@@ -1,0 +1,16 @@
+/*** 定义自定义变量和重写element-ui变量 ***/
+
+/** 自定义变量 **/
+
+/** 重写element-ui变量 **/
+$--color-primary: #0091ff; // 主题色
+
+/* menu相关 */
+$--menu-background-color: #00162B; // menu背景色
+$--menu-hover-background-color: #000C18; // menu背景色
+$--menu-item-font-color: #BEBEBE; // menu字色
+$--menu-item-hover-fill: $--color-primary; // menu鼠标悬浮、激活时背景色
+
+/** 改变 icon 字体路径变量，并引入element-ui变量文件 **/
+$--font-path: '~element-plus/lib/theme-chalk/fonts';
+@import "~element-plus/packages/theme-chalk/src/index";
