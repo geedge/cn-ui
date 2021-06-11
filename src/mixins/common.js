@@ -1,6 +1,5 @@
 import theme from '@/assets/css/theme.scss'
 import { hasButton } from '@/permission'
-import { nextTick } from 'vue'
 export default {
   data () {
     return {
@@ -15,7 +14,6 @@ export default {
     }
   },
   methods: {
-    $nextTick: nextTick,
     hasButton (code) {
       return hasButton(this.$store.getters.buttonList, code)
     },

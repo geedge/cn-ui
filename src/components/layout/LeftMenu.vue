@@ -33,7 +33,9 @@
               <el-submenu
                   :key="secondIndex"
                   :index="`${index}-${secondIndex}`">
-                <span slot="title" class="data-column__span">{{secondMenu.name}}</span>
+                <template #title>
+                  <span class="data-column__span">{{secondMenu.name}}</span>
+                </template>
                 <el-menu-item
                     v-for="(thirdMenu, thirdIndex) in secondMenu.children"
                     :key="`${index}-${secondIndex}-${thirdIndex}`"
@@ -56,7 +58,9 @@
             :key="index + 'a'"
             :index="menu.route">
           <i :class="menu.icon"></i>
-          <span slot="title" class="data-column__span">{{menu.name}}</span>
+          <template #title>
+            <span class="data-column__span">{{menu.name}}</span>
+          </template>
         </el-menu-item>
       </template>
     </el-menu>
@@ -72,7 +76,7 @@ export default {
       logo: ''
     }
   },
-  setup () {
+  mounted () {
     const self = this
     window.addEventListener('setItemEvent', function (e) {
       if (e.key === 'cn-sys-logo' && e.value) {
