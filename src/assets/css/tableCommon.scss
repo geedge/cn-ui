@@ -338,7 +338,7 @@
     }
   }
   /* end--覆盖el-table边框、gutter等样式 */
-  .pagination-bottom {
+  .cn-pagination{
     position: absolute;
     bottom: 8px;
     height: 48px;
@@ -378,4 +378,12 @@
   top: -1px;
   height: 1px;
   background-color: white;
+}
+.col-resize-area {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  cursor: col-resize;
 }

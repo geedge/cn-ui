@@ -1,5 +1,5 @@
 <template>
-  <div v-clickoutside="{object: editObject, func: esc}" class="right-box right-box-user">
+  <div v-click-outside="{object: editObject, func: esc}" class="right-box right-box-user">
     <div class="right-box__header">
       <div class="header__title">{{editObject.id ? $t('config.user.editUser') : $t('config.user.createUser')}}</div>
       <div class="header__operation">
@@ -81,6 +81,7 @@
 
 <script>
 import rightBoxMixin from '@/mixins/rightBox'
+import { onMounted } from "vue";
 import { get, post, put } from '@/utils/http'
 export default {
   name: 'UserBox',
@@ -138,17 +139,22 @@ export default {
     let roleData = []
     const getRoleData = async () => {
       await get('sys/role?pageSize=-1').then(response => {
+        console.log(response);
         if (response.code === 200) {
           roleData = response.data.list
-        } else {
-          this.$message.error('load roles faild')
         }
       })
     }
+    // onMounted(getRoleData)
     return {
       roleData,
       getRoleData
     }
+  },
+  created() {
+  },
+  mounted() {
+    this.getRoleData()
   },
   methods: {
     isCurrentUser () {

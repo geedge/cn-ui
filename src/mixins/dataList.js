@@ -2,8 +2,11 @@ import { tableSort } from '@/utils/tools'
 import { defaultPageSize, fromRoute, position } from '@/utils/constants'
 import { get, del } from '@/utils/http'
 import { ref } from 'vue'
-
+import pagination from '@/components/common/pagination'
 export default {
+  components:{
+    pagination
+  },
   data () {
     return {
       fromRoute: fromRoute,
@@ -120,7 +123,7 @@ export default {
     edit (u) {
       get(`${this.url}/${u.id}`).then(response => {
         if (response.code === 200) {
-          this.object = response.data
+          this.object = response.user
           this.rightBox.show = true
         }
       })

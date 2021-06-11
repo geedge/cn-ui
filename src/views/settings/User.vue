@@ -35,7 +35,7 @@
         />
       </template>
       <template #pagination>
-<!--        <Pagination ref="Pagination" :page-obj="pageObj" :table-id="tableId" @pageNo='pageNo' @pageSize='pageSize'></Pagination> -->
+        <pagination ref="pagination" :page-obj="pageObj" :table-id="tableId" @pageNo='pageNo' @pageSize='pageSize'></pagination>
       </template>
     </cn-data-list>
     <transition name="right-box">
@@ -56,12 +56,12 @@ import { put } from '@/utils/http'
 
 export default {
   name: 'User',
+  mixins: [dataListMixin],
   components: {
     cnDataList,
     userTable,
     userBox
   },
-  mixins: [dataListMixin],
   data () {
     return {
       url: 'sys/user',
