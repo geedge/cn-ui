@@ -1,5 +1,5 @@
 {
-  "name": "sn",
+  "name": "cn",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,13 +14,14 @@
     "element-plus": "^1.0.2-beta.44",
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.21",
+    "moment-timezone": "^0.5.33",
     "node-sass": "^4.14.1",
     "postcss-px2rem-exclude": "0.0.6",
     "sass-loader": "^8.0.2",
     "sass-resources-loader": "^2.2.1",
     "vue": "^3.0.0",
     "vue-grid-layout": "^2.3.12",
-    "vue-i18n": "^8.24.4",
+    "vue-i18n": "^9.1.6",
     "vue-router": "^4.0.8",
     "vuex": "^4.0.1"
   },

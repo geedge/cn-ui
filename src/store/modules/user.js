@@ -1,5 +1,12 @@
+import { post } from '@/utils/http'
+import router from '@/router'
+import { sortByOrderNum, getWelcomeMenu } from '@/permission'
+import moment from 'moment-timezone'
+import bus from '@/utils/bus'
+import { ElMessage } from 'element-plus'
+
 const user = {
-  state() {
+  state () {
     return {
       menuList: [],
       buttonList: [],
@@ -24,65 +31,7 @@ const user = {
   },
   getters: {
     menuList (state) {
-      const menuList = JSON.parse(`[
-        {
-          "id": 1,
-          "name": "dashboards",
-          "code": "dashboard",
-          "i18n": "dashboard.title",
-          "parentId": 0,
-          "perms": "",
-          "type": 1,
-          "route": "",
-          "orderNum": 1,
-          "icon": "cn-icon cn-icon-menu-dashboard",
-          "required": "",
-          "children": [
-            {
-              "id": 2,
-              "name": "Traffic summary",
-              "code": "overview",
-              "i18n": "dashboard.overview.title",
-              "parentId": 1,
-              "perms": "",
-              "type": 1,
-              "route": "/traffic",
-              "orderNum": 1,
-              "icon": "",
-              "required": "",
-              "children": []
-            },
-            {
-              "id": 3,
-              "name": "Network & Application performance",
-              "code": "panel",
-              "i18n": "dashboard.panel.title",
-              "parentId": 1,
-              "perms": "",
-              "type": 1,
-              "route": "/na",
-              "orderNum": 2,
-              "icon": "",
-              "required": ""
-            },
-            {
-              "id": 4,
-              "name": "DNS service insights",
-              "code": "explore",
-              "i18n": "dashboard.metricPreview.title",
-              "parentId": 1,
-              "perms": "",
-              "type": 1,
-              "route": "/dns",
-              "orderNum": 3,
-              "icon": "",
-              "required": "",
-              "children": []
-            }
-          ]
-        }
-      ]`)
-      return menuList
+      return state.menuList
     },
     buttonList (state) {
       return state.buttonList
@@ -93,11 +42,37 @@ const user = {
   },
   actions: {
     loginSuccess (store, res) {
+      sessionStorage.setItem('cn-token', res.data.token)
+      localStorage.setItem('cn-sys-name', res.data.systemName)
+      if (res.systemLogo) {
+        localStorage.setItem('cn-sys-logo', res.data.systemLogo)
+      }
+      localStorage.setItem('cn-sys-timezone', res.data.timezone)
+      localStorage.setItem('timezone-offset', moment.tz(res.data.timezone).format('Z'))
+
+      post('/sys/user/permissions', { token: res.data.token }).then(res => {
+        const menuList = sortByOrderNum(res.data.menus)
+        store.commit('setMenuList', menuList)
+        store.commit('setButtonList', res.data.buttons)
+        store.commit('setRoleList', res.data.roles)
+
+        const welcomeMenu = getWelcomeMenu(menuList)
+        if (welcomeMenu) {
+          router.push({
+            path: welcomeMenu.route,
+            query: {
+              t: +new Date()
+            }
+          })
+        } else {
+          ElMessage.error('No menu') // TODO 国际化
+        }
+      })
     },
     logoutSuccess (store, res) {
-      sessionStorage.removeItem('nz-username')
-      localStorage.removeItem('nz-username')
-      sessionStorage.removeItem('nz-token')
+      sessionStorage.removeItem('cn-username')
+      localStorage.removeItem('cn-username')
+      sessionStorage.removeItem('cn-token')
     }
   }
 }

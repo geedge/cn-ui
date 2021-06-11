@@ -1,6 +1,10 @@
 <template>
   <div class="left-menu">
-    <el-menu :collapse="isShrink" active-text-color="#ffffff" class="header-logo" text-color="#ffffff">
+    <el-menu
+        :collapse="isShrink"
+        active-text-color="#ffffff"
+        class="header-logo"
+        text-color="#ffffff">
       <el-menu-item index="logo">
         <div id="home-to-overview" class="logo link">
           <img alt="loading..." height="26" :src="logo?logo:require('../../assets/img/logo1-2.png')"/>
@@ -8,26 +12,49 @@
         </div>
       </el-menu-item>
     </el-menu>
-    <el-menu :collapse="isShrink" :default-active="route" class="menu-list" mode="vertical" unique-opened @select="jump">
+    <el-menu
+        :collapse="isShrink"
+        :default-active="route"
+        class="menu-list"
+        mode="vertical"
+        unique-opened
+        @select="jump">
       <template v-for="(menu, index) in menuList">
-        <el-submenu v-if="menu.children && menu.children.length > 0" :key="index" :index="`${index}`">
+        <el-submenu
+            v-if="menu.children && menu.children.length > 0"
+            :key="index"
+            :index="`${index}`">
           <template #title>
             <i :class="menu.icon"></i>
             <span>{{menu.name}}</span>
           </template>
           <template v-for="(secondMenu, secondIndex) in menu.children">
             <template v-if="secondMenu.children && secondMenu.children.length > 0">
-              <el-submenu :key="secondIndex" :index="`${index}-${secondIndex}`">
+              <el-submenu
+                  :key="secondIndex"
+                  :index="`${index}-${secondIndex}`">
                 <span slot="title" class="data-column__span">{{secondMenu.name}}</span>
-                <el-menu-item v-for="(thirdMenu, thirdIndex) in secondMenu.children" :key="`${index}-${secondIndex}-${thirdIndex}`" :index="thirdMenu.route">{{thirdMenu.name}}</el-menu-item>
+                <el-menu-item
+                    v-for="(thirdMenu, thirdIndex) in secondMenu.children"
+                    :key="`${index}-${secondIndex}-${thirdIndex}`"
+                    :index="thirdMenu.route">
+                  {{thirdMenu.name}}
+                </el-menu-item>
               </el-submenu>
             </template>
             <template v-else>
-              <el-menu-item :key="secondIndex" :index="secondMenu.route">{{secondMenu.name}}</el-menu-item>
+              <el-menu-item
+                  :key="secondIndex"
+                  :index="secondMenu.route">
+                {{secondMenu.name}}
+              </el-menu-item>
             </template>
           </template>
         </el-submenu>
-        <el-menu-item v-else :key="index + 'a'" :index="menu.route">
+        <el-menu-item
+            v-else
+            :key="index + 'a'"
+            :index="menu.route">
           <i :class="menu.icon"></i>
           <span slot="title" class="data-column__span">{{menu.name}}</span>
         </el-menu-item>
@@ -126,10 +153,15 @@ export default {
     .el-menu-item.is-active {
       color: white !important;
     }
-    // el-submenu  active且open背景色
 
+    // el-submenu  active且open背景色
     .el-submenu__title:not(.is-active):hover, .el-menu-item:not(.is-active):hover, .el-menu-item:not(.is-active):focus {
       background-color: mix($--color-white, $--menu-background-color, 7%) !important;
+    }
+    .is-active.is-opened {
+      .el-submenu__title, .el-menu-item:not(.is-active) {
+        background-color: $--menu-hover-background-color !important;
+      }
     }
     .el-menu-item {
       overflow: hidden;

@@ -4,16 +4,13 @@ module.exports = {
     es2021: true
   },
   extends: [
-    'plugin:vue/essential',
+    'plugin:vue/vue3-essential',
     'standard'
   ],
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module'
   },
-  plugins: [
-    'vue'
-  ],
   rules: {
     eqeqeq: 0, // 关闭必须使用全等
     'no-extend-native': 0,

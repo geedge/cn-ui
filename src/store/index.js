@@ -18,7 +18,7 @@ const store = createStore({
   mutations: {
     isShrink (state) {
       state.isShrink = !state.isShrink
-      localStorage.setItem('nz-left-menu-shrink', state.isShrink)
+      localStorage.setItem('cn-left-menu-shrink', state.isShrink)
     }
   }
 })

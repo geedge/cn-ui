@@ -11,16 +11,20 @@ const routes = [
     component: () => import('@/components/layout/Home'),
     children: [
       {
-        path: '/traffic',
+        path: '/trafficSummary',
         component: () => import('@/views/dashboards/TrafficSummary')
       },
       {
-        path: '/na',
+        path: '/networkAppPerformance',
         component: () => import('@/views/dashboards/TrafficSummary')
       },
       {
-        path: '/dns',
+        path: '/dnsServiceInsights',
         component: () => import('@/views/dashboards/TrafficSummary')
+      },
+      {
+        path: '/user',
+        component: () => import('@/views/settings/User')
       }
     ]
   }

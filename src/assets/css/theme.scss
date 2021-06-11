@@ -1,8 +1,7 @@
 /*** 定义自定义变量和重写element-ui变量 ***/
 
-/** 自定义变量 **/
-
 /** 重写element-ui变量 **/
+
 $--color-primary: #0091ff; // 主题色
 
 /* menu相关 */
@@ -11,6 +10,55 @@ $--menu-hover-background-color: #000C18; // menu背景色
 $--menu-item-font-color: #BEBEBE; // menu字色
 $--menu-item-hover-fill: $--color-primary; // menu鼠标悬浮、激活时背景色
 
+/** 自定义变量 **/
+:root {
+  --theme-color: #FA901C; // 默认主题色，下方深化、浅化的色值默认值是写死的；用户自定义修改主题色后，由js计算新值
+  --theme-color-dark-10: #E18219; // 默认主题色 深10%
+  --theme-color-light-10: #FA9B33; // 默认主题色 浅10%
+  --theme-color-light-20: #FBA649; // 默认主题色 浅20%
+  --theme-color-light-30: #FBB160; // 默认主题色 浅30%
+  --theme-color-light-40: #FBBC77; // 默认主题色 浅40%
+  --theme-color-light-50: #FCC88D; // 默认主题色 浅50%
+  --theme-color-light-60: #FCD4A4; // 默认主题色 浅60%
+  --theme-color-light-71: #FFDFBD; // 默认主题色 浅71%
+  --theme-color-light-80: #FFEAD2; // 默认主题色 浅80%
+  --theme-color-light-90: #FFF5E8; // 默认主题色 浅90%
+  --theme-color-light-96: #FFFBF6; // 默认主题色 浅90%
+  --theme-color-light-98: #FFFCF8; // 默认主题色 浅98%
+}
+
+$--border-color-primary: #DEDEDE;
+$--border-radius-primary: 2px;
+
+$--right-box-border-color: #E7EAED;
+
+/* 按钮 */
+$--button-border-radius: $--border-color-primary; // 按钮圆角
+
+$--button-primary-color: #FFF; // 普通按钮字色
+$--button-primary-background-color: $--color-primary; // 普通按钮背景色
+$--button-hover-tint-percent: 20%; // 非灰色按钮在鼠标hover时背景色变浅的幅度
+$--button-active-shade-percent: 0; // 非灰色按钮在focus时背景色变深的幅度
+
+$--button-gray-color: #666; // 灰色按钮字色
+$--button-gray-hover-color: $--button-gray-color; // 灰色按钮hover字色
+$--button-gray-active-color: $--color-primary; // 灰色按钮focus字色
+$--button-gray-background-color: #F9F9F9; // 灰色按钮背景色
+$--button-gray-hover-background-color: #FFF; // 灰色按钮hover背景色
+$--button-gray-active-background-color: $--button-gray-hover-background-color; // 灰色按钮focus背景色
+$--button-gray-border-color: $--border-color-primary; // 灰色按钮边框色
+$--button-gray-hover-border-color: $--button-gray-border-color; // 灰色按钮hover边框色
+$--button-gray-active-border-color-tint-percent: 30%; // 灰色按钮在focus时边框色相对于主题色变浅的幅度
+
+$--color-danger: #DE5D3F; //全局警告色红色
+$--color-success: #23BF9A; //全局正常色绿色
+$--color-warning: $--color-primary; //全局警告橙色
+$--color-suspended: #9e9c98; //全局停用色灰色
+$--color-monitor: #98AEC5; //全局停用色灰色
+
 /** 改变 icon 字体路径变量，并引入element-ui变量文件 **/
 $--font-path: '~element-plus/lib/theme-chalk/fonts';
 @import "~element-plus/packages/theme-chalk/src/index";
+:export {
+  themeColor: $--color-primary;
+}
