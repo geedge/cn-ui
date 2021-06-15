@@ -5,7 +5,7 @@
 <script>
 import { useRoute } from 'vue-router'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
-import { panel as api, getPanelList } from '@/utils/api'
+import { api, getPanelList } from '@/utils/api'
 
 export default {
   name: 'Panel',

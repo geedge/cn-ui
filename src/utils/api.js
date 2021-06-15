@@ -5,14 +5,16 @@
 */
 import { get } from '@/utils/http'
 
-export const panel = '/visual/panel'
-export const chart = '/visual/chart'
+export const api = {
+  panel: '/visual/panel',
+  chart: '/visual/chart'
+}
 
 export async function getPanelList (params) {
-  return await getData(panel, params, true)
+  return await getData(api.panel, params, true)
 }
 export async function getPanel (url, params) {
-  return await getData(panel, params)
+  return await getData(api.panel, params)
 }
 
 export async function getData (url, params, isQueryList) {
