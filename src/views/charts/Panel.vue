@@ -1,5 +1,5 @@
 <template>
-  <div>{{panel.name}}</div>
+  <div>{{panel}}</div>
 </template>
 
 <script>
@@ -15,7 +15,10 @@ export default {
     }
   },
   async mounted () {
-    this.panel = (await getPanelList({ type: this.panelType }))[0]
+    const panels = await getPanelList({ type: this.panelType })
+    if (panels && panels.length > 0) {
+      this.panel = panels[0]
+    }
   },
   setup () {
     // 取得panel的type
