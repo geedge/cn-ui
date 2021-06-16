@@ -1,6 +1,5 @@
 import { createApp } from 'vue'
 import _ from 'lodash'
-
 import router from '@/router'
 import store from '@/store'
 import App from '@/App.vue'
@@ -11,8 +10,19 @@ import i18n from '@/i18n'
 import '@/assets/css/main.scss' // 样式入口
 
 import ElementPlus from 'element-plus'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc' // dependent on utc plugin
+import timezone from 'dayjs/plugin/timezone'
+import advancedFormat from 'dayjs/plugin/advancedFormat'
+import weekday from 'dayjs/plugin/weekday'
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
+dayjs.extend(weekday)
+window.$dayJs = dayjs
 
 const app = createApp(App)
+
 app.use(router)
 app.use(store)
 app.use(ElementPlus)

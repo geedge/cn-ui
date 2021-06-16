@@ -13,6 +13,14 @@ export default {
     get(`${process.env.BASE_URL}config.json?Timestamp=${new Date().getTime()}`).then(config => {
       axios.defaults.baseURL = config.baseUrl
     })
+    //处理刷新后  $dayJs的时区变为默认的问题
+    const timezone = localStorage.getItem('cn-sys-timezone') || ''
+    if (timezone){
+      $dayJs.tz.setDefault(timezone)
+    } else {
+      $dayJs.tz.setDefault()
+    }
   }
+
 }
 </script>

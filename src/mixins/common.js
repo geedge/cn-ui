@@ -3,6 +3,7 @@ import { hasButton } from '@/permission'
 export default {
   data () {
     return {
+      dayJs: $dayJs,
       blockOperation: {
         save: false,
         import: false,

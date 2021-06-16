@@ -7,11 +7,11 @@
     .pagination-top .pagination {
         padding-top: 0;
     }
-    .pagination  /deep/ .el-pagination {
+    .pagination  :deep(.el-pagination) {
         max-height: 42px;
         padding-right: 0;
     }
-    .pagination-size-select /deep/ .el-input--mini .el-input__inner{
+    .pagination-size-select :deep(.el-input--mini .el-input__inner){
         height: 20px;
         line-height: 20px;
         margin: 5px 0 5px 5px;
@@ -19,7 +19,7 @@
     .pagination-size-select input{
 
     }
-    /deep/ .el-pager li, /deep/ .el-pagination .btn-next,/deep/  .el-pagination .btn-prev {
+    :deep(.el-pager li), :deep(.el-pagination .btn-next),:deep( .el-pagination .btn-prev ){
         margin:5px 5px 0px 5px;
         padding: 0 4px;
         font-size: 13px;
@@ -33,13 +33,13 @@
         border-radius: 2px;
         border-radius: 2px;
     }
-    /deep/ .el-pagination .el-pager li.btn-quicknext, /deep/  .el-pager li.btn-quickprev {
+    :deep(.el-pagination .el-pager li.btn-quicknext), :deep( .el-pager li.btn-quickprev) {
         line-height: 20px;
     }
-    /deep/ .el-pagination .el-pager .more::before {
+    :deep(.el-pagination .el-pager .more::before ){
         line-height: 20px;
     }
-    /deep/  .el-pagination .el-pager .more {
+    :deep( .el-pagination .el-pager .more) {
         background-color: $content-right-background-color;
     }
     .btn-next, .btn-prev {
@@ -48,35 +48,35 @@
     .pagination input {
         background-color: $content-right-background-color !important;
     }
-    /deep/ .el-pager li.number{
+    :deep(.el-pager li.number){
         font-family: NotoSansSC-Regular;
         color: #666666;
         letter-spacing: 0;
         font-weight:normal;
         background-color: $content-right-background-color;
     }
-    /deep/  .el-pager li.number.active{
+    :deep( .el-pager li.number.active){
         font-family: NotoSansSC-Regular;
         color: #FFFFFF;
         letter-spacing: 0;
     }
 
-    /deep/  .el-pagination .el-pager li.active {
+    :deep( .el-pagination .el-pager li.active) {
         background-color: $global-text-color-active;
         border-radius: 2px;
         border-radius: 2px;
     }
-    /deep/  .el-pager li:hover, .el-pagination .btn-next:hover, .el-pagination .btn-prev:hover {
+    :deep( .el-pager li:hover, .el-pagination .btn-next:hover, .el-pagination .btn-prev:hover) {
         font-family: NotoSansSC-Regular;
         color: #666666;
         letter-spacing: 0;
         font-weight:normal;
     }
-    /deep/  .el-pagination__sizes .el-input .el-input__inner,/deep/  .el-pagination__editor.el-input .el-input__inner{
+    :deep( .el-pagination__sizes .el-input .el-input__inner),:deep( .el-pagination__editor.el-input .el-input__inner){
         height: 20px;
         border-color: rgba(154,154,154,0.20);
     }
-    /deep/ .el-pagination__sizes .el-input .el-input__inner:hover{
+    :deep(.el-pagination__sizes .el-input .el-input__inner:hover){
         border-color: rgba(154,154,154,0.20);
     }
 </style>

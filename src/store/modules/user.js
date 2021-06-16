@@ -1,7 +1,9 @@
 import { post } from '@/utils/http'
 import router from '@/router'
 import { sortByOrderNum, getWelcomeMenu } from '@/permission'
-import moment from 'moment-timezone'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc' // dependent on utc plugin
+dayjs.extend(utc)
 import bus from '@/utils/bus'
 import { ElMessage } from 'element-plus'
 
@@ -42,14 +44,15 @@ const user = {
   },
   actions: {
     loginSuccess (store, res) {
+      // res.data.timezone = 'America/New_York'
+      $dayJs.tz.setDefault(res.data.timezone)
       sessionStorage.setItem('cn-token', res.data.token)
       localStorage.setItem('cn-sys-name', res.data.systemName)
       if (res.systemLogo) {
         localStorage.setItem('cn-sys-logo', res.data.systemLogo)
       }
       localStorage.setItem('cn-sys-timezone', res.data.timezone)
-      localStorage.setItem('timezone-offset', moment.tz(res.data.timezone).format('Z'))
-
+      localStorage.setItem('timezone-offset', dayjs.tz().utcOffset()/60)
       post('/sys/user/permissions', { token: res.data.token }).then(res => {
         const menuList = sortByOrderNum(res.data.menus)
         store.commit('setMenuList', menuList)
