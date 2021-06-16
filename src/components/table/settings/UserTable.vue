@@ -46,7 +46,7 @@
                   :active-color="theme.themeColor"
                   active-value="1"
                   inactive-value="0"
-                  @change="val => {statusChange(scope.row)}">
+                  @change="()=>{statusChange(scope.row)}">
           </el-switch>
         </template>
         <span v-else>{{scope.row[item.prop]}}</span>

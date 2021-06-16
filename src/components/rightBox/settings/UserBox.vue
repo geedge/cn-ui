@@ -132,26 +132,11 @@ export default {
         email: [
           { type: 'email', message: this.$t('validate.email') }
         ]
-      }
+      },
+      roleData: []
     }
   },
   setup () {
-    let roleData = []
-    const getRoleData = async () => {
-      await get('sys/role?pageSize=-1').then(response => {
-        console.log(response);
-        if (response.code === 200) {
-          roleData = response.data.list
-        }
-      })
-    }
-    // onMounted(getRoleData)
-    return {
-      roleData,
-      getRoleData
-    }
-  },
-  created() {
   },
   mounted() {
     this.getRoleData()
@@ -198,6 +183,14 @@ export default {
         } else {
           this.blockOperation.save = false
           return false
+        }
+      })
+    },
+   getRoleData (){
+     get('sys/role?pageSize=-1').then(response => {
+        console.log(response);
+        if (response.code === 200) {
+          this.roleData = response.data.list
         }
       })
     }
