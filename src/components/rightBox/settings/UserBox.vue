@@ -59,6 +59,7 @@
             <el-switch
                id="account-input-status"
                v-model="editObject.status"
+               :active-color="theme.themeColor"
                :disabled="(editObject.username === loginName) || (editObject.username==='admin' && editObject.id==1)"
                :active-value="1"
                :inactive-value="0">

@@ -144,10 +144,14 @@ export default {
   },
   methods: {
     statusChange (user) {
+      console.log(user)
       if (user.roles) {
         user.roleIds = user.roles.map(t => t.id)
       }
-      put(this.url, user).then(response => {
+      // if (!user.id){
+      //   return
+      // }
+      put('sys/user', user).then(response => {
         if (response.code === 200) {
           this.rightBox.show = false
           this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })

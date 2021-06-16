@@ -165,6 +165,30 @@ const cn = {
     copySuccess: '复制成功',
     lnglatError: '经纬度格式错误'
   },
+  validate: {
+    required: '必填项',
+    number: '必须是数字',
+    email: '不合法的E-mail地址',
+    tel: '不合法的电话号码',
+    telephone: '电话号码不能为空',
+    host: '不合法的IP',
+    fileSize: '文件过大',
+    port: '不合法的端口',
+    special: '不能包含特殊字符',
+    config: {
+      account: {}
+    },
+    integer: '必须是整数',
+    positiveInteger: '必须是正整数',
+    domain: '不合法的域名',
+    usize: '必须是(1 - 49)的数字',
+    url: '不合法的URL',
+    uSize: '必须是(1 - 47)的数字',
+    requiredIdc: '机房为必选项',
+    tooLong: '文本太长',
+    key: '不合法的值',
+    onlyWord: '只可以输入a-z、A-Z、0-9、"_" 字符'
+  },
   config: {
     config: '设置',
     user: {

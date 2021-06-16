@@ -164,6 +164,28 @@ const en = {
     copySuccess: 'Copy success',
     lnglatError: 'Wrong format of latitude and longitude'
   },
+  validate: { // 校验规则
+    required: 'Required', // '必填项'
+    number: 'Numberic', // '必须是数字'
+    integer: 'Integer',
+    positiveInteger: 'Positive integer',
+    email: 'Invalid email', // '不合法的E-mail地址'
+    tel: 'Invalid phone number', // '不合法的电话号码'
+    telephone: 'Phone number cannot be empty',
+    host: 'Invalid Host', // '不合法的Host'
+    domain: 'Invalid domain',
+    usize: 'Must be number(1 - 47)',
+    fileSize: 'File exceed max size', // File exceed max size.
+    port: 'Invalid port',
+    url: 'Invalid URL',
+    uSize: 'Must be number(1 - 47)',
+    requiredIdc: 'dc is required',
+    key: 'Invalid key',
+    repeat: 'Repeat',
+    tooLong: 'Too long content',
+    onlyWord: 'only input a-z、A-Z、0-9、"_" ',
+    mobile: 'Invalid mobile'
+  },
   config: {
     config: 'Setting', // "设置"
     user: {
