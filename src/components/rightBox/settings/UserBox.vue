@@ -56,8 +56,12 @@
           </el-form-item>
           <!--enable-->
           <el-form-item :label="$t('config.user.enable')">
-            <el-switch id="account-input-status" v-model="editObject.status" :disabled="isCurrentUser(editObject.username) || (editObject.username==='admin' && editObject.id==1) " active-color="#ee9d3f" active-value="1"
-                       inactive-value="0">
+            <el-switch
+               id="account-input-status"
+               v-model="editObject.status"
+               :disabled="(editObject.username === loginName) || (editObject.username==='admin' && editObject.id==1)"
+               :active-value="1"
+               :inactive-value="0">
             </el-switch>
           </el-form-item>
 
@@ -98,6 +102,7 @@ export default {
     }
     return {
       url: 'sys/user',
+      loginName: localStorage.getItem('cn-username'),
       rules: { // 表单校验规则
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
@@ -142,10 +147,8 @@ export default {
     this.getRoleData()
   },
   methods: {
-    isCurrentUser () {
-      return function (username) {
-        return localStorage.getItem('cn-username') === username
-      }
+    isCurrentUser (username) {
+      return localStorage.getItem('cn-username') === username
     },
     /* 密码失去焦点 检验确认密码 */
     pinBlur () {
@@ -188,11 +191,22 @@ export default {
     },
    getRoleData (){
      get('sys/role?pageSize=-1').then(response => {
-        console.log(response);
         if (response.code === 200) {
           this.roleData = response.data.list
         }
       })
+    }
+  },
+  watch: {
+    object: {
+      deep: true,
+      immediate: true,
+      handler (n) {
+        this.editObject = JSON.parse(JSON.stringify(n))
+        if ( !this.editObject.roleIds && this.editObject.roles ) {
+          this.editObject.roleIds = this.editObject.roles[0].id
+        }
+      }
     }
   }
 }

@@ -26,7 +26,7 @@
           :custom-table-title="tools.customTableTitle"
           :height="mainTableHeight"
           :table-data="tableData"
-          @del="del"
+          @delete="del"
           @edit="edit"
           @orderBy="tableDataSort"
           @reload="getTableData"
@@ -72,7 +72,7 @@ export default {
         email: '',
         pin: '',
         mobile: '',
-        status: '1',
+        status: 1,
         roleIds: '',
         pinChange: ''
       },

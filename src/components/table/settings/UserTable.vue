@@ -45,6 +45,7 @@
                   v-model="scope.row.status"
                   :active-color="theme.themeColor"
                   active-value="1"
+                  :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id==1) "
                   inactive-value="0"
                   @change="()=>{statusChange(scope.row)}">
           </el-switch>
@@ -88,6 +89,7 @@ export default {
   mixins: [table],
   data () {
     return {
+      loginName: localStorage.getItem('cn-username'),
       tableTitle: [ // 原始table列
         {
           label: 'ID',

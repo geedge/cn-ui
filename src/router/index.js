@@ -17,6 +17,10 @@ const routes = [
       {
         path: '/user',
         component: () => import('@/views/settings/User')
+      },
+      {
+        path: '/roles',
+        component: () => import('@/views/settings/Roles')
       }
     ]
   }

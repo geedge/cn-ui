@@ -24,6 +24,7 @@ export default {
     login () {
       post('sys/login', { username: this.username, pin: this.pin }).then(res => {
         if (res.code === 200) {
+          localStorage.setItem('cn-username', this.username)
           this.loginSuccess(res)
         }
       })

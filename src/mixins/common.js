@@ -11,7 +11,15 @@ export default {
         refresh: false,
         query: false
       },
-      theme: theme // scss主题变量
+      theme: theme, // scss主题变量
+      prevent_opt: {
+        save: false,
+        import: false,
+        duplicate: false,
+        delete: false,
+        refresh: false,
+        query: false
+      }
     }
   },
   methods: {
