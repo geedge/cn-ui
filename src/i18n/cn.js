@@ -257,7 +257,7 @@ const cn = {
         unknown: 'unknown'
       },
       response: '响应'
-    },
+    }
   }
 }
 

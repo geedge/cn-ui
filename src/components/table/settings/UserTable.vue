@@ -42,6 +42,7 @@
         </template>
         <template v-else-if="item.prop === 'status'">
           <el-switch
+                  v-if="scope.row.id"
                   v-model="scope.row.status"
                   :active-color="theme.themeColor"
                   active-value="1"

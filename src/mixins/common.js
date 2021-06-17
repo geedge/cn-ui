@@ -3,7 +3,7 @@ import { hasButton } from '@/permission'
 export default {
   data () {
     return {
-      dayJs: $dayJs,
+      dayJs: window.$dayJs,
       blockOperation: {
         save: false,
         import: false,
@@ -37,6 +37,20 @@ export default {
         refresh: false,
         query: false
       }
+    },
+    // 时间相关
+    utcTimeToSysTime (str) { // utc 0 到系统设置的时区
+      let date = ''
+      if (isNaN(str)) {
+        date = window.$dayJs(str).valueOf() + localStorage.getItem('timezone-local-offset') * 60 * 60 * 1000
+      } else {
+        date = str
+      }
+      date = window.$dayJs.tz(date).format('YYYY-MM-DD HH:mm:ss')
+      return date
+    },
+    utcTimeToLocalhost (str) { // 系统设置的时区 到 utc 0
+      return str
     }
   }
 }

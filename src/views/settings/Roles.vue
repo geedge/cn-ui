@@ -14,7 +14,7 @@
         </button>
         <delete-button id="role-list-batch-delete" v-has="'role_delete'" :api="url" :delete-objs="batchDeleteObjs" @after="getTableData" @before="delFlag=true"></delete-button>
       </template>
-      <template v-slot:default="slotProps">
+      <template v-slot:default>
         <roles-table
           ref="dataTable"
           v-loading="tools.loading"
@@ -27,7 +27,7 @@
           @orderBy="tableDataSort"
           @reload="getTableData"
           @selectionChange="selectionChange"
-          @showBottomBox="(targetTab, object) => { $refs.dataList.showBottomBox(targetTab, object) }"></roles-table>
+          @showBottomBox="(targetTab) => { $refs.dataList.showBottomBox(targetTab, object) }"></roles-table>
       </template>
       <!-- 分页组件 -->
       <template #pagination>
@@ -40,18 +40,17 @@
   </div>
 </template>
 <script>
-  import cnDataList from '@/components/table/CnDataList'
-  import dataListMixin from '@/mixins/dataList'
-  import rolesTable from '@/components/table/settings/RoleTable'
-  import roleBox from '@/components/rightBox/settings/RoleBox'
-  import { put } from '@/utils/http'
+import cnDataList from '@/components/table/CnDataList'
+import dataListMixin from '@/mixins/dataList'
+import rolesTable from '@/components/table/settings/RoleTable'
+import roleBox from '@/components/rightBox/settings/RoleBox'
 
 export default {
   name: 'roles',
   components: {
     cnDataList,
     roleBox,
-    rolesTable,
+    rolesTable
   },
   mixins: [dataListMixin],
   data () {

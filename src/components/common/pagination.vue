@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import {defaultPageSize} from '@/utils/constants'
+import { defaultPageSize } from '@/utils/constants'
 
 export default {
   name: 'pagination',
@@ -234,7 +234,7 @@ export default {
       immediate: true,
       deep: true,
       handler (n, o) {
-          // console.log(n)
+        // console.log(n)
       }
     }
   }

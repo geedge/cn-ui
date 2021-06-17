@@ -24,7 +24,7 @@
               <button type="button" class="nz-btn nz-btn-size-small-new nz-btn-style-light-new option-btn" @click="selectAllOrNone" :class="{'btn-active':selectAllFlag}"><span ><i class="nz-icon nz-icon-delete"></i></span></button>
             </div>-->
             <el-tree :data="menus" :default-expand-all="expandAllFlag" :props="{label:labelFormatter}"  @check-change="selectChange" class="tree-border" node-key="id" ref="menuTree" show-checkbox id="role-box-input-menus">
-              <template #default="{ node, data }">
+              <template #default="{ data }">
               <span>
                 <i v-if="data.type == '1'" class="el-icon-menu"></i>
                 <i v-if="data.type == '2'" class="el-icon-edit"></i>
@@ -48,8 +48,8 @@
 </template>
 
 <script>
-  import rightBoxMixin from '@/mixins/rightBox'
-  import { get, post, put } from '@/utils/http'
+import rightBoxMixin from '@/mixins/rightBox'
+import { get, post, put } from '@/utils/http'
 export default {
   name: 'userBox',
   mixins: [rightBoxMixin],

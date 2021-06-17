@@ -86,7 +86,6 @@
 
 <script>
 import rightBoxMixin from '@/mixins/rightBox'
-import { onMounted } from "vue";
 import { get, post, put } from '@/utils/http'
 export default {
   name: 'UserBox',
@@ -144,7 +143,7 @@ export default {
   },
   setup () {
   },
-  mounted() {
+  mounted () {
     this.getRoleData()
   },
   methods: {
@@ -190,8 +189,8 @@ export default {
         }
       })
     },
-   getRoleData (){
-     get('sys/role?pageSize=-1').then(response => {
+    getRoleData () {
+      get('sys/role?pageSize=-1').then(response => {
         if (response.code === 200) {
           this.roleData = response.data.list
         }
@@ -204,7 +203,7 @@ export default {
       immediate: true,
       handler (n) {
         this.editObject = JSON.parse(JSON.stringify(n))
-        if ( !this.editObject.roleIds && this.editObject.roles ) {
+        if (!this.editObject.roleIds && this.editObject.roles) {
           this.editObject.roleIds = this.editObject.roles[0].id
         }
       }

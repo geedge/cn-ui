@@ -258,7 +258,7 @@ const en = {
         login: 'login',
         logout: 'logout'
       }
-    },
-  },
+    }
+  }
 }
 export default en

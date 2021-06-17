@@ -4,7 +4,7 @@ import { get, del } from '@/utils/http'
 import { ref } from 'vue'
 import pagination from '@/components/common/pagination'
 export default {
-  components:{
+  components: {
     pagination
   },
   data () {

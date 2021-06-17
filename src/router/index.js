@@ -21,6 +21,10 @@ const routes = [
       {
         path: '/roles',
         component: () => import('@/views/settings/Roles')
+      },
+      {
+        path: '/operationLog',
+        component: () => import('@/views/settings/OperationLog')
       }
     ]
   }
