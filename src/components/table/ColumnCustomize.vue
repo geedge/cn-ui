@@ -11,8 +11,8 @@
           @click="handler(item,index)"
           :id="'element-set-el-'+index"
         >
-          <i class="nz-icon nz-icon-check" v-if="!allowedAll && !item.allowed && (index === 0 || index === 1 || item.visibility === 'disabled')"></i>
-          <i v-else class="nz-icon nz-icon-check" v-show="item.show"></i>
+          <i class="cn-icon cn-icon-check" v-if="!allowedAll && !item.allowed && (index === 0 || index === 1 || item.visibility === 'disabled')"></i>
+          <i v-else class="cn-icon cn-icon-check" v-show="item.show"></i>
           <span>{{item.label}}</span>
         </div>
 

@@ -5,12 +5,12 @@
             v-model:custom-table-title="tools.customTableTitle"
             :api="url"
             :from="fromRoute.roles"
-            :layout="['columnCustomize']"
+            :layout="['columnCustomize','elementSet']"
     >
       <template v-slot:top-tool-right>
         <button id="roles-add" v-has="'role_add'" :title="$t('overall.createRole')" class="top-tool-btn margin-r-10"
                 type="button" @click="add">
-          <i class="nz-icon-create-square nz-icon"></i>
+          <i class="cn-icon-add cn-icon"></i>
         </button>
         <delete-button id="role-list-batch-delete" v-has="'role_delete'" :api="url" :delete-objs="batchDeleteObjs" @after="getTableData" @before="delFlag=true"></delete-button>
       </template>

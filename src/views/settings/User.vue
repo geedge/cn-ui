@@ -5,7 +5,7 @@
       v-model:custom-table-title="tools.customTableTitle"
       :api="url"
       :from="fromRoute.user"
-      :layout="['columnCustomize']"
+      :layout="['columnCustomize','elementSet']"
     >
       <template #top-tool-right>
         <button
@@ -15,7 +15,7 @@
           type="button"
           @click="add"
         >
-          <i class="cn-icon-create-square cn-icon"/>
+          <i class="cn-icon-add cn-icon"/>
         </button>
       </template>
       <template #default>

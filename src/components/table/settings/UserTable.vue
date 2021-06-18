@@ -63,15 +63,15 @@
       </template>
       <template #default="scope">
         <div class="table-operation-items">
-          <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="nz-icon nz-icon-view1"></i></button>
+          <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-view1"></i></button>
           <el-dropdown size="medium" trigger="hover" @command="tableOperation">
             <div class="table-operation-item table-operation-item--more">
-              <i class="nz-icon nz-icon-more3"></i>
+              <i class="cn-icon cn-icon-more3"></i>
             </div>
             <template #dropdown>
               <el-dropdown-menu >
-                <el-dropdown-item v-has="'user_edit'" :command="['edit', scope.row]"><i class="nz-icon nz-icon-edit"></i><span class="operation-dropdown-text">{{$t('overall.edit')}}</span></el-dropdown-item>
-                <el-dropdown-item v-has="'user_delete'" :command="['delete', scope.row]" :disabled="scope.row.id === 1"><i class="nz-icon nz-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
+                <el-dropdown-item v-has="'user_edit'" :command="['edit', scope.row]"><i class="cn-icon cn-icon-edit"></i><span class="operation-dropdown-text">{{$t('overall.edit')}}</span></el-dropdown-item>
+                <el-dropdown-item v-has="'user_delete'" :command="['delete', scope.row]" :disabled="scope.row.id === 1"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
