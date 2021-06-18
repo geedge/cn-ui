@@ -5,6 +5,9 @@
       <!-- 顶部工具栏 -->
       <div class="main-container">
         <div class="top-tools">
+          <myDatePicker
+                  v-model="value1"
+                  type="datetime"/>
           <div class="top-tool-left" style="min-width: 300px">
             <slot name="top-tool-left"></slot>
           </div>
@@ -42,11 +45,13 @@
 
 <script>
 import columnCustomize from '@/components/table/ColumnCustomize'
+import myDatePicker from '../common/MyDatePicker'
 import { fromRoute } from '@/utils/constants'
 
 export default {
   name: 'cnDataList',
   components: {
+    myDatePicker,
     columnCustomize
   },
   props: {
@@ -74,7 +79,8 @@ export default {
       tools: {
         showCustomTableTitle: false // 自定义列弹框是否显示
       },
-      showLayout: []
+      showLayout: [],
+      value1: 1623997984000
     }
   },
   methods: {
