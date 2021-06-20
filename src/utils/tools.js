@@ -369,3 +369,10 @@ export function isEqual (o1, o2) {
   }
   return isEqualForInner(o1, o2)
 }
+
+/* 计算文本的实际width，而不是length */
+export function calculateTextWidth (text, fontSize = 14) {
+  const html = document.querySelector(`.temp-dom--${fontSize}`)
+  html.innerText = text
+  return html.offsetWidth
+}

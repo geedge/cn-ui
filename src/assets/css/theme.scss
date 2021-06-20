@@ -56,9 +56,9 @@ $--color-warning: $--color-primary; //全局警告橙色
 $--color-suspended: #9e9c98; //全局停用色灰色
 $--color-monitor: #98AEC5; //全局停用色灰色
 
-$global-text-color-active: $--color-primary; // 全局文字active字色
+$--chart-single-value-icon-background-color: #E8F6FF;
 
-$content-right-background-color: #f9f9f9; //右侧背景色
+$--content-right-background-color: #EFF2F5; //右侧背景色
 /** 改变 icon 字体路径变量，并引入element-ui变量文件 **/
 $--font-path: '~element-plus/lib/theme-chalk/fonts';
 @import "~element-plus/packages/theme-chalk/src/index";

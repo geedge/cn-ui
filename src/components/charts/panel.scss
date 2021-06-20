@@ -1,0 +1,207 @@
+.cn-panel {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(auto-fill, 50px);
+  grid-gap: 10px;
+  padding: 20px;
+  height: 100%;
+  width: 100%;
+
+  .cn-chart {
+    background-color: #FFFFFF;
+    border: 1px solid #E7EAED;
+    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+    border-radius: 2px;
+    height: 100%;
+    width: 100%;
+  }
+  .cn-chart__echarts, .cn-chart__table {
+    display: flex;
+    flex-direction: column;
+    .cn-chart__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px 10px 18px;
+      height: 50px;
+      font-size: 16px;
+      color: #333333;
+      font-weight: bold;
+
+      .header__operations {
+        .cn-icon-more-light {
+          color: #999;
+        }
+      }
+    }
+    .cn-chart__body {
+      flex: auto;
+
+      .chart-drawing {
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
+  .cn-chart__single-value.cn-chart__single-value--icon-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .single-value__icon {
+      position: relative;
+      margin-right: 7.5%;
+      width: 72px;
+      height: 72px;
+      background-color: $--chart-single-value-icon-background-color;
+      border-radius: 50%;
+
+      i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 28px;
+        color: $--color-primary;
+      }
+    }
+
+    .single-value__content {
+      display: flex;
+      flex-direction: column;
+
+      .content__data {
+        padding-bottom: 7%;
+        font-size: 24px;
+        color: #333333;
+        font-weight: bold;
+      }
+      .content__title {
+        font-size: 16px;
+        color: #666666;
+      }
+    }
+  }
+  .cn-chart__single-value.cn-chart__single-value--icon-right {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    align-items: center;
+
+    .single-value__icon {
+      background-color: $--chart-single-value-icon-background-color;
+      border-radius: 50%;
+      position: relative;
+      margin-right: 7.5%;
+      margin-bottom: 6%;
+      width: 56px;
+      height: 56px;
+
+      i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        font-size: 24px;
+        color: $--color-primary;
+      }
+    }
+
+    .single-value__content {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+
+      .content__title {
+        display: flex;
+        align-items: center;
+        height: 50%;
+        font-size: 16px;
+        color: #666666;
+      }
+      .content__data {
+        display: flex;
+        padding-top: 5%;
+        height: 50%;
+        flex: auto;
+        font-size: 24px;
+        color: #333333;
+        font-weight: bold;
+      }
+    }
+  }
+  .cn-chart__table {
+    .cn-chart__header {
+      border-bottom: 1px solid $--content-right-background-color;
+      .header__operations {
+        display: grid;
+        justify-content: end;
+        align-items: center;
+        grid-template-rows: 30px;
+        grid-template-columns: repeat(5, auto);
+        grid-column-gap: 10px;
+
+        .header__operation.header__operation--table {
+          display: flex;
+          align-items: center;
+          height: 22px;
+          color: $--color-primary;
+          border: 1px solid $--color-primary;
+          border-radius: $--border-radius-primary;
+
+          .option__button {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            padding: 0 5px;
+            cursor: pointer;
+            background-color: white;
+            transition: all linear .2s;
+          }
+          .option__button:hover {
+            background-color: #EFF2F5;
+          }
+          .option__button.icon-group-item:first-of-type:not(:last-of-type) {
+            padding: 0 5px 0 0;
+          }
+          .option__button.icon-group-item:last-of-type:not(:first-of-type) {
+            padding: 0 0 0 5px;
+          }
+          .icon-group-divide {
+            height: 14px;
+            width: 1px;
+            background-color: $--color-primary;
+          }
+          i {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+    .cn-chart__body {
+      flex: auto;
+      overflow-y: auto;
+
+      .el-table {
+        padding: 0 10px;
+
+        &:before {
+          height: 0;
+        }
+        thead {
+          color: #333;
+        }
+        th.is-leaf, td {
+          border-bottom: none;
+        }
+        th {
+          padding-bottom: 5px;
+        }
+        td {
+          padding: 7px 0;
+          color: #333;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+<template>
+  <div class="cn-chart cn-chart__table">
+    <div class="cn-chart__header">
+      <div class="header__title">
+        <slot name="title"></slot>
+      </div>
+      <div class="header__operations">
+        <slot name="operations"></slot>
+      </div>
+    </div>
+    <div class="cn-chart__body">
+      <el-table
+          :data="tableData"
+          style="width: 100%"
+      >
+        <el-table-column
+            type="index"
+            label="#"
+        >
+        </el-table-column>
+        <el-table-column
+            v-for="(c, i) in tableColumns"
+            :key="i"
+            :prop="c"
+        >
+          <template #header>{{c}}</template>
+          <template #default="{ row }">{{row[c]}}</template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <div class="cn-chart__footer">
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ChartTable',
+  props: {
+    tableColumns: Array,
+    tableData: Array
+  }
+}
+</script>
+
+<style>
+
+</style>

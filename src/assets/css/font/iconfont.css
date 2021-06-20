@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1624000421294') format('woff2'),
-       url('iconfont.woff?t=1624000421294') format('woff'),
-       url('iconfont.ttf?t=1624000421294') format('truetype');
+  src: url('iconfont.woff2?t=1624011302849') format('woff2'),
+       url('iconfont.woff?t=1624011302849') format('woff'),
+       url('iconfont.ttf?t=1624011302849') format('truetype');
 }
 
 .cn-icon {
@@ -13,11 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.cn-icon-view1:before {
+.cn-icon-view:before {
   content: "\e702";
 }
 
-.cn-icon-more3:before {
+.cn-icon-more-arrow-down:before {
   content: "\e739";
 }
 
@@ -29,7 +29,7 @@
   content: "\e68f";
 }
 
-.cn-icon-more1:before {
+.cn-icon-more-dark:before {
   content: "\e677";
 }
 
@@ -41,11 +41,11 @@
   content: "\e738";
 }
 
-.cn-icon-xiangshang:before {
+.cn-icon-arrow-up:before {
   content: "\e732";
 }
 
-.cn-icon-xiangxia:before {
+.cn-icon-arrow-down:before {
   content: "\e737";
 }
 
@@ -105,7 +105,7 @@
   content: "\e728";
 }
 
-.cn-icon-more:before {
+.cn-icon-more-light:before {
   content: "\e729";
 }
 

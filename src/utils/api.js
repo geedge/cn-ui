@@ -9,15 +9,22 @@ export const api = {
   panel: '/visual/panel',
   chart: '/visual/chart'
 }
-
+/* panel */
 export async function getPanelList (params) {
   return await getData(api.panel, params, true)
 }
-export async function getPanel (url, params) {
-  return await getData(api.panel, params)
+export async function getPanel (id) {
+  return await getData(`${api.chart}/${id}`)
+}
+/* chart */
+export async function getChartList (params) {
+  return await getData(api.chart, params, true)
+}
+export async function getChart (id) {
+  return await getData(`${api.chart}/${id}`)
 }
 
-export async function getData (url, params, isQueryList) {
+export async function getData (url, params = {}, isQueryList) {
   const request = new Promise((resolve, reject) => {
     get(url, params).then(response => {
       if (response.code === 200) {

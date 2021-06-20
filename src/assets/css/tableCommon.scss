@@ -2,7 +2,6 @@
 .list-page {
   height: 100%;
   width: 100%;
-  box-sizing: border-box;
   background-color: #f6f6f6;
 
   .main-list {
@@ -45,7 +44,7 @@
       height: 44px;
       background-color: white;
       border: 1px solid #E6EAED;
-      box-sizing: border-box;
+      
     }
 
     .top-tool-right {
@@ -135,7 +134,7 @@
         color: #666666;
         font-size: 14px;
         text-align: center;
-        box-sizing: border-box;
+        
         line-height: 40px;
 
         &.sub-list-tab--active {
@@ -157,7 +156,7 @@
     background-color: #e6eaed;
     position: absolute;
     z-index: 1;
-    box-sizing: border-box;
+    
     user-select: none;
     color: #5f6368;
     cursor: ns-resize;
@@ -189,7 +188,7 @@
     position: relative;
     padding: 0 20px;
     width: 100%;
-    box-sizing: border-box;
+    
     flex: auto;
     height: calc(100% - 58px);
 
@@ -231,7 +230,6 @@
         height: 49px;
         border-bottom: 1px solid $--right-box-border-color;
         background-color: white;
-        box-sizing: content-box;
       }
       thead {
         color: #333;
@@ -358,7 +356,7 @@
   left: 270px !important;
   margin-top: -3px !important;
   box-shadow: none;
-  box-sizing: border-box;
+  
   border-radius: 0;
   border-color: #c7c7c7;
 

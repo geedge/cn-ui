@@ -1,10 +1,10 @@
 <template>
   <div class="cn-home">
     <left-menu @refresh="refresh"></left-menu>
-    <div ref="body" class="cn-body">
+    <main ref="body" class="cn-body">
       <cn-header></cn-header>
       <cn-container v-if="containerShow" ref="container"></cn-container>
-    </div>
+    </main>
   </div>
 </template>
 

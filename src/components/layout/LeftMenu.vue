@@ -205,12 +205,10 @@ export default {
       padding: 13px 0 0 18px !important;
       height: 50px;
       border-right: 1px solid #202F3F;
-      box-sizing: border-box;
       background-color: #182534 !important;
 
       .logo {
         display: flex;
-        box-sizing: border-box;
 
         img {
           box-shadow: 0 0 2px 0 rgba(0,0,0,0.50);

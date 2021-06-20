@@ -8,7 +8,7 @@ import commonMixin from '@/mixins/common'
 import { cancelWithChange, clickOutside } from '@/utils/tools'
 import i18n from '@/i18n'
 import '@/assets/css/main.scss' // 样式入口
-
+// import VueGridLayout from 'vue-grid-layout'
 import ElementPlus from 'element-plus'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc' // dependent on utc plugin
@@ -27,6 +27,7 @@ app.use(router)
 app.use(store)
 app.use(ElementPlus)
 app.use(i18n)
+// app.use(VueGridLayout)
 app.use(_)
 
 app.directive('has', hasPermission) // 注册指令

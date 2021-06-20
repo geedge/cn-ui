@@ -26,11 +26,8 @@
         min-width: 20px;
         height: 20px;
         line-height: 20px;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
         text-align: center;
         border: 1px solid rgba(154,154,154,0.20);
-        border-radius: 2px;
         border-radius: 2px;
     }
     :deep(.el-pagination .el-pager li.btn-quicknext), :deep( .el-pager li.btn-quickprev) {
@@ -40,20 +37,20 @@
         line-height: 20px;
     }
     :deep( .el-pagination .el-pager .more) {
-        background-color: $content-right-background-color;
+        background-color: $--content-right-background-color;
     }
     .btn-next, .btn-prev {
-        background-color: $content-right-background-color !important;
+        background-color: $--content-right-background-color !important;
     }
     .pagination input {
-        background-color: $content-right-background-color !important;
+        background-color: $--content-right-background-color !important;
     }
     :deep(.el-pager li.number){
         font-family: NotoSansSC-Regular;
         color: #666666;
         letter-spacing: 0;
         font-weight:normal;
-        background-color: $content-right-background-color;
+        background-color: $--content-right-background-color;
     }
     :deep( .el-pager li.number.active){
         font-family: NotoSansSC-Regular;
@@ -62,7 +59,7 @@
     }
 
     :deep( .el-pagination .el-pager li.active) {
-        background-color: $global-text-color-active;
+        background-color: $--color-primary;
         border-radius: 2px;
         border-radius: 2px;
     }

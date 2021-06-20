@@ -59,7 +59,7 @@
           <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-view1"></i></button>
           <el-dropdown size="medium" trigger="hover" @command="tableOperation">
             <div class="table-operation-item table-operation-item--more">
-              <i class="cn-icon cn-icon-more3"></i>
+              <i class="cn-icon cn-icon-more-arrow-down"></i>
             </div>
             <template #dropdown>
               <el-dropdown-menu >
