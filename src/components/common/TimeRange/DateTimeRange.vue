@@ -1,16 +1,16 @@
 <template>
     <div v-ele-click-outside="changeDropdown" style="position: relative" class="date-range-box">
         <div @click="showDropdown" class="date-range-text">
-            <div class="calendar-popover-text"><i class="cn-icon cn-icon-add"></i></div>
+            <div class="calendar-popover-text"><i class="cn-icon cn-icon-time"></i></div>
             <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
                 <div class="calendar-popover-text">{{dayJs.tz(startTime).format('YYYY-MM-DD HH:mm:ss')}}</div>
                 <div class="calendar-popover-text"> - </div>
                 <div class="calendar-popover-text">{{dayJs.tz(endTime).format('YYYY-MM-DD HH:mm:ss')}}</div>
             </div>
             <div class="calendar-popover-text" v-else>
-                {{dateRangeArr.find(item=>item.value === dateRangeValue).name}}
+                {{dateRangeArr.find(item=>item.value == dateRangeValue).name}}
             </div>
-            <div class="calendar-popover-text"><i class="cn-icon cn-icon-add"></i></div>
+            <div class="calendar-popover-text"><i class="cn-icon cn-icon-arrow-down"></i></div>
         </div>
         <transition name="el-zoom-in-top">
             <div v-if="dropdownFlag" class="date-range-panel">
@@ -40,7 +40,10 @@
                     <div>
                         <div>Relatime time ranges</div>
                         <ul class="date-range-item">
-                            <li v-for="item in dateRangeArr" @click="quickChange(item.value)" :class="item.value==dateRangeValue?'active':''" :key="item.value">{{item.name}}</li>
+                            <li v-for="item in dateRangeArr" @click="quickChange(item.value)" :class="item.value==dateRangeValue?'active':''" :key="item.value">
+                                {{item.name}}
+                            <i v-if="item.value==dateRangeValue" class="cn-icon cn-icon-check"></i>
+                            </li>
                         </ul>
                     </div>
                 </el-col>
@@ -170,13 +173,15 @@ export default {
     }
     const timeRange = () => {
       isCustom.value = true
+      dateRangeValue.value = -1
       returnValue()
     }
     const quickChange = (value) => {
+      console.log(value)
+      dateRangeValue.value = value
       isCustom.value = false
       myEndTime.value = window.$dayJs.tz().valueOf()
       myStartTime.value = myEndTime.value - value * 60 * 1000
-      dateRangeValue.value = value
       returnValue()
     }
     const returnValue = () => {
