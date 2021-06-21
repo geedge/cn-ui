@@ -1,24 +1,27 @@
 <template>
-  <div class="cn-panel">
-    <chart v-for="(chart, index) in chartList" :key="index" :chart="chart"></chart>
-<!--    <grid-layout v-model:layout="chartList"
-                 :col-num="12"
-                 :row-height="30"
-                 :is-draggable="draggable"
-                 :is-resizable="resizable"
-                 :vertical-compact="compact"
-                 :use-css-transforms="true"
-    >
-      <grid-item v-for="item in chartList" :key="item.i"
-                 :x="item.x"
-                 :y="item.y"
-                 :w="item.w"
-                 :h="item.h"
-                 :i="item.i"
-      >
-        <span class="text">{{ item.i }}</span>
-      </grid-item>
-    </grid-layout>-->
+  <div>
+    <DateTimeRange />
+    <div class="cn-panel">
+      <chart v-for="(chart, index) in chartList" :key="index" :chart="chart"></chart>
+      <!--    <grid-layout v-model:layout="chartList"
+                       :col-num="12"
+                       :row-height="30"
+                       :is-draggable="draggable"
+                       :is-resizable="resizable"
+                       :vertical-compact="compact"
+                       :use-css-transforms="true"
+          >
+            <grid-item v-for="item in chartList" :key="item.i"
+                       :x="item.x"
+                       :y="item.y"
+                       :w="item.w"
+                       :h="item.h"
+                       :i="item.i"
+            >
+              <span class="text">{{ item.i }}</span>
+            </grid-item>
+          </grid-layout>-->
+    </div>
   </div>
 </template>
 
@@ -28,11 +31,13 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import Chart from './Chart'
+import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 
 export default {
   name: 'Panel',
   components: {
-    Chart
+    Chart,
+    DateTimeRange
   },
   data () {
     return {

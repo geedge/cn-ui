@@ -2,7 +2,7 @@ import { tableSort } from '@/utils/tools'
 import { defaultPageSize, fromRoute, position } from '@/utils/constants'
 import { get, del } from '@/utils/http'
 import { ref } from 'vue'
-import pagination from '@/components/common/pagination'
+import pagination from '@/components/common/Pagination'
 export default {
   components: {
     pagination
