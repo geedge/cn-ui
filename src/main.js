@@ -6,6 +6,7 @@ import App from '@/App.vue'
 import { hasPermission } from '@/permission'
 import commonMixin from '@/mixins/common'
 import { cancelWithChange, clickOutside } from '@/utils/tools'
+import { ClickOutside } from 'element-plus/lib/directives'
 import i18n from '@/i18n'
 import '@/assets/css/main.scss' // 样式入口
 // import VueGridLayout from 'vue-grid-layout'
@@ -32,6 +33,7 @@ app.use(_)
 
 app.directive('has', hasPermission) // 注册指令
 app.directive('click-outside', clickOutside)
+app.directive('ele-click-outside', ClickOutside)
 app.directive('cancel', cancelWithChange)
 
 app.mixin(commonMixin)

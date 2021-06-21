@@ -1,6 +1,8 @@
 <template>
   <div>
-    <DateTimeRange />
+    <div class="panel-header">
+      <DateTimeRange :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="dateTimeRangeChange"/>
+    </div>
     <div class="cn-panel">
       <chart v-for="(chart, index) in chartList" :key="index" :chart="chart"></chart>
       <!--    <grid-layout v-model:layout="chartList"
@@ -27,9 +29,10 @@
 
 <script>
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
+import { getNowTime } from '@/utils/date-util'
 import Chart from './Chart'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 
@@ -58,21 +61,49 @@ export default {
       })
     }
   },
-  setup () {
+  setup (props, ctx) {
+    // data
     const chartList = ref([])
+    const dateRangeValue = ref(60)
+    const now = getNowTime(dateRangeValue.value)
+    const startTime = ref(now.startTime)
+    const endTime = ref(now.endTime)
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
+    // refs
+    const dateTimeRange = ref(null)
+
     panelTypeAndRouteMapping[params.typeName] && (panelType = panelTypeAndRouteMapping[params.typeName])
+    // onMounted
+    onMounted(() => {
+      dateTimeRange.value.isCustom = false
+      dateTimeRange.value.dateRangeValue = dateRangeValue
+    })
+    // methods
+    const dateTimeRangeChange = (s, e, v) => {
+      startTime.value = s
+      endTime.value = e
+      dateRangeValue.value = v
+    }
     return {
       panelType,
       chartList,
       panel,
-      api
+      startTime,
+      endTime,
+      dateRangeValue,
+      dateTimeRange,
+      api,
+      dateTimeRangeChange
     }
   }
 }
 </script>
 <style lang="scss">
 @import '~@/components/charts/panel.scss';
+  .panel-header{
+    display: flex;
+    justify-content: flex-end;
+  }
 </style>

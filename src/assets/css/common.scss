@@ -13,3 +13,12 @@ body {
   padding: 0 !important;
   cursor: default !important;
 }
+
+.myDatePicker .el-picker-panel__footer{
+  .el-button{
+    display: none;
+  }
+  .is-plain{
+    display: inline-block;
+  }
+}

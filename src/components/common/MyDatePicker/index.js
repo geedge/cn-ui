@@ -25,6 +25,7 @@ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'defau
 
 const dayjs__default = /* #__PURE__ */_interopDefaultLegacy(window.$dayJs)
 console.log(window.$dayJs.tz().format('YYYY-MM-DD HH:mm:ss'))
+console.log(window.$dayJs.tz.guess())
 const ElInput__default = /* #__PURE__ */_interopDefaultLegacy(ElInput)
 const ElButton__default = /* #__PURE__ */_interopDefaultLegacy(ElButton)
 const customParseFormat__default = /* #__PURE__ */_interopDefaultLegacy(customParseFormat)

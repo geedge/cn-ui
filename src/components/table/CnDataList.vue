@@ -74,8 +74,7 @@ export default {
       tools: {
         showCustomTableTitle: false // 自定义列弹框是否显示
       },
-      showLayout: [],
-      value1: 1623997984000
+      showLayout: []
     }
   },
   methods: {
