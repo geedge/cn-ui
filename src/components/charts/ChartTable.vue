@@ -10,8 +10,9 @@
     </div>
     <div class="cn-chart__body">
       <el-table
-          :data="tableData"
           style="width: 100%"
+          tooltip-effect="light"
+          :data="tableData"
       >
         <el-table-column
             type="index"
@@ -20,6 +21,7 @@
         </el-table-column>
         <el-table-column
             v-for="(c, i) in tableColumns"
+            show-overflow-tooltip
             :key="i"
             :prop="c"
         >
@@ -29,6 +31,7 @@
       </el-table>
     </div>
     <div class="cn-chart__footer">
+      <slot name="footer"></slot>
     </div>
   </div>
 </template>

@@ -21,8 +21,8 @@
   </single-value>
   <chart-table
       v-else-if="isTable"
-      :table-columns="tableColumns"
-      :table-data="tableData"
+      :table-columns="table.tableColumns"
+      :table-data="table.currentPageData"
       :style="computePosition"
   >
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
@@ -30,8 +30,29 @@
       <div class="header__operation header__operation--table">
         <span class="option__button"><i class="cn-icon cn-icon-download"></i></span>
       </div>
-      <div class="header__operation header__operation--table"><i class="cn-icon cn-icon-download"></i></div>
-      <div class="header__operation header__operation--table"><i class="cn-icon cn-icon-download"></i></div>
+      <div class="header__operation header__operation--table">
+        <el-select
+            size="mini"
+            v-model="table.limit"
+            class="option__select select__topn"
+            placeholder=""
+            popper-class="option__topn-popper"
+        >
+          <el-option v-for="item in chartTableTopOptions" :key="item" :value="item">TOP&nbsp;{{item}}</el-option>
+          <template #prefix>TOP&nbsp;</template>
+        </el-select>
+      </div>
+      <div class="header__operation header__operation--table">
+        <el-select
+            size="mini"
+            v-model="table.orderBy"
+            class="option__select"
+            placeholder=""
+            popper-class="option__topn-popper"
+        >
+          <el-option v-for="item in table.tableColumns" :key="item" :value="item">{{item}}</el-option>
+        </el-select>
+      </div>
       <div class="header__operation header__operation--table">
         <span class="option__button"><i class="cn-icon cn-icon-style"></i></span>
         <div class="icon-group-divide"></div>
@@ -40,6 +61,12 @@
       <div class="header__operation header__operation--table">
         <span class="option__button"><i class="cn-icon cn-icon-full-screen"></i></span>
       </div>
+    </template>
+    <template #footer>
+      <chart-table-pagination
+          :total="table.tableData.length"
+          @pageJump="pageJump"
+      ></chart-table-pagination>
     </template>
   </chart-table>
 </template>
@@ -50,6 +77,8 @@ import { isEcharts, isSingleValue, isTable, getOption, getTypeCategory, getLayou
 import EchartsFrame from '@/components/charts/EchartsFrame'
 import SingleValue from '@/components/charts/ChartSingleValue'
 import Table from '@/components/charts/ChartTable'
+import ChartTablePagination from '@/components/charts/ChartTablePagination'
+import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
 
 let myChart // echarts实例
@@ -62,12 +91,19 @@ export default {
   components: {
     EchartsFrame,
     SingleValue,
+    ChartTablePagination,
     'chart-table': Table
   },
   data () {
     return {
-      tableColumns: [],
-      tableData: []
+      table: {
+        pageSize: chartTableDefaultPageSize,
+        limit: chartTableTopOptions[0], // top-n
+        orderBy: '',
+        tableColumns: [], // table字段
+        tableData: [], // table的所有数据
+        currentPageData: [] // table当前页的数据
+      }
     }
   },
   methods: {
@@ -88,8 +124,10 @@ export default {
               tableColumns.add(k)
             })
           })
-          this.tableColumns = Array.from(tableColumns)
-          this.tableData = tableResponse.data
+          this.table.tableColumns = Array.from(tableColumns)
+          this.table.orderBy = this.table.tableColumns[0]
+          this.table.tableData = tableResponse.data
+          this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
           /* get(params.url, { startTime: now - 3600000, endTime: now, order: params.order ? params.order : null, limit: params.limit ? params.limit : null }).then(response => {
             if (response.code === 200) {
               const tableColumns = new Set()
@@ -98,13 +136,18 @@ export default {
                   tableColumns.add(k)
                 })
               })
-              this.tableColumns = tableColumns
-              this.tableData = response.data
-              console.info(this.tableColumns, this.tableData)
+              this.table.tableColumns = tableColumns
+              this.table.tableData = response.data
             }
           }) */
         }
       }
+    },
+    pageJump (val) {
+      this.table.currentPageData = this.getTargetPageData(val, this.table.pageSize, this.table.tableData)
+    },
+    getTargetPageData (pageNum, pageSize, tableData) {
+      return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     }
   },
   computed: {
@@ -126,6 +169,7 @@ export default {
     return {
       chartInfo,
       layoutConstant,
+      chartTableTopOptions,
       chartOption: getOption(props.chart.type),
       isEcharts: isEcharts(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),

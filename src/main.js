@@ -1,5 +1,4 @@
 import { createApp } from 'vue'
-import _ from 'lodash'
 import router from '@/router'
 import store from '@/store'
 import App from '@/App.vue'
@@ -16,6 +15,9 @@ import utc from 'dayjs/plugin/utc' // dependent on utc plugin
 import timezone from 'dayjs/plugin/timezone'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import weekday from 'dayjs/plugin/weekday'
+
+const _ = require('lodash') // lodash工具
+
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
@@ -29,12 +31,13 @@ app.use(store)
 app.use(ElementPlus)
 app.use(i18n)
 // app.use(VueGridLayout)
-app.use(_)
 
 app.directive('has', hasPermission) // 注册指令
 app.directive('click-outside', clickOutside)
 app.directive('ele-click-outside', ClickOutside)
 app.directive('cancel', cancelWithChange)
+
+app.config.globalProperties.$_ = _
 
 app.mixin(commonMixin)
 

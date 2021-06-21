@@ -20,3 +20,6 @@ export const position = {
     normal: 'calc(100% - 48px)' // 常规高度，特例在下方定义
   }
 }
+
+export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量
+export const chartTableTopOptions = [10, 50, 100] // table类型图表的TOP-N选项
