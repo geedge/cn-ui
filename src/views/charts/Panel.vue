@@ -1,7 +1,8 @@
 <template>
   <div>
     <div class="panel-header">
-      <DateTimeRange :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="dateTimeRangeChange"/>
+      <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
+      <DateTimeRange class="date-time-range" :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="reload"/>
     </div>
     <div class="cn-panel">
       <chart v-for="(chart, index) in chartList" :key="index" :chart="chart"></chart>
@@ -35,19 +36,19 @@ import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
 import Chart from './Chart'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
+import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 
 export default {
   name: 'Panel',
   components: {
     Chart,
-    DateTimeRange
+    DateTimeRange,
+    TimeRefresh
   },
   data () {
     return {
 
     }
-  },
-  methods: {
   },
   async mounted () {
     const panels = await getPanelList({ type: this.panelType })
@@ -97,13 +98,50 @@ export default {
       api,
       dateTimeRangeChange
     }
+  },
+  methods: {
+    async init () {
+      // const panels = await getPanelList({ type: this.panelType })
+      // if (panels && panels.length > 0) {
+      //   this.panel = panels[0]
+      // }
+      // if (this.panel.id) {
+      //   this.chartList = (await getChartList({ panelId: this.panel.id })).map(chart => {
+      //     chart.i = chart.id
+      //     return chart
+      //   })
+      // }
+    },
+    timeRefreshChange () {
+      if (!this.$refs.dateTimeRange) {
+        this.init()
+        return
+      }
+      console.log(this.$refs.dateTimeRange.isCustom)
+      if (this.$refs.dateTimeRange.isCustom) {
+        this.init()
+      } else {
+        const value = this.dateRangeValue.value || this.dateRangeValue
+        this.$refs.dateTimeRange.quickChange(value)
+      }
+    },
+    reload (s, e, v) {
+      this.dateTimeRangeChange(s, e, v)
+      this.init()
+    }
   }
 }
 </script>
 <style lang="scss">
 @import '~@/components/charts/panel.scss';
   .panel-header{
-    display: flex;
-    justify-content: flex-end;
+    /*overflow: hidden;*/
+    display: inline-block;
+    width: 100%;
+    padding: 20px 20px 0px 20px;
+    .date-time-range{
+      float: right;
+      margin-left: 10px;
+    }
   }
 </style>
