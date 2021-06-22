@@ -34,9 +34,13 @@
         <pagination ref="pagination" :page-obj="pageObj" :table-id="tableId" @pageNo='pageNo' @pageSize='pageSize'></pagination>
       </template>
     </cn-data-list>
-    <transition name="right-box">
-      <role-box v-if="rightBox.show" :object="object" @close="closeRightBox"></role-box>
-    </transition>
+    <el-drawer
+            v-model="rightBox.show"
+            direction="rtl"
+            :with-header="false"
+            destroy-on-close>
+      <role-box :object="object" @close="closeRightBox"></role-box>
+    </el-drawer>
   </div>
 </template>
 <script>
