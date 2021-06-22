@@ -1,38 +1,42 @@
 import router from './router'
 import store from './store'
-import { get, post } from './utils/http'
 import { ElMessage } from 'element-plus'
+import { getConfigJson, getPermission } from '@/utils/api'
+import axios from 'axios'
+import { storageKey } from '@/utils/constants'
+import { loadI18n } from '@/i18n'
 
 const loginWhiteList = ['/login'] // 免登陆白名单
 const permissionWhiteList = [...loginWhiteList] // 权限白名单
 
-router.beforeEach((to, from, next) => {
-  if (sessionStorage.getItem('cn-token')) {
+router.beforeEach(async (to, from, next) => {
+  // 加载baseUrl
+  if (!axios.defaults.baseURL) {
+    const config = await getConfigJson()
+    axios.defaults.baseURL = config.baseUrl
+  }
+  if (sessionStorage.getItem(storageKey.token)) {
+    // 加载i18n
+    if (!sessionStorage.getItem(storageKey.i18n)) {
+      await loadI18n()
+    }
+
     if (permissionWhiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      new Promise(resolve => {
-        if (store.getters.menuList.length === 0) {
-          get(`${process.env.BASE_URL}config.json?Timestamp=${new Date().getTime()}`).then(config => {
-            post(config.baseUrl + 'sys/user/permissions', { token: sessionStorage.getItem('cn-token') }).then(res => {
-              store.commit('setMenuList', sortByOrderNum(res.data.menus))
-              store.commit('setButtonList', res.data.buttons)
-              store.commit('setRoleList', res.data.roles)
-              resolve()
-            })
-          })
+      if (store.getters.menuList.length === 0) {
+        const { menuList, buttonList, roleList } = await getPermission()
+        store.commit('setMenuList', menuList)
+        store.commit('setButtonList', buttonList)
+        store.commit('setRoleList', roleList)
+      }
+      if (to.path) {
+        if (hasMenu(store.getters.menuList, to.path)) {
+          next()
         } else {
-          resolve()
+          ElMessage.error('No access') // TODO 国际化
         }
-      }).then(res => {
-        if (to.path) {
-          if (hasMenu(store.getters.menuList, to.path)) {
-            next()
-          } else {
-            ElMessage.error('No access') // TODO 国际化
-          }
-        }
-      })
+      }
     }
   } else {
     if (loginWhiteList.indexOf(to.path) !== -1) {

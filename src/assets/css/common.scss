@@ -43,3 +43,10 @@ body {
     display: inline-block;
   }
 }
+
+th *:first-letter,
+.left-menu *:first-letter,
+.option-popper *,
+.header__operations *:first-letter {
+  text-transform: capitalize;
+}

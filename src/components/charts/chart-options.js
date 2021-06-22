@@ -117,9 +117,11 @@ const lineStack = {
     }
   ]
 }
+const pieWithTable = {}
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
   { value: 13, option: lineStack }, // 常规折线图
+  { value: 31, option: pieWithTable }, // 常规折线图
   { value: 91, option: line }, // tab容器
   { value: 92, option: line }, // tab页
   { value: 93, option: line } // 大标题
@@ -157,6 +159,10 @@ export function isSingleValue (type) {
 export function isSingleValueWithEcharts (type) {
   return type === 52
 }
+/* 带Table的饼图 */
+export function isEchartsWithTable (type) {
+  return type === 31
+}
 /* table */
 export function isTable (type) {
   return type >= 61 && type <= 70
@@ -183,4 +189,4 @@ export function getLayout (type) {
   }
   return layout
 }
-export const heightUnit = 150
+export const heightUnit = 50

@@ -97,3 +97,6 @@ eg：
 `el.style.padding = 'xxx'`  
 `el.style.margin = 'xxx'`  
 `el.style.border = 'xxx'`
+
+- **布局**  
+避免使用float，视情况使用position，建议使用flex和grid

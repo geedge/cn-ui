@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <div class="panel-header">
-      <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
-      <DateTimeRange class="date-time-range" :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="reload"/>
-    </div>
+  <div style="padding: 10px 0 20px 20px;">
     <div class="cn-panel">
+      <div class="panel__time">
+        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
+        <DateTimeRange class="date-time-range" :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="reload"/>
+      </div>
       <chart v-for="(chart, index) in chartList" :key="index" :chart="chart"></chart>
       <!--    <grid-layout v-model:layout="chartList"
                        :col-num="12"
@@ -134,14 +134,4 @@ export default {
 </script>
 <style lang="scss">
 @import '~@/components/charts/panel.scss';
-  .panel-header{
-    /*overflow: hidden;*/
-    display: inline-block;
-    width: 100%;
-    padding: 20px 20px 0px 20px;
-    .date-time-range{
-      float: right;
-      margin-left: 10px;
-    }
-  }
 </style>

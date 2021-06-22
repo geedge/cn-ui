@@ -1,11 +1,20 @@
 .cn-panel {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(auto-fill, 50px);
+  grid-auto-flow: row;
+  grid-auto-rows: 50px;
   grid-gap: 10px;
-  padding: 20px;
   height: 100%;
   width: 100%;
+  overflow: auto;
+  padding-right: 20px;
+  position: relative;
+
+  .panel__time {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+  }
 
   .cn-chart {
     background-color: #FFFFFF;
@@ -169,8 +178,8 @@
           }
           .option__select {
             .el-input__inner {
+              width: 80px;
               padding-right: 20px;
-              width: 120px;
               border: none;
               height: 100%;
               line-height: 20px;
@@ -193,9 +202,10 @@
               }
             }
           }
-          .option__select.select__topn {
+          .option__select.select-column {
             .el-input__inner {
-              width: 80px;
+              width: 86px;
+              padding-left: 8px;
             }
           }
           .icon-group-divide {
@@ -236,7 +246,7 @@
     }
   }
 }
-.option__topn-popper {
+.option-popper {
   .el-select-dropdown__item {
     height: 24px;
     line-height: 24px;

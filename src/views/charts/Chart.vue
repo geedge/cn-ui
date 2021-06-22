@@ -1,4 +1,5 @@
 <template>
+  <!-- echarts类的图标，如饼图、柱状图、折线图等 -->
   <echarts-frame
       v-if="isEcharts"
       :layout="layout"
@@ -11,14 +12,20 @@
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
-    <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1"></template>
+    <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1">
+      <!-- 带Table的饼图，展示Table -->
+      <template v-if="isEchartsWithTable">
+      </template>
+    </template>
   </echarts-frame>
+  <!-- 单值图 -->
   <single-value
       v-else-if="isSingleValue"
       :type="chartInfo.type"
       :style="computePosition"
   >
   </single-value>
+  <!-- 表格 -->
   <chart-table
       v-else-if="isTable"
       :table-columns="table.tableColumns"
@@ -27,16 +34,16 @@
   >
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
-      <div class="header__operation header__operation--table">
+<!--      <div class="header__operation header__operation&#45;&#45;table">
         <span class="option__button"><i class="cn-icon cn-icon-download"></i></span>
-      </div>
+      </div>-->
       <div class="header__operation header__operation--table">
         <el-select
             size="mini"
             v-model="table.limit"
-            class="option__select select__topn"
+            class="option__select select-topn"
             placeholder=""
-            popper-class="option__topn-popper"
+            popper-class="option-popper"
         >
           <el-option v-for="item in chartTableTopOptions" :key="item" :value="item">TOP&nbsp;{{item}}</el-option>
           <template #prefix>TOP&nbsp;</template>
@@ -46,18 +53,18 @@
         <el-select
             size="mini"
             v-model="table.orderBy"
-            class="option__select"
+            class="option__select select-column"
             placeholder=""
-            popper-class="option__topn-popper"
+            popper-class="option-popper"
         >
           <el-option v-for="item in table.tableColumns" :key="item" :value="item">{{item}}</el-option>
         </el-select>
       </div>
-      <div class="header__operation header__operation--table">
+<!--      <div class="header__operation header__operation&#45;&#45;table">
         <span class="option__button"><i class="cn-icon cn-icon-style"></i></span>
         <div class="icon-group-divide"></div>
         <span class="option__button"><i class="cn-icon cn-icon-dropdown"></i></span>
-      </div>
+      </div>-->
       <div class="header__operation header__operation--table">
         <span class="option__button"><i class="cn-icon cn-icon-full-screen"></i></span>
       </div>
@@ -73,7 +80,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import { isEcharts, isSingleValue, isTable, getOption, getTypeCategory, getLayout, layoutConstant, heightUnit } from '@/components/charts/chart-options'
+import { isEcharts, isSingleValue, isTable, getOption, getTypeCategory, getLayout, layoutConstant, heightUnit, isEchartsWithTable } from '@/components/charts/chart-options'
 import EchartsFrame from '@/components/charts/EchartsFrame'
 import SingleValue from '@/components/charts/ChartSingleValue'
 import Table from '@/components/charts/ChartTable'
@@ -172,6 +179,7 @@ export default {
       chartTableTopOptions,
       chartOption: getOption(props.chart.type),
       isEcharts: isEcharts(props.chart.type),
+      isEchartsWithTable: isEchartsWithTable(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),
       isTable: isTable(props.chart.type),
       layout: getLayout(props.chart.type)

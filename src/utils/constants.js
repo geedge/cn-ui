@@ -1,5 +1,21 @@
 export const defaultPageSize = 20
 
+export const storageKey = {
+  i18n: 'cn-i18n',
+  language: 'cn-language',
+  timezone: 'cn-timezone',
+  timezoneOffset: 'cn-timezone-offset',
+  timezoneLocalOffset: 'cn-timezone-local-offset',
+  token: 'cn-token',
+  username: 'cn-username',
+  sysName: 'cn-sys-name',
+  sysLogo: 'cn-sys-logo',
+  tableTitlePrefix: 'cn-table-title',
+  tablePageSizePrefix: 'cn-page-size',
+  leftMenuShrink: 'cn-left-menu-shrink',
+  unsavedChange: 'cn-unsaved-change'
+}
+
 // 统一定义跳转来源
 export const fromRoute = {
   trafficSummary: 'trafficSummary',
@@ -22,4 +38,4 @@ export const position = {
 }
 
 export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量
-export const chartTableTopOptions = [10, 50, 100] // table类型图表的TOP-N选项
+export const chartTableTopOptions = [10, 100] // table类型图表的TOP-N选项
