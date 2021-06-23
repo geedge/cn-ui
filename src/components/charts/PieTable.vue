@@ -49,7 +49,6 @@ export default {
       deep: true,
       immediate: true,
       handler (n) {
-        console.log(n)
       }
     }
   },

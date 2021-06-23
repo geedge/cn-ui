@@ -52,7 +52,6 @@ export default {
   },
   async mounted () {
     const panels = await getPanelList({ type: this.panelType })
-    console.log(panels)
     if (panels && panels.length > 0) {
       this.panel = panels[0]
     }
@@ -61,7 +60,6 @@ export default {
         chart.i = chart.id
         return chart
       })
-      console.log(this.chartList)
     }
   },
   setup (props, ctx) {
@@ -119,7 +117,6 @@ export default {
         this.init()
         return
       }
-      console.log(this.$refs.dateTimeRange.isCustom)
       if (this.$refs.dateTimeRange.isCustom) {
         this.init()
       } else {

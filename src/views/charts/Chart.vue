@@ -131,7 +131,6 @@ export default {
       const self = this
       const now = this.dayJs.tz().valueOf()
       const params = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null
-      console.log(params)
       if (this.isEcharts) {
         myChart = echarts.init(document.getElementById(`chart${this.chartInfo.id}`))
         myChart.setOption(this.chartOption)
@@ -155,7 +154,6 @@ export default {
             }) */
           self.pieTableData = pieTableDatas
           myChart.on('click', function (echartParams) {
-            console.log(echartParams)
             /* get(params.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
               console.log(response)
             }) */
@@ -211,7 +209,6 @@ export default {
   },
   mounted () {
     this.initChart()
-    console.log(this.layout)
   },
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))

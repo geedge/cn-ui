@@ -144,7 +144,6 @@ export default {
   },
   methods: {
     statusChange (user) {
-      console.log(user)
       if (user.roles) {
         user.roleIds = user.roles.map(t => t.id)
       }
