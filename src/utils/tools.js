@@ -246,7 +246,7 @@ export const tableSort = {
 export const cancelWithChange = {
   mounted (el, binding) {
     if (!binding.value || !binding.value.object) return
-    const unsavedChange = localStorage.getItem('nz-unsaved-change')
+    const unsavedChange = localStorage.getItem('cn-unsaved-change')
     const oldValue = JSON.parse(JSON.stringify(binding.value.object))
     function domClick (e) {
       const newValue = JSON.parse(JSON.stringify(binding.value.object))

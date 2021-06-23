@@ -19,17 +19,17 @@
       </div>
     </div>
     <div class="custom-bottom-btns">
-      <button v-if="isCancel" :id="tableId+'-element-set-none'" class="nz-btn nz-btn-size-small-new nz-btn-style-light-new is-cancel" type="button" @click="batchHandler(false)">
+      <button v-if="isCancel" :id="tableId+'-element-set-none'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new is-cancel" type="button" @click="batchHandler(false)">
         <span class="top-tool-btn-txt">{{$t('overall.clear')}}</span>
       </button>
-      <button v-if="!isCancel" :id="tableId+'-element-set-all'" class="nz-btn nz-btn-size-small-new nz-btn-style-light-new" type="button" @click="batchHandler(true)">
+      <button v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="batchHandler(true)">
         <span class="top-tool-btn-txt">{{$t('overall.all')}}</span>
       </button>
       <div>
-        <button :id="tableId+'-element-set-esc'" class="nz-btn nz-btn-size-small-new nz-btn-style-light-new" type="button" @click="esc">
+        <button :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="esc">
           <span class="top-tool-btn-txt">{{$t('overall.esc')}}</span>
         </button>
-        <button :id="tableId+'-element-set-save'" class="nz-btn nz-btn-size-small-new nz-btn-style-normal-new" type="button" @click="save">
+        <button :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" type="button" @click="save">
           <span class="top-tool-btn-txt">{{$t('overall.save')}}</span>
         </button>
       </div>
@@ -51,9 +51,9 @@ export default {
     }
   },
   created () {
-    const localStorageTitle = JSON.parse(localStorage.getItem('nz-tableTitle-' + localStorage.getItem('nz-username') + '-' + this.tableId))
+    const localStorageTitle = JSON.parse(localStorage.getItem('cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId))
     if (localStorageTitle) {
-      localStorage.setItem('nz-tableTitle-' + localStorage.getItem('nz-username') + '-' + this.tableId, JSON.stringify(localStorageTitle))
+      localStorage.setItem('cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId, JSON.stringify(localStorageTitle))
     }
   },
   watch: {
@@ -93,7 +93,7 @@ export default {
     save () {
       this.$emit('update', this.custom)
       localStorage.setItem(
-        'nz-tableTitle-' + localStorage.getItem('nz-username') + '-' + this.tableId,
+        'cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId,
         JSON.stringify(this.custom)
       )
       this.esc()

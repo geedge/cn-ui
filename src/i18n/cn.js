@@ -258,6 +258,14 @@ const cn = {
       },
       response: '响应'
     }
+  },
+  chart: {
+    pieTable: {
+      domain: '域名',
+      bytes: '字节数',
+      packets: '包数',
+      sessions: '会话数'
+    }
   }
 }
 

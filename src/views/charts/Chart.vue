@@ -4,6 +4,7 @@
       v-if="isEcharts"
       :layout="layout"
       :style="computePosition"
+      :chartInfo="chartInfo"
   >
     <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
@@ -12,9 +13,12 @@
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
-    <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1">
+    <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{}">
       <!-- 带Table的饼图，展示Table -->
       <template v-if="isEchartsWithTable">
+          <div style="height: 100%">
+              <PieTable :tableData="pieTableData" ref="pieTable"/>
+          </div>
       </template>
     </template>
   </echarts-frame>
@@ -80,10 +84,11 @@
 
 <script>
 import * as echarts from 'echarts'
-import { isEcharts, isSingleValue, isTable, getOption, getTypeCategory, getLayout, layoutConstant, heightUnit, isEchartsWithTable } from '@/components/charts/chart-options'
+import { isEcharts, isSingleValue, isTable, getOption, getTypeCategory, getLayout, layoutConstant, heightUnit, isEchartsWithTable, pieTableDatas } from '@/components/charts/chart-options'
 import EchartsFrame from '@/components/charts/EchartsFrame'
 import SingleValue from '@/components/charts/ChartSingleValue'
 import Table from '@/components/charts/ChartTable'
+import PieTable from '@/components/charts/PieTable'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
@@ -93,13 +98,20 @@ let myChart // echarts实例
 export default {
   name: 'Chart',
   props: {
-    chart: Object // 图表对象，包括id、name、type等数据
+    chart: Object, // 图表对象，包括id、name、type等数据
+    startTime: {
+      type: Number
+    },
+    endTime: {
+      type: Number
+    }
   },
   components: {
     EchartsFrame,
     SingleValue,
     ChartTablePagination,
-    'chart-table': Table
+    'chart-table': Table,
+    PieTable
   },
   data () {
     return {
@@ -110,16 +122,46 @@ export default {
         tableColumns: [], // table字段
         tableData: [], // table的所有数据
         currentPageData: [] // table当前页的数据
-      }
+      },
+      pieTableData: []
     }
   },
   methods: {
     initChart () {
-      const now = new Date().getTime()
+      const self = this
+      const now = this.dayJs.tz().valueOf()
       const params = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null
+      console.log(params)
       if (this.isEcharts) {
         myChart = echarts.init(document.getElementById(`chart${this.chartInfo.id}`))
         myChart.setOption(this.chartOption)
+        if (this.isEchartsWithTable) {
+          if (this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
+            this.chartOption.legend.type = 'scroll'
+            myChart.setOption(this.chartOption)
+          }
+          if (params.url.split('?').length > 1) {
+            params.url = params.url.split('?')[0]
+          }
+          if (params.urlTable.split('?').length > 1) {
+            params.urlTable = params.urlTable.split('?')[0]
+          }
+          /* get(params.url, { startTime: now - 3600000, endTime: now, order: params.order ? params.order : null, limit: params.limit ? params.limit : '20' }).then(response => {
+            console.log(response)
+          }) */
+          // 获取pieTable的 table数据
+          /* get(params.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
+              console.log(response)
+            }) */
+          self.pieTableData = pieTableDatas
+          myChart.on('click', function (echartParams) {
+            console.log(echartParams)
+            /* get(params.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
+              console.log(response)
+            }) */
+            self.pieTableData = pieTableDatas
+          })
+        }
         this.$nextTick(() => {
           myChart.resize()
         })
@@ -169,6 +211,7 @@ export default {
   },
   mounted () {
     this.initChart()
+    console.log(this.layout)
   },
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))

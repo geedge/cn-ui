@@ -208,7 +208,7 @@ export default {
       this.pageSize = this.postPageSizes[0]
       this.resetPageSizes()
     } else {
-      const pageSize = localStorage.getItem('nz-pageSize-' + localStorage.getItem('nz-username') + '-' + this.tableId)
+      const pageSize = localStorage.getItem('cn-pageSize-' + localStorage.getItem('cn-username') + '-' + this.tableId)
       if (pageSize != 'undefined' && pageSize != null) {
         this.pageSize = parseInt(pageSize)
       }

@@ -15,16 +15,105 @@ const pieData = [
   { value: 4, name: 'sessions' },
   { value: 5, name: 'fqdn_category_name' },
   { value: 1, name: 'uniq_domain1' },
-  { value: 2, name: 'bytes2' },
-  { value: 3, name: 'packets3' },
-  { value: 4, name: 'sessions4' },
-  { value: 5, name: 'fqdn_category_name5' },
-  { value: 1, name: 'uniq_domain6' },
-  { value: 2, name: 'bytes7' },
-  { value: 3, name: 'packets8' },
-  { value: 4, name: 'sessions9' },
-  { value: 5, name: 'fqdn_category_name10' }
+  { value: 2, name: 'bytes1' },
+  { value: 3, name: 'packets1' },
+  { value: 4, name: 'sessions1' },
+  { value: 5, name: 'fqdn_category_name1' }
+  // { value: 1, name: 'uniq_domain2' },
+  // { value: 2, name: 'bytes2' },
+  // { value: 3, name: 'packets2' },
+  // { value: 4, name: 'sessions2' },
+  // { value: 5, name: 'fqdn_category_name2' },
+  // { value: 1, name: 'uniq_domain3' },
+  // { value: 2, name: 'bytes3' },
+  // { value: 3, name: 'packets3' },
+  // { value: 4, name: 'sessions3' },
+  // { value: 5, name: 'fqdn_category_name3' },
+  // { value: 1, name: 'uniq_domain4' },
+  // { value: 2, name: 'bytes4' },
+  // { value: 3, name: 'packets4' },
+  // { value: 4, name: 'sessions4' },
+  // { value: 5, name: 'fqdn_category_name4' }
 ]
+export const pieTableDatas = [
+  {
+    domain: '12306.com',
+    bytes: '170537133646',
+    packets: '123454646',
+    sessions: '26682',
+    children: [
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      },
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      },
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      }
+    ]
+  },
+  {
+    domain: '12306.com',
+    bytes: '170537133646',
+    packets: '123454646',
+    sessions: '26682',
+    children: [
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      },
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      },
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      }
+    ]
+  },
+  {
+    domain: '12306.com',
+    bytes: '170537133646',
+    packets: '123454646',
+    sessions: '26682',
+    children: [
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      },
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      },
+      {
+        domain: '192.168.36.120',
+        bytes: '170537133646',
+        packets: '123454646',
+        sessions: '26682'
+      }
+    ]
+  }]
 const line = {
   xAxis: {
     type: 'time'
@@ -141,18 +230,21 @@ const pieWithTable = {
   },
   legend: {
     orient: 'vertical',
-    right: '0%',
+    type: 'plain',
+    right: '5%',
     top: '30%',
     height: '50%',
+    width: '40%',
     icon: 'circle',
     itemWidth: 10, // 设置宽度
     itemHeight: 10, // 设置高度
+    itemGap: 20
   },
   series: [
     {
       type: 'pie',
       radius: ['50%', '80%'],
-      center: ['30%', '50%'],
+      center: ['25%', '50%'],
       data: pieData,
       emphasis: {
         itemStyle: {

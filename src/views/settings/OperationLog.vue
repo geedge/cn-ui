@@ -3,6 +3,7 @@
     <cn-data-list
       ref="dataList"
       :api="url"
+      :tableId="tableId"
       :layout="['searchInput', 'elementSet']"
       v-model:custom-table-title="tools.customTableTitle"
       :from="fromRoute.operationLog"

@@ -5,7 +5,7 @@
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
         <DateTimeRange class="date-time-range" :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="reload"/>
       </div>
-      <chart v-for="(chart, index) in chartList" :key="index" :chart="chart"></chart>
+      <chart v-for="(chart, index) in chartList" :key="index" :chart="chart" :start-time="startTime" :end-time="endTime"></chart>
       <!--    <grid-layout v-model:layout="chartList"
                        :col-num="12"
                        :row-height="30"
@@ -52,14 +52,16 @@ export default {
   },
   async mounted () {
     const panels = await getPanelList({ type: this.panelType })
+    console.log(panels)
     if (panels && panels.length > 0) {
       this.panel = panels[0]
     }
     if (this.panel.id) {
-      this.chartList = (await getChartList({ panelId: this.panel.id })).map(chart => {
+      this.chartList = (await getChartList({ panelId: this.panel.id })).map(chart => { // 记得改回mao
         chart.i = chart.id
         return chart
       })
+      console.log(this.chartList)
     }
   },
   setup (props, ctx) {

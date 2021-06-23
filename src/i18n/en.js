@@ -259,6 +259,14 @@ const en = {
         logout: 'logout'
       }
     }
+  },
+  chart: {
+    pieTable: {
+      domain: 'Domain',
+      bytes: 'Bytes',
+      packets: 'Packets',
+      sessions: 'Sessions'
+    }
   }
 }
 export default en

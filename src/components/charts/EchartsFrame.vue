@@ -8,26 +8,27 @@
         <slot name="operations"></slot>
       </div>
     </div>
-    <div class="cn-chart__body">
+    <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}">
       <slot></slot>
     </div>
-    <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1">
+    <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{'pie-with-table': isPieWithTable}">
       <slot name="footer"></slot>
     </div>
   </div>
 </template>
 
 <script>
-import { layoutConstant } from '@/components/charts/chart-options'
-
+import { layoutConstant, isEchartsWithTable } from '@/components/charts/chart-options'
 export default {
   name: 'EchartsFrame',
   props: {
-    layout: Array
+    layout: Array,
+    chartInfo: {}
   },
-  setup () {
+  setup (props) {
     return {
-      layoutConstant
+      layoutConstant,
+      isPieWithTable: isEchartsWithTable(props.chartInfo.type)
     }
   },
   mounted () {
@@ -35,6 +36,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.cn-panel .cn-chart__echarts .pie-with-table{
+  flex: 1;
+  padding: 10px;
+}
 </style>

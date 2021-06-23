@@ -17,9 +17,24 @@ export default {
       type: String
     }
   },
+  computed: {
+    customTableTitles () {
+      return this.customTableTitle.filter(item => item.show)
+    }
+  },
+  watch: {
+    customTableTitle (n) {
+      if (n) {
+        setTimeout(() => {
+          this.$refs.dataTable.doLayout()
+        }, 100)
+      }
+    }
+  },
   data () {
     return {
-      operationWidth: '165' // 操作列宽
+      operationWidth: '165', // 操作列宽
+      show: true
     }
   },
   methods: {

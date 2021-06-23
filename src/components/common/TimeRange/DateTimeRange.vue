@@ -98,7 +98,7 @@ export default {
     const myEndTime = ref(props.endTime)
     const timeArr = ref([myStartTime.value, myEndTime.value])
     const address = localStorage.getItem('cn-sys-timezone')
-    const utc = localStorage.getItem('timezone-offset')
+    const utc = localStorage.getItem('cn-timezone-offset')
     const rangeHistory = ref(localStorage.getItem('date-range-history') ? JSON.parse(localStorage.getItem('date-range-history')) : [])
     const dateRangeValue = ref(60)
     dateRangeValue.value = 60

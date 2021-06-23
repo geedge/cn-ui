@@ -2,6 +2,7 @@
   <div>
     <cn-data-list
             ref="dataList"
+            :tableId="tableId"
             v-model:custom-table-title="tools.customTableTitle"
             :api="url"
             :from="fromRoute.roles"

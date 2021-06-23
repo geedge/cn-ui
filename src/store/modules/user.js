@@ -51,8 +51,8 @@ const user = {
         localStorage.setItem('cn-sys-logo', res.data.systemLogo)
       }
       localStorage.setItem('cn-sys-timezone', res.data.timezone)
-      localStorage.setItem('timezone-offset', dayjs.tz().utcOffset() / 60)
-      localStorage.setItem('timezone-local-offset', dayjs().utcOffset() / 60)
+      localStorage.setItem('cn-timezone-offset', dayjs.tz().utcOffset() / 60)
+      localStorage.setItem('cn-timezone-local-offset', dayjs().utcOffset() / 60)
       post('/sys/user/permissions', { token: res.data.token }).then(res => {
         const menuList = sortByOrderNum(res.data.menus)
         store.commit('setMenuList', menuList)
