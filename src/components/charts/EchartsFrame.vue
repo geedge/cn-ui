@@ -23,7 +23,7 @@ export default {
   name: 'EchartsFrame',
   props: {
     layout: Array,
-    chartInfo: {}
+    chartInfo: Object
   },
   setup (props) {
     return {

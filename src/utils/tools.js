@@ -1,5 +1,6 @@
 import { ElMessageBox } from 'element-plus'
 import i18n from '@/i18n'
+import _ from 'lodash'
 
 export const tableSort = {
   // 是否需要排序
@@ -375,4 +376,12 @@ export function calculateTextWidth (text, fontSize = 14) {
   const html = document.querySelector(`.temp-dom--${fontSize}`)
   html.innerText = text
   return html.offsetWidth
+}
+
+/* url占位符处理 */
+export function replaceUrlPlaceholder (url, params) {
+  _.forIn(params, (value, key) => {
+    url = url.replace('{{' + key + '}}', value)
+  })
+  return url
 }

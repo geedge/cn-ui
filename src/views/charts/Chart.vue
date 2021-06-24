@@ -1,7 +1,20 @@
 <template>
-  <!-- echarts类的图标，如饼图、柱状图、折线图等 -->
+  <!-- 地图 -->
+  <chart-map
+      v-if="isMap"
+      :style="computePosition"
+  >
+    <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
+    <template #operations>
+      <i class="cn-icon cn-icon-more-light"></i>
+    </template>
+    <template #default>
+      <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+    </template>
+  </chart-map>
+  <!-- echarts类的图，如饼图、柱状图、折线图等 -->
   <echarts-frame
-      v-if="isEcharts"
+      v-else-if="isEcharts"
       :layout="layout"
       :style="computePosition"
       :chartInfo="chartInfo"
@@ -16,9 +29,9 @@
     <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{}">
       <!-- 带Table的饼图，展示Table -->
       <template v-if="isEchartsWithTable">
-          <div style="height: 100%">
-              <PieTable :tableData="pieTableData" ref="pieTable"/>
-          </div>
+        <div style="height: 100%">
+          <PieTable :tableData="pieTableData" ref="pieTable"/>
+        </div>
       </template>
     </template>
   </echarts-frame>
@@ -84,16 +97,35 @@
 
 <script>
 import * as echarts from 'echarts'
-import { isEcharts, isSingleValue, isTable, getOption, getTypeCategory, getLayout, layoutConstant, heightUnit, isEchartsWithTable, pieTableDatas } from '@/components/charts/chart-options'
+import * as am4Core from '@amcharts/amcharts4/core'
+import * as am4Maps from '@amcharts/amcharts4/maps'
+import am4GeoDataWorldLow from '@amcharts/amcharts4-geodata/worldChinaLow'
+
+import {
+  isEcharts,
+  isSingleValue,
+  isTable,
+  isMap,
+  getOption,
+  getTypeCategory,
+  getLayout,
+  layoutConstant,
+  heightUnit,
+  isEchartsWithTable,
+  pieTableDatas,
+  isMapLine
+} from '@/components/charts/chart-options'
 import EchartsFrame from '@/components/charts/EchartsFrame'
 import SingleValue from '@/components/charts/ChartSingleValue'
-import Table from '@/components/charts/ChartTable'
+import ChartTable from '@/components/charts/ChartTable'
+import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
+import { replaceUrlPlaceholder } from '@/utils/tools'
 
-let myChart // echarts实例
+let myChart // echarts或amcharts实例
 
 export default {
   name: 'Chart',
@@ -110,8 +142,9 @@ export default {
     EchartsFrame,
     SingleValue,
     ChartTablePagination,
-    'chart-table': Table,
-    PieTable
+    ChartTable,
+    PieTable,
+    ChartMap
   },
   data () {
     return {
@@ -129,9 +162,26 @@ export default {
   methods: {
     initChart () {
       const self = this
-      const now = this.dayJs.tz().valueOf()
-      const params = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null
-      if (this.isEcharts) {
+      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      if (this.isMap) {
+        myChart = this.initMap(`chart${this.chartInfo.id}`)
+        /* const queryParams = { startTime: this.startTime, endTime: this.endTime } // 统计数据的查询参数
+        if (chartParams) {
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+            console.info(response)
+          })
+        } */
+        if (this.isMapLine) {
+          const lineSeries = myChart.series.push(new am4Maps.MapLineSeries())
+          lineSeries.data = [
+            {
+              multiGeoLine: mapResponse.data.map(d => {
+                return [{ latitude: d.server_latitude, longitude: d.server_longitude }, { latitude: d.client_latitude, longitude: d.client_longitude }]
+              })
+            }
+          ]
+        }
+      } else if (this.isEcharts) {
         myChart = echarts.init(document.getElementById(`chart${this.chartInfo.id}`))
         myChart.setOption(this.chartOption)
         if (this.isEchartsWithTable) {
@@ -139,32 +189,32 @@ export default {
             this.chartOption.legend.type = 'scroll'
             myChart.setOption(this.chartOption)
           }
-          if (params.url.split('?').length > 1) {
-            params.url = params.url.split('?')[0]
+          if (chartParams.url.split('?').length > 1) {
+            chartParams.url = chartParams.url.split('?')[0]
           }
-          if (params.urlTable.split('?').length > 1) {
-            params.urlTable = params.urlTable.split('?')[0]
+          if (chartParams.urlTable.split('?').length > 1) {
+            chartParams.urlTable = chartParams.urlTable.split('?')[0]
           }
-          /* get(params.url, { startTime: now - 3600000, endTime: now, order: params.order ? params.order : null, limit: params.limit ? params.limit : '20' }).then(response => {
+          /* get(chartParams.url, { startTime: now - 3600000, endTime: now, order: chartParams.order ? chartParams.order : null, limit: chartParams.limit ? chartParams.limit : '20' }).then(response => {
             console.log(response)
           }) */
           // 获取pieTable的 table数据
-          /* get(params.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
+          /* get(chartParams.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
               console.log(response)
             }) */
           self.pieTableData = pieTableDatas
           myChart.on('click', function (echartParams) {
-            /* get(params.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
+            /* get(chartParams.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
               console.log(response)
             }) */
             self.pieTableData = pieTableDatas
           })
         }
-        this.$nextTick(() => {
-          myChart.resize()
-        })
+        /*this.$nextTick(() => {
+          myChart.doLayout()
+        })*/
       } else if (this.isTable) {
-        if (params) {
+        if (chartParams) {
           const tableColumns = new Set()
           tableResponse.data.forEach(d => {
             Object.keys(d).forEach(k => {
@@ -175,7 +225,7 @@ export default {
           this.table.orderBy = this.table.tableColumns[0]
           this.table.tableData = tableResponse.data
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
-          /* get(params.url, { startTime: now - 3600000, endTime: now, order: params.order ? params.order : null, limit: params.limit ? params.limit : null }).then(response => {
+          /* get(chartParams.url, { startTime: now - 3600000, endTime: now, order: chartParams.order ? chartParams.order : null, limit: chartParams.limit ? chartParams.limit : null }).then(response => {
             if (response.code === 200) {
               const tableColumns = new Set()
               response.data.forEach(d => {
@@ -189,6 +239,20 @@ export default {
           }) */
         }
       }
+    },
+    initMap (id) {
+      const myChart = am4Core.create(id, am4Maps.MapChart)
+      myChart.geodata = am4GeoDataWorldLow
+      myChart.projection = new am4Maps.projections.Miller()
+      const polygonSeries = myChart.series.push(new am4Maps.MapPolygonSeries())
+      polygonSeries.useGeodata = true
+      polygonSeries.exclude = ['AQ'] // 移除南极洲
+      const polygonTemplate = polygonSeries.mapPolygons.template
+      polygonTemplate.tooltipText = '{name}'
+      polygonTemplate.fill = am4Core.color('#E7EDF6')
+      /* const hs = polygonTemplate.states.create('hover') // 添加hover事件
+      hs.properties.fill = am4Core.color('#B7BDC6') */
+      return myChart
     },
     pageJump (val) {
       this.table.currentPageData = this.getTargetPageData(val, this.table.pageSize, this.table.tableData)
@@ -222,11 +286,46 @@ export default {
       isEchartsWithTable: isEchartsWithTable(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),
       isTable: isTable(props.chart.type),
+      isMap: isMap(props.chart.type),
+      isMapLine: isMapLine(props.chart.type),
       layout: getLayout(props.chart.type)
     }
   }
 }
 
+const mapResponse = JSON.parse(`{
+  "code": "200666",
+  "data": [{
+            "server_longitude": "110.290534",
+            "server_latitude": "30.816222",
+            "server_country": "America",
+            "server_region": "Washington",
+            "client_longitude": "116.352963",
+            "client_latitude": "40.409079",
+            "client_country": "China",
+            "client_region": "Beijing",
+            "bytes": 27010,
+            "sessions": 40
+        }, {
+            "server_longitude": "2.352222",
+            "server_latitude": "48.856614",
+            "server_country": "America",
+            "server_region": "Washington",
+            "client_longitude": "-74.005973",
+            "client_latitude": "40.712775",
+            "client_country": "China",
+            "client_region": "Beijing",
+            "bytes": 67010,
+            "sessions": 30
+        }],
+  "status": 200,
+  "statistics": {
+    "result_rows": 0,
+    "elapsed": 0,
+    "rows_read": 0,
+    "result_size": 0
+  }
+}`)
 const tableResponse = JSON.parse(`{
   "status": 200,
   "success": true,
