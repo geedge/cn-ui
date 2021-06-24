@@ -1,4 +1,5 @@
 stages:
+  - gen_git-log
   - build_project
   - build_image
 
@@ -11,6 +12,23 @@ cache:
 
 before_script:
   - export CNUI_TAG=$(date +%Y%m%d%H%M%S)
+
+generate_git-log:
+  stage: gen_git-log
+  script:
+    - if (( `grep git-log.html ./public/index.html | wc -l` == 0 )); then         sed -i '/<body>/ a <a style="position:fixed;bottom:20px;left:40px;z-index:999;color:#000;" target="_blank" href="./git-log.html">更新记录</a>' ./public/index.html;         echo "添加更新记录链接"; fi;
+    - echo "最近的100个提交记录"
+    - echo "<pre>" > ./public/git-log.html
+    - "git log -100 --pretty=format:'%ad : %s' >> ./public/git-log.html"
+    - echo "</pre>" >> ./public/git-log.html
+    - echo "处理 git-log.html 结束"
+  artifacts:
+    paths:
+      - public
+  only:
+    - dev
+  tags:
+    - GN-XXG-Server
 
 build_project:
   stage: build_project
