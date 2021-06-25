@@ -1,7 +1,11 @@
 <template>
+  <div
+      v-if="isTitle"
+      class="cn-chart cn-chart__title"
+      :style="computePosition">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
   <!-- 地图 -->
   <chart-map
-      v-if="isMap"
+      v-else-if="isMap"
       :style="computePosition"
   >
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
@@ -105,6 +109,7 @@ import {
   isEcharts,
   isSingleValue,
   isTable,
+  isTitle,
   isMap,
   getOption,
   getTypeCategory,
@@ -123,9 +128,7 @@ import PieTable from '@/components/charts/PieTable'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
-import { replaceUrlPlaceholder } from '@/utils/tools'
-
-let myChart // echarts或amcharts实例
+import { replaceUrlPlaceholder, lineToHump } from '@/utils/tools'
 
 export default {
   name: 'Chart',
@@ -156,73 +159,113 @@ export default {
         tableData: [], // table的所有数据
         currentPageData: [] // table当前页的数据
       },
-      pieTableData: []
+      pieTableData: [],
+      myChart: null
     }
   },
   methods: {
     initChart () {
-      const self = this
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
-        myChart = this.initMap(`chart${this.chartInfo.id}`)
-        /* const queryParams = { startTime: this.startTime, endTime: this.endTime } // 统计数据的查询参数
+        this.myChart = this.initMap(`chart${this.chartInfo.id}`)
+        const queryParams = { startTime: 1593070343, endTime: this.endTime } // 统计数据的查询参数
         if (chartParams) {
-          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-            console.info(response)
-          })
-        } */
-        if (this.isMapLine) {
-          const lineSeries = myChart.series.push(new am4Maps.MapLineSeries())
-          lineSeries.data = [
-            {
-              multiGeoLine: mapResponse.data.map(d => {
-                return [{ latitude: d.server_latitude, longitude: d.server_longitude }, { latitude: d.client_latitude, longitude: d.client_longitude }]
-              })
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(mapResponse => {
+            if (mapResponse.data.length > 100) {
+              mapResponse.data = mapResponse.data.slice(0, 100)
             }
-          ]
+            if (this.isMapLine) {
+              const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
+              lineSeries.mapLines.template.stroke = am4Core.color('#A258EC')
+              lineSeries.mapLines.template.line.nonScalingStroke = true
+              lineSeries.mapLines.template.line.strokeDasharray = '4 3'
+              lineSeries.data = [
+                {
+                  multiGeoLine: mapResponse.data.map(d => {
+                    return [{ latitude: parseFloat(d.server_latitude), longitude: parseFloat(d.server_longitude) }, { latitude: parseFloat(d.client_latitude), longitude: parseFloat(d.client_longitude) }]
+                  })
+                }
+              ]
+
+              const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+              const imageSeriesTemplate = imageSeries.mapImages.template
+              const circle = imageSeriesTemplate.createChild(am4Core.Circle)
+
+              const gradient = new am4Core.RadialGradient()
+              gradient.addColor(am4Core.color('#A258EC'))
+              gradient.addColor(am4Core.color('#A258EC'))
+              gradient.addColor(am4Core.color('#A258EC'))
+              gradient.addColor(am4Core.color('#FFFFFF'))
+              gradient.addColor(am4Core.color('#FFFFFF'))
+
+              circle.radius = 4
+              circle.fill = gradient
+              circle.stroke = am4Core.color('#A258EC')
+              circle.strokeWidth = 1
+              circle.nonScaling = true
+              circle.tooltipText = '{title}'
+
+              imageSeriesTemplate.propertyFields.latitude = 'latitude'
+              imageSeriesTemplate.propertyFields.longitude = 'longitude'
+
+              const pointData = []
+              mapResponse.data.forEach(d => {
+                pointData.push({ latitude: parseFloat(d.server_latitude), longitude: parseFloat(d.server_longitude), title: d.server_region })
+                pointData.push({ latitude: parseFloat(d.client_latitude), longitude: parseFloat(d.client_longitude), title: d.client_region })
+              })
+              imageSeries.data = pointData
+            }
+          })
         }
       } else if (this.isEcharts) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
-        myChart = echarts.init(dom)
-        myChart.setOption(this.chartOption)
-        if (this.isEchartsWithTable) {
-          this.chartOption.legend.formatter = (name) => { // 根据图表宽 显示legend的字数
-            let str = name
-            const length = Math.floor(dom.offsetWidth / 75)
-            if (name.length > length) {
-              str = name.substring(0, length - 3) + '...'
-            }
-            return str
+        this.myChart = echarts.init(dom)
+        if (chartParams) {
+          if (this.isEchartsWithTable) {
+            const queryParams = { startTime: 1593070343, endTime: this.endTime } // 统计数据的查询参数
+            const tableQueryParams = { startTime: 1593070343, endTime: this.endTime } // 统计数据的查询参数
+            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+              const data = response.data.map(d => {
+                const trans = {}
+                Object.keys(d).forEach(k => {
+                  trans[lineToHump(k)] = d[k]
+                })
+                return trans
+              })
+              this.chartOption.legend.formatter = (name) => { // 根据图表宽 显示legend的字数
+                let str = name
+                const length = Math.floor(dom.offsetWidth / 75)
+                if (name.length > length) {
+                  str = name.substring(0, length - 3) + '...'
+                }
+                return str
+              }
+              this.chartOption.series[0].data = data.map(d => {
+                return {
+                  data: d,
+                  name: d[chartParams.nameColumn],
+                  value: parseInt(d[chartParams.valueColumn])
+                }
+              })
+              if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
+                this.chartOption.legend.type = 'scroll'
+              }
+              this.myChart.setOption(this.chartOption)
+              tableQueryParams[chartParams.nameColumn] = data[0][chartParams.nameColumn]
+              get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
+                this.pieTableData = response2.data
+              })
+            })
+
+            this.myChart.on('click', function (echartParams) {
+              get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response => {
+                this.pieTableData = response.data
+              })
+            })
+          } else {
+            this.myChart.setOption(this.chartOption)
           }
-          myChart.setOption(this.chartOption)
-          if (this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
-            this.chartOption.legend.type = 'scroll'
-            myChart.setOption(this.chartOption)
-          }
-          if (chartParams.url.split('?').length > 1) {
-            chartParams.url = chartParams.url.split('?')[0]
-          }
-          if (chartParams.urlTable.split('?').length > 1) {
-            chartParams.urlTable = chartParams.urlTable.split('?')[0]
-          }
-          /* get(chartParams.url, { startTime: now - 3600000, endTime: now, order: chartParams.order ? chartParams.order : null, limit: chartParams.limit ? chartParams.limit : '20' }).then(response => {
-            console.log(response)
-          }) */
-          // 获取pieTable的 table数据
-          /* get(chartParams.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
-              console.log(response)
-            }) */
-          self.pieTableData = pieTableDatas
-          myChart.on('click', function (echartParams) {
-            /* get(chartParams.urlTable, { startTime: this.startTime, endTime: this.endTime, fqdnCategoryName: echartParams.name }).then(response => {
-              console.log(response)
-            }) */
-            self.pieTableData = pieTableDatas
-          })
         }
-        /*this.$nextTick(() => {
-          myChart.doLayout()
-        })*/
       } else if (this.isTable) {
         if (chartParams) {
           const tableColumns = new Set()
@@ -297,6 +340,7 @@ export default {
       isSingleValue: isSingleValue(props.chart.type),
       isTable: isTable(props.chart.type),
       isMap: isMap(props.chart.type),
+      isTitle: isTitle(props.chart.type),
       isMapLine: isMapLine(props.chart.type),
       layout: getLayout(props.chart.type)
     }

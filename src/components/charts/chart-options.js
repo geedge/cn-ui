@@ -242,12 +242,9 @@ const pieWithTable = {
   series: [
     {
       type: 'pie',
-      top: '10%',
-      left: '10%',
-      width: 'auto',
-      radius: ['50%', '80%'],
-      center: ['25%', '50%'],
-      data: pieData,
+      radius: ['42%', '70%'],
+      center: ['30%', '50%'],
+      data: [],
       emphasis: {
         itemStyle: {
           shadowBlur: 10,

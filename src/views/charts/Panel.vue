@@ -2,8 +2,8 @@
   <div style="padding: 10px 0 20px 20px;">
     <div class="cn-panel">
       <div class="panel__time">
-        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
         <DateTimeRange class="date-time-range" :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="reload"/>
+        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
       </div>
       <chart v-for="(chart, index) in chartList" :key="index" :chart="chart" :start-time="startTime" :end-time="endTime"></chart>
       <!--    <grid-layout v-model:layout="chartList"
