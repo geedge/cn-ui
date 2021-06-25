@@ -182,9 +182,19 @@ export default {
           ]
         }
       } else if (this.isEcharts) {
-        myChart = echarts.init(document.getElementById(`chart${this.chartInfo.id}`))
+        const dom = document.getElementById(`chart${this.chartInfo.id}`)
+        myChart = echarts.init(dom)
         myChart.setOption(this.chartOption)
         if (this.isEchartsWithTable) {
+          this.chartOption.legend.formatter = (name) => { // 根据图表宽 显示legend的字数
+            let str = name
+            const length = Math.floor(dom.offsetWidth / 75)
+            if (name.length > length) {
+              str = name.substring(0, length - 3) + '...'
+            }
+            return str
+          }
+          myChart.setOption(this.chartOption)
           if (this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
             this.chartOption.legend.type = 'scroll'
             myChart.setOption(this.chartOption)

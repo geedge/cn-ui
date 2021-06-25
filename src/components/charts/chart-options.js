@@ -242,6 +242,9 @@ const pieWithTable = {
   series: [
     {
       type: 'pie',
+      top: '10%',
+      left: '10%',
+      width: 'auto',
       radius: ['50%', '80%'],
       center: ['25%', '50%'],
       data: pieData,
