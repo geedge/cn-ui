@@ -51,16 +51,7 @@ export default {
     }
   },
   async mounted () {
-    const panels = await getPanelList({ type: this.panelType })
-    if (panels && panels.length > 0) {
-      this.panel = panels[0]
-    }
-    if (this.panel.id) {
-      this.chartList = (await getChartList({ panelId: this.panel.id })).map(chart => { // 记得改回mao
-        chart.i = chart.id
-        return chart
-      })
-    }
+    await this.init()
   },
   setup (props, ctx) {
     // data
@@ -101,16 +92,16 @@ export default {
   },
   methods: {
     async init () {
-      // const panels = await getPanelList({ type: this.panelType })
-      // if (panels && panels.length > 0) {
-      //   this.panel = panels[0]
-      // }
-      // if (this.panel.id) {
-      //   this.chartList = (await getChartList({ panelId: this.panel.id })).map(chart => {
-      //     chart.i = chart.id
-      //     return chart
-      //   })
-      // }
+      const panels = await getPanelList({ type: this.panelType })
+      if (panels && panels.length > 0) {
+        this.panel = panels[0]
+      }
+      if (this.panel.id) {
+        this.chartList = (await getChartList({ panelId: this.panel.id, pageSize: -1 })).map(chart => {
+          chart.i = chart.id
+          return chart
+        })
+      }
     },
     timeRefreshChange () {
       if (!this.$refs.dateTimeRange) {

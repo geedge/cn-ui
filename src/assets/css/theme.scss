@@ -59,9 +59,12 @@ $--color-monitor: #98AEC5; //全局停用色灰色
 $--chart-single-value-icon-background-color: #E8F6FF;
 
 $--content-right-background-color: #EFF2F5; //右侧背景色
+
+$--chart-height-unit: 40;
 /** 改变 icon 字体路径变量，并引入element-ui变量文件 **/
 $--font-path: '~element-plus/lib/theme-chalk/fonts';
 @import "~element-plus/packages/theme-chalk/src/index";
 :export {
   themeColor: $--color-primary;
+  chartHeightUnit: $--chart-height-unit;
 }
