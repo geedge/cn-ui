@@ -1,5 +1,4 @@
 <template>
-  <div class="background">
   <div class="logins">
     <div class="inside">
       <div class="title" style="margin-top:70px">
@@ -24,7 +23,7 @@
         <el-form-item>
           <el-button
               type="primary"
-            class="inputStyle button"
+            class="inputStyle login__button"
             @click="login"
               style=" font-size: 16px;"
             >登陆</el-button
@@ -32,7 +31,6 @@
         </el-form-item>
       </el-form>
     </div>
-  </div>
   </div>
 </template>
 
@@ -66,26 +64,15 @@ export default {
 </script>
 
 <style lang="scss">
-body{
-  background-color: #000C18;
-}
-.background:after{
-  width: 100%;
-  height: 100%;
-  background-color: #000C18;
-  opacity: 0.2;
-}
-
  .logins{
- background-color: #000C18;
+  background-color: #000C18;
   background-size: auto;
   background-repeat: round;
   background-image: url('../public/images/bg.png');
   display: flex;
+   height: 100%;
   justify-content: center;
   align-items: center;
-   width: 1920px;
-   height: 1080px;
    margin: auto;
 }
 
@@ -118,7 +105,7 @@ body{
    height: 250px;
    margin: auto;
  }
-.button {
+.login__button {
   background: #0091ff;
   color: #fff;
   border-radius: 4px;
