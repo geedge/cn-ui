@@ -4,11 +4,11 @@
       <div class="title" style="margin-top:70px">
         <img src="../public/images/cion.png" />
       </div>
-      <el-form class="five">
+      <el-form class="login__shrink__Box">
         <el-form-item>
           <el-input
               prefix-icon="el-icon-user"
-              class="inputStyle tow"
+              class="inputStyle login__one_input"
             v-model="username"
           ></el-input>
         </el-form-item>
@@ -22,6 +22,7 @@
         </el-form-item>
         <el-form-item>
           <el-button
+              v-loading="loading"
               type="primary"
             class="inputStyle login__button"
             @click="login"
@@ -38,11 +39,13 @@
 import { mapActions } from 'vuex'
 import { post } from '@/utils/http'
 import bus from '@/utils/bus'
-
+import { Loading } from 'element-ui';
 export default {
+
   name: 'Login',
   data () {
     return {
+      loading:false,
       username: 'admin',
       pin: 'Nezha2021'
     }
@@ -50,12 +53,18 @@ export default {
   methods: {
     ...mapActions(['loginSuccess']),
     login () {
+      if(!this.blockOperation.query){
+        this.blockOperation.query=true
+      }
       post('sys/login', { username: this.username, pin: this.pin }).then(
         res => {
-          if (res.code === 200) {
+          this.blockOperation.query=false
+          this.loading=true;
+          setTimeout(()=>{
+            if (res.code === 200) {
             localStorage.setItem('cn-username', this.username)
             this.loginSuccess(res)
-          }
+          }},2000)
         }
       )
     }
@@ -97,10 +106,10 @@ export default {
   width: 300px;
   height: 40px;
 }
- .tow:first-of-type{
+ .login__one_input:first-of-type{
    margin-top: 45.57px;
  }
- .five{
+ .login__shrink__Box{
    width: 300px;
    height: 250px;
    margin: auto;
