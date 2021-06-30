@@ -1,35 +1,38 @@
 <template>
-  <div class="wrap">
+  <div class="background">
+  <div class="logins">
     <div class="inside">
       <div class="title" style="margin-top:70px">
-        <img src="/logo.png" />
+        <img src="../public/images/cion.png" />
       </div>
-      <el-form>
+      <el-form class="five">
         <el-form-item>
           <el-input
               prefix-icon="el-icon-user"
-            style="width: 300px;height: 40px;margin-left:34px;margin-top:45.57px"
+              class="inputStyle tow"
             v-model="username"
           ></el-input>
         </el-form-item>
         <el-form-item>
           <el-input
+              class="inputStyle"
               prefix-icon="el-icon-lock"
               type="password"
-            style="width: 300px;height: 40px;margin-left:34px;"
             v-model="pin"
           ></el-input>
         </el-form-item>
         <el-form-item>
           <el-button
-            style=" margin-bottom: -62px;"
-            class="button"
+              type="primary"
+            class="inputStyle button"
             @click="login"
+              style=" font-size: 16px;"
             >登陆</el-button
           >
         </el-form-item>
       </el-form>
     </div>
+  </div>
   </div>
 </template>
 
@@ -62,14 +65,21 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 body{
-  background-color: #000c18;
+  background-color: #000C18;
 }
- .wrap{
-  background-color: #000c18;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+.background:after{
+  width: 100%;
+  height: 100%;
+  background-color: #000C18;
+  opacity: 0.2;
+}
+
+ .logins{
+ background-color: #000C18;
+  background-size: auto;
+  background-repeat: round;
   background-image: url('../public/images/bg.png');
   display: flex;
   justify-content: center;
@@ -77,7 +87,6 @@ body{
    width: 1920px;
    height: 1080px;
    margin: auto;
-
 }
 
 .inside {
@@ -97,21 +106,27 @@ body{
   margin-left: 52px;
   margin-right: 10px;
 }
-
+.inputStyle{
+  width: 300px;
+  height: 40px;
+}
+ .tow:first-of-type{
+   margin-top: 45.57px;
+ }
+ .five{
+   width: 300px;
+   height: 250px;
+   margin: auto;
+ }
 .button {
   background: #0091ff;
   color: #fff;
   border-radius: 4px;
   border: 0px;
   font-family: PingFangSC-Regular;
-  font-size: 16px;
   text-align: left;
   line-height: 22px;
   font-weight: 400;
-  width: 300px;
-  height: 40px;
   text-align: center;
-  margin-top: 20px;
-  margin-left: 34px;
 }
 </style>
