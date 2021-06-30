@@ -4,17 +4,17 @@
       <div class="title" style="margin-top:70px">
         <img src="../public/images/cion.png" />
       </div>
-      <el-form class="login__shrink__Box">
+      <el-form class="login__box">
         <el-form-item>
           <el-input
               prefix-icon="el-icon-user"
-              class="inputStyle login__one_input"
+              class="inputstyle login__input"
             v-model="username"
           ></el-input>
         </el-form-item>
         <el-form-item>
           <el-input
-              class="inputStyle"
+              class="inputstyle"
               prefix-icon="el-icon-lock"
               type="password"
             v-model="pin"
@@ -24,7 +24,7 @@
           <el-button
               v-loading="loading"
               type="primary"
-            class="inputStyle login__button"
+            class="inputstyle login__button"
             @click="login"
               style=" font-size: 16px;"
             >登陆</el-button
@@ -105,14 +105,14 @@ export default {
   margin-left: 52px;
   margin-right: 10px;
 }
-.inputStyle{
+.inputstyle{
   width: 300px;
   height: 40px;
 }
- .login__one_input:first-of-type{
+ .login__input:first-of-type{
    margin-top: 45.57px;
  }
- .login__shrink__Box{
+ .login__box{
    width: 300px;
    height: 250px;
    margin: auto;
