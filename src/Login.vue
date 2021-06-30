@@ -39,13 +39,13 @@
 import { mapActions } from 'vuex'
 import { post } from '@/utils/http'
 import bus from '@/utils/bus'
-import { Loading } from 'element-ui';
+import { Loading } from 'element-ui'
 export default {
 
   name: 'Login',
   data () {
     return {
-      loading:false,
+      loading: false,
       username: 'admin',
       pin: 'Nezha2021'
     }
@@ -53,18 +53,21 @@ export default {
   methods: {
     ...mapActions(['loginSuccess']),
     login () {
-      if(!this.blockOperation.query){
-        this.blockOperation.query=true
+      if (!this.blockOperation.query) {
+        this.blockOperation.query = true
+      } else {
+        return
       }
       post('sys/login', { username: this.username, pin: this.pin }).then(
         res => {
-          this.blockOperation.query=false
-          this.loading=true;
-          setTimeout(()=>{
+          this.blockOperation.query = false
+          this.loading = true
+          setTimeout(() => {
             if (res.code === 200) {
-            localStorage.setItem('cn-username', this.username)
-            this.loginSuccess(res)
-          }},2000)
+              localStorage.setItem('cn-username', this.username)
+              this.loginSuccess(res)
+            }
+          }, 2000)
         }
       )
     }
