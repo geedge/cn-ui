@@ -1,7 +1,7 @@
 import router from './router'
 import store from './store'
 import { ElMessage } from 'element-plus'
-import { getConfigJson, getPermission } from '@/utils/api'
+import { getConfigJson, getPermission, loadIso36112 } from '@/utils/api'
 import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 import { loadI18n } from '@/i18n'
@@ -10,6 +10,10 @@ const loginWhiteList = ['/login'] // 免登陆白名单
 const permissionWhiteList = [...loginWhiteList] // 权限白名单
 
 router.beforeEach(async (to, from, next) => {
+  // 加载iso-3166-2资源
+  if (!sessionStorage.getItem(storageKey.iso36112)) {
+    loadIso36112()
+  }
   // 加载baseUrl
   if (!axios.defaults.baseURL) {
     const config = await getConfigJson()
@@ -20,7 +24,7 @@ router.beforeEach(async (to, from, next) => {
     if (!sessionStorage.getItem(storageKey.i18n)) {
       await loadI18n()
     }
-
+    // 加载权限
     if (permissionWhiteList.indexOf(to.path) !== -1) {
       next()
     } else {

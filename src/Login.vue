@@ -62,12 +62,10 @@ export default {
         res => {
           this.blockOperation.query = false
           this.loading = true
-          setTimeout(() => {
-            if (res.code === 200) {
-              localStorage.setItem('cn-username', this.username)
-              this.loginSuccess(res)
-            }
-          }, 2000)
+          if (res.code === 200) {
+            localStorage.setItem('cn-username', this.username)
+            this.loginSuccess(res)
+          }
         }
       )
     }

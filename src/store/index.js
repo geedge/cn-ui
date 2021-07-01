@@ -7,7 +7,8 @@ const store = createStore({
   },
   state () {
     return {
-      isShrink: localStorage.getItem('cn-left-menu-shrink') === 'true'
+      isShrink: localStorage.getItem('cn-left-menu-shrink') === 'true',
+      i18n: false
     }
   },
   getters: {
@@ -19,6 +20,9 @@ const store = createStore({
     isShrink (state) {
       state.isShrink = !state.isShrink
       localStorage.setItem('cn-left-menu-shrink', state.isShrink)
+    },
+    loadI18n (state) {
+      state.i18n = true
     }
   }
 })

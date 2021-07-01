@@ -208,7 +208,7 @@ export function isTitle (type) {
 }
 export function getOption (type) {
   const mapping = typeOptionMappings.find(m => m.value === type)
-  return mapping && mapping.option ? mapping.option : null
+  return mapping && mapping.option ? JSON.parse(JSON.stringify(mapping.option)) : null
 }
 export const layoutConstant = {
   HEADER: 'header',

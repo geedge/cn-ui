@@ -127,7 +127,7 @@ import PieTable from '@/components/charts/PieTable'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
-import { replaceUrlPlaceholder, lineToHump } from '@/utils/tools'
+import { replaceUrlPlaceholder, getCapitalGeo } from '@/utils/tools'
 
 export default {
   name: 'Chart',
@@ -167,12 +167,18 @@ export default {
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
         this.myChart = this.initMap(`chart${this.chartInfo.id}`)
-        /*const queryParams = { startTime: 1593070343, endTime: this.endTime } // 统计数据的查询参数
+        const queryParams = { startTime: 1593070343, endTime: this.endTime, country: '', region: '' } // 统计数据的查询参数
         if (chartParams) {
-          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(mapResponse => {
-            if (mapResponse.data.length > 100) {
-              mapResponse.data = mapResponse.data.slice(0, 100)
-            }
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+            const data = response.data.result
+            data.forEach(r => {
+              const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
+              const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
+              serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
+              serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
+              clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
+              clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
+            })
             if (this.isMapLine) {
               const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
               lineSeries.mapLines.template.stroke = am4Core.color('#A258EC')
@@ -180,8 +186,17 @@ export default {
               lineSeries.mapLines.template.line.strokeDasharray = '4 3'
               lineSeries.data = [
                 {
-                  multiGeoLine: mapResponse.data.map(d => {
-                    return [{ latitude: parseFloat(d.server_latitude), longitude: parseFloat(d.server_longitude) }, { latitude: parseFloat(d.client_latitude), longitude: parseFloat(d.client_longitude) }]
+                  multiGeoLine: data.map(d => {
+                    return [
+                      {
+                        latitude: parseFloat(d.serverLatitude),
+                        longitude: parseFloat(d.serverLongitude)
+                      },
+                      {
+                        latitude: parseFloat(d.clientLatitude),
+                        longitude: parseFloat(d.clientLongitude)
+                      }
+                    ]
                   })
                 }
               ]
@@ -190,16 +205,8 @@ export default {
               const imageSeriesTemplate = imageSeries.mapImages.template
               const circle = imageSeriesTemplate.createChild(am4Core.Circle)
 
-              const gradient = new am4Core.RadialGradient()
-              gradient.addColor(am4Core.color('#A258EC'))
-              gradient.addColor(am4Core.color('#A258EC'))
-              gradient.addColor(am4Core.color('#A258EC'))
-              gradient.addColor(am4Core.color('#FFFFFF'))
-              gradient.addColor(am4Core.color('#FFFFFF'))
-
-              circle.radius = 4
-              circle.fill = gradient
-              circle.stroke = am4Core.color('#A258EC')
+              circle.radius = 6
+              circle.fill = am4Core.color('#A258EC')
               circle.strokeWidth = 1
               circle.nonScaling = true
               circle.tooltipText = '{title}'
@@ -208,14 +215,27 @@ export default {
               imageSeriesTemplate.propertyFields.longitude = 'longitude'
 
               const pointData = []
-              mapResponse.data.forEach(d => {
-                pointData.push({ latitude: parseFloat(d.server_latitude), longitude: parseFloat(d.server_longitude), title: d.server_region })
-                pointData.push({ latitude: parseFloat(d.client_latitude), longitude: parseFloat(d.client_longitude), title: d.client_region })
+              data.forEach(d => {
+                pointData.push({
+                  ...d,
+                  latitude: parseFloat(d.serverLatitude),
+                  longitude: parseFloat(d.serverLongitude),
+                  title: this.getTitle(d)
+                })
+                pointData.push({
+                  ...d,
+                  latitude: parseFloat(d.clientLatitude),
+                  longitude: parseFloat(d.clientLongitude),
+                  title: this.getTitle(d)
+                })
               })
               imageSeries.data = pointData
             }
+            /* if (mapResponse.data.length > 100) {
+              mapResponse.data = mapResponse.data.slice(0, 100)
+            } */
           })
-        }*/
+        }
       } else if (this.isEcharts) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
         this.myChart = echarts.init(dom)
@@ -246,13 +266,13 @@ export default {
               this.myChart.setOption(this.chartOption)
               tableQueryParams[chartParams.nameColumn] = data[0][chartParams.nameColumn]
               get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
-                this.pieTableData = response2.data
+                this.pieTableData = response2.data.result
               })
             })
 
             this.myChart.on('click', function (echartParams) {
               get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response => {
-                this.pieTableData = response.data
+                this.pieTableData = response.data.result
               })
             })
           } else {
@@ -268,36 +288,35 @@ export default {
                   }
                 })
               }
+              this.myChart.setOption(this.chartOption)
             })
-            this.myChart.setOption(this.chartOption)
           }
         }
       } else if (this.isTable) {
         if (chartParams) {
-          const tableColumns = new Set()
-          tableResponse.data.forEach(d => {
-            Object.keys(d).forEach(k => {
-              tableColumns.add(k)
-            })
-          })
-          this.table.tableColumns = Array.from(tableColumns)
-          this.table.orderBy = this.table.tableColumns[0]
-          this.table.tableData = tableResponse.data
-          this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
-          /* get(chartParams.url, { startTime: now - 3600000, endTime: now, order: chartParams.order ? chartParams.order : null, limit: chartParams.limit ? chartParams.limit : null }).then(response => {
+          const queryParams = { startTime: 1593070343, endTime: this.endTime, limit: 100, order: 'sessions' }
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
               const tableColumns = new Set()
-              response.data.forEach(d => {
+              response.data.result.forEach(d => {
                 Object.keys(d).forEach(k => {
                   tableColumns.add(k)
                 })
               })
               this.table.tableColumns = tableColumns
-              this.table.tableData = response.data
+              this.table.tableData = response.data.result
+              this.table.orderBy = this.table.tableColumns[0]
+              this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
             }
-          }) */
+          })
         }
       }
+    },
+    getTitle (data) {
+      return `Server: ${data.serverRegion ? data.serverRegion : data.serverCountry}
+          Client: ${data.clientRegion ? data.clientRegion : data.clientCountry}
+          Sessions: ${data.sessions}
+          Bytes: ${data.bytes}`
     },
     initMap (id) {
       const chart = am4Core.create(id, am4Maps.MapChart)
@@ -307,10 +326,11 @@ export default {
       polygonSeries.useGeodata = true
       polygonSeries.exclude = ['AQ'] // 排除南极洲
       // 鼠标悬停提示
-      const polygonTemplate = polygonSeries.mapPolygons.template
-      polygonTemplate.tooltipText = '{name}:{value}'
+      /*const polygonTemplate = polygonSeries.mapPolygons.template
+      polygonTemplate.tooltipText = '{name}'
+      polygonTemplate.fontSize = '12px'
       const hs = polygonTemplate.states.create('hover')
-      hs.properties.fill = am4Core.color('#91cc75')
+      hs.properties.fill = am4Core.color('#ccc')*/
 
       // 热力图规则
       polygonSeries.heatRules.push({
@@ -319,9 +339,10 @@ export default {
         min: am4Core.color('#ffffff'),
         max: am4Core.color(this.theme.themeColor)
       })
+      return chart
 
-// Add expectancy data
-      polygonSeries.data = [
+      // Add expectancy data
+      /*polygonSeries.data = [
         { id: "AF", value: 60.524 },
         { id: "AL", value: 77.185 },
         { id: "DZ", value: 70.874 },
@@ -496,34 +517,7 @@ export default {
         { id: "YE", value: 62.923 },
         { id: "ZM", value: 57.037 },
         { id: "ZW", value: 58.142 }
-      ];
-
-      const lineSeries = chart.series.push(new am4Maps.MapLineSeries())
-      lineSeries.mapLines.template.stroke = am4Core.color('#A258EC')
-      lineSeries.mapLines.template.line.nonScalingStroke = true
-      lineSeries.mapLines.template.line.strokeDasharray = '4 3'
-      lineSeries.data = [
-        {
-          multiGeoLine: mapResponse3.data.map(d => {
-            return [{ id: d.server_id }, { id: d.client_id }]
-          })
-          /*multiGeoLine: mapResponse.data.map(d => {
-            return [{ latitude: parseFloat(d.server_latitude), longitude: parseFloat(d.server_longitude) }, { latitude: parseFloat(d.client_latitude), longitude: parseFloat(d.client_longitude) }]
-          })*/
-        }
-      ]
-      /*const myChart = am4Core.create(id, am4Maps.MapChart)
-      myChart.geodata = am4GeoDataWorldLow
-      myChart.projection = new am4Maps.projections.Miller()
-      const polygonSeries = myChart.series.push(new am4Maps.MapPolygonSeries())
-      polygonSeries.useGeodata = true
-      polygonSeries.exclude = ['AQ'] // 移除南极洲
-      const polygonTemplate = polygonSeries.mapPolygons.template
-      polygonTemplate.tooltipText = '{name}'
-      polygonTemplate.fill = am4Core.color('#E7EDF6')
-      const hs = polygonTemplate.states.create('hover') // 添加hover事件
-      hs.properties.fill = am4Core.color('#B7BDC6')
-      return myChart*/
+      ] */
     },
     pageJump (val) {
       this.table.currentPageData = this.getTargetPageData(val, this.table.pageSize, this.table.tableData)
@@ -564,177 +558,6 @@ export default {
     }
   }
 }
-const mapResponse3 = JSON.parse(`{
-  "code": "200666",
-  "data": [{
-            "level": 0,
-            "server_id": "US",
-            "server_longitude": "110.290534",
-            "server_latitude": "30.816222",
-            "server_country": "America",
-            "server_region": "Washington",
-            "client_id": "CN",
-            "client_longitude": "116.352963",
-            "client_latitude": "40.409079",
-            "client_country": "China",
-            "client_region": "Beijing",
-            "bytes": 27010,
-            "sessions": 40
-        }, {
-            "level": 0,
-            "server_id": "RU",
-            "server_longitude": "2.352222",
-            "server_latitude": "48.856614",
-            "server_country": "America",
-            "server_region": "Washington",
-            "client_id": "CN",
-            "client_longitude": "-74.005973",
-            "client_latitude": "40.712775",
-            "client_country": "China",
-            "client_region": "Beijing",
-            "bytes": 67010,
-            "sessions": 30
-        }],
-  "status": 200,
-  "statistics": {
-    "result_rows": 0,
-    "elapsed": 0,
-    "rows_read": 0,
-    "result_size": 0
-  }
-}`)
-const mapResponse = JSON.parse(`{
-  "code": "200666",
-  "data": [{
-            "server_longitude": "110.290534",
-            "server_latitude": "30.816222",
-            "server_country": "America",
-            "server_region": "Washington",
-            "client_longitude": "116.352963",
-            "client_latitude": "40.409079",
-            "client_country": "China",
-            "client_region": "Beijing",
-            "bytes": 27010,
-            "sessions": 40
-        }, {
-            "server_longitude": "2.352222",
-            "server_latitude": "48.856614",
-            "server_country": "America",
-            "server_region": "Washington",
-            "client_longitude": "-74.005973",
-            "client_latitude": "40.712775",
-            "client_country": "China",
-            "client_region": "Beijing",
-            "bytes": 67010,
-            "sessions": 30
-        }],
-  "status": 200,
-  "statistics": {
-    "result_rows": 0,
-    "elapsed": 0,
-    "rows_read": 0,
-    "result_size": 0
-  }
-}`)/*
-const mapResponse2 = JSON.parse(`{
-  "code": "200666",
-  "data": [{
-  "id": "US",
-  "name": "United States",
-  "value": 100,
-  "fill": am4core.color("#F05C5C")
-}, {
-  "id": "FR",
-  "name": "France",
-  "value": 50,
-  "fill": am4core.color("#5C5CFF")
-}],
-  "status": 200,
-  "statistics": {
-    "result_rows": 0,
-    "elapsed": 0,
-    "rows_read": 0,
-    "result_size": 0
-  }
-}`)*/
-const tableResponse = JSON.parse(`{
-  "status": 200,
-  "success": true,
-  "message": "OK",
-  "statistics": {
-    "elapsed": 2111,
-    "rows_read": 1750155,
-    "result_size": 872,
-    "result_rows": 10
-  },
-  "data": [{
-    "ip": "192.168.32.107",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.108",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.109",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.110",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.111",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.112",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.113",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.114",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.115",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.116",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.117",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.118",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  },{
-    "ip": "192.168.32.119",
-    "sessions": "229112",
-    "packets": "245823",
-    "bytes": "17974141"
-  }
-  ]
-}`)
 </script>
 
 <style>
