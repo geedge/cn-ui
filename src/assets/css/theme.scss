@@ -25,6 +25,15 @@ $--menu-item-hover-fill: $--color-primary; // menu鼠标悬浮、激活时背景
   --theme-color-light-90: #FFF5E8; // 默认主题色 浅90%
   --theme-color-light-96: #FFFBF6; // 默认主题色 浅90%
   --theme-color-light-98: #FFFCF8; // 默认主题色 浅98%
+  @media only screen  and (min-width : 1224px) {
+    --chart-height-unit: 30px;
+  }
+  @media only screen  and (min-width : 1824px) {
+    --chart-height-unit: 40px;
+  }
+  @media only screen  and (min-width : 2424px) {
+    --chart-height-unit: 55px;
+  }
 }
 
 $--border-color-primary: #DEDEDE;
@@ -60,11 +69,9 @@ $--chart-single-value-icon-background-color: #E8F6FF;
 
 $--content-right-background-color: #EFF2F5; //右侧背景色
 
-$--chart-height-unit: 40;
 /** 改变 icon 字体路径变量，并引入element-ui变量文件 **/
 $--font-path: '~element-plus/lib/theme-chalk/fonts';
 @import "~element-plus/packages/theme-chalk/src/index";
 :export {
   themeColor: $--color-primary;
-  chartHeightUnit: $--chart-height-unit;
 }

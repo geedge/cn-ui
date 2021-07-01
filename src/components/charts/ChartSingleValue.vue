@@ -2,8 +2,12 @@
   <div class="cn-chart cn-chart__single-value" :class="singleValueClass(type)">
     <div class="single-value__icon"><i class="el-icon-apple"></i></div>
     <div class="single-value__content" v-if="type === 51">
-      <div class="content__data">11112</div>
-      <div class="content__title">{{$t('common.save')}}</div>
+      <div class="content__data">
+        <slot name="data"></slot>
+      </div>
+      <div class="content__title">
+        <slot name="title"></slot>
+      </div>
     </div>
     <div class="single-value__content" v-if="type === 53">
       <div class="content__title">嘻嘻</div>

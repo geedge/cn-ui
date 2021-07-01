@@ -145,17 +145,15 @@ const pieWithTable = {
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
   { value: 13, option: lineStack }, // 常规折线图
-  { value: 31, option: pieWithTable }, // 常规折线图
-  { value: 91, option: line }, // tab容器
-  { value: 92, option: line }, // tab页
-  { value: 93, option: line } // 大标题
+  { value: 31, option: pieWithTable } // 常规折线图
 ]
 const typeCategory = {
   MAP: 'map',
   TABLE: 'table',
   ECHARTS: 'echarts',
   TITLE: 'title',
-  SINGLE: 'singleValue'
+  SINGLE: 'singleValue',
+  TABS: 'tabs'
 }
 export function getTypeCategory (type) {
   if (isMap(type)) {
@@ -168,6 +166,8 @@ export function getTypeCategory (type) {
     return typeCategory.SINGLE
   } else if (isTitle(type)) {
     return typeCategory.TITLE
+  } else if (isTabs(type)) {
+    return typeCategory.TABS
   }
 }
 /* 饼图柱状图等 */
@@ -202,9 +202,13 @@ export function isEchartsWithTable (type) {
 export function isTable (type) {
   return type >= 61 && type <= 70
 }
-/* title、tab等 */
+/* title */
 export function isTitle (type) {
-  return type >= 91
+  return type === 93
+}
+/* tabs */
+export function isTabs (type) {
+  return type === 91
 }
 export function getOption (type) {
   const mapping = typeOptionMappings.find(m => m.value === type)
