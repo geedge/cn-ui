@@ -190,9 +190,19 @@ export default {
             })
             if (this.isMapLine) {
               const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
-              lineSeries.mapLines.template.stroke = am4Core.color('#A258EC')
-              lineSeries.mapLines.template.line.nonScalingStroke = true
-              lineSeries.mapLines.template.line.strokeDasharray = '4 3'
+              const gradient = new am4Core.LinearGradient()
+              gradient.stops.push({ color: am4Core.color() })
+              gradient.stops.push({ color: am4Core.color() })
+              gradient.stops.push({ color: am4Core.color() })
+
+              const lineTemplate = lineSeries.mapLines.template
+              lineTemplate.stroke = am4Core.color('#A258EC')
+              lineTemplate.line.nonScalingStroke = true
+              lineTemplate.line.strokeDasharray = '4 3'
+              lineTemplate.nonScalingStroke = true
+              lineTemplate.arrow.nonScaling = true
+              lineTemplate.arrow.width = 4
+              lineTemplate.arrow.height = 6
               lineSeries.data = [
                 {
                   multiGeoLine: data.map(d => {
@@ -211,15 +221,25 @@ export default {
               ]
 
               const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+              imageSeries.dataFields.value = 'sessions'
               const imageSeriesTemplate = imageSeries.mapImages.template
               const circle = imageSeriesTemplate.createChild(am4Core.Circle)
 
-              circle.radius = 6
-              circle.fill = am4Core.color('#A258EC')
-              circle.strokeWidth = 1
+              circle.fillOpacity = 0.7
               circle.nonScaling = true
               circle.tooltipText = '{title}'
-
+              const radiusHeat = imageSeries.heatRules.push({
+                target: circle,
+                property: 'radius',
+                min: 8,
+                max: 30
+              })
+              const colorHeat = imageSeries.heatRules.push({
+                target: circle,
+                property: 'fill',
+                min: am4Core.color('#D2A8FF'),
+                max: am4Core.color('#A258EC')
+              })
               imageSeriesTemplate.propertyFields.latitude = 'latitude'
               imageSeriesTemplate.propertyFields.longitude = 'longitude'
 
@@ -240,9 +260,6 @@ export default {
               })
               imageSeries.data = pointData
             }
-            /* if (mapResponse.data.length > 100) {
-              mapResponse.data = mapResponse.data.slice(0, 100)
-            } */
           })
         }
       } else if (this.isEcharts) {
@@ -349,14 +366,6 @@ export default {
       polygonTemplate.fontSize = '12px'
       const hs = polygonTemplate.states.create('hover')
       hs.properties.fill = am4Core.color('#ccc')*/
-
-      // 热力图规则
-      polygonSeries.heatRules.push({
-        property: 'fill',
-        target: polygonSeries.mapPolygons.template,
-        min: am4Core.color('#ffffff'),
-        max: am4Core.color(this.theme.themeColor)
-      })
       return chart
     },
     pageJump (val) {
