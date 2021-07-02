@@ -8,6 +8,7 @@
   <chart-tabs
       v-else-if="isTabs"
       class="cn-chart cn-chart__tabs"
+      :tabs="chartInfo"
   ></chart-tabs>
   <!-- 地图 -->
   <chart-map
