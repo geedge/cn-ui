@@ -34,7 +34,10 @@ body {
 ::-webkit-scrollbar-track-piece {
   background-color: transparent;
 }
-
+/* input的placeholder字色 */
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
+  color: lighten(#0091ff, 20%);
+}
 .myDatePicker .el-picker-panel__footer{
   .el-button{
     display: none;

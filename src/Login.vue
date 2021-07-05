@@ -26,8 +26,8 @@
               type="primary"
             class="inputstyle login__button"
             @click="login"
-              style=" font-size: 16px;"
-            >{{$t('common.login')}}</el-button
+              style="font-size: 16px;"
+            >Login</el-button
           >
         </el-form-item>
       </el-form>

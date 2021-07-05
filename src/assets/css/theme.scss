@@ -3,6 +3,9 @@
 /** 重写element-ui变量 **/
 
 $--color-primary: #0091ff; // 主题色
+$--color-primary-dark-10: darken(#0091ff, 10%); // 默认主题色 深10%
+$--color-primary-light-10: lighten(#0091ff, 10%); // 默认主题色 浅10%
+$--color-primary-light-20: lighten(#0091ff, 20%); // 默认主题色 浅20%
 
 /* menu相关 */
 $--menu-background-color: #00162B; // menu背景色
@@ -12,19 +15,6 @@ $--menu-item-hover-fill: $--color-primary; // menu鼠标悬浮、激活时背景
 
 /** 自定义变量 **/
 :root {
-  --theme-color: #FA901C; // 默认主题色，下方深化、浅化的色值默认值是写死的；用户自定义修改主题色后，由js计算新值
-  --theme-color-dark-10: #E18219; // 默认主题色 深10%
-  --theme-color-light-10: #FA9B33; // 默认主题色 浅10%
-  --theme-color-light-20: #FBA649; // 默认主题色 浅20%
-  --theme-color-light-30: #FBB160; // 默认主题色 浅30%
-  --theme-color-light-40: #FBBC77; // 默认主题色 浅40%
-  --theme-color-light-50: #FCC88D; // 默认主题色 浅50%
-  --theme-color-light-60: #FCD4A4; // 默认主题色 浅60%
-  --theme-color-light-71: #FFDFBD; // 默认主题色 浅71%
-  --theme-color-light-80: #FFEAD2; // 默认主题色 浅80%
-  --theme-color-light-90: #FFF5E8; // 默认主题色 浅90%
-  --theme-color-light-96: #FFFBF6; // 默认主题色 浅90%
-  --theme-color-light-98: #FFFCF8; // 默认主题色 浅98%
   @media only screen  and (min-width : 1224px) {
     --chart-height-unit: 30px;
   }

@@ -13,11 +13,13 @@
       :style="computePosition"
   >
     <el-tab-pane
-        v-for="(tab, index) in chartInfo.children"
+        v-for="tab in chartInfo.children"
         :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
         :key="tab.id"
     >
-      <chart v-for="(chart, index) in tab.children" :key="index" :chart="chart" :start-time="startTime" :end-time="endTime"></chart>
+      <template v-for="(chart, index) in tab.children">
+        <chart v-if="activeTab == tab.id" :key="index" :chart="chart" :start-time="startTime" :end-time="endTime"></chart>
+      </template>
     </el-tab-pane>
   </el-tabs>
   <!-- 地图 -->
@@ -50,7 +52,10 @@
     <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{}">
       <!-- 带Table的饼图，展示Table -->
       <template v-if="isEchartsWithTable">
-        <PieTable :tableData="pieTableData" ref="pieTable"/>
+        <pie-table :tableData="pieTableData" ref="pieTable"/>
+      </template>
+      <template v-else-if="isEchartsWithStatistics">
+        <statistics-legend :data="statisticsData"></statistics-legend>
       </template>
     </template>
   </echarts-frame>
@@ -92,7 +97,7 @@
             size="mini"
             v-model="table.orderBy"
             class="option__select select-column"
-            placeholder=""
+            :placeholder="$t('common.field')"
             popper-class="option-popper"
         >
           <el-option v-for="item in table.tableColumns" :key="item" :value="item">{{item}}</el-option>
@@ -121,6 +126,7 @@ import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import am4GeoDataWorldLow from '@amcharts/amcharts4-geodata/worldChinaLow'
+import { shallowRef } from 'vue'
 
 import {
   isEcharts,
@@ -133,6 +139,7 @@ import {
   getLayout,
   layoutConstant,
   isEchartsWithTable,
+  isEchartsWithStatistics,
   isMapLine,
   isTabs
 } from '@/components/charts/chart-options'
@@ -141,6 +148,7 @@ import SingleValue from '@/components/charts/ChartSingleValue'
 import ChartTable from '@/components/charts/ChartTable'
 import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
+import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
@@ -163,6 +171,7 @@ export default {
     ChartTablePagination,
     ChartTable,
     PieTable,
+    StatisticsLegend,
     ChartMap
   },
   data () {
@@ -178,7 +187,7 @@ export default {
       pieTableData: [],
       singleValue: '-',
       activeTab: '',
-      myChart: null
+      statisticsData: []
     }
   },
   methods: {
@@ -284,14 +293,6 @@ export default {
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
                 const data = response.data.result
-                this.chartOption.legend.formatter = (name) => { // 根据图表宽 显示legend的字数
-                  let str = name
-                  const length = Math.floor(dom.offsetWidth / 75)
-                  if (name.length > length) {
-                    str = name.substring(0, length - 3) + '...'
-                  }
-                  return str
-                }
                 this.chartOption.series[0].data = data.map(d => {
                   return {
                     data: d,
@@ -322,19 +323,21 @@ export default {
                 }
               })
             })
-          } else {
+          } else if (this.isEchartsWithStatistics) {
             const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
+                this.statisticsData = response.data.result
                 const seriesTemplate = this.chartOption.series[0]
                 this.chartOption.series = response.data.result.map(r => {
                   return {
                     ...seriesTemplate,
                     name: r.legend,
-                    data: r.values
+                    data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])])
                   }
                 })
               }
+              this.myChart.setOption(this.chartOption)
               this.$nextTick(() => {
                 this.myChart.resize()
               })
@@ -428,28 +431,16 @@ export default {
       chartOption: getOption(props.chart.type),
       isEcharts: isEcharts(props.chart.type),
       isEchartsWithTable: isEchartsWithTable(props.chart.type),
+      isEchartsWithStatistics: isEchartsWithStatistics(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),
       isTable: isTable(props.chart.type),
       isMap: isMap(props.chart.type),
       isTitle: isTitle(props.chart.type),
       isMapLine: isMapLine(props.chart.type),
       isTabs: isTabs(props.chart.type),
-      layout: getLayout(props.chart.type)
+      layout: getLayout(props.chart.type),
+      myChart: shallowRef({})
     }
   }
 }
 </script>
-
-<style lang="scss">
-.cn-chart__tabs {
-  padding: 10px 25px 10px 15px;
-  overflow: auto;
-
-.el-tabs__nav-wrap::after {
-  height: 1px;
-}
-&>.el-tabs__header {
-   margin-bottom: 10px;
- }
-}
-</style>

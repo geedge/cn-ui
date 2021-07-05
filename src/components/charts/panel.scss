@@ -165,7 +165,15 @@
     border: none;
   }
   &>.cn-chart__tabs {
+    padding: 10px 25px 10px 15px;
+    overflow: auto;
 
+    .el-tabs__nav-wrap::after {
+      height: 1px;
+    }
+    &>.el-tabs__header {
+      margin-bottom: 10px;
+    }
   }
   &>.cn-chart__table {
     .cn-chart__header {
@@ -179,6 +187,7 @@
           display: flex;
           align-items: center;
           height: 22px;
+          margin-left: 10px;
           color: $--color-primary;
           border: 1px solid $--color-primary;
           border-radius: $--border-radius-primary;

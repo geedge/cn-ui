@@ -39,6 +39,6 @@ export default {
 <style scoped>
 .cn-panel .cn-chart__echarts .pie-with-table{
   flex: 1;
-  padding: 10px;
+  padding: 10px 40px 30px;
 }
 </style>

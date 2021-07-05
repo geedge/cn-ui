@@ -3,6 +3,7 @@ import i18n from '@/i18n'
 import _ from 'lodash'
 import { storageKey, iso36112 } from '@/utils/constants'
 import { getIso36112JsonData } from '@/utils/api'
+import { format } from 'echarts'
 
 export const tableSort = {
   // 是否需要排序
@@ -374,10 +375,8 @@ export function isEqual (o1, o2) {
 }
 
 /* 计算文本的实际width，而不是length */
-export function calculateTextWidth (text, fontSize = 14) {
-  const html = document.querySelector(`.temp-dom--${fontSize}`)
-  html.innerText = text
-  return html.offsetWidth
+export function getTextRect (text, fontSize = 14) {
+  return format.getTextRect(text, `${fontSize}`)
 }
 
 /* url占位符处理 */
