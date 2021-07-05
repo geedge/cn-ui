@@ -134,7 +134,7 @@ export function debounce (fn, delay) {
   }
 }
 export function getNowTime (interval) {
-  const endTime = window.$dayJs.tz().valueOf();
+  const endTime = window.$dayJs.tz().valueOf()
   const startTime = endTime - interval * 60 * 1000
   return {
     startTime,

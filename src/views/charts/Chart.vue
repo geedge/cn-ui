@@ -9,6 +9,7 @@
       v-else-if="isTabs"
       class="cn-chart cn-chart__tabs"
       :tabs="chartInfo"
+      style="grid-area: 1 / 1 / 2 / 7;"
   ></chart-tabs>
   <!-- 地图 -->
   <chart-map
@@ -50,7 +51,7 @@
       :type="chartInfo.type"
       :style="computePosition"
   >
-    <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
+    <template #title><span title="TCP Connection Establish Time">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>{{singleValue}}</template>
   </single-value>
   <!-- 表格 -->

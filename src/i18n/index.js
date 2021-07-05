@@ -6,11 +6,11 @@ import cn from './cn'
 import en from './en'
 
 const i18n = createI18n({
-  locale: localStorage.getItem(storageKey.language) || 'en',
-  /*messages: {
+  locale: localStorage.getItem(storageKey.language) || 'en'
+  /* messages: {
     cn: cn,
     en: en
-  }*/
+  } */
 })
 export async function loadI18n () {
   if (!store.state.i18n) {
