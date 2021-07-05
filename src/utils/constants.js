@@ -1,6 +1,7 @@
 export const defaultPageSize = 20
 
 export const storageKey = {
+  iso36112: 'cn-iso3611-2',
   i18n: 'cn-i18n',
   language: 'cn-language',
   timezone: 'cn-timezone',

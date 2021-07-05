@@ -1,6 +1,8 @@
 import { ElMessageBox } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
+import { storageKey } from '@/utils/constants'
+import { getCache, setCache } from '@/utils/cache'
 
 export const tableSort = {
   // 是否需要排序
@@ -388,11 +390,16 @@ export function replaceUrlPlaceholder (url, params) {
 
 // 下划线转换驼峰
 export function lineToHump (name) {
-  return name.replace(/\_(\w)/g, function(all, letter){
+  return name.replace(/\_(\w)/g, function (all, letter) {
     return letter.toUpperCase()
   })
 }
 // 驼峰转换下划线
 export function humpToLine (name) {
-  return name.replace(/([A-Z])/g,"_$1").toLowerCase()
+  return name.replace(/([A-Z])/g, '_$1').toLowerCase()
+}
+
+export function getCapitalGeo (countryId) {
+  !getCache('capitalGeo') && setCache('capitalGeo', JSON.parse(sessionStorage.getItem(storageKey.iso36112)))
+  return getCache('capitalGeo')[countryId]
 }

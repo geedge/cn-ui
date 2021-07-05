@@ -7,7 +7,7 @@
         text-color="#ffffff">
       <el-menu-item index="logo">
         <div id="home-to-overview" class="logo link">
-          <img alt="loading..." height="26" :src="logo?logo:require('../../assets/img/logo1-2.png')"/>
+          <img alt="loading..." height="32" :src="logo?logo:require('../../assets/img/cn-logo-medium.svg')"/>
           <span class="system-name">{{systemName && systemName !== 'undefined' ? systemName : 'dashboard.overview.contentTitle'}}</span>
         </div>
       </el-menu-item>
@@ -26,7 +26,7 @@
             :index="`${index}`">
           <template #title>
             <i :class="menu.icon"></i>
-            <span>{{menu.name}}</span>
+            <span>{{menu.i18n ? $t(menu.i18n) : menu.name}}</span>
           </template>
           <template v-for="(secondMenu, secondIndex) in menu.children">
             <template v-if="secondMenu.children && secondMenu.children.length > 0">
@@ -34,13 +34,13 @@
                   :key="secondIndex"
                   :index="`${index}-${secondIndex}`">
                 <template #title>
-                  <span class="data-column__span">{{secondMenu.name}}</span>
+                  <span class="data-column__span">{{secondMenu.i18n ? $t(secondMenu.i18n) : secondMenu.name}}</span>
                 </template>
                 <el-menu-item
                     v-for="(thirdMenu, thirdIndex) in secondMenu.children"
                     :key="`${index}-${secondIndex}-${thirdIndex}`"
                     :index="thirdMenu.route">
-                  {{thirdMenu.name}}
+                  {{thirdMenu.i18n ? $t(thirdMenu.i18n) : thirdMenu.name}}
                 </el-menu-item>
               </el-submenu>
             </template>
@@ -48,7 +48,7 @@
               <el-menu-item
                   :key="secondIndex"
                   :index="secondMenu.route">
-                {{secondMenu.name}}
+                {{secondMenu.i18n ? $t(secondMenu.i18n) : secondMenu.name}}
               </el-menu-item>
             </template>
           </template>
@@ -59,7 +59,7 @@
             :index="menu.route">
           <i :class="menu.icon"></i>
           <template #title>
-            <span class="data-column__span">{{menu.name}}</span>
+            <span class="data-column__span">{{menu.i18n ? $t(menu.i18n) : menu.name}}</span>
           </template>
         </el-menu-item>
       </template>
@@ -216,12 +216,12 @@ export default {
         }
 
         .system-name {
-          padding-left: 5px;
+          padding-left: 8px;
           color: white;
-          font-size: 12px;
+          font-size: 14px;
           letter-spacing: 0;
           line-height: 34px;
-          font-weight: 400;
+          font-weight: bold;
         }
       }
     }

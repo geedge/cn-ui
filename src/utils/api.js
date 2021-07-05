@@ -5,6 +5,7 @@
 */
 import { get, post } from '@/utils/http'
 import { sortByOrderNum } from '@/permission'
+import {storageKey} from "@/utils/constants";
 
 export const api = {
   // 系统相关
@@ -76,4 +77,10 @@ export async function getI18n () {
     })
   })
   return await request
+}
+
+export function loadIso36112 () {
+  get(`${process.env.BASE_URL}geojson/data/countriesWithCapital.json`).then(response => {
+    sessionStorage.setItem(storageKey.iso36112, JSON.stringify(response))
+  })
 }
