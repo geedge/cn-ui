@@ -27,7 +27,7 @@
             class="inputstyle login__button"
             @click="login"
               style=" font-size: 16px;"
-            >登陆</el-button
+            >{{$t('common.login')}}</el-button
           >
         </el-form-item>
       </el-form>
@@ -38,8 +38,6 @@
 <script>
 import { mapActions } from 'vuex'
 import { post } from '@/utils/http'
-import bus from '@/utils/bus'
-import { Loading } from 'element-ui'
 export default {
 
   name: 'Login',
@@ -119,10 +117,7 @@ export default {
   background: #0091ff;
   color: #fff;
   border-radius: 4px;
-  border: 0px;
-  font-family: PingFangSC-Regular;
-  text-align: left;
-  line-height: 22px;
+  border: 0;
   font-weight: 400;
   text-align: center;
 }

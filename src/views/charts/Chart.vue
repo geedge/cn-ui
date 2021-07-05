@@ -5,12 +5,21 @@
       class="cn-chart cn-chart__title"
       :style="computePosition">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
   <!-- Tabs -->
-  <chart-tabs
+  <el-tabs
       v-else-if="isTabs"
       class="cn-chart cn-chart__tabs"
-      :tabs="chartInfo"
-      style="grid-area: 1 / 1 / 2 / 7;"
-  ></chart-tabs>
+      v-model="activeTab"
+      @tab-click="changeTab"
+      :style="computePosition"
+  >
+    <el-tab-pane
+        v-for="(tab, index) in chartInfo.children"
+        :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
+        :key="tab.id"
+    >
+      <chart v-for="(chart, index) in tab.children" :key="index" :chart="chart" :start-time="startTime" :end-time="endTime"></chart>
+    </el-tab-pane>
+  </el-tabs>
   <!-- 地图 -->
   <chart-map
       v-else-if="isMap"
@@ -132,7 +141,6 @@ import SingleValue from '@/components/charts/ChartSingleValue'
 import ChartTable from '@/components/charts/ChartTable'
 import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
-import ChartTabs from '@/components/charts/ChartTabs'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
@@ -155,8 +163,7 @@ export default {
     ChartTablePagination,
     ChartTable,
     PieTable,
-    ChartMap,
-    ChartTabs
+    ChartMap
   },
   data () {
     return {
@@ -170,6 +177,7 @@ export default {
       },
       pieTableData: [],
       singleValue: '-',
+      activeTab: '',
       myChart: null
     }
   },
@@ -178,89 +186,91 @@ export default {
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
         this.myChart = this.initMap(`chart${this.chartInfo.id}`)
-        const queryParams = { startTime: 1593070343, endTime: this.endTime, country: '', region: '' } // 统计数据的查询参数
+        const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
         if (chartParams) {
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-            const data = response.data.result
-            data.forEach(r => {
-              const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
-              const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
-              serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
-              serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
-              clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
-              clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
-            })
-            if (this.isMapLine) {
-              const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
-              const gradient = new am4Core.LinearGradient()
-              gradient.stops.push({ color: am4Core.color() })
-              gradient.stops.push({ color: am4Core.color() })
-              gradient.stops.push({ color: am4Core.color() })
+            if (response.code === 200) {
+              const data = response.data.result
+              data.forEach(r => {
+                const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
+                const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
+                serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
+                serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
+                clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
+                clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
+              })
+              if (this.isMapLine) {
+                const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
+                const gradient = new am4Core.LinearGradient()
+                gradient.stops.push({ color: am4Core.color() })
+                gradient.stops.push({ color: am4Core.color() })
+                gradient.stops.push({ color: am4Core.color() })
 
-              const lineTemplate = lineSeries.mapLines.template
-              lineTemplate.stroke = am4Core.color('#A258EC')
-              lineTemplate.line.nonScalingStroke = true
-              lineTemplate.line.strokeDasharray = '4 3'
-              lineTemplate.nonScalingStroke = true
-              lineTemplate.arrow.nonScaling = true
-              lineTemplate.arrow.width = 4
-              lineTemplate.arrow.height = 6
-              lineSeries.data = [
-                {
-                  multiGeoLine: data.map(d => {
-                    return [
-                      {
-                        latitude: parseFloat(d.serverLatitude),
-                        longitude: parseFloat(d.serverLongitude)
-                      },
-                      {
-                        latitude: parseFloat(d.clientLatitude),
-                        longitude: parseFloat(d.clientLongitude)
-                      }
-                    ]
+                const lineTemplate = lineSeries.mapLines.template
+                lineTemplate.stroke = am4Core.color('#A258EC')
+                lineTemplate.line.nonScalingStroke = true
+                lineTemplate.line.strokeDasharray = '4 3'
+                lineTemplate.nonScalingStroke = true
+                lineTemplate.arrow.nonScaling = true
+                lineTemplate.arrow.width = 4
+                lineTemplate.arrow.height = 6
+                lineSeries.data = [
+                  {
+                    multiGeoLine: data.map(d => {
+                      return [
+                        {
+                          latitude: parseFloat(d.serverLatitude),
+                          longitude: parseFloat(d.serverLongitude)
+                        },
+                        {
+                          latitude: parseFloat(d.clientLatitude),
+                          longitude: parseFloat(d.clientLongitude)
+                        }
+                      ]
+                    })
+                  }
+                ]
+
+                const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+                imageSeries.dataFields.value = 'sessions'
+                const imageSeriesTemplate = imageSeries.mapImages.template
+                const circle = imageSeriesTemplate.createChild(am4Core.Circle)
+
+                circle.fillOpacity = 0.7
+                circle.nonScaling = true
+                circle.tooltipText = '{title}'
+                const radiusHeat = imageSeries.heatRules.push({
+                  target: circle,
+                  property: 'radius',
+                  min: 8,
+                  max: 30
+                })
+                const colorHeat = imageSeries.heatRules.push({
+                  target: circle,
+                  property: 'fill',
+                  min: am4Core.color('#D2A8FF'),
+                  max: am4Core.color('#A258EC')
+                })
+                imageSeriesTemplate.propertyFields.latitude = 'latitude'
+                imageSeriesTemplate.propertyFields.longitude = 'longitude'
+
+                const pointData = []
+                data.forEach(d => {
+                  pointData.push({
+                    ...d,
+                    latitude: parseFloat(d.serverLatitude),
+                    longitude: parseFloat(d.serverLongitude),
+                    title: this.getTitle(d)
                   })
-                }
-              ]
-
-              const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
-              imageSeries.dataFields.value = 'sessions'
-              const imageSeriesTemplate = imageSeries.mapImages.template
-              const circle = imageSeriesTemplate.createChild(am4Core.Circle)
-
-              circle.fillOpacity = 0.7
-              circle.nonScaling = true
-              circle.tooltipText = '{title}'
-              const radiusHeat = imageSeries.heatRules.push({
-                target: circle,
-                property: 'radius',
-                min: 8,
-                max: 30
-              })
-              const colorHeat = imageSeries.heatRules.push({
-                target: circle,
-                property: 'fill',
-                min: am4Core.color('#D2A8FF'),
-                max: am4Core.color('#A258EC')
-              })
-              imageSeriesTemplate.propertyFields.latitude = 'latitude'
-              imageSeriesTemplate.propertyFields.longitude = 'longitude'
-
-              const pointData = []
-              data.forEach(d => {
-                pointData.push({
-                  ...d,
-                  latitude: parseFloat(d.serverLatitude),
-                  longitude: parseFloat(d.serverLongitude),
-                  title: this.getTitle(d)
+                  pointData.push({
+                    ...d,
+                    latitude: parseFloat(d.clientLatitude),
+                    longitude: parseFloat(d.clientLongitude),
+                    title: this.getTitle(d)
+                  })
                 })
-                pointData.push({
-                  ...d,
-                  latitude: parseFloat(d.clientLatitude),
-                  longitude: parseFloat(d.clientLongitude),
-                  title: this.getTitle(d)
-                })
-              })
-              imageSeries.data = pointData
+                imageSeries.data = pointData
+              }
             }
           })
         }
@@ -269,42 +279,51 @@ export default {
         this.myChart = echarts.init(dom)
         if (chartParams) {
           if (this.isEchartsWithTable) {
-            const queryParams = { startTime: 1593070343, endTime: this.endTime, limit: 10 } // 统计数据的查询参数
-            const tableQueryParams = { startTime: 1593070343, endTime: this.endTime, limit: 10 } // 统计数据的查询参数
+            const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10 } // 统计数据的查询参数
+            const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: this.endTime, limit: 10 } // 统计数据的查询参数
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-              const data = response.data.result
-              this.chartOption.legend.formatter = (name) => { // 根据图表宽 显示legend的字数
-                let str = name
-                const length = Math.floor(dom.offsetWidth / 75)
-                if (name.length > length) {
-                  str = name.substring(0, length - 3) + '...'
+              if (response.code === 200) {
+                const data = response.data.result
+                this.chartOption.legend.formatter = (name) => { // 根据图表宽 显示legend的字数
+                  let str = name
+                  const length = Math.floor(dom.offsetWidth / 75)
+                  if (name.length > length) {
+                    str = name.substring(0, length - 3) + '...'
+                  }
+                  return str
                 }
-                return str
-              }
-              this.chartOption.series[0].data = data.map(d => {
-                return {
-                  data: d,
-                  name: d[chartParams.nameColumn],
-                  value: parseInt(d[chartParams.valueColumn])
+                this.chartOption.series[0].data = data.map(d => {
+                  return {
+                    data: d,
+                    name: d[chartParams.nameColumn],
+                    value: parseInt(d[chartParams.valueColumn])
+                  }
+                })
+                if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
+                  this.chartOption.legend.type = 'scroll'
                 }
-              })
-              if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
-                this.chartOption.legend.type = 'scroll'
+                this.myChart.setOption(this.chartOption)
+                this.$nextTick(() => {
+                  this.myChart.resize()
+                })
+                tableQueryParams[chartParams.nameColumn] = data[0][chartParams.nameColumn]
+                get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
+                  if (response2.code === 200) {
+                    this.pieTableData = response2.data.result
+                  }
+                })
               }
-              this.myChart.setOption(this.chartOption)
-              tableQueryParams[chartParams.nameColumn] = data[0][chartParams.nameColumn]
-              get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
-                this.pieTableData = response2.data.result
-              })
             })
 
             this.myChart.on('click', function (echartParams) {
               get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response => {
-                this.pieTableData = response.data.result
+                if (response.code === 200) {
+                  this.pieTableData = response.data.result
+                }
               })
             })
           } else {
-            const queryParams = { startTime: 1593070343, endTime: this.endTime }
+            const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
                 const seriesTemplate = this.chartOption.series[0]
@@ -316,13 +335,15 @@ export default {
                   }
                 })
               }
-              this.myChart.setOption(this.chartOption)
+              this.$nextTick(() => {
+                this.myChart.resize()
+              })
             })
           }
         }
       } else if (this.isTable) {
         if (chartParams) {
-          const queryParams = { startTime: 1593070343, endTime: this.endTime, limit: 100, order: 'sessions' }
+          const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 100, order: 'sessions' }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
               const tableColumns = new Set()
@@ -340,12 +361,16 @@ export default {
         }
       } else if (this.isSingleValue) {
         if (chartParams) {
-          const queryParams = { startTime: 1593070343, endTime: this.endTime }
+          const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
               this.singleValue = response.data.result
             }
           })
+        }
+      } else if (this.isTabs) {
+        if (!this.$_.isEmpty(this.chartInfo.children)) {
+          this.activeTab = `${this.chartInfo.children[0].id}`
         }
       }
     },
@@ -354,6 +379,9 @@ export default {
           Client: ${data.clientRegion ? data.clientRegion : data.clientCountry}
           Sessions: ${data.sessions}
           Bytes: ${data.bytes}`
+    },
+    changeTab (tab) {
+      this.activeTab = tab.paneName
     },
     initMap (id) {
       const chart = am4Core.create(id, am4Maps.MapChart)
@@ -412,6 +440,16 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+.cn-chart__tabs {
+  padding: 10px 25px 10px 15px;
+  overflow: auto;
 
+.el-tabs__nav-wrap::after {
+  height: 1px;
+}
+&>.el-tabs__header {
+   margin-bottom: 10px;
+ }
+}
 </style>

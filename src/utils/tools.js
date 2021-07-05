@@ -1,8 +1,8 @@
 import { ElMessageBox } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey } from '@/utils/constants'
-import { getCache, setCache } from '@/utils/cache'
+import { storageKey, iso36112 } from '@/utils/constants'
+import { getIso36112JsonData } from '@/utils/api'
 
 export const tableSort = {
   // 是否需要排序
@@ -399,7 +399,46 @@ export function humpToLine (name) {
   return name.replace(/([A-Z])/g, '_$1').toLowerCase()
 }
 
+// 加载geo数据
+export function loadGeoData (key) {
+  const keys = []
+  if (key) {
+    keys.push(key)
+  } else {
+    keys.push(storageKey.iso36112Capital)
+    keys.push(storageKey.iso36112WorldLow)
+  }
+  keys.forEach(async k => {
+    if (!localStorage.getItem(k)) {
+      const data = await getIso36112JsonData(iso36112[k])
+      if (data) {
+        localStorage.setItem(k, JSON.stringify(data))
+      }
+    }
+  })
+  return localStorage.getItem(key)
+}
+
+/* 返回geodata对象 */
+export function getGeoData (key) {
+  const data = localStorage.getItem(key)
+  if (data) {
+    return JSONParse(data)
+  } else {
+    return JSONParse(loadGeoData(key))
+  }
+}
+
 export function getCapitalGeo (countryId) {
-  !getCache('capitalGeo') && setCache('capitalGeo', JSON.parse(sessionStorage.getItem(storageKey.iso36112)))
-  return getCache('capitalGeo')[countryId]
+  const data = getGeoData(storageKey.iso36112Capital)
+  return data[countryId]
+}
+
+export function JSONParse (data) {
+  const firstParse = JSON.parse(data)
+  if (typeof firstParse === 'string') {
+    return JSON.parse(firstParse)
+  } else {
+    return firstParse
+  }
 }

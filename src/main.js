@@ -36,7 +36,6 @@ app.directive('has', hasPermission) // 注册指令
 app.directive('click-outside', clickOutside)
 app.directive('ele-click-outside', ClickOutside)
 app.directive('cancel', cancelWithChange)
-
 app.config.globalProperties.$_ = _
 
 app.mixin(commonMixin)

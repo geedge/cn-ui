@@ -5,7 +5,7 @@
 */
 import { get, post } from '@/utils/http'
 import { sortByOrderNum } from '@/permission'
-import {storageKey} from "@/utils/constants";
+import { storageKey, iso36112 } from '@/utils/constants'
 
 export const api = {
   // 系统相关
@@ -79,8 +79,12 @@ export async function getI18n () {
   return await request
 }
 
-export function loadIso36112 () {
-  get(`${process.env.BASE_URL}geojson/data/countriesWithCapital.json`).then(response => {
-    sessionStorage.setItem(storageKey.iso36112, JSON.stringify(response))
+/* 获得原始的3611-2 json字符串数据 */
+export async function getIso36112JsonData (suffix) {
+  const request = new Promise(resolve => {
+    get(`${process.env.BASE_URL}geojson/${suffix}`).then(response => {
+      resolve(JSON.stringify(response))
+    })
   })
+  return await request
 }

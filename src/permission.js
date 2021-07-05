@@ -1,7 +1,8 @@
 import router from './router'
 import store from './store'
 import { ElMessage } from 'element-plus'
-import { getConfigJson, getPermission, loadIso36112 } from '@/utils/api'
+import { getConfigJson, getPermission } from '@/utils/api'
+import { loadGeoData } from '@/utils/tools'
 import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 import { loadI18n } from '@/i18n'
@@ -11,9 +12,7 @@ const permissionWhiteList = [...loginWhiteList] // 权限白名单
 
 router.beforeEach(async (to, from, next) => {
   // 加载iso-3166-2资源
-  if (!sessionStorage.getItem(storageKey.iso36112)) {
-    loadIso36112()
-  }
+  loadGeoData()
   // 加载baseUrl
   if (!axios.defaults.baseURL) {
     const config = await getConfigJson()

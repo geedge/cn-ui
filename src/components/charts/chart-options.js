@@ -45,6 +45,38 @@ const line = {
     }
   ]
 }
+const lineWithStatistics = {
+  xAxis: {
+    type: 'time'
+  },
+  yAxis: {
+    type: 'value'
+  },
+  legend: {
+    show: true,
+    top: 'top',
+    orient: 'horizontal',
+    icon: 'circle',
+    itemGap: 20,
+    itemWidth: 10,
+    textStyle: {
+      padding: [0, 0, 0, 5],
+      fontSize: 14
+    }
+  },
+  axisLabel: {
+    fontSize: 14
+  },
+  series: [
+    {
+      name: '',
+      type: 'line',
+      smooth: true,
+      symbol: 'none',
+      data: []
+    }
+  ]
+}
 const lineStack = {
   xAxis: {
     type: 'time'
@@ -144,7 +176,8 @@ const pieWithTable = {
 }
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
-  { value: 13, option: lineStack }, // 常规折线图
+  { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
+  { value: 13, option: lineStack }, // 折线堆叠图
   { value: 31, option: pieWithTable } // 常规折线图
 ]
 const typeCategory = {

@@ -1,7 +1,8 @@
 export const defaultPageSize = 20
 
 export const storageKey = {
-  iso36112: 'cn-iso3611-2',
+  iso36112Capital: 'cn-iso3611-2-capital',
+  iso36112WorldLow: 'cn-iso3611-2-world-low',
   i18n: 'cn-i18n',
   language: 'cn-language',
   timezone: 'cn-timezone',
@@ -15,6 +16,11 @@ export const storageKey = {
   tablePageSizePrefix: 'cn-page-size',
   leftMenuShrink: 'cn-left-menu-shrink',
   unsavedChange: 'cn-unsaved-change'
+}
+
+export const iso36112 = {
+  [storageKey.iso36112Capital]: 'data/countriesWithCapital.json',
+  [storageKey.iso36112WorldLow]: 'worldChinaLow.json'
 }
 
 // 统一定义跳转来源
