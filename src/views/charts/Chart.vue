@@ -42,7 +42,21 @@
       :style="computePosition"
       :chartInfo="chartInfo"
   >
-    <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
+    <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">
+      {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
+      <span v-if="isEchartsWithTable">
+        <el-select
+                size="mini"
+                v-model="table.limit"
+                class="option__select select-topn"
+                placeholder=""
+                popper-class="option-popper"
+        >
+          <el-option v-for="item in chartTableTopOptions" :key="item" :value="item">TOP&nbsp;{{item}}</el-option>
+          <template #prefix>TOP&nbsp;</template>
+        </el-select>
+      </span>
+    </template>
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       <i class="cn-icon cn-icon-more-light"></i>
     </template>
@@ -394,11 +408,11 @@ export default {
       polygonSeries.useGeodata = true
       polygonSeries.exclude = ['AQ'] // 排除南极洲
       // 鼠标悬停提示
-      /*const polygonTemplate = polygonSeries.mapPolygons.template
+      /* const polygonTemplate = polygonSeries.mapPolygons.template
       polygonTemplate.tooltipText = '{name}'
       polygonTemplate.fontSize = '12px'
       const hs = polygonTemplate.states.create('hover')
-      hs.properties.fill = am4Core.color('#ccc')*/
+      hs.properties.fill = am4Core.color('#ccc') */
       return chart
     },
     pageJump (val) {
