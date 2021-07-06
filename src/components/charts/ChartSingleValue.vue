@@ -12,8 +12,8 @@
       </div>
     </div>
     <div class="single-value__content" v-if="type === 53">
-      <div class="content__title">嘻嘻</div>
-      <div class="content__data">11112</div>
+      <div class="content__title"></div>
+      <div class="content__data"></div>
     </div>
   </div>
 </template>

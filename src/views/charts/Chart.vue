@@ -80,7 +80,7 @@
       :style="computePosition"
       :icon="singleValue.icon"
   >
-    <template #title><span title="TCP Connection Establish Time">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
+    <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>{{singleValue.value}}</template>
   </single-value>
   <!-- 表格 -->
