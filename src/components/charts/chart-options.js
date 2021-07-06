@@ -7,6 +7,17 @@ import { format } from 'echarts'
 import _ from 'lodash'
 
 const line = {
+  tooltip: {
+    appendToBody: true,
+    trigger: 'axis',
+    textStyle: {
+      width: 20,
+      overflow: 'truncate'
+    },
+    // formatter: () =>{
+    //   return '1'
+    // }
+  },
   xAxis: {
     type: 'time'
   },
@@ -47,6 +58,17 @@ const line = {
   ]
 }
 const lineWithStatistics = {
+  tooltip: {
+    appendToBody: true,
+    trigger: 'axis',
+    textStyle: {
+      width: 20,
+      overflow: 'truncate'
+    },
+    // formatter: () =>{
+    //   return '1'
+    // }
+  },
   xAxis: {
     type: 'time'
   },
@@ -76,6 +98,17 @@ const lineWithStatistics = {
   ]
 }
 const lineStack = {
+  tooltip: {
+    appendToBody: true,
+    trigger: 'axis',
+    textStyle: {
+      width: 20,
+      overflow: 'truncate'
+    },
+    // formatter: () =>{
+    //   return '1'
+    // }
+  },
   xAxis: {
     type: 'time'
   },
@@ -118,6 +151,7 @@ const lineStack = {
 }
 const pieWithTable = {
   tooltip: {
+    appendToBody: true,
     trigger: 'item'
   },
   animation: false,
@@ -243,3 +277,6 @@ export function getLayout (type) {
 function tooLongFormatter (name) {
   return format.truncateText(name, 110, '12')
 }
+// function axiosFormatter(params) {
+//
+// }
