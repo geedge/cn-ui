@@ -21,7 +21,7 @@
         @select="jump">
       <template v-for="(menu, index) in menuList">
         <el-submenu
-            v-if="menu.children && menu.children.length > 0"
+            v-if="menu.children && menu.children.length > 0 && menu.state === 1"
             :key="index"
             :index="`${index}`">
           <template #title>
@@ -29,32 +29,31 @@
             <span>{{menu.i18n ? $t(menu.i18n) : menu.name}}</span>
           </template>
           <template v-for="(secondMenu, secondIndex) in menu.children">
-            <template v-if="secondMenu.children && secondMenu.children.length > 0">
-              <el-submenu
-                  :key="secondIndex"
-                  :index="`${index}-${secondIndex}`">
-                <template #title>
-                  <span class="data-column__span">{{secondMenu.i18n ? $t(secondMenu.i18n) : secondMenu.name}}</span>
-                </template>
+            <el-submenu
+                v-if="secondMenu.children && secondMenu.children.length > 0 && secondMenu.state === 1"
+                :key="secondIndex"
+                :index="`${index}-${secondIndex}`">
+              <template #title>
+                <span class="data-column__span">{{secondMenu.i18n ? $t(secondMenu.i18n) : secondMenu.name}}</span>
+              </template>
+              <template v-for="(thirdMenu, thirdIndex) in secondMenu.children" :key="`${index}-${secondIndex}-${thirdIndex}`">
                 <el-menu-item
-                    v-for="(thirdMenu, thirdIndex) in secondMenu.children"
-                    :key="`${index}-${secondIndex}-${thirdIndex}`"
+                    v-if="thirdMenu.state === 1"
                     :index="thirdMenu.route">
                   {{thirdMenu.i18n ? $t(thirdMenu.i18n) : thirdMenu.name}}
                 </el-menu-item>
-              </el-submenu>
-            </template>
-            <template v-else>
-              <el-menu-item
-                  :key="secondIndex"
-                  :index="secondMenu.route">
-                {{secondMenu.i18n ? $t(secondMenu.i18n) : secondMenu.name}}
-              </el-menu-item>
-            </template>
+              </template>
+            </el-submenu>
+            <el-menu-item
+                v-else-if="secondMenu.state === 1"
+                :key="secondIndex * 100"
+                :index="secondMenu.route">
+              {{secondMenu.i18n ? $t(secondMenu.i18n) : secondMenu.name}}
+            </el-menu-item>
           </template>
         </el-submenu>
         <el-menu-item
-            v-else
+            v-else-if="menu.state === 1"
             :key="index + 'a'"
             :index="menu.route">
           <i :class="menu.icon"></i>

@@ -5,7 +5,10 @@
 */
 import { format } from 'echarts'
 import _ from 'lodash'
-export const chartColor = ['#73A0FA', '#73DEB3', '#F7C739', '#EB7E65', '#FFAB67', '#A285D2', '#FFA8CB']
+export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
+  '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
+  '#E97CCC', '#FEA69E', '#0F8AB2', '#57CBAC',
+  '#5888BC', '#63B6AC', '#EDC6B2', '#D5746B']
 export function getChartColor (index) {
   return chartColor[index % chartColor.length]
 }

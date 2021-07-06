@@ -78,9 +78,10 @@
       v-else-if="isSingleValue"
       :type="chartInfo.type"
       :style="computePosition"
+      :icon="singleValue.icon"
   >
     <template #title><span title="TCP Connection Establish Time">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
-    <template #data>{{singleValue}}</template>
+    <template #data>{{singleValue.value}}</template>
   </single-value>
   <!-- 表格 -->
   <chart-table
@@ -200,7 +201,10 @@ export default {
         currentPageData: [] // table当前页的数据
       },
       pieTableData: [],
-      singleValue: '-',
+      singleValue: {
+        value: '-',
+        icon: ''
+      },
       activeTab: '',
       statisticsData: []
     }
@@ -401,10 +405,11 @@ export default {
         }
       } else if (this.isSingleValue) {
         if (chartParams) {
+          this.singleValue.icon = chartParams.icon
           const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
-              this.singleValue = response.data.result
+              this.singleValue.value = response.data.result
             }
           })
         }

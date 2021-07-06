@@ -1,7 +1,7 @@
 <template>
   <div class="cn-chart cn-chart__single-value" :class="singleValueClass(type)">
     <div class="single-value-icon__box">
-      <div class="single-value__icon"><i class="el-icon-apple"></i></div>
+      <div class="single-value__icon"><i :class="icon"></i></div>
     </div>
     <div class="single-value__content" v-if="type === 51">
       <div class="content__data">
@@ -22,7 +22,8 @@
 export default {
   name: 'ChartSingleValue',
   props: {
-    type: Number
+    type: Number,
+    icon: String
   },
   computed: {
     singleValueClass () {
