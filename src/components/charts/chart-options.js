@@ -5,7 +5,10 @@
 */
 import { format } from 'echarts'
 import _ from 'lodash'
-
+export const chartColor = ['#73A0FA', '#73DEB3', '#F7C739', '#EB7E65', '#FFAB67', '#A285D2', '#FFA8CB']
+export function getChartColor (index) {
+  return chartColor[index % chartColor.length]
+}
 const line = {
   xAxis: {
     type: 'time'
@@ -19,6 +22,7 @@ const line = {
     bottom: 45,
     top: 30
   },
+  color: chartColor,
   legend: {
     show: true,
     right: 30,
@@ -54,6 +58,7 @@ const lineWithStatistics = {
   yAxis: {
     type: 'value'
   },
+  color: chartColor,
   grid: {
     left: 55,
     bottom: 45,
@@ -79,6 +84,7 @@ const lineStack = {
   xAxis: {
     type: 'time'
   },
+  color: chartColor,
   yAxis: {
     type: 'value'
   },
@@ -120,6 +126,7 @@ const pieWithTable = {
   tooltip: {
     trigger: 'item'
   },
+  color: chartColor,
   animation: false,
   legend: {
     orient: 'vertical',

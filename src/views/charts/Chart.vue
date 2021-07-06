@@ -141,7 +141,8 @@ import {
   isEchartsWithTable,
   isEchartsWithStatistics,
   isMapLine,
-  isTabs
+  isTabs,
+  getChartColor
 } from '@/components/charts/chart-options'
 import EchartsFrame from '@/components/charts/EchartsFrame'
 import SingleValue from '@/components/charts/ChartSingleValue'
@@ -321,6 +322,28 @@ export default {
                 if (response.code === 200) {
                   this.pieTableData = response.data.result
                 }
+              })
+            })
+          } else if (this.isEchartsWithStatistics) {
+            const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
+            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+              if (response.code === 200) {
+                this.statisticsData = response.data.result
+                const seriesTemplate = this.chartOption.series[0]
+                this.chartOption.series = response.data.result.map((r, i) => {
+                  return {
+                    ...seriesTemplate,
+                    name: r.legend,
+                    data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])]),
+                    lineStyle: {
+                      color: getChartColor[i]
+                    }
+                  }
+                })
+              }
+              this.myChart.setOption(this.chartOption)
+              this.$nextTick(() => {
+                this.myChart.resize()
               })
             })
           } else {
