@@ -14,12 +14,14 @@ const line = {
     appendToBody: true,
     trigger: 'axis',
     textStyle: {
-      width: 20,
+      width: '20px',
       overflow: 'truncate'
     },
     // formatter: () =>{
     //   return '1'
     // }
+    className: 'nz-chart-tooltip',
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
   },
   xAxis: {
     type: 'time'
@@ -66,12 +68,14 @@ const lineWithStatistics = {
     appendToBody: true,
     trigger: 'axis',
     textStyle: {
-      width: 20,
+      width: '20px',
       overflow: 'truncate'
     },
     // formatter: () =>{
     //   return '1'
     // }
+    className: 'nz-chart-tooltip',
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
   },
   xAxis: {
     type: 'time'
@@ -107,12 +111,14 @@ const lineStack = {
     appendToBody: true,
     trigger: 'axis',
     textStyle: {
-      width: 20,
+      width: '20px',
       overflow: 'truncate'
     },
     // formatter: () =>{
     //   return '1'
     // }
+    className: 'nz-chart-tooltip',
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
   },
   xAxis: {
     type: 'time'

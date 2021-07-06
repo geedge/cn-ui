@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 10px 0 20px 20px;">
-    <div class="cn-panel">
+    <div class="cn-panel" id="cn-panel">
       <div class="panel__time">
         <DateTimeRange class="date-time-range" :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
