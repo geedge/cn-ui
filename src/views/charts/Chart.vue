@@ -323,7 +323,7 @@ export default {
                 }
               })
             })
-          } else if (this.isEchartsWithStatistics) {
+          } else {
             const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
