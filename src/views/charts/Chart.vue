@@ -140,7 +140,6 @@
 import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
-import am4GeoDataWorldLow from '@amcharts/amcharts4-geodata/worldChinaLow'
 import { shallowRef } from 'vue'
 
 import {
@@ -166,9 +165,9 @@ import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
-import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
+import { chartTableDefaultPageSize, chartTableTopOptions, storageKey } from '@/utils/constants'
 import { get } from '@/utils/http'
-import { replaceUrlPlaceholder, getCapitalGeo } from '@/utils/tools'
+import { replaceUrlPlaceholder, getCapitalGeo, getGeoData } from '@/utils/tools'
 
 export default {
   name: 'Chart',
@@ -430,7 +429,7 @@ export default {
     },
     initMap (id) {
       const chart = am4Core.create(id, am4Maps.MapChart)
-      chart.geodata = am4GeoDataWorldLow
+      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
       const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
       polygonSeries.useGeodata = true

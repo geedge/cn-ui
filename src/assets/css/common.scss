@@ -54,3 +54,9 @@ th *:first-letter,
 .header__operations *:first-letter {
   text-transform: capitalize;
 }
+
+.outer-box {
+  padding: 10px;
+  height: 100%;
+  width: 100%;
+}
