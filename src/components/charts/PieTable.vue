@@ -5,14 +5,17 @@
             class="pie-table"
             :data="pieTableData"
             style="width: 100%;border: 1px solid #E7EAED"
-            @expand-change="expandChange"
+            :row-key="getRowKey"
+            @expand-change="currentChange"
+            current-row-key="domain"
+            :expand-row-keys="expandRowKeys"
             :size="'mini'"
             :height="'100%'">
         <el-table-column type="expand" :min-width="'5%'">
-            <template #default="props">
+            <template #default="props" style="height: auto">
                 <el-table
                         class="expand-table"
-                        :data=" props.row.children"
+                        :data="childrenTableData"
                         style="width: 100%;"
                         :show-header="false"
                         :size="'mini'"
@@ -107,6 +110,8 @@ export default {
       loading: false,
       nameColumn: '',
       pieTableData: [],
+      childrenTableData: [],
+      expandRowKeys: [],
       tableTitles: [
         {
           label: this.$t('chart.pieTable.domain'),
@@ -173,24 +178,33 @@ export default {
     // toggleRowExpansion (row) {
     //   this.$refs.table.toggleRowExpansion(row)
     // },
-    expandChange (row) {
-      const nameColumnKey = this.nameColumn === 'fqdnCategoryName' ? 'categoryName' : 'reputationLevel'
+    currentChange (row, expandedRows) {
+      if (this.expandRowKeys[0] && row.domain === this.expandRowKeys[0].domain) {
+        this.expandRowKeys = []
+      } else {
+        this.expandRowKeys = [row.domain]
+      }
+
+      // this.$refs.table.toggleRowExpansion(row)
       const url = JSON.parse(this.chartInfo.params).urlChildrenTable
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), order: this.order, domain: row.domain }
       get(replaceUrlPlaceholder(url, queryParams)).then(response2 => {
         if (response2.code === 200) {
-          row.children = response2.data.result
+          this.childrenTableData = response2.data.result
         }
       })
+    },
+    getRowKey (row) {
+      return row.domain
     }
   }
 }
 </script>
 
-<style scoped>
-/deep/ .el-table__expanded-cell[class*=cell]{
-    padding: 0;
-}
+<style scoped lang="scss">
+    /deep/ .el-table__expanded-cell[class*=cell]{
+        padding: 0;
+    }
     .expand-table /deep/ .el-table__body .el-table__row:last-of-type td{
         border: none;
     }
@@ -203,5 +217,8 @@ export default {
     .expand-table{
         font-weight: 400;
         color: #606266;
+        /deep/ .el-table__body-wrapper{
+            height: auto !important;
+        }
     }
 </style>
