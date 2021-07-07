@@ -231,7 +231,6 @@ export default {
       immediate: true,
       deep: true,
       handler (n, o) {
-        // console.log(n)
       }
     }
   }

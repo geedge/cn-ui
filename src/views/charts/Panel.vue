@@ -101,6 +101,7 @@ export default {
           chart.i = chart.id
           return chart
         })
+        // this.chartList = [this.chartList[7], this.chartList[12]]
       }
     },
     timeRefreshChange () {
