@@ -103,6 +103,7 @@
             class="option__select select-topn"
             placeholder=""
             popper-class="option-popper"
+            @change="tabelLimtChange"
         >
           <el-option v-for="item in chartTableTopOptions" :key="item" :value="item">TOP&nbsp;{{item}}</el-option>
           <template #prefix>TOP&nbsp;</template>
@@ -115,6 +116,7 @@
             class="option__select select-column"
             :placeholder="$t('common.field')"
             popper-class="option-popper"
+            @change="tabelLimtChange"
         >
           <el-option v-for="item in table.tableColumns" :key="item" :value="item">{{item}}</el-option>
         </el-select>
@@ -195,7 +197,7 @@ export default {
       table: {
         pageSize: chartTableDefaultPageSize,
         limit: chartTableTopOptions[0], // top-n
-        orderBy: '',
+        orderBy: 'sessions',
         tableColumns: [], // table字段
         tableData: [], // table的所有数据
         currentPageData: [] // table当前页的数据
@@ -356,21 +358,7 @@ export default {
         }
       } else if (this.isTable) {
         if (chartParams) {
-          const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 100, order: 'sessions' }
-          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-            if (response.code === 200) {
-              const tableColumns = new Set()
-              response.data.result.forEach(d => {
-                Object.keys(d).forEach(k => {
-                  tableColumns.add(k)
-                })
-              })
-              this.table.tableColumns = tableColumns
-              this.table.tableData = response.data.result
-              this.table.orderBy = this.table.tableColumns[0]
-              this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
-            }
-          })
+          this.initChartTable(chartParams)
         }
       } else if (this.isSingleValue) {
         if (chartParams) {
@@ -476,6 +464,26 @@ export default {
         })
       })
     },
+    tabelLimtChange () {
+      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      this.initChartTable(chartParams)
+    },
+    initChartTable (chartParams) {
+      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: this.table.limit, order: this.table.orderBy }
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          const tableColumns = new Set()
+          response.data.result.forEach(d => {
+            Object.keys(d).forEach(k => {
+              tableColumns.add(k)
+            })
+          })
+          this.table.tableColumns = Array.from(tableColumns)
+          this.table.tableData = response.data.result
+          this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
+        }
+      })
+    }
   },
   computed: {
     computePosition () {
