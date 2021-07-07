@@ -179,7 +179,7 @@ export default {
     //   this.$refs.table.toggleRowExpansion(row)
     // },
     currentChange (row, expandedRows) {
-      if (this.expandRowKeys[0] && row.domain === this.expandRowKeys[0].domain) {
+      if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
         this.expandRowKeys = []
       } else {
         this.expandRowKeys = [row.domain]

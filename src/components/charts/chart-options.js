@@ -188,16 +188,12 @@ const pieWithTable = {
     itemHeight: 10, // 设置高度
     itemGap: 20,
     selectedMode: false,
-    formatter: tooLongFormatter
+    // formatter: tooLongFormatter
   },
   series: [
     {
       type: 'pie',
       selectedMode: 'single',
-      itemStyle: {
-        borderRadius: 5,
-        borderWidth: 1
-      },
       radius: ['42%', '70%'],
       center: ['30%', '50%'],
       data: [],

@@ -424,6 +424,7 @@ export default {
       this.chartWithPieTableInit(chartParams)
     },
     chartWithPieTableInit (chartParams) {
+      const self = this
       chartParams.valueColumn = this.orderPieTable
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
       const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: this.endTime, limit: 10, order: this.orderPieTable } // 统计数据的查询参数
