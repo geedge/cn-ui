@@ -5,7 +5,6 @@
 */
 import { get, post } from '@/utils/http'
 import { sortByOrderNum } from '@/permission'
-import { storageKey, iso36112 } from '@/utils/constants'
 
 export const api = {
   // 系统相关
@@ -14,7 +13,10 @@ export const api = {
   dict: '/sys/dict',
   // 业务
   panel: '/visual/panel',
-  chart: '/visual/chart'
+  chart: '/visual/chart',
+  entityIpFilter: '/interface/entity/ip/filter',
+  entityDomainFilter: '/interface/entity/domain/filter',
+  entityAppFilter: '/interface/entity/app/filter'
 }
 /* panel */
 export async function getPanelList (params) {
@@ -30,6 +32,18 @@ export async function getChartList (params) {
 export async function getChart (id) {
   return await getData(`${api.chart}/${id}`)
 }
+/* ip类型entity过滤器数据 */
+export async function getEntityIpFilterList (params) {
+  return await getData(api.entityIpFilter, params, true)
+}
+/* domain类型entity过滤器数据 */
+export async function getEntityDomainFilterList (params) {
+  return await getData(api.entityDomainFilter, params, true)
+}
+/* app类型entity过滤器数据 */
+export async function getEntityAppFilterList (params) {
+  return await getData(api.entityAppFilter, params, true)
+}
 /* 字典 */
 export async function getDictList (params) {
   return await getData(api.dict, params, true)
@@ -39,7 +53,7 @@ export async function getData (url, params = {}, isQueryList) {
   const request = new Promise(resolve => {
     get(url, params).then(response => {
       if (response.code === 200) {
-        resolve(isQueryList ? response.data.list : response.data)
+        resolve(isQueryList ? response.data.list || response.data.result : response.data || response.data.result)
       }
     })
   })
