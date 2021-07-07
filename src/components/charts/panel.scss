@@ -55,21 +55,18 @@
   }
   &>.cn-chart__single-value.cn-chart__single-value--icon-left {
     display: flex;
-    justify-content: center;
     align-items: center;
-    grid-template-columns:(5,200px);
 
-    .single-value-icon__box{
-      height: 70px;
-      flex: 4;
+    .single-value-icon__box {
       display: flex;
-      justify-content: space-around;
       align-items: center;
-
+      justify-content: center;
+      flex: 0 0 40%;
     }
 
     .single-value__icon {
-      margin-right: 7.5%;
+      display: flex;
+      justify-content: center;
       width: 72px;
       height: 72px;
       background-color: $--chart-single-value-icon-background-color;
@@ -77,18 +74,17 @@
 
       i {
         display: flex;
-        justify-content: space-around;
         align-items: center;
-        margin-top: 25px;
         font-size: 28px;
         color: $--color-primary;
       }
     }
 
     .single-value__content {
-      flex: 6;
       display: flex;
       flex-direction: column;
+      max-width: 60%;
+      padding-right: 10px;
 
       .content__data {
         padding-bottom: 7%;
@@ -97,7 +93,6 @@
         font-weight: bold;
       }
       .content__title {
-        width: 206px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;

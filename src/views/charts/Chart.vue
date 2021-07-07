@@ -79,9 +79,10 @@
       v-else-if="isSingleValue"
       :type="chartInfo.type"
       :style="computePosition"
+      :icon="singleValue.icon"
   >
-    <template #title><span title="TCP Connection Establish Time">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
-    <template #data>{{singleValue}}</template>
+    <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
+    <template #data>{{singleValue.value}}</template>
   </single-value>
   <!-- 表格 -->
   <chart-table
@@ -140,7 +141,6 @@
 import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
-import am4GeoDataWorldLow from '@amcharts/amcharts4-geodata/worldChinaLow'
 import { shallowRef } from 'vue'
 
 import {
@@ -166,9 +166,9 @@ import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
-import { chartTableDefaultPageSize, chartTableTopOptions, chartPieTableTopOptions } from '@/utils/constants'
+import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
-import { replaceUrlPlaceholder, getCapitalGeo } from '@/utils/tools'
+import { replaceUrlPlaceholder, getCapitalGeo, getGeoData } from '@/utils/tools'
 
 export default {
   name: 'Chart',
@@ -201,7 +201,10 @@ export default {
         currentPageData: [] // table当前页的数据
       },
       pieTableData: [],
-      singleValue: '-',
+      singleValue: {
+        value: '-',
+        icon: ''
+      },
       activeTab: '',
       statisticsData: [],
       orderPieTable: chartPieTableTopOptions[0].value,
@@ -371,10 +374,11 @@ export default {
         }
       } else if (this.isSingleValue) {
         if (chartParams) {
+          this.singleValue.icon = chartParams.icon
           const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
-              this.singleValue = response.data.result
+              this.singleValue.value = response.data.result
             }
           })
         }
@@ -395,7 +399,7 @@ export default {
     },
     initMap (id) {
       const chart = am4Core.create(id, am4Maps.MapChart)
-      chart.geodata = am4GeoDataWorldLow
+      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
       const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
       polygonSeries.useGeodata = true

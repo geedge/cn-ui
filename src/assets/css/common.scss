@@ -12,6 +12,7 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   cursor: default !important;
+  overflow: hidden;
 }
 
 /*---滚动条默认显示样式--*/
@@ -52,4 +53,10 @@ th *:first-letter,
 .option-popper *,
 .header__operations *:first-letter {
   text-transform: capitalize;
+}
+
+.outer-box {
+  padding: 10px;
+  height: 100%;
+  width: 100%;
 }

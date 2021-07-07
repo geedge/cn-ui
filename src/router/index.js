@@ -25,6 +25,10 @@ const routes = [
       {
         path: '/operationLog',
         component: () => import('@/views/settings/OperationLog')
+      },
+      {
+        path: '/entityExplorer',
+        component: () => import('@/views/entities/EntityExplorer')
       }
     ]
   }

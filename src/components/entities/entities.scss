@@ -1,0 +1,10 @@
+.cn-entities {
+  display: grid;
+  grid-template-rows: 32px auto;
+  grid-template-columns: 250px auto;
+  grid-gap: 10px 20px;
+  padding: 20px;
+  height: 100%;
+  width: 100%;
+  background-color: #fff;
+}
