@@ -194,6 +194,10 @@ const pieWithTable = {
     {
       type: 'pie',
       selectedMode: 'single',
+      itemStyle: {
+        borderRadius: 5,
+        borderWidth: 1
+      },
       radius: ['42%', '70%'],
       center: ['30%', '50%'],
       data: [],
