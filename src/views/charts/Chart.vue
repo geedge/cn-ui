@@ -417,7 +417,7 @@ export default {
       const self = this
       chartParams.valueColumn = this.orderPieTable
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
-      const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: this.endTime, limit: 10, order: this.orderPieTable } // 统计数据的查询参数
+      const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
