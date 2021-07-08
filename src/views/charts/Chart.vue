@@ -144,7 +144,7 @@ import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { shallowRef } from 'vue'
-
+import { allTableTitle } from '@/components/charts/chartTableTitle'
 import {
   isEcharts,
   isSingleValue,
@@ -467,13 +467,7 @@ export default {
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: this.table.limit, order: this.table.orderBy }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
-          const tableColumns = new Set()
-          response.data.result.forEach(d => {
-            Object.keys(d).forEach(k => {
-              tableColumns.add(k)
-            })
-          })
-          this.table.tableColumns = Array.from(tableColumns)
+          this.table.tableColumns = allTableTitle['tableTitles' + this.chart.id]
           this.table.tableData = response.data.result
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
         }
