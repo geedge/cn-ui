@@ -30,6 +30,7 @@
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
       <i class="cn-icon cn-icon-more-light"></i>
+      <i class="cn-icon cn-icon-refresh" @click="mapReload"></i>
     </template>
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
@@ -219,93 +220,8 @@ export default {
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
         this.myChart = this.initMap(`chart${this.chartInfo.id}`)
-        const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
         if (chartParams) {
-          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-            if (response.code === 200) {
-              const data = response.data.result
-              data.forEach(r => {
-                const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
-                const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
-                serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
-                serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
-                clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
-                clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
-              })
-              if (this.isMapLine) {
-                const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
-                const gradient = new am4Core.LinearGradient()
-                gradient.stops.push({ color: am4Core.color() })
-                gradient.stops.push({ color: am4Core.color() })
-                gradient.stops.push({ color: am4Core.color() })
-
-                const lineTemplate = lineSeries.mapLines.template
-                lineTemplate.stroke = am4Core.color('#A258EC')
-                lineTemplate.line.nonScalingStroke = true
-                lineTemplate.line.strokeDasharray = '4 3'
-                lineTemplate.nonScalingStroke = true
-                lineTemplate.arrow.nonScaling = true
-                lineTemplate.arrow.width = 4
-                lineTemplate.arrow.height = 6
-                lineSeries.data = [
-                  {
-                    multiGeoLine: data.map(d => {
-                      return [
-                        {
-                          latitude: parseFloat(d.serverLatitude),
-                          longitude: parseFloat(d.serverLongitude)
-                        },
-                        {
-                          latitude: parseFloat(d.clientLatitude),
-                          longitude: parseFloat(d.clientLongitude)
-                        }
-                      ]
-                    })
-                  }
-                ]
-
-                const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
-                imageSeries.dataFields.value = 'sessions'
-                const imageSeriesTemplate = imageSeries.mapImages.template
-                const circle = imageSeriesTemplate.createChild(am4Core.Circle)
-
-                circle.fillOpacity = 0.7
-                circle.nonScaling = true
-                circle.tooltipText = '{title}'
-                const radiusHeat = imageSeries.heatRules.push({
-                  target: circle,
-                  property: 'radius',
-                  min: 8,
-                  max: 30
-                })
-                const colorHeat = imageSeries.heatRules.push({
-                  target: circle,
-                  property: 'fill',
-                  min: am4Core.color('#D2A8FF'),
-                  max: am4Core.color('#A258EC')
-                })
-                imageSeriesTemplate.propertyFields.latitude = 'latitude'
-                imageSeriesTemplate.propertyFields.longitude = 'longitude'
-
-                const pointData = []
-                data.forEach(d => {
-                  pointData.push({
-                    ...d,
-                    latitude: parseFloat(d.serverLatitude),
-                    longitude: parseFloat(d.serverLongitude),
-                    title: this.getTitle(d)
-                  })
-                  pointData.push({
-                    ...d,
-                    latitude: parseFloat(d.clientLatitude),
-                    longitude: parseFloat(d.clientLongitude),
-                    title: this.getTitle(d)
-                  })
-                })
-                imageSeries.data = pointData
-              }
-            }
-          })
+          this.mapReload()
         }
       } else if (this.isEcharts) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
@@ -399,6 +315,95 @@ export default {
       const hs = polygonTemplate.states.create('hover')
       hs.properties.fill = am4Core.color('#ccc') */
       return chart
+    },
+    mapReload () {
+      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          const data = response.data.result
+          data.forEach(r => {
+            const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
+            const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
+            serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
+            serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
+            clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
+            clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
+          })
+          if (this.isMapLine) {
+            const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
+            const gradient = new am4Core.LinearGradient()
+            gradient.stops.push({ color: am4Core.color() })
+            gradient.stops.push({ color: am4Core.color() })
+            gradient.stops.push({ color: am4Core.color() })
+
+            const lineTemplate = lineSeries.mapLines.template
+            lineTemplate.stroke = am4Core.color('#A258EC')
+            lineTemplate.line.nonScalingStroke = true
+            lineTemplate.line.strokeDasharray = '4 3'
+            lineTemplate.nonScalingStroke = true
+            lineTemplate.arrow.nonScaling = true
+            lineTemplate.arrow.width = 4
+            lineTemplate.arrow.height = 6
+            lineSeries.data = [
+              {
+                multiGeoLine: data.map(d => {
+                  return [
+                    {
+                      latitude: parseFloat(d.serverLatitude),
+                      longitude: parseFloat(d.serverLongitude)
+                    },
+                    {
+                      latitude: parseFloat(d.clientLatitude),
+                      longitude: parseFloat(d.clientLongitude)
+                    }
+                  ]
+                })
+              }
+            ]
+
+            const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+            imageSeries.dataFields.value = 'sessions'
+            const imageSeriesTemplate = imageSeries.mapImages.template
+            const circle = imageSeriesTemplate.createChild(am4Core.Circle)
+
+            circle.fillOpacity = 0.7
+            circle.nonScaling = true
+            circle.tooltipText = '{title}'
+            const radiusHeat = imageSeries.heatRules.push({
+              target: circle,
+              property: 'radius',
+              min: 8,
+              max: 30
+            })
+            const colorHeat = imageSeries.heatRules.push({
+              target: circle,
+              property: 'fill',
+              min: am4Core.color('#D2A8FF'),
+              max: am4Core.color('#A258EC')
+            })
+            imageSeriesTemplate.propertyFields.latitude = 'latitude'
+            imageSeriesTemplate.propertyFields.longitude = 'longitude'
+
+            const pointData = []
+            data.forEach(d => {
+              pointData.push({
+                ...d,
+                latitude: parseFloat(d.serverLatitude),
+                longitude: parseFloat(d.serverLongitude),
+                title: this.getTitle(d)
+              })
+              pointData.push({
+                ...d,
+                latitude: parseFloat(d.clientLatitude),
+                longitude: parseFloat(d.clientLongitude),
+                title: this.getTitle(d)
+              })
+            })
+            imageSeries.data = pointData
+          }
+        }
+      })
     },
     pageJump (val) {
       this.table.currentPageData = this.getTargetPageData(val, this.table.pageSize, this.table.tableData)
