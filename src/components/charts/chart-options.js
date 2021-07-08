@@ -4,6 +4,7 @@
  * @description chart option和一些工具
 */
 import { format } from 'echarts'
+import { shortFormatter } from './chartFormatter'
 import _ from 'lodash'
 export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
   '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
@@ -20,9 +21,7 @@ const line = {
       width: '20px',
       overflow: 'truncate'
     },
-    // formatter: () =>{
-    //   return '1'
-    // }
+    formatter: axiosFormatter,
     className: 'nz-chart-tooltip',
     extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
   },
@@ -30,7 +29,11 @@ const line = {
     type: 'time'
   },
   yAxis: {
-    type: 'value'
+    type: 'value',
+    axisLabel: {
+      formatter: shortFormatter
+    }
+
   },
   animation: false,
   grid: {
@@ -74,9 +77,7 @@ const lineWithStatistics = {
       width: '20px',
       overflow: 'truncate'
     },
-    // formatter: () =>{
-    //   return '1'
-    // }
+    formatter: axiosFormatter,
     className: 'nz-chart-tooltip',
     extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
   },
@@ -85,7 +86,11 @@ const lineWithStatistics = {
   },
   animation: false,
   yAxis: {
-    type: 'value'
+    type: 'value',
+    axisLabel: {
+      formatter: shortFormatter
+    }
+
   },
   color: chartColor,
   grid: {
@@ -117,9 +122,7 @@ const lineStack = {
       width: '20px',
       overflow: 'truncate'
     },
-    // formatter: () =>{
-    //   return '1'
-    // }
+    formatter: axiosFormatter,
     className: 'nz-chart-tooltip',
     extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
   },
@@ -128,7 +131,11 @@ const lineStack = {
   },
   color: chartColor,
   yAxis: {
-    type: 'value'
+    type: 'value',
+    axisLabel: {
+      formatter: shortFormatter
+    }
+
   },
   grid: {
     left: 55,
@@ -181,11 +188,12 @@ const pieWithTable = {
     itemHeight: 10, // 设置高度
     itemGap: 20,
     selectedMode: false,
-    formatter: tooLongFormatter
+    // formatter: tooLongFormatter
   },
   series: [
     {
       type: 'pie',
+      selectedMode: 'single',
       radius: ['42%', '70%'],
       center: ['30%', '50%'],
       data: [],
@@ -293,6 +301,26 @@ export function getLayout (type) {
 function tooLongFormatter (name) {
   return format.truncateText(name, 110, '12')
 }
-// function axiosFormatter(params) {
-//
-// }
+function axiosFormatter (params) {
+  let str = '<div>'
+  const sum = 0
+  params.forEach((item, i) => {
+    const tData = item.data[0]
+    if (i === 0) {
+      str += '<div style="margin-bottom: 5px">'
+      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += '</div>'
+    }
+    str += '<div class="cn-chart-tooltip-box">'
+    str += item.marker
+    str += `<span class="cn-chart-tooltip-content"> 
+        ${item.seriesName}
+    </span>`
+    str += `<span class="cn-chart-tooltip-value">
+        ${shortFormatter(item.data[1])}
+    </span>`
+    str += '</div>'
+  })
+  str += '</div>'
+  return str
+}

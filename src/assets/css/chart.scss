@@ -1,13 +1,21 @@
-.nz-chart-tooltip > div > div:nth-of-type(1) > div:nth-of-type(2) > div > div:nth-of-type(1){
+.nz-chart-tooltip .cn-chart-tooltip-box{
   display: flex;
-  span {
-    float: none;
-  }
-  > span:nth-of-type(2){
+  .cn-chart-tooltip-content{
     flex: 1;
     display: inline-block;
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
+    font-size:14px;
+    color:#666;
+    font-weight:400;
+    margin-left:2px ;
+  }
+  .cn-chart-tooltip-value{
+    float:right;
+    margin-left:20px;
+    font-size:14px;
+    color:#666;
+    font-weight:900;
   }
 }

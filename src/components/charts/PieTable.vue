@@ -1,16 +1,21 @@
 <template>
     <el-table
             v-loading="loading"
+            ref="table"
             class="pie-table"
-            :data="tableData"
+            :data="pieTableData"
             style="width: 100%;border: 1px solid #E7EAED"
+            :row-key="getRowKey"
+            @expand-change="currentChange"
+            current-row-key="domain"
+            :expand-row-keys="expandRowKeys"
             :size="'mini'"
             :height="'100%'">
         <el-table-column type="expand" :min-width="'5%'">
-            <template #default="props">
+            <template #default="props" style="height: auto">
                 <el-table
                         class="expand-table"
-                        :data=" props.row.children"
+                        :data="childrenTableData"
                         style="width: 100%;"
                         :show-header="false"
                         :size="'mini'"
@@ -19,11 +24,21 @@
                             min-width="5%">
                     </el-table-column>
                     <el-table-column
-                            v-for="(item, index) in tableTitles"
+                            v-for="(item, index) in tableTitlesOther"
                             :key="index"
                             :min-width="item.width"
                             :label="item.label"
-                            :prop="item.prop">
+                            :prop="item.prop"
+                            #default="{row}">
+            <span v-if="item.prop === 'nameColumn'">
+                {{nameColumn === 'fqdnCategoryName' ? row['fqdnCategoryName'] : row['reputationLevel'] }}
+            </span>
+                        <span v-else-if="item.prop === 'bytes' || item.prop === 'packets' || item.prop === 'sessions'" >
+                {{shortFormatter(row[item.prop])}}
+            </span>
+                        <span v-else>
+                {{row[item.prop]}}
+            </span>
                     </el-table-column>
                 </el-table>
             </template>
@@ -33,28 +48,70 @@
                 :key="index"
                 :min-width="item.width"
                 :label="item.label"
-                :prop="item.prop">
+                :prop="item.prop"
+                #default="{row}">
+            <span v-if="item.prop === 'nameColumn'">
+                {{nameColumn === 'fqdnCategoryName' ? row['categoryName'] : row['reputationLevel'] }}
+            </span>
+            <span v-else-if="item.prop === 'bytes' || item.prop === 'packets' || item.prop === 'sessions'" >
+                {{shortFormatter(row[item.prop])}}
+            </span>
+            <span v-else>
+                {{row[item.prop]}}
+            </span>
         </el-table-column>
     </el-table>
 </template>
 
 <script>
+import { shortFormatter } from '@/components/charts/chartFormatter'
+import { get } from '@/utils/http'
+import { replaceUrlPlaceholder } from '@/utils/tools'
 export default {
   name: 'PieTable',
   props: {
-    tableData: Array
+    tableData: Array,
+    chartInfo: Object,
+    order: String,
+    startTime: {
+      type: Number
+    },
+    endTime: {
+      type: Number
+    }
   },
   watch: {
     tableData: {
       deep: true,
       immediate: true,
       handler (n) {
+        this.pieTableData = JSON.parse((JSON.stringify(n)))
+        this.pieTableData.forEach(item => {
+          item.children = []
+        })
+      }
+    },
+    pieTableData: {
+      handler (n) {
+      }
+    },
+    chartInfo: {
+      deep: true,
+      immediate: true,
+      handler (n) {
+        if (n && n.params) {
+          this.nameColumn = JSON.parse(n.params).nameColumn
+        }
       }
     }
   },
   data () {
     return {
       loading: false,
+      nameColumn: '',
+      pieTableData: [],
+      childrenTableData: [],
+      expandRowKeys: [],
       tableTitles: [
         {
           label: this.$t('chart.pieTable.domain'),
@@ -62,30 +119,92 @@ export default {
           width: '20%'
         },
         {
+          label: this.$t('chart.pieTable.nameColumn'),
+          prop: 'nameColumn',
+          width: '22%'
+        },
+        {
           label: this.$t('chart.pieTable.sessions'),
           prop: 'sessions',
-          width: '25%'
+          width: '18%'
         },
         {
           label: this.$t('chart.pieTable.packets'),
           prop: 'packets',
-          width: '25%'
+          width: '18%'
         },
         {
           label: this.$t('chart.pieTable.bytes'),
           prop: 'bytes',
-          width: '25%'
+          width: '18%'
+        }
+      ],
+      tableTitlesOther: [
+        {
+          label: this.$t('chart.pieTable.serverIp'),
+          prop: 'serverIp',
+          width: '20%'
+        },
+        {
+          label: this.$t('chart.pieTable.nameColumn'),
+          prop: 'nameColumn',
+          width: '22%'
+        },
+        {
+          label: this.$t('chart.pieTable.sessions'),
+          prop: 'sessions',
+          width: '18%'
+        },
+        {
+          label: this.$t('chart.pieTable.packets'),
+          prop: 'packets',
+          width: '18%'
+        },
+        {
+          label: this.$t('chart.pieTable.bytes'),
+          prop: 'bytes',
+          width: '18%'
         }
       ]
+    }
+  },
+  methods: {
+    shortFormatter: shortFormatter,
+    // rowChange (echartParams) {
+    //   const nameColumnKey = this.nameColumn === 'fqdnCategoryName' ? 'categoryName' : 'reputationLevel'
+    //   const row = this.pieTableData.find(item => echartParams.name === item[nameColumnKey])
+    //   this.toggleRowExpansion(row)
+    // },
+    // toggleRowExpansion (row) {
+    //   this.$refs.table.toggleRowExpansion(row)
+    // },
+    currentChange (row, expandedRows) {
+      if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
+        this.expandRowKeys = []
+      } else {
+        this.expandRowKeys = [row.domain]
+      }
+
+      // this.$refs.table.toggleRowExpansion(row)
+      const url = JSON.parse(this.chartInfo.params).urlChildrenTable
+      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), order: this.order, domain: row.domain }
+      get(replaceUrlPlaceholder(url, queryParams)).then(response2 => {
+        if (response2.code === 200) {
+          this.childrenTableData = response2.data.result
+        }
+      })
+    },
+    getRowKey (row) {
+      return row.domain
     }
   }
 }
 </script>
 
-<style scoped>
-/deep/ .el-table__expanded-cell[class*=cell]{
-    padding: 0;
-}
+<style scoped lang="scss">
+    /deep/ .el-table__expanded-cell[class*=cell]{
+        padding: 0;
+    }
     .expand-table /deep/ .el-table__body .el-table__row:last-of-type td{
         border: none;
     }
@@ -98,5 +217,8 @@ export default {
     .expand-table{
         font-weight: 400;
         color: #606266;
+        /deep/ .el-table__body-wrapper{
+            height: auto !important;
+        }
     }
 </style>

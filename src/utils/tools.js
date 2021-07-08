@@ -433,7 +433,7 @@ export function getCapitalGeo (countryId) {
   return data[countryId]
 }
 
-export function JSONParse (data) {
+function JSONParse (data) {
   const firstParse = JSON.parse(data)
   if (typeof firstParse === 'string') {
     return JSON.parse(firstParse)

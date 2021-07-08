@@ -44,21 +44,22 @@
   >
     <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
-      <span v-if="isEchartsWithTable">
+    </template>
+    <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
+      <div class="header__operation header__operation--table">
         <el-select
                 size="mini"
-                v-model="table.limit"
+                v-model="orderPieTable"
                 class="option__select select-topn"
                 placeholder=""
                 popper-class="option-popper"
+                @change="orderPieTableChange"
         >
-          <el-option v-for="item in chartTableTopOptions" :key="item" :value="item">TOP&nbsp;{{item}}</el-option>
+          <el-option v-for="item in chartPieTableTopOptions" :key="item.value" :value="item.value">&nbsp{{item.name}}</el-option>
           <template #prefix>TOP&nbsp;</template>
         </el-select>
-      </span>
-    </template>
-    <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
-      <i class="cn-icon cn-icon-more-light"></i>
+      </div>
+      <i class="cn-icon cn-icon-more-light margin-l-10"></i>
     </template>
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
@@ -66,7 +67,7 @@
     <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{}">
       <!-- 带Table的饼图，展示Table -->
       <template v-if="isEchartsWithTable">
-        <pie-table :tableData="pieTableData" ref="pieTable"/>
+        <pie-table :tableData="pieTableData" ref="pieTable" :chartInfo="chartInfo" :start-time="startTime" :end-time="endTime" :order="orderPieTable"/>
       </template>
       <template v-else-if="isEchartsWithStatistics">
         <statistics-legend :data="statisticsData"></statistics-legend>
@@ -102,6 +103,7 @@
             class="option__select select-topn"
             placeholder=""
             popper-class="option-popper"
+            @change="tabelLimtChange"
         >
           <el-option v-for="item in chartTableTopOptions" :key="item" :value="item">TOP&nbsp;{{item}}</el-option>
           <template #prefix>TOP&nbsp;</template>
@@ -114,6 +116,7 @@
             class="option__select select-column"
             :placeholder="$t('common.field')"
             popper-class="option-popper"
+            @change="tabelLimtChange"
         >
           <el-option v-for="item in table.tableColumns" :key="item" :value="item">{{item}}</el-option>
         </el-select>
@@ -140,7 +143,6 @@
 import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
-import am4GeoDataWorldLow from '@amcharts/amcharts4-geodata/worldChinaLow'
 import { shallowRef } from 'vue'
 
 import {
@@ -166,9 +168,9 @@ import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
-import { chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
+import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
-import { replaceUrlPlaceholder, getCapitalGeo } from '@/utils/tools'
+import { replaceUrlPlaceholder, getCapitalGeo, getGeoData } from '@/utils/tools'
 
 export default {
   name: 'Chart',
@@ -195,7 +197,7 @@ export default {
       table: {
         pageSize: chartTableDefaultPageSize,
         limit: chartTableTopOptions[0], // top-n
-        orderBy: '',
+        orderBy: 'sessions',
         tableColumns: [], // table字段
         tableData: [], // table的所有数据
         currentPageData: [] // table当前页的数据
@@ -206,11 +208,14 @@ export default {
         icon: ''
       },
       activeTab: '',
-      statisticsData: []
+      statisticsData: [],
+      orderPieTable: chartPieTableTopOptions[0].value,
+      selectPieChartName: ''
     }
   },
   methods: {
     initChart () {
+      const self = this
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
         this.myChart = this.initMap(`chart${this.chartInfo.id}`)
@@ -307,41 +312,7 @@ export default {
         this.myChart = echarts.init(dom)
         if (chartParams) {
           if (this.isEchartsWithTable) {
-            const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10 } // 统计数据的查询参数
-            const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: this.endTime, limit: 10 } // 统计数据的查询参数
-            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-              if (response.code === 200) {
-                const data = response.data.result
-                this.chartOption.series[0].data = data.map(d => {
-                  return {
-                    data: d,
-                    name: d[chartParams.nameColumn],
-                    value: parseInt(d[chartParams.valueColumn])
-                  }
-                })
-                if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
-                  this.chartOption.legend.type = 'scroll'
-                }
-                this.myChart.setOption(this.chartOption)
-                this.$nextTick(() => {
-                  this.myChart.resize()
-                })
-                tableQueryParams[chartParams.nameColumn] = data[0][chartParams.nameColumn]
-                get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
-                  if (response2.code === 200) {
-                    this.pieTableData = response2.data.result
-                  }
-                })
-              }
-            })
-
-            this.myChart.on('click', function (echartParams) {
-              get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response => {
-                if (response.code === 200) {
-                  this.pieTableData = response.data.result
-                }
-              })
-            })
+            this.chartWithPieTableInit(chartParams)
           } else if (this.isEchartsWithStatistics) {
             const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
@@ -387,21 +358,7 @@ export default {
         }
       } else if (this.isTable) {
         if (chartParams) {
-          const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 100, order: 'sessions' }
-          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-            if (response.code === 200) {
-              const tableColumns = new Set()
-              response.data.result.forEach(d => {
-                Object.keys(d).forEach(k => {
-                  tableColumns.add(k)
-                })
-              })
-              this.table.tableColumns = tableColumns
-              this.table.tableData = response.data.result
-              this.table.orderBy = this.table.tableColumns[0]
-              this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
-            }
-          })
+          this.initChartTable(chartParams)
         }
       } else if (this.isSingleValue) {
         if (chartParams) {
@@ -430,7 +387,7 @@ export default {
     },
     initMap (id) {
       const chart = am4Core.create(id, am4Maps.MapChart)
-      chart.geodata = am4GeoDataWorldLow
+      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
       const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
       polygonSeries.useGeodata = true
@@ -448,6 +405,84 @@ export default {
     },
     getTargetPageData (pageNum, pageSize, tableData) {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
+    },
+    orderPieTableChange () {
+      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      this.myChart.off('click')
+      this.chartWithPieTableInit(chartParams)
+    },
+    chartWithPieTableInit (chartParams) {
+      const self = this
+      chartParams.valueColumn = this.orderPieTable
+      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
+      const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: this.endTime, limit: 10, order: this.orderPieTable } // 统计数据的查询参数
+      tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          const data = response.data.result
+          this.chartOption.series[0].data = data.map(d => {
+            if (chartParams.nameColumn === 'fqdnCategoryName') {
+              tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
+            }
+            return {
+              data: d,
+              name: d[chartParams.nameColumn],
+              value: parseInt(d[chartParams.valueColumn])
+            }
+          })
+          if (tableQueryParams[chartParams.nameColumn].length) {
+            // tableQueryParams[chartParams.nameColumn] = JSON.stringify(tableQueryParams[chartParams.nameColumn])
+          }
+          if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
+            this.chartOption.legend.type = 'scroll'
+          }
+          this.myChart.setOption(this.chartOption)
+          this.$nextTick(() => {
+            this.myChart.resize()
+          })
+          get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
+            if (response2.code === 200) {
+              this.pieTableData = response2.data.result
+            }
+          })
+        }
+      })
+
+      this.myChart.on('click', function (echartParams) {
+        const childrenParams = { startTime: parseInt(self.startTime / 1000), endTime: parseInt(self.endTime / 1000), limit: 10 }
+        childrenParams[chartParams.nameColumn] = echartParams.name
+        if (self.selectPieChartName === echartParams.name) {
+          self.selectPieChartName = ''
+          childrenParams[chartParams.nameColumn] = tableQueryParams[chartParams.nameColumn]
+        } else {
+          self.selectPieChartName = echartParams.name
+        }
+        get(replaceUrlPlaceholder(chartParams.urlTable, childrenParams)).then(response2 => {
+          if (response2.code === 200) {
+            self.pieTableData = response2.data.result
+          }
+        })
+      })
+    },
+    tabelLimtChange () {
+      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      this.initChartTable(chartParams)
+    },
+    initChartTable (chartParams) {
+      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: this.table.limit, order: this.table.orderBy }
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          const tableColumns = new Set()
+          response.data.result.forEach(d => {
+            Object.keys(d).forEach(k => {
+              tableColumns.add(k)
+            })
+          })
+          this.table.tableColumns = Array.from(tableColumns)
+          this.table.tableData = response.data.result
+          this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
+        }
+      })
     }
   },
   computed: {
@@ -470,6 +505,7 @@ export default {
       chartInfo,
       layoutConstant,
       chartTableTopOptions,
+      chartPieTableTopOptions,
       chartOption: getOption(props.chart.type),
       isEcharts: isEcharts(props.chart.type),
       isEchartsWithTable: isEchartsWithTable(props.chart.type),

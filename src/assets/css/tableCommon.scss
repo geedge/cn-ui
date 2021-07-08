@@ -44,7 +44,7 @@
       height: 44px;
       background-color: white;
       border: 1px solid #E6EAED;
-      
+
     }
 
     .top-tool-right {
@@ -134,7 +134,7 @@
         color: #666666;
         font-size: 14px;
         text-align: center;
-        
+
         line-height: 40px;
 
         &.sub-list-tab--active {
@@ -156,7 +156,7 @@
     background-color: #e6eaed;
     position: absolute;
     z-index: 1;
-    
+
     user-select: none;
     color: #5f6368;
     cursor: ns-resize;
@@ -188,7 +188,7 @@
     position: relative;
     padding: 0 20px;
     width: 100%;
-    
+
     flex: auto;
     height: calc(100% - 58px);
 
@@ -356,7 +356,7 @@
   left: 270px !important;
   margin-top: -3px !important;
   box-shadow: none;
-  
+
   border-radius: 0;
   border-color: #c7c7c7;
 
@@ -390,4 +390,7 @@
 }
 .margin-r-20{
   margin-right: 20px;
+}
+.margin-l-10{
+  margin-left: 10px;
 }

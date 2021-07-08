@@ -97,7 +97,6 @@ export default {
       immediate: true,
       deep: true,
       handler (n) {
-        console.info(n)
       }
     }
   },
