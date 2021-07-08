@@ -421,18 +421,13 @@ export default {
         if (response.code === 200) {
           const data = response.data.result
           this.chartOption.series[0].data = data.map(d => {
-            if (chartParams.nameColumn === 'fqdnCategoryName') {
-              tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
-            }
+            tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
             return {
               data: d,
               name: d[chartParams.nameColumn],
               value: parseInt(d[chartParams.valueColumn])
             }
           })
-          if (tableQueryParams[chartParams.nameColumn].length) {
-            // tableQueryParams[chartParams.nameColumn] = JSON.stringify(tableQueryParams[chartParams.nameColumn])
-          }
           if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
             this.chartOption.legend.type = 'scroll'
           }
