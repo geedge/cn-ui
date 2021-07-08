@@ -46,7 +46,7 @@
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </template>
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
-      <div class="header__operation header__operation--table">
+      <div class="header__operation header__operation--table" v-if="chart.type === 31">
         <el-select
                 size="mini"
                 v-model="orderPieTable"
@@ -407,9 +407,11 @@ export default {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
     orderPieTableChange () {
-      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
-      this.myChart.off('click')
-      this.chartWithPieTableInit(chartParams)
+      if (this.chart.type === 31) {
+        const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+        this.myChart.off('click')
+        this.chartWithPieTableInit(chartParams)
+      }
     },
     chartWithPieTableInit (chartParams) {
       const self = this
