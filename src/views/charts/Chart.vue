@@ -46,7 +46,7 @@
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </template>
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
-      <div class="header__operation header__operation--table">
+      <div class="header__operation header__operation--table" v-if="chart.type === 31">
         <el-select
                 size="mini"
                 v-model="orderPieTable"
@@ -118,7 +118,7 @@
             popper-class="option-popper"
             @change="tabelLimtChange"
         >
-          <el-option v-for="item in table.tableColumns" :key="item" :value="item">{{item}}</el-option>
+          <el-option v-for="item in table.tableColumns" :key="item.prop" :value="item.prop">{{item.prop}}</el-option>
         </el-select>
       </div>
 <!--      <div class="header__operation header__operation&#45;&#45;table">
@@ -144,7 +144,7 @@ import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { shallowRef } from 'vue'
-
+import { allTableTitle } from '@/components/charts/chartTableTitle'
 import {
   isEcharts,
   isSingleValue,
@@ -408,32 +408,29 @@ export default {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
     orderPieTableChange () {
-      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
-      this.myChart.off('click')
-      this.chartWithPieTableInit(chartParams)
+      if (this.chart.type === 31) {
+        const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+        this.myChart.off('click')
+        this.chartWithPieTableInit(chartParams)
+      }
     },
     chartWithPieTableInit (chartParams) {
       const self = this
       chartParams.valueColumn = this.orderPieTable
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
-      const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: this.endTime, limit: 10, order: this.orderPieTable } // 统计数据的查询参数
+      const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           const data = response.data.result
           this.chartOption.series[0].data = data.map(d => {
-            if (chartParams.nameColumn === 'fqdnCategoryName') {
-              tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
-            }
+            tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
             return {
               data: d,
               name: d[chartParams.nameColumn],
               value: parseInt(d[chartParams.valueColumn])
             }
           })
-          if (tableQueryParams[chartParams.nameColumn].length) {
-            // tableQueryParams[chartParams.nameColumn] = JSON.stringify(tableQueryParams[chartParams.nameColumn])
-          }
           if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
             this.chartOption.legend.type = 'scroll'
           }
@@ -473,13 +470,7 @@ export default {
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: this.table.limit, order: this.table.orderBy }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
-          const tableColumns = new Set()
-          response.data.result.forEach(d => {
-            Object.keys(d).forEach(k => {
-              tableColumns.add(k)
-            })
-          })
-          this.table.tableColumns = Array.from(tableColumns)
+          this.table.tableColumns = allTableTitle['tableTitles' + this.chart.id]
           this.table.tableData = response.data.result
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
         }

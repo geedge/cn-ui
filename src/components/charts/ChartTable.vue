@@ -23,10 +23,18 @@
             v-for="(c, i) in tableColumns"
             show-overflow-tooltip
             :key="i"
-            :prop="c"
+            :label="c.label"
+            :prop="c.prop"
         >
-          <template #header>{{c}}</template>
-          <template #default="{ row }">{{row[c]}}</template>
+          <template #header>{{c.label}}</template>
+          <template #default="{ row }">{{}}
+            <span v-if="c.prop === 'bytes' || c.prop === 'packets' || c.prop === 'sessions'" >
+                {{shortFormatter(row[c.prop])}}
+            </span>
+            <span v-else>
+                {{row[c.prop]}}
+            </span>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -37,11 +45,15 @@
 </template>
 
 <script>
+import { shortFormatter } from '@/components/charts/chartFormatter'
 export default {
   name: 'ChartTable',
   props: {
     tableColumns: Array,
     tableData: Array
+  },
+  methods: {
+    shortFormatter: shortFormatter
   }
 }
 </script>
