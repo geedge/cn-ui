@@ -6,79 +6,17 @@
       <div class="char-table-max blue-button">Maximum</div>
     </div>
     <div class="char__table-bottom">
-      <div class="char__table-bottom-box">
         <div class="box__color" >
-          <p v-for="i in chartColor" :style="{'background':i}" :key="i" title="5370C6
-
-#90CC74
-
-#FAC858
-
-#EE6666
-
-#73BFDE
-
-#3BA172
-
-#FC8452
-
-#9960B4
-
-#E97CCC
-
-#FEA69E
-
-#0F8AB2
-
-#57CBAC
-
-#5888BC
-
-#63B6AC
-
-#EDC6B2
-
-">{{i}}</p>
+          <p v-for="i in chartColor" :style="{'background':i}" :key="i" :title="i"></p>
         </div>
         <div class="box__text">
-          <p title="yyq-ios-yandex-2.yyq-tcp_dstport.yyq-instagram-001
-
-yyq-ios-yandex-2.yyq-tcp_dstport.yyq-instagram-001.lyf-ssl.handshake.extensions_server_name-baidu
-
-yyq-ios-yandex-2.yyq-tcp_dstport.yyq-instagram-001.fwh-app-test.yyq-正则-yandex.ru
-
-yyq-ios-yandex-2.yyq-tcp_dstport.yyq-instagram-001.yyq-twitter-002.yyq-twitter-003
-
-yyq-ios-yandex-2.yyq-tcp_dstport.yyq-instagram-001.yyq-twitter-003
-
-yyq-ios-yandex-2.yyq-tcp_dstport.yyq-instagram-001.yyq-youtube-c2s-首包.yyq-skype-001.zw_test.app.abc.
-
-yyq-源or目的IP.yyq-ios-yandex-2.yyq-tcp_dstport.yyq-instagram-001.lyf-s" v-for="s in data" :key="s">{{s.legend}}</p>
+          <p v-for="s in data" :key="s" :title="s.legend">{{s.legend}}</p>
         </div>
-      </div>
       <div class="char__table-bottom-min">
-        <p  v-for="item in data" :key="item">{{item.aggregation.avg}}</p>
+        <p  v-for="item in data" :key="item" :title="item.aggregation.avg">{{item.aggregation.avg}}</p>
        </div>
       <div class="char__table-bottom-max">
-        <p  v-for="items in data" :key="items" title="16764
-
-16610
-
-22181
-
-12036
-
-15723
-
-45856
-
-13721
-
-23309
-
-26498
-
-17562">{{items.aggregation.max}}</p>
+        <p  v-for="items in data" :key="items" :title="items.aggregation.max">{{items.aggregation.max}}</p>
       </div>
     </div>
   </div>
@@ -97,6 +35,7 @@ export default {
       immediate: true,
       deep: true,
       handler (n) {
+        console.log(n)
       }
     }
   },
@@ -111,39 +50,45 @@ export default {
 
 <style scoped>
 .char__table{
-  width: 513px;
-  height: 127px;
-  border:#cccccc 1px solid;
+  width: 455px;
+  height: 111px;
+  border: 1px solid #E7EAED;
   font-size: 10px;
   color:#5f6368;
   margin: auto;
 }
 .char__table-top{
   position: relative;
-  width: 513px;
-  height: 35px;
+  width: 455px;
+  height: 30px;
   line-height: 35px;
   display: flex;
-  border-bottom: #cccccc 1px solid;
+  border-bottom: #E7EAED 1px solid;
 }
 .blue-button{
-  color: deepskyblue;
   position:absolute;
-  right: 44px;
-  top: 2px;
+  right: 20px;
+  top: -3px;
+  font-family: Roboto-Regular;
+  font-size: 14px;
+  color: #0091FF;
+  font-weight: 400;
 
 }
 .blue-top{
-color: deepskyblue;
   position:absolute;
-  right: 143px;
-  top: 2px;
+  right: 125px;
+  top: -3px;
+  font-family: Roboto-Regular;
+  font-size: 14px;
+  color: #0091FF;
+  font-weight: 400;
 }
 .char__table-bottom{
   position: relative;
   color: #5f6368;
-  width: 390px;
-  height: 80px;
+  width: 455px;
+  height: 75px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -151,29 +96,25 @@ color: deepskyblue;
 }
 .char__table-bottom-max{
   position:absolute;
-  width: 170px;
+  width: 46px;
   height: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  right: -44px;
-  top: 2px;
+  right: 122px;
+  top: -4px;
+  overflow: scroll;
+}
+.char__table-bottom-max::-webkit-scrollbar{
+  display: none;
 }
 .char__table-bottom-min{
   position:absolute;
-  width: 170px;
+  width: 66px;
   height: 100%;
-  right: -140px;
-  top: 2px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  right: 16px;
+  top: -4px;
+  overflow: scroll;
 }
-.char__table-bottom-box{
-  width: 97px;
-  height: 100%;
-  display: flex;
-  justify-content: space-around;
+.char__table-bottom-min::-webkit-scrollbar{
+  display: none;
 }
 .box__color{
   width: 30px;
@@ -182,19 +123,31 @@ color: deepskyblue;
   left: 22px;
   top: 2px;
   box-sizing: border-box;
-  margin-top: 2px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  margin-top: -4px;
+  overflow: scroll;
+}
+.box__color::-webkit-scrollbar{
+  display: none;
+}
+.box__color>p{
+  width: 17px;
+  height: 7px;
+  border-radius: 24%;
+  margin-top: 17px;
 }
 .box__text{
   position:absolute;
   left: 58px;
   top: 2px;
-  width: 47px;
+  width: 106px;
   height: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow: scroll;
+}
+.box__text>p{
+  margin-top: 5px;
+  width: 115px;
+}
+.box__text::-webkit-scrollbar{
+  display: none;
 }
 </style>
