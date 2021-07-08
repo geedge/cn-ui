@@ -215,7 +215,6 @@ export default {
   },
   methods: {
     initChart () {
-      consoe.lod(a)
       const self = this
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
