@@ -7,10 +7,10 @@
     <div class="legend__table">
       <table>
         <tr v-for="(d, i) in data" :key="i" class="legend__row">
-          <td><div :style="{backgroundColor: getChartColor(i)}" class="legend__row-top" :title="getChartColor(i)"></div></td>
+          <td style="width: 40px;"><div :style="{backgroundColor: getChartColor(i)}" class="legend__row-top" :title="getChartColor(i)"></div></td>
           <td><div class="text__show" :title="d.legend">{{d.legend}}</div></td>
-          <td><div :title="d.aggregation.avg" class="legend__row-left">{{d.aggregation.avg}}</div></td>
-          <td><div :title="d.aggregation.max" class="legend__row-right">{{d.aggregation.max}}</div></td>
+          <td style="width: 70px;"><div :title="d.aggregation.avg">{{d.aggregation.avg}}</div></td>
+          <td style="width: 70px;"><div :title="d.aggregation.max">{{d.aggregation.max}}</div></td>
         </tr>
       </table>
     </div>
@@ -38,12 +38,13 @@ export default {
   setup () {
     return {
       getChartColor,
-      chartColor }
+      chartColor
+    }
   }
 }
 
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .chart__legend{
   width: 455px;
   height: 111px;
@@ -52,8 +53,8 @@ export default {
   color:#5f6368;
   margin: auto;
 }
-.text__show{
-  width: 50px;
+.text__show {
+  max-width: 240px;
   overflow: hidden;
   text-overflow:ellipsis;
   white-space: nowrap;
@@ -66,21 +67,17 @@ export default {
 }
 .location{
   position: absolute;
-  right: 138px;
+  right: 110px;
   top: -9px;
-  font-family: Roboto-Regular;
-  font-size: 14px;
+  font-size: 13px;
   color: #0091FF;
-  font-weight: 400;
 }
 .locations{
   position: absolute;
-  right: 29px;
+  right: 25px;
   top: -8px;
-  font-family: Roboto-Regular;
-  font-size: 14px;
+  font-size: 13px;
   color: #0091FF;
-  font-weight: 400;
 }
 .legend__row-top{
   width: 17px;
@@ -90,7 +87,11 @@ export default {
 }
 .legend__table {
   overflow: auto;
-  height: calc(100% - 30px)
+  height: calc(100% - 30px);
+
+  table {
+    width: 100%;
+  }
 }
 .legend__row{
   font-size: 12px;
@@ -98,13 +99,7 @@ export default {
 }
 .legend__row:hover {
   background-color: #f9f9f9;
-  border: 0px;
+  border: 0;
   color: #383838;
-}
-.legend__row-right{
-margin-left: 60px;
-}
-.legend__row-left{
-  margin-left: 178px;
 }
 </style>
