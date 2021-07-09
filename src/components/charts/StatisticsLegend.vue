@@ -9,12 +9,12 @@
     <div class="chart__table-below">
       <div v-for="(item,index) in data" :key="index" class="table-below-box">
         <div class="table-below-account">
-        <div :style="{backgroundColor: getChartColor(index)}" class="table__below-color"></div>
-        <div class="table__below-title">{{item.legend}}</div>
+        <div :style="{backgroundColor: getChartColor(index)}" class="table__below-color" :title="getChartColor(index)"></div>
+        <div class="table__below-title" :title="item.legend">{{item.legend}}</div>
         </div>
         <div class="table__below-flashback">
-          <div  class="table__below-max">{{item.aggregation.max}}</div>
-          <div class="table__below-avg">{{item.aggregation.avg}}</div>
+          <div class="table__below-max qq"  :title="item.aggregation.max">{{item.aggregation.max}}</div>
+          <div class="table__below-avg qq" :title="item.aggregation.avg">{{item.aggregation.avg}}</div>
         </div>
       </div>
     </div>
@@ -35,7 +35,6 @@ export default {
       immediate: true,
       deep: true,
       handler (n) {
-        console.log(n)
       }
     }
   },
@@ -77,8 +76,8 @@ export default {
 }
 .chart__table-below{
   width: 455px;
-  overflow: auto;
   height: calc(100% - 30px);
+  overflow: auto;
   .table-below-box{
     width: 100%;
     display: flex;
@@ -86,14 +85,12 @@ export default {
     align-items: center;
     .table-below-account{
       width: 310px;
-      height: calc(100% - 30px);
       display: flex;
       align-items: center;
       padding-left: 16px;
     }
     .table__below-flashback{
       width: 211px;
-      height: calc(100% - 30px);
       display: flex;
       flex-direction:row-reverse;
       align-items: center;
@@ -111,14 +108,13 @@ export default {
     border-radius: 24%;
   }
   .table__below-title{
-    max-width: 141px;
+    max-width: 226px;
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
   }
-  .table__below-avg{
+  .qq{
+    width: 39px;
   }
 }
-  .table__below-max{
-  }
 </style>
