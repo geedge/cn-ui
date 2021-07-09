@@ -1,25 +1,21 @@
 <template>
-  <div class="chart__legend"></div>
-  <div class="char__table">
-    <div class="char__table-top">
-      <div class="char-table-min blue-top">Average</div>
-      <div class="char-table-max blue-button">Maximum</div>
+  <div class="chart__legend">
+    <div class="charts__table-top">
+      <p class="location">Average</p>
+      <p class="locations">Maximum</p>
     </div>
-    <div class="char__table-bottom">
-        <div class="box__color" >
-          <p v-for="i in chartColor" :style="{'background':i}" :key="i" :title="i"></p>
-        </div>
-        <div class="box__text">
-          <p v-for="s in data" :key="s" :title="s.legend">{{s.legend}}</p>
-        </div>
-      <div class="char__table-bottom-min">
-        <p  v-for="item in data" :key="item" :title="item.aggregation.avg">{{item.aggregation.avg}}</p>
-       </div>
-      <div class="char__table-bottom-max">
-        <p  v-for="items in data" :key="items" :title="items.aggregation.max">{{items.aggregation.max}}</p>
-      </div>
+    <div class="legend__table">
+      <table>
+        <tr v-for="(d, i) in data" :key="i" class="legend__row">
+          <td><div :style="{backgroundColor: getChartColor(i)}" class="legend__row-top" :title="getChartColor(i)"></div></td>
+          <td><div class="text__show" :title="d.legend">{{d.legend}}</div></td>
+          <td><div :title="d.aggregation.avg" class="legend__row-left">{{d.aggregation.avg}}</div></td>
+          <td><div :title="d.aggregation.max" class="legend__row-right">{{d.aggregation.max}}</div></td>
+        </tr>
+      </table>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -47,9 +43,8 @@ export default {
 }
 
 </script>
-
 <style scoped>
-.char__table{
+.chart__legend{
   width: 455px;
   height: 111px;
   border: 1px solid #E7EAED;
@@ -57,97 +52,59 @@ export default {
   color:#5f6368;
   margin: auto;
 }
-.char__table-top{
+.text__show{
+  width: 50px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
+.charts__table-top{
   position: relative;
   width: 455px;
   height: 30px;
-  line-height: 35px;
-  display: flex;
-  border-bottom: #E7EAED 1px solid;
+  border-bottom: #E7EAED 0.96px solid;
 }
-.blue-button{
-  position:absolute;
-  right: 20px;
-  top: -3px;
-  font-family: Roboto-Regular;
-  font-size: 14px;
-  color: #0091FF;
-  font-weight: 400;
-
-}
-.blue-top{
-  position:absolute;
-  right: 125px;
-  top: -3px;
+.location{
+  position: absolute;
+  right: 138px;
+  top: -9px;
   font-family: Roboto-Regular;
   font-size: 14px;
   color: #0091FF;
   font-weight: 400;
 }
-.char__table-bottom{
-  position: relative;
-  color: #5f6368;
-  width: 455px;
-  height: 75px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+.locations{
+  position: absolute;
+  right: 29px;
+  top: -8px;
+  font-family: Roboto-Regular;
+  font-size: 14px;
+  color: #0091FF;
+  font-weight: 400;
 }
-.char__table-bottom-max{
-  position:absolute;
-  width: 46px;
-  height: 100%;
-  right: 122px;
-  top: -4px;
-  overflow: scroll;
-}
-.char__table-bottom-max::-webkit-scrollbar{
-  display: none;
-}
-.char__table-bottom-min{
-  position:absolute;
-  width: 66px;
-  height: 100%;
-  right: 16px;
-  top: -4px;
-  overflow: scroll;
-}
-.char__table-bottom-min::-webkit-scrollbar{
-  display: none;
-}
-.box__color{
-  width: 30px;
-  height: 79px;
-  position:absolute;
-  left: 22px;
-  top: 2px;
-  box-sizing: border-box;
-  margin-top: -4px;
-  overflow: scroll;
-}
-.box__color::-webkit-scrollbar{
-  display: none;
-}
-.box__color>p{
+.legend__row-top{
   width: 17px;
   height: 7px;
   border-radius: 24%;
-  margin-top: 17px;
+  margin-left: 15px;
 }
-.box__text{
-  position:absolute;
-  left: 58px;
-  top: 2px;
-  width: 106px;
-  height: 100%;
-  overflow: scroll;
+.legend__table {
+  overflow: auto;
+  height: calc(100% - 30px)
 }
-.box__text>p{
-  margin-top: 5px;
-  width: 115px;
+.legend__row{
+  font-size: 12px;
+  box-sizing: border-box;
 }
-.box__text::-webkit-scrollbar{
-  display: none;
+.legend__row:hover {
+  background-color: #f9f9f9;
+  border: 0px;
+  color: #383838;
+}
+.legend__row-right{
+margin-left: 60px;
+}
+.legend__row-left{
+  margin-left: 178px;
 }
 </style>

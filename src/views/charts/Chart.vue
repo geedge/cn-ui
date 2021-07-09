@@ -30,7 +30,7 @@
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
       <i class="cn-icon cn-icon-more-light"></i>
-      <i class="cn-icon cn-icon-refresh" @click="mapReload"></i>
+<!--      <i class="cn-icon cn-icon-refresh" @click="mapReload"></i>-->
     </template>
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
