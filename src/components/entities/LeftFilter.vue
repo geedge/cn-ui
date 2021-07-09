@@ -50,7 +50,6 @@ export default {
   },
   watch: {
     filterData (n) {
-      console.info(n)
     }
   }
 }

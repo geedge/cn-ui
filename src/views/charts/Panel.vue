@@ -101,24 +101,23 @@ export default {
           chart.i = chart.id
           return chart
         })
-        // this.chartList = [this.chartList[7], this.chartList[12]]
       }
     },
-    timeRefreshChange () {
+    async timeRefreshChange () {
       if (!this.$refs.dateTimeRange) {
-        this.init()
+        await this.init()
         return
       }
       if (this.$refs.dateTimeRange.isCustom) {
-        this.init()
+        await this.init()
       } else {
         const value = this.dateRangeValue.value || this.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
       }
     },
-    reload (s, e, v) {
+    async reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
-      this.init()
+      await this.init()
     }
   }
 }

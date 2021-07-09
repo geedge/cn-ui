@@ -13,7 +13,7 @@
   .panel__time {
     position: absolute;
     right: 20px;
-    top: 20px;
+    top: 10px;
     display: flex;
   }
 
@@ -175,6 +175,9 @@
     }
     &>.el-tabs__header {
       margin-bottom: 10px;
+    }
+    &>.el-tabs__content {
+      height: calc(100% - 40px);
     }
   }
   &>.cn-chart__table {

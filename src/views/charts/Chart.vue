@@ -104,7 +104,7 @@
             class="option__select select-topn"
             placeholder=""
             popper-class="option-popper"
-            @change="tabelLimtChange"
+            @change="tableLimitChange"
         >
           <el-option v-for="item in chartTableTopOptions" :key="item" :value="item">TOP&nbsp;{{item}}</el-option>
           <template #prefix>TOP&nbsp;</template>
@@ -117,7 +117,7 @@
             class="option__select select-column"
             :placeholder="$t('common.field')"
             popper-class="option-popper"
-            @change="tabelLimtChange"
+            @change="tableLimitChange"
         >
           <el-option v-for="item in table.tableColumns" :key="item.prop" :value="item.prop">{{item.prop}}</el-option>
         </el-select>
@@ -216,7 +216,6 @@ export default {
   },
   methods: {
     initChart () {
-      const self = this
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
         this.myChart = this.initMap(`chart${this.chartInfo.id}`)
@@ -466,7 +465,7 @@ export default {
         })
       })
     },
-    tabelLimtChange () {
+    tableLimitChange () {
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       this.initChartTable(chartParams)
     },
@@ -493,6 +492,17 @@ export default {
   },
   mounted () {
     this.initChart()
+  },
+  watch: {
+    chart: {
+      immediate: true,
+      deep: true,
+      handler (n, o) {
+        if (o) {
+          this.initChart()
+        }
+      }
+    }
   },
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))

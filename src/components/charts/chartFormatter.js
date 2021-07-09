@@ -1,4 +1,4 @@
-const shortList = [' ', 'K', 'Mil', 'Bil', 'Til', 'Quadrillion', 'Quintillion']
+const shortList = [' ', 'K', 'M', 'B', 'T', 'Quadrillion', 'Quintillion']
 function asciiCompute (num, ascii, units, dot = 2) {
   if (!num && num !== 0 && num !== '0') {
     return ''

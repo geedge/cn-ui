@@ -33,7 +33,6 @@ const line = {
     axisLabel: {
       formatter: shortFormatter
     }
-
   },
   animation: false,
   grid: {
@@ -63,7 +62,7 @@ const line = {
     {
       name: '',
       type: 'line',
-      smooth: true,
+      smooth: false,
       symbol: 'none',
       data: []
     }
@@ -95,7 +94,7 @@ const lineWithStatistics = {
   color: chartColor,
   grid: {
     left: 55,
-    bottom: 45,
+    bottom: 25,
     top: 30
   },
   legend: {
@@ -108,7 +107,7 @@ const lineWithStatistics = {
     {
       name: '',
       type: 'line',
-      smooth: true,
+      smooth: false,
       symbol: 'none',
       data: []
     }
