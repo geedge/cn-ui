@@ -22,7 +22,53 @@
             </div>
           </div>
         </div>
-        <div class="cn-entity__body"></div>
+        <div class="cn-entity__body">
+          <template v-if="entityType === 'ip'">
+            <div class="body__row">
+              <span class="body__row-label">{{$t('common.country')}}:</span>
+              <span class="body__row-value">{{d.country || '-'}}</span>
+            </div>
+            <div class="body__row">
+              <span class="body__row-label">{{$t('common.region')}}:</span>
+              <span class="body__row-value">{{d.region || '-'}}</span>
+            </div>
+            <div class="body__row">
+              <span class="body__row-label">{{$t('common.asn')}}:</span>
+              <span class="body__row-value">{{d.asn || '-'}}</span>
+            </div>
+            <div class="body__detail">{{$t('common.detail')}}</div>
+          </template>
+          <template v-else-if="entityType === 'domain'">
+            <div class="body__row">
+              <span class="body__row-label">{{$t('entities.categoryGroup')}}:</span>
+              <span class="body__row-value">{{d.categoryGroup || '-'}}</span>
+            </div>
+            <div class="body__row">
+              <span class="body__row-label">{{$t('entities.categoryName')}}:</span>
+              <span class="body__row-value">{{d.categoryName || '-'}}</span>
+            </div>
+            <div class="body__row">
+              <span class="body__row-label">{{$t('entities.creditScore')}}:</span>
+              <span class="body__row-value">{{d.reputationScore || '-'}}</span>
+            </div>
+            <div class="body__detail">{{$t('common.detail')}}</div>
+          </template>
+          <template v-else-if="entityType === 'app'">
+            <div class="body__row">
+              <span class="body__row-label">APP ID:</span>
+              <span class="body__row-value">{{d.appId || '-'}}</span>
+            </div>
+            <div class="body__row">
+              <span class="body__row-label">{{$t('entities.category')}}:</span>
+              <span class="body__row-value">{{d.appCategory || '-'}}</span>
+            </div>
+            <div class="body__row">
+              <span class="body__row-label">{{$t('entities.subcategory')}}:</span>
+              <span class="body__row-value">{{d.appSubategory || '-'}}</span>
+            </div>
+            <div class="body__detail">{{$t('common.detail')}}</div>
+          </template>
+        </div>
       </div>
     </div>
     <div class="entity-list__pagination"></div>

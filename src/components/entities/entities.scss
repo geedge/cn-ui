@@ -69,7 +69,19 @@
           }
         }
         .cn-entity__body {
-          background-color: lightgoldenrodyellow;
+          .body__row {
+            padding: 0 0 0 20px;
+            color: #666;
+
+            .body__row-label {
+              padding-right: 15px;
+            }
+          }
+          .body__detail {
+            padding: 10px 0 0 20px;
+            color: $--color-primary;
+            cursor: pointer;
+          }
         }
       }
     }
