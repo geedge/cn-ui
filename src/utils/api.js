@@ -16,7 +16,10 @@ export const api = {
   chart: '/visual/chart',
   entityIpFilter: '/interface/entity/ip/filter',
   entityDomainFilter: '/interface/entity/domain/filter',
-  entityAppFilter: '/interface/entity/app/filter'
+  entityAppFilter: '/interface/entity/app/filter',
+  entityIpList: '/interface/entity/ip/list',
+  entityDomainList: '/interface/entity/domain/list',
+  entityAppList: '/interface/entity/app/list'
 }
 /* panel */
 export async function getPanelList (params) {
@@ -43,6 +46,18 @@ export async function getEntityDomainFilterList (params) {
 /* app类型entity过滤器数据 */
 export async function getEntityAppFilterList (params) {
   return await getData(api.entityAppFilter, params, true)
+}
+/* ip类型entity列表 */
+export async function getEntityIpList (params) {
+  return await getData(api.entityIpList, params, true)
+}
+/* domain类型entity列表 */
+export async function getEntityDomainList (params) {
+  return await getData(api.entityDomainList, params, true)
+}
+/* app类型entity列表 */
+export async function getEntityAppList (params) {
+  return await getData(api.entityAppList, params, true)
 }
 /* 字典 */
 export async function getDictList (params) {

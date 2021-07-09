@@ -1,5 +1,5 @@
 <template>
-  <div class="cn-chart cn-chart__echarts">
+  <div class="cn-chart cn-chart__echarts" :class="{'cn-chart__echarts--statistics': isEchartsWithStatistics}">
     <div class="cn-chart__header" v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       <div class="header__title">
         <slot name="title"></slot>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { layoutConstant, isEchartsWithTable } from '@/components/charts/chart-options'
+import { layoutConstant, isEchartsWithTable, isEchartsWithStatistics } from '@/components/charts/chart-options'
 export default {
   name: 'EchartsFrame',
   props: {
@@ -28,7 +28,8 @@ export default {
   setup (props) {
     return {
       layoutConstant,
-      isPieWithTable: isEchartsWithTable(props.chartInfo.type)
+      isPieWithTable: isEchartsWithTable(props.chartInfo.type),
+      isEchartsWithStatistics: isEchartsWithStatistics(props.chartInfo.type)
     }
   },
   mounted () {

@@ -2,19 +2,28 @@
   <div class="entity-left-filter">
     <div class="filter__header">{{$t('entities.filter')}}</div>
     <div class="filter__body">
-      <el-collapse v-model="active">
+      <el-collapse v-model="active" class="filter__collapse">
         <el-collapse-item
             v-for="(f, i) in filterData"
             :key="i"
             :title="f.title"
             :name="`${i}`"
-            class="filter__collapse"
         >
           <el-tree
               :data="f.data"
+              :load="(node, resolve) => f.load(node, resolve, f.filterType, f.childrenKey ? f.childrenKey : f.key)"
+              :node-key="f.key"
+              :props="{ isLeaf: 'leaf' }"
+              :expand-on-click-node="false"
+              :lazy="i === 0"
+              :show-checkbox="i === 1"
+              @node-click="nodeClick"
           >
             <template #default="{ node, data }">
-              <span>{{data[f.key]}}-{{data.count}}</span>
+              <div class="filter-item">
+                <span>{{node.level === 1 ? data[f.key] : ''}}{{node.level === 2 ? data[f.childrenKey] : ''}}</span>
+                <span>{{data.count}}</span>
+              </div>
             </template>
           </el-tree>
         </el-collapse-item>
@@ -34,8 +43,10 @@ export default {
       active: ['1']
     }
   },
-  mounted () {
-    console.info(this.filterData)
+  methods: {
+    nodeClick (data, node) {
+      this.$emit('select', data)
+    }
   }
 }
 </script>
@@ -47,6 +58,7 @@ export default {
   width: 100%;
   height: 100%;
   border: 1px solid $--right-box-border-color;
+  overflow: auto;
 
   .filter__header {
     background-color: #FAFAFA;
@@ -59,12 +71,28 @@ export default {
   .filter__body {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow: auto;
 
     .filter__collapse {
-      max-height: 50%;
-
       .el-collapse-item__header {
         padding-left: 10px;
+        padding-top: 8px;
+        font-weight: bold;
+
+        &.is-active {
+          border-bottom: 1px solid $--right-box-border-color;
+        }
+      }
+      .el-collapse-item__wrap {
+        padding-top: 6px !important;
+
+        .filter-item {
+          display: flex;
+          justify-content: space-between;
+          padding-right: 6px;
+          width: 100%;
+        }
       }
     }
   }
