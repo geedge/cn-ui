@@ -27,6 +27,9 @@
       <entity-list
           :list-data="listData"
           :entity-type="filterType"
+          :page-obj="pageObjRight"
+          @pageSize="pageSizeRight"
+          @pageNo="pageNoRight"
       ></entity-list>
     </div>
   </div>
@@ -46,15 +49,18 @@ export default {
       filterData: [],
       pageObjLeftTop: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 10,
+        total: 0
       },
       pageObjLeftBottom: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 10,
+        total: 0
       },
       pageObjRight: {
         pageNo: 1,
-        pageSize: 50
+        pageSize: 50,
+        total: 0
       },
       listData: []
     }
@@ -64,30 +70,85 @@ export default {
     EntityList
   },
   methods: {
-    async loadData (filterType, conditionGroup) {
+    async loadData (filterType, key) {
       let data
       switch (filterType) {
         case 'ip': {
-          data = await getEntityIpFilterList({ type: conditionGroup })
+          data = await getEntityIpFilterList({ type: key })
           break
         }
         case 'domain': {
-          data = await getEntityDomainFilterList({ type: conditionGroup })
+          data = await getEntityDomainFilterList({ type: key })
           break
         }
         case 'app': {
-          data = await getEntityAppFilterList({ type: conditionGroup })
+          data = await getEntityAppFilterList({ type: key })
           break
         }
         default: break
       }
       return data
     },
+    handleData (n) {
+      this.listData = []
+      const requests = []
+      const data = []
+      switch (n) {
+        case 'ip': {
+          requests.push(this.loadData(n, 'country'))
+          requests.push(this.loadData(n, 'asn'))
+          data.push({ title: this.$t('entities.countryOrRegion'), key: 'country', childrenKey: 'region', type: 'country', childrenType: 'region', load })
+          data.push({ title: this.$t('entities.asn'), key: 'asn', type: 'asn', load })
+          getEntityIpList({ ...this.pageObjRight }).then(res => {
+            this.listData = res.data.result
+            this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
+          })
+          break
+        }
+        case 'domain': {
+          requests.push(this.loadData(n, 'categoryGroup'))
+          requests.push(this.loadData(n, 'reputationLevel'))
+          data.push({ title: this.$t('entities.groupAndName'), key: 'categoryGroup', childrenKey: 'categoryName', load })
+          data.push({ title: this.$t('entities.creditLevel'), key: 'reputationLevel', load })
+          getEntityDomainList({ ...this.pageObjRight }).then(res => {
+            this.listData = res.data.result
+            this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
+          })
+          break
+        }
+        case 'app': {
+          requests.push(this.loadData(n, 'appCategory'))
+          requests.push(this.loadData(n, 'appRisk'))
+          data.push({ title: this.$t('entities.categoryAndSub'), key: 'appCategory', childrenKey: 'appSubcategory', load })
+          data.push({ title: this.$t('entities.riskLevel'), key: 'appRisk', load })
+          getEntityAppList({ ...this.pageObjRight }).then(res => {
+            this.listData = res.data.result
+            this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
+          })
+          break
+        }
+        default: break
+      }
+      Promise.all(requests).then(responses => {
+        data.forEach((d, i) => {
+          d.data = responses[i]
+        })
+        this.filterData = data
+      })
+    },
     select (data) {
 
     },
     getEntityData (param) {
 
+    },
+    pageSizeRight (val) {
+      this.pageObjRight.pageSize = val
+      this.handleData(this.filterType)
+    },
+    pageNoRight (val) {
+      this.pageObjRight.pageNo = val
+      this.handleData(this.filterType)
     }
   },
   watch: {
@@ -104,54 +165,15 @@ export default {
         pageNo: 1,
         pageSize: 50
       }
-      this.listData = []
-      const requests = []
-      const data = []
-      switch (n) {
-        case 'ip': {
-          requests.push(this.loadData(n, 'country'))
-          requests.push(this.loadData(n, 'asn'))
-          data.push({ title: this.$t('entities.countryOrRegion'), key: 'country', childrenKey: 'region', load })
-          data.push({ title: this.$t('entities.systemNumber'), key: 'asn', load })
-          getEntityIpList({ ...this.pageObjRight }).then(res => {
-            this.listData = res
-          })
-          break
-        }
-        case 'domain': {
-          requests.push(this.loadData(n, 'group'))
-          requests.push(this.loadData(n, 'level'))
-          data.push({ title: this.$t('entities.group'), key: 'group', childrenKey: 'name', load })
-          data.push({ title: this.$t('entities.level'), key: 'level', load })
-          getEntityDomainList({ ...this.pageObjRight }).then(res => {
-            this.listData = res
-          })
-          break
-        }
-        case 'app': {
-          requests.push(this.loadData(n, 'category'))
-          requests.push(this.loadData(n, 'risk'))
-          data.push({ title: this.$t('entities.category'), key: 'category', childrenKey: 'subcategory', load })
-          data.push({ title: this.$t('entities.risk'), key: 'risk', load })
-          getEntityAppList({ ...this.pageObjRight }).then(res => {
-            this.listData = res
-          })
-          break
-        }
-        default: break
-      }
-      Promise.all(requests).then(responses => {
-        data.forEach((d, i) => {
-          d.data = responses[i]
-        })
-        this.filterData = data
-      })
+      this.handleData(n)
     }
   },
   async mounted () {
     const country = await this.loadData(this.filterType, 'country')
     const asn = await this.loadData(this.filterType, 'asn')
-    this.listData = await getEntityIpList({ ...this.pageObjRight })
+    const res = await getEntityIpList({ ...this.pageObjRight })
+    this.listData = res.data.result
+    this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
     this.filterData.push({
       title: this.$t('entities.countryOrRegion'),
       key: 'country',
@@ -161,7 +183,7 @@ export default {
       load
     })
     this.filterData.push({
-      title: this.$t('entities.systemNumber'),
+      title: this.$t('entities.asn'),
       key: 'asn',
       data: asn,
       filterType: this.filterType,

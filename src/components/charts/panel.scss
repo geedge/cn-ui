@@ -28,6 +28,9 @@
   &>.cn-chart.cn-chart__echarts--statistics {
     border: none;
     box-shadow: none;
+    .cn-chart__header {
+      border-bottom: none;
+    }
   }
   &>.cn-chart__echarts, &>.cn-chart__table, &>.cn-chart__map {
     display: flex;

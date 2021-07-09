@@ -33,7 +33,7 @@
               <span class="body__row-value">{{d.region || '-'}}</span>
             </div>
             <div class="body__row">
-              <span class="body__row-label">{{$t('common.asn')}}:</span>
+              <span class="body__row-label">{{$t('entities.asn')}}:</span>
               <span class="body__row-value">{{d.asn || '-'}}</span>
             </div>
             <div class="body__detail">{{$t('common.detail')}}</div>
@@ -71,7 +71,19 @@
         </div>
       </div>
     </div>
-    <div class="entity-list__pagination"></div>
+    <div class="entity-list__pagination">
+      <el-pagination
+          @size-change="size"
+          @prev-click="prev"
+          @next-click="next"
+          @current-change="current"
+          :currentPage="pageObj.pageNo"
+          :page-size="pageObj.pageSize"
+          :total="pageObj.total"
+          :page-sizes="[30, 50, 100]"
+          layout="total, prev, pager, next, sizes"
+      ></el-pagination>
+    </div>
   </div>
 </template>
 
@@ -80,7 +92,8 @@ export default {
   name: 'EntityList',
   props: {
     listData: Array,
-    entityType: String
+    entityType: String,
+    pageObj: Object
   },
   computed: {
     circleColor () {
@@ -120,6 +133,34 @@ export default {
         default: break
       }
       return className
+    }
+  },
+  methods: {
+    size (val) {
+      this.$emit('pageSize', val)
+    },
+    // 点击上一页箭头
+    prev () {
+      this.scrollbarToTop()
+    },
+    // 点击下一页箭头
+    next () {
+      this.scrollbarToTop()
+    },
+    // currentPage 改变时会触发
+    current (val) {
+      this.$emit('pageNo', val)
+      this.scrollbarToTop()
+    },
+    scrollbarToTop () {
+      this.$nextTick(() => {
+        const wraps = document.querySelectorAll('.el-table__body-wrapper')
+        wraps.forEach(wrap => {
+          if (wrap._ps_) {
+            wrap.scrollTop = 0
+          }
+        })
+      })
     }
   }
 }

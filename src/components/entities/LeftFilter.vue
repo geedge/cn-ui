@@ -47,6 +47,11 @@ export default {
     nodeClick (data, node) {
       this.$emit('select', data)
     }
+  },
+  watch: {
+    filterData (n) {
+      console.info(n)
+    }
   }
 }
 </script>

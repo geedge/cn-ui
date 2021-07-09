@@ -49,15 +49,36 @@ export async function getEntityAppFilterList (params) {
 }
 /* ip类型entity列表 */
 export async function getEntityIpList (params) {
-  return await getData(api.entityIpList, params, true)
+  const request = new Promise(resolve => {
+    get(api.entityIpList, params).then(response => {
+      if (response.code === 200) {
+        resolve(response)
+      }
+    })
+  })
+  return await request
 }
 /* domain类型entity列表 */
 export async function getEntityDomainList (params) {
-  return await getData(api.entityDomainList, params, true)
+  const request = new Promise(resolve => {
+    get(api.entityDomainList, params).then(response => {
+      if (response.code === 200) {
+        resolve(response)
+      }
+    })
+  })
+  return await request
 }
 /* app类型entity列表 */
 export async function getEntityAppList (params) {
-  return await getData(api.entityAppList, params, true)
+  const request = new Promise(resolve => {
+    get(api.entityAppList, params).then(response => {
+      if (response.code === 200) {
+        resolve(response)
+      }
+    })
+  })
+  return await request
 }
 /* 字典 */
 export async function getDictList (params) {
