@@ -1,17 +1,15 @@
 <template>
   <div class="chart__legend">
     <div class="chart__table-top">
-      <div class="chart__table-box">
-        <div>Average</div>
-        <div>Maximum</div>
-      </div>
+      <div>Average</div>
+      <div>Maximum</div>
     </div>
     <div class="chart__table-below">
       <div v-for="(item,index) in data" :key="index" class="table-below-box">
         <div class="table__below-color"><div :style="{backgroundColor: getChartColor(index)}"></div></div>
         <div class="table__below-title" :title="item.legend">{{item.legend}}</div>
         <div class="table__below-statistics" :title="item.aggregation.max">{{item.aggregation.max}}</div>
-        <div class="table__below-statistics table__below-statistics-2" :title="item.aggregation.avg">{{item.aggregation.avg}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.avg">{{item.aggregation.avg}}</div>
       </div>
     </div>
   </div>
@@ -45,31 +43,29 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chart__legend {
-  width: 455px;
-  height: 95px;
+  width: calc(100% - 60px);
+  height: 105px;
   border: 1px solid #E7EAED;
-  color:#5f6368;
+  color: #5f6368;
   margin: auto;
 }
 .chart__table-top {
-  width: 455px;
+  width: 100%;
   height: 30px;
-  border-bottom: #E7EAED 0.96px solid;
+  border-bottom: #E7EAED 1px solid;
   display: flex;
-  flex-direction:row-reverse;
-  .chart__table-box {
-    width: 185px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: #0091FF;
-    font-weight: 400;
-    justify-content: space-around;
+  justify-content: flex-end;
+  padding-right: 15px;
+
+  div {
+    width: 80px;
+    font-size: 13px;
+    line-height: 28px;
+    color: $--color-primary;
   }
 }
 .chart__table-below {
-  width: 455px;
+  width: 100%;
   height: calc(100% - 30px);
   overflow: auto;
   font-size: 13px;
@@ -106,14 +102,11 @@ export default {
     white-space: nowrap;
   }
   .table__below-statistics {
-    width: 86px;
+    width: 80px;
     flex-shrink: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-  .table__below-statistics-2 {
-    width: 70px;
   }
 }
 </style>
