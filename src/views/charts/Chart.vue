@@ -474,7 +474,11 @@ export default {
           })
         }
       })
-
+      this.myChart.on('legendselectchanged', function (params) {
+        self.myChart.setOption({
+          legend: { selected: { [params.name]: true } }
+        })
+      })
       this.myChart.on('click', function (echartParams) {
         const childrenParams = { startTime: parseInt(self.startTime / 1000), endTime: parseInt(self.endTime / 1000), limit: 10, order: self.orderPieTable }
         childrenParams[chartParams.nameColumn] = echartParams.name

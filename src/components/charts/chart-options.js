@@ -37,14 +37,15 @@ const line = {
   animation: false,
   grid: {
     left: 55,
-    bottom: 45,
-    top: 30
+    bottom: 30,
+    top: 40,
+    right: 25
   },
   color: chartColor,
   legend: {
     show: true,
-    right: 30,
-    top: 'top',
+    right: 25,
+    top: 8,
     orient: 'horizontal',
     icon: 'circle',
     itemGap: 20,
@@ -187,14 +188,16 @@ const pieWithTable = {
     itemWidth: 10, // 设置宽度
     itemHeight: 10, // 设置高度
     itemGap: 20,
-    selectedMode: false,
-    // formatter: tooLongFormatter
+    tooltip: {
+      show: true
+    },
+    formatter: tooLongFormatter
   },
   series: [
     {
       type: 'pie',
       selectedMode: 'single',
-      radius: ['42%', '70%'],
+      radius: ['42%', '65%'],
       center: ['30%', '50%'],
       data: [],
       label: {
