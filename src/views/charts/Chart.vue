@@ -159,6 +159,7 @@ import {
   isEchartsWithTable,
   isEchartsWithStatistics,
   isMapLine,
+  isMapBlock,
   isTabs,
   getChartColor
 } from '@/components/charts/chart-options'
@@ -218,9 +219,10 @@ export default {
     initChart () {
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       if (this.isMap) {
-        this.myChart = this.initMap(`chart${this.chartInfo.id}`)
+        const { chart, polygonSeries } = this.initMap(`chart${this.chartInfo.id}`)
+        this.myChart = chart
         if (chartParams) {
-          this.loadMap()
+          this.loadMap(polygonSeries)
         }
       } else if (this.isEcharts) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
@@ -276,9 +278,12 @@ export default {
       polygonTemplate.fontSize = '12px'
       const hs = polygonTemplate.states.create('hover')
       hs.properties.fill = am4Core.color('#ccc') */
-      return chart
+      return {
+        chart,
+        polygonSeries
+      }
     },
-    loadMap () {
+    loadMap (polygonSeries) {
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
@@ -294,11 +299,6 @@ export default {
           })
           if (this.isMapLine) {
             const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
-            const gradient = new am4Core.LinearGradient()
-            gradient.stops.push({ color: am4Core.color() })
-            gradient.stops.push({ color: am4Core.color() })
-            gradient.stops.push({ color: am4Core.color() })
-
             const lineTemplate = lineSeries.mapLines.template
             lineTemplate.stroke = am4Core.color('#A258EC')
             lineTemplate.line.nonScalingStroke = true
@@ -363,6 +363,26 @@ export default {
               })
             })
             imageSeries.data = pointData
+          } else if (this.isMapBlock) {
+            polygonSeries.heatRules.push({
+              property: 'fill',
+              target: polygonSeries.mapPolygons.template,
+              min: am4Core.color('#FFFF00'),
+              max: am4Core.color('#E66767')
+            })
+            polygonSeries.data = response.data.result.map(r => {
+              return {
+                id: r.serverId,
+                value: r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent
+              }
+            })
+            const polygonTemplate = polygonSeries.mapPolygons.template
+            polygonTemplate.tooltipText = '{name}: {value}'
+            polygonTemplate.nonScalingStroke = true
+            polygonTemplate.strokeWidth = 0.5
+
+            const hs = polygonTemplate.states.create('hover')
+            // hs.properties.fill = am4Core.color('#3c5bdc')
           }
         }
       })
@@ -527,6 +547,7 @@ export default {
       isMap: isMap(props.chart.type),
       isTitle: isTitle(props.chart.type),
       isMapLine: isMapLine(props.chart.type),
+      isMapBlock: isMapBlock(props.chart.type),
       isTabs: isTabs(props.chart.type),
       layout: getLayout(props.chart.type),
       myChart: shallowRef({})

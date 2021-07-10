@@ -251,6 +251,10 @@ export function isMap (type) {
 export function isMapLine (type) {
   return type === 1
 }
+/* 色块地图 */
+export function isMapBlock (type) {
+  return type === 2
+}
 /* 带统计的折线图 */
 export function isEchartsWithStatistics (type) {
   return type === 12
