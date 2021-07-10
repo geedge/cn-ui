@@ -43,7 +43,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .chart__legend {
-  width: calc(100% - 60px);
+  width: calc(100% - 40px);
   height: 105px;
   border: 1px solid #E7EAED;
   color: #5f6368;

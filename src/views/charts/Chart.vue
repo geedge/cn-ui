@@ -30,7 +30,7 @@
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
       <i class="cn-icon cn-icon-more-light"></i>
-<!--      <i class="cn-icon cn-icon-refresh" @click="mapReload"></i>-->
+<!--      <i class="cn-icon cn-icon-refresh" @click="loadMap"></i>-->
     </template>
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
@@ -220,55 +220,18 @@ export default {
       if (this.isMap) {
         this.myChart = this.initMap(`chart${this.chartInfo.id}`)
         if (chartParams) {
-          this.mapReload()
+          this.loadMap()
         }
       } else if (this.isEcharts) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
         this.myChart = echarts.init(dom)
         if (chartParams) {
           if (this.isEchartsWithTable) {
-            this.chartWithPieTableInit(chartParams)
+            this.initEchartsWithPieTable(chartParams)
           } else if (this.isEchartsWithStatistics) {
-            const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
-            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-              if (response.code === 200) {
-                this.statisticsData = response.data.result
-                const seriesTemplate = this.chartOption.series[0]
-                this.chartOption.series = response.data.result.map((r, i) => {
-                  return {
-                    ...seriesTemplate,
-                    name: r.legend,
-                    data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])]),
-                    lineStyle: {
-                      color: getChartColor[i]
-                    }
-                  }
-                })
-              }
-              this.myChart.setOption(this.chartOption)
-              this.$nextTick(() => {
-                this.myChart.resize()
-              })
-            })
+            this.initEchartsWithStatistics(chartParams)
           } else {
-            const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
-            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-              if (response.code === 200) {
-                this.statisticsData = response.data.result
-                const seriesTemplate = this.chartOption.series[0]
-                this.chartOption.series = response.data.result.map(r => {
-                  return {
-                    ...seriesTemplate,
-                    name: r.legend,
-                    data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])])
-                  }
-                })
-              }
-              this.myChart.setOption(this.chartOption)
-              this.$nextTick(() => {
-                this.myChart.resize()
-              })
-            })
+            this.initECharts(chartParams)
           }
         }
       } else if (this.isTable) {
@@ -315,7 +278,7 @@ export default {
       hs.properties.fill = am4Core.color('#ccc') */
       return chart
     },
-    mapReload () {
+    loadMap () {
       const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
@@ -414,10 +377,53 @@ export default {
       if (this.chart.type === 31) {
         const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
         this.myChart.off('click')
-        this.chartWithPieTableInit(chartParams)
+        this.initEchartsWithPieTable(chartParams)
       }
     },
-    chartWithPieTableInit (chartParams) {
+    initECharts (chartParams) {
+      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          this.statisticsData = response.data.result
+          const seriesTemplate = this.chartOption.series[0]
+          this.chartOption.series = response.data.result.map(r => {
+            return {
+              ...seriesTemplate,
+              name: r.legend,
+              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])])
+            }
+          })
+        }
+        this.myChart.setOption(this.chartOption)
+        this.$nextTick(() => {
+          this.myChart.resize()
+        })
+      })
+    },
+    initEchartsWithStatistics (chartParams) {
+      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          this.statisticsData = response.data.result
+          const seriesTemplate = this.chartOption.series[0]
+          this.chartOption.series = response.data.result.map((r, i) => {
+            return {
+              ...seriesTemplate,
+              name: r.legend,
+              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])]),
+              lineStyle: {
+                color: getChartColor[i]
+              }
+            }
+          })
+        }
+        this.myChart.setOption(this.chartOption)
+        this.$nextTick(() => {
+          this.myChart.resize()
+        })
+      })
+    },
+    initEchartsWithPieTable (chartParams) {
       const self = this
       chartParams.valueColumn = this.orderPieTable
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数

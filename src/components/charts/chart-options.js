@@ -94,8 +94,9 @@ const lineWithStatistics = {
   color: chartColor,
   grid: {
     left: 55,
-    bottom: 25,
-    top: 30
+    bottom: 30,
+    top: 20,
+    right: 20
   },
   legend: {
     show: false
