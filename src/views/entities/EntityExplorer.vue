@@ -22,6 +22,7 @@
       <left-filter
           :filter-data="filterData"
           @select="select"
+          @showMore="showMore"
       ></left-filter>
       <!-- 内容区域 -->
       <entity-list
@@ -70,19 +71,60 @@ export default {
     EntityList
   },
   methods: {
-    async loadData (filterType, key) {
+    async showMore (key) {
+      let index = 0
+      switch (key) {
+        case 'country':
+        case 'categoryGroup':
+        case 'appCategory': {
+          this.pageObjLeftTop.pageNo++
+          break
+        }
+        case 'asn':
+        case 'reputationLevel':
+        case 'appRisk': {
+          this.pageObjLeftBottom.pageNo++
+          index = 1
+          break
+        }
+        default: break
+      }
+      const data = await this.loadFilterData(this.filterType, key)
+      if (this.$_.isEmpty(data)) {
+        this.filterData[index].hasnotMore = true
+      } else {
+        this.filterData[index].data = this.$_.concat(this.filterData[index].data, data)
+      }
+    },
+    async loadFilterData (filterType, key) {
       let data
+      let params = { type: key }
+      switch (key) {
+        case 'country':
+        case 'categoryGroup':
+        case 'appCategory': {
+          params = { ...params, ...this.pageObjLeftTop }
+          break
+        }
+        case 'asn':
+        case 'reputationLevel':
+        case 'appRisk': {
+          params = { ...params, ...this.pageObjLeftBottom }
+          break
+        }
+        default: break
+      }
       switch (filterType) {
         case 'ip': {
-          data = await getEntityIpFilterList({ type: key })
+          data = await getEntityIpFilterList(params)
           break
         }
         case 'domain': {
-          data = await getEntityDomainFilterList({ type: key })
+          data = await getEntityDomainFilterList(params)
           break
         }
         case 'app': {
-          data = await getEntityAppFilterList({ type: key })
+          data = await getEntityAppFilterList(params)
           break
         }
         default: break
@@ -95,10 +137,10 @@ export default {
       const data = []
       switch (n) {
         case 'ip': {
-          requests.push(this.loadData(n, 'country'))
-          requests.push(this.loadData(n, 'asn'))
-          data.push({ title: this.$t('entities.countryOrRegion'), key: 'country', childrenKey: 'region', type: 'country', childrenType: 'region', load })
-          data.push({ title: this.$t('entities.asn'), key: 'asn', type: 'asn', load })
+          requests.push(this.loadFilterData(n, 'country'))
+          requests.push(this.loadFilterData(n, 'asn'))
+          data.push({ title: this.$t('entities.countryOrRegion'), key: 'country', childrenKey: 'region', type: 'country', childrenType: 'region', loadFilter })
+          data.push({ title: this.$t('entities.asn'), key: 'asn', type: 'asn', loadFilter })
           getEntityIpList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -106,10 +148,10 @@ export default {
           break
         }
         case 'domain': {
-          requests.push(this.loadData(n, 'categoryGroup'))
-          requests.push(this.loadData(n, 'reputationLevel'))
-          data.push({ title: this.$t('entities.groupAndName'), key: 'categoryGroup', childrenKey: 'categoryName', load })
-          data.push({ title: this.$t('entities.creditLevel'), key: 'reputationLevel', load })
+          requests.push(this.loadFilterData(n, 'categoryGroup'))
+          requests.push(this.loadFilterData(n, 'reputationLevel'))
+          data.push({ title: this.$t('entities.groupAndName'), key: 'categoryGroup', childrenKey: 'categoryName', loadFilter })
+          data.push({ title: this.$t('entities.creditLevel'), key: 'reputationLevel', loadFilter })
           getEntityDomainList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -117,10 +159,10 @@ export default {
           break
         }
         case 'app': {
-          requests.push(this.loadData(n, 'appCategory'))
-          requests.push(this.loadData(n, 'appRisk'))
-          data.push({ title: this.$t('entities.categoryAndSub'), key: 'appCategory', childrenKey: 'appSubcategory', load })
-          data.push({ title: this.$t('entities.riskLevel'), key: 'appRisk', load })
+          requests.push(this.loadFilterData(n, 'appCategory'))
+          requests.push(this.loadFilterData(n, 'appRisk'))
+          data.push({ title: this.$t('entities.categoryAndSub'), key: 'appCategory', childrenKey: 'appSubcategory', loadFilter })
+          data.push({ title: this.$t('entities.riskLevel'), key: 'appRisk', loadFilter })
           getEntityAppList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -136,8 +178,9 @@ export default {
         this.filterData = data
       })
     },
-    select (data) {
-
+    async select (node, data) {
+      const res = await loadList(node, data, this.filterType, this.pageObjRight)
+      this.listData = res.data.result
     },
     getEntityData (param) {
 
@@ -169,8 +212,8 @@ export default {
     }
   },
   async mounted () {
-    const country = await this.loadData(this.filterType, 'country')
-    const asn = await this.loadData(this.filterType, 'asn')
+    const country = await this.loadFilterData(this.filterType, 'country')
+    const asn = await this.loadFilterData(this.filterType, 'asn')
     const res = await getEntityIpList({ ...this.pageObjRight })
     this.listData = res.data.result
     this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -180,14 +223,14 @@ export default {
       childrenKey: 'region',
       data: country,
       filterType: this.filterType,
-      load
+      loadFilter
     })
     this.filterData.push({
       title: this.$t('entities.asn'),
       key: 'asn',
       data: asn,
       filterType: this.filterType,
-      load
+      loadFilter
     })
   },
   setup () {
@@ -198,22 +241,24 @@ export default {
     }
   }
 }
-const load = (node, resolve, filterType, key) => {
+const loadFilter = (node, resolve, filterType, key) => {
   if (node.level === 0) {
     resolve(node.data)
   } else {
+    const param = { type: key }
+    param[key] = (node.data)[key]
     let req = null
     switch (filterType) {
       case 'ip': {
-        req = getEntityIpFilterList({ type: key })
+        req = getEntityIpFilterList(param)
         break
       }
       case 'domain': {
-        req = getEntityDomainFilterList({ type: key })
+        req = getEntityDomainFilterList(param)
         break
       }
       case 'app': {
-        req = getEntityAppFilterList({ type: key })
+        req = getEntityAppFilterList(param)
         break
       }
       default: break
@@ -227,6 +272,26 @@ const load = (node, resolve, filterType, key) => {
       })
     }
   }
+}
+const loadList = async (node, data, filterType, pageObj) => {
+  let res
+  const param = { ...pageObj, ...data }
+  switch (filterType) {
+    case 'ip': {
+      res = await getEntityIpList(param)
+      break
+    }
+    case 'domain': {
+      res = await getEntityDomainList(param)
+      break
+    }
+    case 'app': {
+      res = await getEntityAppList(param)
+      break
+    }
+    default: break
+  }
+  return res
 }
 </script>
 

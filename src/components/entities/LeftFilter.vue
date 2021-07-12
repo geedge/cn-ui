@@ -11,7 +11,7 @@
         >
           <el-tree
               :data="f.data"
-              :load="(node, resolve) => f.load(node, resolve, f.filterType, f.childrenKey ? f.childrenKey : f.key)"
+              :load="(node, resolve) => f.loadFilter(node, resolve, f.filterType, f.childrenKey ? f.childrenKey : f.key)"
               :node-key="f.key"
               :props="{ isLeaf: 'leaf' }"
               :expand-on-click-node="false"
@@ -26,6 +26,7 @@
               </div>
             </template>
           </el-tree>
+          <div class="filter__more" :class="{'filter__more--disabled': f.hasnotMore}" @click="showMore(f.key, f.hasnotMore)">{{$t('common.showMore')}}</div>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -40,16 +41,22 @@ export default {
   },
   data () {
     return {
-      active: ['1']
+      active: ['0', '1']
     }
   },
   methods: {
     nodeClick (data, node) {
-      this.$emit('select', data)
+      this.$emit('select', node, data)
+    },
+    showMore (key, hasnotMore) {
+      if (!hasnotMore) {
+        this.$emit('showMore', key)
+      }
     }
   },
   watch: {
     filterData (n) {
+      this.active = ['0', '1']
     }
   }
 }
@@ -91,11 +98,24 @@ export default {
       .el-collapse-item__wrap {
         padding-top: 6px !important;
 
+        .el-collapse-item__content {
+          padding-bottom: 15px;
+        }
         .filter-item {
           display: flex;
           justify-content: space-between;
           padding-right: 6px;
           width: 100%;
+        }
+        .filter__more {
+          padding-left: 24px;
+          line-height: 36px;
+          color: $--color-primary;
+          cursor: pointer;
+        }
+        .filter__more.filter__more--disabled {
+          color: #999;
+          cursor: default;
         }
       }
     }
