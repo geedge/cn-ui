@@ -98,6 +98,7 @@ export default {
     flex-shrink: 1;
     flex-grow: 1;
     overflow: hidden;
+    min-width: 200px;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
