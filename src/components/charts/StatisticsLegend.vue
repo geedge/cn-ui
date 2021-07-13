@@ -44,7 +44,6 @@ export default {
 <style lang="scss" scoped>
 .chart__legend {
   width: calc(100% - 40px);
-  height: 105px;
   border: 1px solid #E7EAED;
   color: #5f6368;
   margin: auto;
@@ -66,8 +65,6 @@ export default {
 }
 .chart__table-below {
   width: 100%;
-  height: calc(100% - 30px);
-  overflow: auto;
   font-size: 13px;
 
   .table-below-box {
