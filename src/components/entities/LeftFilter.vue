@@ -11,11 +11,12 @@
         >
           <el-tree
               :data="f.data"
-              :load="(node, resolve) => f.loadFilter(node, resolve, f.filterType, f.childrenKey ? f.childrenKey : f.key)"
+              :load="(node, resolve) => f.loadFilter(node, resolve, f.filterType, f.childrenKey, f.key)"
               :node-key="f.key"
               :props="{ isLeaf: 'leaf' }"
               :expand-on-click-node="false"
               :lazy="i === 0"
+              highlight-current
               :show-checkbox="i === 1"
               @node-click="nodeClick"
           >

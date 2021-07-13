@@ -241,12 +241,12 @@ export default {
     }
   }
 }
-const loadFilter = (node, resolve, filterType, key) => {
+const loadFilter = (node, resolve, filterType, key, parentKey) => {
   if (node.level === 0) {
     resolve(node.data)
   } else {
     const param = { type: key }
-    param[key] = (node.data)[key]
+    param[parentKey] = (node.data)[parentKey]
     let req = null
     switch (filterType) {
       case 'ip': {

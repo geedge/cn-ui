@@ -2,8 +2,8 @@ import { createI18n } from 'vue-i18n'
 import { storageKey } from '@/utils/constants'
 import { getI18n } from '@/utils/api'
 import store from '@/store'
-import cn from './cn'
-import en from './en'
+// import cn from './cn'
+// import en from './en'
 
 const i18n = createI18n({
   locale: localStorage.getItem(storageKey.language) || 'en'

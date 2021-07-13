@@ -18,7 +18,7 @@
 
 <script>
 import { getChartColor } from '@/components/charts/chart-options'
-import {chartColor} from "./chart-options";
+import { chartColor } from './chart-options'
 export default {
   name: 'StatisticsLegend',
   props: {
@@ -47,6 +47,7 @@ export default {
   border: 1px solid #E7EAED;
   color: #5f6368;
   margin: auto;
+  margin-bottom: 15px;
 }
 .chart__table-top {
   width: 100%;
