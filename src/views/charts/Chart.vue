@@ -122,7 +122,9 @@
             popper-class="option-popper"
             @change="tableLimitChange"
         >
-          <el-option v-for="item in table.tableColumns" :key="item.prop" :value="item.prop">{{item.prop}}</el-option>
+          <template v-for="(item, index) in table.tableColumns" :key="item.prop">
+            <el-option v-if="index > 0" :value="item.prop">{{item.prop}}</el-option>
+          </template>
         </el-select>
       </div>
 <!--      <div class="header__operation header__operation&#45;&#45;table">
