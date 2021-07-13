@@ -83,7 +83,10 @@
       :icon="singleValue.icon"
   >
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
-    <template #data>{{singleValue.value}}</template>
+    <template #data>
+      <span>{{handleSingleValue(singleValue.value)}}</span>
+      <span v-if="chartInfo.params && chartInfo.params.unit" class="single-value__unit">{{chartInfo.params.unit}}</span>
+    </template>
   </single-value>
   <!-- 表格 -->
   <chart-table
@@ -217,7 +220,7 @@ export default {
   },
   methods: {
     initChart () {
-      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      const chartParams = this.chartInfo.params
       if (this.isMap) {
         const { chart, polygonSeries } = this.initMap(`chart${this.chartInfo.id}`)
         this.myChart = chart
@@ -284,7 +287,7 @@ export default {
       }
     },
     loadMap (polygonSeries) {
-      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      const chartParams = this.chartInfo.params
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
@@ -518,6 +521,11 @@ export default {
         gridColumn,
         gridRow
       }
+    },
+    handleSingleValue () {
+      return function (value) {
+        return Number(value) < 0.01 ? '< 0.01' : this.$_.round(value, 2)
+      }
     }
   },
   mounted () {
@@ -537,6 +545,7 @@ export default {
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))
     chartInfo.category = getTypeCategory(props.chart.type)
+    chartInfo.params = chartInfo.params ? JSON.parse(chartInfo.params) : null
     return {
       chartInfo,
       layoutConstant,

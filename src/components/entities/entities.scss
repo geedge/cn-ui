@@ -70,18 +70,27 @@
           }
         }
         .cn-entity__body {
+          overflow: hidden;
+
           .body__row {
+            display: flex;
             padding: 0 0 0 20px;
             color: #666;
 
             .body__row-label {
               padding-right: 15px;
             }
+            .body__row-value {
+              width: calc(100% - 150px);
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
           }
           .body__detail {
             padding: 10px 0 0 20px;
             color: $--color-primary;
             cursor: pointer;
+
           }
         }
       }

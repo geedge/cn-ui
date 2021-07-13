@@ -90,11 +90,8 @@ export default {
         default: break
       }
       const data = await this.loadFilterData(this.filterType, key)
-      if (this.$_.isEmpty(data)) {
-        this.filterData[index].hasnotMore = true
-      } else {
-        this.filterData[index].data = this.$_.concat(this.filterData[index].data, data)
-      }
+      this.filterData[index].data = this.$_.concat(this.filterData[index].data, data)
+      this.filterData[index].hasnotMore = this.$_.isEmpty(data) || data.length < 10
     },
     async loadFilterData (filterType, key) {
       let data
@@ -174,6 +171,7 @@ export default {
       Promise.all(requests).then(responses => {
         data.forEach((d, i) => {
           d.data = responses[i]
+          d.hasnotMore = this.$_.isEmpty(responses[i]) || responses[i].length < 10
         })
         this.filterData = data
       })
@@ -222,6 +220,7 @@ export default {
       key: 'country',
       childrenKey: 'region',
       data: country,
+      hasnotMore: this.$_.isEmpty(country) || country.length < 10,
       filterType: this.filterType,
       loadFilter
     })
@@ -229,9 +228,11 @@ export default {
       title: this.$t('entities.asn'),
       key: 'asn',
       data: asn,
+      hasnotMore: this.$_.isEmpty(asn) || asn.length < 10,
       filterType: this.filterType,
       loadFilter
     })
+    console.info(this.filterData)
   },
   setup () {
     const filterType = ref(Object.keys(entityType)[0])

@@ -26,45 +26,45 @@
           <template v-if="entityType === 'ip'">
             <div class="body__row">
               <span class="body__row-label">{{$t('common.country')}}:</span>
-              <span class="body__row-value">{{d.country || '-'}}</span>
+              <div class="body__row-value" :title="d.country">{{d.country || '-'}}</div>
             </div>
             <div class="body__row">
               <span class="body__row-label">{{$t('common.region')}}:</span>
-              <span class="body__row-value">{{d.region || '-'}}</span>
+              <div class="body__row-value" :title="d.region">{{d.region || '-'}}</div>
             </div>
             <div class="body__row">
               <span class="body__row-label">{{$t('entities.asn')}}:</span>
-              <span class="body__row-value">{{d.asn || '-'}}</span>
+              <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
             <div class="body__detail">{{$t('common.detail')}}</div>
           </template>
           <template v-else-if="entityType === 'domain'">
             <div class="body__row">
               <span class="body__row-label">{{$t('entities.categoryGroup')}}:</span>
-              <span class="body__row-value">{{d.categoryGroup || '-'}}</span>
+              <div class="body__row-value" :title="d.categoryGroup">{{d.categoryGroup || '-'}}</div>
             </div>
             <div class="body__row">
               <span class="body__row-label">{{$t('entities.categoryName')}}:</span>
-              <span class="body__row-value">{{d.categoryName || '-'}}</span>
+              <div class="body__row-value" :title="d.categoryName">{{d.categoryName || '-'}}</div>
             </div>
             <div class="body__row">
               <span class="body__row-label">{{$t('entities.creditScore')}}:</span>
-              <span class="body__row-value">{{d.reputationScore || '-'}}</span>
+              <div class="body__row-value" :title="d.reputationScore">{{d.reputationScore || '-'}}</div>
             </div>
             <div class="body__detail">{{$t('common.detail')}}</div>
           </template>
           <template v-else-if="entityType === 'app'">
             <div class="body__row">
               <span class="body__row-label">APP ID:</span>
-              <span class="body__row-value">{{d.appId || '-'}}</span>
+              <div class="body__row-value" :title="d.appId">{{d.appId || '-'}}</div>
             </div>
             <div class="body__row">
               <span class="body__row-label">{{$t('entities.category')}}:</span>
-              <span class="body__row-value">{{d.appCategory || '-'}}</span>
+              <div class="body__row-value" :title="d.appCategory">{{d.appCategory || '-'}}</div>
             </div>
             <div class="body__row">
               <span class="body__row-label">{{$t('entities.subcategory')}}:</span>
-              <span class="body__row-value">{{d.appSubategory || '-'}}</span>
+              <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
             <div class="body__detail">{{$t('common.detail')}}</div>
           </template>
