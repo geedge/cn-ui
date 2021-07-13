@@ -100,7 +100,7 @@ export default {
       immediate: true,
       handler (n) {
         if (n && n.params) {
-          this.nameColumn = JSON.parse(n.params).nameColumn
+          this.nameColumn = n.params.nameColumn
         }
       }
     }
