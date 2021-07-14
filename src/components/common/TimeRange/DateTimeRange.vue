@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import {ref, computed} from 'vue'
+import { ref, computed } from 'vue'
 import MyDatePicker from '../MyDatePicker'
 
 export default {
@@ -105,7 +105,7 @@ export default {
   components: {
     MyDatePicker
   },
-  setup(props, ctx) {
+  setup (props, ctx) {
     // data
     const myStartTime = ref(props.startTime)
     const myEndTime = ref(props.endTime)

@@ -255,9 +255,9 @@ export const cancelWithChange = {
     function domClick (e) {
       const newValue = JSON.parse(JSON.stringify(binding.value.object))
       if (unsavedChange === 'on' && !isEqual(oldValue, newValue)) {
-        ElMessageBox.confirm(i18n.t('tip.confirmCancel'), {
-          confirmButtonText: i18n.t('tip.yes'),
-          cancelButtonText: i18n.t('tip.no'),
+        ElMessageBox.confirm(i18n.global.t('tip.confirmCancel'), {
+          confirmButtonText: i18n.global.t('tip.yes'),
+          cancelButtonText: i18n.global.t('tip.no'),
           type: 'warning'
         }).then(() => {
           if (binding.value.func) {
@@ -392,6 +392,12 @@ export function lineToHump (name) {
   return name.replace(/\_(\w)/g, function (all, letter) {
     return letter.toUpperCase()
   })
+}
+// 下划线转换空格首位大写
+export function lineToSpace (name) {
+  return _.upperFirst(name.replace(/\_(\w)/g, function (all, letter) {
+    return ` ${letter.toUpperCase()}`
+  }))
 }
 // 驼峰转换下划线
 export function humpToLine (name) {

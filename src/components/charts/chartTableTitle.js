@@ -1,74 +1,81 @@
+import i18n from '@/i18n'
 export const allTableTitle = {
   tableTitles10: [
     {
-      label: 'clientIp',
+      label: i18n.global.t('common.clientIp'),
       prop: 'clientIp'
     },
     {
-      label: 'bytes',
+      label: i18n.global.t('common.sessions'),
+      prop: 'sessions'
+    },
+    {
+      label: i18n.global.t('common.bytes'),
       prop: 'bytes'
     },
     {
-      label: 'packets',
+      label: i18n.global.t('common.packets'),
       prop: 'packets'
-    },
-    {
-      label: 'sessions',
-      prop: 'sessions'
     }
   ],
   tableTitles13: [
     {
-      label: 'serverIp',
+      label: i18n.global.t('common.serverIp'),
       prop: 'serverIp'
     },
     {
-      label: 'bytes',
+      label: i18n.global.t('common.sessions'),
+      prop: 'sessions'
+    },
+    {
+      label: i18n.global.t('common.bytes'),
       prop: 'bytes'
     },
     {
-      label: 'packets',
+      label: i18n.global.t('common.packets'),
       prop: 'packets'
-    },
-    {
-      label: 'sessions',
-      prop: 'sessions'
     }
   ],
   tableTitles14: [
     {
-      label: 'domain',
+      label: i18n.global.t('common.domain'),
       prop: 'domain'
     },
     {
-      label: 'bytes',
+      label: i18n.global.t('common.sessions'),
+      prop: 'sessions'
+    },
+    {
+      label: i18n.global.t('common.bytes'),
       prop: 'bytes'
     },
     {
-      label: 'packets',
+      label: i18n.global.t('common.packets'),
       prop: 'packets'
-    },
-    {
-      label: 'sessions',
-      prop: 'sessions'
     }
   ],
   tableTitles15: [
     {
-      label: 'appName',
+      label: i18n.global.t('common.appName'),
       prop: 'appName'
     },
     {
-      label: 'bytes',
+      label: i18n.global.t('common.sessions'),
+      prop: 'sessions'
+    },
+    {
+      label: i18n.global.t('common.bytes'),
       prop: 'bytes'
     },
     {
-      label: 'packets',
+      label: i18n.global.t('common.packets'),
       prop: 'packets'
-    },
-    {
-      label: 'sessions',
-      prop: 'sessions'
     }
   ]
+}
+export const legendMapping = {
+  bytes_received_rate: 'Bytes Received Rate',
+  bytes_sent_rate: 'Bytes Sent Rate',
+  bytes_rate: 'Bytes Rate',
+  session_rate: 'Session Rate'
 }

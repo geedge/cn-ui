@@ -297,7 +297,7 @@
         justify-content: end;
         align-items: center;
 
-        .header__operation.header__operation--table {
+        .header__operation.header__operation--echarts {
           display: flex;
           align-items: center;
           height: 22px;
@@ -352,7 +352,7 @@
           }
           .option__select.select-column {
             .el-input__inner {
-              width: 120px;
+              width: 86px;
               padding-left: 8px;
             }
           }
@@ -368,7 +368,6 @@
       }
     }
     .cn-chart__body {
-      flex: auto;
       overflow-y: auto;
 
       .el-table {

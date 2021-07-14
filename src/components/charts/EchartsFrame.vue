@@ -37,9 +37,14 @@ export default {
 }
 </script>
 
-<style scoped>
-.cn-panel .cn-chart__echarts .pie-with-table{
-  flex: 1;
-  padding: 10px 40px 30px;
+<style lang="scss" scoped>
+.cn-panel .cn-chart__echarts {
+  .cn-chart__body.pie-with-table {
+    flex-basis: 40%;
+  }
+  .cn-chart__footer.pie-with-table {
+    flex-basis: 60%;
+    padding: 10px 30px 30px;
+  }
 }
 </style>

@@ -29,7 +29,7 @@
   >
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
-      <i class="cn-icon cn-icon-more-light"></i>
+<!--      <i class="cn-icon cn-icon-more-light"></i>-->
 <!--      <i class="cn-icon cn-icon-refresh" @click="loadMap"></i>-->
     </template>
     <template #default>
@@ -47,20 +47,19 @@
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </template>
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
-      <div class="header__operation header__operation--table" v-if="chart.type === 31">
+      <div class="header__operation header__operation--echarts" v-if="chart.type === 31">
         <el-select
                 size="mini"
                 v-model="orderPieTable"
-                class="option__select select-topn"
+                class="option__select select-column"
                 placeholder=""
                 popper-class="option-popper"
                 @change="orderPieTableChange"
         >
           <el-option v-for="item in chartPieTableTopOptions" :key="item.value" :value="item.value">&nbsp{{item.name}}</el-option>
-          <template #prefix>TOP&nbsp;</template>
         </el-select>
       </div>
-      <i class="cn-icon cn-icon-more-light margin-l-10"></i>
+<!--      <i class="cn-icon cn-icon-more-light margin-l-10"></i>-->
     </template>
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
@@ -131,10 +130,10 @@
         <span class="option__button"><i class="cn-icon cn-icon-style"></i></span>
         <div class="icon-group-divide"></div>
         <span class="option__button"><i class="cn-icon cn-icon-dropdown"></i></span>
-      </div>-->
+      </div>
       <div class="header__operation header__operation--table">
         <span class="option__button"><i class="cn-icon cn-icon-full-screen"></i></span>
-      </div>
+      </div>-->
     </template>
     <template #footer>
       <chart-table-pagination
@@ -150,7 +149,7 @@ import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { shallowRef } from 'vue'
-import { allTableTitle } from '@/components/charts/chartTableTitle'
+import { allTableTitle, legendMapping } from '@/components/charts/chartTableTitle'
 import {
   isEcharts,
   isSingleValue,
@@ -177,7 +176,7 @@ import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
-import { replaceUrlPlaceholder, getCapitalGeo, getGeoData } from '@/utils/tools'
+import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
 
 export default {
   name: 'Chart',
@@ -400,7 +399,7 @@ export default {
     },
     orderPieTableChange () {
       if (this.chart.type === 31) {
-        const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+        const chartParams = this.chartInfo.params || null // 图表参数
         this.myChart.off('click')
         this.initEchartsWithPieTable(chartParams)
       }
@@ -409,12 +408,11 @@ export default {
       const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
-          this.statisticsData = response.data.result
           const seriesTemplate = this.chartOption.series[0]
           this.chartOption.series = response.data.result.map(r => {
             return {
               ...seriesTemplate,
-              name: r.legend,
+              name: legendMapping[r.legend] ? legendMapping[r.legend] : lineToSpace(r.legend),
               data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])])
             }
           })
@@ -501,7 +499,7 @@ export default {
       })
     },
     tableLimitChange () {
-      const chartParams = this.chartInfo.params ? JSON.parse(this.chartInfo.params) : null // 图表参数
+      const chartParams = this.chartInfo.params || null // 图表参数
       this.initChartTable(chartParams)
     },
     initChartTable (chartParams) {
@@ -526,7 +524,11 @@ export default {
     },
     handleSingleValue () {
       return function (value) {
-        return Number(value) < 0.01 ? '< 0.01' : this.$_.round(value, 2)
+        if (!Number(value)) {
+          return 0
+        } else {
+          return Number(value) < 0.01 ? '< 0.01' : this.$_.round(value, 2)
+        }
       }
     }
   },
