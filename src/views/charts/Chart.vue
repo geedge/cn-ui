@@ -454,8 +454,7 @@ export default {
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
-          const data = response.data.result
-          this.chartOption.series[0].data = data.map(d => {
+          const data = response.data.result.map(d => {
             tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
             return {
               data: d,
@@ -463,6 +462,7 @@ export default {
               value: parseInt(d[chartParams.valueColumn])
             }
           })
+          this.chartOption.series[0].data = data
           if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
             this.chartOption.legend.type = 'scroll'
           }
@@ -477,25 +477,50 @@ export default {
           })
         }
       })
+      // legend点击事件
       this.myChart.on('legendselectchanged', function (params) {
         self.myChart.setOption({
           legend: { selected: { [params.name]: true } }
         })
-      })
-      this.myChart.on('click', function (echartParams) {
-        const childrenParams = { startTime: parseInt(self.startTime / 1000), endTime: parseInt(self.endTime / 1000), limit: 10, order: self.orderPieTable }
-        childrenParams[chartParams.nameColumn] = echartParams.name
-        if (self.selectPieChartName === echartParams.name) {
-          self.selectPieChartName = ''
-          childrenParams[chartParams.nameColumn] = tableQueryParams[chartParams.nameColumn]
-        } else {
-          self.selectPieChartName = echartParams.name
-        }
-        get(replaceUrlPlaceholder(chartParams.urlTable, childrenParams)).then(response2 => {
-          if (response2.code === 200) {
-            self.pieTableData = response2.data.result
+        self.chartOption.series[0].data.forEach((d, i) => {
+          if (self.selectPieChartName === d.name) {
+            self.myChart.dispatchAction({
+              type: 'unselect',
+              seriesIndex: 0,
+              dataIndex: i
+            })
+            self.loadPieTableData()
+          } else {
+            if (d.name === params.name) {
+              self.selectPieChartName = d.name
+              self.myChart.dispatchAction({
+                type: 'select',
+                seriesIndex: 0,
+                dataIndex: i
+              })
+              self.loadPieTableData(params.name)
+            } else {
+              self.myChart.dispatchAction({
+                type: 'unselect',
+                seriesIndex: 0,
+                dataIndex: i
+              })
+            }
           }
         })
+      })
+      // 饼图色块点击事件
+      this.myChart.on('click', function (echartParams) {
+        self.loadPieTableData(echartParams.name)
+      })
+    },
+    loadPieTableData (name = '') {
+      const childrenParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable }
+      childrenParams[this.chartInfo.params.nameColumn] = name
+      get(replaceUrlPlaceholder(this.chartInfo.params.urlTable, childrenParams)).then(response => {
+        if (response.code === 200) {
+          this.pieTableData = response.data.result
+        }
       })
     },
     tableLimitChange () {
