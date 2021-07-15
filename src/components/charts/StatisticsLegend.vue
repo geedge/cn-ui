@@ -1,15 +1,15 @@
 <template>
   <div class="chart__legend">
     <div class="chart__table-top">
-      <div>Average</div>
-      <div>Maximum</div>
+      <div>Avg</div>
+      <div>Max</div>
     </div>
     <div class="chart__table-below">
       <div v-for="(item,index) in data" :key="index" class="table-below-box">
         <div class="table__below-color"><div :style="{backgroundColor: getChartColor(index)}"></div></div>
         <div class="table__below-title" :title="item.legend">{{item.legend}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.max">{{item.aggregation.max}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.avg">{{item.aggregation.avg}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.max">{{shortFormatter(item.aggregation.max)}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.avg">{{shortFormatter(item.aggregation.avg)}}</div>
       </div>
     </div>
   </div>
@@ -18,7 +18,7 @@
 
 <script>
 import { getChartColor } from '@/components/charts/chart-options'
-import { chartColor } from './chart-options'
+import { shortFormatter } from '@/components/charts/chartFormatter'
 export default {
   name: 'StatisticsLegend',
   props: {
@@ -35,7 +35,7 @@ export default {
   setup () {
     return {
       getChartColor,
-      chartColor
+      shortFormatter
     }
   }
 }
@@ -55,7 +55,6 @@ export default {
   border-bottom: #E7EAED 1px solid;
   display: flex;
   justify-content: flex-end;
-  padding-right: 15px;
 
   div {
     width: 80px;

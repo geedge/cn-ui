@@ -4,7 +4,7 @@
  * @description chart option和一些工具
 */
 import { format } from 'echarts'
-import { shortFormatter } from './chartFormatter'
+import { shortFormatter, tooltipShortFormatter } from './chartFormatter'
 import _ from 'lodash'
 export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
   '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
@@ -22,6 +22,7 @@ const line = {
       overflow: 'truncate'
     },
     formatter: axiosFormatter,
+    show: true,
     className: 'nz-chart-tooltip',
     extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
   },
@@ -43,8 +44,12 @@ const line = {
   },
   color: chartColor,
   legend: {
+    tooltip: {
+      show: true,
+      formatter: '{a}'
+    },
     show: true,
-    right: 25,
+    right: 23,
     top: 8,
     orient: 'horizontal',
     icon: 'circle',
@@ -175,7 +180,8 @@ const lineStack = {
 const pieWithTable = {
   tooltip: {
     appendToBody: true,
-    trigger: 'item'
+    trigger: 'item',
+    formatter: tooltipShortFormatter
   },
   color: chartColor,
   animation: false,
@@ -310,7 +316,6 @@ function tooLongFormatter (name) {
 }
 function axiosFormatter (params) {
   let str = '<div>'
-  const sum = 0
   params.forEach((item, i) => {
     const tData = item.data[0]
     if (i === 0) {

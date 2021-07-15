@@ -1,4 +1,4 @@
-const shortList = [' ', 'K', 'M', 'B', 'T', 'Quadrillion', 'Quintillion']
+const shortList = [' ', 'K', 'M', 'G', 'T', 'Quadrillion', 'Quintillion']
 function asciiCompute (num, ascii, units, dot = 2) {
   if (!num && num !== 0 && num !== '0') {
     return ''
@@ -18,4 +18,7 @@ function asciiCompute (num, ascii, units, dot = 2) {
 }
 export function shortFormatter (value, index, dot = 2) {
   return asciiCompute(value, 1000, shortList, dot)
+}
+export function tooltipShortFormatter (obj, index, callback, dot = 2) {
+  return asciiCompute(obj.value, 1000, shortList, dot)
 }

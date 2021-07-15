@@ -174,6 +174,7 @@ import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
+import { shortFormatter } from '@/components/charts/chartFormatter'
 import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
@@ -264,7 +265,7 @@ export default {
       return `Server: ${data.serverRegion ? data.serverRegion : data.serverCountry}
           Client: ${data.clientRegion ? data.clientRegion : data.clientCountry}
           Sessions: ${data.sessions}
-          Bytes: ${data.bytes}`
+          Bytes: ${shortFormatter(data.bytes)}`
     },
     changeTab (tab) {
       this.activeTab = tab.paneName
@@ -382,11 +383,9 @@ export default {
             })
             const polygonTemplate = polygonSeries.mapPolygons.template
             polygonTemplate.tooltipText = '{name}: {value}'
+            // polygonTemplate.numberFormatter = new am4Core.NumberFormatter().bigNumberPrefixes
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
-
-            const hs = polygonTemplate.states.create('hover')
-            // hs.properties.fill = am4Core.color('#3c5bdc')
           }
         }
       })
@@ -549,10 +548,10 @@ export default {
     },
     handleSingleValue () {
       return function (value) {
-        if (!Number(value)) {
-          return 0
+        if (!Number(value) && Number(value) !== 0) {
+          return '-'
         } else {
-          return Number(value) < 0.01 ? '< 0.01' : this.$_.round(value, 2)
+          return Number(value) < 0.01 ? '< 0.01' : shortFormatter(value)
         }
       }
     }
