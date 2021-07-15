@@ -1,15 +1,9 @@
 .right-box, .right-sub-box {
   display: flex;
   flex-direction: column;
-  position: fixed;
-  right: 0;
-  top: 0px;
   padding: 0;
-  height: calc(100% - 50px);
-  width: 700px;
-  box-shadow: 0 0 5px #ccc;
-  background-color: white;
-  z-index: 410;
+  height: 100%;
+  width: 100%;
 
   .el-date-editor {
     .el-input__inner {
@@ -40,9 +34,6 @@
 }
 
 .right-box__container {
-  .right-box-form{
-    width: calc(100% - 60px);
-  }
   height: calc(100% - 130px);
   padding: 0 30px;
   overflow-x: hidden;
@@ -181,12 +172,12 @@
       margin-bottom: 20px;
       width: 300px;
       height: 28px;
-      border: 1px solid var(--theme-color-light-71);
+      border: 1px solid lighten($--color-primary, 60%);
       border-radius: $--border-radius-primary;
-      background-color: var(--theme-color-light-98);
+      background-color: lighten($--color-primary, 95%);
 
       i {
-        color: var(--theme-color);
+        color: $--color-primary;
       }
     }
     .form__flex-container {
@@ -226,7 +217,7 @@
     min-width: 74px;
     padding: 0 15px;
     color: white;
-    background-color: var(--theme-color);
+    background-color: $--color-primary;
     border: none;
     border-radius: 4px;
     outline: none;
@@ -235,7 +226,7 @@
     transition: background-color linear .2s, color linear .1s;
   }
   .footer__btn:hover:not(.footer__btn--disabled) {
-    background-color: var(--theme-color-light-20);
+    background-color: lighten($--color-primary, 10%);
   }
   .footer__btn--light {
     background-color: white;
@@ -244,8 +235,8 @@
   }
   .footer__btn.footer__btn--light:hover:not(.footer__btn--disabled) {
     background-color: white;
-    border-color: var(--theme-color-light-50);
-    color: var(--theme-color);
+    border-color: lighten($--color-primary, 40%);
+    color: $--color-primary;
   }
   .footer__btn--disabled {
     opacity: .6;
