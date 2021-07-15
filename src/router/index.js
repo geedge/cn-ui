@@ -19,7 +19,7 @@ const routes = [
         component: () => import('@/views/settings/User')
       },
       {
-        path: '/roles',
+        path: '/role',
         component: () => import('@/views/settings/Roles')
       },
       {
