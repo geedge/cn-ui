@@ -261,11 +261,21 @@ export default {
         }
       }
     },
-    getTitle (data) {
-      return `Server: ${data.serverRegion ? data.serverRegion : data.serverCountry}
-          Client: ${data.clientRegion ? data.clientRegion : data.clientCountry}
-          Sessions: ${data.sessions}
-          Bytes: ${shortFormatter(data.bytes)}`
+    getTitle (r) {
+      let title = ''
+      if (r.establishLatency || r.httpResponseLatency || r.sslConLatency) {
+        title = `${title}: ${shortFormatter(r.establishLatency || r.httpResponseLatency || r.sslConLatency)} ms`
+      }
+      if (r.sequenceGapLossPercent || r.pktRetransPercent) {
+        title = `${title}: ${shortFormatter(r.sequenceGapLossPercent || r.pktRetransPercent)} %`
+      }
+      if (r.sessions) {
+        title = `${title}\nSessions: ${shortFormatter(r.sessions)}`
+      }
+      if (r.bytes) {
+        title = `${title}\nBytes: ${shortFormatter(r.bytes)}`
+      }
+      return title
     },
     changeTab (tab) {
       this.activeTab = tab.paneName
@@ -378,11 +388,12 @@ export default {
             polygonSeries.data = response.data.result.map(r => {
               return {
                 id: r.serverId,
-                value: r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent
+                title: this.getTitle(r),
+                value: r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions
               }
             })
             const polygonTemplate = polygonSeries.mapPolygons.template
-            polygonTemplate.tooltipText = '{name}: {value}'
+            polygonTemplate.tooltipText = '{name}{title}'
             // polygonTemplate.numberFormatter = new am4Core.NumberFormatter().bigNumberPrefixes
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
