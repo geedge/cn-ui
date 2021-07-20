@@ -83,8 +83,8 @@
   >
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
-      <span>{{handleSingleValue(singleValue.value)}}</span>
-      <span v-if="chartInfo.params && chartInfo.params.unit" class="single-value__unit">{{chartInfo.params.unit}}</span>
+      <span>{{handleSingleValue[0]}}</span>
+      <span v-if="chartInfo.params && chartInfo.params.unit" class="single-value__unit">{{handleSingleValue[1]}}</span>
     </template>
   </single-value>
   <!-- 表格 -->
@@ -149,7 +149,7 @@ import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { shallowRef } from 'vue'
-import { allTableTitle, legendMapping } from '@/components/charts/chartTableTitle'
+import { allTableTitle, legendMapping } from '@/components/charts/chart-table-title'
 import {
   isEcharts,
   isSingleValue,
@@ -174,7 +174,7 @@ import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
-import { shortFormatter } from '@/components/charts/chartFormatter'
+import { shortFormatter, timeUnitFormatter } from '@/components/charts/chart-formatter'
 import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
@@ -499,6 +499,7 @@ export default {
               seriesIndex: 0,
               dataIndex: i
             })
+            self.selectPieChartName = ''
             self.loadPieTableData()
           } else {
             if (d.name === params.name) {
@@ -558,11 +559,15 @@ export default {
       }
     },
     handleSingleValue () {
-      return function (value) {
-        if (!Number(value) && Number(value) !== 0) {
-          return '-'
+      const value = this.singleValue.value
+      const unit = this.chartInfo.params.unit
+      if (!Number(value) && Number(value) !== 0) {
+        return '-'
+      } else {
+        if (unit && unit === 'ms') {
+          return Number(value) < 1 ? ['< 1', 'ms'] : timeUnitFormatter(value, null, 0)
         } else {
-          return Number(value) < 0.01 ? '< 0.01' : shortFormatter(value)
+          return Number(value) < 0.01 ? ['< 0.01', ''] : [shortFormatter(value), '']
         }
       }
     }

@@ -4,7 +4,7 @@
  * @description chart option和一些工具
 */
 import { format } from 'echarts'
-import { shortFormatter, tooltipShortFormatter } from './chartFormatter'
+import { shortFormatter, timeUnitFormatter } from './chart-formatter'
 import _ from 'lodash'
 export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
   '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
@@ -179,9 +179,7 @@ const lineStack = {
 }
 const pieWithTable = {
   tooltip: {
-    appendToBody: true,
-    trigger: 'item',
-    formatter: tooltipShortFormatter
+    appendToBody: true
   },
   color: chartColor,
   animation: false,
@@ -194,10 +192,10 @@ const pieWithTable = {
     itemWidth: 10, // 设置宽度
     itemHeight: 10, // 设置高度
     itemGap: 20,
+    formatter: tooLongFormatter,
     tooltip: {
       show: true
-    },
-    formatter: tooLongFormatter
+    }
   },
   series: [
     {
@@ -208,6 +206,11 @@ const pieWithTable = {
       data: [],
       label: {
         formatter: '{d}%'
+      },
+      tooltip: {
+        formatter: function (param, index, callback) {
+          return `${param.name}: ${shortFormatter(param.value)}`
+        }
       },
       emphasis: {
         itemStyle: {

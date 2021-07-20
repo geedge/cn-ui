@@ -18,7 +18,7 @@
 
 <script>
 import { getChartColor } from '@/components/charts/chart-options'
-import { shortFormatter } from '@/components/charts/chartFormatter'
+import { shortFormatter } from '@/components/charts/chart-formatter'
 export default {
   name: 'StatisticsLegend',
   props: {

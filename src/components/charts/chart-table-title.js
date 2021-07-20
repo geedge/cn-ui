@@ -74,8 +74,11 @@ export const allTableTitle = {
   ]
 }
 export const legendMapping = {
-  bytes_received_rate: 'Bytes Received Rate',
-  bytes_sent_rate: 'Bytes Sent Rate',
-  bytes_rate: 'Bytes Rate',
-  session_rate: 'Session Rate'
+  bytes_received_rate: i18n.global.t('trafficSummary.throughputPerSecondC2s'),
+  bytes_sent_rate: i18n.global.t('trafficSummary.throughputPerSecondS2c'),
+  bytes_rate: i18n.global.t('trafficSummary.throughputPerSecond'),
+  session_rate: i18n.global.t('trafficSummary.sessionsPerSecond'),
+  packets_rate: i18n.global.t('trafficSummary.packetsPerSecond'),
+  packets_received_rate: i18n.global.t('trafficSummary.packetsPerSecondC2s'),
+  packets_sent_rate: i18n.global.t('trafficSummary.packetsPerSecondS2c')
 }

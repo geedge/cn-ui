@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { shortFormatter } from '@/components/charts/chartFormatter'
+import { shortFormatter } from '@/components/charts/chart-formatter'
 export default {
   name: 'ChartTable',
   props: {

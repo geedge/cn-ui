@@ -6,17 +6,17 @@ const { VueLoaderPlugin } = require('vue-loader')
 
 const libMode = process.env.LIBMODE
 const isFullMode = libMode === 'full'
-let externals = [
+const externals = [
   {
     vue: {
       root: 'Vue',
       commonjs: 'vue',
-      commonjs2: 'vue',
-    },
-  },
+      commonjs2: 'vue'
+    }
+  }
 ]
 const plugins = [
-  new VueLoaderPlugin(),
+  new VueLoaderPlugin()
   // new BundleAnalyzerPlugin(),
 ]
 
@@ -50,20 +50,21 @@ const config = {
     rules: [
       {
         test: /\.vue$/,
-        use: 'vue-loader',
+        use: 'vue-loader'
       },
       {
         test: /\.(ts|js)x?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-      },
-    ],
+        loader: 'babel-loader'
+      }
+    ]
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.json'],
+    extensions: ['.ts', '.tsx', '.js', '.json']
   },
+  cache: true,
   externals,
-  plugins,
+  plugins
 }
 
 module.exports = config

@@ -17,7 +17,6 @@
               :expand-on-click-node="false"
               :lazy="i === 0"
               highlight-current
-              :show-checkbox="i === 1"
               @node-click="nodeClick"
           >
             <template #default="{ node, data }">

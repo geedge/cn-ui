@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { shortFormatter } from '@/components/charts/chartFormatter'
+import { shortFormatter } from '@/components/charts/chart-formatter'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 
@@ -188,7 +188,8 @@ export default {
         startTime: parseInt(this.startTime / 1000),
         endTime: parseInt(this.endTime / 1000),
         order: this.order,
-        domain: row.domain
+        domain: row.domain,
+        limit: 10
       }
       get(replaceUrlPlaceholder(url, queryParams)).then(response2 => {
         if (response2.code === 200) {
