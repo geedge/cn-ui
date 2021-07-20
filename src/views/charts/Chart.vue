@@ -264,7 +264,7 @@ export default {
     getTitle (r) {
       let title = ''
       if (r.establishLatency || r.httpResponseLatency || r.sslConLatency) {
-        title = `${title}: ${shortFormatter(r.establishLatency || r.httpResponseLatency || r.sslConLatency)} ms`
+        title = `${title}: ${timeUnitFormatter(r.establishLatency || r.httpResponseLatency || r.sslConLatency).join(' ')}`
       }
       if (r.sequenceGapLossPercent || r.pktRetransPercent) {
         title = `${title}: ${shortFormatter(r.sequenceGapLossPercent || r.pktRetransPercent)} %`
