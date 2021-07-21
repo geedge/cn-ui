@@ -123,7 +123,7 @@ export default {
     edit (u) {
       get(`${this.url}/${u.id}`).then(response => {
         if (response.code === 200) {
-          this.object = response.user
+          this.object = response.data
           this.rightBox.show = true
         }
       })
