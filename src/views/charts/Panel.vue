@@ -2,10 +2,10 @@
   <div style="padding: 10px 0 20px 20px;">
     <div class="cn-panel" id="cn-panel">
       <div class="panel__time">
-        <DateTimeRange class="date-time-range" :start-time="startTime" :end-time="endTime" ref="dateTimeRange" @change="reload"/>
-        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="endTime"/>
+        <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
+        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
       </div>
-      <chart v-for="(chart, index) in chartList" :key="index" :chart="chart" :start-time="startTime" :end-time="endTime"></chart>
+      <chart v-for="chart in chartList" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`"></chart>
       <!--    <grid-layout v-model:layout="chartList"
                        :col-num="12"
                        :row-height="30"
@@ -30,7 +30,7 @@
 
 <script>
 import { useRoute } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
@@ -47,7 +47,7 @@ export default {
   },
   data () {
     return {
-
+      chartList: []
     }
   },
   async mounted () {
@@ -55,39 +55,18 @@ export default {
   },
   setup (props, ctx) {
     // data
-    const chartList = ref([])
-    const dateRangeValue = ref(60)
-    const now = getNowTime(dateRangeValue.value)
-    const startTime = ref(now.startTime)
-    const endTime = ref(now.endTime)
+    const dateRangeValue = 60
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    const timeFilter = { startTime, endTime, dateRangeValue }
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
-    // refs
-    const dateTimeRange = ref(null)
-
     panelTypeAndRouteMapping[params.typeName] && (panelType = panelTypeAndRouteMapping[params.typeName])
-    // onMounted
-    onMounted(() => {
-      dateTimeRange.value.isCustom = false
-      dateTimeRange.value.dateRangeValue = dateRangeValue
-    })
-    // methods
-    const dateTimeRangeChange = (s, e, v) => {
-      startTime.value = s
-      endTime.value = e
-      dateRangeValue.value = v
-    }
     return {
       panelType,
-      chartList,
       panel,
-      startTime,
-      endTime,
-      dateRangeValue,
-      dateTimeRange,
-      api,
-      dateTimeRangeChange
+      timeFilter,
+      api
     }
   },
   methods: {
@@ -103,21 +82,30 @@ export default {
         })
       }
     },
-    async timeRefreshChange () {
+    timeRefreshChange () {
       if (!this.$refs.dateTimeRange) {
-        await this.init()
+        this.reloadCharts()
         return
       }
       if (this.$refs.dateTimeRange.isCustom) {
-        await this.init()
+        this.reloadCharts()
       } else {
-        const value = this.dateRangeValue.value || this.dateRangeValue
+        const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
       }
     },
-    async reload (s, e, v) {
+    reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
-      await this.init()
+      this.reloadCharts()
+    },
+    // methods
+    dateTimeRangeChange (s, e, v) {
+      this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
+    },
+    reloadCharts () {
+      this.chartList.forEach(chart => {
+        this.$refs[`chart-${chart.id}`] && this.$refs[`chart-${chart.id}`].reloadChart()
+      })
     }
   }
 }

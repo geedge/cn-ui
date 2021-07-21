@@ -36,8 +36,11 @@
             <span v-if="item.prop === 'nameColumn'">
                 {{ nameColumn === 'fqdnCategoryName' ? row['fqdnCategoryName'] : row['reputationLevel'] }}
             </span>
-            <span v-else-if="item.prop === 'bytes' || item.prop === 'packets' || item.prop === 'sessions'">
-                {{ shortFormatter(row[item.prop]) }}
+            <span v-else-if="item.prop === 'bytes'">
+                {{unitConvert(row[item.prop], unitTypes.byte).join(' ')}}
+            </span>
+            <span v-else-if="item.prop === 'packets' || item.prop === 'sessions'">
+                {{unitConvert(row[item.prop], unitTypes.number).join(' ')}}
             </span>
             <span v-else>
                 {{ row[item.prop] }}
@@ -54,23 +57,27 @@
         :label="item.label"
         :prop="item.prop"
         #default="{row}">
-            <span v-if="item.prop === 'nameColumn'">
-                {{ nameColumn === 'fqdnCategoryName' ? row['categoryName'] : row['reputationLevel'] }}
-            </span>
-      <span v-else-if="item.prop === 'bytes' || item.prop === 'packets' || item.prop === 'sessions'">
-                {{ shortFormatter(row[item.prop]) }}
-            </span>
+      <span v-if="item.prop === 'nameColumn'">
+        {{ nameColumn === 'fqdnCategoryName' ? row['categoryName'] : row['reputationLevel'] }}
+      </span>
+      <span v-else-if="item.prop === 'bytes'">
+          {{unitConvert(row[item.prop], unitTypes.byte).join(' ')}}
+      </span>
+      <span v-else-if="item.prop === 'packets' || item.prop === 'sessions'">
+          {{unitConvert(row[item.prop], unitTypes.number).join(' ')}}
+      </span>
       <span v-else>
-                {{ row[item.prop] }}
-            </span>
+          {{ row[item.prop] }}
+      </span>
     </el-table-column>
   </el-table>
 </template>
 
 <script>
-import { shortFormatter } from '@/components/charts/chart-formatter'
+import unitConvert from '@/utils/unit-convert'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder } from '@/utils/tools'
+import { unitTypes } from '@/utils/constants'
 
 export default {
   name: 'PieTable',
@@ -78,12 +85,7 @@ export default {
     tableData: Array,
     chartInfo: Object,
     order: String,
-    startTime: {
-      type: Number
-    },
-    endTime: {
-      type: Number
-    }
+    timeFilter: Object
   },
   watch: {
     tableData: {
@@ -170,7 +172,6 @@ export default {
     }
   },
   methods: {
-    shortFormatter: shortFormatter,
     // rowChange (echartParams) {
     //   const nameColumnKey = this.nameColumn === 'fqdnCategoryName' ? 'categoryName' : 'reputationLevel'
     //   const row = this.pieTableData.find(item => echartParams.name === item[nameColumnKey])
@@ -185,8 +186,8 @@ export default {
       // this.$refs.table.toggleRowExpansion(row)
       const url = this.chartInfo.params.urlChildrenTable
       const queryParams = {
-        startTime: parseInt(this.startTime / 1000),
-        endTime: parseInt(this.endTime / 1000),
+        startTime: parseInt(this.timeFilter.startTime / 1000),
+        endTime: parseInt(this.timeFilter.endTime / 1000),
         order: this.order,
         domain: row.domain,
         limit: 10
@@ -204,6 +205,12 @@ export default {
     },
     getRowKey (row) {
       return row.domain
+    }
+  },
+  setup () {
+    return {
+      unitTypes,
+      unitConvert
     }
   }
 }

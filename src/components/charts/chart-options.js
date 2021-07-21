@@ -4,7 +4,8 @@
  * @description chart option和一些工具
 */
 import { format } from 'echarts'
-import { shortFormatter, timeUnitFormatter } from './chart-formatter'
+import { unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
 export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
   '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
@@ -32,8 +33,11 @@ const line = {
   yAxis: {
     type: 'value',
     axisLabel: {
-      formatter: shortFormatter
-    }
+      formatter: function (value, index, a, b) {
+        return unitConvert(value, unitTypes.number).join(' ')
+      }
+    },
+    minInterval: 1
   },
   animation: false,
   grid: {
@@ -93,9 +97,11 @@ const lineWithStatistics = {
   yAxis: {
     type: 'value',
     axisLabel: {
-      formatter: shortFormatter
-    }
-
+      formatter: function (value, index) {
+        return unitConvert(value, unitTypes.number).join(' ')
+      }
+    },
+    minInterval: 1
   },
   color: chartColor,
   grid: {
@@ -139,9 +145,11 @@ const lineStack = {
   yAxis: {
     type: 'value',
     axisLabel: {
-      formatter: shortFormatter
-    }
-
+      formatter: function (value, index) {
+        return unitConvert(value, unitTypes.number).join(' ')
+      }
+    },
+    minInterval: 1
   },
   grid: {
     left: 55,
@@ -209,7 +217,7 @@ const pieWithTable = {
       },
       tooltip: {
         formatter: function (param, index, callback) {
-          return `${param.name}: ${shortFormatter(param.value)}`
+          return `${param.name}: ${unitConvert(param.value, param.data.unitType).join(' ')}`
         }
       },
       emphasis: {
@@ -332,7 +340,7 @@ function axiosFormatter (params) {
         ${item.seriesName}
     </span>`
     str += `<span class="cn-chart-tooltip-value">
-        ${shortFormatter(item.data[1])}
+        ${unitConvert(item.data[1], item.data[2]).join(' ')}
     </span>`
     str += '</div>'
   })

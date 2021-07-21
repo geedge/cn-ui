@@ -6,8 +6,8 @@
       :style="computePosition">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
   <!-- Tabs -->
   <el-tabs
-      v-else-if="isTabs"
       class="cn-chart cn-chart__tabs"
+      v-else-if="isTabs"
       v-model="activeTab"
       @tab-click="changeTab"
       :style="computePosition"
@@ -17,8 +17,8 @@
         :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
         :key="tab.id"
     >
-      <template v-for="(chart, index) in tab.children">
-        <chart v-if="activeTab == tab.id" :key="index" :chart="chart" :start-time="startTime" :end-time="endTime"></chart>
+      <template v-for="chart in tab.children">
+        <chart v-if="activeTab == tab.id" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`"></chart>
       </template>
     </el-tab-pane>
   </el-tabs>
@@ -64,10 +64,10 @@
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
-    <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{}">
+    <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1">
       <!-- 带Table的饼图，展示Table -->
       <template v-if="isEchartsWithTable">
-        <pie-table :tableData="pieTableData" ref="pieTable" :chartInfo="chartInfo" :start-time="startTime" :end-time="endTime" :order="orderPieTable"/>
+        <pie-table :tableData="pieTableData" ref="pieTable" :chartInfo="chartInfo" :time-filter="timeFilter" :order="orderPieTable"/>
       </template>
       <template v-else-if="isEchartsWithStatistics">
         <statistics-legend :data="statisticsData"></statistics-legend>
@@ -84,7 +84,7 @@
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
       <span>{{handleSingleValue[0]}}</span>
-      <span v-if="chartInfo.params && chartInfo.params.unit" class="single-value__unit">{{handleSingleValue[1]}}</span>
+      <span class="single-value__unit">{{handleSingleValue[1]}}</span>
     </template>
   </single-value>
   <!-- 表格 -->
@@ -174,8 +174,8 @@ import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
-import { shortFormatter, timeUnitFormatter } from '@/components/charts/chart-formatter'
-import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions } from '@/utils/constants'
+import unitConvert, { getUnitType } from '@/utils/unit-convert'
+import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions, unitTypes } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
 
@@ -183,12 +183,7 @@ export default {
   name: 'Chart',
   props: {
     chart: Object, // 图表对象，包括id、name、type等数据
-    startTime: {
-      type: Number
-    },
-    endTime: {
-      type: Number
-    }
+    timeFilter: Object
   },
   components: {
     EchartsFrame,
@@ -248,7 +243,7 @@ export default {
       } else if (this.isSingleValue) {
         if (chartParams) {
           this.singleValue.icon = chartParams.icon
-          const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
+          const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
               this.singleValue.value = response.data.result
@@ -261,19 +256,29 @@ export default {
         }
       }
     },
+    reloadChart () {
+      this.initChart()
+      this.$nextTick(() => {
+        this.$_.forIn(this.$refs, (ref, key) => {
+          if (this.$_.startsWith(key, 'chart-')) {
+            ref.reloadChart()
+          }
+        })
+      })
+    },
     getTitle (r) {
       let title = ''
       if (r.establishLatency || r.httpResponseLatency || r.sslConLatency) {
-        title = `${title}: ${timeUnitFormatter(r.establishLatency || r.httpResponseLatency || r.sslConLatency).join(' ')}`
+        title = `${title}: ${unitConvert(r.establishLatency || r.httpResponseLatency || r.sslConLatency, unitTypes.time).join(' ')}`
       }
       if (r.sequenceGapLossPercent || r.pktRetransPercent) {
-        title = `${title}: ${shortFormatter(r.sequenceGapLossPercent || r.pktRetransPercent)} %`
+        title = `${title}: ${unitConvert(r.sequenceGapLossPercent || r.pktRetransPercent, unitTypes.number).join(' ')} %`
       }
       if (r.sessions) {
-        title = `${title}\nSessions: ${shortFormatter(r.sessions)}`
+        title = `${title}\nSessions: ${unitConvert(r.sessions, unitTypes.number).join(' ')}`
       }
       if (r.bytes) {
-        title = `${title}\nBytes: ${shortFormatter(r.bytes)}`
+        title = `${title}\nBytes: ${unitConvert(r.bytes, unitTypes.byte).join(' ')}`
       }
       return title
     },
@@ -300,7 +305,7 @@ export default {
     },
     loadMap (polygonSeries) {
       const chartParams = this.chartInfo.params
-      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           const data = response.data.result
@@ -415,7 +420,7 @@ export default {
       }
     },
     initECharts (chartParams) {
-      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           const seriesTemplate = this.chartOption.series[0]
@@ -423,9 +428,15 @@ export default {
             return {
               ...seriesTemplate,
               name: legendMapping[r.legend] ? legendMapping[r.legend] : lineToSpace(r.legend),
-              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])])
+              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType])
             }
           })
+          if (chartParams.unitType === unitTypes.byte) {
+            this.chartOption.yAxis.axisLabel.formatter = function (value, index, a, b) {
+              return unitConvert(value, unitTypes.byte).join(' ')
+            }
+            this.chartOption.grid.left = 75
+          }
         }
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -434,7 +445,7 @@ export default {
       })
     },
     initEchartsWithStatistics (chartParams) {
-      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000) }
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           this.statisticsData = response.data.result
@@ -443,7 +454,7 @@ export default {
             return {
               ...seriesTemplate,
               name: r.legend,
-              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1])]),
+              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
               lineStyle: {
                 color: getChartColor[i]
               }
@@ -459,8 +470,9 @@ export default {
     initEchartsWithPieTable (chartParams) {
       const self = this
       chartParams.valueColumn = this.orderPieTable
-      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
-      const tableQueryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
+      const unitType = getUnitType(chartParams.valueColumn)
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
+      const tableQueryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
@@ -469,7 +481,8 @@ export default {
             return {
               data: d,
               name: d[chartParams.nameColumn],
-              value: parseInt(d[chartParams.valueColumn])
+              value: parseInt(d[chartParams.valueColumn]),
+              unitType: unitType
             }
           })
           this.chartOption.series[0].data = data
@@ -493,16 +506,18 @@ export default {
           legend: { selected: { [params.name]: true } }
         })
         self.chartOption.series[0].data.forEach((d, i) => {
-          if (self.selectPieChartName === d.name) {
-            self.myChart.dispatchAction({
-              type: 'unselect',
-              seriesIndex: 0,
-              dataIndex: i
-            })
-            self.selectPieChartName = ''
-            self.loadPieTableData()
-          } else {
-            if (d.name === params.name) {
+          // 遍历到当前点击的legend时
+          if (d.name === params.name) {
+            // 如果这个legend是已激活状态，则取消激活，并且查询全部
+            if (self.selectPieChartName === d.name) {
+              self.myChart.dispatchAction({
+                type: 'unselect',
+                seriesIndex: 0,
+                dataIndex: i
+              })
+              self.selectPieChartName = ''
+              self.loadPieTableData()
+            } else { // 否则激活，并且查询当前name的数据
               self.selectPieChartName = d.name
               self.myChart.dispatchAction({
                 type: 'select',
@@ -510,23 +525,30 @@ export default {
                 dataIndex: i
               })
               self.loadPieTableData(params.name)
-            } else {
-              self.myChart.dispatchAction({
-                type: 'unselect',
-                seriesIndex: 0,
-                dataIndex: i
-              })
             }
+          } else {
+            self.myChart.dispatchAction({
+              type: 'unselect',
+              seriesIndex: 0,
+              dataIndex: i
+            })
           }
         })
       })
       // 饼图色块点击事件
       this.myChart.on('click', function (echartParams) {
-        self.loadPieTableData(echartParams.name)
+        // 若是已选，则点击后取消选择，并查询全部数据
+        if (echartParams.name === self.selectPieChartName) {
+          self.selectPieChartName = ''
+          self.loadPieTableData()
+        } else { // 否则查询当前name数据
+          self.selectPieChartName = echartParams.name
+          self.loadPieTableData(echartParams.name)
+        }
       })
     },
     loadPieTableData (name = '') {
-      const childrenParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: 10, order: this.orderPieTable }
+      const childrenParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable }
       childrenParams[this.chartInfo.params.nameColumn] = name
       get(replaceUrlPlaceholder(this.chartInfo.params.urlTable, childrenParams)).then(response => {
         if (response.code === 200) {
@@ -539,7 +561,7 @@ export default {
       this.initChartTable(chartParams)
     },
     initChartTable (chartParams) {
-      const queryParams = { startTime: parseInt(this.startTime / 1000), endTime: parseInt(this.endTime / 1000), limit: this.table.limit, order: this.table.orderBy }
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: this.table.limit, order: this.table.orderBy }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           this.table.tableColumns = allTableTitle['tableTitles' + this.chart.id]
@@ -560,16 +582,21 @@ export default {
     },
     handleSingleValue () {
       const value = this.singleValue.value
-      const unit = this.chartInfo.params.unit
-      if (!Number(value) && Number(value) !== 0) {
-        return '-'
-      } else {
-        if (unit && unit === 'ms') {
-          return Number(value) < 1 ? ['< 1', 'ms'] : timeUnitFormatter(value, null, 0)
-        } else {
-          return Number(value) < 0.01 ? ['< 0.01', ''] : [shortFormatter(value), '']
+      const unitType = this.chartInfo.params.unitType
+      const result = unitConvert(value, unitType)
+      switch (unitType) {
+        case unitTypes.number: {
+          result[0] = result[0] < 0.01 ? '< 0.01' : result[0]
+          break
         }
+        case unitTypes.time: {
+          result[0] = result[0] < 1 ? '< 1' : result[0]
+          break
+        }
+        default: break
       }
+      console.info(result)
+      return result
     }
   },
   mounted () {

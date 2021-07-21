@@ -1,6 +1,4 @@
 // 获取初始化时间，默认最近一周
-import moment from 'moment-timezone'
-
 Date.prototype.setStart = function () {
   this.setHours(0)
   this.setMinutes(0)

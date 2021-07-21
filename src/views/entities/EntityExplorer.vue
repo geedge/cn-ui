@@ -232,7 +232,6 @@ export default {
       filterType: this.filterType,
       loadFilter
     })
-    console.info(this.filterData)
   },
   setup () {
     const filterType = ref(Object.keys(entityType)[0])

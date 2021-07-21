@@ -28,8 +28,11 @@
         >
           <template #header>{{c.label}}</template>
           <template #default="{ row }">{{}}
-            <span v-if="c.prop === 'bytes' || c.prop === 'packets' || c.prop === 'sessions'" >
-                {{shortFormatter(row[c.prop])}}
+            <span v-if="c.prop === 'bytes'">
+                {{unitConvert(row[c.prop], unitTypes.byte).join(' ')}}
+            </span>
+            <span v-else-if="c.prop === 'packets' || c.prop === 'sessions'">
+                {{unitConvert(row[c.prop], unitTypes.number).join(' ')}}
             </span>
             <span v-else>
                 {{row[c.prop]}}
@@ -45,15 +48,19 @@
 </template>
 
 <script>
-import { shortFormatter } from '@/components/charts/chart-formatter'
+import unitConvert from '@/utils/unit-convert'
+import { unitTypes } from '@/utils/constants'
 export default {
   name: 'ChartTable',
   props: {
     tableColumns: Array,
     tableData: Array
   },
-  methods: {
-    shortFormatter: shortFormatter
+  setup () {
+    return {
+      unitTypes,
+      unitConvert
+    }
   }
 }
 </script>
