@@ -67,7 +67,7 @@
           </el-form-item>
 
           <el-form-item v-if="editObject.id" :label="$t('config.user.createTime')">
-            <div class="right-box-form-content-txt">{{editObject.createAt}}</div>
+            <div class="right-box-form-content-txt">{{editObject.ctime}}</div>
           </el-form-item>
 
         </el-form>

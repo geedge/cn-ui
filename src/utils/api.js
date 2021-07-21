@@ -123,6 +123,7 @@ export async function getI18n () {
   const langs = dictData.map(d => d.value).join(',')
   const request = new Promise(resolve => {
     get(api.i18n, { l: langs }).then(response => {
+      response.data.cn = response.data.zh
       resolve(response.data)
     })
   })
