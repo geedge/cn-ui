@@ -21,8 +21,17 @@
           </el-form-item>
           <!--lang-->
           <el-form-item :label="$t('config.I18n.lang')" prop="lang">
-            <el-input id="account-input-password" v-model="editObject.lang"  maxlength="64" placeholder=""
-                      show-word-limit size="small"  @blur="pinBlur" autocomplete="new-password"></el-input>
+            <el-select  placeholder="请选择"  v-model="editObject.lang" style="width:640px;">
+              <el-option
+                  v-for="item in  options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                 >
+              </el-option>
+            </el-select>
+<!--            <el-input id="account-input-password" v-model="editObject.lang"  maxlength="64" placeholder=""
+                      show-word-limit size="small"  @blur="pinBlur" autocomplete="new-password"></el-input>-->
           </el-form-item>
           <!--value-->
           <el-form-item :label="$t('config.I18n.value')" label-width="200px" prop="pinChange">
@@ -71,6 +80,16 @@ export default {
       }
     }
     return {
+      options: [{
+        value: 'en',
+        label: 'en'
+      }, {
+        value: 'zh',
+        label: 'zh'
+      }, {
+        value: 'cn',
+        label: 'cn'
+      }],
       url: 'sys/i18n',
       loginName: localStorage.getItem('cn-username'),
       rules: { // 表单校验规则
