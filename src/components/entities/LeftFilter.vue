@@ -26,7 +26,7 @@
               </div>
             </template>
           </el-tree>
-          <div class="filter__more" :class="{'filter__more--disabled': f.hasnotMore}" @click="showMore(f.key, f.hasnotMore)">{{$t('common.showMore')}}</div>
+          <div class="filter__more" :class="{'filter__more--disabled': f.hasnotMore}" @click="showMore(f.key, f.hasnotMore)">{{$t('overall.showMore')}}</div>
         </el-collapse-item>
       </el-collapse>
     </div>

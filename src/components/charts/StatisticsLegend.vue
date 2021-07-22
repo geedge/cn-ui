@@ -7,7 +7,7 @@
       <div class="table__below-statistics">Max</div>
     </div>
     <div class="chart__table-below">
-      <div v-for="(item,index) in data" :key="index" class="table-below-box">
+      <div v-for="(item, index) in data" :key="index" class="table-below-box" :class="{'table-below-box--inactivated': !item.active}" @click="toggleLegend(index)">
         <div class="table__below-color"><div :style="{backgroundColor: getChartColor(index)}"></div></div>
         <div class="table__below-title" :title="item.legend">{{item.legend}}</div>
         <div class="table__below-statistics" :title="item.aggregation.avg">{{unitConvert(item.aggregation.avg, chartInfo.params.unitType).join(' ')}}</div>
@@ -26,6 +26,11 @@ export default {
   props: {
     data: Array,
     chartInfo: Object
+  },
+  methods: {
+    toggleLegend (index) {
+      this.$emit('toggleLegend', index)
+    }
   },
   setup () {
     return {
@@ -98,5 +103,14 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.table-below-box:not(.chart__table-top) {
+  cursor: pointer;
+}
+.table-below-box.table-below-box--inactivated {
+  color: #ccc;
+  .table__below-color div {
+    background-color: #ccc !important;
+  }
 }
 </style>

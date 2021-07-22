@@ -72,7 +72,7 @@
         <pie-table :tableData="pieTableData" ref="pieTable" :chartInfo="chartInfo" :time-filter="timeFilter" :order="orderPieTable"/>
       </template>
       <template v-else-if="isEchartsWithStatistics">
-        <statistics-legend :data="statisticsData" :chart-info="chartInfo"></statistics-legend>
+        <statistics-legend :data="statisticsData" :chart-info="chartInfo" @toggleLegend="toggleStatisticsLegend"></statistics-legend>
       </template>
     </template>
   </echarts-frame>
@@ -119,7 +119,7 @@
             size="mini"
             v-model="table.orderBy"
             class="option__select select-column"
-            :placeholder="$t('common.field')"
+            :placeholder="$t('overall.field')"
             popper-class="option-popper"
             @change="tableLimitChange"
         >
@@ -416,6 +416,22 @@ export default {
     getTargetPageData (pageNum, pageSize, tableData) {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
+    toggleStatisticsLegend (index) {
+      this.statisticsData[index].active = !this.statisticsData[index].active
+      this.statisticsData.forEach((d, i) => {
+        if (d.active) {
+          this.myChart.dispatchAction({
+            type: 'legendSelect',
+            name: d.legend
+          })
+        } else {
+          this.myChart.dispatchAction({
+            type: 'legendUnSelect',
+            name: d.legend
+          })
+        }
+      })
+    },
     orderPieTableChange () {
       if (this.chart.type === 31) {
         const chartParams = this.chartInfo.params || null // 图表参数
@@ -452,7 +468,12 @@ export default {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
-          this.statisticsData = response.data.result
+          this.statisticsData = response.data.result.map(d => {
+            return {
+              ...d,
+              active: true
+            }
+          })
           const seriesTemplate = this.chartOption.series[0]
           this.chartOption.series = response.data.result.map((r, i) => {
             return {

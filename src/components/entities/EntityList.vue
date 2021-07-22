@@ -25,18 +25,18 @@
         <div class="cn-entity__body">
           <template v-if="entityType === 'ip'">
             <div class="body__row">
-              <span class="body__row-label">{{$t('common.country')}}:</span>
+              <span class="body__row-label">{{$t('overall.country')}}:</span>
               <div class="body__row-value" :title="d.country">{{d.country || '-'}}</div>
             </div>
             <div class="body__row">
-              <span class="body__row-label">{{$t('common.region')}}:</span>
+              <span class="body__row-label">{{$t('overall.region')}}:</span>
               <div class="body__row-value" :title="d.region">{{d.region || '-'}}</div>
             </div>
             <div class="body__row">
               <span class="body__row-label">{{$t('entities.asn')}}:</span>
               <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
-            <div class="body__detail">{{$t('common.detail')}}</div>
+            <div class="body__detail">{{$t('overall.detail')}}</div>
           </template>
           <template v-else-if="entityType === 'domain'">
             <div class="body__row">
@@ -51,7 +51,7 @@
               <span class="body__row-label">{{$t('entities.creditScore')}}:</span>
               <div class="body__row-value" :title="d.reputationScore">{{d.reputationScore || '-'}}</div>
             </div>
-            <div class="body__detail">{{$t('common.detail')}}</div>
+            <div class="body__detail">{{$t('overall.detail')}}</div>
           </template>
           <template v-else-if="entityType === 'app'">
             <div class="body__row">
@@ -66,7 +66,7 @@
               <span class="body__row-label">{{$t('entities.subcategory')}}:</span>
               <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
-            <div class="body__detail">{{$t('common.detail')}}</div>
+            <div class="body__detail">{{$t('overall.detail')}}</div>
           </template>
         </div>
       </div>

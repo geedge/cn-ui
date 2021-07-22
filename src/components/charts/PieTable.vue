@@ -117,7 +117,7 @@ export default {
       expandRowKeys: [],
       tableTitles: [
         {
-          label: this.$t('common.domain'),
+          label: this.$t('overall.domain'),
           prop: 'domain',
           width: '20%'
         },
@@ -127,44 +127,44 @@ export default {
           width: '22%'
         },
         {
-          label: this.$t('common.sessions'),
+          label: this.$t('overall.sessions'),
           prop: 'sessions',
           width: '18%'
         },
         {
-          label: this.$t('common.packets'),
+          label: this.$t('overall.packets'),
           prop: 'packets',
           width: '18%'
         },
         {
-          label: this.$t('common.bytes'),
+          label: this.$t('overall.bytes'),
           prop: 'bytes',
           width: '18%'
         }
       ],
       tableTitlesOther: [
         {
-          label: this.$t('common.serverIp'),
+          label: this.$t('overall.serverIp'),
           prop: 'serverIp',
           width: '20%'
         },
         {
-          label: this.$t('common.reputation'),
+          label: this.$t('overall.reputation'),
           prop: 'nameColumn',
           width: '22%'
         },
         {
-          label: this.$t('common.sessions'),
+          label: this.$t('overall.sessions'),
           prop: 'sessions',
           width: '18%'
         },
         {
-          label: this.$t('common.packets'),
+          label: this.$t('overall.packets'),
           prop: 'packets',
           width: '18%'
         },
         {
-          label: this.$t('common.bytes'),
+          label: this.$t('overall.bytes'),
           prop: 'bytes',
           width: '18%'
         }
