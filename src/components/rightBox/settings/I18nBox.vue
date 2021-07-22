@@ -1,7 +1,7 @@
 <template>
   <div v-click-outside="{object: editObject, func: esc}" class="right-box right-box-user">
     <div class="right-box__header">
-      <div class="header__title">{{editObject.id ? $t('config.user.editUser') : $t('config.user.createUser')}}</div>
+      <div class="header__title">{{editObject.id ? $t('edit I18n') : $t('create I18n')}}</div>
       <div class="header__operation">
         <span v-cancel="{object: editObject, func: esc}"><i class="cn-icon cn-icon-close"></i></span>
       </div>
@@ -10,18 +10,18 @@
       <div class="container__form">
         <el-form ref="i18nForm" :model="editObject" :rules="editObject.id ? rules2 : rules" label-position="top" label-width="120px">
           <!--name-->
-          <el-form-item :label="$t('config.I18n.name')" prop="name">
-            <el-input id="account-input-name" v-model="editObject.name" :disabled="editObject.username==='admin' && editObject.id === 1"
+          <el-form-item :label="$t('name')" prop="name">
+            <el-input id="account-input-name" v-model="editObject.name" :disabled="editObject.name==='admin' && editObject.id === 1"
                       maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
           </el-form-item>
           <!--code-->
-          <el-form-item :label="$t('config.I18n.code')" prop="code">
-            <el-input id="account-input-username" v-model="editObject.code" :disabled="editObject.code==='admin' && editObject.id === 1"
+          <el-form-item :label="$t('code')" prop="code">
+            <el-input id="account-input-code" v-model="editObject.code" :disabled="editObject.code==='admin' && editObject.id === 1"
                       maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
           </el-form-item>
           <!--lang-->
-          <el-form-item :label="$t('config.I18n.lang')" prop="lang">
-            <el-select  placeholder="请选择"  v-model="editObject.lang" style="width:640px;">
+          <el-form-item :label="$t('lang')" prop="lang">
+            <el-select placeholder=""  v-model="editObject.lang" style="width:640px;">
               <el-option
                   v-for="item in  options"
                   :key="item.value"
@@ -34,8 +34,8 @@
                       show-word-limit size="small"  @blur="pinBlur" autocomplete="new-password"></el-input>-->
           </el-form-item>
           <!--value-->
-          <el-form-item :label="$t('config.I18n.value')" label-width="200px" prop="pinChange">
-            <el-input id="account-input-pinChange" v-model="editObject.value"  maxlength="64" placeholder=""
+          <el-form-item :label="$t('value')" label-width="200px" prop="value">
+            <el-input id="account-input-value" v-model="editObject.value"  maxlength="64" placeholder=""
                       show-word-limit size="small"></el-input>
           </el-form-item>
           <!--enable-->
@@ -84,9 +84,6 @@ export default {
         value: 'en',
         label: 'en'
       }, {
-        value: 'zh',
-        label: 'zh'
-      }, {
         value: 'cn',
         label: 'cn'
       }],
@@ -96,19 +93,19 @@ export default {
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
-        username: [
+        code: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
-        pin: [
+        value: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ]
       },
       rules2: { // 表单校验规则
-        username: [
+        code: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
-        pinChange: [
-          { validator: validatePin, trigger: 'blur' }
+        value: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ]
       },
       roleData: []

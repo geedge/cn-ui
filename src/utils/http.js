@@ -89,6 +89,7 @@ export function put (url, params, headers) {
     }).catch(err => {
       if (err.response) {
         resolve(err.response.data)
+        console.log(err)
       } else if (err.message) {
         resolve(err.message)
       }

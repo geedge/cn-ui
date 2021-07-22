@@ -111,12 +111,12 @@ export default {
           sortable: 'custom'
         },
         {
-          label: this.$t('config.i18n.lang'),
+          label: this.$t('lang'),
           prop: 'lang',
           show: true,
           sortable: 'custom'
         }, {
-          label: this.$t('config.i18n.value'),
+          label: this.$t('value'),
           prop: 'value',
           show: true,
           width: 150
