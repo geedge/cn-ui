@@ -8,7 +8,7 @@
     </div>
     <div class="right-box__container">
       <div class="container__form">
-        <el-form ref="i18nForm" :model="editObject" :rules="editObject.id ? rules2 : rules" label-position="top" label-width="120px">
+        <el-form ref="i18nForm" :model="editObject" :rules="rules" label-position="top" label-width="120px">
           <!--name-->
           <el-form-item :label="$t('overall.name')" prop="name">
             <el-input id="account-input-name" v-model="editObject.name" :disabled="editObject.name==='admin' && editObject.id === 1"
@@ -21,7 +21,7 @@
           </el-form-item>
           <!--lang-->
           <el-form-item :label="$t('config.i18n.lang')" prop="lang">
-            <el-select placeholder=""  v-model="editObject.lang" style="width:640px;">
+            <el-select placeholder=""  v-model="editObject.lang"  class="right-box__select"  size="small">
               <el-option
                   v-for="item in  options"
                   :key="item.value"
@@ -96,12 +96,7 @@ export default {
         code: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
-        value: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ]
-      },
-      rules2: { // 表单校验规则
-        code: [
+        lang: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         value: [
