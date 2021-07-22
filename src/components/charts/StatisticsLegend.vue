@@ -1,8 +1,10 @@
 <template>
   <div class="chart__legend">
-    <div class="chart__table-top">
-      <div>Avg</div>
-      <div>Max</div>
+    <div class="chart__table-top table-below-box">
+      <div class="table__below-color"></div>
+      <div class="table__below-title">Name</div>
+      <div class="table__below-statistics">Avg</div>
+      <div class="table__below-statistics">Max</div>
     </div>
     <div class="chart__table-below">
       <div v-for="(item,index) in data" :key="index" class="table-below-box">
@@ -47,10 +49,8 @@ export default {
   height: 30px;
   border-bottom: #E7EAED 1px solid;
   display: flex;
-  justify-content: flex-end;
 
   div {
-    width: 80px;
     font-size: 13px;
     line-height: 28px;
     color: $--color-primary;
@@ -59,45 +59,44 @@ export default {
 .chart__table-below {
   width: 100%;
   font-size: 13px;
+}
+.table-below-box {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  line-height: 24px;
+}
+.table-below-box:hover {
+  background-color: #f9f9f9;
+  border: 0;
+  color: #383838;
+}
+.table__below-color {
+  width: 27px;
+  height: 7px;
+  flex-shrink: 0;
+  padding-left: 10px;
 
-  .table-below-box {
+  div {
+    height: 100%;
     width: 100%;
-    display: flex;
-    align-items: center;
-    line-height: 24px;
+    border-radius: 24%;
   }
-  .table-below-box:hover {
-    background-color: #f9f9f9;
-    border: 0;
-    color: #383838;
-  }
-  .table__below-color {
-    width: 27px;
-    height: 7px;
-    flex-shrink: 0;
-    padding-left: 10px;
-
-    div {
-      height: 100%;
-      width: 100%;
-      border-radius: 24%;
-    }
-  }
-  .table__below-title {
-    padding: 0 6px;
-    flex-shrink: 1;
-    flex-grow: 1;
-    overflow: hidden;
-    min-width: 200px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .table__below-statistics {
-    width: 80px;
-    flex-shrink: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+}
+.table__below-title {
+  padding: 0 6px;
+  flex-shrink: 1;
+  flex-grow: 1;
+  overflow: hidden;
+  min-width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.table__below-statistics {
+  width: 80px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
