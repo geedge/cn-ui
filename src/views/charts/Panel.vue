@@ -57,7 +57,7 @@ export default {
     // data
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
-    const timeFilter = { startTime, endTime, dateRangeValue }
+    const timeFilter = ref({ startTime, endTime, dateRangeValue })
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
@@ -83,7 +83,11 @@ export default {
       }
     },
     timeRefreshChange () {
-      if (!this.$refs.dateTimeRange) {
+      if (!this.$refs.dateTimeRange.isCustom) {
+        const value = this.timeFilter.dateRangeValue
+        this.$refs.dateTimeRange.quickChange(value)
+      }
+      /* if (!this.$refs.dateTimeRange) {
         this.reloadCharts()
         return
       }
@@ -92,11 +96,13 @@ export default {
       } else {
         const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
-      }
+      } */
     },
     reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
-      this.reloadCharts()
+      /* this.$nextTick(() => {
+        this.reloadCharts()
+      }) */
     },
     // methods
     dateTimeRangeChange (s, e, v) {

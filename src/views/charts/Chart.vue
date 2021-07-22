@@ -11,11 +11,13 @@
       v-model="activeTab"
       @tab-click="changeTab"
       :style="computePosition"
+      :ref="`chart-${chart.id}`"
   >
     <el-tab-pane
         v-for="tab in chartInfo.children"
         :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
         :key="tab.id"
+        :ref="`chart-${chart.id}`"
     >
       <template v-for="chart in tab.children">
         <chart v-if="activeTab == tab.id" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`"></chart>
@@ -212,7 +214,8 @@ export default {
       activeTab: '',
       statisticsData: [],
       orderPieTable: chartPieTableTopOptions[0].value,
-      selectPieChartName: ''
+      selectPieChartName: '',
+      chartOption: null
     }
   },
   methods: {
@@ -220,13 +223,14 @@ export default {
       const chartParams = this.chartInfo.params
       if (this.isMap) {
         const { chart, polygonSeries } = this.initMap(`chart${this.chartInfo.id}`)
-        this.myChart = chart
+        !this.myChart && (this.myChart = chart)
         if (chartParams) {
           this.loadMap(polygonSeries)
         }
       } else if (this.isEcharts) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
-        this.myChart = echarts.init(dom)
+        !this.myChart && (this.myChart = echarts.init(dom))
+        this.chartOption = JSON.parse(JSON.stringify(getOption(this.chart.type)))
         if (chartParams) {
           if (this.isEchartsWithTable) {
             this.initEchartsWithPieTable(chartParams)
@@ -259,11 +263,11 @@ export default {
     reloadChart () {
       this.initChart()
       this.$nextTick(() => {
-        this.$_.forIn(this.$refs, (ref, key) => {
-          if (this.$_.startsWith(key, 'chart-')) {
-            ref.reloadChart()
-          }
-        })
+        if (!this.$_.isEmpty(this.chart.children)) {
+          this.chart.children.forEach(chart => {
+            this.$refs[`chart-${chart.id}`].reloadChart()
+          })
+        }
       })
     },
     getTitle (r) {
@@ -595,7 +599,6 @@ export default {
         }
         default: break
       }
-      console.info(result)
       return result
     }
   },
@@ -611,6 +614,17 @@ export default {
           this.initChart()
         }
       }
+    },
+    timeFilter: {
+      immediate: true,
+      deep: true,
+      handler (n, o) {
+        if (n) {
+          this.$nextTick(() => {
+            this.initChart()
+          })
+        }
+      }
     }
   },
   setup (props) {
@@ -622,7 +636,6 @@ export default {
       layoutConstant,
       chartTableTopOptions,
       chartPieTableTopOptions,
-      chartOption: getOption(props.chart.type),
       isEcharts: isEcharts(props.chart.type),
       isEchartsWithTable: isEchartsWithTable(props.chart.type),
       isEchartsWithStatistics: isEchartsWithStatistics(props.chart.type),
@@ -634,7 +647,7 @@ export default {
       isMapBlock: isMapBlock(props.chart.type),
       isTabs: isTabs(props.chart.type),
       layout: getLayout(props.chart.type),
-      myChart: shallowRef({})
+      myChart: shallowRef(null)
     }
   }
 }
