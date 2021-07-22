@@ -8,8 +8,8 @@
       <div v-for="(item,index) in data" :key="index" class="table-below-box">
         <div class="table__below-color"><div :style="{backgroundColor: getChartColor(index)}"></div></div>
         <div class="table__below-title" :title="item.legend">{{item.legend}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.avg">{{unitConvert(item.aggregation.avg)}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.max">{{unitConvert(item.aggregation.max)}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.avg">{{unitConvert(item.aggregation.avg, chartInfo.params.unitType).join(' ')}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.max">{{unitConvert(item.aggregation.max, chartInfo.params.unitType).join(' ')}}</div>
       </div>
     </div>
   </div>
@@ -22,7 +22,8 @@ import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'StatisticsLegend',
   props: {
-    data: Array
+    data: Array,
+    chartInfo: Object
   },
   setup () {
     return {

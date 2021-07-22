@@ -72,7 +72,7 @@
         <pie-table :tableData="pieTableData" ref="pieTable" :chartInfo="chartInfo" :time-filter="timeFilter" :order="orderPieTable"/>
       </template>
       <template v-else-if="isEchartsWithStatistics">
-        <statistics-legend :data="statisticsData"></statistics-legend>
+        <statistics-legend :data="statisticsData" :chart-info="chartInfo"></statistics-legend>
       </template>
     </template>
   </echarts-frame>
