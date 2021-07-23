@@ -62,6 +62,7 @@ export default {
   }
 }
 .chart__table-below {
+  height: 240px;
   width: 100%;
   font-size: 13px;
 }

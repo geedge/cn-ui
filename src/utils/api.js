@@ -5,6 +5,7 @@
 */
 import { get, post } from '@/utils/http'
 import { sortByOrderNum } from '@/permission'
+import {storageKey} from "@/utils/constants";
 
 export const api = {
   // 系统相关
@@ -121,6 +122,7 @@ export async function getPermission () {
 export async function getI18n () {
   const dictData = await getDictList()
   const langs = dictData.map(d => d.value).join(',')
+  sessionStorage.setItem(storageKey.languages, langs)
   const request = new Promise(resolve => {
     get(api.i18n, { l: langs }).then(response => {
       response.data.cn = response.data.zh

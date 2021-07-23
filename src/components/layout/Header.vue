@@ -21,7 +21,7 @@
       <el-dropdown>
         <div class='login-user header-menu--item'>{{username}}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
         <template #dropdown>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu #dropdown>
             <el-dropdown-item>
               <div id="header-to-changepin" @click="showPinDialog">Change pin</div>
             </el-dropdown-item>
