@@ -215,6 +215,7 @@ export default {
       statisticsData: [],
       orderPieTable: chartPieTableTopOptions[0].value,
       selectPieChartName: '',
+      allSelectPieChartName: [],
       chartOption: null
     }
   },
@@ -509,6 +510,7 @@ export default {
               unitType: unitType
             }
           })
+          this.allSelectPieChartName = tableQueryParams[chartParams.nameColumn]
           this.chartOption.series[0].data = data
           if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
             this.chartOption.legend.type = 'scroll'
