@@ -21,34 +21,25 @@
           </el-form-item>
           <!--lang-->
           <el-form-item :label="$t('config.i18n.lang')" prop="lang">
-            <el-select placeholder=""  v-model="editObject.lang"  class="right-box__select"  size="small">
-              <el-option
-                  v-for="item in  options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                 >
-              </el-option>
+            <el-select id="account-input-roleIds"
+                       v-model="editObject.lang"
+                       class="right-box__select"
+                       clearable
+                       collapse-tags
+                       placeholder=""
+                       popper-class="right-box-select-dropdown prevent-clickoutside"
+                       size="small"
+                       @change="()=>{ this.$forceUpdate() }">
+              <template v-for="role in roleData">
+                <el-option :label="role.value" :value="role.value"></el-option>
+              </template>
             </el-select>
-<!--            <el-input id="account-input-password" v-model="editObject.lang"  maxlength="64" placeholder=""
-                      show-word-limit size="small"  @blur="pinBlur" autocomplete="new-password"></el-input>-->
           </el-form-item>
           <!--value-->
           <el-form-item :label="$t('config.i18n.value')" label-width="200px" prop="value">
             <el-input id="account-input-value" v-model="editObject.value"  maxlength="64" placeholder=""
                       show-word-limit size="small"></el-input>
           </el-form-item>
-          <!--enable-->
-<!--          <el-form-item :label="$t('config.user.enable')">
-            <el-switch
-                id="account-input-status"
-                v-model="editObject.status"
-                :active-color="theme.themeColor"
-                :disabled="(editObject.username === loginName) || (editObject.username==='admin' && editObject.id==1)"
-                :active-value="1"
-                :inactive-value="0">
-            </el-switch>
-          </el-form-item>-->
         </el-form>
       </div>
     </div>
@@ -70,23 +61,7 @@ export default {
   name: 'I18nBox',
   mixins: [rightBoxMixin],
   data () {
-    const validatePin = (rule, value, callback) => { // 确认密码的二次校验
-      if (value === '' && this.editObject.pin) {
-        callback(new Error(this.$t('config.user.inputConfirmPin')))
-      } else if (value !== this.editObject.pin) {
-        callback(new Error(this.$t('config.user.confirmPinErr')))
-      } else {
-        callback()
-      }
-    }
     return {
-      options: [{
-        value: 'en',
-        label: 'en'
-      }, {
-        value: 'zh',
-        label: 'zh'
-      }],
       url: 'sys/i18n',
       loginName: localStorage.getItem('cn-username'),
       rules: { // 表单校验规则
@@ -155,7 +130,7 @@ export default {
       })
     },
     getRoleData () {
-      get('sys/i18n?pageSize=-1').then(response => {
+      get('sys/dict?pageSize=-1').then(response => {
         if (response.code === 200) {
           this.roleData = response.data.list
         }
