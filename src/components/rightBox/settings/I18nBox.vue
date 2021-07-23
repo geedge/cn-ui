@@ -30,7 +30,7 @@
                        popper-class="right-box-select-dropdown prevent-clickoutside"
                        size="small"
                        @change="()=>{ this.$forceUpdate() }">
-              <template v-for="role in roleData">
+              <template v-for="role in langData" :key="role.value">
                 <el-option :label="role.value" :value="role.value"></el-option>
               </template>
             </el-select>
@@ -78,13 +78,13 @@ export default {
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ]
       },
-      roleData: []
+      langData: []
     }
   },
   setup () {
   },
   mounted () {
-    this.getRoleData()
+    this.getLangData()
   },
   methods: {
     isCurrentUser (username) {
@@ -129,10 +129,10 @@ export default {
         }
       })
     },
-    getRoleData () {
-      get('sys/dict?pageSize=-1').then(response => {
+    getLangData () {
+      get('sys/dict?type=lang&pageSize=-1').then(response => {
         if (response.code === 200) {
-          this.roleData = response.data.list
+          this.langData = response.data.list
         }
       })
     }

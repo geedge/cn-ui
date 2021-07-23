@@ -1,4 +1,4 @@
-<template>
+  <template>
   <el-table
     id="roleTable"
     ref="dataTable"
