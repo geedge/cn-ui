@@ -435,7 +435,6 @@ export default {
     orderPieTableChange () {
       if (this.chart.type === 31) {
         const chartParams = this.chartInfo.params || null // 图表参数
-        this.myChart.off('click')
         this.initEchartsWithPieTable(chartParams)
       }
     },
@@ -526,6 +525,7 @@ export default {
         }
       })
       // legend点击事件
+      this.myChart.off('legendselectchanged')
       this.myChart.on('legendselectchanged', function (params) {
         self.myChart.setOption({
           legend: { selected: { [params.name]: true } }
@@ -550,6 +550,7 @@ export default {
         }
       })
       // 饼图色块点击事件
+      this.myChart.off('click')
       this.myChart.on('click', function (echartParams) {
         // 若是已选，则点击后取消选择，并查询全部数据
         if (echartParams.name === self.selectPieChartName) {
