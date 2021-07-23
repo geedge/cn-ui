@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-custom">
+  <div class="pop-custom" v-ele-click-outside="esc">
     <div class="pop-title">{{$t('overall.select')}}</div>
     <div class="pop-box custom-labels">
       <div style="height: 100%; overflow: auto;">
@@ -19,19 +19,19 @@
       </div>
     </div>
     <div class="custom-bottom-btns">
-      <button v-if="isCancel" :id="tableId+'-element-set-none'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new is-cancel" type="button" @click="batchHandler(false)">
+      <el-button size="mini" v-if="isCancel" :id="tableId+'-element-set-none'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new is-cancel" type="button" @click="batchHandler(false)">
         <span class="top-tool-btn-txt">{{$t('overall.clear')}}</span>
-      </button>
-      <button v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="batchHandler(true)">
+      </el-button>
+      <el-button size="mini" v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="batchHandler(true)">
         <span class="top-tool-btn-txt">{{$t('overall.all')}}</span>
-      </button>
+      </el-button>
       <div>
-        <button :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="esc">
+        <el-button size="mini" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="esc">
           <span class="top-tool-btn-txt">{{$t('overall.esc')}}</span>
-        </button>
-        <button :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" type="button" @click="save">
+        </el-button>
+        <el-button size="mini" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" type="button" @click="save">
           <span class="top-tool-btn-txt">{{$t('overall.save')}}</span>
-        </button>
+        </el-button>
       </div>
     </div>
   </div>
@@ -169,4 +169,9 @@ export default {
 .unshow {
   display: none;
 }
+</style>
+<style scoped>
+  /deep/ .el-button--mini{
+    padding: 5px 7px;
+  }
 </style>

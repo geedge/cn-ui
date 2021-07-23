@@ -530,42 +530,31 @@ export default {
         self.myChart.setOption({
           legend: { selected: { [params.name]: true } }
         })
-        self.chartOption.series[0].data.forEach((d, i) => {
-          // 遍历到当前点击的legend时
-          if (d.name === params.name) {
-            // 如果这个legend是已激活状态，则取消激活，并且查询全部
-            if (self.selectPieChartName === d.name) {
-              self.myChart.dispatchAction({
-                type: 'unselect',
-                seriesIndex: 0,
-                dataIndex: i
-              })
-              self.selectPieChartName = ''
-              self.loadPieTableData()
-            } else { // 否则激活，并且查询当前name的数据
-              self.selectPieChartName = d.name
-              self.myChart.dispatchAction({
-                type: 'select',
-                seriesIndex: 0,
-                dataIndex: i
-              })
-              self.loadPieTableData(params.name)
-            }
-          } else {
-            self.myChart.dispatchAction({
-              type: 'unselect',
-              seriesIndex: 0,
-              dataIndex: i
-            })
-          }
-        })
+        const index = self.chartOption.series[0].data.findIndex(d => d.name === params.name)
+        if (self.selectPieChartName !== params.name) {
+          self.myChart.dispatchAction({
+            type: 'select',
+            seriesIndex: 0,
+            dataIndex: index
+          })
+          self.selectPieChartName = params.name
+          self.loadPieTableData(params.name)
+        } else {
+          self.myChart.dispatchAction({
+            type: 'unselect',
+            seriesIndex: 0,
+            dataIndex: index
+          })
+          self.selectPieChartName = ''
+          self.loadPieTableData(this.allSelectPieChartName)
+        }
       })
       // 饼图色块点击事件
       this.myChart.on('click', function (echartParams) {
         // 若是已选，则点击后取消选择，并查询全部数据
         if (echartParams.name === self.selectPieChartName) {
           self.selectPieChartName = ''
-          self.loadPieTableData()
+          self.loadPieTableData(this.allSelectPieChartName)
         } else { // 否则查询当前name数据
           self.selectPieChartName = echartParams.name
           self.loadPieTableData(echartParams.name)
