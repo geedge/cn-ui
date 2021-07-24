@@ -231,7 +231,7 @@ export default {
       } else if (this.isEcharts) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
         !this.myChart && (this.myChart = echarts.init(dom))
-        this.chartOption = JSON.parse(JSON.stringify(getOption(this.chart.type)))
+        this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
         if (chartParams) {
           if (this.isEchartsWithTable) {
             this.initEchartsWithPieTable(chartParams)

@@ -11,17 +11,17 @@
         >
           <el-tree
               :data="f.data"
-              :load="(node, resolve) => f.loadFilter(node, resolve, f.filterType, f.childrenKey, f.key)"
+              :load="(node, resolve) => loadFilter(node, resolve, f)"
               :node-key="f.key"
               :props="{ isLeaf: 'leaf' }"
               :expand-on-click-node="false"
               :lazy="i === 0"
               highlight-current
-              @node-click="nodeClick"
+              @node-click="(data, node, component) => nodeClick(data, node, component, i)"
           >
             <template #default="{ node, data }">
               <div class="filter-item">
-                <span>{{node.level === 1 ? data[f.key] : ''}}{{node.level === 2 ? data[f.childrenKey] : ''}}</span>
+                <div :title="node.level === 1 ? data[f.key] : (node.level === 2 ? data[f.childrenKey] : '')">{{node.level === 1 ? data[f.key] : (node.level === 2 ? data[f.childrenKey] : '')}}</div>
                 <span>{{data.count}}</span>
               </div>
             </template>
@@ -45,18 +45,26 @@ export default {
     }
   },
   methods: {
-    nodeClick (data, node) {
-      this.$emit('select', node, data)
+    nodeClick (data, node, component, index) {
+      // if ((data.country && !data.region) || ())
+      this.$emit('select', data, node, index)
     },
     showMore (key, hasnotMore) {
       if (!hasnotMore) {
         this.$emit('showMore', key)
       }
+    },
+    loadFilter (node, resolve, f) {
+      this.$emit('loadFilter', node, resolve, f.filterType, f.childrenKey, f.key)
     }
   },
   watch: {
-    filterData (n) {
-      this.active = ['0', '1']
+    filterData: {
+      deep: true,
+      immediate: true,
+      handler (n) {
+        this.active = ['0', '1']
+      }
     }
   }
 }
@@ -106,6 +114,12 @@ export default {
           justify-content: space-between;
           padding-right: 6px;
           width: 100%;
+
+          div {
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
         .filter__more {
           padding-left: 24px;

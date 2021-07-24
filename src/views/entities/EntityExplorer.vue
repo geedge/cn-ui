@@ -23,6 +23,7 @@
           :filter-data="filterData"
           @select="select"
           @showMore="showMore"
+          @loadFilter="loadFilter"
       ></left-filter>
       <!-- 内容区域 -->
       <entity-list
@@ -130,14 +131,15 @@ export default {
     },
     handleData (n) {
       this.listData = []
+      this.filterData = []
       const requests = []
       const data = []
       switch (n) {
         case 'ip': {
           requests.push(this.loadFilterData(n, 'country'))
           requests.push(this.loadFilterData(n, 'asn'))
-          data.push({ title: this.$t('entities.countryOrRegion'), key: 'country', childrenKey: 'region', type: 'country', childrenType: 'region', loadFilter })
-          data.push({ title: this.$t('entities.asn'), key: 'asn', type: 'asn', loadFilter })
+          data.push({ filterType: n, title: this.$t('entities.countryOrRegion'), key: 'country', childrenKey: 'region', type: 'country', childrenType: 'region' })
+          data.push({ filterType: n, title: this.$t('entities.asn'), key: 'asn', type: 'asn' })
           getEntityIpList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -147,8 +149,8 @@ export default {
         case 'domain': {
           requests.push(this.loadFilterData(n, 'categoryGroup'))
           requests.push(this.loadFilterData(n, 'reputationLevel'))
-          data.push({ title: this.$t('entities.groupAndName'), key: 'categoryGroup', childrenKey: 'categoryName', loadFilter })
-          data.push({ title: this.$t('entities.creditLevel'), key: 'reputationLevel', loadFilter })
+          data.push({ filterType: n, title: this.$t('entities.groupAndName'), key: 'categoryGroup', childrenKey: 'categoryName' })
+          data.push({ filterType: n, title: this.$t('entities.creditLevel'), key: 'reputationLevel' })
           getEntityDomainList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -158,8 +160,8 @@ export default {
         case 'app': {
           requests.push(this.loadFilterData(n, 'appCategory'))
           requests.push(this.loadFilterData(n, 'appRisk'))
-          data.push({ title: this.$t('entities.categoryAndSub'), key: 'appCategory', childrenKey: 'appSubcategory', loadFilter })
-          data.push({ title: this.$t('entities.riskLevel'), key: 'appRisk', loadFilter })
+          data.push({ filterType: n, title: this.$t('entities.categoryAndSub'), key: 'appCategory', childrenKey: 'appSubcategory' })
+          data.push({ filterType: n, title: this.$t('entities.riskLevel'), key: 'appRisk' })
           getEntityAppList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -176,8 +178,9 @@ export default {
         this.filterData = data
       })
     },
-    async select (node, data) {
-      const res = await loadList(node, data, this.filterType, this.pageObjRight)
+    async select (data, node, index) {
+      this.pageObjRight = { ...this.pageObjRight, ...data }
+      const res = await loadList(node, this.filterType, this.pageObjRight)
       this.listData = res.data.result
     },
     getEntityData (param) {
@@ -190,6 +193,38 @@ export default {
     pageNoRight (val) {
       this.pageObjRight.pageNo = val
       this.handleData(this.filterType)
+    },
+    loadFilter (node, resolve, filterType, key, parentKey) {
+      if (node.level === 0) {
+        resolve(node.data)
+      } else {
+        const param = { type: key }
+        param[parentKey] = (node.data)[parentKey]
+        let req = null
+        switch (filterType) {
+          case 'ip': {
+            req = getEntityIpFilterList(param)
+            break
+          }
+          case 'domain': {
+            req = getEntityDomainFilterList(param)
+            break
+          }
+          case 'app': {
+            req = getEntityAppFilterList(param)
+            break
+          }
+          default: break
+        }
+        if (req !== null) {
+          req.then(res => {
+            res = res.map(r => {
+              return { ...r, leaf: true }
+            })
+            resolve(res)
+          })
+        }
+      }
     }
   },
   watch: {
@@ -221,16 +256,14 @@ export default {
       childrenKey: 'region',
       data: country,
       hasnotMore: this.$_.isEmpty(country) || country.length < 10,
-      filterType: this.filterType,
-      loadFilter
+      filterType: this.filterType
     })
     this.filterData.push({
       title: this.$t('entities.asn'),
       key: 'asn',
       data: asn,
       hasnotMore: this.$_.isEmpty(asn) || asn.length < 10,
-      filterType: this.filterType,
-      loadFilter
+      filterType: this.filterType
     })
   },
   setup () {
@@ -241,41 +274,9 @@ export default {
     }
   }
 }
-const loadFilter = (node, resolve, filterType, key, parentKey) => {
-  if (node.level === 0) {
-    resolve(node.data)
-  } else {
-    const param = { type: key }
-    param[parentKey] = (node.data)[parentKey]
-    let req = null
-    switch (filterType) {
-      case 'ip': {
-        req = getEntityIpFilterList(param)
-        break
-      }
-      case 'domain': {
-        req = getEntityDomainFilterList(param)
-        break
-      }
-      case 'app': {
-        req = getEntityAppFilterList(param)
-        break
-      }
-      default: break
-    }
-    if (req !== null) {
-      req.then(res => {
-        res = res.map(r => {
-          return { ...r, leaf: true }
-        })
-        resolve(res)
-      })
-    }
-  }
-}
-const loadList = async (node, data, filterType, pageObj) => {
+const loadList = async (node, filterType, pageObj) => {
   let res
-  const param = { ...pageObj, ...data }
+  const param = { ...pageObj }
   switch (filterType) {
     case 'ip': {
       res = await getEntityIpList(param)
