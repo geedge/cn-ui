@@ -16,6 +16,7 @@
               :props="{ isLeaf: 'leaf' }"
               :expand-on-click-node="false"
               :lazy="i === 0"
+              :ref="`tree-${i}`"
               highlight-current
               @node-click="(data, node, component) => nodeClick(data, node, component, i)"
           >
@@ -41,12 +42,22 @@ export default {
   },
   data () {
     return {
-      active: ['0', '1']
+      active: ['0', '1'],
+      currentDataTop: null,
+      currentDataBottom: null
     }
   },
   methods: {
     nodeClick (data, node, component, index) {
-      // if ((data.country && !data.region) || ())
+      const currentData = index === 0 ? this.currentDataTop : this.currentDataBottom
+      if (this.dataEqual(currentData, data)) {
+        node.isCurrent = false
+      }
+      if (index === 0) {
+        this.currentDataTop = this.$_.cloneDeep(data)
+      } else {
+        this.currentDataBottom = this.$_.cloneDeep(data)
+      }
       this.$emit('select', data, node, index)
     },
     showMore (key, hasnotMore) {
@@ -56,6 +67,18 @@ export default {
     },
     loadFilter (node, resolve, f) {
       this.$emit('loadFilter', node, resolve, f.filterType, f.childrenKey, f.key)
+    },
+    dataEqual (obj1, obj2) {
+      if (!obj1 || !obj2) {
+        return false
+      }
+      let equal = true
+      this.$_.forIn(obj1, (value, key) => {
+        if (value !== obj2[key]) {
+          equal = false
+        }
+      })
+      return equal
     }
   },
   watch: {

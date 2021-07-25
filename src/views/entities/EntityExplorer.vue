@@ -179,7 +179,13 @@ export default {
       })
     },
     async select (data, node, index) {
-      this.pageObjRight = { ...this.pageObjRight, ...data }
+      const pageObjRight = { ...this.pageObjRight, ...data }
+      this.$_.forIn(data, (value, key) => {
+        if (value === this.pageObjRight[key]) {
+          delete pageObjRight[key]
+        }
+      })
+      this.pageObjRight = JSON.parse(JSON.stringify(pageObjRight))
       const res = await loadList(node, this.filterType, this.pageObjRight)
       this.listData = res.data.result
     },
