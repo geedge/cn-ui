@@ -2,7 +2,7 @@
   <div class="pop-custom" v-ele-click-outside="esc">
     <div class="pop-title">{{$t('overall.select')}}</div>
     <div class="pop-box custom-labels">
-      <div style="height: 100%; overflow: auto;">
+      <div style="height: 100%; border-radius:2%; border:1px solid #DCDFE6; overflow: auto;">
         <!--NotSet 为true不可设置-->
         <div
           v-for="(item,index) in custom"
@@ -29,7 +29,7 @@
         <el-button size="mini" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="esc">
           <span class="top-tool-btn-txt">{{$t('overall.esc')}}</span>
         </el-button>
-        <el-button size="mini" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" type="button" @click="save">
+        <el-button size="mini" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" type="button" @click="save" style="background-color: #0091ff;color:#DCDFE6">
           <span class="top-tool-btn-txt">{{$t('overall.save')}}</span>
         </el-button>
       </div>
@@ -116,6 +116,9 @@ export default {
 </script>
 
 <style lang="scss">
+.pop-title{
+  margin-top: 7px;
+}
 .pop-custom {
   padding: 0 12px 12px 12px;
   border: 1px solid #EBEEF5;
@@ -127,6 +130,8 @@ export default {
   background: #fff;
   border-radius: 4px;
   z-index: 999999;
+  box-shadow: inset 0 0 10px #CCC;
+  box-sizing:border-box
 }
 .pop-custom-explore {
   top: 33px;
@@ -151,6 +156,10 @@ export default {
   position: relative;
   cursor: default;
   font-size: 14px;
+}
+.custom-label:hover{
+  color: #cccccc;
+  background-color: #DCDFE6;
 }
 .custom-title{
   padding: 2px 0 2px 2px;

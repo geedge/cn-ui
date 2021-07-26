@@ -9,6 +9,8 @@
             <slot name="top-tool-left"></slot>
           </div>
           <div class="top-tool-right">
+            <el-input v-model="keyWord" value="keyWord"></el-input>
+            <el-button @click="onSearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>
             <div v-if="showLayout.indexOf('searchInput') > -1" class="top-tool-search margin-r-20"></div>
             <slot name="top-tool-right"></slot>
             <button v-if="showLayout.indexOf('elementSet') > -1"  class="top-tool-btn"
@@ -43,6 +45,7 @@
 <script>
 import columnCustomize from '@/components/table/ColumnCustomize'
 import { fromRoute } from '@/utils/constants'
+import { get } from '@/utils/http'
 
 export default {
   name: 'cnDataList',
@@ -70,16 +73,25 @@ export default {
   },
   data () {
     return {
+      keyWord:"",
       fromRoute: fromRoute,
       tools: {
         showCustomTableTitle: false // 自定义列弹框是否显示
       },
-      showLayout: []
+      showLayout: [],
+      Search:[],
     }
   },
   methods: {
     updateCustomTableTitle (custom) {
       this.$emit('update:customTableTitle', custom)
+    },
+    onSearch () {
+      get('sys/log?pageNo=1&pageSize=30').then(res => {
+        if(res.code === 200){
+          this.Search = res.data.list
+        }
+      })
     }
   },
   watch: {
@@ -93,3 +105,5 @@ export default {
   }
 }
 </script>
+<style>
+</style>
