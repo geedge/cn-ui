@@ -13,7 +13,6 @@
             <el-button @click="onsearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>-->
             <div v-if="showLayout.indexOf('searchInput') > -1" class="top-tool-search margin-r-20">
              <el-input
-                  placeholder="请输入内容"
                   suffix-icon="el-icon-search"
                   v-model="keyWord" @keyup.enter.native="onsearch" size="small">
               </el-input>
