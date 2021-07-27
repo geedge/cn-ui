@@ -7,6 +7,7 @@
             :api="url"
             :from="fromRoute.roles"
             :layout="['columnCustomize','elementSet']"
+            @search="search"
     >
       <template v-slot:top-tool-right>
         <button id="roles-add" v-has="'role_add'" :title="$t('overall.createRole')" class="top-tool-btn margin-r-10"

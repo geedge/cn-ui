@@ -17,7 +17,7 @@ export default {
       pageObj: { // 分页对象
         pageNo: 1,
         pageSize: defaultPageSize,
-        total: 0
+        total: ''
       },
       /* 工具参数 */
       tools: {
@@ -76,6 +76,7 @@ export default {
           }
           this.tableData = response.data.list
           this.pageObj.total = response.data.total
+          this.pageObj.total = ''
           // TODO 回到顶部
         }
       })
@@ -143,6 +144,10 @@ export default {
     tableDataSort (orderBy) {
       this.$set(this.searchLabel, 'orderBy', orderBy)
       this.getTableData()
+    },
+    search (params) {
+      this.pageObj.pageNo = 1
+      this.getTableData({ q: params })
     }
   },
   watch: {

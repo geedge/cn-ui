@@ -23,6 +23,7 @@
           @reload="getTableData"
           @selectionChange="selectionChange"
           @showBottomBox="(targetTab, object) => { $refs.dataList.showBottomBox(targetTab, object) }"></operation-log-table>
+          @search="search"
       </template>
       <!-- 分页组件 -->
       <template #pagination>

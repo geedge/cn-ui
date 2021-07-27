@@ -7,6 +7,7 @@
       :api="url"
       :from="fromRoute.user"
       :layout="['columnCustomize','elementSet']"
+      @search="search"
     >
       <template #top-tool-right>
         <button
@@ -85,7 +86,6 @@ export default {
     }
   },
   methods: {
-
   }
 }
 </script>
