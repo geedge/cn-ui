@@ -9,13 +9,14 @@
             <slot name="top-tool-left"></slot>
           </div>
           <div class="top-tool-right">
-            <div style="margin-right: 10px;display: flex">
-              <input type="text" v-model="keyWord"/>
-              <button><i class="el-icon-search" @click="onsearch" ></i></button>
-            </div>
 <!--           <el-input v-model="keyWord" value="keyWord"></el-input>
             <el-button @click="onsearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>-->
             <div v-if="showLayout.indexOf('searchInput') > -1" class="top-tool-search margin-r-20">
+             <el-input
+                  placeholder="请输入内容"
+                  suffix-icon="el-icon-search"
+                  v-model="keyWord" @keyup.enter.native="onsearch" size="small">
+              </el-input>
             </div>
             <slot name="top-tool-right"></slot>
             <button v-if="showLayout.indexOf('elementSet') > -1"  class="top-tool-btn"
@@ -105,7 +106,4 @@ export default {
 }
 </script>
 <style>
-input:focus{
-  outline: none;
-}
 </style>

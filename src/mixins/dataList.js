@@ -76,7 +76,6 @@ export default {
           }
           this.tableData = response.data.list
           this.pageObj.total = response.data.total
-          this.pageObj.total = ''
           // TODO 回到顶部
         }
       })

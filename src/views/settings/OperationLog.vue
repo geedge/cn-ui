@@ -4,7 +4,7 @@
       ref="dataList"
       :api="url"
       :tableId="tableId"
-      :layout="['searchInput', 'elementSet']"
+      :layout="['searchInput', 'elementSet','searchInput']"
       v-model:custom-table-title="tools.customTableTitle"
       :from="fromRoute.operationLog"
       @search="search"
