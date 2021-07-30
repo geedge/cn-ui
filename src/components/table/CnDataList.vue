@@ -15,7 +15,11 @@
               <div style="display: flex">
                 <el-input
                     v-model="keyWord"  size="small"></el-input>
-                <el-button icon="el-icon-search" @click="onsearch" size="small"></el-button>
+<!--                <el-button icon="el-icon-search" @click="onsearch" size="small"></el-button>-->
+                <button   class="top-tool-btn" style="border-radius: 0px"
+                        type="button" @click="onsearch">
+                  <i class="el-icon-search"></i>
+                </button>
               </div>
             </div>
             <slot name="top-tool-right"></slot>
@@ -106,4 +110,18 @@ export default {
 }
 </script>
 <style>
+.el-input--small .el-input__inner {
+  height: 32.4px;
+  line-height: 32px;
+  border-radius: 0px;
+}
+.list-page .top-tools .top-tool-btn {
+  height: 32.5px;
+  width: 36px;
+  border: 1px solid #DEDEDE;
+  outline: none;
+  border-radius: 2px;
+  background-color: #F9F9F9;
+  transition: background-color linear .1s;
+}
 </style>
