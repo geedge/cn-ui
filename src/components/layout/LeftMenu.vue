@@ -111,7 +111,7 @@ export default {
   methods: {
     jump (route) {
       if (route === this.route) {
-        // this.refresh()
+        this.refresh()
         return
       }
       this.$router.push({

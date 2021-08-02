@@ -36,7 +36,7 @@
               <span class="body__row-label">{{$t('entities.asn')}}:</span>
               <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
-            <div class="body__detail">{{$t('overall.detail')}}</div>
+            <div class="body__detail" @click="entityDetail">{{$t('overall.detail')}}</div>
           </template>
           <template v-else-if="entityType === 'domain'">
             <div class="body__row">
@@ -51,7 +51,7 @@
               <span class="body__row-label">{{$t('entities.creditScore')}}:</span>
               <div class="body__row-value" :title="d.reputationScore">{{d.reputationScore || '-'}}</div>
             </div>
-            <div class="body__detail">{{$t('overall.detail')}}</div>
+            <div class="body__detail" @click="entityDetail({domain: d.domainName})">{{$t('overall.detail')}}</div>
           </template>
           <template v-else-if="entityType === 'app'">
             <div class="body__row">
@@ -66,7 +66,7 @@
               <span class="body__row-label">{{$t('entities.subcategory')}}:</span>
               <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
-            <div class="body__detail">{{$t('overall.detail')}}</div>
+            <div class="body__detail" @click="entityDetail({appId: d.appId})">{{$t('overall.detail')}}</div>
           </template>
         </div>
       </div>
@@ -94,6 +94,12 @@ export default {
     listData: Array,
     entityType: String,
     pageObj: Object
+  },
+  data () {
+    return {
+      showDetail: false,
+      typeName: ''
+    }
   },
   computed: {
     circleColor () {
@@ -161,6 +167,9 @@ export default {
           }
         })
       })
+    },
+    entityDetail (params) {
+      this.$emit('showDetail', params)
     }
   }
 }

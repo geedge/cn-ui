@@ -40,6 +40,10 @@ import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 
 export default {
   name: 'Panel',
+  props: {
+    typeName: String,
+    entity: Object
+  },
   components: {
     Chart,
     DateTimeRange,
@@ -61,7 +65,7 @@ export default {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
-    panelTypeAndRouteMapping[params.typeName] && (panelType = panelTypeAndRouteMapping[params.typeName])
+    panelType = props.typeName ? panelTypeAndRouteMapping[props.typeName] : panelTypeAndRouteMapping[params.typeName]
     return {
       panelType,
       panel,
@@ -78,7 +82,20 @@ export default {
       if (this.panel.id) {
         this.chartList = (await getChartList({ panelId: this.panel.id, pageSize: -1 })).map(chart => {
           chart.i = chart.id
+          this.recursionParamsConvert(chart)
           return chart
+        })
+      }
+    },
+    recursionParamsConvert (chart) {
+      console.info(chart)
+      chart.params = chart.params ? JSON.parse(chart.params) : null
+      if (this.entity) {
+        chart.params = { ...chart.params, ...this.entity }
+      }
+      if (!this.$_.isEmpty(chart.children)) {
+        chart.children.forEach(c => {
+          this.recursionParamsConvert(c)
         })
       }
     },

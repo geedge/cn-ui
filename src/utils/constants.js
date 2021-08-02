@@ -36,7 +36,10 @@ export const fromRoute = {
 export const panelTypeAndRouteMapping = {
   trafficSummary: 1,
   networkAppPerformance: 2,
-  dnsServiceInsights: 3
+  dnsServiceInsights: 3,
+  ipEntityDetail: 4,
+  domainEntityDetail: 5,
+  appEntityDetail: 6
 }
 
 export const position = {

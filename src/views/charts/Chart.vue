@@ -632,7 +632,7 @@ export default {
       immediate: true,
       deep: true,
       handler (n, o) {
-        if (n) {
+        if (n && o) {
           this.$nextTick(() => {
             this.initChart()
           })
@@ -643,7 +643,6 @@ export default {
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))
     chartInfo.category = getTypeCategory(props.chart.type)
-    chartInfo.params = chartInfo.params ? JSON.parse(chartInfo.params) : null
     return {
       chartInfo,
       layoutConstant,

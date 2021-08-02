@@ -29,7 +29,7 @@ npm run lint
 
 ### 3.图表组件库
 图表：echarts5.0  
-地图(支持下钻)(待定)：echarts+自定义事件 | amCharts  
+地图：amCharts  
 拖拽 & Resize：Vue-grid-layout &nbsp;https://jbaysolutions.github.io/vue-grid-layout/guide/
 
 ### 4.响应式方案
@@ -37,7 +37,7 @@ lib-flexible + postcss-px2rem-exclude + 媒体查询
 lib-flexible 将px自动转为rem，postcss-px2rem-exclude 避免将ui库的css转换，媒体查询根据不同屏幕大小使用不同的root font size
 
 ### 5.工具
-使用lodash库，该库包含大部分常用工具方法，包括数组操作、函数功能扩展、对象操作等，且高性能、一致。开发中应该优先使用该库的方法  
+lodash库，该库包含大部分常用工具方法，包括数组操作、函数功能扩展、对象操作等，且高性能、一致。开发中应该优先使用该库的方法  
 https://www.lodashjs.com/
 
 ## 开发规范 & 要求

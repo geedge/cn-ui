@@ -1,5 +1,5 @@
 <template>
-  <div class="outer-box">
+  <div class="outer-box" v-if="!showDetail">
     <div class="cn-entities">
       <el-select
           size="small"
@@ -30,11 +30,13 @@
           :list-data="listData"
           :entity-type="filterType"
           :page-obj="pageObjRight"
+          @showDetail="entityDetail"
           @pageSize="pageSizeRight"
           @pageNo="pageNoRight"
       ></entity-list>
     </div>
   </div>
+  <cn-panel v-else :entity="currentEntity" :type-name="typeName"></cn-panel>
 </template>
 
 <script>
@@ -43,6 +45,7 @@ import { ref } from 'vue'
 import LeftFilter from '@/components/entities/LeftFilter'
 import EntityList from '@/components/entities/EntityList'
 import { getEntityIpFilterList, getEntityDomainFilterList, getEntityAppFilterList, getEntityIpList, getEntityDomainList, getEntityAppList } from '@/utils/api'
+import Panel from '@/views/charts/Panel'
 export default {
   name: 'EntityExplorer',
   data () {
@@ -64,12 +67,16 @@ export default {
         pageSize: 50,
         total: 0
       },
-      listData: []
+      listData: [],
+      showDetail: false,
+      typeName: '',
+      currentEntity: {}
     }
   },
   components: {
     LeftFilter,
-    EntityList
+    EntityList,
+    'cn-panel': Panel
   },
   methods: {
     async showMore (key) {
@@ -231,6 +238,11 @@ export default {
           })
         }
       }
+    },
+    entityDetail (entity) {
+      this.typeName = `${this.filterType.toLowerCase()}EntityDetail`
+      this.currentEntity = entity
+      this.showDetail = true
     }
   },
   watch: {
