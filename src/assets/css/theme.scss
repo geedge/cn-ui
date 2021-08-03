@@ -21,24 +21,24 @@ $--collapse-border-color: #EFF2F5;
   /* 自适应变量 */
   @media only screen  and (min-width : 10px) {
     --chart-height-unit: 25px;  // chart的单元高度
-    --entity-width: calc(50% - 5px);  // entity列表每个entity框的宽度
-    --entity-height: 190px;  // entity列表每个entity框的高度
+/*    --entity-width: calc(50% - 5px);  // entity列表每个entity框的宽度
+    --entity-height: 190px;  // entity列表每个entity框的高度*/
   }
   @media only screen  and (min-width : 1224px) {
     --chart-height-unit: 30px;
   }
-  @media only screen  and (min-width : 1560px) {
+/*  @media only screen  and (min-width : 1560px) {
     --entity-width: calc(33.3% - 7px);
-  }
+  }*/
   @media only screen  and (min-width : 1824px) {
     --chart-height-unit: 40px;
-    --entity-width: calc(33.3% - 7px);
-    --entity-height: 210px;
+   /* --entity-width: calc(33.3% - 7px);
+    --entity-height: 210px;*/
   }
   @media only screen  and (min-width : 2424px) {
     --chart-height-unit: 55px;
-    --entity-width: calc(25% - 8px);
-    --entity-height: 240px;
+  /*  --entity-width: calc(25% - 8px);
+    --entity-height: 240px;*/
   }
 }
 

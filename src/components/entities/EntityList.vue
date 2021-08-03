@@ -3,9 +3,9 @@
     <div class="entity-list__content">
       <div class="cn-entity" v-for="d in listData" :key="d.id">
         <div class="cn-entity__header">
-          <div class="header__icon" :style="{backgroundColor: circleColor}"><i :class="iconClass"></i></div>
+          <div class="header__icon"><i :class="iconClass"></i></div>
           <div class="header__content">
-            <div class="content__title">
+            <div class="content__title" :title="d.ip||d.domainName||d.appName">
               <template v-if="entityType === 'ip'">{{d.ip || 'Unknown'}}</template>
               <template v-else-if="entityType === 'domain'">{{d.domainName || 'Unknown'}}</template>
               <template v-else-if="entityType === 'app'">{{d.appName || 'Unknown'}}</template>
@@ -32,11 +32,11 @@
               <span class="body__row-label">{{$t('overall.region')}}:</span>
               <div class="body__row-value" :title="d.region">{{d.region || '-'}}</div>
             </div>
-            <div class="body__row">
+            <div class="body__row Select">
               <span class="body__row-label">{{$t('entities.asn')}}:</span>
               <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
-            <div class="body__detail" @click="entityDetail">{{$t('overall.detail')}}</div>
+            <div class="body__detail" @click="entityDetail">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="entityType === 'domain'">
             <div class="body__row">
@@ -47,11 +47,11 @@
               <span class="body__row-label">{{$t('entities.categoryName')}}:</span>
               <div class="body__row-value" :title="d.categoryName">{{d.categoryName || '-'}}</div>
             </div>
-            <div class="body__row">
+            <div class="body__row Select">
               <span class="body__row-label">{{$t('entities.creditScore')}}:</span>
               <div class="body__row-value" :title="d.reputationScore">{{d.reputationScore || '-'}}</div>
             </div>
-            <div class="body__detail" @click="entityDetail({domain: d.domainName})">{{$t('overall.detail')}}</div>
+            <div class="body__detail" @click="entityDetail({domain: d.domainName})">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="entityType === 'app'">
             <div class="body__row">
@@ -62,11 +62,11 @@
               <span class="body__row-label">{{$t('entities.category')}}:</span>
               <div class="body__row-value" :title="d.appCategory">{{d.appCategory || '-'}}</div>
             </div>
-            <div class="body__row">
+            <div class="body__row Select">
               <span class="body__row-label">{{$t('entities.subcategory')}}:</span>
               <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
-            <div class="body__detail" @click="entityDetail({appId: d.appId})">{{$t('overall.detail')}}</div>
+            <div class="body__detail" @click="entityDetail({appId: d.appId})">{{$t('overall.detail')}}></div>
           </template>
         </div>
       </div>

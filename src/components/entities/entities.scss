@@ -6,7 +6,7 @@
   padding: 20px;
   height: 100%;
   width: 100%;
-  background-color: #fff;
+  background-color: #EBEEF1;
 
   .entity-list {
     height: 100%;
@@ -14,36 +14,68 @@
     overflow: hidden;
 
     .entity-list__content {
-      display: grid;
+    /*  display: grid;
       grid-template-columns: repeat(auto-fill, var(--entity-width));
       grid-auto-flow: row;
-      grid-auto-rows: var(--entity-height);
-      grid-gap: 10px;
+      grid-auto-rows: var(--entity-height);*/
+     /* grid-gap: 10px;*/
+      display: flex;
+      flex-wrap: wrap;
+      display: -webkit-flex;
+      justify-content: space-between;
+      border-radius: 2px;
       height: calc(100% - 67px);
       width: 100%;
       overflow: auto;
 
+      .cn-entity:hover{
+          box-shadow: inset 0 0 10px #ccc;
+        .cn-entity__header{
+          background: #8FA1BE;
+        }
+        .header__icon{
+          background: #8FA1BE;
+          border: 2px solid #FFFFFF;
+        }
+      }
       .cn-entity {
-        display: grid;
-        grid-template-rows: 44% 56%;
+      /* display: grid;
+        grid-template-rows: 44% 56%;*/
+        box-sizing: border-box;
+        margin: 14px 13px;
+        width: 240px;
+        height: 290px;
+        background: #FFFFFF;
+        border-radius: 2px;
         border: 1px solid $--right-box-border-color;
 
         .cn-entity__header {
+          position: relative;
+          background: #E1E6ED;
           display: flex;
           align-items: center;
           padding: 20px;
+          width: 240px;
+          height: 96.61px;
+          box-sizing: border-box;
 
           .header__icon {
+            overflow: hidden;
+            position: absolute;
+            bottom: -26px;
+            right: 102px;
             display: flex;
             justify-content: center;
             justify-items: center;
             align-items: center;
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
+            background: #B8C1D1;
 
             i {
               font-size: 20px;
+              color: #ffffff;
             }
           }
           .header__content {
@@ -53,9 +85,16 @@
             padding-left: 10px;
 
             .content__title {
-              font-size: 22px;
-              color: #333333;
-              font-weight: bold;
+              font-family: Roboto-Medium;
+              margin-left: 24px;
+              font-size: 20px;
+              color: #828790;
+              font-weight: 500;
+              width: 125px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              -o-text-overflow: ellipsis;
+              white-space: nowrap;
             }
             .content__desc {
               font-size: 14px;
@@ -71,25 +110,38 @@
         }
         .cn-entity__body {
           overflow: hidden;
+         padding-top: 34px;
+          font-size: 14px;
 
           .body__row {
             display: flex;
-            padding: 0 0 0 20px;
+            width:200px;
+            margin:5px auto;
             color: #666;
+            overflow-y: scroll;
+            border-bottom: 1px solid #EFF2F5;
 
             .body__row-label {
               padding-right: 15px;
             }
             .body__row-value {
-              width: calc(100% - 150px);
+              width: calc(100% - 69px);
+              height:31px;
               overflow: hidden;
               text-overflow: ellipsis;
+              overflow-y: scroll;
+            }
+            .body__row-value::-webkit-scrollbar{
+              display: none;
             }
           }
           .body__detail {
-            padding: 10px 0 0 20px;
-            color: $--color-primary;
+            padding: 1px 0 0 156px;
             cursor: pointer;
+            font-family: Roboto-Regular;
+            font-size: 14px;
+            color: #8FA1BE;
+            font-weight: 400;
 
           }
         }
@@ -112,3 +164,8 @@
 .app-orange {
   color: #FFA200;
 }
+.Select{
+  border-bottom: 0px !important;
+ }
+
+
