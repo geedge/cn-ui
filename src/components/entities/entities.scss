@@ -6,7 +6,6 @@
   padding: 20px;
   height: 100%;
   width: 100%;
-  background-color: #EBEEF1;
 
   .entity-list {
     height: 100%;
@@ -51,6 +50,7 @@
         background: #FFFFFF;
         border-radius: 2px;
         border: 1px solid $--right-box-border-color;
+        transition: all .2s;
 
         .cn-entity__header {
           position: relative;
@@ -61,6 +61,7 @@
           width: 240px;
           height: 96.61px;
           box-sizing: border-box;
+          transition: all .2s;
 
           .header__icon {
             overflow: hidden;
