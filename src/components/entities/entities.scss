@@ -117,14 +117,17 @@
         }
         .cn-entity__body {
           overflow: hidden;
-         padding-top:43px;
+         padding-top:65px;
           font-size: 14px;
           .body__row {
             display: flex;
-            width:200px;
-            margin:19px auto;
+            align-items: center;
+            width: 200px;
+            margin: auto;
             border-bottom: 1px solid #EFF2F5;
             color: #666666;
+            padding: 7px 0px;
+            justify-content: center;
           }
 
           .body__row-label {
@@ -143,11 +146,10 @@
             font-family: PingFangSC-Regular;
             font-size: 14px;
             color: #666666;
-            line-height: 16px;
             font-weight: 400;
           }
           .body__detail {
-            padding: 1px 0 0 156px;
+            padding: 9px 0 0 156px;
             cursor: pointer;
             font-family: Roboto-Regular;
             font-size: 14px;
@@ -206,6 +208,10 @@
   content: "\e734";
   padding: 5.5px;
   font-size: 12px;
+}
+.cn-entity>ip{
+  width: 340px;
+  height: 290px;
 }
 
 

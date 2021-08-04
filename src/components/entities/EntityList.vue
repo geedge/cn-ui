@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="cn-entity__body" style="position: relative;">
-          <div class="content__desc" v-if="entityType !== 'ip'" style="color: #999999; width: 200px; position: absolute; top: 24px;right: -3px ;font-size: 12px;">
+          <div class="content__desc" v-if="entityType !== 'ip'" style="color: #999999; width: 200px; position: absolute; top: 33px;right: -9px ;font-size: 12px;">
             <template v-if="entityType === 'domain'" style="color: #999999; width: 200px;">
               <span class="desc__label">{{$t('entities.reputationLevel')}}:</span>
               <span>{{d.reputationLevel || '-'}}</span>
