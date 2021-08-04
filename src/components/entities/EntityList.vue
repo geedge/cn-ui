@@ -10,60 +10,60 @@
               <template v-else-if="entityType === 'domain'">{{d.domainName || 'Unknown'}}</template>
               <template v-else-if="entityType === 'app'">{{d.appName || 'Unknown'}}</template>
             </div>
-            <div class="content__desc" v-if="entityType !== 'ip'">
-              <template v-if="entityType === 'domain'">
-                <span class="desc__label">{{$t('entities.reputationLevel')}}:</span>
-                <span>{{d.reputationLevel || '-'}}</span>
-              </template>
-              <template v-else-if="entityType === 'app'">
-                <span class="desc__label">{{$t('entities.risk')}}:</span>
-                <span>{{d.appRisk || '-'}}</span>
-              </template>
-            </div>
           </div>
         </div>
-        <div class="cn-entity__body">
+        <div class="cn-entity__body" style="position: relative;">
+          <div class="content__desc" v-if="entityType !== 'ip'" style="color: #999999; width: 200px; position: absolute; top: 24px;right: -3px ;font-size: 12px;">
+            <template v-if="entityType === 'domain'" style="color: #999999; width: 200px;">
+              <span class="desc__label">{{$t('entities.reputationLevel')}}:</span>
+              <span>{{d.reputationLevel || '-'}}</span>
+            </template>
+            <template v-else-if="entityType === 'app'" style="color: #999999; width: 200px; margin:0px 35px;">
+              <span class="desc__label">{{$t('entities.risk')}}:</span>
+              <span>{{d.appRisk || '-'}}</span>
+            </template>
+          </div>
           <template v-if="entityType === 'ip'">
             <div class="body__row">
-              <span class="body__row-label">{{$t('overall.country')}}:</span>
+              <span class="body__row-label cn-icon cn-icon-category tubiao">{{$t('overall.country')}}:</span>
               <div class="body__row-value" :title="d.country">{{d.country || '-'}}</div>
             </div>
             <div class="body__row">
-              <span class="body__row-label">{{$t('overall.region')}}:</span>
+              <span class="body__row-label cn-icon cn-icon-position tubiao">{{$t('overall.region')}}:</span>
               <div class="body__row-value" :title="d.region">{{d.region || '-'}}</div>
             </div>
             <div class="body__row Select">
-              <span class="body__row-label">{{$t('entities.asn')}}:</span>
+              <span class="body__row-label cn-icon cn-icon-cloud tubiao">{{$t('entities.asn')}}:</span>
               <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
             <div class="body__detail" @click="entityDetail">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="entityType === 'domain'">
             <div class="body__row">
-              <span class="body__row-label">{{$t('entities.categoryGroup')}}:</span>
+              <span class="body__row-label  cn-icon cn-icon-category">{{$t('entities.Group')}}:</span>
               <div class="body__row-value" :title="d.categoryGroup">{{d.categoryGroup || '-'}}</div>
             </div>
             <div class="body__row">
-              <span class="body__row-label">{{$t('entities.categoryName')}}:</span>
+              <span class="body__row-label  cn-icon cn-icon-sub-category">{{$t('entities.categoryName')}}:</span>
               <div class="body__row-value" :title="d.categoryName">{{d.categoryName || '-'}}</div>
             </div>
             <div class="body__row Select">
-              <span class="body__row-label">{{$t('entities.creditScore')}}:</span>
+              <span class="body__row-label cn-icon cn-icon-risk">{{$t('entities.credit')}}:</span>
               <div class="body__row-value" :title="d.reputationScore">{{d.reputationScore || '-'}}</div>
             </div>
             <div class="body__detail" @click="entityDetail({domain: d.domainName})">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="entityType === 'app'">
             <div class="body__row">
-              <span class="body__row-label">APP ID:</span>
+              <span class="body__row-label cn-icon cn-icon-id">APP ID:</span>
               <div class="body__row-value" :title="d.appId">{{d.appId || '-'}}</div>
             </div>
             <div class="body__row">
-              <span class="body__row-label">{{$t('entities.category')}}:</span>
+              <span class="body__row-label cn-icon cn-icon-category">{{$t('entities.category')}}:</span>
               <div class="body__row-value" :title="d.appCategory">{{d.appCategory || '-'}}</div>
             </div>
             <div class="body__row Select">
-              <span class="body__row-label">{{$t('entities.subcategory')}}:</span>
+              <span class="body__row-label cn-icon cn-icon-sub-category">{{$t('entities.subcategory')}}:</span>
               <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
             <div class="body__detail" @click="entityDetail({appId: d.appId})">{{$t('overall.detail')}}></div>
