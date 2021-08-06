@@ -5,7 +5,7 @@
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
       </div>
-      <chart v-for="chart in chartList" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`"></chart>
+      <chart v-for="chart in chartList" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
       <!--    <grid-layout v-model:layout="chartList"
                        :col-num="12"
                        :row-height="30"
@@ -88,11 +88,7 @@ export default {
       }
     },
     recursionParamsConvert (chart) {
-      console.info(chart)
       chart.params = chart.params ? JSON.parse(chart.params) : null
-      if (this.entity) {
-        chart.params = { ...chart.params, ...this.entity }
-      }
       if (!this.$_.isEmpty(chart.children)) {
         chart.children.forEach(c => {
           this.recursionParamsConvert(c)

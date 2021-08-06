@@ -20,7 +20,7 @@
         :ref="`chart-${chart.id}`"
     >
       <template v-for="chart in tab.children">
-        <chart v-if="activeTab == tab.id" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`"></chart>
+        <chart v-if="activeTab == tab.id" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
       </template>
     </el-tab-pane>
   </el-tabs>
@@ -166,6 +166,7 @@ import {
   isEchartsWithStatistics,
   isMapLine,
   isMapBlock,
+  isSingleValueWithEcharts,
   isTabs,
   getChartColor
 } from '@/components/charts/chart-options'
@@ -185,7 +186,8 @@ export default {
   name: 'Chart',
   props: {
     chart: Object, // 图表对象，包括id、name、type等数据
-    timeFilter: Object
+    timeFilter: Object,
+    entity: Object
   },
   components: {
     EchartsFrame,
@@ -221,44 +223,54 @@ export default {
   },
   methods: {
     initChart () {
-      const chartParams = this.chartInfo.params
-      if (this.isMap) {
-        const { chart, polygonSeries } = this.initMap(`chart${this.chartInfo.id}`)
-        !this.myChart && (this.myChart = chart)
-        if (chartParams) {
-          this.loadMap(polygonSeries)
-        }
-      } else if (this.isEcharts) {
-        const dom = document.getElementById(`chart${this.chartInfo.id}`)
-        !this.myChart && (this.myChart = echarts.init(dom))
-        this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
-        if (chartParams) {
-          if (this.isEchartsWithTable) {
-            this.initEchartsWithPieTable(chartParams)
-          } else if (this.isEchartsWithStatistics) {
-            this.initEchartsWithStatistics(chartParams)
-          } else {
-            this.initECharts(chartParams)
+      try {
+        const chartParams = this.chartInfo.params
+        if (this.isMap) {
+          const { chart, polygonSeries } = this.initMap(`chart${this.chartInfo.id}`)
+          !this.myChart && (this.myChart = chart)
+          if (chartParams) {
+            this.loadMap(polygonSeries)
+          }
+        } else if (this.isEcharts) {
+          const dom = document.getElementById(`chart${this.chartInfo.id}`)
+          !this.myChart && (this.myChart = echarts.init(dom))
+          this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
+          if (chartParams) {
+            if (this.isEchartsWithTable) {
+              this.initEchartsWithPieTable(chartParams)
+            } else if (this.isEchartsWithStatistics) {
+              this.initEchartsWithStatistics(chartParams)
+            } else {
+              this.initECharts(chartParams)
+            }
+          }
+        } else if (this.isTable) {
+          if (chartParams) {
+            this.initChartTable(chartParams)
+          }
+        } else if (this.isSingleValue) {
+          if (chartParams) {
+            this.singleValue.icon = chartParams.icon
+            const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+              if (response.code === 200) {
+                this.singleValue.value = response.data.result
+              }
+            })
+            if (this.isSingleValueWithEcharts) { // 带曲线的单值图
+              get(replaceUrlPlaceholder(chartParams.urlLine, queryParams)).then(response => {
+                if (response.code === 200) {
+                }
+              })
+            }
+          }
+        } else if (this.isTabs) {
+          if (!this.$_.isEmpty(this.chartInfo.children)) {
+            this.activeTab = `${this.chartInfo.children[0].id}`
           }
         }
-      } else if (this.isTable) {
-        if (chartParams) {
-          this.initChartTable(chartParams)
-        }
-      } else if (this.isSingleValue) {
-        if (chartParams) {
-          this.singleValue.icon = chartParams.icon
-          const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
-          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-            if (response.code === 200) {
-              this.singleValue.value = response.data.result
-            }
-          })
-        }
-      } else if (this.isTabs) {
-        if (!this.$_.isEmpty(this.chartInfo.children)) {
-          this.activeTab = `${this.chartInfo.children[0].id}`
-        }
+      } catch (e) {
+        console.error(e)
       }
     },
     reloadChart () {
@@ -652,6 +664,7 @@ export default {
       isEchartsWithTable: isEchartsWithTable(props.chart.type),
       isEchartsWithStatistics: isEchartsWithStatistics(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),
+      isSingleValueWithEcharts: isSingleValueWithEcharts(props.chart.type),
       isTable: isTable(props.chart.type),
       isMap: isMap(props.chart.type),
       isTitle: isTitle(props.chart.type),
