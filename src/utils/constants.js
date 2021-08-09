@@ -61,7 +61,8 @@ export const entityTypeMappingKey = {
 export const unitTypes = {
   time: 'time',
   number: 'number',
-  byte: 'byte'
+  byte: 'byte',
+  string: 'string'
 }
 
 export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量

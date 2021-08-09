@@ -36,7 +36,7 @@
       ></entity-list>
     </div>
   </div>
-  <cn-panel v-else :entity="currentEntity" :type-name="typeName"></cn-panel>
+  <cn-panel v-else :entity="currentEntity" :type-name="typeName" :tabs="panelTabs"></cn-panel>
 </template>
 
 <script>
@@ -70,7 +70,8 @@ export default {
       listData: [],
       showDetail: false,
       typeName: '',
-      currentEntity: {}
+      currentEntity: {},
+      panelTabs: []
     }
   },
   components: {
@@ -239,9 +240,10 @@ export default {
         }
       }
     },
-    entityDetail (entity) {
+    entityDetail (entity, tabs) {
       this.typeName = `${this.filterType.toLowerCase()}EntityDetail`
       this.currentEntity = entity
+      this.panelTabs = tabs
       this.showDetail = true
     }
   },

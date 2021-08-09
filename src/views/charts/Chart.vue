@@ -151,7 +151,7 @@ import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { shallowRef } from 'vue'
-import { allTableTitle, legendMapping } from '@/components/charts/chart-table-title'
+import { tableTitleMapping, legendMapping } from '@/components/charts/chart-table-title'
 import {
   isEcharts,
   isSingleValue,
@@ -187,7 +187,10 @@ export default {
   props: {
     chart: Object, // 图表对象，包括id、name、type等数据
     timeFilter: Object,
-    entity: Object
+    entity: {
+      type: Object,
+      default: () => {}
+    }
   },
   components: {
     EchartsFrame,
@@ -322,9 +325,9 @@ export default {
     },
     loadMap (polygonSeries) {
       const chartParams = this.chartInfo.params
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), country: '', region: '' } // 统计数据的查询参数
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), country: '', region: '', ...this.entity } // 统计数据的查询参数
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-        if (response.code === 200) {
+        if (response.code === 200 && !this.$_.isEmpty(response.data.result)) {
           const data = response.data.result
           data.forEach(r => {
             const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
@@ -360,7 +363,6 @@ export default {
                 })
               }
             ]
-
             const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
             imageSeries.dataFields.value = 'sessions'
             const imageSeriesTemplate = imageSeries.mapImages.template
@@ -429,6 +431,14 @@ export default {
     getTargetPageData (pageNum, pageSize, tableData) {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
+    getTableTitle (data) {
+      if (data.length > 0) {
+        const columns = Object.keys(data[0])
+        return columns.map(c => tableTitleMapping[c])
+      } else {
+        return []
+      }
+    },
     toggleStatisticsLegend (index) {
       this.statisticsData[index].active = !this.statisticsData[index].active
       this.statisticsData.forEach((d, i) => {
@@ -452,7 +462,7 @@ export default {
       }
     },
     initECharts (chartParams) {
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           const seriesTemplate = this.chartOption.series[0]
@@ -477,7 +487,7 @@ export default {
       })
     },
     initEchartsWithStatistics (chartParams) {
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           this.statisticsData = response.data.result.map(d => {
@@ -508,8 +518,8 @@ export default {
       const self = this
       chartParams.valueColumn = this.orderPieTable
       const unitType = getUnitType(chartParams.valueColumn)
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
-      const tableQueryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable } // 统计数据的查询参数
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
+      const tableQueryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
@@ -531,11 +541,13 @@ export default {
           this.$nextTick(() => {
             this.myChart.resize()
           })
-          get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
-            if (response2.code === 200) {
-              this.pieTableData = response2.data.result
-            }
-          })
+          if (!this.$_.isEmpty(data)) {
+            get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
+              if (response2.code === 200) {
+                this.pieTableData = response2.data.result
+              }
+            })
+          }
         }
       })
       // legend点击事件
@@ -577,7 +589,7 @@ export default {
       })
     },
     loadPieTableData (name = '') {
-      const childrenParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable }
+      const childrenParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable, ...this.entity }
       childrenParams[this.chartInfo.params.nameColumn] = name
       get(replaceUrlPlaceholder(this.chartInfo.params.urlTable, childrenParams)).then(response => {
         if (response.code === 200) {
@@ -590,11 +602,11 @@ export default {
       this.initChartTable(chartParams)
     },
     initChartTable (chartParams) {
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: this.table.limit, order: this.table.orderBy }
+      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: this.table.limit, order: this.table.orderBy, ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
-          this.table.tableColumns = allTableTitle['tableTitles' + this.chart.id]
           this.table.tableData = response.data.result
+          this.table.tableColumns = this.getTableTitle(response.data.result)
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
         }
       })

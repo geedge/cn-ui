@@ -25,45 +25,46 @@
           </div>
           <template v-if="entityType === 'ip'">
             <div class="body__row">
-              <span class="body__row-label cn-icon cn-icon-category tubiao">{{$t('overall.country')}}:</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-category"></i>&nbsp;{{$t('overall.country')}}:</span>
               <div class="body__row-value" :title="d.country">{{d.country || '-'}}</div>
             </div>
             <div class="body__row">
-              <span class="body__row-label cn-icon cn-icon-position tubiao">{{$t('overall.region')}}:</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-position"></i>&nbsp;{{$t('overall.region')}}:</span>
               <div class="body__row-value" :title="d.region">{{d.region || '-'}}</div>
             </div>
-            <div class="body__row Select">
-              <span class="body__row-label cn-icon cn-icon-cloud tubiao">{{$t('entities.asn')}}:</span>
+            <div class="body__row">
+              <span class="body__row-label"><i class="cn-icon cn-icon-cloud"></i>&nbsp;{{$t('entities.asn')}}:</span>
               <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
-            <div class="body__detail" @click="entityDetail">{{$t('overall.detail')}}></div>
+            <div class="body__detail"
+                 @click="entityDetail({clientIP: d.ip}, [{key: 'clientIP', label: $t('overall.clientIp')}, {key: 'serverIP', label: $t('overall.serverIp')}])">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="entityType === 'domain'">
             <div class="body__row">
-              <span class="body__row-label  cn-icon cn-icon-category">{{$t('entities.Group')}}:</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-category"></i>&nbsp;{{$t('entities.Group')}}:</span>
               <div class="body__row-value" :title="d.categoryGroup">{{d.categoryGroup || '-'}}</div>
             </div>
             <div class="body__row">
-              <span class="body__row-label  cn-icon cn-icon-sub-category">{{$t('entities.categoryName')}}:</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-sub-category"></i>&nbsp;{{$t('entities.categoryName')}}:</span>
               <div class="body__row-value" :title="d.categoryName">{{d.categoryName || '-'}}</div>
             </div>
-            <div class="body__row Select">
-              <span class="body__row-label cn-icon cn-icon-risk">{{$t('entities.credit')}}:</span>
+            <div class="body__row">
+              <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;{{$t('entities.credit')}}:</span>
               <div class="body__row-value" :title="d.reputationScore">{{d.reputationScore || '-'}}</div>
             </div>
             <div class="body__detail" @click="entityDetail({domain: d.domainName})">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="entityType === 'app'">
             <div class="body__row">
-              <span class="body__row-label cn-icon cn-icon-id">APP ID:</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;APP ID:</span>
               <div class="body__row-value" :title="d.appId">{{d.appId || '-'}}</div>
             </div>
             <div class="body__row">
-              <span class="body__row-label cn-icon cn-icon-category">{{$t('entities.category')}}:</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;{{$t('entities.category')}}:</span>
               <div class="body__row-value" :title="d.appCategory">{{d.appCategory || '-'}}</div>
             </div>
-            <div class="body__row Select">
-              <span class="body__row-label cn-icon cn-icon-sub-category">{{$t('entities.subcategory')}}:</span>
+            <div class="body__row">
+              <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;{{$t('entities.subcategory')}}:</span>
               <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
             <div class="body__detail" @click="entityDetail({appId: d.appId})">{{$t('overall.detail')}}></div>
@@ -81,7 +82,7 @@
           :page-size="pageObj.pageSize"
           :total="pageObj.total"
           :page-sizes="[30, 50, 100]"
-          layout="total, prev, pager, next, sizes"
+          layout="total, prev, pager, next"
       ></el-pagination>
     </div>
   </div>
@@ -168,8 +169,8 @@ export default {
         })
       })
     },
-    entityDetail (params) {
-      this.$emit('showDetail', params)
+    entityDetail (params, tabs = []) {
+      this.$emit('showDetail', params, tabs)
     }
   }
 }

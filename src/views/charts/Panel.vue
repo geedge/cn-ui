@@ -1,5 +1,14 @@
 <template>
   <div style="padding: 10px 0 20px 20px;">
+    <div v-if="!$_.isEmpty(tabs)" class="entity-detail-tool">
+      <div>
+        <i class="cn-icon cn-icon-arrow-left-circle"></i>&nbsp;
+        <span>{{typeName}}&nbsp;{{$t('overall.detail')}}</span>
+      </div>
+      <el-radio-group v-model="tab" size="mini">
+        <el-radio-button v-for="tab in tabs" :key="tab.key" :label="tab.label"></el-radio-button>
+      </el-radio-group>
+    </div>
     <div class="cn-panel" id="cn-panel">
       <div class="panel__time">
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
@@ -37,12 +46,14 @@ import { getNowTime } from '@/utils/date-util'
 import Chart from './Chart'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
+import _ from 'lodash'
 
 export default {
   name: 'Panel',
   props: {
     typeName: String,
-    entity: Object
+    entity: Object,
+    tabs: Array
   },
   components: {
     Chart,
@@ -58,6 +69,10 @@ export default {
     await this.init()
   },
   setup (props, ctx) {
+    let tab = ''
+    if (!_.isEmpty(props.tabs)) {
+      tab = ref(props.tabs[0].key)
+    }
     // data
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
@@ -70,7 +85,8 @@ export default {
       panelType,
       panel,
       timeFilter,
-      api
+      api,
+      tab
     }
   },
   methods: {

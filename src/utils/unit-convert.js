@@ -64,6 +64,9 @@ export function timeUnitFormatter (time, sourceUnit = 'ms', targetUnit, dot = 2)
 /* 单位转换，返回转换后的[value, unit] */
 // unitType = time / number / byte
 export default function unitConvert (value, unitType, sourceUnit, targetUnit, dot = 2) {
+  if (unitType === unitTypes.string) {
+    return [value, '']
+  }
   if (!Number(value) && Number(value) !== 0) {
     return ['-', '']
   } else {

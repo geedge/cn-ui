@@ -122,11 +122,10 @@
           .body__row {
             display: flex;
             align-items: center;
-            width: 200px;
-            margin: auto;
+            margin: 0 20px;
             border-bottom: 1px solid #EFF2F5;
             color: #666666;
-            padding: 7px 0px;
+            padding: 7px 0;
             justify-content: center;
           }
 
@@ -165,6 +164,12 @@
       justify-content: center;
       align-items: flex-end;
       height: 67px;
+
+      .el-pager {
+        li:last-of-type {
+          display: none;
+        }
+      }
     }
   }
 }
@@ -177,42 +182,3 @@
 .app-orange {
   color: #FFA200;
 }
-.Select{
-  border-bottom: 0px !important;
- }
-.cn-icon-position:before {
-  content: "\e72e";
-  padding: 5.5px;
-  font-size: 12px;}
-.cn-icon-category:before {
-  content: "\e733";
-  padding: 5.5px;
-  font-size: 12px;
-}
-.cn-icon-cloud:before {
-  content: "\e73c";
-  padding: 4.5px;
-  font-size: 12px;
-}
-.cn-icon-sub-category:before {
-  content: "\e730";
-  padding: 5.5px;
-  font-size: 12px;
-}
-.cn-icon-risk:before {
-  content: "\e731";
-  padding: 5.5px;
-  font-size: 12px;
-}
-.cn-icon-id:before {
-  content: "\e734";
-  padding: 5.5px;
-  font-size: 12px;
-}
-.cn-entity>ip{
-  width: 340px;
-  height: 290px;
-}
-
-
-

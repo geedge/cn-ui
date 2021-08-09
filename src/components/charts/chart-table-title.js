@@ -1,77 +1,33 @@
 import i18n from '@/i18n'
-export const allTableTitle = {
-  tableTitles10: [
-    {
-      label: i18n.global.t('overall.clientIp'),
-      prop: 'clientIp'
-    },
-    {
-      label: i18n.global.t('overall.sessions'),
-      prop: 'sessions'
-    },
-    {
-      label: i18n.global.t('overall.bytes'),
-      prop: 'bytes'
-    },
-    {
-      label: i18n.global.t('overall.packets'),
-      prop: 'packets'
-    }
-  ],
-  tableTitles13: [
-    {
-      label: i18n.global.t('overall.serverIp'),
-      prop: 'serverIp'
-    },
-    {
-      label: i18n.global.t('overall.sessions'),
-      prop: 'sessions'
-    },
-    {
-      label: i18n.global.t('overall.bytes'),
-      prop: 'bytes'
-    },
-    {
-      label: i18n.global.t('overall.packets'),
-      prop: 'packets'
-    }
-  ],
-  tableTitles14: [
-    {
-      label: i18n.global.t('overall.domain'),
-      prop: 'domain'
-    },
-    {
-      label: i18n.global.t('overall.sessions'),
-      prop: 'sessions'
-    },
-    {
-      label: i18n.global.t('overall.bytes'),
-      prop: 'bytes'
-    },
-    {
-      label: i18n.global.t('overall.packets'),
-      prop: 'packets'
-    }
-  ],
-  tableTitles15: [
-    {
-      label: i18n.global.t('overall.appName'),
-      prop: 'appName'
-    },
-    {
-      label: i18n.global.t('overall.sessions'),
-      prop: 'sessions'
-    },
-    {
-      label: i18n.global.t('overall.bytes'),
-      prop: 'bytes'
-    },
-    {
-      label: i18n.global.t('overall.packets'),
-      prop: 'packets'
-    }
-  ]
+export const tableTitleMapping = {
+  clientIp: {
+    label: i18n.global.t('overall.clientIp'),
+    prop: 'clientIp'
+  },
+  serverIp: {
+    label: i18n.global.t('overall.serverIp'),
+    prop: 'serverIp'
+  },
+  appName: {
+    label: i18n.global.t('overall.appName'),
+    prop: 'appName'
+  },
+  sessions: {
+    label: i18n.global.t('overall.sessions'),
+    prop: 'sessions'
+  },
+  bytes: {
+    label: i18n.global.t('overall.bytes'),
+    prop: 'bytes'
+  },
+  packets: {
+    label: i18n.global.t('overall.packets'),
+    prop: 'packets'
+  },
+  domain: {
+    label: i18n.global.t('overall.domain'),
+    prop: 'domain'
+  }
 }
 export const legendMapping = {
   bytes_received_rate: i18n.global.t('trafficSummary.throughputPerSecondC2s'),
