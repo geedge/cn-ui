@@ -4,12 +4,10 @@
       <div class="cn-entity" v-for="d in listData" :key="d.id">
         <div class="cn-entity__header">
           <div class="header__icon"><i :class="iconClass"></i></div>
-          <div class="header__content">
-            <div class="content__title" :title="d.ip||d.domainName||d.appName">
-              <template v-if="entityType === 'ip'">{{d.ip || 'Unknown'}}</template>
-              <template v-else-if="entityType === 'domain'">{{d.domainName || 'Unknown'}}</template>
-              <template v-else-if="entityType === 'app'">{{d.appName || 'Unknown'}}</template>
-            </div>
+          <div class="header__content" :title="d.ip||d.domainName||d.appName">
+            <template v-if="entityType === 'ip'">{{d.ip || 'Unknown'}}</template>
+            <template v-else-if="entityType === 'domain'">{{d.domainName || 'Unknown'}}</template>
+            <template v-else-if="entityType === 'app'">{{d.appName || 'Unknown'}}</template>
           </div>
         </div>
         <div class="cn-entity__body" style="position: relative;">

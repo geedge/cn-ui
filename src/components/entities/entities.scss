@@ -1,9 +1,9 @@
 .cn-entities {
   display: grid;
-  grid-template-rows: 32px auto;
+  grid-template-rows: 40px auto;
   grid-template-columns: 250px auto;
   grid-gap: 10px 20px;
-  padding: 20px;
+  padding: 10px;
   height: 100%;
   width: 100%;
 
@@ -24,8 +24,9 @@
       justify-content: space-between;
       border-radius: 2px;
       height: calc(100% - 67px);
-      width: 100%;
-      overflow: auto;
+      margin: 10px 0 0 10px;
+      width: calc(100% - 10px);
+      overflow: hidden auto;
 
       .cn-entity:hover{
           box-shadow:  0 0 10px #ccc;
@@ -41,22 +42,23 @@
         }
       }
       .cn-entity {
-      /* display: grid;
-        grid-template-rows: 44% 56%;*/
         box-sizing: border-box;
-        margin: 14px 13px;
+        margin-bottom: 30px;
         width: 240px;
         height: 315px;
         background: #FFFFFF;
         border-radius: 2px;
-        border: 1px solid $--right-box-border-color;
         transition: all .2s;
 
+        &:hover .cn-entity__header .header__content {
+          color: white;
+        }
         .cn-entity__header {
           position: relative;
-          background: #E1E6ED;
+          background-color: #E1E6ED;
           display: flex;
           align-items: center;
+          justify-content: center;
           padding: 20px;
           width: 240px;
           height: 96.61px;
@@ -84,40 +86,16 @@
             }
           }
           .header__content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-left: 10px;
-
-            .content__title {
-              font-family: Roboto-Medium;
-              margin-left: 24px;
-              text-align: center;
-              font-size: 20px;
-              color: #828790;
-              font-weight: 500;
-              width: 125px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              -o-text-overflow: ellipsis;
-              white-space: nowrap;
-            }
-            .content__desc {
-              font-size: 14px;
-              color: #999999 !important;
-              padding-top: 3px;
-
-              .desc__label {
-                color: #aaa;
-                padding-right: 10px;
-
-              }
-            }
+            font-size: 20px;
+            color: #828790;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
         .cn-entity__body {
           overflow: hidden;
-         padding-top:65px;
+          padding-top:65px;
           font-size: 14px;
           .body__row {
             display: flex;
@@ -163,7 +141,7 @@
       display: flex;
       justify-content: center;
       align-items: flex-end;
-      height: 67px;
+      margin-top: 23px;
 
       .el-pager {
         li:last-of-type {

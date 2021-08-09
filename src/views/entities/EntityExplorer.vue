@@ -1,17 +1,16 @@
 <template>
   <div class="outer-box" v-if="!showDetail">
+    <el-select
+        size="small"
+        v-model="filterType"
+        style="position: fixed; top: 9px; width: 130px; left:260px;"
+    >
+      <el-option v-for="(value, key) in entityType" :key="key" :label="value" :value="key"></el-option>
+    </el-select>
     <div class="cn-entities">
-      <el-select
-          size="small"
-          style="width: 100%"
-          v-model="filterType"
-      >
-        <el-option v-for="(value, key) in entityType" :key="key" :label="value" :value="key"></el-option>
-      </el-select>
       <el-input
           v-model="searchContent"
-          size="small"
-          style="width: 100%"
+          style="width: 100%; grid-area: 1 / 1 / 1 / 3;"
           type="text"
       >
         <template #prefix>
@@ -24,6 +23,7 @@
           @select="select"
           @showMore="showMore"
           @loadFilter="loadFilter"
+          style="grid-area: 2 / 1 / 3 / 2;"
       ></left-filter>
       <!-- 内容区域 -->
       <entity-list
@@ -33,6 +33,7 @@
           @showDetail="entityDetail"
           @pageSize="pageSizeRight"
           @pageNo="pageNoRight"
+          style="grid-area: 2 / 2 / 3 / 3;"
       ></entity-list>
     </div>
   </div>
@@ -146,8 +147,8 @@ export default {
         case 'ip': {
           requests.push(this.loadFilterData(n, 'country'))
           requests.push(this.loadFilterData(n, 'asn'))
-          data.push({ filterType: n, title: this.$t('entities.countryOrRegion'), key: 'country', childrenKey: 'region', type: 'country', childrenType: 'region' })
-          data.push({ filterType: n, title: this.$t('entities.asn'), key: 'asn', type: 'asn' })
+          data.push({ filterType: n, title: this.$t('entities.countryOrRegion'), icon: 'cn-icon cn-icon-country', key: 'country', childrenKey: 'region', type: 'country', childrenType: 'region' })
+          data.push({ filterType: n, title: this.$t('entities.asn'), icon: 'cn-icon cn-icon-cloud', key: 'asn', type: 'asn' })
           getEntityIpList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -157,8 +158,8 @@ export default {
         case 'domain': {
           requests.push(this.loadFilterData(n, 'categoryGroup'))
           requests.push(this.loadFilterData(n, 'reputationLevel'))
-          data.push({ filterType: n, title: this.$t('entities.groupAndName'), key: 'categoryGroup', childrenKey: 'categoryName' })
-          data.push({ filterType: n, title: this.$t('entities.creditLevel'), key: 'reputationLevel' })
+          data.push({ filterType: n, title: this.$t('entities.groupAndName'), icon: 'cn-icon cn-icon-category', key: 'categoryGroup', childrenKey: 'categoryName' })
+          data.push({ filterType: n, title: this.$t('entities.creditLevel'), icon: 'cn-icon cn-icon-risk', key: 'reputationLevel' })
           getEntityDomainList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -168,8 +169,8 @@ export default {
         case 'app': {
           requests.push(this.loadFilterData(n, 'appCategory'))
           requests.push(this.loadFilterData(n, 'appRisk'))
-          data.push({ filterType: n, title: this.$t('entities.categoryAndSub'), key: 'appCategory', childrenKey: 'appSubcategory' })
-          data.push({ filterType: n, title: this.$t('entities.riskLevel'), key: 'appRisk' })
+          data.push({ filterType: n, title: this.$t('entities.categoryAndSub'), icon: 'cn-icon cn-icon-category', key: 'appCategory', childrenKey: 'appSubcategory' })
+          data.push({ filterType: n, title: this.$t('entities.riskLevel'), icon: 'cn-icon cn-icon-risk', key: 'appRisk' })
           getEntityAppList({ ...this.pageObjRight }).then(res => {
             this.listData = res.data.result
             this.pageObjRight = { ...this.pageObjRight, total: res.statistics.result_size }
@@ -274,6 +275,7 @@ export default {
       title: this.$t('entities.countryOrRegion'),
       key: 'country',
       childrenKey: 'region',
+      icon: 'cn-icon cn-icon-country',
       data: country,
       hasnotMore: this.$_.isEmpty(country) || country.length < 10,
       filterType: this.filterType
@@ -282,6 +284,7 @@ export default {
       title: this.$t('entities.asn'),
       key: 'asn',
       data: asn,
+      icon: 'cn-icon cn-icon-cloud',
       hasnotMore: this.$_.isEmpty(asn) || asn.length < 10,
       filterType: this.filterType
     })

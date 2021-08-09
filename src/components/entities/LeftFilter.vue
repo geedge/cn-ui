@@ -6,9 +6,11 @@
         <el-collapse-item
             v-for="(f, i) in filterData"
             :key="i"
-            :title="f.title"
             :name="`${i}`"
         >
+          <template #title>
+            <div class="collapse-header"><i :class="f.icon" class="collapse-header__icon"></i><span>{{f.title}}</span></div>
+          </template>
           <el-tree
               :data="f.data"
               :load="(node, resolve) => loadFilter(node, resolve, f)"
@@ -97,17 +99,19 @@ export default {
 .entity-left-filter {
   display: flex;
   flex-direction: column;
+  margin-top: 10px;
   width: 100%;
   height: 100%;
-  border: 1px solid $--right-box-border-color;
+  // border: 1px solid $--right-box-border-color;
   overflow: auto;
 
   .filter__header {
-    background-color: #FAFAFA;
+    background-color: #E1E6ED;
+    margin-bottom: 10px;
     padding-left: 8px;
     height: 36px;
     line-height: 36px;
-    color: #333;
+    color: #666;
     font-size: 14px;
   }
   .filter__body {
@@ -117,20 +121,41 @@ export default {
     overflow: auto;
 
     .filter__collapse {
+      .el-collapse-item {
+        margin-bottom: 10px;
+      }
       .el-collapse-item__header {
-        padding-left: 10px;
+        padding-left: 15px;
         padding-top: 8px;
-        font-weight: bold;
-
-        &.is-active {
-          border-bottom: 1px solid $--right-box-border-color;
-        }
+        color: #8FA1BE;
+        border-bottom: none !important;
+      }
+      .collapse-header {
+        display: flex;
+        width: 100%;
+        border-bottom: 1px solid $--content-right-background-color;
+      }
+      .collapse-header__icon {
+        padding-right: 6px;
+        font-size: 14px;
       }
       .el-collapse-item__wrap {
-        padding-top: 6px !important;
+        padding-top: 14px !important;
 
         .el-collapse-item__content {
           padding-bottom: 15px;
+
+          .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+            background-color: $--tree-node-hover-background-color;
+          }
+          .el-tree-node.is-expanded, .el-tree-node.is-current {
+            &>.el-tree-node__content>.filter-item {
+              font-weight: bold;
+            }
+          }
+          .el-tree-node__content {
+            height: 30px;
+          }
         }
         .filter-item {
           display: flex;
@@ -147,11 +172,11 @@ export default {
         .filter__more {
           padding-left: 24px;
           line-height: 36px;
-          color: $--color-primary;
+          color: #8FA1BE;
           cursor: pointer;
         }
         .filter__more.filter__more--disabled {
-          color: #999;
+          color: #ccc;
           cursor: default;
         }
       }
