@@ -1,11 +1,10 @@
 <template>
   <div style="padding: 10px 0 20px 20px;">
-    <div v-if="!$_.isEmpty(tabs)" class="entity-detail-tool">
+    <div v-if="typeName" class="entity-detail-tool">
       <div>
-        <i class="cn-icon cn-icon-arrow-left-circle"></i>&nbsp;
-        <span>{{typeName}}&nbsp;{{$t('overall.detail')}}</span>
+        <span @click="goBack" style="cursor: pointer;"><i class="cn-icon cn-icon-arrow-left-circle"></i></span>
       </div>
-      <el-radio-group v-model="tab" size="mini">
+      <el-radio-group v-model="tab" size="mini" @change="changeTab">
         <el-radio-button v-for="tab in tabs" :key="tab.key" :label="tab.label"></el-radio-button>
       </el-radio-group>
     </div>
@@ -71,7 +70,7 @@ export default {
   setup (props, ctx) {
     let tab = ''
     if (!_.isEmpty(props.tabs)) {
-      tab = ref(props.tabs[0].key)
+      tab = ref(props.tabs[0].label)
     }
     // data
     const dateRangeValue = 60
@@ -90,6 +89,11 @@ export default {
     }
   },
   methods: {
+    goBack () {
+      this.$emit('goBack')
+    },
+    changeTab (label) {
+    },
     async init () {
       const panels = await getPanelList({ type: this.panelType })
       if (panels && panels.length > 0) {

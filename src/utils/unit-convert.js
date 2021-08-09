@@ -65,7 +65,15 @@ export function timeUnitFormatter (time, sourceUnit = 'ms', targetUnit, dot = 2)
 // unitType = time / number / byte
 export default function unitConvert (value, unitType, sourceUnit, targetUnit, dot = 2) {
   if (unitType === unitTypes.string) {
-    return [value, '']
+    if (value) {
+      if (typeof value === 'string') {
+        return [value, '']
+      } else {
+        return ['-', '']
+      }
+    } else {
+      return ['-', '']
+    }
   }
   if (!Number(value) && Number(value) !== 0) {
     return ['-', '']

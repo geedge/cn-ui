@@ -36,7 +36,7 @@
       ></entity-list>
     </div>
   </div>
-  <cn-panel v-else :entity="currentEntity" :type-name="typeName" :tabs="panelTabs"></cn-panel>
+  <cn-panel v-else :entity="currentEntity" :type-name="typeName" :tabs="panelTabs" @goBack="showDetail = false"></cn-panel>
 </template>
 
 <script>
