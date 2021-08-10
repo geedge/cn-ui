@@ -82,11 +82,23 @@
       :type="chartInfo.type"
       :style="computePosition"
       :icon="singleValue.icon"
+      :father="father"
   >
+    <div   v-for="(item, index) in singleValue" :key="index"> {{item.result}}</div>
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
       <span>{{handleSingleValue[0]}}</span>
       <span class="single-value__unit">{{handleSingleValue[1]}}</span>
+    </template>
+    <template #chart>
+      <div class="chart-drawing" :id="`chart${chartInfo.id}`" style="
+    width:100%;
+    height: 100%;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    padding: 0px;
+    margin: 0px;
+    border-width: 0px;"></div>
     </template>
   </single-value>
   <!-- 表格 -->
@@ -212,6 +224,7 @@ export default {
         currentPageData: [] // table当前页的数据
       },
       pieTableData: [],
+      father: [],
       singleValue: {
         value: '-',
         icon: ''
@@ -258,12 +271,42 @@ export default {
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
                 this.singleValue.value = response.data.result
+                this.father = response.data.result
               }
             })
             if (this.isSingleValueWithEcharts) { // 带曲线的单值图
+              const dom = document.getElementById(`chart${this.chartInfo.id}`)
+              !this.myChart && (this.myChart = echarts.init(dom))
+              this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
+              const seriesTemplate = this.chartOption.series[0]
+
+              const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
               get(replaceUrlPlaceholder(chartParams.urlLine, queryParams)).then(response => {
                 if (response.code === 200) {
+                  response.data.result = [
+                      {
+                        legend: "session_rate",
+                        values:[
+                            ["1625122200","2"],["1625122500","2"],["1625122800","1"],["1625123100","1"],["1625123400","2"],["1625123700","2"],["1625124000","2"],["1625124300","3"],["1625124600","3"],["1625124900","3"]
+                        ]
+                      }
+                  ]
+
+                  this.chartOption.series = response.data.result.map((r, i) => {
+                    return {
+                      ...seriesTemplate,
+                      name: r.legend,
+                      data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
+                      lineStyle: {
+                        color: getChartColor[i]
+                      }
+                    }
+                  })
                 }
+                this.myChart.setOption(this.chartOption)
+                this.$nextTick(() => {
+                  this.myChart.resize()
+                })
               })
             }
           }

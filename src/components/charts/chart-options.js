@@ -230,11 +230,69 @@ const pieWithTable = {
     }
   ]
 }
+const routinestraightline = {
+  tooltip: {
+    show: false
+  },
+  xAxis: {
+    type: 'time',
+    show: false
+  },
+  yAxis: {
+    type: 'value',
+    show: false
+  },
+  animation: false,
+  grid: {
+    left: 0,
+    bottom: 0,
+    top: 0,
+    right: 0
+  },
+  color: chartColor,
+  legend: {
+    tooltip: {
+      show: true,
+      formatter: '{a}'
+    },
+    show: false,
+    right: 23,
+    top: 8,
+    orient: 'horizontal',
+    icon: 'circle',
+    itemGap: 20,
+    itemWidth: 10,
+    textStyle: {
+      padding: [0, 0, 0, 5],
+      fontSize: 14
+    },
+    formatter: tooLongFormatter
+  },
+  series: [
+    {
+      name: '访问用户量',
+      type: 'line',
+      smooth: true,
+      itemStyle: {
+        normal: {
+          color: '#81C9FF',
+          lineStyle: {
+            width:2
+          }
+        }
+      },
+      data: [],
+      showSymbol: false,
+      areaStyle: { color: '#C9EAFF' }
+    }
+  ]
+}
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
   { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
   { value: 13, option: lineStack }, // 折线堆叠图
-  { value: 31, option: pieWithTable } // 常规折线图
+  { value: 31, option: pieWithTable }, // 常规折线图
+  { value: 52, option: routinestraightline }
 ]
 const typeCategory = {
   MAP: 'map',
