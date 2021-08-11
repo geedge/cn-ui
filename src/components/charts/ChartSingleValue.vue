@@ -18,7 +18,7 @@
       <div class="content__data" style="height: 20%;">
         <slot name="data"></slot>
       </div>
-      <div class="content__chart" style="width: 90%;height: 40%;">
+      <div class="content__chart" style="height: 40%;">
         <slot name="chart"></slot>
       </div>
     </div>

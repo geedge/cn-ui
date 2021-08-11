@@ -230,7 +230,7 @@ const pieWithTable = {
     }
   ]
 }
-const routinestraightline = {
+const singleValueLine = {
   tooltip: {
     show: false
   },
@@ -246,7 +246,7 @@ const routinestraightline = {
   grid: {
     left: 0,
     bottom: 0,
-    top: 0,
+    top: 5,
     right: 0
   },
   color: chartColor,
@@ -292,7 +292,7 @@ const typeOptionMappings = [
   { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
   { value: 13, option: lineStack }, // 折线堆叠图
   { value: 31, option: pieWithTable }, // 常规折线图
-  { value: 52, option: routinestraightline }
+  { value: 52, option: singleValueLine }
 ]
 const typeCategory = {
   MAP: 'map',
