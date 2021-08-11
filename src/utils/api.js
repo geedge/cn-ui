@@ -5,7 +5,7 @@
 */
 import { get, post } from '@/utils/http'
 import { sortByOrderNum } from '@/permission'
-import {storageKey} from "@/utils/constants";
+import { storageKey } from '@/utils/constants'
 
 export const api = {
   // 系统相关
@@ -15,12 +15,9 @@ export const api = {
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',
-  entityIpFilter: '/interface/entity/ip/filter',
-  entityDomainFilter: '/interface/entity/domain/filter',
-  entityAppFilter: '/interface/entity/app/filter',
-  entityIpList: '/interface/entity/ip/list',
-  entityDomainList: '/interface/entity/domain/list',
-  entityAppList: '/interface/entity/app/list'
+  entityList: '/interface/entity/list',
+  entityCount: '/interface/entity/total',
+  entityFilter: '/interface/entity/filter'
 }
 /* panel */
 export async function getPanelList (params) {
@@ -36,50 +33,17 @@ export async function getChartList (params) {
 export async function getChart (id) {
   return await getData(`${api.chart}/${id}`)
 }
+/* entity列表 */
+export async function getEntityList (params) {
+  return await getData(api.entityList, params, true)
+}
+/* entity总数 */
+export async function getEntityCount (params) {
+  return await getData(api.entityCount, params)
+}
 /* ip类型entity过滤器数据 */
-export async function getEntityIpFilterList (params) {
-  return await getData(api.entityIpFilter, params, true)
-}
-/* domain类型entity过滤器数据 */
-export async function getEntityDomainFilterList (params) {
-  return await getData(api.entityDomainFilter, params, true)
-}
-/* app类型entity过滤器数据 */
-export async function getEntityAppFilterList (params) {
-  return await getData(api.entityAppFilter, params, true)
-}
-/* ip类型entity列表 */
-export async function getEntityIpList (params) {
-  const request = new Promise(resolve => {
-    get(api.entityIpList, params).then(response => {
-      if (response.code === 200) {
-        resolve(response)
-      }
-    })
-  })
-  return await request
-}
-/* domain类型entity列表 */
-export async function getEntityDomainList (params) {
-  const request = new Promise(resolve => {
-    get(api.entityDomainList, params).then(response => {
-      if (response.code === 200) {
-        resolve(response)
-      }
-    })
-  })
-  return await request
-}
-/* app类型entity列表 */
-export async function getEntityAppList (params) {
-  const request = new Promise(resolve => {
-    get(api.entityAppList, params).then(response => {
-      if (response.code === 200) {
-        resolve(response)
-      }
-    })
-  })
-  return await request
+export async function getEntityFilter (params) {
+  return await getData(api.entityFilter, params, true)
 }
 /* 字典 */
 export async function getDictList (params) {
@@ -87,12 +51,20 @@ export async function getDictList (params) {
 }
 
 export async function getData (url, params = {}, isQueryList) {
-  const request = new Promise(resolve => {
-    get(url, params).then(response => {
-      if (response.code === 200) {
-        resolve(isQueryList ? response.data.list || response.data.result : response.data || response.data.result)
-      }
-    })
+  const request = new Promise((resolve, reject) => {
+    try {
+      get(url, params).then(response => {
+        if (response.code === 200) {
+          resolve(isQueryList ? response.data.list || response.data.result : response.data.result || response.data)
+        } else {
+          reject(response)
+        }
+      })
+    } catch (e) {
+      reject(e)
+    }
+  }).catch(response => {
+    console.error(response)
   })
   return await request
 }

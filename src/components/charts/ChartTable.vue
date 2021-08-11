@@ -8,7 +8,7 @@
         <slot name="operations"></slot>
       </div>
     </div>
-    <div class="cn-chart__body">
+    <div class="cn-chart__body" v-loading="loading">
       <el-table
           style="width: 100%"
           tooltip-effect="light"
@@ -54,7 +54,8 @@ export default {
   name: 'ChartTable',
   props: {
     tableColumns: Array,
-    tableData: Array
+    tableData: Array,
+    loading: Boolean
   },
   setup () {
     return {

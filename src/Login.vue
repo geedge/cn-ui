@@ -44,13 +44,16 @@ export default {
   data () {
     return {
       loading: false,
-      username: 'admin',
-      pin: 'Nezha2021'
+      username: '',
+      pin: ''
     }
   },
   methods: {
     ...mapActions(['loginSuccess']),
     login () {
+      if (!this.username || !this.pin) {
+        return
+      }
       if (!this.blockOperation.query) {
         this.blockOperation.query = true
       } else {

@@ -28,6 +28,7 @@
   <chart-map
       v-else-if="isMap"
       :style="computePosition"
+      :loading="loading"
   >
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
@@ -44,6 +45,7 @@
       :layout="layout"
       :style="computePosition"
       :chartInfo="chartInfo"
+      :loading="loading"
   >
     <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
@@ -51,12 +53,12 @@
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       <div class="header__operation header__operation--echarts" v-if="chart.type === 31">
         <el-select
-                size="mini"
-                v-model="orderPieTable"
-                class="option__select select-column"
-                placeholder=""
-                popper-class="option-popper"
-                @change="orderPieTableChange"
+          size="mini"
+          v-model="orderPieTable"
+          class="option__select select-column"
+          placeholder=""
+          popper-class="option-popper"
+          @change="orderPieTableChange"
         >
           <el-option v-for="item in chartPieTableTopOptions" :key="item.value" :value="item.value">&nbsp{{item.name}}</el-option>
         </el-select>
@@ -82,9 +84,8 @@
       :type="chartInfo.type"
       :style="computePosition"
       :icon="singleValue.icon"
-      :father="father"
+      v-loading="loading"
   >
-    <div   v-for="(item, index) in singleValue" :key="index"> {{item.result}}</div>
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
       <span>{{handleSingleValue[0]}}</span>
@@ -107,6 +108,7 @@
       :table-columns="table.tableColumns"
       :table-data="table.currentPageData"
       :style="computePosition"
+      :loading="loading"
   >
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
@@ -224,7 +226,6 @@ export default {
         currentPageData: [] // table当前页的数据
       },
       pieTableData: [],
-      father: [],
       singleValue: {
         value: '-',
         icon: ''
@@ -234,11 +235,13 @@ export default {
       orderPieTable: chartPieTableTopOptions[0].value,
       selectPieChartName: '',
       allSelectPieChartName: [],
-      chartOption: null
+      chartOption: null,
+      loading: true
     }
   },
   methods: {
     initChart () {
+      this.loading = true
       try {
         const chartParams = this.chartInfo.params
         if (this.isMap) {
@@ -271,44 +274,46 @@ export default {
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
                 this.singleValue.value = response.data.result
-                this.father = response.data.result
               }
-            })
-            if (this.isSingleValueWithEcharts) { // 带曲线的单值图
-              const dom = document.getElementById(`chart${this.chartInfo.id}`)
-              !this.myChart && (this.myChart = echarts.init(dom))
-              this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
-              const seriesTemplate = this.chartOption.series[0]
+              if (this.isSingleValueWithEcharts) { // 带曲线的单值图
+                const dom = document.getElementById(`chart${this.chartInfo.id}`)
+                !this.myChart && (this.myChart = echarts.init(dom))
+                this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
+                const seriesTemplate = this.chartOption.series[0]
 
-              const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
-              get(replaceUrlPlaceholder(chartParams.urlLine, queryParams)).then(response => {
-                if (response.code === 200) {
-                  response.data.result = [
+                const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
+                get(replaceUrlPlaceholder(chartParams.urlLine, queryParams)).then(response => {
+                  if (response.code === 200) {
+                    response.data.result = [
                       {
                         legend: "session_rate",
                         values:[
-                            ["1625122200","2"],["1625122500","2"],["1625122800","1"],["1625123100","1"],["1625123400","2"],["1625123700","2"],["1625124000","2"],["1625124300","3"],["1625124600","3"],["1625124900","3"]
+                          ["1625122200","2"],["1625122500","2"],["1625122800","1"],["1625123100","1"],["1625123400","2"],["1625123700","2"],["1625124000","2"],["1625124300","3"],["1625124600","3"],["1625124900","3"]
                         ]
                       }
-                  ]
+                    ]
 
-                  this.chartOption.series = response.data.result.map((r, i) => {
-                    return {
-                      ...seriesTemplate,
-                      name: r.legend,
-                      data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
-                      lineStyle: {
-                        color: getChartColor[i]
+                    this.chartOption.series = response.data.result.map((r, i) => {
+                      return {
+                        ...seriesTemplate,
+                        name: r.legend,
+                        data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
+                        lineStyle: {
+                          color: getChartColor[i]
+                        }
                       }
-                    }
+                    })
+                  }
+                  this.myChart.setOption(this.chartOption)
+                  this.$nextTick(() => {
+                    this.myChart.resize()
                   })
-                }
-                this.myChart.setOption(this.chartOption)
-                this.$nextTick(() => {
-                  this.myChart.resize()
+                  setTimeout(() => { this.loading = false }, 250)
                 })
-              })
-            }
+              } else {
+                this.loading = false
+              }
+            })
           }
         } else if (this.isTabs) {
           if (!this.$_.isEmpty(this.chartInfo.children)) {
@@ -466,6 +471,7 @@ export default {
             polygonTemplate.strokeWidth = 0.5
           }
         }
+        setTimeout(() => { this.loading = false }, 250)
       })
     },
     pageJump (val) {
@@ -527,6 +533,7 @@ export default {
         this.$nextTick(() => {
           this.myChart.resize()
         })
+        setTimeout(() => { this.loading = false }, 250)
       })
     },
     initEchartsWithStatistics (chartParams) {
@@ -555,6 +562,7 @@ export default {
         this.$nextTick(() => {
           this.myChart.resize()
         })
+        setTimeout(() => { this.loading = false }, 250)
       })
     },
     initEchartsWithPieTable (chartParams) {
@@ -589,7 +597,10 @@ export default {
               if (response2.code === 200) {
                 this.pieTableData = response2.data.result
               }
+              this.loading = false
             })
+          } else {
+            setTimeout(() => { this.loading = false }, 250)
           }
         }
       })
@@ -652,6 +663,7 @@ export default {
           this.table.tableColumns = this.getTableTitle(response.data.result)
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
         }
+        this.loading = false
       })
     }
   },

@@ -8,7 +8,7 @@
         <slot name="operations"></slot>
       </div>
     </div>
-    <div class="cn-chart__body">
+    <div class="cn-chart__body" v-loading="loading">
       <slot></slot>
     </div>
     <div class="cn-chart__footer">
@@ -20,7 +20,10 @@
 <script>
 
 export default {
-  name: 'ChartMap'
+  name: 'ChartMap',
+  props: {
+    loading: Boolean
+  }
 }
 </script>
 

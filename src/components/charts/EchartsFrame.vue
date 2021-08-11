@@ -8,10 +8,10 @@
         <slot name="operations"></slot>
       </div>
     </div>
-    <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}">
+    <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}" v-loading="loading">
       <slot></slot>
     </div>
-    <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{'pie-with-table': isPieWithTable}">
+    <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{'pie-with-table': isPieWithTable}" v-loading="loading">
       <slot name="footer"></slot>
     </div>
   </div>
@@ -23,7 +23,8 @@ export default {
   name: 'EchartsFrame',
   props: {
     layout: Array,
-    chartInfo: Object
+    chartInfo: Object,
+    loading: Boolean
   },
   setup (props) {
     return {

@@ -54,8 +54,22 @@ export const entityType = {
   app: 'APP'
 }
 
-export const entityTypeMappingKey = {
-  ip: ['country', 'region']
+export const entityFilterType = {
+  ip: {
+    country: 'locate_country',
+    region: 'locate_region',
+    asn: 'asn'
+  },
+  domain: {
+    categoryGroup: 'category_group',
+    categoryName: 'category_name',
+    reputationLevel: 'reputation_level'
+  },
+  app: {
+    appCategory: 'app_category',
+    appSubcategory: 'app_subcategory',
+    appRisk: 'app_risk'
+  }
 }
 
 export const unitTypes = {

@@ -4,32 +4,54 @@
     <div class="filter__body">
       <el-collapse v-model="active" class="filter__collapse">
         <el-collapse-item
-            v-for="(f, i) in filterData"
-            :key="i"
-            :name="`${i}`"
+            name="0"
         >
           <template #title>
-            <div class="collapse-header"><i :class="f.icon" class="collapse-header__icon"></i><span>{{f.title}}</span></div>
+            <div class="collapse-header"><i :class="topFilterData.icon" class="collapse-header__icon"></i><span>{{topFilterData.title}}</span></div>
           </template>
           <el-tree
-              :data="f.data"
-              :load="(node, resolve) => loadFilter(node, resolve, f)"
-              :node-key="f.key"
+              :data="topFilterData.data"
               :props="{ isLeaf: 'leaf' }"
               :expand-on-click-node="false"
-              :lazy="i === 0"
-              :ref="`tree-${i}`"
+              :load="loadLevel2"
+              lazy
+              node-key="name"
+              ref="tree-0"
               highlight-current
-              @node-click="(data, node, component) => nodeClick(data, node, component, i)"
+              @node-click="(data, node, component) => nodeClick(data, node, component, 0)"
           >
             <template #default="{ node, data }">
               <div class="filter-item">
-                <div :title="node.level === 1 ? data[f.key] : (node.level === 2 ? data[f.childrenKey] : '')">{{node.level === 1 ? data[f.key] : (node.level === 2 ? data[f.childrenKey] : '')}}</div>
+                <div>{{data.name}}</div>
                 <span>{{data.count}}</span>
               </div>
             </template>
           </el-tree>
-          <div class="filter__more" :class="{'filter__more--disabled': f.hasnotMore}" @click="showMore(f.key, f.hasnotMore)">{{$t('overall.showMore')}}</div>
+          <div class="filter__more" :class="{'filter__more--disabled': topFilterData.hasnotMore}" @click="showMore(topFilterData)">{{$t('overall.showMore')}}</div>
+        </el-collapse-item>
+        <el-collapse-item
+            name="1"
+        >
+          <template #title>
+            <div class="collapse-header"><i :class="bottomFilterData.icon" class="collapse-header__icon"></i><span>{{bottomFilterData.title}}</span></div>
+          </template>
+          <el-tree
+              :data="bottomFilterData.data"
+              :props="{ isLeaf: 'leaf' }"
+              :expand-on-click-node="false"
+              node-key="name"
+              ref="tree-1"
+              highlight-current
+              @node-click="(data, node, component) => nodeClick(data, node, component, 1)"
+          >
+            <template #default="{ node, data }">
+              <div class="filter-item">
+                <div>{{data.name}}</div>
+                <span>{{data.count}}</span>
+              </div>
+            </template>
+          </el-tree>
+          <div class="filter__more" :class="{'filter__more--disabled': bottomFilterData.hasnotMore}" @click="showMore(bottomFilterData)">{{$t('overall.showMore')}}</div>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -40,7 +62,8 @@
 export default {
   name: 'LeftFilter',
   props: {
-    filterData: Array
+    topFilterData: Object,
+    bottomFilterData: Object
   },
   data () {
     return {
@@ -50,8 +73,12 @@ export default {
     }
   },
   methods: {
+    async loadLevel2 (node, resolve) {
+      resolve(await this.$parent.loadLevel2FilterData(node, this.topFilterData.column))
+    },
     nodeClick (data, node, component, index) {
       const currentData = index === 0 ? this.currentDataTop : this.currentDataBottom
+      const column = index === 0 ? this.topFilterData.column : this.bottomFilterData.column
       if (this.dataEqual(currentData, data)) {
         node.isCurrent = false
       }
@@ -60,15 +87,14 @@ export default {
       } else {
         this.currentDataBottom = this.$_.cloneDeep(data)
       }
-      this.$emit('select', data, node, index)
+      this.$emit('select', data, node, index, column)
     },
-    showMore (key, hasnotMore) {
-      if (!hasnotMore) {
-        this.$emit('showMore', key)
+    showMore (filterData) {
+      if (!filterData.hasnotMore) {
+        this.$emit('showMore', filterData.column)
       }
     },
     loadFilter (node, resolve, f) {
-      this.$emit('loadFilter', node, resolve, f.filterType, f.childrenKey, f.key)
     },
     dataEqual (obj1, obj2) {
       if (!obj1 || !obj2) {
@@ -81,15 +107,6 @@ export default {
         }
       })
       return equal
-    }
-  },
-  watch: {
-    filterData: {
-      deep: true,
-      immediate: true,
-      handler (n) {
-        this.active = ['0', '1']
-      }
     }
   }
 }
@@ -155,6 +172,7 @@ export default {
           }
           .el-tree-node__content {
             height: 30px;
+            padding-right: 10px;
           }
         }
         .filter-item {
