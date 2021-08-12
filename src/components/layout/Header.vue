@@ -2,7 +2,7 @@
   <div class="cn-header">
 <!--    <div class="left-menu&#45;&#45;pin" :class="false ? 'left-menu&#45;&#45;pin-normal' : 'left-menu&#45;&#45;pin-reverse'" @click="shrink"><i :class="{'icon-reverse': false}" class="el-icon-s-fold"></i></div>-->
     <!--导航面包屑-->
-    <div style="flex-grow: 1;display: flex;padding: 17px 70px;">
+    <div style="flex-grow: 1;display: flex;padding: 0 70px;align-items: center">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item v-for="item in breadcrumb" :key="item">{{item}}</el-breadcrumb-item>
       </el-breadcrumb>
