@@ -26,7 +26,7 @@
             :index="`${index}`">
           <template #title>
             <i :class="menu.icon"></i>
-            <span>{{menu.i18n ? $t(menu.i18n) : menu.name}}</span>
+            <span :title="menu.name">{{menu.i18n ? $t(menu.i18n) : menu.name}}</span>
           </template>
           <template v-for="(secondMenu, secondIndex) in menu.children">
             <el-submenu
@@ -38,6 +38,7 @@
               </template>
               <template v-for="(thirdMenu, thirdIndex) in secondMenu.children" :key="`${index}-${secondIndex}-${thirdIndex}`">
                 <el-menu-item
+                    :title="thirdMenu.name"
                     v-if="thirdMenu.state === 1"
                     :index="thirdMenu.route">
                   {{thirdMenu.i18n ? $t(thirdMenu.i18n) : thirdMenu.name}}
@@ -45,6 +46,7 @@
               </template>
             </el-submenu>
             <el-menu-item
+                :title="secondMenu.name"
                 v-else-if="secondMenu.state === 1"
                 :key="secondIndex * 100"
                 :index="secondMenu.route">
@@ -53,6 +55,7 @@
           </template>
         </el-submenu>
         <el-menu-item
+            :title="menu.name"
             v-else-if="menu.state === 1"
             :key="index + 'a'"
             :index="menu.route">

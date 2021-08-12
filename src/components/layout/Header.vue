@@ -2,7 +2,11 @@
   <div class="cn-header">
 <!--    <div class="left-menu&#45;&#45;pin" :class="false ? 'left-menu&#45;&#45;pin-normal' : 'left-menu&#45;&#45;pin-reverse'" @click="shrink"><i :class="{'icon-reverse': false}" class="el-icon-s-fold"></i></div>-->
     <!--导航面包屑-->
-    <div style="flex-grow: 1"></div>
+    <div style="flex-grow: 1;display: flex;padding: 17px 70px;">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item v-for="item in breadcrumb" :key="item">{{item}}</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
     <!--个人操作-->
     <div class="personal">
       <el-dropdown>
@@ -37,6 +41,7 @@
 </template>
 
 <script>
+import { useRoute } from 'vue-router'
 export default {
   name: 'Header',
   data () {
@@ -44,7 +49,54 @@ export default {
       username: 'admin', // sessionStorage.getItem('cn-username'),
       language: localStorage.getItem('cn-language') ? localStorage.getItem('cn-language') : 'en',
 
-      showChangePin: false
+      showChangePin: false,
+
+      breadcrumbMap: [
+        {
+          path: '/panel/trafficSummary',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('trafficSummary.trafficSummary')
+        },
+        {
+          path: '/panel/networkAppPerformance',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('networkAppPerformance.networkAppPerformance')
+        }, {
+          path: '/panel/dnsServiceInsights',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('dnsServiceInsights')
+        }, {
+          path: '/entityExplorer',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('overall.entityExplorer')
+        }, {
+          path: '/user',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('user')
+        }, {
+          path: '/role',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('role')
+        }, {
+          path: '/operationLog',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('overall.operationLog')
+        }, {
+          path: '/i18n',
+          parentName: this.$t('overall.dashboard'),
+          name: this.$t('l18n')
+        }
+      ]
+    }
+  },
+  computed: {
+    breadcrumb () {
+      const breadcrumb = this.breadcrumbMap.find(b => this.path === b.path)
+      return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
+    },
+    path () {
+      const { path } = useRoute()
+      return path
     }
   },
   methods: {
