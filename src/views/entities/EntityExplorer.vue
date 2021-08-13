@@ -309,7 +309,6 @@ export default {
       }
     },
     pageNoRight (val) {
-      console.info(val)
       this.pageObjRight.pageNo = val
       this.search()
     },
@@ -471,6 +470,7 @@ export default {
     }
   },
   beforeUnmount () {
+    this.$store.commit('entityTypeChange', Object.keys(entityType)[0])
     this.$store.commit('showEntityTypeSelector', false)
   }
 }

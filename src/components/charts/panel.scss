@@ -40,6 +40,11 @@
     border-radius: 2px;
     height: 100%;
     width: 100%;
+
+    .chart-drawing {
+      height: 100%;
+      width: 100%;
+    }
   }
   &>.cn-chart__echarts, &>.cn-chart__table, &>.cn-chart__map {
     display: flex;
@@ -62,11 +67,6 @@
     }
     .cn-chart__body {
       flex: auto;
-
-      .chart-drawing {
-        height: 100%;
-        width: 100%;
-      }
     }
   }
   &>.cn-chart__single-value.cn-chart__single-value--icon-left {

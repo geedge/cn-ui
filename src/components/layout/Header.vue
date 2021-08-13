@@ -125,11 +125,19 @@ export default {
     },
     entityName () {
       return this.$store.getters.entityName
+    },
+    storeFrom () {
+      return this.$store.getters.from
     }
   },
   watch: {
     from (n) {
       this.$store.commit('entityTypeChange', n)
+    },
+    storeFrom (n) {
+      if (this.from !== n) {
+        this.from = n
+      }
     },
     entityName (n) {
       const breadcrumb = this.breadcrumbMap.find(b => b.path === '/entityExplorer')

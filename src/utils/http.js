@@ -41,8 +41,8 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     if (licenceErrorCode.indexOf(response.data.code) !== -1) {
-      window.location.href = '/'
       sessionStorage.removeItem(storageKey.token)
+      window.location.href = '/'
     } else if (response.status === 200) {
       if (accountErrorCode.indexOf(response.data.code) !== -1) {
         window.location.href = '/'

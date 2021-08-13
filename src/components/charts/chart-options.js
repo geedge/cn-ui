@@ -245,39 +245,23 @@ const singleValueLine = {
   animation: false,
   grid: {
     left: 0,
-    bottom: 0,
+    bottom: 2,
     top: 5,
     right: 0
   },
   color: chartColor,
   legend: {
-    tooltip: {
-      show: true,
-      formatter: '{a}'
-    },
-    show: false,
-    right: 23,
-    top: 8,
-    orient: 'horizontal',
-    icon: 'circle',
-    itemGap: 20,
-    itemWidth: 10,
-    textStyle: {
-      padding: [0, 0, 0, 5],
-      fontSize: 14
-    },
-    formatter: tooLongFormatter
+    show: false
   },
   series: [
     {
-      name: '访问用户量',
       type: 'line',
-      smooth: true,
+      legendHoverLink: false,
       itemStyle: {
         normal: {
           color: '#81C9FF',
           lineStyle: {
-            width:2
+            width: 2
           }
         }
       },

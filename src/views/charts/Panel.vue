@@ -9,7 +9,7 @@
         <el-radio-button v-for="tab in tabs" :key="tab.key" :label="tab.label"></el-radio-button>
       </el-radio-group>
     </div>
-    <div class="cn-panel" id="cn-panel">
+    <div class="cn-panel" id="cn-panel" :style="{height: typeName ? 'calc(100% - 80px)' : ''}">
       <div class="panel__time">
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>

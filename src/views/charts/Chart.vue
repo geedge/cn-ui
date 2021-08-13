@@ -88,7 +88,7 @@
   >
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
-      <span>{{handleSingleValue[0]}}</span>
+      <span>{{isNaN(handleSingleValue[0]) ? '-' : handleSingleValue[0]}}</span>
       <span class="single-value__unit">{{handleSingleValue[1]}}</span>
     </template>
     <template #chart>
@@ -275,17 +275,8 @@ export default {
                 this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
                 const seriesTemplate = this.chartOption.series[0]
 
-                const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
                 get(replaceUrlPlaceholder(chartParams.urlLine, queryParams)).then(response => {
                   if (response.code === 200) {
-                    /*response.data.result = [
-                      {
-                        legend: "session_rate",
-                        values:[
-                          ["1625122200","2"],["1625122500","2"],["1625122800","1"],["1625123100","1"],["1625123400","2"],["1625123700","2"],["1625124000","2"],["1625124300","3"],["1625124600","3"],["1625124900","3"]
-                        ]
-                      }
-                    ]*/
                     this.chartOption.series = response.data.result.map((r, i) => {
                       return {
                         ...seriesTemplate,
@@ -301,11 +292,14 @@ export default {
                   this.$nextTick(() => {
                     this.myChart.resize()
                   })
-                  setTimeout(() => { this.loading = false }, 250)
                 })
               } else {
                 this.loading = false
               }
+            }).catch(() => {
+              this.singleValue.value = ''
+            }).finally(() => {
+              setTimeout(() => { this.loading = false }, 250)
             })
           }
         } else if (this.isTabs) {
@@ -447,9 +441,10 @@ export default {
             polygonSeries.heatRules.push({
               property: 'fill',
               target: polygonSeries.mapPolygons.template,
-              min: am4Core.color('#FFFF00'),
-              max: am4Core.color('#E66767')
+              min: am4Core.color('#EABA2B'),
+              max: am4Core.color('#D95D41')
             })
+
             polygonSeries.data = response.data.result.map(r => {
               return {
                 id: r.serverId,
@@ -457,6 +452,21 @@ export default {
                 value: r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions
               }
             })
+            const sorted = polygonSeries.data.sort((a, b) => b.value - a.value)
+
+            const heatLegend = this.myChart.createChild(am4Maps.HeatLegend)
+            heatLegend.series = polygonSeries
+            heatLegend.align = 'center'
+            console.info(sorted)
+            if (!this.$_.isEmpty(sorted)) {
+              heatLegend.minValue = 0
+              heatLegend.maxValue = Number(sorted[0].value)
+            }
+            heatLegend.markerContainer.height = 6
+            heatLegend.width = am4Core.percent(25)
+            heatLegend.marginLeft = am4Core.percent(4)
+            heatLegend.valign = 'bottom'
+
             const polygonTemplate = polygonSeries.mapPolygons.template
             polygonTemplate.tooltipText = '{name}{title}'
             // polygonTemplate.numberFormatter = new am4Core.NumberFormatter().bigNumberPrefixes
@@ -464,6 +474,7 @@ export default {
             polygonTemplate.strokeWidth = 0.5
           }
         }
+      }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
       })
     },
@@ -526,6 +537,7 @@ export default {
         this.$nextTick(() => {
           this.myChart.resize()
         })
+      }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
       })
     },
@@ -555,6 +567,7 @@ export default {
         this.$nextTick(() => {
           this.myChart.resize()
         })
+      }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
       })
     },
@@ -590,12 +603,11 @@ export default {
               if (response2.code === 200) {
                 this.pieTableData = response2.data.result
               }
-              this.loading = false
             })
-          } else {
-            setTimeout(() => { this.loading = false }, 250)
           }
         }
+      }).finally(() => {
+        setTimeout(() => { this.loading = false }, 250)
       })
       // legend点击事件
       this.myChart.off('legendselectchanged')
@@ -656,7 +668,8 @@ export default {
           this.table.tableColumns = this.getTableTitle(response.data.result)
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
         }
-        this.loading = false
+      }).finally(() => {
+        setTimeout(() => { this.loading = false }, 250)
       })
     },
     echartsResize () {
