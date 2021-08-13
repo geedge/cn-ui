@@ -1,12 +1,5 @@
 <template>
-  <div class="outer-box" v-if="!showDetail">
-    <el-select
-        size="small"
-        v-model="from"
-        style="position: fixed; top: 9px; width: 130px; left:260px;"
-    >
-      <el-option v-for="(value, key) in entityType" :key="key" :label="value" :value="key"></el-option>
-    </el-select>
+  <div class="outer-box" v-show="!showDetail">
     <div class="cn-entities">
       <el-input
           v-model="searchContentTemp"
@@ -24,27 +17,24 @@
           :bottom-filter-data="bottomFilterData"
           @select="select"
           @showMore="showMore"
-          @loadFilter="loadFilter"
           style="grid-area: 2 / 1 / 3 / 2;"
       ></left-filter>
       <!-- 内容区域 -->
       <entity-list
           :list-data="listData"
-          :entity-type="from"
+          :from="from"
           :page-obj="pageObjRight"
           @showDetail="entityDetail"
-          @pageSize="pageSizeRight"
           @pageNo="pageNoRight"
           style="grid-area: 2 / 2 / 3 / 3;"
       ></entity-list>
     </div>
   </div>
-  <cn-panel v-else :entity="currentEntity" :type-name="typeName" :tabs="panelTabs" @goBack="showDetail = false"></cn-panel>
+  <cn-panel v-if="showDetail" :entity="currentEntity" :type-name="typeName" :tabs="panelTabs" @goBack="showDetail = false"></cn-panel>
 </template>
 
 <script>
 import { entityType, entityFilterType } from '@/utils/constants'
-import { ref } from 'vue'
 import LeftFilter from '@/components/entities/LeftFilter'
 import EntityList from '@/components/entities/EntityList'
 import { getEntityFilter, getEntityList, getEntityCount } from '@/utils/api'
@@ -112,7 +102,7 @@ export default {
         }
         default: break
       }
-      const { topFilterData, bottomFilterData } = await this.queryFilterData({ column, q: this.searchContent, from: this.from })
+      const { topFilterData, bottomFilterData } = await this.queryFilterData({ column, q: this.doubleQuotationToSingle(this.searchContent), from: this.from })
       if (index === 1) {
         this.bottomFilterData = {
           ...this.bottomFilterData,
@@ -128,7 +118,7 @@ export default {
       }
     },
     async search () {
-      const params = { from: this.from, q: this.searchContent }
+      const params = { from: this.from, q: this.doubleQuotationToSingle(this.searchContent) }
       this.listData = await getEntityList({ ...this.pageObjRight, ...params })
       this.pageObjRight.total = await getEntityCount(params)
       const { topFilterData, bottomFilterData } = await this.queryFilterData(params)
@@ -156,7 +146,6 @@ export default {
       let topFilterParams = { ...params, ...this.pageObjLeftTop }
       let bottomFilterParams = { ...params, ...this.pageObjLeftBottom }
       const keys = Object.keys(this.filterObj)
-      let topLevel = 1 // 左上过滤条件默认是tree的第一层
       if (!this.$_.isEmpty(keys)) {
         let hasTopColumn = false
         let hasBottomColumn = false
@@ -165,14 +154,6 @@ export default {
             case entityFilterType.ip.country:
             case entityFilterType.domain.categoryGroup:
             case entityFilterType.app.appCategory: {
-              hasTopColumn = true
-              topFilterParams = { ...topFilterParams, column: key }
-              break
-            }
-            case entityFilterType.ip.region:
-            case entityFilterType.domain.categoryName:
-            case entityFilterType.app.appSubcategory: {
-              topLevel = 2
               hasTopColumn = true
               topFilterParams = { ...topFilterParams, column: key }
               break
@@ -203,17 +184,17 @@ export default {
       let bottomFilterData = { data: bottomFilterListData, hasnotMore: bottomFilterListData.length < 10, column: bottomFilterParams.column }
       switch (this.from) {
         case 'ip': {
-          topFilterData = { ...topFilterData, icon: 'cn-icon cn-icon-country', title: this.$t('entities.countryOrRegion'), leaf: topLevel === 2 }
+          topFilterData = { ...topFilterData, icon: 'cn-icon cn-icon-country', title: this.$t('entities.countryOrRegion') }
           bottomFilterData = { ...bottomFilterData, icon: 'cn-icon cn-icon-cloud', title: this.$t('entities.asn') }
           break
         }
         case 'domain': {
-          topFilterData = { ...topFilterData, icon: 'cn-icon cn-icon-category', title: this.$t('entities.groupAndName'), leaf: topLevel === 2 }
+          topFilterData = { ...topFilterData, icon: 'cn-icon cn-icon-category', title: this.$t('entities.groupAndName') }
           bottomFilterData = { ...bottomFilterData, icon: 'cn-icon cn-icon-risk', title: this.$t('entities.creditLevel') }
           break
         }
         case 'app': {
-          topFilterData = { ...topFilterData, icon: 'cn-icon cn-icon-category', title: this.$t('entities.categoryAndSub'), leaf: topLevel === 2 }
+          topFilterData = { ...topFilterData, icon: 'cn-icon cn-icon-category', title: this.$t('entities.categoryAndSub') }
           bottomFilterData = { ...bottomFilterData, icon: 'cn-icon cn-icon-risk', title: this.$t('entities.riskLevel') }
           break
         }
@@ -222,7 +203,7 @@ export default {
       return { topFilterData, bottomFilterData }
     },
     getDefaultTopColumn (from) {
-      let column = ''
+      let column
       switch (from) {
         case 'ip': {
           column = entityFilterType.ip.country
@@ -260,57 +241,85 @@ export default {
       return column
     },
     async select (data, node, index, column) {
-      this.filterObj[column] = data.name
+      if (index === 0) { // 上部过滤
+        if (node.level === 1) {
+          const columns = { ...this.filterObj, [column]: data.name }
+          // 清除二级条件
+          delete columns[entityFilterType.ip.region]
+          delete columns[entityFilterType.domain.categoryName]
+          delete columns[entityFilterType.app.appSubcategory]
+          this.filterObj = columns
+        } else if (node.level === 2) {
+          const columns = { ...this.filterObj, [column]: data.parentName }
+          // 清除一级条件
+          let childColumn
+          switch (column) {
+            case entityFilterType.ip.country: {
+              childColumn = entityFilterType.ip.region
+              break
+            }
+            case entityFilterType.domain.categoryGroup: {
+              childColumn = entityFilterType.domain.categoryName
+              break
+            }
+            case entityFilterType.app.appCategory: {
+              childColumn = entityFilterType.app.appSubcategory
+              break
+            }
+            default: break
+          }
+          columns[childColumn] = data.name
+          this.filterObj = columns
+        }
+      } else if (index === 1) { // 下部过滤
+        this.filterObj[column] = data.name
+      }
     },
     async loadLevel2FilterData (node, parentColumn) {
-      let column
-      switch (parentColumn) {
-        case entityFilterType.ip.country: {
-          column = entityFilterType.ip.region
-          break
+      if (parentColumn) {
+        const where = {}
+        where[parentColumn] = node.data.name
+        let column
+        switch (parentColumn) {
+          case entityFilterType.ip.country: {
+            column = entityFilterType.ip.region
+            break
+          }
+          case entityFilterType.domain.categoryGroup: {
+            column = entityFilterType.domain.categoryName
+            break
+          }
+          case entityFilterType.app.appCategory: {
+            column = entityFilterType.app.appSubcategory
+            break
+          }
+          default: break
         }
-        case entityFilterType.domain.categoryGroup: {
-          column = entityFilterType.domain.categoryName
-          break
+        const params = {
+          q: this.doubleQuotationToSingle(this.searchContent),
+          from: this.from,
+          pageNo: 1,
+          where,
+          column
         }
-        case entityFilterType.app.appCategory: {
-          column = entityFilterType.app.appSubcategory
-          break
-        }
-        default: break
+        const result = await getEntityFilter(params)
+        return result.map(r => ({ ...r, leaf: true, parentName: node.data.name }))
+      } else {
+        return []
       }
-      const params = {
-        q: this.searchContent,
-        from: this.from,
-        pageSize: -1,
-        pageNo: 1,
-        column
-      }
-      return await getEntityFilter(params)
-    },
-    pageSizeRight (val) {
-      this.pageObjRight.pageSize = val
     },
     pageNoRight (val) {
+      console.info(val)
       this.pageObjRight.pageNo = val
+      this.search()
     },
-    loadFilter (node, resolve, filterType, key, parentKey) {
-      if (node.level === 0) {
-        resolve(node.data)
-      } else {
-        const param = { column: key, from: filterType, q: this.searchContent }
-        const req = getEntityFilter(param)
-        if (req) {
-          req.then(res => {
-            res = res.map(r => {
-              return { ...r, leaf: true }
-            })
-            resolve(res)
-          })
-        }
-      }
+    // 双引号转为单引号
+    doubleQuotationToSingle (content) {
+      return content.replace(/\"/g, "'")
     },
     entityDetail (entity, tabs) {
+      const entityName = entity.domain || entity.clientIP || entity.serverIP || entity.appId
+      this.$store.commit('setEntityName', entityName)
       this.typeName = `${this.from.toLowerCase()}EntityDetail`
       this.currentEntity = entity
       this.panelTabs = tabs
@@ -375,7 +384,10 @@ export default {
           }
         })
         const searchParams = this.$_.cloneDeep(this.searchParams)
-        Object.keys(paramsObj).forEach(key => {
+        const newSearchParams = []
+        const keys = Object.keys(paramsObj)
+        keys.forEach(key => {
+          newSearchParams.push({ name: key, value: paramsObj[key] })
           let containKey = false
           searchParams.forEach(item => {
             if (item.name === key) {
@@ -391,7 +403,9 @@ export default {
             searchParams.push({ name: key, value: paramsObj[key] })
           }
         })
-        if (change) {
+        if (newSearchParams.length !== searchParams.length) {
+          this.searchParams = newSearchParams
+        } else if (change) {
           this.searchParams = searchParams
         }
       } else {
@@ -436,17 +450,28 @@ export default {
           this.search()
         }
       }
+    },
+    showDetail (n) {
+      this.$store.commit('showEntityTypeSelector', !n)
     }
   },
+  computed: {
+    from () {
+      return this.$store.getters.from
+    }
+  },
+
   async mounted () {
+    this.$store.commit('showEntityTypeSelector', true)
     this.searchParams = []
   },
   setup () {
-    const from = ref(Object.keys(entityType)[0])
     return {
-      entityType, // 所有entity类型，用于header下拉框选择
-      from // 当前entity类型，ip/domain/app
+      entityType // 所有entity类型，用于header下拉框选择
     }
+  },
+  beforeUnmount () {
+    this.$store.commit('showEntityTypeSelector', false)
   }
 }
 </script>

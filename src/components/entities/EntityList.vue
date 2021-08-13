@@ -5,23 +5,23 @@
         <div class="cn-entity__header">
           <div class="header__icon"><i :class="iconClass"></i></div>
           <div class="header__content" :title="d.ip||d.domainName||d.appName">
-            <template v-if="entityType === 'ip'">{{d.ip || 'Unknown'}}</template>
-            <template v-else-if="entityType === 'domain'">{{d.domainName || 'Unknown'}}</template>
-            <template v-else-if="entityType === 'app'">{{d.appName || 'Unknown'}}</template>
+            <template v-if="from === 'ip'">{{d.ip || 'Unknown'}}</template>
+            <template v-else-if="from === 'domain'">{{d.domainName || 'Unknown'}}</template>
+            <template v-else-if="from === 'app'">{{d.appName || 'Unknown'}}</template>
           </div>
         </div>
         <div class="cn-entity__body" style="position: relative;">
-          <div class="content__desc" v-if="entityType !== 'ip'" style="color: #999999; width: 200px; position: absolute; top: 33px;right: -9px ;font-size: 12px;">
-            <template v-if="entityType === 'domain'" style="color: #999999; width: 200px;">
+          <div class="content__desc" v-if="from !== 'ip'" style="color: #999999; width: 200px; position: absolute; top: 33px;right: -9px ;font-size: 12px;">
+            <template v-if="from === 'domain'">
               <span class="desc__label">{{$t('entities.reputationLevel')}}:</span>
               <span>{{d.reputationLevel || '-'}}</span>
             </template>
-            <template v-else-if="entityType === 'app'" style="color: #999999; width: 200px; margin:0px 35px;">
+            <template v-else-if="from === 'app'">
               <span class="desc__label">{{$t('entities.risk')}}:</span>
               <span>{{d.appRisk || '-'}}</span>
             </template>
           </div>
-          <template v-if="entityType === 'ip'">
+          <template v-if="from === 'ip'">
             <div class="body__row">
               <span class="body__row-label"><i class="cn-icon cn-icon-category"></i>&nbsp;{{$t('overall.country')}}:</span>
               <div class="body__row-value" :title="d.country">{{d.country || '-'}}</div>
@@ -37,7 +37,7 @@
             <div class="body__detail"
                  @click="entityDetail({clientIP: d.ip}, [{key: 'clientIP', label: $t('overall.clientIp')}, {key: 'serverIP', label: $t('overall.serverIp')}])">{{$t('overall.detail')}}></div>
           </template>
-          <template v-else-if="entityType === 'domain'">
+          <template v-else-if="from === 'domain'">
             <div class="body__row">
               <span class="body__row-label"><i class="cn-icon cn-icon-category"></i>&nbsp;{{$t('entities.Group')}}:</span>
               <div class="body__row-value" :title="d.categoryGroup">{{d.categoryGroup || '-'}}</div>
@@ -52,7 +52,7 @@
             </div>
             <div class="body__detail" @click="entityDetail({domain: d.domainName})">{{$t('overall.detail')}}></div>
           </template>
-          <template v-else-if="entityType === 'app'">
+          <template v-else-if="from === 'app'">
             <div class="body__row">
               <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;APP ID:</span>
               <div class="body__row-value" :title="d.appId">{{d.appId || '-'}}</div>
@@ -79,7 +79,6 @@
           :currentPage="pageObj.pageNo"
           :page-size="pageObj.pageSize"
           :total="pageObj.total"
-          :page-sizes="[30, 50, 100]"
           layout="total, prev, pager, next"
       ></el-pagination>
     </div>
@@ -91,7 +90,7 @@ export default {
   name: 'EntityList',
   props: {
     listData: Array,
-    entityType: String,
+    from: String,
     pageObj: Object
   },
   data () {
@@ -103,7 +102,7 @@ export default {
   computed: {
     circleColor () {
       let color
-      switch (this.entityType) {
+      switch (this.from) {
         case ('ip'): {
           color = '#E8FBF9'
           break
@@ -122,7 +121,7 @@ export default {
     },
     iconClass () {
       let className
-      switch (this.entityType) {
+      switch (this.from) {
         case ('ip'): {
           className = 'cn-icon cn-icon-ip ip-green'
           break
@@ -160,11 +159,7 @@ export default {
     scrollbarToTop () {
       this.$nextTick(() => {
         const wraps = document.querySelectorAll('.el-table__body-wrapper')
-        wraps.forEach(wrap => {
-          if (wrap._ps_) {
-            wrap.scrollTop = 0
-          }
-        })
+        wraps.scrollTop = 0
       })
     },
     entityDetail (params, tabs = []) {

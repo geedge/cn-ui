@@ -3,6 +3,7 @@
     <div v-if="typeName" class="entity-detail-tool">
       <div>
         <span @click="goBack" style="cursor: pointer;"><i class="cn-icon cn-icon-arrow-left-circle"></i></span>
+        <span style="padding-left: 15px; color: #333;">{{tabTitle}}</span>
       </div>
       <el-radio-group v-model="tab" size="mini" @change="changeTab">
         <el-radio-button v-for="tab in tabs" :key="tab.key" :label="tab.label"></el-radio-button>
@@ -62,6 +63,27 @@ export default {
   data () {
     return {
       chartList: []
+    }
+  },
+  computed: {
+    tabTitle () {
+      let title
+      switch (this.typeName) {
+        case 'ipEntityDetail': {
+          title = this.$t('entities.ipDetail')
+          break
+        }
+        case 'domainEntityDetail': {
+          title = this.$t('entities.domainDetail')
+          break
+        }
+        case 'appEntityDetail': {
+          title = this.$t('entities.appDetail')
+          break
+        }
+        default: break
+      }
+      return title
     }
   },
   async mounted () {
@@ -146,6 +168,9 @@ export default {
         this.$refs[`chart-${chart.id}`] && this.$refs[`chart-${chart.id}`].reloadChart()
       })
     }
+  },
+  beforeUnmount () {
+    this.$store.commit('setEntityName', '')
   }
 }
 </script>

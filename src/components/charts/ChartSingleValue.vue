@@ -11,14 +11,14 @@
         <slot name="title"></slot>
       </div>
     </div>
-    <div class="single-value__content" v-if="type === 52" style="width: 100%;height: 100%;display: flex;flex-direction: column;justify-content: center;padding: 0px 10px">
-      <div class="content__title" style="height: 20%;">
+    <div class="single-value__content" v-if="type === 52">
+      <div class="content__title">
         <slot name="title"></slot>
       </div>
-      <div class="content__data" style="height: 20%;">
+      <div class="content__data">
         <slot name="data"></slot>
       </div>
-      <div class="content__chart" style="height: 40%;">
+      <div class="content__chart">
         <slot name="chart"></slot>
       </div>
     </div>

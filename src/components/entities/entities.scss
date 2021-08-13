@@ -144,7 +144,7 @@
       margin-top: 23px;
 
       .el-pager {
-        li:last-of-type {
+        .btn-quicknext + li {
           display: none;
         }
       }

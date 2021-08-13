@@ -19,6 +19,7 @@ export const api = {
   entityCount: '/interface/entity/total',
   entityFilter: '/interface/entity/filter'
 }
+
 /* panel */
 export async function getPanelList (params) {
   return await getData(api.panel, params, true)

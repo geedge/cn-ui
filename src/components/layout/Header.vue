@@ -2,15 +2,26 @@
   <div class="cn-header">
 <!--    <div class="left-menu&#45;&#45;pin" :class="false ? 'left-menu&#45;&#45;pin-normal' : 'left-menu&#45;&#45;pin-reverse'" @click="shrink"><i :class="{'icon-reverse': false}" class="el-icon-s-fold"></i></div>-->
     <!--导航面包屑-->
-    <div style="flex-grow: 1;display: flex;padding: 0 70px;align-items: center">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item v-for="item in breadcrumb" :key="item">{{item}}</el-breadcrumb-item>
+    <div class="header__left">
+      <span @click="shrink" class="shrink-button" :class="{'shrink-button--collapse': isShrink}"><i class="cn-icon cn-icon-expand"></i></span>
+      <el-breadcrumb separator="/" style="padding-left: 20px; padding-top: 6px;">
+        <el-breadcrumb-item :title="item" v-for="item in breadcrumb" :key="item" style="display: inline-block; max-width: 300px; height: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          {{item}}
+        </el-breadcrumb-item>
       </el-breadcrumb>
+      <el-select
+          size="small"
+          v-model="from"
+          v-if="showEntityTypeSelector"
+          style="padding-left: 25px; width: 130px;"
+      >
+        <el-option v-for="(value, key) in entityType" :key="key" :label="value" :value="key"></el-option>
+      </el-select>
     </div>
     <!--个人操作-->
     <div class="personal">
       <el-dropdown>
-        <div class="header-menu--item">Language</div>
+        <div class="header-menu--item"><i class="cn-icon cn-icon-language"></i></div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item>
@@ -25,7 +36,7 @@
       <el-dropdown>
         <div class='login-user header-menu--item'>{{username}}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
         <template #dropdown>
-          <el-dropdown-menu #dropdown>
+          <el-dropdown-menu>
             <el-dropdown-item>
               <div id="header-to-changepin" @click="showPinDialog">Change pin</div>
             </el-dropdown-item>
@@ -42,6 +53,8 @@
 
 <script>
 import { useRoute } from 'vue-router'
+import { get } from '@/utils/http'
+import { entityType, storageKey } from '@/utils/constants'
 export default {
   name: 'Header',
   data () {
@@ -67,36 +80,68 @@ export default {
           name: this.$t('dnsServiceInsights')
         }, {
           path: '/entityExplorer',
-          parentName: this.$t('overall.dashboard'),
-          name: this.$t('overall.entityExplorer')
+          parentName: this.$t('overall.entities'),
+          name: this.$t('overall.entityExplorer'),
+          childName: ''
         }, {
           path: '/user',
-          parentName: this.$t('overall.dashboard'),
-          name: this.$t('user')
+          parentName: this.$t('overall.setting'),
+          name: this.$t('overall.user')
         }, {
           path: '/role',
-          parentName: this.$t('overall.dashboard'),
-          name: this.$t('role')
+          parentName: this.$t('overall.setting'),
+          name: this.$t('overall.role')
         }, {
           path: '/operationLog',
-          parentName: this.$t('overall.dashboard'),
+          parentName: this.$t('overall.setting'),
           name: this.$t('overall.operationLog')
         }, {
           path: '/i18n',
-          parentName: this.$t('overall.dashboard'),
-          name: this.$t('l18n')
+          parentName: this.$t('overall.setting'),
+          name: 'I18N'
         }
-      ]
+      ],
+      from: '' // entity类型
     }
   },
   computed: {
     breadcrumb () {
       const breadcrumb = this.breadcrumbMap.find(b => this.path === b.path)
-      return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
+      const breadcrumbArray = breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
+      if (breadcrumbArray.length > 0 && breadcrumb.childName) {
+        breadcrumbArray.push(breadcrumb.childName)
+      }
+      return breadcrumbArray
     },
     path () {
       const { path } = useRoute()
       return path
+    },
+    showEntityTypeSelector () {
+      return this.$store.getters.getShowEntityTypeSelector
+    },
+    isShrink () {
+      return this.$store.getters.getIsShrink
+    },
+    entityName () {
+      return this.$store.getters.entityName
+    }
+  },
+  watch: {
+    from (n) {
+      this.$store.commit('entityTypeChange', n)
+    },
+    entityName (n) {
+      const breadcrumb = this.breadcrumbMap.find(b => b.path === '/entityExplorer')
+      breadcrumb.childName = n
+    }
+  },
+  mounted () {
+    this.from = Object.keys(this.entityType)[0]
+  },
+  setup () {
+    return {
+      entityType // 所有entity类型，用于header下拉框选择
     }
   },
   methods: {
@@ -111,6 +156,8 @@ export default {
       this.showChangePin = true
     },
     logout () {
+      sessionStorage.removeItem(storageKey.token)
+      get('/logout')
     },
     refreshLang () {
       this.language = localStorage.getItem('cn-language')
@@ -120,6 +167,7 @@ export default {
       })
     },
     shrink () {
+      this.$store.commit('isShrink', !this.isShrink)
     }
   }
 }
@@ -130,6 +178,22 @@ export default {
   display: flex;
   height: 50px;
 
+  .header__left {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+
+    .shrink-button {
+      margin-left: 20px;
+      color: #A4ADB5;
+      cursor: pointer;
+      transition: all linear .4s;
+
+      &.shrink-button--collapse {
+        transform: rotateY(180deg);
+      }
+    }
+  }
   .header-menu {
     display: flex;
     justify-content: flex-end;

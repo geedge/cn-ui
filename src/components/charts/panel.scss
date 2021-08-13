@@ -41,13 +41,6 @@
     height: 100%;
     width: 100%;
   }
-  &>.cn-chart.cn-chart__echarts--statistics {
-    border: none;
-    box-shadow: none;
-    .cn-chart__header {
-      border-bottom: none;
-    }
-  }
   &>.cn-chart__echarts, &>.cn-chart__table, &>.cn-chart__map {
     display: flex;
     flex-direction: column;
@@ -175,6 +168,36 @@
         font-size: 24px;
         color: #333333;
         font-weight: bold;
+      }
+    }
+  }
+  &>.cn-chart__single-value.cn-chart__single-value--chart {
+    display: flex;
+    padding: 13px 20px;
+
+    .single-value__content {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      flex-direction: column;
+
+      .content__title {
+        display: flex;
+        align-items: center;
+        height: 30%;
+        font-size: 16px;
+        color: #666666;
+      }
+      .content__data {
+        display: flex;
+        align-items: center;
+        height: 25%;
+        font-size: 24px;
+        color: #333333;
+        font-weight: bold;
+      }
+      .content__chart {
+        flex: auto
       }
     }
   }
@@ -407,6 +430,13 @@
         }
       }
     }
+  }
+}
+.cn-panel>.cn-chart__tabs>.el-tabs__content>.el-tab-pane>.cn-chart {
+  border: none;
+  box-shadow: none;
+  .cn-chart__header {
+    border-bottom: none;
   }
 }
 .option-popper {

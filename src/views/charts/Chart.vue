@@ -92,14 +92,7 @@
       <span class="single-value__unit">{{handleSingleValue[1]}}</span>
     </template>
     <template #chart>
-      <div class="chart-drawing" :id="`chart${chartInfo.id}`" style="
-    width:100%;
-    height: 100%;
-    user-select: none;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-    padding: 0px;
-    margin: 0px;
-    border-width: 0px;"></div>
+      <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
   </single-value>
   <!-- 表格 -->
@@ -236,7 +229,8 @@ export default {
       selectPieChartName: '',
       allSelectPieChartName: [],
       chartOption: null,
-      loading: true
+      loading: true,
+      throttle: null // 节流器
     }
   },
   methods: {
@@ -284,15 +278,14 @@ export default {
                 const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
                 get(replaceUrlPlaceholder(chartParams.urlLine, queryParams)).then(response => {
                   if (response.code === 200) {
-                    response.data.result = [
+                    /*response.data.result = [
                       {
                         legend: "session_rate",
                         values:[
                           ["1625122200","2"],["1625122500","2"],["1625122800","1"],["1625123100","1"],["1625123400","2"],["1625123700","2"],["1625124000","2"],["1625124300","3"],["1625124600","3"],["1625124900","3"]
                         ]
                       }
-                    ]
-
+                    ]*/
                     this.chartOption.series = response.data.result.map((r, i) => {
                       return {
                         ...seriesTemplate,
@@ -665,6 +658,9 @@ export default {
         }
         this.loading = false
       })
+    },
+    echartsResize () {
+      this.myChart.resize()
     }
   },
   computed: {
@@ -696,6 +692,8 @@ export default {
   },
   mounted () {
     this.initChart()
+    this.throttle = this.$_.throttle(this.echartsResize, 500)
+    window.addEventListener('resize', this.throttle)
   },
   watch: {
     chart: {
@@ -741,6 +739,9 @@ export default {
       layout: getLayout(props.chart.type),
       myChart: shallowRef(null)
     }
+  },
+  unmounted () {
+    window.removeEventListener('resize', this.throttle)
   }
 }
 </script>

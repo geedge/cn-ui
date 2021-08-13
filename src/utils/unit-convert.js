@@ -75,7 +75,7 @@ export default function unitConvert (value, unitType, sourceUnit, targetUnit, do
       return ['-', '']
     }
   }
-  if (!Number(value) && Number(value) !== 0) {
+  if (!value && value !== 0) {
     return ['-', '']
   } else {
     switch (unitType) {

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { storageKey } from '@/utils/constants'
 
 axios.interceptors.request.use(config => {
   const token = sessionStorage.getItem('cn-token')
@@ -41,6 +42,7 @@ axios.interceptors.response.use(
   response => {
     if (licenceErrorCode.indexOf(response.data.code) !== -1) {
       window.location.href = '/'
+      sessionStorage.removeItem(storageKey.token)
     } else if (response.status === 200) {
       if (accountErrorCode.indexOf(response.data.code) !== -1) {
         window.location.href = '/'

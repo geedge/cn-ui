@@ -87,14 +87,14 @@ export default {
       } else {
         this.currentDataBottom = this.$_.cloneDeep(data)
       }
+      console.info(this.currentDataTop)
+      console.info(this.currentDataBottom)
       this.$emit('select', data, node, index, column)
     },
     showMore (filterData) {
       if (!filterData.hasnotMore) {
         this.$emit('showMore', filterData.column)
       }
-    },
-    loadFilter (node, resolve, f) {
     },
     dataEqual (obj1, obj2) {
       if (!obj1 || !obj2) {

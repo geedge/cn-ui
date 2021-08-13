@@ -26,7 +26,7 @@
             :index="`${index}`">
           <template #title>
             <i :class="menu.icon"></i>
-            <span :title="menu.name">{{menu.i18n ? $t(menu.i18n) : menu.name}}</span>
+            <span :title="$t(menu.i18n)">{{menu.i18n ? $t(menu.i18n) : menu.name}}</span>
           </template>
           <template v-for="(secondMenu, secondIndex) in menu.children">
             <el-submenu
@@ -38,7 +38,7 @@
               </template>
               <template v-for="(thirdMenu, thirdIndex) in secondMenu.children" :key="`${index}-${secondIndex}-${thirdIndex}`">
                 <el-menu-item
-                    :title="thirdMenu.name"
+                    :title="$t(thirdMenu.i18n)"
                     v-if="thirdMenu.state === 1"
                     :index="thirdMenu.route">
                   {{thirdMenu.i18n ? $t(thirdMenu.i18n) : thirdMenu.name}}
@@ -46,7 +46,7 @@
               </template>
             </el-submenu>
             <el-menu-item
-                :title="secondMenu.name"
+                :title="$t(secondMenu.i18n)"
                 v-else-if="secondMenu.state === 1"
                 :key="secondIndex * 100"
                 :index="secondMenu.route">
@@ -55,7 +55,7 @@
           </template>
         </el-submenu>
         <el-menu-item
-            :title="menu.name"
+            :title="menu.i18n"
             v-else-if="menu.state === 1"
             :key="index + 'a'"
             :index="menu.route">
@@ -132,6 +132,30 @@ export default {
 </script>
 
 <style lang="scss">
+// el-submenu  active字色
+.el-submenu.is-active .el-submenu__title,
+.el-submenu.is-active .el-submenu__title>i,
+.el-menu-item.is-active {
+  color: white !important;
+}
+// el-submenu  active且open背景色
+.el-submenu__title:not(.is-active):hover, .el-menu-item:not(.is-active):hover, .el-menu-item:not(.is-active):focus {
+  background-color: mix($--color-white, $--menu-background-color, 7%) !important;
+}
+.is-active.is-opened {
+  .el-submenu__title, .el-menu-item:not(.is-active) {
+    background-color: $--menu-hover-background-color !important;
+  }
+}
+.el-menu-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.is-active {
+    background-color: $--color-primary;
+  }
+}
+
 .left-menu {
   display: flex;
   flex-direction: column;
@@ -153,31 +177,6 @@ export default {
     height: calc(100% - 110px);
     border-right: none;
     overflow: auto;
-
-    // el-submenu  active字色
-    .el-submenu.is-active .el-submenu__title,
-    .el-submenu.is-active .el-submenu__title>i,
-    .el-menu-item.is-active {
-      color: white !important;
-    }
-
-    // el-submenu  active且open背景色
-    .el-submenu__title:not(.is-active):hover, .el-menu-item:not(.is-active):hover, .el-menu-item:not(.is-active):focus {
-      background-color: mix($--color-white, $--menu-background-color, 7%) !important;
-    }
-    .is-active.is-opened {
-      .el-submenu__title, .el-menu-item:not(.is-active) {
-        background-color: $--menu-hover-background-color !important;
-      }
-    }
-    .el-menu-item {
-      overflow: hidden;
-      text-overflow: ellipsis;
-
-      &.is-active {
-        background-color: $--color-primary;
-      }
-    }
 
     .el-menu-item, .el-submenu__title {
       height: 46px;

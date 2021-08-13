@@ -8,15 +8,16 @@
         <el-form-item>
           <el-input
               prefix-icon="el-icon-user"
-              class="inputstyle login__input"
+              class="login--input login__input"
             v-model="username"
           ></el-input>
         </el-form-item>
         <el-form-item>
           <el-input
-              class="inputstyle"
+              class="login--input"
               prefix-icon="el-icon-lock"
               type="password"
+              @keyup.enter="login"
             v-model="pin"
           ></el-input>
         </el-form-item>
@@ -24,8 +25,9 @@
           <el-button
               v-loading="loading"
               type="primary"
-            class="inputstyle login__button"
-            @click="login"
+              class="login--input login--butotn"
+              @click="login"
+              @keyup.enter="login"
               style="font-size: 16px;"
             >Login</el-button
           >
@@ -104,7 +106,7 @@ export default {
   margin-left: 52px;
   margin-right: 10px;
 }
-.inputstyle{
+.login--input{
   width: 300px;
   height: 40px;
 }
@@ -116,7 +118,7 @@ export default {
    height: 250px;
    margin: auto;
  }
-.login__button {
+.login--butotn {
   background: #0091ff;
   color: #fff;
   border-radius: 4px;
