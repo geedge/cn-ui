@@ -8,10 +8,10 @@
         <slot name="operations"></slot>
       </div>
     </div>
-    <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}" v-loading="loading">
+    <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}" v-loading="loading" v-no-data="noData">
       <slot></slot>
     </div>
-    <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1" :class="{'pie-with-table': isPieWithTable}" v-loading="loading">
+    <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1 && !noData" :class="{'pie-with-table': isPieWithTable}" v-loading="loading">
       <slot name="footer"></slot>
     </div>
   </div>
@@ -24,7 +24,8 @@ export default {
   props: {
     layout: Array,
     chartInfo: Object,
-    loading: Boolean
+    loading: Boolean,
+    noData: Boolean
   },
   setup (props) {
     return {

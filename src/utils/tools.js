@@ -346,7 +346,15 @@ export const clickOutside = {
     delete el.__vueClickOutside__
   }
 }
-
+export const noData = {
+  updated (el, binding) {
+    if (el) {
+      if (binding.value) {
+        el.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: #999;">No data</div>'
+      }
+    }
+  }
+}
 export function isEqual (o1, o2) {
   const isEqualForInner = function (obj1, obj2) {
     const o1 = obj1 instanceof Object
@@ -447,3 +455,5 @@ function JSONParse (data) {
     return firstParse
   }
 }
+
+

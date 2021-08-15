@@ -46,6 +46,7 @@
       :style="computePosition"
       :chartInfo="chartInfo"
       :loading="loading"
+      :no-data="noData"
   >
     <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
@@ -102,6 +103,7 @@
       :table-data="table.currentPageData"
       :style="computePosition"
       :loading="loading"
+      :no-data="noData"
   >
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
@@ -230,6 +232,7 @@ export default {
       allSelectPieChartName: [],
       chartOption: null,
       loading: true,
+      noData: false, // 查询结果为空
       throttle: null // 节流器
     }
   },
@@ -324,17 +327,19 @@ export default {
     getTitle (r) {
       let title = ''
       if (r.establishLatency || r.httpResponseLatency || r.sslConLatency) {
-        title = `${title}: ${unitConvert(r.establishLatency || r.httpResponseLatency || r.sslConLatency, unitTypes.time).join(' ')}`
+        title = `: ${unitConvert(r.establishLatency || r.httpResponseLatency || r.sslConLatency, unitTypes.time).join(' ')}`
       }
       if (r.sequenceGapLossPercent || r.pktRetransPercent) {
-        title = `${title}: ${unitConvert(r.sequenceGapLossPercent || r.pktRetransPercent, unitTypes.number).join(' ')} %`
+        const d = unitConvert(r.sequenceGapLossPercent || r.pktRetransPercent, unitTypes.number)
+        title = d[0] === '0.00' ? ': 0' : `: ${d.join(' ')} %`
       }
       if (r.sessions) {
-        title = `${title}\nSessions: ${unitConvert(r.sessions, unitTypes.number).join(' ')}`
+        title = `\nSessions: ${unitConvert(r.sessions, unitTypes.number).join(' ')}`
       }
       if (r.bytes) {
-        title = `${title}\nBytes: ${unitConvert(r.bytes, unitTypes.byte).join(' ')}`
+        title = `\nBytes: ${unitConvert(r.bytes, unitTypes.byte).join(' ')}`
       }
+      title = title || ': 0'
       return title
     },
     changeTab (tab) {
@@ -445,21 +450,22 @@ export default {
               max: am4Core.color('#D95D41')
             })
 
-            polygonSeries.data = response.data.result.map(r => {
+            const seriesData = data.map(r => {
+              const value = r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions
               return {
                 id: r.serverId,
                 title: this.getTitle(r),
-                value: r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions
+                value: value || 0
               }
             })
-            const sorted = polygonSeries.data.sort((a, b) => b.value - a.value)
+            polygonSeries.data = [...seriesData]
+            const sorted = seriesData.sort((a, b) => b.value - a.value)
 
             const heatLegend = this.myChart.createChild(am4Maps.HeatLegend)
             heatLegend.series = polygonSeries
             heatLegend.align = 'center'
-            console.info(sorted)
+            heatLegend.minValue = 0
             if (!this.$_.isEmpty(sorted)) {
-              heatLegend.minValue = 0
               heatLegend.maxValue = Number(sorted[0].value)
             }
             heatLegend.markerContainer.height = 6
@@ -514,11 +520,40 @@ export default {
         this.initEchartsWithPieTable(chartParams)
       }
     },
+    timeLineIsAllZero (data) {
+      let allZero = true
+      try {
+        data.forEach(d => {
+          d.values.forEach(r => {
+            if (r[1] && r[1] !== '0' && r[1] !== 0) {
+              allZero = false
+              throw new Error('break')
+            }
+          })
+        })
+      } catch (e) {}
+      return allZero
+    },
     initECharts (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+            return
+          } else {
+            this.noData = false
+          }
           const seriesTemplate = this.chartOption.series[0]
+          const allZero = this.timeLineIsAllZero(response.data.result)
+          if (allZero) {
+            this.chartOption.yAxis = {
+              ...this.chartOption.yAxis,
+              min: 0,
+              max: 5,
+              interval: 1
+            }
+          }
           this.chartOption.series = response.data.result.map(r => {
             return {
               ...seriesTemplate,
@@ -545,6 +580,21 @@ export default {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+            return
+          } else {
+            this.noData = false
+          }
+          const allZero = this.timeLineIsAllZero(response.data.result)
+          if (allZero) {
+            this.chartOption.yAxis = {
+              ...this.chartOption.yAxis,
+              min: 0,
+              max: 5,
+              interval: 1
+            }
+          }
           this.statisticsData = response.data.result.map(d => {
             return {
               ...d,
@@ -580,6 +630,21 @@ export default {
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+            return
+          } else {
+            this.noData = false
+          }
+          const allZero = this.timeLineIsAllZero(response.data.result)
+          if (allZero) {
+            this.chartOption.yAxis = {
+              ...this.chartOption.yAxis,
+              min: 0,
+              max: 5,
+              interval: 1
+            }
+          }
           const data = response.data.result.map(d => {
             tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
             return {
@@ -664,6 +729,12 @@ export default {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: this.table.limit, order: this.table.orderBy, ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+            return
+          } else {
+            this.noData = false
+          }
           this.table.tableData = response.data.result
           this.table.tableColumns = this.getTableTitle(response.data.result)
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
