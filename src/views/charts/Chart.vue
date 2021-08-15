@@ -190,6 +190,7 @@ import unitConvert, { getUnitType } from '@/utils/unit-convert'
 import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions, unitTypes } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
+import { HeatLegend } from '@/components/amcharts/heatLegend'
 
 export default {
   name: 'Chart',
@@ -352,12 +353,6 @@ export default {
       const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
       polygonSeries.useGeodata = true
       polygonSeries.exclude = ['AQ'] // 排除南极洲
-      // 鼠标悬停提示
-      /* const polygonTemplate = polygonSeries.mapPolygons.template
-      polygonTemplate.tooltipText = '{name}'
-      polygonTemplate.fontSize = '12px'
-      const hs = polygonTemplate.states.create('hover')
-      hs.properties.fill = am4Core.color('#ccc') */
       return {
         chart,
         polygonSeries
@@ -443,13 +438,6 @@ export default {
             })
             imageSeries.data = pointData
           } else if (this.isMapBlock) {
-            polygonSeries.heatRules.push({
-              property: 'fill',
-              target: polygonSeries.mapPolygons.template,
-              min: am4Core.color('#EABA2B'),
-              max: am4Core.color('#D95D41')
-            })
-
             const seriesData = data.map(r => {
               const value = r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions
               return {
@@ -460,22 +448,29 @@ export default {
             })
             polygonSeries.data = [...seriesData]
             const sorted = seriesData.sort((a, b) => b.value - a.value)
+            const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
 
-            const heatLegend = this.myChart.createChild(am4Maps.HeatLegend)
-            heatLegend.series = polygonSeries
-            heatLegend.align = 'center'
-            heatLegend.minValue = 0
-            if (!this.$_.isEmpty(sorted)) {
-              heatLegend.maxValue = Number(sorted[0].value)
-            }
+            polygonSeries.heatRules.push({
+              property: 'fill',
+              target: polygonSeries.mapPolygons.template,
+              min: am4Core.color('#EABA2B'),
+              max: allZero ? am4Core.color('#EABA2B') : am4Core.color('#D95D41')
+            })
+
+            const heatLegend = this.myChart.createChild(HeatLegend)
             heatLegend.markerContainer.height = 6
-            heatLegend.width = am4Core.percent(25)
-            heatLegend.marginLeft = am4Core.percent(4)
+            heatLegend.series = polygonSeries
+            heatLegend.align = 'left'
+            heatLegend.markerCount = allZero ? 1 : 3
+            heatLegend.minValue = 0
+            heatLegend.fontSize = 12
+            heatLegend.maxValue = allZero ? 1 : Number(sorted[0].value)
+            heatLegend.width = allZero ? am4Core.percent(10) : am4Core.percent(25)
+            heatLegend.marginLeft = 15
             heatLegend.valign = 'bottom'
 
             const polygonTemplate = polygonSeries.mapPolygons.template
             polygonTemplate.tooltipText = '{name}{title}'
-            // polygonTemplate.numberFormatter = new am4Core.NumberFormatter().bigNumberPrefixes
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
           }

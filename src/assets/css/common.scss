@@ -64,3 +64,9 @@ th *:first-letter,
 .el-table__empty-block {
   width: 100% !important;
 }
+
+/* 淡化amcharts的logo */
+g [aria-labelledby$=-title] {
+  opacity: 0.1;
+  transform: translate(calc(100% - 76px), calc(100% - 25px));
+}
