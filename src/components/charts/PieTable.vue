@@ -21,6 +21,7 @@
             style="width: 100%;"
             :show-header="false"
             :size="'mini'"
+            v-loading="subLoading"
             :height="'100%'">
           <el-table-column
               width="48">
@@ -168,22 +169,19 @@ export default {
           prop: 'bytes',
           width: '18%'
         }
-      ]
+      ],
+      subLoading: true
     }
   },
   methods: {
-    // rowChange (echartParams) {
-    //   const nameColumnKey = this.nameColumn === 'fqdnCategoryName' ? 'categoryName' : 'reputationLevel'
-    //   const row = this.pieTableData.find(item => echartParams.name === item[nameColumnKey])
-    //   this.toggleRowExpansion(row)
-    // },
-    // toggleRowExpansion (row) {
-    //   this.$refs.table.toggleRowExpansion(row)
-    // },
     currentChange (row, expandedRows) {
+      this.subLoading = true
       this.childrenTableData = []
-
-      // this.$refs.table.toggleRowExpansion(row)
+      if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
+        this.expandRowKeys = []
+      } else {
+        this.expandRowKeys = [row.domain]
+      }
       const url = this.chartInfo.params.urlChildrenTable
       const queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
@@ -192,16 +190,15 @@ export default {
         domain: row.domain,
         limit: 10
       }
-      get(replaceUrlPlaceholder(url, queryParams)).then(response2 => {
-        if (response2.code === 200) {
-          this.childrenTableData = response2.data.result
-        }
-        if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
-          this.expandRowKeys = []
-        } else {
-          this.expandRowKeys = [row.domain]
-        }
-      })
+      setTimeout(() => {
+        get(replaceUrlPlaceholder(url, queryParams)).then(response2 => {
+          if (response2.code === 200) {
+            this.childrenTableData = response2.data.result
+          }
+        }).finally(() => {
+          this.subLoading = false
+        })
+      }, 500)
     },
     getRowKey (row) {
       return row.domain

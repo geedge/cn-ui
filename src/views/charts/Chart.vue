@@ -516,18 +516,20 @@ export default {
       }
     },
     timeLineIsAllZero (data) {
-      let allZero = true
-      try {
-        data.forEach(d => {
-          d.values.forEach(r => {
-            if (r[1] && r[1] !== '0' && r[1] !== 0) {
-              allZero = false
-              throw new Error('break')
-            }
+      if (data.resultType === 'matrix') {
+        let allZero = true
+        try {
+          data.forEach(d => {
+            d.values.forEach(r => {
+              if (r[1] && r[1] !== '0' && r[1] !== 0) {
+                allZero = false
+                throw new Error('break')
+              }
+            })
           })
-        })
-      } catch (e) {}
-      return allZero
+        } catch (e) {}
+        return allZero
+      }
     },
     initECharts (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
@@ -540,7 +542,7 @@ export default {
             this.noData = false
           }
           const seriesTemplate = this.chartOption.series[0]
-          const allZero = this.timeLineIsAllZero(response.data.result)
+          const allZero = this.timeLineIsAllZero(response.data)
           if (allZero) {
             this.chartOption.yAxis = {
               ...this.chartOption.yAxis,
@@ -581,7 +583,7 @@ export default {
           } else {
             this.noData = false
           }
-          const allZero = this.timeLineIsAllZero(response.data.result)
+          const allZero = this.timeLineIsAllZero(response.data)
           if (allZero) {
             this.chartOption.yAxis = {
               ...this.chartOption.yAxis,
@@ -625,13 +627,14 @@ export default {
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
+          console.info(response)
           if (this.$_.isEmpty(response.data.result)) {
             this.noData = true
             return
           } else {
             this.noData = false
           }
-          const allZero = this.timeLineIsAllZero(response.data.result)
+          const allZero = this.timeLineIsAllZero(response.data)
           if (allZero) {
             this.chartOption.yAxis = {
               ...this.chartOption.yAxis,
