@@ -232,7 +232,15 @@ const pieWithTable = {
 }
 const singleValueLine = {
   tooltip: {
-    show: false
+    show: true,
+    enterable: true,
+    showContent: true,
+    appendToBody: true,
+    trigger: 'axis',
+    textStyle: {
+      width: '20px',
+      overflow: 'truncate'
+    }
   },
   xAxis: {
     type: 'time',
