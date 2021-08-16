@@ -487,8 +487,18 @@ export default {
     },
     getTableTitle (data) {
       if (data.length > 0) {
-        const columns = Object.keys(data[0])
-        return columns.map(c => tableTitleMapping[c])
+        const dataColumns = Object.keys(data[0]) // 返回数据的字段
+        const columns = dataColumns.map(c => tableTitleMapping[c]) // 展示字段
+        const keys = ['clientIp', 'serverIp', 'appName', 'domain']
+        return columns.sort((a, b) => {
+          if (keys.indexOf(a.prop) > -1) {
+            return -1
+          } else if (keys.indexOf(b.prop) > -1) {
+            return 1
+          } else {
+            return 0
+          }
+        })
       } else {
         return []
       }
