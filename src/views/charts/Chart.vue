@@ -519,9 +519,9 @@ export default {
       if (data.resultType === 'matrix') {
         let allZero = true
         try {
-          data.forEach(d => {
+          data.result.forEach(d => {
             d.values.forEach(r => {
-              if (r[1] && r[1] !== '0' && r[1] !== 0) {
+              if (r[1] && r[1] !== '0') {
                 allZero = false
                 throw new Error('break')
               }
@@ -627,7 +627,6 @@ export default {
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
-          console.info(response)
           if (this.$_.isEmpty(response.data.result)) {
             this.noData = true
             return

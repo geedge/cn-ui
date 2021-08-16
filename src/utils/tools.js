@@ -392,9 +392,12 @@ export function replaceUrlPlaceholder (url, params) {
   _.forIn(params, (value, key) => {
     url = url.replace('{{' + key + '}}', value)
   })
-  return url
+  return doubleQuotationToSingle(url)
 }
-
+// 双引号替换为单引号
+export function doubleQuotationToSingle (content) {
+  return content.replace(/\"/g, "'")
+}
 // 下划线转换驼峰
 export function lineToHump (name) {
   return name.replace(/\_(\w)/g, function (all, letter) {

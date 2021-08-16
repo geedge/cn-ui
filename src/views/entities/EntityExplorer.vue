@@ -39,6 +39,7 @@ import LeftFilter from '@/components/entities/LeftFilter'
 import EntityList from '@/components/entities/EntityList'
 import { getEntityFilter, getEntityList, getEntityCount } from '@/utils/api'
 import Panel from '@/views/charts/Panel'
+import { doubleQuotationToSingle } from '@/utils/tools'
 export default {
   name: 'EntityExplorer',
   data () {
@@ -102,7 +103,7 @@ export default {
         }
         default: break
       }
-      const { topFilterData, bottomFilterData } = await this.queryFilterData({ column, q: this.doubleQuotationToSingle(this.searchContent), from: this.from })
+      const { topFilterData, bottomFilterData } = await this.queryFilterData({ column, q: doubleQuotationToSingle(this.searchContent), from: this.from })
       if (index === 1) {
         this.bottomFilterData = {
           ...this.bottomFilterData,
@@ -118,7 +119,7 @@ export default {
       }
     },
     async search () {
-      const params = { from: this.from, q: this.doubleQuotationToSingle(this.searchContent) }
+      const params = { from: this.from, q: doubleQuotationToSingle(this.searchContent) }
       this.listData = await getEntityList({ ...this.pageObjRight, ...params })
       this.pageObjRight.total = await getEntityCount(params)
       const { topFilterData, bottomFilterData } = await this.queryFilterData(params)
@@ -296,7 +297,7 @@ export default {
           default: break
         }
         const params = {
-          q: this.doubleQuotationToSingle(this.searchContent),
+          q: doubleQuotationToSingle(this.searchContent),
           from: this.from,
           pageNo: 1,
           where,
@@ -311,10 +312,6 @@ export default {
     pageNoRight (val) {
       this.pageObjRight.pageNo = val
       this.search()
-    },
-    // 双引号转为单引号
-    doubleQuotationToSingle (content) {
-      return content.replace(/\"/g, "'")
     },
     entityDetail (entity, tabs) {
       const entityName = entity.domain || entity.clientIP || entity.serverIP || entity.appId
