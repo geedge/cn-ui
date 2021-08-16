@@ -43,7 +43,7 @@ const line = {
   grid: {
     left: 55,
     bottom: 30,
-    top: 40,
+    top: 100,
     right: 25
   },
   color: chartColor,
@@ -55,12 +55,13 @@ const line = {
     show: true,
     right: 23,
     top: 8,
+    padding: 2,
     orient: 'horizontal',
     icon: 'circle',
-    itemGap: 20,
+    itemGap: 10,
     itemWidth: 10,
     textStyle: {
-      padding: [0, 0, 0, 5],
+      padding: [0, 0, 0, 2],
       fontSize: 14
     },
     formatter: tooLongFormatter
