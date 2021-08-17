@@ -542,6 +542,9 @@ export default {
       }
     },
     initECharts (chartParams) {
+      if(chartParams.showLegend === false ) {
+        this.chartOption.legend.show = false
+      }
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
