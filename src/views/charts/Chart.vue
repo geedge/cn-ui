@@ -89,7 +89,7 @@
   >
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
-      <span>{{isNaN(handleSingleValue[0]) ? '-' : handleSingleValue[0]}}</span>
+      <span>{{handleSingleValue[0] ? handleSingleValue[0] : '-'}}</span>
       <span class="single-value__unit">{{handleSingleValue[1]}}</span>
     </template>
     <template #chart>
