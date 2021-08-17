@@ -330,6 +330,10 @@ export function isMapBlock (type) {
 export function isEchartsWithStatistics (type) {
   return type === 12
 }
+/* 关系图 */
+export function isRelationShip (type) {
+  return type === 42
+}
 /* 单值 */
 export function isSingleValue (type) {
   return type >= 51 && type <= 60

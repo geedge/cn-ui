@@ -176,6 +176,7 @@ import {
   isMapLine,
   isMapBlock,
   isSingleValueWithEcharts,
+  isRelationShip,
   isTabs,
   getChartColor
 } from '@/components/charts/chart-options'
@@ -188,7 +189,7 @@ import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import unitConvert, { getUnitType } from '@/utils/unit-convert'
 import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions, unitTypes } from '@/utils/constants'
-import { get } from '@/utils/http'
+import { get, post } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
 import { HeatLegend } from '@/components/amcharts/heatLegend'
 
@@ -257,6 +258,8 @@ export default {
               this.initEchartsWithPieTable(chartParams)
             } else if (this.isEchartsWithStatistics) {
               this.initEchartsWithStatistics(chartParams)
+            } else if (this.isRelationShip) {
+              this.initRelationShip(chartParams)
             } else {
               this.initECharts(chartParams)
             }
@@ -589,6 +592,16 @@ export default {
         setTimeout(() => { this.loading = false }, 250)
       })
     },
+    initRelationShip (chartParams) {
+      const queryParams = { ...this.entity }
+      post(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+
+        }
+      }).finally(() => {
+        setTimeout(() => { this.loading = false }, 250)
+      })
+    },
     initEchartsWithStatistics (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
@@ -827,6 +840,7 @@ export default {
       isEchartsWithStatistics: isEchartsWithStatistics(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chart.type),
+      isRelationShip: isRelationShip(props.chart.type),
       isTable: isTable(props.chart.type),
       isMap: isMap(props.chart.type),
       isTitle: isTitle(props.chart.type),
