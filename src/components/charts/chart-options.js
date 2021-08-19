@@ -280,11 +280,37 @@ const singleValueLine = {
     }
   ]
 }
+const relationShip = {
+  grid: {
+    left: 0,
+    bottom: 50,
+    top: 80,
+    right: 0
+  },
+  series: [
+    {
+      type: 'graph',
+      layout: 'force',
+      symbolSize: 40,
+      roam: true,
+      force: {
+        repulsion: 350
+      },
+      draggable: true,
+      label: { show: true },
+      edgeSymbol: ['none', 'arrow'],
+      edgeSymbolSize: 7,
+      data: [],
+      links: []
+    }
+  ]
+}
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
   { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
   { value: 13, option: lineStack }, // 折线堆叠图
   { value: 31, option: pieWithTable }, // 常规折线图
+  { value: 42, option: relationShip }, // 关系图
   { value: 52, option: singleValueLine }
 ]
 const typeCategory = {

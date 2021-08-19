@@ -545,7 +545,7 @@ export default {
       }
     },
     initECharts (chartParams) {
-      if(chartParams.showLegend === false ) {
+      if (chartParams.showLegend === false) {
         this.chartOption.legend.show = false
       }
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
@@ -593,14 +593,73 @@ export default {
       })
     },
     initRelationShip (chartParams) {
-      const queryParams = { ...this.entity }
+      const queryParams = { ...this.entity, limit: 5 }
       post(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
+          if (!response.data.result) {
+            this.noData = true
+            return
+          } else {
+            this.noData = false
+          }
 
+          const data = []
+          const links = []
+          handleData(data, links, response.data.result)
+          this.chartOption.series[0].data = data
+          this.chartOption.series[0].links = links
         }
+        this.myChart.setOption(this.chartOption)
+        this.$nextTick(() => {
+          this.myChart.resize()
+        })
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
       })
+
+      const vm = this
+      function handleData (data, links, item) {
+        if (!data.some(d => d.name === item.name)) {
+          data.push({ name: item.name, ...handleStyle(item) })
+        }
+        if (!vm.$_.isEmpty(item.from) && !vm.$_.isEmpty(item.to)) {
+          links.push({ target: item.to, source: item.from })
+        }
+        if (!vm.$_.isEmpty(item.leaf)) {
+          item.leaf.forEach(i => {
+            handleData(data, links, i)
+          })
+        }
+      }
+
+      function handleStyle (item) {
+        const style = {}
+        switch (item.type) {
+          case 'app_id': {
+            style.itemStyle = { color: '#73DEB3' }
+            style.symbol = 'circle'
+            break
+          }
+          case 'domain': {
+            style.itemStyle = { color: '#73A0FA' }
+            style.symbol = 'circle'
+            break
+          }
+          case 'client_ip': {
+            style.itemStyle = { color: '#E8F6FF', borderColor: '#C9C9C9' }
+            style.symbol = 'roundRect'
+            style.symbolSize = [80, 25]
+            break
+          }
+          case 'server_ip': {
+            style.itemStyle = { color: '#E2FCEF', borderColor: '#C9C9C9' }
+            style.symbol = 'roundRect'
+            style.symbolSize = [80, 25]
+            break
+          }
+        }
+        return style
+      }
     },
     initEchartsWithStatistics (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
