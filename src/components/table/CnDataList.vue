@@ -14,7 +14,7 @@
             <div v-if="showLayout.indexOf('searchInput') > -1" class="top-tool-search margin-r-20">
               <div style="display: flex">
                 <el-input
-                    v-model="keyWord"  size="small"></el-input>
+                    v-model="keyWord"  size="small" @keyup.enter.native="onsearch"></el-input>
 <!--                <el-button icon="el-icon-search" @click="onsearch" size="small"></el-button>-->
                 <button   class="top-tool-btn" style="border-radius: 0px"
                         type="button" @click="onsearch">

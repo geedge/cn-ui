@@ -16,8 +16,7 @@ export default {
       },
       pageObj: { // 分页对象
         pageNo: 1,
-        pageSize: defaultPageSize,
-        total: ''
+        pageSize: defaultPageSize
       },
       /* 工具参数 */
       tools: {
@@ -145,6 +144,7 @@ export default {
       this.getTableData()
     },
     search (params) {
+      console.info(params)
       this.pageObj.pageNo = 1
       this.getTableData({ q: params })
     }
