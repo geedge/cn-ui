@@ -1,7 +1,8 @@
 <template>
   <div class="cn-chart cn-chart__map">
-    <div class="cn-chart__header">
-      <div class="header__title">
+    <div class="cn-chart__header chart-header-position" >
+      <slot name="chartErrorInfo"></slot>
+      <div class="header__title chart-title-width" >
         <slot name="title"></slot>
       </div>
       <div class="header__operations">
@@ -23,6 +24,12 @@ export default {
   name: 'ChartMap',
   props: {
     loading: Boolean
+  },
+  data () {
+    return {
+      errorContent: '出错了。。。',
+      isError: true,
+    }
   }
 }
 </script>

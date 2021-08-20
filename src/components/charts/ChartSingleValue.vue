@@ -1,6 +1,7 @@
 <template>
-  <div class="cn-chart cn-chart__single-value" :class="singleValueClass(type)">
-    <div class="single-value-icon__box">
+  <div class="cn-chart cn-chart__single-value chart-header-position" :class="singleValueClass(type)" >
+    <slot name="chartErrorInfo"></slot>
+    <div class="single-value-icon__box" >
       <div class="single-value__icon"><i :class="icon"></i></div>
     </div>
     <div class="single-value__content" v-if="type === 51">

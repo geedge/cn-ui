@@ -1,6 +1,7 @@
 <template>
   <div class="cn-chart cn-chart__echarts" :class="{'cn-chart__echarts--statistics': isEchartsWithStatistics}">
-    <div class="cn-chart__header" v-if="layout.indexOf(layoutConstant.HEADER) > -1">
+    <div class="cn-chart__header chart-header-position" v-if="layout.indexOf(layoutConstant.HEADER) > -1" >
+      <slot name="chartErrorInfo"></slot>
       <div class="header__title">
         <slot name="title"></slot>
       </div>

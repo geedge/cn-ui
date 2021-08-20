@@ -30,6 +30,13 @@
       :style="computePosition"
       :loading="loading"
   >
+    <template #chartErrorInfo>
+          <chart-error
+                  :isError="isError"
+                  :errorInfo="errorInfo"
+          >
+          </chart-error>
+    </template>
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
 <!--      <i class="cn-icon cn-icon-more-light"></i>-->
@@ -48,6 +55,13 @@
       :loading="loading"
       :no-data="noData"
   >
+      <template #chartErrorInfo>
+          <chart-error
+                  :isError="isError"
+                  :errorInfo="errorInfo"
+          >
+          </chart-error>
+      </template>
     <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </template>
@@ -87,6 +101,13 @@
       :icon="singleValue.icon"
       v-loading="loading"
   >
+      <template #chartErrorInfo>
+          <chart-error
+                  :isError="isError"
+                  :errorInfo="errorInfo"
+          >
+          </chart-error>
+      </template>
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
       <span>{{handleSingleValue[0] ? handleSingleValue[0] : '-'}}</span>
@@ -105,6 +126,13 @@
       :loading="loading"
       :no-data="noData"
   >
+      <template #chartErrorInfo>
+          <chart-error
+                  :isError="isError"
+                  :errorInfo="errorInfo"
+          >
+          </chart-error>
+      </template>
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
 <!--      <div class="header__operation header__operation&#45;&#45;table">
@@ -180,6 +208,7 @@ import {
   isTabs,
   getChartColor
 } from '@/components/charts/chart-options'
+import ChartError from '@/components/charts/ChartError'
 import EchartsFrame from '@/components/charts/EchartsFrame'
 import SingleValue from '@/components/charts/ChartSingleValue'
 import ChartTable from '@/components/charts/ChartTable'
@@ -210,7 +239,8 @@ export default {
     ChartTable,
     PieTable,
     StatisticsLegend,
-    ChartMap
+    ChartMap,
+    ChartError
   },
   data () {
     return {
@@ -235,7 +265,10 @@ export default {
       chartOption: null,
       loading: true,
       noData: false, // 查询结果为空
-      throttle: null // 节流器
+      throttle: null, // 节流器
+      isError:false,//接口响应是否报错
+      errorInfo:"",//接口具体错误信息
+
     }
   },
   methods: {
@@ -275,6 +308,9 @@ export default {
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
                 this.singleValue.value = response.data.result
+              }else {
+                  this.isError = true;
+                  this.errorInfo = response.message;
               }
               if (this.isSingleValueWithEcharts) { // 带曲线的单值图
                 const dom = document.getElementById(`chart${this.chartInfo.id}`)
@@ -294,6 +330,9 @@ export default {
                         }
                       }
                     })
+                  }else {
+                      this.isError = true;
+                      this.errorInfo = response.message;
                   }
                   this.myChart.setOption(this.chartOption)
                   this.$nextTick(() => {
@@ -477,6 +516,9 @@ export default {
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
           }
+        }else {
+            this.isError = true;
+            this.errorInfo = response.message;
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
@@ -583,6 +625,9 @@ export default {
             }
             this.chartOption.grid.left = 75
           }
+        }else {
+            this.isError = true;
+            this.errorInfo = response.message;
         }
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -697,6 +742,9 @@ export default {
               }
             }
           })
+        }else {
+            this.isError = true;
+            this.errorInfo = response.message;
         }
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -752,9 +800,15 @@ export default {
             get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
               if (response2.code === 200) {
                 this.pieTableData = response2.data.result
+              }else {
+                  this.isError = true;
+                  this.errorInfo = response.message;
               }
             })
           }
+        }else {
+            this.isError = true;
+            this.errorInfo = response.message;
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
@@ -823,6 +877,9 @@ export default {
           this.table.tableData = response.data.result
           this.table.tableColumns = this.getTableTitle(response.data.result)
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
+        }else {
+            this.isError = true;
+            this.errorInfo = response.message;
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
