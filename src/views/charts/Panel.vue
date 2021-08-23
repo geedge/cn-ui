@@ -69,7 +69,8 @@ export default {
     tabTitle () {
       let title
       switch (this.typeName) {
-        case 'ipEntityDetail': {
+        case 'clientIpEntityDetail':
+        case 'serverIpEntityDetail': {
           title = this.$t('entities.ipDetail')
           break
         }

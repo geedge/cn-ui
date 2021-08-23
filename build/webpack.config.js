@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
 const webpack = require('webpack')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
@@ -14,10 +15,6 @@ const externals = [
       commonjs2: 'vue'
     }
   }
-]
-const plugins = [
-  new VueLoaderPlugin()
-  // new BundleAnalyzerPlugin(),
 ]
 
 const entry = path.resolve(__dirname, '../packages/element-plus/index.ts')
@@ -66,5 +63,21 @@ const config = {
   externals,
   plugins
 }
+
+const plugins = [
+  new VueLoaderPlugin(),
+  new UglifyJsPlugin({
+    uglifyOptions: {
+      compress: {
+        warnings: false,
+        drop_console: true
+      }
+    },
+    exclude: /manifest.+js/,
+    sourceMap: config.build.productionSourceMap,
+    parallel: true
+  })
+  // new BundleAnalyzerPlugin(),
+]
 
 module.exports = config
