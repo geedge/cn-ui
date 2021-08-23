@@ -310,7 +310,8 @@ export default {
                 this.singleValue.value = response.data.result
               }else {
                   this.isError = true;
-                  this.errorInfo = response.msg;
+                  this.noData = true
+                  this.errorInfo = response.msg||response.message||'Unknown';
               }
               if (this.isSingleValueWithEcharts) { // 带曲线的单值图
                 const dom = document.getElementById(`chart${this.chartInfo.id}`)
@@ -332,7 +333,8 @@ export default {
                     })
                   }else {
                       this.isError = true;
-                      this.errorInfo = response.msg;
+                      this.noData = true
+                      this.errorInfo = response.msg||response.message||'Unknown';
                   }
                   this.myChart.setOption(this.chartOption)
                   this.$nextTick(() => {
@@ -518,7 +520,8 @@ export default {
           }
         }else {
             this.isError = true;
-            this.errorInfo = response.msg;
+            this.noData = true
+            this.errorInfo = response.msg||response.message||'Unknown';
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
@@ -627,7 +630,8 @@ export default {
           }
         }else {
             this.isError = true;
-            this.errorInfo = response.msg;
+            this.noData = true
+            this.errorInfo = response.msg||response.message||'Unknown';
         }
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -744,7 +748,8 @@ export default {
           })
         }else {
             this.isError = true;
-            this.errorInfo = response.msg;
+            this.noData = true;
+            this.errorInfo = response.msg||response.message||'Unknown';
         }
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -802,13 +807,15 @@ export default {
                 this.pieTableData = response2.data.result
               }else {
                   this.isError = true;
-                  this.errorInfo = response.msg;
-              }
+                  this.noData = true
+                  this.errorInfo = response.msg||response.message||'Unknown';
+            }
             })
           }
         }else {
             this.isError = true;
-            this.errorInfo = response.msg;
+            this.noData = true
+            this.errorInfo = response.msg||response.message||'Unknown';
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
@@ -879,7 +886,8 @@ export default {
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
         }else {
             this.isError = true;
-            this.errorInfo = response.msg;
+            this.noData = true
+            this.errorInfo = response.msg||response.message||'Unknown';
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
