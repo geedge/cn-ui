@@ -48,22 +48,60 @@
       </el-dropdown>
     </div>
 <!--    <change-password :cur-user="username" :show-dialog="showChangePin" @click="showPinDialog" @dialogClosed="dialogClosed"></change-password>-->
+    <el-dialog title="提示"
+               v-model="showChangePin"
+               width="30%"
+               :before-close="handleClose">
+      <el-form  :rules="changePassFormRules" :model="changePassForm" ref="changePassForm">
+        <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="旧密码" prop="oldPass">
+                <el-input v-model="changePassForm.oldPass" type="password"></el-input>
+              </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="新密码" prop="newPass">
+              <el-input v-model="changePassForm.newPass" type="password"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="确认新密码" prop="newPass2">
+              <el-input v-model="changePassForm.newPass2" type="password"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+    <span class="dialog-footer">
+      <el-button @click="showChangePin = false">取 消</el-button>
+      <el-button type="primary" @click="submit">确认更改密码</el-button>
+    </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { useRoute } from 'vue-router'
-import { get } from '@/utils/http'
+import { get, put } from '@/utils/http'
 import { entityType, storageKey } from '@/utils/constants'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'Header',
   data () {
+    const passwordYN = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.changePassForm.newPass) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       username: 'admin', // sessionStorage.getItem('cn-username'),
       language: localStorage.getItem('cn-language') ? localStorage.getItem('cn-language') : 'en',
-
       showChangePin: false,
-
       breadcrumbMap: [
         {
           path: '/panel/trafficSummary',
@@ -101,7 +139,17 @@ export default {
           name: 'I18N'
         }
       ],
-      from: '' // entity类型
+      from: '', // entity类型
+      changePassForm: {
+        oldPass: '',
+        newPass: '',
+        newPass2: ''
+      },
+      changePassFormRules: {
+        oldPass: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
+        newPass: [{ required: true, message: '请输入新密码', trigger: 'blur' }],
+        newPass2: [{ required: true, message: '请输入新密码', trigger: 'blur' }, { validator: passwordYN, trigger: 'blur' }]
+      }
     }
   },
   computed: {
@@ -153,6 +201,9 @@ export default {
     }
   },
   methods: {
+    handleClose () {
+      this.showChangePin = false
+    },
     changeLocal (lang) {
       if (lang !== localStorage.getItem('cn-language')) {
         localStorage.setItem('cn-language', lang)
@@ -176,6 +227,25 @@ export default {
     },
     shrink () {
       this.$store.commit('isShrink', !this.isShrink)
+    },
+    submit () {
+      this.$refs.changePassForm.validate((valid) => {
+        if (valid) {
+          put('sys/user/pin', { oldPin: this.changePassForm.oldPass, newPin: this.changePassForm.newPass }).then(res => {
+            if (res.code === 200) {
+              ElMessage.success({
+                message: '密码修改成功',
+                type: 'success'
+              })
+              this.showChangePin = false
+            } else if (res.msg == 'user oldpwd error') {
+              ElMessage.error('密码错误')
+            }
+          })
+        } else {
+          return false
+        }
+      })
     }
   }
 }
