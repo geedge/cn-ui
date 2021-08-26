@@ -37,7 +37,7 @@ export const panelTypeAndRouteMapping = {
   trafficSummary: 1,
   networkAppPerformance: 2,
   dnsServiceInsights: 3,
-  clientIpEntityDetail: 4,
+  ipEntityDetail: 4,//此为clientIP
   domainEntityDetail: 5,
   appEntityDetail: 6,
   serverIpEntityDetail: 7

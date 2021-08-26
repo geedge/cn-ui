@@ -6,7 +6,7 @@
         <span style="padding-left: 15px; color: #333;">{{tabTitle}}</span>
       </div>
       <el-radio-group v-model="tab" size="mini" @change="changeTab">
-        <el-radio-button v-for="tab in tabs" :key="tab.key" :label="tab.label"></el-radio-button>
+        <el-radio-button v-for="tabTmp in tabs"   :label="tabTmp.key" >{{tabTmp.label}}</el-radio-button>
       </el-radio-group>
     </div>
     <div class="cn-panel" id="cn-panel" :style="{height: typeName ? 'calc(100% - 80px)' : ''}">
@@ -69,7 +69,10 @@ export default {
     tabTitle () {
       let title
       switch (this.typeName) {
-        case 'clientIpEntityDetail':
+        case 'ipEntityDetail':{//client IP
+          title = this.$t('entities.ipDetail')
+          break
+        }
         case 'serverIpEntityDetail': {
           title = this.$t('entities.ipDetail')
           break
@@ -93,7 +96,7 @@ export default {
   setup (props, ctx) {
     let tab = ''
     if (!_.isEmpty(props.tabs)) {
-      tab = ref(props.tabs[0].label)
+      tab = ref(props.tabs[0].key)
     }
     // data
     const dateRangeValue = 60
@@ -115,7 +118,15 @@ export default {
     goBack () {
       this.$emit('goBack')
     },
-    changeTab (label) {
+    async changeTab (label) {
+      let routePath;
+      if(label=='clientIP'){
+        routePath = 'ipEntityDetail';
+      }else if(label=='serverIP'){
+        routePath = 'serverIpEntityDetail';
+      }
+      this.panelType = panelTypeAndRouteMapping[routePath];
+      await this.init();
     },
     async init () {
       const panels = await getPanelList({ type: this.panelType })
