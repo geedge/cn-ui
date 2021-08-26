@@ -63,7 +63,7 @@ export default {
       },
       pageObjRight: {
         pageNo: 1,
-        pageSize: 50,
+        pageSize: 20,
         total: 0
       },
       showDetail: false,
@@ -138,7 +138,7 @@ export default {
       }
       this.pageObjRight = {
         pageNo: 1,
-        pageSize: 50
+        pageSize: 20
       }
       this.searchParams = null
       this.searchParams = []
