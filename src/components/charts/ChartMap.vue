@@ -28,7 +28,7 @@ export default {
   data () {
     return {
       errorContent: '出错了。。。',
-      isError: true,
+      isError: true
     }
   }
 }

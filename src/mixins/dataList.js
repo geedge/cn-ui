@@ -70,7 +70,7 @@ export default {
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       this.tools.loading = true
       // console.log(typeof this.searchLabel)
-      console.log(delete  this.searchLabel.total)
+      console.log(delete this.searchLabel.total)
       get(this.url, this.searchLabel).then(response => {
         this.tools.loading = false
         if (response.code === 200) {

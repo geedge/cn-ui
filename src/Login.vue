@@ -40,7 +40,6 @@
 <script>
 import { mapActions } from 'vuex'
 import { post } from '@/utils/http'
-import { ElMessage } from 'element-plus'
 export default {
 
   name: 'Login',
@@ -64,18 +63,19 @@ export default {
       // }
       post('sys/login', { username: this.username, pin: this.pin }).then(
         res => {
-          if (res.code === 200 && res.msg == 'success') {
-            this.loading = true
-            this.blockOperation.query = true
+          if (res.code === 200) {
             this.loginSuccess(res)
             localStorage.setItem('cn-username', this.username)
+          } else if (res.code === 518005) {
+            this.$message.error(this.$t('tip.incorrectUsernameOrPassword'))
           } else {
-            this.loading = false
-            this.blockOperation.query = false
-            ElMessage.error('密码错误')
+            this.$message.error(this.$t('tip.unknownError'))
           }
         }
-      )
+      ).finally(() => {
+        this.loading = false
+        this.blockOperation.query = false
+      })
     }
   }
 }

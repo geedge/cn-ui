@@ -23,7 +23,7 @@ export default {
   name: 'ChartError',
   props: {
     isError: Boolean,
-    errorInfo:String
+    errorInfo: String
   }
 }
 </script>

@@ -392,11 +392,15 @@ export function replaceUrlPlaceholder (url, params) {
   _.forIn(params, (value, key) => {
     url = url.replace('{{' + key + '}}', value)
   })
-  return doubleQuotationToSingle(url)
+  return url
 }
 // 双引号替换为单引号
 export function doubleQuotationToSingle (content) {
   return content.replace(/\"/g, "'")
+}
+// 双引号加斜杠转义
+export function doubleQuotationEscape (content) {
+  return content.replace(/\"/g, '\\\"')
 }
 // 下划线转换驼峰
 export function lineToHump (name) {
@@ -458,5 +462,3 @@ function JSONParse (data) {
     return firstParse
   }
 }
-
-

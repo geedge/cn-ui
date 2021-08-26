@@ -82,7 +82,7 @@ export default {
   },
   data () {
     return {
-      keyWord:"",
+      keyWord: '',
       fromRoute: fromRoute,
       tools: {
         showCustomTableTitle: false // 自定义列弹框是否显示

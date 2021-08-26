@@ -38,44 +38,43 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item>
-              <div id="header-to-changepin" @click="showPinDialog">Change pin</div>
+              <div id="header-to-changepin" @click="showPinDialog">{{$t('overall.changePin')}}</div>
             </el-dropdown-item>
             <el-dropdown-item>
-              <div id="header-to-logout" @click="logout">Sign out</div>
+              <div id="header-to-logout" @click="logout">{{$t('overall.logout')}}</div>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </div>
 <!--    <change-password :cur-user="username" :show-dialog="showChangePin" @click="showPinDialog" @dialogClosed="dialogClosed"></change-password>-->
-    <el-dialog title="提示"
-               v-model="showChangePin"
+    <el-dialog v-model="showChangePin"
                width="30%"
                :before-close="handleClose">
       <el-form  :rules="changePassFormRules" :model="changePassForm" ref="changePassForm">
         <el-row :gutter="20">
             <el-col :span="24">
-              <el-form-item label="旧密码" prop="oldPass">
-                <el-input v-model="changePassForm.oldPass" type="password"></el-input>
+              <el-form-item :label="$t('overall.currentPassword')" prop="oldPwd">
+                <el-input v-model="changePassForm.oldPwd" type="password"></el-input>
               </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="新密码" prop="newPass">
-              <el-input v-model="changePassForm.newPass" type="password"></el-input>
+            <el-form-item :label="$t('overall.newPassword')" prop="newPwd">
+              <el-input v-model="changePassForm.newPwd" type="password"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="确认新密码" prop="newPass2">
-              <el-input v-model="changePassForm.newPass2" type="password"></el-input>
+            <el-form-item :label="$t('overall.confirmNewPassword')" prop="newPwd2">
+              <el-input v-model="changePassForm.newPwd2" type="password"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <template #footer>
-    <span class="dialog-footer">
-      <el-button @click="showChangePin = false">取 消</el-button>
-      <el-button type="primary" @click="submit">确认更改密码</el-button>
-    </span>
+        <span class="dialog-footer">
+          <el-button @click="showChangePin = false">{{$t('overall.cancel')}}</el-button>
+          <el-button type="primary" @click="submit">{{$t('overall.update')}}</el-button>
+        </span>
       </template>
     </el-dialog>
   </div>
@@ -85,15 +84,12 @@
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
 import { entityType, storageKey } from '@/utils/constants'
-import { ElMessage } from 'element-plus'
 export default {
   name: 'Header',
   data () {
-    const passwordYN = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.changePassForm.newPass) {
-        callback(new Error('两次输入密码不一致!'))
+    const passwordComparison = (rule, value, callback) => {
+      if (value !== this.changePassForm.newPwd) {
+        callback(new Error(this.$t('validate.passwordConsistent')))
       } else {
         callback()
       }
@@ -141,14 +137,14 @@ export default {
       ],
       from: '', // entity类型
       changePassForm: {
-        oldPass: '',
-        newPass: '',
-        newPass2: ''
+        oldPwd: '',
+        newPwd: '',
+        newPwd2: ''
       },
       changePassFormRules: {
-        oldPass: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
-        newPass: [{ required: true, message: '请输入新密码', trigger: 'blur' }],
-        newPass2: [{ required: true, message: '请输入新密码', trigger: 'blur' }, { validator: passwordYN, trigger: 'blur' }]
+        oldPwd: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }],
+        newPwd: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }],
+        newPwd2: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }, { validator: passwordComparison, trigger: 'blur' }]
       }
     }
   },
@@ -231,15 +227,12 @@ export default {
     submit () {
       this.$refs.changePassForm.validate((valid) => {
         if (valid) {
-          put('sys/user/pin', { oldPin: this.changePassForm.oldPass, newPin: this.changePassForm.newPass }).then(res => {
+          put('sys/user/pin', { oldPin: this.changePassForm.oldPwd, newPin: this.changePassForm.newPwd }).then(res => {
             if (res.code === 200) {
-              ElMessage.success({
-                message: '密码修改成功',
-                type: 'success'
-              })
+              this.$message.success('Success')
               this.showChangePin = false
-            } else if (res.msg == 'user oldpwd error') {
-              ElMessage.error('密码错误')
+            } else if (res.code === 518005) {
+              this.$message.error('密码错误')
             }
           })
         } else {

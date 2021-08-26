@@ -1,9 +1,9 @@
 <template>
   <!-- 标题 -->
   <div
-      v-if="isTitle"
-      class="cn-chart cn-chart__title"
-      :style="computePosition">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
+    v-if="isTitle"
+    class="cn-chart cn-chart__title"
+    :style="computePosition">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
   <!-- Tabs -->
   <el-tabs
       class="cn-chart cn-chart__tabs"
@@ -14,10 +14,10 @@
       :ref="`chart-${chart.id}`"
   >
     <el-tab-pane
-        v-for="tab in chartInfo.children"
-        :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
-        :key="tab.id"
-        :ref="`chart-${chart.id}`"
+      v-for="tab in chartInfo.children"
+      :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
+      :key="tab.id"
+      :ref="`chart-${chart.id}`"
     >
       <template v-for="chart in tab.children">
         <chart v-if="activeTab == tab.id" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
@@ -31,11 +31,11 @@
       :loading="loading"
   >
     <template #chartErrorInfo>
-          <chart-error
-                  :isError="isError"
-                  :errorInfo="errorInfo"
-          >
-          </chart-error>
+      <chart-error
+        :isError="isError"
+        :errorInfo="errorInfo"
+      >
+      </chart-error>
     </template>
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
@@ -48,20 +48,20 @@
   </chart-map>
   <!-- echarts类的图，如饼图、柱状图、折线图等 -->
   <echarts-frame
-      v-else-if="isEcharts"
-      :layout="layout"
-      :style="computePosition"
-      :chartInfo="chartInfo"
-      :loading="loading"
-      :no-data="noData"
+    v-else-if="isEcharts"
+    :layout="layout"
+    :style="computePosition"
+    :chartInfo="chartInfo"
+    :loading="loading"
+    :no-data="noData"
   >
-      <template #chartErrorInfo>
-          <chart-error
-                  :isError="isError"
-                  :errorInfo="errorInfo"
-          >
-          </chart-error>
-      </template>
+    <template #chartErrorInfo>
+      <chart-error
+        :isError="isError"
+        :errorInfo="errorInfo"
+      >
+      </chart-error>
+    </template>
     <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </template>
@@ -95,19 +95,19 @@
   </echarts-frame>
   <!-- 单值图 -->
   <single-value
-      v-else-if="isSingleValue"
-      :type="chartInfo.type"
-      :style="computePosition"
-      :icon="singleValue.icon"
-      v-loading="loading"
+    v-else-if="isSingleValue"
+    :type="chartInfo.type"
+    :style="computePosition"
+    :icon="singleValue.icon"
+    v-loading="loading"
   >
-      <template #chartErrorInfo>
-          <chart-error
-                  :isError="isError"
-                  :errorInfo="errorInfo"
-          >
-          </chart-error>
-      </template>
+    <template #chartErrorInfo>
+      <chart-error
+        :isError="isError"
+        :errorInfo="errorInfo"
+      >
+      </chart-error>
+    </template>
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
       <span>{{handleSingleValue[0] ? handleSingleValue[0] : '-'}}</span>
@@ -119,20 +119,20 @@
   </single-value>
   <!-- 表格 -->
   <chart-table
-      v-else-if="isTable"
-      :table-columns="table.tableColumns"
-      :table-data="table.currentPageData"
-      :style="computePosition"
-      :loading="loading"
-      :no-data="noData"
+    v-else-if="isTable"
+    :table-columns="table.tableColumns"
+    :table-data="table.currentPageData"
+    :style="computePosition"
+    :loading="loading"
+    :no-data="noData"
   >
-      <template #chartErrorInfo>
-          <chart-error
-                  :isError="isError"
-                  :errorInfo="errorInfo"
-          >
-          </chart-error>
-      </template>
+    <template #chartErrorInfo>
+      <chart-error
+        :isError="isError"
+        :errorInfo="errorInfo"
+      >
+      </chart-error>
+    </template>
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
 <!--      <div class="header__operation header__operation&#45;&#45;table">
@@ -266,8 +266,8 @@ export default {
       loading: true,
       noData: false, // 查询结果为空
       throttle: null, // 节流器
-      isError:false,//接口响应是否报错
-      errorInfo:"",//接口具体错误信息
+      isError: false, // 接口响应是否报错
+      errorInfo: ''// 接口具体错误信息
 
     }
   },
@@ -308,10 +308,10 @@ export default {
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
                 this.singleValue.value = response.data.result
-              }else {
-                  this.isError = true;
-                  this.noData = true
-                  this.errorInfo = response.msg||response.message||'Unknown';
+              } else {
+                this.isError = true
+                this.noData = true
+                this.errorInfo = response.msg || response.message || 'Unknown'
               }
               if (this.isSingleValueWithEcharts) { // 带曲线的单值图
                 const dom = document.getElementById(`chart${this.chartInfo.id}`)
@@ -331,10 +331,10 @@ export default {
                         }
                       }
                     })
-                  }else {
-                      this.isError = true;
-                      this.noData = true
-                      this.errorInfo = response.msg||response.message||'Unknown';
+                  } else {
+                    this.isError = true
+                    this.noData = true
+                    this.errorInfo = response.msg || response.message || 'Unknown'
                   }
                   this.myChart.setOption(this.chartOption)
                   this.$nextTick(() => {
@@ -372,19 +372,53 @@ export default {
     getTitle (r) {
       let title = ''
       if (r.establishLatency || r.httpResponseLatency || r.sslConLatency) {
-        title = `: ${unitConvert(r.establishLatency || r.httpResponseLatency || r.sslConLatency, unitTypes.time).join(' ')}`
+        title += `: ${unitConvert(r.establishLatency || r.httpResponseLatency || r.sslConLatency, unitTypes.time).join(' ')}`
       }
       if (r.sequenceGapLossPercent || r.pktRetransPercent) {
         const d = unitConvert(r.sequenceGapLossPercent || r.pktRetransPercent, unitTypes.number)
-        title = d[0] === '0.00' ? ': 0' : `: ${d.join(' ')} %`
+        title += d[0] === '0.00' ? ': 0' : `: ${d.join(' ')} %`
       }
       if (r.sessions) {
-        title = `\nSessions: ${unitConvert(r.sessions, unitTypes.number).join(' ')}`
+        title += `\nSessions: ${unitConvert(r.sessions, unitTypes.number).join(' ')}`
+      }
+      if (r.packets) {
+        title += `\nPackets: ${unitConvert(r.packets, unitTypes.number).join(' ')}`
       }
       if (r.bytes) {
-        title = `\nBytes: ${unitConvert(r.bytes, unitTypes.byte).join(' ')}`
+        title += `\nBytes: ${unitConvert(r.bytes, unitTypes.byte).join(' ')}`
       }
       title = title || ': 0'
+      return title
+    },
+    getTitle2 (item, valueColumn) {
+      let title = ''
+      switch (valueColumn) {
+        case 'sessions': {
+          title = `\nSessions: ${unitConvert(item.value, unitTypes.number).join(' ')}`
+          break
+        }
+        case 'packets': {
+          title = `\nPackets: ${unitConvert(item.value, unitTypes.number).join(' ')}`
+          break
+        }
+        case 'bytes': {
+          title = `\nBytes: ${unitConvert(item.value, unitTypes.byte).join(' ')}`
+          break
+        }
+        case 'establishLatency':
+        case 'httpResponseLatency':
+        case 'sslConLatency': {
+          const result = unitConvert(item.value, unitTypes.time)
+          title = `: ${result[0] === 0 ? 0 : result.join(' ')}`
+          break
+        }
+        case 'sequenceGapLossPercent':
+        case 'pktRetransPercent': {
+          title = `: ${unitConvert(item.value, unitTypes.number).join(' ')}`
+          break
+        }
+        default: break
+      }
       return title
     },
     changeTab (tab) {
@@ -482,12 +516,22 @@ export default {
             })
             imageSeries.data = pointData
           } else if (this.isMapBlock) {
-            const seriesData = data.map(r => {
-              const value = r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions
+            const sumData = []
+            data.forEach(r => {
+              const hit = sumData.find(s => s.id === r.serverId)
+              if (hit) {
+                hit.value += Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
+              } else {
+                sumData.push({
+                  id: r.serverId,
+                  value: Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
+                })
+              }
+            })
+            const seriesData = sumData.map(r => {
               return {
-                id: r.serverId,
-                title: this.getTitle(r),
-                value: value || 0
+                ...r,
+                title: this.getTitle2(r, chartParams.valueColumn)
               }
             })
             polygonSeries.data = [...seriesData]
@@ -513,15 +557,26 @@ export default {
             heatLegend.marginLeft = 15
             heatLegend.valign = 'bottom'
 
+            const minRange = heatLegend.valueAxis.axisRanges.create()
+            minRange.value = heatLegend.minValue
+            minRange.label.text = minRange.value === 0 ? 0 : unitConvert(heatLegend.minValue, chartParams.unitType).join(' ')
+            const maxRange = heatLegend.valueAxis.axisRanges.create()
+            maxRange.value = heatLegend.maxValue
+            maxRange.label.text = maxRange.value === 0 ? 0 : unitConvert(heatLegend.maxValue, chartParams.unitType).join(' ')
+
+            heatLegend.valueAxis.renderer.labels.template.adapter.add('text', function (labelText) {
+              return ''
+            })
+
             const polygonTemplate = polygonSeries.mapPolygons.template
             polygonTemplate.tooltipText = '{name}{title}'
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
           }
-        }else {
-            this.isError = true;
-            this.noData = true
-            this.errorInfo = response.msg||response.message||'Unknown';
+        } else {
+          this.isError = true
+          this.noData = true
+          this.errorInfo = response.msg || response.message || 'Unknown'
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
@@ -628,10 +683,10 @@ export default {
             }
             this.chartOption.grid.left = 75
           }
-        }else {
-            this.isError = true;
-            this.noData = true
-            this.errorInfo = response.msg||response.message||'Unknown';
+        } else {
+          this.isError = true
+          this.noData = true
+          this.errorInfo = response.msg || response.message || 'Unknown'
         }
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -746,10 +801,10 @@ export default {
               }
             }
           })
-        }else {
-            this.isError = true;
-            this.noData = true;
-            this.errorInfo = response.msg||response.message||'Unknown';
+        } else {
+          this.isError = true
+          this.noData = true
+          this.errorInfo = response.msg || response.message || 'Unknown'
         }
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -805,17 +860,17 @@ export default {
             get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
               if (response2.code === 200) {
                 this.pieTableData = response2.data.result
-              }else {
-                  this.isError = true;
-                  this.noData = true
-                  this.errorInfo = response.msg||response.message||'Unknown';
-            }
+              } else {
+                this.isError = true
+                this.noData = true
+                this.errorInfo = response.msg || response.message || 'Unknown'
+              }
             })
           }
-        }else {
-            this.isError = true;
-            this.noData = true
-            this.errorInfo = response.msg||response.message||'Unknown';
+        } else {
+          this.isError = true
+          this.noData = true
+          this.errorInfo = response.msg || response.message || 'Unknown'
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
@@ -884,10 +939,10 @@ export default {
           this.table.tableData = response.data.result
           this.table.tableColumns = this.getTableTitle(response.data.result)
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
-        }else {
-            this.isError = true;
-            this.noData = true
-            this.errorInfo = response.msg||response.message||'Unknown';
+        } else {
+          this.isError = true
+          this.noData = true
+          this.errorInfo = response.msg || response.message || 'Unknown'
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
