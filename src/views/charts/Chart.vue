@@ -267,8 +267,8 @@ export default {
       noData: false, // 查询结果为空
       throttle: null, // 节流器
       isError: false, // 接口响应是否报错
-      errorInfo: ''// 接口具体错误信息
-
+      errorInfo: '', // 接口具体错误信息
+      polygonSeries: null
     }
   },
   methods: {
@@ -278,10 +278,12 @@ export default {
         const chartParams = this.chartInfo.params
         if (this.isMap) {
           const { chart, polygonSeries } = this.initMap(`chart${this.chartInfo.id}`)
-          !this.myChart && (this.myChart = chart)
+          this.myChart = chart
+          this.polygonSeries = polygonSeries
           if (chartParams) {
-            this.loadMap(polygonSeries)
+            this.loadMap(this.polygonSeries)
           }
+          // TODO 优化：缓存地图，重新查询时只更改数据不再次初始化
         } else if (this.isEcharts) {
           const dom = document.getElementById(`chart${this.chartInfo.id}`)
           !this.myChart && (this.myChart = echarts.init(dom))
