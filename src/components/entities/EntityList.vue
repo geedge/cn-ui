@@ -35,7 +35,7 @@
               <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
             <div class="body__detail"
-                 @click="entityDetail({clientIP: d.ip}, [{key: 'clientIP', label: $t('overall.clientIp')}, {key: 'serverIP', label: $t('overall.serverIp')}])">{{$t('overall.detail')}}></div>
+                 @click="entityDetail({ip: d.ip}, [{key: 'clientIP', label: $t('overall.clientIp')}, {key: 'serverIP', label: $t('overall.serverIp')}])">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="from === 'domain'">
             <div class="body__row">

@@ -6,7 +6,7 @@
         <span style="padding-left: 15px; color: #333;">{{tabTitle}}</span>
       </div>
       <el-radio-group v-model="tab" size="mini" @change="changeTab">
-        <el-radio-button v-for="tabTmp in tabs"   :label="tabTmp.key" >{{tabTmp.label}}</el-radio-button>
+        <el-radio-button v-for="tabTmp in tabs" :key="tabTmp.key" :label="tabTmp.key" >{{tabTmp.label}}</el-radio-button>
       </el-radio-group>
     </div>
     <div class="cn-panel" id="cn-panel" :style="{height: typeName ? 'calc(100% - 80px)' : ''}">

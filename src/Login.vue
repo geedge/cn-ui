@@ -71,10 +71,13 @@ export default {
           } else {
             this.$message.error(this.$t('tip.unknownError'))
           }
+          this.loading = false
+          this.blockOperation.query = false
         }
-      ).finally(() => {
+      ).catch(e => {
         this.loading = false
         this.blockOperation.query = false
+        this.$message.error(this.$t('tip.unknownError'))
       })
     }
   }
