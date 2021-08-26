@@ -82,6 +82,7 @@ export default function unitConvert (value, unitType, sourceUnit, targetUnit, do
       case unitTypes.time: {
         return timeUnitFormatter(value, sourceUnit, targetUnit, dot)
       }
+      case unitTypes.percent:
       case unitTypes.number: {
         return numberUnitConvert(value, sourceUnit, targetUnit, dot)
       }

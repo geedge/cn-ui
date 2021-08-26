@@ -77,7 +77,8 @@ export const unitTypes = {
   time: 'time',
   number: 'number',
   byte: 'byte',
-  string: 'string'
+  string: 'string',
+  percent: 'percent'
 }
 
 export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量

@@ -56,11 +56,12 @@ export default {
       if (!this.username || !this.pin) {
         return
       }
-      // if (!this.blockOperation.query) {
-      //   this.blockOperation.query = true
-      // } else {
-      //   return
-      // }
+      if (!this.blockOperation.query) {
+        this.blockOperation.query = true
+      } else {
+        return
+      }
+      this.loading = true
       post('sys/login', { username: this.username, pin: this.pin }).then(
         res => {
           if (res.code === 200) {

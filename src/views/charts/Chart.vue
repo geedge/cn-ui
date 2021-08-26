@@ -110,7 +110,7 @@
     </template>
     <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
     <template #data>
-      <span>{{handleSingleValue[0] ? handleSingleValue[0] : '-'}}</span>
+      <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
       <span class="single-value__unit">{{handleSingleValue[1]}}</span>
     </template>
     <template #chart>
@@ -968,7 +968,7 @@ export default {
       const unitType = this.chartInfo.params.unitType
       const result = unitConvert(value, unitType)
       switch (unitType) {
-        case unitTypes.number: {
+        case unitTypes.percent: {
           result[0] = result[0] < 0.01 ? '< 0.01' : result[0]
           break
         }
