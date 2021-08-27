@@ -1,10 +1,12 @@
 <template>
   <el-pagination
       small
+      ref="pagination"
       layout="prev,jumper,slot,next"
       class="chart-table-pagination"
       :total="total"
       :page-size="pageSize"
+      v-model:currentPage="pageNo"
       @current-change="current"
   >
     <span>/&nbsp;{{totalPage}}</span>
@@ -20,7 +22,8 @@ export default {
   },
   data () {
     return {
-      pageSize: chartTableDefaultPageSize
+      pageSize: chartTableDefaultPageSize,
+      pageNo: 1
     }
   },
   computed: {
@@ -36,6 +39,10 @@ export default {
   methods: {
     current (val) {
       this.$emit('pageJump', val)
+    },
+    resetPageNo () {
+      console.info(11)
+      this.pageNo = 1
     }
   },
   mounted () {

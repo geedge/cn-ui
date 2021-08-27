@@ -176,6 +176,7 @@
     </template>
     <template #footer>
       <chart-table-pagination
+          ref="tablePagination"
           :total="table.tableData.length"
           @pageJump="pageJump"
       ></chart-table-pagination>
@@ -947,6 +948,9 @@ export default {
           this.errorInfo = response.msg || response.message || 'Unknown'
         }
       }).finally(() => {
+        this.$nextTick(() => {
+          this.$refs.tablePagination.resetPageNo()
+        })
         setTimeout(() => { this.loading = false }, 250)
       })
     },
