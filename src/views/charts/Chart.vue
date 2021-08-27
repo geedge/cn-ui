@@ -945,7 +945,7 @@ export default {
         } else {
           this.isError = true
           this.noData = true
-          this.errorInfo = response.msg || response.message || 'Unknown error'
+          this.errorInfo = response.msg || response.message || this.$t('tip.unknownError')
         }
       }).finally(() => {
         this.$nextTick(() => {

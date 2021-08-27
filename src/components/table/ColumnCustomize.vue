@@ -27,7 +27,7 @@
       </el-button>
       <div>
         <el-button size="mini" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="esc">
-          <span class="top-tool-btn-txt">{{$t('overall.esc')}}</span>
+          <span class="top-tool-btn-txt">{{$t('overall.cancel')}}</span>
         </el-button>
         <el-button size="mini" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" type="button" @click="save" style="background-color: #0091ff;color:#DCDFE6">
           <span class="top-tool-btn-txt">{{$t('overall.save')}}</span>
@@ -130,7 +130,7 @@ export default {
   background: #fff;
   border-radius: 4px;
   z-index: 999999;
-  box-shadow: inset 0 0 10px #CCC;
+  box-shadow: 0 0 10px #CCC;
   box-sizing:border-box
 }
 .pop-custom-explore {
