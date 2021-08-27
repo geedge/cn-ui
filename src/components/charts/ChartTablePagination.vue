@@ -41,7 +41,6 @@ export default {
       this.$emit('pageJump', val)
     },
     resetPageNo () {
-      console.info(11)
       this.pageNo = 1
     }
   },

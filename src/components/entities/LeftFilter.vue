@@ -87,8 +87,6 @@ export default {
       } else {
         this.currentDataBottom = this.$_.cloneDeep(data)
       }
-      console.info(this.currentDataTop)
-      console.info(this.currentDataBottom)
       this.$emit('select', data, node, index, column)
     },
     showMore (filterData) {
