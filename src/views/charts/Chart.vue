@@ -575,7 +575,7 @@ export default {
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
           }
-        } else {
+        } else if (response.code != 200) {
           this.isError = true
           this.noData = true
           this.errorInfo = response.msg || response.message || 'Unknown'
