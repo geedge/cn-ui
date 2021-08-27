@@ -72,8 +72,6 @@ export default {
           } else {
             this.$message.error(this.$t('tip.unknownError'))
           }
-          this.loading = false
-          this.blockOperation.query = false
         }
       ).catch(e => {
         this.loading = false

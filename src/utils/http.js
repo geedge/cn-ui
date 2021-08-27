@@ -45,6 +45,7 @@ axios.interceptors.response.use(
       window.location.href = '/'
     } else if (response.status === 200) {
       if (accountErrorCode.indexOf(response.data.code) !== -1) {
+        sessionStorage.removeItem(storageKey.token)
         window.location.href = '/'
       }
     }

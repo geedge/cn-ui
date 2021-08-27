@@ -38,7 +38,7 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item>
-              <div id="header-to-changepin" @click="showPinDialog">{{$t('overall.changePin')}}</div>
+              <div id="header-to-changepin" @click="showPinDialog">{{$t('overall.changePassword')}}</div>
             </el-dropdown-item>
             <el-dropdown-item>
               <div id="header-to-logout" @click="logout">{{$t('overall.logout')}}</div>
