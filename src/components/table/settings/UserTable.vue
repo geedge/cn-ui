@@ -70,7 +70,6 @@
             </div>
             <template #dropdown>
               <el-dropdown-menu >
-                <el-dropdown-item v-has="'user_edit'" :command="['edit', scope.row]"><i class="cn-icon cn-icon-edit"></i><span class="operation-dropdown-text">{{$t('overall.edit')}}</span></el-dropdown-item>
                 <el-dropdown-item v-has="'user_delete'" :command="['delete', scope.row]" :disabled="scope.row.id === 1"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
               </el-dropdown-menu>
             </template>

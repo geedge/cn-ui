@@ -68,11 +68,11 @@ export default {
             this.loginSuccess(res)
             localStorage.setItem('cn-username', this.username)
           } else if (res.code === 518005) {
-            this.$message.error(this.$t('tip.incorrectUsernameOrPassword'))
+            this.$message.error(this.$t('Incorrect username or password'))
             this.loading = false
             this.blockOperation.query = false
           } else {
-            this.$message.error(this.$t('tip.unknownError'))
+            this.$message.error('Unknown error')
             this.loading = false
             this.blockOperation.query = false
           }
