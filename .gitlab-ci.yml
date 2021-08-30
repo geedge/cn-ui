@@ -34,6 +34,7 @@ build_project:
   stage: build_project
   script:
     - echo "npm install ..."
+    - npm cache clean -f
     - npm install --unsafe-perm
     - echo "npm run build"
     - npm run build
