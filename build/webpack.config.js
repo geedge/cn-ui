@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
-const webpack = require('webpack')
-const CompressionWebpackPlugin = require('compression-webpack-plugin')
-const productionGzipExtensions = ['js', 'css']
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const libMode = process.env.LIBMODE
 const isFullMode = libMode === 'full'
@@ -68,14 +65,6 @@ const config = {
 
 const plugins = [
   new VueLoaderPlugin(),
-  new CompressionWebpackPlugin({
-    filename: '[path].gz[query]',
-    algorithm: 'gzip',
-    test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i, // 匹配文件名
-    threshold: 10240, // 对10K以上的数据进行压缩
-    minRatio: 0.8,
-    deleteOriginalAssets: false // 是否删除源文件
-  })/*,
   new UglifyJsPlugin({
     uglifyOptions: {
       compress: {
@@ -86,8 +75,19 @@ const plugins = [
     exclude: /manifest.+js/,
     sourceMap: config.build.productionSourceMap,
     parallel: true
-  })*/
-  // new BundleAnalyzerPlugin(),
+  }),
+  new BundleAnalyzerPlugin({
+    analyzerMode: 'server',
+    analyzerHost: '127.0.0.1',
+    analyzerPort: 8889,
+    reportFilename: 'report.html',
+    defaultSizes: 'parsed',
+    openAnalyzer: true,
+    generateStatsFile: false,
+    statsFilename: 'stats.json',
+    statsOptions: null,
+    logLevel: 'info'
+  })
 ]
 
 module.exports = config
