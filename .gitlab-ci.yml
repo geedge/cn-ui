@@ -33,6 +33,7 @@ generate_git-log:
 build_project:
   stage: build_project
   script:
+    -  npm install -g cross-env
     - echo "npm install ..."
     - npm install --unsafe-perm
     - echo "npm run build"
