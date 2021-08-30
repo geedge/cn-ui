@@ -107,13 +107,13 @@ export default {
       if (index === 1) {
         this.bottomFilterData = {
           ...this.bottomFilterData,
-          data: this.$_.concat(this.bottomFilterData.data, bottomFilterData),
+          data: this.$_.concat(this.bottomFilterData.data, bottomFilterData.data),
           hasnotMore: bottomFilterData.length < 10
         }
       } else {
         this.topFilterData = {
           ...this.topFilterData,
-          data: this.$_.concat(this.topFilterData.data, topFilterData),
+          data: this.$_.concat(this.topFilterData.data, topFilterData.data),
           hasnotMore: topFilterData.length < 10
         }
       }
