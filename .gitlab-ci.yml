@@ -35,7 +35,7 @@ build_project:
   stage: build_project
   script:
     - echo "npm install ..."
-    - npm install -g --unsafe-perm
+    - npm install --save-dev cross-env --unsafe-perm
     - echo "npm run build"
     - npm run build
   artifacts:
