@@ -1,3 +1,4 @@
+# 自定义生命周期
 stages:
   - gen_git-log
   - build_project
@@ -34,7 +35,7 @@ build_project:
   stage: build_project
   script:
     - echo "npm install ..."
-    - npm install --unsafe-perm
+    - npm install -g --unsafe-perm
     - echo "npm run build"
     - npm run build
   artifacts:
