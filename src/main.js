@@ -7,6 +7,8 @@ import commonMixin from '@/mixins/common'
 import { cancelWithChange, clickOutside, noData } from '@/utils/tools'
 import { ClickOutside } from 'element-plus/lib/directives'
 import i18n from '@/i18n'
+import hljsVuePlugin from '@highlightjs/vue-plugin'
+import 'highlight.js/styles/color-brewer.css'
 import '@/assets/css/main.scss' // 样式入口
 // import VueGridLayout from 'vue-grid-layout'
 import ElementPlus from 'element-plus'
@@ -30,6 +32,7 @@ app.use(router)
 app.use(store)
 app.use(ElementPlus)
 app.use(i18n)
+app.use(hljsVuePlugin)
 // app.use(VueGridLayout)
 
 app.directive('has', hasPermission) // 注册指令

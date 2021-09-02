@@ -10,11 +10,11 @@
             @search="search"
     >
       <template v-slot:top-tool-right>
-        <button id="roles-add" v-has="'role_add'" :title="$t('overall.createRole')" class="top-tool-btn margin-r-10"
+        <button id="roles-add" :title="$t('overall.createRole')" class="top-tool-btn margin-r-10"
                 type="button" @click="add">
           <i class="cn-icon-add cn-icon"></i>
         </button>
-        <delete-button id="role-list-batch-delete" v-has="'role_delete'" :api="url" :delete-objs="batchDeleteObjs" @after="getTableData" @before="delFlag=true"></delete-button>
+        <delete-button id="role-list-batch-delete" :api="url" :delete-objs="batchDeleteObjs" @after="getTableData" @before="delFlag=true"></delete-button>
       </template>
       <template v-slot:default>
         <roles-table
@@ -29,7 +29,7 @@
           @orderBy="tableDataSort"
           @reload="getTableData"
           @selectionChange="selectionChange"
-          @showBottomBox="(targetTab) => { $refs.dataList.showBottomBox(targetTab, object) }"></roles-table>
+        ></roles-table>
       </template>
       <!-- 分页组件 -->
       <template #pagination>
@@ -51,6 +51,7 @@ import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/dataList'
 import rolesTable from '@/components/table/settings/RoleTable'
 import roleBox from '@/components/rightBox/settings/RoleBox'
+import { api } from '@/utils/api'
 
 export default {
   name: 'roles',
@@ -62,27 +63,11 @@ export default {
   mixins: [dataListMixin],
   data () {
     return {
-      url: 'sys/role',
+      url: api.role,
       tableId: 'rolesTable', // 需要分页的table的id，用于记录每页数量
       blankObject: { // 空白对象
         name: ''
-      },
-      searchMsg: { // 给搜索框子组件传递的信息
-        zheze_none: true,
-        searchLabelList: [{
-          id: 10,
-          name: this.$t('config.roles.name'),
-          type: 'input',
-          label: 'name',
-          disabled: false
-        }]
       }
-    }
-  },
-  methods: {
-    edit (row) {
-      this.object = { ...row }
-      this.rightBox.show = true
     }
   }
 }

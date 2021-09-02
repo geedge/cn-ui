@@ -40,18 +40,6 @@ export default {
   methods: {
     tableOperation ([command, row, param]) {
       switch (command) {
-        case 'recordTab': {
-          this.$emit('showBottomBox', 'recordTab', row)
-          break
-        }
-        case 'endpointQuery': {
-          this.$emit('showBottomBox', 'endpointQuery', row)
-          break
-        }
-        case 'fastSilence': {
-          this.$emit('addSilence', row, param)
-          break
-        }
         default:
           this.$emit(command, row)
           break

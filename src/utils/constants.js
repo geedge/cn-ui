@@ -29,7 +29,8 @@ export const fromRoute = {
   trafficSummary: 'trafficSummary',
   networkAppPerformance: 'networkAppPerformance',
   dnsServiceInsights: 'dnsServiceInsights',
-  user: 'user'
+  user: 'user',
+  galaxyProxy: 'galaxyProxy'
 }
 
 /* panel类别和路由之间的映射 */

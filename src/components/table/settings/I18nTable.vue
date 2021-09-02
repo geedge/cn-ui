@@ -32,26 +32,7 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <template v-if="item.prop === 'roles'">
-          <template v-if="scope.row[item.prop]">
-            {{scope.row[item.prop].map(t=>t.name).join(',')}}
-          </template>
-          <template v-else>
-            <span>-</span>
-          </template>
-        </template>
-        <template v-else-if="item.prop === 'status'">
-          <el-switch
-              v-if="scope.row.id"
-              v-model="scope.row.status"
-              :active-color="theme.themeColor"
-              active-value="1"
-              :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id==1) "
-              inactive-value="0"
-              @change="()=>{statusChange(scope.row)}">
-          </el-switch>
-        </template>
-        <span v-else>{{scope.row[item.prop]}}</span>
+        <span>{{scope.row[item.prop]}}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -70,7 +51,7 @@
             </div>
             <template #dropdown>
               <el-dropdown-menu >
-                <el-dropdown-item v-has="'user_delete'" :command="['delete', scope.row]" :disabled="scope.row.id === 1"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
+                <el-dropdown-item :command="['delete', scope.row]" :disabled="scope.row.id === 1"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -82,14 +63,14 @@
 
 <script>
 import table from '@/mixins/table'
-import { put } from '@/utils/http'
+import { api } from '@/utils/api'
 
 export default {
   name: 'I18nTable',
   mixins: [table],
   data () {
     return {
-      loginName: localStorage.getItem('cn-username'),
+      url: api.i18n,
       tableTitle: [ // 原始table列
         {
           label: 'ID',
@@ -122,22 +103,6 @@ export default {
           width: 150
         }
       ]
-    }
-  },
-  methods: {
-    statusChange (i18n) {
-      if (i18n.roles) {
-        i18n.roleIds = i18n.roles.map(t => t.id)
-      }
-      put('sys/i18n', i18n).then(response => {
-        if (response.code === 200) {
-          this.rightBox.show = false
-          this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
-        } else {
-          this.$message.error(response.msg)
-        }
-        this.$emit('reload')
-      })
     }
   }
 }

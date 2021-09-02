@@ -12,6 +12,10 @@ export const api = {
   permission: '/sys/user/permissions',
   i18n: '/sys/i18n/lang',
   dict: '/sys/dict',
+  user: '/sys/user',
+  role: '/sys/role',
+  galaxyProxy: '/galaxy/setting',
+  operationLog: '/sys/log',
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',

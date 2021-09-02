@@ -12,7 +12,6 @@
       <template #top-tool-right>
         <button
           id="account-add"
-          v-has="'user_add'"
           class="top-tool-btn margin-r-10"
           type="button"
           @click="add"
@@ -33,7 +32,6 @@
           @orderBy="tableDataSort"
           @reload="getTableData"
           @selectionChange="selectionChange"
-          @showBottomBox="(targetTab, object) => { $refs.dataList.showBottomBox(targetTab, object) }"
         />
       </template>
       <template #pagination>
@@ -58,7 +56,7 @@ import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/dataList'
 import userTable from '@/components/table/settings/UserTable'
 import userBox from '@/components/rightBox/settings/UserBox'
-import { put } from '@/utils/http'
+import { api } from '@/utils/api'
 
 export default {
   name: 'User',
@@ -70,7 +68,7 @@ export default {
   },
   data () {
     return {
-      url: 'sys/user',
+      url: api.user,
       blankObject: { // 空白对象
         id: '',
         name: '',
@@ -84,8 +82,6 @@ export default {
       },
       tableId: 'userTable'
     }
-  },
-  methods: {
   }
 }
 </script>

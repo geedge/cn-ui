@@ -1,4 +1,4 @@
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
 import { storageKey, iso36112 } from '@/utils/constants'
@@ -461,4 +461,17 @@ function JSONParse (data) {
   } else {
     return firstParse
   }
+}
+
+export function copyValue (item) {
+  const str = item
+  const domUrl = document.createElement('input')
+  domUrl.value = JSON.stringify(str)
+  domUrl.id = 'creatDom'
+  document.body.appendChild(domUrl)
+  domUrl.select() // 选择对象
+  document.execCommand('Copy') // 执行浏览器复制命令
+  const creatDom = document.getElementById('creatDom')
+  creatDom.parentNode.removeChild(creatDom)
+  ElMessage.success(i18n.global.t('tip.copySuccess'))
 }
