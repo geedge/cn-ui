@@ -955,7 +955,7 @@ export default {
       })
     },
     echartsResize () {
-      this.myChart.resize()
+      this.myChart && this.myChart.resize()
     }
   },
   computed: {
