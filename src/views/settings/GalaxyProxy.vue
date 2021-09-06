@@ -53,6 +53,7 @@ import galaxyProxyBox from '@/components/rightBox/settings/GalaxyProxyBox'
 import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
 import dataListMixin from '@/mixins/dataList'
 import { api } from '@/utils/api'
+import {get} from "@/utils/http";
 
 export default {
   name: 'GalaxyProxy',
@@ -69,6 +70,21 @@ export default {
       blankObject: { // 空白对象
         name: ''
       }
+    }
+  },
+  methods: {
+    edit (u) {
+      get(`${this.url}/${u.id}`).then(response => {
+        if (response.code === 200) {
+          const editObject = response.data
+          editObject.targetHeader || (editObject.targetHeader = '')
+          editObject.preHandle || (editObject.preHandle = '')
+          editObject.postHandle || (editObject.postHandle = '')
+          editObject.targetParam || (editObject.targetParam = '')
+          this.object = editObject
+          this.rightBox.show = true
+        }
+      })
     }
   }
 }

@@ -44,19 +44,36 @@
           </el-form-item>
           <!--target param-->
           <el-form-item :label="$t('galaxyProxy.targetParam')" prop="targetParam">
-            <prism-editor class="my-editor" v-model="editObject.targetParam" :highlight="jsonHl" line-numbers></prism-editor>
+<!--            <prism-editor class="my-editor" v-model="editObject.targetParam" :highlight="jsonHl" line-numbers></prism-editor>-->
+            <v-ace-editor
+                v-model:value="editObject.targetParam"
+                lang="json"
+                theme="chrome"
+                style="height: 300px" />
           </el-form-item>
           <!--target header-->
           <el-form-item :label="$t('galaxyProxy.targetHeader')" prop="targetHeader">
-            <prism-editor class="my-editor" v-model="editObject.targetHeader" :highlight="jsonHl" line-numbers></prism-editor>
+            <v-ace-editor
+                v-model:value="editObject.targetHeader"
+                lang="json"
+                theme="chrome"
+                style="height: 300px" />
           </el-form-item>
           <!--pre handle-->
           <el-form-item label="Pre handle" prop="preHandle">
-            <prism-editor class="my-editor" v-model="editObject.preHandle" :highlight="javascriptHl" line-numbers></prism-editor>
+            <v-ace-editor
+                v-model:value="editObject.preHandle"
+                lang="javascript"
+                theme="chrome"
+                style="height: 300px" />
           </el-form-item>
           <!--post handle-->
           <el-form-item label="Post handle" prop="postHandle">
-            <prism-editor class="my-editor" v-model="editObject.postHandle" :highlight="javascriptHl" line-numbers></prism-editor>
+            <v-ace-editor
+                v-model:value="editObject.postHandle"
+                lang="javascript"
+                theme="chrome"
+                style="height: 300px" />
           </el-form-item>
         </el-form>
       </div>
@@ -75,18 +92,16 @@
 <script>
 import rightBoxMixin from '@/mixins/rightBox'
 import { api } from '@/utils/api'
-import { PrismEditor } from 'vue-prism-editor'
-import 'vue-prism-editor/dist/prismeditor.min.css'
-import { highlight, languages } from 'prismjs/components/prism-core'
-import 'prismjs/components/prism-clike'
-import 'prismjs/components/prism-javascript'
-import 'prismjs/themes/prism-tomorrow.css'
+import { VAceEditor } from 'vue3-ace-editor'
+import 'ace-builds/src-noconflict/mode-javascript'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-chrome'
 
 export default {
   name: 'GalaxyProxyBox',
   mixins: [rightBoxMixin],
   components: {
-    PrismEditor
+    VAceEditor
   },
   data () {
     return {
@@ -96,14 +111,6 @@ export default {
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ]
       }
-    }
-  },
-  methods: {
-    jsonHl (code) {
-      return highlight(code, languages.js, 'json')
-    },
-    javascriptHl (code) {
-      return highlight(code, languages.js, 'javascript')
     }
   }
 }
