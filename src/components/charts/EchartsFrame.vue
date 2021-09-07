@@ -9,8 +9,11 @@
         <slot name="operations"></slot>
       </div>
     </div>
-    <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}" v-loading="loading" v-no-data="noData">
+    <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}" v-no-data="noData" v-show="!loading">
       <slot></slot>
+    </div>
+    <div class="cn-chart__body chart__loading" v-show="loading">
+      <i class="el-icon-loading"></i>
     </div>
     <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1 && !noData" :class="{'pie-with-table': isPieWithTable}" v-loading="loading">
       <slot name="footer"></slot>

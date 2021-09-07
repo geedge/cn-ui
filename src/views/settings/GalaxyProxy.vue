@@ -53,7 +53,7 @@ import galaxyProxyBox from '@/components/rightBox/settings/GalaxyProxyBox'
 import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
 import dataListMixin from '@/mixins/dataList'
 import { api } from '@/utils/api'
-import {get} from "@/utils/http";
+import { get } from '@/utils/http'
 
 export default {
   name: 'GalaxyProxy',

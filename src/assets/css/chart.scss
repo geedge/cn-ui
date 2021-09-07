@@ -19,3 +19,14 @@
     font-weight:900;
   }
 }
+.chart__loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fefefe;
+
+  i {
+    font-size: 30px;
+    color: #aaa;
+  }
+}

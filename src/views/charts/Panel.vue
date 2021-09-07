@@ -69,7 +69,7 @@ export default {
     tabTitle () {
       let title
       switch (this.typeName) {
-        case 'ipEntityDetail':{//client IP
+        case 'ipEntityDetail': { // client IP
           title = this.$t('entities.ipDetail')
           break
         }
@@ -119,14 +119,14 @@ export default {
       this.$emit('goBack')
     },
     async changeTab (label) {
-      let routePath;
-      if(label=='clientIP'){
-        routePath = 'ipEntityDetail';
-      }else if(label=='serverIP'){
-        routePath = 'serverIpEntityDetail';
+      let routePath
+      if (label == 'clientIP') {
+        routePath = 'ipEntityDetail'
+      } else if (label == 'serverIP') {
+        routePath = 'serverIpEntityDetail'
       }
-      this.panelType = panelTypeAndRouteMapping[routePath];
-      await this.init();
+      this.panelType = panelTypeAndRouteMapping[routePath]
+      await this.init()
     },
     async init () {
       const panels = await getPanelList({ type: this.panelType })

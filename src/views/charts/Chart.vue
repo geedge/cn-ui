@@ -99,7 +99,7 @@
     :type="chartInfo.type"
     :style="computePosition"
     :icon="singleValue.icon"
-    v-loading="loading"
+    :loading="loading"
   >
     <template #chartErrorInfo>
       <chart-error
