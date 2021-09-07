@@ -1,6 +1,5 @@
 <template>
   <el-table
-      v-loading="loading"
       ref="table"
       class="pie-table"
       :data="pieTableData"
@@ -21,7 +20,6 @@
             style="width: 100%;"
             :show-header="false"
             :size="'mini'"
-            v-loading="subLoading"
             :height="'100%'">
           <el-table-column
               width="48">
@@ -111,7 +109,6 @@ export default {
   },
   data () {
     return {
-      loading: false,
       nameColumn: '',
       pieTableData: [],
       childrenTableData: [],
@@ -169,13 +166,11 @@ export default {
           prop: 'bytes',
           width: '18%'
         }
-      ],
-      subLoading: true
+      ]
     }
   },
   methods: {
     currentChange (row, expandedRows) {
-      this.subLoading = true
       this.childrenTableData = []
       if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
         this.expandRowKeys = []
@@ -196,7 +191,6 @@ export default {
             this.childrenTableData = response2.data.result
           }
         }).finally(() => {
-          this.subLoading = false
         })
       }, 500)
     },
