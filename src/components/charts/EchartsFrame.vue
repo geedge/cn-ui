@@ -12,7 +12,7 @@
     <div class="cn-chart__body" :class="{'pie-with-table': isPieWithTable}" v-no-data="noData">
       <slot></slot>
     </div>
-    <div class="cn-chart__body chart__loading" v-show="loading">
+    <div class="chart__loading" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
     <div class="cn-chart__footer" v-if="layout.indexOf(layoutConstant.FOOTER) > -1 && !noData" :class="{'pie-with-table': isPieWithTable}">

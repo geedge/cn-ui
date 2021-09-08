@@ -12,7 +12,7 @@
     <div class="cn-chart__body">
       <slot></slot>
     </div>
-    <div class="cn-chart__body chart__loading" v-show="loading">
+    <div class="chart__loading" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
     <div class="cn-chart__footer">

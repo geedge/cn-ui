@@ -19,6 +19,12 @@
     font-weight:900;
   }
 }
+.cn-chart__single-value {
+  .chart__loading {
+    top: 0;
+    height: 100%;
+  }
+}
 .chart__loading {
   position: absolute;
   height: calc(100% - 50px);
@@ -28,9 +34,8 @@
 
   i {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    left: calc(50% - 15px);
+    top: calc(50% - 15px);
     font-size: 30px;
     color: #aaa;
   }

@@ -4,7 +4,7 @@
     <div class="single-value-icon__box" >
       <div class="single-value__icon"><i :class="icon"></i></div>
     </div>
-    <div class="single-value__content chart__loading" style="height: 100%; width: 100%;" v-show="loading">
+    <div class="chart__loading" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
     <div class="single-value__content" v-if="type === 51">
