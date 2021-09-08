@@ -9,7 +9,7 @@
         <slot name="operations"></slot>
       </div>
     </div>
-    <div class="cn-chart__body" v-show="!loading">
+    <div class="cn-chart__body">
       <slot></slot>
     </div>
     <div class="cn-chart__body chart__loading" v-show="loading">

@@ -20,12 +20,17 @@
   }
 }
 .chart__loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: absolute;
+  height: calc(100% - 50px);
+  top: 50px;
+  width: 100%;
   background-color: #fefefe;
 
   i {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     font-size: 30px;
     color: #aaa;
   }

@@ -284,7 +284,7 @@ export default {
           if (chartParams) {
             this.loadMap(this.polygonSeries)
           }
-          // TODO 优化：缓存地图，重新查询时只更改数据不再次初始化
+          // TODO 优化：缓存地图，重新查询时只更改数据，不再次初始化
         } else if (this.isEcharts) {
           const dom = document.getElementById(`chart${this.chartInfo.id}`)
           !this.myChart && (this.myChart = echarts.init(dom))
@@ -340,9 +340,6 @@ export default {
                     this.errorInfo = response.msg || response.message || 'Unknown'
                   }
                   this.myChart.setOption(this.chartOption)
-                  this.$nextTick(() => {
-                    this.myChart.resize()
-                  })
                 })
               } else {
                 this.loading = false
@@ -350,7 +347,12 @@ export default {
             }).catch(() => {
               this.singleValue.value = ''
             }).finally(() => {
-              setTimeout(() => { this.loading = false }, 250)
+              setTimeout(() => {
+                this.loading = false
+                this.$nextTick(() => {
+                  this.echartsResize()
+                })
+              }, 250)
             })
           }
         } else if (this.isTabs) {
@@ -692,11 +694,13 @@ export default {
           this.errorInfo = response.msg || response.message || 'Unknown'
         }
         this.myChart.setOption(this.chartOption)
-        this.$nextTick(() => {
-          this.myChart.resize()
-        })
       }).finally(() => {
-        setTimeout(() => { this.loading = false }, 250)
+        setTimeout(() => {
+          this.loading = false
+          this.$nextTick(() => {
+            this.echartsResize()
+          })
+        }, 250)
       })
     },
     initRelationShip (chartParams) {
@@ -717,11 +721,13 @@ export default {
           this.chartOption.series[0].links = links
         }
         this.myChart.setOption(this.chartOption)
-        this.$nextTick(() => {
-          this.myChart.resize()
-        })
       }).finally(() => {
-        setTimeout(() => { this.loading = false }, 250)
+        setTimeout(() => {
+          this.loading = false
+          setTimeout(() => {
+            this.myChart.resize()
+          })
+        }, 250)
       })
 
       const vm = this
@@ -810,11 +816,13 @@ export default {
           this.errorInfo = response.msg || response.message || 'Unknown'
         }
         this.myChart.setOption(this.chartOption)
-        this.$nextTick(() => {
-          this.myChart.resize()
-        })
       }).finally(() => {
-        setTimeout(() => { this.loading = false }, 250)
+        setTimeout(() => {
+          this.loading = false
+          this.$nextTick(() => {
+            this.echartsResize()
+          })
+        }, 250)
       })
     },
     initEchartsWithPieTable (chartParams) {
@@ -856,9 +864,6 @@ export default {
             this.chartOption.legend.type = 'scroll'
           }
           this.myChart.setOption(this.chartOption)
-          this.$nextTick(() => {
-            this.myChart.resize()
-          })
           if (!this.$_.isEmpty(data)) {
             get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
               if (response2.code === 200) {
@@ -876,7 +881,12 @@ export default {
           this.errorInfo = response.msg || response.message || 'Unknown'
         }
       }).finally(() => {
-        setTimeout(() => { this.loading = false }, 250)
+        setTimeout(() => {
+          this.loading = false
+          this.$nextTick(() => {
+            this.echartsResize()
+          })
+        }, 250)
       })
       // legend点击事件
       this.myChart.off('legendselectchanged')

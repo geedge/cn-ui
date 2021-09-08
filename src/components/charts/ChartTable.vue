@@ -12,7 +12,7 @@
     <div class="cn-chart__body chart__loading" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
-    <div class="cn-chart__body" v-show="!loading" v-no-data="noData">
+    <div class="cn-chart__body" v-no-data="noData">
       <el-table
           style="width: 100%"
           tooltip-effect="light"

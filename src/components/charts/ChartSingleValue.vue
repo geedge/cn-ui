@@ -4,10 +4,10 @@
     <div class="single-value-icon__box" >
       <div class="single-value__icon"><i :class="icon"></i></div>
     </div>
-    <div class="single-value__content chart__loading" style="height: 100%; width: 100%;" v-if="loading">
+    <div class="single-value__content chart__loading" style="height: 100%; width: 100%;" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
-    <div class="single-value__content" v-if="type === 51" v-show="!loading">
+    <div class="single-value__content" v-if="type === 51">
       <div class="content__data">
         <slot name="data"></slot>
       </div>
@@ -15,7 +15,7 @@
         <slot name="title"></slot>
       </div>
     </div>
-    <div class="single-value__content" v-if="type === 52" v-show="!loading">
+    <div class="single-value__content" v-if="type === 52">
       <div class="content__title">
         <slot name="title"></slot>
       </div>
@@ -26,7 +26,7 @@
         <slot name="chart"></slot>
       </div>
     </div>
-    <div class="single-value__content" v-if="type === 53" v-show="!loading">
+    <div class="single-value__content" v-if="type === 53">
       <div class="content__title"></div>
       <div class="content__data"></div>
     </div>
