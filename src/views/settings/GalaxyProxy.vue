@@ -10,6 +10,10 @@
         @search="search"
     >
       <template v-slot:top-tool-right>
+        <button id="galaxy-proxy-clear-cache" class="top-tool-btn margin-r-10" :title="$t('overall.clearCache')"
+                type="button" @click="clearCache">
+          <i class="cn-icon cn-icon-clear-cache"></i>
+        </button>
         <button id="galaxy-proxy-add" class="top-tool-btn margin-r-10"
                 type="button" @click="add">
           <i class="cn-icon-add cn-icon"></i>
@@ -53,7 +57,7 @@ import galaxyProxyBox from '@/components/rightBox/settings/GalaxyProxyBox'
 import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
 import dataListMixin from '@/mixins/dataList'
 import { api } from '@/utils/api'
-import { get } from '@/utils/http'
+import { get, put } from '@/utils/http'
 
 export default {
   name: 'GalaxyProxy',
@@ -84,6 +88,17 @@ export default {
           this.object = editObject
           this.rightBox.show = true
         }
+      })
+    },
+    clearCache () {
+      put(`${this.url}/clearCache`).then(response => {
+        if (response.code === 200) {
+          this.$message({ duration: 2000, type: 'success', message: this.$t('tip.success') })
+        } else {
+          this.$message.error(response.msg || response.message)
+        }
+      }).catch(() => {
+        this.$message.error(this.$t('tip.unknownError'))
       })
     }
   }
