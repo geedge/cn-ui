@@ -314,7 +314,7 @@ export default {
       this.search()
     },
     entityDetail (entity, tabs) {
-      const entityName = entity.domain || entity.clientIP || entity.serverIP || entity.appId
+      const entityName = entity.domain || entity.ip || entity.appId
       this.$store.commit('setEntityName', entityName)
       this.typeName = `${this.from.toLowerCase()}EntityDetail`
       this.currentEntity = entity
