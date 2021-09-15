@@ -2,7 +2,7 @@
   <div class="cn-chart cn-chart__map">
     <div class="cn-chart__header chart-header-position" >
       <slot name="chartErrorInfo"></slot>
-      <div class="header__title chart-title-width" >
+      <div class="header__title" >
         <slot name="title"></slot>
       </div>
       <div class="header__operations">

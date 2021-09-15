@@ -39,8 +39,12 @@
     </template>
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
-<!--      <i class="cn-icon cn-icon-more-light"></i>-->
-<!--      <i class="cn-icon cn-icon-refresh" @click="loadMap"></i>-->
+      <el-popover trigger="hover" placement="top" :content="chartInfo.remark" v-if="chartInfo.remark">
+        <template #reference>
+          <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
+        </template>
+      </el-popover>
+      <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
     </template>
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
@@ -78,7 +82,12 @@
           <el-option v-for="item in chartPieTableTopOptions" :key="item.value" :value="item.value">&nbsp{{item.name}}</el-option>
         </el-select>
       </div>
-<!--      <i class="cn-icon cn-icon-more-light margin-l-10"></i>-->
+      <el-popover trigger="hover" placement="top" :content="chartInfo.remark" v-if="chartInfo.remark">
+        <template #reference>
+          <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
+        </template>
+      </el-popover>
+      <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
     </template>
     <template #default>
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
@@ -135,9 +144,12 @@
     </template>
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
-<!--      <div class="header__operation header__operation&#45;&#45;table">
-        <span class="option__button"><i class="cn-icon cn-icon-download"></i></span>
-      </div>-->
+      <el-popover trigger="hover" placement="top" :content="chartInfo.remark" v-if="chartInfo.remark">
+        <template #reference>
+          <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
+        </template>
+      </el-popover>
+      <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
       <div class="header__operation header__operation--table">
         <el-select
             size="mini"
@@ -578,7 +590,7 @@ export default {
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
           }
-        } else if (response.code != 200) {
+        } else if (response.code !== 200) {
           this.isError = true
           this.noData = true
           this.errorInfo = response.msg || response.message || 'Unknown'
@@ -592,6 +604,9 @@ export default {
     },
     getTargetPageData (pageNum, pageSize, tableData) {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
+    },
+    refresh () {
+      this.initChart()
     },
     getTableTitle (data) {
       if (data.length > 0) {

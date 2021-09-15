@@ -11,8 +11,7 @@ const store = createStore({
       i18n: false,
 
       showEntityTypeSelector: false, // 在entity explore页面时，控制header显示实体类型选择框
-      from: '', // entity type
-      entityName: '' // entity名称，用于header顶部面包屑展示
+      from: '' // entity type
     }
   },
   getters: {
@@ -44,9 +43,6 @@ const store = createStore({
     },
     showEntityTypeSelector (state, show) {
       state.showEntityTypeSelector = show
-    },
-    setEntityName (state, entityName) {
-      state.entityName = entityName
     }
   }
 })

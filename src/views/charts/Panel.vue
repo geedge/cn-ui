@@ -1,15 +1,6 @@
 <template>
-  <div style="padding: 10px 0 20px 20px;">
-    <div v-if="typeName" class="entity-detail-tool">
-      <div>
-        <span @click="goBack" style="cursor: pointer;"><i class="cn-icon cn-icon-arrow-left-circle"></i></span>
-        <span style="padding-left: 15px; color: #333;">{{tabTitle}}</span>
-      </div>
-      <el-radio-group v-model="tab" size="mini" @change="changeTab">
-        <el-radio-button v-for="tabTmp in tabs" :key="tabTmp.key" :label="tabTmp.key" >{{tabTmp.label}}</el-radio-button>
-      </el-radio-group>
-    </div>
-    <div class="cn-panel" id="cn-panel" :style="{height: typeName ? 'calc(100% - 80px)' : ''}">
+  <div style="padding: 10px 0 20px 20px;" v-if="!isEntityDetail">
+    <div class="cn-panel" id="cn-panel">
       <div class="panel__time">
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
@@ -35,6 +26,30 @@
           </grid-layout>-->
     </div>
   </div>
+  <div class="cn-entity-detail" id="cn-entity-detail" v-else>
+    <div class="panel__time">
+      <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
+      <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
+    </div>
+    <div class="entity-detail__header">
+      <el-tabs v-model="currentTab">
+        <el-tab-pane
+            v-for="(tab, index) in detailTabs"
+            :label="tab.i18n ? $t(tab.i18n) : tab.name"
+            :name="`${tab.id}`"
+            :key="tab.id"
+            :ref="`chart-${tab.id}`"
+            @tab-click="changeTab(index)"
+        >
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+    <div class="entity-detail__body">
+      <div class="cn-panel">
+        <chart v-for="chart in detailChartList" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -46,14 +61,12 @@ import { getNowTime } from '@/utils/date-util'
 import Chart from './Chart'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
-import _ from 'lodash'
 
 export default {
   name: 'Panel',
   props: {
-    typeName: String,
     entity: Object,
-    tabs: Array
+    isEntityDetail: Boolean
   },
   components: {
     Chart,
@@ -62,42 +75,18 @@ export default {
   },
   data () {
     return {
-      chartList: []
-    }
-  },
-  computed: {
-    tabTitle () {
-      let title
-      switch (this.typeName) {
-        case 'ipEntityDetail': { // client IP
-          title = this.$t('entities.ipDetail')
-          break
-        }
-        case 'serverIpEntityDetail': {
-          title = this.$t('entities.ipDetail')
-          break
-        }
-        case 'domainEntityDetail': {
-          title = this.$t('entities.domainDetail')
-          break
-        }
-        case 'appEntityDetail': {
-          title = this.$t('entities.appDetail')
-          break
-        }
-        default: break
-      }
-      return title
+      chartList: [], // 普通panel的chart
+      // entity详情的chart
+      detailTabs: [],
+      detailChartList: [],
+      currentTab: ''
     }
   },
   async mounted () {
     await this.init()
+    this.currentTab = this.detailTabs[0].id
   },
   setup (props, ctx) {
-    let tab = ''
-    if (!_.isEmpty(props.tabs)) {
-      tab = ref(props.tabs[0].key)
-    }
     // data
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
@@ -105,41 +94,43 @@ export default {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
-    panelType = props.typeName ? panelTypeAndRouteMapping[props.typeName] : panelTypeAndRouteMapping[params.typeName]
+    panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
     return {
       panelType,
       panel,
       timeFilter,
-      api,
-      tab
+      api
     }
   },
   methods: {
-    goBack () {
-      this.$emit('goBack')
-    },
-    async changeTab (label) {
-      let routePath
-      if (label == 'clientIP') {
-        routePath = 'ipEntityDetail'
-      } else if (label == 'serverIP') {
-        routePath = 'serverIpEntityDetail'
-      }
-      this.panelType = panelTypeAndRouteMapping[routePath]
-      await this.init()
-    },
     async init () {
       const panels = await getPanelList({ type: this.panelType })
       if (panels && panels.length > 0) {
         this.panel = panels[0]
       }
       if (this.panel.id) {
-        this.chartList = (await getChartList({ panelId: this.panel.id, pageSize: -1 })).map(chart => {
+        const allCharts = (await getChartList({ panelId: this.panel.id, pageSize: -1 })).map(chart => {
           chart.i = chart.id
           this.recursionParamsConvert(chart)
           return chart
         })
+        if (this.isEntityDetail) {
+          if (!this.$_.isEmpty(allCharts)) {
+            const rootChart = allCharts[0]
+            this.detailTabs = rootChart.children
+            if (!this.$_.isEmpty(this.detailTabs)) {
+              this.detailChartList = this.detailTabs[0].children
+            }
+          }
+        } else {
+          this.chartList = allCharts
+        }
       }
+    },
+    changeTab (i) {
+      this.currentTab = this.detailTabs[i].id
+      this.detailChartList = this.detailTabs[i].children
+      this.init()
     },
     recursionParamsConvert (chart) {
       chart.params = chart.params ? JSON.parse(chart.params) : null
@@ -180,9 +171,6 @@ export default {
         this.$refs[`chart-${chart.id}`] && this.$refs[`chart-${chart.id}`].reloadChart()
       })
     }
-  },
-  beforeUnmount () {
-    this.$store.commit('setEntityName', '')
   }
 }
 </script>

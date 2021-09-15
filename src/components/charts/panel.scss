@@ -23,11 +23,8 @@
   max-width: 280px !important;
 }
 
-.chart-title-width{
-  width:100%;
-}
 .chart-header-position{
-  position:relative;
+  position: relative;
 }
 
 .chart-error-popper.el-popper.is-light {
@@ -105,6 +102,7 @@
     position: absolute;
     right: 20px;
     top: 10px;
+    z-index: 1;
     display: flex;
   }
 
@@ -133,14 +131,14 @@
       flex-shrink: 0;
       padding: 10px 20px 10px 18px;
       height: 50px;
-      font-size: 16px;
-      color: #333333;
-      font-weight: bold;
 
+      .cn-chart__title {
+        font-size: 16px;
+        color: #333333;
+        font-weight: bold;
+      }
       .header__operations {
-        .cn-icon-more-light {
-          color: #999;
-        }
+        color: #999;
       }
     }
     .cn-chart__body {
@@ -517,12 +515,87 @@
     border-bottom: none;
   }
 }
+
+.cn-entity-detail {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  .entity-detail__header {
+    display: flex;
+    justify-content: end;
+    height: 70px;
+    padding-right: 20px;
+    background-color: #F7F9FB;
+    & > .el-tabs > .el-tabs__header { // header背景色
+      margin: 0;
+      & > .el-tabs__nav-wrap > .el-tabs__nav-scroll > .el-tabs__nav {
+        & > .el-tabs__item.is-active { // 激活的tab上边框和背景色
+          background-color: white;
+          border-top: 2px solid #0091ff;
+        }
+        & > .el-tabs__active-bar {
+          display: none;
+        }
+        & > div:last-of-type {
+          padding-right: 20px;
+        }
+        & > div:nth-of-type(2) {
+          padding-left: 20px;
+        }
+      }
+    }
+    & > .el-tabs > .el-tabs__header > .el-tabs__nav-wrap::after { // 去掉tabs下方边框
+      height: 0 !important;
+    }
+    &>.el-tabs { // 底部对齐
+      display: flex;
+      align-items: end;
+    }
+  }
+  .entity-detail__body {
+    height: calc(100% - 90px);
+    width: 100%;
+    overflow: auto;
+    &>div {
+      display: grid;
+      grid-template-columns: repeat(30, 1fr);
+      grid-auto-flow: row;
+      grid-auto-rows: var(--chart-height-unit);
+      grid-gap: 10px;
+    }
+    .cn-panel {
+      padding: 20px;
+      grid-gap: 20px;
+    }
+  }
+}
+.el-overlay {
+  overflow: hidden !important;
+}
+.entity-detail__dialog {
+  height: 90vh;
+  overflow: hidden;
+  .el-dialog__header {
+    display: none;
+  }
+  .el-dialog__body {
+    height: 100%;
+    padding: 0;
+    .panel__time {
+      display: none;
+    }
+  }
+}
 .option-popper {
   .el-select-dropdown__item {
     height: 24px;
     line-height: 24px;
     font-size: 12px;
   }
+}
+.header__operation-btn {
+  margin-left: 12px;
+  cursor: pointer;
 }
 //.cn-chart-select{
 //  display: flex;

@@ -1,5 +1,5 @@
 <template>
-  <div class="outer-box" v-show="!showDetail">
+  <div class="outer-box">
     <div class="cn-entities">
       <el-input
           v-model="searchContentTemp"
@@ -30,7 +30,11 @@
       ></entity-list>
     </div>
   </div>
-  <cn-panel v-if="showDetail" :entity="currentEntity" :type-name="typeName" :tabs="panelTabs" @goBack="showDetail = false"></cn-panel>
+  <entity-detail
+      v-model:show-detail="showDetail"
+      top="5vh"
+      :show-close="false"
+      :entity="currentEntity"></entity-detail>
 </template>
 
 <script>
@@ -38,8 +42,8 @@ import { entityType, entityFilterType } from '@/utils/constants'
 import LeftFilter from '@/components/entities/LeftFilter'
 import EntityList from '@/components/entities/EntityList'
 import { getEntityFilter, getEntityList, getEntityCount } from '@/utils/api'
-import Panel from '@/views/charts/Panel'
 import { doubleQuotationToSingle } from '@/utils/tools'
+import EntityDetail from '@/components/entities/EntityDetail'
 export default {
   name: 'EntityExplorer',
   data () {
@@ -67,15 +71,13 @@ export default {
         total: 0
       },
       showDetail: false,
-      typeName: '',
-      currentEntity: {},
-      panelTabs: []
+      currentEntity: {}
     }
   },
   components: {
+    EntityDetail,
     LeftFilter,
-    EntityList,
-    'cn-panel': Panel
+    EntityList
   },
   methods: {
     enter () {
@@ -315,10 +317,8 @@ export default {
     },
     entityDetail (entity, tabs) {
       const entityName = entity.domain || entity.ip || entity.appId
-      this.$store.commit('setEntityName', entityName)
       this.typeName = `${this.from.toLowerCase()}EntityDetail`
       this.currentEntity = entity
-      this.panelTabs = tabs
       this.showDetail = true
     }
   },
@@ -446,9 +446,6 @@ export default {
           this.search()
         }
       }
-    },
-    showDetail (n) {
-      this.$store.commit('showEntityTypeSelector', !n)
     }
   },
   computed: {

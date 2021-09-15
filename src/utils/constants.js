@@ -33,15 +33,14 @@ export const fromRoute = {
   galaxyProxy: 'galaxyProxy'
 }
 
-/* panel类别和路由之间的映射 */
+/* panel类别和名称之间的映射 */
 export const panelTypeAndRouteMapping = {
   trafficSummary: 1,
   networkAppPerformance: 2,
   dnsServiceInsights: 3,
-  ipEntityDetail: 4, // 此为clientIP
+  ipEntityDetail: 4,
   domainEntityDetail: 5,
-  appEntityDetail: 6,
-  serverIpEntityDetail: 7
+  appEntityDetail: 6
 }
 
 export const position = {

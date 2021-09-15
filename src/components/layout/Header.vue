@@ -1,6 +1,5 @@
 <template>
   <div class="cn-header">
-<!--    <div class="left-menu&#45;&#45;pin" :class="false ? 'left-menu&#45;&#45;pin-normal' : 'left-menu&#45;&#45;pin-reverse'" @click="shrink"><i :class="{'icon-reverse': false}" class="el-icon-s-fold"></i></div>-->
     <!--导航面包屑-->
     <div class="header__left">
       <span @click="shrink" class="shrink-button" :class="{'shrink-button--collapse': isShrink}"><i class="cn-icon cn-icon-expand"></i></span>
@@ -47,7 +46,6 @@
         </template>
       </el-dropdown>
     </div>
-<!--    <change-password :cur-user="username" :show-dialog="showChangePin" @click="showPinDialog" @dialogClosed="dialogClosed"></change-password>-->
     <el-dialog v-model="showChangePin"
                width="30%"
                :before-close="handleClose">
@@ -84,6 +82,7 @@
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
 import { entityType, storageKey } from '@/utils/constants'
+
 export default {
   name: 'Header',
   data () {
@@ -151,11 +150,7 @@ export default {
   computed: {
     breadcrumb () {
       const breadcrumb = this.breadcrumbMap.find(b => this.path === b.path)
-      const breadcrumbArray = breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
-      if (breadcrumbArray.length > 0 && breadcrumb.childName) {
-        breadcrumbArray.push(breadcrumb.childName)
-      }
-      return breadcrumbArray
+      return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
     },
     path () {
       const { path } = useRoute()
@@ -166,9 +161,6 @@ export default {
     },
     isShrink () {
       return this.$store.getters.getIsShrink
-    },
-    entityName () {
-      return this.$store.getters.entityName
     },
     storeFrom () {
       return this.$store.getters.from
@@ -182,10 +174,6 @@ export default {
       if (this.from !== n) {
         this.from = n
       }
-    },
-    entityName (n) {
-      const breadcrumb = this.breadcrumbMap.find(b => b.path === '/entityExplorer')
-      breadcrumb.childName = n
     }
   },
   mounted () {
@@ -203,7 +191,6 @@ export default {
     changeLocal (lang) {
       if (lang !== localStorage.getItem('cn-language')) {
         localStorage.setItem('cn-language', lang)
-        // this.$i18n.locale = lang
         window.location.reload()
       }
     },
