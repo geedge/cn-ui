@@ -522,34 +522,70 @@
   overflow: hidden;
   .entity-detail__header {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
     height: 70px;
     padding-right: 20px;
     background-color: #F7F9FB;
-    & > .el-tabs > .el-tabs__header { // header背景色
-      margin: 0;
-      & > .el-tabs__nav-wrap > .el-tabs__nav-scroll > .el-tabs__nav {
-        & > .el-tabs__item.is-active { // 激活的tab上边框和背景色
+
+    .detail-header__title {
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+      font-size: 20px;
+      font-weight: bold;
+
+      .title__icon-circle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 38px;
+        width: 38px;
+        border-radius: 50%;
+        background-color: #B8C1D1;
+
+        i {
           background-color: white;
-          border-top: 2px solid #0091ff;
-        }
-        & > .el-tabs__active-bar {
-          display: none;
-        }
-        & > div:last-of-type {
-          padding-right: 20px;
-        }
-        & > div:nth-of-type(2) {
-          padding-left: 20px;
+          font-size: 17px;
         }
       }
+      .title__name {
+        padding-left: 10px;
+      }
     }
-    & > .el-tabs > .el-tabs__header > .el-tabs__nav-wrap::after { // 去掉tabs下方边框
-      height: 0 !important;
-    }
-    &>.el-tabs { // 底部对齐
+    .detail-header__operation {
       display: flex;
       align-items: end;
+
+      & > .el-tabs > .el-tabs__header { // header背景色
+        margin: 0 0 -1px 0;
+
+        & > .el-tabs__nav-wrap > .el-tabs__nav-scroll > .el-tabs__nav {
+          & > .el-tabs__item {
+            height: 35px;
+            line-height: 35px;
+          }
+          & > .el-tabs__item.is-active { // 激活的tab上边框和背景色
+            background-color: white;
+            border-top: 2px solid #0091ff;
+          }
+          & > .el-tabs__active-bar {
+            display: none;
+          }
+          & > div:last-of-type {
+            padding-right: 20px;
+          }
+          & > div:nth-of-type(2) {
+            padding-left: 20px;
+          }
+        }
+      }
+      & > .el-tabs > .el-tabs__header > .el-tabs__nav-wrap::after { // 去掉tabs下方边框
+        height: 0 !important;
+      }
+      &>.el-tabs { // 底部对齐
+        display: flex;
+        align-items: end;
+      }
     }
   }
   .entity-detail__body {

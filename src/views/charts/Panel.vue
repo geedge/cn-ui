@@ -27,22 +27,29 @@
     </div>
   </div>
   <div class="cn-entity-detail" id="cn-entity-detail" v-else>
-    <div class="panel__time">
-      <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
-      <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
-    </div>
     <div class="entity-detail__header">
-      <el-tabs v-model="currentTab">
-        <el-tab-pane
-            v-for="(tab, index) in detailTabs"
-            :label="tab.i18n ? $t(tab.i18n) : tab.name"
-            :name="`${tab.id}`"
-            :key="tab.id"
-            :ref="`chart-${tab.id}`"
-            @tab-click="changeTab(index)"
-        >
-        </el-tab-pane>
-      </el-tabs>
+      <div class="detail-header__title">
+        <span class="title__icon-circle">
+          <i class="cn-icon cn-icon-ip"></i>
+        </span>
+        <span class="title__name">{{entity.name}}</span></div>
+      <div class="detail-header__operation">
+        <div class="panel__time">
+          <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
+          <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
+        </div>
+        <el-tabs v-model="currentTab">
+          <el-tab-pane
+              v-for="(tab, index) in detailTabs"
+              :label="tab.i18n ? $t(tab.i18n) : tab.name"
+              :name="`${tab.id}`"
+              :key="tab.id"
+              :ref="`chart-${tab.id}`"
+              @tab-click="changeTab(index)"
+          >
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
     <div class="entity-detail__body">
       <div class="cn-panel">
