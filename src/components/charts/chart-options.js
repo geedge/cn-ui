@@ -384,6 +384,18 @@ export function isTitle (type) {
 export function isTabs (type) {
   return type === 91
 }
+/* IP实体基本信息 */
+export function isIpBasicInfo (type) {
+  return type === 4
+}
+/* IP实体开放端口 */
+export function isIpOpenPort (type) {
+  return type === 22
+}
+/* IP实体托管域名 */
+export function isIpHostedDomain (type) {
+  return type === 33
+}
 export function getOption (type) {
   const mapping = typeOptionMappings.find(m => m.value === type)
   return mapping && mapping.option ? _.cloneDeep(mapping.option) : null

@@ -532,7 +532,6 @@
       align-items: center;
       padding-left: 20px;
       font-size: 20px;
-      font-weight: bold;
 
       .title__icon-circle {
         display: flex;
@@ -544,17 +543,23 @@
         background-color: #B8C1D1;
 
         i {
-          background-color: white;
-          font-size: 17px;
+          color: white;
+          font-size: 20px;
         }
       }
       .title__name {
         padding-left: 10px;
+        color: #333;
       }
     }
     .detail-header__operation {
       display: flex;
       align-items: end;
+
+      .panel__time {
+        display: flex;
+        padding: 0 30px 10px 0;
+      }
 
       & > .el-tabs > .el-tabs__header { // header背景色
         margin: 0 0 -1px 0;
@@ -617,9 +622,6 @@
   .el-dialog__body {
     height: 100%;
     padding: 0;
-    .panel__time {
-      display: none;
-    }
   }
 }
 .option-popper {

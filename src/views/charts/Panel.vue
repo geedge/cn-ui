@@ -38,14 +38,16 @@
           <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
           <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
         </div>
-        <el-tabs v-model="currentTab">
+        <el-tabs
+            v-model="currentTab"
+            @tab-click="changeTab"
+        >
           <el-tab-pane
-              v-for="(tab, index) in detailTabs"
+              v-for="tab in detailTabs"
               :label="tab.i18n ? $t(tab.i18n) : tab.name"
               :name="`${tab.id}`"
               :key="tab.id"
               :ref="`chart-${tab.id}`"
-              @tab-click="changeTab(index)"
           >
           </el-tab-pane>
         </el-tabs>
@@ -91,7 +93,7 @@ export default {
   },
   async mounted () {
     await this.init()
-    this.currentTab = this.detailTabs[0].id
+    this.currentTab = this.detailTabs[0].id + ''
   },
   setup (props, ctx) {
     // data
@@ -134,10 +136,9 @@ export default {
         }
       }
     },
-    changeTab (i) {
-      this.currentTab = this.detailTabs[i].id
-      this.detailChartList = this.detailTabs[i].children
-      this.init()
+    changeTab ({ index }) {
+      this.currentTab = this.detailTabs[index].id + ''
+      this.detailChartList = this.detailTabs[index].children
     },
     recursionParamsConvert (chart) {
       chart.params = chart.params ? JSON.parse(chart.params) : null
