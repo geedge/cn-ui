@@ -194,6 +194,21 @@
       ></chart-table-pagination>
     </template>
   </chart-table>
+  <!-- group -->
+  <div
+      v-else-if="isGroup"
+      class="cn-chart cn-chart__group"
+      :style="computePosition"
+  >
+    <div class="cn-chart__header">
+      <div class="header__title">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
+    </div>
+    <div class="cn-chart__body">
+      <template v-for="chart in chartInfo.children" :key="chart.id">
+        <chart :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -219,6 +234,7 @@ import {
   isSingleValueWithEcharts,
   isRelationShip,
   isTabs,
+  isGroup,
   getChartColor
 } from '@/components/charts/chart-options'
 import ChartError from '@/components/charts/ChartError'
@@ -308,6 +324,8 @@ export default {
               this.initEchartsWithStatistics(chartParams)
             } else if (this.isRelationShip) {
               this.initRelationShip(chartParams)
+            } else if (this.isGroup) {
+
             } else {
               this.initECharts(chartParams)
             }
@@ -1039,6 +1057,7 @@ export default {
   },
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))
+    console.info(chartInfo)
     chartInfo.category = getTypeCategory(props.chart.type)
     return {
       chartInfo,
@@ -1057,6 +1076,7 @@ export default {
       isMapLine: isMapLine(props.chart.type),
       isMapBlock: isMapBlock(props.chart.type),
       isTabs: isTabs(props.chart.type),
+      isGroup: isGroup(props.chart.type),
       layout: getLayout(props.chart.type),
       myChart: shallowRef(null)
     }

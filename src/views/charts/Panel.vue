@@ -93,7 +93,9 @@ export default {
   },
   async mounted () {
     await this.init()
-    this.currentTab = this.detailTabs[0].id + ''
+    if (!this.$_.isEmpty(this.detailTabs)) {
+      this.currentTab = this.detailTabs[0].id + ''
+    }
   },
   setup (props, ctx) {
     // data

@@ -396,6 +396,10 @@ export function isIpOpenPort (type) {
 export function isIpHostedDomain (type) {
   return type === 33
 }
+/* 组 */
+export function isGroup (type) {
+  return type === 94
+}
 export function getOption (type) {
   const mapping = typeOptionMappings.find(m => m.value === type)
   return mapping && mapping.option ? _.cloneDeep(mapping.option) : null
