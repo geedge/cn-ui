@@ -305,12 +305,53 @@ const relationShip = {
     }
   ]
 }
+const sankeyShip = {
+  tooltip: {
+    trigger: 'item',
+    triggerOn: 'mousemove'
+  },
+  series: [
+    {
+      type: 'sankey',
+      data: [],
+      links: [],
+      levels: [
+        {
+          depth: 0,
+          itemStyle: {
+            color: '#47D49C'
+          },
+          lineStyle: {
+            color: '#999'
+          }
+        }, {
+          depth: 1,
+          itemStyle: {
+            color: '#A69BF5'
+          },
+          lineStyle: {
+            color: '#999'
+          }
+        }, {
+          depth: 2,
+          itemStyle: {
+            color: '#73A0FA'
+          },
+          lineStyle: {
+            color: '#999'
+          }
+        }
+      ]
+    }
+  ]
+}
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
   { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
   { value: 13, option: lineStack }, // 折线堆叠图
   { value: 31, option: pieWithTable }, // 常规折线图
   { value: 42, option: relationShip }, // 关系图
+  { value: 43, option: sankeyShip }, // 桑基图
   { value: 52, option: singleValueLine }
 ]
 const typeCategory = {
@@ -359,6 +400,10 @@ export function isEchartsWithStatistics (type) {
 /* 关系图 */
 export function isRelationShip (type) {
   return type === 42
+}
+/* 桑基图 */
+export function isSankey (type) {
+  return type === 43
 }
 /* 单值 */
 export function isSingleValue (type) {

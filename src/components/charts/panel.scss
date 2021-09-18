@@ -143,6 +143,22 @@
     }
     .cn-chart__body {
       flex: auto;
+      display: flex;
+      .el-descriptions {
+        padding-top: 30px;
+      }
+      &>.el-descriptions {
+        flex: 0 0 350px;
+        padding: 30px 36px;
+      }
+      .chart-location {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+      }
+      .el-descriptions__content {
+        color: #3976CB;
+      }
     }
   }
   &>.cn-chart__group {
@@ -153,6 +169,7 @@
       padding: 0 20px;
       .cn-chart {
         border: none;
+        box-shadow: none;
       }
     }
   }
@@ -201,6 +218,11 @@
         text-overflow: ellipsis;
         font-size: 16px;
         color: #666666;
+      }
+      &.single-value__content--with-chart {
+        .content__title {
+          border-bottom: 1px solid $--content-right-background-color;
+        }
       }
       .single-value__unit {
         font-weight: normal;
@@ -626,6 +648,13 @@
           font-size: 16px;
         }
       }
+      .cn-chart__header {
+        border-bottom: none;
+        .header__title {
+          color: #3976CB;
+          font-size: 14px;
+        }
+      }
     }
   }
 }
@@ -653,6 +682,11 @@
 .header__operation-btn {
   margin-left: 12px;
   cursor: pointer;
+}
+.ip-detail-as {
+  color: #999;
+  font-size: 12px;
+  padding-left: 10px;
 }
 //.cn-chart-select{
 //  display: flex;

@@ -47,7 +47,21 @@
       <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
     </template>
     <template #default>
-      <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+      <template v-if="isIpBasicInfo">
+        <el-descriptions :column="1">
+          <el-descriptions-item label="ASN:">{{detailData.asn}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('entities.asSubnet') + ':'">{{detailData.asSubnet}}</el-descriptions-item>
+          <el-descriptions-item label="ISP:">{{detailData.isp}}</el-descriptions-item>
+          <el-descriptions-item label="DNS PTR:">{{detailData.dnsPTR}}</el-descriptions-item>
+        </el-descriptions>
+        <div class="chart-location">
+          <el-descriptions :column="1">
+            <el-descriptions-item :label="$t('overall.location') + ':'">{{location}}</el-descriptions-item>
+          </el-descriptions>
+          <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+        </div>
+      </template>
+      <div v-else class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
   </chart-map>
   <!-- echarts类的图，如饼图、柱状图、折线图等 -->
@@ -117,7 +131,15 @@
       >
       </chart-error>
     </template>
-    <template #title><span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span></template>
+    <template #title>
+      <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      <span
+          v-if="chartInfo.params && chartInfo.params.as"
+          class="ip-detail-as"
+      >
+          as&nbsp;<span style="text-transform: capitalize">{{chartInfo.params.as}}</span>
+        </span>
+    </template>
     <template #data>
       <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
       <span class="single-value__unit">{{handleSingleValue[1]}}</span>
@@ -201,14 +223,28 @@
       :style="computePosition"
   >
     <div class="cn-chart__header">
-      <div class="header__title">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
+      <chart-error
+          :isError="isError"
+          :errorInfo="errorInfo"
+      >
+      </chart-error>
+      <div class="header__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+        <span
+            v-if="chartInfo.params && chartInfo.params.as"
+            class="ip-detail-as"
+        >
+          as&nbsp;<span style="text-transform: capitalize">{{chartInfo.params.as}}</span>
+        </span>
+      </div>
     </div>
     <div class="cn-chart__body">
       <template v-for="chart in chartInfo.children" :key="chart.id">
-        <chart :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
+        <chart :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity" :parent-data="groupData"></chart>
       </template>
     </div>
   </div>
+  <!-- IP详情-基本信息 -->
 </template>
 
 <script>
@@ -235,6 +271,10 @@ import {
   isRelationShip,
   isTabs,
   isGroup,
+  isSankey,
+  isIpBasicInfo,
+  isIpOpenPort,
+  isIpHostedDomain,
   getChartColor
 } from '@/components/charts/chart-options'
 import ChartError from '@/components/charts/ChartError'
@@ -256,6 +296,7 @@ export default {
   props: {
     chart: Object, // 图表对象，包括id、name、type等数据
     timeFilter: Object,
+    parentData: Object,
     entity: {
       type: Object,
       default: () => {}
@@ -287,6 +328,8 @@ export default {
         icon: ''
       },
       activeTab: '',
+      groupData: '', // group类型的查询数据，用于传递给子chart，子chart通过params.dataKey取值
+      detailData: {}, // 详情类型图表的数据
       statisticsData: [],
       orderPieTable: chartPieTableTopOptions[0].value,
       selectPieChartName: '',
@@ -324,8 +367,8 @@ export default {
               this.initEchartsWithStatistics(chartParams)
             } else if (this.isRelationShip) {
               this.initRelationShip(chartParams)
-            } else if (this.isGroup) {
-
+            } else if (this.isSankey) {
+              this.initSankey(chartParams)
             } else {
               this.initECharts(chartParams)
             }
@@ -337,16 +380,31 @@ export default {
         } else if (this.isSingleValue) {
           if (chartParams) {
             this.singleValue.icon = chartParams.icon
-            const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
-            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-              if (response.code === 200) {
-                this.singleValue.value = response.data.result
+            const gotData = new Promise(resolve => {
+              if (chartParams.dataKey) {
+                if (this.parentData && this.parentData[chartParams.dataKey]) {
+                  this.singleValue.value = this.parentData[chartParams.dataKey]
+                } else {
+                  this.noData = true
+                }
+                resolve()
               } else {
-                this.isError = true
-                this.noData = true
-                this.errorInfo = response.msg || response.message || 'Unknown'
+                const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+                get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+                  if (response.code === 200) {
+                    this.singleValue.value = response.data.result
+                  } else {
+                    this.isError = true
+                    this.noData = true
+                    this.errorInfo = response.msg || response.message || 'Unknown'
+                  }
+                  resolve()
+                })
               }
+            })
+            gotData.then(() => {
               if (this.isSingleValueWithEcharts) { // 带曲线的单值图
+                const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
                 const dom = document.getElementById(`chart${this.chartInfo.id}`)
                 !this.myChart && (this.myChart = echarts.init(dom))
                 this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
@@ -389,6 +447,20 @@ export default {
           if (!this.$_.isEmpty(this.chartInfo.children)) {
             this.activeTab = `${this.chartInfo.children[0].id}`
           }
+        } else if (this.isGroup) {
+          const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+            if (response.code === 200) {
+              this.groupData = response.data.result
+            } else {
+              this.isError = true
+              this.noData = true
+              this.errorInfo = response.msg || response.message || 'Unknown'
+            }
+          }).catch(e => {
+            this.isError = true
+            this.errorInfo = e
+          })
         }
       } catch (e) {
         console.error(e)
@@ -607,6 +679,9 @@ export default {
             polygonTemplate.tooltipText = '{name}{title}'
             polygonTemplate.nonScalingStroke = true
             polygonTemplate.strokeWidth = 0.5
+          } else if (this.isIpBasicInfo) {
+            this.detailData = data
+            console.info(1)
           }
         } else if (response.code !== 200) {
           this.isError = true
@@ -806,6 +881,9 @@ export default {
         }
         return style
       }
+    },
+    initSankey (chartParams) {
+
     },
     initEchartsWithStatistics (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
@@ -1010,6 +1088,19 @@ export default {
         gridRow
       }
     },
+    location () {
+      let location = ''
+      if (this.detailData.country) {
+        location = this.detailData.country
+        if (this.detailData.region) {
+          location += ', '
+          location += this.detailData.region
+        }
+      } else if (this.detailData.region) {
+        location = this.detailData.region
+      }
+      return location
+    },
     handleSingleValue () {
       const value = this.singleValue.value
       const unitType = this.chartInfo.params.unitType
@@ -1057,7 +1148,6 @@ export default {
   },
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))
-    console.info(chartInfo)
     chartInfo.category = getTypeCategory(props.chart.type)
     return {
       chartInfo,
@@ -1077,6 +1167,10 @@ export default {
       isMapBlock: isMapBlock(props.chart.type),
       isTabs: isTabs(props.chart.type),
       isGroup: isGroup(props.chart.type),
+      isSankey: isSankey(props.chart.type),
+      isIpBasicInfo: isIpBasicInfo(props.chart.type),
+      isIpHostedDomain: isIpHostedDomain(props.chart.type),
+      isIpOpenPort: isIpOpenPort(props.chart.type),
       layout: getLayout(props.chart.type),
       myChart: shallowRef(null)
     }

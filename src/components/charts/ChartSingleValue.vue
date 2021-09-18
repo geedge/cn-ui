@@ -15,7 +15,7 @@
         <slot name="title"></slot>
       </div>
     </div>
-    <div class="single-value__content" v-if="type === 52">
+    <div class="single-value__content single-value__content--with-chart" v-if="type === 52">
       <div class="content__title">
         <slot name="title"></slot>
       </div>
