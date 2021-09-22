@@ -467,6 +467,22 @@ export function isIpOpenPort (type) {
 export function isIpHostedDomain (type) {
   return type === 33
 }
+/* APP实体托管域名 */
+export function isAppRelatedDomain (type) {
+  return type === 34
+}
+/* APP实体基本信息 */
+export function isAppBasicInfo (type) {
+  return type === 82
+}
+/* DOMAIN实体Whois */
+export function isDomainWhois (type) {
+  return type === 83
+}
+/* DOMAIN实体DNS记录 */
+export function isDomainDnsRecord (type) {
+  return type === 84
+}
 /* 组 */
 export function isGroup (type) {
   return type === 94

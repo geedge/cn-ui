@@ -139,7 +139,7 @@
           </div>
           <div class="hosted-domain__chart">
             <div>
-              <div class="hosted-domain__chart-title">{{$t('entities.byType')}}</div>
+              <div class="hosted-domain__chart-title">{{$t('entities.byCategory')}}</div>
               <div class="chart-drawing" :id="`chart${chartInfo.id}-0`"></div>
             </div>
             <div>
@@ -289,7 +289,185 @@
       </template>
     </div>
   </div>
-  <!-- IP详情-基本信息 -->
+  <!-- Domain详情-whois -->
+  <div
+      v-else-if="isDomainWhois"
+      class="cn-chart cn-chart__whois"
+      :style="computePosition"
+  >
+    <div class="cn-chart__header">
+      <chart-error
+          :isError="isError"
+          :errorInfo="errorInfo"
+      >
+      </chart-error>
+      <div class="header__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+    </div>
+    <div class="cn-chart__body">
+      <div class="domain-detail-list">
+        <div class="domain-detail-list__row">
+          <div class="domain-detail-list__label">{{$t('entities.sponsor')}}</div>
+          <div class="domain-detail-list__content">{{detailData.sponsor || '-'}}</div>
+        </div>
+        <div class="domain-detail-list__row">
+          <div class="domain-detail-list__label">{{$t('entities.org')}}</div>
+          <div class="domain-detail-list__content">{{detailData.org || '-'}}</div>
+        </div>
+        <div class="domain-detail-list__row">
+          <div class="domain-detail-list__label">Email</div>
+          <div class="domain-detail-list__content">{{detailData.email || '-'}}</div>
+        </div>
+        <div class="domain-detail-list__row">
+          <div class="domain-detail-list__label">{{$t('overall.country')}}</div>
+          <div class="domain-detail-list__content">{{detailData.orgCountry || '-'}}</div>
+        </div>
+        <div class="domain-detail-list__row">
+          <div class="domain-detail-list__label">{{$t('entities.creationDate')}}</div>
+          <div class="domain-detail-list__content">{{detailData.creationDate || '-'}}</div>
+        </div>
+        <div class="domain-detail-list__row">
+          <div class="domain-detail-list__label">{{$t('entities.expirationDate')}}</div>
+          <div class="domain-detail-list__content">{{detailData.expirationDate || '-'}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Domain详情-DNS记录 -->
+  <div
+      v-else-if="isDomainDnsRecord"
+      class="cn-chart cn-chart__dns-record"
+      :style="computePosition"
+  >
+    <div class="cn-chart__header">
+      <chart-error
+          :isError="isError"
+          :errorInfo="errorInfo"
+      >
+      </chart-error>
+      <div class="header__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+    </div>
+    <div class="cn-chart__body">
+      <div class="entity-detail__dns-record">
+        <div class="dns-record__table">
+          <div style="height: 100%; overflow: hidden auto;">
+            <div class="dns-record__table-row dns-record__table-row--header">
+              <div class="dns-record__table-cell" style="min-width: 200px;">Type</div>
+              <div class="dns-record__table-cell" style="width: 100%;">Value</div>
+            </div>
+            <div class="dns-record__table-row" v-for="(data, index) in detailData" :key="index">
+              <div class="dns-record__table-cell">{{data.type || '-'}}</div>
+              <div class="dns-record__table-cell">{{data.value || '-'}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- APP详情-基本信息 -->
+  <div
+      v-else-if="isAppBasicInfo"
+      class="cn-chart cn-chart__app-basic"
+      :style="computePosition"
+  >
+    <div class="cn-chart__header">
+      <chart-error
+          :isError="isError"
+          :errorInfo="errorInfo"
+      >
+      </chart-error>
+      <div class="header__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+    </div>
+    <div class="cn-chart__body">
+      <div style="display: flex; justify-content: space-between; width: 100%;">
+        <el-descriptions :column="1" style="padding: 20px 30px;">
+          <el-descriptions-item :label="$t('overall.appName')">{{detailData ? detailData.name : '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.appFullName') + ':'">{{detailData.fullName || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.technology')">{{detailData.technology || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.remark')">{{detailData.remark || '-'}}</el-descriptions-item>
+        </el-descriptions>
+        <div style="display: flex;">
+          <single-value
+              :type="51"
+              icon="cn-icon cn-icon-category"
+              :loading="false"
+              style="width: 250px;"
+          >
+            <template #title>
+              <span>{{$t('entities.category')}}</span>
+            </template>
+            <template #data>
+              <span>test</span>
+            </template>
+          </single-value>
+          <single-value
+              :type="51"
+              icon="cn-icon cn-icon-sub-category"
+              :loading="false"
+              style="width: 250px;"
+          >
+            <template #title>
+              <span>{{$t('entities.subcategory')}}</span>
+            </template>
+            <template #data>
+              <span>test2</span>
+            </template>
+          </single-value>
+          <single-value
+              :type="51"
+              icon="cn-icon cn-icon-credit"
+              :loading="false"
+              style="width: 250px;"
+          >
+            <template #title>
+              <span>{{$t('entities.reputationLevel')}}</span>
+            </template>
+            <template #data>
+              <span>test3</span>
+            </template>
+          </single-value>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- APP详情-相关域名 -->
+  <div
+      v-else-if="isAppRelatedDomain"
+      class="cn-chart cn-chart__dns-record"
+      :style="computePosition"
+  >
+    <div class="cn-chart__header">
+      <chart-error
+          :isError="isError"
+          :errorInfo="errorInfo"
+      >
+      </chart-error>
+      <div class="header__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+    </div>
+    <div class="cn-chart__body">
+      <div class="entity-detail__dns-record">
+        <div class="dns-record__table">
+          <div style="height: 100%; overflow: hidden auto;">
+            <div class="dns-record__table-row dns-record__table-row--header">
+              <div class="dns-record__table-cell" style="min-width: 200px;">Type</div>
+              <div class="dns-record__table-cell" style="width: 100%;">Value</div>
+            </div>
+            <div class="dns-record__table-row" v-for="(data, index) in detailData" :key="index">
+              <div class="dns-record__table-cell">{{data.type || '-'}}</div>
+              <div class="dns-record__table-cell">{{data.value || '-'}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -320,6 +498,10 @@ import {
   isIpBasicInfo,
   isIpOpenPort,
   isIpHostedDomain,
+  isDomainWhois,
+  isDomainDnsRecord,
+  isAppBasicInfo,
+  isAppRelatedDomain,
   getChartColor
 } from '@/components/charts/chart-options'
 import ChartError from '@/components/charts/ChartError'
@@ -505,6 +687,20 @@ export default {
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
               this.groupData = response.data.result
+            } else {
+              this.isError = true
+              this.noData = true
+              this.errorInfo = response.msg || response.message || 'Unknown'
+            }
+          }).catch(e => {
+            this.isError = true
+            this.errorInfo = e
+          })
+        } else if (this.isDomainWhois || this.isDomainDnsRecord) {
+          const queryParams = { domain: this.entity.domain }
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+            if (response.code === 200) {
+              this.detailData = response.data.result
             } else {
               this.isError = true
               this.noData = true
@@ -1331,6 +1527,10 @@ export default {
       isIpBasicInfo: isIpBasicInfo(props.chart.type),
       isIpHostedDomain: isIpHostedDomain(props.chart.type),
       isIpOpenPort: isIpOpenPort(props.chart.type),
+      isDomainWhois: isDomainWhois(props.chart.type),
+      isDomainDnsRecord: isDomainDnsRecord(props.chart.type),
+      isAppBasicInfo: isAppBasicInfo(props.chart.type),
+      isAppRelatedDomain: isAppRelatedDomain(props.chart.type),
       layout: getLayout(props.chart.type),
       myChart: shallowRef(null)
     }
@@ -1364,7 +1564,7 @@ export default {
     }
     .open-port__table-cell {
       display: table-cell;
-      vertical-align: 30px;
+      vertical-align: middle;
       padding: 13px 30px;
     }
   }
@@ -1432,6 +1632,59 @@ export default {
       .chart-drawing {
         flex: 1;
       }
+    }
+  }
+}
+.domain-detail-list {
+  display: table;
+  width: 100%;
+
+  .domain-detail-list__row {
+    display: table-row;
+
+    .domain-detail-list__label {
+      display: table-cell;
+      padding: 15px 30px;
+      border-bottom: 1px solid $--content-right-background-color;
+      width: 170px;
+      color: #6B717B;
+    }
+    .domain-detail-list__content {
+      display: table-cell;
+      padding: 15px 0 ;
+      border-bottom: 1px solid $--content-right-background-color;
+      color: #3976CB;
+    }
+  }
+}
+.entity-detail__dns-record {
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  .dns-record__table {
+    display: table;
+    height: 100%;
+    width: 100%;
+
+    .dns-record__table-row {
+      display: table-row;
+      font-size: 14px;
+      color: #333333;
+    }
+    .dns-record__table-row.dns-record__table-row--header {
+      padding: 13px 30px 0;
+      height: 40px;
+      color: #6B717B;
+    }
+    .dns-record__table-cell {
+      display: table-cell;
+      border-bottom: 1px solid $--content-right-background-color;
+      vertical-align: middle;
+      padding: 13px 30px;
+    }
+    .dns-record__table-row:not(.dns-record__table-row--header) .dns-record__table-cell:last-of-type {
+      color: #3976CB;
     }
   }
 }
