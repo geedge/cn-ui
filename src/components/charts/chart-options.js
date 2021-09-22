@@ -305,7 +305,7 @@ const relationShip = {
     }
   ]
 }
-const sankeyShip = {
+const sankey = {
   tooltip: {
     trigger: 'item',
     triggerOn: 'mousemove'
@@ -345,13 +345,39 @@ const sankeyShip = {
     }
   ]
 }
+const ipOpenPortBar = {
+  xAxis: {
+    type: 'category',
+    axisTick: { show: false },
+    axisLine: { show: false }
+  },
+  grid: {
+    top: 30,
+    left: 60,
+    right: 50,
+    bottom: 50
+  },
+  yAxis: {
+    type: 'value',
+    show: false
+  },
+  series: [{
+    barWidth: 38,
+    data: [],
+    type: 'bar',
+    label: { show: true, position: 'top' },
+    barCategoryGap: '10%'
+  }]
+}
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
   { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
   { value: 13, option: lineStack }, // 折线堆叠图
+  { value: 22, option: ipOpenPortBar }, // ip详情--开放端口的柱状图
   { value: 31, option: pieWithTable }, // 常规折线图
+  { value: 33, option: ipOpenPortBar }, // ip详情--域名
   { value: 42, option: relationShip }, // 关系图
-  { value: 43, option: sankeyShip }, // 桑基图
+  { value: 43, option: sankey }, // 桑基图
   { value: 52, option: singleValueLine }
 ]
 const typeCategory = {

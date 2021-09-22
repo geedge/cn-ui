@@ -350,7 +350,7 @@ export const noData = {
   updated (el, binding) {
     if (el) {
       if (binding.value) {
-        el.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: #999;">No data</div>'
+        el.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%; color: #999;">No data</div>'
       }
     }
   }

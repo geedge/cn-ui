@@ -49,16 +49,16 @@
     <template #default>
       <template v-if="isIpBasicInfo">
         <el-descriptions :column="1">
-          <el-descriptions-item label="ASN:">{{detailData.asn}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('entities.asSubnet') + ':'">{{detailData.asSubnet}}</el-descriptions-item>
-          <el-descriptions-item label="ISP:">{{detailData.isp}}</el-descriptions-item>
-          <el-descriptions-item label="DNS PTR:">{{detailData.dnsPTR}}</el-descriptions-item>
+          <el-descriptions-item label="ASN:">{{detailData ? detailData.asn : '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('entities.asSubnet') + ':'">{{detailData.asSubnet || '-'}}</el-descriptions-item>
+          <el-descriptions-item label="ISP:">{{detailData.isp || '-'}}</el-descriptions-item>
+          <el-descriptions-item label="DNS PTR:">{{detailData.dnsPTR || '-'}}</el-descriptions-item>
         </el-descriptions>
         <div class="chart-location">
           <el-descriptions :column="1">
             <el-descriptions-item :label="$t('overall.location') + ':'">{{location}}</el-descriptions-item>
           </el-descriptions>
-          <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+          <div class="chart-drawing" style="padding: 0 36px 30px 0;" :id="`chart${chartInfo.id}`"></div>
         </div>
       </template>
       <div v-else class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
@@ -104,7 +104,52 @@
       <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
     </template>
     <template #default>
-      <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+      <!-- IP详情 开放端口 -->
+      <template v-if="isIpOpenPort">
+        <div class="ip-detail__open-port">
+          <div class="open-port__table">
+            <div style="height: 100%; overflow: hidden auto;">
+              <div class="open-port__table-row open-port__table-row--header">
+                <div class="open-port__table-cell" style="min-width: 100px;">Port</div>
+                <div class="open-port__table-cell" style="min-width: 130px;">{{$t('overall.protocol')}}</div>
+                <div class="open-port__table-cell">Banner</div>
+                <div class="open-port__table-cell" style="min-width: 200px;">Update at</div>
+              </div>
+              <div class="open-port__table-row" v-for="(data, index) in detailData" :key="index">
+                <div class="open-port__table-cell">{{data.port || '-'}}</div>
+                <div class="open-port__table-cell">{{data.protocol || '-'}}</div>
+                <div class="open-port__table-cell">{{data.banner || '-'}}</div>
+                <div class="open-port__table-cell">{{data.utime || '-'}}</div>
+              </div>
+            </div>
+          </div>
+          <div class="open-port__chart">
+            <div class="open-port__chart-title">{{$t('overall.protocolsStatistics')}}</div>
+            <div class="open-port__chart-body chart-drawing" :id="`chart${chartInfo.id}`"></div>
+          </div>
+        </div>
+      </template>
+      <template v-else-if="isIpHostedDomain">
+        <div class="ip-detail__hosted-domain">
+          <div class="hosted-domain__list">
+            <div class="hosted-domain__list-title">{{$t('overall.domain')}}</div>
+            <div class="hosted-domain__list-body">
+              <div class="hosted-domain__list-row" v-for="(data, i) in detailData" :key="i">{{data}}</div>
+            </div>
+          </div>
+          <div class="hosted-domain__chart">
+            <div>
+              <div class="hosted-domain__chart-title">{{$t('entities.byType')}}</div>
+              <div class="chart-drawing" :id="`chart${chartInfo.id}-0`"></div>
+            </div>
+            <div>
+              <div class="hosted-domain__chart-title">{{$t('entities.byCredit')}}</div>
+              <div class="chart-drawing" :id="`chart${chartInfo.id}-1`"></div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <div v-else class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
     <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1">
       <!-- 带Table的饼图，展示Table -->
@@ -329,7 +374,7 @@ export default {
       },
       activeTab: '',
       groupData: '', // group类型的查询数据，用于传递给子chart，子chart通过params.dataKey取值
-      detailData: {}, // 详情类型图表的数据
+      detailData: '', // 详情类型图表的数据
       statisticsData: [],
       orderPieTable: chartPieTableTopOptions[0].value,
       selectPieChartName: '',
@@ -357,8 +402,12 @@ export default {
           }
           // TODO 优化：缓存地图，重新查询时只更改数据，不再次初始化
         } else if (this.isEcharts) {
-          const dom = document.getElementById(`chart${this.chartInfo.id}`)
-          !this.myChart && (this.myChart = echarts.init(dom))
+          if (this.isIpHostedDomain) {
+
+          } else {
+            const dom = document.getElementById(`chart${this.chartInfo.id}`)
+            !this.myChart && (this.myChart = echarts.init(dom))
+          }
           this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
           if (chartParams) {
             if (this.isEchartsWithTable) {
@@ -369,6 +418,10 @@ export default {
               this.initRelationShip(chartParams)
             } else if (this.isSankey) {
               this.initSankey(chartParams)
+            } else if (this.isIpOpenPort) {
+              this.initIpOpenPort(chartParams)
+            } else if (this.isIpHostedDomain) {
+              this.initIpHostedDomain(chartParams)
             } else {
               this.initECharts(chartParams)
             }
@@ -549,139 +602,140 @@ export default {
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200 && !this.$_.isEmpty(response.data.result)) {
           const data = response.data.result
-          data.forEach(r => {
-            const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
-            const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
-            serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
-            serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
-            clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
-            clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
-          })
-          if (this.isMapLine) {
-            const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
-            const lineTemplate = lineSeries.mapLines.template
-            lineTemplate.stroke = am4Core.color('#A258EC')
-            lineTemplate.line.nonScalingStroke = true
-            lineTemplate.line.strokeDasharray = '4 3'
-            lineTemplate.nonScalingStroke = true
-            lineTemplate.arrow.nonScaling = true
-            lineTemplate.arrow.width = 4
-            lineTemplate.arrow.height = 6
-            lineSeries.data = [
-              {
-                multiGeoLine: data.map(d => {
-                  return [
-                    {
-                      latitude: parseFloat(d.serverLatitude),
-                      longitude: parseFloat(d.serverLongitude)
-                    },
-                    {
-                      latitude: parseFloat(d.clientLatitude),
-                      longitude: parseFloat(d.clientLongitude)
-                    }
-                  ]
-                })
-              }
-            ]
-            const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
-            imageSeries.dataFields.value = 'sessions'
-            const imageSeriesTemplate = imageSeries.mapImages.template
-            const circle = imageSeriesTemplate.createChild(am4Core.Circle)
-
-            circle.fillOpacity = 0.7
-            circle.nonScaling = true
-            circle.tooltipText = '{title}'
-            const radiusHeat = imageSeries.heatRules.push({
-              target: circle,
-              property: 'radius',
-              min: 8,
-              max: 30
-            })
-            const colorHeat = imageSeries.heatRules.push({
-              target: circle,
-              property: 'fill',
-              min: am4Core.color('#D2A8FF'),
-              max: am4Core.color('#A258EC')
-            })
-            imageSeriesTemplate.propertyFields.latitude = 'latitude'
-            imageSeriesTemplate.propertyFields.longitude = 'longitude'
-
-            const pointData = []
-            data.forEach(d => {
-              pointData.push({
-                ...d,
-                latitude: parseFloat(d.serverLatitude),
-                longitude: parseFloat(d.serverLongitude),
-                title: this.getTitle(d)
-              })
-              pointData.push({
-                ...d,
-                latitude: parseFloat(d.clientLatitude),
-                longitude: parseFloat(d.clientLongitude),
-                title: this.getTitle(d)
-              })
-            })
-            imageSeries.data = pointData
-          } else if (this.isMapBlock) {
-            const sumData = []
-            data.forEach(r => {
-              const hit = sumData.find(s => s.id === r.serverId)
-              if (hit) {
-                hit.value += Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
-              } else {
-                sumData.push({
-                  id: r.serverId,
-                  value: Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
-                })
-              }
-            })
-            const seriesData = sumData.map(r => {
-              return {
-                ...r,
-                title: this.getTitle2(r, chartParams.valueColumn)
-              }
-            })
-            polygonSeries.data = [...seriesData]
-            const sorted = seriesData.sort((a, b) => b.value - a.value)
-            const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
-
-            polygonSeries.heatRules.push({
-              property: 'fill',
-              target: polygonSeries.mapPolygons.template,
-              min: am4Core.color('#EABA2B'),
-              max: allZero ? am4Core.color('#EABA2B') : am4Core.color('#D95D41')
-            })
-
-            const heatLegend = this.myChart.createChild(HeatLegend)
-            heatLegend.markerContainer.height = 6
-            heatLegend.series = polygonSeries
-            heatLegend.align = 'left'
-            heatLegend.markerCount = allZero ? 1 : 3
-            heatLegend.minValue = 0
-            heatLegend.fontSize = 12
-            heatLegend.maxValue = allZero ? 1 : Number(sorted[0].value)
-            heatLegend.width = allZero ? am4Core.percent(10) : am4Core.percent(25)
-            heatLegend.marginLeft = 15
-            heatLegend.valign = 'bottom'
-
-            const minRange = heatLegend.valueAxis.axisRanges.create()
-            minRange.value = heatLegend.minValue
-            minRange.label.text = minRange.value === 0 ? 0 : unitConvert(heatLegend.minValue, chartParams.unitType).join(' ')
-            const maxRange = heatLegend.valueAxis.axisRanges.create()
-            maxRange.value = heatLegend.maxValue
-            maxRange.label.text = maxRange.value === 0 ? 0 : unitConvert(heatLegend.maxValue, chartParams.unitType).join(' ')
-
-            heatLegend.valueAxis.renderer.labels.template.adapter.add('text', function (labelText) {
-              return ''
-            })
-
-            const polygonTemplate = polygonSeries.mapPolygons.template
-            polygonTemplate.tooltipText = '{name}{title}'
-            polygonTemplate.nonScalingStroke = true
-            polygonTemplate.strokeWidth = 0.5
-          } else if (this.isIpBasicInfo) {
+          if (this.isIpBasicInfo) {
             this.detailData = data
-            console.info(1)
+          } else {
+            data.forEach(r => {
+              const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
+              const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
+              serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
+              serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
+              clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
+              clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
+            })
+            if (this.isMapLine) {
+              const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
+              const lineTemplate = lineSeries.mapLines.template
+              lineTemplate.stroke = am4Core.color('#A258EC')
+              lineTemplate.line.nonScalingStroke = true
+              lineTemplate.line.strokeDasharray = '4 3'
+              lineTemplate.nonScalingStroke = true
+              lineTemplate.arrow.nonScaling = true
+              lineTemplate.arrow.width = 4
+              lineTemplate.arrow.height = 6
+              lineSeries.data = [
+                {
+                  multiGeoLine: data.map(d => {
+                    return [
+                      {
+                        latitude: parseFloat(d.serverLatitude),
+                        longitude: parseFloat(d.serverLongitude)
+                      },
+                      {
+                        latitude: parseFloat(d.clientLatitude),
+                        longitude: parseFloat(d.clientLongitude)
+                      }
+                    ]
+                  })
+                }
+              ]
+              const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+              imageSeries.dataFields.value = 'sessions'
+              const imageSeriesTemplate = imageSeries.mapImages.template
+              const circle = imageSeriesTemplate.createChild(am4Core.Circle)
+
+              circle.fillOpacity = 0.7
+              circle.nonScaling = true
+              circle.tooltipText = '{title}'
+              const radiusHeat = imageSeries.heatRules.push({
+                target: circle,
+                property: 'radius',
+                min: 8,
+                max: 30
+              })
+              const colorHeat = imageSeries.heatRules.push({
+                target: circle,
+                property: 'fill',
+                min: am4Core.color('#D2A8FF'),
+                max: am4Core.color('#A258EC')
+              })
+              imageSeriesTemplate.propertyFields.latitude = 'latitude'
+              imageSeriesTemplate.propertyFields.longitude = 'longitude'
+
+              const pointData = []
+              data.forEach(d => {
+                pointData.push({
+                  ...d,
+                  latitude: parseFloat(d.serverLatitude),
+                  longitude: parseFloat(d.serverLongitude),
+                  title: this.getTitle(d)
+                })
+                pointData.push({
+                  ...d,
+                  latitude: parseFloat(d.clientLatitude),
+                  longitude: parseFloat(d.clientLongitude),
+                  title: this.getTitle(d)
+                })
+              })
+              imageSeries.data = pointData
+            } else if (this.isMapBlock) {
+              const sumData = []
+              data.forEach(r => {
+                const hit = sumData.find(s => s.id === r.serverId)
+                if (hit) {
+                  hit.value += Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
+                } else {
+                  sumData.push({
+                    id: r.serverId,
+                    value: Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
+                  })
+                }
+              })
+              const seriesData = sumData.map(r => {
+                return {
+                  ...r,
+                  title: this.getTitle2(r, chartParams.valueColumn)
+                }
+              })
+              polygonSeries.data = [...seriesData]
+              const sorted = seriesData.sort((a, b) => b.value - a.value)
+              const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
+
+              polygonSeries.heatRules.push({
+                property: 'fill',
+                target: polygonSeries.mapPolygons.template,
+                min: am4Core.color('#EABA2B'),
+                max: allZero ? am4Core.color('#EABA2B') : am4Core.color('#D95D41')
+              })
+
+              const heatLegend = this.myChart.createChild(HeatLegend)
+              heatLegend.markerContainer.height = 6
+              heatLegend.series = polygonSeries
+              heatLegend.align = 'left'
+              heatLegend.markerCount = allZero ? 1 : 3
+              heatLegend.minValue = 0
+              heatLegend.fontSize = 12
+              heatLegend.maxValue = allZero ? 1 : Number(sorted[0].value)
+              heatLegend.width = allZero ? am4Core.percent(10) : am4Core.percent(25)
+              heatLegend.marginLeft = 15
+              heatLegend.valign = 'bottom'
+
+              const minRange = heatLegend.valueAxis.axisRanges.create()
+              minRange.value = heatLegend.minValue
+              minRange.label.text = minRange.value === 0 ? 0 : unitConvert(heatLegend.minValue, chartParams.unitType).join(' ')
+              const maxRange = heatLegend.valueAxis.axisRanges.create()
+              maxRange.value = heatLegend.maxValue
+              maxRange.label.text = maxRange.value === 0 ? 0 : unitConvert(heatLegend.maxValue, chartParams.unitType).join(' ')
+
+              heatLegend.valueAxis.renderer.labels.template.adapter.add('text', function (labelText) {
+                return ''
+              })
+
+              const polygonTemplate = polygonSeries.mapPolygons.template
+              polygonTemplate.tooltipText = '{name}{title}'
+              polygonTemplate.nonScalingStroke = true
+              polygonTemplate.strokeWidth = 0.5
+            }
           }
         } else if (response.code !== 200) {
           this.isError = true
@@ -884,6 +938,110 @@ export default {
     },
     initSankey (chartParams) {
 
+    },
+    initIpOpenPort (chartParams) {
+      get(replaceUrlPlaceholder(chartParams.url, { ip: this.entity.ip })).then(response => {
+        if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+          } else {
+            this.noData = false
+            // this.detailData = response.data.result
+            this.detailData = [
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Http/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTP',
+                port: '80'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Http/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTP',
+                port: '81'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTPS',
+                port: '82'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTPS',
+                port: '82'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTPS',
+                port: '82'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTPS',
+                port: '82'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTPS',
+                port: '82'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: ApacheServer: ApacheServer: ApacheServer: ApacheServer: Apache',
+                protocol: 'HTTPS',
+                port: '82'
+              },
+              {
+                utime: '2021-9-17 13:53:37',
+                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+                protocol: 'HTTPS',
+                port: '82'
+              }
+            ]
+            const protocols = []
+            this.detailData.forEach((d, i) => {
+              const index = protocols.findIndex(p => p.name === d.protocol.toUpperCase())
+              if (index === -1) {
+                protocols.push({ name: d.protocol.toUpperCase(), value: 1, itemStyle: { color: getChartColor(i) } })
+              } else {
+                protocols[index].value++
+              }
+            })
+            this.chartOption.series[0].data = protocols
+            this.chartOption.xAxis.data = protocols.map(p => p.name)
+            this.myChart.setOption(this.chartOption)
+          }
+        }
+      }).finally(() => {
+        setTimeout(() => {
+          this.loading = false
+          this.$nextTick(() => {
+            this.echartsResize()
+          })
+        }, 250)
+      })
+    },
+    initIpHostedDomain (chartParams) {
+      get(replaceUrlPlaceholder(chartParams.url, { ip: this.entity.ip })).then(response => {
+        if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+          } else {
+            this.noData = false
+            // this.detailData = response.data.result
+            this.detailData = ['www.abcdefghijklmnopqrstuvwxyz.com', 'qq.com', 'baidu.com', 'alimama.com', 'google.com']
+          }
+        }
+      }).finally(() => {
+        setTimeout(() => {
+          this.loading = false
+        }, 250)
+      })
     },
     initEchartsWithStatistics (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
@@ -1090,14 +1248,16 @@ export default {
     },
     location () {
       let location = ''
-      if (this.detailData.country) {
-        location = this.detailData.country
-        if (this.detailData.region) {
-          location += ', '
-          location += this.detailData.region
+      if (this.detailData) {
+        if (this.detailData.country) {
+          location = this.detailData.country
+          if (this.detailData.region) {
+            location += ', '
+            location += this.detailData.region
+          }
+        } else if (this.detailData.region) {
+          location = this.detailData.region
         }
-      } else if (this.detailData.region) {
-        location = this.detailData.region
       }
       return location
     },
@@ -1180,3 +1340,99 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.ip-detail__open-port {
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  .open-port__table {
+    flex: 1;
+    display: table;
+    height: 100%;
+    border-right: 1px solid $--right-box-border-color;
+
+    .open-port__table-row {
+      display: table-row;
+      font-size: 14px;
+      color: #333333;
+    }
+    .open-port__table-row.open-port__table-row--header {
+      padding: 13px 30px 0;
+      height: 40px;
+      color: #6B717B;
+    }
+    .open-port__table-cell {
+      display: table-cell;
+      vertical-align: 30px;
+      padding: 13px 30px;
+    }
+  }
+
+  .open-port__chart {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 30%;
+    height: 100%;
+
+    .open-port__chart-title {
+      padding-left: 20px;
+      line-height: 50px;
+      flex: 0 0 50px;
+    }
+    .open-port__chart-body {
+      flex: 1;
+    }
+  }
+}
+.ip-detail__hosted-domain {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  .hosted-domain__list {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 25%;
+    overflow: auto;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $--right-box-border-color;
+
+    .hosted-domain__list-title {
+      padding: 13px 30px 0;
+      height: 40px;
+      color: #6B717B;
+    }
+    .hosted-domain__list-body {
+      display: flex;
+      flex-direction: column;
+      height: calc(100% - 40px);
+      overflow: hidden auto;
+    }
+    .hosted-domain__list-row {
+      padding: 5px 30px;
+      color: #3976CB;
+    }
+  }
+  .hosted-domain__chart {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    &>div {
+      flex: 0 0 50%;
+      display: flex;
+      flex-direction: column;
+      .hosted-domain__chart-title {
+        padding-left: 20px;
+        line-height: 50px;
+        flex: 0 0 50px;
+      }
+      .chart-drawing {
+        flex: 1;
+      }
+    }
+  }
+}
+</style>

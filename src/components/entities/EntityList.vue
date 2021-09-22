@@ -35,7 +35,7 @@
               <div class="body__row-value" :title="d.asn">{{d.asn || '-'}}</div>
             </div>
             <div class="body__detail"
-                 @click="entityDetail({name: d.ip, type: 4})">{{$t('overall.detail')}}></div>
+                 @click="entityDetail({ip: d.ip, type: 4})">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="from === 'domain'">
             <div class="body__row">
@@ -50,7 +50,7 @@
               <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;{{$t('entities.credit')}}:</span>
               <div class="body__row-value" :title="d.reputationScore">{{d.reputationScore || '-'}}</div>
             </div>
-            <div class="body__detail" @click="entityDetail({name: d.domainName, type: 5})">{{$t('overall.detail')}}></div>
+            <div class="body__detail" @click="entityDetail({domain: d.domainName, type: 5})">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="from === 'app'">
             <div class="body__row">
@@ -65,7 +65,7 @@
               <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;{{$t('entities.subcategory')}}:</span>
               <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
-            <div class="body__detail" @click="entityDetail({name: d.appId, type: 6})">{{$t('overall.detail')}}></div>
+            <div class="body__detail" @click="entityDetail({appId: d.appId, type: 6})">{{$t('overall.detail')}}></div>
           </template>
         </div>
       </div>
