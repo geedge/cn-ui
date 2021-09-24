@@ -231,6 +231,47 @@ const pieWithTable = {
     }
   ]
 }
+const ipHostedDomain = {
+  color: chartColor,
+  animation: false,
+  legend: {
+    orient: 'vertical',
+    type: 'plain',
+    left: '60%',
+    top: 'middle',
+    icon: 'circle',
+    itemWidth: 10, // 设置宽度
+    itemHeight: 10, // 设置高度
+    itemGap: 20,
+    tooltip: {
+      show: true
+    }
+  },
+  series: [
+    {
+      type: 'pie',
+      selectedMode: 'single',
+      radius: ['42%', '65%'],
+      center: ['30%', '50%'],
+      data: [],
+      label: {
+        formatter: '{d}%'
+      },
+      tooltip: {
+        formatter: function (param, index, callback) {
+          return `${param.name}: ${unitConvert(param.value, param.data.unitType).join(' ')}`
+        }
+      },
+      emphasis: {
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: 'rgba(0, 0, 0, 0.5)'
+        }
+      }
+    }
+  ]
+}
 const singleValueLine = {
   tooltip: {
     show: true,
@@ -375,7 +416,8 @@ const typeOptionMappings = [
   { value: 13, option: lineStack }, // 折线堆叠图
   { value: 22, option: ipOpenPortBar }, // ip详情--开放端口的柱状图
   { value: 31, option: pieWithTable }, // 常规折线图
-  { value: 33, option: ipOpenPortBar }, // ip详情--域名
+  { value: 33, option: ipHostedDomain }, // ip详情--托管域名
+  { value: 34, option: ipHostedDomain }, // app详情--相关域名
   { value: 42, option: relationShip }, // 关系图
   { value: 43, option: sankey }, // 桑基图
   { value: 52, option: singleValueLine }
@@ -467,7 +509,7 @@ export function isIpOpenPort (type) {
 export function isIpHostedDomain (type) {
   return type === 33
 }
-/* APP实体托管域名 */
+/* APP实体相关域名 */
 export function isAppRelatedDomain (type) {
   return type === 34
 }
