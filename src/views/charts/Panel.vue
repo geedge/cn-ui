@@ -30,9 +30,9 @@
     <div class="entity-detail__header">
       <div class="detail-header__title">
         <span class="title__icon-circle">
-          <i class="cn-icon" :class="{'cn-icon-ip': entity.ip, 'cn-icon-domain': entity.domain, 'cn-icon-app': entity.appId}"></i>
+          <i class="cn-icon" :class="{'cn-icon-ip': entity.ip, 'cn-icon-domain': entity.domain, 'cn-icon-app': entity.app}"></i>
         </span>
-        <div class="title__name" :title="entity.ip || entity.domain || entity.appId || '-'">{{entity.ip || entity.domain || entity.appId || '-'}}</div></div>
+        <div class="title__name" :title="entity.ip || entity.domain || entity.app || '-'">{{entity.ip || entity.domain || entity.app || '-'}}</div></div>
       <div class="detail-header__operation">
         <div class="panel__time">
           <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>

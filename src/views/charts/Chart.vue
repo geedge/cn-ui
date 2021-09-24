@@ -129,6 +129,7 @@
           </div>
         </div>
       </template>
+      <!-- IP详情 托管域名 -->
       <template v-else-if="isIpHostedDomain">
         <div class="ip-detail__hosted-domain">
           <div class="hosted-domain__list">
@@ -144,6 +145,27 @@
             </div>
             <div>
               <div class="hosted-domain__chart-title">{{$t('entities.byCredit')}}</div>
+              <div class="chart-drawing" :id="`chart${chartInfo.id}-1`"></div>
+            </div>
+          </div>
+        </div>
+      </template>
+      <!-- APP详情 关联域名 -->
+      <template v-else-if="isAppRelatedDomain">
+        <div class="app-detail__related-domain">
+          <div class="related-domain__list">
+            <div class="related-domain__list-title">{{$t('overall.domain')}}</div>
+            <div class="related-domain__list-body">
+              <div class="related-domain__list-row" v-for="(data, i) in detailData" :key="i"><i class="cn-icon cn-icon-domain"></i>&nbsp;{{data}}</div>
+            </div>
+          </div>
+          <div class="related-domain__chart">
+            <div>
+              <div class="related-domain__chart-title">{{$t('entities.byCategory')}}</div>
+              <div class="chart-drawing" :id="`chart${chartInfo.id}-0`"></div>
+            </div>
+            <div>
+              <div class="related-domain__chart-title">{{$t('entities.byCredit')}}</div>
               <div class="chart-drawing" :id="`chart${chartInfo.id}-1`"></div>
             </div>
           </div>
@@ -387,9 +409,9 @@
       <div style="display: flex; justify-content: space-between; width: 100%;">
         <el-descriptions :column="1" style="padding: 20px 30px;">
           <el-descriptions-item :label="$t('overall.appName')">{{detailData ? detailData.name : '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.appFullName') + ':'">{{detailData.fullName || '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.technology')">{{detailData.technology || '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.remark')">{{detailData.remark || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.appFullName') + ':'">{{detailData ? detailData.allName : '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.technology')">{{detailData ? detailData.tech : '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.remark')">{{detailData ? detailData.remark : '-'}}</el-descriptions-item>
         </el-descriptions>
         <div style="display: flex;">
           <single-value
@@ -402,7 +424,7 @@
               <span>{{$t('entities.category')}}</span>
             </template>
             <template #data>
-              <span>test</span>
+              <span>{{detailData ? detailData.category : '-'}}</span>
             </template>
           </single-value>
           <single-value
@@ -415,7 +437,7 @@
               <span>{{$t('entities.subcategory')}}</span>
             </template>
             <template #data>
-              <span>test2</span>
+              <span>{{detailData ? detailData.subcategory : '-'}}</span>
             </template>
           </single-value>
           <single-value
@@ -428,42 +450,9 @@
               <span>{{$t('entities.reputationLevel')}}</span>
             </template>
             <template #data>
-              <span>test3</span>
+              <span>{{detailData ? detailData.risk : '-'}}</span>
             </template>
           </single-value>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- APP详情-相关域名 -->
-  <div
-      v-else-if="isAppRelatedDomain"
-      class="cn-chart cn-chart__dns-record"
-      :style="computePosition"
-  >
-    <div class="cn-chart__header">
-      <chart-error
-          :isError="isError"
-          :errorInfo="errorInfo"
-      >
-      </chart-error>
-      <div class="header__title">
-        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
-      </div>
-    </div>
-    <div class="cn-chart__body">
-      <div class="entity-detail__dns-record">
-        <div class="dns-record__table">
-          <div style="height: 100%; overflow: hidden auto;">
-            <div class="dns-record__table-row dns-record__table-row--header">
-              <div class="dns-record__table-cell" style="min-width: 200px;">Type</div>
-              <div class="dns-record__table-cell" style="width: 100%;">Value</div>
-            </div>
-            <div class="dns-record__table-row" v-for="(data, index) in detailData" :key="index">
-              <div class="dns-record__table-cell">{{data.type || '-'}}</div>
-              <div class="dns-record__table-cell">{{data.value || '-'}}</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -584,8 +573,11 @@ export default {
           }
           // TODO 优化：缓存地图，重新查询时只更改数据，不再次初始化
         } else if (this.isEcharts) {
-          if (this.isIpHostedDomain) {
-
+          if (this.isIpHostedDomain || this.isAppRelatedDomain) {
+            const dom = document.getElementById(`chart${this.chartInfo.id}-0`)
+            const dom2 = document.getElementById(`chart${this.chartInfo.id}-1`)
+            !this.myChart && (this.myChart = echarts.init(dom))
+            !this.myChart2 && (this.myChart2 = echarts.init(dom2))
           } else {
             const dom = document.getElementById(`chart${this.chartInfo.id}`)
             !this.myChart && (this.myChart = echarts.init(dom))
@@ -604,6 +596,8 @@ export default {
               this.initIpOpenPort(chartParams)
             } else if (this.isIpHostedDomain) {
               this.initIpHostedDomain(chartParams)
+            } else if (this.isAppRelatedDomain) {
+              this.initAppRelatedDomain(chartParams)
             } else {
               this.initECharts(chartParams)
             }
@@ -617,6 +611,7 @@ export default {
             this.singleValue.icon = chartParams.icon
             const gotData = new Promise(resolve => {
               if (chartParams.dataKey) {
+                console.info(this.parentData, chartParams)
                 if (this.parentData && this.parentData[chartParams.dataKey]) {
                   this.singleValue.value = this.parentData[chartParams.dataKey]
                 } else {
@@ -1229,15 +1224,72 @@ export default {
             this.noData = true
           } else {
             this.noData = false
-            // this.detailData = response.data.result
-            this.detailData = ['www.abcdefghijklmnopqrstuvwxyz.com', 'qq.com', 'baidu.com', 'alimama.com', 'google.com']
+            this.detailData = response.data.result
+            // this.detailData = ['www.abcdefghijklmnopqrstuvwxyz.com', 'qq.com', 'baidu.com', 'alimama.com', 'google.com']
+          }
+        }
+        this.chartOption.series[0].data = [
+          {
+            name: 'test1',
+            value: 32
+          },
+          {
+            name: 'test2',
+            value: 21
+          },
+          {
+            name: 'test3',
+            value: 20
+          },
+          {
+            name: 'test4',
+            value: 7
+          }
+        ]
+        this.myChart.setOption(this.chartOption)
+        this.myChart2.setOption(this.chartOption)
+      }).finally(() => {
+        setTimeout(() => {
+          this.loading = false
+        }, 250)
+      })
+    },
+    initAppRelatedDomain (chartParams) {
+      this.noData = false
+      this.loading = false
+      this.chartOption.series[0].data = [
+        {
+          name: 'test1',
+          value: 32
+        },
+        {
+          name: 'test2',
+          value: 21
+        },
+        {
+          name: 'test3',
+          value: 20
+        },
+        {
+          name: 'test4',
+          value: 7
+        }
+      ]
+      this.myChart.setOption(this.chartOption)
+      this.myChart2.setOption(this.chartOption)
+      /* get(replaceUrlPlaceholder(chartParams.url, { app: this.entity.app })).then(response => {
+        if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+          } else {
+            this.noData = false
           }
         }
       }).finally(() => {
         setTimeout(() => {
           this.loading = false
         }, 250)
-      })
+      }) */
     },
     initEchartsWithStatistics (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
@@ -1500,6 +1552,17 @@ export default {
           })
         }
       }
+    },
+    parentData: {
+      immediate: true,
+      deep: true,
+      handler (n, o) {
+        if (n) {
+          this.$nextTick(() => {
+            this.initChart()
+          })
+        }
+      }
     }
   },
   setup (props) {
@@ -1532,7 +1595,8 @@ export default {
       isAppBasicInfo: isAppBasicInfo(props.chart.type),
       isAppRelatedDomain: isAppRelatedDomain(props.chart.type),
       layout: getLayout(props.chart.type),
-      myChart: shallowRef(null)
+      myChart: shallowRef(null),
+      myChart2: shallowRef(null) // 个别有两个图表的chart
     }
   },
   unmounted () {
@@ -1585,13 +1649,13 @@ export default {
     }
   }
 }
-.ip-detail__hosted-domain {
+.ip-detail__hosted-domain, .app-detail__related-domain {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
 
-  .hosted-domain__list {
+  .hosted-domain__list, .related-domain__list {
     display: flex;
     flex-direction: column;
     flex: 0 0 25%;
@@ -1599,23 +1663,23 @@ export default {
     padding-bottom: 20px;
     border-bottom: 1px solid $--right-box-border-color;
 
-    .hosted-domain__list-title {
+    .hosted-domain__list-title, .related-domain__list-title {
       padding: 13px 30px 0;
       height: 40px;
       color: #6B717B;
     }
-    .hosted-domain__list-body {
+    .hosted-domain__list-body, .related-domain__list-body {
       display: flex;
       flex-direction: column;
       height: calc(100% - 40px);
       overflow: hidden auto;
     }
-    .hosted-domain__list-row {
+    .hosted-domain__list-row, .related-domain__list-row {
       padding: 5px 30px;
       color: #3976CB;
     }
   }
-  .hosted-domain__chart {
+  .hosted-domain__chart, .related-domain__chart {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -1685,6 +1749,31 @@ export default {
     }
     .dns-record__table-row:not(.dns-record__table-row--header) .dns-record__table-cell:last-of-type {
       color: #3976CB;
+    }
+  }
+}
+.app-detail__related-domain {
+  flex-direction: row;
+  .related-domain__list {
+    border-bottom: none;
+  }
+  .related-domain__chart {
+    flex-direction: row;
+    border-left: 1px solid $--right-box-border-color;
+    padding: 3vh 5vw;
+    &>div {
+      flex: 0 0 50%;
+      display: flex;
+      flex-direction: column;
+      .related-domain__chart-title {
+        padding-left: 20px;
+        line-height: 50px;
+        flex: 0 0 50px;
+        color: #3976CB;
+      }
+      .chart-drawing {
+        flex: 1;
+      }
     }
   }
 }

@@ -65,7 +65,7 @@
               <span class="body__row-label"><i class="cn-icon cn-icon-risk"></i>&nbsp;{{$t('entities.subcategory')}}:</span>
               <div class="body__row-value" :title="d.appSubategory">{{d.appSubategory || '-'}}</div>
             </div>
-            <div class="body__detail" @click="entityDetail({appId: d.appId, type: 6})">{{$t('overall.detail')}}></div>
+            <div class="body__detail" @click="entityDetail({app: d.appName, type: 6})">{{$t('overall.detail')}}></div>
           </template>
         </div>
       </div>

@@ -12,9 +12,18 @@
           size="small"
           v-model="from"
           v-if="showEntityTypeSelector"
-          style="padding-left: 25px; width: 130px;"
+          style="padding-left: 25px; width: 140px;"
+          class="entity-selector"
       >
-        <el-option v-for="(value, key) in entityType" :key="key" :label="value" :value="key"></el-option>
+        <el-option v-for="(value, key) in entityType" :label="value" :key="key" :value="key">
+          <template v-if="value === entityType.ip"><i style="color: #23BF9A;" class="cn-icon cn-icon-ip"></i></template>
+          <template v-else-if="value === entityType.domain"><i style="color: #23BF9A;" class="cn-icon cn-icon-domain"></i></template>
+          <template v-else-if="value === entityType.app"><i style="color: #23BF9A;" class="cn-icon cn-icon-app"></i></template>
+          {{value}}
+        </el-option>
+        <template #prefix>
+          <i style="color: #23BF9A;" class="cn-icon" :class="`cn-icon-${from}`"></i>
+        </template>
       </el-select>
     </div>
     <!--个人操作-->
@@ -337,6 +346,11 @@ export default {
 
   .el-breadcrumb__item .el-breadcrumb__inner {
     color: #999;
+  }
+}
+.entity-selector {
+  .el-input__prefix {
+    left: 7px !important;
   }
 }
 </style>
