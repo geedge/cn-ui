@@ -8,9 +8,9 @@ export const tableTitleMapping = {
     label: i18n.global.t('overall.serverIp'),
     prop: 'serverIp'
   },
-  appName: {
-    label: i18n.global.t('overall.appName'),
-    prop: 'appName'
+  appId: {
+    label: 'APP ID',
+    prop: 'appId'
   },
   sessions: {
     label: i18n.global.t('overall.sessions'),
