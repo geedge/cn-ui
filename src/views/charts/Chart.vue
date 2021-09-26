@@ -611,7 +611,6 @@ export default {
             this.singleValue.icon = chartParams.icon
             const gotData = new Promise(resolve => {
               if (chartParams.dataKey) {
-                console.info(this.parentData, chartParams)
                 if (this.parentData && this.parentData[chartParams.dataKey]) {
                   this.singleValue.value = this.parentData[chartParams.dataKey]
                 } else {

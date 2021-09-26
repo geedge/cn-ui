@@ -12,40 +12,45 @@
       :size="'mini'"
       :height="'100%'">
     <el-table-column type="expand" :min-width="'5%'">
-      <template #default="props" style="height: auto">
-        <el-table
-            tooltip-effect="light"
-            class="expand-table"
-            :data="childrenTableData"
-            style="width: 100%;"
-            :show-header="false"
-            :size="'mini'"
-            :height="'100%'">
-          <el-table-column
-              width="48">
-          </el-table-column>
-          <el-table-column
-              v-for="(item, index) in tableTitlesOther"
-              :key="index"
-              show-overflow-tooltip
-              :min-width="item.width"
-              :label="item.label"
-              :prop="item.prop"
-              #default="{row}">
+      <template #default="props">
+        <div style="position: relative">
+          <div class="chart__loading" style="top: 0; height: 100%; z-index: 1;" v-show="loading">
+            <i class="el-icon-loading"></i>
+          </div>
+          <el-table
+              tooltip-effect="light"
+              class="expand-table"
+              :data="childrenTableData"
+              style="width: 100%;"
+              :show-header="false"
+              :size="'mini'"
+              :height="'100%'">
+            <el-table-column
+                width="48">
+            </el-table-column>
+            <el-table-column
+                v-for="(item, index) in tableTitlesOther"
+                :key="index"
+                show-overflow-tooltip
+                :min-width="item.width"
+                :label="item.label"
+                :prop="item.prop"
+                #default="{row}">
             <span v-if="item.prop === 'nameColumn'">
                 {{ nameColumn === 'fqdnCategoryName' ? row['fqdnCategoryName'] : row['reputationLevel'] }}
             </span>
-            <span v-else-if="item.prop === 'bytes'">
+              <span v-else-if="item.prop === 'bytes'">
                 {{unitConvert(row[item.prop], unitTypes.byte).join(' ')}}
             </span>
-            <span v-else-if="item.prop === 'packets' || item.prop === 'sessions'">
+              <span v-else-if="item.prop === 'packets' || item.prop === 'sessions'">
                 {{unitConvert(row[item.prop], unitTypes.number).join(' ')}}
             </span>
-            <span v-else>
+              <span v-else>
                 {{ row[item.prop] }}
             </span>
-          </el-table-column>
-        </el-table>
+            </el-table-column>
+          </el-table>
+        </div>
       </template>
     </el-table-column>
     <el-table-column
@@ -166,11 +171,13 @@ export default {
           prop: 'bytes',
           width: '18%'
         }
-      ]
+      ],
+      loading: true
     }
   },
   methods: {
     currentChange (row, expandedRows) {
+      this.loading = true
       this.childrenTableData = []
       if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
         this.expandRowKeys = []
@@ -191,6 +198,7 @@ export default {
             this.childrenTableData = response2.data.result
           }
         }).finally(() => {
+          this.loading = false
         })
       }, 500)
     },
