@@ -50,7 +50,8 @@
       <template v-if="isIpBasicInfo">
         <el-descriptions :column="1">
           <el-descriptions-item label="ASN:">{{detailData ? detailData.asn : '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('entities.asSubnet') + ':'">{{detailData.asSubnet || '-'}}</el-descriptions-item>
+          <el-descriptions-item label="AS Org:">{{detailData ? detailData.asnOrg : '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('entities.asSubnet') + ':'">{{detailData.asnSubnet || '-'}}</el-descriptions-item>
           <el-descriptions-item label="ISP:">{{detailData.isp || '-'}}</el-descriptions-item>
           <el-descriptions-item label="DNS PTR:">{{detailData.dnsPTR || '-'}}</el-descriptions-item>
         </el-descriptions>
@@ -610,30 +611,47 @@ export default {
           if (chartParams) {
             this.singleValue.icon = chartParams.icon
             const gotData = new Promise(resolve => {
+              let result = ''
               if (chartParams.dataKey) {
                 if (this.parentData && this.parentData[chartParams.dataKey]) {
-                  this.singleValue.value = this.parentData[chartParams.dataKey]
+                  result = this.parentData[chartParams.dataKey]
                 } else {
                   this.noData = true
                 }
-                resolve()
+                resolve(result)
               } else {
                 const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
                 get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
                   if (response.code === 200) {
-                    this.singleValue.value = response.data.result
+                    result = response.data.result
                   } else {
                     this.isError = true
                     this.noData = true
                     this.errorInfo = response.msg || response.message || 'Unknown'
                   }
-                  resolve()
+                  resolve(result)
                 })
               }
             })
-            gotData.then(() => {
+            gotData.then(result => {
               if (this.isSingleValueWithEcharts) { // 带曲线的单值图
-                const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+                const dom = document.getElementById(`chart${this.chartInfo.id}`)
+                !this.myChart && (this.myChart = echarts.init(dom))
+                this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
+                const seriesTemplate = this.chartOption.series[0]
+                this.chartOption.series = result.map((r, i) => {
+                  return {
+                    ...seriesTemplate,
+                    name: r.legend,
+                    data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
+                    lineStyle: {
+                      color: getChartColor[i]
+                    }
+                  }
+                })
+                this.myChart.setOption(this.chartOption)
+                this.singleValue.value = result[0].values[result[0].values.length - 1][1]
+                /* const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
                 const dom = document.getElementById(`chart${this.chartInfo.id}`)
                 !this.myChart && (this.myChart = echarts.init(dom))
                 this.chartOption = this.$_.cloneDeep(getOption(this.chart.type))
@@ -657,8 +675,9 @@ export default {
                     this.errorInfo = response.msg || response.message || 'Unknown'
                   }
                   this.myChart.setOption(this.chartOption)
-                })
+                }) */
               } else {
+                this.singleValue.value = result
                 this.loading = false
               }
             }).catch(() => {
@@ -1136,63 +1155,7 @@ export default {
             this.noData = true
           } else {
             this.noData = false
-            // this.detailData = response.data.result
-            this.detailData = [
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Http/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTP',
-                port: '80'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Http/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTP',
-                port: '81'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTPS',
-                port: '82'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTPS',
-                port: '82'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTPS',
-                port: '82'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTPS',
-                port: '82'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTPS',
-                port: '82'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: ApacheServer: ApacheServer: ApacheServer: ApacheServer: Apache',
-                protocol: 'HTTPS',
-                port: '82'
-              },
-              {
-                utime: '2021-9-17 13:53:37',
-                banner: 'Https/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
-                protocol: 'HTTPS',
-                port: '82'
-              }
-            ]
+            this.detailData = response.data.result
             const protocols = []
             this.detailData.forEach((d, i) => {
               const index = protocols.findIndex(p => p.name === d.protocol.toUpperCase())
@@ -1224,7 +1187,6 @@ export default {
           } else {
             this.noData = false
             this.detailData = response.data.result
-            // this.detailData = ['www.abcdefghijklmnopqrstuvwxyz.com', 'qq.com', 'baidu.com', 'alimama.com', 'google.com']
           }
         }
         this.chartOption.series[0].data = [

@@ -237,7 +237,7 @@ const ipHostedDomain = {
   legend: {
     orient: 'vertical',
     type: 'plain',
-    left: '60%',
+    right: 50,
     top: 'middle',
     icon: 'circle',
     itemWidth: 10, // 设置宽度
@@ -252,7 +252,7 @@ const ipHostedDomain = {
       type: 'pie',
       selectedMode: 'single',
       radius: ['42%', '65%'],
-      center: ['30%', '50%'],
+      center: ['40%', '50%'],
       data: [],
       label: {
         formatter: '{d}%'
