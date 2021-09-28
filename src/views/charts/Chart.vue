@@ -613,7 +613,7 @@ export default {
             const gotData = new Promise(resolve => {
               let result = ''
               if (chartParams.dataKey) {
-                if (this.parentData && this.parentData[chartParams.dataKey]) {
+                if (this.parentData && (this.parentData[chartParams.dataKey] || this.parentData[chartParams.dataKey] === 0)) {
                   result = this.parentData[chartParams.dataKey]
                 } else {
                   this.noData = true
@@ -696,19 +696,21 @@ export default {
             this.activeTab = `${this.chartInfo.children[0].id}`
           }
         } else if (this.isGroup) {
-          const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
-          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-            if (response.code === 200) {
-              this.groupData = response.data.result
-            } else {
+          if (chartParams && chartParams.url) {
+            const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+            get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+              if (response.code === 200) {
+                this.groupData = response.data.result
+              } else {
+                this.isError = true
+                this.noData = true
+                this.errorInfo = response.msg || response.message || 'Unknown'
+              }
+            }).catch(e => {
               this.isError = true
-              this.noData = true
-              this.errorInfo = response.msg || response.message || 'Unknown'
-            }
-          }).catch(e => {
-            this.isError = true
-            this.errorInfo = e
-          })
+              this.errorInfo = e
+            })
+          }
         } else if (this.isDomainWhois || this.isDomainDnsRecord) {
           const queryParams = { domain: this.entity.domain }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
