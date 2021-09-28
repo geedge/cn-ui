@@ -949,7 +949,7 @@ export default {
       if (data.length > 0) {
         const dataColumns = Object.keys(data[0]) // 返回数据的字段
         const columns = dataColumns.map(c => tableTitleMapping[c]) // 展示字段
-        const keys = ['clientIp', 'serverIp', 'appId', 'domain']
+        const keys = ['clientIp', 'serverIp', 'appId', 'app', 'domain']
         return columns.sort((a, b) => {
           if (keys.indexOf(a.prop) > -1) {
             return -1
@@ -1467,7 +1467,6 @@ export default {
           }
           this.table.tableData = response.data.result
           this.table.tableColumns = this.getTableTitle(response.data.result)
-          console.info(this.table.tableColumns)
           this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
         } else {
           this.isError = true

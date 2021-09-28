@@ -4,7 +4,6 @@
   </div>
 </template>
 <script>
-import { get } from '@/utils/http'
 
 export default {
   name: 'App',

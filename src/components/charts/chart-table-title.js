@@ -12,6 +12,10 @@ export const tableTitleMapping = {
     label: 'APP ID',
     prop: 'appId'
   },
+  app: {
+    label: 'APP',
+    prop: 'app'
+  },
   sessions: {
     label: i18n.global.t('overall.sessions'),
     prop: 'sessions'
