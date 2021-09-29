@@ -21,7 +21,10 @@ export const api = {
   chart: '/visual/chart',
   entityList: '/interface/entity/list',
   entityCount: '/interface/entity/total',
-  entityFilter: '/interface/entity/filter'
+  entityFilter: '/interface/entity/filter',
+  ipThroughput: '/interface/entity/ip/detail/throughput',
+  domainThroughput: '/interface/entity/domain/detail/throughput',
+  appThroughput: '/interface/entity/app/detail/throughput'
 }
 
 /* panel */

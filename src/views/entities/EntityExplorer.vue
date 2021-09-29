@@ -122,7 +122,12 @@ export default {
     },
     async search () {
       const params = { from: this.from, q: doubleQuotationToSingle(this.searchContent) }
-      this.listData = await getEntityList({ ...this.pageObjRight, ...params })
+      this.listData = (await getEntityList({ ...this.pageObjRight, ...params })).map(d => ({
+        ...d,
+        id: window.btoa(d.ip || d.domainName || d.appId),
+        latestSent: null,
+        latestReceived: null
+      }))
       this.pageObjRight.total = await getEntityCount(params)
       const { topFilterData, bottomFilterData } = await this.queryFilterData(params)
       this.topFilterData = topFilterData
@@ -316,7 +321,6 @@ export default {
       this.search()
     },
     entityDetail (entity, tabs) {
-      const entityName = entity.domain || entity.ip || entity.appId
       this.typeName = `${this.from.toLowerCase()}EntityDetail`
       this.currentEntity = entity
       this.showDetail = true

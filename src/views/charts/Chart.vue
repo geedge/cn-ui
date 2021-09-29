@@ -409,10 +409,10 @@
     <div class="cn-chart__body">
       <div style="display: flex; justify-content: space-between; width: 100%;">
         <el-descriptions :column="1" style="padding: 20px 30px;">
-          <el-descriptions-item :label="$t('overall.appName')">{{detailData ? detailData.name : '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.appFullName') + ':'">{{detailData ? detailData.allName : '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.technology')">{{detailData ? detailData.tech : '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.remark')">{{detailData ? detailData.remark : '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.appName') + ':'">{{detailData.name || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.appFullName') + ':'">{{detailData.allName || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.technology') + ':'">{{detailData.tech || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.remark') + ':'">{{detailData.description || '-'}}</el-descriptions-item>
         </el-descriptions>
         <div style="display: flex;">
           <single-value
@@ -425,7 +425,7 @@
               <span>{{$t('entities.category')}}</span>
             </template>
             <template #data>
-              <span>{{detailData ? detailData.category : '-'}}</span>
+              <span>{{detailData.category ? detailData.category : '-'}}</span>
             </template>
           </single-value>
           <single-value
@@ -438,7 +438,7 @@
               <span>{{$t('entities.subcategory')}}</span>
             </template>
             <template #data>
-              <span>{{detailData ? detailData.subcategory : '-'}}</span>
+              <span>{{detailData.subcategory ? detailData.subcategory : '-'}}</span>
             </template>
           </single-value>
           <single-value
@@ -451,7 +451,7 @@
               <span>{{$t('entities.reputationLevel')}}</span>
             </template>
             <template #data>
-              <span>{{detailData ? detailData.risk : '-'}}</span>
+              <span>{{detailData.risk ? detailData.risk : '-'}}</span>
             </template>
           </single-value>
         </div>
@@ -725,6 +725,20 @@ export default {
             this.isError = true
             this.errorInfo = e
           })
+        } else if (this.isAppBasicInfo) {
+          const queryParams = { app: this.entity.app }
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+            if (response.code === 200) {
+              this.detailData = response.data.result
+            } else {
+              this.isError = true
+              this.noData = true
+              this.errorInfo = response.msg || response.message || 'Unknown'
+            }
+          }).catch(e => {
+            this.isError = true
+            this.errorInfo = e
+          })
         }
       } catch (e) {
         console.error(e)
@@ -970,7 +984,7 @@ export default {
       if (data.length > 0) {
         const dataColumns = Object.keys(data[0]) // 返回数据的字段
         const columns = dataColumns.map(c => tableTitleMapping[c]) // 展示字段
-        const keys = ['clientIp', 'serverIp', 'appId', 'app', 'domain']
+        const keys = ['clientIp', 'serverIp', 'ip', 'appId', 'app', 'domain']
         return columns.sort((a, b) => {
           if (keys.indexOf(a.prop) > -1) {
             return -1
@@ -1048,7 +1062,7 @@ export default {
           this.chartOption.series = response.data.result.map(r => {
             return {
               ...seriesTemplate,
-              name: legendMapping[r.legend] ? legendMapping[r.legend] : lineToSpace(r.legend),
+              name: legendMapping[`${this.entity.ip ? 'ip_' : ''}${r.legend}`] ? legendMapping[`${this.entity.ip ? 'ip_' : ''}${r.legend}`] : lineToSpace(r.legend),
               data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType])
             }
           })
@@ -1240,11 +1254,12 @@ export default {
       ]
       this.myChart.setOption(this.chartOption)
       this.myChart2.setOption(this.chartOption)
-      /* get(replaceUrlPlaceholder(chartParams.url, { app: this.entity.app })).then(response => {
+      get(replaceUrlPlaceholder(chartParams.url, { app: this.entity.app })).then(response => {
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
             this.noData = true
           } else {
+            this.detailData = response.data.result
             this.noData = false
           }
         }
@@ -1252,7 +1267,7 @@ export default {
         setTimeout(() => {
           this.loading = false
         }, 250)
-      }) */
+      })
     },
     initEchartsWithStatistics (chartParams) {
       const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
@@ -1640,6 +1655,9 @@ export default {
     .hosted-domain__list-row, .related-domain__list-row {
       padding: 5px 30px;
       color: #3976CB;
+      i {
+        color: #B8C1D1;
+      }
     }
   }
   .hosted-domain__chart, .related-domain__chart {
@@ -1671,14 +1689,14 @@ export default {
 
     .domain-detail-list__label {
       display: table-cell;
-      padding: 15px 30px;
+      padding: 13px 30px;
       border-bottom: 1px solid $--content-right-background-color;
       width: 170px;
       color: #6B717B;
     }
     .domain-detail-list__content {
       display: table-cell;
-      padding: 15px 0 ;
+      padding: 13px 0 ;
       border-bottom: 1px solid $--content-right-background-color;
       color: #3976CB;
     }

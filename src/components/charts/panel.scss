@@ -120,7 +120,9 @@
       width: 100%;
     }
   }
-
+  &>.cn-chart__whois>.cn-chart__body {
+    overflow: auto;
+  }
   &>.cn-chart__echarts, &>.cn-chart__table, &>.cn-chart__map, &>.cn-chart__group, &>.cn-chart__whois, &>.cn-chart__dns-record, &>.cn-chart__app-basic {
     display: flex;
     flex-direction: column;
