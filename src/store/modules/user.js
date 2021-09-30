@@ -43,7 +43,6 @@ const user = {
   },
   actions: {
     loginSuccess (store, res) {
-      res.data.timezone = 'America/New_York'
       window.$dayJs.tz.setDefault(res.data.timezone)
       sessionStorage.setItem('cn-token', res.data.token)
       localStorage.setItem('cn-sys-name', res.data.systemName)

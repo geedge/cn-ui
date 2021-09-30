@@ -49,8 +49,8 @@
             <div class="body__drawing-box">
               <div class="body__drawing" :id="`entityListChart${d.id}`"></div>
             </div>
-            <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived}} bps</div>
-            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent}} bps</div>
+            <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
+            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
             <div class="body__detail" @click="entityDetail({ip: d.ip, type: 4})">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="from === 'domain'">
@@ -70,8 +70,8 @@
             <div class="body__drawing-box">
               <div class="body__drawing" :id="`entityListChart${d.id}`"></div>
             </div>
-            <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived}} bps</div>
-            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent}} bps</div>
+            <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
+            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
             <div class="body__detail" @click="entityDetail({domain: d.domainName, type: 5})">{{$t('overall.detail')}}></div>
           </template>
           <template v-else-if="from === 'app'">
@@ -91,8 +91,8 @@
             <div class="body__drawing-box">
               <div class="body__drawing" :id="`entityListChart${d.id}`"></div>
             </div>
-            <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived}} bps</div>
-            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent}} bps</div>
+            <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
+            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
             <div class="body__detail" @click="entityDetail({app: d.appName, type: 6})">{{$t('overall.detail')}}></div>
           </template>
         </div>
