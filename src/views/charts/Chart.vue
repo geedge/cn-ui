@@ -1062,7 +1062,7 @@ export default {
           this.chartOption.series = response.data.result.map(r => {
             return {
               ...seriesTemplate,
-              name: legendMapping[`${this.entity.ip ? 'ip_' : ''}${r.legend}`] ? legendMapping[`${this.entity.ip ? 'ip_' : ''}${r.legend}`] : lineToSpace(r.legend),
+              name: legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] ? legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] : lineToSpace(r.legend),
               data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType])
             }
           })
