@@ -172,6 +172,14 @@
           </div>
         </div>
       </template>
+      <template v-else-if="isSankey">
+        <div class="sankey-box">
+          <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+          <div class="sankey__label" style="left: 5%;">{{$t('entities.inboundLinkId')}}</div>
+          <div class="sankey__label" style="left: 50%;">{{entity.ip || entity.domain || entity.app}}</div>
+          <div class="sankey__label" style="right: 5%; transform: translateX(50%)">{{$t('entities.outboundLinkId')}}</div>
+        </div>
+      </template>
       <div v-else class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
     <template #footer v-if="layout.indexOf(layoutConstant.FOOTER) > -1">
@@ -1162,7 +1170,177 @@ export default {
       }
     },
     initSankey (chartParams) {
-
+      const vm = this
+      const entityName = this.entity.ip || this.entity.domain || this.entity.app
+      this.chartOption.series[0].tooltip = {
+        formatter: function ({ name }) {
+          return `
+            <div class="sankey__tooltip">
+              <div class="sankey__tooltip-row">
+                <div class="sankey__row-label">Via:</div>
+                <div class="sankey__row-value">1521</div>
+              </div>
+              <div class="sankey__tooltip-row">
+                <div class="sankey__row-label">To:</div>
+                <div class="sankey__row-value">21522</div>
+              </div>
+              <div class="sankey__tooltip-row">
+                <div style="margin: 6px 0; height: 1px; width: 100%; background-color: #E7EAED;"></div>
+              </div>
+              <div class="sankey__tooltip-row">
+                <div class="sankey__row-label">Traffic:</div>
+                <div class="sankey__row-value">150bps(8%)</div>
+              </div>
+              <div class="sankey__tooltip-row">
+                <div class="sankey__row-label">Performance:</div>
+              </div>
+              <div class="sankey__tooltip-table">
+                <div class="sankey__table-row">
+                  <div class="sankey__table-cell">${vm.$t('networkAppPerformance.tripTime')}:</div>
+                  <div class="sankey__table-cell">58ms</div>
+                </div>
+                <div class="sankey__table-row">
+                  <div class="sankey__table-cell">${vm.$t('overall.packetLoss')}:</div>
+                  <div class="sankey__table-cell">5%</div>
+                </div>
+                <div class="sankey__table-row">
+                  <div class="sankey__table-cell">${vm.$t('overall.packetRetrans')}:</div>
+                  <div class="sankey__table-cell">58%</div>
+                </div>
+              </div>
+            </div>
+          `
+        }
+      }
+      this.chartOption.series[0].data = [
+        {
+          name: '1521'
+        },
+        {
+          name: '2714'
+        },
+        {
+          name: entityName,
+          label: {
+            show: false
+          }
+        },
+        {
+          name: '21521'
+        },
+        {
+          name: '22714'
+        },
+        {
+          name: '29047'
+        },
+        {
+          name: '21522'
+        },
+        {
+          name: '22715'
+        },
+        {
+          name: '29048'
+        },
+        {
+          name: '121521'
+        },
+        {
+          name: '122714'
+        },
+        {
+          name: '129047'
+        },
+        {
+          name: '121522'
+        },
+        {
+          name: '122715'
+        },
+        {
+          name: '129048'
+        }
+      ]
+      this.chartOption.series[0].links = [
+        {
+          source: '1521',
+          target: entityName,
+          value: 6779
+        },
+        {
+          source: '2714',
+          target: entityName,
+          value: 4417
+        },
+        {
+          source: entityName,
+          target: '21521',
+          value: 704
+        },
+        {
+          source: entityName,
+          target: '22714',
+          value: 55
+        },
+        {
+          source: entityName,
+          target: '29047',
+          value: 509
+        },
+        {
+          source: entityName,
+          target: '21522',
+          value: 3140
+        },
+        {
+          source: entityName,
+          target: '22715',
+          value: 550
+        },
+        {
+          source: entityName,
+          target: '29048',
+          value: 1290
+        },
+        {
+          source: entityName,
+          target: '121521',
+          value: 704
+        },
+        {
+          source: entityName,
+          target: '122714',
+          value: 55
+        },
+        {
+          source: entityName,
+          target: '129047',
+          value: 509
+        },
+        {
+          source: entityName,
+          target: '121522',
+          value: 2040
+        },
+        {
+          source: entityName,
+          target: '122715',
+          value: 550
+        },
+        {
+          source: entityName,
+          target: '129048',
+          value: 1090
+        }
+      ]
+      this.myChart.setOption(this.chartOption)
+      setTimeout(() => {
+        this.loading = false
+        this.$nextTick(() => {
+          this.echartsResize()
+        })
+      }, 250)
     },
     initIpOpenPort (chartParams) {
       get(replaceUrlPlaceholder(chartParams.url, { ip: this.entity.ip })).then(response => {
@@ -1754,6 +1932,58 @@ export default {
       }
       .chart-drawing {
         flex: 1;
+      }
+    }
+  }
+}
+.sankey-box {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  .sankey__label {
+    position: absolute;
+    color: #333;
+    bottom: 50px;
+    font-weight: bold;
+    transform: translateX(-50%);
+  }
+}
+.sankey__tooltip {
+  width: 270px;
+  height: 200px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+
+  .sankey__tooltip-row {
+    display: flex;
+    padding: 2px 0;
+
+    .sankey__row-label {
+      flex: 0 0 98px;
+      color: #666;
+    }
+    .sankey__row-value {
+      flex: 1;
+      color: #333;
+    }
+  }
+
+  .sankey__tooltip-table {
+    padding: 2px 0 2px 22px;
+    display: table;
+
+    .sankey__table-row {
+      display: table-row;
+      padding: 1px 0 4px 0;
+
+      .sankey__table-cell {
+        display: table-cell;
+        font-size: 12px;
+        color: #333;
+      }
+      .sankey__table-cell:first-of-type {
+        color: #999;
       }
     }
   }

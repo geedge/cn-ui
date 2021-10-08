@@ -404,6 +404,9 @@ const sankey = {
       type: 'sankey',
       data: [],
       links: [],
+      right: '5%',
+      top: 50,
+      bottom: 100,
       levels: [
         {
           depth: 0,
