@@ -938,10 +938,9 @@ export default {
               polygonSeries.heatRules.push({
                 property: 'fill',
                 target: polygonSeries.mapPolygons.template,
-                min: am4Core.color('#EABA2B'),
-                max: allZero ? am4Core.color('#EABA2B') : am4Core.color('#D95D41')
+                min: this.myChart.colors.getIndex(1).brighten(1),
+                max: allZero ? this.myChart.colors.getIndex(1).brighten(1) : this.myChart.colors.getIndex(1).brighten(-0.3)
               })
-
               const heatLegend = this.myChart.createChild(HeatLegend)
               heatLegend.markerContainer.height = 6
               heatLegend.series = polygonSeries
@@ -969,6 +968,7 @@ export default {
               polygonTemplate.tooltipText = '{name}{title}'
               polygonTemplate.nonScalingStroke = true
               polygonTemplate.strokeWidth = 0.5
+              polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
             }
           }
         } else if (response.code !== 200) {
