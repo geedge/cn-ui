@@ -11,6 +11,7 @@
     height: 100%;
     width: 100%;
     overflow: hidden;
+    position: relative;
 
     .entity-list__content {
     /*  display: grid;
@@ -126,37 +127,6 @@
           position: relative;
           height:240px;
 
-          .entity-statics-down{
-            position: absolute;
-            bottom: 20px;
-            left: 30px;
-            font-family: PingFangSC-Medium;
-            font-size: 14px;
-            color: #666666;
-            font-weight: 500;
-            margin-right:24px;
-            i {
-              color:#5881B7;
-              font-size:14px;
-              margin-right:6px;
-            }
-          }
-
-          .entity-statics-up{
-            position: absolute;
-            bottom: 20px;
-            left: 112px;
-            font-family: PingFangSC-Medium;
-            font-size: 14px;
-            color: #666666;
-            font-weight: 500;
-            i {
-              color:#62B16C;
-              font-size:14px;
-              margin-right:6px;
-            }
-
-          }
           .body__row {
             display: flex;
             align-items: center;
@@ -204,18 +174,42 @@
             color: #666666;
             font-weight: 400;
           }
-          .body__detail {
-            padding: 9px 0 0 30px;
-            cursor: pointer;
-            font-family: PingFangSC-Regular;
-            font-size: 14px;
-            color: #8FA1BE;
-            font-weight: 400;
-
+          .body__statics {
             position: absolute;
             bottom: 20px;
-            right: 30px;
+            display: flex;
+            width: 100%;
+            padding: 0 30px;
+            font-size: 14px;
+            color: #666666;
+            .entity-statics-down{
+              padding-right: 20px;
+              min-width: 80px;
 
+              i {
+                color:#5881B7;
+                font-size:14px;
+                padding-right:6px;
+              }
+            }
+
+            .entity-statics-up{
+              padding-right: 20px;
+              min-width: 80px;;
+              i {
+                color: #62B16C;
+                font-size: 14px;
+                padding-right: 6px;
+              }
+
+            }
+            .body__detail {
+              cursor: pointer;
+              font-size: 14px;
+              color: #8FA1BE;
+              position: absolute;
+              right: 30px;
+            }
           }
         }
       }

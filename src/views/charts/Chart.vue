@@ -915,12 +915,13 @@ export default {
               const sumData = []
               data.forEach(r => {
                 const hit = sumData.find(s => s.id === r.serverId)
+                const value = Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
                 if (hit) {
-                  hit.value += Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
+                  hit.value += value
                 } else {
                   sumData.push({
                     id: r.serverId,
-                    value: Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
+                    value
                   })
                 }
               })

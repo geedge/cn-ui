@@ -1,5 +1,8 @@
 <template>
   <div class="entity-list">
+    <div class="entity__loading" v-show="loading">
+      <i class="el-icon-loading"></i>
+    </div>
     <div class="entity-list__content">
       <div class="cn-entity" v-for="(d, i) in entityList" :key="i">
         <div class="cn-entity__header">
@@ -29,9 +32,9 @@
               </div>
             </template>
           </div>
-          <div class="header__bottom__line" ></div>
+          <div class="header__bottom__line"></div>
         </div>
-        <div class="cn-entity__body" >
+        <div class="cn-entity__body">
           <template v-if="from === 'ip'">
             <div class="body__row">
               <span class="body__row-label"><i class="cn-icon cn-icon-country" ></i>{{$t('overall.country')}}：</span>
@@ -49,9 +52,11 @@
             <div class="body__drawing-box">
               <div class="body__drawing" :id="`entityListChart${d.id}`"></div>
             </div>
-            <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
-            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
-            <div class="body__detail" @click="entityDetail({ip: d.ip, type: 4})">{{$t('overall.detail')}}></div>
+            <div class="body__statics">
+              <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
+              <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
+              <div class="body__detail" @click="entityDetail({ip: d.ip, type: 4})">{{$t('overall.detail')}}></div>
+            </div>
           </template>
           <template v-else-if="from === 'domain'">
             <div class="body__row">
@@ -70,9 +75,11 @@
             <div class="body__drawing-box">
               <div class="body__drawing" :id="`entityListChart${d.id}`"></div>
             </div>
-            <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
-            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
-            <div class="body__detail" @click="entityDetail({domain: d.domainName, type: 5})">{{$t('overall.detail')}}></div>
+            <div class="body__statics">
+              <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
+              <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
+              <div class="body__detail" @click="entityDetail({domain: d.domainName, type: 5})">{{$t('overall.detail')}}></div>
+            </div>
           </template>
           <template v-else-if="from === 'app'">
             <div class="body__row">
@@ -91,9 +98,11 @@
             <div class="body__drawing-box">
               <div class="body__drawing" :id="`entityListChart${d.id}`"></div>
             </div>
-            <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
-            <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
-            <div class="body__detail" @click="entityDetail({app: d.appName, type: 6})">{{$t('overall.detail')}}></div>
+            <div class="body__statics">
+              <div class="entity-statics-down" style=" "><i class="cn-icon cn-icon-fall entity-statics-icon" style=""></i>{{d.latestReceived || 0}} bps</div>
+              <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise" style=""></i>{{d.latestSent || 0}} bps</div>
+              <div class="body__detail" @click="entityDetail({app: d.appName, type: 6})">{{$t('overall.detail')}}></div>
+            </div>
           </template>
         </div>
       </div>
@@ -127,7 +136,8 @@ export default {
   props: {
     listData: Array,
     from: String,
-    pageObj: Object
+    pageObj: Object,
+    loading: Boolean
   },
   components: {
 
@@ -359,4 +369,17 @@ export default {
 </script>
 
 <style>
+.entity__loading {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+.entity__loading i {
+  position: absolute;
+  left: calc(50% - 15px);
+  top: calc(50% - 15px);
+  font-size: 30px;
+  color: #aaa;
+}
 </style>
