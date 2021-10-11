@@ -139,9 +139,6 @@ export default {
     pageObj: Object,
     loading: Boolean
   },
-  components: {
-
-  },
   data () {
     return {
       showDetail: false,

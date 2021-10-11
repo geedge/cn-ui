@@ -127,12 +127,14 @@ export default {
       const params = { from: this.from, q: doubleQuotationToSingle(this.searchContent) }
       this.loading = true
       try {
-        this.listData = (await getEntityList({ ...this.pageObjRight, ...params })).map(d => ({
-          ...d,
-          id: window.btoa(d.ip || d.domainName || d.appName),
-          latestSent: null,
-          latestReceived: null
-        }))
+        this.listData = (await getEntityList({ ...this.pageObjRight, ...params })).map(d => {
+          return {
+            ...d,
+            id: window.btoa(unescape(encodeURIComponent(d.ip || d.domainName || d.appName))),
+            latestSent: null,
+            latestReceived: null
+          }
+        })
         this.pageObjRight.total = await getEntityCount(params)
         const { topFilterData, bottomFilterData } = await this.queryFilterData(params)
         this.topFilterData = topFilterData

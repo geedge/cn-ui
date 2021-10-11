@@ -62,7 +62,7 @@ export function timeUnitFormatter (time, sourceUnit = 'ms', targetUnit, dot = 2)
 }
 
 /* 单位转换，返回转换后的[value, unit] */
-// unitType = time / number / byte
+// unitType = time / number / byte / percent
 export default function unitConvert (value, unitType, sourceUnit, targetUnit, dot = 2) {
   if (unitType === unitTypes.string) {
     if (value) {
@@ -110,4 +110,27 @@ export function getUnitType (column) {
   } else {
     return unitTypes.number
   }
+}
+
+/* 单位转换，返回转换后的[value, unit]，type=time时若value<1ms，返回<1ms，type=percent时若value<0.01%，返回<0.01% */
+export function valueToRangeValue (value, unitType) {
+  const values = unitConvert(value, unitType)
+  if (values[0] || values[0] === 0) {
+    switch (unitType) {
+      case unitTypes.time: {
+        if (values[0] < 1) {
+          return ['<1', 'ms']
+        }
+        break
+      }
+      case unitTypes.percent: {
+        if (values[0] < 0.01) {
+          return ['<0.01', '']
+        }
+        break
+      }
+      default: break
+    }
+  }
+  return values
 }

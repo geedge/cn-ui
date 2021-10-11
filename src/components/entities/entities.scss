@@ -117,6 +117,9 @@
               position: absolute;
               top: 21px;
               left: 82px;
+              overflow: hidden;
+              max-width: 200px;
+              text-overflow: ellipsis;
             }
           }
         }

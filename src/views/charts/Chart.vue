@@ -247,7 +247,6 @@
           <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
         </template>
       </el-popover>
-      <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
       <div class="header__operation header__operation--table">
         <el-select
             size="mini"
@@ -275,6 +274,7 @@
           </template>
         </el-select>
       </div>
+      <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
 <!--      <div class="header__operation header__operation&#45;&#45;table">
         <span class="option__button"><i class="cn-icon cn-icon-style"></i></span>
         <div class="icon-group-divide"></div>
@@ -510,7 +510,7 @@ import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
-import unitConvert, { getUnitType } from '@/utils/unit-convert'
+import unitConvert, { getUnitType, valueToRangeValue } from '@/utils/unit-convert'
 import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions, unitTypes } from '@/utils/constants'
 import { get, post } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
@@ -762,57 +762,14 @@ export default {
         }
       })
     },
-    getTitle (r) {
-      let title = ''
-      if (r.establishLatency || r.httpResponseLatency || r.sslConLatency) {
-        title += `: ${unitConvert(r.establishLatency || r.httpResponseLatency || r.sslConLatency, unitTypes.time).join(' ')}`
-      }
-      if (r.sequenceGapLossPercent || r.pktRetransPercent) {
-        const d = unitConvert(r.sequenceGapLossPercent || r.pktRetransPercent, unitTypes.number)
-        title += d[0] === '0.00' ? ': 0' : `: ${d.join(' ')} %`
-      }
-      if (r.sessions) {
-        title += `\nSessions: ${unitConvert(r.sessions, unitTypes.number).join(' ')}`
-      }
-      if (r.packets) {
-        title += `\nPackets: ${unitConvert(r.packets, unitTypes.number).join(' ')}`
-      }
-      if (r.bytes) {
-        title += `\nBytes: ${unitConvert(r.bytes, unitTypes.byte).join(' ')}`
-      }
-      title = title || ': 0'
-      return title
-    },
-    getTitle2 (item, valueColumn) {
-      let title = ''
-      switch (valueColumn) {
-        case 'sessions': {
-          title = `\nSessions: ${unitConvert(item.value, unitTypes.number).join(' ')}`
-          break
-        }
-        case 'packets': {
-          title = `\nPackets: ${unitConvert(item.value, unitTypes.number).join(' ')}`
-          break
-        }
-        case 'bytes': {
-          title = `\nBytes: ${unitConvert(item.value, unitTypes.byte).join(' ')}`
-          break
-        }
-        case 'establishLatency':
-        case 'httpResponseLatency':
-        case 'sslConLatency': {
-          const result = unitConvert(item.value, unitTypes.time)
-          title = `: ${result[0] === 0 ? 0 : result.join(' ')}`
-          break
-        }
-        case 'sequenceGapLossPercent':
-        case 'pktRetransPercent': {
-          title = `: ${unitConvert(item.value, unitTypes.number).join(' ')}`
-          break
-        }
-        default: break
-      }
-      return title
+    generateTooltipHTML () {
+      return `
+        <div style="padding-bottom: 10px;">
+          <div style="color: #333; font-size: 16px; height: 30px; line-height: 30px;">{name}</div>
+          <span style="color: #666; font-size: 14px; padding-right: 15px;">{labelText}</span>
+          <span style="color: #666; font-size: 14px;">{showValue}</span>
+        </div>
+      `
     },
     changeTab (tab) {
       this.activeTab = tab.paneName
@@ -879,7 +836,6 @@ export default {
 
               circle.fillOpacity = 0.7
               circle.nonScaling = true
-              circle.tooltipText = '{title}'
               const radiusHeat = imageSeries.heatRules.push({
                 target: circle,
                 property: 'radius',
@@ -900,14 +856,12 @@ export default {
                 pointData.push({
                   ...d,
                   latitude: parseFloat(d.serverLatitude),
-                  longitude: parseFloat(d.serverLongitude),
-                  title: this.getTitle(d)
+                  longitude: parseFloat(d.serverLongitude)
                 })
                 pointData.push({
                   ...d,
                   latitude: parseFloat(d.clientLatitude),
-                  longitude: parseFloat(d.clientLongitude),
-                  title: this.getTitle(d)
+                  longitude: parseFloat(d.clientLongitude)
                 })
               })
               imageSeries.data = pointData
@@ -915,22 +869,23 @@ export default {
               const sumData = []
               data.forEach(r => {
                 const hit = sumData.find(s => s.id === r.serverId)
-                const value = Number(r.establishLatency || r.httpResponseLatency || r.sslConLatency || r.sequenceGapLossPercent || r.pktRetransPercent || r.sessions) || 0
+                const { key, labelText } = this.getDataKey(r)
+                const value = Number(r[key]) || 0
                 if (hit) {
                   hit.value += value
                 } else {
                   sumData.push({
                     id: r.serverId,
+                    key,
+                    labelText,
                     value
                   })
                 }
               })
-              const seriesData = sumData.map(r => {
-                return {
-                  ...r,
-                  title: this.getTitle2(r, chartParams.valueColumn)
-                }
-              })
+              const seriesData = sumData.map(r => ({
+                ...r,
+                showValue: (r.value || r.value === 0) ? valueToRangeValue(r.value, chartParams.unitType).join(' ') : ''
+              }))
               polygonSeries.data = [...seriesData]
               const sorted = seriesData.sort((a, b) => b.value - a.value)
               const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
@@ -965,7 +920,9 @@ export default {
               })
 
               const polygonTemplate = polygonSeries.mapPolygons.template
-              polygonTemplate.tooltipText = '{name}{title}'
+              polygonTemplate.tooltipHTML = this.generateTooltipHTML()
+              polygonSeries.tooltip.getFillFromObject = false
+              polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
               polygonTemplate.nonScalingStroke = true
               polygonTemplate.strokeWidth = 0.5
               polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
@@ -988,6 +945,30 @@ export default {
     },
     refresh () {
       this.initChart()
+    },
+    getDataKey (r) {
+      let key = ''
+      let labelText = ''
+      if (r.establishLatency || r.establishLatency === 0) {
+        key = 'establishLatency'
+        labelText = this.$t('networkAppPerformance.tripTime')
+      } else if (r.httpResponseLatency || r.httpResponseLatency === 0) {
+        key = 'httpResponseLatency'
+        labelText = this.$t('networkAppPerformance.httpResponse')
+      } else if (r.sslConLatency || r.sslConLatency === 0) {
+        key = 'sslConLatency'
+        labelText = this.$t('networkAppPerformance.sslResponse')
+      } else if (r.sequenceGapLossPercent || r.sequenceGapLossPercent === 0) {
+        key = 'sequenceGapLossPercent'
+        labelText = this.$t('networkAppPerformance.packetlossRate')
+      } else if (r.pktRetransPercent || r.pktRetransPercent === 0) {
+        key = 'pktRetransPercent'
+        labelText = this.$t('networkAppPerformance.retransmissionRate')
+      } else if (r.sessions || r.sessions === 0) {
+        key = 'sessions'
+        labelText = this.$t('overall.sessions')
+      }
+      return { key, labelText }
     },
     getTableTitle (data) {
       if (data.length > 0) {
