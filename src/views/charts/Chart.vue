@@ -960,7 +960,7 @@ export default {
         labelText = this.$t('networkAppPerformance.sslResponse')
       } else if (r.sequenceGapLossPercent || r.sequenceGapLossPercent === 0) {
         key = 'sequenceGapLossPercent'
-        labelText = this.$t('networkAppPerformance.packetlossRate')
+        labelText = this.$t('networkAppPerformance.packetLossRate')
       } else if (r.pktRetransPercent || r.pktRetransPercent === 0) {
         key = 'pktRetransPercent'
         labelText = this.$t('networkAppPerformance.retransmissionRate')
