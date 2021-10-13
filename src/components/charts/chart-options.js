@@ -234,10 +234,13 @@ const pieWithTable = {
 const ipHostedDomain = {
   color: chartColor,
   animation: false,
+  tooltip: {
+    show: true
+  },
   legend: {
     orient: 'vertical',
     type: 'plain',
-    right: 50,
+    right: '8%',
     top: 'middle',
     icon: 'circle',
     itemWidth: 10, // 设置宽度
@@ -252,7 +255,7 @@ const ipHostedDomain = {
       type: 'pie',
       selectedMode: 'single',
       radius: ['42%', '65%'],
-      center: ['40%', '50%'],
+      center: ['36%', '50%'],
       data: [],
       label: {
         formatter: '{d}%'

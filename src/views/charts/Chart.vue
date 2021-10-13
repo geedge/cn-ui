@@ -562,6 +562,8 @@ export default {
       chartOption: null,
       loading: true,
       noData: false, // 查询结果为空
+      noData0: false, // 单chart内含多图表时使用
+      noData1: false,
       throttle: null, // 节流器
       isError: false, // 接口响应是否报错
       errorInfo: '', // 接口具体错误信息
@@ -764,10 +766,12 @@ export default {
     },
     generateTooltipHTML () {
       return `
-        <div style="padding-bottom: 10px;">
-          <div style="color: #333; font-size: 16px; height: 30px; line-height: 30px;">{name}</div>
-          <span style="color: #666; font-size: 14px; padding-right: 15px;">{labelText}</span>
-          <span style="color: #666; font-size: 14px;">{showValue}</span>
+        <div class="map-tooltip" style="padding-bottom: 10px;">
+          <div class="map-tooltip__title">{name}</div>
+          <div class="map-tooltip__content">
+            <span>{labelText}</span>
+            <span>{showValue}</span>
+          </div>
         </div>
       `
     },
@@ -781,6 +785,15 @@ export default {
       const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
       polygonSeries.useGeodata = true
       polygonSeries.exclude = ['AQ'] // 排除南极洲
+      polygonSeries.tooltip.getFillFromObject = false
+      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+      const polygonTemplate = polygonSeries.mapPolygons.template
+      polygonTemplate.tooltipHTML = this.generateTooltipHTML()
+      polygonSeries.tooltip.getFillFromObject = false
+      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+      polygonTemplate.nonScalingStroke = true
+      polygonTemplate.strokeWidth = 0.5
+      polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
       return {
         chart,
         polygonSeries
@@ -918,14 +931,6 @@ export default {
               heatLegend.valueAxis.renderer.labels.template.adapter.add('text', function (labelText) {
                 return ''
               })
-
-              const polygonTemplate = polygonSeries.mapPolygons.template
-              polygonTemplate.tooltipHTML = this.generateTooltipHTML()
-              polygonSeries.tooltip.getFillFromObject = false
-              polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
-              polygonTemplate.nonScalingStroke = true
-              polygonTemplate.strokeWidth = 0.5
-              polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
             }
           }
         } else if (response.code !== 200) {
@@ -1081,23 +1086,26 @@ export default {
       })
     },
     initRelationShip (chartParams) {
+      this.isError = false
+      this.errorInfo = '0'
       const queryParams = { ...this.entity, limit: 5 }
       post(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           if (!response.data.result) {
             this.noData = true
             return
-          } else {
-            this.noData = false
           }
-
           const data = []
           const links = []
           handleData(data, links, response.data.result)
           this.chartOption.series[0].data = data
           this.chartOption.series[0].links = links
+          this.myChart.setOption(this.chartOption)
+        } else {
+          this.isError = true
+          this.errorInfo = response
+          this.noData = true
         }
-        this.myChart.setOption(this.chartOption)
       }).finally(() => {
         setTimeout(() => {
           this.loading = false
@@ -1356,38 +1364,55 @@ export default {
       })
     },
     initIpHostedDomain (chartParams) {
-      get(replaceUrlPlaceholder(chartParams.url, { ip: this.entity.ip })).then(response => {
-        if (response.code === 200) {
-          if (this.$_.isEmpty(response.data.result)) {
-            this.noData = true
-          } else {
-            this.noData = false
-            this.detailData = response.data.result
+      const list = new Promise(resolve => {
+        get(replaceUrlPlaceholder(chartParams.url, { ip: this.entity.ip })).then(response => {
+          if (response.code === 200) {
+            if (this.$_.isEmpty(response.data.result)) {
+              this.noData = true
+            } else {
+              this.noData = false
+              this.detailData = response.data.result
+            }
           }
-        }
-        this.chartOption.series[0].data = [
-          {
-            name: 'test1',
-            value: 32
-          },
-          {
-            name: 'test2',
-            value: 21
-          },
-          {
-            name: 'test3',
-            value: 20
-          },
-          {
-            name: 'test4',
-            value: 7
+          resolve()
+        })
+      })
+      const byType = new Promise(resolve => {
+        get(replaceUrlPlaceholder(chartParams.byTypeUrl, { ip: this.entity.ip })).then(response => {
+          if (response.code === 200) {
+            if (this.$_.isEmpty(response.data.result)) {
+              this.noData0 = true
+            } else {
+              this.noData0 = false
+              const chartOption = this.$_.cloneDeep(this.chartOption)
+              chartOption.series[0].data = response.data.result.map(r => ({ ...r, unitType: chartParams.unitType }))
+              this.myChart.setOption(chartOption)
+            }
           }
-        ]
-        this.myChart.setOption(this.chartOption)
-        this.myChart2.setOption(this.chartOption)
-      }).finally(() => {
+          resolve()
+        })
+      })
+      const byCredit = new Promise(resolve => {
+        get(replaceUrlPlaceholder(chartParams.byCreditUrl, { ip: this.entity.ip })).then(response => {
+          if (response.code === 200) {
+            if (this.$_.isEmpty(response.data.result)) {
+              this.noData1 = true
+            } else {
+              this.noData1 = false
+              const chartOption = this.$_.cloneDeep(this.chartOption)
+              chartOption.series[0].data = response.data.result.map(r => ({ ...r, unitType: chartParams.unitType }))
+              this.myChart2.setOption(chartOption)
+            }
+          }
+          resolve()
+        })
+      })
+      Promise.all([list, byType, byCredit]).finally(response => {
         setTimeout(() => {
           this.loading = false
+          this.$nextTick(() => {
+            this.echartsResize()
+          })
         }, 250)
       })
     },
@@ -1621,6 +1646,7 @@ export default {
     },
     echartsResize () {
       this.myChart && this.myChart.resize()
+      this.myChart2 && this.myChart2.resize()
     }
   },
   computed: {
@@ -1967,6 +1993,28 @@ export default {
       .sankey__table-cell:first-of-type {
         color: #999;
       }
+    }
+  }
+}
+.map-tooltip {
+  display: flex;
+  flex-direction: column;
+
+  .map-tooltip__title {
+    color: #333;
+    font-size: 16px;
+  }
+  .map-tooltip__content {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+    font-size: 14px;
+
+    span {
+      line-height: 35px;
+    }
+    span:first-of-type {
+      padding-right: 20px;
     }
   }
 }
