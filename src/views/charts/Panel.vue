@@ -5,7 +5,15 @@
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
       </div>
-      <chart v-for="chart in chartList" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
+      <chart
+          v-for="chart in chartList"
+          :key="chart.id"
+          :chart="chart"
+          :time-filter="timeFilter"
+          :ref="`chart-${chart.id}`"
+          :entity="entity"
+          @getCurrentTimeRange="getCurrentTimeRange"
+      ></chart>
       <!--    <grid-layout v-model:layout="chartList"
                        :col-num="12"
                        :row-height="30"
@@ -149,6 +157,11 @@ export default {
           this.recursionParamsConvert(c)
         })
       }
+    },
+    getCurrentTimeRange (callback) {
+      const myEndTime = window.$dayJs.tz().valueOf()
+      const myStartTime = myEndTime - this.timeFilter.dateRangeValue * 60 * 1000
+      callback({ startTime: myStartTime, endTime: myEndTime })
     },
     timeRefreshChange () {
       if (!this.$refs.dateTimeRange.isCustom) {

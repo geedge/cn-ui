@@ -20,7 +20,15 @@
       :ref="`chart-${chart.id}`"
     >
       <template v-for="chart in tab.children">
-        <chart v-if="activeTab == tab.id" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
+        <chart
+            v-if="activeTab == tab.id"
+            :key="chart.id"
+            :chart="chart"
+            :time-filter="timeFilter"
+            :ref="`chart-${chart.id}`"
+            :entity="entity"
+            @getCurrentTimeRange="getCurrentTimeRange"
+        ></chart>
       </template>
     </el-tab-pane>
   </el-tabs>
@@ -552,6 +560,15 @@ export default {
         value: '-',
         icon: ''
       },
+      standaloneTimeRange: { // 单个图表刷新时，重新获取时间范围，且不影响到其他图
+        use: false,
+        startTime: '',
+        endTime: ''
+      },
+      queryTimeRange: { // 实际查询接口时使用的时间
+        startTime: '',
+        endTime: ''
+      },
       activeTab: '',
       groupData: '', // group类型的查询数据，用于传递给子chart，子chart通过params.dataKey取值
       detailData: '', // 详情类型图表的数据
@@ -573,6 +590,9 @@ export default {
   methods: {
     initChart () {
       this.loading = true
+      this.queryTimeRange = this.standaloneTimeRange.use
+        ? { startTime: parseInt(this.standaloneTimeRange.startTime / 1000), endTime: parseInt(this.standaloneTimeRange.endTime / 1000) }
+        : { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
       try {
         const chartParams = this.chartInfo.params
         if (this.isMap) {
@@ -630,7 +650,7 @@ export default {
                 }
                 resolve(result)
               } else {
-                const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+                const queryParams = { ...this.queryTimeRange, ...this.entity }
                 get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
                   if (response.code === 200) {
                     result = response.data.result
@@ -707,7 +727,7 @@ export default {
           }
         } else if (this.isGroup) {
           if (chartParams && chartParams.url) {
-            const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+            const queryParams = { ...this.queryTimeRange, ...this.entity }
             get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
               if (response.code === 200) {
                 this.groupData = response.data.result
@@ -801,7 +821,7 @@ export default {
     },
     loadMap (polygonSeries) {
       const chartParams = this.chartInfo.params
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), country: '', region: '', ...this.entity } // 统计数据的查询参数
+      const queryParams = { ...this.queryTimeRange, country: '', region: '', ...this.entity } // 统计数据的查询参数
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200 && !this.$_.isEmpty(response.data.result)) {
           const data = response.data.result
@@ -949,7 +969,17 @@ export default {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
     refresh () {
-      this.initChart()
+      this.$emit('getCurrentTimeRange', ({ startTime, endTime }) => {
+        this.standaloneTimeRange.use = true
+        this.standaloneTimeRange.startTime = startTime
+        this.standaloneTimeRange.endTime = endTime
+        this.initChart()
+      })
+    },
+    getCurrentTimeRange (callback) {
+      this.$emit('getCurrentTimeRange', ({ startTime, endTime }) => {
+        callback({ startTime, endTime })
+      })
     },
     getDataKey (r) {
       let key = ''
@@ -1035,7 +1065,7 @@ export default {
       if (chartParams.showLegend === false) {
         this.chartOption.legend.show = false
       }
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+      const queryParams = { ...this.queryTimeRange, ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
@@ -1455,7 +1485,7 @@ export default {
       })
     },
     initEchartsWithStatistics (chartParams) {
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
+      const queryParams = { ...this.queryTimeRange, ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
@@ -1509,8 +1539,8 @@ export default {
       const self = this
       chartParams.valueColumn = this.orderPieTable
       const unitType = getUnitType(chartParams.valueColumn)
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
-      const tableQueryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
+      const queryParams = { ...this.queryTimeRange, limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
+      const tableQueryParams = { ...this.queryTimeRange, limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
@@ -1607,7 +1637,7 @@ export default {
       })
     },
     loadPieTableData (name = '') {
-      const childrenParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: 10, order: this.orderPieTable, ...this.entity }
+      const childrenParams = { ...this.queryTimeRange, limit: 10, order: this.orderPieTable, ...this.entity }
       childrenParams[this.chartInfo.params.nameColumn] = name
       get(replaceUrlPlaceholder(this.chartInfo.params.urlTable, childrenParams)).then(response => {
         if (response.code === 200) {
@@ -1620,7 +1650,7 @@ export default {
       this.initChartTable(chartParams)
     },
     initChartTable (chartParams) {
-      const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), limit: this.table.limit, order: this.table.orderBy, ...this.entity }
+      const queryParams = { ...this.queryTimeRange, limit: this.table.limit, order: this.table.orderBy, ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
@@ -1711,6 +1741,7 @@ export default {
       deep: true,
       handler (n, o) {
         if (n && o) {
+          this.standaloneTimeRange.use = false
           this.$nextTick(() => {
             this.initChart()
           })
