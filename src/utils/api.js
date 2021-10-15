@@ -16,6 +16,7 @@ export const api = {
   role: '/sys/role',
   galaxyProxy: '/galaxy/setting',
   operationLog: '/sys/log',
+  chartList: '/visual/chart/list',
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',

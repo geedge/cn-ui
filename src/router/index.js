@@ -37,6 +37,10 @@ const routes = [
       {
         path: '/galaxyProxy',
         component: () => import('@/views/settings/GalaxyProxy')
+      },
+      {
+        path: '/chart',
+        component: () => import('@/views/settings/Chart')
       }
     ]
   }

@@ -69,7 +69,11 @@ export default {
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       this.tools.loading = true
       delete this.searchLabel.total
-      get(this.url, this.searchLabel).then(response => {
+      let listUrl = this.url
+      if (this.listUrl) {
+        listUrl = this.listUrl
+      }
+      get(listUrl, this.searchLabel).then(response => {
         this.tools.loading = false
         if (response.code === 200) {
           for (let i = 0; i < response.data.list.length; i++) {

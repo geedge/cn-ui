@@ -30,7 +30,8 @@ export const fromRoute = {
   networkAppPerformance: 'networkAppPerformance',
   dnsServiceInsights: 'dnsServiceInsights',
   user: 'user',
-  galaxyProxy: 'galaxyProxy'
+  galaxyProxy: 'galaxyProxy',
+  chart: 'chart'
 }
 
 /* panel类别和名称之间的映射 */
