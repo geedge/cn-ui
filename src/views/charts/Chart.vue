@@ -47,6 +47,7 @@
     </template>
     <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
     <template #operations>
+      <span class="header__operation-btn" v-show="showMapBackButton" @click="mapBack"><i class="cn-icon el-icon-back"></i></span>
       <el-popover trigger="hover" placement="top" :content="chartInfo.remark" v-if="chartInfo.remark">
         <template #reference>
           <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
@@ -70,7 +71,9 @@
           <div class="chart-drawing" style="padding: 0 36px 30px 0;" :id="`chart${chartInfo.id}`"></div>
         </div>
       </template>
-      <div v-else class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+      <template v-else>
+        <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+      </template>
     </template>
   </chart-map>
   <!-- echarts类的图，如饼图、柱状图、折线图等 -->
@@ -560,6 +563,7 @@ export default {
         value: '-',
         icon: ''
       },
+      showMapBackButton: false, // 下钻之后控制是否显示返回上一层按钮
       standaloneTimeRange: { // 单个图表刷新时，重新获取时间范围，且不影响到其他图
         use: false,
         startTime: '',
@@ -584,7 +588,9 @@ export default {
       throttle: null, // 节流器
       isError: false, // 接口响应是否报错
       errorInfo: '', // 接口具体错误信息
-      polygonSeries: null
+      polygonSeries: null, // 世界地图series
+      countrySeries: null, // 下钻国家series
+      baseMapSeriesName: ['Container', 'MapChart']
     }
   },
   methods: {
@@ -596,9 +602,7 @@ export default {
       try {
         const chartParams = this.chartInfo.params
         if (this.isMap) {
-          const { chart, polygonSeries } = this.initMap(`chart${this.chartInfo.id}`)
-          this.myChart = chart
-          this.polygonSeries = polygonSeries
+          this.initMap(`chart${this.chartInfo.id}`)
           if (chartParams) {
             this.loadMap(this.polygonSeries)
           }
@@ -802,26 +806,58 @@ export default {
       const chart = am4Core.create(id, am4Maps.MapChart)
       chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
+      this.myChart = chart
       const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
       polygonSeries.useGeodata = true
       polygonSeries.exclude = ['AQ'] // 排除南极洲
       polygonSeries.tooltip.getFillFromObject = false
       polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+      this.polygonSeries = polygonSeries
       const polygonTemplate = polygonSeries.mapPolygons.template
       polygonTemplate.tooltipHTML = this.generateTooltipHTML()
-      polygonSeries.tooltip.getFillFromObject = false
-      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
       polygonTemplate.nonScalingStroke = true
       polygonTemplate.strokeWidth = 0.5
       polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
+      polygonTemplate.events.on('hit', ev => {
+        const countryId = ev.target.dataItem.dataContext.id
+        if (countryId) {
+          ev.target.series.chart.zoomToMapObject(ev.target)
+          ev.target.isHover = false
+          this.countrySeries = chart.series.push(new am4Maps.MapPolygonSeries())
+          this.countrySeries.tooltip.getFillFromObject = false
+          this.countrySeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+          const countryTemplate = this.countrySeries.mapPolygons.template
+          countryTemplate.tooltipHTML = this.generateTooltipHTML()
+          countryTemplate.nonScalingStroke = true
+          countryTemplate.strokeWidth = 0.5
+          countryTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
+          const geoData = getGeoData(countryId)
+          if (geoData) {
+            this.countrySeries.geodata = geoData
+            this.polygonSeries.hide()
+            this.loadMap(this.countrySeries, ev.target.dataItem.dataContext.serverCountry)
+          }
+        }
+      })
       return {
         chart,
         polygonSeries
       }
     },
-    loadMap (polygonSeries) {
+    loadMap (polygonSeries, country) {
+      this.loading = true
+      // 清除数据
+      polygonSeries.data.splice(0)
+      // 清除legend
+      this.myChart.children.each((s, i) => {
+        if (s.className !== 'Container') {
+          this.myChart.children.removeIndex(i)
+        }
+      })
+
+      this.showMapBackButton = !!country
       const chartParams = this.chartInfo.params
-      const queryParams = { ...this.queryTimeRange, country: '', region: '', ...this.entity } // 统计数据的查询参数
+      const queryParams = { ...this.queryTimeRange, country: country || '', region: '', ...this.entity } // 统计数据的查询参数
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200 && !this.$_.isEmpty(response.data.result)) {
           const data = response.data.result
@@ -898,7 +934,8 @@ export default {
                 })
               })
               imageSeries.data = pointData
-            } else if (this.isMapBlock) {
+            }
+            if (this.isMapBlock) {
               const sumData = []
               data.forEach(r => {
                 const hit = sumData.find(s => s.id === r.serverId)
@@ -909,6 +946,7 @@ export default {
                 } else {
                   sumData.push({
                     id: r.serverId,
+                    serverCountry: r.serverCountry,
                     key,
                     labelText,
                     value
@@ -976,6 +1014,13 @@ export default {
         this.initChart()
       })
     },
+    mapBack () {
+      this.countrySeries.hide()
+      this.loadMap(this.polygonSeries)
+      this.polygonSeries.show()
+      this.myChart.goHome()
+    },
+    // 获取最新时间
     getCurrentTimeRange (callback) {
       this.$emit('getCurrentTimeRange', ({ startTime, endTime }) => {
         callback({ startTime, endTime })

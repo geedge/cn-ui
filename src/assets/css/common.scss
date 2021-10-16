@@ -68,5 +68,5 @@ th *:first-letter,
 /* 淡化amcharts的logo */
 g [aria-labelledby$=-title] {
   opacity: 0.1;
-  transform: translate(calc(100% - 76px), calc(100% - 25px));
+  transform: translateX(calc(100% - 52px)) scale(.7);
 }

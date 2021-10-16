@@ -4,6 +4,7 @@
  * @description 1.定义api；2.定义通用查询方法，函数名应为 获取详情getItem、获取列表getItemList。例如getUser、getUserList
 */
 import { get, post } from '@/utils/http'
+import axios from 'axios'
 import { sortByOrderNum } from '@/permission'
 import { storageKey } from '@/utils/constants'
 
@@ -116,8 +117,10 @@ export async function getI18n () {
 /* 获得原始的3611-2 json字符串数据 */
 export async function getIso36112JsonData (suffix) {
   const request = new Promise(resolve => {
-    get(`${process.env.BASE_URL}geojson/${suffix}`).then(response => {
-      resolve(JSON.stringify(response))
+    axios({
+      url: `${window.location.protocol}//${window.location.host}:${window.location.port}/geojson/${suffix}.json`,
+    }).then(response => {
+      resolve(response.data || response || null)
     })
   })
   return await request

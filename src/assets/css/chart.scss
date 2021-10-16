@@ -27,11 +27,12 @@
 }
 .chart__loading {
   position: absolute;
-  height: calc(100% - 50px);
-  top: 50px;
+  height: calc(100% - 47px);
+  top: 47px;
   width: 100%;
   background-color: #fefefe;
   z-index: 1;
+  opacity: .9;
 
   i {
     position: absolute;
