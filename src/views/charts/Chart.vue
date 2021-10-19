@@ -527,6 +527,11 @@ import { get, post } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
 import { HeatLegend } from '@/components/amcharts/heatLegend'
 
+import * as L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import icon from 'leaflet/dist/images/marker-icon.png'
+import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+
 export default {
   name: 'Chart',
   props: {
@@ -590,7 +595,8 @@ export default {
       errorInfo: '', // 接口具体错误信息
       polygonSeries: null, // 世界地图series
       countrySeries: null, // 下钻国家series
-      baseMapSeriesName: ['Container', 'MapChart']
+      baseMapSeriesName: ['Container', 'MapChart'],
+      mapPictureUrl: '/Tiles/{z}/{x}/{y}.png'
     }
   },
   methods: {
@@ -604,7 +610,7 @@ export default {
         if (this.isMap) {
           this.initMap(`chart${this.chartInfo.id}`)
           if (chartParams) {
-            this.loadMap(this.polygonSeries)
+            this.isIpBasicInfo ? this.loadLeafletMap() : this.loadAm4ChartMap(this.polygonSeries)
           }
           // TODO 优化：缓存地图，重新查询时只更改数据，不再次初始化
         } else if (this.isEcharts) {
@@ -803,48 +809,77 @@ export default {
       this.activeTab = tab.paneName
     },
     initMap (id) {
-      const chart = am4Core.create(id, am4Maps.MapChart)
-      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
-      chart.projection = new am4Maps.projections.Miller()
-      this.myChart = chart
-      const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
-      polygonSeries.useGeodata = true
-      polygonSeries.exclude = ['AQ'] // 排除南极洲
-      polygonSeries.tooltip.getFillFromObject = false
-      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
-      this.polygonSeries = polygonSeries
-      const polygonTemplate = polygonSeries.mapPolygons.template
-      polygonTemplate.tooltipHTML = this.generateTooltipHTML()
-      polygonTemplate.nonScalingStroke = true
-      polygonTemplate.strokeWidth = 0.5
-      polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
-      polygonTemplate.events.on('hit', ev => {
-        const countryId = ev.target.dataItem.dataContext.id
-        if (countryId) {
-          ev.target.series.chart.zoomToMapObject(ev.target)
-          ev.target.isHover = false
-          this.countrySeries = chart.series.push(new am4Maps.MapPolygonSeries())
-          this.countrySeries.tooltip.getFillFromObject = false
-          this.countrySeries.tooltip.background.fill = am4Core.color('#FFFFFF')
-          const countryTemplate = this.countrySeries.mapPolygons.template
-          countryTemplate.tooltipHTML = this.generateTooltipHTML()
-          countryTemplate.nonScalingStroke = true
-          countryTemplate.strokeWidth = 0.5
-          countryTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
-          const geoData = getGeoData(countryId)
-          if (geoData) {
-            this.countrySeries.geodata = geoData
-            this.polygonSeries.hide()
-            this.loadMap(this.countrySeries, ev.target.dataItem.dataContext.serverCountry)
+      if (this.isIpBasicInfo) {
+        L.Marker.prototype.options.icon = L.icon({
+          iconUrl: icon,
+          shadowUrl: iconShadow
+        })
+        const map = L.map(`chart${this.chartInfo.id}`, {
+          minZoom: 3,
+          maxZoom: 7,
+          zoom: 5,
+          attributionControl: false,
+          zoomControl: false,
+          maxBounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
+        })
+        L.tileLayer(
+          this.mapPictureUrl,
+          { noWrap: true }
+        ).addTo(map)
+
+        const attribution = L.control.attribution({ position: 'bottomright', prefix: '' })
+        attribution.addAttribution(' © OpenStreetMap contributors')
+        attribution.addTo(map)
+
+        /* L.control.zoom({
+          position: 'bottomright',
+          zoomInText: '<i class="nz-icon nz-icon-enlarge"></i>',
+          zoomOutText: '<i class="nz-icon nz-icon-narrow"></i>',
+          zoomInTitle: '',
+          zoomOutTitle: ''
+        }).addTo(map) */
+
+        this.myChart = map
+      } else {
+        const chart = am4Core.create(id, am4Maps.MapChart)
+        chart.geodata = getGeoData(storageKey.iso36112WorldLow)
+        chart.projection = new am4Maps.projections.Miller()
+        this.myChart = chart
+        const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
+        polygonSeries.useGeodata = true
+        polygonSeries.exclude = ['AQ'] // 排除南极洲
+        polygonSeries.tooltip.getFillFromObject = false
+        polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+        this.polygonSeries = polygonSeries
+        const polygonTemplate = polygonSeries.mapPolygons.template
+        polygonTemplate.tooltipHTML = this.generateTooltipHTML()
+        polygonTemplate.nonScalingStroke = true
+        polygonTemplate.strokeWidth = 0.5
+        polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
+        polygonTemplate.events.on('hit', ev => {
+          const countryId = ev.target.dataItem.dataContext.id
+          if (countryId) {
+            ev.target.series.chart.zoomToMapObject(ev.target)
+            ev.target.isHover = false
+            this.countrySeries = chart.series.push(new am4Maps.MapPolygonSeries())
+            this.countrySeries.tooltip.getFillFromObject = false
+            this.countrySeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+            const countryTemplate = this.countrySeries.mapPolygons.template
+            countryTemplate.tooltipHTML = this.generateTooltipHTML()
+            countryTemplate.nonScalingStroke = true
+            countryTemplate.strokeWidth = 0.5
+            countryTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
+            const geoData = getGeoData(countryId)
+            if (geoData) {
+              this.countrySeries.geodata = geoData
+              this.polygonSeries.hide()
+              this.loadAm4ChartMap(this.countrySeries, ev.target.dataItem.dataContext.serverCountry)
+            }
           }
-        }
-      })
-      return {
-        chart,
-        polygonSeries
+        })
       }
     },
-    loadMap (polygonSeries, country) {
+    loadAm4ChartMap (polygonSeries, country) {
       this.loading = true
       // 清除数据
       polygonSeries.data.splice(0)
@@ -861,140 +896,152 @@ export default {
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200 && !this.$_.isEmpty(response.data.result)) {
           const data = response.data.result
-          if (this.isIpBasicInfo) {
-            this.detailData = data
-          } else {
-            data.forEach(r => {
-              const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
-              const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
-              serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
-              serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
-              clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
-              clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
+          data.forEach(r => {
+            const serverCountryCapital = r.serverId && getCapitalGeo(r.serverId)
+            const clientCountryCapital = r.clientId && getCapitalGeo(r.clientId)
+            serverCountryCapital && (r.serverLongitude = serverCountryCapital.capitalLongitude)
+            serverCountryCapital && (r.serverLatitude = serverCountryCapital.capitalLatitude)
+            clientCountryCapital && (r.clientLongitude = clientCountryCapital.capitalLongitude)
+            clientCountryCapital && (r.clientLatitude = clientCountryCapital.capitalLatitude)
+          })
+          /* if (this.isMapLine) {
+            const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
+            const lineTemplate = lineSeries.mapLines.template
+            lineTemplate.stroke = am4Core.color('#A258EC')
+            lineTemplate.line.nonScalingStroke = true
+            lineTemplate.line.strokeDasharray = '4 3'
+            lineTemplate.nonScalingStroke = true
+            lineTemplate.arrow.nonScaling = true
+            lineTemplate.arrow.width = 4
+            lineTemplate.arrow.height = 6
+            lineSeries.data = [
+              {
+                multiGeoLine: data.map(d => {
+                  return [
+                    {
+                      latitude: parseFloat(d.serverLatitude),
+                      longitude: parseFloat(d.serverLongitude)
+                    },
+                    {
+                      latitude: parseFloat(d.clientLatitude),
+                      longitude: parseFloat(d.clientLongitude)
+                    }
+                  ]
+                })
+              }
+            ]
+            const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+            imageSeries.dataFields.value = 'sessions'
+            const imageSeriesTemplate = imageSeries.mapImages.template
+            const circle = imageSeriesTemplate.createChild(am4Core.Circle)
+
+            circle.fillOpacity = 0.7
+            circle.nonScaling = true
+            const radiusHeat = imageSeries.heatRules.push({
+              target: circle,
+              property: 'radius',
+              min: 8,
+              max: 30
             })
-            if (this.isMapLine) {
-              const lineSeries = this.myChart.series.push(new am4Maps.MapLineSeries())
-              const lineTemplate = lineSeries.mapLines.template
-              lineTemplate.stroke = am4Core.color('#A258EC')
-              lineTemplate.line.nonScalingStroke = true
-              lineTemplate.line.strokeDasharray = '4 3'
-              lineTemplate.nonScalingStroke = true
-              lineTemplate.arrow.nonScaling = true
-              lineTemplate.arrow.width = 4
-              lineTemplate.arrow.height = 6
-              lineSeries.data = [
-                {
-                  multiGeoLine: data.map(d => {
-                    return [
-                      {
-                        latitude: parseFloat(d.serverLatitude),
-                        longitude: parseFloat(d.serverLongitude)
-                      },
-                      {
-                        latitude: parseFloat(d.clientLatitude),
-                        longitude: parseFloat(d.clientLongitude)
-                      }
-                    ]
-                  })
-                }
-              ]
-              const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
-              imageSeries.dataFields.value = 'sessions'
-              const imageSeriesTemplate = imageSeries.mapImages.template
-              const circle = imageSeriesTemplate.createChild(am4Core.Circle)
+            const colorHeat = imageSeries.heatRules.push({
+              target: circle,
+              property: 'fill',
+              min: am4Core.color('#D2A8FF'),
+              max: am4Core.color('#A258EC')
+            })
+            imageSeriesTemplate.propertyFields.latitude = 'latitude'
+            imageSeriesTemplate.propertyFields.longitude = 'longitude'
 
-              circle.fillOpacity = 0.7
-              circle.nonScaling = true
-              const radiusHeat = imageSeries.heatRules.push({
-                target: circle,
-                property: 'radius',
-                min: 8,
-                max: 30
+            const pointData = []
+            data.forEach(d => {
+              pointData.push({
+                ...d,
+                latitude: parseFloat(d.serverLatitude),
+                longitude: parseFloat(d.serverLongitude)
               })
-              const colorHeat = imageSeries.heatRules.push({
-                target: circle,
-                property: 'fill',
-                min: am4Core.color('#D2A8FF'),
-                max: am4Core.color('#A258EC')
+              pointData.push({
+                ...d,
+                latitude: parseFloat(d.clientLatitude),
+                longitude: parseFloat(d.clientLongitude)
               })
-              imageSeriesTemplate.propertyFields.latitude = 'latitude'
-              imageSeriesTemplate.propertyFields.longitude = 'longitude'
-
-              const pointData = []
-              data.forEach(d => {
-                pointData.push({
-                  ...d,
-                  latitude: parseFloat(d.serverLatitude),
-                  longitude: parseFloat(d.serverLongitude)
+            })
+            imageSeries.data = pointData
+          } */
+          if (this.isMapBlock) {
+            const sumData = []
+            data.forEach(r => {
+              const hit = sumData.find(s => s.id === r.serverId)
+              const { key, labelText } = this.getDataKey(r)
+              const value = Number(r[key]) || 0
+              if (hit) {
+                hit.value += value
+              } else {
+                sumData.push({
+                  id: r.serverId,
+                  serverCountry: r.serverCountry,
+                  key,
+                  labelText,
+                  value
                 })
-                pointData.push({
-                  ...d,
-                  latitude: parseFloat(d.clientLatitude),
-                  longitude: parseFloat(d.clientLongitude)
-                })
-              })
-              imageSeries.data = pointData
-            }
-            if (this.isMapBlock) {
-              const sumData = []
-              data.forEach(r => {
-                const hit = sumData.find(s => s.id === r.serverId)
-                const { key, labelText } = this.getDataKey(r)
-                const value = Number(r[key]) || 0
-                if (hit) {
-                  hit.value += value
-                } else {
-                  sumData.push({
-                    id: r.serverId,
-                    serverCountry: r.serverCountry,
-                    key,
-                    labelText,
-                    value
-                  })
-                }
-              })
-              const seriesData = sumData.map(r => ({
-                ...r,
-                showValue: (r.value || r.value === 0) ? valueToRangeValue(r.value, chartParams.unitType).join(' ') : ''
-              }))
-              polygonSeries.data = [...seriesData]
-              const sorted = seriesData.sort((a, b) => b.value - a.value)
-              const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
+              }
+            })
+            const seriesData = sumData.map(r => ({
+              ...r,
+              showValue: (r.value || r.value === 0) ? valueToRangeValue(r.value, chartParams.unitType).join(' ') : ''
+            }))
+            polygonSeries.data = [...seriesData]
+            const sorted = seriesData.sort((a, b) => b.value - a.value)
+            const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
 
-              polygonSeries.heatRules.push({
-                property: 'fill',
-                target: polygonSeries.mapPolygons.template,
-                min: this.myChart.colors.getIndex(1).brighten(1),
-                max: allZero ? this.myChart.colors.getIndex(1).brighten(1) : this.myChart.colors.getIndex(1).brighten(-0.3)
-              })
-              const heatLegend = this.myChart.createChild(HeatLegend)
-              heatLegend.markerContainer.height = 6
-              heatLegend.series = polygonSeries
-              heatLegend.align = 'left'
-              heatLegend.markerCount = allZero ? 1 : 3
-              heatLegend.minValue = 0
-              heatLegend.fontSize = 12
-              heatLegend.maxValue = allZero ? 1 : Number(sorted[0].value)
-              heatLegend.width = allZero ? am4Core.percent(10) : am4Core.percent(25)
-              heatLegend.marginLeft = 15
-              heatLegend.valign = 'bottom'
+            polygonSeries.heatRules.push({
+              property: 'fill',
+              target: polygonSeries.mapPolygons.template,
+              min: this.myChart.colors.getIndex(1).brighten(1),
+              max: allZero ? this.myChart.colors.getIndex(1).brighten(1) : this.myChart.colors.getIndex(1).brighten(-0.3)
+            })
+            const heatLegend = this.myChart.createChild(HeatLegend)
+            heatLegend.markerContainer.height = 6
+            heatLegend.series = polygonSeries
+            heatLegend.align = 'left'
+            heatLegend.markerCount = allZero ? 1 : 3
+            heatLegend.minValue = 0
+            heatLegend.fontSize = 12
+            heatLegend.maxValue = allZero ? 1 : Number(sorted[0].value)
+            heatLegend.width = allZero ? am4Core.percent(10) : am4Core.percent(25)
+            heatLegend.marginLeft = 15
+            heatLegend.valign = 'bottom'
 
-              const minRange = heatLegend.valueAxis.axisRanges.create()
-              minRange.value = heatLegend.minValue
-              minRange.label.text = minRange.value === 0 ? 0 : unitConvert(heatLegend.minValue, chartParams.unitType).join(' ')
-              const maxRange = heatLegend.valueAxis.axisRanges.create()
-              maxRange.value = heatLegend.maxValue
-              maxRange.label.text = maxRange.value === 0 ? 0 : unitConvert(heatLegend.maxValue, chartParams.unitType).join(' ')
+            const minRange = heatLegend.valueAxis.axisRanges.create()
+            minRange.value = heatLegend.minValue
+            minRange.label.text = minRange.value === 0 ? 0 : unitConvert(heatLegend.minValue, chartParams.unitType).join(' ')
+            const maxRange = heatLegend.valueAxis.axisRanges.create()
+            maxRange.value = heatLegend.maxValue
+            maxRange.label.text = maxRange.value === 0 ? 0 : unitConvert(heatLegend.maxValue, chartParams.unitType).join(' ')
 
-              heatLegend.valueAxis.renderer.labels.template.adapter.add('text', function (labelText) {
-                return ''
-              })
-            }
+            heatLegend.valueAxis.renderer.labels.template.adapter.add('text', function (labelText) {
+              return ''
+            })
           }
         } else if (response.code !== 200) {
           this.isError = true
           this.noData = true
           this.errorInfo = response.msg || response.message || 'Unknown'
+        }
+      }).finally(() => {
+        setTimeout(() => { this.loading = false }, 250)
+      })
+    },
+    loadLeafletMap () {
+      this.loading = true
+      const chartParams = this.chartInfo.params
+      get(replaceUrlPlaceholder(chartParams.url, this.entity)).then(response => {
+        if (response.code === 200 && !this.$_.isEmpty(response.data.result)) {
+          this.detailData = response.data.result
+          this.myChart.setView([this.detailData.latitude, this.detailData.longitude], 5)
+          const myIcon = L.divIcon({
+            className: 'cn-icon cn-icon-position2 position-icon'
+          })
+          L.marker([this.detailData.latitude, this.detailData.longitude], { icon: myIcon }).addTo(this.myChart)
         }
       }).finally(() => {
         setTimeout(() => { this.loading = false }, 250)
@@ -1016,7 +1063,7 @@ export default {
     },
     mapBack () {
       this.countrySeries.hide()
-      this.loadMap(this.polygonSeries)
+      this.loadAm4ChartMap(this.polygonSeries)
       this.polygonSeries.show()
       this.myChart.goHome()
     },
@@ -2093,5 +2140,10 @@ export default {
       padding-right: 20px;
     }
   }
+}
+
+.position-icon {
+  font-size: 24px;
+  color: #EC7F66;
 }
 </style>
