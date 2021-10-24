@@ -4,6 +4,7 @@
     ref="dataTable"
     :data="tableData"
     :height="height"
+    tooltip-effect="light"
     border
     class="no-operation"
     @header-dragend="dragend"
@@ -27,17 +28,32 @@
       :sort-orders="['ascending', 'descending']"
       :width="`${item.width}`"
       class="data-column"
+      :show-overflow-tooltip="['params', 'response'].indexOf(item.prop) > -1"
     >
       <template #header>
         <span class="data-column__span">{{item.label}}</span>
         <div class="col-resize-area"></div>
       </template>
       <template  #default="scope">
-        <span v-if="item.prop === 'time'">
-                {{scope.row[item.prop]}} ms
+        <span v-if="item.prop === 'duration'">
+                {{scope.row[item.prop]}}ms
               </span>
+        <span v-else-if="item.prop === 'state'">
+          <template v-if="scope.row[item.prop]==operationLogStateMapping.success">
+            {{$t('operationLog.state.success')}}
+          </template>
+          <template v-else-if="scope.row[item.prop]==operationLogStateMapping.fail">
+            {{$t('operationLog.state.fail')}}
+          </template>
+          <template v-else>
+            {{scope.row[item.prop]}}
+          </template>
+        </span>
         <span v-else-if="item.prop === 'username'">{{formatUsername(scope.row)}}</span>
         <span v-else-if="item.prop === 'ctime'">{{utcTimeToSysTime(scope.row[item.prop])}}</span>
+        <template v-else-if="item.prop === 'params' || item.prop === 'response'">
+          <span>{{scope.row[item.prop]}}</span>
+        </template>
         <span v-else>{{scope.row[item.prop]}}</span>
       </template>
     </el-table-column>
@@ -46,11 +62,14 @@
 
 <script>
 import table from '@/mixins/table'
+import { operationLogStateMapping } from '@/utils/constants'
+
 export default {
   name: 'roleTable',
   mixins: [table],
   data () {
     return {
+      operationLogStateMapping: operationLogStateMapping,
       tableTitle: [
         {
           label: this.$t('config.operationlog.id'),
@@ -99,18 +118,20 @@ export default {
         },
         {
           label: this.$t('config.operationlog.time'),
-          prop: 'time',
+          prop: 'duration',
           show: false
         },
         {
           label: this.$t('config.operationlog.params'),
           prop: 'params',
-          show: false
+          show: false,
+          width: 150
         },
         {
           label: this.$t('config.operationlog.response'),
           prop: 'response',
-          show: false
+          show: false,
+          width: 150
         }
       ]
     }

@@ -39,6 +39,12 @@ export const panelTypeAndRouteMapping = {
   appEntityDetail: 6
 }
 
+/* operationLog state 执行状态属性 值与名称之间的映射 */
+export const operationLogStateMapping = {
+  success: 1,
+  fail: 0
+}
+
 export const position = {
   tableHeight: {
     normal: 'calc(100% - 48px)' // 常规高度，特例在下方定义
