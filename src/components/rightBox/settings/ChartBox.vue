@@ -103,8 +103,12 @@
           </el-form-item>
 
           <!--params-->
-          <el-form-item :label="$t('config.chart.params')">
-            <el-input maxlength="1024" show-word-limit :rows="2" size='mini' type="textarea" v-model="editObject.params" id="chart-box-params"/>
+          <el-form-item :label="$t('config.chart.params')" prop="params">
+            <v-ace-editor
+                    v-model:value="editObject.params"
+                    lang="json"
+                    theme="chrome"
+                    style="height: 300px" />
           </el-form-item>
           <!--remark-->
           <el-form-item :label="$t('config.chart.remark')">
@@ -130,10 +134,17 @@ import rightBoxMixin from '@/mixins/rightBox'
 import { get, post, put } from '@/utils/http'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api } from '@/utils/api'
+import { VAceEditor } from 'vue3-ace-editor'
+import 'ace-builds/src-noconflict/mode-javascript'
+import 'ace-builds/src-noconflict/mode-json'
+import 'ace-builds/src-noconflict/theme-chrome'
 
 export default {
   name: 'ChartBox',
   mixins: [rightBoxMixin],
+  components: {
+    VAceEditor
+  },
   data () {
     return {
       url: api.chart,
@@ -380,3 +391,13 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+  .my-editor {
+    margin-top: 4px;
+    border: 1px solid $--right-box-border-color;
+
+    .prism-editor__textarea {
+      outline: none;
+    }
+  }
+</style>
