@@ -36,9 +36,6 @@ build_project:
     - npm install --save-dev --unsafe-perm
     - echo "npm run build"
     - npm run build
-  artifacts:
-    paths:
-      - dist
   only:
     - dev
     - tags
