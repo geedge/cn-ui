@@ -18,6 +18,19 @@
                 type="button" @click="add">
           <i class="cn-icon-add cn-icon"></i>
         </button>
+        <top-tool-more-options
+                ref="export"
+                id="model"
+                :params="searchLabel"
+                class="top-tool-export margin-l-10 margin-r-10"
+                export-file-name="galaxyProxy"
+                export-url="/galaxy/setting/export"
+                import-url="/galaxy/setting/import"
+                @afterImport="getTableData"
+        >
+          <template v-slot:before>
+          </template>
+        </top-tool-more-options>
       </template>
       <template v-slot:default>
         <galaxy-proxy-table
@@ -58,13 +71,15 @@ import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
 import dataListMixin from '@/mixins/dataList'
 import { api } from '@/utils/api'
 import { get, put } from '@/utils/http'
+import topToolMoreOptions from '@/components/common/popBox/topToolMoreOptions'
 
 export default {
   name: 'GalaxyProxy',
   components: {
     cnDataList,
     galaxyProxyBox,
-    galaxyProxyTable
+    galaxyProxyTable,
+    topToolMoreOptions,
   },
   mixins: [dataListMixin],
   data () {
