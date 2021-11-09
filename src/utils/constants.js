@@ -52,9 +52,9 @@ export const position = {
 }
 
 export const entityType = {
-  ip: 'IP',
+  app: 'APP',
   domain: 'Domain',
-  app: 'APP'
+  ip: 'IP'
 }
 
 export const entityFilterType = {
