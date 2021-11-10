@@ -1284,24 +1284,22 @@ export default {
     initSankey (chartParams) {
       const vm = this
       const entityName = this.entity.ip || this.entity.domain || this.entity.app
+      const queryParams = { ...this.queryTimeRange, ...this.entity }
       this.chartOption.series[0].tooltip = {
-        formatter: function ({ name }) {
+        formatter: function (param) {
+          console.info(param)
           return `
             <div class="sankey__tooltip">
               <div class="sankey__tooltip-row">
                 <div class="sankey__row-label">Via:</div>
-                <div class="sankey__row-value">1521</div>
-              </div>
-              <div class="sankey__tooltip-row">
-                <div class="sankey__row-label">To:</div>
-                <div class="sankey__row-value">21522</div>
+                <div class="sankey__row-value">${param.data.name}</div>
               </div>
               <div class="sankey__tooltip-row">
                 <div style="margin: 6px 0; height: 1px; width: 100%; background-color: #E7EAED;"></div>
               </div>
               <div class="sankey__tooltip-row">
                 <div class="sankey__row-label">Traffic:</div>
-                <div class="sankey__row-value">150bps(8%)</div>
+                <div class="sankey__row-value">${param.data.convert[0]}${param.data.convert[1]}&nbsp;(${param.data.percent[0]}%)</div>
               </div>
               <div class="sankey__tooltip-row">
                 <div class="sankey__row-label">Performance:</div>
@@ -1309,150 +1307,153 @@ export default {
               <div class="sankey__tooltip-table">
                 <div class="sankey__table-row">
                   <div class="sankey__table-cell">${vm.$t('networkAppPerformance.tripTime')}:</div>
-                  <div class="sankey__table-cell">58ms</div>
+                  <div class="sankey__table-cell">${param.data.latency[0]}&nbsp;${param.data.latency[1]}</div>
                 </div>
                 <div class="sankey__table-row">
                   <div class="sankey__table-cell">${vm.$t('overall.packetLoss')}:</div>
-                  <div class="sankey__table-cell">5%</div>
+                  <div class="sankey__table-cell">${param.data.lossPercent[0]}&nbsp;%</div>
                 </div>
                 <div class="sankey__table-row">
                   <div class="sankey__table-cell">${vm.$t('overall.packetRetrans')}:</div>
-                  <div class="sankey__table-cell">58%</div>
+                  <div class="sankey__table-cell">${param.data.retransPercent[0]}&nbsp;%</div>
                 </div>
               </div>
             </div>
           `
         }
       }
-      this.chartOption.series[0].data = [
-        {
-          name: '1521'
-        },
-        {
-          name: '2714'
-        },
-        {
-          name: entityName,
-          label: {
-            show: false
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+          } else {
+            this.noData = false
+            let inTotalValue = 0
+            let outTotalValue = 0
+
+            /* 测试代码
+            const t = []
+            for (const k in response.data.result) {
+              t.push(response.data.result[k])
+            }
+            response.data.result = t */
+
+            response.data.result.forEach(item => {
+              if (item.direction === 'in') {
+                inTotalValue += parseInt(item.bytes)
+              } else if (item.direction === 'out') {
+                outTotalValue += parseInt(item.bytes)
+              }
+            })
+            const data = response.data.result.map(item => {
+              return {
+                ...item,
+                name: item.linkID,
+                percent: valueToRangeValue(parseInt(item.bytes) / (item.direction === 'in' ? inTotalValue : outTotalValue) * 100, unitTypes.percent),
+                convert: unitConvert(item.bytes, unitTypes.byte),
+                latency: valueToRangeValue(item.latency, unitTypes.time),
+                lossPercent: valueToRangeValue(item.lossPercent, unitTypes.percent),
+                retransPercent: valueToRangeValue(item.retransPercent, unitTypes.percent),
+                bytes: parseFloat(item.bytes)
+              }
+            })
+            data.push({ name: entityName })
+
+            const link = data.map(item => {
+              const source = item.direction === 'in' ? item.linkID : entityName
+              const target = item.direction === 'in' ? entityName : item.linkID
+              return {
+                ...item,
+                source,
+                target,
+                value: item.bytes
+              }
+            })
+            console.info(data)
+            console.info(link)
+            this.chartOption.series[0].data = data
+            this.chartOption.series[0].links = link
+            this.myChart.setOption(this.chartOption)
           }
-        },
-        {
-          name: '21521'
-        },
-        {
-          name: '22714'
-        },
-        {
-          name: '29047'
-        },
-        {
-          name: '21522'
-        },
-        {
-          name: '22715'
-        },
-        {
-          name: '29048'
-        },
-        {
-          name: '121521'
-        },
-        {
-          name: '122714'
-        },
-        {
-          name: '129047'
-        },
-        {
-          name: '121522'
-        },
-        {
-          name: '122715'
-        },
-        {
-          name: '129048'
         }
-      ]
-      this.chartOption.series[0].links = [
-        {
-          source: '1521',
-          target: entityName,
-          value: 6779
-        },
-        {
-          source: '2714',
-          target: entityName,
-          value: 4417
-        },
-        {
-          source: entityName,
-          target: '21521',
-          value: 704
-        },
-        {
-          source: entityName,
-          target: '22714',
-          value: 55
-        },
-        {
-          source: entityName,
-          target: '29047',
-          value: 509
-        },
-        {
-          source: entityName,
-          target: '21522',
-          value: 3140
-        },
-        {
-          source: entityName,
-          target: '22715',
-          value: 550
-        },
-        {
-          source: entityName,
-          target: '29048',
-          value: 1290
-        },
-        {
-          source: entityName,
-          target: '121521',
-          value: 704
-        },
-        {
-          source: entityName,
-          target: '122714',
-          value: 55
-        },
-        {
-          source: entityName,
-          target: '129047',
-          value: 509
-        },
-        {
-          source: entityName,
-          target: '121522',
-          value: 2040
-        },
-        {
-          source: entityName,
-          target: '122715',
-          value: 550
-        },
-        {
-          source: entityName,
-          target: '129048',
-          value: 1090
-        }
-      ]
-      this.myChart.setOption(this.chartOption)
-      setTimeout(() => {
-        this.loading = false
-        this.$nextTick(() => {
-          this.echartsResize()
+      }).finally(() => {
+        setTimeout(() => {
+          this.loading = false
+          this.$nextTick(() => {
+            this.echartsResize()
+          })
+        }, 250)
+      })
+      /* const inDirection = new Promise(resolve =>
+        get(replaceUrlPlaceholder(chartParams.url, { ...queryParams, direction: 'ingress' })).then(response => {
+          if (response.code === 200) {
+            if (this.$_.isEmpty(response.data.result)) {
+              this.noData = true
+            } else {
+              this.noData = false
+              resolve(handleData(response.data.result, 'in'))
+            }
+          }
+          resolve()
         })
-      }, 250)
+      )
+      const outDirection = new Promise(resolve =>
+        get(replaceUrlPlaceholder(chartParams.url, { ...queryParams, direction: 'egress' })).then(response => {
+          if (response.code === 200) {
+            if (this.$_.isEmpty(response.data.result)) {
+              this.noData = true
+            } else {
+              this.noData = false
+              resolve(handleData(response.data.result, 'out'))
+            }
+          }
+          resolve()
+        })
+      )
+      Promise.all([inDirection, outDirection]).then(responses => {
+        const inData = responses[0]
+        const outData = responses[1]
+        this.chartOption.series[0].data = inData.data.concat(outData.data)
+        this.chartOption.series[0].links = inData.link.concat(outData.link)
+        this.myChart.setOption(this.chartOption)
+      }).finally(() => {
+        setTimeout(() => {
+          this.loading = false
+          this.$nextTick(() => {
+            this.echartsResize()
+          })
+        }, 250)
+      })
+
+      function handleData (originalData, direction) {
+        let totalValue = 0
+        originalData.forEach(item => {
+          totalValue += parseInt(item.bytes)
+        })
+        const data = originalData.map(item => {
+          return {
+            ...item,
+            name: item.linkID,
+            percent: unitConvert(parseInt(item.bytes) / totalValue, unitTypes.byte),
+            bytes: unitConvert(item.bytes, unitTypes.byte)
+          }
+        })
+
+        const link = data.map(item => {
+          const source = direction === 'in' ? item.linkID : entityName
+          const target = direction === 'in' ? entityName : item.linkID
+          return {
+            ...item,
+            source,
+            target,
+            value: item.bytes
+          }
+        })
+        return {
+          data,
+          link
+        }
+      } */
     },
     initIpOpenPort (chartParams) {
       get(replaceUrlPlaceholder(chartParams.url, { ip: this.entity.ip })).then(response => {
@@ -2081,7 +2082,7 @@ export default {
 }
 .sankey__tooltip {
   width: 270px;
-  height: 200px;
+  height: 170px;
   padding: 5px;
   display: flex;
   flex-direction: column;

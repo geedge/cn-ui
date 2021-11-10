@@ -13,7 +13,7 @@ export const tableTitleMapping = {
     prop: 'ip'
   },
   appId: {
-    label: 'APP ID',
+    label: 'APP',
     prop: 'appId'
   },
   app: {

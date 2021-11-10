@@ -83,7 +83,7 @@
           </template>
           <template v-else-if="from === 'app'">
             <div class="body__row">
-              <span class="body__row-label"><i class="cn-icon cn-icon-id"></i>APP ID：</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-id"></i>APP：</span>
               <div class="body__row-value" :title="d.appId">{{d.appId || '-'}}</div>
             </div>
             <div class="body__row">
