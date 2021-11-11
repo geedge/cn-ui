@@ -70,3 +70,15 @@ g [aria-labelledby$=-title] {
   opacity: 0.1;
   transform: translateX(calc(100% - 52px)) scale(.7);
 }
+
+.no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  color: #999;
+}
+.no-data-hide {
+  display: none;
+}

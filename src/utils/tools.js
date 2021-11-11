@@ -346,11 +346,33 @@ export const clickOutside = {
     delete el.__vueClickOutside__
   }
 }
+
+const noDataDom = document.createElement('div')
+noDataDom.setAttribute('class', 'no-data')
+noDataDom.innerText = 'No data'
 export const noData = {
   updated (el, binding) {
-    if (el) {
+    if (el && binding.oldValue !== binding.value) {
       if (binding.value) {
-        el.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%; color: #999;">No data</div>'
+        setTimeout(() => {
+          el.childNodes.forEach(node => {
+            node.style.display = 'none'
+          })
+          el.insertBefore(noDataDom, el.childNodes[0])
+        })
+      } else {
+        setTimeout(() => {
+          for (let i = 0; i < el.childNodes.length; i++) {
+            const node = el.childNodes[i]
+            if (node.innerText === 'No data') {
+              el.removeChild(node)
+              break
+            }
+          }
+          el.childNodes.forEach(node => {
+            node.style.display = ''
+          })
+        })
       }
     }
   }
