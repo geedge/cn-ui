@@ -179,7 +179,7 @@ export default {
     let localStorageTableTitle = localStorage.getItem('cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId)
     localStorageTableTitle = localStorageTableTitle ? JSON.parse(localStorageTableTitle) : this.$refs.dataTable.tableTitle
     this.tools.customTableTitle = this.$refs.dataTable.tableTitle.map((item, index) => { // 修复切换中英文的问题
-      if(localStorageTableTitle[index]){
+      if (localStorageTableTitle[index]) {
         item.show = localStorageTableTitle[index].show
       }
       return item

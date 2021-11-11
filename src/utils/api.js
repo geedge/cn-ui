@@ -118,7 +118,7 @@ export async function getI18n () {
 export async function getIso36112JsonData (suffix) {
   const request = new Promise(resolve => {
     axios({
-      url: `${window.location.protocol}//${window.location.host}:${window.location.port}/geojson/${suffix}.json`,
+      url: `${window.location.protocol}//${window.location.host}:${window.location.port}/geojson/${suffix}.json`
     }).then(response => {
       resolve(response.data || response || null)
     })

@@ -82,7 +82,7 @@ export default {
   },
   data () {
     return {
-      importBox: { show: false, title: this.$t('overall.import'), type: 1,width:'600px' },
+      importBox: { show: false, title: this.$t('overall.import'), type: 1, width: '600px' },
       importFile: null,
       importFileList: [],
       importResult: null,
@@ -145,12 +145,12 @@ export default {
     },
     exportAll () {
       const params = JSON.parse(JSON.stringify(this.params))
-      if (this.params2){
-        Object.keys(this.params2).forEach(key=>{
-          if ( params[key] ) {
-            if ( params[key].prototype.toString.call(val) === '[object Object]' ){
-              Object.assign(params[key],this.params2[key])
-            } else if (params[key].prototype.toString.call(val) === '[object Array]'){
+      if (this.params2) {
+        Object.keys(this.params2).forEach(key => {
+          if (params[key]) {
+            if (params[key].prototype.toString.call(val) === '[object Object]') {
+              Object.assign(params[key], this.params2[key])
+            } else if (params[key].prototype.toString.call(val) === '[object Array]') {
               params[key].concat(this.params2[key])
             }
           } else {

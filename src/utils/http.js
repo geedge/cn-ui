@@ -55,6 +55,36 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+export function getForDebug (url, params) {
+  return new Promise((resolve) => {
+    axios.get(url, {
+      params: params
+    }).then(response => {
+      resolve(response)
+    }).catch(err => {
+      if (err.response) {
+        resolve(err.response)
+      } else if (err.message) {
+        resolve(err.message)
+      }
+    })
+  })
+}
+
+export function postForDebug (url, params, headers) {
+  return new Promise(resolve => {
+    axios.post(url, params, { headers: headers }).then(response => {
+      resolve(response, response)
+    }).catch(err => {
+      if (err.response) {
+        resolve(err.response)
+      } else if (err.message) {
+        resolve(err.message)
+      }
+    })
+  })
+}
+
 export function get (url, params) {
   return new Promise((resolve) => {
     axios.get(url, {

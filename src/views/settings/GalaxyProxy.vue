@@ -18,6 +18,10 @@
                 type="button" @click="add">
           <i class="cn-icon-add cn-icon"></i>
         </button>
+        <button id="galaxy-proxy-debug" class="top-tool-btn margin-r-10"  :title="$t('overall.debug')"
+                type="button" @click="debug(true,{})">
+          <i class="cn-icon-category cn-icon"></i>
+        </button>
         <top-tool-more-options
                 ref="export"
                 id="model"
@@ -46,6 +50,7 @@
             @reload="getTableData"
             @selectionChange="selectionChange"
             @copy="copy"
+            @debug="debugRow"
         ></galaxy-proxy-table>
       </template>
       <!-- 分页组件 -->
@@ -62,6 +67,11 @@
       <galaxy-proxy-box :object="object" @close="closeRightBox"></galaxy-proxy-box>
     </el-drawer>
   </div>
+  <galaxy-proxy-debug
+          v-model:show-debug="showDebug"
+          top="5vh"
+          :show-close="false"
+          :curGalaxyProxy="curGalaxyProxy"></galaxy-proxy-debug>
 </template>
 
 <script>
@@ -72,6 +82,7 @@ import dataListMixin from '@/mixins/dataList'
 import { api } from '@/utils/api'
 import { get, put } from '@/utils/http'
 import topToolMoreOptions from '@/components/common/popBox/topToolMoreOptions'
+import galaxyProxyDebug from '@/components/setting/GalaxyProxyDebug'
 
 export default {
   name: 'GalaxyProxy',
@@ -80,6 +91,7 @@ export default {
     galaxyProxyBox,
     galaxyProxyTable,
     topToolMoreOptions,
+    galaxyProxyDebug
   },
   mixins: [dataListMixin],
   data () {
@@ -88,7 +100,9 @@ export default {
       tableId: 'galaxySettingTable', // 需要分页的table的id，用于记录每页数量
       blankObject: { // 空白对象
         name: ''
-      }
+      },
+      showDebug: false,
+      curGalaxyProxy: {}
     }
   },
   methods: {
@@ -105,6 +119,15 @@ export default {
         }
       })
     },
+    debug (isTopDebug, u) {
+      if (!isTopDebug && u) {
+        this.curGalaxyProxy = JSON.parse(JSON.stringify(u))
+      }
+      this.showDebug = true
+    },
+    debugRow (u) {
+      this.debug(false, u)
+    },
     clearCache () {
       put(`${this.url}/clearCache`).then(response => {
         if (response.code === 200) {
@@ -116,6 +139,7 @@ export default {
         this.$message.error(this.$t('tip.unknownError'))
       })
     }
+
   }
 }
 </script>
