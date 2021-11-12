@@ -8,10 +8,10 @@
           <!-- import、export之前的内容 -->
           <slot name="before"></slot>
           <el-dropdown-item v-if="importUrl">
-            <div id="chart-import" @click="showImportBox(1)"><i class="cn-icon cn-icon-upload"></i>{{$t('overall.import')}}</div>
+            <div id="chart-import" @click="showImportBox(1)"><i class="cn-icon cn-icon-upload1"></i>{{$t('overall.import')}}</div>
           </el-dropdown-item>
           <el-dropdown-item v-if="exportUrl">
-            <div id="chart-export" @click="exportAll"><i class="cn-icon cn-icon-download"></i>{{$t('overall.export')}}</div>
+            <div id="chart-export" @click="exportAll"><i class="cn-icon cn-icon-download1"></i>{{$t('overall.export')}}</div>
           </el-dropdown-item>
           <!-- import、export之后的内容 -->
           <slot name="after"></slot>

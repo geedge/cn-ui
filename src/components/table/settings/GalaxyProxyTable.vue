@@ -97,9 +97,9 @@
             </div>
             <template #dropdown>
               <el-dropdown-menu >
-                <el-dropdown-item :command="['copy', scope.row]"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.duplicate')}}</span></el-dropdown-item>
+                <el-dropdown-item :command="['copy', scope.row]"><i class="cn-icon cn-icon-override"></i><span class="operation-dropdown-text">{{$t('overall.duplicate')}}</span></el-dropdown-item>
                 <el-dropdown-item :command="['delete', scope.row]"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
-                <el-dropdown-item :command="['debug', scope.row]"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.debug')}}</span></el-dropdown-item>
+                <el-dropdown-item :command="['debug', scope.row]"><i class="cn-icon cn-icon-debug"></i><span class="operation-dropdown-text">{{$t('overall.debug')}}</span></el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
