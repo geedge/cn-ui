@@ -47,5 +47,8 @@ export const legendMapping = {
   session_rate: i18n.global.t('trafficSummary.sessionsPerSecond'),
   packets_rate: i18n.global.t('trafficSummary.packetsPerSecond'),
   packets_received_rate: i18n.global.t('trafficSummary.packetsPerSecondC2s'),
-  packets_sent_rate: i18n.global.t('trafficSummary.packetsPerSecondS2c')
+  packets_sent_rate: i18n.global.t('trafficSummary.packetsPerSecondS2c'),
+  ip_packets_rate: i18n.global.t('trafficSummary.packetsPerSecond'),
+  ip_packets_received_rate: i18n.global.t('trafficSummary.packetsPerSecondC2s'),
+  ip_packets_sent_rate: i18n.global.t('trafficSummary.packetsPerSecondS2c')
 }
