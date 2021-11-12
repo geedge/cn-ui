@@ -352,11 +352,12 @@ noDataDom.setAttribute('class', 'no-data')
 noDataDom.innerText = 'No data'
 export const noData = {
   updated (el, binding) {
+    console.info(binding)
     if (el && binding.oldValue !== binding.value) {
       if (binding.value) {
         setTimeout(() => {
           el.childNodes.forEach(node => {
-            node.style.display = 'none'
+            node.style && (node.style.display = 'none')
           })
           el.insertBefore(noDataDom, el.childNodes[0])
         })
@@ -370,7 +371,7 @@ export const noData = {
             }
           }
           el.childNodes.forEach(node => {
-            node.style.display = ''
+            node.style && (node.style.display = '')
           })
         })
       }

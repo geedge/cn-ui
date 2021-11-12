@@ -63,7 +63,15 @@
     </div>
     <div class="entity-detail__body">
       <div class="cn-panel">
-        <chart v-for="chart in detailChartList" :key="chart.id" :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity"></chart>
+        <chart
+            v-for="chart in detailChartList"
+            :key="chart.id"
+            :chart="chart"
+            :time-filter="timeFilter"
+            :ref="`chart-${chart.id}`"
+            :entity="entity"
+            @getCurrentTimeRange="getCurrentTimeRange"
+        ></chart>
       </div>
     </div>
   </div>

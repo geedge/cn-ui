@@ -1287,7 +1287,6 @@ export default {
       const queryParams = { ...this.queryTimeRange, ...this.entity }
       this.chartOption.series[0].tooltip = {
         formatter: function (param) {
-          console.info(param)
           return `
             <div class="sankey__tooltip">
               <div class="sankey__tooltip-row">
@@ -1369,8 +1368,6 @@ export default {
                 value: item.bytes
               }
             })
-            console.info(data)
-            console.info(link)
             this.chartOption.series[0].data = data
             this.chartOption.series[0].links = link
             this.myChart.setOption(this.chartOption)
