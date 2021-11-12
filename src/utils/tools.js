@@ -352,7 +352,6 @@ noDataDom.setAttribute('class', 'no-data')
 noDataDom.innerText = 'No data'
 export const noData = {
   updated (el, binding) {
-    console.info(binding)
     if (el && binding.oldValue !== binding.value) {
       if (binding.value) {
         setTimeout(() => {
