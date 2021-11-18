@@ -857,7 +857,8 @@ export default {
         polygonTemplate.strokeWidth = 0.5
         polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
         polygonTemplate.events.on('hit', ev => {
-          const countryId = ev.target.dataItem.dataContext.id
+          let countryId = ev.target.dataItem.dataContext.id
+          countryId = countryId === 'Private IP' ? 'China' : countryId
           if (countryId) {
             ev.target.series.chart.zoomToMapObject(ev.target)
             ev.target.isHover = false
