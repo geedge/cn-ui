@@ -28,7 +28,7 @@
           >
           </el-option>
         </el-select>
-        <el-input v-model="path" placeholder="Please input" />
+        <el-input v-model="fullPathWithParams" placeholder="Please input" readonly/>
         <el-button @click="send">{{$t('galaxyProxy.debug.send')}}</el-button>
       </div>
 
@@ -38,22 +38,43 @@
             <el-button size="mini" @click="handleAddDetails"><i class="cn-icon-add cn-icon"></i></el-button>
         </div>
 
-        <el-table :data="paramsTableData" style="width: 100%;"
+        <el-table :data="paramsTableData"
+                  width="100%"
                   @selection-change="handleDetailSelectionChange"
+                  :row-class-name="rowClassName"
                   ref="tb">
-          <el-table-column  type="selection" align="center" label="" width="50px" style="border-left:0px;" />
 
-          <el-table-column prop="key"  label="Key" align="center" width="100px" >
+          <el-table-column  type="selection" align="center" label="" width="30px" style="border-left:0px;" />
+
+          <el-table-column  prop="key"  align="center"  width="80px" >
+            <template #header>
+              <div class="table-operation-title">{{$t('galaxyProxy.debug.key')}}</div>
+            </template>
             <template #default="scope">
-              <el-input   @change=""  v-model="scope.row.key"></el-input>
+              <el-input   @change="paramsChange(scope.row)"  v-model="scope.row.key"></el-input>
             </template>
           </el-table-column>
 
-          <el-table-column prop="value"  label="Value" align="center" style="border-right:0px;">
+          <el-table-column prop="value"   align="center" >
+            <template #header>
+              <div class="table-operation-title">{{$t('galaxyProxy.debug.value')}}</div>
+            </template>
             <template #default="scope">
-              <el-input  @change=""  v-model="scope.row.value"></el-input>
+              <el-input  @change="paramsChange(scope.row)"  v-model="scope.row.value"></el-input>
             </template>
           </el-table-column>
+
+          <el-table-column  align="center" style="border-right:0px;" width="70px">
+            <template #header>
+              <div class="table-operation-title">{{$t('overall.option')}}</div>
+            </template>
+            <template #default="scope">
+              <div @click="deleteRow(scope.$index)"  class="debug__params-delete">{{$t('overall.delete')}}</div>
+            </template>
+          </el-table-column>
+          <template v-slot:empty>
+            <div style="height:0px;"></div>
+          </template>
 
         </el-table>
 
@@ -65,7 +86,12 @@
         <div class="response-body">{{$t('galaxyProxy.debug.response.body')}}</div>
         <div class="response-header-content"><pre v-html="proxyResponseHeader"  style="height: 98%;width: 98%;margin-left: -15px;margin-top: -10px;"></pre></div>
         <div class="response-body-content color-pre__style">
-            <pre v-html="proxyResponseBody"  style="height: 95%;width: 95%;"></pre>
+          <v-ace-editor
+                  v-model:value="proxyResponseBody"
+                  lang="json"
+                  readonly="true"
+                  theme="chrome"
+                  style="height: 100%" />
         </div>
       </div>
     </div>
@@ -84,6 +110,9 @@ import 'ace-builds/src-noconflict/theme-chrome'
 
 export default {
   name: 'GalaxyProxyDebug',
+  components: {
+    VAceEditor
+  },
   props: {
     showDebug: Boolean,
     top: {
@@ -117,17 +146,11 @@ export default {
       galaxyProxyData: [],
       name: '',
       paramsTableData: [
-        {
-          key: 'q',
-          value: 'ip'
-        },
-        {
-          key: 'addr',
-          value: '192'
-        }
+
       ],
       // 选中的数据
       checkedDetail: {},
+      checkedRowData: [],
       methodOptions: [
         {
           value: 'GET',
@@ -139,7 +162,8 @@ export default {
         }
       ],
       method: 'GET',
-      path: '',
+      path: '', // 不带参数的路径，用于请求URL
+      fullPathWithParams: '', // 带参数的完整路径，用于界面显示
       proxyResponseBody: '',
       proxyRequestHeader: '',
       proxyResponseHeader: ''
@@ -160,12 +184,55 @@ export default {
       this.paramsTableData.push(obj)
     },
 
+    // 删除当前行
+    deleteRow (index) {
+      this.paramsTableData.splice(index, 1)
+      this.updateUrlParams()
+    },
+
+    rowClassName ({ row, rowIndex }) {
+      // 把每一行的索引放进row
+      row.index = rowIndex
+    },
+
+    // 参数发送改变时
+    paramsChange (row) {
+      this.fullPathWithParams = this.path
+      this.checkedDetail = {}
+      this.checkedRowData.forEach(t => {
+        if (t.key != '') {
+          this.checkedDetail[t.key] = t.value
+        }
+      })
+      if (this.fullPathWithParams != '') {
+        this.updateUrlParams()
+      }
+    },
+
+    updateUrlParams () {
+      this.fullPathWithParams = this.path
+      let params = ''
+      for (const key in this.checkedDetail) {
+        if (key != '') {
+          params = params + key + '=' + this.checkedDetail[key] + '&'
+        }
+      }
+      if (params.endsWith('&')) {
+        params = params.substring(0, params.length - 1)
+      }
+      if (params != '') {
+        this.fullPathWithParams = this.fullPathWithParams + '?' + params
+      }
+    },
+
     // 单选框选中数据
     handleDetailSelectionChange (selection) {
       this.checkedDetail = {}
-      selection.forEach(t => {
-        this.checkedDetail[t.key] = t.value
+      this.checkedRowData = selection
+      selection.forEach((item, index) => {
+        this.checkedDetail[item.key] = item.value
       })
+      this.updateUrlParams()
     },
 
     async getGalaxyProxyData (value) {
@@ -176,30 +243,37 @@ export default {
       })
     },
 
+    syntaxUrl (json) {
+      if (typeof json != 'string') {
+        json = JSON.stringify(json, undefined, 2)
+      }
+      return json = json.replace(/,/g, '&').replace(/{/g, '').replace(/}/g, '').replace(/"/g, '').replace(/:/g, '=').replace(/ /g, '')
+    },
+
     changPath (index) {
       // 修改input的值
-      this.path = this.galaxyProxyData[index].path
+      this.path = axios.defaults.baseURL + 'interface' + this.galaxyProxyData[index].path
+      this.updateUrlParams()
       this.method = this.galaxyProxyData[index].method.toUpperCase()
     },
 
     send () {
       // this.path = "galaxy/setting?pageNo=1&pageSize=1"
-      const finalUrl = axios.defaults.baseURL + 'interface' + this.path
       // 注意有GET与POST两种方式
       if (this.method.toUpperCase() == 'GET') {
-        getForDebug(finalUrl, this.checkedDetail).then(response => {
-          this.proxyResponseBody = this.syntaxHighlight(JSON.parse(JSON.stringify(response.data)))
-          this.proxyResponseHeader = this.syntaxHighlight(JSON.parse(JSON.stringify(response.headers)))
-          this.proxyRequestHeader = this.syntaxHighlight(JSON.parse(JSON.stringify(response.config.headers)))
+        getForDebug(this.path, this.checkedDetail).then(response => {
+          this.proxyResponseBody = this.syntaxJson(JSON.parse(JSON.stringify(response.data)))
+          this.proxyResponseHeader = this.syntaxJson(JSON.parse(JSON.stringify(response.headers)))
+          this.proxyRequestHeader = this.syntaxJson(JSON.parse(JSON.stringify(response.config.headers)))
           this.proxyResponseHeader = this.proxyResponseHeader.replace(/{/g, '').replace(/}/g, '').replace(/"/g, '')
           this.proxyRequestHeader = this.proxyRequestHeader.replace(/{/g, '').replace(/}/g, '').replace(/"/g, '')
         })
       } else if (this.method.toUpperCase() == 'POST') {
-        postForDebug(finalUrl, this.checkedDetail).then(response => {
+        postForDebug(this.path, this.checkedDetail).then(response => {
           if (response) {
-            this.proxyResponseBody = this.syntaxHighlight(JSON.parse(JSON.stringify(response.data)))
-            this.proxyResponseHeader = this.syntaxHighlight(JSON.parse(JSON.stringify(response.headers)))
-            this.proxyRequestHeader = this.syntaxHighlight(JSON.parse(JSON.stringify(response.config.headers)))
+            this.proxyResponseBody = this.syntaxJson(JSON.parse(JSON.stringify(response.data)))
+            this.proxyResponseHeader = this.syntaxJson(JSON.parse(JSON.stringify(response.headers)))
+            this.proxyRequestHeader = this.syntaxJson(JSON.parse(JSON.stringify(response.config.headers)))
 
             this.proxyResponseHeader = this.proxyResponseHeader.replace(/{/g, '').replace(/}/g, '').replace(/"/g, '')
             this.proxyRequestHeader = this.proxyRequestHeader.replace(/{/g, '').replace(/}/g, '').replace(/"/g, '')
@@ -207,48 +281,21 @@ export default {
         })
       }
     },
-
     // 格式化json
-    syntaxHighlight (json) {
+    syntaxJson (json) {
       if (typeof json != 'string') {
         json = JSON.stringify(json, undefined, 2)
       }
-      json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>')
-      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        let cls = 'number'
-        if (/^"/.test(match)) {
-          if (/:$/.test(match)) {
-            cls = 'key'
-          } else {
-            cls = 'string'
-          }
-        } else if (/true|false/.test(match)) {
-          cls = 'boolean'
-        } else if (/null/.test(match)) {
-          cls = 'null'
-        }
-        return '<span class="' + cls + '">' + match + '</span>'
-      })
+      return json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>')
     },
-
     closeDebug () {
-      const paramsTableData = []
-      const q = {}
-      q.key = 'q'
-      q.value = 'ip'
-      const addr = {}
-      addr.key = 'addr'
-      addr.value = '192'
-
-      paramsTableData.push(q)
-      paramsTableData.push(addr)
-
-      this.paramsTableData = JSON.parse(JSON.stringify(paramsTableData))
+      this.paramsTableData = []// JSON.parse(JSON.stringify(paramsTableData))
       this.proxyResponseBody = ''
       this.proxyResponseHeader = ''
       this.proxyRequestHeader = ''
       this.name = ''
       this.path = ''
+      this.fullPathWithParams = ''
       for (const key in this.curGalaxyProxy) {
         delete this.curGalaxyProxy[key]
       }
@@ -256,7 +303,8 @@ export default {
     openDebug () {
       if (this.curGalaxyProxy.path) {
         this.name = this.curGalaxyProxy.name
-        this.path = this.curGalaxyProxy.path
+        this.path = axios.defaults.baseURL + 'interface' + this.curGalaxyProxy.path
+        this.fullPathWithParams = this.path
         this.method = this.curGalaxyProxy.method.toUpperCase()
       } else {
         this.name = ''
@@ -275,6 +323,9 @@ export default {
     },
     show (n, o) {
       this.$emit('update:show-debug', n)
+    },
+    path (n, o) {
+      this.updateUrlParams()
     }
   }
 }
@@ -360,7 +411,6 @@ export default {
 
       .item-3 {
         background-color: #ffffff;
-
         .el-input__inner{
           border: 0px;
         }
@@ -379,6 +429,11 @@ export default {
           height: 60px;
         }
 
+        .el-table__empty-block{
+          height:0px;
+          min-height:0px;
+        }
+
         .el-table th.is-leaf, .el-table td {
           border-top: 1px solid #bbbbbb;
           border-left: 1px solid #bbbbbb;
@@ -389,7 +444,8 @@ export default {
 
         .el-table{
           border-bottom: 1px solid #bbbbbb;
-          border-right: 1px solid #bbbbbb;
+          border-right: 0px solid #bbbbbb;
+          border-left: 0px solid #bbbbbb;
         }
 
         .el-table .cell {
@@ -405,6 +461,10 @@ export default {
 
         .el-table__body tr:focus >td {
           background-color: cadetblue;
+        }
+        .debug__params-delete:hover{
+          color:#0091FF;
+          cursor: pointer;
         }
       }
 
@@ -422,11 +482,6 @@ export default {
         .color-pre__style{
           height: 95%;
           width: 95%;
-          .string { color: green; }
-          .number { color: darkorange; }
-          .boolean { color: blue; }
-          .null { color: magenta; }
-          .key { color: red; }
         }
         .request-header {
           grid-column-start: 1;
@@ -485,11 +540,12 @@ export default {
             grid-row-gap: 0px;
             grid-column-gap: 0px;
             padding:0px;
+            justify-items: center;
 
       }
 
       .sub-grid-params-add{
-        width: 100%;
+        width: 96%;
         height:100%;
         background: #fff;
         text-align: left;
