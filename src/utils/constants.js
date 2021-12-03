@@ -26,7 +26,8 @@ export const fromRoute = {
   dnsServiceInsights: 'dnsServiceInsights',
   user: 'user',
   galaxyProxy: 'galaxyProxy',
-  chart: 'chart'
+  chart: 'chart',
+  cyptocurrency: 'cyptocurrency'
 }
 
 /* panel类别和名称之间的映射 */
@@ -36,7 +37,8 @@ export const panelTypeAndRouteMapping = {
   dnsServiceInsights: 3,
   ipEntityDetail: 4,
   domainEntityDetail: 5,
-  appEntityDetail: 6
+  appEntityDetail: 6,
+  cyptocurrency: 7
 }
 
 /* operationLog state 执行状态属性 值与名称之间的映射 */
