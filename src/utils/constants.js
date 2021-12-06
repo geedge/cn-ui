@@ -87,6 +87,7 @@ export const unitTypes = {
 
 export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量
 export const chartTableTopOptions = [10, 100] // table类型图表的TOP-N选项
+export const chartActiveIpTableOrderOptions = ['machine'] // active ip table类型图表的order 选项
 export const chartPieTableTopOptions = [{ name: 'Sessions', value: 'sessions' }, { name: 'Packets', value: 'packets' }, { name: 'Bytes', value: 'bytes' }] // table类型图表的TOP-N选项
 
 export const iso36112 = {

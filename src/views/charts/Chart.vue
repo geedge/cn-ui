@@ -235,6 +235,44 @@
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </template>
   </single-value>
+  <!-- 表格：Cryptocurrency活跃IP -->
+  <chart-table-active-ip
+          v-else-if="isActiveIpTable"
+          :table-data="activeIpTable.tableData"
+          :style="computePosition"
+          :loading="loading"
+          :no-data="false"
+  >
+    <template #chartErrorInfo>
+      <chart-error
+              :isError="isError"
+              :errorInfo="errorInfo"
+      >
+      </chart-error>
+    </template>
+    <template #title>{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</template>
+    <template #operations>
+      <el-popover trigger="hover" placement="top" :content="chartInfo.remark" v-if="chartInfo.remark">
+        <template #reference>
+          <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
+        </template>
+      </el-popover>
+      <div class="header__operation header__operation--table">
+        <el-select
+                size="mini"
+                v-model="activeIpTable.orderBy"
+                class="option__select select-column"
+                :placeholder="$t('overall.field')"
+                popper-class="option-popper"
+                @change="activeIpTableLimitChange"
+        >
+          <template v-for="item in chartActiveIpTableOrderOptions" :key="item">
+            <el-option :value="item">{{item}}</el-option>
+          </template>
+        </el-select>
+      </div>
+    </template>
+  </chart-table-active-ip>
   <!-- 表格 -->
   <chart-table
     v-else-if="isTable"
@@ -489,6 +527,7 @@ import {
   isEcharts,
   isSingleValue,
   isTable,
+  isActiveIpTable,
   isTitle,
   isMap,
   getOption,
@@ -517,12 +556,13 @@ import ChartError from '@/components/charts/ChartError'
 import EchartsFrame from '@/components/charts/EchartsFrame'
 import SingleValue from '@/components/charts/ChartSingleValue'
 import ChartTable from '@/components/charts/ChartTable'
+import ChartTableActiveIp from '@/components/charts/ChartTableActiveIp'
 import ChartMap from '@/components/charts/ChartMap'
 import PieTable from '@/components/charts/PieTable'
 import StatisticsLegend from '@/components/charts/StatisticsLegend'
 import ChartTablePagination from '@/components/charts/ChartTablePagination'
 import unitConvert, { getUnitType, valueToRangeValue } from '@/utils/unit-convert'
-import { chartTableDefaultPageSize, chartTableTopOptions, storageKey, chartPieTableTopOptions, unitTypes } from '@/utils/constants'
+import { chartTableDefaultPageSize, chartTableTopOptions, chartActiveIpTableOrderOptions, storageKey, chartPieTableTopOptions, unitTypes } from '@/utils/constants'
 import { get, post } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
 import { HeatLegend } from '@/components/amcharts/heatLegend'
@@ -548,6 +588,7 @@ export default {
     SingleValue,
     ChartTablePagination,
     ChartTable,
+    ChartTableActiveIp,
     PieTable,
     StatisticsLegend,
     ChartMap,
@@ -561,6 +602,34 @@ export default {
         orderBy: 'sessions',
         tableColumns: [], // table字段
         tableData: [], // table的所有数据
+        currentPageData: [] // table当前页的数据
+      },
+      activeIpTable: {
+        orderBy: 'machine',
+        tableData: [
+          {
+            name: '192.168.20.21',
+            num: 111
+
+          }, {
+            name: '192.168.20.22',
+            num: 345
+          }, {
+            name: '192.168.20.23',
+            num: 111
+
+          }, {
+            name: '192.168.20.24',
+            num: 345
+          }, {
+            name: '192.168.20.25',
+            num: 111
+
+          }, {
+            name: '192.168.20.26',
+            num: 345
+          }
+        ], // table的所有数据
         currentPageData: [] // table当前页的数据
       },
       pieTableData: [],
@@ -643,6 +712,8 @@ export default {
               this.initECharts(chartParams)
             }
           }
+        } else if (this.isActiveIpTable) {
+          this.initChartActiveIpTable(chartParams)
         } else if (this.isTable) {
           if (chartParams) {
             this.initChartTable(chartParams)
@@ -1765,6 +1836,33 @@ export default {
         setTimeout(() => { this.loading = false }, 250)
       })
     },
+
+    activeIpTableLimitChange () {
+      const chartParams = this.chartInfo.params || null // 图表参数
+      this.initChartActiveIpTable(chartParams)
+    },
+    initChartActiveIpTable (chartParams) {
+      const queryParams = { ...this.queryTimeRange, order: this.activeIpTable.orderBy, ...this.entity }
+      get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        if (response.code === 200) {
+          if (this.$_.isEmpty(response.data.result)) {
+            this.noData = true
+            return
+          } else {
+            this.noData = false
+          }
+          this.activeIpTable.tableData = response.data.result
+          this.activeIpTable.tableColumns = this.getTableTitle(response.data.result)
+          this.activeIpTable.currentPageData = this.getTargetPageData(1, this.activeIpTable.pageSize, this.activeIpTable.tableData)
+        } else {
+          this.isError = true
+          this.noData = true
+          this.errorInfo = response.msg || response.message || this.$t('tip.unknownError')
+        }
+      }).finally(() => {
+        setTimeout(() => { this.loading = false }, 250)
+      })
+    },
     echartsResize () {
       this.myChart && this.myChart.resize()
       this.myChart2 && this.myChart2.resize()
@@ -1858,6 +1956,7 @@ export default {
       chartInfo,
       layoutConstant,
       chartTableTopOptions,
+      chartActiveIpTableOrderOptions,
       chartPieTableTopOptions,
       isEcharts: isEcharts(props.chart.type),
       isEchartsWithTable: isEchartsWithTable(props.chart.type),
@@ -1866,6 +1965,7 @@ export default {
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chart.type),
       isRelationShip: isRelationShip(props.chart.type),
       isTable: isTable(props.chart.type),
+      isActiveIpTable: isActiveIpTable(props.chart.type),
       isMap: isMap(props.chart.type),
       isTitle: isTitle(props.chart.type),
       isMapLine: isMapLine(props.chart.type),

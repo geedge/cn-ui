@@ -56,6 +56,7 @@
 
                 <el-option :key="panelTypeAndRouteMapping.trafficSummary" :label="$t('trafficSummary.trafficSummary')" :value="panelTypeAndRouteMapping.trafficSummary"></el-option>
                 <el-option :key="panelTypeAndRouteMapping.networkAppPerformance" :label="$t('networkAppPerformance.networkAppPerformance')" :value="panelTypeAndRouteMapping.networkAppPerformance"></el-option>
+                <el-option :key="panelTypeAndRouteMapping.cyptocurrency" :label="$t('cyptocurrency.cyptocurrency')" :value="panelTypeAndRouteMapping.cyptocurrency"></el-option>
                 <el-option :key="panelTypeAndRouteMapping.dnsServiceInsights" :label="$t('dnsServiceInsights.dnsServiceInsights')" :value="panelTypeAndRouteMapping.dnsServiceInsights"></el-option>
                 <el-option :key="panelTypeAndRouteMapping.ipEntityDetail" :label="$t('entities.ipEntityDetail')" :value="panelTypeAndRouteMapping.ipEntityDetail"></el-option>
                 <el-option :key="panelTypeAndRouteMapping.domainEntityDetail" :label="$t('entities.domainEntityDetail')" :value="panelTypeAndRouteMapping.domainEntityDetail"></el-option>
@@ -229,8 +230,11 @@ export default {
           value: 62,
           label: 'table-2',
           remark: 'DNS记录'
-        },
-        {
+        }, {
+          value: 63,
+          label: 'table-3',
+          remark: '挖矿活跃ip'
+        }, {
           value: 31,
           label: 'pie-1',
           remark: '饼图-带联动表格'

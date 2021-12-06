@@ -543,6 +543,10 @@ export function isEchartsWithTable (type) {
 export function isTable (type) {
   return type >= 61 && type <= 70
 }
+/* table */
+export function isActiveIpTable (type) {
+  return type == 63
+}
 /* title */
 export function isTitle (type) {
   return type === 93
