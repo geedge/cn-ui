@@ -553,8 +553,8 @@ import {
   isDomainDnsRecord,
   isAppBasicInfo,
   isAppRelatedDomain,
-  getChartColor, chartBarColor,timeVerticalFormatter,timeHorizontalFormatter,
-  categoryHorizontalFormatter,categoryVerticalFormatter, getCharBartColor
+  getChartColor, chartBarColor, timeVerticalFormatter, timeHorizontalFormatter,
+  categoryHorizontalFormatter, categoryVerticalFormatter, getCharBartColor
 } from '@/components/charts/chart-options'
 import ChartError from '@/components/charts/ChartError'
 import EchartsFrame from '@/components/charts/EchartsFrame'
@@ -633,7 +633,7 @@ export default {
             name: '192.168.20.26',
             num: 345
           }
-        ], // table的所有数据
+        ] // table的所有数据
       },
       pieTableData: [],
       singleValue: {
@@ -713,9 +713,9 @@ export default {
               this.initAppRelatedDomain(chartParams)
             } else if (this.isEchartsTimeBar) {
               this.initEchartsTimeBar(chartParams)
-            }else if (this.isEchartsCategoryBar) {
+            } else if (this.isEchartsCategoryBar) {
               this.initEchartsCategoryBar(chartParams)
-            } else{
+            } else {
               this.initECharts(chartParams)
             }
           }
@@ -1654,11 +1654,11 @@ export default {
       })
     },
 
-    handleTimeChartOption(chartParams,dataArray){
+    handleTimeChartOption (chartParams, dataArray) {
       let direction = 'vertical'
-      if(chartParams.direction){
+      if (chartParams.direction) {
         direction = chartParams.direction
-        if(direction=='horizontal'){//柱状图水平方向
+        if (direction == 'horizontal') { // 柱状图水平方向
           this.chartOption.xAxis = {
             axisTick: { show: false },
             axisLine: { show: false },
@@ -1667,7 +1667,7 @@ export default {
               formatter: function (value, index, a, b) {
                 return unitConvert(value, unitTypes.number).join(' ')
               }
-            },
+            }
           }
 
           this.chartOption.yAxis = {
@@ -1676,16 +1676,16 @@ export default {
             axisLine: { show: false },
             axisLabel: {
               interval: 0,
-              //rotate: -40, //设置日期显示样式（倾斜度）
-              formatter: function (value) {//在这里写你需要的时间格式
+              // rotate: -40, //设置日期显示样式（倾斜度）
+              formatter: function (value) { // 在这里写你需要的时间格式
                 return window.$dayJs.tz(Number(value)).format('M/D H:m')
               }
             },
-            axisPointer: {//y轴上显示指针对应的值
-              show: true,
-            },
+            axisPointer: { // y轴上显示指针对应的值
+              show: true
+            }
           }
-        } else if(direction=='vertical'){//柱状图竖直方向
+        } else if (direction == 'vertical') { // 柱状图竖直方向
           this.chartOption.yAxis = {
             axisTick: { show: false },
             axisLine: { show: false },
@@ -1703,40 +1703,40 @@ export default {
             axisLine: { show: false },
             axisLabel: {
               interval: 0,
-              //rotate: -40, //设置日期显示样式（倾斜度）
-              formatter: function (value) {//在这里写你需要的时间格式
+              // rotate: -40, //设置日期显示样式（倾斜度）
+              formatter: function (value) { // 在这里写你需要的时间格式
                 return window.$dayJs.tz(Number(value)).format('M/D H:m')
               }
             },
-            axisPointer: {//y轴上显示指针对应的值
-              show: true,
-            },
+            axisPointer: { // y轴上显示指针对应的值
+              show: true
+            }
           }
         }
       }
 
-      let itemColorAlternately = false//true|false 柱体色是否轮替
-      if(chartParams.itemColorAlternately){
+      let itemColorAlternately = false// true|false 柱体色是否轮替
+      if (chartParams.itemColorAlternately) {
         itemColorAlternately = chartParams.itemColorAlternately
       }
 
       this.chartOption.tooltip = {
         ...this.chartOption.tooltip,
-        formatter: (direction=='horizontal')?timeHorizontalFormatter:timeVerticalFormatter
+        formatter: (direction == 'horizontal') ? timeHorizontalFormatter : timeVerticalFormatter
       }
 
-      this.chartOption.series =  {
+      this.chartOption.series = {
         ...this.chartOption.series[0],
         name: this.chartInfo.name,
         data: dataArray,
         itemStyle: {
-          color:  function(params) {
-            if(itemColorAlternately){
+          color: function (params) {
+            if (itemColorAlternately) {
               return getCharBartColor([params.dataIndex])
-            }else {
+            } else {
               return getCharBartColor(0)
             }
-          },
+          }
         }
       }
     },
@@ -1753,23 +1753,23 @@ export default {
           }
 
           let dataArray = []
-          if(chartParams.direction=='vertical') {//柱状图竖直方向
+          if (chartParams.direction == 'vertical') { // 柱状图竖直方向
             dataArray = response.data.result[0].values.map((r, i) => {
-              return  [Number(r[0]),Number(r[1]),chartParams.unitType]
+              return [Number(r[0]), Number(r[1]), chartParams.unitType]
             })
-          }else if(chartParams.direction=='horizontal') {//柱状图水平方向
+          } else if (chartParams.direction == 'horizontal') { // 柱状图水平方向
             dataArray = response.data.result[0].values.map((r, i) => {
-              return  [ Number(r[1]),Number(r[0]),chartParams.unitType]
+              return [Number(r[1]), Number(r[0]), chartParams.unitType]
             })
           }
 
-          this.handleTimeChartOption(chartParams,dataArray)
+          this.handleTimeChartOption(chartParams, dataArray)
         } else {
           this.isError = true
           this.noData = true
           this.errorInfo = response.msg || response.message || 'Unknown'
 
-          //产生测试数据
+          // 产生测试数据
           this.initTestTimeBarData(chartParams)
         }
         this.myChart.setOption(this.chartOption)
@@ -1783,21 +1783,21 @@ export default {
       })
     },
 
-    initTestTimeBarData(chartParams){
+    initTestTimeBarData (chartParams) {
       this.noData = false
-      let data = [[1612113120000, "9"], [1612113220000, "2"],[1612113320000, "3"], [1612113420000, "4"],[1612113520000, "1"],[1612113620000, "5"],[1612113720000, "7"],[1612113820000, "9"]]
+      const data = [[1612113120000, '9'], [1612113220000, '2'], [1612113320000, '3'], [1612113420000, '4'], [1612113520000, '1'], [1612113620000, '5'], [1612113720000, '7'], [1612113820000, '9']]
       let dataArray = []
-      if(chartParams.direction=='vertical') {//柱状图竖直方向
+      if (chartParams.direction == 'vertical') { // 柱状图竖直方向
         dataArray = data.map((r, i) => {
-          return  [r[0],Number(r[1]),chartParams.unitType]
+          return [r[0], Number(r[1]), chartParams.unitType]
         })
-      }else if(chartParams.direction=='horizontal') {//柱状图水平方向
+      } else if (chartParams.direction == 'horizontal') { // 柱状图水平方向
         dataArray = data.map((r, i) => {
-          return  [ Number(r[1]),r[0],chartParams.unitType]
+          return [Number(r[1]), r[0], chartParams.unitType]
         })
       }
 
-      this.handleTimeChartOption(chartParams,dataArray)
+      this.handleTimeChartOption(chartParams, dataArray)
     },
 
     initEchartsCategoryBar (chartParams) {
@@ -1812,18 +1812,18 @@ export default {
           }
 
           let dataArray = []
-          if(chartParams.direction=='horizontal'){//柱状图水平方向
-            dataArray = response.data.result.map((r, i) => {return [r.num,r.name]})
-          } else if(chartParams.direction=='vertical'){//柱状图竖直方向
-            dataArray = response.data.result.map((r, i) => {return [r.name,r.num]})
+          if (chartParams.direction == 'horizontal') { // 柱状图水平方向
+            dataArray = response.data.result.map((r, i) => { return [r.num, r.name] })
+          } else if (chartParams.direction == 'vertical') { // 柱状图竖直方向
+            dataArray = response.data.result.map((r, i) => { return [r.name, r.num] })
           }
-          this.handleCategoryChartOption(chartParams,dataArray)
+          this.handleCategoryChartOption(chartParams, dataArray)
         } else {
           this.isError = true
           this.noData = true
           this.errorInfo = response.msg || response.message || 'Unknown'
 
-          //产生测试数据
+          // 产生测试数据
           this.initTestCategoryBarData(chartParams)
         }
         this.myChart.setOption(this.chartOption)
@@ -1837,29 +1837,29 @@ export default {
       })
     },
 
-    handleCategoryChartOption(chartParams,dataArray){
+    handleCategoryChartOption (chartParams, dataArray) {
       let xType = 'category'
       let yType = 'value'
       let direction = 'vertical'
-      if(chartParams.direction){
-          direction = chartParams.direction
-          if(direction=='horizontal'){//柱状图水平方向
-            xType = 'value'
-            yType = 'category'
-          } else if(direction=='vertical'){//柱状图竖直方向
-            xType = 'category'
-            yType = 'value'
-          }
+      if (chartParams.direction) {
+        direction = chartParams.direction
+        if (direction == 'horizontal') { // 柱状图水平方向
+          xType = 'value'
+          yType = 'category'
+        } else if (direction == 'vertical') { // 柱状图竖直方向
+          xType = 'category'
+          yType = 'value'
+        }
       }
 
-      let itemColorAlternately = false//true|false 柱体色是否轮替
-      if(chartParams.itemColorAlternately){
+      let itemColorAlternately = false// true|false 柱体色是否轮替
+      if (chartParams.itemColorAlternately) {
         itemColorAlternately = chartParams.itemColorAlternately
       }
 
       this.chartOption.tooltip = {
         ...this.chartOption.tooltip,
-        formatter: (direction=='horizontal')?categoryHorizontalFormatter:categoryVerticalFormatter,
+        formatter: (direction == 'horizontal') ? categoryHorizontalFormatter : categoryVerticalFormatter
       }
       this.chartOption.xAxis = {
         ...this.chartOption.xAxis,
@@ -1869,59 +1869,59 @@ export default {
         ...this.chartOption.yAxis,
         type: yType
       }
-      this.chartOption.series =  {
+      this.chartOption.series = {
         ...this.chartOption.series[0],
         data: dataArray,
         itemStyle: {
-          color:  function(params) {
-            if(itemColorAlternately){
+          color: function (params) {
+            if (itemColorAlternately) {
               return getCharBartColor([params.dataIndex])
-            }else {
+            } else {
               return getCharBartColor(0)
             }
-          },
+          }
         }
       }
     },
 
-    initTestCategoryBarData(chartParams){
+    initTestCategoryBarData (chartParams) {
       this.noData = false
 
       let xType = 'category'
       let yType = 'value'
       let direction = 'vertical'
-      if(chartParams.direction){
+      if (chartParams.direction) {
         direction = chartParams.direction
-        if(direction=='horizontal'){//柱状图水平方向
+        if (direction == 'horizontal') { // 柱状图水平方向
           xType = 'value'
           yType = 'category'
-        } else if(direction=='vertical'){//柱状图竖直方向
+        } else if (direction == 'vertical') { // 柱状图竖直方向
           xType = 'category'
           yType = 'value'
         }
       }
 
-      let itemColorAlternately = false//true|false 柱体色是否轮替
-      if(chartParams.itemColorAlternately){
+      let itemColorAlternately = false// true|false 柱体色是否轮替
+      if (chartParams.itemColorAlternately) {
         itemColorAlternately = chartParams.itemColorAlternately
       }
 
       let dataArray = []
-      if(direction=='horizontal'){//柱状图水平方向
-        dataArray =  [
-          [240,'中国出版集团公司'],
-          [200,'中国铁路总公司'],
-          [175,'中国烟草总公司'],
-          [140,'中国邮政集团公司'],
-          [99,'中国石油天然气集团公司']
+      if (direction == 'horizontal') { // 柱状图水平方向
+        dataArray = [
+          [240, '中国出版集团公司'],
+          [200, '中国铁路总公司'],
+          [175, '中国烟草总公司'],
+          [140, '中国邮政集团公司'],
+          [99, '中国石油天然气集团公司']
         ]
-      } else if(direction=='vertical'){//柱状图竖直方向
-        dataArray =  [
-            ['中国出版集团公司',240],
-            ['中国铁路总公司',200],
-            ['中国烟草总公司',175],
-            ['中国邮政集团公司',140],
-            ['中国石油天然气集团公司',99]
+      } else if (direction == 'vertical') { // 柱状图竖直方向
+        dataArray = [
+          ['中国出版集团公司', 240],
+          ['中国铁路总公司', 200],
+          ['中国烟草总公司', 175],
+          ['中国邮政集团公司', 140],
+          ['中国石油天然气集团公司', 99]
         ]
       }
 
@@ -1933,17 +1933,17 @@ export default {
             width: '20px',
             overflow: 'truncate'
           },
-          formatter: (direction=='horizontal')?categoryHorizontalFormatter:categoryVerticalFormatter,
+          formatter: (direction == 'horizontal') ? categoryHorizontalFormatter : categoryVerticalFormatter,
           show: true,
           className: 'nz-chart-tooltip',
           extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
         },
-        xAxis:{
+        xAxis: {
           type: xType,
           axisTick: { show: false },
           axisLine: { show: false }
         },
-        yAxis:{
+        yAxis: {
           type: yType,
           axisTick: { show: false },
           axisLine: { show: false }
@@ -1953,23 +1953,23 @@ export default {
           left: 10,
           right: 25,
           bottom: 20,
-          containLabel:true
+          containLabel: true
         },
-        color:chartBarColor,
+        color: chartBarColor,
         series: [{
           barWidth: 15,
           data: dataArray,
           type: 'bar',
-          label: {show: false},
+          label: { show: false },
           barCategoryGap: '10%',
           itemStyle: {
-            color:  function(params) {
-              if(itemColorAlternately){
+            color: function (params) {
+              if (itemColorAlternately) {
                 return getCharBartColor([params.dataIndex])
-              }else {
+              } else {
                 return getCharBartColor(0)
               }
-            },
+            }
           }
         }]
       }
@@ -2288,8 +2288,8 @@ export default {
       chartActiveIpTableOrderOptions,
       chartPieTableTopOptions,
       isEcharts: isEcharts(props.chart.type),
-      isEchartsTimeBar:isEchartsTimeBar(props.chart.type),
-      isEchartsCategoryBar:isEchartsCategoryBar(props.chart.type),
+      isEchartsTimeBar: isEchartsTimeBar(props.chart.type),
+      isEchartsCategoryBar: isEchartsCategoryBar(props.chart.type),
       isEchartsWithTable: isEchartsWithTable(props.chart.type),
       isEchartsWithStatistics: isEchartsWithStatistics(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),

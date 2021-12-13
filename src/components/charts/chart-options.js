@@ -11,7 +11,7 @@ export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
   '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
   '#E97CCC', '#FEA69E', '#0F8AB2', '#57CBAC',
   '#5888BC', '#63B6AC', '#EDC6B2', '#D5746B']
-export const chartBarColor = [ '#0F8AB2', '#57CBAC']
+export const chartBarColor = ['#0F8AB2', '#57CBAC']
 export function getChartColor (index) {
   return chartColor[index % chartColor.length]
 }
@@ -491,24 +491,24 @@ const categoryBar = {
     left: 10,
     right: 25,
     bottom: 20,
-    containLabel:true
+    containLabel: true
   },
   yAxis: {
     type: 'value',
     axisTick: { show: false },
     axisLine: { show: false }
   },
-  color:chartColor,
+  color: chartColor,
   series: [{
     barWidth: 15,
     data: [],
     type: 'bar',
-    label: { show: false},
+    label: { show: false },
     barCategoryGap: '10%',
     itemStyle: {
-        color:  function(params) {
-          return getCharBartColor([params.dataIndex])
-        },
+      color: function (params) {
+        return getCharBartColor([params.dataIndex])
+      }
     }
   }]
 }
@@ -532,10 +532,10 @@ const timeBar = {
     axisLine: { show: false },
     axisLabel: {
       interval: 0,
-      //rotate: -40, //设置日期显示样式（倾斜度）
-      formatter: function (value) {//在这里写你需要的时间格式
-        var t_date = new Date(value);
-        return [t_date.getMonth() + 1, t_date.getDate()].join('/')+ " " + [t_date.getHours(), t_date.getMinutes()].join(':');
+      // rotate: -40, //设置日期显示样式（倾斜度）
+      formatter: function (value) { // 在这里写你需要的时间格式
+        const t_date = new Date(value)
+        return [t_date.getMonth() + 1, t_date.getDate()].join('/') + ' ' + [t_date.getHours(), t_date.getMinutes()].join(':')
       }
     }
   },
@@ -544,7 +544,7 @@ const timeBar = {
     left: 25,
     right: 25,
     bottom: 20,
-    containLabel:true
+    containLabel: true
   },
   yAxis: {
     type: 'value',
@@ -557,17 +557,17 @@ const timeBar = {
     },
     minInterval: 1
   },
-  color:chartColor,
+  color: chartColor,
   series: [{
     barWidth: 15,
     data: [],
     type: 'bar',
-    label: { show: false},
+    label: { show: false },
     barCategoryGap: '10%',
     itemStyle: {
-      color:  function(params) {
+      color: function (params) {
         return getCharBartColor([params.dataIndex])
-      },
+      }
     }
   }]
 }
@@ -798,7 +798,7 @@ export function categoryHorizontalFormatter (params) {
   let str = '<div>'
   params.forEach((item, i) => {
     str += '<div class="cn-chart-tooltip-box">'
-    str += item.data[1]+': ' + item.data[0]
+    str += item.data[1] + ': ' + item.data[0]
     str += '</div>'
   })
   str += '</div>'
@@ -808,7 +808,7 @@ export function categoryVerticalFormatter (params) {
   let str = '<div>'
   params.forEach((item, i) => {
     str += '<div class="cn-chart-tooltip-box">'
-    str += item.data[0]+': ' + item.data[1]
+    str += item.data[0] + ': ' + item.data[1]
     str += '</div>'
   })
   str += '</div>'
