@@ -22,8 +22,8 @@
       >
         <el-table-column>
           <template #default="{ row }">
-              <div class="header__icon"><i class="cn-icon cn-icon-ip ip-green"></i></div>
-             <div class="content__name" >
+              <div class="active-ip__icon"><i class="cn-icon cn-icon-ip ip-green"></i></div>
+             <div class="active-ip__content" >
                {{row['name']}}
              </div>
           </template>
@@ -85,7 +85,7 @@ export default {
 
 <style>
 
-  .header__icon {
+  .active-ip__icon {
     overflow: hidden;
     position: absolute;
     top: 8px;
@@ -103,7 +103,7 @@ export default {
   .ip-green {
     color: #23BF9A;
   }
-  .content__name {
+  .active-ip__content {
     position: absolute;
     top: 7px;
     left: 35px;

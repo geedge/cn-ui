@@ -11,8 +11,12 @@ export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
   '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
   '#E97CCC', '#FEA69E', '#0F8AB2', '#57CBAC',
   '#5888BC', '#63B6AC', '#EDC6B2', '#D5746B']
+export const chartBarColor = [ '#0F8AB2', '#57CBAC']
 export function getChartColor (index) {
   return chartColor[index % chartColor.length]
+}
+export function getCharBartColor (index) {
+  return chartBarColor[index % chartBarColor.length]
 }
 const line = {
   tooltip: {
@@ -464,11 +468,116 @@ const ipOpenPortBar = {
     barCategoryGap: '10%'
   }]
 }
+const categoryBar = {
+  tooltip: {
+    appendToBody: true,
+    trigger: 'axis',
+    textStyle: {
+      width: '20px',
+      overflow: 'truncate'
+    },
+    formatter: categoryVerticalFormatter,
+    show: true,
+    className: 'nz-chart-tooltip',
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
+  },
+  xAxis: {
+    type: 'category',
+    axisTick: { show: false },
+    axisLine: { show: false }
+  },
+  grid: {
+    top: 20,
+    left: 10,
+    right: 25,
+    bottom: 20,
+    containLabel:true
+  },
+  yAxis: {
+    type: 'value',
+    axisTick: { show: false },
+    axisLine: { show: false }
+  },
+  color:chartColor,
+  series: [{
+    barWidth: 15,
+    data: [],
+    type: 'bar',
+    label: { show: false},
+    barCategoryGap: '10%',
+    itemStyle: {
+        color:  function(params) {
+          return getCharBartColor([params.dataIndex])
+        },
+    }
+  }]
+}
+
+const timeBar = {
+  tooltip: {
+    appendToBody: true,
+    trigger: 'axis',
+    textStyle: {
+      width: '20px',
+      overflow: 'truncate'
+    },
+    formatter: timeVerticalFormatter,
+    show: true,
+    className: 'nz-chart-tooltip',
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
+  },
+  xAxis: {
+    type: 'time',
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: {
+      interval: 0,
+      //rotate: -40, //设置日期显示样式（倾斜度）
+      formatter: function (value) {//在这里写你需要的时间格式
+        var t_date = new Date(value);
+        return [t_date.getMonth() + 1, t_date.getDate()].join('/')+ " " + [t_date.getHours(), t_date.getMinutes()].join(':');
+      }
+    }
+  },
+  grid: {
+    top: 20,
+    left: 25,
+    right: 25,
+    bottom: 20,
+    containLabel:true
+  },
+  yAxis: {
+    type: 'value',
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: {
+      formatter: function (value, index, a, b) {
+        return unitConvert(value, unitTypes.number).join(' ')
+      }
+    },
+    minInterval: 1
+  },
+  color:chartColor,
+  series: [{
+    barWidth: 15,
+    data: [],
+    type: 'bar',
+    label: { show: false},
+    barCategoryGap: '10%',
+    itemStyle: {
+      color:  function(params) {
+        return getCharBartColor([params.dataIndex])
+      },
+    }
+  }]
+}
 const typeOptionMappings = [
   { value: 11, option: line }, // 常规折线图
   { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
   { value: 13, option: lineStack }, // 折线堆叠图
   { value: 22, option: ipOpenPortBar }, // ip详情--开放端口的柱状图
+  { value: 23, option: timeBar }, // 矿机所属单位
+  { value: 24, option: categoryBar }, // 挖矿事件统计
   { value: 31, option: pieWithTable }, // 常规折线图
   { value: 33, option: ipHostedDomain }, // ip详情--托管域名
   { value: 34, option: ipHostedDomain }, // app详情--相关域名
@@ -498,6 +607,14 @@ export function getTypeCategory (type) {
   } else if (isTabs(type)) {
     return typeCategory.TABS
   }
+}
+/* 柱状图:挖矿事件统计(time类型柱状图) */
+export function isEchartsTimeBar (type) {
+  return type == 23
+}
+/* 柱状图:矿机所属单位(category类型柱状图) */
+export function isEchartsCategoryBar (type) {
+  return type == 24
 }
 /* 饼图柱状图等 */
 export function isEcharts (type) {
@@ -626,6 +743,72 @@ function axiosFormatter (params) {
     str += `<span class="cn-chart-tooltip-value">
         ${unitConvert(item.data[1], item.data[2]).join(' ')}
     </span>`
+    str += '</div>'
+  })
+  str += '</div>'
+  return str
+}
+
+export function timeVerticalFormatter (params) {
+  let str = '<div>'
+  params.forEach((item, i) => {
+    const tData = item.data[0]
+    if (i === 0) {
+      str += '<div style="margin-bottom: 5px">'
+      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += '</div>'
+    }
+    str += '<div class="cn-chart-tooltip-box">'
+    str += item.marker
+    str += `<span class="cn-chart-tooltip-content"> 
+        ${item.seriesName}
+    </span>`
+    str += `<span class="cn-chart-tooltip-value">
+        ${unitConvert(item.data[1], item.data[2]).join(' ')}
+    </span>`
+    str += '</div>'
+  })
+  str += '</div>'
+  return str
+}
+
+export function timeHorizontalFormatter (params) {
+  let str = '<div>'
+  params.forEach((item, i) => {
+    const tData = item.data[1]
+    if (i === 0) {
+      str += '<div style="margin-bottom: 5px">'
+      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += '</div>'
+    }
+    str += '<div class="cn-chart-tooltip-box">'
+    str += item.marker
+    str += `<span class="cn-chart-tooltip-content"> 
+        ${item.seriesName}
+    </span>`
+    str += `<span class="cn-chart-tooltip-value">
+        ${unitConvert(item.data[0], item.data[2]).join(' ')}
+    </span>`
+    str += '</div>'
+  })
+  str += '</div>'
+  return str
+}
+export function categoryHorizontalFormatter (params) {
+  let str = '<div>'
+  params.forEach((item, i) => {
+    str += '<div class="cn-chart-tooltip-box">'
+    str += item.data[1]+': ' + item.data[0]
+    str += '</div>'
+  })
+  str += '</div>'
+  return str
+}
+export function categoryVerticalFormatter (params) {
+  let str = '<div>'
+  params.forEach((item, i) => {
+    str += '<div class="cn-chart-tooltip-box">'
+    str += item.data[0]+': ' + item.data[1]
     str += '</div>'
   })
   str += '</div>'

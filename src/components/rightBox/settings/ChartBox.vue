@@ -54,13 +54,13 @@
                        size="small"
                        @change="getChartData">
 
-                <el-option :key="panelTypeAndRouteMapping.trafficSummary" :label="$t('trafficSummary.trafficSummary')" :value="panelTypeAndRouteMapping.trafficSummary"></el-option>
-                <el-option :key="panelTypeAndRouteMapping.networkAppPerformance" :label="$t('networkAppPerformance.networkAppPerformance')" :value="panelTypeAndRouteMapping.networkAppPerformance"></el-option>
-                <el-option :key="panelTypeAndRouteMapping.cyptocurrency" :label="$t('cyptocurrency.cyptocurrency')" :value="panelTypeAndRouteMapping.cyptocurrency"></el-option>
-                <el-option :key="panelTypeAndRouteMapping.dnsServiceInsights" :label="$t('dnsServiceInsights.dnsServiceInsights')" :value="panelTypeAndRouteMapping.dnsServiceInsights"></el-option>
-                <el-option :key="panelTypeAndRouteMapping.ipEntityDetail" :label="$t('entities.ipEntityDetail')" :value="panelTypeAndRouteMapping.ipEntityDetail"></el-option>
-                <el-option :key="panelTypeAndRouteMapping.domainEntityDetail" :label="$t('entities.domainEntityDetail')" :value="panelTypeAndRouteMapping.domainEntityDetail"></el-option>
-                <el-option :key="panelTypeAndRouteMapping.appEntityDetail" :label="$t('entities.appEntityDetail')" :value="panelTypeAndRouteMapping.appEntityDetail"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.trafficSummary" :label="$t('trafficSummary.trafficSummary')" :value="panelTypeAndRouteMapping.trafficSummary"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.networkAppPerformance" :label="$t('networkAppPerformance.networkAppPerformance')" :value="panelTypeAndRouteMapping.networkAppPerformance"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.cyptocurrency" :label="$t('overall.cyptocurrency')" :value="panelTypeAndRouteMapping.cyptocurrency"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.dnsServiceInsights" :label="$t('dnsServiceInsights.dnsServiceInsights')" :value="panelTypeAndRouteMapping.dnsServiceInsights"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.ipEntityDetail" :label="$t('entities.ipEntityDetail')" :value="panelTypeAndRouteMapping.ipEntityDetail"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.domainEntityDetail" :label="$t('entities.domainEntityDetail')" :value="panelTypeAndRouteMapping.domainEntityDetail"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.appEntityDetail" :label="$t('entities.appEntityDetail')" :value="panelTypeAndRouteMapping.appEntityDetail"></el-option>
 
             </el-select>
           </el-form-item>
@@ -131,269 +131,282 @@
 </template>
 
 <script>
-import rightBoxMixin from '@/mixins/rightBox'
-import { get, post, put } from '@/utils/http'
-import { panelTypeAndRouteMapping } from '@/utils/constants'
-import { api } from '@/utils/api'
-import { VAceEditor } from 'vue3-ace-editor'
-import 'ace-builds/src-noconflict/mode-javascript'
-import 'ace-builds/src-noconflict/mode-json'
-import 'ace-builds/src-noconflict/theme-chrome'
+  import rightBoxMixin from '@/mixins/rightBox'
+  import { get, post, put } from '@/utils/http'
+  import { panelTypeAndRouteMapping } from '@/utils/constants'
+  import { api } from '@/utils/api'
+  import { VAceEditor } from 'vue3-ace-editor'
+  import 'ace-builds/src-noconflict/mode-javascript'
+  import 'ace-builds/src-noconflict/mode-json'
+  import 'ace-builds/src-noconflict/theme-chrome'
 
-export default {
-  name: 'ChartBox',
-  mixins: [rightBoxMixin],
-  components: {
-    VAceEditor
-  },
-  data () {
-    return {
-      url: api.chart,
-      loginName: localStorage.getItem('cn-username'),
-      panelTypeAndRouteMapping: panelTypeAndRouteMapping,
-      rules: { // 表单校验规则
-        name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        type: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        panel_id: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        x: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        y: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        w: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        h: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ]
-      },
-      rules2: { // 表单校验规则
-        name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        type: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        panel_id: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        x: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        y: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        w: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        h: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ]
-      },
-      chartData: [],
-      options: [
-        {
-          value: 1,
-          label: 'map-1',
-          remark: '流量流向地图-连线'
-        },
-        {
-          value: 2,
-          label: 'map-2',
-          remark: '地图-色块'
-        }, {
-          value: 3,
-          label: 'map-3',
-          remark: '地图-点'
-        },
-        {
-          value: 4,
-          label: 'map-4',
-          remark: '地图-点'
-        }, {
-          value: 11,
-          label: 'line-1',
-          remark: '折线图-常规'
-        },
-        {
-          value: 61,
-          label: 'table-1',
-          remark: '表格'
-        }, {
-          value: 62,
-          label: 'table-2',
-          remark: 'DNS记录'
-        }, {
-          value: 63,
-          label: 'table-3',
-          remark: '挖矿活跃ip'
-        }, {
-          value: 31,
-          label: 'pie-1',
-          remark: '饼图-带联动表格'
-        }, {
-          value: 51,
-          label: 'singleValue-1',
-          remark: '单值图'
-        },
-        {
-          value: 91,
-          label: 'tab-container',
-          remark: 'tab标签(容器)'
-        }, {
-          value: 92,
-          label: 'tab-item',
-          remark: 'tab标签(标签页)'
-        },
-        {
-          value: 93,
-          label: 'title',
-          remark: '标题'
-        }, {
-          value: 94,
-          label: 'group',
-          remark: '组'
-        },
-        {
-          value: 12,
-          label: 'line-2',
-          remark: '折线图-带统计'
-        }, {
-          value: 52,
-          label: 'singleValue-2',
-          remark: '详情单值图'
-        },
-        {
-          value: 53,
-          label: 'singleValue-3',
-          remark: '单值图'
-        }, {
-          value: 13,
-          label: 'line-3',
-          remark: '折线图-堆叠面积'
-        },
-        {
-          value: 21,
-          label: 'bar-1',
-          remark: '柱状图'
-        }, {
-          value: 22,
-          label: 'bar-2',
-          remark: '开放端口'
-        },
-        {
-          value: 32,
-          label: 'pie-2',
-          remark: '饼图-常规'
-        }, {
-          value: 33,
-          label: 'pie-3',
-          remark: '托管域名'
-        },
-        {
-          value: 34,
-          label: 'pie-4',
-          remark: '相关域名'
-        }, {
-          value: 42,
-          label: 'relation-2',
-          remark: '关系图谱'
-        },
-        {
-          value: 43,
-          label: 'relation-3',
-          remark: '访问链路图'
-        },
-        {
-          value: 82,
-          label: 'base-2',
-          remark: 'APP基本信息'
-        }, {
-          value: 83,
-          label: 'list-1',
-          remark: 'Whois'
-        },
-        {
-          value: 84,
-          label: 'list-2',
-          remark: 'DNS记录'
-        }
-      ]
-    }
-  },
-  setup () {
-  },
-  mounted () {
-    if (this.editObject.id) {
-      this.getChartData(this.editObject.panelId)
-    }
-  },
-  watch: {
-    'editObject.panelId': function (newValue, oldValue) {
-      this.editObject.pid = ''
-    }
-  },
-  methods: {
-    isCurrentUser (username) {
-      return localStorage.getItem('cn-username') === username
+  export default {
+    name: 'ChartBox',
+    mixins: [rightBoxMixin],
+    components: {
+      VAceEditor
     },
-    /* 密码失去焦点 检验确认密码 */
-    pinBlur () {
-      if (this.editObject.pin && this.editObject.pinChange) {
-        this.$refs.chartForm.validateField('pinChange')
+    data () {
+      return {
+        url: api.chart,
+        loginName: localStorage.getItem('cn-username'),
+        panelTypeAndRouteMapping: panelTypeAndRouteMapping,
+        rules: { // 表单校验规则
+          name: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          type: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          panel_id: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          x: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          y: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          w: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          h: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ]
+        },
+        rules2: { // 表单校验规则
+          name: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          type: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          panel_id: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          x: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          y: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          w: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          h: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ]
+        },
+        chartData: [],
+        options: [
+          {
+            value: 1,
+            label: 'map-1',
+            remark: '流量流向地图-连线'
+          },
+          {
+            value: 2,
+            label: 'map-2',
+            remark: '地图-色块'
+          }, {
+            value: 3,
+            label: 'map-3',
+            remark: '地图-点'
+          },
+          {
+            value: 4,
+            label: 'map-4',
+            remark: '地图-点'
+          }, {
+            value: 11,
+            label: 'line-1',
+            remark: '折线图-常规'
+          },
+          {
+            value: 61,
+            label: 'table-1',
+            remark: '表格'
+          }, {
+            value: 62,
+            label: 'table-2',
+            remark: 'DNS记录'
+          }, {
+            value: 63,
+            label: 'table-3',
+            remark: '挖矿活跃ip'
+          }, {
+            value: 31,
+            label: 'pie-1',
+            remark: '饼图-带联动表格'
+          }, {
+            value: 51,
+            label: 'singleValue-1',
+            remark: '单值图'
+          },
+          {
+            value: 91,
+            label: 'tab-container',
+            remark: 'tab标签(容器)'
+          }, {
+            value: 92,
+            label: 'tab-item',
+            remark: 'tab标签(标签页)'
+          },
+          {
+            value: 93,
+            label: 'title',
+            remark: '标题'
+          }, {
+            value: 94,
+            label: 'group',
+            remark: '组'
+          },
+          {
+            value: 12,
+            label: 'line-2',
+            remark: '折线图-带统计'
+          }, {
+            value: 52,
+            label: 'singleValue-2',
+            remark: '详情单值图'
+          },
+          {
+            value: 53,
+            label: 'singleValue-3',
+            remark: '单值图'
+          }, {
+            value: 13,
+            label: 'line-3',
+            remark: '折线图-堆叠面积'
+          },
+          {
+            value: 21,
+            label: 'bar-1',
+            remark: '柱状图'
+          }, {
+            value: 22,
+            label: 'bar-2',
+            remark: '开放端口'
+          }, {
+            value: 23,
+            label: 'bar-3',
+            remark: '挖矿事件统计(time类型柱状图)'
+          }, {
+            value: 24,
+            label: 'bar-4',
+            remark: '矿机所属单位(category类型柱状图)'
+          },
+          {
+            value: 32,
+            label: 'pie-2',
+            remark: '饼图-常规'
+          }, {
+            value: 33,
+            label: 'pie-3',
+            remark: '托管域名'
+          },
+          {
+            value: 34,
+            label: 'pie-4',
+            remark: '相关域名'
+          }, {
+            value: 42,
+            label: 'relation-2',
+            remark: '关系图谱'
+          },
+          {
+            value: 43,
+            label: 'relation-3',
+            remark: '访问链路图'
+          },
+          {
+            value: 82,
+            label: 'base-2',
+            remark: 'APP基本信息'
+          }, {
+            value: 83,
+            label: 'list-1',
+            remark: 'Whois'
+          },
+          {
+            value: 84,
+            label: 'list-2',
+            remark: 'DNS记录'
+          },
+          {
+            value: 85,
+            label: 'list-3',
+            remark: '近期挖矿事件'
+          }
+        ]
       }
     },
-    save () {
-      if (this.blockOperation.save) { return }
-      this.blockOperation.save = true
-
-      this.$refs.chartForm.validate((valid) => {
-        if (valid) {
-          if (this.editObject.id) {
-            put(this.url, this.editObject).then(res => {
-              this.blockOperation.save = false
-              if (res.code === 200) {
-                this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
-                this.esc(true)
-              } else {
-                this.$message.error(res.msg)
-              }
-            })
-          } else {
-            post(this.url, this.editObject).then(res => {
-              this.blockOperation.save = false
-              if (res.code === 200) {
-                this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
-                this.esc(true)
-              } else {
-                this.$message.error(res.msg)
-              }
-            })
-          }
-        } else {
-          this.blockOperation.save = false
-          return false
-        }
-      })
+    setup () {
     },
-    async getChartData (value) {
-      await get('/visual/chart?panelId=' + value).then(response => {
-        if (response.code === 200) {
-          this.chartData = response.data.list
+    mounted () {
+      if (this.editObject.id) {
+        this.getChartData(this.editObject.panelId)
+      }
+    },
+    watch: {
+      'editObject.panelId': function (newValue, oldValue) {
+        this.editObject.pid = ''
+      }
+    },
+    methods: {
+      isCurrentUser (username) {
+        return localStorage.getItem('cn-username') === username
+      },
+      /* 密码失去焦点 检验确认密码 */
+      pinBlur () {
+        if (this.editObject.pin && this.editObject.pinChange) {
+          this.$refs.chartForm.validateField('pinChange')
         }
-      })
+      },
+      save () {
+        if (this.blockOperation.save) { return }
+        this.blockOperation.save = true
 
-      // this.$set(this.editObject, 'pid', '')
+        this.$refs.chartForm.validate((valid) => {
+          if (valid) {
+            if (this.editObject.id) {
+              put(this.url, this.editObject).then(res => {
+                this.blockOperation.save = false
+                if (res.code === 200) {
+                  this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                  this.esc(true)
+                } else {
+                  this.$message.error(res.msg)
+                }
+              })
+            } else {
+              post(this.url, this.editObject).then(res => {
+                this.blockOperation.save = false
+                if (res.code === 200) {
+                  this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                  this.esc(true)
+                } else {
+                  this.$message.error(res.msg)
+                }
+              })
+            }
+          } else {
+            this.blockOperation.save = false
+            return false
+          }
+        })
+      },
+      async getChartData (value) {
+        await get('/visual/chart?panelId=' + value).then(response => {
+          if (response.code === 200) {
+            this.chartData = response.data.list
+          }
+        })
+
+        // this.$set(this.editObject, 'pid', '')
+      }
     }
   }
-}
 </script>
 <style lang="scss">
   .my-editor {
