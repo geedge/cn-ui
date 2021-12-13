@@ -86,6 +86,11 @@
   font-weight:normal;
 }
 
+.cn-chart__crypto-header{
+  font-size:15px;
+  font-family: SimHei;
+}
+
 .cn-panel, .cn-panel>.cn-chart__tabs>.el-tabs__content>.el-tab-pane, .cn-chart__group .cn-chart__body {
   display: grid;
   grid-template-columns: repeat(30, 1fr);

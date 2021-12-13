@@ -700,6 +700,10 @@ export function isDomainWhois (type) {
 export function isDomainDnsRecord (type) {
   return type === 84
 }
+/* 近期挖矿事件 */
+export function isCryptocurrencyEventList (type) {
+  return type === 85
+}
 /* 组 */
 export function isGroup (type) {
   return type === 94

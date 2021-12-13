@@ -92,8 +92,8 @@
       >
       </chart-error>
     </template>
-    <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1">
-      {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
+    <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1"  >
+      <span  :class="{ 'cn-chart__crypto-header':(isEchartsTimeBar||isEchartsCategoryBar)}">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
     </template>
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       <div class="header__operation header__operation--echarts" v-if="chart.type === 31">
@@ -448,6 +448,44 @@
       </div>
     </div>
   </div>
+  <!-- Cryptocurrency EventList ：近期挖矿事件-->
+  <div v-else-if="isCryptocurrencyEventList"
+          class="cn-chart cn-chart__table"
+          :style="computePosition"
+  >
+    <div class="cn-chart__header" style="font-size:16px">
+      <chart-error
+              :isError="isError"
+              :errorInfo="errorInfo"
+      >
+      </chart-error>
+      <div class="header__title cn-chart__crypto-header" >
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+
+      <span class="header__operations header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
+    </div>
+    <div class="cn-chart__body">
+      <div class="crypto-eventList__record">
+        <div class="record__table">
+          <div style="height: 100%; overflow: hidden auto;">
+            <div class="record__table-row" v-for="(data, index) in croptyEventList" :key="index">
+              <div class="record__table-cell">
+                <div class="circle1" style=""></div>
+              </div>
+              <div class="record__table-cell">
+                {{data.message || '-'}}：{{data.serverIP || '-'}}<br/>
+                <span class="record_second" > {{data.time || '-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.clientIP || '-'}}&nbsp;&nbsp;&nbsp; </span>
+                <div class="record_second arrow arrow-hor right"> </div>
+                <span class="record_second">&nbsp;&nbsp;&nbsp; {{data.serverIP || '-'}}</span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- APP详情-基本信息 -->
   <div
       v-else-if="isAppBasicInfo"
@@ -551,6 +589,7 @@ import {
   isIpHostedDomain,
   isDomainWhois,
   isDomainDnsRecord,
+  isCryptocurrencyEventList,
   isAppBasicInfo,
   isAppRelatedDomain,
   getChartColor, chartBarColor, timeVerticalFormatter, timeHorizontalFormatter,
@@ -653,6 +692,7 @@ export default {
       activeTab: '',
       groupData: '', // group类型的查询数据，用于传递给子chart，子chart通过params.dataKey取值
       detailData: '', // 详情类型图表的数据
+      croptyEventList: [],
       statisticsData: [],
       orderPieTable: chartPieTableTopOptions[0].value,
       selectPieChartName: '',
@@ -843,6 +883,23 @@ export default {
             this.isError = true
             this.errorInfo = e
           })
+        } else if (this.isCryptocurrencyEventList) {
+          const queryParams = { ...this.queryTimeRange, ...this.entity }
+          get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+            if (response.code === 200) {
+              this.croptyEventList = response.data.result
+            } else {
+              this.isError = true
+              this.noData = true
+              this.errorInfo = response.msg || response.message || 'Unknown'
+
+              // 测试数据
+              this.initTestEventListData()
+            }
+          }).catch(e => {
+            this.isError = true
+            this.errorInfo = e
+          })
         } else if (this.isAppBasicInfo) {
           const queryParams = { app: this.entity.app }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
@@ -862,6 +919,35 @@ export default {
         console.error(e)
       }
     },
+
+    initTestEventListData () {
+      this.noData = false
+
+      for (let i = 0; i < this.croptyEventList.length; i++) {
+        this.croptyEventList.splice(i, 1)
+      }
+      this.croptyEventList = [{
+        time: '2021-11-23 12:00:00',
+        serverIP: '192.168.1.1',
+        clientIP: '101.1.1.1',
+        message: '检测到连接挖矿木马远控地址',
+        level: 1
+      }, {
+        time: '2021-11-23 12:10:00',
+        serverIP: '192.168.1.1',
+        clientIP: '101.1.1.1',
+        message: '检测到连接挖矿木马远控地址',
+        level: 1
+      }, {
+        time: '2021-11-23 12:10:00',
+        serverIP: '192.168.1.1',
+        clientIP: '101.1.1.1',
+        message: '检测到连接挖矿木马远控地址',
+        level: 1
+      }
+      ]
+    },
+
     reloadChart () {
       this.initChart()
       this.$nextTick(() => {
@@ -2309,6 +2395,7 @@ export default {
       isIpOpenPort: isIpOpenPort(props.chart.type),
       isDomainWhois: isDomainWhois(props.chart.type),
       isDomainDnsRecord: isDomainDnsRecord(props.chart.type),
+      isCryptocurrencyEventList: isCryptocurrencyEventList(props.chart.type),
       isAppBasicInfo: isAppBasicInfo(props.chart.type),
       isAppRelatedDomain: isAppRelatedDomain(props.chart.type),
       layout: getLayout(props.chart.type),
@@ -2441,6 +2528,54 @@ export default {
     }
   }
 }
+.crypto-eventList__record {
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  .record__table {
+    display: table;
+    height: 100%;
+    width: 100%;
+
+    .record__table-row {
+      display: table-row;
+      font-size: 14px;
+      color: #333333;
+    }
+    .record__table-row.record__table-row--header {
+      padding: 13px 30px 0;
+      height: 40px;
+      color: #6B717B;
+    }
+    .record__table-cell {
+      display: table-cell;
+      //border-bottom: 1px solid $--content-right-background-color;
+      vertical-align: middle;
+      padding-left: 10px;
+      padding-top:15px;
+      padding-bottom:0px;
+
+      .record_second{
+        color:#7e8088;
+        font-size:12px;
+      }
+
+      .circle-red {
+        color: #EC7F66;
+        font-size: 28px;
+      }
+
+    }
+    .record__table-cell:first-of-type {
+      padding-left:30px;
+    }
+    .record__table-row:not(.record__table-row--header) .record__table-cell:last-of-type {
+      //color: #3976CB;
+    }
+  }
+}
+
 .entity-detail__dns-record {
   display: flex;
   height: 100%;
@@ -2576,4 +2711,49 @@ export default {
   font-size: 24px;
   color: #EC7F66;
 }
+
+.circle1{
+  position: relative;
+  width:28px;
+  height:28px;
+  line-height: 28px;
+  border:1px solid #dd674d;
+  background:#FFFFFF;
+  border-radius:50%;
+  -moz-border-radius:50%;
+  margin:auto;
+  z-index: 1;
+}
+.circle1::after {
+  position: absolute;
+  content: '';
+  background: #dd674d;
+  bottom: 3px;
+  right: 3px;
+  left: 3px;
+  top: 3px;
+  z-index: 5;
+  border-radius: 50%;
+}
+
+.arrow {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  background-color: #aeaeae;
+  &.arrow-hor {
+    width: 24px;
+    height: 2px;
+    margin-bottom: 3px;
+  }
+  &.arrow-hor.right::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    border: 5px solid transparent;
+    border-left: 5px solid #aeaeae;
+  }
+}
+
 </style>
