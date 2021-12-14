@@ -402,19 +402,7 @@ export default {
           this.chartData = response.data.list
         }
       })
-
-      // this.$set(this.editObject, 'pid', '')
     }
   }
 }
 </script>
-<style lang="scss">
-  .my-editor {
-    margin-top: 4px;
-    border: 1px solid $--right-box-border-color;
-
-    .prism-editor__textarea {
-      outline: none;
-    }
-  }
-</style>

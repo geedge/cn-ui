@@ -1,0 +1,21 @@
+.entity-list {
+  width: calc(100% - 290px);
+  height: 100%;
+  padding-top: 10px;
+
+  .entity-list__content {
+    height: 100%;
+    width: 100%;
+
+    .entity-list--block {
+      display: flex;
+      flex-wrap: wrap;
+      display: -webkit-flex;
+      justify-content: flex-start;
+      border-radius: 2px;
+      height: calc(100% - 67px);
+      width: calc(100% - 10px);
+      overflow: hidden auto;
+    }
+  }
+}

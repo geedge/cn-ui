@@ -1,0 +1,110 @@
+.entity-explorer {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  margin: 20px;
+  height: calc(100% - 40px) !important;
+  justify-content: center;
+  transition: all linear .2s;
+
+  &.entity-explorer--show-list {
+    background-color: unset;
+    justify-content: flex-start;
+  }
+
+  .explorer-top-tools {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 18px;
+
+    &>div {
+      padding: 0 0 0 10px;
+    }
+    .el-button--mini{
+      padding: 4px 6px !important;
+      min-height: 26px !important;
+      &.active i {
+        color: $--color-primary;
+      }
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+  .explorer-container {
+    display: flex;
+    height: 100%;
+  }
+  .explorer-foot {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 17vh;
+
+    &>div {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .el-divider {
+      width: 2px;
+      height: 40px;
+      background-color: #cecece;
+    }
+    .entity-overview {
+      display: flex;
+
+      .overview-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0 30px;
+
+        span:first-of-type {
+          font-size: 30px;
+          color: #333333;
+          font-weight: bold;
+        }
+        span:last-of-type {
+          font-size: 16px;
+          color: #666666;
+        }
+      }
+      .overview-right {
+        display: flex;
+        flex-direction: column;
+        padding: 0 30px;
+
+        .right-row {
+          display: flex;
+          height: 30px;
+          align-items: center;
+
+          .right-label {
+            width: 55px;
+            font-size: 14px;
+            color: #666666;
+          }
+          .right-value {
+            font-size: 14px;
+            color: #333333;
+            font-weight: bold;
+          }
+          i {
+            padding-right: 10px;
+            font-size: 18px;
+          }
+          .cn-icon-increase {
+            color: #23BF9A;
+          }
+          .cn-icon-active {
+            color: #0091FF;
+          }
+        }
+      }
+    }
+  }
+}

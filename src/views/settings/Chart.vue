@@ -6,7 +6,7 @@
       v-model:custom-table-title="tools.customTableTitle"
       :api="url"
       :from="fromRoute.chart"
-      :layout="['columnCustomize','elementSet','searchInput']"
+      :layout="['columnCustomize','elementSet','search']"
       @search="search"
     >
       <template #top-tool-right>

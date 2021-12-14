@@ -9,7 +9,7 @@ const _version = tagVer ? tagVer.startsWith('v') ? tagVer.slice(1) : tagVer : ve
 helper({
   name,
   version: _version,
-  entry: 'website/docs/en-US/!(custom-theme|datetime-picker|i18n|installation|message-box|message|migration-from-2.x|notification|quickstart|transition|typography).md',
+  entry: 'website/docs/en-US/!(custom-themes|datetime-picker|i18n|installation|message-box|message|migration-from-2.x|notification|quickstart|transition|typography).md',
   outDir: 'lib',
   reComponentName,
   reDocUrl,

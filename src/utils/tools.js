@@ -4,6 +4,7 @@ import _ from 'lodash'
 import { storageKey, iso36112 } from '@/utils/constants'
 import { getIso36112JsonData } from '@/utils/api'
 import { format } from 'echarts'
+import router from '@/router'
 
 export const tableSort = {
   // 是否需要排序
@@ -250,11 +251,10 @@ export const tableSort = {
 export const cancelWithChange = {
   mounted (el, binding) {
     if (!binding.value || !binding.value.object) return
-    const unsavedChange = localStorage.getItem('cn-unsaved-change')
     const oldValue = JSON.parse(JSON.stringify(binding.value.object))
     function domClick (e) {
       const newValue = JSON.parse(JSON.stringify(binding.value.object))
-      if (unsavedChange === 'on' && !isEqual(oldValue, newValue)) {
+      if (!isEqual(oldValue, newValue)) {
         ElMessageBox.confirm(i18n.global.t('tip.confirmCancel'), {
           confirmButtonText: i18n.global.t('tip.yes'),
           cancelButtonText: i18n.global.t('tip.no'),
@@ -281,15 +281,13 @@ export const cancelWithChange = {
 const exceptClassName = ['prevent-click-outside'] // clickOutside排除的class(白名单)
 export const clickOutside = {
   // 初始化指令
-  mounted (el, binding) {
-    if (!binding.expression) return
-    const unsavedChange = localStorage.getItem('cn-unsaved-change')
-    let oldValue
+  beforeMount (el, binding) {
+    /* let oldValue
     try {
       oldValue = JSON.parse(JSON.stringify(binding.value.object))
     } catch (e) {
 
-    }
+    } */
     function documentHandler (e) {
       if (el.contains(e.target)) {
         return false
@@ -299,7 +297,7 @@ export const clickOutside = {
         // eslint-disable-next-line no-labels
         top: for (let i = 0; i < path.length; i++) {
           for (let j = 0; j < exceptClassName.length; j++) {
-            if (path[i].className && path[i].className.indexOf && path[i].className.indexOf(exceptClassName[j]) !== -1) {
+            if (path[i].className && path[i].className.indexOf(exceptClassName[j]) !== -1) {
               flag = false
               // eslint-disable-next-line no-labels
               break top
@@ -309,9 +307,10 @@ export const clickOutside = {
         if (!flag) {
           return false
         }
-        if (oldValue) {
+        binding.value()
+        /* if (oldValue) {
           const newValue = JSON.parse(JSON.stringify(binding.value.oldValue))
-          if (unsavedChange === 'on' && !isEqual(oldValue, newValue)) {
+          if (!isEqual(oldValue, newValue)) {
             ElMessageBox.confirm('Confirm？', { // TODO 国际化
               confirmButtonText: 'Yes', // TODO 国际化
               cancelButtonText: 'No', // TODO 国际化
@@ -332,17 +331,17 @@ export const clickOutside = {
               binding.value(e)
             }
           }
-        }
+        } */
       }
     }
 
     // 给当前元素绑定个私有变量，方便在unbind中可以解除事件监听
     el.__vueClickOutside__ = documentHandler
-    document.addEventListener('mousedown', documentHandler)
+    document.addEventListener('click', documentHandler)
   },
   unmounted (el, binding) {
     // 解除事件监听
-    document.removeEventListener('mousedown', el.__vueClickOutside__)
+    document.removeEventListener('click', el.__vueClickOutside__)
     delete el.__vueClickOutside__
   }
 }
@@ -496,4 +495,8 @@ export function copyValue (item) {
   const creatDom = document.getElementById('creatDom')
   creatDom.parentNode.removeChild(creatDom)
   ElMessage.success(i18n.global.t('tip.copySuccess'))
+}
+
+export function getCurrentRoute () {
+  return router.currentRoute && router.currentRoute.path
 }

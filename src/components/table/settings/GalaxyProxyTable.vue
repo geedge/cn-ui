@@ -1,5 +1,6 @@
 <template>
   <el-table
+    class="galaxy-proxy-table"
     id="userTable"
     ref="dataTable"
     :data="tableData"
@@ -186,25 +187,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.js-code-highlight {
-  height: 250px;
-
-  .highlight-box {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-
-    .highlight-box__copy-btn {
-      position: absolute;
-      right: 5px;
-      top: 5px;
-      cursor: pointer;
-    }
-  }
-}
-pre code.hljs {
-  overflow-x: visible;
-}
-</style>

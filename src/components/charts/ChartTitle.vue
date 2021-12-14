@@ -7,7 +7,3 @@ export default {
   name: 'ChartTitle'
 }
 </script>
-
-<style scoped>
-
-</style>

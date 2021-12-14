@@ -32,7 +32,7 @@ const routes = [
       },
       {
         path: '/entityExplorer',
-        component: () => import('@/views/entities/EntityExplorer')
+        component: () => import('@/views/entityExplorer/EntityExplorer')
       },
       {
         path: '/galaxyProxy',

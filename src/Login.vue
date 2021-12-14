@@ -25,7 +25,7 @@
           <el-button
               v-loading="loading"
               type="primary"
-              class="login--input login--butotn"
+              class="login--input login--button"
               @click="login"
               @keyup.enter="login"
               style="font-size: 16px;"
@@ -87,7 +87,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
  .logins{
   background-color: #000C18;
   background-size: auto;
@@ -129,7 +129,7 @@ export default {
    height: 250px;
    margin: auto;
  }
-.login--butotn {
+.login--button {
   background: #0091ff;
   color: #fff;
   border-radius: 4px;

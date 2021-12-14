@@ -32,18 +32,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.cn-home {
-  display: flex;
-  height: 100%;
-  transition: all .2s;
-  .cn-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - 240px);
-    transition: all .2s;
-  }
-}
-</style>

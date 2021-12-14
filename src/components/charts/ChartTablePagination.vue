@@ -49,14 +49,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.chart-table-pagination.el-pagination {
-  padding: 12px 0 9px 0;
-  text-align: center;
-
-  .el-pagination__jump {
-    margin-left: 10px;
-  }
-}
-</style>

@@ -1,0 +1,189 @@
+.date-range-box {
+  font-size: 14px;
+  border-radius: 2px;
+  display: flex;
+
+  .date-range-refresh {
+    margin-left: 10px;
+  }
+
+  .date-time-range {
+    margin-right: 10px;
+  }
+
+  .date-range-item {
+    list-style-type: none;
+  }
+
+  .panel-time-picker-hidden {
+    visibility: hidden !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .date-range-text {
+    font-size: 14px;
+    min-width: 150px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-around;
+    height: 26px;
+    background: #FFFFFF;
+    border: 1px solid #E7EAED;
+    box-shadow: 0 2px 4px 0 rgba(51, 51, 51, 0.02);
+    border-radius: 2px;
+    line-height: 26px;
+    transition: width .3s;
+
+    .cn-icon {
+      font-size: 14px;
+    }
+
+    .cn-icon-arrow-down {
+      transition: all .3s;
+      display: inline-block;
+    }
+
+    .cn-icon-arrow-down-active {
+      transform: rotate(180deg);
+    }
+  }
+
+  .date-range-title {
+    font-size: 14px;
+    color: #666666;
+    font-weight: 600;
+    padding: 14px 0 7px 8px;
+  }
+
+  .calendar-popover-text {
+    white-space: nowrap;
+    display: inline-block;
+    margin: 0 5px;
+  }
+
+  .calendar-popover-text:first-of-type {
+    margin-left: 0;
+  }
+
+  .calendar-popover-text:last-of-type {
+    margin-right: 0;
+  }
+
+  .date-range-panel {
+    height: 410px;
+    width: 500px;
+    background: #FFFFFF;
+    box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    position: absolute;
+    right: 0;
+    top: 34px;
+    z-index: 1;
+
+    .date-range-panel-content-left {
+      padding-left: 10px;
+      display: flex;
+      flex-direction: column;
+
+      .content-title {
+        font-size: 14px;
+        color: #666666;
+        font-weight: 400;
+        margin-bottom: 12px;
+      }
+
+      .content-input {
+        border: 1px solid #E7EAED;
+        border-radius: 2px;
+        width: 230px;
+        padding: 0 8px;
+        height: 30px;
+        line-height: 30px;
+        margin-bottom: 12px;
+        outline: #169AFF;
+      }
+
+      .content-input:focus {
+        border: 1px solid #169AFF;
+      }
+
+      .date-range-history {
+        flex: 1;
+        overflow-y: auto;
+
+        .date-range-history-item {
+          padding: 5px 0;
+          cursor: pointer;
+        }
+
+        .date-range-history-item:hover {
+          /*font-weight: 600;*/
+          background: #f9f9f9;
+        }
+      }
+    }
+
+    .date-range-panel-content-right {
+      display: flex;
+      flex-direction: column;
+
+      ul {
+        flex: 1;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+
+        li {
+          width: 100%;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          color: #333333;
+          font-weight: 400;
+          padding: 0 10px;
+          cursor: pointer;
+        }
+
+        li.active {
+          background: #F2F9FF;
+          color: #0091FF;
+          font-weight: 400;
+
+          .cn-icon-check {
+            color: #0091FF;
+            position: absolute;
+            right: 7px;
+          }
+        }
+
+        li:hover {
+          background: #F2F9FF;
+          color: #0091FF;
+        }
+      }
+    }
+  }
+
+  .date-range-panel-top {
+    height: 364px;
+  }
+
+  .date-range-panel-bottom {
+    height: 44px;
+    line-height: 44px;
+    border-top: 1px solid rgba(0, 0, 0, 0.09);
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+
+    .utc-str {
+      text-align: right;
+    }
+  }
+}

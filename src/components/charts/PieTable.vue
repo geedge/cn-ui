@@ -214,34 +214,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="scss">
-/deep/ .el-table__expanded-cell[class*=cell] {
-  padding: 0;
-}
-
-.expand-table /deep/ .el-table__body .el-table__row:last-of-type td {
-  border: none;
-}
-
-.pie-table {
-  font-size: 14px;
-  color: #333333;
-  font-weight: 500;
-
-  /deep/ .el-table__header-wrapper {
-    .cell {
-      color: #333;
-    }
-  }
-}
-
-.expand-table {
-  font-weight: 400;
-  color: #606266;
-
-  /deep/ .el-table__body-wrapper {
-    height: auto !important;
-  }
-}
-</style>

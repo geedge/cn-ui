@@ -59,9 +59,8 @@
 <script>
 import axios from 'axios'
 import { post } from '@/utils/http'
-let timeout
 export default {
-  name: 'topToolMoreOptions',
+  name: 'TopToolMoreOptions',
   props: {
     size: {
       type: String,
@@ -233,7 +232,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
   .cn-dialog {
     overflow: hidden;
   }

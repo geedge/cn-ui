@@ -60,21 +60,62 @@ export const entityType = {
 }
 
 export const entityFilterType = {
-  ip: {
-    country: 'locate_country',
-    region: 'locate_region',
-    asn: 'asn'
-  },
-  domain: {
-    categoryGroup: 'category_group',
-    categoryName: 'category_name',
-    reputationLevel: 'reputation_level'
-  },
-  app: {
-    appCategory: 'app_category',
-    appSubcategory: 'app_subcategory',
-    appRisk: 'app_risk'
-  }
+  ip: [
+    {
+      column: 'country_distinct_count',
+      labelI18nCode: 'overall.country',
+      icon: 'cn-icon cn-icon-country'
+    },
+    {
+      column: 'province_distinct_count',
+      labelI18nCode: 'overall.province',
+      icon: 'cn-icon cn-icon-position'
+    },
+    {
+      column: 'city_distinct_count',
+      labelI18nCode: 'overall.city',
+      icon: 'el-icon-s-home'
+    },
+    {
+      column: 'asn_distinct_count',
+      labelI18nCode: 'entities.asn',
+      icon: 'cn-icon cn-icon-cloud'
+    }
+  ],
+  domain: [
+    {
+      column: 'category_group_distinct_count',
+      labelI18nCode: 'entities.domainDetail.categoryGroup',
+      icon: 'cn-icon cn-icon-category'
+    },
+    {
+      column: 'category_distinct_count',
+      labelI18nCode: 'entities.category',
+      icon: 'cn-icon cn-icon-sub-category'
+    },
+    {
+      column: 'category_group_distinct_count',
+      labelI18nCode: 'entities.reputationLevel',
+      icon: 'cn-icon cn-icon-credit'
+    }
+  ],
+  app: [
+    {
+      column: 'category_distinct_count',
+      labelI18nCode: 'entities.category',
+      icon: 'cn-icon cn-icon-category'
+    },
+    {
+      column: 'subcategory_distinct_count',
+      labelI18nCode: 'entities.subcategory',
+      icon: 'cn-icon cn-icon-sub-category'
+    },
+    {
+      column: 'risk_distinct_count',
+      labelI18nCode: 'entities.risk',
+      icon: 'cn-icon cn-icon-risk'
+    }
+  ]
 }
 
 export const unitTypes = {

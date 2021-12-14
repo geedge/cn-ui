@@ -11,7 +11,7 @@
           <div class="top-tool-right">
 <!--           <el-input v-model="keyWord" value="keyWord"></el-input>
             <el-button @click="onsearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>-->
-            <div v-if="showLayout.indexOf('searchInput') > -1" class="top-tool-search margin-r-20">
+            <div v-if="showLayout.indexOf('search') > -1" class="top-tool-search margin-r-20">
               <div style="display: flex">
                 <el-input
                     v-model="keyWord"  size="small" @keyup.enter="onsearch"></el-input>
@@ -109,19 +109,3 @@ export default {
   }
 }
 </script>
-<style>
-.el-input--small .el-input__inner {
-  height: 32.4px;
-  line-height: 32px;
-  border-radius: 0px;
-}
-.list-page .top-tools .top-tool-btn {
-  height: 32.5px;
-  width: 36px;
-  border: 1px solid #DEDEDE;
-  outline: none;
-  border-radius: 2px;
-  background-color: #F9F9F9;
-  transition: background-color linear .1s;
-}
-</style>

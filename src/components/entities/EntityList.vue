@@ -364,19 +364,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.entity__loading {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  z-index: 1;
-}
-.entity__loading i {
-  position: absolute;
-  left: calc(50% - 15px);
-  top: calc(50% - 15px);
-  font-size: 30px;
-  color: #aaa;
-}
-</style>

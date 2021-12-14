@@ -485,7 +485,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-@import '~@/components/entities/entities.scss';
-</style>

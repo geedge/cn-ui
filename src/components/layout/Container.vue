@@ -18,14 +18,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.cn-container {
-  height: calc(100% - 50px);
-  background-color: $--content-right-background-color;
-  width: 100%;
-  &>div {
-    height: 100%;
-  }
-}
-</style>

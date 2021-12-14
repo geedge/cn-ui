@@ -6,7 +6,7 @@
         v-model:custom-table-title="tools.customTableTitle"
         :api="url"
         :from="fromRoute.galaxyProxy"
-        :layout="['columnCustomize','elementSet','searchInput']"
+        :layout="['columnCustomize','elementSet','search']"
         @search="search"
     >
       <template v-slot:top-tool-right>
@@ -81,7 +81,7 @@ import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
 import dataListMixin from '@/mixins/dataList'
 import { api } from '@/utils/api'
 import { get, put } from '@/utils/http'
-import topToolMoreOptions from '@/components/common/popBox/topToolMoreOptions'
+import TopToolMoreOptions from '@/components/common/popBox/TopToolMoreOptions'
 import galaxyProxyDebug from '@/components/setting/GalaxyProxyDebug'
 
 export default {
@@ -90,7 +90,7 @@ export default {
     cnDataList,
     galaxyProxyBox,
     galaxyProxyTable,
-    topToolMoreOptions,
+    TopToolMoreOptions,
     galaxyProxyDebug
   },
   mixins: [dataListMixin],
@@ -143,7 +143,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

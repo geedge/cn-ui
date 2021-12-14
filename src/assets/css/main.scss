@@ -1,7 +1,29 @@
-@import './font/iconfont';
+@font-face { // 由于主题嵌套原因，原ele的icon图标字体加载会出错，需重写
+  font-family: 'element-icons';
+  src: url('~@/assets/css/themes/src/fonts/element-icons.woff') format('woff'), /* chrome, firefox */
+  url('~@/assets/css/themes/src/fonts/element-icons.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  font-weight: normal;
+  font-display: auto;
+  font-style: normal;
+}
+$--font-path: '~@/assets/css/themes/src/fonts'; // 避免ele原字体加载语句出错
+
 @import './common';
-@import './rightBoxCommon';
-@import './tableCommon';
-@import './chart';
-@import '../stylus/index.scss';
-@import './font/iconfont.css';
+
+/* 主题 */
+
+.theme-light {
+  $--theme: light;
+  @import './themes/theme-light.scss'; // 加载主题变量
+  @import './themes/src/index.scss'; // 加载ele样式
+  @import './components/index'; // 加载cn组件样式
+  @import './common/index.scss'; // 加载通用样式
+}
+
+.theme-dark {
+  $--theme: dark;
+  @import './themes/theme-dark.scss'; // 加载主题变量
+  @import './themes/src/index.scss'; // 加载ele样式
+  @import './components/index'; // 加载cn组件样式
+  @import './common/index.scss'; // 加载通用样式
+}

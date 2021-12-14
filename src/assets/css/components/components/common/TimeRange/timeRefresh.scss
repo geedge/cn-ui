@@ -1,0 +1,54 @@
+.cn-refresh-box{
+  position: relative;
+  font-size: 14px;
+
+  .cn-icon-refresh{
+    font-size: 14px;
+  }
+  .cn-icon-dropdown{
+    font-size: 14px;
+    transition: all .3s;
+    display: inline-block;
+  }
+  .cn-icon-dropdown.active{
+    transform: rotate(180deg);
+  }
+  .refresh-list{
+    position: absolute;
+    z-index: 1;
+    background: #FFFFFF;
+    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.77);
+    border-radius: 2px;
+    top: 30px;
+    right: 0;
+    .refresh-list-item{
+      width: 82px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #333333;
+      cursor: pointer;
+      position: relative;
+      padding: 8px 0 8px 12px;
+    }
+    .refresh-list-item.active{
+      background: #F2F9FF;
+      color: #0091FF;
+      font-weight: 400;
+      .cn-icon-check{
+        color: #0091FF;
+        position: absolute;
+        right: 7px;
+      }
+    }
+    .refresh-list-item:hover{
+      background: #F2F9FF;
+      color: #0091FF;
+    }
+  }
+  .el-button--mini{
+    padding: 4px 6px !important;
+    min-height: 26px !important;
+  }
+}

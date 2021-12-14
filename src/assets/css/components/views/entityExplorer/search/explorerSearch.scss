@@ -1,0 +1,72 @@
+.explorer-search {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  background-image: url('~@/assets/img/cn-explore-bg.svg');
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+
+  &.explorer-search--show-list {
+    flex: 0 0 40px;
+    background-image: none;
+  }
+  .explorer-search__title {
+    height: 112px;
+    text-align: center;
+    font-size: 42px;
+    color: #3976CB;
+  }
+  .explorer-search__input-case {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+
+    &.explorer-search__input-case--question-mark-in-line {
+      flex-direction: row;
+      padding: 0;
+
+      .explorer-search__input {
+        height: 40px;
+        max-width: unset;
+      }
+    }
+    .search-symbol-inline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 16px;
+      padding: 0 10px;
+      cursor: pointer;
+    }
+    .explorer-search__input {
+      width: 100%;
+      max-width: 1200px;
+      height: 66px;
+    }
+    .explorer-search__foot {
+      display: flex;
+      padding-top: 18px;
+      width: 100%;
+      max-width: 1200px;
+      justify-content: space-between;
+      font-weight: bold;
+
+      .foot__item {
+        font-size: 14px;
+        color: #3976CB;
+
+        .el-divider {
+          background-color: #3976CB;
+        }
+
+        span {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+}

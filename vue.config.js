@@ -4,13 +4,13 @@ function resolve (dir) {
 }
 module.exports = {
   css: {
-    loaderOptions: {
+    /* loaderOptions: {
       // scss变量全局应用
       scss: {
-        prependData: '@import "~@/assets/css/theme.scss";'
+        prependData: '@import "~@/assets/css/main.scss";'
       }
-    },
-    sourceMap: true // 开启浏览器调试css定位
+    }, */
+    sourceMap: false // 开启浏览器调试css定位
   },
   chainWebpack: (config) => {
     config.resolve.alias // 路径别名

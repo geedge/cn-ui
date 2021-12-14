@@ -205,6 +205,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-@import '~@/components/charts/panel.scss';
-</style>
