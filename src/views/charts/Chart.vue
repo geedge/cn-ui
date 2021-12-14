@@ -93,7 +93,7 @@
       </chart-error>
     </template>
     <template #title v-if="layout.indexOf(layoutConstant.HEADER) > -1"  >
-      <span  :class="{ 'cn-chart__crypto-header':(isEchartsTimeBar||isEchartsCategoryBar)}">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </template>
     <template #operations v-if="layout.indexOf(layoutConstant.HEADER) > -1">
       <div class="header__operation header__operation--echarts" v-if="chart.type === 31">
@@ -459,7 +459,7 @@
               :errorInfo="errorInfo"
       >
       </chart-error>
-      <div class="header__title cn-chart__crypto-header" >
+      <div class="header__title" >
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
       </div>
 

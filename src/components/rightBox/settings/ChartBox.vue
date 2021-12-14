@@ -56,7 +56,7 @@
 
               <el-option :key="panelTypeAndRouteMapping.trafficSummary" :label="$t('trafficSummary.trafficSummary')" :value="panelTypeAndRouteMapping.trafficSummary"></el-option>
               <el-option :key="panelTypeAndRouteMapping.networkAppPerformance" :label="$t('networkAppPerformance.networkAppPerformance')" :value="panelTypeAndRouteMapping.networkAppPerformance"></el-option>
-              <el-option :key="panelTypeAndRouteMapping.cyptocurrency" :label="$t('overall.cyptocurrency')" :value="panelTypeAndRouteMapping.cyptocurrency"></el-option>
+              <el-option :key="panelTypeAndRouteMapping.cryptocurrency" :label="$t('overall.cryptocurrency')" :value="panelTypeAndRouteMapping.cryptocurrency"></el-option>
               <el-option :key="panelTypeAndRouteMapping.dnsServiceInsights" :label="$t('dnsServiceInsights.dnsServiceInsights')" :value="panelTypeAndRouteMapping.dnsServiceInsights"></el-option>
               <el-option :key="panelTypeAndRouteMapping.ipEntityDetail" :label="$t('entities.ipEntityDetail')" :value="panelTypeAndRouteMapping.ipEntityDetail"></el-option>
               <el-option :key="panelTypeAndRouteMapping.domainEntityDetail" :label="$t('entities.domainEntityDetail')" :value="panelTypeAndRouteMapping.domainEntityDetail"></el-option>

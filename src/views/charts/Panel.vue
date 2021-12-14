@@ -1,6 +1,6 @@
 <template>
   <div style="padding: 10px 0 20px 20px;" v-if="!isEntityDetail">
-    <div class="cn-panel" id="cn-panel">
+    <div id="cn-panel" :class="(isCryptocurrency)?'cn-panel cn-panel-crypto':'cn-panel'">
       <div class="panel__time">
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
@@ -104,10 +104,13 @@ export default {
       // entity详情的chart
       detailTabs: [],
       detailChartList: [],
-      currentTab: ''
+      currentTab: '',
+      isCryptocurrency: false// 是否为挖矿列表
     }
   },
   async mounted () {
+    const path = this.$route.path
+    this.isCryptocurrency = this.$route.path.indexOf('cryptocurrency') > -1
     await this.init()
     if (!this.$_.isEmpty(this.detailTabs)) {
       this.currentTab = this.detailTabs[0].id + ''

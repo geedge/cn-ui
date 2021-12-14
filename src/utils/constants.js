@@ -27,7 +27,7 @@ export const fromRoute = {
   user: 'user',
   galaxyProxy: 'galaxyProxy',
   chart: 'chart',
-  cyptocurrency: 'cyptocurrency'
+  cryptocurrency: 'cryptocurrency'
 }
 
 /* panel类别和名称之间的映射 */
@@ -38,7 +38,7 @@ export const panelTypeAndRouteMapping = {
   ipEntityDetail: 4,
   domainEntityDetail: 5,
   appEntityDetail: 6,
-  cyptocurrency: 7
+  cryptocurrency: 7
 }
 
 /* operationLog state 执行状态属性 值与名称之间的映射 */
