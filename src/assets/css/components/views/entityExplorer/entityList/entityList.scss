@@ -1,7 +1,6 @@
 .entity-list {
   width: calc(100% - 290px);
-  height: 100%;
-  padding-top: 10px;
+  flex: 1;
 
   .entity-list__content {
     height: 100%;
@@ -15,6 +14,11 @@
       border-radius: 2px;
       height: calc(100% - 67px);
       width: calc(100% - 10px);
+      overflow: hidden auto;
+    }
+    .entity-list--list {
+      display: flex;
+      flex-direction: column;
       overflow: hidden auto;
     }
   }

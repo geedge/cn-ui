@@ -74,7 +74,7 @@ export const entityFilterType = {
     {
       column: 'city_distinct_count',
       labelI18nCode: 'overall.city',
-      icon: 'el-icon-s-home'
+      icon: 'cn-icon cn-icon-city'
     },
     {
       column: 'asn_distinct_count',

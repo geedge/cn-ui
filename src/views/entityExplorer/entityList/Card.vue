@@ -128,61 +128,9 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import entityListMixin from './entityListMixin'
 export default {
   name: 'Card',
-  props: {
-    entity: Object
-  },
-  data () {
-    return {
-    }
-  },
-  methods: {
-    entityDetail (entity) {
-
-    },
-    queryTraffic () {
-
-    },
-    querySecurity () {
-
-    },
-    queryAlert () {
-
-    }
-  },
-  computed: {
-    iconClass () {
-      let className
-      switch (this.entityData.entityType) {
-        case ('ip'): {
-          className = 'cn-icon cn-icon-ip domain-blue'
-          break
-        }
-        case ('domain'): {
-          className = 'cn-icon cn-icon-domain domain-blue'
-          break
-        }
-        case ('app'): {
-          className = 'cn-icon cn-icon-app domain-blue'
-          break
-        }
-        default: break
-      }
-      return className
-    }
-  },
-  mounted () {
-    setTimeout(() => { this.queryTraffic() })
-    setTimeout(() => { this.querySecurity() })
-    setTimeout(() => { this.queryAlert() })
-  },
-  setup (props) {
-    const entityData = _.cloneDeep(props.entity)
-    return {
-      entityData
-    }
-  }
+  mixins: [entityListMixin]
 }
 </script>
