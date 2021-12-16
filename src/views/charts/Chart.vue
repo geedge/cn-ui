@@ -453,7 +453,7 @@
           class="cn-chart cn-chart__table"
           :style="computePosition"
   >
-    <div class="cn-chart__header" style="font-size:16px">
+    <div class="cn-chart__header" >
       <chart-error
               :isError="isError"
               :errorInfo="errorInfo"
