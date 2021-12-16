@@ -7,10 +7,12 @@
       <!-- 列表式 -->
       <template v-if="listMode === 'list'">
         <div class="entity-list--list">
+          <div v-if="isCollapse" class="cn-entity__shadow"></div>
           <entity-row
               v-for="(data, index) in listData"
               :entity="data"
               :key="index"
+              @showCollapse="showCollapse"
           ></entity-row>
         </div>
       </template>
@@ -68,7 +70,8 @@ export default {
     return {
       showDetail: false,
       typeName: '',
-      entityList: []
+      entityList: [],
+      isCollapse: false
     }
   },
   methods: {
@@ -96,6 +99,9 @@ export default {
     },
     entityDetail (params) {
       this.$emit('showDetail', { ...params, icon: this.iconClass })
+    },
+    showCollapse (isCollapse) {
+      this.isCollapse = isCollapse
     }
   }
 }

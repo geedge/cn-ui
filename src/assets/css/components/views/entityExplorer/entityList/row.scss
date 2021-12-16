@@ -9,7 +9,21 @@
     align-items: flex-start;
     background-color: #F3F7FA;
 
-    i {
+    span {
+      transform: rotate(0);
+      transition: all linear .2s;
+      padding-top: 0;
+
+      &.reg-down {
+        padding-top: 2px;
+        transform: rotate(90deg);
+      }
+    }
+    span:hover {
+      cursor: pointer;
+    }
+
+    .cn-icon-arrow-right {
       color: #ADBCCA;
       font-size: 12px;
     }
@@ -47,6 +61,7 @@
 
       .cn-entity__header {
         font-size: 16px;
+        padding-bottom: 3px;
         color: #333333;
       }
       .cn-entity__body {
@@ -85,6 +100,10 @@
             padding: 0 30px;
             font-size: 12px;
             color: #3976CB;
+
+            &:hover {
+              cursor: pointer;
+            }
           }
         }
       }

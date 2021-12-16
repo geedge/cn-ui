@@ -1,8 +1,8 @@
 <template>
-  <div class="cn-entity--list">
+  <div class="cn-entity--list" :style="{zIndex: isCollapse ? 1 : 'unset'}">
     <!-- 左侧下拉按钮 -->
     <div class="cn-entity__collapse">
-      <span><i class="cn-icon cn-icon-arrow-right"></i></span>
+      <span @click="showCollapse" :class="{'reg-down': isCollapse}"><i class="cn-icon cn-icon-arrow-right"></i></span>
     </div>
     <div class="cn-entity__case">
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
@@ -65,26 +65,26 @@
               <!-- 通用字段 -->
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-rise"></i>
-                <span>{{$t('entities.risk')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{$t('entities.sentThroughput')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{entityData.bytesSentRate || '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-fall"></i>
-                <span>{{$t('entities.risk')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{$t('entities.receivedThroughput')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{entityData.bytesReceivedRate || '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-entity-alert"></i>
-                <span>{{$t('entities.risk')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{$t('entities.recentAlert')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{entityData.alertCount || '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-safe"></i>
-                <span>{{$t('entities.risk')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{$t('entities.recentSecurity')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{entityData.securityCount || '-'}}</span>
               </div>
             </div>
-            <div class="show-detail">{{$t('overall.detail')}}>></div>
+            <div class="show-detail" :style="{visibility: isCollapse ? 'visible' : 'hidden'}">{{$t('overall.detail')}}>></div>
           </div>
           <div class="body__detail"></div>
         </div>
@@ -97,6 +97,17 @@
 import entityListMixin from './entityListMixin'
 export default {
   name: 'Row',
-  mixins: [entityListMixin]
+  mixins: [entityListMixin],
+  data () {
+    return {
+      isCollapse: false
+    }
+  },
+  methods: {
+    showCollapse () {
+      this.isCollapse = !this.isCollapse
+      this.$emit('showCollapse', this.isCollapse)
+    }
+  }
 }
 </script>
