@@ -97,6 +97,9 @@
 import entityListMixin from './entityListMixin'
 export default {
   name: 'Row',
+  props: {
+    index: Number
+  },
   mixins: [entityListMixin],
   data () {
     return {
@@ -106,7 +109,10 @@ export default {
   methods: {
     showCollapse () {
       this.isCollapse = !this.isCollapse
-      this.$emit('showCollapse', this.isCollapse)
+      this.$emit('showCollapse', this.isCollapse, this.index)
+    },
+    cancelCollapse () {
+      this.isCollapse = false
     }
   }
 }

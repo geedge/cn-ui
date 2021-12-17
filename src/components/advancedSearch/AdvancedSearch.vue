@@ -9,7 +9,7 @@
         <div class="search__suffix">
           <i class="cn-icon cn-icon-search-advance"></i>
         </div>
-        <div class="search__suffix">
+        <div class="search__suffix" @click="search">
           <i class="el-icon-search"></i>
         </div>
       </div>
@@ -17,7 +17,7 @@
         <div class="search__suffix">
           <i class="cn-icon cn-icon-search-advance"></i>
         </div>
-        <div class="search__suffix">
+        <div class="search__suffix" @click="search">
           <i class="el-icon-search"></i>
         </div>
       </div>
@@ -38,6 +38,11 @@ export default {
   data () {
     return {
       searchContent: ''
+    }
+  },
+  methods: {
+    search () {
+      this.$emit('search', this.searchContent)
     }
   }
 }

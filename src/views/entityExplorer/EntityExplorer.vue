@@ -112,7 +112,7 @@ export default {
   data () {
     return {
       showList: false,
-      listMode: 'block', // entity列表的模式，list|block
+      listMode: 'list', // entity列表的模式，list|block
       timeFilter: {},
 
       filterData: [
