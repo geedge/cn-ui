@@ -6,7 +6,7 @@
       style="width: 100%;border: 1px solid #E7EAED"
       :row-key="getRowKey"
       @expand-change="currentChange"
-      current-row-key="domain"
+      :current-row-key="tableNameColumn"
       tooltip-effect="light"
       :expand-row-keys="expandRowKeys"
       :size="'mini'"
@@ -37,7 +37,10 @@
                 :prop="item.prop"
                 #default="{row}">
             <span v-if="item.prop === 'nameColumn'">
-                {{ nameColumn === 'fqdnCategoryName' ? row['fqdnCategoryName'] : row['reputationLevel'] }}
+                {{ nameColumn === 'fqdnCategoryName' ? row['fqdnCategoryName'] :(nameColumn === 'fqdnReputationLevel'? row['fqdnReputationLevel']:(nameColumn==='appCategory'?row['appCategory']:row['appRisk']))}}
+            </span>
+              <span v-else-if="item.prop === 'tableNameColumn'">
+                {{ tableNameColumn === 'appName' ? row['appName'] : row['domain']}}
             </span>
               <span v-else-if="item.prop === 'bytes'">
                 {{unitConvert(row[item.prop], unitTypes.byte).join(' ')}}
@@ -58,11 +61,14 @@
         :key="index"
         show-overflow-tooltip
         :min-width="item.width"
-        :label="item.label"
+        :label="(tableNameColumn === 'appName'&& item.prop === 'tableNameColumn')? $t('overall.appName'):item.label"
         :prop="item.prop"
         #default="{row}">
       <span v-if="item.prop === 'nameColumn'">
-        {{ nameColumn === 'fqdnCategoryName' ? row['categoryName'] : row['reputationLevel'] }}
+          {{ nameColumn === 'fqdnCategoryName' ? row['categoryName'] :(nameColumn === 'fqdnReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategory']:row['appRisk']))}}
+      </span>
+      <span v-else-if="item.prop === 'tableNameColumn'">
+          {{ tableNameColumn === 'appName' ? row['appName'] : row['domain']}}
       </span>
       <span v-else-if="item.prop === 'bytes'">
           {{unitConvert(row[item.prop], unitTypes.byte).join(' ')}}
@@ -108,6 +114,7 @@ export default {
       handler (n) {
         if (n && n.params) {
           this.nameColumn = n.params.nameColumn
+          this.tableNameColumn = n.params.tableNameColumn
         }
       }
     }
@@ -115,13 +122,14 @@ export default {
   data () {
     return {
       nameColumn: '',
+      tableNameColumn: '',
       pieTableData: [],
       childrenTableData: [],
       expandRowKeys: [],
       tableTitles: [
         {
           label: this.$t('overall.domain'),
-          prop: 'domain',
+          prop: 'tableNameColumn', // 'domain'
           width: '20%'
         },
         {
@@ -179,21 +187,43 @@ export default {
     currentChange (row, expandedRows) {
       this.loading = true
       this.childrenTableData = []
-      if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
-        this.expandRowKeys = []
+
+      if (this.tableNameColumn === 'appName') {
+        if (this.expandRowKeys[0] && (row.appName === this.expandRowKeys[0])) {
+          this.expandRowKeys = []
+        } else {
+          this.expandRowKeys = [row.appName]
+        }
       } else {
-        this.expandRowKeys = [row.domain]
+        if (this.expandRowKeys[0] && (row.domain === this.expandRowKeys[0])) {
+          this.expandRowKeys = []
+        } else {
+          this.expandRowKeys = [row.domain]
+        }
       }
+
       const url = this.chartInfo.params.urlChildrenTable
-      const queryParams = {
+      let queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000),
         order: this.order,
         domain: row.domain,
         limit: 10
       }
+      if (this.tableNameColumn === 'appName') {
+        queryParams = {
+          startTime: parseInt(this.timeFilter.startTime / 1000),
+          endTime: parseInt(this.timeFilter.endTime / 1000),
+          order: this.order,
+          appName: row.appName,
+          limit: 10
+        }
+      }
       setTimeout(() => {
         get(replaceUrlPlaceholder(url, queryParams)).then(response2 => {
+          // app：测试数据生成，如接口可正常返回数据后，删除即可
+          response2 = this.initTestDataForAppSecondTable(url, row)
+
           if (response2.code === 200) {
             this.childrenTableData = response2.data.result
           }
@@ -202,8 +232,43 @@ export default {
         })
       }, 500)
     },
+    initTestDataForAppSecondTable (url, row) {
+      let rlt = ''
+
+      if (url.indexOf('app') > -1) {
+        rlt = {
+          code: 200,
+          msg: '',
+          data: {
+            resultType: 'table',
+            result: [{
+              sessions: '0',
+              packets: '134',
+              bytes: '33202',
+              appCategory: row.appCategory,
+              serverIp: '51.104.167.186',
+              appRisk: row.appRisk
+            }, {
+              sessions: '0',
+              packets: '134',
+              bytes: '33202',
+              appCategory: row.appCategory,
+              serverIp: '23.164.67.16',
+              appRisk: row.appRisk
+            }
+            ]
+          },
+          success: true
+        }
+      }
+      return rlt
+    },
     getRowKey (row) {
-      return row.domain
+      if (this.tableNameColumn === 'appName') {
+        return row.appName
+      } else {
+        return row.domain
+      }
     }
   },
   setup () {

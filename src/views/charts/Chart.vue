@@ -2112,14 +2112,94 @@ export default {
         }, 250)
       })
     },
+
+    initTestDataForApp (chartParams) {
+      let rlt = ''
+      if (chartParams.url.indexOf('App') > -1) {
+        rlt = {
+          code: 200,
+          msg: '',
+          data: {
+            resultType: 'table',
+            result: [{
+              appCategory: 'aaa',
+              uniqApps: 'bbb',
+              bytes: '1337678073',
+              packets: '1687757',
+              sessions: '28307',
+              appRisk: 'low'
+            }, {
+              appCategory: 'www',
+              uniqApps: 'uuu',
+              bytes: '1337678073',
+              packets: '1687757',
+              sessions: '28307',
+              appRisk: 'middle'
+            }, {
+              appCategory: 'xxx',
+              uniqApps: 'zzz',
+              bytes: '1337678073',
+              packets: '1687757',
+              sessions: '28307',
+              appRisk: 'high'
+            }
+            ]
+          },
+          success: true
+        }
+      }
+      return rlt
+    },
+
+    initTestDataForAppTable (chartParams) {
+      let rlt = ''
+      if (chartParams.urlTable.indexOf('app') > -1) {
+        rlt = {
+          code: 200,
+          msg: '',
+          data: {
+            resultType: 'table',
+            result: [{
+              sessions: '0',
+              packets: '134',
+              bytes: '33202',
+              appName: 'aacccc',
+              appCategory: 'aaa',
+              appRisk: 'low'
+            }, {
+              sessions: '0',
+              packets: '134',
+              bytes: '33202',
+              appName: 'wwcccc',
+              appCategory: 'www',
+              appRisk: 'middle'
+            }, {
+              sessions: '0',
+              packets: '134',
+              bytes: '33202',
+              appName: 'xxcccc',
+              appCategory: 'xxx',
+              appRisk: 'high'
+            }
+            ]
+          },
+          success: true
+        }
+      }
+      return rlt
+    },
+
     initEchartsWithPieTable (chartParams) {
       const self = this
       chartParams.valueColumn = this.orderPieTable
       const unitType = getUnitType(chartParams.valueColumn)
       const queryParams = { ...this.queryTimeRange, limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
       const tableQueryParams = { ...this.queryTimeRange, limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
-      tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方
+      tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方)
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
+        // app：测试数据生成，如接口可正常返回数据后，删除即可
+        response = this.initTestDataForApp(chartParams)
+
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
             this.noData = true
@@ -2153,6 +2233,9 @@ export default {
           this.myChart.setOption(this.chartOption)
           if (!this.$_.isEmpty(data)) {
             get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
+              // app：测试数据生成，如接口可正常返回数据后，删除即可
+              response2 = this.initTestDataForAppTable(chartParams)
+
               if (response2.code === 200) {
                 this.pieTableData = response2.data.result
               } else {
