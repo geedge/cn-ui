@@ -107,16 +107,17 @@
           color: #666666;
           letter-spacing: 0;
           font-weight: 400;
-          .top-table-percent{
-            display:grid;
-            grid-template-columns: 50% auto;
-            grid-template-rows: 100%;
-            grid-row-gap: 0px;
-            grid-column-gap: 0px;
-            .top-table-progress{
-              align-content: center;
-              padding-top: 8px;
-            }
+        }
+
+        .top-table-percent{
+          display:grid;
+          grid-template-columns: 50% auto;
+          grid-template-rows: 100%;
+          grid-row-gap: 0px;
+          grid-column-gap: 0px;
+          .top-table-progress{
+            align-content: center;
+            padding-top: 8px;
           }
         }
       }

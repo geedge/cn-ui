@@ -17,13 +17,13 @@
                           class="customer-no-border-table"
                           :cell-style="{'text-align':'left','padding': '1px 0','border':'0px'}">
                     <el-table-column label="Top10" type="index" :index="indexMethod" width="81"/>
-                    <el-table-column prop="name" :label="$t('overall.country')" width="100" />
+                    <el-table-column prop="name" :label="item.label" width="100" />
                     <el-table-column prop="value" :label="$t('overall.number')" width="79" />
                     <el-table-column prop="rate" :label="$t('overall.percent')" >
                         <template #default="scope">
-                            <div class="top-table-percent">
+                            <div class="top-table-percent" >
                                 <div >{{ scope.row.percent }}%</div>
-                                <div class="top-table-progress"><el-progress :percentage="scope.row.percent" :show-text="false" color="#23BF9A" ></el-progress></div>
+                                <div class="top-table-progress" ><el-progress :percentage="scope.row.percent" :show-text="false" color="#23BF9A" ></el-progress></div>
                             </div>
                         </template>
                     </el-table-column>
