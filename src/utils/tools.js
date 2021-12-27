@@ -346,18 +346,24 @@ export const clickOutside = {
   }
 }
 
-const noDataDom = document.createElement('div')
-noDataDom.setAttribute('class', 'no-data')
-noDataDom.innerText = 'No data'
+function noDataDomFactory () {
+  const noDataDom = document.createElement('div')
+  noDataDom.setAttribute('class', 'no-data')
+  noDataDom.innerText = 'No data'
+  return noDataDom
+}
+
 export const noData = {
   updated (el, binding) {
-    if (el && binding.oldValue !== binding.value) {
+    if (el) {
+      console.info(binding.value, el)
       if (binding.value) {
         setTimeout(() => {
           el.childNodes.forEach(node => {
+            console.info(node, node.style)
             node.style && (node.style.display = 'none')
           })
-          el.insertBefore(noDataDom, el.childNodes[0])
+          el.insertBefore(noDataDomFactory(), el.childNodes[0])
         })
       } else {
         setTimeout(() => {
