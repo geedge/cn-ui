@@ -356,11 +356,9 @@ function noDataDomFactory () {
 export const noData = {
   updated (el, binding) {
     if (el) {
-      console.info(binding.value, el)
       if (binding.value) {
         setTimeout(() => {
           el.childNodes.forEach(node => {
-            console.info(node, node.style)
             node.style && (node.style.display = 'none')
           })
           el.insertBefore(noDataDomFactory(), el.childNodes[0])
