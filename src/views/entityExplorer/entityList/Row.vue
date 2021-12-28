@@ -1,8 +1,8 @@
 <template>
-  <div class="cn-entity--list" :style="{zIndex: isCollapse ? 1 : 'unset'}">
+  <div class="cn-entity--list" :style="{zIndex: !isCollapse ? 1 : 'unset'}">
     <!-- 左侧下拉按钮 -->
     <div class="cn-entity__collapse">
-      <span @click="showCollapse" :class="{'reg-down': isCollapse}"><i class="cn-icon cn-icon-arrow-right"></i></span>
+      <span @click="switchCollapse" :class="{'reg-down': !isCollapse}"><i class="cn-icon cn-icon-arrow-right"></i></span>
     </div>
     <div class="cn-entity__case">
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
@@ -84,35 +84,48 @@
                 <span>{{entityData.securityCount || '-'}}</span>
               </div>
             </div>
-            <div class="show-detail" :style="{visibility: isCollapse ? 'visible' : 'hidden'}">{{$t('overall.detail')}}>></div>
+            <div class="show-detail" :style="{visibility: !isCollapse ? 'visible' : 'hidden'}">{{$t('overall.detail')}}>></div>
           </div>
-          <div class="body__detail"></div>
         </div>
       </div>
+      <el-collapse-transition>
+        <div class="cn-entity__detail-overview" v-show="!isCollapse">
+          <el-divider></el-divider>
+          <detail-overview
+              :entity="entityData"
+          ></detail-overview>
+        </div>
+      </el-collapse-transition>
     </div>
   </div>
 </template>
 
 <script>
 import entityListMixin from './entityListMixin'
+import DetailOverview from '@/views/entityExplorer/entityList/detailOverview/DetailOverview'
 export default {
   name: 'Row',
   props: {
     index: Number
   },
+  components: {
+    DetailOverview
+  },
   mixins: [entityListMixin],
   data () {
     return {
-      isCollapse: false
+      isCollapse: true // 是否是折叠状态
     }
   },
   methods: {
-    showCollapse () {
+    /* 切换折叠状态 */
+    switchCollapse () {
       this.isCollapse = !this.isCollapse
-      this.$emit('showCollapse', this.isCollapse, this.index)
+      this.$emit('switchCollapse', this.isCollapse, this.index)
     },
-    cancelCollapse () {
-      this.isCollapse = false
+    /* 设为折叠状态 */
+    collapse () {
+      this.isCollapse = true
     }
   }
 }

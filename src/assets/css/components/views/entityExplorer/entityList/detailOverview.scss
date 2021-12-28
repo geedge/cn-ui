@@ -1,0 +1,115 @@
+.entity-detail-overview {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  padding: 0 30px;
+
+  .overview-item {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+
+    .overview__title {
+      color: #333;
+      font-size: 14px;
+    }
+    .overview__content {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0 0 20px;
+
+      .overview__row {
+        display: flex;
+        flex-direction: row;
+        padding: 2px 0;
+        font-size: 14px;
+
+        &.overview__row--small-font {
+          font-size: 12px;
+        }
+        .show-more {
+          color: #8FA1BE;
+          cursor: pointer;
+        }
+        .row__label {
+          color: #6B717B;
+          padding-right: 20px;
+
+          &.row__label--width130 {
+            flex-basis: 130px;
+            padding-right: unset;
+          }
+          &.row__label--width160 {
+            flex-basis: 160px;
+            padding-right: unset;
+          }
+        }
+        .row__content {
+          display: flex;
+          color: #3976CB;
+
+          .alert-level-tag {
+            display: flex;
+            padding: 1px 4px;
+            margin-right: 6px;
+            border-radius: 2px;
+            color: white;
+
+            &.alert-level-tag--high {
+              background-color: #ED907B;
+            }
+            &.alert-level-tag--middle {
+              background-color: #FFAB66;
+            }
+            &.alert-level-tag--low {
+              background-color: #F6C738;
+            }
+          }
+          &.row__content--width200 {
+            width: 200px;
+          }
+        }
+        .row__contents {
+          display: flex;
+          flex-direction: column;
+
+          .row__content {
+            padding: 2px 0;
+
+            &:first-of-type {
+              padding-top: 0;
+            }
+            &:last-of-type {
+              padding-bottom: 0;
+            }
+          }
+        }
+        .row__desc {
+          color: #666666;
+        }
+      }
+    }
+
+    .overview__tags {
+      display: flex;
+
+      .overview__tag {
+        display: flex;
+        padding: 6px 15px;
+        margin-right: 20px;
+        background-color: #EFF6FE;
+        font-size: 14px;
+        border-radius: 4px;
+
+        .tag__value {
+          padding-right: 5px;
+          color: #3976CB;
+          font-weight: bold;
+        }
+        .tag__desc {
+          color: #3976CB;
+        }
+      }
+    }
+  }
+}

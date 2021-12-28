@@ -31,6 +31,7 @@
   .cn-entity__case {
     flex: 1;
     display: flex;
+    flex-wrap: wrap;
     padding: 16px 0;
     margin-bottom: 1px;
     background-color: white;
@@ -108,6 +109,14 @@
             }
           }
         }
+      }
+    }
+    .cn-entity__detail-overview {
+      flex-basis: 100%;
+      padding: 0 10px;
+
+      .el-divider {
+        background-color: #EFF2F5;
       }
     }
   }
