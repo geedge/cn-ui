@@ -804,6 +804,73 @@
     }
   }
 }
+.cn-chart__single-value.cn-chart__single-value--icon-right--color {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-around;
+  align-items: center;
+
+  .single-value__content {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+
+    .single-value-icon__box {
+        padding-right: 30px;
+        .single-value__icon {
+          border-radius: 50%;
+          position: relative;
+          margin-right: 7.5%;
+          margin-top: 30%;
+
+          .cn-icon-svg {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+            fill: currentColor;
+            overflow: hidden;
+          }
+
+          i {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            font-size: 24px;
+          }
+        }
+    }
+
+    .single-value__data{
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      padding-left: 20px;
+
+      .content__title {
+        display: flex;
+        align-items: end;
+        height: 50%;
+        font-size: 16px;
+        color: #666666;
+        padding-bottom: 5px;
+      }
+      .content__data {
+        display: flex;
+        padding-top: 5%;
+        height: 50%;
+        flex: auto;
+        font-size: 24px;
+        color: #333333;
+        font-weight: bold;
+      }
+    }
+
+  }
+}
 .cn-chart__single-value.cn-chart__single-value--chart {
   display: flex;
   padding: 13px 20px;

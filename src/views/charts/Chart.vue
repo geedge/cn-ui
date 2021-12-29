@@ -209,6 +209,7 @@
     :type="chartInfo.type"
     :style="computePosition"
     :icon="singleValue.icon"
+    :color="singleValue.color"
     :loading="loading"
   >
     <template #chartErrorInfo>
@@ -241,7 +242,7 @@
           :table-data="activeIpTable.tableData"
           :style="computePosition"
           :loading="loading"
-          :no-data="false"
+          :no-data="noData"
   >
     <template #chartErrorInfo>
       <chart-error
@@ -465,7 +466,10 @@
 
       <span class="header__operations header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
     </div>
-    <div class="cn-chart__body">
+    <div class="chart__loading" v-show="loading">
+      <i class="el-icon-loading"></i>
+    </div>
+    <div class="cn-chart__body"  v-no-data="noData">
       <div class="crypto-eventList__record">
         <div class="record__table">
           <div style="height: 100%; overflow: hidden auto;">
@@ -677,7 +681,8 @@ export default {
       pieTableData: [],
       singleValue: {
         value: '-',
-        icon: ''
+        icon: '',
+        color: ''
       },
       showMapBackButton: false, // 下钻之后控制是否显示返回上一层按钮
       standaloneTimeRange: { // 单个图表刷新时，重新获取时间范围，且不影响到其他图
@@ -768,6 +773,9 @@ export default {
         } else if (this.isSingleValue) {
           if (chartParams) {
             this.singleValue.icon = chartParams.icon
+            if (chartParams.color) {
+              this.singleValue.color = chartParams.color
+            }
             const gotData = new Promise(resolve => {
               let result = ''
               if (chartParams.dataKey) {
@@ -887,7 +895,11 @@ export default {
           const queryParams = { ...this.queryTimeRange, ...this.entity }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
-              this.croptyEventList = response.data.result
+              if (response.data.result.length > 0) {
+                this.croptyEventList = response.data.result
+              } else {
+                this.noData = true
+              }
             } else {
               this.isError = true
               this.noData = true
@@ -899,6 +911,8 @@ export default {
           }).catch(e => {
             this.isError = true
             this.errorInfo = e
+          }).finally(() => {
+            setTimeout(() => { this.loading = false }, 250)
           })
         } else if (this.isAppBasicInfo) {
           const queryParams = { app: this.entity.app }
