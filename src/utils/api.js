@@ -21,9 +21,10 @@ export const api = {
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',
-  entityList: '/interface/entity/list',
+  entityList: '/interface/entity/list/basic',
   entityCount: '/interface/entity/total',
-  entityFilter: '/interface/entity/filter',
+  entityFilter: '/interface/entity/filter/count',
+  entityFilterTop: '/interface/entity/filter/top',
   ipThroughput: '/interface/entity/ip/detail/throughput',
   domainThroughput: '/interface/entity/domain/detail/throughput',
   appThroughput: '/interface/entity/app/detail/throughput',

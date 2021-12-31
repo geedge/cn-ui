@@ -1,32 +1,33 @@
 <template >
-    <div class="entity-filter-case " >
-      <div class="filter-case__header">{{$t('entities.filter')}}</div>
-      <div
-          class="entity-filter"
-          v-for="(filter, index) in filterData"
-          :key="index"
-      >
-        <div class="filter__header">{{filter.title}}</div>
-        <div class="filter__body">
-          <div class="filter__row" v-for="(item, i) in filter.data" :key="i"  @click="showTopDailog(i,item,filter.type)"  :ref="`entityTopTen`+i">
-            <div class="row__label">
-              <i :class="item.icon"></i>
-              <span>{{item.label}}</span>
-            </div>
-            <div class="row__value">{{item.value}}</div>
+  <div class="entity-filter-case " >
+    <div class="filter-case__header">{{$t('entities.filter')}}</div>
+    <div
+        class="entity-filter"
+        v-for="(filter, index) in filterData"
+        :key="index"
+    >
+      <div class="filter__header">{{filter.title}}</div>
+      <div class="filter__body">
+        <div class="filter__row" v-for="(item, i) in filter.data" :key="i"  @click="showTopDialog(i, item, filter)"  :ref="`entityTopTen`+i">
+          <div class="row__label">
+            <i :class="item.icon"></i>
+            <span>{{item.label}}</span>
           </div>
+          <div class="row__value">{{item.value}}</div>
         </div>
       </div>
-        <!-- 自定义table列 -->
-        <transition name="el-zoom-in-top">
-            <entity-top
-                    v-show="showTopTen"
-                    ref="entityTopTenPop"
-                    @close="showTopTen = false"
-            ></entity-top>
-        </transition>
-
     </div>
+    <!-- 自定义table列 -->
+    <transition name="el-zoom-in-top">
+      <entity-top
+          v-show="showTopTen"
+          ref="entityTopTenPop"
+          @filter="filter"
+          @close="showTopTen = false"
+      ></entity-top>
+    </transition>
+
+  </div>
 
 </template>
 
@@ -41,7 +42,9 @@ export default {
     EntityTop
   },
   props: {
-    filterData: Array
+    filterData: Array,
+    searchParams: Object,
+    timeFilter: Object
   },
   data () {
     return {
@@ -52,44 +55,30 @@ export default {
     }
   },
   methods: {
-    showTopDailog (i, item, type) {
+    showTopDialog (i, item, filter) {
+      const type = filter.type
       const width = this.$refs['entityTopTen' + i].offsetWidth
       const offsetLeft = this.$refs['entityTopTen' + i].offsetLeft
       const leftVal = offsetLeft + width
 
-      get(api.filterTop, { entityType: type, column: item.column, top: 10 }).then(response => {
+      get(api.filterTop, { entityType: type, q: this.searchParams, column: item.topColumn, top: 10, ...this.timeFilter }).then(response => {
         if (response.code === 200) {
-          const rlt = response.data.result
-
-          let sum = 0
-          rlt.forEach(item => {
-            sum = sum + item.value
-          })
-
-          let curSumPercent = 0
-          rlt.forEach((item, i) => {
-            const per = Number(item.value * 100 / sum).toFixed(0)
-            if ((i + 1) === rlt.length) {
-              item.percent = 100 - curSumPercent
-            } else {
-              item.percent = per
-              curSumPercent = Number(curSumPercent) + Number(per)
-            }
-          })
-          this.$refs.entityTopTenPop.initEntityTop(leftVal, item, rlt)
+          this.$refs.entityTopTenPop.initEntityTop(leftVal, item, response.data.result, filter.totalCount)
         } else {
-          this.$refs.entityTopTenPop.initEntityTop(leftVal, item, [])
+          this.$refs.entityTopTenPop.initEntityTop(leftVal, item, [], filter.totalCount)
         }
       }).catch(e => {
-        this.$refs.entityTopTenPop.initEntityTop(leftVal, item, [])
+        this.$refs.entityTopTenPop.initEntityTop(leftVal, item, [], filter.totalCount)
       }).finally(() => {
         this.showTopTen = true
       })
+    },
+    filter (name, topData) {
+      this.showTopTen = false
+      this.$emit('filter', name, topData)
     }
   },
   mounted () {
-
   }
-
 }
 </script>

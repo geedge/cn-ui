@@ -13,6 +13,7 @@
     </div>
     <!-- 搜索组件 -->
     <explorer-search
+        ref="search"
         :class="{'explorer-search--show-list': showList}"
         :show-list="showList"
         @search="search"
@@ -21,6 +22,9 @@
     <div class="explorer-container" v-if="showList">
       <entity-filter
         :filter-data="filterData"
+        :search-params="searchParams"
+        :time-filter="timeFilter"
+        @filter="filter"
       ></entity-filter>
       <entity-list
         :list-data="listData"
@@ -115,7 +119,10 @@ export default {
     return {
       showList: false,
       listMode: 'list', // entity列表的模式，list|block
-      timeFilter: {},
+      timeFilter: {
+        startTime: 1639989600,
+        endTime: 1639992840
+      },
 
       entityAppTotal: '-',
       entityAppNew: '-',
@@ -129,86 +136,106 @@ export default {
       entityIpNew: '-',
       entityIpActive: '-',
 
+      searchParams: {},
+      showFilter: ['ip', 'app', 'domain'], // ip,domain,app
+      pageObj: {
+        pageNo: 1,
+        pageSize: 20
+      },
       filterData: [
         {
           type: 'ip',
           title: entityType.ip,
+          totalCount: 0,
           data: [
             {
               label: this.$t('overall.country'),
               column: 'country_distinct_count',
+              topColumn: 'ip_location_country', // top弹框查询字段
               icon: entityFilterType.ip[0].icon,
-              value: 15
+              value: 0
             },
             {
               label: this.$t('overall.province'),
               column: 'province_distinct_count',
+              topColumn: 'ip_location_province', // top弹框查询字段
               icon: entityFilterType.ip[1].icon,
-              value: 201
+              value: 0
             },
             {
               label: this.$t('overall.city'),
               column: 'city_distinct_count',
+              topColumn: 'ip_location_city', // top弹框查询字段
               icon: entityFilterType.ip[2].icon,
-              value: 1052
+              value: 0
             },
             {
               label: this.$t('entities.asn'),
               column: 'asn_distinct_count',
+              topColumn: 'ip_asn', // top弹框查询字段
               icon: entityFilterType.ip[3].icon,
-              value: 76
+              value: 0
             }
           ]
         },
         {
           type: 'app',
           title: entityType.app,
+          totalCount: 0,
           data: [
             {
               label: this.$t('entities.category'),
               column: 'category_distinct_count',
+              topColumn: 'app_category', // top弹框查询字段
               icon: entityFilterType.app[0].icon,
-              value: 15
+              value: 0
             },
             {
               label: this.$t('entities.subcategory'),
               column: 'subcategory_distinct_count',
+              topColumn: 'app_subcategory', // top弹框查询字段
               icon: entityFilterType.app[1].icon,
-              value: 201
+              value: 0
             },
             {
               label: this.$t('entities.risk'),
               column: 'risk_distinct_count',
+              topColumn: 'app_risk', // top弹框查询字段
               icon: entityFilterType.app[2].icon,
-              value: 1052
+              value: 0
             }
           ]
         },
         {
           type: 'domain',
           title: entityType.domain,
+          totalCount: 0,
           data: [
             {
               label: this.$t('entities.domainDetail.categoryGroup'),
               column: 'category_group_distinct_count',
+              topColumn: 'domain_category_group', // top弹框查询字段
               icon: entityFilterType.domain[0].icon,
-              value: 31
+              value: 0
             },
             {
               label: this.$t('entities.category'),
               column: 'category_distinct_count',
+              topColumn: 'domain_category', // top弹框查询字段
               icon: entityFilterType.domain[1].icon,
-              value: 82
+              value: 0
             },
             {
               label: this.$t('entities.reputationLevel'),
               column: 'reputation_level_distinct_count',
+              topColumn: 'domain_reputation_level', // top弹框查询字段
               icon: entityFilterType.domain[2].icon,
-              value: 8
+              value: 0
             }
           ]
         }
       ],
+      // listData: []
       listData: JSON.parse(`[
         {
           "entityType": "app",
@@ -219,20 +246,20 @@ export default {
           "appSubcategory": "internet-utility"
         },
         {
-          "entityType": "app",
-          "appName": "suning",
-          "appCategory": "general-internet",
-          "appId": "",
-          "appRisk": "1",
-          "appSubcategory": "internet-utility"
+          "domainCategory": "Streaming Media",
+          "domainCategoryGroup": "IT Resources",
+          "domainReputationScore": 79,
+          "domainName": "9ddm.com",
+          "entityType": "domain",
+          "domainReputationLevel": "Low Risk"
         },
         {
-          "entityType": "app",
-          "appName": "dianping",
-          "appCategory": "general-internet",
-          "appId": "",
-          "appRisk": "1",
-          "appSubcategory": "internet-utility"
+          "ipAsn": "",
+          "ipLocationCountry": "China",
+          "entityType": "ip",
+          "ipLocation_province": "Other",
+          "ipAddr": "116.178.30.96",
+          "ipLocationCity": "Other"
         },
         {
           "entityType": "app",
@@ -380,22 +407,69 @@ export default {
     reload () {
 
     },
-    search (param) {
+    search (params) {
+      this.searchParams = params
       if (!this.showList) {
         this.showList = true
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
-      if (param) {
-        return '1'
+      if (params && Object.keys(params).length > 0) {
+        this.queryFilter({ entityType: 'ip', q: this.handleQ(params), ...this.timeFilter })
+        this.queryFilter({ entityType: 'app', q: this.handleQ(params), ...this.timeFilter })
+        this.queryFilter({ entityType: 'domain', q: this.handleQ(params), ...this.timeFilter })
+        this.queryList({ q: this.handleQ(params), ...this.timeFilter, ...this.pageObj })
       } else {
-        return ''
+        this.queryFilter({ entityType: 'ip', ...this.timeFilter })
+        this.queryFilter({ entityType: 'app', ...this.timeFilter })
+        this.queryFilter({ entityType: 'domain', ...this.timeFilter })
+        this.queryList({ ...this.timeFilter, ...this.pageObj })
       }
     },
-    queryFilter () {
-
+    /* filter组件内点击后查询 */
+    filter (name, topData) {
+      const params = {}
+      params[topData.topColumn] = name
+      this.$refs.search.addParams(params)
     },
-    queryList () {
-
+    /* 查询filter数据 */
+    queryFilter (params) {
+      get(api.entityFilter, params).then(response => {
+        if (response.data.result) {
+          switch (params.entityType) {
+            case 'ip': {
+              this.filterData[0].data.forEach(d => {
+                d.value = response.data.result[d.column]
+              })
+              this.filterData[0].totalCount = response.data.result.count
+              break
+            }
+            case 'app': {
+              this.filterData[1].data.forEach(d => {
+                d.value = response.data.result[d.column]
+              })
+              this.filterData[1].totalCount = response.data.result.count
+              break
+            }
+            case 'domain': {
+              this.filterData[2].data.forEach(d => {
+                d.value = response.data.result[d.column]
+              })
+              this.filterData[2].totalCount = response.data.result.count
+              break
+            }
+          }
+        }
+      })
+    },
+    queryList (params) {
+      get(api.entityList, params).then(response => {
+        this.listData = response.data.result
+      })
+    },
+    handleQ (params) {
+      return Object.keys(params).map(param => {
+        return `${param}="${params[param]}"`
+      }).join(' AND ')
     },
 
     getEntityIndexData () {
@@ -404,28 +478,28 @@ export default {
         if (response.code === 200) {
           this.entityAppTotal = response.data.result
         }
-      }),
+      })
       get(api.entityTotal, { entityType: 'domain' }).then(response => {
         if (response.code === 200) {
           this.entityDomainTotal = response.data.result
         }
-      }),
+      })
       get(api.entityTotal, { entityType: 'ip' }).then(response => {
         if (response.code === 200) {
           this.entityIpTotal = response.data.result
         }
-      }),
+      })
       // New
       get(api.entityNew, { entityType: 'app' }).then(response => {
         if (response.code === 200) {
           this.entityAppNew = response.data.result
         }
-      }),
+      })
       get(api.entityNew, { entityType: 'domain' }).then(response => {
         if (response.code === 200) {
           this.entityDomainNew = response.data.result
         }
-      }),
+      })
       get(api.entityNew, { entityType: 'ip' }).then(response => {
         if (response.code === 200) {
           this.entityIpNew = response.data.result
@@ -436,12 +510,12 @@ export default {
         if (response.code === 200) {
           this.entityAppActive = response.data.result
         }
-      }),
+      })
       get(api.entityActive, { entityType: 'domain' }).then(response => {
         if (response.code === 200) {
           this.entityDomainActive = response.data.result
         }
-      }),
+      })
       get(api.entityActive, { entityType: 'ip' }).then(response => {
         if (response.code === 200) {
           this.entityIpActive = response.data.result

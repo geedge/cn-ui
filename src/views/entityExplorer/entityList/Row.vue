@@ -13,18 +13,18 @@
             <div class="basic-info">
               <template v-if="entityData.entityType === 'ip'">
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-country">$t('overall.country')&nbsp;:&nbsp;&nbsp;</i>
-                  <span>$t('overall.country')&nbsp;:&nbsp;&nbsp;</span>
+                  <i class="cn-icon cn-icon-country"></i>
+                  <span>{{$t('overall.country')}}&nbsp;:&nbsp;&nbsp;</span>
                   <span>{{entityData.ipLocationCountry || '-'}}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
-                  <span>$t('overall.region')&nbsp;:&nbsp;&nbsp;</span>
+                  <span>{{$t('overall.region')}}&nbsp;:&nbsp;&nbsp;</span>
                   <span>{{entityData.ipLocationProvince ? (entityData.ipLocationProvince + ', ' + entityData.ipLocationCity) : '-'}}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-cloud"></i>
-                  <span>$t('overall.asn')&nbsp;:&nbsp;&nbsp;</span>
+                  <span>{{$t('entities.asn')}}&nbsp;:&nbsp;&nbsp;</span>
                   <span>{{entityData.ipAsn || '-'}}</span>
                 </div>
               </template>

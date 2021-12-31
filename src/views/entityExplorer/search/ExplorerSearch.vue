@@ -4,6 +4,7 @@
     <div class="explorer-search__input-case" :class="{'explorer-search__input-case--question-mark-in-line': showList}">
       <div class="explorer-search__input">
         <advanced-search
+          ref="search"
           :show-list="showList"
           @search="search"
         ></advanced-search>
@@ -40,8 +41,11 @@ export default {
     }
   },
   methods: {
-    search (param) {
-      this.$emit('search', param)
+    search (params) {
+      this.$emit('search', params)
+    },
+    addParams (params) {
+      this.$refs.search.addParams(params)
     }
   }
 }
