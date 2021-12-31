@@ -27,7 +27,17 @@ export const api = {
   ipThroughput: '/interface/entity/ip/detail/throughput',
   domainThroughput: '/interface/entity/domain/detail/throughput',
   appThroughput: '/interface/entity/app/detail/throughput',
-  filterTop: '/interface/entity/filter/top'
+  filterTop: '/interface/entity/filter/top',
+  entityTotal: '/interface/entity/index/total',
+  entityNew: '/interface/entity/index/new',
+  entityActive: '/interface/entity/index/active',
+  entityTraffic: '/interface/entity/list/traffic',
+  entityAlertNum: '/interface/entity/list/alertNum',
+  entitySecurityNum: '/interface/entity/list/detectionNum',
+  ipBytes: '/interface/entity/detail/ip/bytes',
+  domainBytes: '/interface/entity/detail/domain/bytes',
+  appBytes: '/interface/entity/detail/app/bytes'
+
 }
 
 /* panel */

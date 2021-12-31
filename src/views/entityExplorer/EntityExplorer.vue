@@ -32,57 +32,57 @@
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
           <div class="overview-left">
-            <span>86</span>
+            <span>{{entityAppTotal}}</span>
             <span>APP</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
-              <div class="right-value">51</div>
+              <div class="right-value">{{entityAppNew}}</div>
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
-              <div class="right-value">56</div>
+              <div class="right-value">{{entityAppActive}}</div>
             </div>
           </div>
         </div>
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
           <div class="overview-left">
-            <span>186</span>
+            <span>{{entityDomainTotal}}</span>
             <span>DOMAIN</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
-              <div class="right-value">40</div>
+              <div class="right-value">{{entityDomainNew}}</div>
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
-              <div class="right-value">18</div>
+              <div class="right-value">{{entityDomainActive}}</div>
             </div>
           </div>
         </div>
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
           <div class="overview-left">
-            <span>861</span>
+            <span>{{entityIpTotal}}</span>
             <span>IP</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
-              <div class="right-value">99</div>
+              <div class="right-value">{{entityIpNew}}</div>
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
-              <div class="right-value">37</div>
+              <div class="right-value">{{entityIpActive}}</div>
             </div>
           </div>
         </div>
@@ -99,6 +99,8 @@ import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
 import { entityType, entityFilterType } from '@/utils/constants'
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
 
 export default {
   name: 'entity-explorer',
@@ -114,6 +116,18 @@ export default {
       showList: false,
       listMode: 'list', // entity列表的模式，list|block
       timeFilter: {},
+
+      entityAppTotal: '-',
+      entityAppNew: '-',
+      entityAppActive: '-',
+
+      entityDomainTotal: '-',
+      entityDomainNew: '-',
+      entityDomainActive: '-',
+
+      entityIpTotal: '-',
+      entityIpNew: '-',
+      entityIpActive: '-',
 
       filterData: [
         {
@@ -382,7 +396,62 @@ export default {
     },
     queryList () {
 
+    },
+
+    getEntityIndexData () {
+      // Total
+      get(api.entityTotal, { entityType: 'app' }).then(response => {
+        if (response.code === 200) {
+          this.entityAppTotal = response.data.result
+        }
+      }),
+      get(api.entityTotal, { entityType: 'domain' }).then(response => {
+        if (response.code === 200) {
+          this.entityDomainTotal = response.data.result
+        }
+      }),
+      get(api.entityTotal, { entityType: 'ip' }).then(response => {
+        if (response.code === 200) {
+          this.entityIpTotal = response.data.result
+        }
+      }),
+      // New
+      get(api.entityNew, { entityType: 'app' }).then(response => {
+        if (response.code === 200) {
+          this.entityAppNew = response.data.result
+        }
+      }),
+      get(api.entityNew, { entityType: 'domain' }).then(response => {
+        if (response.code === 200) {
+          this.entityDomainNew = response.data.result
+        }
+      }),
+      get(api.entityNew, { entityType: 'ip' }).then(response => {
+        if (response.code === 200) {
+          this.entityIpNew = response.data.result
+        }
+      })
+      // Active
+      get(api.entityActive, { entityType: 'app' }).then(response => {
+        if (response.code === 200) {
+          this.entityAppActive = response.data.result
+        }
+      }),
+      get(api.entityActive, { entityType: 'domain' }).then(response => {
+        if (response.code === 200) {
+          this.entityDomainActive = response.data.result
+        }
+      }),
+      get(api.entityActive, { entityType: 'ip' }).then(response => {
+        if (response.code === 200) {
+          this.entityIpActive = response.data.result
+        }
+      })
     }
+
+  },
+  mounted () {
+    this.getEntityIndexData()
   }
 }
 </script>

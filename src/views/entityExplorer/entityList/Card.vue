@@ -115,7 +115,7 @@
         </div>
         <!-- 曲线-->
         <div class="body__drawing-box">
-          <div class="body__drawing" :id="`entityListChart${entityData.appId}`"></div>
+                <div class="body__drawing" :id="`entityListChart${entityData.appName}`"></div>
         </div>
         <div class="body__statics">
           <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate || 0}} bps</div>

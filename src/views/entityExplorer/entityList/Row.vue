@@ -106,7 +106,8 @@ import DetailOverview from '@/views/entityExplorer/entityList/detailOverview/Det
 export default {
   name: 'Row',
   props: {
-    index: Number
+    index: Number,
+    timeFilter: Object
   },
   components: {
     DetailOverview
