@@ -102,6 +102,11 @@
   .domain-detail-list__row {
     display: table-row;
 
+    &:last-of-type {
+      .domain-detail-list__label, .domain-detail-list__content {
+        border-bottom: none;
+      }
+    }
     .domain-detail-list__label {
       display: table-cell;
       padding: 13px 30px;

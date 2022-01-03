@@ -7,6 +7,10 @@ const routes = [
     component: () => import('@/Login')
   },
   {
+    path: '/entityDetail',
+    component: () => import('@/views/entityExplorer/EntityDetail')
+  },
+  {
     path: '/',
     component: () => import('@/components/layout/Home'),
     children: [

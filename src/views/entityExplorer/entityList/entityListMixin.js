@@ -41,7 +41,7 @@ export default {
       let name
       switch (this.entityData.entityType) {
         case ('ip'): {
-          name = this.entity.ip
+          name = this.entity.ipAddr
           break
         }
         case ('domain'): {
@@ -85,7 +85,7 @@ export default {
               startTime: Math.floor(now.getTime() / 1000 - 3600),
               endTime: Math.floor(now.getTime() / 1000)
             },
-            ip: this.entityData.ip
+            ip: this.entityData.ipAddr
           }
           break
         }

@@ -44,7 +44,7 @@ const user = {
   actions: {
     loginSuccess (store, res) {
       window.$dayJs.tz.setDefault(res.data.timezone)
-      sessionStorage.setItem('cn-token', res.data.token)
+      localStorage.setItem('cn-token', res.data.token)
       localStorage.setItem('cn-sys-name', res.data.systemName)
       if (res.systemLogo) {
         localStorage.setItem('cn-sys-logo', res.data.systemLogo)
@@ -72,9 +72,9 @@ const user = {
       })
     },
     logoutSuccess (store, res) {
-      sessionStorage.removeItem('cn-username')
       localStorage.removeItem('cn-username')
-      sessionStorage.removeItem('cn-token')
+      localStorage.removeItem('cn-username')
+      localStorage.removeItem('cn-token')
     }
   }
 }

@@ -8,7 +8,7 @@ import { storageKey } from '@/utils/constants'
 import { loadI18n } from '@/i18n'
 
 const loginWhiteList = ['/login', '/'] // 免登陆白名单
-const permissionWhiteList = [...loginWhiteList] // 权限白名单
+const permissionWhiteList = [...loginWhiteList, '/entityDetail'] // 权限白名单
 
 router.beforeEach(async (to, from, next) => {
   // await test(to, from)
@@ -19,9 +19,9 @@ router.beforeEach(async (to, from, next) => {
     const config = await getConfigJson()
     axios.defaults.baseURL = config.baseUrl
   }
-  if (sessionStorage.getItem(storageKey.token)) {
+  if (localStorage.getItem(storageKey.token)) {
     // 加载i18n
-    if (!sessionStorage.getItem(storageKey.i18n)) {
+    if (!localStorage.getItem(storageKey.i18n)) {
       await loadI18n()
     }
     // 加载权限

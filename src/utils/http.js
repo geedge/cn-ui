@@ -2,7 +2,7 @@ import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 
 axios.interceptors.request.use(config => {
-  const token = sessionStorage.getItem('cn-token')
+  const token = localStorage.getItem('cn-token')
   if (token) {
     config.headers.Authorization = token // 请求头token
   }
@@ -41,11 +41,11 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     if (licenceErrorCode.indexOf(response.data.code) !== -1) {
-      sessionStorage.removeItem(storageKey.token)
+      localStorage.removeItem(storageKey.token)
       window.location.href = '/'
     } else if (response.status === 200) {
       if (accountErrorCode.indexOf(response.data.code) !== -1) {
-        sessionStorage.removeItem(storageKey.token)
+        localStorage.removeItem(storageKey.token)
         window.location.href = '/'
       }
     }

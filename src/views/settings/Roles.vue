@@ -52,6 +52,7 @@ import dataListMixin from '@/mixins/dataList'
 import rolesTable from '@/components/table/settings/RoleTable'
 import roleBox from '@/components/rightBox/settings/RoleBox'
 import { api } from '@/utils/api'
+import {get} from "@/utils/http";
 
 export default {
   name: 'roles',
@@ -68,6 +69,16 @@ export default {
       blankObject: { // 空白对象
         name: ''
       }
+    }
+  },
+  methods: {
+    edit (u) {
+      get(`${this.url}`, { ids: u.id }).then(response => {
+        if (response.code === 200) {
+          this.object = response.data
+          this.rightBox.show = true
+        }
+      })
     }
   }
 }

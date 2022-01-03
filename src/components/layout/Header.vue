@@ -207,7 +207,7 @@ export default {
       this.showChangePin = true
     },
     logout () {
-      sessionStorage.removeItem(storageKey.token)
+      localStorage.removeItem(storageKey.token)
       get('/logout')
     },
     refreshLang () {

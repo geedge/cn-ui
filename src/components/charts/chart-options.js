@@ -708,6 +708,10 @@ export function isCryptocurrencyEventList (type) {
 export function isGroup (type) {
   return type === 94
 }
+/* 实体详情块 */
+export function isBlock (type) {
+  return type === 95
+}
 export function getOption (type) {
   const mapping = typeOptionMappings.find(m => m.value === type)
   return mapping && mapping.option ? _.cloneDeep(mapping.option) : null

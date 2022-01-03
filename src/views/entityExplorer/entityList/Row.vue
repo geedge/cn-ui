@@ -84,7 +84,11 @@
                 <span>{{entityData.securityCount || '-'}}</span>
               </div>
             </div>
-            <div class="show-detail" :style="{visibility: !isCollapse ? 'visible' : 'hidden'}">{{$t('overall.detail')}}>></div>
+            <div
+                class="show-detail"
+                :style="{visibility: !isCollapse ? 'visible' : 'hidden'}"
+                @click="showDetail"
+            >{{$t('overall.detail')}}>></div>
           </div>
         </div>
       </div>
@@ -127,6 +131,16 @@ export default {
     /* 设为折叠状态 */
     collapse () {
       this.isCollapse = true
+    },
+    showDetail () {
+      const { href } = this.$router.resolve({
+        path: '/entityDetail',
+        query: {
+          entityType: this.entityData.entityType,
+          name: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
+        }
+      })
+      window.open(href, '_blank')
     }
   }
 }

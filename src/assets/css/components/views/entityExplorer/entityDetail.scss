@@ -1,0 +1,78 @@
+.entity-detail.cn-home {
+  flex-direction: column;
+
+  .entity-detail__header {
+    flex: 0 0 80px;
+    display: flex;
+    align-items: center;
+
+    .cn-entity__name {
+      font-size: 20px;
+      color: #333333;
+      font-weight: bold;
+    }
+    .cn-entity__icon {
+      margin-left: 26px;
+      margin-right: 10px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      justify-items: center;
+      align-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background-color: #F3F7FA;
+
+      i {
+        font-size: 22px;
+        color: #4E84B4;
+      }
+    }
+  }
+  &>.entity-detail__body {
+    width: 100%;
+    height: calc(100% - 52px);
+    display: flex;
+    flex-direction: row;
+
+    .entity-detail__menu {
+      flex: 0 0 240px;
+      display: flex;
+      flex-direction: column;
+      padding-top: 23px;
+      border-top: 1px solid $--content-right-background-color;
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        padding: 7px 0 7px 30px;
+        font-size: 14px;
+        color: #666666;
+
+        span {
+          padding-left: 10px;
+          cursor: pointer;
+        }
+
+        &.menu-item--active {
+          color: #1890FF;
+
+          span {
+            border-left: 2px solid #1890FF;
+          }
+        }
+      }
+    }
+    .entity-detail__content {
+      height: calc(100% - 28px);
+      flex: 1;
+      padding: 10px;
+      background-color: $--content-right-background-color;
+
+      &>.cn-entity-detail .entity-detail__body>.cn-panel {
+        background-color: white;
+      }
+    }
+  }
+}

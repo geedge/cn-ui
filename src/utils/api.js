@@ -102,7 +102,7 @@ export async function getConfigJson () {
 
 export async function getPermission () {
   const request = new Promise(resolve => {
-    post(api.permission, { token: sessionStorage.getItem('cn-token') }).then(response => {
+    post(api.permission, { token: localStorage.getItem('cn-token') }).then(response => {
       resolve({
         menuList: sortByOrderNum(response.data.menus),
         buttonList: response.data.buttons,
@@ -116,7 +116,7 @@ export async function getPermission () {
 export async function getI18n () {
   const dictData = await getDictList()
   const langs = dictData.map(d => d.value).join(',')
-  sessionStorage.setItem(storageKey.languages, langs)
+  localStorage.setItem(storageKey.languages, langs)
   const request = new Promise(resolve => {
     get(api.i18n, { l: langs }).then(response => {
       response.data.cn = response.data.zh

@@ -84,34 +84,34 @@ export const entityFilterType = {
   ],
   domain: [
     {
-      column: 'category_group_distinct_count',
+      column: 'categoryGroupDistinctCount',
       labelI18nCode: 'entities.domainDetail.categoryGroup',
       icon: 'cn-icon cn-icon-category'
     },
     {
-      column: 'category_distinct_count',
+      column: 'categoryDistinctCount',
       labelI18nCode: 'entities.category',
       icon: 'cn-icon cn-icon-sub-category'
     },
     {
-      column: 'category_group_distinct_count',
+      column: 'categoryGroupDistinctCount',
       labelI18nCode: 'entities.reputationLevel',
       icon: 'cn-icon cn-icon-credit'
     }
   ],
   app: [
     {
-      column: 'category_distinct_count',
+      column: 'categoryDistinctCount',
       labelI18nCode: 'entities.category',
       icon: 'cn-icon cn-icon-category'
     },
     {
-      column: 'subcategory_distinct_count',
+      column: 'subcategoryDistinctCount',
       labelI18nCode: 'entities.subcategory',
       icon: 'cn-icon cn-icon-sub-category'
     },
     {
-      column: 'risk_distinct_count',
+      column: 'riskDistinctCount',
       labelI18nCode: 'entities.risk',
       icon: 'cn-icon cn-icon-risk'
     }

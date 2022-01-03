@@ -150,28 +150,28 @@ export default {
           data: [
             {
               label: this.$t('overall.country'),
-              column: 'country_distinct_count',
-              topColumn: 'ip_location_country', // top弹框查询字段
+              column: 'countryDistinctCount',
+              topColumn: 'ipLocationCountry', // top弹框查询字段
               icon: entityFilterType.ip[0].icon,
               value: 0
             },
             {
               label: this.$t('overall.province'),
-              column: 'province_distinct_count',
-              topColumn: 'ip_location_province', // top弹框查询字段
+              column: 'provinceDistinctCount',
+              topColumn: 'ipLocationProvince', // top弹框查询字段
               icon: entityFilterType.ip[1].icon,
               value: 0
             },
             {
               label: this.$t('overall.city'),
-              column: 'city_distinct_count',
+              column: 'cityDistinctCount',
               topColumn: 'ip_location_city', // top弹框查询字段
               icon: entityFilterType.ip[2].icon,
               value: 0
             },
             {
               label: this.$t('entities.asn'),
-              column: 'asn_distinct_count',
+              column: 'asnDistinctCount',
               topColumn: 'ip_asn', // top弹框查询字段
               icon: entityFilterType.ip[3].icon,
               value: 0
@@ -185,21 +185,21 @@ export default {
           data: [
             {
               label: this.$t('entities.category'),
-              column: 'category_distinct_count',
+              column: 'categoryDistinctCount',
               topColumn: 'app_category', // top弹框查询字段
               icon: entityFilterType.app[0].icon,
               value: 0
             },
             {
               label: this.$t('entities.subcategory'),
-              column: 'subcategory_distinct_count',
+              column: 'subcategoryDistinctCount',
               topColumn: 'app_subcategory', // top弹框查询字段
               icon: entityFilterType.app[1].icon,
               value: 0
             },
             {
               label: this.$t('entities.risk'),
-              column: 'risk_distinct_count',
+              column: 'riskDistinctCount',
               topColumn: 'app_risk', // top弹框查询字段
               icon: entityFilterType.app[2].icon,
               value: 0
@@ -213,22 +213,22 @@ export default {
           data: [
             {
               label: this.$t('entities.domainDetail.categoryGroup'),
-              column: 'category_group_distinct_count',
+              column: 'categoryGroupDistinctCount',
               topColumn: 'domain_category_group', // top弹框查询字段
               icon: entityFilterType.domain[0].icon,
               value: 0
             },
             {
               label: this.$t('entities.category'),
-              column: 'category_distinct_count',
+              column: 'categoryDistinctCount',
               topColumn: 'domain_category', // top弹框查询字段
               icon: entityFilterType.domain[1].icon,
               value: 0
             },
             {
               label: this.$t('entities.reputationLevel'),
-              column: 'reputation_level_distinct_count',
-              topColumn: 'domain_reputation_level', // top弹框查询字段
+              column: 'reputationLevelDistinctCount',
+              topColumn: 'domainReputationLevel', // top弹框查询字段
               icon: entityFilterType.domain[2].icon,
               value: 0
             }

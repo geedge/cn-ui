@@ -102,7 +102,7 @@
           v-model="orderPieTable"
           class="option__select select-column"
           placeholder=""
-          popper-class="option-popper"
+          popper-class="option-popper is-light"
           @change="orderPieTableChange"
         >
           <el-option v-for="item in chartPieTableTopOptions" :key="item.value" :value="item.value">&nbsp{{item.name}}</el-option>
@@ -367,7 +367,50 @@
     </div>
     <div class="cn-chart__body">
       <template v-for="chart in chartInfo.children" :key="chart.id">
-        <chart :chart="chart" :time-filter="timeFilter" :ref="`chart-${chart.id}`" :entity="entity" :parent-data="groupData"></chart>
+        <chart
+            :chart="chart"
+            :time-filter="timeFilter"
+            :ref="`chart-${chart.id}`"
+            :entity="entity"
+            :parent-data="groupData"
+            :from-block="fromBlock"
+            @getChartCurrentTimeRange="getChartCurrentTimeRange"
+        ></chart>
+      </template>
+    </div>
+  </div>
+  <!-- block -->
+  <div
+      v-else-if="isBlock"
+      class="cn-chart cn-chart__block"
+      :style="computePosition"
+      :id="chartInfo.params && chartInfo.params.anchorPoint"
+  >
+    <div class="cn-chart__header">
+      <chart-error
+          :isError="isError"
+          :errorInfo="errorInfo"
+      >
+      </chart-error>
+      <div class="header__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+        <div style="top: 18px;" class="panel__time" v-if="chartInfo.params && chartInfo.params.showTimeTool">
+          <DateTimeRange class="date-time-range" :start-time="chartTimeFilter.startTime" :end-time="chartTimeFilter.endTime" ref="dateTimeRange" @change="reload"/>
+          <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="chartTimeFilter.endTime"/>
+        </div>
+      </div>
+    </div>
+    <div class="cn-chart__body">
+      <template v-for="chart in chartInfo.children" :key="chart.id">
+        <chart
+            :chart="chart"
+            :time-filter="chartTimeFilter"
+            :ref="`chart-${chart.id}`"
+            :entity="entity"
+            :parent-data="groupData"
+            :from-block="true"
+            @getChartCurrentTimeRange="getChartCurrentTimeRange"
+        ></chart>
       </template>
     </div>
   </div>
@@ -564,7 +607,7 @@
 import * as echarts from 'echarts'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
-import { shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { tableTitleMapping, legendMapping } from '@/components/charts/chart-table-title'
 import {
   isEcharts,
@@ -597,7 +640,7 @@ import {
   isAppBasicInfo,
   isAppRelatedDomain,
   getChartColor, chartBarColor, timeVerticalFormatter, timeHorizontalFormatter,
-  categoryHorizontalFormatter, categoryVerticalFormatter, getCharBartColor
+  categoryHorizontalFormatter, categoryVerticalFormatter, getCharBartColor, isBlock
 } from '@/components/charts/chart-options'
 import ChartError from '@/components/charts/ChartError'
 import EchartsFrame from '@/components/charts/EchartsFrame'
@@ -613,11 +656,14 @@ import { chartTableDefaultPageSize, chartTableTopOptions, chartActiveIpTableOrde
 import { get, post } from '@/utils/http'
 import { replaceUrlPlaceholder, getCapitalGeo, getGeoData, lineToSpace } from '@/utils/tools'
 import { HeatLegend } from '@/components/amcharts/heatLegend'
+import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
+import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 
 import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
+import { getNowTime } from '@/utils/date-util'
 
 export default {
   name: 'Chart',
@@ -625,6 +671,7 @@ export default {
     chart: Object, // 图表对象，包括id、name、type等数据
     timeFilter: Object,
     parentData: Object,
+    fromBlock: Boolean,
     entity: {
       type: Object,
       default: () => {}
@@ -639,7 +686,9 @@ export default {
     PieTable,
     StatisticsLegend,
     ChartMap,
-    ChartError
+    ChartError,
+    DateTimeRange,
+    TimeRefresh
   },
   data () {
     return {
@@ -651,6 +700,7 @@ export default {
         tableData: [], // table的所有数据
         currentPageData: [] // table当前页的数据
       },
+
       activeIpTable: {
         orderBy: 'machine',
         tableData: [
@@ -719,9 +769,13 @@ export default {
   methods: {
     initChart () {
       this.loading = true
-      this.queryTimeRange = this.standaloneTimeRange.use
-        ? { startTime: parseInt(this.standaloneTimeRange.startTime / 1000), endTime: parseInt(this.standaloneTimeRange.endTime / 1000) }
-        : { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
+      if (this.standaloneTimeRange.use) {
+        this.queryTimeRange = { startTime: parseInt(this.standaloneTimeRange.startTime / 1000), endTime: parseInt(this.standaloneTimeRange.endTime / 1000) }
+      } else if (this.timeFilter) {
+        this.queryTimeRange = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000) }
+      } else {
+        this.queryTimeRange = { startTime: parseInt(this.chartTimeFilter.startTime / 1000), endTime: parseInt(this.chartTimeFilter.endTime / 1000) }
+      }
       try {
         const chartParams = this.chartInfo.params
         if (this.isMap) {
@@ -971,6 +1025,18 @@ export default {
           })
         }
       })
+    },
+    timeRefreshChange () {
+      if (!this.$refs.dateTimeRange.isCustom) {
+        const value = this.chartTimeFilter.dateRangeValue
+        this.$refs.dateTimeRange.quickChange(value)
+      }
+    },
+    reload (s, e, v) {
+      this.dateTimeRangeChange(s, e, v)
+    },
+    dateTimeRangeChange (s, e, v) {
+      this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
     generateTooltipHTML () {
       return `
@@ -1233,7 +1299,8 @@ export default {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
     refresh () {
-      this.$emit('getCurrentTimeRange', ({ startTime, endTime }) => {
+      const eventName = this.fromBlock ? 'getChartCurrentTimeRange' : 'getCurrentTimeRange'
+      this.$emit(eventName, ({ startTime, endTime }) => {
         this.standaloneTimeRange.use = true
         this.standaloneTimeRange.startTime = startTime
         this.standaloneTimeRange.endTime = endTime
@@ -1251,6 +1318,21 @@ export default {
       this.$emit('getCurrentTimeRange', ({ startTime, endTime }) => {
         callback({ startTime, endTime })
       })
+    },
+    // 获取最新时间
+    getChartCurrentTimeRange (callback) {
+      console.info(this.isGroup)
+      if (this.isGroup) {
+        this.$emit('getChartCurrentTimeRange', ({ startTime, endTime }) => {
+          console.info(startTime, endTime)
+          callback({ startTime, endTime })
+        })
+      } else {
+        const myEndTime = window.$dayJs.tz().valueOf()
+        const myStartTime = myEndTime - this.chartTimeFilter.dateRangeValue * 60 * 1000
+        console.info(myStartTime, myEndTime)
+        callback({ startTime: myStartTime, endTime: myEndTime })
+      }
     },
     getDataKey (r) {
       let key = ''
@@ -1337,6 +1419,8 @@ export default {
         this.chartOption.legend.show = false
       }
       const queryParams = { ...this.queryTimeRange, ...this.entity }
+      console.info(chartParams.url)
+      console.info(queryParams)
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
@@ -2464,8 +2548,14 @@ export default {
   setup (props) {
     const chartInfo = JSON.parse(JSON.stringify(props.chart))
     chartInfo.category = getTypeCategory(props.chart.type)
+
+    const dateRangeValue = 60
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    // entity详情内的chart时间工具不是公共的，需要单独定义
+    const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
     return {
       chartInfo,
+      chartTimeFilter,
       layoutConstant,
       chartTableTopOptions,
       chartActiveIpTableOrderOptions,
@@ -2486,6 +2576,7 @@ export default {
       isMapBlock: isMapBlock(props.chart.type),
       isTabs: isTabs(props.chart.type),
       isGroup: isGroup(props.chart.type),
+      isBlock: isBlock(props.chart.type),
       isSankey: isSankey(props.chart.type),
       isIpBasicInfo: isIpBasicInfo(props.chart.type),
       isIpHostedDomain: isIpHostedDomain(props.chart.type),

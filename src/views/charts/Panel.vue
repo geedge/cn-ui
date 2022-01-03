@@ -1,6 +1,8 @@
 <template>
-  <div style="padding: 10px 0 20px 20px;" v-if="!isEntityDetail">
-    <div id="cn-panel" :class="(isCryptocurrency)?'cn-panel cn-panel-crypto':'cn-panel'">
+  <div style="padding: 10px 0 20px 20px; overflow: auto" v-if="!isEntityDetail">
+    <div id="cn-panel"
+         :class="(isCryptocurrency)?'cn-panel cn-panel-crypto':'cn-panel'"
+    >
       <div class="panel__time">
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
@@ -35,43 +37,16 @@
     </div>
   </div>
   <div class="cn-entity-detail" id="cn-entity-detail" v-else>
-    <div class="entity-detail__header">
-      <div class="detail-header__title">
-        <span class="title__icon-circle">
-          <i class="cn-icon" :class="{'cn-icon-ip': entity.ip, 'cn-icon-domain': entity.domain, 'cn-icon-app': entity.app}"></i>
-        </span>
-        <div class="title__name" :title="entity.ip || entity.domain || entity.app || '-'">{{entity.ip || entity.domain || entity.app || '-'}}</div></div>
-      <div class="detail-header__operation">
-        <div class="panel__time">
-          <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
-          <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
-        </div>
-        <el-tabs
-            v-model="currentTab"
-            @tab-click="changeTab"
-        >
-          <el-tab-pane
-              v-for="tab in detailTabs"
-              :label="tab.i18n ? $t(tab.i18n) : tab.name"
-              :name="`${tab.id}`"
-              :key="tab.id"
-              :ref="`chart-${tab.id}`"
-          >
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-    </div>
     <div class="entity-detail__body">
-      <div class="cn-panel">
-        <chart
-            v-for="chart in detailChartList"
-            :key="chart.id"
-            :chart="chart"
-            :time-filter="timeFilter"
-            :ref="`chart-${chart.id}`"
-            :entity="entity"
-            @getCurrentTimeRange="getCurrentTimeRange"
-        ></chart>
+      <div class="cn-panel" @scroll="scroll" id="cn-panel">
+        <template v-for="chart in chartList" :key="chart.id">
+          <chart
+              :chart="chart"
+              :ref="`chart-${chart.id}`"
+              :entity="entity"
+              @getCurrentTimeRange="getCurrentTimeRange"
+          ></chart>
+        </template>
       </div>
     </div>
   </div>
@@ -91,7 +66,8 @@ export default {
   name: 'Panel',
   props: {
     entity: Object,
-    isEntityDetail: Boolean
+    isEntityDetail: Boolean,
+    typeName: String
   },
   components: {
     Chart,
@@ -109,7 +85,6 @@ export default {
     }
   },
   async mounted () {
-    const path = this.$route.path
     this.isCryptocurrency = this.$route.path.indexOf('cryptocurrency') > -1
     await this.init()
     if (!this.$_.isEmpty(this.detailTabs)) {
@@ -144,22 +119,18 @@ export default {
           this.recursionParamsConvert(chart)
           return chart
         })
-        if (this.isEntityDetail) {
-          if (!this.$_.isEmpty(allCharts)) {
-            const rootChart = allCharts[0]
-            this.detailTabs = rootChart.children
-            if (!this.$_.isEmpty(this.detailTabs)) {
-              this.detailChartList = this.detailTabs[0].children
-            }
-          }
-        } else {
-          this.chartList = allCharts
-        }
+        this.chartList = allCharts
+        setTimeout(() => {
+          this.$emit('chartLoaded', allCharts)
+        })
       }
     },
     changeTab ({ index }) {
       this.currentTab = this.detailTabs[index].id + ''
       this.detailChartList = this.detailTabs[index].children
+    },
+    scroll (e) {
+      this.$emit('scroll', { top: e.target.scrollTop })
     },
     recursionParamsConvert (chart) {
       chart.params = chart.params ? JSON.parse(chart.params) : null
@@ -179,22 +150,9 @@ export default {
         const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
       }
-      /* if (!this.$refs.dateTimeRange) {
-        this.reloadCharts()
-        return
-      }
-      if (this.$refs.dateTimeRange.isCustom) {
-        this.reloadCharts()
-      } else {
-        const value = this.timeFilter.dateRangeValue
-        this.$refs.dateTimeRange.quickChange(value)
-      } */
     },
     reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
-      /* this.$nextTick(() => {
-        this.reloadCharts()
-      }) */
     },
     // methods
     dateTimeRangeChange (s, e, v) {
@@ -204,6 +162,9 @@ export default {
       this.chartList.forEach(chart => {
         this.$refs[`chart-${chart.id}`] && this.$refs[`chart-${chart.id}`].reloadChart()
       })
+    },
+    jumpToTop (top) {
+      document.querySelector('#cn-panel').scrollTop = top
     }
   }
 }
