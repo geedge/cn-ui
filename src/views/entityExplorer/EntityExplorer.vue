@@ -105,6 +105,8 @@ import EntityList from '@/views/entityExplorer/entityList/EntityList'
 import { entityType, entityFilterType } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import {getNowTime} from "@/utils/date-util";
+import {ref} from "vue";
 
 export default {
   name: 'entity-explorer',
@@ -119,10 +121,6 @@ export default {
     return {
       showList: false,
       listMode: 'list', // entity列表的模式，list|block
-      timeFilter: {
-        startTime: 1639989600,
-        endTime: 1639992840
-      },
 
       entityAppTotal: '-',
       entityAppNew: '-',
@@ -165,14 +163,14 @@ export default {
             {
               label: this.$t('overall.city'),
               column: 'cityDistinctCount',
-              topColumn: 'ip_location_city', // top弹框查询字段
+              topColumn: 'ipLocationCity', // top弹框查询字段
               icon: entityFilterType.ip[2].icon,
               value: 0
             },
             {
               label: this.$t('entities.asn'),
               column: 'asnDistinctCount',
-              topColumn: 'ip_asn', // top弹框查询字段
+              topColumn: 'ipAsn', // top弹框查询字段
               icon: entityFilterType.ip[3].icon,
               value: 0
             }
@@ -186,21 +184,21 @@ export default {
             {
               label: this.$t('entities.category'),
               column: 'categoryDistinctCount',
-              topColumn: 'app_category', // top弹框查询字段
+              topColumn: 'appCategory', // top弹框查询字段
               icon: entityFilterType.app[0].icon,
               value: 0
             },
             {
               label: this.$t('entities.subcategory'),
               column: 'subcategoryDistinctCount',
-              topColumn: 'app_subcategory', // top弹框查询字段
+              topColumn: 'appSubcategory', // top弹框查询字段
               icon: entityFilterType.app[1].icon,
               value: 0
             },
             {
               label: this.$t('entities.risk'),
               column: 'riskDistinctCount',
-              topColumn: 'app_risk', // top弹框查询字段
+              topColumn: 'appRisk', // top弹框查询字段
               icon: entityFilterType.app[2].icon,
               value: 0
             }
@@ -214,14 +212,14 @@ export default {
             {
               label: this.$t('entities.domainDetail.categoryGroup'),
               column: 'categoryGroupDistinctCount',
-              topColumn: 'domain_category_group', // top弹框查询字段
+              topColumn: 'domainCategoryGroup', // top弹框查询字段
               icon: entityFilterType.domain[0].icon,
               value: 0
             },
             {
               label: this.$t('entities.category'),
               column: 'categoryDistinctCount',
-              topColumn: 'domain_category', // top弹框查询字段
+              topColumn: 'domainCategory', // top弹框查询字段
               icon: entityFilterType.domain[1].icon,
               value: 0
             },
@@ -235,8 +233,8 @@ export default {
           ]
         }
       ],
-      // listData: []
-      listData: JSON.parse(`[
+      listData: []
+      /*listData: JSON.parse(`[
         {
           "entityType": "app",
           "appName": "360cn",
@@ -397,27 +395,36 @@ export default {
           "appRisk": "1",
           "appSubcategory": "infrastructure"
         }
-      ]`)
+      ]`)*/
     }
   },
   methods: {
     timeRefreshChange () {
-
+      if (!this.$refs.dateTimeRange.isCustom) {
+        const value = this.timeFilter.dateRangeValue
+        this.$refs.dateTimeRange.quickChange(value)
+      }
     },
-    reload () {
-
+    reload (s, e, v) {
+      this.dateTimeRangeChange(s, e, v)
+    },
+    // methods
+    dateTimeRangeChange (s, e, v) {
+      this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
     search (params) {
-      this.searchParams = params
+      if (params) {
+        this.searchParams = params
+      }
       if (!this.showList) {
         this.showList = true
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
-      if (params && Object.keys(params).length > 0) {
-        this.queryFilter({ entityType: 'ip', q: this.handleQ(params), ...this.timeFilter })
-        this.queryFilter({ entityType: 'app', q: this.handleQ(params), ...this.timeFilter })
-        this.queryFilter({ entityType: 'domain', q: this.handleQ(params), ...this.timeFilter })
-        this.queryList({ q: this.handleQ(params), ...this.timeFilter, ...this.pageObj })
+      if (this.searchParams && Object.keys(this.searchParams).length > 0) {
+        this.queryFilter({ entityType: 'ip', q: this.handleQ(this.searchParams), ...this.timeFilter })
+        this.queryFilter({ entityType: 'app', q: this.handleQ(this.searchParams), ...this.timeFilter })
+        this.queryFilter({ entityType: 'domain', q: this.handleQ(this.searchParams), ...this.timeFilter })
+        this.queryList({ q: this.handleQ(this.searchParams), ...this.timeFilter, ...this.pageObj })
       } else {
         this.queryFilter({ entityType: 'ip', ...this.timeFilter })
         this.queryFilter({ entityType: 'app', ...this.timeFilter })
@@ -433,7 +440,12 @@ export default {
     },
     /* 查询filter数据 */
     queryFilter (params) {
-      get(api.entityFilter, params).then(response => {
+      const queryParams = {
+        ...params,
+        startTime: parseInt(params.startTime / 1000),
+        endTime: parseInt(params.endTime / 1000)
+      }
+      get(api.entityFilter, queryParams).then(response => {
         if (response.data.result) {
           switch (params.entityType) {
             case 'ip': {
@@ -462,7 +474,12 @@ export default {
       })
     },
     queryList (params) {
-      get(api.entityList, params).then(response => {
+      const queryParams = {
+        ...params,
+        startTime: parseInt(params.startTime / 1000),
+        endTime: parseInt(params.endTime / 1000)
+      }
+      get(api.entityList, queryParams).then(response => {
         this.listData = response.data.result
       })
     },
@@ -522,10 +539,22 @@ export default {
         }
       })
     }
-
   },
   mounted () {
     this.getEntityIndexData()
+  },
+  watch: {
+    timeFilter (n) {
+      this.search()
+    }
+  },
+  setup () {
+    const dateRangeValue = 60
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    const timeFilter = ref({ startTime, endTime, dateRangeValue })
+    return {
+      timeFilter
+    }
   }
 }
 </script>
