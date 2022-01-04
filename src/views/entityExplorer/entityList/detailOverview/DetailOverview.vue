@@ -1,13 +1,13 @@
 <template>
   <div class="entity-detail-overview">
     <template v-if="entity.entityType === 'ip'">
-      <ip-overview></ip-overview>
+      <ip-overview :entity="entity"></ip-overview>
     </template>
     <template v-else-if="entity.entityType === 'domain'">
-      <domain-overview></domain-overview>
+      <domain-overview :entity="entity"></domain-overview>
     </template>
     <template v-else-if="entity.entityType === 'app'">
-      <app-overview></app-overview>
+      <app-overview :entity="entity"></app-overview>
     </template>
   </div>
 </template>
@@ -16,6 +16,7 @@
 import App from './App'
 import Domain from './Domain'
 import Ip from './Ip'
+
 export default {
   /* 详情概览 */
   name: 'DetailOverview',

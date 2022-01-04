@@ -37,8 +37,26 @@ export const api = {
   entitySecurityNum: '/interface/entity/list/detectionNum',
   ipBytes: '/interface/entity/detail/ip/bytes',
   domainBytes: '/interface/entity/detail/domain/bytes',
-  appBytes: '/interface/entity/detail/app/bytes'
-
+  appBytes: '/interface/entity/detail/app/bytes',
+  // app detail
+  entityAppDetailTraffic: '/interface/entity/detail/overview/app/traffic',
+  entityAppDetailRelation: '/interface/entity/detail/overview/app/relation',
+  entityAppDetailAlert: '/interface/entity/detail/overview/app/alert',
+  entityAppDetailSecurity: '/interface/entity/detail/overview/app/security',
+  // domain detail
+  entityDomainDetailBasic: '/interface/entity/detail/overview/domain/basic',
+  entityDomainDetailTraffic: '/interface/entity/detail/overview/domain/traffic',
+  entityDomainDetailRelation: '/interface/entity/detail/overview/domain/relation',
+  entityDomainDetailNetworkQuantity: '/interface/entity/detail/overview/domain/networkQuantity',
+  entityDomainDetailLinkIn: '/interface/entity/detail/overview/domain/linkIn',
+  entityDomainDetailLinkOut: '/interface/entity/detail/overview/domain/linkOut',
+  entityDomainDetailAlert: '/interface/entity/detail/overview/domain/alert',
+  entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/security',
+  // ip detail
+  entityIpDetailTraffic: '/interface/entity/detail/overview/ip/traffic',
+  entityIpDetailRelation: '/interface/entity/detail/overview/ip/relation',
+  entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
+  entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security'
 }
 
 /* panel */

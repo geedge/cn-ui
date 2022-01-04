@@ -26,6 +26,7 @@
           <entity-card
               v-for="(data, index) in listData"
               :entity="data"
+              :index="index"
               :listMode="listMode"
               :timeFilter="timeFilter"
               :key="index"

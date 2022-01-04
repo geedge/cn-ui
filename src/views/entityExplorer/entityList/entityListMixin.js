@@ -85,7 +85,7 @@ export default {
               startTime: Math.floor(now.getTime() / 1000 - 3600),
               endTime: Math.floor(now.getTime() / 1000)
             },
-            ip: this.entityData.ipAddr
+            ip: this.entityData.ip
           }
           break
         }
@@ -142,7 +142,7 @@ export default {
     queryAlert () {
       get(api.entityAlertNum, { entityType: this.entityData.entityType, name: this.entityName }).then(response => {
         if (response.code === 200) {
-          this.entityData.securityCount = response.data.result[0].value
+          this.entityData.alertCount = response.data.result[0].value
         }
       })
     },
