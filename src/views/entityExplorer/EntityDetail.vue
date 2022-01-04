@@ -2,7 +2,7 @@
   <div class="cn-home entity-detail">
     <div class="entity-detail__header">
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
-      <div class="cn-entity__name">{{entityData.name}}</div>
+      <div class="cn-entity__name">{{entityData.ip || entityData.domain || entityData.appName }}</div>
     </div>
     <main class="cn-body entity-detail__body">
       <div class="entity-detail__menu">
@@ -42,7 +42,7 @@ export default {
   setup (props, ctx) {
     const { query } = useRoute()
     let panelType
-    const entityData = {}
+    const entityData = { entityType: query.entityType }
     switch (query.entityType) {
       case 'ip': {
         panelType = 4

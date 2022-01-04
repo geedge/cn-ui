@@ -1419,8 +1419,6 @@ export default {
         this.chartOption.legend.show = false
       }
       const queryParams = { ...this.queryTimeRange, ...this.entity }
-      console.info(chartParams.url)
-      console.info(queryParams)
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
