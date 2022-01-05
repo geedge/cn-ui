@@ -4,6 +4,22 @@
   flex-direction: column;
   padding: 0 30px;
 
+  .overview-map {
+    position: absolute;
+    right: 50px;
+    top: 0;
+    width: 550px;
+    height: 350px;
+
+    .cn-chart__map {
+      height: 100%;
+      width: 100%;
+      .chart-drawing {
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
   .overview-item {
     display: flex;
     flex-direction: column;
@@ -84,12 +100,13 @@
             }
           }
           .row__charts-msg {
-            width:105px;
+            width: auto;
+            padding-right: 20px;
           }
           .row__charts {
-            height:20px;
-            width:60px;
-            padding-left:5px;
+            height: 20px;
+            width: 60px;
+            padding-left: 5px;
           }
         }
         .row__desc {

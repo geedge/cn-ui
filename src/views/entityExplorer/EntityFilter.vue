@@ -22,6 +22,7 @@
       <entity-top
           v-show="showTopTen"
           ref="entityTopTenPop"
+          :loading="loading"
           @filter="filter"
           @close="showTopTen = false"
       ></entity-top>
@@ -35,7 +36,7 @@
 import EntityTop from '@/components/entities/EntityTop'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
-
+import { objToStr } from '@/utils/tools'
 export default {
   name: 'EntityFilter',
   components: {
@@ -51,7 +52,8 @@ export default {
       topList: 'list',
       topData: [],
       showTopTen: false, // 自定义列弹框是否显示
-      entityTopTenData: []
+      entityTopTenData: [],
+      loading: false
     }
   },
   methods: {
@@ -60,8 +62,18 @@ export default {
       const width = this.$refs['entityTopTen' + i].offsetWidth
       const offsetLeft = this.$refs['entityTopTen' + i].offsetLeft
       const leftVal = offsetLeft + width
-
-      get(api.filterTop, { entityType: type, q: this.searchParams, column: item.topColumn, top: 10, ...this.timeFilter }).then(response => {
+      const queryParams = {
+        q: objToStr(this.searchParams),
+        entityType: type,
+        column: item.topColumn,
+        top: 10,
+        startTime: parseInt(this.timeFilter.startTime / 1000),
+        endTime: parseInt(this.timeFilter.endTime / 1000)
+      }
+      this.timeout = setTimeout(() => {
+        this.loading = true
+      }, 500)
+      get(api.filterTop, queryParams).then(response => {
         if (response.code === 200) {
           this.$refs.entityTopTenPop.initEntityTop(leftVal, item, response.data.result, filter.totalCount)
         } else {
@@ -70,6 +82,8 @@ export default {
       }).catch(e => {
         this.$refs.entityTopTenPop.initEntityTop(leftVal, item, [], filter.totalCount)
       }).finally(() => {
+        clearTimeout(this.timeout)
+        this.loading = false
         this.showTopTen = true
       })
     },

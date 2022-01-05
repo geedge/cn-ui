@@ -37,6 +37,7 @@
       v-else-if="isMap"
       :style="computePosition"
       :loading="loading"
+      :hide-header="hideHeader"
   >
     <template #chartErrorInfo>
       <chart-error
@@ -58,11 +59,11 @@
     <template #default>
       <template v-if="isIpBasicInfo">
         <el-descriptions :column="1">
-          <el-descriptions-item label="ASN:">{{detailData ? detailData.asn : '-'}}</el-descriptions-item>
-          <el-descriptions-item label="AS Org:">{{detailData ? detailData.asnOrg : '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('entities.asSubnet') + ':'">{{detailData.asnSubnet || '-'}}</el-descriptions-item>
+          <el-descriptions-item label="ASN:">{{detailData.asn || '-'}}</el-descriptions-item>
+          <el-descriptions-item label="AS Org:">{{detailData.asOrganization || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('entities.asSubnet') + ':'">{{detailData.asSubnet || '-'}}</el-descriptions-item>
           <el-descriptions-item label="ISP:">{{detailData.isp || '-'}}</el-descriptions-item>
-          <el-descriptions-item label="DNS PTR:">{{detailData.dnsPTR || '-'}}</el-descriptions-item>
+          <el-descriptions-item label="DNS PTR:">{{detailData.dnsPtr || '-'}}</el-descriptions-item>
         </el-descriptions>
         <div class="chart-location">
           <el-descriptions :column="1">
@@ -434,7 +435,7 @@
       <div class="domain-detail-list">
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('entities.sponsor')}}</div>
-          <div class="domain-detail-list__content">{{detailData.sponsor || '-'}}</div>
+          <div class="domain-detail-list__content">{{detailData.registrar || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('entities.org')}}</div>
@@ -442,19 +443,19 @@
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">Email</div>
-          <div class="domain-detail-list__content">{{detailData.email || '-'}}</div>
+          <div class="domain-detail-list__content">{{detailData.postcode || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('overall.country')}}</div>
-          <div class="domain-detail-list__content">{{detailData.orgCountry || '-'}}</div>
+          <div class="domain-detail-list__content">{{detailData.country || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('entities.creationDate')}}</div>
-          <div class="domain-detail-list__content">{{detailData.creationDate || '-'}}</div>
+          <div class="domain-detail-list__content">{{detailData.createTime ? parseMsDate(detailData.createTime) : '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('entities.expirationDate')}}</div>
-          <div class="domain-detail-list__content">{{detailData.expirationDate || '-'}}</div>
+          <div class="domain-detail-list__content">{{detailData.expirationTime ? parseMsDate(detailData.expirationTime) : '-'}}</div>
         </div>
       </div>
     </div>
@@ -627,6 +628,7 @@ import {
   isMapLine,
   isMapBlock,
   isSingleValueWithEcharts,
+  isSingleValueWithEchartsTemp,
   isRelationShip,
   isTabs,
   isGroup,
@@ -672,6 +674,7 @@ export default {
     timeFilter: Object,
     parentData: Object,
     fromBlock: Boolean,
+    hideHeader: Boolean,
     entity: {
       type: Object,
       default: () => {}
@@ -871,6 +874,7 @@ export default {
                 })
                 this.myChart.setOption(this.chartOption)
                 this.singleValue.value = result[0].values[result[0].values.length - 1][1]
+
                 /* const queryParams = { startTime: parseInt(this.timeFilter.startTime / 1000), endTime: parseInt(this.timeFilter.endTime / 1000), ...this.entity }
                 const dom = document.getElementById(`chart${this.chartInfo.id}`)
                 !this.myChart && (this.myChart = echarts.init(dom))
@@ -969,7 +973,7 @@ export default {
             setTimeout(() => { this.loading = false }, 250)
           })
         } else if (this.isAppBasicInfo) {
-          const queryParams = { app: this.entity.app }
+          const queryParams = { appName: this.entity.appName }
           get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
             if (response.code === 200) {
               this.detailData = response.data.result
@@ -1135,6 +1139,7 @@ export default {
         }
       })
 
+      console.info(this.entity)
       this.showMapBackButton = !!country
       const chartParams = this.chartInfo.params
       const queryParams = { ...this.queryTimeRange, country: country || '', region: '', ...this.entity } // 统计数据的查询参数
@@ -1321,16 +1326,13 @@ export default {
     },
     // 获取最新时间
     getChartCurrentTimeRange (callback) {
-      console.info(this.isGroup)
       if (this.isGroup) {
         this.$emit('getChartCurrentTimeRange', ({ startTime, endTime }) => {
-          console.info(startTime, endTime)
           callback({ startTime, endTime })
         })
       } else {
         const myEndTime = window.$dayJs.tz().valueOf()
         const myStartTime = myEndTime - this.chartTimeFilter.dateRangeValue * 60 * 1000
-        console.info(myStartTime, myEndTime)
         callback({ startTime: myStartTime, endTime: myEndTime })
       }
     },
@@ -1820,7 +1822,7 @@ export default {
       ]
       this.myChart.setOption(this.chartOption)
       this.myChart2.setOption(this.chartOption)
-      get(replaceUrlPlaceholder(chartParams.url, { app: this.entity.app })).then(response => {
+      get(replaceUrlPlaceholder(chartParams.url, { appName: this.entity.appName })).then(response => {
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
             this.noData = true
@@ -2476,12 +2478,22 @@ export default {
       if (this.detailData) {
         if (this.detailData.country) {
           location = this.detailData.country
-          if (this.detailData.region) {
+          if (this.detailData.province) {
             location += ', '
-            location += this.detailData.region
+            location += this.detailData.province
+            if (this.detailData.city) {
+              location += ', '
+              location += this.detailData.city
+            }
           }
-        } else if (this.detailData.region) {
-          location = this.detailData.region
+        } else if (this.detailData.province) {
+          location = this.detailData.province
+          if (this.detailData.city) {
+            location += ', '
+            location += this.detailData.city
+          }
+        } else if (this.detailData.city) {
+          location = this.detailData.city
         }
       }
       return location
@@ -2505,6 +2517,8 @@ export default {
     }
   },
   mounted () {
+    console.info(this.chart)
+    console.info(this.entity)
     this.initChart()
     this.throttle = this.$_.throttle(this.echartsResize, 500)
     window.addEventListener('resize', this.throttle)
@@ -2565,6 +2579,7 @@ export default {
       isEchartsWithStatistics: isEchartsWithStatistics(props.chart.type),
       isSingleValue: isSingleValue(props.chart.type),
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chart.type),
+      isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(props.chart.type),
       isRelationShip: isRelationShip(props.chart.type),
       isTable: isTable(props.chart.type),
       isActiveIpTable: isActiveIpTable(props.chart.type),

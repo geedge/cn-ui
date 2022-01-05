@@ -443,7 +443,29 @@ export function lineToSpace (name) {
 export function humpToLine (name) {
   return name.replace(/([A-Z])/g, '_$1').toLowerCase()
 }
-
+// 搜索功能：对象转字符串
+export function objToStr (obj) {
+  return Object.keys(obj).map(k => {
+    return `${k}='${obj[k]}'`
+  }).join(' AND ')
+}
+// 搜索功能：字符串转对象
+export function strToObj (n) {
+  const paramsArr = n.split(/\s[aA][nN][dD]\s/)
+  const paramsObj = {}
+  paramsArr.forEach(string => {
+    const param = string.split('=')
+    if (param.length > 1) {
+      let value = param[1].trim()
+      const valueArr = value.split(/[\"\']/g)
+      if (valueArr.length > 2) {
+        value = valueArr[1].trim()
+      }
+      paramsObj[param[0].trim()] = value
+    }
+  })
+  return paramsObj
+}
 // 加载geo数据
 export function loadGeoData (key) {
   const keys = []

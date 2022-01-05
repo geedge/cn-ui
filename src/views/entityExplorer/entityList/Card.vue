@@ -58,7 +58,7 @@
         <div class="body__statics">
           <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate || 0}} bps</div>
           <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i>{{entityData.bytesSentRate || 0}} bps</div>
-          <div class="body__detail" @click="entityDetail({ip: entityData.ipAddr, type: 4})">{{$t('overall.detail')}}></div>
+          <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
       </template>
       <template v-else-if="entityData.entityType === 'domain'">
@@ -89,7 +89,7 @@
         <div class="body__statics">
           <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate || 0}} bps</div>
           <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i>{{entityData.bytesSentRate || 0}} bps</div>
-          <div class="body__detail" @click="entityDetail({domain: entityData.domainName, type: 5})">{{$t('overall.detail')}}></div>
+          <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
       </template>
       <template v-else-if="entityData.entityType === 'app'">
@@ -103,7 +103,7 @@
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-sub-category"></i>{{$t('entities.subcategory')}}：</span>
-          <div class="body__row-value" :title="entityData.appSubategory">{{entityData.appSubategory || '-'}}</div>
+          <div class="body__row-value" :title="entityData.appSubcategory">{{entityData.appSubcategory || '-'}}</div>
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-entity-alert"></i>{{$t('entities.recentAlert')}}：</span>
@@ -118,9 +118,9 @@
                 <div class="body__drawing" :id="`entityListChart${entityData.appName}`"></div>
         </div>
         <div class="body__statics">
-          <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate || 0}} bps</div>
-          <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i>{{entityData.bytesSentRate || 0}} bps</div>
-          <div class="body__detail" @click="entityDetail({app: entityData.appName, type: 6})">{{$t('overall.detail')}}></div>
+          <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}</div>
+          <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}</div>
+          <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
       </template>
     </div>
@@ -129,8 +129,16 @@
 
 <script>
 import entityListMixin from './entityListMixin'
+import { unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'Card',
-  mixins: [entityListMixin]
+  mixins: [entityListMixin],
+  setup () {
+    return {
+      unitTypes,
+      unitConvert
+    }
+  }
 }
 </script>

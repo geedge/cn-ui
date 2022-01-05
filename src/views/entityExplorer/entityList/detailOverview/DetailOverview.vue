@@ -1,13 +1,13 @@
 <template>
   <div class="entity-detail-overview">
     <template v-if="entity.entityType === 'ip'">
-      <ip-overview :entity="entity"></ip-overview>
+      <ip-overview :entity="entity" :time-filter="timeFilter"></ip-overview>
     </template>
     <template v-else-if="entity.entityType === 'domain'">
-      <domain-overview :entity="entity"></domain-overview>
+      <domain-overview :entity="entity" :time-filter="timeFilter"></domain-overview>
     </template>
     <template v-else-if="entity.entityType === 'app'">
-      <app-overview :entity="entity"></app-overview>
+      <app-overview :entity="entity" :time-filter="timeFilter"></app-overview>
     </template>
   </div>
 </template>
@@ -21,7 +21,8 @@ export default {
   /* 详情概览 */
   name: 'DetailOverview',
   props: {
-    entity: Object
+    entity: Object,
+    timeFilter: Object
   },
   components: {
     'domain-overview': Domain,

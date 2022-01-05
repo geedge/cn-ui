@@ -9,6 +9,9 @@
     </div>
     <div class="filter-top-box" >
       <div class="filter-top-body">
+        <div class="entity__loading" v-show="loading">
+          <i class="el-icon-loading"></i>
+        </div>
         <div class="filter-top-type">{{item.value}}{{$t('overall.operator')}}{{item.label}}</div>
         <el-table
             :data="entityTopTenData"
@@ -44,6 +47,7 @@
 <script>
 export default {
   props: {
+    loading: Boolean
   },
   data () {
     return {

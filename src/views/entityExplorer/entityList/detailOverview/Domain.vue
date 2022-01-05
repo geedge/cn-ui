@@ -33,22 +33,22 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
-        <div class="row__content">{{entityData.max}} Kb/s</div>
+        <div class="row__content">{{unitConvert(entityData.max, unitTypes.byte).join(' ')}}/s</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.mean')}}</div>
-        <div class="row__content">{{entityData.avg}} Kb/s</div>
+        <div class="row__content">{{unitConvert(entityData.avg, unitTypes.byte).join(' ')}}/s</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.throughput')}}</div>
         <div class="row__contents">
           <div class="row__content">
-            <div class="row__charts-msg">{{$t('overall.sent')}}：{{entityData.bytesSentRate}}bps</div>
+            <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__charts" :id="`entityDetailSend${entityData.domainName}`" ></div>
           </div>
           <div class="row__content">
-            <div class="row__charts-msg">{{$t('overall.received')}}：{{entityData.bytesReceivedRate}}bps</div>
+            <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__charts" :id="`entityDetailReceived${entityData.domainName}`" ></div>
           </div>
@@ -86,7 +86,7 @@
             <span>{{$t('entities.avgRoundTripTime')}}</span>
           </template>
           <template #data>
-            <span>{{entityData.establishLatency?entityData.establishLatency+'ms':'-'}}</span>
+            <span>{{entityData.establishLatency ? unitConvert(entityData.establishLatency, unitTypes.time).join(' ') : '-'}}</span>
           </template>
         </single-value>
         <single-value
@@ -100,7 +100,7 @@
             <span>{{$t('entities.httpResponseLatency')}}</span>
           </template>
           <template #data>
-            <span>{{entityData.httpResponseLatency?entityData.httpResponseLatency+'ms':'-'}}</span>
+            <span>{{entityData.httpResponseLatency ? unitConvert(entityData.httpResponseLatency, unitTypes.time).join(' ') : '-'}}</span>
           </template>
         </single-value>
         <single-value
@@ -114,7 +114,7 @@
             <span>{{$t('entities.sslConLatency')}}</span>
           </template>
           <template #data>
-            <span>{{entityData.sslConLatency?entityData.sslConLatency+'ms':'-'}}</span>
+            <span>{{entityData.sslConLatency ? unitConvert(entityData.sslConLatency, unitTypes.time).join(' ') : '-'}}</span>
           </template>
         </single-value>
         <single-value
@@ -128,7 +128,7 @@
             <span>{{$t('entities.sequenceGapLossPercent')}}</span>
           </template>
           <template #data>
-            <span>{{entityData.sequenceGapLossPercent?entityData.sequenceGapLossPercent+'%':'-'}}</span>
+            <span>{{entityData.sequenceGapLossPercent ? unitConvert(entityData.sequenceGapLossPercent, unitTypes.percent).join(' ') : '-'}}</span>
           </template>
         </single-value>
         <single-value
@@ -142,7 +142,7 @@
             <span>{{$t('entities.pktRetransPercent')}}</span>
           </template>
           <template #data>
-            <span>{{entityData.pktRetransPercent?entityData.pktRetransPercent+'%':'-'}}</span>
+            <span>{{entityData.pktRetransPercent ? unitConvert(entityData.pktRetransPercent, unitTypes.percent).join(' ') : '-'}}</span>
           </template>
         </single-value>
       </div>
@@ -154,11 +154,11 @@
       <div class="overview__tags">
         <div class="overview__tag">
           <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
-          <span class="tag__value">{{entityData.linkOutPercent?entityData.linkOutPercent+'%':'-'}}</span>
+          <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
         </div>
         <div class="overview__tag">
           <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
-          <span class="tag__value">{{entityData.linkInPercent?entityData.linkInPercent+'%':'-'}}</span>
+          <span class="tag__value">{{entityData.linkInPercent ? unitConvert(entityData.linkInPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
         </div>
       </div>
     </div>
@@ -170,7 +170,7 @@
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
         <div class="row__content">{{entityData.alertNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font"  v-for="alert in entityData.alertList">
+      <div class="overview__row overview__row--small-font" v-for="alert in entityData.alertList">
         <div class="row__label row__label--width160">{{alert.startTime}}</div>
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high">{{alert.alertSeverity}}</div>
@@ -178,7 +178,7 @@
         </div>
         <div class="row__desc"></div>
       </div>
-      <div class="overview__row overview__row--small-font">
+      <div class="overview__row overview__row--small-font" v-if="entityData.alertList && entityData.alertList.length > 3">
         <div class="show-more">{{$t('overall.showMore')}}>></div>
       </div>
     </div>
@@ -198,10 +198,18 @@
         </div>
         <div class="row__desc"></div>
       </div>
-      <div class="overview__row overview__row--small-font">
+      <div class="overview__row overview__row--small-font" v-if="entityData.securityList && entityData.securityList.length > 3">
         <div class="show-more">{{$t('overall.showMore')}}>></div>
       </div>
     </div>
+  </div>
+  <div class="overview-map">
+    <chart
+        :chart="chart"
+        :entity="entityCopy"
+        :hide-header="true"
+        @getCurrentTimeRange="getCurrentTimeRange"
+    ></chart>
   </div>
 </template>
 
@@ -209,14 +217,15 @@
 import SingleValue from '@/components/charts/ChartSingleValue'
 import { api } from '@/utils/api'
 import entityDetailMixin from './entityDetailMixin'
-
+import { unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
+import Chart from '@/views/charts/Chart'
+import _ from "lodash";
 export default {
   name: 'Domain',
   components: {
-    SingleValue
-  },
-  props: {
-    entity: Object
+    SingleValue,
+    Chart
   },
   mixins: [entityDetailMixin],
   data () {
@@ -235,10 +244,9 @@ export default {
   },
   methods: {
     getQueryParams () {
-      const now = new Date()
       const queryParams = {
-        startTime: Math.floor(now.getTime() / 1000 - 3600),
-        endTime: Math.floor(now.getTime() / 1000),
+        startTime: parseInt(this.timeFilter.startTime / 1000),
+        endTime: parseInt(this.timeFilter.endTime / 1000),
         domain: this.entityData.domainName
       }
       return queryParams
@@ -246,6 +254,25 @@ export default {
     handleRelationData (result) {
       this.entityData.appCount = result.appCount
       this.entityData.ipCount = result.ipCount
+    }
+  },
+  setup (props) {
+    const entityCopy = {
+      ..._.cloneDeep(props.entity),
+      domain: props.entity.domainName
+    }
+    return {
+      chart: {
+        params: {
+          url: '/interface/entity/detail/domain/trafficMap?startTime={{startTime}}&endTime={{endTime}}&country={{country}}&domain={{domain}}',
+          unitType: 'number',
+          valueColumn: 'sessions'
+        },
+        type: 2
+      },
+      entityCopy,
+      unitTypes,
+      unitConvert
     }
   }
 }

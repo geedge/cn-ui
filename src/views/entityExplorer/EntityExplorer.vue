@@ -33,6 +33,7 @@
         :time-filter="timeFilter"
         @pageSize="pageSize"
         @pageNo="pageNo"
+        :loading="listLoading"
       ></entity-list>
     </div>
     <div class="explorer-foot" v-else>
@@ -145,7 +146,6 @@ export default {
         pageSize: defaultPageSize,
         total: 0
       },
-      timeFilter: {},
       filterData: [
         {
           type: 'ip',
@@ -155,28 +155,28 @@ export default {
             {
               label: this.$t('overall.country'),
               column: 'countryDistinctCount',
-              topColumn: 'ipLocationCountry', // top弹框查询字段
+              topColumn: 'ip_location_country', // top弹框查询字段
               icon: entityFilterType.ip[0].icon,
               value: 0
             },
             {
               label: this.$t('overall.province'),
               column: 'provinceDistinctCount',
-              topColumn: 'ipLocationProvince', // top弹框查询字段
+              topColumn: 'ip_location_province', // top弹框查询字段
               icon: entityFilterType.ip[1].icon,
               value: 0
             },
             {
               label: this.$t('overall.city'),
               column: 'cityDistinctCount',
-              topColumn: 'ipLocationCity', // top弹框查询字段
+              topColumn: 'ip_location_city', // top弹框查询字段
               icon: entityFilterType.ip[2].icon,
               value: 0
             },
             {
               label: this.$t('entities.asn'),
               column: 'asnDistinctCount',
-              topColumn: 'ipAsn', // top弹框查询字段
+              topColumn: 'ip_asn', // top弹框查询字段
               icon: entityFilterType.ip[3].icon,
               value: 0
             }
@@ -190,21 +190,21 @@ export default {
             {
               label: this.$t('entities.category'),
               column: 'categoryDistinctCount',
-              topColumn: 'appCategory', // top弹框查询字段
+              topColumn: 'app_category', // top弹框查询字段
               icon: entityFilterType.app[0].icon,
               value: 0
             },
             {
               label: this.$t('entities.subcategory'),
               column: 'subcategoryDistinctCount',
-              topColumn: 'appSubcategory', // top弹框查询字段
+              topColumn: 'app_subcategory', // top弹框查询字段
               icon: entityFilterType.app[1].icon,
               value: 0
             },
             {
               label: this.$t('entities.risk'),
               column: 'riskDistinctCount',
-              topColumn: 'appRisk', // top弹框查询字段
+              topColumn: 'app_risk', // top弹框查询字段
               icon: entityFilterType.app[2].icon,
               value: 0
             }
@@ -218,29 +218,30 @@ export default {
             {
               label: this.$t('entities.domainDetail.categoryGroup'),
               column: 'categoryGroupDistinctCount',
-              topColumn: 'domainCategoryGroup', // top弹框查询字段
+              topColumn: 'domain_category_group', // top弹框查询字段
               icon: entityFilterType.domain[0].icon,
               value: 0
             },
             {
               label: this.$t('entities.category'),
               column: 'categoryDistinctCount',
-              topColumn: 'domainCategory', // top弹框查询字段
+              topColumn: 'domain_category', // top弹框查询字段
               icon: entityFilterType.domain[1].icon,
               value: 0
             },
             {
               label: this.$t('entities.reputationLevel'),
               column: 'reputationLevelDistinctCount',
-              topColumn: 'domainReputationLevel', // top弹框查询字段
+              topColumn: 'domain_reputation_level', // top弹框查询字段
               icon: entityFilterType.domain[2].icon,
               value: 0
             }
           ]
         }
       ],
-      listData: []
-      /* listData: JSON.parse(`[
+      listData: [],
+      listLoading: false/*,
+      listData: JSON.parse(`[
         {
           "entityType": "app",
           "appName": "360cn",
@@ -261,7 +262,7 @@ export default {
           "ipAsn": "",
           "ipLocationCountry": "China",
           "entityType": "ip",
-          "ipLocation_province": "Other",
+          "ipLocationProvince": "Other",
           "ipAddr": "116.178.30.96",
           "ipLocationCity": "Other"
         },
@@ -490,6 +491,10 @@ export default {
       })
     },
     queryList (params) {
+      this.timeout = setTimeout(() => {
+        this.listLoading = true
+      }, 500)
+      this.listData = []
       const queryParams = {
         ...params,
         startTime: parseInt(params.startTime / 1000),
@@ -499,6 +504,9 @@ export default {
         if (response.code === 200) {
           this.listData = response.data.result
         }
+      }).finally(() => {
+        clearTimeout(this.timeout)
+        this.listLoading = false
       })
     },
 
@@ -516,11 +524,16 @@ export default {
     },
     handleQ (params) {
       return Object.keys(params).map(param => {
-        return `${param}="${params[param]}"`
+        return `${param}='${params[param]}'`
       }).join(' AND ')
     },
 
     getEntityIndexData () {
+      const now = window.$dayJs.tz().valueOf()
+      const timeFilter = {
+        startTime: parseInt(now / 1000 - 3600),
+        endTime: parseInt(now / 1000)
+      }
       // Total
       get(api.entityTotal, { entityType: 'app' }).then(response => {
         if (response.code === 200) {
@@ -538,33 +551,33 @@ export default {
         }
       })
       // New
-      get(api.entityNew, { entityType: 'app' }).then(response => {
+      get(api.entityNew, { entityType: 'app', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityAppNew = response.data.result
         }
       })
-      get(api.entityNew, { entityType: 'domain' }).then(response => {
+      get(api.entityNew, { entityType: 'domain', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityDomainNew = response.data.result
         }
       })
-      get(api.entityNew, { entityType: 'ip' }).then(response => {
+      get(api.entityNew, { entityType: 'ip', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityIpNew = response.data.result
         }
       })
       // Active
-      get(api.entityActive, { entityType: 'app' }).then(response => {
+      get(api.entityActive, { entityType: 'app', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityAppActive = response.data.result
         }
       })
-      get(api.entityActive, { entityType: 'domain' }).then(response => {
+      get(api.entityActive, { entityType: 'domain', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityDomainActive = response.data.result
         }
       })
-      get(api.entityActive, { entityType: 'ip' }).then(response => {
+      get(api.entityActive, { entityType: 'ip', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityIpActive = response.data.result
         }

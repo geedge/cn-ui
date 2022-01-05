@@ -226,7 +226,7 @@ export default {
         if (!this.$_.isEmpty(n) && !this.$_.isEqual(n, o)) {
           this.entityList = []
           setTimeout(() => {
-            const now = new Date()
+            const now = window.$dayJs.tz().valueOf()
             const queryParams = { startTime: Math.floor(now.getTime() / 1000 - 3600), endTime: Math.floor(now.getTime() / 1000) }
             switch (this.from) {
               case ('ip'): {

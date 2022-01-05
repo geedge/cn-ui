@@ -10,7 +10,7 @@
         <div class="search__suffix">
           <i class="cn-icon cn-icon-search-advance"></i>
         </div>
-        <div class="search__suffix" @click="search">
+        <div class="search__suffix" @click="enter">
           <i class="el-icon-search"></i>
         </div>
       </div>
@@ -18,7 +18,7 @@
         <div class="search__suffix">
           <i class="cn-icon cn-icon-search-advance"></i>
         </div>
-        <div class="search__suffix" @click="search">
+        <div class="search__suffix" @click="enter">
           <i class="el-icon-search"></i>
         </div>
       </div>
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { objToStr, strToObj } from '@/utils/tools'
 export default {
   name: 'AdvancedSearch',
   props: {
@@ -54,30 +55,9 @@ export default {
     addParams (params) {
       if (params) {
         const newParams = { ...this.searchParams, ...params }
-        this.searchContentTemp = this.objToStr(newParams)
+        this.searchContentTemp = objToStr(newParams)
         this.enter()
       }
-    },
-    strToObj (n) {
-      const paramsArr = n.split(/\s[aA][nN][dD]\s/)
-      const paramsObj = {}
-      paramsArr.forEach(string => {
-        const param = string.split('=')
-        if (param.length > 1) {
-          let value = param[1].trim()
-          const valueArr = value.split('"')
-          if (valueArr.length > 2) {
-            value = valueArr[1].trim()
-          }
-          paramsObj[param[0].trim()] = value
-        }
-      })
-      return paramsObj
-    },
-    objToStr (obj) {
-      return Object.keys(obj).map(k => {
-        return `${k}="${obj[k]}"`
-      }).join(' AND ')
     },
     enter () {
       if (!this.searchContentTemp) {
@@ -90,7 +70,7 @@ export default {
   watch: {
     searchContent (n) {
       if (n) {
-        this.searchParams = this.strToObj(n)
+        this.searchParams = strToObj(n)
       } else {
         this.reset()
       }

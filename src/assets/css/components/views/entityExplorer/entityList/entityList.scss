@@ -1,6 +1,7 @@
 .entity-list {
   width: calc(100% - 290px);
   flex: 1;
+  position: relative;
 
   .entity-list__content {
     height: 100%;
@@ -29,6 +30,7 @@
         width: 100vw;
         left: 0;
         top: 0;
+        z-index: 1;
         background-color: rgba(0, 0, 0, .2);
       }
     }

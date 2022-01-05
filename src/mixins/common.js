@@ -19,7 +19,8 @@ export default {
         delete: false,
         refresh: false,
         query: false
-      }
+      },
+      timeout: null
     }
   },
   methods: {
@@ -51,6 +52,9 @@ export default {
     },
     utcTimeToLocalhost (str) { // 系统设置的时区 到 utc 0
       return str
+    },
+    parseMsDate (ms, format = 'YYYY-MM-DD HH:mm:ss') {
+      return this.dayJs.tz(parseFloat(ms)).format(format)
     }
   }
 }

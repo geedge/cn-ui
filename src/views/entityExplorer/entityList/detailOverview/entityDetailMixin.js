@@ -3,10 +3,12 @@ import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/components/charts/chart-options'
 import { unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 
 export default {
   props: {
-    entity: Object
+    entity: Object,
+    timeFilter: Object
   },
   data () {
     return {
@@ -46,11 +48,16 @@ export default {
     }
   },
   methods: {
+    getCurrentTimeRange (callback) {
+      const myEndTime = window.$dayJs.tz().valueOf()
+      const myStartTime = myEndTime - this.timeFilter.dateRangeValue * 60 * 1000
+      callback({ startTime: myStartTime, endTime: myEndTime })
+    },
     queryEntityDetailTraffic () {
       this.sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}`))
       this.receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}`))
       get(this.trafficUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
+        if (response.code === 200 && response.data.result && response.data.result.length > 0) {
           response.data.result.forEach(t => {
             if (t.legend === 'bytesRate') {
               this.entityData.max = t.aggregation.max
@@ -101,15 +108,17 @@ export default {
               }
             }
           })
+          this.sentChart.setOption(this.chartOptionSent)
+          this.receivedChart.setOption(this.chartOptionReceived)
         }
-        this.sentChart.setOption(this.chartOptionSent)
-        this.receivedChart.setOption(this.chartOptionReceived)
       }).finally(() => {
         setTimeout(() => {
-          this.$nextTick(() => {
-            this.sentChart && this.sentChart.resize()
-            this.receivedChart && this.receivedChart.resize()
-          })
+          try {
+            this.$nextTick(() => {
+              this.sentChart && this.sentChart.resize()
+              this.receivedChart && this.receivedChart.resize()
+            })
+          } catch (e) {}
         }, 250)
       })
     },
@@ -192,7 +201,9 @@ export default {
   },
   setup () {
     return {
-      chartOption: entityListLineOption
+      chartOption: entityListLineOption,
+      unitTypes,
+      unitConvert
     }
   },
   mounted () {

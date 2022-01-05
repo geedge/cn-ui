@@ -77,7 +77,7 @@ export default {
     },
     queryParams () {
       let params
-      const now = new Date()
+      const now = window.$dayJs.tz().valueOf()
       switch (this.entityData.entityType) {
         case ('ip'): {
           params = {
@@ -115,11 +115,24 @@ export default {
     }
   },
   methods: {
-    entityDetail (entity) {
-
+    showDetail () {
+      const { href } = this.$router.resolve({
+        path: '/entityDetail',
+        query: {
+          entityType: this.entityData.entityType,
+          name: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
+        }
+      })
+      window.open(href, '_blank')
     },
     queryTraffic () {
-      get(api.entityTraffic, { entityType: this.entityData.entityType, name: this.entityName }).then(response => {
+      const queryParams = {
+        startTime: parseInt(this.timeFilter.startTime / 1000),
+        endTime: parseInt(this.timeFilter.endTime / 1000),
+        entityType: this.entityData.entityType,
+        name: this.entityName
+      }
+      get(api.entityTraffic, queryParams).then(response => {
         if (response.code === 200) {
           response.data.result.forEach(t => {
             if (t.name === 'bytes_sent_rate') {
@@ -133,14 +146,26 @@ export default {
       })
     },
     querySecurity () {
-      get(api.entitySecurityNum, { entityType: this.entityData.entityType, name: this.entityName }).then(response => {
+      const queryParams = {
+        startTime: parseInt(this.timeFilter.startTime / 1000),
+        endTime: parseInt(this.timeFilter.endTime / 1000),
+        entityType: this.entityData.entityType,
+        name: this.entityName
+      }
+      get(api.entitySecurityNum, queryParams).then(response => {
         if (response.code === 200) {
           this.entityData.securityCount = response.data.result[0].count
         }
       })
     },
     queryAlert () {
-      get(api.entityAlertNum, { entityType: this.entityData.entityType, name: this.entityName }).then(response => {
+      const queryParams = {
+        startTime: parseInt(this.timeFilter.startTime / 1000),
+        endTime: parseInt(this.timeFilter.endTime / 1000),
+        entityType: this.entityData.entityType,
+        name: this.entityName
+      }
+      get(api.entityAlertNum, queryParams).then(response => {
         if (response.code === 200) {
           this.entityData.alertCount = response.data.result[0].value
         }
@@ -211,6 +236,7 @@ export default {
                 }
               }
             }
+            return {}
           })
           chartOption = {
             ...this.chartOption,

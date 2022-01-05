@@ -652,6 +652,10 @@ export function isSingleValue (type) {
 export function isSingleValueWithEcharts (type) {
   return type === 52
 }
+/* 带折线图的单值 */
+export function isSingleValueWithEchartsTemp (type) {
+  return type === 55
+}
 /* 带Table的饼图 */
 export function isEchartsWithTable (type) {
   return type === 31

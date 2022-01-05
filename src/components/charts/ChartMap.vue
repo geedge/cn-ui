@@ -2,10 +2,10 @@
   <div class="cn-chart cn-chart__map">
     <div class="cn-chart__header chart-header-position" >
       <slot name="chartErrorInfo"></slot>
-      <div class="header__title" >
+      <div class="header__title" v-if="!hideHeader">
         <slot name="title"></slot>
       </div>
-      <div class="header__operations">
+      <div class="header__operations" v-if="!hideHeader">
         <slot name="operations"></slot>
       </div>
     </div>
@@ -26,7 +26,8 @@
 export default {
   name: 'ChartMap',
   props: {
-    loading: Boolean
+    loading: Boolean,
+    hideHeader: Boolean
   },
   data () {
     return {

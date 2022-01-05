@@ -18,7 +18,7 @@
           <span>{{$t('search.searchHistory')}}</span>
         </div>
         <div class="foot__item">
-          <span @click="search">{{$t('overall.explore')}}</span>
+          <span @click="search({})">{{$t('overall.explore')}}</span>
           <el-divider direction="vertical"></el-divider>
           <span>{{$t('overall.help')}}</span>
         </div>
@@ -41,7 +41,7 @@ export default {
     }
   },
   methods: {
-    search (params) {
+    search (params = {}) {
       this.$emit('search', params)
     },
     addParams (params) {

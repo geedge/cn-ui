@@ -15,7 +15,7 @@
         <slot name="title"></slot>
       </div>
     </div>
-    <div class="single-value__content single-value__content--with-chart" v-if="type === 52">
+    <div class="single-value__content single-value__content--with-chart" v-if="type === 52 || type === 55">
       <div class="content__title">
         <slot name="title"></slot>
       </div>
@@ -72,6 +72,7 @@ export default {
             c = 'cn-chart__single-value--icon-left'
             break
           }
+          case 55:
           case 52: {
             c = 'cn-chart__single-value--chart'
             break

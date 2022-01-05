@@ -36,7 +36,9 @@ export default {
   data () {
     return {
       anchorPoints: [], // { id, label, top, height }
-      top: 0
+      top: 0,
+      scrollHeight: 0,
+      clientHeight: 0
     }
   },
   setup (props, ctx) {
@@ -73,6 +75,9 @@ export default {
     chartLoaded (chartList) {
       this.anchorPoints = []
       let anchorPoints = []
+      const panelDom = document.querySelector('#cn-panel')
+      this.scrollHeight = panelDom.scrollHeight
+      this.clientHeight = panelDom.clientHeight
       chartList.forEach(chart => {
         if (chart.params.anchorPoint) {
           const dom = document.querySelector(`#${chart.params.anchorPoint}`)
@@ -128,11 +133,15 @@ export default {
     },
     currentAnchor () {
       let currentAnchor = null
-      this.anchorPoints.forEach(anchor => {
-        if (anchor.top <= this.top) {
-          currentAnchor = anchor
-        }
-      })
+      if (this.top + this.clientHeight === this.scrollHeight) {
+        currentAnchor = this.anchorPoints[this.anchorPoints.length - 1]
+      } else {
+        this.anchorPoints.forEach(anchor => {
+          if (anchor.top <= this.top) {
+            currentAnchor = anchor
+          }
+        })
+      }
       return currentAnchor
     }
   }

@@ -66,12 +66,12 @@
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-rise"></i>
                 <span>{{$t('entities.sentThroughput')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{entityData.bytesSentRate || '-'}}</span>
+                <span>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-fall"></i>
                 <span>{{$t('entities.receivedThroughput')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{entityData.bytesReceivedRate || '-'}}</span>
+                <span>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-entity-alert"></i>
@@ -97,6 +97,7 @@
           <el-divider></el-divider>
           <detail-overview
               :entity="entityData"
+              :time-filter="timeFilter"
           ></detail-overview>
         </div>
       </el-collapse-transition>
@@ -107,6 +108,8 @@
 <script>
 import entityListMixin from './entityListMixin'
 import DetailOverview from '@/views/entityExplorer/entityList/detailOverview/DetailOverview'
+import { unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'Row',
   props: {
@@ -122,6 +125,12 @@ export default {
       isCollapse: true // 是否是折叠状态
     }
   },
+  setup () {
+    return {
+      unitConvert,
+      unitTypes
+    }
+  },
   methods: {
     /* 切换折叠状态 */
     switchCollapse () {
@@ -131,16 +140,6 @@ export default {
     /* 设为折叠状态 */
     collapse () {
       this.isCollapse = true
-    },
-    showDetail () {
-      const { href } = this.$router.resolve({
-        path: '/entityDetail',
-        query: {
-          entityType: this.entityData.entityType,
-          name: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
-        }
-      })
-      window.open(href, '_blank')
     }
   }
 }
