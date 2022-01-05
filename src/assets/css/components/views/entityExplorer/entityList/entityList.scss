@@ -5,6 +5,7 @@
   .entity-list__content {
     height: 100%;
     width: 100%;
+    overflow: inherit;
 
     .entity-list--block {
       display: flex;
@@ -13,12 +14,14 @@
       justify-content: flex-start;
       border-radius: 2px;
       width: calc(100% - 10px);
-      overflow: hidden auto;
+      height: calc(100% - 40px);
+      overflow: inherit;
     }
     .entity-list--list {
       display: flex;
       flex-direction: column;
-      overflow: hidden auto;
+      height: calc(100% - 40px);
+      overflow: inherit;
 
       .cn-entity__shadow {
         position: fixed;
@@ -29,5 +32,13 @@
         background-color: rgba(0, 0, 0, .2);
       }
     }
+  }
+
+
+  .entity__pagination{
+    position: absolute;
+    bottom: 9px;
+    height: 40px;
+    width: calc(100% - 538px);
   }
 }

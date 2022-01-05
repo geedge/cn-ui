@@ -34,17 +34,8 @@
         </div>
       </template>
     </div>
-    <div class="entity-list__pagination">
-<!--      <el-pagination
-              @size-change="size"
-              @prev-click="prev"
-              @next-click="next"
-              @current-change="current"
-              :currentPage="pageObj.pageNo"
-              :page-size="pageObj.pageSize"
-              :total="pageObj.total"
-              layout="total, prev, pager, next"
-      ></el-pagination>-->
+    <div class="entity__pagination" >
+      <pagination ref="pagination"  :table-id="tableId"  :page-obj="pageObj"  @pageNo='current' @pageSize='size'></pagination><!-- :table-id="entityList" -->
     </div>
   </div>
 </template>
@@ -52,6 +43,7 @@
 <script>
 import Card from '@/views/entityExplorer/entityList/Card'
 import Row from '@/views/entityExplorer/entityList/Row'
+import pagination from '@/components/common/Pagination'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import * as echarts from 'echarts'
@@ -72,7 +64,8 @@ export default {
   },
   components: {
     'entity-card': Card,
-    'entity-row': Row
+    'entity-row': Row,
+    pagination: pagination
   },
   data () {
     return {
@@ -80,7 +73,8 @@ export default {
       typeName: '',
       entityList: [],
       isCollapse: true,
-      collapseIndex: 0
+      collapseIndex: 0,
+      tableId: 'entityList'
     }
   },
   methods: {

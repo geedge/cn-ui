@@ -34,8 +34,8 @@
   }
   .explorer-container {
     display: flex;
-    height: 100%;
     overflow: hidden auto;
+    height: calc(100% - 120px);
   }
   .explorer-foot {
     display: flex;

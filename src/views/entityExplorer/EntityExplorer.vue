@@ -19,7 +19,7 @@
         @search="search"
     ></explorer-search>
     <!-- 内容区 -->
-    <div class="explorer-container" v-if="showList">
+    <div class="explorer-container" v-if="showList"  style="height: calc(100% - 120px);">
       <entity-filter
         :filter-data="filterData"
         :search-params="searchParams"
@@ -29,6 +29,10 @@
       <entity-list
         :list-data="listData"
         :list-mode="listMode"
+        :pageObj="pageObj"
+        :time-filter="timeFilter"
+        @pageSize="pageSize"
+        @pageNo="pageNo"
       ></entity-list>
     </div>
     <div class="explorer-foot" v-else>
@@ -102,11 +106,11 @@ import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
-import { entityType, entityFilterType } from '@/utils/constants'
+import { entityType, entityFilterType, defaultPageSize } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
-import {getNowTime} from "@/utils/date-util";
-import {ref} from "vue";
+import { getNowTime } from '@/utils/date-util'
+import { ref } from 'vue'
 
 export default {
   name: 'entity-explorer',
@@ -138,8 +142,10 @@ export default {
       showFilter: ['ip', 'app', 'domain'], // ip,domain,app
       pageObj: {
         pageNo: 1,
-        pageSize: 20
+        pageSize: defaultPageSize,
+        total: 0
       },
+      timeFilter: {},
       filterData: [
         {
           type: 'ip',
@@ -234,7 +240,7 @@ export default {
         }
       ],
       listData: []
-      /*listData: JSON.parse(`[
+      /* listData: JSON.parse(`[
         {
           "entityType": "app",
           "appName": "360cn",
@@ -395,7 +401,7 @@ export default {
           "appRisk": "1",
           "appSubcategory": "infrastructure"
         }
-      ]`)*/
+      ]`) */
     }
   },
   methods: {
@@ -425,12 +431,22 @@ export default {
         this.queryFilter({ entityType: 'app', q: this.handleQ(this.searchParams), ...this.timeFilter })
         this.queryFilter({ entityType: 'domain', q: this.handleQ(this.searchParams), ...this.timeFilter })
         this.queryList({ q: this.handleQ(this.searchParams), ...this.timeFilter, ...this.pageObj })
+        this.queryListTotal({ q: this.handleQ(this.searchParams), ...this.timeFilter })
       } else {
         this.queryFilter({ entityType: 'ip', ...this.timeFilter })
         this.queryFilter({ entityType: 'app', ...this.timeFilter })
         this.queryFilter({ entityType: 'domain', ...this.timeFilter })
         this.queryList({ ...this.timeFilter, ...this.pageObj })
+        this.queryListTotal({ ...this.timeFilter })
       }
+    },
+    pageSize (val) {
+      this.pageObj.pageSize = val
+      this.search()
+    },
+    pageNo (val) {
+      this.pageObj.pageNo = val
+      this.search()
     },
     /* filter组件内点击后查询 */
     filter (name, topData) {
@@ -480,7 +496,22 @@ export default {
         endTime: parseInt(params.endTime / 1000)
       }
       get(api.entityList, queryParams).then(response => {
-        this.listData = response.data.result
+        if (response.code === 200) {
+          this.listData = response.data.result
+        }
+      })
+    },
+
+    queryListTotal (params) {
+      const queryParams = {
+        ...params,
+        startTime: parseInt(params.startTime / 1000),
+        endTime: parseInt(params.endTime / 1000)
+      }
+      get(api.entityListTotal, queryParams).then(response => {
+        if (response.code === 200) {
+          this.pageObj.total = response.data.result
+        }
       })
     },
     handleQ (params) {

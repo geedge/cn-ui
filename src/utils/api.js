@@ -22,6 +22,7 @@ export const api = {
   panel: '/visual/panel',
   chart: '/visual/chart',
   entityList: '/interface/entity/list/basic',
+  entityListTotal: '/interface/entity/list/total',
   entityCount: '/interface/entity/total',
   entityFilter: '/interface/entity/filter/count',
   entityFilterTop: '/interface/entity/filter/top',
