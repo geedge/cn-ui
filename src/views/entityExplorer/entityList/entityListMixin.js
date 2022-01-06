@@ -81,30 +81,24 @@ export default {
       switch (this.entityData.entityType) {
         case ('ip'): {
           params = {
-            queryTimeRange: {
-              startTime: Math.floor(now / 1000 - 3600),
-              endTime: Math.floor(now / 1000)
-            },
-            ip: this.entityData.ip
+            startTime: this.timeFilter.startTime?parseInt(this.timeFilter.startTime / 1000): Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime?parseInt(this.timeFilter.endTime / 1000):Math.floor(now / 1000),
+            ip: this.entityData.ipAddr
           }
           break
         }
         case ('domain'): {
           params = {
-            queryTimeRange: {
-              startTime: Math.floor(now / 1000 - 3600),
-              endTime: Math.floor(now / 1000)
-            },
+            startTime: this.timeFilter.startTime?parseInt(this.timeFilter.startTime / 1000): Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime?parseInt(this.timeFilter.endTime / 1000):Math.floor(now / 1000),
             domain: this.entityData.domainName
           }
           break
         }
         case ('app'): {
           params = {
-            queryTimeRange: {
-              startTime: Math.floor(now / 1000 - 3600),
-              endTime: Math.floor(now / 1000)
-            },
+            startTime: this.timeFilter.startTime?parseInt(this.timeFilter.startTime / 1000): Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime?parseInt(this.timeFilter.endTime / 1000):Math.floor(now / 1000),
             appName: this.entityData.appName
           }
           break
@@ -179,11 +173,11 @@ export default {
         if (response.code === 200) {
           const seriesTemplate = this.chartOption.series[0]
           const series = response.data.result.map((r, i) => {
-            if (r.legend === 'bytesSentRate') {
+            if (r.legend === 'bytes_sent_rate') {
               return {
                 ...seriesTemplate,
                 name: this.$t('entities.sentThroughput'), // 'bytes_sent_rate',//legendMapping[`ip_${r.legend}`],
-                data: r.values.map(v => [Number(v[0]), Number(v[1]), unitTypes.byte]),
+                data: r.values.map(v => [Number(v[0])* 1000, Number(v[1]), unitTypes.byte]),
                 itemStyle: {
                   normal: {
                     color: '#69b072',
@@ -207,11 +201,11 @@ export default {
                   ])
                 }
               }
-            } else if (r.legend === 'bytesReceivedRate') {
+            } else if (r.legend === 'bytes_received_rate') {
               return {
                 ...seriesTemplate,
                 name: this.$t('entities.receivedThroughput'), // legendMapping[`ip_${r.legend}`],
-                data: r.values.map(v => [Number(v[0]), Number(v[1]), unitTypes.byte]),
+                data: r.values.map(v => [Number(v[0])* 1000, Number(v[1]), unitTypes.byte]),
                 itemStyle: {
                   normal: {
                     color: '#7899c6',
@@ -245,8 +239,10 @@ export default {
         }
       }).finally(() => {
         this.$nextTick(() => {
-          const myChart = echarts.init(document.getElementById(`entityListChart${this.entityName}`))
-          myChart.setOption(chartOption)
+          if(chartOption){
+            const myChart = echarts.init(document.getElementById(`entityListChart${this.entityName}`))
+            myChart.setOption(chartOption)
+          }
         })
       })
     }
