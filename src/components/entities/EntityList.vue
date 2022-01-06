@@ -227,7 +227,7 @@ export default {
           this.entityList = []
           setTimeout(() => {
             const now = window.$dayJs.tz().valueOf()
-            const queryParams = { startTime: Math.floor(now.getTime() / 1000 - 3600), endTime: Math.floor(now.getTime() / 1000) }
+            const queryParams = { startTime: Math.floor(now / 1000 - 3600), endTime: Math.floor(now / 1000) }
             switch (this.from) {
               case ('ip'): {
                 n.forEach(data => {

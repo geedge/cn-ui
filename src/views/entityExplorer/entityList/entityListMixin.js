@@ -82,8 +82,8 @@ export default {
         case ('ip'): {
           params = {
             queryTimeRange: {
-              startTime: Math.floor(now.getTime() / 1000 - 3600),
-              endTime: Math.floor(now.getTime() / 1000)
+              startTime: Math.floor(now / 1000 - 3600),
+              endTime: Math.floor(now / 1000)
             },
             ip: this.entityData.ip
           }
@@ -92,8 +92,8 @@ export default {
         case ('domain'): {
           params = {
             queryTimeRange: {
-              startTime: Math.floor(now.getTime() / 1000 - 3600),
-              endTime: Math.floor(now.getTime() / 1000)
+              startTime: Math.floor(now / 1000 - 3600),
+              endTime: Math.floor(now / 1000)
             },
             domain: this.entityData.domainName
           }
@@ -102,8 +102,8 @@ export default {
         case ('app'): {
           params = {
             queryTimeRange: {
-              startTime: Math.floor(now.getTime() / 1000 - 3600),
-              endTime: Math.floor(now.getTime() / 1000)
+              startTime: Math.floor(now / 1000 - 3600),
+              endTime: Math.floor(now / 1000)
             },
             appName: this.entityData.appName
           }
@@ -135,11 +135,11 @@ export default {
       get(api.entityTraffic, queryParams).then(response => {
         if (response.code === 200) {
           response.data.result.forEach(t => {
-            if (t.name === 'bytes_sent_rate') {
-              this.entityData.bytesSentRate = t.value
+            if (t.legend === 'bytesSentRate') {
+              this.entityData.bytesSentRate = t.aggregation.last
             }
-            if (t.name === 'bytes_received_rate') {
-              this.entityData.bytesReceivedRate = t.value
+            if (t.legend === 'bytesReceivedRate') {
+              this.entityData.bytesReceivedRate = t.aggregation.last
             }
           })
         }
@@ -179,7 +179,7 @@ export default {
         if (response.code === 200) {
           const seriesTemplate = this.chartOption.series[0]
           const series = response.data.result.map((r, i) => {
-            if (r.legend === 'bytes_sent_rate') {
+            if (r.legend === 'bytesSentRate') {
               return {
                 ...seriesTemplate,
                 name: this.$t('entities.sentThroughput'), // 'bytes_sent_rate',//legendMapping[`ip_${r.legend}`],
@@ -207,7 +207,7 @@ export default {
                   ])
                 }
               }
-            } else if (r.legend === 'bytes_received_rate') {
+            } else if (r.legend === 'bytesReceivedRate') {
               return {
                 ...seriesTemplate,
                 name: this.$t('entities.receivedThroughput'), // legendMapping[`ip_${r.legend}`],
