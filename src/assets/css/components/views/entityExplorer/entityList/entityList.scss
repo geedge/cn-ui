@@ -16,8 +16,8 @@
       justify-content: flex-start;
       border-radius: 2px;
       width: calc(100% - 10px);
-      height: calc(100% - 40px);
-      overflow: inherit;
+      height: 100%;
+      overflow: auto;
     }
     .entity-list--list {
       display: flex;

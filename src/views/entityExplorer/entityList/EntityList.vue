@@ -7,6 +7,7 @@
       <!-- 列表式 -->
       <template v-if="listMode === 'list'">
         <div class="entity-list--list">
+          <div class="no-data" v-if="noData">No data</div>
           <div v-if="!isCollapse" @click="collapse" class="cn-entity__shadow"></div>
           <entity-row
               v-for="(data, index) in listData"
@@ -23,6 +24,7 @@
       <!-- 卡片式 -->
       <template v-else-if="listMode === 'block'">
         <div class="entity-list--block">
+          <div class="no-data" v-if="noData">No data</div>
           <entity-card
               v-for="(data, index) in listData"
               :entity="data"
@@ -63,7 +65,8 @@ export default {
       isCollapse: true,
       collapseIndex: 0,
       tableId: 'entityList',
-      listDataCopy: []
+      listDataCopy: [],
+      noData: false
     }
   },
   methods: {
@@ -77,6 +80,21 @@ export default {
     collapse () {
       this.isCollapse = true
       this.$refs[`entityRow${this.collapseIndex}`].collapse()
+    }
+  },
+  watch: {
+    listData: {
+      deep: true,
+      handler (n) {
+        if (!n || n.length === 0) {
+          this.timeout = setTimeout(() => {
+            this.noData = true
+          }, 500)
+        } else {
+          clearTimeout(this.timeout)
+          this.noData = false
+        }
+      }
     }
   }
 }
