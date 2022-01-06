@@ -1,6 +1,6 @@
 <template>
   <div class="entity-list" id="entityList">
-    <div class="entity__loading" v-show="loading">
+    <div class="entity__loading" style="background: #eff2f5;opacity: .6;" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
     <div class="entity-list__content">
@@ -40,14 +40,6 @@
 <script>
 import Card from '@/views/entityExplorer/entityList/Card'
 import Row from '@/views/entityExplorer/entityList/Row'
-import pagination from '@/components/common/Pagination'
-import { get } from '@/utils/http'
-import { api } from '@/utils/api'
-import * as echarts from 'echarts'
-import { getChartColor, entityListLineOption } from '@/components/charts/chart-options'
-import { legendMapping } from '@/components/charts/chart-table-title'
-import unitConvert from '@/utils/unit-convert'
-import { unitTypes } from '@/utils/constants'
 
 export default {
   name: 'EntityList',
@@ -61,8 +53,7 @@ export default {
   },
   components: {
     'entity-card': Card,
-    'entity-row': Row,
-    pagination: pagination
+    'entity-row': Row
   },
   data () {
     return {
@@ -71,7 +62,8 @@ export default {
       entityList: [],
       isCollapse: true,
       collapseIndex: 0,
-      tableId: 'entityList'
+      tableId: 'entityList',
+      listDataCopy: []
     }
   },
   methods: {

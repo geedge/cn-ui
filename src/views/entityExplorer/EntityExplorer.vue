@@ -526,10 +526,7 @@ export default {
       })
     },
     queryList (params) {
-      this.timeout = setTimeout(() => {
-        this.listLoading = true
-      }, 500)
-      this.listData = []
+      this.listLoading = true
       const queryParams = {
         ...params,
         startTime: parseInt(params.startTime / 1000),
@@ -537,10 +534,12 @@ export default {
       }
       get(api.entityList, queryParams).then(response => {
         if (response.code === 200) {
-          this.listData = response.data.result
+          this.listData = []
+          this.$nextTick(() => {
+            this.listData = response.data.result
+          })
         }
       }).finally(() => {
-        clearTimeout(this.timeout)
         this.listLoading = false
       })
     },

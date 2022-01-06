@@ -1139,7 +1139,6 @@ export default {
         }
       })
 
-      console.info(this.entity)
       this.showMapBackButton = !!country
       const chartParams = this.chartInfo.params
       const queryParams = { ...this.queryTimeRange, country: country || '', region: '', ...this.entity } // 统计数据的查询参数
@@ -2517,8 +2516,6 @@ export default {
     }
   },
   mounted () {
-    console.info(this.chart)
-    console.info(this.entity)
     this.initChart()
     this.throttle = this.$_.throttle(this.echartsResize, 500)
     window.addEventListener('resize', this.throttle)
