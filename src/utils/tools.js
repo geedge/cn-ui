@@ -358,16 +358,24 @@ export const noData = {
     if (el) {
       if (binding.value) {
         setTimeout(() => {
+          // 是否已有no data
+          let alreadyHasNoData = false
           el.childNodes.forEach(node => {
-            node.style && (node.style.display = 'none')
+            if (node.classList && node.classList.value.indexOf('no-data') > -1) {
+              alreadyHasNoData = true
+            } else {
+              node.style && (node.style.display = 'none')
+            }
           })
-          el.insertBefore(noDataDomFactory(), el.childNodes[0])
+          if (!alreadyHasNoData) {
+            el.insertBefore(noDataDomFactory(), el.childNodes[0])
+          }
         })
       } else {
         setTimeout(() => {
           for (let i = 0; i < el.childNodes.length; i++) {
             const node = el.childNodes[i]
-            if (node.innerText === 'No data') {
+            if (node.classList && node.classList.value.indexOf('no-data') > -1) {
               el.removeChild(node)
               break
             }
