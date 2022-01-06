@@ -19,22 +19,36 @@
         @search="search"
     ></explorer-search>
     <!-- 内容区 -->
-    <div class="explorer-container" v-if="showList"  style="height: calc(100% - 120px);">
-      <entity-filter
-        :filter-data="filterData"
-        :search-params="searchParams"
-        :time-filter="timeFilter"
-        @filter="filter"
-      ></entity-filter>
-      <entity-list
-        :list-data="listData"
-        :list-mode="listMode"
-        :pageObj="pageObj"
-        :time-filter="timeFilter"
-        @pageSize="pageSize"
-        @pageNo="pageNo"
-        :loading="listLoading"
-      ></entity-list>
+    <div class="explorer-container" v-if="showList"  style="height: calc(100% - 20px); flex-direction: column">
+      <div style="display: flex; height: 100%;">
+        <entity-filter
+            :filter-data="filterData"
+            :search-params="searchParams"
+            :time-filter="timeFilter"
+            @filter="filter"
+        ></entity-filter>
+        <entity-list
+            :list-data="listData"
+            :list-mode="listMode"
+            :pageObj="pageObj"
+            :time-filter="timeFilter"
+            @pageSize="pageSize"
+            @pageNo="pageNo"
+            :loading="listLoading"
+        ></entity-list>
+      </div>
+      <div class="entity__pagination" style="position: absolute; bottom: 0; width: 100%;">
+        <pagination
+            ref="pagination"
+            :page-obj="pageObj"
+            @pageNo='pageNo'
+            @pageSize='pageSize'
+            @size-change="pageSize"
+            @prev-click="prev"
+            @next-click="next"
+        >
+        </pagination>
+      </div>
     </div>
     <div class="explorer-foot" v-else>
       <div>
@@ -112,6 +126,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
+import pagination from '@/components/common/Pagination'
 
 export default {
   name: 'entity-explorer',
@@ -120,7 +135,8 @@ export default {
     DateTimeRange,
     TimeRefresh,
     EntityFilter,
-    EntityList
+    EntityList,
+    pagination: pagination
   },
   data () {
     return {
@@ -448,6 +464,25 @@ export default {
     pageNo (val) {
       this.pageObj.pageNo = val
       this.search()
+    },
+    // 点击上一页箭头
+    prev () {
+      this.scrollbarToTop()
+    },
+    // 点击下一页箭头
+    next () {
+      this.scrollbarToTop()
+    },
+    // currentPage 改变时会触发
+    current (val) {
+      this.$emit('pageNo', val)
+      this.scrollbarToTop()
+    },
+    scrollbarToTop () {
+      this.$nextTick(() => {
+        const wraps = document.querySelector('#entityList')
+        wraps.scrollTop = 0
+      })
     },
     /* filter组件内点击后查询 */
     filter (name, topData) {

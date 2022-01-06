@@ -1,5 +1,5 @@
 <template>
-  <div class="entity-list">
+  <div class="entity-list" id="entityList">
     <div class="entity__loading" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
@@ -33,9 +33,6 @@
           ></entity-card>
         </div>
       </template>
-    </div>
-    <div class="entity__pagination" >
-      <pagination ref="pagination"  :table-id="tableId"  :page-obj="pageObj"  @pageNo='current' @pageSize='size'></pagination><!-- :table-id="entityList" -->
     </div>
   </div>
 </template>
@@ -78,28 +75,6 @@ export default {
     }
   },
   methods: {
-    size (val) {
-      this.$emit('pageSize', val)
-    },
-    // 点击上一页箭头
-    prev () {
-      this.scrollbarToTop()
-    },
-    // 点击下一页箭头
-    next () {
-      this.scrollbarToTop()
-    },
-    // currentPage 改变时会触发
-    current (val) {
-      this.$emit('pageNo', val)
-      this.scrollbarToTop()
-    },
-    scrollbarToTop () {
-      this.$nextTick(() => {
-        const wraps = document.querySelectorAll('.el-table__body-wrapper')
-        wraps.scrollTop = 0
-      })
-    },
     entityDetail (params) {
       this.$emit('showDetail', { ...params, icon: this.iconClass })
     },

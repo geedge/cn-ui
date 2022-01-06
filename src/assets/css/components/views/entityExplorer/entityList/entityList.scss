@@ -1,5 +1,6 @@
 .entity-list {
   width: calc(100% - 290px);
+  height: calc(100% - 42px);
   flex: 1;
   position: relative;
 
@@ -21,8 +22,8 @@
     .entity-list--list {
       display: flex;
       flex-direction: column;
-      height: calc(100% - 40px);
-      overflow: inherit;
+      height: 100%;
+      overflow: auto;
 
       .cn-entity__shadow {
         position: fixed;

@@ -156,6 +156,7 @@ export default {
           unitType: 'number',
           valueColumn: 'sessions'
         },
+        id: props.entity.ipAddr,
         type: 2
       },
       entityCopy,
