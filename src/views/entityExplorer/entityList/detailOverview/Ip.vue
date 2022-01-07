@@ -111,7 +111,7 @@ import { api } from '@/utils/api'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
-import _ from "lodash";
+import _ from 'lodash'
 
 export default {
   name: 'Ip',

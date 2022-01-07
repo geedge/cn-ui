@@ -37,7 +37,7 @@
                 :prop="item.prop"
                 #default="{row}">
             <span v-if="item.prop === 'nameColumn'">
-                {{ nameColumn === 'fqdnCategoryName' ? row['fqdnCategoryName'] :(nameColumn === 'fqdnReputationLevel'? row['fqdnReputationLevel']:(nameColumn==='appCategory'?row['appCategory']:row['appRisk']))}}
+                {{ nameColumn === 'domainCategoryName' ? row['categoryName'] :(nameColumn === 'domainReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategoryName']:row['appRiskLevel']))}}
             </span>
               <span v-else-if="item.prop === 'tableNameColumn'">
                 {{ tableNameColumn === 'appName' ? row['appName'] : row['domain']}}
@@ -65,7 +65,7 @@
         :prop="item.prop"
         #default="{row}">
       <span v-if="item.prop === 'nameColumn'">
-          {{ nameColumn === 'fqdnCategoryName' ? row['categoryName'] :(nameColumn === 'fqdnReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategory']:row['appRisk']))}}
+          {{ nameColumn === 'domainCategoryName' ? row['categoryName'] :(nameColumn === 'domainReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategoryName']:row['appRiskLevel']))}}
       </span>
       <span v-else-if="item.prop === 'tableNameColumn'">
           {{ tableNameColumn === 'appName' ? row['appName'] : row['domain']}}
@@ -221,9 +221,6 @@ export default {
       }
       setTimeout(() => {
         get(replaceUrlPlaceholder(url, queryParams)).then(response2 => {
-          // app：测试数据生成，如接口可正常返回数据后，删除即可
-          response2 = this.initTestDataForAppSecondTable(url, row)
-
           if (response2.code === 200) {
             this.childrenTableData = response2.data.result
           }
@@ -232,37 +229,7 @@ export default {
         })
       }, 500)
     },
-    initTestDataForAppSecondTable (url, row) {
-      let rlt = ''
 
-      if (url.indexOf('app') > -1) {
-        rlt = {
-          code: 200,
-          msg: '',
-          data: {
-            resultType: 'table',
-            result: [{
-              sessions: '0',
-              packets: '134',
-              bytes: '33202',
-              appCategory: row.appCategory,
-              serverIp: '51.104.167.186',
-              appRisk: row.appRisk
-            }, {
-              sessions: '0',
-              packets: '134',
-              bytes: '33202',
-              appCategory: row.appCategory,
-              serverIp: '23.164.67.16',
-              appRisk: row.appRisk
-            }
-            ]
-          },
-          success: true
-        }
-      }
-      return rlt
-    },
     getRowKey (row) {
       if (this.tableNameColumn === 'appName') {
         return row.appName

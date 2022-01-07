@@ -962,9 +962,6 @@ export default {
               this.isError = true
               this.noData = true
               this.errorInfo = response.msg || response.message || 'Unknown'
-
-              // 测试数据
-              this.initTestEventListData()
             }
           }).catch(e => {
             this.isError = true
@@ -990,34 +987,6 @@ export default {
       } catch (e) {
         console.error(e)
       }
-    },
-
-    initTestEventListData () {
-      this.noData = false
-
-      for (let i = 0; i < this.croptyEventList.length; i++) {
-        this.croptyEventList.splice(i, 1)
-      }
-      this.croptyEventList = [{
-        time: '2021-11-23 12:00:00',
-        serverIP: '192.168.1.1',
-        clientIP: '101.1.1.1',
-        message: '检测到连接挖矿木马远控地址',
-        level: 1
-      }, {
-        time: '2021-11-23 12:10:00',
-        serverIP: '192.168.1.1',
-        clientIP: '101.1.1.1',
-        message: '检测到连接挖矿木马远控地址',
-        level: 1
-      }, {
-        time: '2021-11-23 12:10:00',
-        serverIP: '192.168.1.1',
-        clientIP: '101.1.1.1',
-        message: '检测到连接挖矿木马远控地址',
-        level: 1
-      }
-      ]
     },
 
     reloadChart () {
@@ -1951,9 +1920,6 @@ export default {
           this.isError = true
           this.noData = true
           this.errorInfo = response.msg || response.message || 'Unknown'
-
-          // 产生测试数据
-          this.initTestTimeBarData(chartParams)
         }
         this.myChart.setOption(this.chartOption)
       }).finally(() => {
@@ -1964,23 +1930,6 @@ export default {
           })
         }, 250)
       })
-    },
-
-    initTestTimeBarData (chartParams) {
-      this.noData = false
-      const data = [[1612113120000, '9'], [1612113220000, '2'], [1612113320000, '3'], [1612113420000, '4'], [1612113520000, '1'], [1612113620000, '5'], [1612113720000, '7'], [1612113820000, '9']]
-      let dataArray = []
-      if (chartParams.direction == 'vertical') { // 柱状图竖直方向
-        dataArray = data.map((r, i) => {
-          return [r[0], Number(r[1]), chartParams.unitType]
-        })
-      } else if (chartParams.direction == 'horizontal') { // 柱状图水平方向
-        dataArray = data.map((r, i) => {
-          return [Number(r[1]), r[0], chartParams.unitType]
-        })
-      }
-
-      this.handleTimeChartOption(chartParams, dataArray)
     },
 
     initEchartsCategoryBar (chartParams) {
@@ -2005,9 +1954,6 @@ export default {
           this.isError = true
           this.noData = true
           this.errorInfo = response.msg || response.message || 'Unknown'
-
-          // 产生测试数据
-          this.initTestCategoryBarData(chartParams)
         }
         this.myChart.setOption(this.chartOption)
       }).finally(() => {
@@ -2067,97 +2013,6 @@ export default {
       }
     },
 
-    initTestCategoryBarData (chartParams) {
-      this.noData = false
-
-      let xType = 'category'
-      let yType = 'value'
-      let direction = 'vertical'
-      if (chartParams.direction) {
-        direction = chartParams.direction
-        if (direction == 'horizontal') { // 柱状图水平方向
-          xType = 'value'
-          yType = 'category'
-        } else if (direction == 'vertical') { // 柱状图竖直方向
-          xType = 'category'
-          yType = 'value'
-        }
-      }
-
-      let itemColorAlternately = false// true|false 柱体色是否轮替
-      if (chartParams.itemColorAlternately) {
-        itemColorAlternately = chartParams.itemColorAlternately
-      }
-
-      let dataArray = []
-      if (direction == 'horizontal') { // 柱状图水平方向
-        dataArray = [
-          [240, '中国出版集团公司'],
-          [200, '中国铁路总公司'],
-          [175, '中国烟草总公司'],
-          [140, '中国邮政集团公司'],
-          [99, '中国石油天然气集团公司']
-        ]
-      } else if (direction == 'vertical') { // 柱状图竖直方向
-        dataArray = [
-          ['中国出版集团公司', 240],
-          ['中国铁路总公司', 200],
-          ['中国烟草总公司', 175],
-          ['中国邮政集团公司', 140],
-          ['中国石油天然气集团公司', 99]
-        ]
-      }
-
-      this.chartOption = {
-        tooltip: {
-          appendToBody: true,
-          trigger: 'axis',
-          textStyle: {
-            width: '20px',
-            overflow: 'truncate'
-          },
-          formatter: (direction == 'horizontal') ? categoryHorizontalFormatter : categoryVerticalFormatter,
-          show: true,
-          className: 'nz-chart-tooltip',
-          extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
-        },
-        xAxis: {
-          type: xType,
-          axisTick: { show: false },
-          axisLine: { show: false }
-        },
-        yAxis: {
-          type: yType,
-          axisTick: { show: false },
-          axisLine: { show: false }
-        },
-        grid: {
-          top: 20,
-          left: 10,
-          right: 25,
-          bottom: 20,
-          containLabel: true
-        },
-        color: chartBarColor,
-        series: [{
-          barWidth: 15,
-          data: dataArray,
-          type: 'bar',
-          label: { show: false },
-          barCategoryGap: '10%',
-          itemStyle: {
-            color: function (params) {
-              if (itemColorAlternately) {
-                return getCharBartColor([params.dataIndex])
-              } else {
-                return getCharBartColor(0)
-              }
-            }
-          }
-        }]
-      }
-    },
-
     initEchartsWithStatistics (chartParams) {
       const queryParams = { ...this.queryTimeRange, ...this.entity }
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
@@ -2210,82 +2065,6 @@ export default {
       })
     },
 
-    initTestDataForApp (chartParams) {
-      let rlt = ''
-      if (chartParams.url.indexOf('App') > -1) {
-        rlt = {
-          code: 200,
-          msg: '',
-          data: {
-            resultType: 'table',
-            result: [{
-              appCategory: 'aaa',
-              uniqApps: 'bbb',
-              bytes: '1337678073',
-              packets: '1687757',
-              sessions: '28307',
-              appRisk: 'low'
-            }, {
-              appCategory: 'www',
-              uniqApps: 'uuu',
-              bytes: '1337678073',
-              packets: '1687757',
-              sessions: '28307',
-              appRisk: 'middle'
-            }, {
-              appCategory: 'xxx',
-              uniqApps: 'zzz',
-              bytes: '1337678073',
-              packets: '1687757',
-              sessions: '28307',
-              appRisk: 'high'
-            }
-            ]
-          },
-          success: true
-        }
-      }
-      return rlt
-    },
-
-    initTestDataForAppTable (chartParams) {
-      let rlt = ''
-      if (chartParams.urlTable.indexOf('app') > -1) {
-        rlt = {
-          code: 200,
-          msg: '',
-          data: {
-            resultType: 'table',
-            result: [{
-              sessions: '0',
-              packets: '134',
-              bytes: '33202',
-              appName: 'aacccc',
-              appCategory: 'aaa',
-              appRisk: 'low'
-            }, {
-              sessions: '0',
-              packets: '134',
-              bytes: '33202',
-              appName: 'wwcccc',
-              appCategory: 'www',
-              appRisk: 'middle'
-            }, {
-              sessions: '0',
-              packets: '134',
-              bytes: '33202',
-              appName: 'xxcccc',
-              appCategory: 'xxx',
-              appRisk: 'high'
-            }
-            ]
-          },
-          success: true
-        }
-      }
-      return rlt
-    },
-
     initEchartsWithPieTable (chartParams) {
       const self = this
       chartParams.valueColumn = this.orderPieTable
@@ -2294,9 +2073,6 @@ export default {
       const tableQueryParams = { ...this.queryTimeRange, limit: 10, order: this.orderPieTable, ...this.entity } // 统计数据的查询参数
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方)
       get(replaceUrlPlaceholder(chartParams.url, queryParams)).then(response => {
-        // app：测试数据生成，如接口可正常返回数据后，删除即可
-        response = this.initTestDataForApp(chartParams)
-
         if (response.code === 200) {
           if (this.$_.isEmpty(response.data.result)) {
             this.noData = true
@@ -2313,8 +2089,11 @@ export default {
               interval: 1
             }
           }
+
           const data = response.data.result.map(d => {
-            tableQueryParams[chartParams.nameColumn].push(d[chartParams.nameColumn])
+            if (d[chartParams.nameColumn]) {
+              this.allSelectPieChartName.push(d[chartParams.nameColumn])
+            }
             return {
               data: d,
               name: d[chartParams.nameColumn],
@@ -2322,17 +2101,16 @@ export default {
               unitType: unitType
             }
           })
+
           this.allSelectPieChartName = tableQueryParams[chartParams.nameColumn]
           this.chartOption.series[0].data = data
           if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
             this.chartOption.legend.type = 'scroll'
           }
           this.myChart.setOption(this.chartOption)
+
           if (!this.$_.isEmpty(data)) {
             get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response2 => {
-              // app：测试数据生成，如接口可正常返回数据后，删除即可
-              response2 = this.initTestDataForAppTable(chartParams)
-
               if (response2.code === 200) {
                 this.pieTableData = response2.data.result
               } else {

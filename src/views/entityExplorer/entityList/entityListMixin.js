@@ -81,24 +81,24 @@ export default {
       switch (this.entityData.entityType) {
         case ('ip'): {
           params = {
-            startTime: this.timeFilter.startTime?parseInt(this.timeFilter.startTime / 1000): Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime?parseInt(this.timeFilter.endTime / 1000):Math.floor(now / 1000),
+            startTime: this.timeFilter.startTime ? parseInt(this.timeFilter.startTime / 1000) : Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime ? parseInt(this.timeFilter.endTime / 1000) : Math.floor(now / 1000),
             ip: this.entityData.ipAddr
           }
           break
         }
         case ('domain'): {
           params = {
-            startTime: this.timeFilter.startTime?parseInt(this.timeFilter.startTime / 1000): Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime?parseInt(this.timeFilter.endTime / 1000):Math.floor(now / 1000),
+            startTime: this.timeFilter.startTime ? parseInt(this.timeFilter.startTime / 1000) : Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime ? parseInt(this.timeFilter.endTime / 1000) : Math.floor(now / 1000),
             domain: this.entityData.domainName
           }
           break
         }
         case ('app'): {
           params = {
-            startTime: this.timeFilter.startTime?parseInt(this.timeFilter.startTime / 1000): Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime?parseInt(this.timeFilter.endTime / 1000):Math.floor(now / 1000),
+            startTime: this.timeFilter.startTime ? parseInt(this.timeFilter.startTime / 1000) : Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime ? parseInt(this.timeFilter.endTime / 1000) : Math.floor(now / 1000),
             appName: this.entityData.appName
           }
           break
@@ -177,7 +177,7 @@ export default {
               return {
                 ...seriesTemplate,
                 name: this.$t('entities.sentThroughput'), // 'bytes_sent_rate',//legendMapping[`ip_${r.legend}`],
-                data: r.values.map(v => [Number(v[0])* 1000, Number(v[1]), unitTypes.byte]),
+                data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
                 itemStyle: {
                   normal: {
                     color: '#69b072',
@@ -205,7 +205,7 @@ export default {
               return {
                 ...seriesTemplate,
                 name: this.$t('entities.receivedThroughput'), // legendMapping[`ip_${r.legend}`],
-                data: r.values.map(v => [Number(v[0])* 1000, Number(v[1]), unitTypes.byte]),
+                data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
                 itemStyle: {
                   normal: {
                     color: '#7899c6',
@@ -239,7 +239,7 @@ export default {
         }
       }).finally(() => {
         this.$nextTick(() => {
-          if(chartOption){
+          if (chartOption) {
             const myChart = echarts.init(document.getElementById(`entityListChart${this.entityName}`))
             myChart.setOption(chartOption)
           }

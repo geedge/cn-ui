@@ -220,7 +220,7 @@ import entityDetailMixin from './entityDetailMixin'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
-import _ from "lodash";
+import _ from 'lodash'
 export default {
   name: 'Domain',
   components: {
