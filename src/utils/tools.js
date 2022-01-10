@@ -459,7 +459,7 @@ export function objToStr (obj) {
 }
 // 搜索功能：字符串转对象
 export function strToObj (n) {
-  const paramsArr = n.split(/\s[aA][nN][dD]\s/)
+  const paramsArr = n.split(/\sAND\s/)
   const paramsObj = {}
   paramsArr.forEach(string => {
     const param = string.split('=')
