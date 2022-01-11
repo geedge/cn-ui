@@ -24,6 +24,10 @@ generate_git-log:
     - "git log -100 --pretty=format:'%ad : %s' >> ./public/git-log.html"
     - echo "</pre></body></html>" >> ./public/git-log.html
     - echo "处理 git-log.html 结束"
+  artifacts:
+    paths:
+      - public/index.html
+      - public/git-log.html
   only:
     - dev
   tags:
