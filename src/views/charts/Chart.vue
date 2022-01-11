@@ -2294,9 +2294,11 @@ export default {
     }
   },
   mounted () {
-    this.initChart()
-    this.throttle = this.$_.throttle(this.echartsResize, 500)
-    window.addEventListener('resize', this.throttle)
+    setTimeout(() => {
+      this.initChart()
+      this.throttle = this.$_.throttle(this.echartsResize, 500)
+      window.addEventListener('resize', this.throttle)
+    }, 300)
   },
   watch: {
     chart: {
@@ -2304,7 +2306,7 @@ export default {
       deep: true,
       handler (n, o) {
         if (o) {
-          this.initChart()
+          setTimeout(() => { this.initChart() })
         }
       }
     },
@@ -2315,7 +2317,7 @@ export default {
         if (n && o) {
           this.standaloneTimeRange.use = false
           this.$nextTick(() => {
-            this.initChart()
+            setTimeout(() => { this.initChart() })
           })
         }
       }
@@ -2326,7 +2328,7 @@ export default {
       handler (n, o) {
         if (n) {
           this.$nextTick(() => {
-            this.initChart()
+            setTimeout(() => { this.initChart() })
           })
         }
       }

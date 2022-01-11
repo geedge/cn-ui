@@ -93,7 +93,7 @@
         </div>
       </div>
       <el-collapse-transition>
-        <div class="cn-entity__detail-overview" v-show="!isCollapse">
+        <div class="cn-entity__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
           <detail-overview
               :entity="entityData"
