@@ -210,7 +210,7 @@ export default {
     if (this.listMode === 'list') {
       this.entityData = _.cloneDeep(this.entity)
       this.chartOption = _.cloneDeep(entityListLineOption)
-      // setTimeout(() => { this.queryEntityDetail() })
+      setTimeout(() => { this.queryEntityDetail() })
     }
   }
 }
