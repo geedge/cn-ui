@@ -51,8 +51,8 @@ https://www.lodashjs.com/
 多个单词时，应该以高阶的 (通常是一般化描述的) 单词开头，以描述性的修饰词结尾  
 eg：`SearchButtonClear.vue` 反例：`ClearSearchButton.vue`
 - **文件夹**  
-使用小写，单词间使用连字符`-`连接  
-eg：`right-box`
+使用小写，单词间使用连字符`-`连接，或使用驼峰格式 
+eg：`right-box`、`rightBox`
 
 
 - **VUE组件文件**  

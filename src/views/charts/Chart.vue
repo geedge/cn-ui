@@ -22,10 +22,10 @@
       <template v-for="chart in tab.children">
         <chart
             v-if="activeTab == tab.id"
-            :key="chart.id"
-            :chart="chart"
+            :key="Chart.id"
+            :chart="Chart"
             :time-filter="timeFilter"
-            :ref="`chart-${chart.id}`"
+            :ref="`chart-${Chart.id}`"
             :entity="entity"
             @getCurrentTimeRange="getCurrentTimeRange"
         ></chart>
@@ -367,11 +367,11 @@
       </div>
     </div>
     <div class="cn-chart__body">
-      <template v-for="chart in chartInfo.children" :key="chart.id">
+      <template v-for="chart in chartInfo.children" :key="Chart.id">
         <chart
-            :chart="chart"
+            :chart="Chart"
             :time-filter="timeFilter"
-            :ref="`chart-${chart.id}`"
+            :ref="`chart-${Chart.id}`"
             :entity="entity"
             :parent-data="groupData"
             :from-block="fromBlock"
@@ -402,11 +402,11 @@
       </div>
     </div>
     <div class="cn-chart__body">
-      <template v-for="chart in chartInfo.children" :key="chart.id">
+      <template v-for="chart in chartInfo.children" :key="Chart.id">
         <chart
-            :chart="chart"
+            :chart="Chart"
             :time-filter="chartTimeFilter"
-            :ref="`chart-${chart.id}`"
+            :ref="`chart-${Chart.id}`"
             :entity="entity"
             :parent-data="groupData"
             :from-block="true"

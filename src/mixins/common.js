@@ -1,4 +1,3 @@
-import theme from '@/assets/css/theme.scss'
 import { hasButton } from '@/permission'
 export default {
   data () {
@@ -11,7 +10,6 @@ export default {
         refresh: false,
         query: false
       },
-      theme: theme, // scss主题变量
       prevent_opt: {
         save: false,
         import: false,

@@ -1,2 +1,12 @@
-@import './rightBoxCommon';
-@import './tableCommon';
+@import 'right-box-common';
+@import 'table-common';
+
+/* 通用css */
+.panel-chart__no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  color: #999;
+}

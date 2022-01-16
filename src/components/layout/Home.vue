@@ -5,6 +5,8 @@
       <cn-header></cn-header>
       <cn-container v-if="containerShow" ref="container"></cn-container>
     </main>
+    <!-- 临时文本dom，用来计算文本长度 -->
+    <span class="temp-dom"></span>
   </div>
 </template>
 

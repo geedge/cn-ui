@@ -51,4 +51,12 @@ $--chart-single-value-icon-background-color: #E8F6FF;
 
 $--content-right-background-color: #EFF2F5; //右侧背景色
 
+// 空白背景色
+$--background-color-empty: #fffffe;
+$--background-color-1: #EFEFEF;
+// 普通字色(覆盖element-ui内置变量)
+$--color-text-regular: #666665;
+$--border-color-light: #E7EAED;
+$--chart-box-border-color: $--border-color-light;
+$--chart-title-hover-background-color: #323238;
 @import './common';

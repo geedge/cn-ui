@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import rightBoxMixin from '@/mixins/rightBox'
+import rightBoxMixin from '@/mixins/right-box'
 import { api } from '@/utils/api'
 import { VAceEditor } from 'vue3-ace-editor'
 import 'ace-builds/src-noconflict/mode-javascript'

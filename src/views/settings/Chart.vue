@@ -53,7 +53,7 @@
 </template>
 <script>
 import cnDataList from '@/components/table/CnDataList'
-import dataListMixin from '@/mixins/dataList'
+import dataListMixin from '@/mixins/data-list'
 import chartTable from '@/components/table/settings/ChartTable'
 import chartBox from '@/components/rightBox/settings/ChartBox'
 import { api } from '@/utils/api'

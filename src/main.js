@@ -11,7 +11,7 @@ import i18n from '@/i18n'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
 import 'highlight.js/styles/color-brewer.css'
 import '@/assets/css/main.scss' // 样式入口
-// import VueGridLayout from 'vue-grid-layout'
+import VueGridLayout from 'vue-grid-layout'
 import ElementPlus from 'element-plus'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc' // dependent on utc plugin
@@ -34,7 +34,7 @@ app.use(store)
 app.use(ElementPlus)
 app.use(i18n)
 app.use(hljsVuePlugin)
-// app.use(VueGridLayout)
+app.use(VueGridLayout)
 
 app.directive('has', hasPermission) // 注册指令
 app.directive('click-outside', clickOutside)

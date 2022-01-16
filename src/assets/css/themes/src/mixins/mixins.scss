@@ -140,7 +140,7 @@
   }
 
   @at-root {
-    #{renderThemeClass($selector)}##{&}#{$specSelector}.#{$block+$element-separator+$element+$modifierCombo} {
+    #{renderThemeClass($selector)}#{&}#{$specSelector}.#{$block+$element-separator+$element+$modifierCombo} {
       @content;
     }
   }
@@ -164,9 +164,8 @@
 }
 
 @mixin when($state) {
-  $selector: &;
   @at-root {
-    #{renderThemeClass($selector)}&.#{$state-prefix + $state} {
+    &.#{$state-prefix + $state} {
       @content;
     }
   }

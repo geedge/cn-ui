@@ -9,3 +9,5 @@
 ### 源码改动
 - theme-chalk/src/common/var.scss 首行增加$--theme属性
 - theme-chalk/src/mixins/mixins.scss 改动较多，如需了解请比对文件差异
+-   // $arrow-selector: #{& + '__arrow'};   
+    改为 $arrow-selector: '.el-popper__arrow';

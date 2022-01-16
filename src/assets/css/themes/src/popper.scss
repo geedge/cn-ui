@@ -12,7 +12,8 @@
   word-wrap: break-word;
   visibility: visible;
 
-  $arrow-selector: #{& + '__arrow'};
+  // $arrow-selector: #{& + '__arrow'};
+  $arrow-selector: '.el-popper__arrow';
 
   @include when(dark) {
     color: $--color-white;

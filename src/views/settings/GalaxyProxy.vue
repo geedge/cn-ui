@@ -78,7 +78,7 @@
 import cnDataList from '@/components/table/CnDataList'
 import galaxyProxyBox from '@/components/rightBox/settings/GalaxyProxyBox'
 import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
-import dataListMixin from '@/mixins/dataList'
+import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
 import { get, put } from '@/utils/http'
 import TopToolMoreOptions from '@/components/common/popBox/TopToolMoreOptions'

@@ -48,7 +48,7 @@
 </template>
 <script>
 import cnDataList from '@/components/table/CnDataList'
-import dataListMixin from '@/mixins/dataList'
+import dataListMixin from '@/mixins/data-list'
 import rolesTable from '@/components/table/settings/RoleTable'
 import roleBox from '@/components/rightBox/settings/RoleBox'
 import { api } from '@/utils/api'

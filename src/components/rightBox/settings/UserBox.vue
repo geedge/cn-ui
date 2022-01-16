@@ -59,7 +59,6 @@
             <el-switch
                id="account-input-status"
                v-model="editObject.status"
-               :active-color="theme.themeColor"
                :disabled="(editObject.username === loginName) || (editObject.username==='admin' && editObject.id==1)"
                :active-value="1"
                :inactive-value="0">
@@ -85,7 +84,7 @@
 </template>
 
 <script>
-import rightBoxMixin from '@/mixins/rightBox'
+import rightBoxMixin from '@/mixins/right-box'
 import { get, post, put } from '@/utils/http'
 export default {
   name: 'UserBox',

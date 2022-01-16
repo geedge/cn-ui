@@ -375,12 +375,11 @@
 }
 .chart__loading {
   position: absolute;
-  height: calc(100% - 47px);
-  top: 47px;
+  height: 100%;
   width: 100%;
   background-color: #fefefe;
   z-index: 1;
-  opacity: .9;
+  opacity: .8;
 
   i {
     position: absolute;
@@ -389,4 +388,13 @@
     font-size: 30px;
     color: #aaa;
   }
+}
+
+.map-back {
+  position: absolute;
+  right: 12px;
+  top: 15px;
+  color: $--color-primary;
+  cursor: pointer;
+  z-index: 2;
 }

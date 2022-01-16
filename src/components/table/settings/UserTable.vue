@@ -44,7 +44,6 @@
           <el-switch
                   v-if="scope.row.id"
                   v-model="scope.row.status"
-                  :active-color="theme.themeColor"
                   active-value="1"
                   :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id==1) "
                   inactive-value="0"

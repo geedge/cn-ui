@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import rightBoxMixin from '@/mixins/rightBox'
+import rightBoxMixin from '@/mixins/right-box'
 import { get, post, put } from '@/utils/http'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api } from '@/utils/api'

@@ -33,7 +33,7 @@
 </template>
 <script>
 import cnDataList from '@/components/table/CnDataList'
-import dataListMixin from '@/mixins/dataList'
+import dataListMixin from '@/mixins/data-list'
 import operationLogTable from '@/components/table/settings/OperationLogTable'
 import { api } from '@/utils/api'
 

@@ -1,9 +1,11 @@
 import { createStore } from 'vuex'
 import user from './modules/user'
+import panel from './modules/panel'
 
 const store = createStore({
   modules: {
-    user
+    user,
+    panel
   },
   state () {
     return {

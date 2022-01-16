@@ -1,13 +1,17 @@
 <template>
-  <div style="padding: 10px 0 20px 20px; overflow: auto" v-if="!isEntityDetail">
-    <div id="cn-panel"
-         :class="(isCryptocurrency)?'cn-panel cn-panel-crypto':'cn-panel'"
-    >
+  <div style="padding: 10px 10px 20px 10px; overflow: auto" v-if="!isEntityDetail">
+    <div id="cn-panel" class="cn-panel2">
       <div class="panel__time">
         <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
       </div>
-      <chart
+      <panel-chart-list
+          :time-filter="timeFilter"
+          :data-list="chartList"
+          :panel-lock="panelLock"
+      >
+      </panel-chart-list>
+<!--      <chart
           v-for="chart in chartList"
           :key="chart.id"
           :chart="chart"
@@ -15,7 +19,7 @@
           :ref="`chart-${chart.id}`"
           :entity="entity"
           @getCurrentTimeRange="getCurrentTimeRange"
-      ></chart>
+      ></chart>-->
       <!--    <grid-layout v-model:layout="chartList"
                        :col-num="12"
                        :row-height="30"
@@ -40,12 +44,12 @@
     <div class="entity-detail__body">
       <div class="cn-panel" @scroll="scroll" id="cn-panel">
         <template v-for="chart in chartList" :key="chart.id">
-          <chart
+<!--          <chart
               :chart="chart"
               :ref="`chart-${chart.id}`"
               :entity="entity"
               @getCurrentTimeRange="getCurrentTimeRange"
-          ></chart>
+          ></chart>-->
         </template>
       </div>
     </div>
@@ -58,7 +62,7 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
-import Chart from './Chart'
+import PanelChartList from './PanelChartList'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 
@@ -70,13 +74,14 @@ export default {
     typeName: String
   },
   components: {
-    Chart,
     DateTimeRange,
-    TimeRefresh
+    TimeRefresh,
+    PanelChartList
   },
   data () {
     return {
       chartList: [], // 普通panel的chart
+      panelLock: true,
       // entity详情的chart
       detailTabs: [],
       detailChartList: [],

@@ -425,6 +425,7 @@ export function replaceUrlPlaceholder (url, params) {
   _.forIn(params, (value, key) => {
     url = url.replace('{{' + key + '}}', value)
   })
+  url = url.replace(/{{(.*?)}}/g, '')
   return url
 }
 // 双引号替换为单引号
