@@ -166,7 +166,7 @@ export default {
           ...this.entity,
           ...extraParams
         }
-        const requestUrl = url || chartParams.url
+        const requestUrl = url || (chartParams && chartParams.url)
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
             if (response.code === 200) {
@@ -177,11 +177,14 @@ export default {
               this.noData = true
               this.errorInfo = response.msg || response.message || 'Unknown'
             }
+          }).finally(() => {
+            setTimeout(() => {
+              this.loading = false
+            }, 200)
           })
         }
       } catch (e) {
         console.error(e)
-      } finally {
         setTimeout(() => {
           this.loading = false
         }, 200)

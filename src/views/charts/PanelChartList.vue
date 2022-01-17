@@ -308,15 +308,9 @@ export default {
 ]
           `)*/
         const tempList = n.map(item => {
-          let params = {}
           const height = item.h
           if (item.params) {
-            try {
-              params = JSON.parse(item.params)
-            } catch (e) {
-              console.error(e)
-            }
-            params.showHeader = true
+            item.params.showHeader = true
           }
           return {
             ...item,
@@ -325,7 +319,7 @@ export default {
             h: height,
             x: item.x || 0,
             y: item.y || 0,
-            params,
+            params: item.params,
             category: getTypeCategory(item.type) // 类别，是echarts还是map等等
           }
         })

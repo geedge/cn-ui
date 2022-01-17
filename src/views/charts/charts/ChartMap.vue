@@ -115,7 +115,9 @@ export default {
       }
     },
     loadAm4ChartMap (polygonSeries, country, chartData) {
-      this.$emit('showLoading', true)
+      if (chartData) {
+        this.$emit('showLoading', true)
+      }
       try {
         // 清除数据
         polygonSeries.data.splice(0)
@@ -187,9 +189,11 @@ export default {
       } catch (e) {
         console.error(e)
       } finally {
-        setTimeout(() => {
-          this.$emit('showLoading', false)
-        }, 200)
+        if (chartData) {
+          setTimeout(() => {
+            this.$emit('showLoading', false)
+          }, 200)
+        }
       }
     },
     loadLeafletMap () {
@@ -250,8 +254,13 @@ export default {
       return { key, labelText }
     }
   },
-  mounted () {
-    this.initMap(`chart${this.chartInfo.id}`)
+  watch: {
+    chartData: {
+      deep: true,
+      handler (n) {
+        this.initMap(`chart${this.chartInfo.id}`)
+      }
+    }
   },
   setup (props) {
     return {
