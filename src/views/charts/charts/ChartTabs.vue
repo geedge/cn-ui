@@ -3,14 +3,13 @@
       class="cn-chart cn-chart__tabs"
       v-model="activeTab"
       @tab-click="changeTab"
-      :style="computePosition"
-      :ref="`chart-${chart.id}`"
+      :ref="`chart-${chartInfo.id}`"
   >
     <el-tab-pane
         v-for="tab in chartInfo.children"
         :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
         :key="tab.id"
-        :ref="`chart-${chart.id}`"
+        :ref="`chart-${chartInfo.id}`"
     >
       <template v-for="chart in tab.children" :key="chart.id">
         <panel-chart
@@ -46,13 +45,12 @@ export default {
       }
     }
   },
-  data () {
-    return {
-    }
-  },
   methods: {
     showFullscreen () {
 
+    },
+    changeTab (tab) {
+      this.activeTab = tab.paneName
     }
   },
   setup (props) {

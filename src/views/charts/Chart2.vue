@@ -1,7 +1,7 @@
 <template>
   <div class="cn-chart">
-    <loading :loading="loading"></loading>
-    <chart-no-data v-if="!loading && (isNoData || isError)"></chart-no-data>
+    <loading :loading="loading && !isTabs"></loading>
+    <chart-no-data v-if="isNoData"></chart-no-data>
     <template v-else>
 
       <chart-tabs
@@ -79,7 +79,7 @@ export default {
   },
   computed: {
     isNoData () {
-      return _.isEmpty(this.chartData)
+      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs
     },
     chartOption () {
       if (this.customChartOption) {

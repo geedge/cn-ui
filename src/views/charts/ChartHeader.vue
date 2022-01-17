@@ -2,7 +2,7 @@
   <div class="chart-header" :class="{'chart-header--title-chart': isTitle}">
     <div class="chart-header__title">{{chartInfo.name}}</div>
     <chart-error :isError="isError" :errorInfo="errorInfo"></chart-error>
-    <div class="chart-header__tools" v-if="!isTitle">
+    <div class="chart-header__tools" v-if="!isTitle && !isTabs">
       <el-popover trigger="click" placement="top" :content="chartInfo.remark" v-if="chartInfo.remark">
         <template #reference>
           <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { isTitle } from './charts/tools'
+import { isTitle, isTabs } from './charts/tools'
 import ChartError from '@/components/charts/ChartError'
 export default {
   name: 'ChartHeader',
@@ -45,7 +45,8 @@ export default {
   },
   setup (props) {
     return {
-      isTitle: isTitle(props.chartInfo.type)
+      isTitle: isTitle(props.chartInfo.type),
+      isTabs: isTabs(props.chartInfo.type)
     }
   }
 }
