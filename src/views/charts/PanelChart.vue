@@ -1,9 +1,13 @@
 <template>
   <!-- chart外层箱子 -->
-  <div :class="{'panel-chart--fullscreen': isFullscreen, 'panel-chart--title-chart': isTitle}" class="panel-chart" :id="isFullscreen ? ('chart-screen-' + chartInfo.id ) : ('chart-local-' + chartInfo.id)">
+  <div
+      :class="{'panel-chart--fullscreen': isFullscreen, 'panel-chart--title-chart': isTitle}"
+      class="panel-chart"
+      :id="isFullscreen ? ('chart-screen-' + chartInfo.id ) : ('chart-local-' + chartInfo.id)"
+  >
     <!-- title和工具栏，支持浮动 -->
     <chart-header
-        v-if="!isFullscreen && showHeader && !isSingleValue"
+        v-if="!isFullscreen && showHeader && !isSingleValue && !isTabs"
         :is-error="isError"
         :error-info="errorInfo"
         :chart-data="chartData"
@@ -16,7 +20,7 @@
     <!-- 数据查询后传入chart组件，chart组件内不查询，只根据接传递的数据来渲染 -->
     <chart
         ref="chart"
-        v-if="(!isGroup || !chartInfo.param.collapse) && !isTitle"
+        v-if="(!isGroup || !(chartInfo.params && chartInfo.params.collapse)) && !isTitle"
         :chart-data="chartData"
         :result-type="resultType"
         :chart-info="chartInfo"
@@ -24,6 +28,7 @@
         :panel-lock="panelLock"
         :is-error="isError"
         :loading="loading"
+        :entity="entity"
         :is-fullscreen="isFullscreen"
         @showLoading="showLoading"
     ></chart>
@@ -80,6 +85,7 @@ export default {
     timeFilter: Object, // 时间范围
     isFullscreen: Boolean,
     panelLock: Boolean,
+    entity: Object,
     showHeader: {
       type: Boolean,
       default: true

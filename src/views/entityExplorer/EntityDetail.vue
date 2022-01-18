@@ -12,13 +12,12 @@
           </div>
         </template>
       </div>
-      <div class="entity-detail__content">
+      <div class="entity-detail__content" @scroll="scroll" id="detailWrapper">
         <cn-panel
             ref="cnPanel"
             :entity="entityData"
             :is-entity-detail="true"
             @chartLoaded="chartLoaded"
-            @scroll="scroll"
         ></cn-panel>
       </div>
     </main>
@@ -75,16 +74,16 @@ export default {
     chartLoaded (chartList) {
       this.anchorPoints = []
       let anchorPoints = []
-      const panelDom = document.querySelector('#cn-panel')
+      const panelDom = document.querySelector('#detailWrapper')
       this.scrollHeight = panelDom.scrollHeight
       this.clientHeight = panelDom.clientHeight
       chartList.forEach(chart => {
         if (chart.params.anchorPoint) {
-          const dom = document.querySelector(`#${chart.params.anchorPoint}`)
-          anchorPoints.push({
+          const dom = document.querySelector(`[anchor-point='${chart.params.anchorPoint}']`)
+          dom && anchorPoints.push({
             id: chart.params.anchorPoint,
             label: chart.i18n ? this.$t(chart.i18n) : chart.name,
-            top: dom.offsetTop/* ,
+            top: dom.offsetTop + 10/* ,
             height: document.querySelector(`#${chart.params.anchorPoint}}`).scrollHeight */
           })
         }
@@ -98,12 +97,12 @@ export default {
       }
       this.anchorPoints = anchorPoints
     },
-    scroll ({ top }) {
-      this.top = top || 0
+    scroll (e) {
+      this.top = (e.target.scrollTop + 10) || 0
     },
     jumpToAnchor (anchor) {
       this.top = anchor.top
-      this.$refs.cnPanel.jumpToTop(anchor.top)
+      document.querySelector('#detailWrapper').scrollTop = this.top
     }
   },
   computed: {
@@ -133,7 +132,7 @@ export default {
     },
     currentAnchor () {
       let currentAnchor = null
-      if (this.top + this.clientHeight === this.scrollHeight) {
+      if (this.top + this.clientHeight - 10 === this.scrollHeight) {
         currentAnchor = this.anchorPoints[this.anchorPoints.length - 1]
       } else {
         this.anchorPoints.forEach(anchor => {

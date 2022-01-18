@@ -68,6 +68,7 @@
       height: calc(100% - 28px);
       flex: 1;
       padding: 10px;
+      overflow: auto;
       background-color: $--content-right-background-color;
 
       &>.cn-entity-detail .entity-detail__body>.cn-panel {

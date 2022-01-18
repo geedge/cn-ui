@@ -1,6 +1,6 @@
 <template>
   <div class="cn-chart">
-    <loading :loading="loading && !isTabs"></loading>
+    <loading :loading="loading && !isTabs && !isBlock"></loading>
     <chart-no-data v-if="isNoData"></chart-no-data>
     <template v-else>
 
@@ -8,13 +8,15 @@
           v-if="isTabs"
           :chart-info="chartInfo"
           :query-params="queryParams"
+          :entity="entity"
       ></chart-tabs>
 
       <chart-map
-          v-else-if="isMap"
+          v-else-if="isMap && !isIpBasicInfo"
           :chart-info="chartInfo"
           :chart-data="chartData"
           :query-params="queryParams"
+          :entity="entity"
           @showLoading="showLoading"
       ></chart-map>
 
@@ -26,7 +28,19 @@
           @showLoading="showLoading"
       ></chart-single-value>
 
-      <div v-else style="height: 100%; width: 100%; background-color: lightcyan;"></div>
+      <chart-block
+          v-else-if="isBlock"
+          :chart-info="chartInfo"
+          :chart-data="chartData"
+          :entity="entity"
+      ></chart-block>
+
+      <ip-basic-info
+          v-else-if="isIpBasicInfo"
+          :chart-info="chartInfo"
+          :chart-data="chartData"
+          :entity="entity"
+      ></ip-basic-info>
 
       <chart-echart-line
           v-else-if="isEchartsLine"
@@ -47,6 +61,8 @@ import ChartNoData from './charts/ChartNoData'
 import ChartTabs from './charts/ChartTabs'
 import ChartMap from './charts/ChartMap'
 import ChartSingleValue from './charts/ChartSingleValue'
+import ChartBlock from './charts/ChartBlock'
+import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from './charts/ChartEchartLine'
 import {
   isEcharts,
@@ -84,12 +100,14 @@ import _ from 'lodash'
 export default {
   name: 'chart',
   components: {
+    IpBasicInfo,
     ChartSingleValue,
     Loading,
     ChartNoData,
     ChartTabs,
     ChartMap,
-    ChartEchartLine
+    ChartEchartLine,
+    ChartBlock
   },
   props: {
     chartInfo: Object,
@@ -100,6 +118,7 @@ export default {
     isFullscreen: Boolean,
     loading: Boolean,
     panelLock: Boolean,
+    entity: Object,
     isError: Boolean
   },
   computed: {

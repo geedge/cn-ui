@@ -19,15 +19,17 @@ import timezone from 'dayjs/plugin/timezone'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import weekday from 'dayjs/plugin/weekday'
 
+import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
+import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import PanelChartList from '@/views/charts/PanelChartList'
 
 const _ = require('lodash') // lodash工具
 
-dayjs.extend(utc)
+/*dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
 dayjs.extend(weekday)
-window.$dayJs = dayjs
+window.$dayJs = dayjs*/
 
 const app = createApp(App)
 
@@ -47,6 +49,8 @@ app.config.globalProperties.$_ = _
 
 app.mixin(commonMixin)
 
+app.component('date-time-range', DateTimeRange)
+app.component('time-refresh', TimeRefresh)
 app.component('panel-chart-list', PanelChartList)
 
 app.mount('#app')

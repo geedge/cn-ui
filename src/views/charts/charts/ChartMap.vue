@@ -4,21 +4,16 @@
 </template>
 
 <script>
-import * as L from 'leaflet'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { getGeoData, replaceUrlPlaceholder } from '@/utils/tools'
 import { storageKey } from '@/utils/constants'
-import 'leaflet/dist/leaflet.css'
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import {
-  isIpBasicInfo,
-  isMapBlock
-} from './tools'
+
+import { isMapBlock } from './tools'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { HeatLegend } from '@/components/amcharts/heatLegend'
 import { getData } from '@/utils/api'
+import chartMixin from './chart-mixin'
 
 export default {
   name: 'ChartMap',
@@ -31,88 +26,50 @@ export default {
       countrySeries: null // 下钻国家series
     }
   },
-  props: {
-    chartInfo: Object,
-    chartData: [Array, Object],
-    queryParams: Object
-  },
+  mixins: [chartMixin],
   methods: {
     initMap (id) {
-      if (this.isIpBasicInfo) {
-        L.Marker.prototype.options.icon = L.icon({
-          iconUrl: icon,
-          shadowUrl: iconShadow
-        })
-        const map = L.map(`chart${this.chartInfo.id}`, {
-          minZoom: 3,
-          maxZoom: 7,
-          zoom: 5,
-          attributionControl: false,
-          zoomControl: false,
-          maxBounds: L.latLngBounds(L.latLng(-90, -180), L.latLng(90, 180))
-        })
-        L.tileLayer(
-          this.mapPictureUrl,
-          { noWrap: true }
-        ).addTo(map)
-
-        const attribution = L.control.attribution({ position: 'bottomright', prefix: '' })
-        attribution.addAttribution(' © OpenStreetMap contributors')
-        attribution.addTo(map)
-
-        /* L.control.zoom({
-          position: 'bottomright',
-          zoomInText: '<i class="nz-icon nz-icon-enlarge"></i>',
-          zoomOutText: '<i class="nz-icon nz-icon-narrow"></i>',
-          zoomInTitle: '',
-          zoomOutTitle: ''
-        }).addTo(map) */
-
-        this.myChart = map
-        this.loadLeafletMap()
-      } else {
-        const chart = am4Core.create(id, am4Maps.MapChart)
-        chart.geodata = getGeoData(storageKey.iso36112WorldLow)
-        chart.projection = new am4Maps.projections.Miller()
-        this.myChart = chart
-        const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
-        polygonSeries.useGeodata = true
-        polygonSeries.exclude = ['AQ'] // 排除南极洲
-        polygonSeries.tooltip.getFillFromObject = false
-        polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
-        this.polygonSeries = polygonSeries
-        const polygonTemplate = polygonSeries.mapPolygons.template
-        polygonTemplate.tooltipHTML = this.generateTooltipHTML()
-        polygonTemplate.nonScalingStroke = true
-        polygonTemplate.strokeWidth = 0.5
-        polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
-        this.loadAm4ChartMap(this.polygonSeries)
-        // 地图点击事件
-        polygonTemplate.events.on('hit', async ev => {
-          const countryId = ev.target.dataItem.dataContext.id
-          if (countryId) {
-            ev.target.series.chart.zoomToMapObject(ev.target)
-            ev.target.isHover = false
-            this.countrySeries = chart.series.push(new am4Maps.MapPolygonSeries())
-            this.countrySeries.tooltip.getFillFromObject = false
-            this.countrySeries.tooltip.background.fill = am4Core.color('#FFFFFF')
-            const countryTemplate = this.countrySeries.mapPolygons.template
-            countryTemplate.tooltipHTML = this.generateTooltipHTML()
-            countryTemplate.nonScalingStroke = true
-            countryTemplate.strokeWidth = 0.5
-            countryTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
-            const geoData = getGeoData(countryId)
-            if (geoData) {
-              this.countrySeries.geodata = geoData
-              this.polygonSeries.hide()
-              const country = ev.target.dataItem.dataContext.serverCountry
-              const queryParams = { ...this.queryParams, country }
-              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-              this.loadAm4ChartMap(this.countrySeries, ev.target.dataItem.dataContext.serverCountry, chartData)
-            }
+      const chart = am4Core.create(id, am4Maps.MapChart)
+      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
+      chart.projection = new am4Maps.projections.Miller()
+      this.myChart = chart
+      const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
+      polygonSeries.useGeodata = true
+      polygonSeries.exclude = ['AQ'] // 排除南极洲
+      polygonSeries.tooltip.getFillFromObject = false
+      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+      this.polygonSeries = polygonSeries
+      const polygonTemplate = polygonSeries.mapPolygons.template
+      polygonTemplate.tooltipHTML = this.generateTooltipHTML()
+      polygonTemplate.nonScalingStroke = true
+      polygonTemplate.strokeWidth = 0.5
+      polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
+      this.loadAm4ChartMap(this.polygonSeries)
+      // 地图点击事件
+      polygonTemplate.events.on('hit', async ev => {
+        const countryId = ev.target.dataItem.dataContext.id
+        if (countryId) {
+          ev.target.series.chart.zoomToMapObject(ev.target)
+          ev.target.isHover = false
+          this.countrySeries = chart.series.push(new am4Maps.MapPolygonSeries())
+          this.countrySeries.tooltip.getFillFromObject = false
+          this.countrySeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+          const countryTemplate = this.countrySeries.mapPolygons.template
+          countryTemplate.tooltipHTML = this.generateTooltipHTML()
+          countryTemplate.nonScalingStroke = true
+          countryTemplate.strokeWidth = 0.5
+          countryTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
+          const geoData = getGeoData(countryId)
+          if (geoData) {
+            this.countrySeries.geodata = geoData
+            this.polygonSeries.hide()
+            const country = ev.target.dataItem.dataContext.serverCountry
+            const queryParams = { ...this.queryParams, country }
+            const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+            this.loadAm4ChartMap(this.countrySeries, ev.target.dataItem.dataContext.serverCountry, chartData)
           }
-        })
-      }
+        }
+      })
     },
     loadAm4ChartMap (polygonSeries, country, chartData) {
       if (chartData) {
@@ -196,20 +153,6 @@ export default {
         }
       }
     },
-    loadLeafletMap () {
-      this.$emit('showLoading', true)
-      try {
-        this.myChart.setView([this.chartData.latitude, this.chartData.longitude], 5)
-        const myIcon = L.divIcon({
-          className: 'cn-icon cn-icon-position2 position-icon'
-        })
-        L.marker([this.chartData.latitude, this.chartData.longitude], { icon: myIcon }).addTo(this.myChart)
-      } finally {
-        setTimeout(() => {
-          this.$emit('showLoading', false)
-        }, 200)
-      }
-    },
     mapBack () {
       this.countrySeries.hide()
       this.$nextTick(() => {
@@ -264,7 +207,6 @@ export default {
   },
   setup (props) {
     return {
-      isIpBasicInfo: isIpBasicInfo(props.chartInfo.type),
       isMapBlock: isMapBlock(props.chartInfo.type)
     }
   }

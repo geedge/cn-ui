@@ -16,7 +16,15 @@ const locale = require('element-plus/lib/locale')
 const debounce = require('lodash/debounce')
 const ElScrollbar = require('element-plus/lib/el-scrollbar')
 const union = require('lodash/union')
-
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
+const advancedFormat = require('dayjs/plugin/advancedFormat')
+const weekday = require('dayjs/plugin/weekday')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
+dayjs.extend(weekday)
+window.$dayJs = dayjs
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { default: e } }
 
 const dayjs__default = /* #__PURE__ */_interopDefaultLegacy(window.$dayJs)

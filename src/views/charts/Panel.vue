@@ -2,8 +2,8 @@
   <div style="padding: 10px 10px 20px 10px; overflow: auto" v-if="!isEntityDetail">
     <div id="cn-panel" class="cn-panel2">
       <div class="panel__time">
-        <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
-        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
+        <date-time-range class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
+        <time-refresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
       </div>
       <panel-chart-list
           :time-filter="timeFilter"
@@ -11,46 +11,26 @@
           :panel-lock="panelLock"
       >
       </panel-chart-list>
-<!--      <chart
-          v-for="chart in chartList"
-          :key="chart.id"
-          :chart="chart"
-          :time-filter="timeFilter"
-          :ref="`chart-${chart.id}`"
-          :entity="entity"
-          @getCurrentTimeRange="getCurrentTimeRange"
-      ></chart>-->
-      <!--    <grid-layout v-model:layout="chartList"
-                       :col-num="12"
-                       :row-height="30"
-                       :is-draggable="draggable"
-                       :is-resizable="resizable"
-                       :vertical-compact="compact"
-                       :use-css-transforms="true"
-          >
-            <grid-item v-for="item in chartList" :key="item.i"
-                       :x="item.x"
-                       :y="item.y"
-                       :w="item.w"
-                       :h="item.h"
-                       :i="item.i"
-            >
-              <span class="text">{{ item.i }}</span>
-            </grid-item>
-          </grid-layout>-->
     </div>
   </div>
   <div class="cn-entity-detail" id="cn-entity-detail" v-else>
     <div class="entity-detail__body">
-      <div class="cn-panel" @scroll="scroll" id="cn-panel">
-        <template v-for="chart in chartList" :key="chart.id">
-<!--          <chart
+      <div class="cn-panel2" id="cn-panel">
+        <panel-chart-list
+            :time-filter="timeFilter"
+            :data-list="chartList"
+            :panel-lock="panelLock"
+            :entity="entity"
+        >
+        </panel-chart-list>
+<!--        <template v-for="chart in chartList" :key="chart.id">
+          <chart
               :chart="chart"
               :ref="`chart-${chart.id}`"
               :entity="entity"
               @getCurrentTimeRange="getCurrentTimeRange"
-          ></chart>-->
-        </template>
+          ></chart>
+        </template>-->
       </div>
     </div>
   </div>
@@ -62,8 +42,6 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
-import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
-import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 
 export default {
   name: 'Panel',
@@ -71,10 +49,6 @@ export default {
     entity: Object,
     isEntityDetail: Boolean,
     typeName: String
-  },
-  components: {
-    DateTimeRange,
-    TimeRefresh
   },
   data () {
     return {
@@ -125,15 +99,12 @@ export default {
         this.chartList = allCharts
         setTimeout(() => {
           this.$emit('chartLoaded', allCharts)
-        })
+        }, 1000)
       }
     },
     changeTab ({ index }) {
       this.currentTab = this.detailTabs[index].id + ''
       this.detailChartList = this.detailTabs[index].children
-    },
-    scroll (e) {
-      this.$emit('scroll', { top: e.target.scrollTop })
     },
     recursionParamsConvert (chart) {
       chart.params = chart.params ? JSON.parse(chart.params) : null
@@ -165,9 +136,6 @@ export default {
       this.chartList.forEach(chart => {
         this.$refs[`chart-${chart.id}`] && this.$refs[`chart-${chart.id}`].reloadChart()
       })
-    },
-    jumpToTop (top) {
-      document.querySelector('#cn-panel').scrollTop = top
     }
   }
 }

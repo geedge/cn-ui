@@ -25,12 +25,14 @@
           :isResizable = "item.type === 'group' ? false: null"
           dragAllowFrom=".chart-header"
           dragIgnoreFrom=".chart-header__tools"
+          v-bind="anchorPoint(item)"
       >
         <panel-chart
             :ref="'chart' + item.id"
             :chart-info="item"
             :show-header="true"
             :time-filter="timeFilter"
+            :entity="entity"
             @showFullscreen="showFullscreen"
         ></panel-chart>
       </grid-item>
@@ -64,6 +66,7 @@
 import PanelChart from '@/views/charts/PanelChart'
 import VueGridLayout from 'vue-grid-layout'
 import { getTypeCategory } from './charts/tools'
+import _ from 'lodash'
 
 export default {
   name: 'PanelChartList',
@@ -76,6 +79,7 @@ export default {
     timeFilter: Object, // 时间范围
     panelLock: { type: Boolean, default: true },
     isGroup: Boolean,
+    entity: Object,
     dataList: Array // 看板中所有图表信息
   },
   data () {
@@ -109,9 +113,21 @@ export default {
       this.fullscreen.visible = show
     }
   },
+  computed: {
+    anchorPoint () {
+      return function (chart) {
+        if (!_.isEmpty(chart.params && chart.params.anchorPoint)) {
+          return { 'anchor-point': chart.params.anchorPoint }
+        } else {
+          return ''
+        }
+      }
+    }
+  },
   watch: {
     dataList: {
       deep: true,
+      immediate: true,
       handler (n, o) {
         this.gridLayoutShow = false
         this.gridLayoutLoading = true

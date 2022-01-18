@@ -86,9 +86,6 @@
   font-weight:normal;
 }
 
-.cn-panel-crypto {
-  grid-template-columns: repeat(36, 1fr) !important;
-}
 .cn-chart:not(.cn-chart__group):not(.cn-chart__block) {
   &>.cn-chart__body {
     height: 100%;
@@ -672,7 +669,7 @@
     height: 100%;
     width: 100%;
     overflow: auto;
-    &>div {
+    /*&>div {
       display: grid;
       grid-template-columns: repeat(30, 1fr);
       grid-auto-flow: row;
@@ -701,7 +698,7 @@
           }
         }
       }
-    }
+    }*/
   }
 }
 .el-overlay {
