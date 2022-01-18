@@ -3,7 +3,7 @@
   <div :class="{'panel-chart--fullscreen': isFullscreen, 'panel-chart--title-chart': isTitle}" class="panel-chart" :id="isFullscreen ? ('chart-screen-' + chartInfo.id ) : ('chart-local-' + chartInfo.id)">
     <!-- title和工具栏，支持浮动 -->
     <chart-header
-        v-if="!isFullscreen && showHeader && !isSingleValue"
+        v-if="!isFullscreen && showHeader && !isSingleValue && !isTabs"
         :is-error="isError"
         :error-info="errorInfo"
         :chart-data="chartData"

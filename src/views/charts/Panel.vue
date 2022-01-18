@@ -62,7 +62,6 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
-import PanelChartList from './PanelChartList'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 
@@ -75,8 +74,7 @@ export default {
   },
   components: {
     DateTimeRange,
-    TimeRefresh,
-    PanelChartList
+    TimeRefresh
   },
   data () {
     return {

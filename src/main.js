@@ -19,6 +19,8 @@ import timezone from 'dayjs/plugin/timezone'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import weekday from 'dayjs/plugin/weekday'
 
+import PanelChartList from '@/views/charts/PanelChartList'
+
 const _ = require('lodash') // lodash工具
 
 dayjs.extend(utc)
@@ -44,6 +46,8 @@ app.directive('no-data', noData)
 app.config.globalProperties.$_ = _
 
 app.mixin(commonMixin)
+
+app.component('panel-chart-list', PanelChartList)
 
 app.mount('#app')
 export default app

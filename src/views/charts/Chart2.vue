@@ -18,6 +18,8 @@
           @showLoading="showLoading"
       ></chart-map>
 
+      <div v-else style="height: 100%; width: 100%; background-color: lightcyan;"></div>
+
     </template>
   </div>
 </template>
