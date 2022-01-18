@@ -3,7 +3,7 @@
   <div :class="{'panel-chart--fullscreen': isFullscreen, 'panel-chart--title-chart': isTitle}" class="panel-chart" :id="isFullscreen ? ('chart-screen-' + chartInfo.id ) : ('chart-local-' + chartInfo.id)">
     <!-- title和工具栏，支持浮动 -->
     <chart-header
-        v-if="!isFullscreen && showHeader && !isSingleValue && !isTabs"
+        v-if="!isFullscreen && showHeader && !isSingleValue"
         :is-error="isError"
         :error-info="errorInfo"
         :chart-data="chartData"
@@ -18,6 +18,7 @@
         ref="chart"
         v-if="(!isGroup || !chartInfo.param.collapse) && !isTitle"
         :chart-data="chartData"
+        :result-type="resultType"
         :chart-info="chartInfo"
         :query-params="queryParams"
         :panel-lock="panelLock"
@@ -87,6 +88,7 @@ export default {
   data () {
     return {
       chartData: null, // 图表要渲染的数据，请求接口得到，传入chart组件，chart组件内除特别情况(多级)外不做查询
+      resultType: null, // 返回数据的类型
       loading: false,
       isError: false, // 接口响应是否报错
       errorInfo: '', // 接口具体错误信息
@@ -171,6 +173,7 @@ export default {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
             if (response.code === 200) {
               this.chartData = response.data.result
+              this.resultType = response.data.resultType
               this.isError = false
             } else {
               this.isError = true
