@@ -18,7 +18,14 @@
           @showLoading="showLoading"
       ></chart-map>
 
-      <div v-else style="height: 100%; width: 100%; background-color: lightcyan;"></div>
+      <chart-echart-line
+          v-else-if="isEchartsLine"
+          :chart-info="chartInfo"
+          :chart-data="chartData"
+          :result-type="resultType"
+          :query-params="queryParams"
+          @showLoading="showLoading"
+      ></chart-echart-line>
 
     </template>
   </div>
@@ -29,8 +36,10 @@ import Loading from '@/components/common/Loading'
 import ChartNoData from './charts/ChartNoData'
 import ChartTabs from './charts/ChartTabs'
 import ChartMap from './charts/ChartMap'
+import ChartEchartLine from './charts/ChartEchartLine'
 import {
   isEcharts,
+  isEchartsLine,
   isSingleValue,
   isTable,
   isActiveIpTable,
@@ -67,11 +76,13 @@ export default {
     Loading,
     ChartNoData,
     ChartTabs,
-    ChartMap
+    ChartMap,
+    ChartEchartLine
   },
   props: {
     chartInfo: Object,
     chartData: [Object, Array, String], // 数据在父组件查询后传入，本组件内不查询，只根据接传递的数据来渲染
+    resultType: Object, // 返回数据的类型
     queryParams: Object, // 接口请求参数
     customChartOption: Object, // 需要自定义echarts的option时传入，非必须；传入该值时仍需传对应格式的chartData
     isFullscreen: Boolean,
@@ -102,6 +113,7 @@ export default {
   setup (props) {
     return {
       isEcharts: isEcharts(props.chartInfo.type),
+      isEchartsLine: isEchartsLine(props.chartInfo.type),
       isEchartsTimeBar: isEchartsTimeBar(props.chartInfo.type),
       isEchartsCategoryBar: isEchartsCategoryBar(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),

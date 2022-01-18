@@ -62,6 +62,10 @@ export function isMapLine (type) {
 export function isMapBlock (type) {
   return type === 2
 }
+/* 普通折线图 */
+export function isEchartsLine (type) {
+  return type === 11
+}
 /* 带统计的折线图 */
 export function isEchartsWithStatistics (type) {
   return type === 12
@@ -147,7 +151,6 @@ export function isBlock (type) {
   return type === 95
 }
 
-
 /* 根据type获取图表分类 */
 const typeCategory = {
   MAP: 'map',
@@ -173,7 +176,6 @@ export function getTypeCategory (type) {
   }
 }
 
-
 /* 根据type获取布局 */
 export const layoutConstant = {
   HEADER: 'header',
@@ -189,7 +191,6 @@ export function getLayout (type) {
   }
   return layout
 }
-
 
 export function getGroupHeight (arr) {
   if (arr.length) {
