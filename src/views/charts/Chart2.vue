@@ -18,6 +18,14 @@
           @showLoading="showLoading"
       ></chart-map>
 
+      <chart-single-value
+          v-else-if="isSingleValue"
+          :chart-info="chartInfo"
+          :chart-data="chartData"
+          :query-params="queryParams"
+          @showLoading="showLoading"
+      ></chart-single-value>
+
       <div v-else style="height: 100%; width: 100%; background-color: lightcyan;"></div>
 
     </template>
@@ -29,6 +37,7 @@ import Loading from '@/components/common/Loading'
 import ChartNoData from './charts/ChartNoData'
 import ChartTabs from './charts/ChartTabs'
 import ChartMap from './charts/ChartMap'
+import ChartSingleValue from './charts/ChartSingleValue'
 import {
   isEcharts,
   isSingleValue,
@@ -64,6 +73,7 @@ import _ from 'lodash'
 export default {
   name: 'chart',
   components: {
+    ChartSingleValue,
     Loading,
     ChartNoData,
     ChartTabs,

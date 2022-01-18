@@ -1,0 +1,137 @@
+<template>
+  <div class="cn-chart__single-value chart-header-position" :class="singleValueClass(type)" :style="{backgroundColor:color}">
+    <div class="single-value-icon__box"  v-if="chartInfo.type != 54">
+      <div class="single-value__icon"><i :class="icon"></i></div>
+    </div>
+    <div class="single-value__content" v-if="chartInfo.type == 51">
+      <div class="content__data">
+        <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
+        <span class="single-value__unit">{{handleSingleValue[1]}}</span>
+      </div>
+      <div class="content__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+    </div>
+    <div class="single-value__content single-value__content--with-chart" v-if="chartInfo.type == 52">
+      <div class="content__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+      <div class="content__data">
+        <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
+        <span class="single-value__unit">{{handleSingleValue[1]}}</span>
+      </div>
+      <div class="content__chart">
+        <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+      </div>
+    </div>
+    <div class="single-value__content" v-if="chartInfo.type == 53">
+      <div class="content__title">
+        <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+      </div>
+      <div class="content__data">
+        <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
+        <span class="single-value__unit">{{handleSingleValue[1]}}</span>
+      </div>
+    </div>
+    <div class="single-value__content" v-if="chartInfo.type == 54"  >
+      <div class="single-value-icon__box"  >
+        <div class="single-value__icon">
+          <!-- 使用图标-->
+          <svg class="cn-icon-svg" aria-hidden="true">
+            <use :xlink:href="icon"></use>
+          </svg>
+        </div>
+      </div>
+      <div class="single-value__data">
+        <div class="content__title">
+          <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+        </div>
+        <div class="content__data">
+          <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
+          <span class="single-value__unit">{{handleSingleValue[1]}}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
+
+<script>
+import unitConvert from '@/utils/unit-convert'
+import {unitTypes} from "@/utils/constants";
+export default {
+  name: "chartSingleValue",
+  props: {
+    chartInfo: Object,
+    chartData: [Array, Object],
+    queryParams: Object
+  },
+  data () {
+    return {
+      icon: '',
+      color: '',
+      type: 0
+    }
+  },
+  watch: {
+    chartInfo: {
+      deep: true,
+      immediate: true,
+      handler (n) {
+        this.icon = n.params.icon
+        this.color = n.params.color
+        this.type = n.type
+      }
+    }
+  },
+  computed: {
+    handleSingleValue () {
+      const value = this.chartData ? this.chartData.value: ''
+      const unitType = this.chartInfo.params.unitType
+      const result = unitConvert(value, unitType)
+      switch (unitType) {
+        case unitTypes.percent: {
+          result[0] = result[0] < 0.01 ? '< 0.01' : result[0]
+          break
+        }
+        case unitTypes.time: {
+          result[0] = result[0] < 1 ? '< 1' : result[0]
+          break
+        }
+        default: break
+      }
+      return result
+    },
+    singleValueClass () {
+      return function (type) {
+        let c
+        switch (type) {
+          case 51: {
+            c = 'cn-chart__single-value--icon-left'
+            break
+          }
+          case 55:
+          case 52: {
+            c = 'cn-chart__single-value--chart'
+            break
+          }
+          case 53: {
+            c = 'cn-chart__single-value--icon-right'
+            break
+          }
+          case 54: {
+            c = 'cn-chart__single-value--icon-right--color'
+            break
+          }
+          default: break
+        }
+        return c
+      }
+    }
+  },
+  methods: {
+  },
+  mounted() {
+  }
+}
+</script>
