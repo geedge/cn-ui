@@ -1,9 +1,9 @@
 <template>
   <div class="cn-chart__single-value chart-header-position" :class="singleValueClass(type)" :style="{backgroundColor:color}">
-    <div class="single-value-icon__box"  v-if="chartInfo.type != 54">
+    <div class="single-value-icon__box"  v-if="type !== 54">
       <div class="single-value__icon"><i :class="icon"></i></div>
     </div>
-    <div class="single-value__content" v-if="chartInfo.type == 51">
+    <div class="single-value__content" v-if="type === 51">
       <div class="content__data">
         <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
         <span class="single-value__unit">{{handleSingleValue[1]}}</span>
@@ -12,9 +12,12 @@
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
       </div>
     </div>
-    <div class="single-value__content single-value__content--with-chart" v-if="chartInfo.type == 52">
+    <div class="single-value__content single-value__content--with-chart" v-if="type === 52">
       <div class="content__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
+        <span v-if="chartInfo.params && chartInfo.params.as" class="ip-detail-as">
+          as&nbsp;<span style="text-transform: capitalize">{{chartInfo.params.as}}</span>
+        </span>
       </div>
       <div class="content__data">
         <span>{{handleSingleValue[0] || handleSingleValue[0] === 0 ? handleSingleValue[0] : '-'}}</span>
@@ -24,7 +27,7 @@
         <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
       </div>
     </div>
-    <div class="single-value__content" v-if="chartInfo.type == 53">
+    <div class="single-value__content" v-if="type === 53">
       <div class="content__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
       </div>
@@ -33,7 +36,7 @@
         <span class="single-value__unit">{{handleSingleValue[1]}}</span>
       </div>
     </div>
-    <div class="single-value__content" v-if="chartInfo.type == 54"  >
+    <div class="single-value__content" v-if="type === 54"  >
       <div class="single-value-icon__box"  >
         <div class="single-value__icon">
           <!-- 使用图标-->
@@ -86,7 +89,7 @@ export default {
   },
   computed: {
     handleSingleValue () {
-      const value = this.chartData ? this.chartData.value: ''
+      const value = this.chartData ? this.chartData : ''
       const unitType = this.chartInfo.params.unitType
       const result = unitConvert(value, unitType)
       switch (unitType) {

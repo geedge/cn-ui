@@ -13,6 +13,8 @@ import 'highlight.js/styles/color-brewer.css'
 import '@/assets/css/main.scss' // 样式入口
 import VueGridLayout from 'vue-grid-layout'
 import ElementPlus from 'element-plus'
+import bus from 'tiny-emitter'
+const emitter = new bus()
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc' // dependent on utc plugin
 import timezone from 'dayjs/plugin/timezone'
@@ -54,4 +56,6 @@ app.component('time-refresh', TimeRefresh)
 app.component('panel-chart-list', PanelChartList)
 
 app.mount('#app')
+
+app.config.globalProperties.emitter = emitter
 export default app

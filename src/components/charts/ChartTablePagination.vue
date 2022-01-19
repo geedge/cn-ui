@@ -45,6 +45,10 @@ export default {
     }
   },
   mounted () {
+    const _this = this
+    this.emitter.on('chart-pageNo', function () {
+      _this.resetPageNo()
+    })
     this.$el.querySelector('.el-pagination__jump').childNodes[0].nodeValue = ''
   }
 }
