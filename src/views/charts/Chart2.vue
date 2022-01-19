@@ -51,6 +51,24 @@
           @showLoading="showLoading"
       ></chart-echart-line>
 
+      <chart-time-bar
+              v-else-if="isEchartsTimeBar"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+      ></chart-time-bar>
+
+      <chart-category-bar
+              v-else-if="isEchartsCategoryBar"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+      ></chart-category-bar>
+
       <chart-table
         v-else-if="isTable"
         :chart-info="chartInfo"
@@ -108,8 +126,14 @@ import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import ChartBlock from '@/views/charts/charts/ChartBlock'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from '@/views/charts/charts/ChartEchartLine'
-import ChartTable from "@/views/charts/charts/ChartTable";
+import ChartTable from '@/views/charts/charts/ChartTable'
 import ChartActiveIpTable from "@/views/charts/charts/ChartActiveIpTable";
+import ChartTimeBar from './charts/ChartTimeBar'
+import ChartCategoryBar from './charts/ChartCategoryBar'
+import ChartAppBasicInfo from "@/views/charts/charts/ChartAppBasicInfo";
+import ChartDomainWhois from "@/views/charts/charts/ChartDomainWhois";
+import ChartDomainDnsRecord from "@/views/charts/charts/ChartDomainDnsRecord";
+import ChartCryptocurrencyEventList from "@/views/charts/charts/ChartCryptocurrencyEventList";
 import {
   isEcharts,
   isEchartsLine,
@@ -142,10 +166,6 @@ import {
   isBlock
 } from './charts/tools'
 import _ from 'lodash'
-import ChartAppBasicInfo from "@/views/charts/charts/ChartAppBasicInfo";
-import ChartDomainWhois from "@/views/charts/charts/ChartDomainWhois";
-import ChartDomainDnsRecord from "@/views/charts/charts/ChartDomainDnsRecord";
-import ChartCryptocurrencyEventList from "@/views/charts/charts/ChartCryptocurrencyEventList";
 
 export default {
   name: 'chart',
@@ -163,7 +183,9 @@ export default {
     ChartTabs,
     ChartMap,
     ChartEchartLine,
-    ChartBlock
+    ChartBlock,
+    ChartTimeBar,
+    ChartCategoryBar
   },
   props: {
     chartInfo: Object,

@@ -315,6 +315,7 @@ export function categoryVerticalFormatter (params) {
   return str
 }
 export function timeVerticalFormatter (params) {
+  console.log(params)
   let str = '<div>'
   params.forEach((item, i) => {
     const tData = item.data[0]

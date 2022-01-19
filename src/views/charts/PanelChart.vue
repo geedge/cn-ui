@@ -41,6 +41,7 @@
 <script>
 import ChartHeader from './ChartHeader'
 import Chart from '@/views/charts/Chart2'
+import testData from './charts/testData'
 import {
   isEcharts,
   isSingleValue,
@@ -183,6 +184,12 @@ export default {
         const requestUrl = url || (chartParams && chartParams.url)
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
+            console.log(testData)
+            if (this.chartInfo.type === 23 && testData) {
+              response = testData.data
+            } else if (this.chartInfo.type === 24 && testData) {
+              response = testData.data2
+            }
             if (response.code === 200) {
               this.chartData = response.data.result
               this.table.tableData = response.data.result
