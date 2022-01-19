@@ -12,9 +12,11 @@
         :error-info="errorInfo"
         :chart-data="chartData"
         :chart-info="chartInfo"
+        :table="table"
         @loadMore="loadMore"
         @refresh="refresh"
         @showFullscreen="showFullscreen"
+        @tableChange="tableChange"
     ></chart-header>
     <!-- chart -->
     <!-- 数据查询后传入chart组件，chart组件内不查询，只根据接传递的数据来渲染 -->
@@ -29,6 +31,7 @@
         :is-error="isError"
         :loading="loading"
         :entity="entity"
+        :table="table"
         :is-fullscreen="isFullscreen"
         @showLoading="showLoading"
     ></chart>
@@ -140,7 +143,10 @@ export default {
       table: {
         pageSize: chartTableDefaultPageSize,
         limit: chartTableTopOptions[0], // top-n
-        orderBy: 'sessions'
+        orderBy: 'sessions',
+        tableColumns: [], // table字段
+        tableData: [], // table的所有数据
+        currentPageData: [] // table当前页的数据
       }
     }
   },
@@ -179,6 +185,9 @@ export default {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
             if (response.code === 200) {
               this.chartData = response.data.result
+              this.table.tableData = response.data.result
+              this.table.tableColumns = this.getTableTitle(response.data.result)
+              this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
               this.resultType = response.data.resultType
               this.isError = false
             } else {
@@ -277,6 +286,12 @@ export default {
     },
     showLoading (show) {
       this.loading = show
+    },
+    tableChange () {
+      this.getChartData()
+    },
+    getTargetPageData (pageNum, pageSize, tableData) {
+      return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     }
   },
   mounted () {

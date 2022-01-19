@@ -51,6 +51,15 @@
           @showLoading="showLoading"
       ></chart-echart-line>
 
+      <chart-table
+        v-else-if="isTable"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :table="table"
+        :query-params="queryParams"
+        @showLoading="showLoading"
+      ></chart-table>
+
     </template>
   </div>
 </template>
@@ -64,6 +73,7 @@ import ChartSingleValue from './charts/ChartSingleValue'
 import ChartBlock from './charts/ChartBlock'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from './charts/ChartEchartLine'
+import ChartTable from "./charts/ChartTable";
 import {
   isEcharts,
   isEchartsLine,
@@ -100,6 +110,7 @@ import _ from 'lodash'
 export default {
   name: 'chart',
   components: {
+    ChartTable,
     IpBasicInfo,
     ChartSingleValue,
     Loading,
@@ -119,7 +130,8 @@ export default {
     loading: Boolean,
     panelLock: Boolean,
     entity: Object,
-    isError: Boolean
+    isError: Boolean,
+    table: Object
   },
   computed: {
     isNoData () {
