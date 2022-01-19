@@ -232,6 +232,7 @@ export default {
       this.standaloneTimeRange.use = true
       this.standaloneTimeRange.startTime = myStartTime
       this.standaloneTimeRange.endTime = myEndTime
+      this.emitter.emit('chart-pageNo')
       this.getChartData(null, {}, true)
     },
     showFullscreen (show) {
@@ -288,6 +289,7 @@ export default {
       this.loading = show
     },
     tableChange () {
+      this.emitter.emit('chart-pageNo')
       this.getChartData()
     },
     getTargetPageData (pageNum, pageSize, tableData) {
