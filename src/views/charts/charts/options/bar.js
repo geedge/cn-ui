@@ -4,7 +4,7 @@ import {
   categoryVerticalFormatter,
   chartColor,
   getCharBartColor,
-  timeVerticalFormatter
+  timeVerticalFormatter, tooLongFormatter
 } from '@/views/charts/charts/tools'
 
 export const ipOpenPortBar = {
@@ -121,7 +121,6 @@ export const timeBar = {
   },
   color: chartColor,
   series: [{
-    barWidth: 15,
     data: [],
     type: 'bar',
     label: { show: false },

@@ -96,6 +96,7 @@ export default {
           this.recursionParamsConvert(chart)
           return chart
         })
+        // allCharts = allCharts.filter(chart => chart.type === 24)
         this.chartList = allCharts
         setTimeout(() => {
           this.$emit('chartLoaded', allCharts)

@@ -51,6 +51,23 @@
           @showLoading="showLoading"
       ></chart-echart-line>
 
+      <chart-time-bar
+              v-else-if="isEchartsTimeBar"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+      ></chart-time-bar>
+
+      <chart-category-bar
+              v-else-if="isEchartsCategoryBar"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+      ></chart-category-bar>
     </template>
   </div>
 </template>
@@ -64,6 +81,8 @@ import ChartSingleValue from './charts/ChartSingleValue'
 import ChartBlock from './charts/ChartBlock'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from './charts/ChartEchartLine'
+import ChartTimeBar from './charts/ChartTimeBar'
+import ChartCategoryBar from './charts/ChartCategoryBar'
 import {
   isEcharts,
   isEchartsLine,
@@ -107,7 +126,9 @@ export default {
     ChartTabs,
     ChartMap,
     ChartEchartLine,
-    ChartBlock
+    ChartBlock,
+    ChartTimeBar,
+    ChartCategoryBar
   },
   props: {
     chartInfo: Object,
