@@ -10,9 +10,9 @@
               <div class="dns-record__table-cell" style="width: 100%;">Country</div>
             </div>
             <div class="dns-record__table-row" v-for="(data, index) in chartDate" :key="index">
-              <div class="dns-record__table-cell">{{data ? data.type : '-'}}</div>
-              <div class="dns-record__table-cell">{{data ? data.value : '-'}}</div>
-              <div class="dns-record__table-cell">{{data ? data.country : '-'}}</div>
+              <div class="dns-record__table-cell">{{$_.get(data, "type") || '-'}}</div>
+              <div class="dns-record__table-cell">{{$_.get(data, "value") || '-'}}</div>
+              <div class="dns-record__table-cell">{{$_.get(data, "country") || '-'}}</div>
             </div>
           </div>
         </div>

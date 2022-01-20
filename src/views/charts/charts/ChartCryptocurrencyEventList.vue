@@ -9,10 +9,10 @@
                 <div class="circle1" style=""></div>
               </div>
               <div class="record__table-cell">
-                {{data ? data.message : '-'}}：{{ data ? data.serverIP : '-'}}<br/>
-                <span class="record_second" > {{data ? data.time : '-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ data ? data.clientIP : '-'}}&nbsp;&nbsp;&nbsp; </span>
+                {{$_.get(data, "message") || '-'}}：{{$_.get(data, "serverIP") || '-'}}<br/>
+                <span class="record_second" > {{$_.get(data, "time") || '-'}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $_.get(data, "clientIP") || '-'}}&nbsp;&nbsp;&nbsp; </span>
                 <div class="record_second arrow arrow-hor right"> </div>
-                <span class="record_second">&nbsp;&nbsp;&nbsp; {{data ? data.serverIP : '-'}}</span>
+                <span class="record_second">&nbsp;&nbsp;&nbsp; {{$_.get(data, "serverIP") || '-'}}</span>
               </div>
             </div>
           </div>
