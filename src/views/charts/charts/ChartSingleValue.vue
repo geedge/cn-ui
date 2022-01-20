@@ -61,7 +61,13 @@
 
 <script>
 import unitConvert from '@/utils/unit-convert'
-import {unitTypes} from "@/utils/constants";
+import {
+  unitTypes
+} from "@/utils/constants"
+import { get } from '@/utils/http'
+import {replaceUrlPlaceholder} from "@/utils/tools";
+import * as echarts from "echarts";
+import {getOption, getChartColor} from "@/components/charts/chart-options";
 export default {
   name: "chartSingleValue",
   props: {
@@ -73,7 +79,9 @@ export default {
     return {
       icon: '',
       color: '',
-      type: 0
+      type: 0,
+      chartOption: null,
+      chartEchartsDate: []
     }
   },
   watch: {
@@ -133,8 +141,51 @@ export default {
     }
   },
   methods: {
+    chartSingleValueTotal() {
+      const chartParams = this.$_.get(this.chartInfo, 'params') || {}
+      if (this.type === 52) {
+        const dom = document.getElementById(`chart${this.chartInfo.id}`)
+        const myChart = echarts.init(dom)
+        this.chartOption = this.$_.cloneDeep(getOption(this.type))
+        get(replaceUrlPlaceholder(chartParams.urlChart)).then(response => {
+          const seriesTemplate = this.chartOption.series[0]
+          const result = [{
+            "legend": "app",
+            "aggregation": {
+              "max": 1,
+              "last": 1,
+              "first": 1,
+              "avg": 1
+            },
+            "values": [
+              [1435781430781, "0"],
+              [1435781431782, "1"],
+              [1435781431783, "2"],
+              [1435781431784, "3"],
+              [1435781431785, "4"],
+              [1435781431786, "5"],
+              [1435781431787, "6"],
+              [1435781431788, "7"]
+            ]
+          }]
+          // const result = response.data.result
+          this.chartOption.series = result.map((r, i) => {
+            return {
+              ...seriesTemplate,
+              name: r.legend,
+              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
+              lineStyle: {
+                color: getChartColor[i]
+              }
+            }
+          })
+          myChart.setOption(this.chartOption)
+        })
+      }
+    }
   },
   mounted() {
+    this.chartSingleValueTotal()
   }
 }
 </script>

@@ -87,23 +87,63 @@
         @showLoading="showLoading"
       ></chart-table>
 
+      <chart-active-ip-table
+          v-else-if="isActiveIpTable"
+          :chart-info="chartInfo"
+          :chart-data="chartData"
+          :query-params="queryParams"
+      ></chart-active-ip-table>
+
+      <chart-app-basic-info
+        v-else-if="isAppBasicInfo"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
+      ></chart-app-basic-info>
+
+      <chart-domain-whois
+        v-else-if="isDomainWhois"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
+      ></chart-domain-whois>
+
+      <chart-domain-dns-record
+          v-else-if="isDomainDnsRecord"
+          :chart-info="chartInfo"
+          :chart-data="chartData"
+          :query-params="queryParams"
+      ></chart-domain-dns-record>
+
+      <chart-cryptocurrency-event-list
+          v-else-if="isCryptocurrencyEventList"
+          :chart-info="chartInfo"
+          :chart-data="chartData"
+          :query-params="queryParams"
+      ></chart-cryptocurrency-event-list>
+
     </template>
   </div>
 </template>
 
 <script>
 import Loading from '@/components/common/Loading'
-import ChartNoData from './charts/ChartNoData'
-import ChartTabs from './charts/ChartTabs'
-import ChartMap from './charts/ChartMap'
-import ChartSingleValue from './charts/ChartSingleValue'
-import ChartBlock from './charts/ChartBlock'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
+import ChartTabs from '@/views/charts/charts/ChartTabs'
+import ChartMap from '@/views/charts/charts/ChartMap'
+import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
+import ChartBlock from '@/views/charts/charts/ChartBlock'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
-import ChartEchartLine from './charts/ChartEchartLine'
+import ChartEchartLine from '@/views/charts/charts/ChartEchartLine'
+import ChartActiveIpTable from '@/views/charts/charts/ChartActiveIpTable'
 import ChartTimeBar from './charts/ChartTimeBar'
 import ChartCategoryBar from './charts/ChartCategoryBar'
 import ChartIpOpenPortBar from './charts/ChartIpOpenPortBar'
 import ChartTable from './charts/ChartTable'
+import ChartAppBasicInfo from '@/views/charts/charts/ChartAppBasicInfo'
+import ChartDomainWhois from '@/views/charts/charts/ChartDomainWhois'
+import ChartDomainDnsRecord from '@/views/charts/charts/ChartDomainDnsRecord'
+import ChartCryptocurrencyEventList from '@/views/charts/charts/ChartCryptocurrencyEventList'
 import {
   isEcharts,
   isEchartsLine,
@@ -141,6 +181,11 @@ import _ from 'lodash'
 export default {
   name: 'chart',
   components: {
+    ChartCryptocurrencyEventList,
+    ChartDomainDnsRecord,
+    ChartDomainWhois,
+    ChartAppBasicInfo,
+    ChartActiveIpTable,
     ChartTable,
     IpBasicInfo,
     ChartSingleValue,
@@ -169,7 +214,7 @@ export default {
   },
   computed: {
     isNoData () {
-      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs
+      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs && !this.isDomainDnsRecord && !this.isCryptocurrencyEventList
     },
     chartOption () {
       if (this.customChartOption) {

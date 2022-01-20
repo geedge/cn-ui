@@ -499,7 +499,7 @@
               height: calc(100% - 40px);
             }
           }
-          &>.cn-chart__table, {
+          &>.cn-chart__table,{
             .cn-chart__header {
               border-bottom: 1px solid $--content-right-background-color;
               .header__operations {
@@ -748,6 +748,201 @@
 
             .el-pagination__jump {
               margin-left: 10px;
+            }
+          }
+          &>.cn-chart__app-basic {
+            display: flex;
+            flex-direction: column;
+            .cn-chart__body {
+              flex: auto;
+              display: flex;
+              .el-descriptions {
+                padding-top: 30px;
+              }
+              &>.el-descriptions {
+                flex: 0 0 350px;
+                padding: 30px 36px;
+              }
+              .chart-location {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                padding: 0 20px 20px 0;
+              }
+              .el-descriptions__content {
+                color: #3976CB;
+              }
+            }
+            .cn-chart__body-single {
+              display: flex;
+              .cn-chart__body-single-table {
+                display: flex;
+                width: 250px;
+                align-items: center;
+              }
+              .single-value-icon__box {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 40%;
+              }
+              .single-value__icon {
+                 display: flex;
+                 justify-content: center;
+                 width: 72px;
+                 height: 72px;
+                 background-color: $--chart-single-value-icon-background-color;
+                 border-radius: 50%;
+
+                 i {
+                   display: flex;
+                   align-items: center;
+                   font-size: 28px;
+                   color: $--color-primary;
+                 }
+               }
+              .single-value-color-g.single-value__icon {
+                background-color: limegreen;
+                i {
+                  color: green;
+                }
+              }
+              .single-value-color-y.single-value__icon {
+                background-color: yellow;
+                i {
+                  color: darkorange;
+                }
+              }
+              .single-value__content {
+                display: flex;
+                flex-direction: column;
+                max-width: 60%;
+                padding-right: 10px;
+
+                .content__data {
+                  padding-bottom: 7%;
+                  font-size: 24px;
+                  color: #333333;
+                  font-weight: bold;
+                }
+                .content__title {
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  font-size: 16px;
+                  color: #666666;
+                }
+                &.single-value__content--with-chart {
+                  .content__title {
+                    border-bottom: 1px solid $--content-right-background-color;
+                  }
+                }
+                .single-value__unit {
+                  font-weight: normal;
+                  padding-left: 10px;
+                  color: #666;
+                  font-size: 20px;
+                }
+              }
+            }
+          }
+          &>.cn-chart__dns-record {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            .cn-chart__body {
+              flex: auto;
+              display: flex;
+              height: 100%;
+              width: 100%;
+              .el-descriptions {
+                padding-top: 30px;
+              }
+              &>.el-descriptions {
+                flex: 0 0 350px;
+                padding: 30px 36px;
+              }
+              .chart-location {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                padding: 0 20px 20px 0;
+              }
+              .el-descriptions__content {
+                color: #3976CB;
+              }
+            }
+          }
+          .cn-chart__table.eventList {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            .cn-chart__body {
+              flex: auto;
+              display: flex;
+              height: 100%;
+              width: 100%;
+              .el-descriptions {
+                padding-top: 30px;
+              }
+              &>.el-descriptions {
+                flex: 0 0 350px;
+                padding: 30px 36px;
+              }
+              .chart-location {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                padding: 0 20px 20px 0;
+              }
+              .el-descriptions__content {
+                color: #3976CB;
+              }
+              .crypto-eventList__record {
+                display: flex;
+                height: 100%;
+                width: 100%;
+
+                .record__table {
+                  display: table;
+                  height: 100%;
+                  width: 100%;
+
+                  .record__table-row {
+                    display: table-row;
+                    font-size: 14px;
+                    color: #333333;
+                  }
+                  .record__table-row.record__table-row--header {
+                    padding: 13px 30px 0;
+                    height: 40px;
+                    color: #6B717B;
+                  }
+                  .record__table-cell {
+                    display: table-cell;
+                    vertical-align: middle;
+                    padding-left: 10px;
+                    padding-top: 15px;
+                    padding-bottom: 0;
+
+                    .record_second{
+                      color:#7e8088;
+                      font-size:12px;
+                    }
+
+                    .circle-red {
+                      color: #EC7F66;
+                      font-size: 28px;
+                    }
+
+                  }
+                  .record__table-cell:first-of-type {
+                    padding-left:30px;
+                  }
+                }
+              }
             }
           }
         }
