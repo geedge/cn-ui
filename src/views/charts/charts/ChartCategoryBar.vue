@@ -11,7 +11,7 @@ import { legendMapping } from '@/components/charts/chart-table-title'
 import {
   categoryBar
 } from '@/views/charts/charts/options/bar'
-import { getCharBartColor } from '@/views/charts/charts/tools'
+import { getCharBartColor, categoryBarTooltipFormatter } from '@/views/charts/charts/tools'
 
 export default {
   name: 'ChartCategoryBar',
@@ -33,6 +33,11 @@ export default {
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = this.$_.cloneDeep(categoryBar)
+      this.chartOption.tooltip.trigger = 'item'
+      this.chartOption.tooltip.formatter = (params) => {
+        const str = categoryBarTooltipFormatter(params, chartParams.direction)
+        return str
+      }
       if (!chartParams.itemColorAlternately) {
         this.chartOption.series[0].itemStyle.color = function (params) {
           return getCharBartColor(0)
@@ -50,9 +55,9 @@ export default {
       this.chartData.forEach((r, index) => {
         // chartParams.direction === 'vertical' ? r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]) : r.values.map(v => [Number(v[1]), Number(v[0]) * 1000, chartParams.unitType])
         if (chartParams.direction === 'horizontal') {
-          obj.data.push([Number(r.events), r.clientCountry + ' ' + r.clientRegion, r])
+          obj.data.push([Number(r.events), r.clientCountry + ' ' + r.clientRegion, chartParams.unitType])
         } else {
-          obj.data.push([r.clientCountry + ' ' + r.clientRegion, Number(r.events), r])
+          obj.data.push([r.clientCountry + ' ' + r.clientRegion, Number(r.events), chartParams.unitType])
         }
         return obj
       })

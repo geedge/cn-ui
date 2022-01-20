@@ -69,6 +69,15 @@
         @showLoading="showLoading"
       ></chart-category-bar>
 
+      <chart-ip-open-port-bar
+              v-else-if="isIpOpenPortBar"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+      ></chart-ip-open-port-bar>
+
       <chart-table
         v-else-if="isTable"
         :chart-info="chartInfo"
@@ -126,14 +135,15 @@ import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import ChartBlock from '@/views/charts/charts/ChartBlock'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from '@/views/charts/charts/ChartEchartLine'
-import ChartTable from '@/views/charts/charts/ChartTable'
-import ChartActiveIpTable from "@/views/charts/charts/ChartActiveIpTable";
+import ChartActiveIpTable from '@/views/charts/charts/ChartActiveIpTable'
 import ChartTimeBar from './charts/ChartTimeBar'
 import ChartCategoryBar from './charts/ChartCategoryBar'
-import ChartAppBasicInfo from "@/views/charts/charts/ChartAppBasicInfo";
-import ChartDomainWhois from "@/views/charts/charts/ChartDomainWhois";
-import ChartDomainDnsRecord from "@/views/charts/charts/ChartDomainDnsRecord";
-import ChartCryptocurrencyEventList from "@/views/charts/charts/ChartCryptocurrencyEventList";
+import ChartIpOpenPortBar from './charts/ChartIpOpenPortBar'
+import ChartTable from './charts/ChartTable'
+import ChartAppBasicInfo from '@/views/charts/charts/ChartAppBasicInfo'
+import ChartDomainWhois from '@/views/charts/charts/ChartDomainWhois'
+import ChartDomainDnsRecord from '@/views/charts/charts/ChartDomainDnsRecord'
+import ChartCryptocurrencyEventList from '@/views/charts/charts/ChartCryptocurrencyEventList'
 import {
   isEcharts,
   isEchartsLine,
@@ -147,6 +157,7 @@ import {
   isEchartsWithStatistics,
   isEchartsTimeBar,
   isEchartsCategoryBar,
+  isIpOpenPortBar,
   isMapLine,
   isMapBlock,
   isSingleValueWithEcharts,
@@ -185,7 +196,8 @@ export default {
     ChartEchartLine,
     ChartBlock,
     ChartTimeBar,
-    ChartCategoryBar
+    ChartCategoryBar,
+    ChartIpOpenPortBar
   },
   props: {
     chartInfo: Object,
@@ -226,6 +238,7 @@ export default {
       isEchartsLine: isEchartsLine(props.chartInfo.type),
       isEchartsTimeBar: isEchartsTimeBar(props.chartInfo.type),
       isEchartsCategoryBar: isEchartsCategoryBar(props.chartInfo.type),
+      isIpOpenPortBar: isIpOpenPortBar(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isEchartsWithStatistics: isEchartsWithStatistics(props.chartInfo.type),
       isSingleValue: isSingleValue(props.chartInfo.type),

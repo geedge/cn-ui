@@ -188,6 +188,8 @@ export default {
               response = testData.data
             } else if (this.chartInfo.type === 24 && testData) {
               response = testData.data2
+            } else if (this.chartInfo.type === 22 && testData) {
+              response = testData.data3
             }
             if (response.code === 200) {
               this.chartData = response.data.result
