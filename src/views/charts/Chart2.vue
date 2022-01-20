@@ -79,7 +79,7 @@
       ></chart-ip-open-port-bar>
 
       <chart-table
-        v-else-if="isTable"
+        v-else-if="isTable && isCurrentTable"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :table="table"
@@ -91,6 +91,7 @@
           v-else-if="isActiveIpTable"
           :chart-info="chartInfo"
           :chart-data="chartData"
+          :table="table"
           :query-params="queryParams"
       ></chart-active-ip-table>
 
@@ -149,6 +150,7 @@ import {
   isEchartsLine,
   isSingleValue,
   isTable,
+  isCurrentTable,
   isActiveIpTable,
   isTitle,
   isMap,
@@ -214,7 +216,7 @@ export default {
   },
   computed: {
     isNoData () {
-      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs && !this.isDomainDnsRecord && !this.isCryptocurrencyEventList
+      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs && !this.isDomainDnsRecord && !this.isCryptocurrencyEventList && !this.isActiveIpTable
     },
     chartOption () {
       if (this.customChartOption) {
@@ -246,6 +248,7 @@ export default {
       isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(props.chartInfo.type),
       isRelationShip: isRelationShip(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
+      isCurrentTable: isCurrentTable(props.chartInfo.type),
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
       isMap: isMap(props.chartInfo.type),
       isTitle: isTitle(props.chartInfo.type),

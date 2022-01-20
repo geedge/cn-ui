@@ -499,7 +499,9 @@
               height: calc(100% - 40px);
             }
           }
-          &>.cn-chart__table,{
+          &>.cn-chart__table{
+            height: 100%;
+            width: 100%;
             .cn-chart__header {
               border-bottom: 1px solid $--content-right-background-color;
               .header__operations {
@@ -580,6 +582,8 @@
             .cn-chart__body {
               flex: auto;
               overflow-y: auto;
+              height: 100%;
+              width: 100%;
 
               .el-table {
                 padding: 0 10px;
@@ -600,6 +604,30 @@
                   padding: 4px 0;
                   color: #333;
                 }
+              }
+              .active-ip__icon {
+                overflow: hidden;
+                position: absolute;
+                top: 8px;
+                left: 6px;
+                display: flex;
+                justify-content: center;
+                justify-items: center;
+                align-items: center;
+                width: 23px;
+                height: 23px;
+                border-radius: 50%;
+                background: #e8fbf9;
+                border: 2px solid #e8fbf9;
+              }
+              .ip-green {
+                color: #23BF9A;
+              }
+              .active-ip__content {
+                position: absolute;
+                top: 7px;
+                left: 35px;
+                overflow: hidden;
               }
             }
           }

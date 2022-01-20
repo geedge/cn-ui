@@ -101,6 +101,10 @@ export function isEchartsWithTable (type) {
 export function isTable (type) {
   return type >= 61 && type <= 70
 }
+/* current table */
+export function isCurrentTable (type) {
+  return type === 61
+}
 /* table */
 export function isActiveIpTable (type) {
   return type === 63
@@ -139,7 +143,7 @@ export function isDomainWhois (type) {
 }
 /* DOMAIN实体DNS记录 */
 export function isDomainDnsRecord (type) {
-  return type === 84
+  return type === 62
 }
 /* 近期挖矿事件 */
 export function isCryptocurrencyEventList (type) {
