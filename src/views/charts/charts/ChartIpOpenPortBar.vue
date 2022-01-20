@@ -35,6 +35,9 @@
 
 <script>
 import lodash from 'lodash'
+import { ipOpenPortBar } from '@/views/charts/charts/options/bar'
+import { getChartColor } from '@/components/charts/chart-options'
+import * as echarts from 'echarts'
 export default {
   name: 'ChartIpOpenPortBar',
   props: {
@@ -71,7 +74,22 @@ export default {
   },
   methods: {
     init (id) {
+      const dom = document.getElementById(id)
+      !this.myChart && (this.myChart = echarts.init(dom))
       this.tableData = lodash.cloneDeep(this.chartData)
+      this.chartOption = this.$_.cloneDeep(ipOpenPortBar)
+      const protocols = []
+      this.tableData.forEach((d, i) => {
+        const index = protocols.findIndex(p => p.name === d.protocol.toUpperCase())
+        if (index === -1) {
+          protocols.push({ name: d.protocol.toUpperCase(), value: 1, itemStyle: { color: getChartColor(i) } })
+        } else {
+          protocols[index].value++
+        }
+      })
+      this.chartOption.series[0].data = protocols
+      this.chartOption.xAxis.data = protocols.map(p => p.name)
+      this.myChart.setOption(this.chartOption)
     }
   },
   watch: {

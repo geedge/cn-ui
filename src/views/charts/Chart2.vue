@@ -123,6 +123,21 @@
           :query-params="queryParams"
       ></chart-cryptocurrency-event-list>
 
+      <chart-relation-ship
+              v-else-if="isRelationShip"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :query-params="queryParams"
+      ></chart-relation-ship>
+
+      <chart-san-key
+              v-else-if="isSankey"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :query-params="queryParams"
+              :entity="entity"
+      ></chart-san-key>
+
     </template>
   </div>
 </template>
@@ -145,6 +160,8 @@ import ChartAppBasicInfo from '@/views/charts/charts/ChartAppBasicInfo'
 import ChartDomainWhois from '@/views/charts/charts/ChartDomainWhois'
 import ChartDomainDnsRecord from '@/views/charts/charts/ChartDomainDnsRecord'
 import ChartCryptocurrencyEventList from '@/views/charts/charts/ChartCryptocurrencyEventList'
+import ChartRelationShip from '@/views/charts/charts/ChartRelationShip'
+import ChartSanKey from '@/views/charts/charts/ChartSanKey'
 import {
   isEcharts,
   isEchartsLine,
@@ -183,6 +200,7 @@ import _ from 'lodash'
 export default {
   name: 'chart',
   components: {
+    ChartSanKey,
     ChartCryptocurrencyEventList,
     ChartDomainDnsRecord,
     ChartDomainWhois,
@@ -199,7 +217,8 @@ export default {
     ChartBlock,
     ChartTimeBar,
     ChartCategoryBar,
-    ChartIpOpenPortBar
+    ChartIpOpenPortBar,
+    ChartRelationShip,
   },
   props: {
     chartInfo: Object,

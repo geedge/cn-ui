@@ -1,5 +1,6 @@
 .chart-ip-open-port-bar {
     display: flex;
+    height: 100%;
     .el-table--border td{
         border: none !important;
     }
@@ -18,6 +19,9 @@
             color: #909399;
             font-size: 12px;
             font-weight: bold;
+        }
+        .chart-drawing{
+            height: calc(100% - 36px) !important;
         }
     }
 

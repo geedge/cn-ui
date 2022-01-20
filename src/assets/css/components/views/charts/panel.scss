@@ -199,7 +199,7 @@
         &>.cn-chart {
           position: relative;
           border-radius: 2px;
-          height: 100%;
+          height: calc(100% - 47px);
           width: 100%;
 
           .chart-drawing {
