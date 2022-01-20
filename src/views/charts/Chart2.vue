@@ -5,68 +5,68 @@
     <template v-else>
 
       <chart-tabs
-          v-if="isTabs"
-          :chart-info="chartInfo"
-          :query-params="queryParams"
-          :entity="entity"
+        v-if="isTabs"
+        :chart-info="chartInfo"
+        :query-params="queryParams"
+        :entity="entity"
       ></chart-tabs>
 
       <chart-map
-          v-else-if="isMap && !isIpBasicInfo"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :query-params="queryParams"
-          :entity="entity"
-          @showLoading="showLoading"
+        v-else-if="isMap && !isIpBasicInfo"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
+        :entity="entity"
+        @showLoading="showLoading"
       ></chart-map>
 
       <chart-single-value
-          v-else-if="isSingleValue"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :query-params="queryParams"
-          @showLoading="showLoading"
+        v-else-if="isSingleValue"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
+        @showLoading="showLoading"
       ></chart-single-value>
 
       <chart-block
-          v-else-if="isBlock"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :entity="entity"
+        v-else-if="isBlock"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :entity="entity"
       ></chart-block>
 
       <ip-basic-info
-          v-else-if="isIpBasicInfo"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :entity="entity"
+        v-else-if="isIpBasicInfo"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :entity="entity"
       ></ip-basic-info>
 
       <chart-echart-line
-          v-else-if="isEchartsLine"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :result-type="resultType"
-          :query-params="queryParams"
-          @showLoading="showLoading"
+        v-else-if="isEchartsLine"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :result-type="resultType"
+        :query-params="queryParams"
+        @showLoading="showLoading"
       ></chart-echart-line>
 
       <chart-time-bar
-              v-else-if="isEchartsTimeBar"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :result-type="resultType"
-              :query-params="queryParams"
-              @showLoading="showLoading"
+        v-else-if="isEchartsTimeBar"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :result-type="resultType"
+        :query-params="queryParams"
+        @showLoading="showLoading"
       ></chart-time-bar>
 
       <chart-category-bar
-              v-else-if="isEchartsCategoryBar"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :result-type="resultType"
-              :query-params="queryParams"
-              @showLoading="showLoading"
+        v-else-if="isEchartsCategoryBar"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :result-type="resultType"
+        :query-params="queryParams"
+        @showLoading="showLoading"
       ></chart-category-bar>
 
       <chart-table

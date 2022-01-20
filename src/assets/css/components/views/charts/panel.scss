@@ -285,7 +285,7 @@
                   font-size: 20px;
                 }
               }
-          }
+            }
             &.cn-chart__single-value--icon-right {
               display: flex;
               flex-direction: row-reverse;
@@ -817,7 +817,11 @@
                 display: flex;
                 flex-direction: column;
                 max-width: 60%;
-                padding-right: 10px;
+                padding-left: 10px;
+
+                div:nth-of-type(1) {
+                  margin-bottom: 10px;
+                }
 
                 .content__data {
                   padding-bottom: 7%;

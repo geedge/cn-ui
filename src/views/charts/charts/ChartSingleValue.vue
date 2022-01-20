@@ -81,7 +81,7 @@ export default {
       color: '',
       type: 0,
       chartOption: null,
-      chartEchartsDate: []
+      timer: null
     }
   },
   watch: {
@@ -158,14 +158,21 @@ export default {
               "avg": 1
             },
             "values": [
-              [1435781430781, "0"],
-              [1435781431782, "1"],
-              [1435781431783, "2"],
-              [1435781431784, "3"],
-              [1435781431785, "4"],
-              [1435781431786, "5"],
-              [1435781431787, "6"],
-              [1435781431788, "7"]
+              ["1642655880", "18"],
+              ["1642655940", "23"],
+              ["1642656000", "17"],
+              ["1642656060", "17"],
+              ["1642656120", "19"],
+              ["1642656180", "13"],
+              ["1642656240", "22"],
+              ["1642656300", "19"],
+              ["1642656360", "14"],
+              ["1642656420", "16"],
+              ["1642656480", "18"],
+              ["1642656540", "20"],
+              ["1642656600", "16"],
+              ["1642656660", "19"],
+              ["1642656720", "19"]
             ]
           }]
           // const result = response.data.result
@@ -173,7 +180,7 @@ export default {
             return {
               ...seriesTemplate,
               name: r.legend,
-              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
+              data: r.values.map(v => [Number(v[0]), Number(v[1]), chartParams.unitType]),
               lineStyle: {
                 color: getChartColor[i]
               }
@@ -185,7 +192,10 @@ export default {
     }
   },
   mounted() {
-    this.chartSingleValueTotal()
+    this.$nextTick(() => this.timer = setTimeout(() => {this.chartSingleValueTotal()}))
+  },
+  deactivated() {
+    clearTimeout(this.timer)
   }
 }
 </script>

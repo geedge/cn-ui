@@ -1,6 +1,6 @@
 <template>
 
-  <div class="cn-chart__whois" :style="computePosition">
+  <div class="cn-chart__whois">
     <div class="cn-chart__body">
       <div class="domain-detail-list">
         <div class="domain-detail-list__row">
@@ -39,16 +39,6 @@ export default {
     chartInfo: Object,
     chartData: [Array, Object],
     queryParams: Object
-  },
-  computed: {
-    computePosition() {
-      const gridColumn = `${this.chartInfo.x} / ${this.chartInfo.x + this.chartInfo.w}`
-      const gridRow = `${this.chartInfo.y} / ${this.chartInfo.y + this.chartInfo.h}`
-      return {
-        gridColumn,
-        gridRow
-      }
-    }
   }
 }
 </script>

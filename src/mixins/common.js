@@ -1,4 +1,5 @@
 import { hasButton } from '@/permission'
+import {getMillisecond} from "@/utils/date-util";
 export default {
   data () {
     return {
@@ -51,8 +52,8 @@ export default {
     utcTimeToLocalhost (str) { // 系统设置的时区 到 utc 0
       return str
     },
-    parseMsDate (ms, format = 'YYYY-MM-DD HH:mm:ss') {
-      return this.dayJs.tz(parseFloat(ms)).format(format)
+    parseMsDate (time, format = 'YYYY-MM-DD HH:mm:ss') {
+      return this.dayJs.tz(getMillisecond(time)).format(format)
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="cn-chart__table eventList" :style="computePosition">
+  <div class="cn-chart__table eventList">
     <div class="cn-chart__body">
       <div class="crypto-eventList__record">
         <div class="record__table">
@@ -40,16 +40,6 @@ export default {
         {message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'},
         {message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'}
       ]
-    }
-  },
-  computed: {
-    computePosition() {
-      const gridColumn = `${this.chartInfo.x} / ${this.chartInfo.x + this.chartInfo.w}`
-      const gridRow = `${this.chartInfo.y} / ${this.chartInfo.y + this.chartInfo.h}`
-      return {
-        gridColumn,
-        gridRow
-      }
     }
   }
 }
