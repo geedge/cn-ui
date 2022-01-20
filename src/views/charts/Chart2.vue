@@ -69,6 +69,15 @@
               @showLoading="showLoading"
       ></chart-category-bar>
 
+      <chart-ip-open-port-bar
+              v-else-if="isIpOpenPortBar"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+      ></chart-ip-open-port-bar>
+
       <chart-table
         v-else-if="isTable"
         :chart-info="chartInfo"
@@ -93,7 +102,8 @@ import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from './charts/ChartEchartLine'
 import ChartTimeBar from './charts/ChartTimeBar'
 import ChartCategoryBar from './charts/ChartCategoryBar'
-import ChartTable from "./charts/ChartTable";
+import ChartIpOpenPortBar from './charts/ChartIpOpenPortBar'
+import ChartTable from './charts/ChartTable'
 import {
   isEcharts,
   isEchartsLine,
@@ -107,6 +117,7 @@ import {
   isEchartsWithStatistics,
   isEchartsTimeBar,
   isEchartsCategoryBar,
+  isIpOpenPortBar,
   isMapLine,
   isMapBlock,
   isSingleValueWithEcharts,
@@ -140,7 +151,8 @@ export default {
     ChartEchartLine,
     ChartBlock,
     ChartTimeBar,
-    ChartCategoryBar
+    ChartCategoryBar,
+    ChartIpOpenPortBar
   },
   props: {
     chartInfo: Object,
@@ -181,6 +193,7 @@ export default {
       isEchartsLine: isEchartsLine(props.chartInfo.type),
       isEchartsTimeBar: isEchartsTimeBar(props.chartInfo.type),
       isEchartsCategoryBar: isEchartsCategoryBar(props.chartInfo.type),
+      isIpOpenPortBar: isIpOpenPortBar(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isEchartsWithStatistics: isEchartsWithStatistics(props.chartInfo.type),
       isSingleValue: isSingleValue(props.chartInfo.type),

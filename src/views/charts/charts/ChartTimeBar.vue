@@ -11,7 +11,7 @@ import { legendMapping } from '@/components/charts/chart-table-title'
 import {
   timeBar
 } from '@/views/charts/charts/options/bar'
-import { getCharBartColor } from '@/views/charts/charts/tools'
+import { getCharBartColor, timeBarTooltipFormatter } from '@/views/charts/charts/tools'
 
 export default {
   name: 'ChaetTimeBar',
@@ -33,6 +33,11 @@ export default {
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = this.$_.cloneDeep(timeBar)
+      this.chartOption.tooltip.trigger = 'item'
+      this.chartOption.tooltip.formatter = (params) => {
+        const str = timeBarTooltipFormatter(params, chartParams.direction)
+        return str
+      }
       if (!chartParams.itemColorAlternately) {
         this.chartOption.series[0].itemStyle.color = function (params) {
           return getCharBartColor(0)
@@ -107,6 +112,7 @@ export default {
         return allZero
       }
     }
+
   },
   watch: {
     chartData: {

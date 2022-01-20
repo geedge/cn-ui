@@ -59,8 +59,35 @@ const data2 = {
       clientRegion: 'ShangHai',
       clientId: 'CN',
       events: 13000
+    }, {
+      serverCountry: 'America2',
+      serverRegion: 'Washington2',
+      serverId: 'US',
+      clientCountry: 'China',
+      clientRegion: 'ShangHai2',
+      clientId: 'CN',
+      events: 13000
     }
     ]
   }
 }
-export default { data, data2 }
+const data3 = {
+  code: 200,
+  msg: '',
+  data: {
+    resultType: 'object',
+    result: [{
+      port: '80',
+      protocol: 'HTTP',
+      banner: 'Http/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+      utime: '2021-9-17 13:53:37'
+    }, {
+      port: '443',
+      protocol: 'HTTPS',
+      banner: 'Http/1.1 200 OK\r\nDate:2021-9-17 13:53:03\r\nServer: Apache',
+      utime: '2021-9-17 13:53:37'
+    }
+    ]
+  }
+}
+export default { data, data2, data3 }

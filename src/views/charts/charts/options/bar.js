@@ -34,7 +34,7 @@ export const ipOpenPortBar = {
 export const categoryBar = {
   tooltip: {
     appendToBody: true,
-    trigger: 'axis',
+    trigger: 'item',
     textStyle: {
       width: '20px',
       overflow: 'truncate'

@@ -46,6 +46,9 @@ export function isEchartsTimeBar (type) {
 export function isEchartsCategoryBar (type) {
   return type === 24
 }
+export function isIpOpenPortBar (type) {
+  return type === 22
+}
 /* 饼图柱状图等 */
 export function isEcharts (type) {
   return type >= 11 && type <= 50
@@ -334,6 +337,63 @@ export function timeVerticalFormatter (params) {
     </span>`
     str += '</div>'
   })
+  str += '</div>'
+  return str
+}
+export function timeBarTooltipFormatter (params, type) {
+  console.log(params, type)
+  let index1, index0
+  if (type === 'vertical') {
+    index0 = 0
+    index1 = 1
+  } else {
+    index0 = 1
+    index1 = 0
+  }
+  let str = '<div>'
+  const tData = params.data[index0]
+  str += '<div style="margin-bottom: 5px">'
+  str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+  str += '</div>'
+
+  str += '<div class="cn-chart-tooltip-box">'
+  // str += params.marker
+  str += `<span class="cn-chart-tooltip-content"> 
+       values
+    </span>`
+  str += `<span class="cn-chart-tooltip-value">
+        ${unitConvert(params.data[index1], params.data[2]).join(' ')}
+    </span>`
+  str += '</div>'
+
+  str += '</div>'
+  return str
+}
+export function categoryBarTooltipFormatter (params, type) {
+  console.log(params, type)
+  let index1, index0
+  if (type === 'vertical') {
+    index0 = 0
+    index1 = 1
+  } else {
+    index0 = 1
+    index1 = 0
+  }
+  let str = '<div>'
+  str += '<div style="margin-bottom: 5px">'
+  str += params.data[index0]
+  str += '</div>'
+
+  str += '<div class="cn-chart-tooltip-box">'
+  // str += params.marker
+  str += `<span class="cn-chart-tooltip-content"> 
+       values
+    </span>`
+  str += `<span class="cn-chart-tooltip-value">
+        ${unitConvert(params.data[index1], params.data[2]).join(' ')}
+    </span>`
+  str += '</div>'
+
   str += '</div>'
   return str
 }

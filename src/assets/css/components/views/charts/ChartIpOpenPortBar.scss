@@ -1,0 +1,24 @@
+.chart-ip-open-port-bar {
+    display: flex;
+    .el-table--border td{
+        border: none !important;
+    }
+    .el-table--border th{
+        border-right: none !important;
+    }
+    .chart-box{
+        width: 30%;
+        height: 100%;
+        border: 1px solid #EBEEF5;
+        >.title{
+            height: 36px;
+            line-height: 36px;
+            box-sizing: border-box;
+            padding: 0 10px;
+            color: #909399;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    }
+
+}
