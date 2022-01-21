@@ -133,7 +133,7 @@ export async function getPermission () {
 }
 
 export async function getI18n () {
-  const dictData = await getDictList()
+  const dictData = await getDictList( { type: 'lang'})
   const langs = dictData.map(d => d.value).join(',')
   localStorage.setItem(storageKey.languages, langs)
   const request = new Promise(resolve => {
