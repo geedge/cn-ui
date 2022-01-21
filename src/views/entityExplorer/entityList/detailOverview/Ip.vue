@@ -96,12 +96,14 @@
     </div>
   </div>
   <div class="overview-map">
-    <chart
-        :chart="chart"
+    <chart2
+        :chart-info="chart"
+        :chart-data="chartData"
         :entity="entityCopy"
+        :query-params="getQueryParams"
         :hide-header="true"
         @getCurrentTimeRange="getCurrentTimeRange"
-    ></chart>
+    ></chart2>
   </div>
 </template>
 
@@ -110,24 +112,27 @@ import entityDetailMixin from './entityDetailMixin'
 import { api } from '@/utils/api'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import Chart from '@/views/charts/Chart'
+import Chart2 from '@/views/charts/Chart2'
 import _ from 'lodash'
+import {get} from "@/utils/http";
 
 export default {
   name: 'Ip',
   mixins: [entityDetailMixin],
   components: {
-    Chart
+    Chart2
   },
   data () {
     return {
       // entityData: {}
       entityType: 'ip',
       trafficUrl: api.entityIpDetailTraffic,
+      trafficUrlMap: api.entityIpDetailTrafficMap,
       relationUrl: api.entityIpDetailRelation,
       alertUrl: api.entityIpDetailAlert,
       securityUrl: api.entityIpDetailSecurity,
-      listMode: 'list'
+      listMode: 'list',
+      chartData: null
     }
   },
   methods: {
@@ -135,14 +140,26 @@ export default {
       const queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000),
-        ip: this.entityData.ipAddr
+        ip: this.entityData.ipAddr,
+        country: this.entityData.ipLocationCountry
       }
       return queryParams
     },
     handleRelationData (result) {
       this.entityData.appCount = result.appCount
       this.entityData.domainCount = result.domainCount
-    }
+    },
+    chartGetMap () {
+      get((this.trafficUrlMap), this.getQueryParams()).then(response => {
+        if (response.code === 200) {
+          this.chartData = response.data.result
+          console.log(this.chartData)
+        }
+      })
+    },
+  },
+  mounted() {
+    this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 200)})
   },
   setup (props) {
     const entityCopy = {

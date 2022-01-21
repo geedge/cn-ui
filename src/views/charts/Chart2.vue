@@ -253,7 +253,7 @@ export default {
   },
   computed: {
     isNoData () {
-      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs && !this.isDomainDnsRecord && !this.isCryptocurrencyEventList && !this.isActiveIpTable
+      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs && !this.isDomainDnsRecord && !this.isCryptocurrencyEventList && !this.isActiveIpTable && !this.isMap
     },
     chartOption () {
       if (this.customChartOption) {
@@ -269,6 +269,13 @@ export default {
     },
     showLoading (show) {
       this.$emit('showLoading', show)
+    }
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler (n) {
+      }
     }
   },
   setup (props) {

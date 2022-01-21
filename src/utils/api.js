@@ -55,6 +55,7 @@ export const api = {
   entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/security',
   // ip detail
   entityIpDetailTraffic: '/interface/entity/detail/overview/ip/traffic',
+  entityIpDetailTrafficMap: '/interface/entity/detail/ip/trafficMap',
   entityIpDetailRelation: '/interface/entity/detail/overview/ip/relation',
   entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
   entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security'

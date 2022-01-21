@@ -53,7 +53,7 @@ export default {
       return str
     },
     parseMsDate (time, format = 'YYYY-MM-DD HH:mm:ss') {
-      return this.dayJs.tz(getMillisecond(time)).format(format)
+      return this.dayJs.tz(parseFloat(time)).format(format)
     }
   }
 }
