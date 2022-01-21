@@ -124,6 +124,9 @@ export default {
           chart.h = 1
         }
       }
+      if (chart.type === 95) {
+        chart.h += 1
+      }
       if (!this.$_.isEmpty(chart.children)) {
         chart.children.forEach(c => {
           this.recursionParamsConvert(c)

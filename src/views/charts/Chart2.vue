@@ -35,12 +35,12 @@
         :entity="entity"
       ></chart-block>
 
-      <chart-block
+      <chart-group
               v-else-if="isGroup"
               :chart-info="chartInfo"
               :chart-data="chartData"
               :entity="entity"
-      ></chart-block>
+      ></chart-group>
 
       <ip-basic-info
         v-else-if="isIpBasicInfo"
@@ -156,6 +156,7 @@ import ChartTabs from '@/views/charts/charts/ChartTabs'
 import ChartMap from '@/views/charts/charts/ChartMap'
 import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import ChartBlock from '@/views/charts/charts/ChartBlock'
+import ChartGroup from '@/views/charts/charts/ChartGroup'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from '@/views/charts/charts/ChartEchartLine'
 import ChartActiveIpTable from '@/views/charts/charts/ChartActiveIpTable'
@@ -226,6 +227,7 @@ export default {
     ChartCategoryBar,
     ChartIpOpenPortBar,
     ChartRelationShip,
+    ChartGroup
   },
   props: {
     chartInfo: Object,
