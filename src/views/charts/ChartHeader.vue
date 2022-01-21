@@ -1,8 +1,13 @@
 <template>
   <div class="chart-header" :class="{'chart-header--title-chart': isTitle}">
-    <div class="chart-header__title" v-if="!isCurrentTable" :class="{'chart-header__title--block': isBlock}">{{chartInfo.name}}</div>
+    <div class="chart-header__title" v-if="!isCurrentTable&&(isGroup||isBlock)" :class="{'chart-header__title--block': isBlock}">
+      <span @click="groupShow"> <i class="cn-icon" :class="chartInfo.params&&chartInfo.params.collapse ? 'cn-icon-arrow-right': 'cn-icon-arrow-down'"></i></span>
+      {{chartInfo.name}}
+    </div>
+    <div class="chart-header__title" v-else-if="!isCurrentTable" :class="{'chart-header__title--block': isBlock}">{{chartInfo.name}}</div>
     <template v-if="isCurrentTable">
       <div class="chart-header__title">
+<!--        -->
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
         <span
             v-if="chartInfo.params && chartInfo.params.as"
@@ -85,11 +90,11 @@
 </template>
 
 <script>
-import {isTitle, isTabs, isBlock, isTable, isActiveIpTable, isCurrentTable} from './charts/tools'
+import { isTitle, isTabs, isBlock, isTable, isActiveIpTable, isCurrentTable, isGroup } from './charts/tools'
 import ChartError from '@/components/charts/ChartError'
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
-import {chartTableTopOptions, chartActiveIpTableOrderOptions} from "@/utils/constants";
+import { chartTableTopOptions, chartActiveIpTableOrderOptions } from '@/utils/constants'
 
 export default {
   name: 'ChartHeader',
@@ -139,7 +144,7 @@ export default {
             num: 345
           }
         ] // table的所有数据
-      },
+      }
     }
   },
   methods: {
@@ -154,6 +159,10 @@ export default {
     },
     reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
+    },
+    groupShow () {
+      console.log(123)
+      this.emitter.emit('groupShow', this.chartInfo)
     },
     dateTimeRangeChange (s, e, v) {
       this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }
@@ -180,6 +189,7 @@ export default {
       isTable: isTable(props.chartInfo.type),
       isCurrentTable: isCurrentTable(props.chartInfo.type),
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
+      isGroup: isGroup(props.chartInfo.type)
     }
   }
 }

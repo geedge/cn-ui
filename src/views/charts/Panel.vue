@@ -6,9 +6,11 @@
         <time-refresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
       </div>
       <panel-chart-list
+          ref="panelChartList"
           :time-filter="timeFilter"
           :data-list="chartList"
           :panel-lock="panelLock"
+          :entity="entity"
       >
       </panel-chart-list>
     </div>
@@ -17,6 +19,7 @@
     <div class="entity-detail__body">
       <div class="cn-panel2" id="cn-panel">
         <panel-chart-list
+            ref="panelChartList"
             :time-filter="timeFilter"
             :data-list="chartList"
             :panel-lock="panelLock"
@@ -62,6 +65,7 @@ export default {
     }
   },
   async mounted () {
+    this.emitter.on('groupShow', this.groupShow)
     this.isCryptocurrency = this.$route.path.indexOf('cryptocurrency') > -1
     await this.init()
     if (!this.$_.isEmpty(this.detailTabs)) {
@@ -137,6 +141,10 @@ export default {
       this.chartList.forEach(chart => {
         this.$refs[`chart-${chart.id}`] && this.$refs[`chart-${chart.id}`].reloadChart()
       })
+    },
+    groupShow (chart) {
+      console.log( this.$refs.panelChartList,chart)
+      this.$refs.panelChartList.groupShow(chart)
     }
   }
 }

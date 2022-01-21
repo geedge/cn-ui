@@ -22,7 +22,7 @@
     <!-- 数据查询后传入chart组件，chart组件内不查询，只根据接传递的数据来渲染 -->
     <chart
         ref="chart"
-        v-if="(!isGroup || !(chartInfo.params && chartInfo.params.collapse)) && !isTitle"
+        v-if="((!isBlock) || !(chartInfo.params && chartInfo.params.collapse)) && !isTitle"
         :chart-data="chartData"
         :result-type="resultType"
         :chart-info="chartInfo"

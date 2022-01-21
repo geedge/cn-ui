@@ -8,7 +8,7 @@
         :is-draggable="!panelLock"
         :is-resizable="!panelLock"
         :margin="[10, 10]"
-        :row-height="40"
+        :row-height="rowHeight"
         :vertical-compact="true"
         :use-css-transforms="false"
     >
@@ -86,6 +86,7 @@ export default {
     return {
       gridLayoutLoading: false,
       gridLayoutShow: false,
+      rowHeight: 40,
       copyDataList: [],
       noData: false, // no data
       tempDom: { height: '', width: '' },
@@ -111,6 +112,20 @@ export default {
     showFullscreen (show, chartInfo) {
       this.fullscreen.chartInfo = chartInfo
       this.fullscreen.visible = show
+    },
+    groupShow (chart) {
+      console.log(chart, this.copyDataList)
+      this.copyDataList.forEach((item, index) => {
+        if (item.id === chart.id) {
+          item.params.collpase = !item.params.collpase
+          if (item.params.collpase) {
+            item.h = 1
+          } else {
+            item.h = item.oldH
+          }
+        }
+      })
+      this.copyDataList = [...this.copyDataList]
     }
   },
   computed: {
@@ -132,202 +147,18 @@ export default {
         this.gridLayoutShow = false
         this.gridLayoutLoading = true
         this.noData = !n || n.length < 1
-        /*const nn = JSON.parse(`
-            [
-  {
-    "id": 1,
-    "name": "Sessions",
-    "i18n": "overall.sessions",
-    "panelId": 1,
-    "pid": 0,
-    "type": 11,
-    "x": 20,
-    "y": 1,
-    "w": 10,
-    "h": 5,
-    "params": "{\\"url\\":\\"/interface/traffic/sessions?startTime={{startTime}}&endTime={{endTime}}\\",\\"unitType\\":\\"number\\"}",
-    "remark": "",
-    "state": 1,
-    "buildIn": 0,
-    "children": [],
-    "parent": null,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-    "id": 2,
-    "name": "Traffic summary",
-    "i18n": "trafficSummary.trafficSummary",
-    "panelId": 1,
-    "pid": 0,
-    "type": 93,
-    "x": 0,
-    "y": 0,
-    "w": 30,
-    "h": 1,
-    "params": "",
-    "remark": "",
-    "state": 1,
-    "buildIn": 0,
-    "children": [],
-    "parent": null,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-    "id": 3,
-    "name": "Active list",
-    "i18n": "trafficSummary.activeList",
-    "panelId": 1,
-    "pid": 0,
-    "type": 93,
-    "x": 0,
-    "y": 16,
-    "w": 30,
-    "h": 1,
-    "params": "",
-    "remark": "",
-    "state": 1,
-    "buildIn": 0,
-    "children": [],
-    "parent": null,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-    "id": 4,
-    "name": "Domain analysis statistics",
-    "i18n": "trafficSummary.domainStatistics",
-    "panelId": 1,
-    "pid": 0,
-    "type": 93,
-    "x": 0,
-    "y": 35,
-    "w": 30,
-    "h": 1,
-    "params": "",
-    "remark": "",
-    "state": 1,
-    "buildIn": 0,
-    "children": [],
-    "parent": null,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-    "id": 6,
-    "name": "Packets",
-    "i18n": "overall.packets",
-    "panelId": 1,
-    "pid": 0,
-    "type": 11,
-    "x": 20,
-    "y": 6,
-    "w": 10,
-    "h": 5,
-    "params": "{\\"url\\":\\"/interface/traffic/packets?startTime={{startTime}}&endTime={{endTime}}\\",\\"unitType\\":\\"number\\"}",
-    "remark": "",
-    "state": 1,
-    "buildIn": 0,
-    "children": [],
-    "parent": null,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-    "id": 9,
-    "name": "Throughput",
-    "i18n": "trafficSummary.throughput",
-    "panelId": 1,
-    "pid": 0,
-    "type": 11,
-    "x": 20,
-    "y": 11,
-    "w": 10,
-    "h": 5,
-    "params": "{\\"url\\":\\"/interface/traffic/throughput?startTime={{startTime}}&endTime={{endTime}}\\",\\"unitType\\":\\"byte\\"}",
-    "remark": "packets",
-    "state": 1,
-    "buildIn": 0,
-    "children": [],
-    "parent": null,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-    "id": 10,
-    "name": "Active client",
-    "i18n": "trafficSummary.activeClient",
-    "panelId": 1,
-    "pid": 0,
-    "type": 61,
-    "x": 0,
-    "y": 17,
-    "w": 10,
-    "h": 9,
-    "params": "{\\"url\\":\\"/interface/traffic/activeClientIP?startTime={{startTime}}&endTime={{endTime}}&order={{order}}&limit={{limit}}\\"}",
-    "remark": "",
-    "state": 1,
-    "buildIn": 0,
-    "children": [],
-    "parent": null,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-    "id": 11,
-    "name": "Domain category",
-    "i18n": "trafficSummary.domainCategory",
-    "panelId": 1,
-    "pid": 0,
-    "type": 31,
-    "x": 0,
-    "y": 36,
-    "w": 15,
-    "h": 13,
-    "params": "{\\"url\\":\\"/interface/traffic/topDomainCategories?startTime={{startTime}}&endTime={{endTime}}&limit={{limit}}\\",\\"nameColumn\\":\\"fqdnCategoryName\\",\\"valueColumn\\":\\"uniqDomains\\",\\"tableNameColumn\\":\\"domain\\",\\"urlTable\\":\\"/interface/traffic/activeDomainCategories?startTime={{startTime}}&endTime={{endTime}}&fqdnCategoryName={{fqdnCategoryName}}&limit={{limit}}&order={{order}}\\",\\"urlChildrenTable\\":\\"/interface/traffic/domainCategoryServerIpList?startTime={{startTime}}&endTime={{endTime}}&order={{order}}&limit={{limit}}&domain={{domain}}\\"}",
-    "remark": "",
-    "state": 1,
-    "buildIn": 0,
-    "panel": {
-      "id": 1
-    }
-  },
-  {
-        "id": 12,
-        "name": "Traffic map",
-        "i18n": "trafficSummary.trafficMap",
-        "panelId": 1,
-        "pid": 0,
-        "type": 2,
-        "x": 0,
-        "y": 1,
-        "w": 20,
-        "h": 15,
-        "params": "{\\"url\\":\\"/interface/traffic/map?startTime={{startTime}}&endTime={{endTime}}&country={{country}}&province={{province}}&city={{city}}\\",\\"unitType\\":\\"byte\\",\\"valueColumn\\":\\"bytes\\"}",
-        "remark": "traffic summaryyy",
-        "state": 1,
-        "buildIn": 0,
-        "children": [],
-        "parent": null,
-        "panel": {
-          "id": 1
-        }
-      }
-]
-          `)*/
         const tempList = n.map(item => {
-          const height = item.h
           if (item.params) {
             item.params.showHeader = true
+            if (item.type === 95 || item.type === 94) {
+              item.oldH = item.h
+              item.params.collpase = false
+            }
+            if (item.params.collpase) {
+              item.h = this.rowHeight
+            }
           }
+          const height = item.h
           return {
             ...item,
             i: item.id,
