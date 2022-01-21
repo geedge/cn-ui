@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+   <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
 </template>
 
 <script>
@@ -23,11 +23,10 @@ export default {
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
-    resultType: Object,
-    queryParams: Object
+    resultType: Object
   },
   methods: {
-    initMap (id) {
+    initLine (id) {
       const chartParams = this.chartInfo.params
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
@@ -94,7 +93,7 @@ export default {
     chartData: {
       deep: true,
       handler (n) {
-        this.initMap(`chart${this.chartInfo.id}`)
+        this.initLine(`chart${this.chartInfo.id}`)
       }
     }
   }

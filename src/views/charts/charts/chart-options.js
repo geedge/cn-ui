@@ -620,6 +620,10 @@ export function isEchartsCategoryBar (type) {
 export function isEcharts (type) {
   return type >= 11 && type <= 50
 }
+/* 折线，饼图 */
+export function isEchartsLineBar (type) {
+  return type == 11 || type == 12 || type == 31 || type == 32 || type == 33 || type == 34
+}
 /* 地图 */
 export function isMap (type) {
   return type >= 1 && type <= 10
