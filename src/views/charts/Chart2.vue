@@ -49,15 +49,6 @@
         :entity="entity"
       ></ip-basic-info>
 
-      <chart-echart-line
-        v-else-if="isEchartsLine"
-        :chart-info="chartInfo"
-        :chart-data="chartData"
-        :result-type="resultType"
-        :query-params="queryParams"
-        @showLoading="showLoading"
-      ></chart-echart-line>
-
       <chart-time-bar
         v-else-if="isEchartsTimeBar"
         :chart-info="chartInfo"
@@ -145,6 +136,22 @@
         :entity="entity"
       ></chart-san-key>
 
+      <chart-echart-line
+              v-else-if="isEchartsLine"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              @showLoading="showLoading"
+      ></chart-echart-line>
+
+      <chart-echart-with-statistics
+              v-else-if="isEchartsWithStatistics"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              @showLoading="showLoading"
+      ></chart-echart-with-statistics>
+
     </template>
   </div>
 </template>
@@ -159,6 +166,7 @@ import ChartBlock from '@/views/charts/charts/ChartBlock'
 import ChartGroup from '@/views/charts/charts/ChartGroup'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from '@/views/charts/charts/ChartEchartLine'
+import ChartEchartWithStatistics from '@/views/charts/charts/ChartEchartWithStatistics'
 import ChartActiveIpTable from '@/views/charts/charts/ChartActiveIpTable'
 import ChartTimeBar from './charts/ChartTimeBar'
 import ChartCategoryBar from './charts/ChartCategoryBar'
@@ -227,7 +235,8 @@ export default {
     ChartCategoryBar,
     ChartIpOpenPortBar,
     ChartRelationShip,
-    ChartGroup
+    ChartGroup,
+    ChartEchartWithStatistics
   },
   props: {
     chartInfo: Object,
