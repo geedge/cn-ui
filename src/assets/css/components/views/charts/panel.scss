@@ -1,13 +1,11 @@
 .cn-panel2 {
   position: relative;
-
   .panel__time {
     position: absolute;
     right: 10px;
     top: 10px;
     z-index: 1;
     display: flex;
-
     &>div {
       margin-left: 10px;
     }
@@ -22,7 +20,6 @@
         display: flex;
         position: relative;
         flex-direction: column;
-
         &.panel-chart--title-chart {
           border: none;
           background-color: transparent;
@@ -201,437 +198,11 @@
           border-radius: 2px;
           height: calc(100% - 47px);
           width: 100%;
-
           .chart-drawing {
             height: 100%;
             width: 100%;
           }
-          &>.cn-chart__single-value {
-            &.cn-chart__single-value--detail-overview.cn-chart__single-value--icon-left {
-              .single-value__icon {
-                width: 38px;
-                height: 38px;
-
-                i {
-                  font-size: 15px;
-                }
-              }
-              .single-value__content {
-                .content__data {
-                  font-size: 14px;
-                }
-                .content__title {
-                  font-size: 12px;
-                }
-              }
-            }
-            &.cn-chart__single-value--icon-left {
-              display: flex;
-              align-items: center;
-              height: 100%;
-              width: 100%;
-
-              .single-value-icon__box {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex: 0 0 40%;
-              }
-
-              .single-value__icon {
-                display: flex;
-                justify-content: center;
-                width: 72px;
-                height: 72px;
-                background-color: $--chart-single-value-icon-background-color;
-                border-radius: 50%;
-
-                i {
-                  display: flex;
-                  align-items: center;
-                  font-size: 28px;
-                  color: $--color-primary;
-                }
-              }
-
-              .single-value__content {
-                display: flex;
-                flex-direction: column;
-                max-width: 60%;
-                padding-right: 10px;
-
-                .content__data {
-                  padding-bottom: 7%;
-                  font-size: 24px;
-                  color: #333333;
-                  font-weight: bold;
-                }
-                .content__title {
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  font-size: 16px;
-                  color: #666666;
-                }
-                &.single-value__content--with-chart {
-                  .content__title {
-                    border-bottom: 1px solid $--content-right-background-color;
-                  }
-                }
-                .single-value__unit {
-                  font-weight: normal;
-                  padding-left: 10px;
-                  color: #666;
-                  font-size: 20px;
-                }
-              }
-            }
-            &.cn-chart__single-value--icon-right {
-              display: flex;
-              flex-direction: row-reverse;
-              justify-content: space-around;
-              align-items: center;
-              height: 100%;
-              width: 100%;
-
-              .single-value__icon {
-                background-color: $--chart-single-value-icon-background-color;
-                border-radius: 50%;
-                position: relative;
-                margin-right: 7.5%;
-                margin-bottom: 6%;
-                width: 56px;
-                height: 56px;
-
-                i {
-                  position: absolute;
-                  top: 50%;
-                  left: 50%;
-                  transform: translate(-50%,-50%);
-                  font-size: 24px;
-                  color: $--color-primary;
-                }
-              }
-
-              .single-value__content {
-                display: flex;
-                height: 100%;
-                flex-direction: column;
-
-                .content__title {
-                  display: flex;
-                  align-items: center;
-                  height: 50%;
-                  font-size: 16px;
-                  color: #666666;
-                }
-                .content__data {
-                  display: flex;
-                  padding-top: 5%;
-                  height: 50%;
-                  flex: auto;
-                  font-size: 24px;
-                  color: #333333;
-                  font-weight: bold;
-                }
-              }
-            }
-            &.cn-chart__single-value--icon-right--color {
-              display: flex;
-              flex-direction: row-reverse;
-              justify-content: space-around;
-              align-items: center;
-              height: 100%;
-              width: 100%;
-
-              .single-value__content {
-                display: flex;
-                height: 100%;
-                width: 100%;
-                flex-direction: row-reverse;
-                justify-content: space-between;
-                align-items: center;
-
-                .single-value-icon__box {
-                  padding-right: 30px;
-                  .single-value__icon {
-                    border-radius: 50%;
-                    position: relative;
-                    margin-right: 7.5%;
-                    margin-top: 30%;
-
-                    .cn-icon-svg {
-                      width: 50px;
-                      height: 50px;
-                      vertical-align: middle;
-                      fill: currentColor;
-                      overflow: hidden;
-                    }
-
-                    i {
-                      position: absolute;
-                      top: 50%;
-                      left: 50%;
-                      transform: translate(-50%,-50%);
-                      font-size: 24px;
-                    }
-                  }
-                }
-
-                .single-value__data{
-                  display: flex;
-                  height: 100%;
-                  flex-direction: column;
-                  padding-left: 20px;
-
-                  .content__title {
-                    display: flex;
-                    align-items: end;
-                    height: 50%;
-                    font-size: 16px;
-                    color: #666666;
-                    padding-bottom: 5px;
-                  }
-                  .content__data {
-                    display: flex;
-                    padding-top: 5%;
-                    height: 50%;
-                    flex: auto;
-                    font-size: 24px;
-                    color: #333333;
-                    font-weight: bold;
-                  }
-                }
-
-              }
-            }
-            &.cn-chart__single-value--chart {
-              display: flex;
-              padding: 13px 20px;
-              height: 100%;
-              width: 100%;
-
-              .single-value__content {
-                display: flex;
-                height: 100%;
-                width: 100%;
-                flex-direction: column;
-
-                .content__title {
-                  display: flex;
-                  align-items: center;
-                  height: 30%;
-                  font-size: 16px;
-                  color: #666666;
-                }
-                .content__data {
-                  display: flex;
-                  align-items: center;
-                  height: 25%;
-                  font-size: 24px;
-                  color: #333333;
-                  font-weight: bold;
-                }
-                .content__chart {
-                  flex: auto
-                }
-              }
-            }
-          }
-          &>.cn-chart__whois {
-            overflow: auto;
-          }
-          &>.cn-chart__ip-basic {
-            display: flex;
-            .el-descriptions {
-              padding-top: 30px;
-            }
-            &>.el-descriptions {
-              flex: 0 0 350px;
-              padding: 30px 36px;
-            }
-            .chart-location {
-              display: flex;
-              flex: 1;
-              flex-direction: column;
-              padding: 0 20px 20px 0;
-            }
-            .el-descriptions__content {
-              color: #3976CB;
-            }
-          }
-          &>.cn-chart__block {
-            .cn-chart {
-              border: 1px solid #E7EAED;
-            }
-            /* detail页面block下的五连图的标题样式改变 */
-            .cn-chart__group .cn-chart__echarts {
-              .cn-chart__header {
-                border-bottom: none !important;
-
-                .header__title {
-                  font-size: 14px !important;
-                  color: #3976CB !important;
-                }
-              }
-            }
-          }
-          &>.cn-chart__title {
-            display: flex;
-            align-items: center;
-            font-size: 20px;
-            padding-left: 10px;
-            color: #333;
-            background-color: transparent;
-            box-shadow: none;
-            border: none;
-          }
-          &>.cn-chart__tabs {
-            padding: 10px 25px 10px 15px;
-
-            .el-tabs__nav-wrap::after {
-              height: 1px;
-            }
-            &>.el-tabs__header {
-              margin-bottom: 10px;
-            }
-            &>.el-tabs__content {
-              height: calc(100% - 40px);
-            }
-          }
-          &>.cn-chart__table{
-            height: 100%;
-            width: 100%;
-            .cn-chart__header {
-              border-bottom: 1px solid $--content-right-background-color;
-              .header__operations {
-                display: flex;
-                justify-content: end;
-                align-items: center;
-
-                .header__operation.header__operation--table {
-                  display: flex;
-                  align-items: center;
-                  height: 22px;
-                  margin-left: 10px;
-                  color: $--color-primary;
-                  border: 1px solid $--color-primary;
-                  border-radius: $--border-radius-primary;
-
-                  .option__button {
-                    display: flex;
-                    align-items: center;
-                    height: 100%;
-                    padding: 0 5px;
-                    cursor: pointer;
-                    background-color: white;
-                    transition: all linear .2s;
-                  }
-                  .option__button:hover {
-                    background-color: #EFF2F5;
-                  }
-                  .option__button.icon-group-item:first-of-type:not(:last-of-type) {
-                    padding: 0 5px 0 0;
-                  }
-                  .option__button.icon-group-item:last-of-type:not(:first-of-type) {
-                    padding: 0 0 0 5px;
-                  }
-                  .option__select {
-                    .el-input__inner {
-                      width: 80px;
-                      padding-right: 20px;
-                      border: none;
-                      height: 100%;
-                      line-height: 20px;
-                      color: $--color-primary;
-                    }
-                    .el-input__prefix > div {
-                      font-weight: normal;
-                      line-height: 19px;
-                      color: $--color-primary;
-                    }
-                    .el-input__suffix {
-                      display: flex;
-                      .el-input__suffix-inner {
-                        line-height: 14px;
-                        .el-select__caret {
-                          line-height: 14px;
-                          width: 16px;
-                          color: $--color-primary;
-                        }
-                      }
-                    }
-                  }
-                  .option__select.select-column {
-                    .el-input__inner {
-                      width: 86px;
-                      padding-left: 8px;
-                    }
-                  }
-                  .icon-group-divide {
-                    height: 14px;
-                    width: 1px;
-                    background-color: $--color-primary;
-                  }
-                  i {
-                    font-size: 12px;
-                  }
-                }
-              }
-            }
-            .cn-chart__body {
-              flex: auto;
-              overflow-y: auto;
-              height: 100%;
-              width: 100%;
-
-              .el-table {
-                padding: 0 10px;
-
-                &:before {
-                  height: 0;
-                }
-                thead {
-                  color: #333;
-                }
-                th.is-leaf, td {
-                  border-bottom: none;
-                }
-                th {
-                  padding-bottom: 5px;
-                }
-                td {
-                  padding: 4px 0;
-                  color: #333;
-                }
-              }
-              .active-ip__icon {
-                overflow: hidden;
-                position: absolute;
-                top: 8px;
-                left: 6px;
-                display: flex;
-                justify-content: center;
-                justify-items: center;
-                align-items: center;
-                width: 23px;
-                height: 23px;
-                border-radius: 50%;
-                background: #e8fbf9;
-                border: 2px solid #e8fbf9;
-              }
-              .ip-green {
-                color: #23BF9A;
-              }
-              .active-ip__content {
-                position: absolute;
-                top: 7px;
-                left: 35px;
-                overflow: hidden;
-              }
-            }
-          }
-          &>.cn-chart__echarts {
+          &>.cn-chart__echarts,&>.cn-chart__table {
             .cn-chart__header {
               border-bottom: 1px solid $--content-right-background-color;
               .header__operations {
@@ -709,6 +280,66 @@
                 }
               }
             }
+          }
+          &>.cn-chart__ip-basic {
+            display: flex;
+            .el-descriptions {
+              padding-top: 30px;
+            }
+            &>.el-descriptions {
+              flex: 0 0 350px;
+              padding: 30px 36px;
+            }
+            .chart-location {
+              display: flex;
+              flex: 1;
+              flex-direction: column;
+              padding: 0 20px 20px 0;
+            }
+            .el-descriptions__content {
+              color: #3976CB;
+            }
+          }
+          &>.cn-chart__block {
+            .cn-chart {
+              border: 1px solid #E7EAED;
+            }
+            /* detail页面block下的五连图的标题样式改变 */
+            .cn-chart__group .cn-chart__echarts {
+              .cn-chart__header {
+                border-bottom: none !important;
+
+                .header__title {
+                  font-size: 14px !important;
+                  color: #3976CB !important;
+                }
+              }
+            }
+          }
+          &>.cn-chart__title {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            padding-left: 10px;
+            color: #333;
+            background-color: transparent;
+            box-shadow: none;
+            border: none;
+          }
+          &>.cn-chart__tabs {
+            padding: 10px 25px 10px 15px;
+
+            .el-tabs__nav-wrap::after {
+              height: 1px;
+            }
+            &>.el-tabs__header {
+              margin-bottom: 10px;
+            }
+            &>.el-tabs__content {
+              height: calc(100% - 40px);
+            }
+          }
+          &>.cn-chart__echarts {
             .cn-chart__body {
               overflow: hidden auto;
 
@@ -767,7 +398,6 @@
               }
             }
           }
-
           .chart-table-pagination.el-pagination {
             padding: 12px 0 9px 0;
             text-align: center;
@@ -776,205 +406,6 @@
 
             .el-pagination__jump {
               margin-left: 10px;
-            }
-          }
-          &>.cn-chart__app-basic {
-            display: flex;
-            flex-direction: column;
-            .cn-chart__body {
-              flex: auto;
-              display: flex;
-              .el-descriptions {
-                padding-top: 30px;
-              }
-              &>.el-descriptions {
-                flex: 0 0 350px;
-                padding: 30px 36px;
-              }
-              .chart-location {
-                display: flex;
-                flex: 1;
-                flex-direction: column;
-                padding: 0 20px 20px 0;
-              }
-              .el-descriptions__content {
-                color: #3976CB;
-              }
-            }
-            .cn-chart__body-single {
-              display: flex;
-              .cn-chart__body-single-table {
-                display: flex;
-                width: 250px;
-                align-items: center;
-              }
-              .single-value-icon__box {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex: 0 0 40%;
-              }
-              .single-value__icon {
-                 display: flex;
-                 justify-content: center;
-                 width: 72px;
-                 height: 72px;
-                 background-color: $--chart-single-value-icon-background-color;
-                 border-radius: 50%;
-
-                 i {
-                   display: flex;
-                   align-items: center;
-                   font-size: 28px;
-                   color: $--color-primary;
-                 }
-               }
-              .single-value-color-g.single-value__icon {
-                background-color: limegreen;
-                i {
-                  color: green;
-                }
-              }
-              .single-value-color-y.single-value__icon {
-                background-color: yellow;
-                i {
-                  color: darkorange;
-                }
-              }
-              .single-value__content {
-                display: flex;
-                flex-direction: column;
-                max-width: 60%;
-                padding-left: 10px;
-
-                div:nth-of-type(1) {
-                  margin-bottom: 10px;
-                }
-
-                .content__data {
-                  padding-bottom: 7%;
-                  font-size: 24px;
-                  color: #333333;
-                  font-weight: bold;
-                }
-                .content__title {
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  font-size: 16px;
-                  color: #666666;
-                }
-                &.single-value__content--with-chart {
-                  .content__title {
-                    border-bottom: 1px solid $--content-right-background-color;
-                  }
-                }
-                .single-value__unit {
-                  font-weight: normal;
-                  padding-left: 10px;
-                  color: #666;
-                  font-size: 20px;
-                }
-              }
-            }
-          }
-          &>.cn-chart__dns-record {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            .cn-chart__body {
-              flex: auto;
-              display: flex;
-              height: 100%;
-              width: 100%;
-              .el-descriptions {
-                padding-top: 30px;
-              }
-              &>.el-descriptions {
-                flex: 0 0 350px;
-                padding: 30px 36px;
-              }
-              .chart-location {
-                display: flex;
-                flex: 1;
-                flex-direction: column;
-                padding: 0 20px 20px 0;
-              }
-              .el-descriptions__content {
-                color: #3976CB;
-              }
-            }
-          }
-          .cn-chart__table.eventList {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            .cn-chart__body {
-              flex: auto;
-              display: flex;
-              height: 100%;
-              width: 100%;
-              .el-descriptions {
-                padding-top: 30px;
-              }
-              &>.el-descriptions {
-                flex: 0 0 350px;
-                padding: 30px 36px;
-              }
-              .chart-location {
-                display: flex;
-                flex: 1;
-                flex-direction: column;
-                padding: 0 20px 20px 0;
-              }
-              .el-descriptions__content {
-                color: #3976CB;
-              }
-              .crypto-eventList__record {
-                display: flex;
-                height: 100%;
-                width: 100%;
-
-                .record__table {
-                  display: table;
-                  height: 100%;
-                  width: 100%;
-
-                  .record__table-row {
-                    display: table-row;
-                    font-size: 14px;
-                    color: #333333;
-                  }
-                  .record__table-row.record__table-row--header {
-                    padding: 13px 30px 0;
-                    height: 40px;
-                    color: #6B717B;
-                  }
-                  .record__table-cell {
-                    display: table-cell;
-                    vertical-align: middle;
-                    padding-left: 10px;
-                    padding-top: 15px;
-                    padding-bottom: 0;
-
-                    .record_second{
-                      color:#7e8088;
-                      font-size:12px;
-                    }
-
-                    .circle-red {
-                      color: #EC7F66;
-                      font-size: 28px;
-                    }
-
-                  }
-                  .record__table-cell:first-of-type {
-                    padding-left:30px;
-                  }
-                }
-              }
             }
           }
         }

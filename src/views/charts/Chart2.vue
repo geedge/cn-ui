@@ -70,12 +70,12 @@
       ></chart-category-bar>
 
       <chart-ip-open-port-bar
-              v-else-if="isIpOpenPortBar"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :result-type="resultType"
-              :query-params="queryParams"
-              @showLoading="showLoading"
+        v-else-if="isIpOpenPortBar"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :result-type="resultType"
+        :query-params="queryParams"
+        @showLoading="showLoading"
       ></chart-ip-open-port-bar>
 
       <chart-table
@@ -88,11 +88,11 @@
       ></chart-table>
 
       <chart-active-ip-table
-          v-else-if="isActiveIpTable"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :table="table"
-          :query-params="queryParams"
+        v-else-if="isActiveIpTable"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :table="table"
+        :query-params="queryParams"
       ></chart-active-ip-table>
 
       <chart-app-basic-info
@@ -110,32 +110,32 @@
       ></chart-domain-whois>
 
       <chart-domain-dns-record
-          v-else-if="isDomainDnsRecord"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :query-params="queryParams"
+        v-else-if="isDomainDnsRecord"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
       ></chart-domain-dns-record>
 
       <chart-cryptocurrency-event-list
-          v-else-if="isCryptocurrencyEventList"
-          :chart-info="chartInfo"
-          :chart-data="chartData"
-          :query-params="queryParams"
+        v-else-if="isCryptocurrencyEventList"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
       ></chart-cryptocurrency-event-list>
 
       <chart-relation-ship
-              v-else-if="isRelationShip"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :query-params="queryParams"
+        v-else-if="isRelationShip"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
       ></chart-relation-ship>
 
       <chart-san-key
-              v-else-if="isSankey"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :query-params="queryParams"
-              :entity="entity"
+        v-else-if="isSankey"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
+        :entity="entity"
       ></chart-san-key>
 
     </template>

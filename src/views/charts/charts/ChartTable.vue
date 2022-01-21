@@ -6,10 +6,7 @@
           tooltip-effect="light"
           :data="table.currentPageData"
       >
-        <el-table-column
-            type="index"
-            label="#"
-        >
+        <el-table-column v-if="table.currentPageData.length" type="index" label="#">
         </el-table-column>
         <el-table-column
             v-for="(c, i) in table.tableColumns"
@@ -33,7 +30,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="cn-chart__footer">
+    <div class="cn-chart__footer" v-if="table.tableData.length > 10">
       <chart-table-pagination
           ref="tablePagination"
           :total="table.tableData.length"
@@ -73,6 +70,7 @@ export default {
     },
   },
   mounted() {
+    console.log(this.chartData)
   }
 }
 </script>

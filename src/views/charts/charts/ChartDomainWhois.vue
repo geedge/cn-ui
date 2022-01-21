@@ -1,5 +1,4 @@
 <template>
-
   <div class="cn-chart__whois">
     <div class="cn-chart__body">
       <div class="domain-detail-list">

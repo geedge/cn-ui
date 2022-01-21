@@ -1,5 +1,5 @@
 <template>
-  <div class="cn-chart__app-basic" :style="computePosition">
+  <div class="cn-chart__app-basic">
     <div class="cn-chart__body">
       <div style="display: flex; justify-content: space-between; width: 100%;">
         <el-descriptions :column="1" style="padding: 20px 30px;">
@@ -55,8 +55,6 @@
 </template>
 
 <script>
-import ChartSingleValue from "@/views/charts/charts/ChartSingleValue";
-import {isIpBasicInfo} from "@/views/charts/charts/tools";
 export default {
   name: "ChartAppBasicInfo",
   props: {
@@ -64,36 +62,12 @@ export default {
     chartData: [Array, Object],
     queryParams: Object
   },
-  components: {
-    ChartSingleValue
-  },
   data () {
     return {
 
     }
   },
-  watch: {
-    chartData: {
-      deep: true,
-      immediate: true,
-      handler (n) {
-      }
-    }
-  },
-  computed: {
-    computePosition() {
-      const gridColumn = `${this.chartInfo.x} / ${this.chartInfo.x + this.chartInfo.w}`
-      const gridRow = `${this.chartInfo.y} / ${this.chartInfo.y + this.chartInfo.h}`
-      return {
-        gridColumn,
-        gridRow
-      }
-    }
-  },
   mounted() {
-  },
-  setup (props) {
-    isIpBasicInfo: isIpBasicInfo(props.chartInfo.type)
   }
 }
 </script>

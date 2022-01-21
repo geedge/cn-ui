@@ -1,0 +1,81 @@
+.cn-panel2 {
+  position: relative;
+  .chart-list {
+    .vue-grid-layout>.vue-grid-item {
+      .cn-chart {
+        height: 100% !important;
+        .active-ip.cn-chart__table {
+          height: calc(100% - 47px) !important;
+        }
+        .cn-chart__table{
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          .cn-chart__body {
+            flex: auto;
+            overflow-y: auto;
+            height: 100%;
+            width: 100%;
+
+            .el-table {
+              padding: 0 10px;
+              .el-table__body-wrapper.is-scrolling-none {
+                height: 100%;
+                overflow-y: auto;
+              }
+
+              &:before {
+                height: 0;
+              }
+              thead {
+                color: #333;
+              }
+              th.is-leaf, td {
+                border-bottom: none;
+              }
+              th {
+                padding-bottom: 5px;
+              }
+              td {
+                padding: 4px 0;
+                color: #333;
+              }
+            }
+            .active-ip__icon {
+              overflow: hidden;
+              position: absolute;
+              top: 8px;
+              left: 6px;
+              display: flex;
+              justify-content: center;
+              justify-items: center;
+              align-items: center;
+              width: 23px;
+              height: 23px;
+              border-radius: 50%;
+              background: #e8fbf9;
+              border: 2px solid #e8fbf9;
+            }
+            .ip-green {
+              color: #23BF9A;
+            }
+            .active-ip__content {
+              position: absolute;
+              top: 7px;
+              left: 35px;
+              overflow: hidden;
+            }
+          }
+          .chart-table-pagination.el-pagination {
+            padding: 12px 0 9px 0;
+            text-align: center;
+
+            .el-pagination__jump {
+              margin-left: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

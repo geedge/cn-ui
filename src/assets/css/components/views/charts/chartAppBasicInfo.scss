@@ -1,0 +1,110 @@
+.cn-panel2 {
+  position: relative;
+  .chart-list {
+    .vue-grid-layout>.vue-grid-item {
+      .cn-chart {
+        height: 100% !important;
+        .cn-chart__app-basic {
+          display: flex;
+          flex-direction: column;
+          .cn-chart__body {
+            flex: auto;
+            display: flex;
+            .el-descriptions {
+              padding-top: 30px;
+            }
+            &>.el-descriptions {
+              flex: 0 0 350px;
+              padding: 30px 36px;
+            }
+            .chart-location {
+              display: flex;
+              flex: 1;
+              flex-direction: column;
+              padding: 0 20px 20px 0;
+            }
+            .el-descriptions__content {
+              color: #3976CB;
+            }
+            .cn-chart__body-single {
+              display: flex;
+              .cn-chart__body-single-table {
+                display: flex;
+                width: 250px;
+                align-items: center;
+              }
+              .single-value-icon__box {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 40%;
+              }
+              .single-value__icon {
+                display: flex;
+                justify-content: center;
+                width: 72px;
+                height: 72px;
+                background-color: $--chart-single-value-icon-background-color;
+                border-radius: 50%;
+
+                i {
+                  display: flex;
+                  align-items: center;
+                  font-size: 28px;
+                  color: $--color-primary;
+                }
+              }
+              .single-value-color-g.single-value__icon {
+                background-color: limegreen;
+                i {
+                  color: green;
+                }
+              }
+              .single-value-color-y.single-value__icon {
+                background-color: yellow;
+                i {
+                  color: darkorange;
+                }
+              }
+              .single-value__content {
+                display: flex;
+                flex-direction: column;
+                max-width: 60%;
+                padding-left: 10px;
+
+                div:nth-of-type(1) {
+                  margin-bottom: 10px;
+                }
+
+                .content__data {
+                  padding-bottom: 7%;
+                  font-size: 24px;
+                  color: #333333;
+                  font-weight: bold;
+                }
+                .content__title {
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  font-size: 16px;
+                  color: #666666;
+                }
+                &.single-value__content--with-chart {
+                  .content__title {
+                    border-bottom: 1px solid $--content-right-background-color;
+                  }
+                }
+                .single-value__unit {
+                  font-weight: normal;
+                  padding-left: 10px;
+                  color: #666;
+                  font-size: 20px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

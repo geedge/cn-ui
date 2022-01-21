@@ -1,0 +1,13 @@
+.cn-panel2 {
+  position: relative;
+  .chart-list {
+    .vue-grid-layout>.vue-grid-item {
+      .cn-chart {
+        height: 100% !important;
+        .cn-chart__whois {
+          overflow: auto;
+        }
+      }
+    }
+  }
+}

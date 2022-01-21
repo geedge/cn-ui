@@ -1,0 +1,38 @@
+.cn-panel2 {
+  position: relative;
+  .chart-list {
+    .vue-grid-layout>.vue-grid-item {
+      .cn-chart {
+        height: 100% !important;
+        cn-chart__dns-record {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          width: 100%;
+          .cn-chart__body {
+            flex: auto;
+            display: flex;
+            height: 100%;
+            width: 100%;
+            .el-descriptions {
+              padding-top: 30px;
+            }
+            &>.el-descriptions {
+              flex: 0 0 350px;
+              padding: 30px 36px;
+            }
+            .chart-location {
+              display: flex;
+              flex: 1;
+              flex-direction: column;
+              padding: 0 20px 20px 0;
+            }
+            .el-descriptions__content {
+              color: #3976CB;
+            }
+          }
+        }
+      }
+    }
+  }
+}

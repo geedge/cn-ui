@@ -1,8 +1,8 @@
 <template>
-  <div class="cn-chart__table">
+  <div class="cn-chart__table active-ip">
     <div class="cn-chart__body">
       <el-table
-          style="width: 100%"
+          style="width: 100%;height: 100%"
           tooltip-effect="light"
           :data="activeIpTable.tableData"
           :show-header="false"

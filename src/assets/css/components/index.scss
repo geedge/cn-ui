@@ -19,5 +19,12 @@
 @import './views/entityExplorer/entityList/row';
 @import 'views/entityExplorer/entityList/detail-overview';
 @import './views/charts/panel';
-@import 'views/charts/ChartIpOpenPortBar';
+@import 'views/charts/chartIpOpenPortBar';
+@import './views/charts/chartTable';
+@import './views/charts/chartSingleValue';
+@import './views/charts/chartCryptocurrencyEventList';
+@import './views/charts/chartAppBasicInfo';
+@import './views/charts/chartDomainDnsRecord';
+@import './views/charts/chartDomainWhois';
+
 //@import '../chart';
