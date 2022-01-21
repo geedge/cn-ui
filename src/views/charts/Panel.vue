@@ -45,6 +45,7 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
+import {getGroupHeight, getTypeCategory} from "@/views/charts/charts/tools";
 
 export default {
   name: 'Panel',
@@ -65,7 +66,7 @@ export default {
     }
   },
   async mounted () {
-    this.emitter.on('groupShow', this.groupShow)
+    this.emitter.on('groupParentCalcHeight', this.groupParentCalcHeight)
     this.isCryptocurrency = this.$route.path.indexOf('cryptocurrency') > -1
     await this.init()
     if (!this.$_.isEmpty(this.detailTabs)) {
@@ -113,6 +114,16 @@ export default {
     },
     recursionParamsConvert (chart) {
       chart.params = chart.params ? JSON.parse(chart.params) : null
+      if (chart.type === 94) {
+        chart.oldH = chart.h
+        chart.params = {
+          collpase: false
+        }
+        chart.h = getGroupHeight(chart.children) + 2
+        if (chart.params.collpase) {
+          chart.h = 1
+        }
+      }
       if (!this.$_.isEmpty(chart.children)) {
         chart.children.forEach(c => {
           this.recursionParamsConvert(c)
@@ -142,9 +153,8 @@ export default {
         this.$refs[`chart-${chart.id}`] && this.$refs[`chart-${chart.id}`].reloadChart()
       })
     },
-    groupShow (chart) {
-      console.log( this.$refs.panelChartList,chart)
-      this.$refs.panelChartList.groupShow(chart)
+    groupParentCalcHeight (params) {
+      this.$refs.panelChartList.groupParentCalcHeight(params.chart, params.childrenList)
     }
   }
 }

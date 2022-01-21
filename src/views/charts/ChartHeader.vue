@@ -1,7 +1,7 @@
 <template>
   <div class="chart-header" :class="{'chart-header--title-chart': isTitle}">
-    <div class="chart-header__title" v-if="!isCurrentTable&&(isGroup||isBlock)" :class="{'chart-header__title--block': isBlock}">
-      <span @click="groupShow"> <i class="cn-icon" :class="chartInfo.params&&chartInfo.params.collapse ? 'cn-icon-arrow-right': 'cn-icon-arrow-down'"></i></span>
+    <div class="chart-header__title" v-if="!isCurrentTable&&(isGroup)" :class="{'chart-header__title--block': isBlock}">
+      <span @click="groupShow"> <i class="cn-icon" :class="chartInfo.params&&chartInfo.params.collpase ? 'cn-icon-arrow-right': 'cn-icon-arrow-down'"></i></span>
       {{chartInfo.name}}
     </div>
     <div class="chart-header__title" v-else-if="!isCurrentTable" :class="{'chart-header__title--block': isBlock}">{{chartInfo.name}}</div>
@@ -161,8 +161,7 @@ export default {
       this.dateTimeRangeChange(s, e, v)
     },
     groupShow () {
-      console.log(123)
-      this.emitter.emit('groupShow', this.chartInfo)
+      this.$emit('groupShow', this.chartInfo)
     },
     dateTimeRangeChange (s, e, v) {
       this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }

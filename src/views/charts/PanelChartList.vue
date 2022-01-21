@@ -33,6 +33,7 @@
             :show-header="true"
             :time-filter="timeFilter"
             :entity="entity"
+            @groupShow="groupShow"
             @showFullscreen="showFullscreen"
         ></panel-chart>
       </grid-item>
@@ -65,7 +66,7 @@
 <script>
 import PanelChart from '@/views/charts/PanelChart'
 import VueGridLayout from 'vue-grid-layout'
-import { getTypeCategory } from './charts/tools'
+import { getGroupHeight, getTypeCategory } from './charts/tools'
 import _ from 'lodash'
 
 export default {
@@ -114,18 +115,28 @@ export default {
       this.fullscreen.visible = show
     },
     groupShow (chart) {
-      console.log(chart, this.copyDataList)
       this.copyDataList.forEach((item, index) => {
         if (item.id === chart.id) {
           item.params.collpase = !item.params.collpase
           if (item.params.collpase) {
             item.h = 1
           } else {
-            item.h = item.oldH
+            item.h = getGroupHeight(item.children) + 2
           }
         }
       })
       this.copyDataList = [...this.copyDataList]
+      this.emitter.emit('groupParentCalcHeight', { chart, childrenList: this.copyDataList })
+    },
+    groupParentCalcHeight (chart, childrenList) {
+      setTimeout(() => {
+        const parent = this.copyDataList.find(chartitem => chartitem.id === chart.parent.id)
+        const children = parent.children.find(item => item.id === chart.id)
+        children.h = chart.h
+        children.params = chart.params
+        parent.h = getGroupHeight(childrenList) + 2
+        this.copyDataList = [...this.copyDataList]
+      }, 100)
     }
   },
   computed: {
@@ -146,17 +157,11 @@ export default {
       handler (n, o) {
         this.gridLayoutShow = false
         this.gridLayoutLoading = true
+        // const arr = this.$_.cloneDeep(n)
         this.noData = !n || n.length < 1
         const tempList = n.map(item => {
           if (item.params) {
             item.params.showHeader = true
-            if (item.type === 95 || item.type === 94) {
-              item.oldH = item.h
-              item.params.collpase = false
-            }
-            if (item.params.collpase) {
-              item.h = this.rowHeight
-            }
           }
           const height = item.h
           return {

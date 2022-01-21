@@ -213,8 +213,8 @@ export function getGroupHeight (arr) {
     })
     let maxHeight = 0
     lastItem.forEach(last => {
-      if (maxHeight < last.height) {
-        maxHeight = last.height
+      if (maxHeight < last.h) {
+        maxHeight = last.h
       }
     })
     if (maxY < 0) {

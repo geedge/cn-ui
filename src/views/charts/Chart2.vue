@@ -1,6 +1,6 @@
 <template>
   <div class="cn-chart">
-    <loading :loading="loading && !isTabs && !isBlock"></loading>
+    <loading :loading="loading && !isTabs && !isBlock && !isGroup"></loading>
     <chart-no-data v-if="isNoData"></chart-no-data>
     <template v-else>
 
@@ -33,6 +33,13 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :entity="entity"
+      ></chart-block>
+
+      <chart-block
+              v-else-if="isGroup"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :entity="entity"
       ></chart-block>
 
       <ip-basic-info
