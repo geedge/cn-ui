@@ -1,0 +1,122 @@
+.advanced-search {
+  position: relative;
+  height: 100%;
+
+  .search__suffixes {
+    &.search__suffixes--text-mode, &.search__suffixes--tag-mode {
+      position: absolute;
+      display: flex;
+      top: 10px;
+      right: 10px;
+
+      .search__suffix {
+        margin-left: 8px;
+
+        .cn-icon-search-advance {
+          color: #A6AAAE;
+          font-size: 18px;
+        }
+        .el-icon-search {
+          color: #3976CB;
+          font-size: 22px;
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+.advanced-search--show-list .CodeMirror, .advanced-search--show-list .tag-search {
+  border: none;
+}
+.tag-search {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  border: 1px solid #CECECE;
+  border-radius: 2px;
+  padding-left: 10px;
+  padding-right: 80px;
+  background-color: white;
+
+  .tag-search__meta, .tag-search__add {
+    margin-right: 10px;
+  }
+
+  .tag-search__add {
+    display: flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 4px;
+    font-size: 12px;
+    color: #333;
+    background-color: #F5F6F7;
+    border: 1px solid #D7D7D7;
+    border-radius: 1px;
+    cursor: pointer;
+    transition: all linear .1s;
+
+    &:hover {
+      background-color: white;
+      color: #111;
+    }
+  }
+
+  .tag-search__meta {
+    display: flex;
+    height: 22px;
+    padding: 0 6px;
+    font-size: 12px;
+    background-color: #F5F6F7;
+
+    &>div:not(:last-of-type) {
+      margin-right: 6px;
+    }
+
+    &.tag-search__meta--condition {
+      .condition__delete {
+        display: flex;
+        align-items: center;
+        color: #bcbdbd;
+        font-size: 16px;
+        margin-right: 6px;
+        cursor: pointer;
+        transition: all linear .1s;
+
+        &:hover {
+          color: #999;
+        }
+      }
+      .condition__column, .condition__operator, .condition__value {
+        display: flex;
+        align-items: center;
+        color: #333;
+        font-weight: bold;
+        cursor: text;
+      }
+      .condition__operator {
+        color: #3976CB;
+      }
+      .condition__operation-select {
+        display: flex;
+        align-items: center;
+
+        .condition__operation {
+          margin: 0 5px;
+          color: #3976CB;
+        }
+      }
+    }
+    &.tag-search__meta--connection {
+      .connection__value {
+        display: flex;
+        align-items: center;
+        color: #3976CB;
+        font-weight: bold;
+        cursor: text;
+      }
+    }
+  }
+}

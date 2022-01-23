@@ -1,7 +1,8 @@
-@import 'components/advancedSearch/advanced-search';
+@import './components/advancedSearch/advanced-search2';
+@import './components/advancedSearch/codemirror';
 // @import './components/charts/panel';
-@import 'components/common/TimeRange/date-time-range';
-@import 'components/common/TimeRange/time-refresh';
+@import './components/common/TimeRange/date-time-range';
+@import './components/common/TimeRange/time-refresh';
 @import './components/common/pagination';
 // @import './components/entities/entities';
 @import './components/layout/layout';
