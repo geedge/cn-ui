@@ -202,7 +202,6 @@ export default {
       deep: true,
       handler (n) {
         this.initMap(`chart${this.chartInfo.id}`)
-        console.log(n)
       }
     }
   },

@@ -96,7 +96,6 @@ export default {
     chartData: {
       deep: true,
       handler (n) {
-        console.log(n)
         this.init(`chart${this.chartInfo.id}`)
       }
     }

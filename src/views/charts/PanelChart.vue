@@ -184,7 +184,6 @@ export default {
         }
         if (this.isSingleValue) {
           if (chartParams && chartParams.dataKey) {
-            console.log(chartParams.dataKey)
             get('/interface/entity/detail/ip/serviceOverview', this.queryParams).then(response =>{
               if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
                 this.chartData = response.data.result[chartParams.dataKey]

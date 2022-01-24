@@ -153,7 +153,6 @@ export default {
       get((this.trafficUrlMap), this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.chartData = response.data.result
-          console.log(this.chartData)
         }
       })
     },
