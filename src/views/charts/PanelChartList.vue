@@ -121,7 +121,7 @@ export default {
           if (item.params.collpase) {
             item.h = 1
           } else {
-            item.h = getGroupHeight(item.children) + 2
+            item.h = getGroupHeight(item.children) + 1
           }
         }
       })

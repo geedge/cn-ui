@@ -125,7 +125,7 @@ export default {
         }
       }
       if (chart.type === 95) {
-        chart.h += 1
+        chart.h += 0
       }
       if (!this.$_.isEmpty(chart.children)) {
         chart.children.forEach(c => {
