@@ -182,6 +182,17 @@ export default {
           ...this.entity,
           ...extraParams
         }
+        if (this.isSingleValue) {
+          if (chartParams && chartParams.dataKey) {
+            console.log(chartParams.dataKey)
+            get('/interface/entity/detail/ip/serviceOverview', this.queryParams).then(response =>{
+              if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
+                this.chartData = response.data.result[chartParams.dataKey]
+                this.loading = false
+              }
+            })
+          }
+        }
         const requestUrl = url || (chartParams && chartParams.url)
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
