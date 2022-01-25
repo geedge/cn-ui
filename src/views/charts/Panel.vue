@@ -45,7 +45,7 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
-import {getGroupHeight, getTypeCategory} from "@/views/charts/charts/tools";
+import { getGroupHeight, getTypeCategory } from '@/views/charts/charts/tools'
 
 export default {
   name: 'Panel',
@@ -119,13 +119,19 @@ export default {
         chart.params = {
           collpase: false
         }
-        chart.h = getGroupHeight(chart.children) + 2
+        chart.h = getGroupHeight(chart.children) + 1.5
         if (chart.params.collpase) {
           chart.h = 1
         }
       }
       if (chart.type === 95) {
-        chart.h += 0
+        let sumGroup = 0
+        chart.children.forEach(item => {
+          if (item.type === 94) {
+            sumGroup++
+          }
+        })
+        chart.h += sumGroup * 0.5
       }
       if (!this.$_.isEmpty(chart.children)) {
         chart.children.forEach(c => {

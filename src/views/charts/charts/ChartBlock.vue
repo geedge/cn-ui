@@ -24,16 +24,16 @@ export default {
     }
   },
   watch: {
-    'chartInfo.children': {
-      immediate: true,
-      deep: true,
-      handle (n) {
-        if (!this.firstShow) {
-          this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
-          this.firstShow = true
-        }
-      }
-    }
+    // 'chartInfo.children': {
+    //   immediate: true,
+    //   deep: true,
+    //   handle (n) {
+    //     if (!this.firstShow) {
+    //       this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
+    //       this.firstShow = true
+    //     }
+    //   }
+    // }
   },
   mounted () {
     this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
