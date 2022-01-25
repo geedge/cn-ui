@@ -71,6 +71,7 @@ export default {
       this.$emit('close')
     },
     filter (row) {
+      console.info(row.name, this.item)
       this.$emit('filter', row.name, this.item)
     },
     initEntityTop (leftVal, itemVal, data, totalCount) {

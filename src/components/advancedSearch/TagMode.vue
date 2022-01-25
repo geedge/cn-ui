@@ -75,7 +75,7 @@
     <div class="tag-search__add" @click="addCondition">{{$t('entities.advancedSearch.add')}}</div>
     <div class="search__suffixes search__suffixes--tag-mode">
       <div class="search__suffix" @click="changeMode">
-        <i class="cn-icon cn-icon-search-advance"></i>
+        <i class="cn-icon cn-icon-search-normal"></i>
       </div>
       <div class="search__suffix" @click="search">
         <i class="el-icon-search"></i>
@@ -87,12 +87,14 @@
 <script>
 import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
+import SqlParser, { stringInQuot } from '@/utils/sql-parser'
 export default {
   name: 'TagMode',
   props: {
     columnList: Array,
     operatorList: Array,
-    connectionList: Array
+    connectionList: Array,
+    convertMetaList: Array
   },
   data () {
     return {
@@ -103,9 +105,9 @@ export default {
   },
   methods: {
     // 新增条件
-    addCondition () {
-      this.metaList.forEach(meta => {
-        meta.cancelEditing()
+    addCondition (meta) {
+      this.metaList.forEach(m => {
+        m.cancelEditing()
       })
       // 先判断上一个condition是否已填写完整，没有则删除；之后将当前所有meta的内容的isEditing置为false
       if (this.metaList.length > 0) {
@@ -118,14 +120,19 @@ export default {
       if (!_.isEmpty(this.metaList)) {
         this.addConnection()
       }
-      const newCondition = new Meta(condition)
-      newCondition.isEditing = true
-      newCondition.column.isEditing = true
-      this.metaList.push(newCondition)
+      if (meta instanceof Meta) {
+        this.metaList.push(meta)
+      } else {
+        const newCondition = new Meta(condition)
+        newCondition.isEditing = true
+        newCondition.column.isEditing = true
+        this.metaList.push(newCondition)
 
-      this.$nextTick(() => {
-        this.$refs.columnSelect.focus()
-      })
+        this.$nextTick(() => {
+          this.$refs.columnSelect.focus()
+        })
+      }
+      console.info(this.metaList)
     },
     addConnection () {
       this.metaList.push(new Meta(connection))
@@ -216,10 +223,44 @@ export default {
       })
     },
     search () {
-      this.$emit('search', this.metaList)
+      const parser = new SqlParser(this.metaList, this.columnList)
+      const { metaList, formatSql } = parser.formatMetaList()
+      this.metaList = metaList
+      this.$emit('search', this.metaList, formatSql)
     },
     changeMode () {
-      this.$emit('changeMode', 'text')
+      const parser = new SqlParser(this.metaList, this.columnList)
+      const { metaList, formatSql } = parser.formatMetaList()
+      this.metaList = metaList
+      this.$emit('changeMode', 'text', formatSql)
+    },
+    addParams (params) {
+      Object.keys(params).forEach(key => {
+        const column = this.columnList.find(column => {
+          return column.name === key
+        })
+        const meta = new Meta()
+        meta.column.name = key
+        meta.column.type = column ? column.type : columnType.string
+        meta.column.label = column ? column.label : key
+        meta.operator.value = '='
+        meta.operator.show = true
+        meta.value.value = meta.column.type === columnType.string ? stringInQuot(params[key]) : params[key]
+        meta.value.show = true
+        meta.value.label = meta.value.value
+        this.addCondition(meta)
+      })
+    }
+  },
+  watch: {
+    convertMetaList: {
+      immediate: true,
+      deep: true,
+      handler (n) {
+        if (!_.isEmpty(n)) {
+          this.metaList = n
+        }
+      }
     }
   }
 }

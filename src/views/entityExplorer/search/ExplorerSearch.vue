@@ -177,8 +177,8 @@ export default {
     }
   },
   methods: {
-    search (params = {}) {
-      this.$emit('search', params)
+    search (q) {
+      this.$emit('search', { q: q })
     },
     addParams (params) {
       this.$refs.search.addParams(params)

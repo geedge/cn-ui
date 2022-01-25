@@ -9,6 +9,10 @@
   border: 1px solid #CECECE;
   border-radius: 2px;
   padding-right: 80px;
+
+  pre.CodeMirror-placeholder.CodeMirror-line-like {
+    color: #ccc;
+  }
 }
 
 /* PADDING */

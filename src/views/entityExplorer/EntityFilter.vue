@@ -63,7 +63,7 @@ export default {
       const offsetLeft = this.$refs['entityTopTen' + i].offsetLeft
       const leftVal = offsetLeft + width
       const queryParams = {
-        q: objToStr(this.searchParams),
+        q: this.searchParams.q,
         entityType: type,
         column: item.topColumn,
         top: 10,

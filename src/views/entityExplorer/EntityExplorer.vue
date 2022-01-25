@@ -444,11 +444,11 @@ export default {
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
       if (this.searchParams && Object.keys(this.searchParams).length > 0) {
-        this.queryFilter({ entityType: 'ip', q: this.handleQ(this.searchParams), ...this.timeFilter })
-        this.queryFilter({ entityType: 'app', q: this.handleQ(this.searchParams), ...this.timeFilter })
-        this.queryFilter({ entityType: 'domain', q: this.handleQ(this.searchParams), ...this.timeFilter })
-        this.queryList({ q: this.handleQ(this.searchParams), ...this.timeFilter, ...this.pageObj })
-        this.queryListTotal({ q: this.handleQ(this.searchParams), ...this.timeFilter })
+        this.queryFilter({ entityType: 'ip', q: this.searchParams.q, ...this.timeFilter })
+        this.queryFilter({ entityType: 'app', q: this.searchParams.q, ...this.timeFilter })
+        this.queryFilter({ entityType: 'domain', q: this.searchParams.q, ...this.timeFilter })
+        this.queryList({ q: this.searchParams.q, ...this.timeFilter, ...this.pageObj })
+        this.queryListTotal({ q: this.searchParams.q, ...this.timeFilter })
       } else {
         this.queryFilter({ entityType: 'ip', ...this.timeFilter })
         this.queryFilter({ entityType: 'app', ...this.timeFilter })

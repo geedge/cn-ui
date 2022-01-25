@@ -4,14 +4,19 @@
   >
     <text-mode
         v-if="searchMode === 'text'"
+        ref="textMode"
+        :column-list="columnList"
+        :sql="sql"
         @changeMode="changeMode"
         @search="search"
     ></text-mode>
     <tag-mode
         v-if="searchMode === 'tag'"
+        ref="tagMode"
         :column-list="columnList"
         :operator-list="showOperatorList"
         :connection-list="showConnectionList"
+        :convert-meta-list="metaList"
         @changeMode="changeMode"
         @search="search"
     ></tag-mode>
@@ -29,6 +34,12 @@ export default {
   components: {
     TagMode,
     TextMode
+  },
+  data () {
+    return {
+      sql: null,
+      metaList: null
+    }
   },
   props: {
     // 默认模式，tag | text
@@ -49,11 +60,20 @@ export default {
     connectionList: Array
   },
   methods: {
-    search () {
-
+    search (metaList, formatSql) {
+      this.$emit('search', formatSql)
     },
-    changeMode (mode) {
+    changeMode (mode, data) {
       this.searchMode = mode
+      if (mode === 'text') {
+        this.sql = data
+      } else if (mode === 'tag') {
+        this.metaList = data
+      }
+    },
+    addParams (params) {
+      this.$refs.tagMode && this.$refs.tagMode.addParams(params)
+      this.$refs.textMode && this.$refs.textMode.addParams(params)
     }
   },
   setup (props) {

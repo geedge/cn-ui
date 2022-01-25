@@ -4,7 +4,9 @@ export const condition = 'condition'
 export const columnType = {
   fullText: 'fullText',
   string: 'string',
-  long: 'long'
+  long: 'long',
+  number: 'number',
+  array: 'array'
 }
 export const defaultOperatorList = ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE']
 export const defaultConnectionList = [
