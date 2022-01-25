@@ -199,12 +199,6 @@ export default {
               response = testData.data
             } else if (this.chartInfo.type === 24 && testData) {
               response = testData.data2
-            } else if (this.chartInfo.type === 22 && testData) {
-              response = testData.data3
-            } else if (this.chartInfo.type === 43 && testData) {
-              response = testData.data4
-            } else if (this.chartInfo.type === 42 && testData) {
-              response = testData.data5
             }
             if (response.code === 200) {
               this.chartData = response.data.result
