@@ -177,8 +177,8 @@ export default {
     }
   },
   methods: {
-    search (q) {
-      this.$emit('search', { q: q })
+    search (metaList, formatSql) {
+      this.$emit('search', metaList, formatSql)
     },
     addParams (params) {
       this.$refs.search.addParams(params)

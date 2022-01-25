@@ -107,6 +107,7 @@ export default {
     // 新增条件
     addCondition (meta) {
       this.metaList.forEach(m => {
+        console.info(m)
         m.cancelEditing()
       })
       // 先判断上一个condition是否已填写完整，没有则删除；之后将当前所有meta的内容的isEditing置为false
@@ -132,7 +133,6 @@ export default {
           this.$refs.columnSelect.focus()
         })
       }
-      console.info(this.metaList)
     },
     addConnection () {
       this.metaList.push(new Meta(connection))
@@ -161,16 +161,16 @@ export default {
         })
         meta.column.label = selectedColumn.label
         meta.column.type = selectedColumn.type
-      }
-      setTimeout(() => {
-        meta.column.isEditing = false
+        setTimeout(() => {
+          meta.column.isEditing = false
 
-        // 处理操作符
-        if (!meta.operator.value) {
-          meta.operator.isEditing = true
-          meta.operator.show = true
-        }
-      }, 200)
+          // 处理操作符
+          if (!meta.operator.value) {
+            meta.operator.isEditing = true
+            meta.operator.show = true
+          }
+        }, 200)
+      }
     },
     selectConnection (value, meta) {
       meta.isEditing = false
@@ -185,7 +185,11 @@ export default {
       setTimeout(() => {
         meta.column.isEditing = false
         if (meta.isEmpty()) {
-          this.metaList.splice(index, 1)
+          if (this.metaList.length > 1) {
+            this.metaList.splice(index - 1, 2)
+          } else {
+            this.metaList.splice(index, 1)
+          }
         }
       }, 200)
     },
@@ -231,6 +235,7 @@ export default {
     changeMode () {
       const parser = new SqlParser(this.metaList, this.columnList)
       const { metaList, formatSql } = parser.formatMetaList()
+      console.info(formatSql)
       this.metaList = metaList
       this.$emit('changeMode', 'text', formatSql)
     },

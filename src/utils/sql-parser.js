@@ -1,5 +1,5 @@
 import { GenericSQL, SqlParserVisitor } from 'dt-sql-parser'
-import Meta, { connection, condition, columnType } from '@/components/advancedSearch/meta/meta'
+import Meta, { connection, condition, columnType, cloneMeta } from '@/components/advancedSearch/meta/meta'
 import _ from 'lodash'
 // 补全语句，用于解析
 const sqlPrev = 'select a from b where '
@@ -34,7 +34,7 @@ export default class SqlParser extends SqlParserVisitor {
       this.tempMeta.column.type = columnType.fullText
       this.tempMeta.column.name = stringInQuot(this.tempMeta.column.name)
       this.tempMeta.column.label = this.tempMeta.column.name
-      this.metaList.push(_.cloneDeep(this.tempMeta))
+      this.metaList.push(cloneMeta(this.tempMeta))
     }
     this.tempMeta = null
     return {
@@ -44,12 +44,15 @@ export default class SqlParser extends SqlParserVisitor {
   }
 
   formatMetaList () {
-    const tempMetaList = _.cloneDeep(this.metaList)
+    const tempMetaList = cloneMeta(this.metaList)
     this.metaList = []
     tempMetaList.forEach(meta => {
       if (meta.meta === condition) {
         if (meta.column.type === columnType.fullText) {
-          this.metaList.push({ ...meta, name: stringInQuot(meta.name), label: stringInQuot(meta.name) })
+          const m = cloneMeta(meta)
+          m.column.name = stringInQuot(meta.column.name)
+          m.column.label = m.column.name
+          this.metaList.push(m)
         } else if (meta.column.type === columnType.string) {
           if (_.isArray(meta.value.value)) {
             meta.value.value = meta.value.value.map(v => {
@@ -69,6 +72,8 @@ export default class SqlParser extends SqlParserVisitor {
           }
           this.metaList.push(meta)
         }
+      } else {
+        this.metaList.push(meta)
       }
     })
     return {
@@ -81,9 +86,11 @@ export default class SqlParser extends SqlParserVisitor {
     let sql = ''
     metaList.forEach(meta => {
       if (meta.meta === condition) {
-        sql += meta.column.name
+        sql += (meta.column.name)
         if (meta.column.type !== columnType.fullText) {
           sql += `${meta.operator.value}${meta.value.value} `
+        } else {
+          sql += ' '
         }
       }
       if (meta.meta === connection) {
@@ -133,7 +140,7 @@ export default class SqlParser extends SqlParserVisitor {
             }
           }
           this.tempMeta.value.show = true
-          this.metaList.push(_.cloneDeep(this.tempMeta))
+          this.metaList.push(cloneMeta(this.tempMeta))
         }
         break
       }
@@ -158,7 +165,7 @@ export default class SqlParser extends SqlParserVisitor {
           this.tempMeta.column.type = columnType.fullText
           this.tempMeta.column.name = stringInQuot(this.tempMeta.column.name)
           this.tempMeta.column.label = this.tempMeta.column.name
-          this.metaList.push(_.cloneDeep(this.tempMeta))
+          this.metaList.push(cloneMeta(this.tempMeta))
           this.tempMeta = null
         }
         const meta = new Meta(connection)

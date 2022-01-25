@@ -44,7 +44,7 @@ export default {
   },
   props: {
     filterData: Array,
-    searchParams: Object,
+    q: String,
     timeFilter: Object
   },
   data () {
@@ -63,7 +63,7 @@ export default {
       const offsetLeft = this.$refs['entityTopTen' + i].offsetLeft
       const leftVal = offsetLeft + width
       const queryParams = {
-        q: this.searchParams.q,
+        q: this.q,
         entityType: type,
         column: item.topColumn,
         top: 10,

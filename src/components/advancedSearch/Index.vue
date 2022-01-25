@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     search (metaList, formatSql) {
-      this.$emit('search', formatSql)
+      this.$emit('search', metaList, formatSql)
     },
     changeMode (mode, data) {
       this.searchMode = mode
@@ -77,8 +77,8 @@ export default {
     }
   },
   setup (props) {
-    // 默认为文本模式 TODO 改回text
-    let searchMode = ref('tag')
+    // 默认为文本模式
+    let searchMode = ref('text')
     if (props.defaultMode) {
       switch (props.defaultMode) {
         case 'tag': {

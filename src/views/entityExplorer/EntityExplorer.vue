@@ -23,7 +23,7 @@
       <div style="display: flex; height: 100%;">
         <entity-filter
             :filter-data="filterData"
-            :search-params="searchParams"
+            :q="q"
             :time-filter="timeFilter"
             @filter="filter"
         ></entity-filter>
@@ -124,7 +124,7 @@ import EntityList from '@/views/entityExplorer/entityList/EntityList'
 import { entityType, entityFilterType, defaultPageSize } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
-import { getNowTime } from '@/utils/date-util'
+import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
 
@@ -155,7 +155,6 @@ export default {
       entityIpNew: '-',
       entityIpActive: '-',
 
-      searchParams: {},
       showFilter: ['ip', 'app', 'domain'], // ip,domain,app
       pageObj: {
         pageNo: 1,
@@ -256,6 +255,8 @@ export default {
         }
       ],
       listData: [],
+      q: '',
+      limitFilterType: true, // 是否限定了filter的类型
       listLoading: false/*,
       listData: JSON.parse(`[
         {
@@ -435,21 +436,49 @@ export default {
     dateTimeRangeChange (s, e, v) {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
-    search (params) {
-      if (params) {
-        this.searchParams = params
+    search (metaList, formatSql) {
+      if (formatSql) {
+        this.q = formatSql
+      } else {
+        this.q = ''
       }
+
       if (!this.showList) {
         this.showList = true
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
-      if (this.searchParams && Object.keys(this.searchParams).length > 0) {
-        this.queryFilter({ entityType: 'ip', q: this.searchParams.q, ...this.timeFilter })
-        this.queryFilter({ entityType: 'app', q: this.searchParams.q, ...this.timeFilter })
-        this.queryFilter({ entityType: 'domain', q: this.searchParams.q, ...this.timeFilter })
-        this.queryList({ q: this.searchParams.q, ...this.timeFilter, ...this.pageObj })
-        this.queryListTotal({ q: this.searchParams.q, ...this.timeFilter })
+      if (formatSql) {
+        const entityTypeMeta = metaList.find(meta => {
+          return meta.column && meta.column === 'entity_type'
+        })
+        if (entityTypeMeta) {
+          let entityType = ''
+          this.limitFilterType = false
+          if (entityTypeMeta.value.value === "'ip'") {
+            this.limitFilterType = true
+            entityType = 'ip'
+          } else if (entityTypeMeta.value.value === "'domain'") {
+            this.limitFilterType = true
+            entityType = 'domain'
+          } else if (entityTypeMeta.value.value === "'app'") {
+            this.limitFilterType = true
+            entityType = 'app'
+          } else {
+            this.limitFilterType = false
+          }
+          this.queryFilter({ entityType: entityType, q: formatSql, ...this.timeFilter })
+          this.queryList({ q: formatSql, ...this.timeFilter, ...this.pageObj })
+          this.queryListTotal({ q: formatSql, ...this.timeFilter })
+        } else {
+          this.limitFilterType = false
+          this.queryFilter({ entityType: 'ip', q: formatSql, ...this.timeFilter })
+          this.queryFilter({ entityType: 'domain', q: formatSql, ...this.timeFilter })
+          this.queryFilter({ entityType: 'app', q: formatSql, ...this.timeFilter })
+          this.queryList({ q: formatSql, ...this.timeFilter, ...this.pageObj })
+          this.queryListTotal({ q: formatSql, ...this.timeFilter })
+        }
       } else {
+        this.limitFilterType = false
         this.queryFilter({ entityType: 'ip', ...this.timeFilter })
         this.queryFilter({ entityType: 'app', ...this.timeFilter })
         this.queryFilter({ entityType: 'domain', ...this.timeFilter })
@@ -494,8 +523,8 @@ export default {
     queryFilter (params) {
       const queryParams = {
         ...params,
-        startTime: parseInt(params.startTime / 1000),
-        endTime: parseInt(params.endTime / 1000)
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime)
       }
       get(api.entityFilter, queryParams).then(response => {
         if (response.data.result) {
@@ -505,6 +534,10 @@ export default {
                 d.value = response.data.result[d.column]
               })
               this.filterData[0].totalCount = response.data.result.count
+              if (this.limitFilterType) {
+                this.cleanFilterData(1)
+                this.cleanFilterData(2)
+              }
               break
             }
             case 'app': {
@@ -512,6 +545,10 @@ export default {
                 d.value = response.data.result[d.column]
               })
               this.filterData[1].totalCount = response.data.result.count
+              if (this.limitFilterType) {
+                this.cleanFilterData(0)
+                this.cleanFilterData(2)
+              }
               break
             }
             case 'domain': {
@@ -519,6 +556,10 @@ export default {
                 d.value = response.data.result[d.column]
               })
               this.filterData[2].totalCount = response.data.result.count
+              if (this.limitFilterType) {
+                this.cleanFilterData(0)
+                this.cleanFilterData(1)
+              }
               break
             }
           }
@@ -616,6 +657,12 @@ export default {
           this.entityIpActive = response.data.result
         }
       })
+    },
+    cleanFilterData (index) {
+      this.filterData[index].data.forEach(d => {
+        d.value = 0
+      })
+      this.filterData[index].totalCount = 0
     }
   },
   mounted () {

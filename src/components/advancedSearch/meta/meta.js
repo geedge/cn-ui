@@ -88,3 +88,17 @@ export default class Meta {
     }
   }
 }
+
+export function cloneMeta (source) {
+  if (source instanceof Meta) {
+    const m = new Meta(source.meta)
+    Object.keys(source).forEach(s => {
+      m[s] = _.cloneDeep(source[s])
+    })
+    return m
+  } else if (_.isArray(source)) {
+    return source.map(s => {
+      return cloneMeta(s)
+    })
+  }
+}
