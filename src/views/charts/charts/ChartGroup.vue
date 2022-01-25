@@ -12,7 +12,7 @@
 import chartMixin from '@/views/charts/charts/chart-mixin'
 
 export default {
-  name: 'ChartBlock',
+  name: 'ChartGroup',
   mixins: [chartMixin],
   props: {
     timeFilter: Object

@@ -30,6 +30,7 @@
 
       <chart-block
         v-else-if="isBlock"
+        ref="chart"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :entity="entity"

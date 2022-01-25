@@ -130,7 +130,41 @@ const data3 = {
     ]
   }
 }
-const data4 = { msg: 'OK', queryKey: 'b52e11629e25b6cd130f72e347f6b50f', code: 200, data: { result: [{ latency: 0, linkID: '2049', bytes: '151596973', lossPercent: 0, direction: 'in', retransPercent: 0.0025 }, { latency: 0, linkID: '769', bytes: '88934697', lossPercent: 0, direction: 'in', retransPercent: 7.0E-4 }, { latency: 0, linkID: '1537', bytes: '163254171', lossPercent: 0, direction: 'in', retransPercent: 0.0049 }, { latency: 0, linkID: '1281', bytes: '112557520', lossPercent: 2.0E-4, direction: 'in', retransPercent: 0.0044 }, { latency: 0, linkID: '257', bytes: '126863185', lossPercent: 0, direction: 'in', retransPercent: 0.0068 }, { latency: 0, linkID: '513', bytes: '145047254', lossPercent: 0, direction: 'in', retransPercent: 0.0045 }, { latency: 0, linkID: '2048', bytes: '126388053', lossPercent: 0, direction: 'out', retransPercent: 0.0085 }, { latency: 0, linkID: '768', bytes: '88328714', lossPercent: 0, direction: 'out', retransPercent: 7.0E-4 }, { latency: 0, linkID: '1536', bytes: '121816536', lossPercent: 0, direction: 'out', retransPercent: 0.0057 }, { latency: 0, linkID: '1280', bytes: '83435437', lossPercent: 0, direction: 'out', retransPercent: 0.0044 }, { latency: 0, linkID: '256', bytes: '76227896', lossPercent: 0, direction: 'out', retransPercent: 0.0014 }, { latency: 0, linkID: '512', bytes: '133311800', lossPercent: 2.0E-4, direction: 'out', retransPercent: 0.0046 }, { latency: 0, linkID: '1792', bytes: '158745364', lossPercent: 0, direction: 'out', retransPercent: 0.0015 }], resultType: 'table' }, originalUrl: 'http://192.168.44.55:9999?query=%28SELECT%20common_ingress_link_id%20AS%20linkID%2C%27in%27%20as%20direction%2CSUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%29%20AS%20bytes%2CROUND%28AVG%28common_establish_latency_ms%29%29%20AS%20latency%2CROUND%28SUM%28common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2F%20SUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%20%2B%20common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2C%204%29%20AS%20lossPercent%2CROUND%28SUM%28common_c2s_pkt_retrans%20%2B%20common_s2c_pkt_retrans%29%2F%20SUM%28common_c2s_pkt_num%20%2B%20common_s2c_pkt_num%29%2C%204%29%20AS%20retransPercent%20FROM%20tsg_base_metrics%20WHERE%20common_recv_time%20%3E%3D%20toDateTime%281642665066%29%20AND%20common_recv_time%20%3C%20toDateTime%281642668666%29%20AND%20common_ingress_link_id%20%21%3D%200%20AND%20common_egress_link_id%20%21%3D0%20AND%20common_app_label%20%3D%20%27youku%27%20GROUP%20BY%20linkID%29%20UNION%20ALL%20%28SELECT%20common_egress_link_id%20AS%20linkID%2C%27out%27%20as%20direction%2CSUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%29%20AS%20bytes%2CROUND%28AVG%28common_establish_latency_ms%29%29%20AS%20latency%2CROUND%28SUM%28common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2F%20SUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%20%2B%20common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2C%204%29%20AS%20lossPercent%2CROUND%28SUM%28common_c2s_pkt_retrans%20%2B%20common_s2c_pkt_retrans%29%2F%20SUM%28common_c2s_pkt_num%20%2B%20common_s2c_pkt_num%29%2C%204%29%20AS%20retransPercent%20FROM%20tsg_base_metrics%20WHERE%20common_recv_time%20%3E%3D%20toDateTime%281642665066%29%20AND%20common_recv_time%20%3C%20toDateTime%281642668666%29%20AND%20common_ingress_link_id%20%21%3D%200%20AND%20common_egress_link_id%20%21%3D0%20AND%20common_app_label%20%3D%20%27youku%27%20GROUP%20BY%20linkID%29&format=json&option=real-time', success: true, meta: [{ type: 'long', name: 'linkID' }, { type: 'string', name: 'direction' }, { type: 'long', name: 'bytes' }, { type: 'double', name: 'latency' }, { type: 'double', name: 'lossPercent' }, { type: 'double', name: 'retransPercent' }], formatType: 'json', status: 200, statistics: { result_rows: 13, elapsed: 25, rows_read: 301384, result_size: 1242 } }
+const data4 = {
+  msg: 'OK',
+  queryKey: 'b52e11629e25b6cd130f72e347f6b50f',
+  code: 200,
+  data: {
+    result: [
+      {
+        latency: 0,
+        linkID: '2049',
+        bytes: '151596973',
+        lossPercent: 0,
+        direction: 'in',
+        retransPercent: 0.0025
+      },
+      { latency: 0, linkID: '769', bytes: '88934697', lossPercent: 0, direction: 'in', retransPercent: 7.0E-4 },
+      { latency: 0, linkID: '1537', bytes: '163254171', lossPercent: 0, direction: 'in', retransPercent: 0.0049 },
+      { latency: 0, linkID: '1281', bytes: '112557520', lossPercent: 2.0E-4, direction: 'in', retransPercent: 0.0044 },
+      { latency: 0, linkID: '257', bytes: '126863185', lossPercent: 0, direction: 'in', retransPercent: 0.0068 },
+      { latency: 0, linkID: '513', bytes: '145047254', lossPercent: 0, direction: 'in', retransPercent: 0.0045 },
+      { latency: 0, linkID: '2048', bytes: '126388053', lossPercent: 0, direction: 'out', retransPercent: 0.0085 },
+      { latency: 0, linkID: '768', bytes: '88328714', lossPercent: 0, direction: 'out', retransPercent: 7.0E-4 },
+      { latency: 0, linkID: '1536', bytes: '121816536', lossPercent: 0, direction: 'out', retransPercent: 0.0057 },
+      { latency: 0, linkID: '1280', bytes: '83435437', lossPercent: 0, direction: 'out', retransPercent: 0.0044 },
+      { latency: 0, linkID: '256', bytes: '76227896', lossPercent: 0, direction: 'out', retransPercent: 0.0014 },
+      { latency: 0, linkID: '512', bytes: '133311800', lossPercent: 2.0E-4, direction: 'out', retransPercent: 0.0046 },
+      { latency: 0, linkID: '1792', bytes: '158745364', lossPercent: 0, direction: 'out', retransPercent: 0.0015 }],
+    resultType: 'table'
+  },
+  originalUrl: 'http://192.168.44.55:9999?query=%28SELECT%20common_ingress_link_id%20AS%20linkID%2C%27in%27%20as%20direction%2CSUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%29%20AS%20bytes%2CROUND%28AVG%28common_establish_latency_ms%29%29%20AS%20latency%2CROUND%28SUM%28common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2F%20SUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%20%2B%20common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2C%204%29%20AS%20lossPercent%2CROUND%28SUM%28common_c2s_pkt_retrans%20%2B%20common_s2c_pkt_retrans%29%2F%20SUM%28common_c2s_pkt_num%20%2B%20common_s2c_pkt_num%29%2C%204%29%20AS%20retransPercent%20FROM%20tsg_base_metrics%20WHERE%20common_recv_time%20%3E%3D%20toDateTime%281642665066%29%20AND%20common_recv_time%20%3C%20toDateTime%281642668666%29%20AND%20common_ingress_link_id%20%21%3D%200%20AND%20common_egress_link_id%20%21%3D0%20AND%20common_app_label%20%3D%20%27youku%27%20GROUP%20BY%20linkID%29%20UNION%20ALL%20%28SELECT%20common_egress_link_id%20AS%20linkID%2C%27out%27%20as%20direction%2CSUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%29%20AS%20bytes%2CROUND%28AVG%28common_establish_latency_ms%29%29%20AS%20latency%2CROUND%28SUM%28common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2F%20SUM%28common_c2s_byte_num%20%2B%20common_s2c_byte_num%20%2B%20common_c2s_tcp_lostlen%20%2B%20common_s2c_tcp_lostlen%29%2C%204%29%20AS%20lossPercent%2CROUND%28SUM%28common_c2s_pkt_retrans%20%2B%20common_s2c_pkt_retrans%29%2F%20SUM%28common_c2s_pkt_num%20%2B%20common_s2c_pkt_num%29%2C%204%29%20AS%20retransPercent%20FROM%20tsg_base_metrics%20WHERE%20common_recv_time%20%3E%3D%20toDateTime%281642665066%29%20AND%20common_recv_time%20%3C%20toDateTime%281642668666%29%20AND%20common_ingress_link_id%20%21%3D%200%20AND%20common_egress_link_id%20%21%3D0%20AND%20common_app_label%20%3D%20%27youku%27%20GROUP%20BY%20linkID%29&format=json&option=real-time',
+  success: true,
+  meta: [{ type: 'long', name: 'linkID' }, { type: 'string', name: 'direction' }, { type: 'long', name: 'bytes' }, { type: 'double', name: 'latency' }, { type: 'double', name: 'lossPercent' }, { type: 'double', name: 'retransPercent' }],
+  formatType: 'json',
+  status: 200,
+  statistics: { result_rows: 13, elapsed: 25, rows_read: 301384, result_size: 1242 }
+}
 const data5 = {
   msg: '',
   code: 200,

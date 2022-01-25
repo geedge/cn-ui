@@ -32,9 +32,11 @@ export default {
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = this.$_.cloneDeep(sankey)
-      this.chartOption.series[0].tooltip = {
-        formatter: function (param) {
-          return `
+      this.chartOption.tooltip.formatter = function (param) {
+        if (!param.data.latency || !param.data.convert || !param.data.lossPercent || !param.data.retransPercent) {
+          return false
+        }
+        return `
             <div class="sankey__tooltip">
               <div class="sankey__tooltip-row">
                 <div class="sankey__row-label">Via:</div>
@@ -66,7 +68,6 @@ export default {
               </div>
             </div>
           `
-        }
       }
       let inTotalValue = 0
       let outTotalValue = 0

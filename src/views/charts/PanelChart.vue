@@ -217,6 +217,8 @@ export default {
               this.loading = false
             }, 200)
           })
+        } else if (this.chartInfo.type === 94) {
+          this.chartInfo.children = [...this.chartInfo.children]
         }
       } catch (e) {
         console.error(e)
