@@ -184,10 +184,18 @@ export default {
         }
         if (this.isSingleValue) {
           if (chartParams && chartParams.dataKey) {
-            get('/interface/entity/detail/ip/serviceOverview', this.queryParams).then(response =>{
-              if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
-                this.chartData = response.data.result[chartParams.dataKey]
-                this.loading = false
+            get(replaceUrlPlaceholder(chartParams.url), this.queryParams).then(response =>{
+              console.log(response)
+              if (response.code === 200) {
+                if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
+                  this.chartData = response.data.result[chartParams.dataKey]
+                } else {
+                  this.chartData = ''
+                }
+              } else {
+                this.isError = true
+                this.noData = true
+                this.errorInfo = response.msg || response.message || 'Unknown'
               }
             })
           }
