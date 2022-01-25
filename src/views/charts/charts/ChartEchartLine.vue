@@ -14,9 +14,14 @@ import {
 
 export default {
   name: 'ChartEchartLine',
+  setup () {
+    const myChart = null
+    return {
+      myChart
+    }
+  },
   data () {
     return {
-      myChart: null,
       chartOption: null
     }
   },
