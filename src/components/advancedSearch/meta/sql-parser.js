@@ -32,7 +32,6 @@ export default class SqlParser extends SqlParserVisitor {
     this.visit(tree)
     if (this.metaList.length === 0 && this.tempMeta.column.name) {
       this.tempMeta.column.type = columnType.fullText
-      this.tempMeta.column.name = stringInQuot(this.tempMeta.column.name)
       this.tempMeta.column.label = this.tempMeta.column.name
       this.metaList.push(cloneMeta(this.tempMeta))
     }
@@ -50,7 +49,7 @@ export default class SqlParser extends SqlParserVisitor {
       if (meta.meta === condition) {
         if (meta.column.type === columnType.fullText) {
           const m = cloneMeta(meta)
-          m.column.name = stringInQuot(meta.column.name)
+          m.column.name = meta.column.name
           m.column.label = m.column.name
           this.metaList.push(m)
         } else if (meta.column.type === columnType.string) {
@@ -82,15 +81,29 @@ export default class SqlParser extends SqlParserVisitor {
     }
   }
 
-  parseMetaToSql (metaList) {
+  parseMetaToSql (metaList, isFullText) {
     let sql = ''
     metaList.forEach(meta => {
-      if (meta.meta === condition) {
-        sql += (meta.column.name)
-        if (meta.column.type !== columnType.fullText) {
-          sql += `${meta.operator.value}${meta.value.value} `
-        } else {
-          sql += ' '
+      if (isFullText) {
+        if (meta.meta === condition) {
+          if (meta.column.type !== columnType.fullText) {
+            sql += `${meta.column.name}${meta.operator.value}${meta.value.value} `
+          } else {
+            sql += "QUERY('"
+            this.columnList.forEach(column => {
+              sql += `${column.name}:${meta.column.name.replace(/'/g, '')} `
+            })
+            sql += "') "
+          }
+        }
+      } else {
+        if (meta.meta === condition) {
+          sql += (meta.column.name)
+          if (meta.column.type !== columnType.fullText) {
+            sql += `${meta.operator.value}${meta.value.value} `
+          } else {
+            sql += ' '
+          }
         }
       }
       if (meta.meta === connection) {
@@ -163,7 +176,6 @@ export default class SqlParser extends SqlParserVisitor {
         // tempMeta的value为空，则上个条件是全文搜索
         if (!this.tempMeta.column.type && !this.tempMeta.value.value) {
           this.tempMeta.column.type = columnType.fullText
-          this.tempMeta.column.name = stringInQuot(this.tempMeta.column.name)
           this.tempMeta.column.label = this.tempMeta.column.name
           this.metaList.push(cloneMeta(this.tempMeta))
           this.tempMeta = null

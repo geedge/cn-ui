@@ -448,8 +448,9 @@ export default {
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
       if (formatSql) {
+        // entity_type处理，不查其他两种entity_type对应的左侧筛选
         const entityTypeMeta = metaList.find(meta => {
-          return meta.column && meta.column === 'entity_type'
+          return meta.column && meta.column.name === 'entity_type'
         })
         if (entityTypeMeta) {
           let entityType = ''

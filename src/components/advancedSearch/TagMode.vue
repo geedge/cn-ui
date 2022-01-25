@@ -87,7 +87,7 @@
 <script>
 import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
-import SqlParser, { stringInQuot } from '@/utils/sql-parser'
+import SqlParser, { stringInQuot } from '@/components/advancedSearch/meta/sql-parser'
 export default {
   name: 'TagMode',
   props: {
@@ -183,6 +183,7 @@ export default {
     },
     columnBlur (meta, index) {
       setTimeout(() => {
+        meta.column.name = meta.column.name.replace(/"/g, '')
         meta.column.isEditing = false
         if (meta.isEmpty()) {
           if (this.metaList.length > 1) {
@@ -211,6 +212,7 @@ export default {
       meta.operator.isEditing = true
     },
     valueBlur (meta) {
+      meta.value.value = meta.value.value.replace(/"/g, "'")
       meta.value.label = meta.value.value // label是显示，value是实际值；目前的需求label和value是相等的，
       meta.value.isEditing = !meta.isCompleteCondition()
     },
@@ -235,7 +237,6 @@ export default {
     changeMode () {
       const parser = new SqlParser(this.metaList, this.columnList)
       const { metaList, formatSql } = parser.formatMetaList()
-      console.info(formatSql)
       this.metaList = metaList
       this.$emit('changeMode', 'text', formatSql)
     },

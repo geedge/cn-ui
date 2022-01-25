@@ -18,7 +18,7 @@ import 'codemirror/addon/hint/show-hint'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/display/placeholder'
 import 'codemirror/mode/sql/sql'
-import SqlParser, { stringInQuot } from '@/utils/sql-parser'
+import SqlParser, { stringInQuot } from '@/components/advancedSearch/meta/sql-parser'
 import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import { columnType } from '@/components/advancedSearch/meta/meta'
@@ -43,15 +43,27 @@ export default {
         placeholder: 'Enter...',
         lineNumbers: false
       })
+      this.codeMirror.setOption('extraKeys', {
+        Enter: (cm) => {
+          this.search()
+        }
+      })
     },
     search () {
-      const originalSql = this.codeMirror.getValue()
-      const parser = new SqlParser(originalSql, this.columnList)
-      const errorList = parser.validate()
-      if (this.$_.isEmpty(errorList)) {
-        const { metaList, formatSql } = parser.formatSql()
-        toRaw(this.codeMirror).setValue(formatSql)
-        this.$emit('search', metaList, formatSql)
+      let originalSql = this.codeMirror.getValue()
+      if (originalSql) {
+        originalSql = originalSql.replace(/"/g, '')
+        const parser = new SqlParser(originalSql, this.columnList)
+        const errorList = parser.validate()
+        if (this.$_.isEmpty(errorList)) {
+          const { metaList, formatSql } = parser.formatSql()
+          toRaw(this.codeMirror).setValue(formatSql)
+          this.$emit('search', metaList, formatSql)
+        } else {
+          console.info(errorList)
+        }
+      } else {
+        this.$emit('search')
       }
     },
     changeMode () {

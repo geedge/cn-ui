@@ -22,7 +22,7 @@
           <span>{{$t('search.searchHistory')}}</span>
         </div>
         <div class="foot__item">
-          <span @click="search({})">{{$t('overall.explore')}}</span>
+          <span @click="search">{{$t('overall.explore')}}</span>
           <el-divider direction="vertical"></el-divider>
           <span>{{$t('overall.help')}}</span>
         </div>
@@ -33,6 +33,8 @@
 
 <script>
 import AdvancedSearch from '@/components/advancedSearch/Index'
+import { columnType } from '@/components/advancedSearch/meta/meta'
+import SqlParser from '@/components/advancedSearch/meta/sql-parser'
 export default {
   name: 'CnSearch',
   components: {
@@ -178,7 +180,18 @@ export default {
   },
   methods: {
     search (metaList, formatSql) {
-      this.$emit('search', metaList, formatSql)
+      let sql = formatSql
+      if (metaList) {
+        // 全文搜索处理
+        const hasFullText = metaList.some(meta => {
+          return meta.column && meta.column.type === columnType.fullText
+        })
+        if (hasFullText) {
+          const parser = new SqlParser(metaList, this.columnList)
+          sql = parser.parseMetaToSql(metaList, true)
+        }
+      }
+      this.$emit('search', metaList, sql)
     },
     addParams (params) {
       this.$refs.search.addParams(params)
