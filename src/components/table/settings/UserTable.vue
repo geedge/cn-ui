@@ -143,14 +143,14 @@ export default {
   methods: {
     statusChange (user) {
       if (user.roles) {
-        user.roleIds = user.roles.map(t => t.id)
+        user.roleIds = user.roles.map(t => t.id).join(',')
       }
       // if (!user.id){
       //   return
       // }
       put('sys/user', user).then(response => {
         if (response.code === 200) {
-          this.rightBox.show = false
+          // this.rightBox.show = false
           this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
         } else {
           this.$message.error(response.msg)

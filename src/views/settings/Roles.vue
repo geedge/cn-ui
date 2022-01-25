@@ -67,7 +67,14 @@ export default {
       url: api.role,
       tableId: 'rolesTable', // 需要分页的table的id，用于记录每页数量
       blankObject: { // 空白对象
-        name: ''
+        name: '',
+        buildIn: '',
+        i18n: '',
+        id: '',
+        menuIds: [],
+        remark: '',
+        uby: 0,
+        utime: ''
       }
     }
   },
@@ -75,7 +82,7 @@ export default {
     edit (u) {
       get(`${this.url}`, { ids: u.id }).then(response => {
         if (response.code === 200) {
-          this.object = response.data
+          this.object = response.data.list[0]
           this.rightBox.show = true
         }
       })

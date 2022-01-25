@@ -84,7 +84,7 @@ export default {
       handler (n) {
         this.editRole = JSON.parse(JSON.stringify(n))
         if (this.editRole.roles && this.editRole.roles.length > 0) {
-          this.editRole.roleIds = this.editRole.roles.map(t => t.id)
+          this.editRole.roleIds = this.editRole.roles.map(t => t.id).json(',')
         }
       }
     }
