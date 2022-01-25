@@ -40,6 +40,12 @@ import { getChartColor } from '@/components/charts/chart-options'
 import * as echarts from 'echarts'
 export default {
   name: 'ChartIpOpenPortBar',
+  setup () {
+    const myChart = null
+    return {
+      myChart
+    }
+  },
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -48,7 +54,6 @@ export default {
   },
   data () {
     return {
-      myChart: null,
       chartOption: null,
       tableData: [],
       tableKey: [

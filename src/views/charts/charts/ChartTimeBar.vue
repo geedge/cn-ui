@@ -15,9 +15,14 @@ import { getCharBartColor, timeBarTooltipFormatter } from '@/views/charts/charts
 
 export default {
   name: 'ChaetTimeBar',
+  setup () {
+    const myChart = null
+    return {
+      myChart
+    }
+  },
   data () {
     return {
-      myChart: null,
       chartOption: null
     }
   },
@@ -33,11 +38,11 @@ export default {
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = this.$_.cloneDeep(timeBar)
-      this.chartOption.tooltip.trigger = 'item'
-      this.chartOption.tooltip.formatter = (params) => {
-        const str = timeBarTooltipFormatter(params, chartParams.direction)
-        return str
-      }
+      // this.chartOption.tooltip.trigger = 'item'
+      // this.chartOption.tooltip.formatter = (params) => {
+      //   const str = timeBarTooltipFormatter(params, chartParams.direction)
+      //   return str
+      // }
       if (!chartParams.itemColorAlternately) {
         this.chartOption.series[0].itemStyle.color = function (params) {
           return getCharBartColor(0)
