@@ -111,7 +111,7 @@
       display: table-cell;
       padding: 13px 30px;
       border-bottom: 1px solid $--content-right-background-color;
-      width: 170px;
+      min-width: 170px;
       color: #6B717B;
     }
     .domain-detail-list__content {

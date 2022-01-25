@@ -61,7 +61,6 @@ export default {
           active: true
         }
       })
-
       const seriesTemplate = this.chartOption.series[0]
       this.chartOption.series = this.chartData.map((r, i) => {
         return {
