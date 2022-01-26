@@ -452,7 +452,7 @@ export default {
         const entityTypeMeta = metaList.find(meta => {
           return meta.column && meta.column.name === 'entity_type'
         })
-        if (entityTypeMeta) {
+        if (entityTypeMeta && entityTypeMeta.operator.value === '=') {
           let entityType = ''
           this.limitFilterType = false
           if (entityTypeMeta.value.value === "'ip'") {
