@@ -175,7 +175,6 @@
               v-else-if="isIpHostedDomain"
               :chart-info="chartInfo"
               :chart-data="chartData"
-              :query-params="queryParams"
               @showLoading="showLoading"
               :entity="entity"
       ></chart-echart-ip-hosted-domain>
@@ -184,7 +183,6 @@
               v-else-if="isAppRelatedDomain"
               :chart-info="chartInfo"
               :chart-data="chartData"
-              :query-params="queryParams"
               @showLoading="showLoading"
               :entity="entity"
       ></chart-echart-app-relate-domain>
