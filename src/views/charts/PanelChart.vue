@@ -213,6 +213,8 @@ export default {
                 if (chartParams && chartParams.dataKey) {
                   if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
                     this.chartData = response.data.result[chartParams.dataKey]
+                  } else {
+                    this.chartData = null
                   }
                 }
               }

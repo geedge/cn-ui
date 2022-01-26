@@ -28,11 +28,13 @@
         </div>
         <transition name="el-zoom-in-top">
           <div class="search__history" v-show="showHistory" v-ele-click-outside="esc">
-            <div class="history__item" v-for="(h, i) in history" :key="i" @click="selectHistory(h.sql)">
-              <span class="item-date">{{h.date}}</span>
-              <div class="item-value" :title="h.sql">{{h.sql}}</div>
+            <div class="history__items">
+              <div class="history__item" v-for="(h, i) in history" :key="i" @click="selectHistory(h.sql)">
+                <span class="item-date">{{h.date}}</span>
+                <div class="item-value" :title="h.sql">{{h.sql}}</div>
+              </div>
             </div>
-            <div class="history__item clear-all">
+            <div class="clear-all">
               <span @click="clearHistory" v-if="!$_.isEmpty(history)">{{$t('overall.clear')}}</span>
               <div v-else>暂无记录</div>
             </div>
@@ -196,7 +198,7 @@ export default {
   methods: {
     search (metaList, formatSql) {
       let sql = formatSql
-      if (metaList) {
+      if (metaList && this.$_.isArray(metaList)) {
         // 全文搜索处理
         const hasFullText = metaList.some(meta => {
           return meta.column && meta.column.type === columnType.fullText
@@ -207,7 +209,7 @@ export default {
         }
       }
       this.$emit('search', metaList, sql)
-      // 加入搜索记录
+      // 加入搜索记录，将记录数量控制在30以内
       if (sql) {
         const oldHistory = localStorage.getItem(storageKey.entitySearchHistory)
         let arr = []
@@ -216,6 +218,9 @@ export default {
           const oldArr = JSON.parse(oldHistory)
           oldArr.unshift(newItem)
           arr = [...oldArr]
+          if (arr.length > 30) {
+            arr = arr.slice(0, 30)
+          }
         } else {
           arr.push(newItem)
         }
@@ -228,6 +233,11 @@ export default {
     selectHistory (sql) {
       this.$refs.search.setSql(sql)
       this.showHistory = false
+      this.$nextTick(() => {
+        if (this.$refs.search.$refs.textMode) {
+          this.$refs.search.$refs.textMode.focus()
+        }
+      })
     },
     clearHistory () {
       localStorage.setItem(storageKey.entitySearchHistory, '')
