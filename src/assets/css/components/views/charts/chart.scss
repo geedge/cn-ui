@@ -350,6 +350,9 @@
 }
 .nz-chart-tooltip .cn-chart-tooltip-box{
   display: flex;
+  >span:first-child{
+    margin-top: 8px;
+  }
   .cn-chart-tooltip-content{
     flex: 1;
     display: inline-block;
