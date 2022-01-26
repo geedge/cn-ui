@@ -146,7 +146,7 @@ export default {
       })
     },
     tableDataSort (orderBy) {
-      this.$set(this.searchLabel, 'orderBy', orderBy)
+      this.searchLabel.orderBy = orderBy
       this.getTableData()
     },
     search (params) {
