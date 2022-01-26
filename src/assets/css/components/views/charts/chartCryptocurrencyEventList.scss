@@ -1,72 +1,63 @@
-.cn-panel2 {
-  position: relative;
-  .chart-list {
-    .vue-grid-layout>.vue-grid-item {
-      .cn-chart {
-        .cn-chart__table.eventList {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          width: 100%;
-          .cn-chart__body {
-            flex: auto;
-            display: flex;
-            height: 100%;
-            width: 100%;
-            .el-descriptions {
-              padding-top: 30px;
-            }
-            &>.el-descriptions {
-              flex: 0 0 350px;
-              padding: 30px 36px;
-            }
-            .chart-location {
-              display: flex;
-              flex: 1;
-              flex-direction: column;
-              padding: 0 20px 20px 0;
-            }
-            .el-descriptions__content {
-              color: #3976CB;
-            }
-            .crypto-eventList__record {
-              display: flex;
-              height: 100%;
-              width: 100%;
-              .record__table {
-                display: table;
-                height: 100%;
-                width: 100%;
+.cn-chart__table.eventList {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  .cn-chart__body {
+    flex: auto;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    .el-descriptions {
+      padding-top: 30px;
+    }
+    &>.el-descriptions {
+      flex: 0 0 350px;
+      padding: 30px 36px;
+    }
+    .chart-location {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 0 20px 20px 0;
+    }
+    .el-descriptions__content {
+      color: #3976CB;
+    }
+    .crypto-eventList__record {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      .record__table {
+        display: table;
+        height: 100%;
+        width: 100%;
 
-                .record__table-row {
-                  display: table-row;
-                  font-size: 14px;
-                  color: #333333;
-                }
-                .record__table-row.record__table-row--header {
-                  padding: 13px 30px 0;
-                  height: 40px;
-                  color: #6B717B;
-                }
-                .record__table-cell {
-                  display: table-cell;
-                  vertical-align: middle;
-                  padding: 15px 10px;
-                  .record_second{
-                    color:#7e8088;
-                    font-size:12px;
-                  }
-                  .circle-red {
-                    color: #EC7F66;
-                    font-size: 28px;
-                  }
-                }
-                .record__table-cell:first-of-type {
-                  padding-left:30px;
-                }
-              }
-            }
+        .record__table-row {
+          display: table-row;
+          font-size: 14px;
+          color: #333333;
+        }
+        .record__table-row.record__table-row--header {
+          padding: 13px 30px 0;
+          height: 40px;
+          color: #6B717B;
+        }
+        .record__table-cell {
+          display: table-cell;
+          vertical-align: middle;
+          padding: 15px 10px;
+          .record_second{
+            color:#7e8088;
+            font-size:12px;
           }
+          .circle-red {
+            color: #EC7F66;
+            font-size: 28px;
+          }
+        }
+        .record__table-cell:first-of-type {
+          padding-left:30px;
         }
       }
     }
