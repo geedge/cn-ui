@@ -51,6 +51,7 @@ export default {
     },
     search () {
       let originalSql = this.codeMirror.getValue()
+      console.info(originalSql)
       if (originalSql) {
         originalSql = originalSql.replace(/"/g, '')
         const parser = new SqlParser(originalSql, this.columnList)
