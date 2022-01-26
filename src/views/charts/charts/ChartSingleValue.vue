@@ -97,7 +97,7 @@ export default {
   },
   computed: {
     handleSingleValue () {
-      const value = this.chartData ? this.chartData : ''
+      const value = this.$_.isEmpty(this.chartData) ? this.chartData : ''
       const unitType = this.chartInfo.params.unitType
       const result = unitConvert(value, unitType)
       switch (unitType) {

@@ -185,23 +185,6 @@ export default {
           ...this.entity,
           ...extraParams
         }
-        if (this.isSingleValue) {
-          if (chartParams && chartParams.dataKey) {
-            get(replaceUrlPlaceholder(chartParams.url), this.queryParams).then(response =>{
-              if (response.code === 200) {
-                if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
-                  this.chartData = response.data.result[chartParams.dataKey]
-                } else {
-                  this.chartData = ''
-                }
-              } else {
-                this.isError = true
-                this.noData = true
-                this.errorInfo = response.msg || response.message || 'Unknown'
-              }
-            })
-          }
-        }
         const requestUrl = url || (chartParams && chartParams.url)
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
@@ -216,6 +199,13 @@ export default {
               this.table.tableColumns = this.getTableTitle(response.data.result)
               this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
               this.resultType = response.data.resultType
+              if (this.isSingleValue) {
+                if (chartParams && chartParams.dataKey) {
+                  if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
+                    this.chartData = response.data.result[chartParams.dataKey]
+                  }
+                }
+              }
               this.isError = false
             } else {
               this.isError = true
