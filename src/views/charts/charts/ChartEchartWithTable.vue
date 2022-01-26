@@ -4,7 +4,7 @@
       <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
     </div>
     <div class="cn-chart__footer pie-with-table" >
-      <pie-table :tableData="pieTableData" ref="pieTable" :chartInfo="chartInfo" :time-filter="queryParams" :order="orderPieTable"/>
+      <pie-table :tableData="pieTableData" ref="pieTable" :chartInfo="chartInfo" :time-filter="handleQueryParams(queryParams)" :order="orderPieTable"/>
     </div>
   </div>
 </template>
@@ -43,6 +43,12 @@ export default {
   mounted () {
   },
   methods: {
+    handleQueryParams(queryParams) {
+      return this.timeFilter = {
+        startTime:Number(queryParams.startTime)*1000,
+        endTime:Number(queryParams.endTime)*1000
+      }
+    },
     initEchartsWithTable (id) {
       const chartParams = this.chartInfo.params
       const dom = document.getElementById(id)
@@ -81,9 +87,6 @@ export default {
       if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
         this.chartOption.legend.type = 'scroll'
       }
-
-      console.log('table===' + JSON.stringify(this.chartOption))
-
       this.loadEchartWithTable()
 
       if (!this.$_.isEmpty(data)) {
