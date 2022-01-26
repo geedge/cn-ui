@@ -104,12 +104,14 @@
     </div>
   </div>
   <div class="overview-map">
-    <chart
-        :chart="chart"
+    <chart2
+        :chart-info="chart"
+        :chart-data="chartData"
         :entity="entityCopy"
+        :query-params="getQueryParams"
         :hide-header="true"
         @getCurrentTimeRange="getCurrentTimeRange"
-    ></chart>
+    ></chart2>
   </div>
 </template>
 
@@ -118,14 +120,15 @@ import { api } from '@/utils/api'
 import entityDetailMixin from './entityDetailMixin'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import Chart from '@/views/charts/Chart'
+import Chart2 from '@/views/charts/Chart2'
 import _ from 'lodash'
+import {get} from "@/utils/http";
 
 export default {
   name: 'App',
   mixins: [entityDetailMixin],
   components: {
-    Chart
+    Chart2
   },
   data () {
     return {
@@ -135,6 +138,8 @@ export default {
       relationUrl: api.entityAppDetailRelation,
       alertUrl: api.entityAppDetailAlert,
       securityUrl: api.entityAppDetailSecurity,
+      trafficUrlMap: api.entityAppDetailTrafficMap,
+      chartData: null,
       listMode: 'list'
     }
   },
@@ -150,7 +155,17 @@ export default {
     handleRelationData (result) {
       this.entityData.domainCount = result.domainCount
       this.entityData.ipCount = result.ipCount
+    },
+    chartGetMap () {
+      get((this.trafficUrlMap), this.getQueryParams()).then(response => {
+        if (response.code === 200) {
+          this.chartData = response.data.result
+        }
+      })
     }
+  },
+  mounted() {
+    this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 200)})
   },
   setup (props) {
     return {

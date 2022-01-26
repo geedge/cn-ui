@@ -56,6 +56,8 @@ export const api = {
   // ip detail
   entityIpDetailTraffic: '/interface/entity/detail/overview/ip/traffic',
   entityIpDetailTrafficMap: '/interface/entity/detail/ip/trafficMap',
+  entityDomainDetailTrafficMap: '/interface/entity/detail/domain/trafficMap',
+  entityAppDetailTrafficMap: '/interface/entity/detail/app/trafficMap',
   entityIpDetailRelation: '/interface/entity/detail/overview/ip/relation',
   entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
   entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security'

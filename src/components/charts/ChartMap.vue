@@ -1,5 +1,5 @@
 <template>
-  <div class="cn-chart cn-chart__map">
+  <div class="cn-chart__map">
     <div class="cn-chart__header chart-header-position" >
       <slot name="chartErrorInfo"></slot>
       <div class="header__title" v-if="!hideHeader">

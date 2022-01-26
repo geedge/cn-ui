@@ -75,76 +75,11 @@
     <div class="overview__title">{{$t('overall.networkQuality')}}</div>
     <div class="overview__content">
       <div class="overview__row">
-        <single-value
-            :type="51"
-            icon="cn-icon cn-icon-time"
-            class="cn-chart__single-value--detail-overview"
-            :loading="false"
-            style="width: 180px;"
-        >
-          <template #title>
-            <span>{{$t('entities.avgRoundTripTime')}}</span>
-          </template>
-          <template #data>
-            <span>{{entityData.establishLatency ? unitConvert(entityData.establishLatency, unitTypes.time).join(' ') : '-'}}</span>
-          </template>
-        </single-value>
-        <single-value
-            :type="51"
-            icon="cn-icon cn-icon-http"
-            class="cn-chart__single-value--detail-overview"
-            :loading="false"
-            style="width: 180px;"
-        >
-          <template #title>
-            <span>{{$t('entities.httpResponseLatency')}}</span>
-          </template>
-          <template #data>
-            <span>{{entityData.httpResponseLatency ? unitConvert(entityData.httpResponseLatency, unitTypes.time).join(' ') : '-'}}</span>
-          </template>
-        </single-value>
-        <single-value
-            :type="51"
-            icon="cn-icon cn-icon-ssl"
-            class="cn-chart__single-value--detail-overview"
-            :loading="false"
-            style="width: 180px;"
-        >
-          <template #title>
-            <span>{{$t('entities.sslConLatency')}}</span>
-          </template>
-          <template #data>
-            <span>{{entityData.sslConLatency ? unitConvert(entityData.sslConLatency, unitTypes.time).join(' ') : '-'}}</span>
-          </template>
-        </single-value>
-        <single-value
-            :type="51"
-            icon="cn-icon cn-icon-package-loss"
-            class="cn-chart__single-value--detail-overview"
-            :loading="false"
-            style="width: 180px;"
-        >
-          <template #title>
-            <span>{{$t('entities.sequenceGapLossPercent')}}</span>
-          </template>
-          <template #data>
-            <span>{{entityData.sequenceGapLossPercent ? unitConvert(entityData.sequenceGapLossPercent, unitTypes.percent).join(' ') : '-'}}</span>
-          </template>
-        </single-value>
-        <single-value
-            :type="51"
-            icon="cn-icon cn-icon-upload"
-            class="cn-chart__single-value--detail-overview"
-            :loading="false"
-            style="width: 180px;"
-        >
-          <template #title>
-            <span>{{$t('entities.pktRetransPercent')}}</span>
-          </template>
-          <template #data>
-            <span>{{entityData.pktRetransPercent ? unitConvert(entityData.pktRetransPercent, unitTypes.percent).join(' ') : '-'}}</span>
-          </template>
-        </single-value>
+        <chart-single-value
+          v-for="(chartInfo, i) in singleValues.chartInfos"
+          :chart-info="chartInfo"
+          :chart-data="singleValues.chartDatas[i]"
+        ></chart-single-value>
       </div>
     </div>
   </div>
@@ -204,28 +139,31 @@
     </div>
   </div>
   <div class="overview-map">
-    <chart
-        :chart="chart"
+    <chart2
+        :chart-info="chart"
+        :chart-data="chartData"
         :entity="entityCopy"
+        :query-params="getQueryParams"
         :hide-header="true"
         @getCurrentTimeRange="getCurrentTimeRange"
-    ></chart>
+    ></chart2>
   </div>
 </template>
 
 <script>
-import SingleValue from '@/components/charts/ChartSingleValue'
+import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { api } from '@/utils/api'
 import entityDetailMixin from './entityDetailMixin'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import Chart from '@/views/charts/Chart'
+import Chart2 from '@/views/charts/Chart2'
 import _ from 'lodash'
+import {get} from "@/utils/http";
 export default {
   name: 'Domain',
   components: {
-    SingleValue,
-    Chart
+    ChartSingleValue,
+    Chart2
   },
   mixins: [entityDetailMixin],
   data () {
@@ -239,7 +177,54 @@ export default {
       linkOutUrl: api.entityDomainDetailLinkOut,
       alertUrl: api.entityDomainDetailAlert,
       securityUrl: api.entityDomainDetailSecurity,
-      listMode: 'list'
+      trafficUrlMap: api.entityDomainDetailTrafficMap,
+      chartData: null,
+      listMode: 'list',
+      singleValues: {
+        chartInfos: [
+          {
+            params: {
+              icon: 'cn-icon cn-icon-time',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.avgRoundTripTime'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-http',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.httpResponseLatency'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-ssl',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.sslConLatency'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-package-loss',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.sequenceGapLossPercent'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-upload',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.avgRoundTripTime'
+          }
+        ],
+        chartDatas: [null, null, null, null, null]
+      }
     }
   },
   methods: {
@@ -254,7 +239,32 @@ export default {
     handleRelationData (result) {
       this.entityData.appCount = result.appCount
       this.entityData.ipCount = result.ipCount
+    },
+    chartGetMap () {
+      get((this.trafficUrlMap), this.getQueryParams()).then(response => {
+        if (response.code === 200) {
+          this.chartData = response.data.result
+        }
+      })
     }
+  },
+  watch: {
+    entityData: {
+      immediate: true,
+      deep: true,
+      handler (n) {
+        if ((n.pktRetransPercent && n.sequenceGapLossPercent && n.sslConLatency && n.establishLatency && n.httpResponseLatency) !== undefined) {
+          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency') || null)
+          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency') || null)
+          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency') || null)
+          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent') || null)
+          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent') || null)
+        }
+      }
+    }
+  },
+  mounted() {
+    this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 200)})
   },
   setup (props) {
     const entityCopy = {

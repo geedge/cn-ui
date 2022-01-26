@@ -141,7 +141,7 @@ export default {
     }
   },
   methods: {
-    chartSingleValueTotal() {
+    chartSingleValueTotal () {
       const chartParams = this.$_.get(this.chartInfo, 'params') || {}
       if (this.type === 52) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
@@ -150,7 +150,7 @@ export default {
         get(replaceUrlPlaceholder(chartParams.urlChart)).then(response => {
           const seriesTemplate = this.chartOption.series[0]
           const result = [{
-            "legend": "app",
+            'legend': 'app',
             "aggregation": {
               "max": 1,
               "last": 1,
@@ -191,10 +191,10 @@ export default {
       }
     }
   },
-  mounted() {
-    this.$nextTick(() => this.timer = setTimeout(() => {this.chartSingleValueTotal()}))
+  mounted () {
+    this.$nextTick(() => this.timer = setTimeout(() => { this.chartSingleValueTotal() }))
   },
-  deactivated() {
+  deactivated () {
     clearTimeout(this.timer)
   }
 }
