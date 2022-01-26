@@ -1,0 +1,67 @@
+.cn-panel2 {
+  position: relative;
+  .chart-list {
+    .vue-grid-layout > .vue-grid-item {
+      .cn-chart {
+        .ip-detail__hosted-domain {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          width: 100%;
+          .hosted-domain__list {
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 25%;
+            overflow: auto;
+            padding-bottom: 20px;
+            border-bottom: 1px solid $--right-box-border-color;
+
+            .hosted-domain__list-title {
+              padding: 13px 30px 0;
+              height: 40px;
+              color: #6B717B;
+            }
+
+            .hosted-domain__list-body {
+              display: flex;
+              flex-direction: column;
+              height: calc(100% - 40px);
+              overflow: hidden auto;
+            }
+
+            .hosted-domain__list-row {
+              padding: 5px 30px;
+              color: #3976CB;
+
+              i {
+                color: #B8C1D1;
+              }
+            }
+          }
+
+          .hosted-domain__chart {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            & > div {
+              flex: 0 0 50%;
+              display: flex;
+              flex-direction: column;
+
+              .hosted-domain__chart-title {
+                padding-left: 20px;
+                line-height: 50px;
+                flex: 0 0 50px;
+              }
+
+              .chart-drawing {
+                flex: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -71,8 +71,26 @@
       </div>
     </template>
 
+    <template v-else-if="isEchartsWithTable">
+      <div class="header__operations">
+        <div class="header__operation header__operation--table" >
+          <el-select
+                  size="mini"
+                  v-model="orderPieTable"
+                  class="option__select select-column"
+                  placeholder=""
+                  popper-class="option-popper"
+                  @change="orderPieTableChange"
+          >
+            <el-option v-for="item in chartPieTableTopOptions" :key="item.value" :value="item.value">&nbsp{{item.name}}</el-option>
+          </el-select>
+        </div>
+        <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
+      </div>
+    </template>
+
     <chart-error :isError="isError" :errorInfo="errorInfo"></chart-error>
-    <div class="chart-header__tools" v-if="!isTitle && !isTabs && !isCurrentTable && !isActiveIpTable">
+    <div class="chart-header__tools" v-if="!isTitle && !isTabs && !isCurrentTable && !isActiveIpTable && !isEchartsWithTable">
       <div class="panel__time" v-if="chartInfo.params && chartInfo.params.showTimeTool">
         <date-time-range class="date-time-range" :start-time="chartTimeFilter.startTime" :end-time="chartTimeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <time-refresh class="date-time-range" @change="timeRefreshChange" :end-time="chartTimeFilter.endTime"/>
@@ -90,11 +108,11 @@
 </template>
 
 <script>
-import { isTitle, isTabs, isBlock, isTable, isActiveIpTable, isCurrentTable, isGroup } from './charts/tools'
+import { isTitle, isTabs, isBlock, isTable, isActiveIpTable, isCurrentTable, isGroup, isEchartsWithTable } from './charts/tools'
 import ChartError from '@/components/charts/ChartError'
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
-import { chartTableTopOptions, chartActiveIpTableOrderOptions } from '@/utils/constants'
+import { chartTableTopOptions, chartActiveIpTableOrderOptions, chartPieTableTopOptions } from '@/utils/constants'
 
 export default {
   name: 'ChartHeader',
@@ -108,7 +126,8 @@ export default {
       type: Boolean,
       default: false
     },
-    table: Object
+    table: Object,
+    orderPieTable: Object
   },
   components: {
     ChartError
@@ -171,6 +190,9 @@ export default {
     },
     activeIpTableLimitChange () {
       this.$emit('tableChange')
+    },
+    orderPieTableChange () {
+      this.$emit('orderPieTableChange', this.orderPieTable)
     }
   },
   setup (props) {
@@ -182,12 +204,14 @@ export default {
       chartTimeFilter,
       chartTableTopOptions,
       chartActiveIpTableOrderOptions,
+      chartPieTableTopOptions,
       isTitle: isTitle(props.chartInfo.type),
       isBlock: isBlock(props.chartInfo.type),
       isTabs: isTabs(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
       isCurrentTable: isCurrentTable(props.chartInfo.type),
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
+      isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isGroup: isGroup(props.chartInfo.type)
     }
   }

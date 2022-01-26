@@ -664,6 +664,10 @@ export function isSingleValueWithEchartsTemp (type) {
 export function isEchartsWithTable (type) {
   return type === 31
 }
+/* 普通饼图 */
+export function isEchartsPie (type) {
+  return type === 32
+}
 /* table */
 export function isTable (type) {
   return type >= 61 && type <= 70

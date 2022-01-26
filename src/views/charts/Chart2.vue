@@ -153,6 +153,42 @@
               @showLoading="showLoading"
       ></chart-echart-with-statistics>
 
+      <chart-echart-pie
+              v-else-if="isEchartsPie"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :result-type="resultType"
+              @showLoading="showLoading"
+      ></chart-echart-pie>
+
+      <chart-echart-with-table
+              v-else-if="isEchartsWithTable"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :query-params="queryParams"
+              :result-type="resultType"
+              :order-pie-table="orderPieTable"
+              @showLoading="showLoading"
+      ></chart-echart-with-table>
+
+      <chart-echart-ip-hosted-domain
+              v-else-if="isIpHostedDomain"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+              :entity="entity"
+      ></chart-echart-ip-hosted-domain>
+
+      <chart-echart-app-relate-domain
+              v-else-if="isAppRelatedDomain"
+              :chart-info="chartInfo"
+              :chart-data="chartData"
+              :query-params="queryParams"
+              @showLoading="showLoading"
+              :entity="entity"
+      ></chart-echart-app-relate-domain>
+
     </template>
   </div>
 </template>
@@ -168,6 +204,10 @@ import ChartGroup from '@/views/charts/charts/ChartGroup'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
 import ChartEchartLine from '@/views/charts/charts/ChartEchartLine'
 import ChartEchartWithStatistics from '@/views/charts/charts/ChartEchartWithStatistics'
+import ChartEchartPie from '@/views/charts/charts/ChartEchartPie'
+import ChartEchartWithTable from '@/views/charts/charts/ChartEchartWithTable'
+import ChartEchartIpHostedDomain from '@/views/charts/charts/ChartEchartIpHostedDomain'
+import ChartEchartAppRelateDomain from '@/views/charts/charts/ChartEchartAppRelateDomain'
 import ChartActiveIpTable from '@/views/charts/charts/ChartActiveIpTable'
 import ChartTimeBar from './charts/ChartTimeBar'
 import ChartCategoryBar from './charts/ChartCategoryBar'
@@ -189,6 +229,7 @@ import {
   isTitle,
   isMap,
   getOption,
+  isEchartsPie,
   isEchartsWithTable,
   isEchartsWithStatistics,
   isEchartsTimeBar,
@@ -230,14 +271,18 @@ export default {
     ChartNoData,
     ChartTabs,
     ChartMap,
-    ChartEchartLine,
     ChartBlock,
     ChartTimeBar,
     ChartCategoryBar,
     ChartIpOpenPortBar,
     ChartRelationShip,
     ChartGroup,
-    ChartEchartWithStatistics
+    ChartEchartLine,
+    ChartEchartWithStatistics,
+    ChartEchartPie,
+    ChartEchartWithTable,
+    ChartEchartIpHostedDomain,
+    ChartEchartAppRelateDomain
   },
   props: {
     chartInfo: Object,
@@ -250,7 +295,8 @@ export default {
     panelLock: Boolean,
     entity: Object,
     isError: Boolean,
-    table: Object
+    table: Object,
+    orderPieTable: Object
   },
   computed: {
     isNoData () {
@@ -270,7 +316,11 @@ export default {
     },
     showLoading (show) {
       this.$emit('showLoading', show)
+    },
+    initEchartsWithTable () {
+      this.$refs['chart' + this.chartInfo.id] && this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(`chart${this.chartInfo.id}`)
     }
+
   },
   watch: {
     chartData: {
@@ -286,6 +336,7 @@ export default {
       isEchartsTimeBar: isEchartsTimeBar(props.chartInfo.type),
       isEchartsCategoryBar: isEchartsCategoryBar(props.chartInfo.type),
       isIpOpenPortBar: isIpOpenPortBar(props.chartInfo.type),
+      isEchartsPie: isEchartsPie(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isEchartsWithStatistics: isEchartsWithStatistics(props.chartInfo.type),
       isSingleValue: isSingleValue(props.chartInfo.type),

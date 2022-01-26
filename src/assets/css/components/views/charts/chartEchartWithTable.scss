@@ -1,0 +1,78 @@
+.cn-panel2 {
+  position: relative;
+  .chart-list {
+    .vue-grid-layout>.vue-grid-item {
+      .cn-chart {
+        height: 100% !important;
+        .cn-chart__echarts {
+          display: flex;
+          flex-direction: column;
+          height:100%;
+          .cn-chart__body {
+            flex: auto;
+            display: flex;
+            overflow: hidden auto;
+
+            .el-table {
+              padding: 0 10px;
+
+              &:before {
+                height: 0;
+              }
+              thead {
+                color: #333;
+              }
+              th.is-leaf, td {
+                border-bottom: none;
+              }
+              th {
+                padding-bottom: 5px;
+              }
+              td {
+                padding: 4px 0;
+                color: #333;
+              }
+            }
+
+            .chart-drawing{
+              height: calc(100% - 36px) !important;
+            }
+          }
+          .cn-chart__body.pie-with-table {
+            flex-basis: 40%;
+          }
+          .cn-chart__footer.pie-with-table {
+            flex-basis: 60%;
+            padding: 10px 30px 30px;
+          }
+        }
+        .pie-table {
+          font-size: 14px;
+          color: #333333;
+          font-weight: 500;
+
+          .el-table__header-wrapper {
+            .cell {
+              color: #333;
+            }
+          }
+          .el-table__expanded-cell[class*=cell] {
+            padding: 0;
+          }
+
+          .expand-table .el-table__body .el-table__row:last-of-type td {
+            border: none;
+          }
+          .expand-table {
+            font-weight: 400;
+            color: #606266;
+
+            .el-table__body-wrapper {
+              height: auto !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}

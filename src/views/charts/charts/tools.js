@@ -69,6 +69,10 @@ export function isMapBlock (type) {
 export function isEchartsLine (type) {
   return type === 11
 }
+/* 普通饼图 */
+export function isEchartsPie (type) {
+  return type === 32
+}
 /* 带统计的折线图 */
 export function isEchartsWithStatistics (type) {
   return type === 12

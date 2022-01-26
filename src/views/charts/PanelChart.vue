@@ -13,11 +13,13 @@
         :chart-data="chartData"
         :chart-info="chartInfo"
         :table="table"
+        :order-pie-table="orderPieTable"
         @loadMore="loadMore"
         @refresh="refresh"
         @groupShow="groupShow"
         @showFullscreen="showFullscreen"
         @tableChange="tableChange"
+        @orderPieTableChange="orderPieTableChange"
     ></chart-header>
     <!-- chart -->
     <!-- 数据查询后传入chart组件，chart组件内不查询，只根据接传递的数据来渲染 -->
@@ -34,6 +36,7 @@
         :entity="entity"
         :table="table"
         :is-fullscreen="isFullscreen"
+        :order-pie-table="orderPieTable"
         @showLoading="showLoading"
     ></chart>
   </div>
@@ -322,8 +325,13 @@ export default {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
     groupShow (chartInfo) {
-      this.$emit('groupShow',chartInfo)
+      this.$emit('groupShow', chartInfo)
     },
+    orderPieTableChange (orderPieTable) {
+      this.orderPieTable = orderPieTable
+      this.getChartData()
+      this.$refs.chart.initEchartsWithTable()
+    }
   },
   mounted () {
     this.showLoading(true)
