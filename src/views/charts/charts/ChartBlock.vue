@@ -20,24 +20,21 @@ export default {
   data () {
     return {
       dataList: [],
+      time: {},
       firstShow: false
     }
   },
-  watch: {
-    // 'chartInfo.children': {
-    //   immediate: true,
-    //   deep: true,
-    //   handle (n) {
-    //     if (!this.firstShow) {
-    //       this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
-    //       this.firstShow = true
-    //     }
-    //   }
-    // }
-  },
   mounted () {
     this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
+    // this.time = JSON.parse(JSON.stringify(this.timeFilter))
     this.firstShow = true
+  },
+  methods: {
+    reload () {
+      console.log(123132)
+      this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
+      // this.time = JSON.parse(JSON.stringify(this.timeFilter))
+    }
   }
 }
 </script>

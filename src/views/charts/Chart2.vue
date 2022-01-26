@@ -31,6 +31,7 @@
       <chart-block
         v-else-if="isBlock"
         ref="chart"
+        :timeFilter="queryParams"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :entity="entity"
@@ -38,6 +39,7 @@
 
       <chart-group
               v-else-if="isGroup"
+              :timeFilter="queryParams"
               :chart-info="chartInfo"
               :chart-data="chartData"
               :entity="entity"
