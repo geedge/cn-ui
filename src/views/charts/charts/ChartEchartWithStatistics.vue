@@ -17,9 +17,14 @@ import {
 
 export default {
   name: 'ChartEchartWithStatistics',
+  setup () {
+    const myChart = null
+    return {
+      myChart
+    }
+  },
   data () {
     return {
-      myChart: null,
       chartOption: null,
       statisticsData: [],
       statisticsHeight: 280
