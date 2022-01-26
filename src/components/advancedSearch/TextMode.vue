@@ -66,6 +66,9 @@ export default {
         this.$emit('search')
       }
     },
+    focus () {
+      this.codeMirror.focus()
+    },
     changeMode () {
       const originalSql = this.codeMirror.getValue()
       const parser = new SqlParser(originalSql, this.columnList)
