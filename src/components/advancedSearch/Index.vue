@@ -29,6 +29,7 @@ import TextMode from '@/components/advancedSearch/TextMode'
 import { defaultOperatorList, defaultConnectionList } from '@/components/advancedSearch/meta/meta'
 import _ from 'lodash'
 import { ref } from 'vue'
+import SqlParser from "@/components/advancedSearch/meta/sql-parser";
 export default {
   name: 'Index',
   components: {
@@ -74,6 +75,18 @@ export default {
     addParams (params) {
       this.$refs.tagMode && this.$refs.tagMode.addParams(params)
       this.$refs.textMode && this.$refs.textMode.addParams(params)
+    },
+    setSql (sql) {
+      if (this.searchMode === 'text') {
+        this.sql = sql
+      } else if (this.searchMode === 'tag') {
+        const parser = new SqlParser(sql, this.columnList)
+        const errorList = parser.validate()
+        if (this.$_.isEmpty(errorList)) {
+          const { metaList } = parser.formatSql()
+          this.metaList = metaList
+        }
+      }
     }
   },
   setup (props) {

@@ -16,7 +16,8 @@ export const storageKey = {
   tableTitlePrefix: 'cn-table-title',
   tablePageSizePrefix: 'cn-page-size',
   leftMenuShrink: 'cn-left-menu-shrink',
-  unsavedChange: 'cn-unsaved-change'
+  unsavedChange: 'cn-unsaved-change',
+  entitySearchHistory: 'cn-entity-search-history'
 }
 
 // 统一定义跳转来源

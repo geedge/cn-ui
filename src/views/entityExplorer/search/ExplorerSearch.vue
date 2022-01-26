@@ -17,8 +17,8 @@
         <i class="cn-icon cn-icon-help"></i>
       </div>
       <div v-else class="explorer-search__foot">
-        <div class="foot__item">
-          <i class="el-icon-arrow-right" style="padding-right: 5px;"></i>
+        <div class="foot__item" @click="triggerHistory">
+          <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': showHistory }" style="padding-right: 5px;"></i>
           <span>{{$t('search.searchHistory')}}</span>
         </div>
         <div class="foot__item">
@@ -26,6 +26,18 @@
           <el-divider direction="vertical"></el-divider>
           <span>{{$t('overall.help')}}</span>
         </div>
+        <transition name="el-zoom-in-top">
+          <div class="search__history" v-show="showHistory" v-ele-click-outside="esc">
+            <div class="history__item" v-for="(h, i) in history" :key="i" @click="selectHistory(h.sql)">
+              <span class="item-date">{{h.date}}</span>
+              <div class="item-value" :title="h.sql">{{h.sql}}</div>
+            </div>
+            <div class="history__item clear-all">
+              <span @click="clearHistory" v-if="!$_.isEmpty(history)">{{$t('overall.clear')}}</span>
+              <div v-else>暂无记录</div>
+            </div>
+          </div>
+        </transition>
       </div>
     </div>
   </div>
@@ -35,6 +47,7 @@
 import AdvancedSearch from '@/components/advancedSearch/Index'
 import { columnType } from '@/components/advancedSearch/meta/meta'
 import SqlParser from '@/components/advancedSearch/meta/sql-parser'
+import {storageKey} from "@/utils/constants";
 export default {
   name: 'CnSearch',
   components: {
@@ -175,7 +188,9 @@ export default {
           value: 'OR',
           label: 'OR'
         }
-      ]
+      ],
+      showHistory: false,
+      history: []
     }
   },
   methods: {
@@ -192,9 +207,43 @@ export default {
         }
       }
       this.$emit('search', metaList, sql)
+      // 加入搜索记录
+      if (sql) {
+        const oldHistory = localStorage.getItem(storageKey.entitySearchHistory)
+        let arr = []
+        const newItem = { sql, date: window.$dayJs.tz(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss') }
+        if (!this.$_.isEmpty(oldHistory)) {
+          const oldArr = JSON.parse(oldHistory)
+          oldArr.unshift(newItem)
+          arr = [...oldArr]
+        } else {
+          arr.push(newItem)
+        }
+        localStorage.setItem(storageKey.entitySearchHistory, JSON.stringify(arr))
+      }
     },
     addParams (params) {
       this.$refs.search.addParams(params)
+    },
+    selectHistory (sql) {
+      this.$refs.search.setSql(sql)
+      this.showHistory = false
+    },
+    clearHistory () {
+      localStorage.setItem(storageKey.entitySearchHistory, '')
+      this.history = []
+    },
+    triggerHistory () {
+      this.showHistory = !this.showHistory
+      if (this.showHistory) {
+        const history = localStorage.getItem(storageKey.entitySearchHistory)
+        if (!this.$_.isEmpty(history)) {
+          this.history = JSON.parse(history)
+        }
+      }
+    },
+    esc () {
+      this.showHistory = false
     }
   }
 }

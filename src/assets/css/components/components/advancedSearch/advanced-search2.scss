@@ -35,14 +35,21 @@
   display: flex;
   align-items: center;
   height: 40px;
+  overflow: auto hidden;
   border: 1px solid #CECECE;
   border-radius: 2px;
   padding-left: 10px;
   padding-right: 80px;
   background-color: white;
 
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
   .tag-search__meta, .tag-search__add {
     margin-right: 10px;
+    flex-shrink: 0;
   }
 
   .tag-search__add {
