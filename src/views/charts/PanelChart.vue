@@ -185,7 +185,6 @@ export default {
         if (this.isSingleValue) {
           if (chartParams && chartParams.dataKey) {
             get(replaceUrlPlaceholder(chartParams.url), this.queryParams).then(response =>{
-              console.log(response)
               if (response.code === 200) {
                 if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
                   this.chartData = response.data.result[chartParams.dataKey]

@@ -28,7 +28,7 @@ export default {
     init (id) {
       const vm = this
       const chartParams = this.chartInfo.params
-      const entityName = this.entity.ip || this.entity.domain || this.entity.app
+      const entityName = this.entity.ip || this.entity.domain || this.entity.app || this.entity.appName
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = this.$_.cloneDeep(sankey)
