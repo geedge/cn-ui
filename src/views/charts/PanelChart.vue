@@ -75,7 +75,7 @@ import {
   isAppRelatedDomain,
   isBlock
 } from './charts/tools'
-import { tableTitleMapping } from '@/components/charts/chart-table-title'
+import { tableTitleMapping, legendMapping } from '@/components/charts/chart-table-title'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { chartPieTableTopOptions, chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
@@ -166,6 +166,7 @@ export default {
   methods: {
     /* 参数 extraParams 额外请求参数，isRefresh 是否是刷新 */
     getChartData (url, extraParams = {}, isRefresh) {
+      const vm = this
       this.loading = true
       this.standaloneTimeRange.use = !!isRefresh
       try {
@@ -187,7 +188,7 @@ export default {
         }
         if (this.isSingleValue) {
           if (chartParams && chartParams.dataKey) {
-            get(replaceUrlPlaceholder(chartParams.url), this.queryParams).then(response =>{
+            get(replaceUrlPlaceholder(chartParams.url), this.queryParams).then(response => {
               if (response.code === 200) {
                 if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
                   this.chartData = response.data.result[chartParams.dataKey]
@@ -211,6 +212,13 @@ export default {
               response = testData.data2
             }
             if (response.code === 200) {
+              if (Array.isArray(response.data.result)) {
+                response.data.result.forEach(item => {
+                  if (item.legend && legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${item.legend}`]) {
+                    item.legend = vm.$t(legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${item.legend}`])
+                  }
+                })
+              }
               this.chartData = response.data.result
               this.table.tableData = response.data.result
               this.table.tableColumns = this.getTableTitle(response.data.result)
