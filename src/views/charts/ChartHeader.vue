@@ -184,6 +184,7 @@ export default {
     },
     dateTimeRangeChange (s, e, v) {
       this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }
+      this.$emit('refresh', this.chartTimeFilter)
     },
     tableLimitChange () {
       this.$emit('tableChange')
