@@ -190,13 +190,13 @@ export default class SqlParser extends SqlParserVisitor {
 
   // 字段或值
   visitExpressionAtomPredicate (ctx) {
-    const constant = ctx.getText()
+    const constant = ctx.getText().toLowerCase()
     this.buildMeta('expression', constant)
   }
 
   // 操作符
   visitComparisonOperator (ctx) {
-    const comparisonOperator = ctx.getText()
+    const comparisonOperator = ctx.getText().toLowerCase()
     this.buildMeta('operator', comparisonOperator)
   }
 
@@ -208,13 +208,13 @@ export default class SqlParser extends SqlParserVisitor {
 
   // in语句
   visitInPredicate (ctx) {
-    const inPredicate = ctx.getText()
+    const inPredicate = ctx.getText().toLowerCase()
     this.buildMeta('in', inPredicate)
   }
 
   // like语句
   visitLikePredicate (ctx) {
-    const likePredicate = ctx.getText()
+    const likePredicate = ctx.getText().toLowerCase()
     this.buildMeta('like', likePredicate)
   }
 }
