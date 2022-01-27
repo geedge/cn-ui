@@ -165,7 +165,7 @@ export default {
     }
   },
   mounted() {
-    this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 200)})
+    this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 250)})
   },
   setup (props) {
     return {
