@@ -110,6 +110,11 @@ export default {
         this.stepWidth = Math.floor(dom.offsetWidth / 12)
       }
     },
+    reload () {
+      this.copyDataList.forEach(item => {
+        this.$refs['chart' + item.id].getChartData()
+      })
+    },
     showFullscreen (show, chartInfo) {
       this.fullscreen.chartInfo = chartInfo
       this.fullscreen.visible = show

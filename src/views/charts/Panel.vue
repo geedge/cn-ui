@@ -156,7 +156,10 @@ export default {
     // methods
     dateTimeRangeChange (s, e, v) {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
-      this.chartList = [...this.chartList]
+      // this.chartList = [...this.chartList]
+      this.$nextTick(() => {
+        this.$refs.panelChartList.reload()
+      })
     },
     reloadCharts () {
       this.chartList.forEach(chart => {
