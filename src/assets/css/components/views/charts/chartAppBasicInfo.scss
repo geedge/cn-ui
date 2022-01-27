@@ -27,6 +27,9 @@
         width: 250px;
         align-items: center;
       }
+      .cn-chart__body-single-table:nth-of-type(3) {
+        margin-right: 126px;
+      }
       .single-value-icon__box {
         display: flex;
         align-items: center;
@@ -49,15 +52,15 @@
         }
       }
       .single-value-color-g.single-value__icon {
-        background-color: limegreen;
+        background-color: #E2FCEF;
         i {
-          color: green;
+          color: #41D389;
         }
       }
       .single-value-color-y.single-value__icon {
-        background-color: yellow;
+        background-color: #FFF0DA;
         i {
-          color: darkorange;
+          color: #FA901C;
         }
       }
       .single-value__content {
