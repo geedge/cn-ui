@@ -198,17 +198,6 @@ export default {
   methods: {
     search (metaList, formatSql) {
       let sql = formatSql
-      if (metaList && this.$_.isArray(metaList)) {
-        // 全文搜索处理
-        const hasFullText = metaList.some(meta => {
-          return meta.column && meta.column.type === columnType.fullText
-        })
-        if (hasFullText) {
-          const parser = new SqlParser(metaList, this.columnList)
-          sql = parser.parseMetaToSql(metaList, true)
-        }
-      }
-      this.$emit('search', metaList, sql)
       // 加入搜索记录，将记录数量控制在30以内
       if (sql) {
         const oldHistory = localStorage.getItem(storageKey.entitySearchHistory)
@@ -226,6 +215,17 @@ export default {
         }
         localStorage.setItem(storageKey.entitySearchHistory, JSON.stringify(arr))
       }
+      if (metaList && this.$_.isArray(metaList)) {
+        // 全文搜索处理
+        const hasFullText = metaList.some(meta => {
+          return meta.column && meta.column.type === columnType.fullText
+        })
+        if (hasFullText) {
+          const parser = new SqlParser(metaList, this.columnList)
+          sql = parser.parseMetaToSql(metaList, true)
+        }
+      }
+      this.$emit('search', metaList, sql)
     },
     addParams (params) {
       this.$refs.search.addParams(params)

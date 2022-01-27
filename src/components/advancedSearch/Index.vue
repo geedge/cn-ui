@@ -20,6 +20,7 @@
         @changeMode="changeMode"
         @search="search"
     ></tag-mode>
+<!--    <div class="search-tip&#45;&#45;error">something error...</div>-->
   </div>
 </template>
 
@@ -29,7 +30,8 @@ import TextMode from '@/components/advancedSearch/TextMode'
 import { defaultOperatorList, defaultConnectionList } from '@/components/advancedSearch/meta/meta'
 import _ from 'lodash'
 import { ref } from 'vue'
-import SqlParser from "@/components/advancedSearch/meta/sql-parser";
+import SqlParser from '@/components/advancedSearch/meta/sql-parser'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'Index',
   components: {
@@ -85,6 +87,8 @@ export default {
         if (this.$_.isEmpty(errorList)) {
           const { metaList } = parser.formatSql()
           this.metaList = metaList
+        } else {
+          ElMessage.error(this.$t('tip.invalidExpression'))
         }
       }
     }

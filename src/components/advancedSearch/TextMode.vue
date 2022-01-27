@@ -22,6 +22,7 @@ import SqlParser, { stringInQuot } from '@/components/advancedSearch/meta/sql-pa
 import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import { columnType } from '@/components/advancedSearch/meta/meta'
+import { ElMessage } from 'element-plus'
 
 export default {
   name: 'TextMode',
@@ -51,7 +52,6 @@ export default {
     },
     search () {
       let originalSql = this.codeMirror.getValue()
-      console.info(originalSql)
       if (originalSql) {
         originalSql = originalSql.replace(/"/g, '')
         const parser = new SqlParser(originalSql, this.columnList)
@@ -61,7 +61,7 @@ export default {
           toRaw(this.codeMirror).setValue(formatSql)
           this.$emit('search', metaList, formatSql)
         } else {
-          console.info(errorList)
+          ElMessage.error(this.$t('tip.invalidExpression'))
         }
       } else {
         this.$emit('search')
