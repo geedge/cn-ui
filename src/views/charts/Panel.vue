@@ -148,6 +148,8 @@ export default {
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
+      } else {
+        this.$refs.panelChartList.reload()
       }
     },
     reload (s, e, v) {
