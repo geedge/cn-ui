@@ -58,6 +58,8 @@
       font-weight: bold;
 
       .foot__item {
+        display: flex;
+        align-items: center;
         font-size: 14px;
         color: #3976CB;
 

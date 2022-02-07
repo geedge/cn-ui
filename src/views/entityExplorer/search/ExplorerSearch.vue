@@ -67,7 +67,8 @@ export default {
         {
           name: 'entity_type',
           type: 'string',
-          label: this.$t('overall.type')
+          // label: this.$t('overall.type')
+          label: 'Type'
         },
         {
           name: 'ip_addr',
@@ -77,22 +78,26 @@ export default {
         {
           name: 'ip_location_country',
           type: 'string',
-          label: this.$t('overall.country')
+          // label: this.$t('overall.country')
+          label: 'Country'
         },
         {
           name: 'ip_location_province',
           type: 'string',
-          label: this.$t('overall.province')
+          // label: this.$t('overall.province')
+          label: 'Province'
         },
         {
           name: 'ip_location_city',
           type: 'string',
-          label: this.$t('overall.city')
+          // label: this.$t('overall.city')
+          label: 'City'
         },
         {
           name: 'ip_asn',
           type: 'string',
-          label: this.$t('entities.asn')
+          // label: this.$t('entities.asn')
+          label: 'ASN'
         },
         {
           name: 'ip_os',
@@ -107,22 +112,26 @@ export default {
         {
           name: 'domain_category',
           type: 'string',
-          label: this.$t('entities.domainCategory')
+          // label: this.$t('entities.domainCategory')
+          label: 'Domain category'
         },
         {
           name: 'domain_category_group',
           type: 'string',
-          label: this.$t('entities.domainDetail.categoryGroup')
+          // label: this.$t('entities.domainDetail.categoryGroup')
+          label: 'Domain category group'
         },
         {
           name: 'domain_reputation_score',
           type: 'long',
-          label: this.$t('entities.domainDetail.reputationValue')
+          // label: this.$t('entities.domainDetail.reputationValue')
+          label: 'Domain reputation score'
         },
         {
           name: 'domain_reputation_level',
           type: 'string',
-          label: this.$t('entities.reputationLevel')
+          // label: this.$t('entities.reputationLevel')
+          label: 'Domain reputation level'
         },
         {
           name: 'domain_whois_email',
@@ -162,25 +171,28 @@ export default {
         {
           name: 'app_name',
           type: 'string',
-          label: 'App'
+          label: 'APP'
         },
         {
           name: 'app_category',
           type: 'string',
-          label: this.$t('trafficSummary.appCategory')
+          // label: this.$t('trafficSummary.appCategory')
+          label: 'APP category'
         },
         {
           name: 'app_subcategory',
           type: 'string',
-          label: this.$t('entities.domainDetail.appSubcategory')
+          // label: this.$t('entities.domainDetail.appSubcategory')
+          label: 'APP subcategory'
         },
         {
           name: 'app_risk',
           type: 'long',
-          label: this.$t('trafficSummary.appRisk')
+          // label: this.$t('trafficSummary.appRisk')
+          label: 'APP risk'
         }
       ],
-      operatorList: ['=', '!=', '>', '<', '>=', '<='/* , 'IN', 'NOT IN', 'LIKE', 'NOT LIKE' */],
+      operatorList: ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
       connectionList: [
         {
           value: 'AND',
