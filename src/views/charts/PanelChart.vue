@@ -1,7 +1,7 @@
 <template>
   <!-- chart外层箱子 -->
   <div
-      :class="{'panel-chart--fullscreen': isFullscreen, 'panel-chart--title-chart': isTitle}"
+      :class="{'panel-chart--fullscreen': isFullscreen, 'panel-chart--title-chart': isTitle, 'panel-chart-group': isGroup}"
       class="panel-chart"
       :id="isFullscreen ? ('chart-screen-' + chartInfo.id ) : ('chart-local-' + chartInfo.id)"
   >

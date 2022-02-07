@@ -74,6 +74,20 @@
       &>.cn-entity-detail .entity-detail__body>.cn-panel {
         background-color: white;
       }
+      &>.cn-entity-detail .entity-detail__body>.cn-panel2 {
+        .chart-list {
+          .vue-grid-layout .vue-grid-item {
+            .panel-chart-group.panel-chart {
+              .panel-chart {
+                border: none;
+                .chart-header {
+                  border: none;
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
