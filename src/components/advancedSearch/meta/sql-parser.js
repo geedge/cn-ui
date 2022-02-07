@@ -122,18 +122,19 @@ export default class SqlParser extends SqlParserVisitor {
         }
         // 如果column.name为空，则参数值是column，否则是value
         if (!this.tempMeta.column.name) {
-          // 在columnList中的，按columnList；不在则先设为空串，由之后value值来自动判断
+          // 在columnList中的，按columnList；不在则为全文检索
           const column = this.columnList.find(column => {
             return column.name === value
           })
           this.tempMeta.column.name = value
           this.tempMeta.column.label = column ? column.label : value
-          this.tempMeta.column.type = column ? column.type : ''
-        } else {
-          // 若column的type为空，则根据value自动判断赋值
-          if (!this.tempMeta.column.type) {
-            this.tempMeta.column.type = handleType(value)
+          this.tempMeta.column.type = column ? column.type : columnType.fullText
+          if (this.tempMeta.column.type === columnType.fullText) {
+            this.tempMeta.value.show = false
+            this.tempMeta.operator.show = false
+            this.metaList.push(cloneMeta(this.tempMeta))
           }
+        } else {
           if (this.tempMeta.column.type === columnType.string) {
             if (_.isArray(value)) {
               this.tempMeta.value.value = value.map(v => {

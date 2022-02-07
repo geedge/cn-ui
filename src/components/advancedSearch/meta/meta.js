@@ -87,6 +87,23 @@ export default class Meta {
       this.isEditing = false
     }
   }
+
+  resetOperator () {
+    this.operator = {
+      value: '',
+      isEditing: false,
+      show: false
+    }
+  }
+
+  resetValue () {
+    this.value = {
+      value: '',
+      label: '',
+      isEditing: false,
+      show: false
+    }
+  }
 }
 
 export function cloneMeta (source) {

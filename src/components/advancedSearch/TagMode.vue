@@ -107,7 +107,6 @@ export default {
     // 新增条件
     addCondition (meta) {
       this.metaList.forEach(m => {
-        console.info(m)
         m.cancelEditing()
       })
       // 先判断上一个condition是否已填写完整，没有则删除；之后将当前所有meta的内容的isEditing置为false
@@ -155,6 +154,8 @@ export default {
       if (this.isCustomized(value)) {
         meta.column.type = columnType.fullText
         meta.column.label = value
+        meta.resetOperator()
+        meta.resetValue()
       } else {
         const selectedColumn = this.columnList.find(column => {
           return column.name === value

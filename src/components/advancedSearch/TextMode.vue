@@ -88,7 +88,7 @@ export default {
           return column.name === key
         })
         let current = this.codeMirror.getValue()
-        current = `${key}=${(column.type === columnType.string ? stringInQuot(params[key]) : params[key])} ${current ? 'AND' : ''} ${current}`
+        current = `${current ? current + 'AND ' : ''}${key}=${(column.type === columnType.string ? stringInQuot(params[key]) : params[key])}`
         toRaw(this.codeMirror).setValue(current)
       })
     }
