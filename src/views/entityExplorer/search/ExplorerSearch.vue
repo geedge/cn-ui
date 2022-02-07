@@ -16,7 +16,7 @@
       <div class="search-symbol-inline" v-if="showList">
         <i class="cn-icon cn-icon-help"></i>
       </div>
-      <div v-else class="explorer-search__foot">
+      <div v-else class="explorer-search__foot" v-ele-click-outside="esc">
         <div class="foot__item" @click="triggerHistory">
           <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': showHistory }" style="padding-right: 5px;"></i>
           <span>{{$t('search.searchHistory')}}</span>
@@ -27,7 +27,7 @@
           <span>{{$t('overall.help')}}</span>
         </div>
         <transition name="el-zoom-in-top">
-          <div class="search__history" v-show="showHistory" v-ele-click-outside="esc">
+          <div class="search__history" v-show="showHistory">
             <div class="history__items">
               <div class="history__item" v-for="(h, i) in history" :key="i" @click="selectHistory(h.sql)">
                 <span class="item-date">{{h.date}}</span>

@@ -256,6 +256,7 @@ export default {
       ],
       listData: [],
       q: '',
+      metaList: [],
       limitFilterType: true, // 是否限定了filter的类型
       listLoading: false/*,
       listData: JSON.parse(`[
@@ -439,8 +440,10 @@ export default {
     search (metaList, formatSql) {
       if (formatSql) {
         this.q = formatSql
+        this.metaList = metaList
       } else {
         this.q = ''
+        this.metaList = []
       }
 
       if (!this.showList) {
@@ -489,11 +492,11 @@ export default {
     },
     pageSize (val) {
       this.pageObj.pageSize = val
-      this.search()
+      this.search(this.metaList, this.q)
     },
     pageNo (val) {
       this.pageObj.pageNo = val
-      this.search()
+      this.search(this.metaList, this.q)
     },
     // 点击上一页箭头
     prev () {
@@ -671,7 +674,7 @@ export default {
   },
   watch: {
     timeFilter (n) {
-      this.search()
+      this.search(this.metaList, this.q)
     }
   },
   setup () {
