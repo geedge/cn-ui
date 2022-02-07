@@ -4,7 +4,7 @@
                 ref="table"
                 class="pie-table"
                 :data="tableData"
-                style="width: 70%;border-left: none;"
+                style="width: 70%;"
                 tooltip-effect="light"
                 border="none"
                 :size="'mini'"

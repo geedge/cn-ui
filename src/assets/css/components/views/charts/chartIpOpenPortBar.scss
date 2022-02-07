@@ -1,6 +1,13 @@
 .chart-ip-open-port-bar {
     display: flex;
     height: 100%;
+    .el-table--border {
+        border: none;
+        .el-table__body-wrapper {
+            overflow-y: auto;
+            height: 261px !important;
+        }
+    }
     .el-table--border td{
         border: none !important;
     }
@@ -10,7 +17,6 @@
     .chart-box{
         width: 30%;
         height: 100%;
-        border: 1px solid #EBEEF5;
         >.title{
             height: 36px;
             line-height: 36px;
