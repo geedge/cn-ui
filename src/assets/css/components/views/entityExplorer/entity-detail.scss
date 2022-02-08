@@ -75,8 +75,8 @@
         background-color: white;
       }
       &>.cn-entity-detail .entity-detail__body>.cn-panel2 {
-        .chart-header {
-          border-bottom: none;
+        .cn-chart {
+          height: calc(100% - 47px) !important;
         }
         .chart-list {
           .vue-grid-layout .vue-grid-item {
