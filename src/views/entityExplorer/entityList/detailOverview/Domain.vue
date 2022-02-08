@@ -79,6 +79,8 @@
           v-for="(chartInfo, i) in singleValues.chartInfos"
           :chart-info="chartInfo"
           :chart-data="singleValues.chartDatas[i]"
+          :key="i"
+          class="cn-chart__single-value--detail-overview"
         ></chart-single-value>
       </div>
     </div>

@@ -18,6 +18,7 @@ export default {
     timeFilter: Object
   },
   mounted () {
+    console.info(this.chartInfo)
   }
 }
 </script>

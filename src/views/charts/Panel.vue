@@ -113,14 +113,14 @@ export default {
       this.detailChartList = this.detailTabs[index].children
     },
     recursionParamsConvert (chart) {
-      chart.params = chart.params ? JSON.parse(chart.params) : null
+      chart.params = chart.params ? JSON.parse(chart.params) : {}
       if (chart.type === 94) {
         chart.oldH = chart.h
-        chart.params = {
-          collpase: false
-        }
+        /* chart.params = {
+          collapse: false
+        } */
         chart.h = getGroupHeight(chart.children) + 1.5
-        if (chart.params.collpase) {
+        if (chart.params.collapse) {
           chart.h = 1
         }
       }

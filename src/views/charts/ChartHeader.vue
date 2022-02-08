@@ -1,13 +1,19 @@
 <template>
-  <div class="chart-header" :class="{'chart-header--title-chart': isTitle, 'is-group-collapse': chartInfo.params&&chartInfo.params.collpase, 'panel-chart-block': isBlock}">
-    <div class="chart-header__title" v-if="!isCurrentTable&&(isGroup)" :class="{'chart-header__title--block': isBlock}">
-      <span @click="groupShow"> <i class="cn-icon" :class="chartInfo.params&&chartInfo.params.collpase ? 'cn-icon-arrow-right': 'cn-icon-arrow-down'"></i></span>
+  <div class="chart-header" :class="{'chart-header--title-chart': isTitle, 'is-group-collapse': isGroup, 'panel-chart-block': isBlock}">
+    <div class="chart-header__title" v-if="isGroup">
+      <span
+          @click="groupShow"
+          v-if="chartInfo.params && chartInfo.params.collapsable"
+          class="arrow-icon"
+          :class="{'reg-down': chartInfo.params && !chartInfo.params.collapse}"
+      >
+        <i class="cn-icon cn-icon-arrow-right"></i>
+      </span>
       {{chartInfo.name}}
     </div>
     <div class="chart-header__title" v-else-if="!isCurrentTable" :class="{'chart-header__title--block': isBlock}">{{chartInfo.name}}</div>
     <template v-if="isCurrentTable">
       <div class="chart-header__title">
-<!--        -->
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
         <span
             v-if="chartInfo.params && chartInfo.params.as"
@@ -101,7 +107,7 @@
             <span class="header__operation-btn"><i class="cn-icon el-icon-info"></i></span>
           </template>
         </el-popover>
-        <span class="header__operation-btn" @click="refresh"><i class="cn-icon cn-icon-refresh"></i></span>
+        <span class="header__operation-btn" @click="refresh" v-if="showRefreshButton"><i class="cn-icon cn-icon-refresh"></i></span>
       </template>
     </div>
   </div>
@@ -196,6 +202,14 @@ export default {
     },
     orderPieTableChange () {
       this.$emit('orderPieTableChange', this.orderPieTable)
+    }
+  },
+  computed: {
+    showRefreshButton () {
+      // 自己是group且父元素是block时，不显示刷新按钮
+      // TODO 父元素是block，且只有自己一个子元素时，不显示刷新按钮
+      const isGroupAndParentIsBlock = this.chartInfo.parent.type === 95 && this.isGroup
+      return !isGroupAndParentIsBlock
     }
   },
   setup (props) {

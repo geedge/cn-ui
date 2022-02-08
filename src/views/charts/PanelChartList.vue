@@ -122,8 +122,8 @@ export default {
     groupShow (chart) {
       this.copyDataList.forEach((item, index) => {
         if (item.id === chart.id) {
-          item.params.collpase = !item.params.collpase
-          if (item.params.collpase) {
+          item.params.collapse = !item.params.collapse
+          if (item.params.collapse) {
             item.h = 1
           } else {
             item.h = getGroupHeight(item.children) + 1.5
@@ -134,7 +134,7 @@ export default {
       this.emitter.emit('groupParentCalcHeight', { chart, childrenList: this.copyDataList })
     },
     groupParentCalcHeight (chart, childrenList) {
-      console.log(chart, childrenList)
+      // console.log(chart, childrenList)
       setTimeout(() => {
         const parent = this.copyDataList.find(chartitem => chartitem.id === chart.parent.id)
         const children = parent.children.find(item => item.id === chart.id)

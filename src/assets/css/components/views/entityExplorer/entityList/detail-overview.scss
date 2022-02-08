@@ -37,6 +37,7 @@
       .overview__row {
         display: flex;
         flex-direction: row;
+        flex-wrap: wrap;
         padding: 2px 0;
         font-size: 14px;
 
