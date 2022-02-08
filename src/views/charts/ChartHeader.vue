@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-header" :class="{'chart-header--title-chart': isTitle, 'is-group-collapse': chartInfo.params&&chartInfo.params.collpase}">
+  <div class="chart-header" :class="{'chart-header--title-chart': isTitle, 'is-group-collapse': chartInfo.params&&chartInfo.params.collpase, 'panel-chart-block': isBlock}">
     <div class="chart-header__title" v-if="!isCurrentTable&&(isGroup)" :class="{'chart-header__title--block': isBlock}">
       <span @click="groupShow"> <i class="cn-icon" :class="chartInfo.params&&chartInfo.params.collpase ? 'cn-icon-arrow-right': 'cn-icon-arrow-down'"></i></span>
       {{chartInfo.name}}

@@ -75,8 +75,15 @@
         background-color: white;
       }
       &>.cn-entity-detail .entity-detail__body>.cn-panel2 {
-        .cn-chart {
-          height: calc(100% - 47px) !important;
+        .panel-chart {
+          .chart-header.panel-chart-block {
+            border: none;
+          }
+        }
+        .panel-chart-table.panel-chart {
+          .cn-chart {
+            height: calc(100% - 47px) !important;
+          }
         }
         .chart-list {
           .vue-grid-layout .vue-grid-item {
