@@ -27,29 +27,22 @@ import {
 } from '@/views/charts/charts/options/pie'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { get } from '@/utils/http'
+import chartEchartMixin from './chart-echart-mixin'
 
 export default {
   name: 'ChartEchartIpHostedDomain',
+  mixins: [chartEchartMixin],
   data () {
     return {
-      myChart: null,
-      myChart2: null,
-      chartOption: null
     }
   },
   props: {
-    chartInfo: Object,
-    chartData: [Array, Object],
     entity: Object
   },
   methods: {
-    initIpHostedDomain (id) {
+    initEcharts (id) {
+      this.initDom(id, 2)
       const chartParams = this.chartInfo.params
-      const dom = document.getElementById(id + '-0')
-      const dom2 = document.getElementById(id + '-1')
-      !this.myChart && (this.myChart = echarts.init(dom))
-      !this.myChart2 && (this.myChart2 = echarts.init(dom2))
-      this.chartOption = this.$_.cloneDeep(ipHostedDomain)
       this.$emit('showLoading', true)
       const byType = new Promise(resolve => {
         get(replaceUrlPlaceholder(chartParams.byTypeUrl, { ip: this.entity.ip })).then(response => {
@@ -102,14 +95,6 @@ export default {
           this.$emit('showLoading', false)
         }, 1000)
       })
-    }
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.initIpHostedDomain(`chart${this.chartInfo.id}`)
-      }
     }
   }
 }

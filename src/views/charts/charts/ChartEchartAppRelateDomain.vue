@@ -24,31 +24,20 @@ import * as echarts from 'echarts'
 import {
   ipHostedDomain
 } from '@/views/charts/charts/options/pie'
-import { replaceUrlPlaceholder, lineToSpace } from '@/utils/tools'
-import { get } from '@/utils/http'
+import chartEchartMixin from './chart-echart-mixin'
 
 export default {
   name: 'ChartEchartAppRelateDomain',
+  mixins: [chartEchartMixin],
   data () {
     return {
-      myChart: null,
-      myChart2: null,
-      chartOption: null
     }
   },
   props: {
-    chartInfo: Object,
-    chartData: [Array, Object],
-    entity: Object
   },
   methods: {
-    initAppRelatedDomain (id) {
-      const chartParams = this.chartInfo.params
-      const dom = document.getElementById(`chart${this.chartInfo.id}-0`)
-      const dom2 = document.getElementById(`chart${this.chartInfo.id}-1`)
-      !this.myChart && (this.myChart = echarts.init(dom))
-      !this.myChart2 && (this.myChart2 = echarts.init(dom2))
-      this.chartOption = this.$_.cloneDeep(ipHostedDomain)
+    initEcharts (id) {
+      this.initDom(id, 2)
       this.$emit('showLoading', true)
       this.chartOption.series[0].data = [
         {
@@ -68,43 +57,7 @@ export default {
           value: 7
         }
       ]
-      this.loadEchartPie()
-      /*
-        get(replaceUrlPlaceholder(chartParams.url, { appName: this.entity.appName })).then(response => {
-           if (response.code === 200) {
-              if (this.$_.isEmpty(response.data.result)) {
-                 this.noData = true
-              } else {
-                 this.detailData = response.data.result
-                 this.noData = false
-              }
-           }
-        }).finally(() => {
-           setTimeout(() => {
-              this.$emit('showLoading', false)
-           }, 250)
-        })
-         */
-    },
-
-    loadEchartPie () {
-      this.$emit('showLoading', true)
-      try {
-        this.myChart.setOption(this.chartOption)
-        this.myChart2.setOption(this.chartOption)
-      } finally {
-        setTimeout(() => {
-          this.$emit('showLoading', false)
-        }, 200)
-      }
-    }
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.initAppRelatedDomain(`chart${this.chartInfo.id}`)
-      }
+      this.loadEchart(2)
     }
   }
 }

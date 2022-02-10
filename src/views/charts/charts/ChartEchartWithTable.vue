@@ -18,21 +18,19 @@ import {
 import { getUnitType } from '@/utils/unit-convert'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { get } from '@/utils/http'
+import chartEchartMixin from './chart-echart-mixin'
 
 export default {
   name: 'ChartEchartWithTable',
+  mixins: [chartEchartMixin],
   data () {
     return {
-      myChart: null,
-      chartOption: null,
       pieTableData: [],
       selectPieChartName: '',
       allSelectPieChartName: []
     }
   },
   props: {
-    chartInfo: Object,
-    chartData: [Array, Object],
     resultType: Object,
     queryParams: Object,
     orderPieTable: Object
@@ -43,33 +41,20 @@ export default {
   mounted () {
   },
   methods: {
-    handleQueryParams(queryParams) {
+    handleQueryParams (queryParams) {
       return this.timeFilter = {
-        startTime:Number(queryParams.startTime)*1000,
-        endTime:Number(queryParams.endTime)*1000
+        startTime: Number(queryParams.startTime) * 1000,
+        endTime: Number(queryParams.endTime) * 1000
       }
     },
-    initEchartsWithTable (id) {
+    initEcharts (id) {
+      this.initDom(id)
       const chartParams = this.chartInfo.params
-      const dom = document.getElementById(id)
-      !this.myChart && (this.myChart = echarts.init(dom))
-      this.chartOption = this.$_.cloneDeep(pieWithTable)
-
       chartParams.valueColumn = this.orderPieTable
       const unitType = getUnitType(chartParams.valueColumn)
       const tableQueryParams = this.$_.cloneDeep(this.queryParams)
       tableQueryParams[chartParams.nameColumn] = [] // 处理两个图表不一样的地方)
-
-      const allZero = this.timeLineIsAllZero(this.chartData)
-      if (allZero) {
-        this.chartOption.yAxis = {
-          ...this.chartOption.yAxis,
-          min: 0,
-          max: 5,
-          interval: 1
-        }
-      }
-
+      this.handleYaxis()
       const data = this.chartData.map(d => {
         if (d[chartParams.nameColumn]) {
           this.allSelectPieChartName.push(d[chartParams.nameColumn])
@@ -87,7 +72,7 @@ export default {
       if (this.chartOption.series[0].data && this.chartOption.series[0].data.length > 10) { // pieWithTable 图例超过10个改为滚动显示
         this.chartOption.legend.type = 'scroll'
       }
-      this.loadEchartWithTable()
+      this.loadEchart()
 
       if (!this.$_.isEmpty(data)) {
         get(replaceUrlPlaceholder(chartParams.urlTable, tableQueryParams)).then(response => {
@@ -130,11 +115,8 @@ export default {
       // 饼图色块点击事件
       this.myChart.off('click')
       this.myChart.on('click', function (echartParams) {
-        console.log(echartParams)
-        console.log(self.selectPieChartName)
         // 若是已选，则点击后取消选择，并查询全部数据
         if (echartParams.name === self.selectPieChartName) {
-          console.log(1)
           self.selectPieChartName = ''
           self.loadPieTableData(this.allSelectPieChartName)
         } else { // 否则查询当前name数据
@@ -152,41 +134,6 @@ export default {
           this.pieTableData = response.data.result
         }
       })
-    },
-
-    loadEchartWithTable () {
-      this.$emit('showLoading', true)
-      try {
-        this.myChart.setOption(this.chartOption)
-      } finally {
-        setTimeout(() => {
-          this.$emit('showLoading', false)
-        }, 200)
-      }
-    },
-    timeLineIsAllZero (data) {
-      if (this.resultType === 'matrix') {
-        let allZero = true
-        try {
-          data.forEach(d => {
-            d.values.forEach(r => {
-              if (r[1] && r[1] !== '0') {
-                allZero = false
-                throw new Error('break')
-              }
-            })
-          })
-        } catch (e) {}
-        return allZero
-      }
-    }
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.initEchartsWithTable(`chart${this.chartInfo.id}`)
-      }
     }
   }
 }

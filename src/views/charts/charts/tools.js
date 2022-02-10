@@ -26,7 +26,8 @@ const typeOptionMappings = [
   { value: 22, option: ipOpenPortBar }, // ip详情--开放端口的柱状图
   { value: 23, option: timeBar }, // 矿机所属单位
   { value: 24, option: categoryBar }, // 挖矿事件统计
-  { value: 31, option: pieWithTable }, // 常规折线图
+  { value: 31, option: pieWithTable }, // 常规饼图
+  { value: 32, option: pieWithTable }, // 带表格饼图
   { value: 33, option: ipHostedDomain }, // ip详情--托管域名
   { value: 34, option: ipHostedDomain }, // app详情--相关域名
   { value: 42, option: relationShip }, // 关系图

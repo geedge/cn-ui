@@ -14,25 +14,18 @@ import {
 import {
   getChartColor
 } from '@/views/charts/charts/chart-options'
+import chartEchartMixin from './chart-echart-mixin'
 
 export default {
   name: 'ChartEchartWithStatistics',
-  setup () {
-    const myChart = null
-    return {
-      myChart
-    }
-  },
+  mixins: [chartEchartMixin],
   data () {
     return {
-      chartOption: null,
       statisticsData: [],
       statisticsHeight: 280
     }
   },
   props: {
-    chartInfo: Object,
-    chartData: [Array, Object],
     resultType: Object
   },
   components: {
@@ -46,20 +39,10 @@ export default {
     }
   },
   methods: {
-    initEchartsWithStatistics (id) {
+    initEcharts (id) {
+      this.initDom(id)
       const chartParams = this.chartInfo.params
-      const dom = document.getElementById(id)
-      !this.myChart && (this.myChart = echarts.init(dom))
-      this.chartOption = this.$_.cloneDeep(lineWithStatistics)
-      const allZero = this.timeLineIsAllZero(this.chartData)
-      if (allZero) {
-        this.chartOption.yAxis = {
-          ...this.chartOption.yAxis,
-          min: 0,
-          max: 5,
-          interval: 1
-        }
-      }
+      this.handleYaxis()
       this.statisticsData = this.chartData.map(d => {
         return {
           ...d,
@@ -77,34 +60,7 @@ export default {
           }
         }
       })
-      this.loadEchartWithStatistics()
-    },
-
-    loadEchartWithStatistics () {
-      this.$emit('showLoading', true)
-      try {
-        this.myChart.setOption(this.chartOption)
-      } finally {
-        setTimeout(() => {
-          this.$emit('showLoading', false)
-        }, 200)
-      }
-    },
-    timeLineIsAllZero (data) {
-      if (this.resultType === 'matrix') {
-        let allZero = true
-        try {
-          data.forEach(d => {
-            d.values.forEach(r => {
-              if (r[1] && r[1] !== '0') {
-                allZero = false
-                throw new Error('break')
-              }
-            })
-          })
-        } catch (e) {}
-        return allZero
-      }
+      this.loadEchart()
     },
     toggleStatisticsLegend (index) {
       this.statisticsData[index].active = !this.statisticsData[index].active
@@ -124,12 +80,6 @@ export default {
     }
   },
   watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.initEchartsWithStatistics(`chart${this.chartInfo.id}`)
-      }
-    },
     statisticsHeight (val) {
       const dom = document.getElementById(`chart${this.chartInfo.id}`)
       dom.style.cssText += `height: calc(100% - ${val}px)`

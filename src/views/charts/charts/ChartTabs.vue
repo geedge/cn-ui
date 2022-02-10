@@ -12,6 +12,7 @@
         :ref="`chart-${chartInfo.id}`"
     >
       <panel-chart-list
+          v-if="activeTab == tab.id"
           :time-filter="timeFilter"
           :data-list="tab.children"
           :panel-lock="true"

@@ -139,13 +139,13 @@
         :entity="entity"
       ></chart-san-key>
 
-      <chart-echart-line
-              v-else-if="isEchartsLine"
+      <chart-echart
+              v-else-if="isEchartsLine || isEchartsPie"
               :chart-info="chartInfo"
               :chart-data="chartData"
               :result-type="resultType"
               @showLoading="showLoading"
-      ></chart-echart-line>
+      ></chart-echart>
 
       <chart-echart-with-statistics
               v-else-if="isEchartsWithStatistics"
@@ -154,14 +154,6 @@
               :result-type="resultType"
               @showLoading="showLoading"
       ></chart-echart-with-statistics>
-
-      <chart-echart-pie
-              v-else-if="isEchartsPie"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :result-type="resultType"
-              @showLoading="showLoading"
-      ></chart-echart-pie>
 
       <chart-echart-with-table
               v-else-if="isEchartsWithTable"
@@ -202,9 +194,8 @@ import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import ChartBlock from '@/views/charts/charts/ChartBlock'
 import ChartGroup from '@/views/charts/charts/ChartGroup'
 import IpBasicInfo from '@/views/charts/charts/IpBasicInfo'
-import ChartEchartLine from '@/views/charts/charts/ChartEchartLine'
+import ChartEchart from '@/views/charts/charts/ChartEchart'
 import ChartEchartWithStatistics from '@/views/charts/charts/ChartEchartWithStatistics'
-import ChartEchartPie from '@/views/charts/charts/ChartEchartPie'
 import ChartEchartWithTable from '@/views/charts/charts/ChartEchartWithTable'
 import ChartEchartIpHostedDomain from '@/views/charts/charts/ChartEchartIpHostedDomain'
 import ChartEchartAppRelateDomain from '@/views/charts/charts/ChartEchartAppRelateDomain'
@@ -277,9 +268,8 @@ export default {
     ChartIpOpenPortBar,
     ChartRelationShip,
     ChartGroup,
-    ChartEchartLine,
     ChartEchartWithStatistics,
-    ChartEchartPie,
+    ChartEchart,
     ChartEchartWithTable,
     ChartEchartIpHostedDomain,
     ChartEchartAppRelateDomain
