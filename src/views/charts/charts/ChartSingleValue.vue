@@ -63,13 +63,13 @@
 import unitConvert from '@/utils/unit-convert'
 import {
   unitTypes
-} from "@/utils/constants"
+} from '@/utils/constants'
 import { get } from '@/utils/http'
-import {replaceUrlPlaceholder} from "@/utils/tools";
-import * as echarts from "echarts";
-import {getOption, getChartColor} from "@/components/charts/chart-options";
+import { replaceUrlPlaceholder } from '@/utils/tools'
+import * as echarts from 'echarts'
+import { getOption, getChartColor } from '@/components/charts/chart-options'
 export default {
-  name: "chartSingleValue",
+  name: 'chartSingleValue',
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -147,7 +147,7 @@ export default {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
         const myChart = echarts.init(dom)
         this.chartOption = this.$_.cloneDeep(getOption(this.type))
-        get(replaceUrlPlaceholder(chartParams.urlChart)).then(response => {
+        get(replaceUrlPlaceholder(chartParams.urlChart, this.queryParams)).then(response => {
           const seriesTemplate = this.chartOption.series[0]
           const result = response.data.result
           this.chartOption.series = result.map((r, i) => {
@@ -166,7 +166,7 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => this.timer = setTimeout(() => { this.chartSingleValueTotal() }))
+    this.$nextTick(() => this.timer = setTimeout(() => { this.chartSingleValueTotal() }, 200))
   },
   deactivated () {
     clearTimeout(this.timer)
