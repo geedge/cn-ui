@@ -335,6 +335,15 @@
             }
             &>.el-tabs__content {
               height: calc(100% - 40px);
+              .el-tab-pane {
+                .panel-chart {
+                  border: none;
+                  .chart-header,.cn-chart {
+                    border: none;
+                  }
+                }
+
+              }
             }
           }
           &>.cn-chart__echarts {

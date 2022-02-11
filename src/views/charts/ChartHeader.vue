@@ -208,7 +208,6 @@ export default {
     showRefreshButton () {
       // 自己是group且父元素是block时，不显示刷新按钮
       // TODO 父元素是block，且只有自己一个子元素时，不显示刷新按钮
-      console.log(this.chartInfo)
       const isGroupAndParentIsBlock = this.$_.get(this.chartInfo.parent, 'type') === 95 && this.isGroup
       return !isGroupAndParentIsBlock
     }
