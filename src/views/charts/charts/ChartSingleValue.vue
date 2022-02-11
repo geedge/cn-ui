@@ -97,7 +97,7 @@ export default {
   },
   computed: {
     handleSingleValue () {
-      const value = this.$_.isEmpty(this.chartData) ? this.chartData : ''
+      const value = this.$_.isEmpty(this.chartData) || this.$_.get(this, 'chartData') ? this.chartData : ''
       const unitType = this.chartInfo.params.unitType
       const result = unitConvert(value, unitType)
       switch (unitType) {
@@ -149,33 +149,7 @@ export default {
         this.chartOption = this.$_.cloneDeep(getOption(this.type))
         get(replaceUrlPlaceholder(chartParams.urlChart)).then(response => {
           const seriesTemplate = this.chartOption.series[0]
-          const result = [{
-            'legend': 'app',
-            "aggregation": {
-              "max": 1,
-              "last": 1,
-              "first": 1,
-              "avg": 1
-            },
-            "values": [
-              ["1642655880", "18"],
-              ["1642655940", "23"],
-              ["1642656000", "17"],
-              ["1642656060", "17"],
-              ["1642656120", "19"],
-              ["1642656180", "13"],
-              ["1642656240", "22"],
-              ["1642656300", "19"],
-              ["1642656360", "14"],
-              ["1642656420", "16"],
-              ["1642656480", "18"],
-              ["1642656540", "20"],
-              ["1642656600", "16"],
-              ["1642656660", "19"],
-              ["1642656720", "19"]
-            ]
-          }]
-          // const result = response.data.result
+          const result = response.data.result
           this.chartOption.series = result.map((r, i) => {
             return {
               ...seriesTemplate,

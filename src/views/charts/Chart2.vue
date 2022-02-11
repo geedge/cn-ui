@@ -140,45 +140,45 @@
       ></chart-san-key>
 
       <chart-echart
-              v-else-if="isEchartsLine || isEchartsPie"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :result-type="resultType"
-              @showLoading="showLoading"
+        v-else-if="isEchartsLine || isEchartsPie"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :result-type="resultType"
+        @showLoading="showLoading"
       ></chart-echart>
 
       <chart-echart-with-statistics
-              v-else-if="isEchartsWithStatistics"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :result-type="resultType"
-              @showLoading="showLoading"
+        v-else-if="isEchartsWithStatistics"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :result-type="resultType"
+        @showLoading="showLoading"
       ></chart-echart-with-statistics>
 
       <chart-echart-with-table
-              v-else-if="isEchartsWithTable"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :query-params="queryParams"
-              :result-type="resultType"
-              :order-pie-table="orderPieTable"
-              @showLoading="showLoading"
+        v-else-if="isEchartsWithTable"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
+        :result-type="resultType"
+        :order-pie-table="orderPieTable"
+        @showLoading="showLoading"
       ></chart-echart-with-table>
 
       <chart-echart-ip-hosted-domain
-              v-else-if="isIpHostedDomain"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              @showLoading="showLoading"
-              :entity="entity"
+        v-else-if="isIpHostedDomain"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        @showLoading="showLoading"
+        :entity="entity"
       ></chart-echart-ip-hosted-domain>
 
       <chart-echart-app-relate-domain
-              v-else-if="isAppRelatedDomain"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              @showLoading="showLoading"
-              :entity="entity"
+        v-else-if="isAppRelatedDomain"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        @showLoading="showLoading"
+        :entity="entity"
       ></chart-echart-app-relate-domain>
 
     </template>
