@@ -1,5 +1,6 @@
 import { GenericSQL, SqlParserVisitor } from 'dt-sql-parser'
 import Meta, { connection, condition, columnType, cloneMeta } from '@/components/advancedSearch/meta/meta'
+import { riskLevelMapping } from '@/utils/constants'
 import _ from 'lodash'
 // 补全语句，用于解析
 const sqlPrev = 'select a from b where '
@@ -87,7 +88,7 @@ export default class SqlParser extends SqlParserVisitor {
       if (isFullText) {
         if (meta.meta === condition) {
           if (meta.column.type !== columnType.fullText) {
-            sql += `${meta.column.name}${meta.operator.value}${meta.value.value} `
+            sql += `${meta.column.name}${meta.operator.value}${valueHandle(meta.value.value, meta.column.name)} `
           } else {
             sql += "QUERY('"
             this.columnList.forEach(column => {
@@ -100,7 +101,7 @@ export default class SqlParser extends SqlParserVisitor {
         if (meta.meta === condition) {
           sql += (meta.column.name)
           if (meta.column.type !== columnType.fullText) {
-            sql += `${meta.operator.value}${meta.value.value} `
+            sql += `${meta.operator.value}${valueHandle(meta.value.value, meta.column.name)} `
           } else {
             sql += ' '
           }
@@ -273,5 +274,21 @@ function handleInOrLike (value, type) {
     column: columnName,
     operator,
     handleValue: v
+  }
+}
+
+function valueHandle (value, columnName) {
+  if (value === "'unknown'") {
+    return "''"
+  } else {
+    if (columnName) {
+      if (columnName === 'app_risk') {
+        const m = riskLevelMapping.find(mapping => {
+          return `'${mapping.name}'` === value || `'${mapping.value}'` === value
+        })
+        return (m && m.value) || value
+      }
+    }
+    return value
   }
 }

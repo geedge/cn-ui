@@ -23,7 +23,7 @@
           </div>
           <div class="content__desc" >
             <span class="desc__label">{{$t('entities.risk')}}:&nbsp;</span>
-            <span>{{entityData.appRisk || '-'}}</span>
+            <span>{{appRisk(entityData.appRisk) || '-'}}</span>
           </div>
         </template>
       </div>

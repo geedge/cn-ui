@@ -9,9 +9,9 @@
       :current-row-key="tableNameColumn"
       tooltip-effect="light"
       :expand-row-keys="expandRowKeys"
-      :size="'mini'"
-      :height="'100%'">
-    <el-table-column type="expand" :min-width="'5%'">
+      size="mini"
+      height="100%">
+    <el-table-column type="expand" min-width="5%">
       <template #default="props">
         <div style="position: relative">
           <div class="chart__loading" style="top: 0; height: 100%; z-index: 1;" v-show="loading">
@@ -37,7 +37,7 @@
                 :prop="item.prop"
                 #default="{row}">
             <span v-if="item.prop === 'nameColumn'">
-                {{ nameColumn === 'domainCategoryName' ? row['categoryName'] :(nameColumn === 'domainReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategoryName']:row['appRiskLevel']))}}
+                {{ nameColumn === 'domainCategoryName' ? row['categoryName'] :(nameColumn === 'domainReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategoryName']:appRisk(row['appRiskLevel'])))}}
             </span>
               <span v-else-if="item.prop === 'tableNameColumn'">
                 {{ tableNameColumn === 'appName' ? row['appName'] : row['domain']}}
@@ -65,7 +65,7 @@
         :prop="item.prop"
         #default="{row}">
       <span v-if="item.prop === 'nameColumn'">
-          {{ nameColumn === 'domainCategoryName' ? row['categoryName'] :(nameColumn === 'domainReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategoryName']:row['appRiskLevel']))}}
+          {{ nameColumn === 'domainCategoryName' ? row['categoryName'] :(nameColumn === 'domainReputationLevel'? row['reputationLevel']:(nameColumn==='appCategory'?row['appCategoryName']:appRisk(row['appRiskLevel'])))}}
       </span>
       <span v-else-if="item.prop === 'tableNameColumn'">
           {{ tableNameColumn === 'appName' ? row['appName'] : row['domain']}}
@@ -87,7 +87,7 @@
 import unitConvert from '@/utils/unit-convert'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder } from '@/utils/tools'
-import { unitTypes } from '@/utils/constants'
+import { unitTypes, riskLevelMapping } from '@/utils/constants'
 
 export default {
   name: 'PieTable',
@@ -119,6 +119,16 @@ export default {
       }
     }
   },
+  computed: {
+    appRisk () {
+      return function (level) {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.value == level
+        })
+        return (m && m.name) || level
+      }
+    }
+  },
   data () {
     return {
       nameColumn: '',
@@ -133,7 +143,7 @@ export default {
           width: '20%'
         },
         {
-          label: this.$t('entities.category'),
+          label: this.$t(this.chartInfo.params.tableTypeColumnLabel),
           prop: 'nameColumn',
           width: '22%'
         },

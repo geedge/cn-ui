@@ -160,7 +160,7 @@ import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import Chart2 from '@/views/charts/Chart2'
 import _ from 'lodash'
-import {get} from "@/utils/http";
+import { get } from '@/utils/http'
 export default {
   name: 'Domain',
   components: {
@@ -170,7 +170,7 @@ export default {
   mixins: [entityDetailMixin],
   data () {
     return {
-      entityData: {},
+      // entityData: {},
       entityType: 'domain',
       trafficUrl: api.entityDomainDetailTraffic,
       relationUrl: api.entityDomainDetailRelation,
@@ -211,7 +211,7 @@ export default {
           {
             params: {
               icon: 'cn-icon cn-icon-package-loss',
-              unitType: unitTypes.time
+              unitType: unitTypes.percent
             },
             type: 51,
             i18n: 'entities.sequenceGapLossPercent'
@@ -219,10 +219,10 @@ export default {
           {
             params: {
               icon: 'cn-icon cn-icon-upload',
-              unitType: unitTypes.time
+              unitType: unitTypes.percent
             },
             type: 51,
-            i18n: 'entities.avgRoundTripTime'
+            i18n: 'entities.pktRetransPercent'
           }
         ],
         chartDatas: [null, null, null, null, null]
@@ -255,17 +255,15 @@ export default {
       immediate: true,
       deep: true,
       handler (n) {
-        if ((n.pktRetransPercent && n.sequenceGapLossPercent && n.sslConLatency && n.establishLatency && n.httpResponseLatency) !== undefined) {
-          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency') || null)
-          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency') || null)
-          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency') || null)
-          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent') || null)
-          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent') || null)
-        }
+        this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
+        this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
+        this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
+        this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
+        this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
       }
     }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 250)})
   },
   setup (props) {

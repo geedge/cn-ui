@@ -81,9 +81,12 @@ export default {
         this.entityTopTenData = data.map(d => {
           return {
             ...d,
+            name: d.name || 'unknown',
             percent: (parseFloat(d.count / totalCount) * 100).toFixed(2)
           }
         })
+      } else {
+        this.entityTopTenData = []
       }
     },
     indexMethod (index) {

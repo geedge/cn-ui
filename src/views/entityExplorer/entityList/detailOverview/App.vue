@@ -64,6 +64,35 @@
     </div>
   </div>
   <div class="overview-item">
+    <div class="overview__title">{{$t('overall.networkQuality')}}</div>
+    <div class="overview__content">
+      <div class="overview__row">
+        <chart-single-value
+            v-for="(chartInfo, i) in singleValues.chartInfos"
+            :chart-info="chartInfo"
+            :chart-data="singleValues.chartDatas[i]"
+            :key="i"
+            class="cn-chart__single-value--detail-overview"
+        ></chart-single-value>
+      </div>
+    </div>
+  </div>
+  <div class="overview-item">
+    <div class="overview__title">{{$t('entities.accessLink')}}</div>
+    <div class="overview__content">
+      <div class="overview__tags">
+        <div class="overview__tag">
+          <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
+          <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
+        </div>
+        <div class="overview__tag">
+          <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
+          <span class="tag__value">{{entityData.linkInPercent ? unitConvert(entityData.linkInPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="overview-item">
     <div class="overview__title">{{$t('overall.alert')}}</div>
     <div class="overview__content">
       <div class="overview__row">
@@ -103,7 +132,7 @@
       </div>
     </div>
   </div>
-  <div class="overview-map">
+  <div class="overview-map overview-map--app">
     <chart2
         :chart-info="chart"
         :chart-data="chartData"
@@ -122,13 +151,15 @@ import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import Chart2 from '@/views/charts/Chart2'
 import _ from 'lodash'
-import {get} from "@/utils/http";
+import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
+import { get } from '@/utils/http'
 
 export default {
   name: 'App',
   mixins: [entityDetailMixin],
   components: {
-    Chart2
+    Chart2,
+    ChartSingleValue
   },
   data () {
     return {
@@ -136,11 +167,59 @@ export default {
       entityType: 'app',
       trafficUrl: api.entityAppDetailTraffic,
       relationUrl: api.entityAppDetailRelation,
+      networkQuantityUrl: api.entityAppDetailNetworkQuantity,
+      linkInUrl: api.entityAppDetailLinkIn,
+      linkOutUrl: api.entityAppDetailLinkOut,
       alertUrl: api.entityAppDetailAlert,
       securityUrl: api.entityAppDetailSecurity,
       trafficUrlMap: api.entityAppDetailTrafficMap,
       chartData: null,
-      listMode: 'list'
+      listMode: 'list',
+      singleValues: {
+        chartInfos: [
+          {
+            params: {
+              icon: 'cn-icon cn-icon-time',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.avgRoundTripTime'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-http',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.httpResponseLatency'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-ssl',
+              unitType: unitTypes.time
+            },
+            type: 51,
+            i18n: 'entities.sslConLatency'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-package-loss',
+              unitType: unitTypes.percent
+            },
+            type: 51,
+            i18n: 'entities.sequenceGapLossPercent'
+          },
+          {
+            params: {
+              icon: 'cn-icon cn-icon-upload',
+              unitType: unitTypes.percent
+            },
+            type: 51,
+            i18n: 'entities.pktRetransPercent'
+          }
+        ],
+        chartDatas: [null, null, null, null, null]
+      }
     }
   },
   methods: {
@@ -164,8 +243,21 @@ export default {
       })
     }
   },
-  mounted() {
-    this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 250)})
+  watch: {
+    entityData: {
+      immediate: true,
+      deep: true,
+      handler (n) {
+        this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
+        this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
+        this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
+        this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
+        this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
+      }
+    }
+  },
+  mounted () {
+    this.$nextTick(() => { setTimeout(() => { this.chartGetMap() }, 250) })
   },
   setup (props) {
     return {

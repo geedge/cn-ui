@@ -187,12 +187,12 @@ export default {
         },
         {
           name: 'app_risk',
-          type: 'long',
+          type: 'string',
           // label: this.$t('trafficSummary.appRisk')
           label: 'APP risk'
         }
       ],
-      operatorList: ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
+      operatorList: ['=', '!=', '>', '<', '>=', '<='/*, 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'*/],
       connectionList: [
         {
           value: 'AND',

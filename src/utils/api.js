@@ -42,6 +42,9 @@ export const api = {
   // app detail
   entityAppDetailTraffic: '/interface/entity/detail/overview/app/traffic',
   entityAppDetailRelation: '/interface/entity/detail/overview/app/relation',
+  entityAppDetailNetworkQuantity: '/interface/entity/detail/overview/app/networkQuantity',
+  entityAppDetailLinkIn: '/interface/entity/detail/overview/app/linkIn',
+  entityAppDetailLinkOut: '/interface/entity/detail/overview/app/linkOut',
   entityAppDetailAlert: '/interface/entity/detail/overview/app/alert',
   entityAppDetailSecurity: '/interface/entity/detail/overview/app/security',
   // domain detail
@@ -59,6 +62,9 @@ export const api = {
   entityDomainDetailTrafficMap: '/interface/entity/detail/domain/trafficMap',
   entityAppDetailTrafficMap: '/interface/entity/detail/app/trafficMap',
   entityIpDetailRelation: '/interface/entity/detail/overview/ip/relation',
+  entityIpDetailNetworkQuantity: '/interface/entity/detail/overview/ip/networkQuantity',
+  entityIpDetailLinkIn: '/interface/entity/detail/overview/ip/linkIn',
+  entityIpDetailLinkOut: '/interface/entity/detail/overview/ip/linkOut',
   entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
   entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security'
 }

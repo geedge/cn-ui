@@ -160,10 +160,18 @@ export default {
     queryEntityDetailLinkOutUrl () {
       if (this.linkOutUrl) {
         get(this.linkOutUrl, this.getQueryParams()).then(response => {
-          if (response.code === 200 && response.data.aggregation) {
-            const sum = response.data.aggregation.sum
-            const max = response.data.aggregation.max
-            this.entityData.linkOutPercent = (parseFloat(max / sum) * 100).toFixed(2)
+          if (response.code === 200) {
+            if (!this.$_.isEmpty(response.data.result)) {
+              let sum = 0
+              response.data.result.forEach(r => {
+                sum += parseFloat(r.bytes)
+              })
+              const sorted = response.data.result.sort((r1, r2) => {
+                return parseFloat(r2.bytes) - parseFloat(r1.bytes)
+              })
+              const max = parseFloat(sorted[0].bytes)
+              this.entityData.linkOutPercent = (parseFloat(max / sum) * 100).toFixed(2)
+            }
           }
         })
       }
@@ -192,11 +200,9 @@ export default {
       this.queryEntityDetailRelation()
       this.queryEntityDetailAlert()
       this.queryEntityDetailSecurity()
-      if (this.entityData.entityType === 'domain') {
-        this.queryEntityDetailNetworkQuantity()
-        this.queryEntityDetailLinkOutUrl()
-        this.queryEntityDetailLinkInUrl()
-      }
+      this.queryEntityDetailNetworkQuantity()
+      this.queryEntityDetailLinkOutUrl()
+      this.queryEntityDetailLinkInUrl()
     }
   },
   setup () {

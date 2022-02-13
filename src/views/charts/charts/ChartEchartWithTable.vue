@@ -19,6 +19,7 @@ import { getUnitType } from '@/utils/unit-convert'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { get } from '@/utils/http'
 import chartEchartMixin from './chart-echart-mixin'
+import { riskLevelMapping } from '@/utils/constants'
 
 export default {
   name: 'ChartEchartWithTable',
@@ -38,7 +39,15 @@ export default {
   components: {
     PieTable
   },
-  mounted () {
+  computed: {
+    appRisk () {
+      return function (level) {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.value == level
+        })
+        return (m && m.name) || level
+      }
+    }
   },
   methods: {
     handleQueryParams (queryParams) {
@@ -61,7 +70,7 @@ export default {
         }
         return {
           data: d,
-          name: d[chartParams.nameColumn],
+          name: this.appRisk(d[chartParams.nameColumn]),
           value: parseInt(d[chartParams.valueColumn]),
           unitType: unitType
         }

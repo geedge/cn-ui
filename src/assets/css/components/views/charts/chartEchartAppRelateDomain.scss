@@ -3,12 +3,12 @@
   .chart-list {
     .vue-grid-layout > .vue-grid-item {
       .cn-chart {
-         .app-detail__related-domain {
+        .app-detail__related-domain {
           display: flex;
           flex-direction: row;
           height: 100%;
           width: 100%;
-         .related-domain__list {
+          .related-domain__list {
             display: flex;
             flex-direction: column;
             flex: 0 0 25%;

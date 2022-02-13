@@ -49,17 +49,17 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-id"></i>
                   <span>{{$t('entities.category')}}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{entityData.appId || '-'}}</span>
+                  <span>{{entityData.appCategory || '-'}}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category"></i>
                   <span>{{$t('entities.subcategory')}}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{entityData.appCategory || '-'}}</span>
+                  <span>{{entityData.appSubategory || '-'}}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
                   <span>{{$t('entities.risk')}}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{entityData.appSubategory || '-'}}</span>
+                  <span>{{appRisk(entityData.appRisk) || '-'}}</span>
                 </div>
               </template>
               <!-- 通用字段 -->

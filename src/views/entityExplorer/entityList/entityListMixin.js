@@ -3,7 +3,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/components/charts/chart-options'
-import { unitTypes } from '@/utils/constants'
+import {riskLevelMapping, unitTypes} from '@/utils/constants'
 
 export default {
   props: {
@@ -74,6 +74,14 @@ export default {
         default: break
       }
       return url
+    },
+    appRisk () {
+      return function (level) {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.value == level
+        })
+        return (m && m.name) || level
+      }
     },
     queryParams () {
       let params

@@ -11,6 +11,12 @@
     width: 550px;
     height: 350px;
 
+    &.overview-map--ip {
+      height: 300px;
+    }
+    &.overview-map--app {
+      height: 325px;
+    }
     .cn-chart {
       height: 100%;
       width: 100%;
@@ -128,11 +134,11 @@
         border-radius: 4px;
 
         .tag__value {
-          padding-right: 5px;
           color: #3976CB;
           font-weight: bold;
         }
         .tag__desc {
+          padding-right: 5px;
           color: #3976CB;
         }
       }

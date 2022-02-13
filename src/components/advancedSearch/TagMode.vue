@@ -36,7 +36,7 @@
         <!-- 值 -->
         <div class="condition__value">
           <div v-if="meta.value.isEditing">
-            <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput"></el-input>
+            <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput" @keyup.enter="valueBlur(meta)"></el-input>
           </div>
           <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
         </div>

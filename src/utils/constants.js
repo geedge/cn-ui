@@ -136,7 +136,13 @@ export const chartPieTableTopOptions = [
   { name: 'Packets', value: 'packets' },
   { name: 'Bytes', value: 'bytes' }
 ]
-
+export const riskLevelMapping = [
+  { name: 'Trustworthy', value: 1 },
+  { name: 'Low Risk', value: 2 },
+  { name: 'Moderate Risk', value: 3 },
+  { name: 'Suspicious', value: 4 },
+  { name: 'High Risk', value: 5 }
+]
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',
   [storageKey.iso36112WorldLow]: 'worldChinaLow',
