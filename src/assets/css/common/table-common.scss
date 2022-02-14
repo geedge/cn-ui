@@ -46,6 +46,11 @@
       border: 1px solid #E6EAED;
 
     }
+    .top-tool-search.margin-r-20 {
+     .top-tool-btn {
+       border-left: none;
+     }
+    }
 
     .top-tool-right {
       display: flex;
@@ -68,7 +73,7 @@
       }
     }
     .top-tool-btn {
-      height: 32px;
+      height: 33px;
       width: 36px;
       border: 1px solid $--border-color-primary;
       outline: none;
@@ -81,6 +86,7 @@
         color: $--button-gray-color;
       }
     }
+
     .top-tool-btn.top-tool-btn--text {
       padding: 0 8px;
       width: unset;
