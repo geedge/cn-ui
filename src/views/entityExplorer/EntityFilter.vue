@@ -36,7 +36,6 @@
 import EntityTop from '@/components/entities/EntityTop'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
-import { objToStr } from '@/utils/tools'
 export default {
   name: 'EntityFilter',
   components: {

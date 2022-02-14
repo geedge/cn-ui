@@ -88,7 +88,7 @@ export default class SqlParser extends SqlParserVisitor {
       if (isFullText) {
         if (meta.meta === condition) {
           if (meta.column.type !== columnType.fullText) {
-            sql += `${meta.column.name}${meta.operator.value}${valueHandle(meta.value.value, meta.column.name)} `
+            sql += `${meta.column.name}${meta.operator.value}${meta.value.value} `
           } else {
             sql += "QUERY('"
             this.columnList.forEach(column => {
@@ -101,7 +101,7 @@ export default class SqlParser extends SqlParserVisitor {
         if (meta.meta === condition) {
           sql += (meta.column.name)
           if (meta.column.type !== columnType.fullText) {
-            sql += `${meta.operator.value}${valueHandle(meta.value.value, meta.column.name)} `
+            sql += `${meta.operator.value}${meta.value.value} `
           } else {
             sql += ' '
           }
@@ -242,7 +242,7 @@ function handleType (value) {
 
 // 使用单引号包裹
 export function stringInQuot (value) {
-  const match = value.match(/^'.+?'$/)
+  const match = `${value}`.match(/^'.+?'$/)
   return match ? value : `'${value}'`
 }
 function handleInOrLike (value, type) {
@@ -284,7 +284,7 @@ function valueHandle (value, columnName) {
     if (columnName) {
       if (columnName === 'app_risk') {
         const m = riskLevelMapping.find(mapping => {
-          return `'${mapping.name}'` === value || `'${mapping.value}'` === value
+          return `'${mapping.name}'`.toLowerCase() === value.toLowerCase() || `'${mapping.value}'` === value
         })
         return (m && m.value) || value
       }

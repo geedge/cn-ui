@@ -45,6 +45,8 @@
 </template>
 
 <script>
+import { riskLevelMapping } from '@/utils/constants'
+
 export default {
   props: {
     loading: Boolean
@@ -59,11 +61,6 @@ export default {
       item: {},
       entityTopTenData: []
     }
-  },
-  created () {
-
-  },
-  watch: {
   },
   methods: {
     // 悬浮点击空白隐藏
@@ -81,7 +78,7 @@ export default {
         this.entityTopTenData = data.map(d => {
           return {
             ...d,
-            name: d.name || 'unknown',
+            name: this.valueHandle(d.name, this.item.topColumn) || 'unknown',
             percent: (parseFloat(d.count / totalCount) * 100).toFixed(2)
           }
         })
@@ -91,6 +88,15 @@ export default {
     },
     indexMethod (index) {
       return index + 1
+    },
+    valueHandle (value, columnName) {
+      if (columnName === 'app_risk') {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.value === value
+        })
+        return (m && m.name) || value
+      }
+      return value
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {

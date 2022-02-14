@@ -121,7 +121,7 @@ import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
-import { entityType, entityFilterType, defaultPageSize } from '@/utils/constants'
+import {entityType, entityFilterType, defaultPageSize, riskLevelMapping} from '@/utils/constants'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -437,9 +437,43 @@ export default {
     dateTimeRangeChange (s, e, v) {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
+    // sql特殊字段转换
+    specialColumnHandle (sql) {
+      const columns = [
+        {
+          target: "app_risk='1'",
+          original: `app_risk='${riskLevelMapping[0].name.toLowerCase()}'`
+        },
+        {
+          target: "app_risk='2'",
+          original: `app_risk='${riskLevelMapping[1].name.toLowerCase()}'`
+        },
+        {
+          target: "app_risk='3'",
+          original: `app_risk='${riskLevelMapping[2].name.toLowerCase()}'`
+        },
+        {
+          target: "app_risk='4'",
+          original: `app_risk='${riskLevelMapping[3].name.toLowerCase()}'`
+        },
+        {
+          target: "app_risk='5'",
+          original: `app_risk='${riskLevelMapping[4].name.toLowerCase()}'`
+        },
+        {
+          target: "=''",
+          original: "='unknown'"
+        }
+      ]
+      let result = sql
+      columns.forEach(c => {
+        result = this.$_.replace(result, c.original, c.target)
+      })
+      return result
+    },
     search (metaList, formatSql) {
       if (formatSql) {
-        this.q = formatSql
+        this.q = this.specialColumnHandle(formatSql)
         this.metaList = metaList
       } else {
         this.q = ''
@@ -470,16 +504,16 @@ export default {
           } else {
             this.limitFilterType = false
           }
-          this.queryFilter({ entityType: entityType, q: formatSql, ...this.timeFilter })
-          this.queryList({ q: formatSql, ...this.timeFilter, ...this.pageObj })
-          this.queryListTotal({ q: formatSql, ...this.timeFilter })
+          this.queryFilter({ entityType: entityType, q: this.q, ...this.timeFilter })
+          this.queryList({ q: this.q, ...this.timeFilter, ...this.pageObj })
+          this.queryListTotal({ q: this.q, ...this.timeFilter })
         } else {
           this.limitFilterType = false
-          this.queryFilter({ entityType: 'ip', q: formatSql, ...this.timeFilter })
-          this.queryFilter({ entityType: 'domain', q: formatSql, ...this.timeFilter })
-          this.queryFilter({ entityType: 'app', q: formatSql, ...this.timeFilter })
-          this.queryList({ q: formatSql, ...this.timeFilter, ...this.pageObj })
-          this.queryListTotal({ q: formatSql, ...this.timeFilter })
+          this.queryFilter({ entityType: 'ip', q: this.q, ...this.timeFilter })
+          this.queryFilter({ entityType: 'domain', q: this.q, ...this.timeFilter })
+          this.queryFilter({ entityType: 'app', q: this.q, ...this.timeFilter })
+          this.queryList({ q: this.q, ...this.timeFilter, ...this.pageObj })
+          this.queryListTotal({ q: this.q, ...this.timeFilter })
         }
       } else {
         this.limitFilterType = false
@@ -531,7 +565,7 @@ export default {
         endTime: getSecond(params.endTime)
       }
       get(api.entityFilter, queryParams).then(response => {
-        if (response.data.result) {
+        if (response.data && response.data.result) {
           switch (params.entityType) {
             case 'ip': {
               this.filterData[0].data.forEach(d => {
