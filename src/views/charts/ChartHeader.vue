@@ -115,7 +115,7 @@
 
 <script>
 import { isTitle, isTabs, isBlock, isTable, isActiveIpTable, isCurrentTable, isGroup, isEchartsWithTable } from './charts/tools'
-import ChartError from '@/components/charts/ChartError'
+import ChartError from '@/views/charts/ChartError'
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
 import { chartTableTopOptions, chartActiveIpTableOrderOptions, chartPieTableTopOptions } from '@/utils/constants'

@@ -7,7 +7,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import StatisticsLegend from '@/components/charts/StatisticsLegend'
+import StatisticsLegend from '@/views/charts/charts/StatisticsLegend'
 import {
   lineWithStatistics
 } from '@/views/charts/charts/options/line'

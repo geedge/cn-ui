@@ -36,7 +36,7 @@
 <script>
 import lodash from 'lodash'
 import { ipOpenPortBar } from '@/views/charts/charts/options/bar'
-import { getChartColor } from '@/components/charts/chart-options'
+import { getChartColor } from '@/views/charts/charts/chart-options'
 import * as echarts from 'echarts'
 export default {
   name: 'ChartIpOpenPortBar',

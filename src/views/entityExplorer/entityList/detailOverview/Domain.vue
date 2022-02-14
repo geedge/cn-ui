@@ -127,7 +127,7 @@
         <div class="row__label">{{$t('entities.recentSecurity')}}</div>
         <div class="row__content">{{entityData.securityNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font" v-for="security in entityData.securityList">
+      <div class="overview__row overview__row--small-font" v-for="(security, i) in entityData.securityList" :key="i">
         <div class="row__label row__label--width160">{{security.startTime}}</div>
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high">{{security.securitySeverity}}</div>
@@ -141,14 +141,14 @@
     </div>
   </div>
   <div class="overview-map">
-    <chart2
+    <chart
         :chart-info="chart"
         :chart-data="chartData"
         :entity="entityCopy"
         :query-params="getQueryParams"
         :hide-header="true"
         @getCurrentTimeRange="getCurrentTimeRange"
-    ></chart2>
+    ></chart>
   </div>
 </template>
 
@@ -158,14 +158,14 @@ import { api } from '@/utils/api'
 import entityDetailMixin from './entityDetailMixin'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import Chart2 from '@/views/charts/Chart2'
+import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
 export default {
   name: 'Domain',
   components: {
     ChartSingleValue,
-    Chart2
+    Chart
   },
   mixins: [entityDetailMixin],
   data () {

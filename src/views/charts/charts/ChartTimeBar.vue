@@ -7,7 +7,7 @@ import unitConvert from '@/utils/unit-convert'
 import * as echarts from 'echarts'
 import { lineToSpace } from '@/utils/tools'
 import { unitTypes } from '@/utils/constants'
-import { legendMapping } from '@/components/charts/chart-table-title'
+import { legendMapping } from '@/views/charts/charts/chart-table-title'
 import {
   timeBar
 } from '@/views/charts/charts/options/bar'

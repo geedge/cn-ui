@@ -11,6 +11,10 @@ const routes = [
     component: () => import('@/views/entityExplorer/EntityDetail')
   },
   {
+    path: '/detections',
+    component: () => import('@/views/detections/Index')
+  },
+  {
     path: '/',
     component: () => import('@/components/layout/Home'),
     children: [
