@@ -126,8 +126,8 @@
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import * as echarts from 'echarts'
-import { getChartColor, entityListLineOption } from '@/components/charts/chart-options'
-import { legendMapping } from '@/components/charts/chart-table-title'
+import { getChartColor, entityListLineOption } from '@/views/charts/charts/chart-options'
+import { legendMapping } from '@/views/charts/charts/chart-table-title'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 

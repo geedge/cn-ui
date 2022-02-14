@@ -44,7 +44,7 @@
 
 <script>
 import ChartHeader from './ChartHeader'
-import Chart from '@/views/charts/Chart2'
+import Chart from '@/views/charts/Chart'
 import testData from './charts/testData'
 import {
   isEcharts,
@@ -75,7 +75,7 @@ import {
   isAppRelatedDomain,
   isBlock
 } from './charts/tools'
-import { tableTitleMapping, legendMapping } from '@/components/charts/chart-table-title'
+import { tableTitleMapping, legendMapping } from '@/views/charts/charts/chart-table-title'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { chartPieTableTopOptions, chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'

@@ -9,7 +9,7 @@ import { lineToSpace } from '@/utils/tools'
 import { unitTypes } from '@/utils/constants'
 import chartEchartMixin from './chart-echart-mixin'
 import { getOption, isEchartsPie } from './tools'
-import { legendMapping } from '@/components/charts/chart-table-title'
+import { legendMapping } from '@/views/charts/charts/chart-table-title'
 
 export default {
   name: 'ChartEchart',

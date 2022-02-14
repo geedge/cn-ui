@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { get } from '@/utils/http'
 import * as echarts from 'echarts'
-import { entityListLineOption } from '@/components/charts/chart-options'
+import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 

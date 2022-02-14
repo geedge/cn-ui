@@ -2,8 +2,8 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import * as echarts from 'echarts'
-import { entityListLineOption } from '@/components/charts/chart-options'
-import {riskLevelMapping, unitTypes} from '@/utils/constants'
+import { entityListLineOption } from '@/views/charts/charts/chart-options'
+import { riskLevelMapping, unitTypes } from '@/utils/constants'
 
 export default {
   props: {

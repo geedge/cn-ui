@@ -125,14 +125,14 @@
     </div>
   </div>
   <div class="overview-map overview-map--ip">
-    <chart2
+    <chart
         :chart-info="chart"
         :chart-data="chartData"
         :entity="entityCopy"
         :query-params="getQueryParams"
         :hide-header="true"
         @getCurrentTimeRange="getCurrentTimeRange"
-    ></chart2>
+    ></chart>
   </div>
 </template>
 
@@ -142,7 +142,7 @@ import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { api } from '@/utils/api'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import Chart2 from '@/views/charts/Chart2'
+import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
 
@@ -150,7 +150,7 @@ export default {
   name: 'Ip',
   mixins: [entityDetailMixin],
   components: {
-    Chart2,
+    Chart,
     ChartSingleValue
   },
   data () {
