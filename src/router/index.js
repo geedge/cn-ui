@@ -11,10 +11,6 @@ const routes = [
     component: () => import('@/views/entityExplorer/EntityDetail')
   },
   {
-    path: '/detections',
-    component: () => import('@/views/detections/Index')
-  },
-  {
     path: '/',
     component: () => import('@/components/layout/Home'),
     children: [
@@ -41,6 +37,10 @@ const routes = [
       {
         path: '/entityExplorer',
         component: () => import('@/views/entityExplorer/EntityExplorer')
+      },
+      {
+        path: '/detections',
+        component: () => import('@/views/detections/Index')
       },
       {
         path: '/galaxyProxy',

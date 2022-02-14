@@ -1,5 +1,5 @@
 <template >
-  <div class="entity-filter-case " >
+  <div class="entity-filter-case">
     <div class="filter-case__header">{{$t('entities.filter')}}</div>
     <div
         class="entity-filter"

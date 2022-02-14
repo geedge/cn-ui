@@ -38,7 +38,7 @@
         ></entity-list>
       </div>
       <div class="entity__pagination" style="position: absolute; bottom: 0; width: 100%;">
-        <pagination
+        <Pagination
             ref="pagination"
             :page-obj="pageObj"
             @pageNo='pageNo'
@@ -47,7 +47,7 @@
             @prev-click="prev"
             @next-click="next"
         >
-        </pagination>
+        </Pagination>
       </div>
     </div>
     <div class="explorer-foot" v-else>
@@ -121,12 +121,12 @@ import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
-import {entityType, entityFilterType, defaultPageSize, riskLevelMapping} from '@/utils/constants'
+import { entityType, entityFilterType, defaultPageSize, riskLevelMapping } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
-import pagination from '@/components/common/Pagination'
+import Pagination from '@/components/common/Pagination'
 
 export default {
   name: 'entity-explorer',
@@ -136,7 +136,7 @@ export default {
     TimeRefresh,
     EntityFilter,
     EntityList,
-    pagination: pagination
+    Pagination
   },
   data () {
     return {
@@ -155,7 +155,6 @@ export default {
       entityIpNew: '-',
       entityIpActive: '-',
 
-      showFilter: ['ip', 'app', 'domain'], // ip,domain,app
       pageObj: {
         pageNo: 1,
         pageSize: defaultPageSize,
