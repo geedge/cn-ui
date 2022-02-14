@@ -10,11 +10,7 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'
-import PieTable from '@/components/charts/PieTable'
-import {
-  pieWithTable
-} from '@/views/charts/charts/options/pie'
+import PieTable from '@/views/charts/charts/PieTable'
 import { getUnitType } from '@/utils/unit-convert'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { get } from '@/utils/http'

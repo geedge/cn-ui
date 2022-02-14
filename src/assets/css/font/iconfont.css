@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1640662054649') format('woff2'),
-       url('iconfont.woff?t=1640662054649') format('woff'),
-       url('iconfont.ttf?t=1640662054649') format('truetype');
+  src: url('iconfont.woff2?t=1644832156673') format('woff2'),
+       url('iconfont.woff?t=1644832156673') format('woff'),
+       url('iconfont.ttf?t=1644832156673') format('truetype');
 }
 
 .cn-icon {
@@ -13,6 +13,45 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.cn-icon-shaixuan:before {
+  content: "\e764";
+}
+
+.cn-icon-qingchu:before {
+  content: "\e765";
+}
+
+.cn-icon-time2:before {
+  content: "\e760";
+}
+
+.cn-icon-alert-level:before {
+  content: "\e763";
+}
+
+.cn-icon-windows:before {
+  content: "\e762";
+}
+
+.cn-icon-attacked:before {
+  content: "\e75e";
+}
+
+.cn-icon-attacker:before {
+  content: "\e75f";
+}
+
+.cn-icon-severity-level:before {
+  content: "\e75c";
+}
+
+.cn-icon-event-type:before {
+  content: "\e75d";
+}
+
+.cn-icon-trojan:before {
+  content: "\e761";
+}
 
 .cn-icon-mining-machine:before {
   content: "\e758";

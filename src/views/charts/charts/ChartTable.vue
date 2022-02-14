@@ -41,11 +41,11 @@
 </template>
 
 <script>
-import {unitTypes} from '@/utils/constants'
+import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import ChartTablePagination from '@/components/charts/ChartTablePagination'
+import ChartTablePagination from '@/views/charts/charts/ChartTablePagination'
 export default {
-  name: "ChartTable",
+  name: 'ChartTable',
   components: {
     ChartTablePagination
   },
