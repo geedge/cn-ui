@@ -39,7 +39,7 @@
       </grid-item>
     </grid-layout>
     <!-- noData -->
-    <div v-if="noData" class="no-data">
+    <div v-if="false" class="no-data">
       <div class="no-data-div">No data</div>
     </div>
     <!-- 全屏查看 -->
