@@ -1,0 +1,19 @@
+.detection__event-severity-bar {
+  flex: 0 0 175px;
+  background-color: white;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.detection__list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  .detection__list-statistics {
+    display: flex;
+    flex: 0 0 192px;
+    margin-bottom: 10px;
+    width: 100%;
+    background-color: white;
+  }
+}

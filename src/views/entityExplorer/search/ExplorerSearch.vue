@@ -49,7 +49,7 @@
 import AdvancedSearch from '@/components/advancedSearch/Index'
 import { columnType } from '@/components/advancedSearch/meta/meta'
 import SqlParser from '@/components/advancedSearch/meta/sql-parser'
-import {storageKey} from "@/utils/constants";
+import { storageKey } from '@/utils/constants'
 export default {
   name: 'CnSearch',
   components: {
