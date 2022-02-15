@@ -114,6 +114,7 @@ export default {
     },
     recursionParamsConvert (chart) {
       chart.params = chart.params ? JSON.parse(chart.params) : {}
+      chart.firstShow = false
       if (chart.type === 94) {
         chart.oldH = chart.h
         /* chart.params = {
