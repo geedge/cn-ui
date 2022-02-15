@@ -1,0 +1,66 @@
+.detection-filter-case {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  padding: 10px;
+  margin-right: 10px;
+  background-color: white;
+
+  .detection-filter {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+    .filter__header {
+      display: flex;
+      flex: 0 0 32px;
+      align-items: center;
+      padding-left: 10px;
+      color: #666;
+      background-color: #F3F7FA;
+      cursor: pointer;
+
+      span {
+        font-size: 14px;
+        padding-left: 6px;
+      }
+      i {
+        font-size: 12px;
+        transition: all linear .1s;
+        transform: rotate(0) translate(0, 2px);
+      }
+      i.arrow-rotate {
+        transform: rotate(90deg) translate(2px, 3px);
+      }
+    }
+    .filter__body {
+      padding: 5px 0 0 15px;
+
+      .el-checkbox-group {
+        display: flex;
+        flex-direction: column;
+
+        .el-checkbox {
+          display: flex;
+          align-items: center;
+          padding: 5px 0;
+
+          .filter__checkbox-label {
+            display: flex;
+            align-items: center;
+
+            .severity-color-block {
+              width: 4px;
+              height: 15px;
+              border-radius: 2px;
+            }
+          }
+
+          &:last-of-type {
+            padding-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+}

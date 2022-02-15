@@ -1,5 +1,5 @@
 <template>
-  <div class="explorer-search">
+  <div class="explorer-search explorer-search--show-list">
     <div class="explorer-search__input-case explorer-search__input-case--question-mark-in-line">
       <div class="explorer-search__input">
         <advanced-search
@@ -28,9 +28,29 @@ export default {
   },
   data () {
     return {
-      columnList: [],
-      operatorList: [],
-      connectionList: []
+      columnList: [
+        {
+          name: 'event_severity',
+          type: 'string',
+          label: 'Event severity'
+        },
+        {
+          name: 'security_type',
+          type: 'string',
+          label: 'Security type'
+        }
+      ],
+      operatorList: ['=', '!=', '>', '<', '>=', '<='/*, 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'*/],
+      connectionList: [
+        {
+          value: 'AND',
+          label: 'AND'
+        },
+        {
+          value: 'OR',
+          label: 'OR'
+        }
+      ]
     }
   },
   methods: {
