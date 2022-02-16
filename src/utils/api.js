@@ -47,6 +47,8 @@ export const api = {
   entityAppDetailLinkOut: '/interface/entity/detail/overview/app/linkOut',
   entityAppDetailAlert: '/interface/entity/detail/overview/app/alert',
   entityAppDetailSecurity: '/interface/entity/detail/overview/app/security',
+  entityAppRelatedServerDomain: '/interface/entity/detail/overview/app/relatedDomain',
+  entityAppRelatedServerIp: '/interface/entity/detail/overview/app/relatedServerIp',
   // domain detail
   entityDomainDetailBasic: '/interface/entity/detail/overview/domain/basic',
   entityDomainDetailTraffic: '/interface/entity/detail/overview/domain/traffic',
@@ -56,6 +58,8 @@ export const api = {
   entityDomainDetailLinkOut: '/interface/entity/detail/overview/domain/linkOut',
   entityDomainDetailAlert: '/interface/entity/detail/overview/domain/alert',
   entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/security',
+  entityDomainRelatedServerIp: '/interface/entity/detail/overview/domain/relatedServerIp',
+  entityDomainRelatedServerApp: '/interface/entity/detail/overview/domain/relatedApp',
   // ip detail
   entityIpDetailTraffic: '/interface/entity/detail/overview/ip/traffic',
   entityIpDetailTrafficMap: '/interface/entity/detail/ip/trafficMap',
@@ -66,7 +70,9 @@ export const api = {
   entityIpDetailLinkIn: '/interface/entity/detail/overview/ip/linkIn',
   entityIpDetailLinkOut: '/interface/entity/detail/overview/ip/linkOut',
   entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
-  entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security'
+  entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security',
+  entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
+  entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp'
 }
 
 /* panel */
