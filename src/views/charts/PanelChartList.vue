@@ -134,7 +134,6 @@ export default {
       this.emitter.emit('groupParentCalcHeight', { chart, childrenList: this.copyDataList })
     },
     groupParentCalcHeight (chart, childrenList) {
-      // console.log(chart, childrenList)
       setTimeout(() => {
         const parent = this.copyDataList.find(chartitem => chartitem.id === chart.parent.id)
         const children = parent.children.find(item => item.id === chart.id)
@@ -192,6 +191,26 @@ export default {
           setTimeout(() => {
             this.gridLayoutShow = true
           })
+          setTimeout(() => {
+            this.copyDataList.forEach(item => {
+              // if (item.type === 95) {
+              //   console.log(item.h, item.name)
+              //   item.children.forEach(children => {
+              //     console.log(children.name, children.h, children.y)
+              //   })
+              //   let parentH = 1.5
+              //   parentH += getGroupHeight(item.children)
+              //   if (parentH !== item.h) {
+              //     item.h = parentH
+              //   }
+              // }
+              if (item.type === 94 && !item.firstShow) {
+                item.firstShow = true
+                this.copyDataList = [...this.copyDataList]
+                this.emitter.emit('groupParentCalcHeight', { chart: item, childrenList: this.copyDataList })
+              }
+            })
+          }, 200)
           this.gridLayoutLoading = false
         })
       }

@@ -22,6 +22,7 @@
             :time-filter="timeFilter"
             @filter="filter"
         ></detection-filter>
+
         <div class="detection__list">
           <div class="detection__list-statistics"></div>
           <detection-list
@@ -78,7 +79,101 @@ export default {
         total: 0
       },
       q: '',
-      filterData: [],
+      filterData: [
+        {
+          title: this.$t('detections.eventSeverity'),
+          column: 'eventSeverity',
+          collapse: false,
+          value: [], // value之间是or的关系
+          data: [
+            {
+              label: 'Critical',
+              value: 'critical',
+              count: 50
+            },
+            {
+              label: 'High',
+              value: 'high',
+              count: 50
+            },
+            {
+              label: 'Medium',
+              value: 'medium',
+              count: 50
+            },
+            {
+              label: 'Low',
+              value: 'low',
+              count: 50
+            },
+            {
+              label: 'Info',
+              value: 'info',
+              count: 50
+            }
+          ] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
+        },
+        {
+          title: this.$t('detections.securityType'),
+          collapse: false,
+          value: [],
+          data: [
+            {
+              label: 'Command and control',
+              value: 'command and control',
+              count: 50
+            }
+          ] // 从接口动态获取
+        },
+        {
+          title: this.$t('detections.victimIp'),
+          collapse: false,
+          value: [],
+          data: [
+            {
+              label: '1.2.6.8',
+              value: '1.2.6.8',
+              count: 50
+            }
+          ] // 从接口动态获取
+        },
+        {
+          title: this.$t('detections.victimLocation'),
+          collapse: false,
+          value: [],
+          data: [
+            {
+              label: 'China',
+              value: 'china',
+              count: 50
+            }
+          ] // 从接口动态获取
+        },
+        {
+          title: this.$t('detections.offenderIp'),
+          collapse: false,
+          value: [],
+          data: [
+            {
+              label: '1.2.6.8',
+              value: '1.2.6.8',
+              count: 50
+            }
+          ] // 从接口动态获取
+        },
+        {
+          title: this.$t('detections.offenderLocation'),
+          collapse: false,
+          value: [],
+          data: [
+            {
+              label: 'China',
+              value: 'china',
+              count: 50
+            }
+          ] // 从接口动态获取
+        }
+      ],
       listData: [],
       listLoading: false
     }
