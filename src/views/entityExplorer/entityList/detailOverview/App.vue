@@ -51,7 +51,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
     <div class="overview__content domain__content">
-      <div class="overview__tags domain__tags overview__domain-tags" ref="relationship">
+      <div class="overview__tags domain__tags overview__app-tags" ref="relationship">
         <div class="overview__domain-tabs">
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">

@@ -43,7 +43,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
     <div class="overview__content domain__content">
-      <div class="overview__tags domain__tags overview__domain-tags" ref="relationship">
+      <div class="overview__tags domain__tags overview__ip-tags" ref="relationship">
         <div class="overview__domain-tabs">
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
@@ -67,7 +67,7 @@
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{entityData.appCount}}</span>
-              <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
+              <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
             </div>
             <div class="overview__tag domain__tag-list" :ref="'relatedServerIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
               <span class="tag__desc">{{item.appName}}</span>
