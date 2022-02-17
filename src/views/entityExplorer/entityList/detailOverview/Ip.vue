@@ -42,15 +42,45 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
-    <div class="overview__content">
-      <div class="overview__tags">
-        <div class="overview__tag">
-          <span class="tag__value">{{entityData.domainCount}}</span>
-          <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
+    <div class="overview__content domain__content">
+      <div class="overview__tags domain__tags overview__ip-tags" ref="relationship">
+        <div class="overview__domain-tabs">
+          <div class="overview__domain-tab">
+            <div class="overview__tag domain__tag">
+              <span class="tag__value">{{entityData.domainCount}}</span>
+              <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
+            </div>
+            <div class="overview__tag domain__tag-list" :ref="'relatedIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+              <span class="tag__desc">{{item.domain}}</span>
+            </div>
+          </div>
+          <div class="overview__domain-btn" @click="more(relationshipDataOne, relationshipShowMoreOne, 1)" v-if="relationshipShowOne">
+            <div class="overview__domain-more">...</div>
+            <div class="overview__domain-more-tabs show-more-app" v-if="relationshipShowMoreOne">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
+                <span v-if="item.domain" :title="item.domain">{{item.domain}}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="overview__tag">
-          <span class="tag__value">{{entityData.appCount}}</span>
-          <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
+        <div class="overview__domain-tabs">
+          <div class="overview__domain-tab">
+            <div class="overview__tag domain__tag">
+              <span class="tag__value">{{entityData.appCount}}</span>
+              <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
+            </div>
+            <div class="overview__tag domain__tag-list" :ref="'relatedServerIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+              <span class="tag__desc">{{item.appName}}</span>
+            </div>
+          </div>
+          <div class="overview__domain-btn" @click="more(relationshipDataTow, relationshipShowMoreTow, 2)" v-if="relationshipShowTow">
+            <div class="overview__domain-more">...</div>
+            <div class="overview__domain-more-tabs show-more-ip" v-if="relationshipShowMoreTow">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataTow" :key="item">
+                <span v-if="item.appName" :title="item.appName">{{item.appName}}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -145,10 +175,11 @@ import unitConvert from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
+import relatedServer from '@/mixins/relatedServer'
 
 export default {
   name: 'Ip',
-  mixins: [entityDetailMixin],
+  mixins: [entityDetailMixin, relatedServer],
   components: {
     Chart,
     ChartSingleValue
@@ -165,6 +196,8 @@ export default {
       linkOutUrl: api.entityIpDetailLinkOut,
       alertUrl: api.entityIpDetailAlert,
       securityUrl: api.entityIpDetailSecurity,
+      relatedServerDomainUrl: api.entityIpRelatedServerDomain,
+      relatedServerAppUrl: api.entityIpRelatedServerApp,
       listMode: 'list',
       chartData: null,
       singleValues: {
@@ -246,11 +279,17 @@ export default {
         this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
         this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
         this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
+        this.getRelatedServerDataOne(this.relatedServerDomainUrl, 'relatedIp')
+        this.getRelatedServerDataTow(this.relatedServerAppUrl, 'relatedServerIp')
       }
     }
   },
   mounted () {
-    this.$nextTick(() => { setTimeout(() => { this.chartGetMap() }, 250) })
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.chartGetMap()
+      }, 250)
+    })
   },
   setup (props) {
     const entityCopy = {

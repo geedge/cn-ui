@@ -50,15 +50,45 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
-    <div class="overview__content">
-      <div class="overview__tags">
-        <div class="overview__tag">
-          <span class="tag__value">{{entityData.domainCount}}</span>
-          <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
+    <div class="overview__content domain__content">
+      <div class="overview__tags domain__tags overview__app-tags" ref="relationship">
+        <div class="overview__domain-tabs">
+          <div class="overview__domain-tab">
+            <div class="overview__tag domain__tag">
+              <span class="tag__value">{{entityData.domainCount}}</span>
+              <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
+            </div>
+            <div class="overview__tag domain__tag-list" :ref="'relatedApp' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+              <span class="tag__desc">{{item.domain}}</span>
+            </div>
+          </div>
+          <div class="overview__domain-btn" @click="more(relationshipDataOne, relationshipShowMoreOne, 1)" v-if="relationshipShowOne">
+            <div class="overview__domain-more">...</div>
+            <div class="overview__domain-more-tabs show-more-app" v-if="relationshipShowMoreOne">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
+                <span v-if="item.domain" :title="item.domain">{{item.domain}}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="overview__tag">
-          <span class="tag__value">{{entityData.ipCount}}</span>
-          <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
+        <div class="overview__domain-tabs">
+          <div class="overview__domain-tab">
+            <div class="overview__tag domain__tag">
+              <span class="tag__value">{{entityData.ipCount}}</span>
+              <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
+            </div>
+            <div class="overview__tag domain__tag-list" :ref="'relatedServerApp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+              <span class="tag__desc">{{item.ip}}</span>
+            </div>
+          </div>
+          <div class="overview__domain-btn" @click="more(relationshipDataTow, relationshipShowMoreTow, 2)" v-if="relationshipShowTow">
+            <div class="overview__domain-more">...</div>
+            <div class="overview__domain-more-tabs show-more-ip" v-if="relationshipShowMoreTow">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataTow" :key="item">
+                <span v-if="item.ip" :title="item.ip">{{item.ip}}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -153,10 +183,11 @@ import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { get } from '@/utils/http'
+import relatedServer from '@/mixins/relatedServer'
 
 export default {
   name: 'App',
-  mixins: [entityDetailMixin],
+  mixins: [entityDetailMixin, relatedServer],
   components: {
     Chart,
     ChartSingleValue
@@ -173,6 +204,8 @@ export default {
       alertUrl: api.entityAppDetailAlert,
       securityUrl: api.entityAppDetailSecurity,
       trafficUrlMap: api.entityAppDetailTrafficMap,
+      relatedServerDomainUrl: api.entityAppRelatedServerDomain,
+      relatedServerIpUrl: api.entityAppRelatedServerIp,
       chartData: null,
       listMode: 'list',
       singleValues: {
@@ -252,12 +285,17 @@ export default {
         this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
         this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
         this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
-        this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
+        this.getRelatedServerDataOne(this.relatedServerDomainUrl, 'relatedApp')
+        this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedServerApp')
       }
     }
   },
   mounted () {
-    this.$nextTick(() => { setTimeout(() => { this.chartGetMap() }, 250) })
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.chartGetMap()
+      }, 250)
+    })
   },
   setup (props) {
     return {

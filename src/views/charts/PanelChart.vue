@@ -190,12 +190,12 @@ export default {
         }
         const requestUrl = url || (chartParams && chartParams.url)
         if (requestUrl) {
-          get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
-            if (this.chartInfo.type === 23 && testData) {
-              response = testData.data
-            } else if (this.chartInfo.type === 24 && testData) {
-              response = testData.data2
-            }
+          get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {1
+            // if (this.chartInfo.type === 23 && testData) {
+            //   response = testData.data
+            // } else if (this.chartInfo.type === 24 && testData) {
+            //   response = testData.data2
+            // }
             if (response.code === 200) {
               if (Array.isArray(response.data.result)) {
                 response.data.result.forEach(item => {

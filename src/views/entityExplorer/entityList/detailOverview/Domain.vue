@@ -58,15 +58,45 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
-    <div class="overview__content">
-      <div class="overview__tags">
-        <div class="overview__tag">
-          <span class="tag__value">{{entityData.appCount}}</span>
-          <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
+    <div class="overview__content domain__content">
+      <div class="overview__tags domain__tags overview__domain-tags" ref="relationship">
+        <div class="overview__domain-tabs">
+          <div class="overview__domain-tab">
+            <div class="overview__tag domain__tag">
+              <span class="tag__value">{{entityData.appCount}}</span>
+              <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
+            </div>
+            <div class="overview__tag domain__tag-list" :ref="'relatedDomain' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+              <span class="tag__desc">{{item.appName}}</span>
+            </div>
+          </div>
+          <div class="overview__domain-btn" @click="more(relationshipDataOne, relationshipShowMoreOne, 1)" v-if="relationshipShowOne">
+            <div class="overview__domain-more">...</div>
+            <div class="overview__domain-more-tabs show-more-app" v-if="relationshipShowMoreOne">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
+                <span v-if="item.appName" :title="item.appName">{{item.appName}}</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="overview__tag">
-          <span class="tag__value">{{entityData.ipCount}}</span>
-          <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
+        <div class="overview__domain-tabs">
+          <div class="overview__domain-tab">
+            <div class="overview__tag domain__tag">
+              <span class="tag__value">{{entityData.ipCount}}</span>
+              <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
+            </div>
+            <div class="overview__tag domain__tag-list" :ref="'relatedServerDomain' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+              <span class="tag__desc">{{item.ip}}</span>
+            </div>
+          </div>
+          <div class="overview__domain-btn" @click="more(relationshipDataTow, relationshipShowMoreTow, 2)" v-if="relationshipShowTow">
+            <div class="overview__domain-more">...</div>
+            <div class="overview__domain-more-tabs show-more-ip" v-if="relationshipShowMoreTow">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataTow" :key="item">
+                <span v-if="item.ip" :title="item.ip">{{item.ip}}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -159,15 +189,16 @@ import entityDetailMixin from './entityDetailMixin'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
-import _ from 'lodash'
+import _, { lowerFirst } from 'lodash'
 import { get } from '@/utils/http'
+import relatedServer from '@/mixins/relatedServer'
 export default {
   name: 'Domain',
   components: {
     ChartSingleValue,
     Chart
   },
-  mixins: [entityDetailMixin],
+  mixins: [entityDetailMixin, relatedServer],
   data () {
     return {
       // entityData: {},
@@ -180,6 +211,8 @@ export default {
       alertUrl: api.entityDomainDetailAlert,
       securityUrl: api.entityDomainDetailSecurity,
       trafficUrlMap: api.entityDomainDetailTrafficMap,
+      relatedServerIpUrl: api.entityDomainRelatedServerIp,
+      relatedServerAppUrl: api.entityDomainRelatedServerApp,
       chartData: null,
       listMode: 'list',
       singleValues: {
@@ -243,7 +276,7 @@ export default {
       this.entityData.ipCount = result.ipCount
     },
     chartGetMap () {
-      get((this.trafficUrlMap), this.getQueryParams()).then(response => {
+      get(this.trafficUrlMap, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.chartData = response.data.result
         }
@@ -260,11 +293,17 @@ export default {
         this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
         this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
         this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
+        this.getRelatedServerDataOne(this.relatedServerAppUrl, 'relatedDomain')
+        this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedServerDomain')
       }
     }
   },
   mounted () {
-    this.$nextTick(() => { setTimeout(() => { this.chartGetMap()}, 250)})
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.chartGetMap()
+      }, 250)
+    })
   },
   setup (props) {
     const entityCopy = {
