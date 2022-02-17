@@ -2,7 +2,6 @@ import { get } from '@/utils/http'
 export default {
   data () {
     return {
-
       relationshipDataOne: [], // 数据
       relationshipDataTow: [], // 数据
       relationshipShowOne: false, // 控制 ... 的展示隐藏
@@ -20,7 +19,7 @@ export default {
         if (response.code === 200) {
           this.relationshipDataOne = response.data.result
           // 将请求数据 传入方法中
-          this.relatedServerWidth(this.relationshipDataOne, refOne)
+          this.relatedServerWidth(this.relationshipDataOne, refOne, 1)
         }
       })
     },
@@ -29,12 +28,12 @@ export default {
         if (response.code === 200) {
           this.relationshipDataTow = response.data.result
           // 将请求数据 传入方法中
-          this.relatedServerWidth(this.relationshipDataTow, refTow)
+          this.relatedServerWidth(this.relationshipDataTow, refTow, 2)
         }
       })
     },
     // data => 数据， value => ref
-    relatedServerWidth (data, value) {
+    relatedServerWidth (data, value, num) {
       // 最大宽度
       const relatedServerWidth = this.$refs.relationship.offsetWidth
       let sum = 0
@@ -42,12 +41,14 @@ export default {
       data.map((item, index) => {
         if (this.$refs[value + index]) {
           // 每条数据的宽度
-          const width = this.$refs[value + index].offsetWidth + 30
+          const width = this.$refs[value + index].offsetWidth + 32
           if (width) {
             sum += width
-            if (flag && relatedServerWidth < sum) {
+            if (flag && sum >= relatedServerWidth && num === 1) {
               flag = false
               this.relationshipShowOne = true
+            } else if (flag && sum >= relatedServerWidth && num === 2) {
+              flag = false
               this.relationshipShowTow = true
             }
           }

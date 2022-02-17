@@ -293,10 +293,8 @@ export default {
         this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
         this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
         this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
-        this.$nextTick(() => {
-          this.getRelatedServerDataOne(this.relatedServerAppUrl, 'relatedDomain')
-          this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedServerDomain')
-        })
+        this.getRelatedServerDataOne(this.relatedServerAppUrl, 'relatedDomain')
+        this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedServerDomain')
       }
     }
   },
