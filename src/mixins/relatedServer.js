@@ -2,61 +2,77 @@ import { get } from '@/utils/http'
 export default {
   data () {
     return {
-      relationDomainData: [],
-      relationAppData: [],
-      showMoreApp: false,
-      showMoreDomain: false,
-      moreDataDomain: [],
-      moreDataApp: [],
-      showDomainMore: false,
-      showAppMore: false
+
+      relationshipDataOne: [], // 数据
+      relationshipDataTow: [], // 数据
+      relationshipShowOne: false, // 控制 ... 的展示隐藏
+      relationshipShowTow: false, // 控制 ... 的展示隐藏
+      relationshipShowMoreOne: false, // 控制弹框的展示隐藏
+      relationshipShowMoreTow: false, // 控制弹框的展示隐藏
+      relationshipMoreDataOne: [], // 展示所有
+      relationshipMoreDataTow: [] // 展示所有
     }
   },
   methods: {
-    getRelatedServerData () {
-      get(this.relatedServerDomainUrl, this.getQueryParams()).then(response => {
+    // 请求数据 relationshipUrlOne => 路由 refOne => ref
+    getRelatedServerDataOne (relationshipUrlOne, refOne) {
+      get(relationshipUrlOne, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          this.relationDomainData = response.data.result
-          this.relatedServerWidth(this.relationDomainData, 'relatedDomain')
-        }
-      })
-      get(this.relatedServerAppUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.relationAppData = response.data.result
-          this.relatedServerWidth(this.relationAppData, 'relatedServerApp')
+          this.relationshipDataOne = response.data.result
+          // 将请求数据 传入方法中
+          this.relatedServerWidth(this.relationshipDataOne, refOne)
         }
       })
     },
+    getRelatedServerDataTow (relationshipUrlTow, refTow) {
+      get(relationshipUrlTow, this.getQueryParams()).then(response => {
+        if (response.code === 200) {
+          this.relationshipDataTow = response.data.result
+          // 将请求数据 传入方法中
+          this.relatedServerWidth(this.relationshipDataTow, refTow)
+        }
+      })
+    },
+    // data => 数据， value => ref
     relatedServerWidth (data, value) {
+      // 最大宽度
       const relatedServerWidth = this.$refs.relationship.offsetWidth
       let sum = 0
       let flag = true
       data.map((item, index) => {
         if (this.$refs[value + index]) {
-          const width = this.$refs[value + index].offsetWidth + 22
+          // 每条数据的宽度
+          const width = this.$refs[value + index].offsetWidth + 30
           if (width) {
             sum += width
             if (flag && relatedServerWidth < sum) {
               flag = false
-              this.showDomainMore = true
+              this.relationshipShowOne = true
+              this.relationshipShowTow = true
             }
           }
           item.show = flag
         }
         return item
       })
-      console.log(data)
     },
+    // 点击事件 控制弹框的展示隐藏，展示全部的数据
     more (data, showMore, index) {
       if (index === 1) {
-        this.moreDataDomain = data
-        this.showMoreDomain = !showMore
-        this.showMoreApp = false
+        // 展示数据
+        this.relationshipMoreDataOne = data
+        // 弹框的显示隐藏
+        this.relationshipShowMoreOne = !showMore
+        // 展示当前弹框是，隐藏其他弹框
+        this.relationshipShowMoreTow = false
       }
       if (index === 2) {
-        this.moreDataApp = data
-        this.showMoreApp = !showMore
-        this.showMoreDomain = false
+        // 展示数据
+        this.relationshipMoreDataTow = data
+        // 弹框的显示隐藏
+        this.relationshipShowMoreTow = !showMore
+        // 展示当前弹框是，隐藏其他弹框
+        this.relationshipShowMoreOne = false
       }
     }
   }

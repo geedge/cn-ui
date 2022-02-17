@@ -43,21 +43,21 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
     <div class="overview__content domain__content">
-      <div class="overview__tags domain__tags" ref="relationship">
+      <div class="overview__tags domain__tags overview__domain-tags" ref="relationship">
         <div class="overview__domain-tabs">
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{entityData.domainCount}}</span>
               <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedDomain' + index" v-show="item.show" v-for="(item, index) in relationDomainData" :key="index">
+            <div class="overview__tag domain__tag-list" :ref="'relatedIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
               <span class="tag__desc">{{item.domain}}</span>
             </div>
           </div>
-          <div class="overview__domain-btn" @click="more(relationDomainData, showMoreDomain, 1)" v-if="showDomainMore">
+          <div class="overview__domain-btn" @click="more(relationshipDataOne, relationshipShowMoreOne, 1)" v-if="relationshipShowOne">
             <div class="overview__domain-more">...</div>
-            <div class="overview__domain-more-tabs show-more-app" v-if="showMoreDomain">
-              <div class="domain-more-tab" v-for="item in moreDataDomain" :key="item">
+            <div class="overview__domain-more-tabs show-more-app" v-if="relationshipShowMoreOne">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
                 <span v-if="item.domain" :title="item.domain">{{item.domain}}</span>
               </div>
             </div>
@@ -69,14 +69,14 @@
               <span class="tag__value">{{entityData.appCount}}</span>
               <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedServerApp' + index" v-show="item.show" v-for="(item, index) in relationAppData" :key="index">
+            <div class="overview__tag domain__tag-list" :ref="'relatedServerIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
               <span class="tag__desc">{{item.appName}}</span>
             </div>
           </div>
-          <div class="overview__domain-btn" @click="more(relationAppData, showMoreApp, 2)" v-if="showAppMore">
+          <div class="overview__domain-btn" @click="more(relationshipDataTow, relationshipShowMoreTow, 2)" v-if="relationshipShowTow">
             <div class="overview__domain-more">...</div>
-            <div class="overview__domain-more-tabs show-more-ip" v-if="showMoreApp">
-              <div class="domain-more-tab" v-for="item in moreDataApp" :key="item">
+            <div class="overview__domain-more-tabs show-more-ip" v-if="relationshipShowMoreTow">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataTow" :key="item">
                 <span v-if="item.appName" :title="item.appName">{{item.appName}}</span>
               </div>
             </div>
@@ -84,18 +84,6 @@
         </div>
       </div>
     </div>
-<!--    <div class="overview__content">-->
-<!--      <div class="overview__tags">-->
-<!--        <div class="overview__tag">-->
-<!--          <span class="tag__value">{{entityData.domainCount}}</span>-->
-<!--          <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>-->
-<!--        </div>-->
-<!--        <div class="overview__tag">-->
-<!--          <span class="tag__value">{{entityData.appCount}}</span>-->
-<!--          <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.networkQuality')}}</div>
@@ -187,10 +175,11 @@ import unitConvert from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
+import relatedServer from '@/mixins/relatedServer'
 
 export default {
   name: 'Ip',
-  mixins: [entityDetailMixin],
+  mixins: [entityDetailMixin, relatedServer],
   components: {
     Chart,
     ChartSingleValue
@@ -255,15 +244,7 @@ export default {
           }
         ],
         chartDatas: [null, null, null, null, null]
-      },
-      relationDomainData: [],
-      relationAppData: [],
-      showMoreApp: false,
-      showMoreDomain: false,
-      moreDataDomain: [],
-      moreDataApp: [],
-      showDomainMore: false,
-      showAppMore: false
+      }
     }
   },
   methods: {
@@ -286,51 +267,6 @@ export default {
           this.chartData = response.data.result
         }
       })
-    },
-    getRelatedServerData () {
-      get(this.relatedServerDomainUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.relationDomainData = response.data.result
-          this.relatedServerWidth(this.relationDomainData, 'relatedDomain')
-        }
-      })
-      get(this.relatedServerAppUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.relationAppData = response.data.result
-          this.relatedServerWidth(this.relationAppData, 'relatedServerApp')
-        }
-      })
-    },
-    relatedServerWidth (data, value) {
-      const relatedServerWidth = this.$refs.relationship.offsetWidth
-      let sum = 0
-      let flag = true
-      data.map((item, index) => {
-        if (this.$refs[value + index]) {
-          const width = this.$refs[value + index].offsetWidth + 22
-          if (width) {
-            sum += width
-            if (flag && relatedServerWidth < sum) {
-              flag = false
-              this.showDomainMore = true
-            }
-          }
-          item.show = flag
-        }
-        return item
-      })
-    },
-    more (data, showMore, index) {
-      if (index === 1) {
-        this.moreDataDomain = data
-        this.showMoreDomain = !showMore
-        this.showMoreApp = false
-      }
-      if (index === 2) {
-        this.moreDataApp = data
-        this.showMoreApp = !showMore
-        this.showMoreDomain = false
-      }
     }
   },
   watch: {
@@ -343,6 +279,10 @@ export default {
         this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
         this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
         this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
+        this.$nextTick(() => {
+          this.getRelatedServerDataOne(this.relatedServerDomainUrl, 'relatedIp')
+          this.getRelatedServerDataTow(this.relatedServerAppUrl, 'relatedServerIp')
+        })
       }
     }
   },
@@ -350,7 +290,6 @@ export default {
     this.$nextTick(() => {
       setTimeout(() => {
         this.chartGetMap()
-        this.getRelatedServerData()
       }, 250)
     })
   },

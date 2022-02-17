@@ -123,10 +123,39 @@
     }
 
     .overview__content.domain__content {
+      .overview__tags.domain__tags.overview__ip-tags,.overview__tags.domain__tags.overview__app-tags {
+        max-width: 1200px;
+        .overview__domain-more-tabs.show-more-app {
+          z-index: 1;
+          position: absolute;
+          right: -92px;
+          top: -180px;
+        }
+        .overview__domain-more-tabs.show-more-ip {
+          z-index: 1;
+          position: absolute;
+          top: -180px;
+          right: -92px;
+        }
+      }
+      .overview__tags.domain__tags.overview__domain-tags {
+        max-width: 1500px;
+        .overview__domain-more-tabs.show-more-app {
+          z-index: 1;
+          position: absolute;
+          top: -180px;
+          right: -92px;
+        }
+        .overview__domain-more-tabs.show-more-ip {
+          z-index: 1;
+          position: absolute;
+          top: -180px;
+          right: -92px;
+        }
+      }
       .overview__tags.domain__tags {
         flex-direction: column;
         align-items: baseline;
-        max-width: 1500px;
         .overview__domain-tabs {
           display: flex;
           margin: 0 0 8px 0;
@@ -159,7 +188,6 @@
             font-size: 14px;
             font-weight: 400;
             border-radius: 15px;
-            position: relative;
           }
           .overview__domain-btn {
             background-color: #EFF6FE;
@@ -172,16 +200,7 @@
             padding: 6px 15px;
             line-height: .3;
             cursor: pointer;
-          }
-          .overview__domain-more-tabs.show-more-app {
-            position: absolute;
-            top: 176px;
-            z-index: 1;
-          }
-          .overview__domain-more-tabs.show-more-ip {
-            position: absolute;
-            top: 215px;
-            z-index: 1;
+            position: relative;
           }
           .overview__domain-more-tabs {
             min-width: 110px;
