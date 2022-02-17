@@ -72,7 +72,12 @@ export const api = {
   entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
   entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security',
   entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
-  entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp'
+  entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp',
+  //detection
+  detectionEventSeverity:'/interface/detection/filter/severity',
+  detectionAttackType:'/interface/detection/filter/attackType',
+  detectionOffenderIp:'/interface/detection/filter/offenderIp',
+  detectionSeverity:'/interface/detection/filter/severity',
 }
 
 /* panel */
