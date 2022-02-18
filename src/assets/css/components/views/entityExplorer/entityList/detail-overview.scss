@@ -133,11 +133,11 @@
             display: flex;
           }
           .overview__tag.domain__tag {
-             display: unset;
-             min-width: 154px;
+            display: unset;
              padding: 6px 15px;
              margin: 0 12px 0 0;
              text-align: center;
+             min-width: 210px;
              height: 32px;
              line-height: 1.5;
              background-color: #EFF6FE;
@@ -145,12 +145,10 @@
              border-radius: 4px;
            }
           .overview__tag.domain__tag-list {
-            display: unset;
             padding: 6px 15px;
             margin: 4px 12px 0 0;
             text-align: center;
             height: 24px;
-            max-width: 300px;
             line-height: 0.9;
             background-color: #EFF6FE;
             font-family: Roboto-Regular;
