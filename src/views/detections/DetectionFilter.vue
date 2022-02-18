@@ -9,8 +9,8 @@
         <el-collapse-transition>
           <div class="filter__body" v-show="!filter.collapse">
             <el-checkbox-group v-model="filter.value">
-              <template v-for="d in filter.data" :key="d.value">
-                <el-checkbox :label="d.value">
+              <template v-for="(d, i) in filter.data" :key="i">
+                <el-checkbox :label="d.value" v-if="!filter.showIndex || filter.showIndex >= i">
                   <div class="filter__checkbox-label">
                     <span class="severity-color-block" v-if="filter.column === 'eventSeverity'" :style="`background-color: ${eventSeverityColor[d.value]}`"></span>
                     <span :style="filter.column === 'eventSeverity' ? 'padding-left: 10px' : ''">{{d.label}}</span>
@@ -18,10 +18,10 @@
                 </el-checkbox>
               </template>
             </el-checkbox-group>
+            <div class="filter__more" v-if="filter.showMore" @click="showMore(filter)">{{$t('overall.showMore')}}</div>
           </div>
         </el-collapse-transition>
       </div>
-
     </template>
   </div>
 </template>
@@ -43,6 +43,15 @@ export default {
         low: '#FFD82D',
         info: '#D1BD50'
       }
+    }
+  },
+  methods: {
+    /*filterChange (value, filter) {
+      this.$emit('filter', filter.column)
+    },*/
+    showMore (filter) {
+      filter.showIndex && (filter.showIndex += 10)
+      filter.showIndex >= filter.data.length && (filter.showMore = false)
     }
   }
 }

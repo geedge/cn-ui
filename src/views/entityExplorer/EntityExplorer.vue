@@ -552,9 +552,12 @@ export default {
     },
     /* filter组件内点击后查询 */
     filter (name, topData) {
-      const params = {}
-      params[topData.topColumn] = name
-      this.$refs.search.addParams(params)
+      const params = {
+        column: topData.topColumn,
+        operator: '=',
+        value: name
+      }
+      this.$refs.search.addParams([params])
     },
     /* 查询filter数据 */
     queryFilter (params) {

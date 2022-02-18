@@ -53,21 +53,24 @@ export default class SqlParser extends SqlParserVisitor {
           m.column.name = meta.column.name
           m.column.label = m.column.name
           this.metaList.push(m)
-        } else if (meta.column.type === columnType.string) {
-          if (_.isArray(meta.value.value)) {
-            meta.value.value = meta.value.value.map(v => {
-              return stringInQuot(v)
-            })
-            meta.value.label = `(${meta.value.value.join(',')})`
-          } else {
-            meta.value.value = stringInQuot(meta.value.value)
-            meta.value.label = stringInQuot(meta.value.value)
-          }
-          this.metaList.push(meta)
         } else {
           if (_.isArray(meta.value.value)) {
-            meta.value.label = `(${meta.value.value.join(',')})`
+            const tempArr = meta.value.value.map(v => {
+              return meta.column.type === columnType.string ? stringInQuot(v.trim()) : v.trim()
+            })
+            meta.value.value = `(${tempArr.join(',')})`
+            meta.value.label = meta.value.value
           } else {
+            const isArray = ['IN', 'NOT IN'].indexOf(meta.operator.value) > -1
+            if (isArray) {
+              const leftBracketIndex = meta.value.value.indexOf('(')
+              const rightBracketIndex = meta.value.value.lastIndexOf(')')
+              let temp = meta.value.value.substring(0, rightBracketIndex)
+              temp = meta.value.value.substring(leftBracketIndex + 1, temp.length)
+              let tempArr = temp.split(',')
+              tempArr = tempArr.map(t => meta.column.type === columnType.string ? stringInQuot(t.trim()) : t.trim())
+              meta.value.value = `(${tempArr.join(',')})`
+            }
             meta.value.label = meta.value.value
           }
           this.metaList.push(meta)
@@ -88,7 +91,7 @@ export default class SqlParser extends SqlParserVisitor {
       if (isFullText) {
         if (meta.meta === condition) {
           if (meta.column.type !== columnType.fullText) {
-            sql += `${meta.column.name}${meta.operator.value}${meta.value.value} `
+            sql += `${meta.column.name}${handleOperatorSpace(meta.operator.value)}${meta.value.value} `
           } else {
             sql += "QUERY('"
             this.columnList.forEach(column => {
@@ -101,7 +104,7 @@ export default class SqlParser extends SqlParserVisitor {
         if (meta.meta === condition) {
           sql += (meta.column.name)
           if (meta.column.type !== columnType.fullText) {
-            sql += `${meta.operator.value}${meta.value.value} `
+            sql += `${handleOperatorSpace(meta.operator.value)}${meta.value.value} `
           } else {
             sql += ' '
           }
@@ -136,23 +139,26 @@ export default class SqlParser extends SqlParserVisitor {
             this.metaList.push(cloneMeta(this.tempMeta))
           }
         } else {
-          if (this.tempMeta.column.type === columnType.string) {
-            if (_.isArray(value)) {
-              this.tempMeta.value.value = value.map(v => {
-                return stringInQuot(v)
-              })
-              this.tempMeta.value.label = `(${this.tempMeta.value.value.join(',')})`
-            } else {
-              this.tempMeta.value.value = stringInQuot(value)
-              this.tempMeta.value.label = stringInQuot(value)
-            }
+          if (_.isArray(value)) {
+            const tempArr = value.map(v => {
+              return this.tempMeta.column.type === columnType.string ? stringInQuot(v.trim()) : v.trim()
+            })
+            this.tempMeta.value.value = `(${tempArr.join(',')})`
+            this.tempMeta.value.label = this.tempMeta.value.value
           } else {
-            this.tempMeta.value.value = value
-            if (_.isArray(value)) {
-              this.tempMeta.value.label = `(${this.tempMeta.value.value.join(',')})`
+            const isArray = ['IN', 'NOT IN'].indexOf(this.tempMeta.operator.value) > -1
+            if (isArray) {
+              const leftBracketIndex = value.indexOf('(')
+              const rightBracketIndex = value.lastIndexOf(')')
+              let temp = value.substring(0, rightBracketIndex)
+              temp = value.substring(leftBracketIndex + 1, temp.length)
+              let tempArr = temp.split(',')
+              tempArr = tempArr.map(t => this.tempMeta.column.type === columnType.string ? stringInQuot(t.trim()) : t.trim())
+              this.tempMeta.value.value = `(${tempArr.join(',')})`
             } else {
-              this.tempMeta.value.label = value
+              this.tempMeta.value.value = value
             }
+            this.tempMeta.value.label = this.tempMeta.value.value
           }
           this.tempMeta.value.show = true
           this.metaList.push(cloneMeta(this.tempMeta))
@@ -168,7 +174,7 @@ export default class SqlParser extends SqlParserVisitor {
       // (not)in和(not)like特殊处理
       case 'like':
       case 'in': {
-        const { column, operator, handleValue } = handleInOrLike(value)
+        const { column, operator, handleValue } = handleInOrLike(value, type)
         this.buildMeta('expression', column)
         this.buildMeta('operator', operator)
         this.buildMeta('expression', handleValue)
@@ -245,6 +251,11 @@ export function stringInQuot (value) {
   const match = `${value}`.match(/^'.+?'$/)
   return match ? value : `'${value}'`
 }
+// IN和LIKE前后加空格
+export function handleOperatorSpace (operator) {
+  return ['IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(operator) > -1 ? ` ${operator} ` : operator
+}
+// in、like拆分方法；解析后内容挤一堆，如：a in ('b')解析结果是ain('b')，需要拆分
 function handleInOrLike (value, type) {
   let sep
   if (type === 'in') {
@@ -255,7 +266,7 @@ function handleInOrLike (value, type) {
   const notSep = `not${sep}`
   let arr
   let operator
-  if (value.split(notSep).length === 3) {
+  if (value.split(notSep).length === 2) {
     arr = value.split(notSep)
     operator = `NOT ${type.toUpperCase()}`
   } else {
@@ -266,9 +277,9 @@ function handleInOrLike (value, type) {
 
   let v
   if (type === 'in') {
-    v = arr[2].substring(0, arr[2].length - 2).split(',')
+    v = `(${arr[1]}`
   } else if (type === 'like') {
-    v = `'${arr[2]}'`
+    v = `'${arr[1]}`
   }
   return {
     column: columnName,

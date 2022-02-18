@@ -192,7 +192,7 @@ export default {
           label: 'APP risk'
         }
       ],
-      operatorList: ['=', '!=', '>', '<', '>=', '<='/*, 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'*/],
+      operatorList: ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
       connectionList: [
         {
           value: 'AND',
@@ -227,8 +227,8 @@ export default {
         }
         localStorage.setItem(storageKey.entitySearchHistory, JSON.stringify(arr))
       }
+      // 全文搜索处理
       if (metaList && this.$_.isArray(metaList)) {
-        // 全文搜索处理
         const hasFullText = metaList.some(meta => {
           return meta.column && meta.column.type === columnType.fullText
         })

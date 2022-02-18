@@ -241,22 +241,39 @@ export default {
       this.metaList = metaList
       this.$emit('changeMode', 'text', formatSql)
     },
+    // 处理value，例如转换IN的值
+    handleValue (value, column) {
+      const isArray = ['IN', 'NOT IN'].indexOf(column.operator.value) > -1
+      if (isArray) {
+        if (this.$_.isArray(value)) {
+          value = value.map(v => column.type === columnType.string ? stringInQuot(v) : v)
+          return `(${value.join(',')})`
+        } else {
+          return value
+        }
+      } else {
+        return column.type === columnType.string ? stringInQuot(value) : value
+      }
+    },
     addParams (params) {
-      Object.keys(params).forEach(key => {
+      params.forEach(param => {
         const column = this.columnList.find(column => {
-          return column.name === key
+          return column.name === param.column
         })
         const meta = new Meta()
-        meta.column.name = key
+        meta.column.name = param.column
         meta.column.type = column ? column.type : columnType.string
-        meta.column.label = column ? column.label : key
+        meta.column.label = column ? column.label : param.column
         meta.operator.value = '='
         meta.operator.show = true
-        meta.value.value = meta.column.type === columnType.string ? stringInQuot(params[key]) : params[key]
+        meta.value.value = this.handleValue(param.value, column)
         meta.value.show = true
         meta.value.label = meta.value.value
         this.addCondition(meta)
       })
+    },
+    changeParams (params) {
+
     }
   },
   watch: {

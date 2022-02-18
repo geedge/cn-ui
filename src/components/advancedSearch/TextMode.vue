@@ -18,7 +18,7 @@ import 'codemirror/addon/hint/show-hint'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/display/placeholder'
 import 'codemirror/mode/sql/sql'
-import SqlParser, { stringInQuot } from '@/components/advancedSearch/meta/sql-parser'
+import SqlParser, { stringInQuot, handleOperatorSpace } from '@/components/advancedSearch/meta/sql-parser'
 import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import { columnType } from '@/components/advancedSearch/meta/meta'
@@ -82,12 +82,40 @@ export default {
         this.$emit('changeMode', 'tag', [])
       }
     },
+    // 处理value，例如转换IN的值
+    handleValue (value, column, operator) {
+      const isArray = ['IN', 'NOT IN'].indexOf(operator) > -1
+      if (isArray) {
+        if (this.$_.isArray(value)) {
+          value = value.map(v => column.type === columnType.string ? stringInQuot(v) : v)
+          return `(${value.join(',')})`
+        } else {
+          return value
+        }
+      } else {
+        return column.type === columnType.string ? stringInQuot(value) : value
+      }
+    },
     addParams (params) {
+      let current = this.codeMirror.getValue()
+      params.forEach(param => {
+        const column = this.columnList.find(c => c.name === param.column)
+        current = `${current ? current + ' AND ' : ''}${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`
+      })
+      toRaw(this.codeMirror).setValue(current)
+    },
+    removeParams () {
+
+    },
+    changeParams (params) {
       Object.keys(params).forEach(key => {
         const column = this.columnList.find(column => {
           return column.name === key
         })
+        console.info(this.columnList, params)
         let current = this.codeMirror.getValue()
+        let selected = column.value
+        // if (selected && selected.length )
         current = `${current ? current + 'AND ' : ''}${key}=${(column.type === columnType.string ? stringInQuot(params[key]) : params[key])}`
         toRaw(this.codeMirror).setValue(current)
       })

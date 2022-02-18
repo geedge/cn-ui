@@ -15,7 +15,7 @@
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
       <div class="detection__event-severity-bar" id="detectionEventSeverityBar"></div>
-        <div style="display: flex; height: 100%;">
+        <div style="display: flex;">
         <detection-filter
             :filter-data="filterData"
             :q="q"
@@ -89,6 +89,7 @@ import ChartEchart from '@/views/charts/charts/ChartEchart'
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
 
+import { arrayIsEqual } from '@/utils/tools'
 export default {
   name: 'Index',
   components: {
@@ -158,10 +159,112 @@ export default {
           title: this.$t('detections.victimIp'),
           collapse: false,
           value: [],
+          showMore: true,
+          showIndex: 9,
           data: [
             {
               label: '1.2.6.8',
               value: '1.2.6.8',
+              count: 50
+            },
+            {
+              label: '1.2.6.9',
+              value: '1.2.6.9',
+              count: 50
+            },
+            {
+              label: '1.2.6.0',
+              value: '1.2.6.0',
+              count: 50
+            },
+            {
+              label: '1.2.6.1',
+              value: '1.2.6.1',
+              count: 50
+            },
+            {
+              label: '1.2.6.2',
+              value: '1.2.6.2',
+              count: 50
+            },
+            {
+              label: '1.2.6.3',
+              value: '1.2.6.3',
+              count: 50
+            },
+            {
+              label: '1.2.6.4',
+              value: '1.2.6.4',
+              count: 50
+            },
+            {
+              label: '1.2.6.5',
+              value: '1.2.6.5',
+              count: 50
+            },
+            {
+              label: '1.2.6.6',
+              value: '1.2.6.6',
+              count: 50
+            },
+            {
+              label: '1.2.6.7',
+              value: '1.2.6.7',
+              count: 50
+            },
+            {
+              label: '1.2.7.8',
+              value: '1.2.7.8',
+              count: 50
+            },
+            {
+              label: '1.2.8.8',
+              value: '1.2.8.8',
+              count: 50
+            },
+            {
+              label: '1.2.9.8',
+              value: '1.2.9.8',
+              count: 50
+            },
+            {
+              label: '1.2.6.18',
+              value: '1.2.6.18',
+              count: 50
+            },
+            {
+              label: '1.2.6.28',
+              value: '1.2.6.28',
+              count: 50
+            },
+            {
+              label: '1.2.6.38',
+              value: '1.2.6.38',
+              count: 50
+            },
+            {
+              label: '1.2.6.48',
+              value: '1.2.6.48',
+              count: 50
+            },
+            {
+              label: '1.2.6.58',
+              value: '1.2.6.58',
+              count: 50
+            },
+            {
+              label: '1.2.6.68',
+              value: '1.2.6.68',
+              count: 50
+            },
+            {
+              label: '1.2.6.78',
+              value: '1.2.6.78',
+              count: 50
+            },
+            {
+              label: '1.2.6.88',
+              value: '1.2.6.88',
               count: 50
             }
           ] // 从接口动态获取
@@ -170,6 +273,8 @@ export default {
           title: this.$t('detections.victimLocation'),
           collapse: false,
           value: [],
+          showMore: false,
+          showIndex: 9,
           data: [
             {
               label: 'China',
@@ -182,6 +287,8 @@ export default {
           title: this.$t('detections.offenderIp'),
           collapse: false,
           value: [],
+          showMore: false,
+          showIndex: 9,
           data: [
             {
               label: '1.2.6.8',
@@ -194,6 +301,8 @@ export default {
           title: this.$t('detections.offenderLocation'),
           collapse: false,
           value: [],
+          showMore: false,
+          showIndex: 9,
           data: [
             {
               label: 'China',
@@ -433,8 +542,12 @@ export default {
     search () {
 
     },
-    filter () {
-
+    filter (filterColumn) {
+      const params = {}
+      params[filterColumn] = this.filterData.find(f => {
+        return f.column === filterColumn
+      }).value
+      this.$refs.search.changeParams(params)
     },
     pageSize (val) {
       this.pageObj.pageSize = val
@@ -473,7 +586,56 @@ export default {
   watch: {
     timeFilter (n) {
       this.search(this.metaList, this.q)
+    },
+    'filterData.0.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData[0].column, oldValue: o, newValue: n })
+      }
+    },
+    'filterData.1.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData[1].column, oldValue: o, newValue: n })
+      }
+    },
+    'filterData.2.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData[2].column, oldValue: o, newValue: n })
+      }
+    },
+    'filterData.3.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData[3].column, oldValue: o, newValue: n })
+      }
+    },
+    'filterData.4.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData[4].column, oldValue: o, newValue: n })
+      }
+    },
+    'filterData.5.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData[5].column, oldValue: o, newValue: n })
+      }
     }
+    /*filterData: {
+      deep: true,
+      handler (n, o) {
+        console.info(n, o)
+        n.forEach((f, i) => {
+          console.info(f.value, o[i].value)
+          console.info(arrayIsEqual(f.value, o[i].value))
+          if (!arrayIsEqual(f.value, o[i].value)) {
+            this.$refs.search.changeParams({ column: f.column, oldValue: o[i].value, newValue: f.value })
+          }
+        })
+      }
+    }*/
   },
   setup () {
     const dateRangeValue = 60

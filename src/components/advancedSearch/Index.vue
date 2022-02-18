@@ -74,9 +74,18 @@ export default {
         this.metaList = data
       }
     },
+    // params: [{column, operator, value}, ...]
     addParams (params) {
       this.$refs.tagMode && this.$refs.tagMode.addParams(params)
       this.$refs.textMode && this.$refs.textMode.addParams(params)
+    },
+    removeParams (params) {
+      this.$refs.tagMode && this.$refs.tagMode.removeParams(params)
+      this.$refs.textMode && this.$refs.textMode.removeParams(params)
+    },
+    changeParams (n, o) {
+      this.$refs.tagMode && this.$refs.tagMode.changeParams(n, o)
+      this.$refs.textMode && this.$refs.textMode.changeParams(n, o)
     },
     setSql (sql) {
       if (this.searchMode === 'text') {
