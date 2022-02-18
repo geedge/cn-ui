@@ -148,10 +148,23 @@ export default {
     queryEntityDetailLinkInUrl () {
       if (this.linkInUrl) {
         get(this.linkInUrl, this.getQueryParams()).then(response => {
-          if (response.code === 200 && response.data.aggregation) {
-            const sum = response.data.aggregation.sum
-            const max = response.data.aggregation.max
-            this.entityData.linkInPercent = (parseFloat(max / sum) * 100).toFixed(2)
+          if (response.code === 200) {
+            if (!this.$_.isEmpty(response.data.result)) {
+              let sum = 0
+              response.data.result.forEach(r => {
+                sum += parseFloat(r.bytes)
+              })
+              const sorted = response.data.result.sort((r1, r2) => {
+                return parseFloat(r2.bytes) - parseFloat(r1.bytes)
+              })
+              const sortedId = response.data.result.sort((r1, r2) => {
+                return parseFloat(r2.commonEgressLinkId) - parseFloat(r1.commonEgressLinkId)
+              })
+              const max = parseFloat(sorted[0].bytes)
+              const maxId = parseFloat(sortedId[0].commonEgressLinkId)
+              this.entityData.linkInPercent = (parseFloat(max / sum) * 100).toFixed(2)
+              this.entityData.linkInId = maxId
+            }
           }
         })
       }
@@ -169,8 +182,13 @@ export default {
               const sorted = response.data.result.sort((r1, r2) => {
                 return parseFloat(r2.bytes) - parseFloat(r1.bytes)
               })
+              const sortedId = response.data.result.sort((r1, r2) => {
+                return parseFloat(r2.commonEgressLinkId) - parseFloat(r1.commonEgressLinkId)
+              })
               const max = parseFloat(sorted[0].bytes)
+              const maxId = parseFloat(sortedId[0].commonEgressLinkId)
               this.entityData.linkOutPercent = (parseFloat(max / sum) * 100).toFixed(2)
+              this.entityData.linkOutId = maxId
             }
           }
         })

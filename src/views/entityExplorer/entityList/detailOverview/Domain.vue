@@ -63,7 +63,7 @@
         <div class="overview__domain-tabs">
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
-              <span class="tag__value">{{entityData.appCount}}</span>
+              <span class="tag__value">{{relationshipDataOne.length}}</span>
               <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
             </div>
             <div class="overview__tag domain__tag-list" :ref="'relatedDomain' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
@@ -82,10 +82,10 @@
         <div class="overview__domain-tabs">
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
-              <span class="tag__value">{{entityData.ipCount}}</span>
+              <span class="tag__value">{{relationshipDataTow.length}}</span>
               <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedServerDomain' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+            <div class="overview__tag domain__tag-list" :ref="'relatedDomainIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
               <span class="tag__desc">{{item.ip}}</span>
             </div>
           </div>
@@ -121,10 +121,14 @@
       <div class="overview__tags">
         <div class="overview__tag">
           <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
+          <span class="tag__value">{{entityData.linkOutId ? entityData.linkOutId : '-'}},</span>
+          <span class="tag__desc">{{$t('entities.percentage')}}</span>
           <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
         </div>
         <div class="overview__tag">
           <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
+          <span class="tag__value">{{entityData.linkInId ? entityData.linkInId : '-'}},</span>
+          <span class="tag__desc">{{$t('entities.percentage')}}</span>
           <span class="tag__value">{{entityData.linkInPercent ? unitConvert(entityData.linkInPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
         </div>
       </div>
@@ -294,7 +298,7 @@ export default {
         this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
         this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
         this.getRelatedServerDataOne(this.relatedServerAppUrl, 'relatedDomain')
-        this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedServerDomain')
+        this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedDomainIp')
       }
     }
   },
