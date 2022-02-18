@@ -42,8 +42,8 @@ export default {
       data.map((item, index) => {
         if (this.$refs[value + index]) {
           // 每条数据的宽度
-          const width = this.$refs[value + index].offsetWidth + 35
-          if (width > 35 && width !== 0) {
+          const width = this.$refs[value + index].offsetWidth + 44
+          if (width > 44 && width !== 0) {
             sum += width
             if (flag && sum >= relatedServerWidth && num === 1) {
               flag = false
