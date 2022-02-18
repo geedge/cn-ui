@@ -59,12 +59,12 @@ export default {
       })
     },
     // 点击事件 控制弹框的展示隐藏，展示全部的数据
-    more (data, showMore, index) {
+    more (data, index) {
       if (index === 1) {
         // 展示数据
         this.relationshipMoreDataOne = data
         // 弹框的显示隐藏
-        this.relationshipShowMoreOne = !showMore
+        this.relationshipShowMoreOne = true
         // 展示当前弹框是，隐藏其他弹框
         this.relationshipShowMoreTow = false
       }
@@ -72,20 +72,14 @@ export default {
         // 展示数据
         this.relationshipMoreDataTow = data
         // 弹框的显示隐藏
-        this.relationshipShowMoreTow = !showMore
+        this.relationshipShowMoreTow = true
         // 展示当前弹框是，隐藏其他弹框
         this.relationshipShowMoreOne = false
       }
     },
     mouseout () {
-      this.timer = setTimeout(() => {
-        this.relationshipShowMoreTow = false
-        this.relationshipShowMoreOne = false
-      }, 300)
+      this.relationshipShowMoreTow = false
+      this.relationshipShowMoreOne = false
     }
-  },
-  beforeDestroy () {
-    // 移除定时器
-    clearInterval(this.timer)
-  },
+  }
 }

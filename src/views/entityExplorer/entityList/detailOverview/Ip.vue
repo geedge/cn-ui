@@ -55,8 +55,8 @@
             </div>
           </div>
           <div class="overview__domain-btn">
-            <div class="overview__domain-more" @click="more(relationshipDataOne, relationshipShowMoreOne, 1)" v-if="relationshipShowOne" @mouseout="mouseout()">...</div>
-            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreOne">
+            <div class="overview__domain-more" @click="more(relationshipDataOne, 1)" v-if="relationshipShowOne">...</div>
+            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreOne" v-ele-click-outside="mouseout">
               <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
                 <span v-if="item.domain" :title="item.domain">{{item.domain}}</span>
               </div>
@@ -74,8 +74,8 @@
             </div>
           </div>
           <div class="overview__domain-btn">
-            <div class="overview__domain-more" @click="more(relationshipDataTow, relationshipShowMoreTow, 2)" v-if="relationshipShowTow" @mouseout="mouseout()">...</div>
-            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreTow">
+            <div class="overview__domain-more" @click="more(relationshipDataTow, 2)" v-if="relationshipShowTow">...</div>
+            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreTow" v-ele-click-outside="mouseout">
               <div class="domain-more-tab" v-for="item in relationshipMoreDataTow" :key="item">
                 <span v-if="item.appName" :title="item.appName">{{item.appName}}</span>
               </div>
