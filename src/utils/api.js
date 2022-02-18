@@ -78,6 +78,7 @@ export const api = {
   detectionAttackType:'/interface/detection/filter/attackType',
   detectionOffenderIp:'/interface/detection/filter/offenderIp',
   detectionSeverity:'/interface/detection/filter/severity',
+  detectionListBasic:'/interface/detection/list/basic'
 }
 
 /* panel */

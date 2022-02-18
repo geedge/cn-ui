@@ -209,9 +209,8 @@ export const activeAttackBar = {
   grid: {
     top: 20,
     left: 10,
-    right: 25,
-    bottom: 20,
-    containLabel: true
+    right: 70,
+    bottom: 20
   },
   yAxis: {
     type: 'category',
@@ -226,6 +225,7 @@ export const activeAttackBar = {
   },
   series: [{
     barWidth: 5,
+    barMaxHeight:20,
     itemStyle: {
       normal: {
         color: function(params) {

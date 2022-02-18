@@ -1,0 +1,140 @@
+.cn-detection--list {
+  display: flex;
+  .cn-detection__collapse {
+    margin-bottom: 1px;
+    padding-top: 30px;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: #F3F7FA;
+
+    span {
+      transform: rotate(0);
+      transition: all linear .2s;
+      padding-top: 0;
+
+      &.reg-down {
+        padding-top: 2px;
+        transform: rotate(90deg);
+      }
+    }
+    span:hover {
+      cursor: pointer;
+    }
+
+    .cn-icon-arrow-right {
+      color: #ADBCCA;
+      font-size: 12px;
+    }
+  }
+  .cn-detection__case {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 9px 0;
+    margin-bottom: 1px;
+    background-color: white;
+
+    .cn-detection__icon {
+      margin-left: 13px;
+      margin-right: 13px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      justify-items: center;
+      align-items: center;
+      width: 5px;
+      height: 20px;
+      border-radius: 12px;
+    }
+    .cn-detection__row {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: center;
+      flex-wrap: wrap;
+
+      .cn-detection__header {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        font-size: 16px;
+        padding-bottom: 3px;
+        color: #333333;
+        align-items: center;
+        i {
+          color:#7b8fa2;
+          margin-right: 5px;
+          font-size:18px;
+        }
+        .line {
+          color:#da5656;
+          margin-left:12px;
+          font-size: xx-small;
+          font-weight: bold;
+        }
+        .circle {
+          width:10px;
+          height:10px;
+          border:2px solid #da5656;
+          border-radius: 10px;
+          margin-top: 4px;
+          margin-right:12px;
+        }
+      }
+      .cn-detection__body {
+        display: flex;
+        flex-direction: column;
+
+        .body__basic-info {
+          display: flex;
+          flex-direction: row;
+
+          .basic-info {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            .basic-info__item {
+              padding-right: 40px;
+              i {
+                padding-right: 6px;
+                color: #8FA1BE;
+                font-size: 14px;
+              }
+              span {
+                font-size: 14px;
+              }
+              span:first-of-type {
+                color: #999;
+              }
+              span:last-of-type {
+                color: #666;
+              }
+            }
+          }
+          .show-detail {
+            flex-shrink: 0;
+            padding: 0 30px;
+            font-size: 12px;
+            color: #3976CB;
+
+            &:hover {
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+    .cn-detection__detail-overview {
+      flex-basis: 100%;
+      padding: 0 10px;
+
+      .el-divider {
+        background-color: #EFF2F5;
+      }
+    }
+  }
+}

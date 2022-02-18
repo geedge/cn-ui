@@ -43,7 +43,7 @@
               <div class="chart-header" >
                 <div class="chart-header__title">{{$t('detection.activeAttacker')}}</div>
               </div>
-              <div class="chart-content" id="detectionActiveAttacker">
+              <div class="chart-content" style="" id="detectionActiveAttacker">
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@
           ></detection-list>
         </div>
       </div>
-      <div class="entity__pagination" style="position: absolute; bottom: 0; width: 100%;">
+      <div class="entity__pagination" >
         <Pagination
             ref="pagination"
             :page-obj="pageObj"
@@ -526,6 +526,76 @@ export default {
         })
       })
     },
+    initListData(){
+      const queryParams = {
+        ...this.timeFilter,
+        q:this.q,
+      }
+      get(api.detectionListBasic, queryParams).then(response => {
+        response = {
+          "code": 200,
+          "success": true,
+          "msg": "OK",
+          "data": {
+            "resultType": "table",
+            "result": [
+              {
+                "eventId": 1212,
+                "securityType": "ddos",
+                "offenderIp": "1.1.1.1",
+                "victimIp": "2.2.2.2",
+                "eventSecurity": "critical",
+                "malwareName": "the great wall",
+                "cryptominingPool": "a",
+                "startTime": 978456923589
+              },
+              {
+                "eventId": 1212,
+                "securityType": "ddos",
+                "offenderIp": "1.1.1.1",
+                "victimIp": "2.2.2.2",
+                "eventSecurity": "high",
+                "cryptominingPool": "a",
+                "startTime": 1111111111
+              },
+              {
+                "eventId": 1212,
+                "securityType": "ddos",
+                "offenderIp": "1.1.1.1",
+                "victimIp": "2.2.2.2",
+                "eventSecurity": "low",
+                "malwareName": "the great wall",
+                "startTime": 1111111111
+              },
+              {
+                "eventId": 1212,
+                "securityType": "ddos",
+                "offenderIp": "1.1.1.1",
+                "victimIp": "2.2.2.2",
+                "eventSecurity": "medium",
+                "malwareName": "the great wall",
+                "cryptominingPool": "a",
+                "startTime": 1111111111
+              },
+              {
+                "eventId": 1212,
+                "securityType": "ddos",
+                "offenderIp": "1.1.1.1",
+                "victimIp": "2.2.2.2",
+                "eventSecurity": "info",
+                "malwareName": "the great wall",
+                "cryptominingPool": "a",
+                "startTime": 1111111111
+              }
+            ]
+          }
+        }
+
+        if (response.code === 200) {
+          this.listData = response.data.result
+        }
+      })
+    },
     timeRefreshChange () {
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.timeFilter.dateRangeValue
@@ -582,6 +652,7 @@ export default {
     this.initSeverityPerData()
     this.initCategoryPerData()
     this.initActiveAttackData()
+    this.initListData()
   },
   watch: {
     timeFilter (n) {

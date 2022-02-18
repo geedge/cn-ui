@@ -1,12 +1,12 @@
 <template>
-  <div class="entity-list" id="detectionList">
-    <div class="entity__loading" style="background: #eff2f5;opacity: .6;" v-show="loading">
+  <div class="detection-list" id="detectionList">
+    <div class="detection__loading" style="background: #eff2f5;opacity: .6;" v-show="loading">
       <i class="el-icon-loading"></i>
     </div>
-    <div class="entity-list__content">
-      <div class="entity-list--list">
+    <div class="detection-list__content">
+      <div class="detection-list--list">
         <div class="no-data" v-if="noData">No data</div>
-        <div v-if="!isCollapse" @click="collapse" class="cn-entity__shadow"></div>
+        <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow"></div>
         <detection-row
             v-for="(data, index) in listData"
             :detection="data"
