@@ -9,7 +9,8 @@ export default {
       relationshipShowMoreOne: false, // 控制弹框的展示隐藏
       relationshipShowMoreTow: false, // 控制弹框的展示隐藏
       relationshipMoreDataOne: [], // 展示所有
-      relationshipMoreDataTow: [] // 展示所有
+      relationshipMoreDataTow: [], // 展示所有
+      timer: null
     }
   },
   methods: {
@@ -75,6 +76,16 @@ export default {
         // 展示当前弹框是，隐藏其他弹框
         this.relationshipShowMoreOne = false
       }
+    },
+    mouseout () {
+      this.timer = setTimeout(() => {
+        this.relationshipShowMoreTow = false
+        this.relationshipShowMoreOne = false
+      }, 300)
     }
-  }
+  },
+  beforeDestroy () {
+    // 移除定时器
+    clearInterval(this.timer)
+  },
 }

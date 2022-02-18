@@ -30,6 +30,7 @@
   }
   .cn-entity__case {
     flex: 1;
+    overflow: hidden;
     display: flex;
     flex-wrap: wrap;
     padding: 16px 0;
@@ -114,6 +115,7 @@
     .cn-entity__detail-overview {
       flex-basis: 100%;
       padding: 0 10px;
+      overflow: hidden;
 
       .el-divider {
         background-color: #EFF2F5;

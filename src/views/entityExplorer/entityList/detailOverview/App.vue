@@ -51,7 +51,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
     <div class="overview__content domain__content">
-      <div class="overview__tags domain__tags overview__app-tags" ref="relationship">
+      <div class="overview__tags domain__tags" ref="relationship">
         <div class="overview__domain-tabs">
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
@@ -62,9 +62,9 @@
               <span class="tag__desc">{{item.domain}}</span>
             </div>
           </div>
-          <div class="overview__domain-btn" @click="more(relationshipDataOne, relationshipShowMoreOne, 1)" v-if="relationshipShowOne">
-            <div class="overview__domain-more">...</div>
-            <div class="overview__domain-more-tabs show-more-app" v-if="relationshipShowMoreOne">
+          <div class="overview__domain-btn">
+            <div class="overview__domain-more" @click="more(relationshipDataOne, relationshipShowMoreOne, 1)" v-if="relationshipShowOne" @mouseout="mouseout()">...</div>
+            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreOne">
               <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
                 <span v-if="item.domain" :title="item.domain">{{item.domain}}</span>
               </div>
@@ -81,9 +81,9 @@
               <span class="tag__desc">{{item.ip}}</span>
             </div>
           </div>
-          <div class="overview__domain-btn" @click="more(relationshipDataTow, relationshipShowMoreTow, 2)" v-if="relationshipShowTow">
-            <div class="overview__domain-more">...</div>
-            <div class="overview__domain-more-tabs show-more-ip" v-if="relationshipShowMoreTow">
+          <div class="overview__domain-btn">
+            <div class="overview__domain-more" @click="more(relationshipDataTow, relationshipShowMoreTow, 2)" v-if="relationshipShowTow" @mouseout="mouseout()">...</div>
+            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreTow">
               <div class="domain-more-tab" v-for="item in relationshipMoreDataTow" :key="item">
                 <span v-if="item.ip" :title="item.ip">{{item.ip}}</span>
               </div>
