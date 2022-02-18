@@ -15,7 +15,7 @@
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
       <div class="detection__event-severity-bar" id="detectionEventSeverityBar"></div>
-        <div style="display: flex;">
+      <div style="display: flex;">
         <detection-filter
             :filter-data="filterData"
             :q="q"
@@ -81,7 +81,7 @@ import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize } from '@/utils/constants'
-import { getNowTime } from '@/utils/date-util'
+import {getNowTime, getSecond} from '@/utils/date-util'
 import { ref } from 'vue'
 import * as echarts from 'echarts'
 import { multipleBarOption,pieForSeverity,activeAttackBar,getAttackColor,getSeverityColor } from '@/views/detections/options/detectionOptions'
@@ -89,7 +89,6 @@ import ChartEchart from '@/views/charts/charts/ChartEchart'
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
 
-import { arrayIsEqual } from '@/utils/tools'
 export default {
   name: 'Index',
   components: {
@@ -145,6 +144,7 @@ export default {
         },
         {
           title: this.$t('detections.securityType'),
+          column: 'securityType',
           collapse: false,
           value: [],
           data: [
@@ -157,6 +157,7 @@ export default {
         },
         {
           title: this.$t('detections.victimIp'),
+          column: 'victimIp',
           collapse: false,
           value: [],
           showMore: true,
@@ -271,6 +272,7 @@ export default {
         },
         {
           title: this.$t('detections.victimLocation'),
+          column: 'victimLocation',
           collapse: false,
           value: [],
           showMore: false,
@@ -285,6 +287,7 @@ export default {
         },
         {
           title: this.$t('detections.offenderIp'),
+          column: 'offenderIp',
           collapse: false,
           value: [],
           showMore: false,
@@ -299,6 +302,7 @@ export default {
         },
         {
           title: this.$t('detections.offenderLocation'),
+          column: 'offenderLocation',
           collapse: false,
           value: [],
           showMore: false,
@@ -331,8 +335,9 @@ export default {
       this.eventSeverityOption = this.$_.cloneDeep(multipleBarOption)
 
       const queryParams = {
-        ...this.timeFilter,
-        q:this.q,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
       }
       get(api.detectionEventSeverity, queryParams).then(response => {
         response = {
@@ -384,10 +389,11 @@ export default {
       this.severityPerOption = this.$_.cloneDeep(pieForSeverity)
 
       const queryParams = {
-        ...this.timeFilter,
-        q:this.q,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
       }
-      get(api.detectionSeverity, queryParams).then(response => {
+      get(api.detectionEventSeverity, queryParams).then(response => {
         response = {
           "code": 200,
           "success": true,
@@ -415,6 +421,7 @@ export default {
           }
         }
         if (response.code === 200) {
+          this.filterData[0].data = response.data.result.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
           this.severityPerData = response.data.result.map(d => {
             return { value: d.count, name: d.eventSeverity,itemStyle:{color:getSeverityColor(d.eventSeverity)}}
           })
@@ -432,8 +439,9 @@ export default {
       this.categoryPerOption = this.$_.cloneDeep(pieForSeverity)
 
       const queryParams = {
-        ...this.timeFilter,
-        q:this.q,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
       }
       get(api.detectionAttackType, queryParams).then(response => {
         response = {
@@ -484,8 +492,9 @@ export default {
       this.activeAttackOption = this.$_.cloneDeep(activeAttackBar)
 
       const queryParams = {
-        ...this.timeFilter,
-        q:this.q,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
       }
       get(api.detectionOffenderIp, queryParams).then(response => {
         response = {
@@ -515,6 +524,7 @@ export default {
           }
         }
         if (response.code === 200) {
+          this.filterData[4].data = response.data.result.map(r => ({ label: r.offenderIp, value: r.offenderIp, count: r.count }))
           this.activeAttackData = response.data.result.map(d => {
             return [d.count,d.offenderIp]
           })
@@ -524,6 +534,42 @@ export default {
           this.activeAttackOption.series[0].data = this.activeAttackData.reverse()
           this.activeAttackOption && detectionChart.setOption(this.activeAttackOption);
         })
+      })
+    },
+    initVictimIp () {
+      const queryParams = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
+      }
+      get(api.detectionVictimIp, queryParams).then(response => {
+        if (response.data && response.data.result) {
+          this.filterData[2].data = response.data.result.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
+        }
+      })
+    },
+    initVictimLocation () {
+      const queryParams = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
+      }
+      get(api.detectionVictimLocation, queryParams).then(response => {
+        if (response.data && response.data.result) {
+          this.filterData[3].data = response.data.result.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
+        }
+      })
+    },
+    initOffenderLocation () {
+      const queryParams = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
+      }
+      get(api.detectionOffenderLocation, queryParams).then(response => {
+        if (response.data && response.data.result) {
+          this.filterData[5].data = response.data.result.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
+        }
       })
     },
     initListData(){
@@ -609,7 +655,30 @@ export default {
     dateTimeRangeChange (s, e, v) {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
-    search () {
+    search (metaList, formatSql) {
+      if (formatSql) {
+        this.q = formatSql
+        this.metaList = metaList
+      } else {
+        this.q = ''
+        this.metaList = []
+      }
+      this.queryFilter()
+      this.queryList()
+      this.queryListTotal()
+    },
+    queryFilter () {
+      this.initSeverityPerData()
+      this.initCategoryPerData()
+      this.initActiveAttackData()
+      this.initOffenderLocation()
+      this.initVictimIp()
+      this.initVictimLocation()
+    },
+    queryList () {
+
+    },
+    queryListTotal () {
 
     },
     filter (filterColumn) {
@@ -694,19 +763,6 @@ export default {
         this.$refs.search.changeParams({ column: this.filterData[5].column, oldValue: o, newValue: n })
       }
     }
-    /*filterData: {
-      deep: true,
-      handler (n, o) {
-        console.info(n, o)
-        n.forEach((f, i) => {
-          console.info(f.value, o[i].value)
-          console.info(arrayIsEqual(f.value, o[i].value))
-          if (!arrayIsEqual(f.value, o[i].value)) {
-            this.$refs.search.changeParams({ column: f.column, oldValue: o[i].value, newValue: f.value })
-          }
-        })
-      }
-    }*/
   },
   setup () {
     const dateRangeValue = 60

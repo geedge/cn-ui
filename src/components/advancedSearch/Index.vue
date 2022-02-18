@@ -79,13 +79,15 @@ export default {
       this.$refs.tagMode && this.$refs.tagMode.addParams(params)
       this.$refs.textMode && this.$refs.textMode.addParams(params)
     },
+    // params: [{column, operator, value}, ...]
     removeParams (params) {
       this.$refs.tagMode && this.$refs.tagMode.removeParams(params)
       this.$refs.textMode && this.$refs.textMode.removeParams(params)
     },
-    changeParams (n, o) {
-      this.$refs.tagMode && this.$refs.tagMode.changeParams(n, o)
-      this.$refs.textMode && this.$refs.textMode.changeParams(n, o)
+    // params: [{ newParam: {column, operator, value }, oldParam: { column, operator, value }], ...]
+    changeParams (params) {
+      this.$refs.tagMode && this.$refs.tagMode.changeParams(params)
+      this.$refs.textMode && this.$refs.textMode.changeParams(params)
     },
     setSql (sql) {
       if (this.searchMode === 'text') {

@@ -70,6 +70,8 @@ export default class SqlParser extends SqlParserVisitor {
               let tempArr = temp.split(',')
               tempArr = tempArr.map(t => meta.column.type === columnType.string ? stringInQuot(t.trim()) : t.trim())
               meta.value.value = `(${tempArr.join(',')})`
+            } else {
+              meta.value.value = meta.column.type === columnType.string ? stringInQuot(meta.value.value.trim()) : meta.value.value.trim()
             }
             meta.value.label = meta.value.value
           }
@@ -156,7 +158,7 @@ export default class SqlParser extends SqlParserVisitor {
               tempArr = tempArr.map(t => this.tempMeta.column.type === columnType.string ? stringInQuot(t.trim()) : t.trim())
               this.tempMeta.value.value = `(${tempArr.join(',')})`
             } else {
-              this.tempMeta.value.value = value
+              this.tempMeta.value.value = this.tempMeta.column.type === columnType.string ? stringInQuot(value.trim()) : value.trim()
             }
             this.tempMeta.value.label = this.tempMeta.value.value
           }
