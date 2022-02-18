@@ -48,7 +48,7 @@
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataOne.length}}</span>
-              <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
+              <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedDomains')}}</span>
             </div>
             <div class="overview__tag domain__tag-list" :ref="'relatedIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
               <span class="tag__desc">{{item.domain}}</span>
@@ -67,7 +67,7 @@
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataTow.length}}</span>
-              <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
+              <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedApp')}}</span>
             </div>
             <div class="overview__tag domain__tag-list" :ref="'relatedServerIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
               <span class="tag__desc">{{item.appName}}</span>
