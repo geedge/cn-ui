@@ -104,21 +104,27 @@ export default {
       })
       toRaw(this.codeMirror).setValue(current)
     },
-    removeParams () {
-
+    removeParams (params) {
+      let current = this.codeMirror.getValue()
+      params.forEach(param => {
+        const column = this.columnList.find(c => c.name === param.column)
+        // 将对应内容替换为空串
+        const sqlPiece = `${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`.trim()
+        current = current.replace(sqlPiece, '')
+      })
+      toRaw(this.codeMirror).setValue(current)
     },
     changeParams (params) {
-      Object.keys(params).forEach(key => {
-        const column = this.columnList.find(column => {
-          return column.name === key
-        })
-        console.info(this.columnList, params)
-        let current = this.codeMirror.getValue()
-        let selected = column.value
-        // if (selected && selected.length )
-        current = `${current ? current + 'AND ' : ''}${key}=${(column.type === columnType.string ? stringInQuot(params[key]) : params[key])}`
-        toRaw(this.codeMirror).setValue(current)
+      let current = this.codeMirror.getValue()
+      params.forEach(param => {
+        const oldColumn = this.columnList.find(c => c.name === param.oldParam.column)
+        const newColumn = this.columnList.find(c => c.name === param.newParam.column)
+        // 将oldParam内容替换为newParam
+        const oldSqlPiece = `${param.oldParam.column}${handleOperatorSpace(param.oldParam.operator)}${this.handleValue(param.oldParam.value, oldColumn, param.oldParam.operator)}`.trim()
+        const newSqlPiece = `${param.newParam.column}${handleOperatorSpace(param.newParam.operator)}${this.handleValue(param.newParam.value, newColumn, param.newParam.operator)}`.trim()
+        current = current.replace(oldSqlPiece, newSqlPiece)
       })
+      toRaw(this.codeMirror).setValue(current)
     }
   },
   watch: {

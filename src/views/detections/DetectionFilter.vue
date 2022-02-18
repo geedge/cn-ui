@@ -1,7 +1,7 @@
 <template>
   <div class="detection-filter-case">
     <template v-for="(filter, index) in filterData" :key="index">
-      <div class="detection-filter">
+      <div class="detection-filter" v-show="filter.data.length > 0">
         <div class="filter__header" @click="filter.collapse = !filter.collapse">
           <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': !filter.collapse }"></i>
           <span>{{filter.title}}</span>

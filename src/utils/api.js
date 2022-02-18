@@ -73,10 +73,13 @@ export const api = {
   entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security',
   entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
   entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp',
-  //detection
-  detectionEventSeverity:'/interface/detection/filter/severity',
-  detectionAttackType:'/interface/detection/filter/attackType',
-  detectionOffenderIp:'/interface/detection/filter/offenderIp',
+  // detection
+  detectionEventSeverity: '/interface/detection/filter/severity',
+  detectionAttackType: '/interface/detection/filter/attackType',
+  detectionOffenderIp: '/interface/detection/filter/offenderIp',
+  detectionOffenderLocation: '/interface/detection/filter/offenderLocation',
+  detectionVictimIp: '/interface/detection/filter/victimIp',
+  detectionVictimLocation: '/interface/detection/filter/victimLocation',
   detectionSeverity:'/interface/detection/filter/severity',
   detectionListBasic:'/interface/detection/list/basic'
 }

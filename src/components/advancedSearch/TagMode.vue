@@ -242,8 +242,8 @@ export default {
       this.$emit('changeMode', 'text', formatSql)
     },
     // 处理value，例如转换IN的值
-    handleValue (value, column) {
-      const isArray = ['IN', 'NOT IN'].indexOf(column.operator.value) > -1
+    handleValue (value, column, operator) {
+      const isArray = ['IN', 'NOT IN'].indexOf(operator) > -1
       if (isArray) {
         if (this.$_.isArray(value)) {
           value = value.map(v => column.type === columnType.string ? stringInQuot(v) : v)
@@ -266,14 +266,39 @@ export default {
         meta.column.label = column ? column.label : param.column
         meta.operator.value = '='
         meta.operator.show = true
-        meta.value.value = this.handleValue(param.value, column)
+        meta.value.value = this.handleValue(param.value, column, column.operator)
         meta.value.show = true
         meta.value.label = meta.value.value
         this.addCondition(meta)
       })
     },
     changeParams (params) {
-
+      params.forEach(param => {
+        const oldColumn = this.columnList.find(column => {
+          return column.name === param.oldParam.column
+        })
+        const newColumn = this.columnList.find(column => {
+          return column.name === param.newParam.column
+        })
+        const meta = this.metaList.find(m => m.column.name === oldColumn.name && m.operator.value === param.oldParam.operator && m.value.value === this.handleValue(param.oldParam.value, oldColumn, param.oldParam.operator))
+        if (meta) {
+          meta.column.name = newColumn.name
+          meta.column.type = newColumn.type
+          meta.column.label = newColumn.label ? newColumn.label : newColumn.name
+          meta.operator.value = param.newParam.operator
+          meta.value.value = this.handleValue(param.newParam.value, newColumn, param.newParam.operator)
+          meta.value.label = meta.value.value
+        }
+      })
+    },
+    removeParams (params) {
+      params.forEach(param => {
+        const column = this.columnList.find(c => {
+          return c.name === param.column
+        })
+        const metaIndex = this.metaList.findIndex(m => m.column.name === param.column && m.operator.value === param.operator && m.value.value === this.handleValue(param.value, column, param.operator))
+        this.metaList.splice(metaIndex, 1)
+      })
     }
   },
   watch: {

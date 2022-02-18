@@ -7,7 +7,7 @@
             :column-list="columnList"
             :operator-list="operatorList"
             :connection-list="connectionList"
-            :full-text="true"
+            :full-text="false"
             class="advanced-search--show-list"
             @search="search"
         ></advanced-search>
@@ -75,8 +75,8 @@ export default {
     }
   },
   methods: {
-    search () {
-
+    search (metaList, formatSql) {
+      this.$emit('search', metaList, formatSql)
     },
     changeParams (params) { // params: { column: columnName, oldValue: [...], newValue: [...] }
       // 向下传递时需要再转换一次param格式为[{column, operator, value}, ...]
@@ -93,7 +93,7 @@ export default {
         const p = {
           column: humpToLine(params.column),
           operator: '=',
-          value: params.newValue
+          value: params.oldValue
         }
         this.$refs.search.removeParams([p])
       } else if (params.oldValue.length === 2 && params.newValue.length === 1) {
@@ -108,8 +108,8 @@ export default {
           operator: '=',
           value: params.newValue
         }
-        this.$refs.search.changeParams(newParam, oldParam)
-      } else if (params.oldValue.length === 1 && params.newArray.length === 2) {
+        this.$refs.search.changeParams([{ newParam, oldParam }])
+      } else if (params.oldValue.length === 1 && params.newValue.length === 2) {
         // 4.参数值数量从1到多, operator由'='改为'in'
         const oldParam = {
           column: humpToLine(params.column),
@@ -121,7 +121,20 @@ export default {
           operator: 'IN',
           value: params.newValue
         }
-        this.$refs.search.changeParams(newParam, oldParam)
+        this.$refs.search.changeParams([{ newParam, oldParam }])
+      } else {
+        // 5.参数值数量从多到多，加1或者减1
+        const oldParam = {
+          column: humpToLine(params.column),
+          operator: 'IN',
+          value: params.oldValue
+        }
+        const newParam = {
+          column: humpToLine(params.column),
+          operator: 'IN',
+          value: params.newValue
+        }
+        this.$refs.search.changeParams([{ newParam, oldParam }])
       }
     }
   }
