@@ -344,9 +344,10 @@ export default {
   },
   mounted () {
     this.showLoading(true)
-    setTimeout(() => {
-      this.getChartData()
-    }, 200)
+    this.getChartData()
+    // setTimeout(() => {
+    //   this.getChartData()
+    // }, 200)
   },
   setup (props) {
     const dateRangeValue = 60
