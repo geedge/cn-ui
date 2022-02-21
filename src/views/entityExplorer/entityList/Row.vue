@@ -20,7 +20,10 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
                   <span>{{$t('overall.region')}}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{entityData.ipLocationProvince ? (entityData.ipLocationProvince + ', ' + entityData.ipLocationCity) : '-'}}</span>
+                  <span v-if="entityData.ipLocationProvince !== 'null' && entityData.ipLocationCity !== 'null'">{{$_.get(entityData, 'ipLocationProvince') + ', ' + $_.get(entityData, 'ipLocationCity') || '-'}}</span>
+                  <span v-else-if="entityData.ipLocationProvince !== 'null'">{{$_.get(entityData, 'ipLocationProvince')}}</span>
+                  <span v-else-if="entityData.ipLocationCity !== 'null'">{{$_.get(entityData, 'ipLocationCity')}}</span>
+                  <span v-else>-</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-cloud"></i>
