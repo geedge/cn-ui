@@ -141,7 +141,7 @@
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
         <div class="row__content">{{entityData.alertNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font" v-for="alert in entityData.alertList">
+      <div class="overview__row overview__row--small-font" v-for="(alert, index) in entityData.alertList" :key="index">
         <div class="row__label row__label--width160">{{alert.startTime}}</div>
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high">{{alert.alertSeverity}}</div>
@@ -193,7 +193,7 @@ import entityDetailMixin from './entityDetailMixin'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
-import _, { lowerFirst } from 'lodash'
+import _ from 'lodash'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
 export default {

@@ -133,7 +133,7 @@
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
         <div class="row__content">{{entityData.alertNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font"   v-for="alert in entityData.alertList">
+      <div class="overview__row overview__row--small-font"   v-for="(alert, index) in entityData.alertList" :key="index">
         <div class="row__label row__label--width160">{{alert.startTime}}</div>
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high">{{alert.alertSeverity}}</div>
@@ -153,7 +153,7 @@
         <div class="row__label">{{$t('entities.recentSecurity')}}</div>
         <div class="row__content">{{entityData.securityNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font"   v-for="security in entityData.securityList">
+      <div class="overview__row overview__row--small-font"   v-for="(security, index) in entityData.securityList" :key="index">
         <div class="row__label row__label--width160">{{security.startTime}}</div>
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high">{{security.securitySeverity}}</div>

@@ -137,9 +137,6 @@ export default {
     },
     curGalaxyProxy: Object // 实体，{ name: '', path: '', icon: icon-class }
   },
-  components: {
-    VAceEditor
-  },
   data () {
     return {
       show: false,
