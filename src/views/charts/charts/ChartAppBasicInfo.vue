@@ -56,7 +56,7 @@
 
 <script>
 export default {
-  name: "ChartAppBasicInfo",
+  name: 'ChartAppBasicInfo',
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -67,7 +67,7 @@ export default {
 
     }
   },
-  mounted() {
+  mounted () {
   }
 }
 </script>

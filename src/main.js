@@ -14,7 +14,6 @@ import '@/assets/css/main.scss' // 样式入口
 import VueGridLayout from 'vue-grid-layout'
 import ElementPlus from 'element-plus'
 import bus from 'tiny-emitter'
-const emitter = new bus()
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc' // dependent on utc plugin
 import timezone from 'dayjs/plugin/timezone'
@@ -24,14 +23,15 @@ import weekday from 'dayjs/plugin/weekday'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import PanelChartList from '@/views/charts/PanelChartList'
+const emitter = new bus()
 
 const _ = require('lodash') // lodash工具
 
-/*dayjs.extend(utc)
+/* dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
 dayjs.extend(weekday)
-window.$dayJs = dayjs*/
+window.$dayJs = dayjs */
 
 const app = createApp(App)
 

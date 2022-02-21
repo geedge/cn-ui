@@ -52,7 +52,7 @@ import dataListMixin from '@/mixins/data-list'
 import rolesTable from '@/components/table/settings/RoleTable'
 import roleBox from '@/components/rightBox/settings/RoleBox'
 import { api } from '@/utils/api'
-import {get} from "@/utils/http";
+import { get } from '@/utils/http'
 
 export default {
   name: 'roles',

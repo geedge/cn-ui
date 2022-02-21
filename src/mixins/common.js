@@ -1,5 +1,5 @@
 import { hasButton } from '@/permission'
-import {getMillisecond} from "@/utils/date-util";
+import { getMillisecond } from '@/utils/date-util'
 export default {
   data () {
     return {
