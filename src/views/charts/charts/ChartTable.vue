@@ -67,10 +67,9 @@ export default {
     },
     getTargetPageData (pageNum, pageSize, tableData) {
       return this.$_.slice(tableData, (pageNum - 1) * pageSize, pageNum * pageSize)
-    },
+    }
   },
-  mounted() {
+  mounted () {
   }
 }
 </script>
-

@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  name: "ChartCryptocurrencyEventList",
+  name: 'ChartCryptocurrencyEventList',
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -33,12 +33,12 @@ export default {
   data () {
     return {
       chartDate: [
-        {message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'},
-        {message: 'Traffic ', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'},
-        {message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'},
-        {message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'},
-        {message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'},
-        {message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25'}
+        { message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25' },
+        { message: 'Traffic ', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25' },
+        { message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25' },
+        { message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25' },
+        { message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25' },
+        { message: 'Traffic', serverIP: '1.3.2.2', clientIP: '1.3.2.2', time: '2022-01-19 20:06:25' }
       ]
     }
   }

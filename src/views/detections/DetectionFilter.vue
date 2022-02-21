@@ -46,9 +46,9 @@ export default {
     }
   },
   methods: {
-    /*filterChange (value, filter) {
+    /* filterChange (value, filter) {
       this.$emit('filter', filter.column)
-    },*/
+    }, */
     showMore (filter) {
       filter.showIndex && (filter.showIndex += 10)
       filter.showIndex >= filter.data.length && (filter.showMore = false)

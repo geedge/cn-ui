@@ -74,14 +74,14 @@ export const api = {
   entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
   entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp',
   // detection
-  detectionEventSeverity: '/interface/detection/filter/severity',
+  detectionSeverityTrend: '/interface/detection/filter/severityTrend',
   detectionAttackType: '/interface/detection/filter/attackType',
   detectionOffenderIp: '/interface/detection/filter/offenderIp',
   detectionOffenderLocation: '/interface/detection/filter/offenderLocation',
   detectionVictimIp: '/interface/detection/filter/victimIp',
   detectionVictimLocation: '/interface/detection/filter/victimLocation',
-  detectionSeverity:'/interface/detection/filter/severity',
-  detectionListBasic:'/interface/detection/list/basic'
+  detectionSeverity: '/interface/detection/filter/severity',
+  detectionListBasic: '/interface/detection/list/basic'
 }
 
 /* panel */
@@ -157,7 +157,7 @@ export async function getPermission () {
 }
 
 export async function getI18n () {
-  const dictData = await getDictList( { type: 'lang'})
+  const dictData = await getDictList({ type: 'lang' })
   const langs = dictData.map(d => d.value).join(',')
   localStorage.setItem(storageKey.languages, langs)
   const request = new Promise(resolve => {

@@ -49,10 +49,10 @@
 </template>
 
 <script>
-import {unitTypes} from '@/utils/constants'
+import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 export default {
-  name: "ChartActiveIpTable",
+  name: 'ChartActiveIpTable',
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -92,7 +92,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
   }
 }
 </script>

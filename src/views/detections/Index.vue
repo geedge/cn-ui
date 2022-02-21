@@ -25,22 +25,22 @@
 
         <div class="detection__list">
           <div class="detection__list-statistics">
-            <div class="statistics__severity" >
-              <div class="chart-header" >
+            <div class="statistics__severity">
+              <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.severity')}}</div>
               </div>
               <div class="chart-content" id="detectionSeverityPer">
               </div>
             </div>
-            <div class="statistics__category" >
-              <div class="chart-header" >
+            <div class="statistics__category">
+              <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.categoryProportion')}}</div>
               </div>
               <div class="chart-content" id="detectionCategoryPer">
               </div>
             </div>
-            <div class="statistics__active-attack" >
-              <div class="chart-header" >
+            <div class="statistics__active-attack">
+              <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.activeAttacker')}}</div>
               </div>
               <div class="chart-content" style="" id="detectionActiveAttacker">
@@ -57,7 +57,7 @@
           ></detection-list>
         </div>
       </div>
-      <div class="entity__pagination" >
+      <div class="entity__pagination">
         <Pagination
             ref="pagination"
             :page-obj="pageObj"
@@ -81,10 +81,10 @@ import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize } from '@/utils/constants'
-import {getNowTime, getSecond} from '@/utils/date-util'
+import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import * as echarts from 'echarts'
-import { multipleBarOption,pieForSeverity,activeAttackBar,getAttackColor,getSeverityColor } from '@/views/detections/options/detectionOptions'
+import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor } from '@/views/detections/options/detectionOptions'
 import ChartEchart from '@/views/charts/charts/ChartEchart'
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
@@ -114,46 +114,14 @@ export default {
           column: 'eventSeverity',
           collapse: false,
           value: [], // value之间是or的关系
-          data: [
-            {
-              label: 'Critical',
-              value: 'critical',
-              count: 50
-            },
-            {
-              label: 'High',
-              value: 'high',
-              count: 50
-            },
-            {
-              label: 'Medium',
-              value: 'medium',
-              count: 50
-            },
-            {
-              label: 'Low',
-              value: 'low',
-              count: 50
-            },
-            {
-              label: 'Info',
-              value: 'info',
-              count: 50
-            }
-          ] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
+          data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
         },
         {
           title: this.$t('detections.securityType'),
           column: 'securityType',
           collapse: false,
           value: [],
-          data: [
-            {
-              label: 'Command and control',
-              value: 'command and control',
-              count: 50
-            }
-          ] // 从接口动态获取
+          data: [] // 从接口动态获取
         },
         {
           title: this.$t('detections.victimIp'),
@@ -162,117 +130,11 @@ export default {
           value: [],
           showMore: true,
           showIndex: 9,
-          data: [
-            {
-              label: '1.2.6.8',
-              value: '1.2.6.8',
-              count: 50
-            },
-            {
-              label: '1.2.6.9',
-              value: '1.2.6.9',
-              count: 50
-            },
-            {
-              label: '1.2.6.0',
-              value: '1.2.6.0',
-              count: 50
-            },
-            {
-              label: '1.2.6.1',
-              value: '1.2.6.1',
-              count: 50
-            },
-            {
-              label: '1.2.6.2',
-              value: '1.2.6.2',
-              count: 50
-            },
-            {
-              label: '1.2.6.3',
-              value: '1.2.6.3',
-              count: 50
-            },
-            {
-              label: '1.2.6.4',
-              value: '1.2.6.4',
-              count: 50
-            },
-            {
-              label: '1.2.6.5',
-              value: '1.2.6.5',
-              count: 50
-            },
-            {
-              label: '1.2.6.6',
-              value: '1.2.6.6',
-              count: 50
-            },
-            {
-              label: '1.2.6.7',
-              value: '1.2.6.7',
-              count: 50
-            },
-            {
-              label: '1.2.7.8',
-              value: '1.2.7.8',
-              count: 50
-            },
-            {
-              label: '1.2.8.8',
-              value: '1.2.8.8',
-              count: 50
-            },
-            {
-              label: '1.2.9.8',
-              value: '1.2.9.8',
-              count: 50
-            },
-            {
-              label: '1.2.6.18',
-              value: '1.2.6.18',
-              count: 50
-            },
-            {
-              label: '1.2.6.28',
-              value: '1.2.6.28',
-              count: 50
-            },
-            {
-              label: '1.2.6.38',
-              value: '1.2.6.38',
-              count: 50
-            },
-            {
-              label: '1.2.6.48',
-              value: '1.2.6.48',
-              count: 50
-            },
-            {
-              label: '1.2.6.58',
-              value: '1.2.6.58',
-              count: 50
-            },
-            {
-              label: '1.2.6.68',
-              value: '1.2.6.68',
-              count: 50
-            },
-            {
-              label: '1.2.6.78',
-              value: '1.2.6.78',
-              count: 50
-            },
-            {
-              label: '1.2.6.88',
-              value: '1.2.6.88',
-              count: 50
-            }
-          ] // 从接口动态获取
+          data: [] // 从接口动态获取
         },
         {
           title: this.$t('detections.victimLocation'),
-          column: 'victimLocation',
+          column: 'victimLocationCountry',
           collapse: false,
           value: [],
           showMore: false,
@@ -302,7 +164,7 @@ export default {
         },
         {
           title: this.$t('detections.offenderLocation'),
-          column: 'offenderLocation',
+          column: 'offenderLocationCountry',
           collapse: false,
           value: [],
           showMore: false,
@@ -319,19 +181,19 @@ export default {
       listData: [],
       listLoading: false,
       eventSeverityOption: null,
-      eventSeverityData:[],
+      eventSeverityData: [],
       severityPerOption: null,
-      severityPerData:[],
+      severityPerData: [],
       categoryPerOption: null,
-      categoryPerData:[],
+      categoryPerData: [],
       activeAttackOption: null,
-      activeAttackData:[],
+      activeAttackData: []
     }
   },
   methods: {
-    initEventSeverityData(){
-      const chartDom = document.getElementById('detectionEventSeverityBar');
-      const detectionChart = echarts.init(chartDom);
+    initEventSeverityTrendData () {
+      const chartDom = document.getElementById('detectionEventSeverityBar')
+      const detectionChart = echarts.init(chartDom)
       this.eventSeverityOption = this.$_.cloneDeep(multipleBarOption)
 
       const queryParams = {
@@ -339,53 +201,53 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         q: this.q
       }
-      get(api.detectionEventSeverity, queryParams).then(response => {
+      get(api.detectionSeverityTrend, queryParams).then(response => {
         response = {
-          "code": 200,
-          "success": true,
-          "msg": "OK",
-          "data": {
-            "resultType": "table",
-            "result": [
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
               {
-                "eventSeverity": "Critical",
-                "count": 1048
-              },{
-                "eventSeverity": "High",
-                "count": 735
-              },{
-                "eventSeverity": "Medium",
-                "count": 580
-              },{
-                "eventSeverity": "Low",
-                "count": 484
-              },{
-                "eventSeverity": "Info",
-                "count": 300
+                eventSeverity: 'Critical',
+                count: 1048
+              }, {
+                eventSeverity: 'High',
+                count: 735
+              }, {
+                eventSeverity: 'Medium',
+                count: 580
+              }, {
+                eventSeverity: 'Low',
+                count: 484
+              }, {
+                eventSeverity: 'Info',
+                count: 300
               }
             ]
           }
         }
         if (response.code === 200) {
           this.eventSeverityData = [
-            ['time', '2021/11/12 12:00', '2021/11/13 12:00', '2021/11/14 12:00', '2021/11/15 12:00','2021/11/16 12:00','2021/11/17 12:00','2021/11/18 12:00','2021/11/19 12:00','2021/11/20 12:00','2021/11/21 12:00'],
-            ['Critical', 5, 0, 2, 0,0,3,3,0,4,2],
-            ['High', 5, 7, 3,0, 0,3,3,20,2,2],
-            ['Medium', 10, 8, 20, 8,0,5,5,5,5,20],
-            ['Low', 18, 6, 5, 0,0,2,20,2,2,2],
-            ['Info', 16, 10, 4, 0,7,0,8,5,15,1]
+            ['time', '2021/11/12 12:00', '2021/11/13 12:00', '2021/11/14 12:00', '2021/11/15 12:00', '2021/11/16 12:00', '2021/11/17 12:00', '2021/11/18 12:00', '2021/11/19 12:00', '2021/11/20 12:00', '2021/11/21 12:00'],
+            ['Critical', 5, 0, 2, 0, 0, 3, 3, 0, 4, 2],
+            ['High', 5, 7, 3, 0, 0, 3, 3, 20, 2, 2],
+            ['Medium', 10, 8, 20, 8, 0, 5, 5, 5, 5, 20],
+            ['Low', 18, 6, 5, 0, 0, 2, 20, 2, 2, 2],
+            ['Info', 16, 10, 4, 0, 7, 0, 8, 5, 15, 1]
           ]
         }
       }).finally(() => {
         this.$nextTick(() => {
           this.eventSeverityOption.dataset.source = this.eventSeverityData
-          this.eventSeverityOption && detectionChart.setOption(this.eventSeverityOption);
+          this.eventSeverityOption && detectionChart.setOption(this.eventSeverityOption)
         })
       })
     },
-    initSeverityPerData(){
-      const chartDom = document.getElementById('detectionSeverityPer');
-      const detectionChart = echarts.init(chartDom);
+    initSeverityPerData () {
+      const chartDom = document.getElementById('detectionSeverityPer')
+      const detectionChart = echarts.init(chartDom)
       this.severityPerOption = this.$_.cloneDeep(pieForSeverity)
 
       const queryParams = {
@@ -395,27 +257,27 @@ export default {
       }
       get(api.detectionEventSeverity, queryParams).then(response => {
         response = {
-          "code": 200,
-          "success": true,
-          "msg": "OK",
-          "data": {
-            "resultType": "table",
-            "result": [
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
               {
-                "eventSeverity": "Critical",
-                "count": 1048
-              },{
-                "eventSeverity": "High",
-                "count": 735
-              },{
-                "eventSeverity": "Medium",
-                "count": 580
-              },{
-                "eventSeverity": "Low",
-                "count": 484
-              },{
-                "eventSeverity": "Info",
-                "count": 300
+                eventSeverity: 'Critical',
+                count: 1048
+              }, {
+                eventSeverity: 'High',
+                count: 735
+              }, {
+                eventSeverity: 'Medium',
+                count: 580
+              }, {
+                eventSeverity: 'Low',
+                count: 484
+              }, {
+                eventSeverity: 'Info',
+                count: 300
               }
             ]
           }
@@ -423,19 +285,19 @@ export default {
         if (response.code === 200) {
           this.filterData[0].data = response.data.result.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
           this.severityPerData = response.data.result.map(d => {
-            return { value: d.count, name: d.eventSeverity,itemStyle:{color:getSeverityColor(d.eventSeverity)}}
+            return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
           })
         }
       }).finally(() => {
         this.$nextTick(() => {
           this.severityPerOption.series[0].data = this.severityPerData
-          this.severityPerOption && detectionChart.setOption(this.severityPerOption);
+          this.severityPerOption && detectionChart.setOption(this.severityPerOption)
         })
       })
     },
-    initCategoryPerData(){
-      const chartDom = document.getElementById('detectionCategoryPer');
-      const detectionChart = echarts.init(chartDom);
+    initCategoryPerData () {
+      const chartDom = document.getElementById('detectionCategoryPer')
+      const detectionChart = echarts.init(chartDom)
       this.categoryPerOption = this.$_.cloneDeep(pieForSeverity)
 
       const queryParams = {
@@ -445,50 +307,50 @@ export default {
       }
       get(api.detectionAttackType, queryParams).then(response => {
         response = {
-          "code": 200,
-          "success": true,
-          "msg": "OK",
-          "data": {
-            "resultType": "table",
-            "result": [
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
               {
-                "attackType": "Command and control",
-                "count": 1048
-              },{
-                "attackType": "Payload_delivery",
-                "count": 735
-              },{
-                "attackType": "Cryptomining",
-                "count": 580
-              },{
-                "attackType": "phishing",
-                "count": 484
-              },{
-                "attackType": "dga",
-                "count": 300
-              },{
-                "attackType": "ddos",
-                "count": 50
-              },
+                attackType: 'Command and control',
+                count: 1048
+              }, {
+                attackType: 'Payload_delivery',
+                count: 735
+              }, {
+                attackType: 'Cryptomining',
+                count: 580
+              }, {
+                attackType: 'phishing',
+                count: 484
+              }, {
+                attackType: 'dga',
+                count: 300
+              }, {
+                attackType: 'ddos',
+                count: 50
+              }
             ]
           }
         }
         if (response.code === 200) {
+          this.filterData[1].data = response.data.result.map(r => ({ label: r.attackType, value: r.attackType, count: r.count }))
           this.categoryPerData = response.data.result.map(d => {
-            return { value: d.count, name: d.attackType,itemStyle:{color:getAttackColor(d.attackType)}}
+            return { value: d.count, name: d.attackType, itemStyle: { color: getAttackColor(d.attackType) } }
           })
         }
       }).finally(() => {
         this.$nextTick(() => {
           this.categoryPerOption.series[0].data = this.categoryPerData
-          this.categoryPerOption && detectionChart.setOption(this.categoryPerOption);
+          this.categoryPerOption && detectionChart.setOption(this.categoryPerOption)
         })
       })
-
     },
-    initActiveAttackData(){
-      const chartDom = document.getElementById('detectionActiveAttacker');
-      const detectionChart = echarts.init(chartDom);
+    initActiveAttackData () {
+      const chartDom = document.getElementById('detectionActiveAttacker')
+      const detectionChart = echarts.init(chartDom)
       this.activeAttackOption = this.$_.cloneDeep(activeAttackBar)
 
       const queryParams = {
@@ -498,41 +360,44 @@ export default {
       }
       get(api.detectionOffenderIp, queryParams).then(response => {
         response = {
-          "code": 200,
-          "success": true,
-          "msg": "OK",
-          "data": {
-            "resultType": "table",
-            "result": [
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
               {
-                "offenderIp": "192.168.12.21",
-                "count": 99999
-              },{
-                "offenderIp": "192.168.22.21",
-                "count": 88888
-              },{
-                "offenderIp": "192.168.32.21",
-                "count": 77777
-              },{
-                "offenderIp": "192.168.42.21",
-                "count": 66666
-              },{
-                "offenderIp": "192.168.52.21",
-                "count": 55555
+                offenderIp: '192.168.12.21',
+                count: 99999
+              }, {
+                offenderIp: '192.168.22.21',
+                count: 88888
+              }, {
+                offenderIp: '192.168.32.21',
+                count: 77777
+              }, {
+                offenderIp: '192.168.42.21',
+                count: 66666
+              }, {
+                offenderIp: '192.168.52.21',
+                count: 55555
               }
             ]
           }
         }
         if (response.code === 200) {
           this.filterData[4].data = response.data.result.map(r => ({ label: r.offenderIp, value: r.offenderIp, count: r.count }))
+          const { showMore, showIndex } = this.computeFilterPage(this.filterData[4].data)
+          this.filterData[4].showMore = showMore
+          this.filterData[4].showIndex = showIndex
           this.activeAttackData = response.data.result.map(d => {
-            return [d.count,d.offenderIp]
+            return [d.count, d.offenderIp]
           })
         }
       }).finally(() => {
         this.$nextTick(() => {
           this.activeAttackOption.series[0].data = this.activeAttackData.reverse()
-          this.activeAttackOption && detectionChart.setOption(this.activeAttackOption);
+          this.activeAttackOption && detectionChart.setOption(this.activeAttackOption)
         })
       })
     },
@@ -543,8 +408,105 @@ export default {
         q: this.q
       }
       get(api.detectionVictimIp, queryParams).then(response => {
+        response = {
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
+              {
+                victimIp: '1.2.6.8',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.9',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.0',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.1',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.2',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.3',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.4',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.5',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.6',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.7',
+                count: 50
+              },
+              {
+                victimIp: '1.2.7.8',
+                count: 50
+              },
+              {
+                victimIp: '1.2.8.8',
+                count: 50
+              },
+              {
+                victimIp: '1.2.9.8',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.18',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.28',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.38',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.48',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.58',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.68',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.78',
+                count: 50
+              },
+              {
+                victimIp: '1.2.6.88',
+                count: 50
+              }
+            ]
+          }
+        }
         if (response.data && response.data.result) {
           this.filterData[2].data = response.data.result.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
+          const { showMore, showIndex } = this.computeFilterPage(this.filterData[2].data)
+          this.filterData[2].showMore = showMore
+          this.filterData[2].showIndex = showIndex
         }
       })
     },
@@ -555,8 +517,25 @@ export default {
         q: this.q
       }
       get(api.detectionVictimLocation, queryParams).then(response => {
+        response = {
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
+              {
+                victimLocationCountry: 'china',
+                count: 50
+              }
+            ]
+          }
+        }
         if (response.data && response.data.result) {
           this.filterData[3].data = response.data.result.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
+          const { showMore, showIndex } = this.computeFilterPage(this.filterData[3].data)
+          this.filterData[3].showMore = showMore
+          this.filterData[3].showIndex = showIndex
         }
       })
     },
@@ -567,71 +546,204 @@ export default {
         q: this.q
       }
       get(api.detectionOffenderLocation, queryParams).then(response => {
+        response = {
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
+              {
+                offenderLocationCountry: 'china',
+                count: 50
+              }
+            ]
+          }
+        }
         if (response.data && response.data.result) {
-          this.filterData[5].data = response.data.result.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
+          this.filterData[5].data = response.data.result.map(r => ({ label: r.offenderLocationCountry, value: r.offenderLocationCountry, count: r.count }))
+          const { showMore, showIndex } = this.computeFilterPage(this.filterData[5].data)
+          this.filterData[5].showMore = showMore
+          this.filterData[5].showIndex = showIndex
         }
       })
     },
-    initListData(){
+    computeFilterPage (data) {
+      return {
+        showMore: data.length > 10,
+        showIndex: 9
+      }
+    },
+    queryList () {
       const queryParams = {
         ...this.timeFilter,
-        q:this.q,
+        q: this.q
       }
       get(api.detectionListBasic, queryParams).then(response => {
         response = {
-          "code": 200,
-          "success": true,
-          "msg": "OK",
-          "data": {
-            "resultType": "table",
-            "result": [
+          code: 200,
+          success: true,
+          msg: 'OK',
+          data: {
+            resultType: 'table',
+            result: [
               {
-                "eventId": 1212,
-                "securityType": "ddos",
-                "offenderIp": "1.1.1.1",
-                "victimIp": "2.2.2.2",
-                "eventSecurity": "critical",
-                "malwareName": "the great wall",
-                "cryptominingPool": "a",
-                "startTime": 978456923589
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'critical',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 978456923589
               },
               {
-                "eventId": 1212,
-                "securityType": "ddos",
-                "offenderIp": "1.1.1.1",
-                "victimIp": "2.2.2.2",
-                "eventSecurity": "high",
-                "cryptominingPool": "a",
-                "startTime": 1111111111
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'high',
+                cryptominingPool: 'a',
+                startTime: 1111111111
               },
               {
-                "eventId": 1212,
-                "securityType": "ddos",
-                "offenderIp": "1.1.1.1",
-                "victimIp": "2.2.2.2",
-                "eventSecurity": "low",
-                "malwareName": "the great wall",
-                "startTime": 1111111111
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'low',
+                malwareName: 'the great wall',
+                startTime: 1111111111
               },
               {
-                "eventId": 1212,
-                "securityType": "ddos",
-                "offenderIp": "1.1.1.1",
-                "victimIp": "2.2.2.2",
-                "eventSecurity": "medium",
-                "malwareName": "the great wall",
-                "cryptominingPool": "a",
-                "startTime": 1111111111
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'medium',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
               },
               {
-                "eventId": 1212,
-                "securityType": "ddos",
-                "offenderIp": "1.1.1.1",
-                "victimIp": "2.2.2.2",
-                "eventSecurity": "info",
-                "malwareName": "the great wall",
-                "cryptominingPool": "a",
-                "startTime": 1111111111
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
+              },
+              {
+                eventId: 1212,
+                securityType: 'ddos',
+                offenderIp: '1.1.1.1',
+                victimIp: '2.2.2.2',
+                eventSecurity: 'info',
+                malwareName: 'the great wall',
+                cryptominingPool: 'a',
+                startTime: 1111111111
               }
             ]
           }
@@ -668,15 +780,13 @@ export default {
       this.queryListTotal()
     },
     queryFilter () {
+      this.initEventSeverityTrendData()
       this.initSeverityPerData()
       this.initCategoryPerData()
       this.initActiveAttackData()
       this.initOffenderLocation()
       this.initVictimIp()
       this.initVictimLocation()
-    },
-    queryList () {
-
     },
     queryListTotal () {
 
@@ -717,11 +827,8 @@ export default {
     }
   },
   mounted () {
-    this.initEventSeverityData()
-    this.initSeverityPerData()
-    this.initCategoryPerData()
-    this.initActiveAttackData()
-    this.initListData()
+    this.queryFilter()
+    this.queryList()
   },
   watch: {
     timeFilter (n) {

@@ -36,9 +36,9 @@ export const multipleBarOption = {
   legend: {
     icon: 'circle',
     top: 10,
-    right:10,
+    right: 10,
     itemWidth: 10, // 设置宽度
-    itemHeight: 10, // 设置高度
+    itemHeight: 10 // 设置高度
   },
   tooltip: {},
   dataset: {
@@ -49,34 +49,34 @@ export const multipleBarOption = {
     type: 'category',
     axisTick: { show: false },
     axisLine: {
-      show: true ,
-      lineStyle :{
-        color:'#eaedef'
+      show: true,
+      lineStyle: {
+        color: '#eaedef'
       }
     },
-    axisLabel:{
-      color:'#737373',
+    axisLabel: {
+      color: '#737373',
       interval: 0
     },
-    splitLine:{
-      show:false
-    },
+    splitLine: {
+      show: false
+    }
   },
   yAxis: {
     axisTick: { show: false },
     axisLine: {
       show: true,
-      lineStyle :{
-        color:'#eaedef'
+      lineStyle: {
+        color: '#eaedef'
       }
     },
-    axisLabel:{
-      color:'#737373'
+    axisLabel: {
+      color: '#737373'
     },
-    splitLine:{
-      show:false
+    splitLine: {
+      show: false
     },
-    interval:10
+    interval: 10
   },
   grid: {
     top: 40,
@@ -130,9 +130,9 @@ export const multipleBarOption = {
       itemStyle: {
         color: '#d7c668'
       }
-    },
+    }
   ]
-};
+}
 export const pieForSeverity = {
   tooltip: {
     appendToBody: true
@@ -161,10 +161,10 @@ export const pieForSeverity = {
       center: ['30%', '50%'],
       data: [],
       label: {
-        show:false
+        show: false
       },
-      labelLine:{
-        show:false
+      labelLine: {
+        show: false
       },
       tooltip: {
         formatter: function (param, index, callback) {
@@ -199,12 +199,12 @@ export const activeAttackBar = {
   xAxis: {
     axisTick: { show: false },
     axisLine: { show: false },
-    axisLabel:{
-      show:false
+    axisLabel: {
+      show: false
     },
-    splitLine:{
-      show:false
-    },
+    splitLine: {
+      show: false
+    }
   },
   grid: {
     top: 20,
@@ -216,20 +216,20 @@ export const activeAttackBar = {
     type: 'category',
     axisTick: { show: false },
     axisLine: { show: false },
-    axisLabel:{
-      show:true
+    axisLabel: {
+      show: true
     },
-    splitLine:{
-      show:false
-    },
+    splitLine: {
+      show: false
+    }
   },
   series: [{
     barWidth: 5,
-    barMaxHeight:20,
+    barMaxHeight: 20,
     itemStyle: {
       normal: {
-        color: function(params) {
-          const colorList = ['#d1bd50','#c9d150','#fddd52','#ffb65a','#fe845d'];
+        color: function (params) {
+          const colorList = ['#d1bd50', '#c9d150', '#fddd52', '#ffb65a', '#fe845d']
           return colorList[params.dataIndex]
         }
       }
@@ -242,7 +242,7 @@ export const activeAttackBar = {
       valueAnimation: true,
       formatter: function (param, index, callback) {
         return `${unitConvert(param.value[0], 'number').join(' ')}`
-      },
+      }
     },
     barCategoryGap: '10%'
   }]

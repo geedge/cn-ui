@@ -33,7 +33,7 @@
 
 <script>
 export default {
-  name: "ChartDomainWhois",
+  name: 'ChartDomainWhois',
   props: {
     chartInfo: Object,
     chartData: [Array, Object],

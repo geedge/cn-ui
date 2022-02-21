@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  name: "ChartDomainDnsRecord",
+  name: 'ChartDomainDnsRecord',
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -32,9 +32,9 @@ export default {
   data () {
     return {
       chartDate: [
-        {type: '1', value: '2', country: 'z'},
-        {type: '1', value: '2', country: 'm'},
-        {type: '1', value: '2', country: 'h'}
+        { type: '1', value: '2', country: 'z' },
+        { type: '1', value: '2', country: 'm' },
+        { type: '1', value: '2', country: 'h' }
       ]
     }
   }
