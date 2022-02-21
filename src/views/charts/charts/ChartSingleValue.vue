@@ -154,7 +154,7 @@ export default {
             return {
               ...seriesTemplate,
               name: r.legend,
-              data: r.values.map(v => [Number(v[0]), Number(v[1]), chartParams.unitType]),
+              data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]),
               lineStyle: {
                 color: getChartColor[i]
               }

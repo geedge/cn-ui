@@ -172,6 +172,9 @@
             }
             position: relative;
           }
+          .overview__domain-more-tabs::-webkit-scrollbar {
+            width: 10px;
+          }
           .overview__domain-more-tabs {
             min-width: 110px;
             max-height: 180px;
