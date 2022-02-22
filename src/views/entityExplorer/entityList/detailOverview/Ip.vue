@@ -275,19 +275,20 @@ export default {
     }
   },
   watch: {
-    entityData: {
-      immediate: true,
+    'entityData.ipAddr': {
       deep: true,
       handler (n) {
-        this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
-        this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
-        this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
-        this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
-        this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
-        this.$nextTick(() => {
-          this.getRelatedServerDataOne(this.relatedServerDomainUrl, 'relatedIp')
-          this.getRelatedServerDataTow(this.relatedServerAppUrl, 'relatedServerIp')
-        })
+        if (n) {
+          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
+          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
+          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
+          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
+          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
+          this.$nextTick(() => {
+            this.getRelatedServerDataOne(this.relatedServerDomainUrl, 'relatedIp')
+            this.getRelatedServerDataTow(this.relatedServerAppUrl, 'relatedServerIp')
+          })
+        }
       }
     }
   },

@@ -1,4 +1,5 @@
 import { get } from '@/utils/http'
+import { getTextRect } from '@/utils/tools'
 export default {
   data () {
     return {
@@ -18,18 +19,20 @@ export default {
     getRelatedServerDataOne (relationshipUrlOne, refOne) {
       get(relationshipUrlOne, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          this.relationshipDataOne = response.data.result
+          // this.relationshipDataOne = response.data.result
+          const relationshipDataOne = response.data.result
           // 将请求数据 传入方法中
-          this.relatedServerWidth(this.relationshipDataOne, refOne, 1)
+          this.relatedServerWidth(relationshipDataOne, refOne, 1)
         }
       })
     },
     getRelatedServerDataTow (relationshipUrlTow, refTow) {
       get(relationshipUrlTow, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          this.relationshipDataTow = response.data.result
+          // this.relationshipDataTow = response.data.result
+          const relationshipDataTow = response.data.result
           // 将请求数据 传入方法中
-          this.relatedServerWidth(this.relationshipDataTow, refTow, 2)
+          this.relatedServerWidth(relationshipDataTow, refTow, 2)
         }
       })
     },
@@ -37,26 +40,28 @@ export default {
     relatedServerWidth (data, value, num) {
       // 最大宽度
       const relatedServerWidth = this.$refs.relationship.offsetWidth
-      let sum = 0
+      let sum = 194
       let flag = true
-      data.map((item, index) => {
-        if (this.$refs[value + index]) {
-          // 每条数据的宽度
-          const width = this.$refs[value + index].offsetWidth + 44
-          if (width > 44 && width !== 0) {
-            sum += width
-            if (flag && sum >= relatedServerWidth && num === 1) {
-              flag = false
-              this.relationshipShowOne = true
-            } else if (flag && sum >= relatedServerWidth && num === 2) {
-              flag = false
-              this.relationshipShowTow = true
-            }
+      data.forEach((item, index) => {
+        // 每条数据的宽度
+        const width = getTextRect(item.appName || item.domain || item.ipAddr).width + 47
+        if (width > 47 && width !== 0) {
+          sum += width
+          if (flag && sum >= relatedServerWidth && num === 1) {
+            flag = false
+            this.relationshipShowOne = true
+          } else if (flag && sum >= relatedServerWidth && num === 2) {
+            flag = false
+            this.relationshipShowTow = true
           }
-          item.show = flag
         }
-        return item
+        item.show = flag
       })
+      if (num === 1) {
+        this.relationshipDataOne = data
+      } else if (num === 2) {
+        this.relationshipDataTow = data
+      }
     },
     // 点击事件 控制弹框的展示隐藏，展示全部的数据
     more (data, index) {
