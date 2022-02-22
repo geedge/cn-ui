@@ -84,7 +84,7 @@ import { defaultPageSize } from '@/utils/constants'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import * as echarts from 'echarts'
-import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor } from '@/views/detections/options/detectionOptions'
+import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor,getSeriesIndex } from '@/views/detections/options/detectionOptions'
 import ChartEchart from '@/views/charts/charts/ChartEchart'
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
@@ -207,40 +207,38 @@ export default {
           success: true,
           msg: 'OK',
           data: {
-            resultType: 'table',
+            resultType: 'matrix',
             result: [
               {
-                eventSeverity: 'Critical',
-                count: 1048
+                legend: "Critical",
+                values: [[1435781430781, "5"], [1435781431781, "3"],[1435781432781, "5"], [1435781433781, "3"]]
+              },
+              {
+                legend: "High",
+                values: [[1435781430781, "2"], [1435781431781, "3"],[1435781432781, "6"], [1435781433781, "4"]]
               }, {
-                eventSeverity: 'High',
-                count: 735
+                legend: "Medium",
+                values: [[1435781430781, "4"], [1435781431781, "1"],[1435781432781, "5"], [1435781433781, "3"]]
               }, {
-                eventSeverity: 'Medium',
-                count: 580
+                legend: "Low",
+                values: [[1435781430781, "1"], [1435781431781, "4"],[1435781432781, "1"], [1435781433781, "3"]]
               }, {
-                eventSeverity: 'Low',
-                count: 484
-              }, {
-                eventSeverity: 'Info',
-                count: 300
+                legend: "Info",
+                values: [[1435781430781, "5"], [1435781431781, "7"],[1435781432781, "5"], [1435781433781, "8"]]
               }
             ]
           }
         }
         if (response.code === 200) {
-          this.eventSeverityData = [
-            ['time', '2021/11/12 12:00', '2021/11/13 12:00', '2021/11/14 12:00', '2021/11/15 12:00', '2021/11/16 12:00', '2021/11/17 12:00', '2021/11/18 12:00', '2021/11/19 12:00', '2021/11/20 12:00', '2021/11/21 12:00'],
-            ['Critical', 5, 0, 2, 0, 0, 3, 3, 0, 4, 2],
-            ['High', 5, 7, 3, 0, 0, 3, 3, 20, 2, 2],
-            ['Medium', 10, 8, 20, 8, 0, 5, 5, 5, 5, 20],
-            ['Low', 18, 6, 5, 0, 0, 2, 20, 2, 2, 2],
-            ['Info', 16, 10, 4, 0, 7, 0, 8, 5, 15, 1]
-          ]
+          response.data.result.forEach(item => {
+            this.eventSeverityOption.series[Number(getSeriesIndex(item.legend))].data = item.values.map(v => Number(v[1]))
+          })
+
+          this.eventSeverityOption.xAxis.data = response.data.result[0].values.map(v => [window.$dayJs.tz(Number(v[0])).format('YYYY-MM-DD HH:mm:ss')])
+
         }
       }).finally(() => {
         this.$nextTick(() => {
-          this.eventSeverityOption.dataset.source = this.eventSeverityData
           this.eventSeverityOption && detectionChart.setOption(this.eventSeverityOption)
         })
       })

@@ -5,6 +5,19 @@ import {
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
 
+const severitySeriesIndexMappings = [
+  { value: 'critical', index: '0' },
+  { value: 'high', index: '1' },
+  { value: 'medium', index: '2' },
+  { value: 'low', index: '3'},
+  { value: 'info', index: '4' }
+]
+
+export function getSeriesIndex (type) {
+  const mapping = severitySeriesIndexMappings.find(m => m.value === type.toLowerCase())
+  return mapping && mapping.index ? _.cloneDeep(mapping.index) : null
+}
+
 const activeAttackColorMappings = [
   { value: 'Command and control', color: '#51a9ee' },
   { value: 'Payload_delivery', color: '#49bcf2' },
