@@ -50,7 +50,7 @@
               <span class="tag__value">{{relationshipDataOne.length}}</span>
               <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedDomains')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
               <span class="tag__desc">{{item.domain}}</span>
             </div>
           </div>
@@ -69,7 +69,7 @@
               <span class="tag__value">{{relationshipDataTow.length}}</span>
               <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedApp')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedServerIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
               <span class="tag__desc">{{item.appName}}</span>
             </div>
           </div>
@@ -285,8 +285,8 @@ export default {
           this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
           this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
           this.$nextTick(() => {
-            this.getRelatedServerDataOne(this.relatedServerDomainUrl, 'relatedIp')
-            this.getRelatedServerDataTow(this.relatedServerAppUrl, 'relatedServerIp')
+            this.getRelatedServerDataOne(this.relatedServerDomainUrl)
+            this.getRelatedServerDataTow(this.relatedServerAppUrl)
           })
         }
       }

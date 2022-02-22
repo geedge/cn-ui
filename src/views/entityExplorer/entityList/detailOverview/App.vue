@@ -58,7 +58,7 @@
               <span class="tag__value">{{relationshipDataOne.length}}</span>
               <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedDomains')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedApp' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
               <span class="tag__desc">{{item.domain}}</span>
             </div>
           </div>
@@ -77,7 +77,7 @@
               <span class="tag__value">{{relationshipDataTow.length}}</span>
               <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedServerIp')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedServerApp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
               <span class="tag__desc">{{item.ip}}</span>
             </div>
           </div>
@@ -281,18 +281,20 @@ export default {
     }
   },
   watch: {
-    entityData: {
+    'entityData.appName': {
       immediate: true,
       deep: true,
       handler (n) {
-        this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
-        this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
-        this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
-        this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
-        this.$nextTick(() => {
-          this.getRelatedServerDataOne(this.relatedServerDomainUrl, 'relatedApp')
-          this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedServerApp')
-        })
+        if (n) {
+          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
+          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
+          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
+          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
+          this.$nextTick(() => {
+            this.getRelatedServerDataOne(this.relatedServerDomainUrl)
+            this.getRelatedServerDataTow(this.relatedServerIpUrl)
+          })
+        }
       }
     }
   },

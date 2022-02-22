@@ -66,7 +66,7 @@
               <span class="tag__value">{{relationshipDataOne.length}}</span>
               <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedApp')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedDomain' + index" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
               <span class="tag__desc">{{item.appName}}</span>
             </div>
           </div>
@@ -85,7 +85,7 @@
               <span class="tag__value">{{relationshipDataTow.length}}</span>
               <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedServerIp')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" :ref="'relatedDomainIp' + index" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
               <span class="tag__desc">{{item.ip}}</span>
             </div>
           </div>
@@ -288,19 +288,21 @@ export default {
     }
   },
   watch: {
-    entityData: {
+    'entityData.domainName': {
       immediate: true,
       deep: true,
       handler (n) {
-        this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
-        this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
-        this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
-        this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
-        this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
-        this.$nextTick(() => {
-          this.getRelatedServerDataOne(this.relatedServerAppUrl, 'relatedDomain')
-          this.getRelatedServerDataTow(this.relatedServerIpUrl, 'relatedDomainIp')
-        })
+        if (n) {
+          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
+          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
+          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
+          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
+          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
+          this.$nextTick(() => {
+            this.getRelatedServerDataOne(this.relatedServerAppUrl)
+            this.getRelatedServerDataTow(this.relatedServerIpUrl)
+          })
+        }
       }
     }
   },

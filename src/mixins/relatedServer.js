@@ -19,7 +19,6 @@ export default {
     getRelatedServerDataOne (relationshipUrlOne, refOne) {
       get(relationshipUrlOne, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          // this.relationshipDataOne = response.data.result
           const relationshipDataOne = response.data.result
           // 将请求数据 传入方法中
           this.relatedServerWidth(relationshipDataOne, refOne, 1)
@@ -29,7 +28,6 @@ export default {
     getRelatedServerDataTow (relationshipUrlTow, refTow) {
       get(relationshipUrlTow, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          // this.relationshipDataTow = response.data.result
           const relationshipDataTow = response.data.result
           // 将请求数据 传入方法中
           this.relatedServerWidth(relationshipDataTow, refTow, 2)
@@ -40,12 +38,12 @@ export default {
     relatedServerWidth (data, value, num) {
       // 最大宽度
       const relatedServerWidth = this.$refs.relationship.offsetWidth
-      let sum = 194
+      let sum = 240
       let flag = true
-      data.forEach((item, index) => {
+      data.forEach((item) => {
         // 每条数据的宽度
-        const width = getTextRect(item.appName || item.domain || item.ipAddr).width + 47
-        if (width > 47 && width !== 0) {
+        const width = getTextRect(item.appName || item.domain || item.ip).width + 64
+        if (width > 64 && width !== 0) {
           sum += width
           if (flag && sum >= relatedServerWidth && num === 1) {
             flag = false
