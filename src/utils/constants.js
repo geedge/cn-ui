@@ -143,6 +143,28 @@ export const riskLevelMapping = [
   { name: 'Suspicious', value: 4 },
   { name: 'High Risk', value: 5 }
 ]
+export const eventSeverity = {
+  critical: 'critical',
+  high: 'high',
+  medium: 'medium',
+  low: 'low',
+  info: 'info'
+}
+export const eventSeverityColor = {
+  critical: '#D84C4C',
+  high: '#FE845D',
+  medium: '#FFB65A',
+  low: '#FFD82D',
+  info: '#D1BD50'
+}
+export const securityType = {
+  commandAndControl: 'common and control',
+  payloadDelivery: 'payload delivery',
+  cryptomining: 'cryptomining',
+  phishing: 'phishing',
+  dga: 'dga',
+  ddos: 'ddos'
+}
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',
   [storageKey.iso36112WorldLow]: 'worldChinaLow',

@@ -12,8 +12,11 @@
               <template v-for="(d, i) in filter.data" :key="i">
                 <el-checkbox :label="d.value" v-if="!filter.showIndex || filter.showIndex >= i">
                   <div class="filter__checkbox-label">
-                    <span class="severity-color-block" v-if="filter.column === 'eventSeverity'" :style="`background-color: ${eventSeverityColor[d.value]}`"></span>
-                    <span :style="filter.column === 'eventSeverity' ? 'padding-left: 10px' : ''">{{d.label}}</span>
+                    <div style="display: flex">
+                      <span class="severity-color-block" v-if="filter.column === 'eventSeverity'" :style="`background-color: ${eventSeverityColor[d.value]}`"></span>
+                      <span :style="filter.column === 'eventSeverity' ? 'padding-left: 10px' : ''">{{d.label}}</span>
+                    </div>
+                    <div v-if="d.count || d.count === 0">{{d.count}}</div>
                   </div>
                 </el-checkbox>
               </template>
@@ -27,6 +30,7 @@
 </template>
 
 <script>
+import { eventSeverityColor } from '@/utils/constants'
 export default {
   name: 'DetectionFilter',
   props: {
@@ -36,13 +40,7 @@ export default {
   },
   data () {
     return {
-      eventSeverityColor: {
-        critical: '#D84C4C',
-        high: '#FE845D',
-        medium: '#FFB65A',
-        low: '#FFD82D',
-        info: '#D1BD50'
-      }
+      eventSeverityColor
     }
   },
   methods: {

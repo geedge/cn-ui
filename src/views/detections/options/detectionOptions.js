@@ -19,9 +19,9 @@ export function getSeriesIndex (type) {
 }
 
 const activeAttackColorMappings = [
-  { value: 'Command and control', color: '#51a9ee' },
-  { value: 'Payload_delivery', color: '#49bcf2' },
-  { value: 'Cryptomining', color: '#4ad7eb' },
+  { value: 'command and control', color: '#51a9ee' },
+  { value: 'payload delivery', color: '#49bcf2' },
+  { value: 'cryptomining', color: '#4ad7eb' },
   { value: 'phishing', color: '#4cd4c8' },
   { value: 'dga', color: '#7acc7e' },
   { value: 'ddos', color: '#a7db69' }
@@ -33,11 +33,11 @@ export function getAttackColor (type) {
 }
 
 const severityColorMappings = [
-  { value: 'Critical', color: '#d84c4c' },
-  { value: 'High', color: '#ff9a79' },
-  { value: 'Medium', color: '#ffb65a' },
-  { value: 'Low', color: '#ffdd4a' },
-  { value: 'Info', color: '#d7c668' }
+  { value: 'critical', color: '#d84c4c' },
+  { value: 'high', color: '#ff9a79' },
+  { value: 'medium', color: '#ffb65a' },
+  { value: 'low', color: '#ffdd4a' },
+  { value: 'info', color: '#d7c668' }
 ]
 
 export function getSeverityColor (type) {
@@ -100,7 +100,7 @@ export const multipleBarOption = {
   },
   series: [
     {
-      name: 'Critical',
+      name: 'critical',
       type: 'bar',
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -109,7 +109,7 @@ export const multipleBarOption = {
       }
     },
     {
-      name: 'High',
+      name: 'high',
       type: 'bar',
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -118,7 +118,7 @@ export const multipleBarOption = {
       }
     },
     {
-      name: 'Medium',
+      name: 'medium',
       type: 'bar',
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -127,7 +127,7 @@ export const multipleBarOption = {
       }
     },
     {
-      name: 'Low',
+      name: 'low',
       type: 'bar',
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -136,7 +136,7 @@ export const multipleBarOption = {
       }
     },
     {
-      name: 'Info',
+      name: 'info',
       type: 'bar',
       barWidth: 15,
       seriesLayoutBy: 'row',

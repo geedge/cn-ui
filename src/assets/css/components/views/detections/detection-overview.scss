@@ -169,3 +169,10 @@
     }
   }
 }
+.row__tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 4px;
+  color: white;
+}

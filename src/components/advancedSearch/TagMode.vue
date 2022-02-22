@@ -280,7 +280,7 @@ export default {
         const newColumn = this.columnList.find(column => {
           return column.name === param.newParam.column
         })
-        const meta = this.metaList.find(m => m.column.name === oldColumn.name && m.operator.value === param.oldParam.operator && m.value.value === this.handleValue(param.oldParam.value, oldColumn, param.oldParam.operator))
+        const meta = this.metaList.find(m => m.column && m.column.name === oldColumn.name && m.operator.value === param.oldParam.operator && m.value.value === this.handleValue(param.oldParam.value, oldColumn, param.oldParam.operator))
         if (meta) {
           meta.column.name = newColumn.name
           meta.column.type = newColumn.type
@@ -296,8 +296,15 @@ export default {
         const column = this.columnList.find(c => {
           return c.name === param.column
         })
-        const metaIndex = this.metaList.findIndex(m => m.column.name === param.column && m.operator.value === param.operator && m.value.value === this.handleValue(param.value, column, param.operator))
-        this.metaList.splice(metaIndex, 1)
+        const metaIndex = this.metaList.findIndex(m => m.column && m.column.name === param.column && m.operator.value === param.operator && m.value.value === this.handleValue(param.value, column, param.operator))
+        // 不是在首位，则删除时顺带删除前一个index（and或or），否则顺带删除后一个index
+        if (metaIndex > 0) {
+          this.metaList.splice(metaIndex - 1, 2)
+        } else if (this.metaList.length === 1) {
+          this.metaList.splice(metaIndex, 1)
+        } else {
+          this.metaList.splice(metaIndex, 2)
+        }
       })
     }
   },

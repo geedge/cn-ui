@@ -71,9 +71,14 @@ export default class Meta {
 
   // 是否是完整的condition
   isCompleteCondition () {
-    return (this.column.type === columnType.fullText)
-      ? !_.isEmpty(this.column.name)
-      : !_.isEmpty(this.column.name) && !_.isEmpty(this.operator.value) && !_.isEmpty(this.value.value)
+    if (this.meta === condition) {
+      return (this.column.type === columnType.fullText)
+        ? !_.isEmpty(this.column.name)
+        : !_.isEmpty(this.column.name) && !_.isEmpty(this.operator.value) && !_.isEmpty(this.value.value)
+    } else if (this.meta === connection) {
+      return !!this.value
+    }
+    return false
   }
 
   // 取消editing状态

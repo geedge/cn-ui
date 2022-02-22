@@ -210,20 +210,20 @@ export default {
             resultType: 'matrix',
             result: [
               {
-                legend: "Critical",
+                legend: "critical",
                 values: [[1435781430781, "5"], [1435781431781, "3"],[1435781432781, "5"], [1435781433781, "3"]]
               },
               {
-                legend: "High",
+                legend: "high",
                 values: [[1435781430781, "2"], [1435781431781, "3"],[1435781432781, "6"], [1435781433781, "4"]]
               }, {
-                legend: "Medium",
+                legend: "medium",
                 values: [[1435781430781, "4"], [1435781431781, "1"],[1435781432781, "5"], [1435781433781, "3"]]
               }, {
-                legend: "Low",
+                legend: "low",
                 values: [[1435781430781, "1"], [1435781431781, "4"],[1435781432781, "1"], [1435781433781, "3"]]
               }, {
-                legend: "Info",
+                legend: "info",
                 values: [[1435781430781, "5"], [1435781431781, "7"],[1435781432781, "5"], [1435781433781, "8"]]
               }
             ]
@@ -262,19 +262,19 @@ export default {
             resultType: 'table',
             result: [
               {
-                eventSeverity: 'Critical',
+                eventSeverity: 'critical',
                 count: 1048
               }, {
-                eventSeverity: 'High',
+                eventSeverity: 'high',
                 count: 735
               }, {
-                eventSeverity: 'Medium',
+                eventSeverity: 'medium',
                 count: 580
               }, {
-                eventSeverity: 'Low',
+                eventSeverity: 'low',
                 count: 484
               }, {
-                eventSeverity: 'Info',
+                eventSeverity: 'info',
                 count: 300
               }
             ]
@@ -312,13 +312,13 @@ export default {
             resultType: 'table',
             result: [
               {
-                attackType: 'Command and control',
+                attackType: 'command and control',
                 count: 1048
               }, {
-                attackType: 'Payload_delivery',
+                attackType: 'payload delivery',
                 count: 735
               }, {
-                attackType: 'Cryptomining',
+                attackType: 'cryptomining',
                 count: 580
               }, {
                 attackType: 'phishing',

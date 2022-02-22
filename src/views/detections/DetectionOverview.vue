@@ -48,7 +48,9 @@
       </div>
       <div class="overview__row">
         <div class="row__label">{{$t('entities.reputationLevel')}}</div>
-        <div class="row__content">{{basicInfo.domainReputationLevel || '-'}}</div>
+        <div class="row__content">
+          <div class="row__tag" :style="`background-color:${eventSeverityColor[basicInfo.domainReputationLevel]}`">{{basicInfo.domainReputationLevel || '-'}}</div>
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label">APP</div>
@@ -61,6 +63,12 @@
       <div class="overview__row">
         <div class="row__label">APP {{$t('entities.subcategory')}}</div>
         <div class="row__content">{{basicInfo.appSubcategory || '-'}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label">{{$t('overall.appRisk')}}</div>
+        <div class="row__content">
+          <div class="row__tag" :style="`background-color:${eventSeverityColor[basicInfo.appRisk]}`">{{basicInfo.appRisk || '-'}}</div>
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{$t('detections.malware')}}</div>
@@ -119,7 +127,7 @@
           <div class="row-timeline__card">
             <div>
               <div class="timeline__severity timeline__severity--high">
-                <i class="cn-icon cn-icon-alert-level"></i>
+                <i class="cn-icon cn-icon-alert-level" :style="`color:${eventSeverityColor[event.eventSeverity]}`"></i>
                 <span>{{event.eventSeverity}}</span>
               </div>
               <div class="timeline__security-type">{{event.securityType}}</div>
@@ -146,6 +154,7 @@
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getMillisecond } from '@/utils/date-util'
+import { eventSeverityColor } from '@/utils/constants'
 export default {
   name: 'DetectionOverview',
   props: {
@@ -153,6 +162,7 @@ export default {
   },
   data () {
     return {
+      eventSeverityColor,
       basicInfo: {},
       events: [],
       reference: 'https://attack.mitre.org'

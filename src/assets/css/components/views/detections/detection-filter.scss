@@ -44,9 +44,14 @@
           display: flex;
           align-items: center;
           padding: 5px 0;
+          margin-right: 5px;
+          .el-checkbox__label {
+            width: 100%;
+          }
 
           .filter__checkbox-label {
             display: flex;
+            justify-content: space-between;
             align-items: center;
 
             .severity-color-block {

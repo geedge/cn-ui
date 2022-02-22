@@ -41,7 +41,7 @@
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
                 <span>{{$t('detection.list.startTime')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ dayJs.tz(detection.startTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                <span>{{dayJs.tz(getMillisecond(detection.startTime)).format('YYYY-MM-DD HH:mm:ss')}}</span>
               </div>
             </div>
           </div>
@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import { eventSeverityColor } from '@/utils/constants'
+import { getMillisecond } from '@/utils/date-util'
 import DetectionOverview from '@/views/detections/DetectionOverview'
 export default {
   name: 'DetectionRow',
@@ -75,16 +77,11 @@ export default {
   data () {
     return {
       isCollapse: true, // 是否是折叠状态
-      eventSeverityColor: {
-        critical: '#D84C4C',
-        high: '#FE845D',
-        medium: '#FFB65A',
-        low: '#FFD82D',
-        info: '#D1BD50'
-      }
+      eventSeverityColor
     }
   },
   methods: {
+    getMillisecond,
     /* 切换折叠状态 */
     switchCollapse () {
       this.isCollapse = !this.isCollapse

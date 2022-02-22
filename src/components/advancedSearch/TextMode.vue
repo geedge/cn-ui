@@ -110,7 +110,10 @@ export default {
         const column = this.columnList.find(c => c.name === param.column)
         // 将对应内容替换为空串
         const sqlPiece = `${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`.trim()
-        current = current.replace(sqlPiece, '')
+        const sqlPieceWithConnection = [` AND ${sqlPiece}`, ` OR ${sqlPiece}`, `${sqlPiece} AND `, `${sqlPiece} OR `, sqlPiece]
+        sqlPieceWithConnection.forEach(piece => {
+          current = current.replace(piece, '')
+        })
       })
       toRaw(this.codeMirror).setValue(current)
     },
