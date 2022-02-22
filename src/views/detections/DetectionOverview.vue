@@ -107,6 +107,37 @@
         <div class="row__content row__content--link">{{$t('detections.viewAllRelated')}}</div>
       </div>
       <div class="overview__title">{{$t('detections.relatedDetections')}}</div>
+      <div class="overview__row-timeline">
+        <div class="row-timeline" v-for="event in events" :key="event">
+          <div class="row-timeline__time-info" :style="event.startTime === basicInfo.startTime ? 'color: #333;font-weight: bold;' : ''">{{formatT0(event.startTime)}}</div>
+          <div class="row-timeline__line">
+            <div class="line-point-larger" v-if="event.startTime === basicInfo.startTime">
+              <div class="line-point"></div>
+            </div>
+            <div v-else class="line-point"></div>
+          </div>
+          <div class="row-timeline__card">
+            <div>
+              <div class="timeline__severity timeline__severity--high">
+                <i class="cn-icon cn-icon-alert-level"></i>
+                <span>{{event.eventSeverity}}</span>
+              </div>
+              <div class="timeline__security-type">{{event.securityType}}</div>
+              <div class="timeline__start-time">{{dayJs.tz(getMillisecond(event.startTime)).format('YYYY-MM-DD HH:mm:ss')}}</div>
+            </div>
+          </div>
+          <div class="row-timeline__foot">
+            <div class="detection-ip" :class="{'detection-ip__current': [basicInfo.offenderIp, basicInfo.victimIp].indexOf(event.offenderIp) > -1}">
+              <i class="cn-icon cn-icon-attacker"></i>
+              <span>{{event.offenderIp}}</span>
+            </div>
+            <div class="detection-ip" :class="{'detection-ip__current': [basicInfo.offenderIp, basicInfo.victimIp].indexOf(event.victimIp) > -1}">
+              <i class="cn-icon cn-icon-attacked"></i>
+              <span>{{event.victimIp}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -127,12 +158,19 @@ export default {
       reference: 'https://attack.mitre.org'
     }
   },
+  computed: {
+    formatT0 () {
+      return function (startTime) {
+        return startTime === this.basicInfo.startTime ? 'T0' : 'T0-10m'
+      }
+    }
+  },
   methods: {
     getMillisecond,
     query () {
       this.basicInfo = {
         "eventId": 1212,
-        "offenderIp": "2.2.2.2",
+        "offenderIp": "112.2.2.3",
         "offenderLocationCountry": "China",
         "offenderLocationProvince": "Hebei",
         "offenderLocationRegion": "Xingtai",
@@ -170,10 +208,10 @@ export default {
           "startTime": 1645307930
         },
         {
-          "eventSeverity": "high",
+          "eventSeverity": "critical",
           "securityType": "command and control",
           "offenderIp": "2.2.2.2",
-          "victimIp": "2.2.2.3",
+          "victimIp": "112.2.2.3",
           "startTime": 1645317930
         },
         {
@@ -210,20 +248,6 @@ export default {
           "offenderIp": "2.2.2.2",
           "victimIp": "2.2.2.3",
           "startTime": 1645367930
-        },
-        {
-          "eventSeverity": "high",
-          "securityType": "command and control",
-          "offenderIp": "2.2.2.2",
-          "victimIp": "2.2.2.3",
-          "startTime": 1645377930
-        },
-        {
-          "eventSeverity": "high",
-          "securityType": "command and control",
-          "offenderIp": "2.2.2.2",
-          "victimIp": "2.2.2.3",
-          "startTime": 1645387930
         },
         {
           "eventSeverity": "high",

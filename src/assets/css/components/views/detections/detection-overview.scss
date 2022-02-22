@@ -47,3 +47,125 @@
     }
   }
 }
+.overview__row-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 17px;
+  background-color: #F9F9F9;
+
+  .row-timeline {
+    flex: 0 0 110px;
+    display: flex;
+    flex-direction: column;
+
+    .row-timeline__time-info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      color: #666666;
+    }
+    .row-timeline__line {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 1px;
+      margin: 5px 0;
+      background-color: #CBD0D5;
+      overflow: visible;
+
+      .line-point-larger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+        background-color: #F9F9F9;
+        border: 1px solid #666;
+
+        .line-point {
+          background-color: #666;
+        }
+      }
+      .line-point {
+        height: 6px;
+        width: 6px;
+        border-radius: 50%;
+        background-color: #A0B5CA;
+      }
+    }
+    .row-timeline__card {
+      padding: 8px 4px 0;
+
+      &>div {
+        display: flex;
+        flex-direction: column;
+        height: 122px;
+        width: 102px;
+        padding: 10px;
+        background-color: #EFF2F5;
+        border-radius: 2px;
+
+        .timeline__severity {
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+
+          &.timeline__severity--critical i {
+            color: #D84C4C;
+          }
+          &.timeline__severity--high i {
+            color: #FE845D;
+          }
+          &.timeline__severity--medium i {
+            color: #FEB65A;
+          }
+          &.timeline__severity--low i {
+            color: #F6C738;
+          }
+          &.timeline__severity--info i {
+            color: #D1BD50;
+          }
+          i {
+            font-size: 16px;
+          }
+          span {
+            padding-left: 5px;
+            font-size: 14px;
+            color: #3976CB;
+          }
+        }
+        .timeline__security-type {
+          font-size: 12px;
+          color: #3976CB;
+          margin-bottom: 10px;
+        }
+        .timeline__start-time {
+          font-size: 12px;
+          color: #666666;
+        }
+      }
+    }
+    .row-timeline__foot {
+      display: flex;
+      flex-direction: column;
+      padding: 2px 0 10px;
+
+      .detection-ip {
+        display: flex;
+        align-items: center;
+        padding-left: 5px;
+        color: #666;
+        font-size: 12px;
+
+        &.detection-ip__current {
+          color: #D84C4C;
+        }
+        i {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
