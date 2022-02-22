@@ -81,7 +81,9 @@ export const api = {
   detectionVictimIp: '/interface/detection/filter/victimIp',
   detectionVictimLocation: '/interface/detection/filter/victimLocation',
   detectionSeverity: '/interface/detection/filter/severity',
-  detectionListBasic: '/interface/detection/list/basic'
+  detectionListBasic: '/interface/detection/list/basic',
+  detectionOverviewBasic: '/interface/detection/detail/overview/basic',
+  detectionOverviewEvent: '/interface/detection/detail/overview/event'
 }
 
 /* panel */

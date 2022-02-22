@@ -51,7 +51,7 @@
         <div class="cn-detection__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
           <detection-overview
-              :entity="entityData"
+              :detection="detection"
               :time-filter="timeFilter"
           ></detection-overview>
         </div>
@@ -74,7 +74,6 @@ export default {
   },
   data () {
     return {
-      entityData: [],
       isCollapse: true, // 是否是折叠状态
       eventSeverityColor: {
         critical: '#D84C4C',
