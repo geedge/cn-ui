@@ -74,17 +74,17 @@
         <div class="overview__domain-tabs">
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
-              <span class="tag__value">{{relationshipDataTow.length}}</span>
+              <span class="tag__value">{{relationshipDataTwo.length}}</span>
               <span class="tag__desc">{{$t('entities.piece')}}{{$t('entities.relatedServerIp')}}</span>
             </div>
-            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataTow" :key="index">
+            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
               <span class="tag__desc">{{item.ip}}</span>
             </div>
           </div>
           <div class="overview__domain-btn">
-            <div class="overview__domain-more" @click="more(relationshipDataTow, 2)" v-if="relationshipShowTow">...</div>
-            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreTow" v-ele-click-outside="mouseout">
-              <div class="domain-more-tab" v-for="item in relationshipMoreDataTow" :key="item">
+            <div class="overview__domain-more" @click="more(relationshipDataTwo, 2)" v-if="relationshipShowTwo">...</div>
+            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreTwo" v-ele-click-outside="mouseout">
+              <div class="domain-more-tab" v-for="item in relationshipMoreDataTwo" :key="item">
                 <span v-if="item.ip" :title="item.ip">{{item.ip}}</span>
               </div>
             </div>

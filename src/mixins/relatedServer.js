@@ -4,14 +4,13 @@ export default {
   data () {
     return {
       relationshipDataOne: [], // 数据
-      relationshipDataTow: [], // 数据
+      relationshipDataTwo: [], // 数据
       relationshipShowOne: false, // 控制 ... 的展示隐藏
-      relationshipShowTow: false, // 控制 ... 的展示隐藏
+      relationshipShowTwo: false, // 控制 ... 的展示隐藏
       relationshipShowMoreOne: false, // 控制弹框的展示隐藏
-      relationshipShowMoreTow: false, // 控制弹框的展示隐藏
+      relationshipShowMoreTwo: false, // 控制弹框的展示隐藏
       relationshipMoreDataOne: [], // 展示所有
-      relationshipMoreDataTow: [], // 展示所有
-      timer: null
+      relationshipMoreDataTwo: [] // 展示所有
     }
   },
   methods: {
@@ -28,9 +27,9 @@ export default {
     getRelatedServerDataTow (relationshipUrlTow, refTow) {
       get(relationshipUrlTow, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          const relationshipDataTow = response.data.result
+          const relationshipDataTwo = response.data.result
           // 将请求数据 传入方法中
-          this.relatedServerWidth(relationshipDataTow, refTow, 2)
+          this.relatedServerWidth(relationshipDataTwo, refTow, 2)
         }
       })
     },
@@ -42,15 +41,15 @@ export default {
       let flag = true
       data.forEach((item) => {
         // 每条数据的宽度
-        const width = getTextRect(item.appName || item.domain || item.ip).width + 64
-        if (width > 64 && width !== 0) {
+        const width = getTextRect(item.appName || item.domain || item.ip).width + 67
+        if (width > 67 && width !== 0) {
           sum += width
           if (flag && sum >= relatedServerWidth && num === 1) {
             flag = false
             this.relationshipShowOne = true
           } else if (flag && sum >= relatedServerWidth && num === 2) {
             flag = false
-            this.relationshipShowTow = true
+            this.relationshipShowTwo = true
           }
         }
         item.show = flag
@@ -58,7 +57,7 @@ export default {
       if (num === 1) {
         this.relationshipDataOne = data
       } else if (num === 2) {
-        this.relationshipDataTow = data
+        this.relationshipDataTwo = data
       }
     },
     // 点击事件 控制弹框的展示隐藏，展示全部的数据
@@ -69,19 +68,18 @@ export default {
         // 弹框的显示隐藏
         this.relationshipShowMoreOne = true
         // 展示当前弹框是，隐藏其他弹框
-        this.relationshipShowMoreTow = false
-      }
-      if (index === 2) {
+        this.relationshipShowMoreTwo = false
+      } else if (index === 2) {
         // 展示数据
-        this.relationshipMoreDataTow = data
+        this.relationshipMoreDataTwo = data
         // 弹框的显示隐藏
-        this.relationshipShowMoreTow = true
+        this.relationshipShowMoreTwo = true
         // 展示当前弹框是，隐藏其他弹框
         this.relationshipShowMoreOne = false
       }
     },
     mouseout () {
-      this.relationshipShowMoreTow = false
+      this.relationshipShowMoreTwo = false
       this.relationshipShowMoreOne = false
     }
   }
