@@ -221,7 +221,7 @@ export const activeAttackBar = {
   },
   grid: {
     top: 20,
-    left: 10,
+    left: 100,
     right: 70,
     bottom: 20
   },
