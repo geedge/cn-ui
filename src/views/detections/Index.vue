@@ -14,7 +14,7 @@
     ></detection-search>
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
-      <div class="detection__event-severity-bar" id="eventSeverityTrendBar"></div>
+      <div class="detection__event-severity-bar" :id="`eventSeverityTrendBar${pageType}`"></div>
       <div style="display: flex;">
         <detection-filter
             :filter-data="filterData[pageType]"
@@ -29,21 +29,21 @@
               <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.severity')}}</div>
               </div>
-              <div class="chart-content" id="eventSeverityPie">
+              <div class="chart-content" :id="`eventSeverityPie${pageType}`">
               </div>
             </div>
             <div class="statistics__category">
               <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.categoryProportion')}}</div>
               </div>
-              <div class="chart-content" id="detectionCategoryPer">
+              <div class="chart-content" :id="`detectionCategoryPer${pageType}`">
               </div>
             </div>
             <div class="statistics__active-attack">
               <div class="chart-header">
                 <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeAttacker') : $t('detections.activeEntity')}}</div>
               </div>
-              <div class="chart-content" style="" id="detectionActiveAttacker">
+              <div class="chart-content" style="" :id="`detectionActiveAttacker${pageType}`">
               </div>
             </div>
           </div>
@@ -218,7 +218,7 @@ export default {
             values: [[1435781430781, "5"], [1435781431781, "7"],[1435781432781, "5"], [1435781433781, "8"]]
           }
         ]
-        const chartDom = document.getElementById('eventSeverityTrendBar')
+        const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
         const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
         data.forEach(item => {
@@ -258,7 +258,7 @@ export default {
         eventSeverityOption.series[0].data = data.map(d => {
           return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
         })
-        const chartDom = document.getElementById('eventSeverityPie')
+        const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
         detectionChart.setOption(eventSeverityOption)
       }).catch(error => {
@@ -289,7 +289,7 @@ export default {
           }
         ]
         this.filterData[this.pageType][1].data = data.map(r => ({ label: r.attackType, value: r.attackType, count: r.count }))
-        const chartDom = document.getElementById('detectionCategoryPer')
+        const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
         const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
         securityTypeOption.series[0].data = data.map(d => {
@@ -325,7 +325,7 @@ export default {
         this.filterData[this.pageType][4].showMore = showMore
         this.filterData[this.pageType][4].showIndex = showIndex
 
-        const chartDom = document.getElementById('detectionActiveAttacker')
+        const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
         const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
         offenderIpOption.series[0].data = data.map(d => {
@@ -480,7 +480,7 @@ export default {
             count: 50
           }
         ]
-        const chartDom = document.getElementById('detectionActiveAttacker')
+        const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
         const option = this.$_.cloneDeep(activeAttackBar)
         option.series[0].data = data.map(d => {
