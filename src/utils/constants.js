@@ -165,6 +165,11 @@ export const securityType = {
   dga: 'dga',
   ddos: 'ddos'
 }
+export const detectionPageType = {
+  securityEvent: 'securityEvent',
+  performanceEvent: 'performanceEvent'
+}
+
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',
   [storageKey.iso36112WorldLow]: 'worldChinaLow',

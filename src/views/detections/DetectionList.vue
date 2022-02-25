@@ -10,6 +10,7 @@
         <detection-row
             v-for="(data, index) in listData"
             :detection="data"
+            :page-type="pageType"
             :timeFilter="timeFilter"
             :key="index"
             :ref="`detectionRow${index}`"
@@ -33,7 +34,8 @@ export default {
     from: String,
     pageObj: Object,
     loading: Boolean,
-    timeFilter: Object
+    timeFilter: Object,
+    pageType: String // 安全事件、服务质量
   },
   data () {
     return {

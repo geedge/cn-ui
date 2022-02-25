@@ -39,7 +39,7 @@ const routes = [
         component: () => import('@/views/entityExplorer/EntityExplorer')
       },
       {
-        path: '/detections',
+        path: '/detection/:typeName',
         component: () => import('@/views/detections/Index')
       },
       {

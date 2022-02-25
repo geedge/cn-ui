@@ -74,16 +74,28 @@ export const api = {
   entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
   entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp',
   // detection
-  detectionSeverityTrend: '/interface/detection/filter/severityTrend',
-  detectionAttackType: '/interface/detection/filter/attackType',
-  detectionOffenderIp: '/interface/detection/filter/offenderIp',
-  detectionOffenderLocation: '/interface/detection/filter/offenderLocation',
-  detectionVictimIp: '/interface/detection/filter/victimIp',
-  detectionVictimLocation: '/interface/detection/filter/victimLocation',
-  detectionSeverity: '/interface/detection/filter/severity',
-  detectionListBasic: '/interface/detection/list/basic',
-  detectionOverviewBasic: '/interface/detection/detail/overview/basic',
-  detectionOverviewEvent: '/interface/detection/detail/overview/event'
+  detection: {
+    securityEvent: {
+      eventSeverityTrend: '/interface/detection/filter/severityTrend',
+      securityType: '/interface/detection/filter/attackType',
+      offenderIp: '/interface/detection/filter/offenderIp',
+      offenderLocation: '/interface/detection/filter/offenderLocation',
+      victimIp: '/interface/detection/filter/victimIp',
+      victimLocation: '/interface/detection/filter/victimLocation',
+      eventSeverity: '/interface/detection/filter/severity',
+      listBasic: '/interface/detection/list/basic',
+      overviewBasic: '/interface/detection/detail/overview/basic',
+      overviewEvent: '/interface/detection/detail/overview/event'
+    },
+    performanceEvent: {
+      eventSeverityTrend: '/interface/detection/filter/severityTrend',
+      securityType: '/interface/detection/filter/attackType',
+      eventSeverity: '/interface/detection/filter/severity',
+      activeEntity: '/interface/detection/filter/activeEntity',
+      listBasic: '/interface/detection/list/basic',
+      overviewBasic: '/interface/detection/detail/overview/basic'
+    }
+  }
 }
 
 /* panel */

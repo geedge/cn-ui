@@ -20,10 +20,7 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
                   <span>{{$t('overall.region')}}&nbsp;:&nbsp;&nbsp;</span>
-                  <span v-if="entityData.ipLocationProvince !== 'null' && entityData.ipLocationCity !== 'null'">{{$_.get(entityData, 'ipLocationProvince') + ', ' + $_.get(entityData, 'ipLocationCity') || '-'}}</span>
-                  <span v-else-if="entityData.ipLocationProvince !== 'null'">{{$_.get(entityData, 'ipLocationProvince')}}</span>
-                  <span v-else-if="entityData.ipLocationCity !== 'null'">{{$_.get(entityData, 'ipLocationCity')}}</span>
-                  <span v-else>-</span>
+                  <span>{{ipLocationRegion(entityData)}}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-cloud"></i>
@@ -126,6 +123,25 @@ export default {
   data () {
     return {
       isCollapse: true // 是否是折叠状态
+    }
+  },
+  computed: {
+    ipLocationRegion () {
+      return function (entityData) {
+        const hasProvinceAndCity = entityData.ipLocationProvince && entityData.ipLocationCity &&
+            entityData.ipLocationProvince !== 'null' && entityData.ipLocationCity !== 'null'
+        const hasProvince = entityData.ipLocationProvince && entityData.ipLocationProvince !== 'null'
+        const hasCity = entityData.ipLocationCity && entityData.ipLocationCity !== 'null'
+        if (hasProvinceAndCity) {
+          return `${entityData.ipLocationProvince}, ${entityData.ipLocationCity}`
+        } else if (hasProvince) {
+          return entityData.ipLocationProvince
+        } else if (hasCity) {
+          return entityData.ipLocationCity
+        } else {
+          return '-'
+        }
+      }
     }
   },
   setup () {

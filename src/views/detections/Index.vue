@@ -14,10 +14,10 @@
     ></detection-search>
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
-      <div class="detection__event-severity-bar" id="detectionEventSeverityBar"></div>
+      <div class="detection__event-severity-bar" id="eventSeverityTrendBar"></div>
       <div style="display: flex;">
         <detection-filter
-            :filter-data="filterData"
+            :filter-data="filterData[pageType]"
             :q="q"
             :time-filter="timeFilter"
             @filter="filter"
@@ -29,7 +29,7 @@
               <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.severity')}}</div>
               </div>
-              <div class="chart-content" id="detectionSeverityPer">
+              <div class="chart-content" id="eventSeverityPie">
               </div>
             </div>
             <div class="statistics__category">
@@ -41,7 +41,7 @@
             </div>
             <div class="statistics__active-attack">
               <div class="chart-header">
-                <div class="chart-header__title">{{$t('detection.activeAttacker')}}</div>
+                <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeAttacker') : $t('detections.activeEntity')}}</div>
               </div>
               <div class="chart-content" style="" id="detectionActiveAttacker">
               </div>
@@ -51,6 +51,7 @@
               :list-data="listData"
               :pageObj="pageObj"
               :time-filter="timeFilter"
+              :page-type="pageType"
               @pageSize="pageSize"
               @pageNo="pageNo"
               :loading="listLoading"
@@ -80,14 +81,13 @@ import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
-import { defaultPageSize } from '@/utils/constants'
+import { defaultPageSize, detectionPageType } from '@/utils/constants'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import * as echarts from 'echarts'
 import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor,getSeriesIndex } from '@/views/detections/options/detectionOptions'
-import ChartEchart from '@/views/charts/charts/ChartEchart'
-import { api } from '@/utils/api'
-import { get } from '@/utils/http'
+import { api, getData } from '@/utils/api'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'Index',
@@ -97,8 +97,7 @@ export default {
     TimeRefresh,
     DetectionFilter,
     DetectionList,
-    Pagination,
-    ChartEchart
+    Pagination
   },
   data () {
     return {
@@ -108,79 +107,85 @@ export default {
         total: 0
       },
       q: '',
-      filterData: [
-        {
-          title: this.$t('detections.eventSeverity'),
-          column: 'eventSeverity',
-          collapse: false,
-          value: [], // value之间是or的关系
-          data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
-        },
-        {
-          title: this.$t('detections.securityType'),
-          column: 'securityType',
-          collapse: false,
-          value: [],
-          data: [] // 从接口动态获取
-        },
-        {
-          title: this.$t('detections.victimIp'),
-          column: 'victimIp',
-          collapse: false,
-          value: [],
-          showMore: true,
-          showIndex: 9,
-          data: [] // 从接口动态获取
-        },
-        {
-          title: this.$t('detections.victimLocation'),
-          column: 'victimLocationCountry',
-          collapse: false,
-          value: [],
-          showMore: false,
-          showIndex: 9,
-          data: [
-            {
-              label: 'China',
-              value: 'china',
-              count: 50
-            }
-          ] // 从接口动态获取
-        },
-        {
-          title: this.$t('detections.offenderIp'),
-          column: 'offenderIp',
-          collapse: false,
-          value: [],
-          showMore: false,
-          showIndex: 9,
-          data: [
-            {
-              label: '1.2.6.8',
-              value: '1.2.6.8',
-              count: 50
-            }
-          ] // 从接口动态获取
-        },
-        {
-          title: this.$t('detections.offenderLocation'),
-          column: 'offenderLocationCountry',
-          collapse: false,
-          value: [],
-          showMore: false,
-          showIndex: 9,
-          data: [
-            {
-              label: 'China',
-              value: 'china',
-              count: 50
-            }
-          ] // 从接口动态获取
-        }
-      ],
+      detectionPageType,
+      filterData: {
+        securityEvent: [
+          {
+            title: this.$t('detections.eventSeverity'),
+            column: 'eventSeverity',
+            collapse: false,
+            value: [], // value之间是or的关系
+            data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
+          },
+          {
+            title: this.$t('detections.securityType'),
+            column: 'securityType',
+            collapse: false,
+            value: [],
+            data: [] // 从接口动态获取
+          },
+          {
+            title: this.$t('detections.victimIp'),
+            column: 'victimIp',
+            collapse: false,
+            value: [],
+            showMore: true,
+            showIndex: 9,
+            data: [] // 从接口动态获取
+          },
+          {
+            title: this.$t('detections.victimLocation'),
+            column: 'victimLocationCountry',
+            collapse: false,
+            value: [],
+            showMore: false,
+            showIndex: 9,
+            data: [
+              {
+                label: 'China',
+                value: 'china',
+                count: 50
+              }
+            ] // 从接口动态获取
+          },
+          {
+            title: this.$t('detections.offenderIp'),
+            column: 'offenderIp',
+            collapse: false,
+            value: [],
+            showMore: false,
+            showIndex: 9,
+            data: [] // 从接口动态获取
+          },
+          {
+            title: this.$t('detections.offenderLocation'),
+            column: 'offenderLocationCountry',
+            collapse: false,
+            value: [],
+            showMore: false,
+            showIndex: 9,
+            data: [] // 从接口动态获取
+          }
+        ],
+        performanceEvent: [
+          {
+            title: this.$t('detections.eventSeverity'),
+            column: 'eventSeverity',
+            collapse: false,
+            value: [], // value之间是or的关系
+            data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
+          },
+          {
+            title: this.$t('detections.securityType'),
+            column: 'securityType',
+            collapse: false,
+            value: [],
+            data: [] // 从接口动态获取
+          }
+        ]
+      },
       listData: [],
       listLoading: false,
-      eventSeverityOption: null,
       eventSeverityData: [],
       severityPerOption: null,
       severityPerData: [],
@@ -191,379 +196,299 @@ export default {
     }
   },
   methods: {
-    initEventSeverityTrendData () {
-      const chartDom = document.getElementById('detectionEventSeverityBar')
-      const detectionChart = echarts.init(chartDom)
-      this.eventSeverityOption = this.$_.cloneDeep(multipleBarOption)
-
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
-      }
-      get(api.detectionSeverityTrend, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'matrix',
-            result: [
-              {
-                legend: "critical",
-                values: [[1435781430781, "5"], [1435781431781, "3"],[1435781432781, "5"], [1435781433781, "3"]]
-              },
-              {
-                legend: "high",
-                values: [[1435781430781, "2"], [1435781431781, "3"],[1435781432781, "6"], [1435781433781, "4"]]
-              }, {
-                legend: "medium",
-                values: [[1435781430781, "4"], [1435781431781, "1"],[1435781432781, "5"], [1435781433781, "3"]]
-              }, {
-                legend: "low",
-                values: [[1435781430781, "1"], [1435781431781, "4"],[1435781432781, "1"], [1435781433781, "3"]]
-              }, {
-                legend: "info",
-                values: [[1435781430781, "5"], [1435781431781, "7"],[1435781432781, "5"], [1435781433781, "8"]]
-              }
-            ]
+    // 初始化顶部大柱状图
+    initEventSeverityTrendData (params) {
+      getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
+        data = [
+          {
+            legend: "critical",
+            values: [[1435781430781, "5"], [1435781431781, "3"],[1435781432781, "5"], [1435781433781, "3"]]
+          },
+          {
+            legend: "high",
+            values: [[1435781430781, "2"], [1435781431781, "3"],[1435781432781, "6"], [1435781433781, "4"]]
+          }, {
+            legend: "medium",
+            values: [[1435781430781, "4"], [1435781431781, "1"],[1435781432781, "5"], [1435781433781, "3"]]
+          }, {
+            legend: "low",
+            values: [[1435781430781, "1"], [1435781431781, "4"],[1435781432781, "1"], [1435781433781, "3"]]
+          }, {
+            legend: "info",
+            values: [[1435781430781, "5"], [1435781431781, "7"],[1435781432781, "5"], [1435781433781, "8"]]
           }
-        }
-        if (response.code === 200) {
-          response.data.result.forEach(item => {
-            this.eventSeverityOption.series[Number(getSeriesIndex(item.legend))].data = item.values.map(v => Number(v[1]))
-          })
-
-          this.eventSeverityOption.xAxis.data = response.data.result[0].values.map(v => [window.$dayJs.tz(Number(v[0])).format('YYYY-MM-DD HH:mm:ss')])
-
-        }
-      }).finally(() => {
-        this.$nextTick(() => {
-          this.eventSeverityOption && detectionChart.setOption(this.eventSeverityOption)
+        ]
+        const chartDom = document.getElementById('eventSeverityTrendBar')
+        const detectionChart = echarts.init(chartDom)
+        const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
+        data.forEach(item => {
+          eventSeverityTrendOption.series[Number(getSeriesIndex(item.legend))].data = item.values.map(v => Number(v[1]))
         })
-      })
-    },
-    initSeverityPerData () {
-      const chartDom = document.getElementById('detectionSeverityPer')
-      const detectionChart = echarts.init(chartDom)
-      this.severityPerOption = this.$_.cloneDeep(pieForSeverity)
-
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
-      }
-      get(api.detectionEventSeverity, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'table',
-            result: [
-              {
-                eventSeverity: 'critical',
-                count: 1048
-              }, {
-                eventSeverity: 'high',
-                count: 735
-              }, {
-                eventSeverity: 'medium',
-                count: 580
-              }, {
-                eventSeverity: 'low',
-                count: 484
-              }, {
-                eventSeverity: 'info',
-                count: 300
-              }
-            ]
-          }
-        }
-        if (response.code === 200) {
-          this.filterData[0].data = response.data.result.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
-          this.severityPerData = response.data.result.map(d => {
-            return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
-          })
-        }
-      }).finally(() => {
+        eventSeverityTrendOption.xAxis.data = data[0].values.map(v => [window.$dayJs.tz(Number(v[0])).format('YYYY-MM-DD HH:mm:ss')])
         this.$nextTick(() => {
-          this.severityPerOption.series[0].data = this.severityPerData
-          this.severityPerOption && detectionChart.setOption(this.severityPerOption)
+          detectionChart.setOption(eventSeverityTrendOption)
         })
-      })
-    },
-    initCategoryPerData () {
-      const chartDom = document.getElementById('detectionCategoryPer')
-      const detectionChart = echarts.init(chartDom)
-      this.categoryPerOption = this.$_.cloneDeep(pieForSeverity)
+      }).catch(error => {
 
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
-      }
-      get(api.detectionAttackType, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'table',
-            result: [
-              {
-                attackType: 'command and control',
-                count: 1048
-              }, {
-                attackType: 'payload delivery',
-                count: 735
-              }, {
-                attackType: 'cryptomining',
-                count: 580
-              }, {
-                attackType: 'phishing',
-                count: 484
-              }, {
-                attackType: 'dga',
-                count: 300
-              }, {
-                attackType: 'ddos',
-                count: 50
-              }
-            ]
-          }
-        }
-        if (response.code === 200) {
-          this.filterData[1].data = response.data.result.map(r => ({ label: r.attackType, value: r.attackType, count: r.count }))
-          this.categoryPerData = response.data.result.map(d => {
-            return { value: d.count, name: d.attackType, itemStyle: { color: getAttackColor(d.attackType) } }
-          })
-        }
-      }).finally(() => {
-        this.$nextTick(() => {
-          this.categoryPerOption.series[0].data = this.categoryPerData
-          this.categoryPerOption && detectionChart.setOption(this.categoryPerOption)
-        })
       })
     },
-    initActiveAttackData () {
-      const chartDom = document.getElementById('detectionActiveAttacker')
-      const detectionChart = echarts.init(chartDom)
-      this.activeAttackOption = this.$_.cloneDeep(activeAttackBar)
+    // 初始化左侧事件严重等级和小饼图
+    initEventSeverityData (params) {
+      getData(api.detection[this.pageType].eventSeverity, params).then(data => {
+        data = [
+          {
+            eventSeverity: 'critical',
+            count: 1048
+          }, {
+            eventSeverity: 'high',
+            count: 735
+          }, {
+            eventSeverity: 'medium',
+            count: 580
+          }, {
+            eventSeverity: 'low',
+            count: 484
+          }, {
+            eventSeverity: 'info',
+            count: 300
+          }
+        ]
+        this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
+        const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
+        eventSeverityOption.series[0].data = data.map(d => {
+          return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
+        })
+        const chartDom = document.getElementById('eventSeverityPie')
+        const detectionChart = echarts.init(chartDom)
+        detectionChart.setOption(eventSeverityOption)
+      }).catch(error => {
 
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
-      }
-      get(api.detectionOffenderIp, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'table',
-            result: [
-              {
-                offenderIp: '192.168.12.21',
-                count: 99999
-              }, {
-                offenderIp: '192.168.22.21',
-                count: 88888
-              }, {
-                offenderIp: '192.168.32.21',
-                count: 77777
-              }, {
-                offenderIp: '192.168.42.21',
-                count: 66666
-              }, {
-                offenderIp: '192.168.52.21',
-                count: 55555
-              }
-            ]
+      })
+    },
+    initSecurityTypeData (params) {
+      getData(api.detection[this.pageType].securityType, params).then(data => {
+        data = [
+          {
+            attackType: 'command and control',
+            count: 1048
+          }, {
+            attackType: 'payload delivery',
+            count: 735
+          }, {
+            attackType: 'cryptomining',
+            count: 580
+          }, {
+            attackType: 'phishing',
+            count: 484
+          }, {
+            attackType: 'dga',
+            count: 300
+          }, {
+            attackType: 'ddos',
+            count: 50
           }
-        }
-        if (response.code === 200) {
-          this.filterData[4].data = response.data.result.map(r => ({ label: r.offenderIp, value: r.offenderIp, count: r.count }))
-          const { showMore, showIndex } = this.computeFilterPage(this.filterData[4].data)
-          this.filterData[4].showMore = showMore
-          this.filterData[4].showIndex = showIndex
-          this.activeAttackData = response.data.result.map(d => {
-            return [d.count, d.offenderIp]
-          })
-        }
-      }).finally(() => {
-        this.$nextTick(() => {
-          this.activeAttackOption.series[0].data = this.activeAttackData.reverse()
-          this.activeAttackOption && detectionChart.setOption(this.activeAttackOption)
+        ]
+        this.filterData[this.pageType][1].data = data.map(r => ({ label: r.attackType, value: r.attackType, count: r.count }))
+        const chartDom = document.getElementById('detectionCategoryPer')
+        const detectionChart = echarts.init(chartDom)
+        const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
+        securityTypeOption.series[0].data = data.map(d => {
+          return { value: d.count, name: d.attackType, itemStyle: { color: getAttackColor(d.attackType) } }
         })
+        detectionChart.setOption(securityTypeOption)
+      }).catch(error => {
+
       })
     },
-    initVictimIp () {
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
-      }
-      get(api.detectionVictimIp, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'table',
-            result: [
-              {
-                victimIp: '1.2.6.8',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.9',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.0',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.1',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.2',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.3',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.4',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.5',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.6',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.7',
-                count: 50
-              },
-              {
-                victimIp: '1.2.7.8',
-                count: 50
-              },
-              {
-                victimIp: '1.2.8.8',
-                count: 50
-              },
-              {
-                victimIp: '1.2.9.8',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.18',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.28',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.38',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.48',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.58',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.68',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.78',
-                count: 50
-              },
-              {
-                victimIp: '1.2.6.88',
-                count: 50
-              }
-            ]
+    initOffenderIpData (params) {
+      getData(api.detection[this.pageType].offenderIp, params).then(data => {
+        data = [
+          {
+            offenderIp: '192.168.12.21',
+            count: 99999
+          }, {
+            offenderIp: '192.168.22.21',
+            count: 88888
+          }, {
+            offenderIp: '192.168.32.21',
+            count: 77777
+          }, {
+            offenderIp: '192.168.42.21',
+            count: 66666
+          }, {
+            offenderIp: '192.168.52.21',
+            count: 55555
           }
-        }
-        if (response.data && response.data.result) {
-          this.filterData[2].data = response.data.result.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
-          const { showMore, showIndex } = this.computeFilterPage(this.filterData[2].data)
-          this.filterData[2].showMore = showMore
-          this.filterData[2].showIndex = showIndex
-        }
+        ]
+        this.filterData[this.pageType][4].data = data.map(r => ({ label: r.offenderIp, value: r.offenderIp, count: r.count }))
+        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][4].data)
+        this.filterData[this.pageType][4].showMore = showMore
+        this.filterData[this.pageType][4].showIndex = showIndex
+
+        const chartDom = document.getElementById('detectionActiveAttacker')
+        const detectionChart = echarts.init(chartDom)
+        const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
+        offenderIpOption.series[0].data = data.map(d => {
+          return [d.count, d.offenderIp]
+        }).reverse()
+        detectionChart.setOption(offenderIpOption)
+      }).catch(error => {
+
       })
     },
-    initVictimLocation () {
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
-      }
-      get(api.detectionVictimLocation, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'table',
-            result: [
-              {
-                victimLocationCountry: 'china',
-                count: 50
-              }
-            ]
+    initVictimIpData (params) {
+      getData(api.detection[this.pageType].victimIp, params).then(data => {
+        data = [
+          {
+            victimIp: '1.2.6.8',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.9',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.0',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.1',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.2',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.3',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.4',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.5',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.6',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.7',
+            count: 50
+          },
+          {
+            victimIp: '1.2.7.8',
+            count: 50
+          },
+          {
+            victimIp: '1.2.8.8',
+            count: 50
+          },
+          {
+            victimIp: '1.2.9.8',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.18',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.28',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.38',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.48',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.58',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.68',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.78',
+            count: 50
+          },
+          {
+            victimIp: '1.2.6.88',
+            count: 50
           }
-        }
-        if (response.data && response.data.result) {
-          this.filterData[3].data = response.data.result.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
-          const { showMore, showIndex } = this.computeFilterPage(this.filterData[3].data)
-          this.filterData[3].showMore = showMore
-          this.filterData[3].showIndex = showIndex
-        }
+        ]
+        this.filterData[this.pageType][2].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
+        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][2].data)
+        this.filterData[this.pageType][2].showMore = showMore
+        this.filterData[this.pageType][2].showIndex = showIndex
+      }).catch(error => {
+
       })
     },
-    initOffenderLocation () {
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
-      }
-      get(api.detectionOffenderLocation, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'table',
-            result: [
-              {
-                offenderLocationCountry: 'china',
-                count: 50
-              }
-            ]
+    initVictimLocationData (params) {
+      getData(api.detection[this.pageType].victimLocation, params).then(data => {
+        data = [
+          {
+            victimLocationCountry: 'china',
+            count: 50
           }
-        }
-        if (response.data && response.data.result) {
-          this.filterData[5].data = response.data.result.map(r => ({ label: r.offenderLocationCountry, value: r.offenderLocationCountry, count: r.count }))
-          const { showMore, showIndex } = this.computeFilterPage(this.filterData[5].data)
-          this.filterData[5].showMore = showMore
-          this.filterData[5].showIndex = showIndex
-        }
+        ]
+        this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
+        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
+        this.filterData[this.pageType][3].showMore = showMore
+        this.filterData[this.pageType][3].showIndex = showIndex
+      }).catch(error => {
+
+      })
+    },
+    initOffenderLocationData (params) {
+      getData(api.detection[this.pageType].offenderLocation, params).then(data => {
+        data = [
+          {
+            offenderLocationCountry: 'china',
+            count: 50
+          }
+        ]
+        this.filterData[this.pageType][5].data = data.map(r => ({ label: r.offenderLocationCountry, value: r.offenderLocationCountry, count: r.count }))
+        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][5].data)
+        this.filterData[this.pageType][5].showMore = showMore
+        this.filterData[this.pageType][5].showIndex = showIndex
+      }).catch(error => {
+
+      })
+    },
+    initActiveEntity (params) {
+      getData(api.detection[this.pageType].activeEntity, params).then(data => {
+        data = [
+          {
+            name: 'csdn.net',
+            count: 250
+          },
+          {
+            name: 'duokan',
+            count: 150
+          },
+          {
+            name: '2.3.2.2',
+            count: 50
+          }
+        ]
+        const chartDom = document.getElementById('detectionActiveAttacker')
+        const detectionChart = echarts.init(chartDom)
+        const option = this.$_.cloneDeep(activeAttackBar)
+        option.series[0].data = data.map(d => {
+          return [d.count, d.name]
+        }).reverse()
+        detectionChart.setOption(option)
+      }).catch(error => {
+
       })
     },
     computeFilterPage (data) {
@@ -572,184 +497,307 @@ export default {
         showIndex: 9
       }
     },
-    queryList () {
-      const queryParams = {
-        ...this.timeFilter,
-        q: this.q
-      }
-      get(api.detectionListBasic, queryParams).then(response => {
-        response = {
-          code: 200,
-          success: true,
-          msg: 'OK',
-          data: {
-            resultType: 'table',
-            result: [
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'critical',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 978456923589
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'high',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'low',
-                malwareName: 'the great wall',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'medium',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              },
-              {
-                eventId: 1212,
-                securityType: 'ddos',
-                offenderIp: '1.1.1.1',
-                victimIp: '2.2.2.2',
-                eventSecurity: 'info',
-                malwareName: 'the great wall',
-                cryptominingPool: 'a',
-                startTime: 1111111111
-              }
-            ]
-          }
+    queryList (params) {
+      getData(api.detection[this.pageType].listBasic, params).then(data => {
+        if (this.pageType === detectionPageType.securityEvent) {
+          data = [
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'critical',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 978456923589
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'high',
+              cryptominingPool: 'a',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'low',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'medium',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              cryptominingPool: 'a',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              malwareName: 'the great wall',
+              durationMs: 600000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              cryptominingPool: 'a',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              cryptominingPool: 'a',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              cryptominingPool: 'a',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              malwareName: 'the great wall',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              cryptominingPool: 'a',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              eventId: 1212,
+              securityType: 'ddos',
+              offenderIp: '1.1.1.1',
+              victimIp: '2.2.2.2',
+              eventSecurity: 'info',
+              cryptominingPool: 'a',
+              durationMs: 60000,
+              startTime: 1111111111
+            }
+          ]
+        } else if (this.pageType === detectionPageType.performanceEvent) {
+          data = [
+            {
+              entityType: 'ip',
+              eventType: 'Dns error',
+              serverIp: '2.2.2.2',
+              eventSecurity: 'critical',
+              durationMs: 60000,
+              startTime: 978456923589
+            },
+            {
+              entityType: 'ip',
+              eventType: 'ddos',
+              serverIp: '2.2.2.2',
+              eventSecurity: 'high',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'ip',
+              eventType: 'ddos',
+              serverIp: '2.2.2.2',
+              eventSecurity: 'low',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'domain',
+              eventType: 'ddos',
+              domain: 'csdn.net',
+              eventSecurity: 'medium',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'domain',
+              eventType: 'ddos',
+              domain: 'amazon.com',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'domain',
+              eventType: 'ddos',
+              domain: 'qiniu.com',
+              eventSecurity: 'info',
+              durationMs: 600000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            },
+            {
+              entityType: 'app',
+              eventType: 'ddos',
+              appName: 'Samsung',
+              eventSecurity: 'info',
+              durationMs: 60000,
+              startTime: 1111111111
+            }
+          ]
         }
 
-        if (response.code === 200) {
-          this.listData = response.data.result
-        }
+        this.listData = data
+      }).catch(error => {
+
       })
     },
     timeRefreshChange () {
@@ -778,20 +826,29 @@ export default {
       this.queryListTotal()
     },
     queryFilter () {
-      this.initEventSeverityTrendData()
-      this.initSeverityPerData()
-      this.initCategoryPerData()
-      this.initActiveAttackData()
-      this.initOffenderLocation()
-      this.initVictimIp()
-      this.initVictimLocation()
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
+      }
+      this.initEventSeverityTrendData(params)
+      this.initEventSeverityData(params)
+      this.initSecurityTypeData(params)
+      if (this.pageType === detectionPageType.securityEvent) {
+        this.initOffenderIpData(params)
+        this.initOffenderLocationData(params)
+        this.initVictimIpData(params)
+        this.initVictimLocationData(params)
+      } else if (this.pageType === detectionPageType.performanceEvent) {
+        this.initActiveEntity(params)
+      }
     },
     queryListTotal () {
 
     },
     filter (filterColumn) {
       const params = {}
-      params[filterColumn] = this.filterData.find(f => {
+      params[filterColumn] = this.filterData[this.pageType].find(f => {
         return f.column === filterColumn
       }).value
       this.$refs.search.changeParams(params)
@@ -832,65 +889,66 @@ export default {
     timeFilter (n) {
       this.search(this.metaList, this.q)
     },
-    'filterData.0.value': {
+    'filterData.securityEvent.0.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData[0].column, oldValue: o, newValue: n })
+        this.$refs.search.changeParams({ column: this.filterData.securityEvent[0].column, oldValue: o, newValue: n })
       }
     },
-    'filterData.1.value': {
+    'filterData.securityEvent.1.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData[1].column, oldValue: o, newValue: n })
+        this.$refs.search.changeParams({ column: this.filterData.securityEvent[1].column, oldValue: o, newValue: n })
       }
     },
-    'filterData.2.value': {
+    'filterData.securityEvent.2.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData[2].column, oldValue: o, newValue: n })
+        this.$refs.search.changeParams({ column: this.filterData.securityEvent[2].column, oldValue: o, newValue: n })
       }
     },
-    'filterData.3.value': {
+    'filterData.securityEvent.3.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData[3].column, oldValue: o, newValue: n })
+        this.$refs.search.changeParams({ column: this.filterData.securityEvent[3].column, oldValue: o, newValue: n })
       }
     },
-    'filterData.4.value': {
+    'filterData.securityEvent.4.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData[4].column, oldValue: o, newValue: n })
+        this.$refs.search.changeParams({ column: this.filterData.securityEvent[4].column, oldValue: o, newValue: n })
       }
     },
-    'filterData.5.value': {
+    'filterData.securityEvent.5.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData[5].column, oldValue: o, newValue: n })
+        this.$refs.search.changeParams({ column: this.filterData.securityEvent[5].column, oldValue: o, newValue: n })
+      }
+    },
+    'filterData.performanceEvent.0.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData.performanceEvent[0].column, oldValue: o, newValue: n })
+      }
+    },
+    'filterData.performanceEvent.1.value': {
+      deep: true,
+      handler (n, o) {
+        this.$refs.search.changeParams({ column: this.filterData.performanceEvent[1].column, oldValue: o, newValue: n })
       }
     }
   },
   setup () {
+    const { params } = useRoute()
+    const pageType = params.typeName
+
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const timeFilter = ref({ startTime, endTime, dateRangeValue })
+
     return {
       timeFilter,
-      severityPerChart: {
-        params: {
-          url: '/interface/entity/detail/ip/trafficMap?startTime={{startTime}}&endTime={{endTime}}&country={{country}}&ip={{ip}}',
-          unitType: 'number'
-        },
-        id: 'detectionSeverityPer',
-        type: 32
-      },
-      categoryPerChart: {
-        params: {
-          url: '/interface/entity/detail/ip/trafficMap?startTime={{startTime}}&endTime={{endTime}}&country={{country}}&ip={{ip}}',
-          unitType: 'number'
-        },
-        id: 'detectionCategoryPer',
-        type: 32
-      }
+      pageType
     }
   }
 }

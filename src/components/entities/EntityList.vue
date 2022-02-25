@@ -60,7 +60,7 @@
           </template>
           <template v-else-if="from === 'domain'">
             <div class="body__row">
-              <span class="body__row-label"><i class="cn-icon cn-icon-category"></i>{{$t('entities.Group')}}：</span>
+              <span class="body__row-label"><i class="cn-icon cn-icon-category"></i>{{$t('entities.group')}}：</span>
               <div class="body__row-value" :title="d.categoryGroup">{{d.categoryGroup || '-'}}</div>
             </div>
             <div class="body__row">

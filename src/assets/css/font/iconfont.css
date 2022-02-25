@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1644832156673') format('woff2'),
-       url('iconfont.woff?t=1644832156673') format('woff'),
-       url('iconfont.ttf?t=1644832156673') format('truetype');
+  src: url('iconfont.woff2?t=1645687921203') format('woff2'),
+       url('iconfont.woff?t=1645687921203') format('woff'),
+       url('iconfont.ttf?t=1645687921203') format('truetype');
 }
 
 .cn-icon {
@@ -13,7 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.cn-icon-shaixuan:before {
+.cn-icon-detection:before {
+  content: "\e766";
+}
+
+.cn-icon-filter:before {
   content: "\e764";
 }
 
