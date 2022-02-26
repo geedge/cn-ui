@@ -110,7 +110,7 @@ export default {
             ...r,
             showValue: (r.value || r.value === 0) ? valueToRangeValue(r.value, chartParams.unitType).join(' ') : ''
           }))
-          polygonSeries.data = [...seriesData]
+          !this.$_.isEmpty(seriesData) && (polygonSeries.data = [...seriesData])
           const sorted = seriesData.sort((a, b) => b.value - a.value)
           const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
 

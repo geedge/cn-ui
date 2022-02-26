@@ -179,7 +179,7 @@
         :chart-info="chart"
         :chart-data="chartData"
         :entity="entityCopy"
-        :query-params="getQueryParams"
+        :query-params="queryParams"
         :hide-header="true"
         @getCurrentTimeRange="getCurrentTimeRange"
     ></chart>
@@ -288,7 +288,7 @@ export default {
     }
   },
   watch: {
-    'entityData.domainName': {
+    entityData: {
       immediate: true,
       deep: true,
       handler (n) {
@@ -307,6 +307,7 @@ export default {
     }
   },
   mounted () {
+    this.queryParams = this.getQueryParams()
     this.$nextTick(() => {
       setTimeout(() => {
         this.chartGetMap()

@@ -171,7 +171,7 @@
         :chart-info="chart"
         :chart-data="chartData"
         :entity="entityCopy"
-        :query-params="getQueryParams"
+        :query-params="queryParams"
         :hide-header="true"
         @getCurrentTimeRange="getCurrentTimeRange"
     ></chart>
@@ -281,7 +281,7 @@ export default {
     }
   },
   watch: {
-    'entityData.appName': {
+    entityData: {
       immediate: true,
       deep: true,
       handler (n) {
@@ -290,6 +290,7 @@ export default {
           this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
           this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
           this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
+          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
           this.$nextTick(() => {
             this.getRelatedServerDataOne(this.relatedServerDomainUrl)
             this.getRelatedServerDataTow(this.relatedServerIpUrl)
@@ -299,6 +300,7 @@ export default {
     }
   },
   mounted () {
+    this.queryParams = this.getQueryParams()
     this.$nextTick(() => {
       setTimeout(() => {
         this.chartGetMap()

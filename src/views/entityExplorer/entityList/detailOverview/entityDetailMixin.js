@@ -23,7 +23,8 @@ export default {
         chartOption: null,
         sentChart: null,
         receivedChart: null
-      }
+      },
+      queryParams: {}
     }
   },
   computed: {

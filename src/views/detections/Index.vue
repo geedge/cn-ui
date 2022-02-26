@@ -85,7 +85,7 @@ import { defaultPageSize, detectionPageType } from '@/utils/constants'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import * as echarts from 'echarts'
-import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor,getSeriesIndex } from '@/views/detections/options/detectionOptions'
+import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
 import { useRoute } from 'vue-router'
 
@@ -201,21 +201,21 @@ export default {
       getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
         data = [
           {
-            legend: "critical",
-            values: [[1435781430781, "5"], [1435781431781, "3"],[1435781432781, "5"], [1435781433781, "3"]]
+            legend: 'critical',
+            values: [[1435781430781, '5'], [1435781431781, '3'], [1435781432781, '5'], [1435781433781, '3']]
           },
           {
-            legend: "high",
-            values: [[1435781430781, "2"], [1435781431781, "3"],[1435781432781, "6"], [1435781433781, "4"]]
+            legend: 'high',
+            values: [[1435781430781, '2'], [1435781431781, '3'], [1435781432781, '6'], [1435781433781, '4']]
           }, {
-            legend: "medium",
-            values: [[1435781430781, "4"], [1435781431781, "1"],[1435781432781, "5"], [1435781433781, "3"]]
+            legend: 'medium',
+            values: [[1435781430781, '4'], [1435781431781, '1'], [1435781432781, '5'], [1435781433781, '3']]
           }, {
-            legend: "low",
-            values: [[1435781430781, "1"], [1435781431781, "4"],[1435781432781, "1"], [1435781433781, "3"]]
+            legend: 'low',
+            values: [[1435781430781, '1'], [1435781431781, '4'], [1435781432781, '1'], [1435781433781, '3']]
           }, {
-            legend: "info",
-            values: [[1435781430781, "5"], [1435781431781, "7"],[1435781432781, "5"], [1435781433781, "8"]]
+            legend: 'info',
+            values: [[1435781430781, '5'], [1435781431781, '7'], [1435781432781, '5'], [1435781433781, '8']]
           }
         ]
         const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)

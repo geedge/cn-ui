@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     handleQueryParams (queryParams) {
-      return this.timeFilter = {
+      this.timeFilter = {
         startTime: Number(queryParams.startTime) * 1000,
         endTime: Number(queryParams.endTime) * 1000
       }
@@ -126,7 +126,7 @@ export default {
           self.loadPieTableData(this.allSelectPieChartName)
         } else { // 否则查询当前name数据
           self.selectPieChartName = echartParams.name
-          self.loadPieTableData(echartParams.name)
+          self.loadPieTableData(echartParams.data.data.appRisk || echartParams.name)
         }
       })
     },

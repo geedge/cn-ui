@@ -9,7 +9,7 @@ const severitySeriesIndexMappings = [
   { value: 'critical', index: '0' },
   { value: 'high', index: '1' },
   { value: 'medium', index: '2' },
-  { value: 'low', index: '3'},
+  { value: 'low', index: '3' },
   { value: 'info', index: '4' }
 ]
 
