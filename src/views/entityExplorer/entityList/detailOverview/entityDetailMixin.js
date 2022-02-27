@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
-import { unitTypes } from '@/utils/constants'
+import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 
 export default {
@@ -46,6 +46,14 @@ export default {
         default: break
       }
       return name
+    },
+    appRisk () {
+      return function (level) {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.value == level
+        })
+        return (m && m.name) || level
+      }
     }
   },
   methods: {

@@ -9,9 +9,9 @@
       >
         <i class="cn-icon cn-icon-arrow-right"></i>
       </span>
-      {{chartInfo.name}}
+      {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </div>
-    <div class="chart-header__title" v-else-if="!isCurrentTable" :class="{'chart-header__title--block': isBlock}">{{chartInfo.name}}</div>
+    <div class="chart-header__title" v-else-if="!isCurrentTable" :class="{'chart-header__title--block': isBlock}" :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
     <template v-if="isCurrentTable">
       <div class="chart-header__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
