@@ -20,15 +20,25 @@
         <div class="cn-detection__body">
           <div class="body__basic-info">
             <div class="basic-info">
-              <div class="basic-info__item">
+              <div class="basic-info__item" v-if="detection.eventSecurity">
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detection.list.eventSecurity')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventSecurity}}</span>
               </div>
-              <div class="basic-info__item">
+              <div class="basic-info__item" v-if="detection.eventSeverity">
+                <i class="cn-icon cn-icon-severity-level"></i>
+                <span>{{$t('detections.eventSeverity')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{detection.eventSeverity}}</span>
+              </div>
+              <div class="basic-info__item" v-if="detection.securityType">
                 <i class="cn-icon cn-icon-event-type"></i>
                 <span>{{$t('detection.list.securityType')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.securityType}}</span>
+              </div>
+              <div class="basic-info__item" v-if="detection.eventType">
+                <i class="cn-icon cn-icon-event-type"></i>
+                <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{detection.eventType}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.malwareName">
                 <i class="cn-icon cn-icon-trojan"></i>
