@@ -199,7 +199,7 @@ export default {
     // 初始化顶部大柱状图
     initEventSeverityTrendData (params) {
       getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
-        data = [
+        /*data = [
           {
             legend: 'critical',
             values: [[1435781430781, '5'], [1435781431781, '3'], [1435781432781, '5'], [1435781433781, '3']]
@@ -217,7 +217,7 @@ export default {
             legend: 'info',
             values: [[1435781430781, '5'], [1435781431781, '7'], [1435781432781, '5'], [1435781433781, '8']]
           }
-        ]
+        ]*/
         const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
         const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
@@ -235,7 +235,7 @@ export default {
     // 初始化左侧事件严重等级和小饼图
     initEventSeverityData (params) {
       getData(api.detection[this.pageType].eventSeverity, params).then(data => {
-        data = [
+        /*data = [
           {
             eventSeverity: 'critical',
             count: 1048
@@ -252,7 +252,7 @@ export default {
             eventSeverity: 'info',
             count: 300
           }
-        ]
+        ]*/
         this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
         const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
         eventSeverityOption.series[0].data = data.map(d => {
@@ -267,7 +267,7 @@ export default {
     },
     initSecurityTypeData (params) {
       getData(api.detection[this.pageType].securityType, params).then(data => {
-        data = [
+        /*data = [
           {
             attackType: 'command and control',
             count: 1048
@@ -287,7 +287,7 @@ export default {
             attackType: 'ddos',
             count: 50
           }
-        ]
+        ]*/
         this.filterData[this.pageType][1].data = data.map(r => ({ label: r.attackType, value: r.attackType, count: r.count }))
         const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
@@ -302,7 +302,7 @@ export default {
     },
     initOffenderIpData (params) {
       getData(api.detection[this.pageType].offenderIp, params).then(data => {
-        data = [
+        /*data = [
           {
             offenderIp: '192.168.12.21',
             count: 99999
@@ -319,7 +319,7 @@ export default {
             offenderIp: '192.168.52.21',
             count: 55555
           }
-        ]
+        ]*/
         this.filterData[this.pageType][4].data = data.map(r => ({ label: r.offenderIp, value: r.offenderIp, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][4].data)
         this.filterData[this.pageType][4].showMore = showMore
@@ -338,7 +338,7 @@ export default {
     },
     initVictimIpData (params) {
       getData(api.detection[this.pageType].victimIp, params).then(data => {
-        data = [
+        /*data = [
           {
             victimIp: '1.2.6.8',
             count: 50
@@ -423,7 +423,7 @@ export default {
             victimIp: '1.2.6.88',
             count: 50
           }
-        ]
+        ]*/
         this.filterData[this.pageType][2].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][2].data)
         this.filterData[this.pageType][2].showMore = showMore
@@ -434,12 +434,12 @@ export default {
     },
     initVictimLocationData (params) {
       getData(api.detection[this.pageType].victimLocation, params).then(data => {
-        data = [
+        /*data = [
           {
             victimLocationCountry: 'china',
             count: 50
           }
-        ]
+        ]*/
         this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
         this.filterData[this.pageType][3].showMore = showMore
@@ -450,12 +450,12 @@ export default {
     },
     initOffenderLocationData (params) {
       getData(api.detection[this.pageType].offenderLocation, params).then(data => {
-        data = [
+        /*data = [
           {
             offenderLocationCountry: 'china',
             count: 50
           }
-        ]
+        ]*/
         this.filterData[this.pageType][5].data = data.map(r => ({ label: r.offenderLocationCountry, value: r.offenderLocationCountry, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][5].data)
         this.filterData[this.pageType][5].showMore = showMore
@@ -466,7 +466,7 @@ export default {
     },
     initActiveEntity (params) {
       getData(api.detection[this.pageType].activeEntity, params).then(data => {
-        data = [
+        /*data = [
           {
             name: 'csdn.net',
             count: 250
@@ -479,7 +479,7 @@ export default {
             name: '2.3.2.2',
             count: 50
           }
-        ]
+        ]*/
         const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
         const detectionChart = echarts.init(chartDom)
         const option = this.$_.cloneDeep(activeAttackBar)
@@ -497,10 +497,15 @@ export default {
         showIndex: 9
       }
     },
-    queryList (params) {
+    queryList () {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        q: this.q
+      }
       getData(api.detection[this.pageType].listBasic, params).then(data => {
         if (this.pageType === detectionPageType.securityEvent) {
-          data = [
+          /*data = [
             {
               eventId: 1212,
               securityType: 'ddos',
@@ -661,9 +666,9 @@ export default {
               durationMs: 60000,
               startTime: 1111111111
             }
-          ]
+          ]*/
         } else if (this.pageType === detectionPageType.performanceEvent) {
-          data = [
+          /*data = [
             {
               entityType: 'ip',
               eventType: 'Dns error',
@@ -792,7 +797,7 @@ export default {
               durationMs: 60000,
               startTime: 1111111111
             }
-          ]
+          ]*/
         }
 
         this.listData = data
