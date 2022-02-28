@@ -50,7 +50,7 @@ export default {
     }, */
     showMore (filter) {
       filter.showIndex && (filter.showIndex += 10)
-      filter.showIndex >= filter.data.length && (filter.showMore = false)
+      filter.showIndex >= (filter.data.length - 1) && (filter.showMore = false)
     }
   },
   computed: {
