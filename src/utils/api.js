@@ -76,24 +76,24 @@ export const api = {
   // detection
   detection: {
     securityEvent: {
-      eventSeverityTrend: '/interface/detection/filter/severityTrend',
-      securityType: '/interface/detection/filter/attackType',
-      offenderIp: '/interface/detection/filter/offenderIp',
-      offenderLocation: '/interface/detection/filter/offenderLocation',
-      victimIp: '/interface/detection/filter/victimIp',
-      victimLocation: '/interface/detection/filter/victimLocation',
-      eventSeverity: '/interface/detection/filter/severity',
-      listBasic: '/interface/detection/list/basic',
-      overviewBasic: '/interface/detection/detail/overview/basic',
-      overviewEvent: '/interface/detection/detail/overview/event'
+      eventSeverityTrend: '/interface/detection/security/filter/severityTrend',
+      securityType: '/interface/detection/security/filter/securityType',
+      offenderIp: '/interface/detection/security/filter/offenderIp',
+      offenderLocation: '/interface/detection/security/filter/offenderLocation',
+      victimIp: '/interface/detection/security/filter/victimIp',
+      victimLocation: '/interface/detection/security/filter/victimLocation',
+      eventSeverity: '/interface/detection/security/filter/severity',
+      listBasic: '/interface/detection/security/list/basic',
+      overviewBasic: '/interface/detection/security/detail/overview/basic',
+      overviewEvent: '/interface/detection/security/detail/overview/event'
     },
     performanceEvent: {
-      eventSeverityTrend: '/interface/detection/filter/severityTrend',
-      securityType: '/interface/detection/filter/attackType',
-      eventSeverity: '/interface/detection/filter/severity',
-      activeEntity: '/interface/detection/filter/activeEntity',
-      listBasic: '/interface/detection/list/basic',
-      overviewBasic: '/interface/detection/detail/overview/basic'
+      eventSeverityTrend: '/interface/detection/performance/filter/severityTrend',
+      securityType: '/interface/detection/performance/filter/eventType',
+      eventSeverity: '/interface/detection/performance/filter/severity',
+      activeEntity: '/interface/detection/performance/filter/activeEntity',
+      listBasic: '/interface/detection/performance/list/basic',
+      overviewBasic: '/interface/detection/performance/detail/overview/basic'
     }
   }
 }
