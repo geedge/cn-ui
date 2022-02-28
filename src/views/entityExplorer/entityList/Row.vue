@@ -54,7 +54,7 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category"></i>
                   <span>{{$t('entities.subcategory')}}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{entityData.appSubategory || '-'}}</span>
+                  <span>{{entityData.appSubcategory || '-'}}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>

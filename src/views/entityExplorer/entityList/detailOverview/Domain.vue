@@ -217,6 +217,7 @@ export default {
       trafficUrlMap: api.entityDomainDetailTrafficMap,
       relatedServerIpUrl: api.entityDomainRelatedServerIp,
       relatedServerAppUrl: api.entityDomainRelatedServerApp,
+      basicProperties:api.entityDomainDetailBasic,
       chartData: null,
       listMode: 'list',
       singleValues: {
@@ -285,6 +286,13 @@ export default {
           this.chartData = response.data.result
         }
       })
+    },
+    getBasicProperties(){
+      get(this.basicProperties, this.getQueryParams()).then(response => {
+        if (response.code === 200) {
+          this.entityData = response.data.result
+        }
+      })
     }
   },
   watch: {
@@ -311,6 +319,7 @@ export default {
     this.$nextTick(() => {
       setTimeout(() => {
         this.chartGetMap()
+        this.getBasicProperties()
       }, 250)
     })
   },
