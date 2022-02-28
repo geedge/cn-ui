@@ -15,7 +15,7 @@
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
       <div class="detection__event-severity-bar" :id="`eventSeverityTrendBar${pageType}`"></div>
-      <div style="display: flex;">
+      <div style="display: flex; flex-grow: 1">
         <detection-filter
             :filter-data="filterData[pageType]"
             :q="q"
