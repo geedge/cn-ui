@@ -106,43 +106,6 @@ export default {
       username: 'admin', // sessionStorage.getItem('cn-username'),
       language: localStorage.getItem('cn-language') ? localStorage.getItem('cn-language') : 'en',
       showChangePin: false,
-      breadcrumbMap: [
-        {
-          path: '/panel/trafficSummary',
-          parentName: this.$t('overall.dashboard'),
-          name: this.$t('trafficSummary.trafficSummary')
-        },
-        {
-          path: '/panel/networkAppPerformance',
-          parentName: this.$t('overall.dashboard'),
-          name: this.$t('networkAppPerformance.networkAppPerformance')
-        }, {
-          path: '/panel/dnsServiceInsights',
-          parentName: this.$t('overall.dashboard'),
-          name: this.$t('dnsServiceInsights')
-        }, {
-          path: '/entityExplorer',
-          parentName: this.$t('overall.entities'),
-          name: this.$t('overall.entityExplorer'),
-          childName: ''
-        }, {
-          path: '/user',
-          parentName: this.$t('overall.setting'),
-          name: this.$t('overall.user')
-        }, {
-          path: '/role',
-          parentName: this.$t('overall.setting'),
-          name: this.$t('overall.role')
-        }, {
-          path: '/operationLog',
-          parentName: this.$t('overall.setting'),
-          name: this.$t('overall.operationLog')
-        }, {
-          path: '/i18n',
-          parentName: this.$t('overall.setting'),
-          name: 'I18N'
-        }
-      ],
       from: '', // entity类型
       changePassForm: {
         oldPwd: '',
@@ -158,7 +121,17 @@ export default {
   },
   computed: {
     breadcrumb () {
-      const breadcrumb = this.breadcrumbMap.find(b => this.path === b.path)
+      const breadcrumbMap = []
+      this.$store.getters.menuList.forEach(menu => {
+        if (this.$_.isEmpty(menu.children) && menu.route) {
+          breadcrumbMap.push({ name: this.$t(menu.i18n), path: menu.route })
+        } else if (!this.$_.isEmpty(menu.children)) {
+          menu.children.forEach(child => {
+            breadcrumbMap.push({ name: child.i18n ? this.$t(child.i18n) : child.name, parentName: menu.i18n ? this.$t(menu.i18n) : menu.name, path: child.route })
+          })
+        }
+      })
+      const breadcrumb = breadcrumbMap.find(b => this.path === b.path)
       return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
     },
     path () {

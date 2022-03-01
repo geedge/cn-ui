@@ -1,7 +1,7 @@
 <template>
   <div class="cn-chart__single-value chart-header-position" :class="singleValueClass(type)" :style="{backgroundColor:color}">
-    <div class="single-value-icon__box"  v-if="type !== 54">
-      <div class="single-value__icon"><i :class="icon"></i></div>
+    <div class="single-value-icon__box" v-if="type !== 54">
+      <div class="single-value__icon" :style="`background-color: ${chartInfo.params.iconBackgroundColor || ''}`"><i :class="icon" :style="`color: ${chartInfo.params.iconColor || ''}`"></i></div>
     </div>
     <div class="single-value__content" v-if="type === 51">
       <div class="content__data">
