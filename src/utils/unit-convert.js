@@ -1,4 +1,5 @@
 import { unitTypes } from '@/utils/constants'
+import _ from 'lodash'
 
 const numberUnit = ['', 'K', 'M', 'G', 'T', 'P', 'E']
 const byteUnit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
@@ -35,6 +36,9 @@ export function byteUnitConvert (value, sourceUnit = 'B', targetUnit, dot = 2) {
 }
 /* 时间单位转换，例如将ms转为h */
 export function timeUnitFormatter (time, sourceUnit = 'ms', targetUnit, dot = 2) {
+  if (!_.isNumber(time) || time === 0) {
+    return [0, sourceUnit]
+  }
   let sourceIndex = -1
   let targetIndex = -1
   timeUnit.forEach((t, i) => {

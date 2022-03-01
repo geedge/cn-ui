@@ -1,5 +1,6 @@
 <template>
   <div class="detection-filter-case">
+    <div class="no-data" v-if="isNoData">No data</div>
     <template v-for="(filter, index) in filterData" :key="index">
       <div class="detection-filter" v-show="filter.data.length > 0">
         <div class="filter__header" @click="filter.collapse = !filter.collapse">
@@ -49,7 +50,18 @@ export default {
     }, */
     showMore (filter) {
       filter.showIndex && (filter.showIndex += 10)
-      filter.showIndex >= filter.data.length && (filter.showMore = false)
+      filter.showIndex >= (filter.data.length - 1) && (filter.showMore = false)
+    }
+  },
+  computed: {
+    isNoData () {
+      let isNoData = true
+      this.filterData.forEach(filter => {
+        if (!this.$_.isEmpty(filter.data)) {
+          isNoData = false
+        }
+      })
+      return isNoData
     }
   }
 }
