@@ -88,8 +88,7 @@ export const multipleBarOption = {
     },
     splitLine: {
       show: false
-    },
-    interval: 10
+    }
   },
   grid: {
     top: 40,

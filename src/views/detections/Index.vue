@@ -14,7 +14,9 @@
     ></detection-search>
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
-      <div class="detection__event-severity-bar" :id="`eventSeverityTrendBar${pageType}`"></div>
+      <div class="detection__event-severity-bar" :id="`eventSeverityTrendBar${pageType}`">
+        <detection-no-data v-if="isEventSeverityNoData"></detection-no-data>
+      </div>
       <div style="display: flex; flex-grow: 1">
         <detection-filter
             :filter-data="filterData[pageType]"
@@ -30,6 +32,7 @@
                 <div class="chart-header__title">{{$t('detection.severity')}}</div>
               </div>
               <div class="chart-content" :id="`eventSeverityPie${pageType}`">
+                <detection-no-data v-if="isStatisticsSeverityNoData"></detection-no-data>
               </div>
             </div>
             <div class="statistics__category">
@@ -37,6 +40,7 @@
                 <div class="chart-header__title">{{$t('detection.categoryProportion')}}</div>
               </div>
               <div class="chart-content" :id="`detectionCategoryPer${pageType}`">
+                <detection-no-data v-if="isStatisticsCategoryNoData"></detection-no-data>
               </div>
             </div>
             <div class="statistics__active-attack">
@@ -44,6 +48,7 @@
                 <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeAttacker') : $t('detections.activeEntity')}}</div>
               </div>
               <div class="chart-content" style="" :id="`detectionActiveAttacker${pageType}`">
+                <detection-no-data v-if="isStatisticsActiveAttackNoData"></detection-no-data>
               </div>
             </div>
           </div>
@@ -88,6 +93,7 @@ import * as echarts from 'echarts'
 import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
 import { useRoute } from 'vue-router'
+import DetectionNoData from '@/views/detections/DetectionNoData'
 
 export default {
   name: 'Index',
@@ -97,7 +103,8 @@ export default {
     TimeRefresh,
     DetectionFilter,
     DetectionList,
-    Pagination
+    Pagination,
+    DetectionNoData
   },
   data () {
     return {
@@ -192,7 +199,11 @@ export default {
       categoryPerOption: null,
       categoryPerData: [],
       activeAttackOption: null,
-      activeAttackData: []
+      activeAttackData: [],
+      isEventSeverityNoData:true,
+      isStatisticsSeverityNoData:true,
+      isStatisticsCategoryNoData:true,
+      isStatisticsActiveAttackNoData:true
     }
   },
   methods: {
@@ -202,7 +213,7 @@ export default {
         /*data = [
           {
             legend: 'critical',
-            values: [[1435781430781, '5'], [1435781431781, '3'], [1435781432781, '5'], [1435781433781, '3']]
+            values: [[1435781430781, '999'], [1435781431781, '222'], [1435781432781, '11'], [1435781433781, '3']]
           },
           {
             legend: 'high',
@@ -218,16 +229,19 @@ export default {
             values: [[1435781430781, '5'], [1435781431781, '7'], [1435781432781, '5'], [1435781433781, '8']]
           }
         ]*/
-        const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
-        const detectionChart = echarts.init(chartDom)
-        const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
-        data.forEach(item => {
-          eventSeverityTrendOption.series[Number(getSeriesIndex(item.legend))].data = item.values.map(v => Number(v[1]))
-        })
-        eventSeverityTrendOption.xAxis.data = data[0].values.map(v => [window.$dayJs.tz(Number(v[0])).format('YYYY-MM-DD HH:mm:ss')])
-        this.$nextTick(() => {
-          detectionChart.setOption(eventSeverityTrendOption)
-        })
+        if (!this.$_.isEmpty(data)) {
+          const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
+          const detectionChart = echarts.init(chartDom)
+          const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
+          data.forEach(item => {
+            eventSeverityTrendOption.series[Number(getSeriesIndex(item.legend))].data = item.values.map(v => Number(v[1]))
+          })
+          eventSeverityTrendOption.xAxis.data = data[0].values.map(v => [window.$dayJs.tz(Number(v[0])).format('YYYY-MM-DD HH:mm:ss')])
+          this.$nextTick(() => {
+            detectionChart.setOption(eventSeverityTrendOption)
+          })
+          this.isEventSeverityNoData = false
+        }
       }).catch(error => {
 
       })
@@ -253,14 +267,17 @@ export default {
             count: 300
           }
         ]*/
-        this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
-        const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
-        eventSeverityOption.series[0].data = data.map(d => {
-          return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
-        })
-        const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
-        const detectionChart = echarts.init(chartDom)
-        detectionChart.setOption(eventSeverityOption)
+        if (!this.$_.isEmpty(data)) {
+          this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
+          const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
+          eventSeverityOption.series[0].data = data.map(d => {
+            return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
+          })
+          const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
+          const detectionChart = echarts.init(chartDom)
+          detectionChart.setOption(eventSeverityOption)
+          this.isStatisticsSeverityNoData = false
+        }
       }).catch(error => {
 
       })
@@ -288,14 +305,21 @@ export default {
             count: 50
           }
         ]*/
-        this.filterData[this.pageType][1].data = data.map(r => ({ label: r.attackType, value: r.attackType, count: r.count }))
-        const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
-        const detectionChart = echarts.init(chartDom)
-        const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
-        securityTypeOption.series[0].data = data.map(d => {
-          return { value: d.count, name: d.attackType, itemStyle: { color: getAttackColor(d.attackType) } }
-        })
-        detectionChart.setOption(securityTypeOption)
+        if (!this.$_.isEmpty(data)) {
+          this.filterData[this.pageType][1].data = data.map(r => ({
+            label: r.attackType,
+            value: r.attackType,
+            count: r.count
+          }))
+          const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
+          const detectionChart = echarts.init(chartDom)
+          const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
+          securityTypeOption.series[0].data = data.map(d => {
+            return {value: d.count, name: d.attackType, itemStyle: {color: getAttackColor(d.attackType)}}
+          })
+          detectionChart.setOption(securityTypeOption)
+          this.isStatisticsCategoryNoData = false
+        }
       }).catch(error => {
 
       })
@@ -307,34 +331,80 @@ export default {
             offenderIp: '192.168.12.21',
             count: 99999
           }, {
-            offenderIp: '192.168.22.21',
+            offenderIp: '193.168.22.21',
             count: 88888
           }, {
-            offenderIp: '192.168.32.21',
+            offenderIp: '194.168.32.21',
             count: 77777
           }, {
-            offenderIp: '192.168.42.21',
+            offenderIp: '195.168.42.21',
             count: 66666
+          }, {
+            offenderIp: '196.168.52.21',
+            count: 55555
+          },
+          {
+            offenderIp: '192.168.12.21',
+            count: 44444
+          }, {
+            offenderIp: '192.168.22.21',
+            count: 98888
+          }, {
+            offenderIp: '192.168.32.21',
+            count: 97777
+          }, {
+            offenderIp: '192.168.42.21',
+            count: 96666
           }, {
             offenderIp: '192.168.52.21',
             count: 55555
+          },
+          {
+            offenderIp: '193.168.12.21',
+            count: 91999
+          }, {
+            offenderIp: '193.168.22.21',
+            count: 88688
+          }, {
+            offenderIp: '193.168.32.21',
+            count: 77747
+          }, {
+            offenderIp: '193.168.42.21',
+            count: 66666
+          }, {
+            offenderIp: '193.168.52.21',
+            count: 55355
           }
         ]*/
-        this.filterData[this.pageType][4].data = data.map(r => ({ label: r.offenderIp, value: r.offenderIp, count: r.count }))
-        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][4].data)
-        this.filterData[this.pageType][4].showMore = showMore
-        this.filterData[this.pageType][4].showIndex = showIndex
+        if (!this.$_.isEmpty(data)) {
+          this.filterData[this.pageType][4].data = data.map(r => ({
+            label: r.offenderIp,
+            value: r.offenderIp,
+            count: r.count
+          }))
+          const {showMore, showIndex} = this.computeFilterPage(this.filterData[this.pageType][4].data)
+          this.filterData[this.pageType][4].showMore = showMore
+          this.filterData[this.pageType][4].showIndex = showIndex
 
-        const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
-        const detectionChart = echarts.init(chartDom)
-        const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
-        offenderIpOption.series[0].data = data.map(d => {
-          return [d.count, d.offenderIp]
-        }).reverse()
-        detectionChart.setOption(offenderIpOption)
+          const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
+          const detectionChart = echarts.init(chartDom)
+          const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
+          data.sort(this.sortBy('count'));
+          data = data.slice(0,5)
+          offenderIpOption.series[0].data = data.map(d => {
+            return [d.count, d.offenderIp]
+          }).reverse()
+          detectionChart.setOption(offenderIpOption)
+          this.isStatisticsActiveAttackNoData = false
+        }
       }).catch(error => {
 
       })
+    },
+    sortBy(i) {
+      return function(a,b) {
+        return b[i] - a[i]
+      }
     },
     initVictimIpData (params) {
       getData(api.detection[this.pageType].victimIp, params).then(data => {
