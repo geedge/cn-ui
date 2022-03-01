@@ -81,6 +81,7 @@ import { getNowTime, getSecond } from '@/utils/date-util'
 import { chartPieTableTopOptions, chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { ref } from 'vue'
+import _ from 'lodash'
 
 export default {
   name: 'PanelChart',
@@ -209,6 +210,24 @@ export default {
               this.table.tableColumns = this.getTableTitle(response.data.result)
               this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
               this.resultType = response.data.resultType
+              if(this.chartInfo.type === 12){
+                const newArr = []
+                _.forEach(this.chartData,function(value,key){
+                  _.forEach(value.values,function(value,key){
+                    newArr.push(value[0])
+                  })
+                })
+                const Arr = newArr.sort()
+                _.forEach(this.chartData,function(value,key){
+                  console.log(_.head(value.values[0]));
+                  if(_.head(value.values[0]) !== _.head(Arr)){
+                    value.values.unshift([_.head(Arr),0])
+                  }
+                  if((_.last(value.values[0]) !== _.last(Arr))){
+                    value.values.push([_.last(Arr),0])
+                  }
+                })
+              }
               if (this.isSingleValue) {
                 if (chartParams && chartParams.dataKey) {
                   if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
