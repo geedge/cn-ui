@@ -167,10 +167,10 @@ export default {
                 return parseFloat(r2.bytes) - parseFloat(r1.bytes)
               })
               const sortedId = response.data.result.sort((r1, r2) => {
-                return parseFloat(r2.commonEgressLinkId) - parseFloat(r1.commonEgressLinkId)
+                return parseFloat(r2.commonIngressLinkId) - parseFloat(r1.commonIngressLinkId)
               })
               const max = parseFloat(sorted[0].bytes)
-              const maxId = parseFloat(sortedId[0].commonEgressLinkId)
+              const maxId = parseFloat(sortedId[0].commonIngressLinkId)
               this.entityData.linkInPercent = (parseFloat(max / sum) * 100).toFixed(2)
               this.entityData.linkInId = maxId
             }
