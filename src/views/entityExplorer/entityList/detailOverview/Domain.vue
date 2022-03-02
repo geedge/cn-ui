@@ -217,7 +217,7 @@ export default {
       trafficUrlMap: api.entityDomainDetailTrafficMap,
       relatedServerIpUrl: api.entityDomainRelatedServerIp,
       relatedServerAppUrl: api.entityDomainRelatedServerApp,
-      basicProperties:api.entityDomainDetailBasic,
+      basicProperties: api.entityDomainDetailBasic,
       chartData: null,
       listMode: 'list',
       singleValues: {
@@ -287,7 +287,7 @@ export default {
         }
       })
     },
-    getBasicProperties(){
+    getBasicProperties () {
       get(this.basicProperties, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.entityData = response.data.result

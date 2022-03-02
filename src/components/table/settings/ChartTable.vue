@@ -119,6 +119,7 @@ export default {
     return {
       panelTypeAndRouteMapping: panelTypeAndRouteMapping,
       tableTitle: [ // 原table列
+      
         {
           label: 'ID',
           prop: 'id',

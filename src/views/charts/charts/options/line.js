@@ -113,7 +113,7 @@ export const lineWithStatistics = {
       smooth: false,
       symbol: 'none',
       data: [],
-      connectNulls:true
+      connectNulls: true
     }
   ]
 }

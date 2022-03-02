@@ -154,6 +154,14 @@ export function isDomainDnsRecord (type) {
 export function isCryptocurrencyEventList (type) {
   return type === 85
 }
+/* 单支持情况统计 */ 
+export function isSingleSupportStatistics (type) {
+  return type === 86
+}
+/* 两个支持情况统计 */ 
+export function isTwoSupportStatistics (type) {
+  return type === 87
+}
 /* 组 */
 export function isGroup (type) {
   return type === 94

@@ -3,7 +3,6 @@
     <loading :loading="loading && !isTabs && !isBlock && !isGroup"></loading>
     <chart-no-data v-if="isNoData"></chart-no-data>
     <template v-else>
-
       <chart-tabs
         v-if="isTabs"
         :chart-info="chartInfo"
@@ -38,11 +37,11 @@
       ></chart-block>
 
       <chart-group
-              v-else-if="isGroup"
-              :timeFilter="queryParams"
-              :chart-info="chartInfo"
-              :chart-data="chartData"
-              :entity="entity"
+        v-else-if="isGroup"
+        :timeFilter="queryParams"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :entity="entity"
       ></chart-group>
 
       <ip-basic-info
@@ -181,6 +180,21 @@
         :entity="entity"
       ></chart-echart-app-relate-domain>
 
+      <chart-one-Situation-Statistics
+        v-else-if="isSingleSupportStatistics"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        @showLoading="showLoading"
+        :entity="entity"
+      ></chart-one-Situation-Statistics>
+
+      <chart-two-Situation-Statistics
+        v-else-if="isTwoSupportStatistics"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        @showLoading="showLoading"
+        :entity="entity"
+      ></chart-two-Situation-Statistics>
     </template>
   </div>
 </template>
@@ -210,6 +224,8 @@ import ChartDomainDnsRecord from '@/views/charts/charts/ChartDomainDnsRecord'
 import ChartCryptocurrencyEventList from '@/views/charts/charts/ChartCryptocurrencyEventList'
 import ChartRelationShip from '@/views/charts/charts/ChartRelationShip'
 import ChartSanKey from '@/views/charts/charts/ChartSanKey'
+import ChartOneSituationStatistics from '@/views/charts/charts/ChartOneSituationStatistics'
+import ChartTwoSituationStatistics from '@/views/charts/charts/ChartTwoSituationStatistics'
 import {
   isEcharts,
   isEchartsLine,
@@ -242,7 +258,9 @@ import {
   isCryptocurrencyEventList,
   isAppBasicInfo,
   isAppRelatedDomain,
-  isBlock
+  isBlock,
+  isSingleSupportStatistics,
+  isTwoSupportStatistics
 } from './charts/tools'
 import _ from 'lodash'
 
@@ -272,7 +290,9 @@ export default {
     ChartEchart,
     ChartEchartWithTable,
     ChartEchartIpHostedDomain,
-    ChartEchartAppRelateDomain
+    ChartEchartAppRelateDomain,
+    ChartOneSituationStatistics,
+    ChartTwoSituationStatistics
   },
   props: {
     chartInfo: Object,
@@ -290,7 +310,18 @@ export default {
   },
   computed: {
     isNoData () {
-      return !this.loading && (_.isEmpty(this.chartData) || this.isError) && !this.isSingleValue && !this.isTabs && !this.isDomainDnsRecord && !this.isCryptocurrencyEventList && !this.isActiveIpTable && !this.isMap
+      return (
+        !this.loading &&
+        (_.isEmpty(this.chartData) || this.isError) &&
+        !this.isSingleValue &&
+        !this.isTabs &&
+        !this.isDomainDnsRecord &&
+        !this.isCryptocurrencyEventList &&
+        !this.isActiveIpTable &&
+        !this.isMap &&
+        !this.isSingleSupportStatistics &&
+        !this.isTwoSupportStatistics
+      )
     },
     chartOption () {
       if (this.customChartOption) {
@@ -302,21 +333,23 @@ export default {
   },
   methods: {
     resize () {
-      this.$refs['chart' + this.chartInfo.id] && this.$refs['chart' + this.chartInfo.id].resize()
+      this.$refs['chart' + this.chartInfo.id] &&
+        this.$refs['chart' + this.chartInfo.id].resize()
     },
     showLoading (show) {
       this.$emit('showLoading', show)
     },
     initEchartsWithTable () {
-      this.$refs['chart' + this.chartInfo.id] && this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(`chart${this.chartInfo.id}`)
+      this.$refs['chart' + this.chartInfo.id] &&
+        this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(
+          `chart${this.chartInfo.id}`
+        )
     }
-
   },
   watch: {
     chartData: {
       deep: true,
-      handler (n) {
-      }
+      handler (n) {}
     }
   },
   setup (props) {
@@ -331,7 +364,9 @@ export default {
       isEchartsWithStatistics: isEchartsWithStatistics(props.chartInfo.type),
       isSingleValue: isSingleValue(props.chartInfo.type),
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chartInfo.type),
-      isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(props.chartInfo.type),
+      isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(
+        props.chartInfo.type
+      ),
       isRelationShip: isRelationShip(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
       isCurrentTable: isCurrentTable(props.chartInfo.type),
@@ -349,9 +384,13 @@ export default {
       isIpOpenPort: isIpOpenPort(props.chartInfo.type),
       isDomainWhois: isDomainWhois(props.chartInfo.type),
       isDomainDnsRecord: isDomainDnsRecord(props.chartInfo.type),
-      isCryptocurrencyEventList: isCryptocurrencyEventList(props.chartInfo.type),
+      isCryptocurrencyEventList: isCryptocurrencyEventList(
+        props.chartInfo.type
+      ),
       isAppBasicInfo: isAppBasicInfo(props.chartInfo.type),
-      isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type)
+      isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
+      isSingleSupportStatistics: isSingleSupportStatistics(props.chartInfo.type),
+      isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type)
     }
   }
 }
