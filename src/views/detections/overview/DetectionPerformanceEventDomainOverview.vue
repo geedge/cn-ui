@@ -79,31 +79,17 @@ export default {
   methods: {
     query () {
       this.basicInfo = {
-        clientLocationCountry: 1212,
-        clientLocationProvince: '112.2.2.3',
-        clientLocationRegion: 'China',
-        clientAsn: 'Hebei',
-        serverLocationCountry: 'Xingtai',
-        serverLocationProvince: 'hehe',
-        serverLocationRegion: '2.2.2.2',
-        serverAsn: 'China',
-        domainCategoryName: 'Hebei',
-        domainCategoryGroup: 'Xingtai',
-        domainReputationScore: 'hehe',
-        domainReputationLevel: 'high',
-        appCategory: 'vpn',
-        appSubcategory: 'foreign vpn',
-        appRisk: 'critical'
       }
-      /* this.queryBasic().then(responses => {
-      }) */
+      this.queryBasic().then(responses => {
+      })
     },
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
           get(api.detection.performanceEvent.overviewBasic, { serverIp: this.detection.appName }).then(response => {
             if (response.code === 200) {
-              resolve(response.data.list)
+              this.basicInfo = response.data.result[0]
+              resolve(response.data.result)
             } else {
               reject(response)
             }

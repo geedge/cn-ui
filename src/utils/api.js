@@ -139,11 +139,11 @@ export async function getData (url, params = {}, isQueryList) {
           reject(response)
         }
       })
-    } catch (e) {
+    }catch(e) {
       reject(e)
     }
   }).catch(response => {
-    console.error(response)
+      console.error(response)
   })
   return await request
 }

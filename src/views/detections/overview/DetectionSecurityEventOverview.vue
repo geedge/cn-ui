@@ -179,107 +179,8 @@ export default {
     getMillisecond,
     query () {
       this.basicInfo = {
-        eventId: 1212,
-        offenderIp: '112.2.2.3',
-        offenderLocationCountry: 'China',
-        offenderLocationProvince: 'Hebei',
-        offenderLocationRegion: 'Xingtai',
-        offenderAsn: 'hehe',
-        victimIp: '2.2.2.2',
-        victimLocationCountry: 'China',
-        victimLocationProvince: 'Hebei',
-        victimLocationRegion: 'Xingtai',
-        victimAsn: 'hehe',
-        domain: '5aibj.com',
-        domainCategoryName: 'bbs',
-        domainCategoryGroup: 'hehe',
-        domainReputationLevel: 'high',
-        appName: 'express vpn',
-        appCategory: 'vpn',
-        appSubcategory: 'foreign vpn',
-        appRisk: 'critical',
-        cryptominingPool: 'btcP',
-        cryptominingCoinType: 'btc',
-        cryptominingSoftware: 'a',
-        malwareName: 'gtw',
-        malwareAlias: 'gt',
-        malwareDescription: 'this is description,this is description,this is description,this is description,this is description,this is description,this is description,this is description,this is description,this is description,',
-        malwarePlatforms: 'windows',
-        malwareTechniques: 'Audio captures',
-        malwareGroups: 'Silver terrier',
-        startTime: 1645417930
       }
       this.events = [
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645307930
-        },
-        {
-          eventSeverity: 'critical',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '112.2.2.3',
-          startTime: 1645317930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645327930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645337930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645347930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645357930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645367930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645397930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645407930
-        },
-        {
-          eventSeverity: 'high',
-          securityType: 'command and control',
-          offenderIp: '2.2.2.2',
-          victimIp: '2.2.2.3',
-          startTime: 1645417930
-        }
       ]
       Promise.all([this.queryBasic(), this.queryEvent()]).then(responses => {
       })
@@ -287,9 +188,13 @@ export default {
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detectionOverviewBasic, { eventId: this.detection.eventId }).then(response => {
+          get(api.detection.securityEvent.overviewBasic, { eventId: this.detection.eventId }).then(response => {
             if (response.code === 200) {
-              resolve(response.data.list)
+              let data = response.data.result[0]
+                    if (!this.$_.isEmpty(data)) {
+                this.basicInfo = data
+              }
+              resolve(response.data.result)
             } else {
               reject(response)
             }
@@ -302,9 +207,13 @@ export default {
     queryEvent () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detectionOverviewEvent, { eventId: this.detection.eventId }).then(response => {
+          get(api.detection.securityEvent.overviewEvent, { eventId: this.detection.eventId }).then(response => {
             if (response.code === 200) {
-              resolve(response.data.list)
+              let data = response.data.result
+              if (!this.$_.isEmpty(data)) {
+                this.events = response.data.result
+              }
+              resolve(response.data.result)
             } else {
               reject(response)
             }
