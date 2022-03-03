@@ -6,7 +6,7 @@
 <script>
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
-import { getGeoData, replaceUrlPlaceholder, getCapitalGeo } from '@/utils/tools'
+import { getGeoData, replaceUrlPlaceholder } from '@/utils/tools'
 import { storageKey, dnsServerRole } from '@/utils/constants'
 import { isMapBlock, isMapPoint } from './tools'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
@@ -189,8 +189,8 @@ export default {
           imageSeries.heatRules.push({
             target: circle,
             property: 'radius',
-            min: 4,
-            max: 30,
+            min: 6,
+            max: 25,
             dataField: 'value'
           })
         }
