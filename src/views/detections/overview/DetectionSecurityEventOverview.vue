@@ -3,7 +3,7 @@
     <div class="overview__left">
       <div class="overview__title">{{$t('overall.remark')}}</div>
       <div class="overview__row">
-        <div class="row__content">{{basicInfo.malwareDescription || '-'}}</div>
+        <div class="row__content">Description</div>
       </div>
       <div class="overview__title">Fields</div>
       <div class="overview__row">
@@ -178,11 +178,9 @@ export default {
   methods: {
     getMillisecond,
     query () {
-      this.basicInfo = {
-      }
-      this.events = [
-      ]
       Promise.all([this.queryBasic(), this.queryEvent()]).then(responses => {
+        responses[0] && (this.basicInfo = responses[0])
+        responses[1] && (this.events = responses[1])
       })
     },
     queryBasic () {
@@ -190,11 +188,7 @@ export default {
         try {
           get(api.detection.securityEvent.overviewBasic, { eventId: this.detection.eventId }).then(response => {
             if (response.code === 200) {
-              let data = response.data.result[0]
-                    if (!this.$_.isEmpty(data)) {
-                this.basicInfo = data
-              }
-              resolve(response.data.result)
+              resolve(response.data.result[0])
             } else {
               reject(response)
             }
@@ -207,12 +201,8 @@ export default {
     queryEvent () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detection.securityEvent.overviewEvent, { eventId: this.detection.eventId }).then(response => {
+          get(api.detection.securityEvent.overviewEvent, { eventId: this.detection.eventId, offenderIp: this.detection.offenderIp, victimIp: this.detection.victimIp }).then(response => {
             if (response.code === 200) {
-              let data = response.data.result
-              if (!this.$_.isEmpty(data)) {
-                this.events = response.data.result
-              }
               resolve(response.data.result)
             } else {
               reject(response)

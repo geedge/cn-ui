@@ -65,17 +65,15 @@ export default {
   },
   methods: {
     query () {
-      this.basicInfo = {
-      }
       this.queryBasic().then(responses => {
+        responses && (this.basicInfo = responses)
       })
     },
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
           getData(api.detection.performanceEvent.overviewBasic, { serverIp: this.detection.serverIp }).then(data => {
-            this.basicInfo = data[0]
-            resolve(data)
+            resolve(data[0])
           }).catch(error => {
             reject(error)
           })

@@ -63,6 +63,10 @@ export function isMapLine (type) {
 export function isMapBlock (type) {
   return type === 2
 }
+/* 散点地图 */
+export function isMapPoint (type) {
+  return type === 3
+}
 /* 普通折线图 */
 export function isEchartsLine (type) {
   return type === 11

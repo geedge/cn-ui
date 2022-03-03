@@ -402,82 +402,6 @@ export default {
         ]*/
         this.statisticsSeverityData = data
         //this.isStatisticsSeverityNoData = true
-        this.filterData = {
-          securityEvent: [
-            {
-              title: this.$t('detections.eventSeverity'),
-              column: 'eventSeverity',
-              collapse: false,
-              value: [], // value之间是or的关系
-              data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
-            },
-            {
-              title: this.$t('detections.securityType'),
-              column: 'securityType',
-              collapse: false,
-              value: [],
-              data: [] // 从接口动态获取
-            },
-            {
-              title: this.$t('detections.victimIp'),
-              column: 'victimIp',
-              collapse: false,
-              value: [],
-              showMore: true,
-              showIndex: 9,
-              data: [] // 从接口动态获取
-            },
-            {
-              title: this.$t('detections.victimLocation'),
-              column: 'victimLocationCountry',
-              collapse: false,
-              value: [],
-              showMore: false,
-              showIndex: 9,
-              data: [
-                {
-                  label: 'China',
-                  value: 'china',
-                  count: 50
-                }
-              ] // 从接口动态获取
-            },
-            {
-              title: this.$t('detections.offenderIp'),
-              column: 'offenderIp',
-              collapse: false,
-              value: [],
-              showMore: false,
-              showIndex: 9,
-              data: [] // 从接口动态获取
-            },
-            {
-              title: this.$t('detections.offenderLocation'),
-              column: 'offenderLocationCountry',
-              collapse: false,
-              value: [],
-              showMore: false,
-              showIndex: 9,
-              data: [] // 从接口动态获取
-            }
-          ],
-          performanceEvent: [
-            {
-              title: this.$t('detections.eventSeverity'),
-              column: 'eventSeverity',
-              collapse: false,
-              value: [], // value之间是or的关系
-              data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
-            },
-            {
-              title: this.$t('detections.securityType'),
-              column: 'securityType',
-              collapse: false,
-              value: [],
-              data: [] // 从接口动态获取
-            }
-          ]
-        }
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
@@ -788,7 +712,9 @@ export default {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
+        q: this.q,
+        pageSize: this.pageObj.pageSize,
+        pageNo: this.pageObj.pageNo
       }
       getData(api.detection[this.pageType].listBasic, params).then(data => {
         if (this.pageType === detectionPageType.securityEvent) {
@@ -1126,7 +1052,16 @@ export default {
       this.queryList()
       this.queryListTotal()
     },
+    resetFilterData () {
+      this.filterData.securityEvent.forEach(d => {
+        d.data = []
+      })
+      this.filterData.performanceEvent.forEach(d => {
+        d.data = []
+      })
+    },
     queryFilter () {
+      this.resetFilterData()
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),

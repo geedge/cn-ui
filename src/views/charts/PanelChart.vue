@@ -46,6 +46,7 @@
 import ChartHeader from './ChartHeader'
 import Chart from '@/views/charts/Chart'
 import testData from './charts/testData'
+import { dnsServerRole } from '@/utils/constants'
 import {
   isEcharts,
   isSingleValue,
@@ -189,7 +190,11 @@ export default {
           ...this.entity,
           ...extraParams
         }
+        // 默认参数特殊处理
         const requestUrl = url || (chartParams && chartParams.url)
+        if (requestUrl && requestUrl.indexOf('dnsServerRole') > -1) {
+          this.queryParams.dnsServerRole = dnsServerRole.RTDNS
+        }
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
             // if (this.chartInfo.type === 23 && testData) {
@@ -197,6 +202,27 @@ export default {
             // } else if (this.chartInfo.type === 24 && testData) {
             //   response = testData.data2
             // }
+            if (this.chartInfo.type === 3) {
+              response = {
+                code: 200,
+                data: {
+                  result: [
+                    {
+                      "dnsServerRole":"TLDNS",
+                      "ipLocationCountry":"China",
+                      "ipLocationId":"CN",
+                      "count":161
+                    },
+                    {
+                      "dnsServerRole":"RTDNS",
+                      "ipLocationCountry":"Japan",
+                      "ipLocationId":"JP",
+                      "count":222
+                    }
+                  ]
+                }
+              }
+            }
             if (response.code === 200) {
               if (Array.isArray(response.data.result)) {
                 response.data.result.forEach(item => {
