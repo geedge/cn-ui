@@ -6,11 +6,8 @@ import { ipOpenPortBar, timeBar, categoryBar } from './options/bar'
 import { pieWithTable, ipHostedDomain } from './options/pie'
 import { relationShip } from './options/graph'
 import { sankey } from './options/sankey'
+import { chartColor } from '@/utils/constants'
 
-export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
-  '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
-  '#E97CCC', '#FEA69E', '#0F8AB2', '#57CBAC',
-  '#5888BC', '#63B6AC', '#EDC6B2', '#D5746B']
 export const chartBarColor = ['#0F8AB2', '#57CBAC']
 export function getChartColor (index) {
   return chartColor[index % chartColor.length]
@@ -154,11 +151,11 @@ export function isDomainDnsRecord (type) {
 export function isCryptocurrencyEventList (type) {
   return type === 85
 }
-/* 单支持情况统计 */ 
+/* 单支持情况统计 */
 export function isSingleSupportStatistics (type) {
   return type === 86
 }
-/* 两个支持情况统计 */ 
+/* 两个支持情况统计 */
 export function isTwoSupportStatistics (type) {
   return type === 87
 }

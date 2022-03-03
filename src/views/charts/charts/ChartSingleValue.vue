@@ -67,7 +67,7 @@ import {
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import * as echarts from 'echarts'
-import { getOption, getChartColor } from '@/views/charts/charts/chart-options'
+import { getOption, getChartColor } from '@/views/charts/charts/tools'
 export default {
   name: 'chartSingleValue',
   props: {

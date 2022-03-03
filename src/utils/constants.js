@@ -170,6 +170,11 @@ export const detectionPageType = {
   performanceEvent: 'performanceEvent'
 }
 
+export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
+  '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
+  '#E97CCC', '#FEA69E', '#0F8AB2', '#57CBAC',
+  '#5888BC', '#63B6AC', '#EDC6B2', '#D5746B']
+
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',
   [storageKey.iso36112WorldLow]: 'worldChinaLow',

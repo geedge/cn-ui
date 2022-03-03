@@ -1,7 +1,6 @@
 import unitConvert from '@/utils/unit-convert'
-import { unitTypes } from '@/utils/constants'
-import { chartColor } from '@/views/charts/charts/chart-options'
-import { axisFormatter, tooLongFormatter } from '../tools'
+import { unitTypes, chartColor } from '@/utils/constants'
+import { axisFormatter, tooLongFormatter } from '@/views/charts/charts/tools'
 
 export const line = {
   tooltip: {
