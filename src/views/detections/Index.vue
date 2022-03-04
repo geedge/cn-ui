@@ -370,12 +370,16 @@ export default {
           detectionChart.setOption(eventSeverityTrendOption)
           //this.isEventSeverityNoData = false
 
-          this.loading = false
+
         }else {
           //this.isEventSeverityNoData = true
         }
       }).catch(error => {
 
+      }).finally(() => {
+        this.$nextTick(() => {
+          this.loading = false
+        })
       })
     },
 
