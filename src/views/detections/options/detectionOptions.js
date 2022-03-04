@@ -18,6 +18,9 @@ export function getSeriesIndex (type) {
   return mapping && mapping.index ? _.cloneDeep(mapping.index) : null
 }
 
+export const activeAttackColor = ['#51a9ee', '#49bcf2', '#4ad7eb', '#4cd4c8',
+  '#7acc7e', '#a7db69']
+
 const activeAttackColorMappings = [
   { value: 'command and control', color: '#51a9ee' },
   { value: 'payload delivery', color: '#49bcf2' },
@@ -149,7 +152,7 @@ export const pieForSeverity = {
   tooltip: {
     appendToBody: true
   },
-  color: chartColor,
+  color: activeAttackColor,
   animation: false,
   legend: {
     orient: 'vertical',

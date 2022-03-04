@@ -203,7 +203,7 @@ export default {
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detection.securityEvent.overviewBasic, { eventId: this.detection.eventId }).then(response => {
+          get(api.detection.securityEvent.overviewBasic, { eventId: this.detection.eventId,startTime: this.detection.startTime }).then(response => {
             if (response.code === 200) {
               resolve(response.data.result[0])
             } else {

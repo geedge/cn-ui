@@ -421,27 +421,6 @@ export default {
     },
     initEventTypeData (params) {
       getData(api.detection[this.pageType].eventType, params).then(data => {
-        /* data = [
-          {
-            attackType: 'command and control',
-            count: 1048
-          }, {
-            attackType: 'payload delivery',
-            count: 735
-          }, {
-            attackType: 'cryptomining',
-            count: 580
-          }, {
-            attackType: 'phishing',
-            count: 484
-          }, {
-            attackType: 'dga',
-            count: 300
-          }, {
-            attackType: 'ddos',
-            count: 50
-          }
-        ] */
         this.statisticsCategoryData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][1].data = data.map(r => ({
@@ -453,7 +432,7 @@ export default {
           const detectionChart = echarts.init(chartDom)
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
-            return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
+            return { value: d.count, name: d.eventType }
           })
           detectionChart.setOption(securityTypeOption)
         }
