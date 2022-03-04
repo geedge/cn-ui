@@ -107,7 +107,7 @@ import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize, detectionPageType } from '@/utils/constants'
-import { getNowTime, getSecond,rTime } from '@/utils/date-util'
+import { getNowTime, getSecond, rTime } from '@/utils/date-util'
 import { ref } from 'vue'
 import * as echarts from 'echarts'
 import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
@@ -203,8 +203,8 @@ export default {
             data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
           },
           {
-            title: this.$t('detections.securityType'),
-            column: 'securityType',
+            title: this.$t('detections.eventType'),
+            column: 'eventType',
             collapse: false,
             value: [],
             data: [] // 从接口动态获取
@@ -219,15 +219,15 @@ export default {
       categoryPerData: [],
       activeAttackOption: null,
       activeAttackData: [],
-      eventSeverityData:[],
-      statisticsSeverityData:[],
-      statisticsCategoryData:[],
-      statisticsActiveAttackData:[],
-      isEventSeverityNoData:false,
-      isStatisticsSeverityNoData:false,
-      isStatisticsCategoryNoData:false,
-      isStatisticsActiveAttackNoData:false,
-      loading: false,
+      eventSeverityData: [],
+      statisticsSeverityData: [],
+      statisticsCategoryData: [],
+      statisticsActiveAttackData: [],
+      isEventSeverityNoData: false,
+      isStatisticsSeverityNoData: false,
+      isStatisticsCategoryNoData: false,
+      isStatisticsActiveAttackNoData: false,
+      loading: false
     }
   },
   methods: {
@@ -235,7 +235,7 @@ export default {
     initEventSeverityTrendData (params) {
       this.loading = true
       getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
-        /*data = [
+        /* data = [
           {
             "stat_time": "2022-01-01T10:07:03.008Z",
             "event_severity": "critical",
@@ -327,8 +327,8 @@ export default {
             "event_severity": "info",
             "count": 27
           },
-        ]*/
-        /*data2 = [
+        ] */
+        /* data2 = [
           {
             legend: 'critical',
             values: [[1435781430781, '999'], [1435781431781, '222'], [1435781432781, '11'], [1435781433781, '3']]
@@ -346,33 +346,31 @@ export default {
             legend: 'info',
             values: [[1435781430781, '5'], [1435781431781, '7'], [1435781432781, '5'], [1435781433781, '8']]
           }
-        ]*/
+        ] */
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
-          let dataMap = new Map()
+          const dataMap = new Map()
           data.forEach(item => {
-            if(item.eventSeverity){
-              if(!dataMap.has(item.eventSeverity)){
-                let count = [[item.statTime,item.count]]
-                dataMap.set(item.eventSeverity,count)
-              }else {
-                dataMap.get(item.eventSeverity).push([item.statTime,item.count])
+            if (item.eventSeverity) {
+              if (!dataMap.has(item.eventSeverity)) {
+                const count = [[item.statTime, item.count]]
+                dataMap.set(item.eventSeverity, count)
+              } else {
+                dataMap.get(item.eventSeverity).push([item.statTime, item.count])
               }
             }
           })
           const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
-          dataMap.forEach(function(value,key){
+          dataMap.forEach(function (value, key) {
             eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
-          });
-          eventSeverityTrendOption.xAxis.data = dataMap.get('critical').map(v =>rTime(v[0]))
+          })
+          eventSeverityTrendOption.xAxis.data = dataMap.get('critical').map(v => rTime(v[0]))
           const detectionChart = echarts.init(chartDom)
           detectionChart.setOption(eventSeverityTrendOption)
-          //this.isEventSeverityNoData = false
-
-
-        }else {
-          //this.isEventSeverityNoData = true
+          // this.isEventSeverityNoData = false
+        } else {
+          // this.isEventSeverityNoData = true
         }
       }).catch(error => {
 
@@ -386,7 +384,7 @@ export default {
     // 初始化左侧事件严重等级和小饼图
     initEventSeverityData (params) {
       getData(api.detection[this.pageType].eventSeverity, params).then(data => {
-        /*data = [
+        /* data = [
           {
             eventSeverity: 'critical',
             count: 1048
@@ -403,9 +401,9 @@ export default {
             eventSeverity: 'info',
             count: 300
           }
-        ]*/
+        ] */
         this.statisticsSeverityData = data
-        //this.isStatisticsSeverityNoData = true
+        // this.isStatisticsSeverityNoData = true
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
@@ -415,15 +413,15 @@ export default {
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           detectionChart.setOption(eventSeverityOption)
-          //this.isStatisticsSeverityNoData = false
+          // this.isStatisticsSeverityNoData = false
         }
       }).catch(error => {
 
       })
     },
-    initSecurityTypeData (params) {
-      getData(api.detection[this.pageType].securityType, params).then(data => {
-        /*data = [
+    initEventTypeData (params) {
+      getData(api.detection[this.pageType].eventType, params).then(data => {
+        /* data = [
           {
             attackType: 'command and control',
             count: 1048
@@ -443,23 +441,42 @@ export default {
             attackType: 'ddos',
             count: 50
           }
-        ]*/
+        ] */
         this.statisticsCategoryData = data
-        //this.isStatisticsCategoryNoData = true
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][1].data = data.map(r => ({
-            label: r.attackType,
-            value: r.attackType,
+            label: r.eventType,
+            value: r.eventType,
             count: r.count
           }))
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
-            return {value: d.count, name: d.attackType, itemStyle: {color: getAttackColor(d.attackType)}}
+            return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
           })
           detectionChart.setOption(securityTypeOption)
-          //this.isStatisticsCategoryNoData = false
+        }
+      }).catch(error => {
+
+      })
+    },
+    initSecurityTypeData (params) {
+      getData(api.detection[this.pageType].securityType, params).then(data => {
+        this.statisticsCategoryData = data
+        if (!this.$_.isEmpty(data)) {
+          this.filterData[this.pageType][1].data = data.map(r => ({
+            label: r.securityType,
+            value: r.securityType,
+            count: r.count
+          }))
+          const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
+          const detectionChart = echarts.init(chartDom)
+          const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
+          securityTypeOption.series[0].data = data.map(d => {
+            return { value: d.count, name: d.securityType, itemStyle: { color: getAttackColor(d.securityType) } }
+          })
+          detectionChart.setOption(securityTypeOption)
         }
       }).catch(error => {
 
@@ -467,7 +484,7 @@ export default {
     },
     initOffenderIpData (params) {
       getData(api.detection[this.pageType].offenderIp, params).then(data => {
-        /*data = [
+        /* data = [
           {
             offenderIp: '192.168.12.21',
             count: 99999
@@ -516,7 +533,7 @@ export default {
             offenderIp: '193.168.52.21',
             count: 55355
           }
-        ]*/
+        ] */
 
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
@@ -525,33 +542,33 @@ export default {
             value: r.offenderIp,
             count: r.count
           }))
-          const {showMore, showIndex} = this.computeFilterPage(this.filterData[this.pageType][4].data)
+          const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][4].data)
           this.filterData[this.pageType][4].showMore = showMore
           this.filterData[this.pageType][4].showIndex = showIndex
 
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
-          data.sort(this.sortBy('count'));
-          data = data.slice(0,5)
+          data.sort(this.sortBy('count'))
+          data = data.slice(0, 5)
           offenderIpOption.series[0].data = data.map(d => {
             return [d.count, d.offenderIp]
           }).reverse()
           detectionChart.setOption(offenderIpOption)
-          //this.isStatisticsActiveAttackNoData = false
+          // this.isStatisticsActiveAttackNoData = false
         }
       }).catch(error => {
 
       })
     },
-    sortBy(i) {
-      return function(a,b) {
+    sortBy (i) {
+      return function (a, b) {
         return b[i] - a[i]
       }
     },
     initVictimIpData (params) {
       getData(api.detection[this.pageType].victimIp, params).then(data => {
-        /*data = [
+        /* data = [
           {
             victimIp: '1.2.6.8',
             count: 50
@@ -636,7 +653,7 @@ export default {
             victimIp: '1.2.6.88',
             count: 50
           }
-        ]*/
+        ] */
         this.filterData[this.pageType][2].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][2].data)
         this.filterData[this.pageType][2].showMore = showMore
@@ -647,12 +664,12 @@ export default {
     },
     initVictimLocationData (params) {
       getData(api.detection[this.pageType].victimLocation, params).then(data => {
-        /*data = [
+        /* data = [
           {
             victimLocationCountry: 'china',
             count: 50
           }
-        ]*/
+        ] */
         this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
         this.filterData[this.pageType][3].showMore = showMore
@@ -663,12 +680,12 @@ export default {
     },
     initOffenderLocationData (params) {
       getData(api.detection[this.pageType].offenderLocation, params).then(data => {
-        /*data = [
+        /* data = [
           {
             offenderLocationCountry: 'china',
             count: 50
           }
-        ]*/
+        ] */
         this.filterData[this.pageType][5].data = data.map(r => ({ label: r.offenderLocationCountry, value: r.offenderLocationCountry, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][5].data)
         this.filterData[this.pageType][5].showMore = showMore
@@ -679,7 +696,7 @@ export default {
     },
     initActiveEntity (params) {
       getData(api.detection[this.pageType].activeEntity, params).then(data => {
-        /*data = [
+        /* data = [
           {
             name: 'csdn.net',
             count: 250
@@ -692,7 +709,7 @@ export default {
             name: '2.3.2.2',
             count: 50
           }
-        ]*/
+        ] */
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
@@ -722,7 +739,7 @@ export default {
       }
       getData(api.detection[this.pageType].listBasic, params).then(data => {
         if (this.pageType === detectionPageType.securityEvent) {
-          /*data = [
+          /* data = [
             {
               eventId: 1212,
               securityType: 'ddos',
@@ -883,9 +900,9 @@ export default {
               durationMs: 60000,
               startTime: 1111111111
             }
-          ]*/
+          ] */
         } else if (this.pageType === detectionPageType.performanceEvent) {
-          /*data = [
+          /* data = [
             {
               entityType: 'ip',
               eventType: 'Dns error',
@@ -1014,7 +1031,7 @@ export default {
               durationMs: 60000,
               startTime: 1111111111
             }
-          ]*/
+          ] */
         }
 
         this.listData = data
@@ -1029,7 +1046,7 @@ export default {
         this.$refs.dateTimeRange.quickChange(value)
       }
     },
-    initNoData(){
+    initNoData () {
       this.isEventSeverityNoData = false
       this.isStatisticsSeverityNoData = false
       this.isStatisticsCategoryNoData = false
@@ -1073,14 +1090,15 @@ export default {
       }
       this.initEventSeverityTrendData(params)
       this.initEventSeverityData(params)
-      this.initSecurityTypeData(params)
       if (this.pageType === detectionPageType.securityEvent) {
         this.initOffenderIpData(params)
         this.initOffenderLocationData(params)
         this.initVictimIpData(params)
         this.initVictimLocationData(params)
+        this.initSecurityTypeData(params)
       } else if (this.pageType === detectionPageType.performanceEvent) {
         this.initActiveEntity(params)
+        this.initEventTypeData(params)
       }
     },
     queryListTotal () {
@@ -1132,12 +1150,12 @@ export default {
         if (!n || n.length === 0) {
           this.timeout = setTimeout(() => {
             this.isEventSeverityNoData = true
-            //this.$set(this.isEventSeverityNoData ,true)
+            // this.$set(this.isEventSeverityNoData ,true)
             this.loading = false
           }, 500)
         } else {
           clearTimeout(this.timeout)
-          //this.$set(this.isEventSeverityNoData ,false)
+          // this.$set(this.isEventSeverityNoData ,false)
           this.isEventSeverityNoData = false
           this.loading = false
         }
@@ -1148,12 +1166,12 @@ export default {
       handler (n) {
         if (!n || n.length === 0) {
           this.timeout = setTimeout(() => {
-            //this.$set(this.isStatisticsSeverityNoData ,true)
+            // this.$set(this.isStatisticsSeverityNoData ,true)
             this.isStatisticsSeverityNoData = true
           }, 500)
         } else {
           clearTimeout(this.timeout)
-          //this.$set(this.isStatisticsSeverityNoData ,false)
+          // this.$set(this.isStatisticsSeverityNoData ,false)
           this.isStatisticsSeverityNoData = false
         }
       }
@@ -1164,11 +1182,11 @@ export default {
         if (!n || n.length === 0) {
           this.timeout = setTimeout(() => {
             this.isStatisticsCategoryNoData = true
-            //this.$set(this.isStatisticsCategoryNoData ,true)
+            // this.$set(this.isStatisticsCategoryNoData ,true)
           }, 500)
         } else {
           clearTimeout(this.timeout)
-          //this.$set(this.isStatisticsCategoryNoData ,false)
+          // this.$set(this.isStatisticsCategoryNoData ,false)
           this.isStatisticsCategoryNoData = false
         }
       }
@@ -1179,11 +1197,11 @@ export default {
         if (!n || n.length === 0) {
           this.timeout = setTimeout(() => {
             this.isStatisticsActiveAttackNoData = true
-            //this.$set(this.isStatisticsActiveAttackNoData ,true)
+            // this.$set(this.isStatisticsActiveAttackNoData ,true)
           }, 500)
         } else {
           clearTimeout(this.timeout)
-          //this.$set(this.isStatisticsActiveAttackNoData ,false)
+          // this.$set(this.isStatisticsActiveAttackNoData ,false)
           this.isStatisticsActiveAttackNoData = false
         }
       }

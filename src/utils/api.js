@@ -89,7 +89,7 @@ export const api = {
     },
     performanceEvent: {
       eventSeverityTrend: '/interface/detection/performance/filter/severityTrend',
-      securityType: '/interface/detection/performance/filter/eventType',
+      eventType: '/interface/detection/performance/filter/eventType',
       eventSeverity: '/interface/detection/performance/filter/severity',
       activeEntity: '/interface/detection/performance/filter/activeEntity',
       listBasic: '/interface/detection/performance/list/basic',
@@ -139,11 +139,11 @@ export async function getData (url, params = {}, isQueryList) {
           reject(response)
         }
       })
-    }catch(e) {
+    } catch (e) {
       reject(e)
     }
   }).catch(response => {
-      console.error(response)
+    console.error(response)
   })
   return await request
 }

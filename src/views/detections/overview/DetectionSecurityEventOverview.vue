@@ -117,7 +117,7 @@
       <div class="overview__title">{{$t('detections.relatedDetections')}}</div>
       <div class="overview__row-timeline">
         <div class="row-timeline" v-for="event in events" :key="event">
-          <div class="row-timeline__time-info" :style="event.startTime === basicInfo.startTime ? 'color: #333;font-weight: bold;' : ''">{{formatT0(event.startTime)}}</div>
+          <div class="row-timeline__time-info" :style="event.startTime === basicInfo.startTime ? 'color: #333;font-weight: bold;' : ''">{{formatT0(event)}}</div>
           <div class="row-timeline__line">
             <div class="line-point-larger" v-if="event.startTime === basicInfo.startTime">
               <div class="line-point"></div>
@@ -154,7 +154,8 @@
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getMillisecond } from '@/utils/date-util'
-import { eventSeverityColor } from '@/utils/constants'
+import { eventSeverityColor, unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'DetectionOverview',
   props: {
@@ -170,8 +171,23 @@ export default {
   },
   computed: {
     formatT0 () {
-      return function (startTime) {
-        return startTime === this.basicInfo.startTime ? 'T0' : 'T0-10m'
+      return function (event) {
+        const diffSeconds = event.diffSeconds
+        if (diffSeconds === 0) {
+          return 'T0'
+        }
+        const eventStartTime = event.startTime
+        const entityStartTime = this.basicInfo ? this.basicInfo.startTime : ''
+
+        if (!this.$_.isEmpty(diffSeconds) && !this.$_.isEmpty(eventStartTime) && !this.$_.isEmpty(entityStartTime)) {
+          const suffix = unitConvert(diffSeconds, unitTypes.time, 's', null, 0).join('')
+          if (eventStartTime > entityStartTime) {
+            return `T0+${suffix}`
+          } else if (eventStartTime < entityStartTime) {
+            return `T0-${suffix}`
+          }
+        }
+        return ''
       }
     }
   },
@@ -179,6 +195,7 @@ export default {
     getMillisecond,
     query () {
       Promise.all([this.queryBasic(), this.queryEvent()]).then(responses => {
+        console.info(responses)
         responses[0] && (this.basicInfo = responses[0])
         responses[1] && (this.events = responses[1])
       })
@@ -201,7 +218,7 @@ export default {
     queryEvent () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detection.securityEvent.overviewEvent, { eventId: this.detection.eventId, offenderIp: this.detection.offenderIp, victimIp: this.detection.victimIp }).then(response => {
+          get(api.detection.securityEvent.overviewEvent, { startTime: this.detection.startTime, offenderIp: this.detection.offenderIp, victimIp: this.detection.victimIp }).then(response => {
             if (response.code === 200) {
               resolve(response.data.result)
             } else {
