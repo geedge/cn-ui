@@ -1017,6 +1017,11 @@ export default {
       }).catch(error => {
 
       })
+      getData(api.detection[this.pageType].listCount, params).then(data => {
+        this.pageObj.total = data
+      }).catch(error => {
+
+      })
     },
     timeRefreshChange () {
       this.initNoData()

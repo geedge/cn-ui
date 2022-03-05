@@ -84,6 +84,7 @@ export const api = {
       victimLocation: '/interface/detection/security/filter/victimLocation',
       eventSeverity: '/interface/detection/security/filter/severity',
       listBasic: '/interface/detection/security/list/basic',
+      listCount: '/interface/detection/security/list/count',
       overviewBasic: '/interface/detection/security/detail/overview/basic',
       overviewEvent: '/interface/detection/security/detail/overview/event'
     },
@@ -93,6 +94,7 @@ export const api = {
       eventSeverity: '/interface/detection/performance/filter/severity',
       activeEntity: '/interface/detection/performance/filter/activeEntity',
       listBasic: '/interface/detection/performance/list/basic',
+      listCount: '/interface/detection/performance/list/count',
       overviewBasic: '/interface/detection/performance/detail/overview/basic'
     }
   }

@@ -257,8 +257,7 @@ export default {
       const queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000),
-        ip: this.entityData.ipAddr,
-        country: this.entityData.ipLocationCountry
+        ip: this.entityData.ipAddr
       }
       return queryParams
     },

@@ -45,8 +45,7 @@
 <script>
 import ChartHeader from './ChartHeader'
 import Chart from '@/views/charts/Chart'
-import testData from './charts/testData'
-import { dnsServerRole } from '@/utils/constants'
+import { dnsServerRole, chartPieTableTopOptions, chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import {
   isEcharts,
   isSingleValue,
@@ -79,7 +78,7 @@ import {
 import { tableTitleMapping, legendMapping } from '@/views/charts/charts/chart-table-title'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
-import { chartPieTableTopOptions, chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
+
 import { get } from '@/utils/http'
 import { ref } from 'vue'
 import _ from 'lodash'
@@ -208,16 +207,16 @@ export default {
                 data: {
                   result: [
                     {
-                      "dnsServerRole":"TLDNS",
-                      "ipLocationCountry":"China",
-                      "ipLocationId":"CN",
-                      "count":161
+                      dnsServerRole: 'TLDNS',
+                      ipLocationCountry: 'China',
+                      ipLocationId: 'CN',
+                      count: 161
                     },
                     {
-                      "dnsServerRole":"RTDNS",
-                      "ipLocationCountry":"Japan",
-                      "ipLocationId":"JP",
-                      "count":222
+                      dnsServerRole: 'RTDNS',
+                      ipLocationCountry: 'Japan',
+                      ipLocationId: 'JP',
+                      count: 222
                     }
                   ]
                 }
