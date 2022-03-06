@@ -11,8 +11,8 @@
       </span>
       {{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}
     </div>
-    <div class="chart-header__title" v-else-if="!isCurrentTable" :class="{'chart-header__title--block': isBlock}" :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
-    <template v-if="isCurrentTable">
+    <div class="chart-header__title" v-else-if="!isBasicTable" :class="{'chart-header__title--block': isBlock}" :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
+    <template v-if="isBasicTable">
       <div class="chart-header__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</span>
         <span
@@ -50,8 +50,8 @@
               popper-class="option-popper"
               @change="tableLimitChange"
           >
-            <template v-for="(item, index) in table.tableColumns" :key="item.prop">
-              <el-option v-if="index > 0" :value="item.prop">{{item.prop}}</el-option>
+            <template v-for="(item, index) in table.tableColumns.order" :key="item.prop">
+              <el-option :label="$t(chartTableColumnMapping[item])" :value="item"></el-option>
             </template>
           </el-select>
         </div>
@@ -96,7 +96,7 @@
     </template>
 
     <chart-error :isError="isError" :errorInfo="errorInfo"></chart-error>
-    <div class="chart-header__tools" v-if="!isTitle && !isTabs && !isCurrentTable && !isActiveIpTable && !isEchartsWithTable">
+    <div class="chart-header__tools" v-if="!isTitle && !isTabs && !isBasicTable && !isActiveIpTable && !isEchartsWithTable">
       <div class="panel__time" v-if="chartInfo.params && chartInfo.params.showTimeTool">
         <date-time-range class="date-time-range" :start-time="chartTimeFilter.startTime" :end-time="chartTimeFilter.endTime" ref="dateTimeRange" @change="reload"/>
         <time-refresh class="date-time-range" @change="timeRefreshChange" :end-time="chartTimeFilter.endTime"/>
@@ -114,11 +114,11 @@
 </template>
 
 <script>
-import { isTitle, isTabs, isBlock, isTable, isActiveIpTable, isCurrentTable, isGroup, isEchartsWithTable } from './charts/tools'
+import { isTitle, isTabs, isBlock, isTable, isActiveIpTable, isBasicTable, isGroup, isEchartsWithTable } from './charts/tools'
 import ChartError from '@/views/charts/ChartError'
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
-import { chartTableTopOptions, chartActiveIpTableOrderOptions, chartPieTableTopOptions } from '@/utils/constants'
+import { chartTableTopOptions, chartActiveIpTableOrderOptions, chartPieTableTopOptions, chartTableColumnMapping } from '@/utils/constants'
 
 export default {
   name: 'ChartHeader',
@@ -140,6 +140,7 @@ export default {
   },
   data () {
     return {
+      chartTableColumnMapping,
       dropdownMenuShow: false,
       errorText: '',
 
@@ -226,7 +227,7 @@ export default {
       isBlock: isBlock(props.chartInfo.type),
       isTabs: isTabs(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
-      isCurrentTable: isCurrentTable(props.chartInfo.type),
+      isBasicTable: isBasicTable(props.chartInfo.type),
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isGroup: isGroup(props.chartInfo.type)

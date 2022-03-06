@@ -16,6 +16,7 @@
         :chart-data="chartData"
         :query-params="queryParams"
         :entity="entity"
+        @query="query"
         @showLoading="showLoading"
       ></chart-map>
 
@@ -79,7 +80,7 @@
       ></chart-ip-open-port-bar>
 
       <chart-table
-        v-else-if="isTable && isCurrentTable"
+        v-else-if="isTable && isBasicTable"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :table="table"
@@ -231,7 +232,7 @@ import {
   isEchartsLine,
   isSingleValue,
   isTable,
-  isCurrentTable,
+  isBasicTable,
   isActiveIpTable,
   isTitle,
   isMap,
@@ -344,6 +345,9 @@ export default {
         this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(
           `chart${this.chartInfo.id}`
         )
+    },
+    query (params) {
+      this.$emit('query', params)
     }
   },
   watch: {
@@ -369,7 +373,7 @@ export default {
       ),
       isRelationShip: isRelationShip(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
-      isCurrentTable: isCurrentTable(props.chartInfo.type),
+      isBasicTable: isBasicTable(props.chartInfo.type),
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
       isMap: isMap(props.chartInfo.type),
       isTitle: isTitle(props.chartInfo.type),

@@ -9,22 +9,30 @@
         <el-table-column v-if="table.currentPageData.length" type="index" label="#">
         </el-table-column>
         <el-table-column
-            v-for="(c, i) in table.tableColumns"
+            v-for="(c, i) in table.tableColumns.common"
             show-overflow-tooltip
             :key="i"
-            :label="c.label"
-            :prop="c.prop"
+            :label="$t(chartTableColumnMapping[c])"
+            :prop="c"
         >
-          <template #header>{{$t(c.label)}}</template>
+        </el-table-column>
+        <el-table-column
+            v-for="(c, i) in table.tableColumns.order"
+            show-overflow-tooltip
+            :key="i"
+            :label="$t(chartTableColumnMapping[c])"
+            :prop="c"
+        >
+          <template #header>{{$t(chartTableColumnMapping[c])}}</template>
           <template #default="{ row }">
-            <span v-if="c.prop === 'bytes'">
-                {{unitConvert(row[c.prop], unitTypes.byte).join(' ')}}
+            <span v-if="c === 'bytes'">
+                {{unitConvert(row[c], unitTypes.byte).join(' ')}}
             </span>
-            <span v-else-if="c.prop === 'packets' || c.prop === 'sessions'">
-                {{unitConvert(row[c.prop], unitTypes.number).join(' ')}}
+            <span v-else-if="c === 'packets' || c === 'sessions'">
+                {{unitConvert(row[c], unitTypes.number).join(' ')}}
             </span>
             <span v-else>
-                {{row[c.prop]}}
+                {{row[c]}}
             </span>
           </template>
         </el-table-column>
@@ -41,7 +49,7 @@
 </template>
 
 <script>
-import { unitTypes } from '@/utils/constants'
+import { unitTypes, chartTableColumnMapping } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import ChartTablePagination from '@/views/charts/charts/ChartTablePagination'
 export default {
@@ -57,6 +65,7 @@ export default {
   },
   data () {
     return {
+      chartTableColumnMapping,
       unitConvert,
       unitTypes
     }

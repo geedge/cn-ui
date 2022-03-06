@@ -130,7 +130,19 @@ export const unitTypes = {
 export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量
 export const chartTableTopOptions = [10, 100] // table类型图表的TOP-N选项
 export const chartActiveIpTableOrderOptions = ['machine'] // active ip table类型图表的order 选项
-// table类型图表的TOP-N选项
+// table类型图表column映射
+export const chartTableColumnMapping = {
+  sessions: 'overall.sessions',
+  packets: 'overall.packets',
+  bytes: 'overall.bytes',
+  clientIp: 'overall.clientIp',
+  serverIp: 'overall.serverIp',
+  domain: 'overall.domain',
+  appName: 'overall.appName',
+  queryRate: 'dns.queryRate',
+  dnsLatency: 'dns.averageResolveLatency',
+  responseFailRate: 'dns.responseFailureRate'
+}
 export const chartPieTableTopOptions = [
   { name: 'Sessions', value: 'sessions' },
   { name: 'Packets', value: 'packets' },

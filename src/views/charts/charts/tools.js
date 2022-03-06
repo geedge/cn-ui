@@ -107,8 +107,8 @@ export function isEchartsWithTable (type) {
 export function isTable (type) {
   return type >= 61 && type <= 70
 }
-/* current table */
-export function isCurrentTable (type) {
+/* basic table */
+export function isBasicTable (type) {
   return type === 61
 }
 /* table */

@@ -29,7 +29,7 @@ export function getMillisecond (time) {
       ms = Math.floor(time * (10 ** (0 - difference)))
     }
   }
-  return ms
+  return ms ? Number(ms) : null
 }
 // 初始化日期
 export function getNowTime (interval) {

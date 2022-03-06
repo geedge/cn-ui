@@ -37,6 +37,7 @@
         :table="table"
         :is-fullscreen="isFullscreen"
         :order-pie-table="orderPieTable"
+        @query="(params) => getChartData(null, params)"
         @showLoading="showLoading"
     ></chart>
   </div>
@@ -145,14 +146,6 @@ export default {
             num: 345
           }
         ] // table的所有数据
-      },
-      table: {
-        pageSize: chartTableDefaultPageSize,
-        limit: chartTableTopOptions[0], // top-n
-        orderBy: 'sessions',
-        tableColumns: [], // table字段
-        tableData: [], // table的所有数据
-        currentPageData: [] // table当前页的数据
       }
     }
   },
@@ -189,10 +182,10 @@ export default {
           ...this.entity,
           ...extraParams
         }
-        // 默认参数特殊处理
         const requestUrl = url || (chartParams && chartParams.url)
+        // 默认参数特殊处理
         if (requestUrl && requestUrl.indexOf('dnsServerRole') > -1) {
-          this.queryParams.dnsServerRole = dnsServerRole.RTDNS
+          this.queryParams.dnsServerRole = extraParams.dnsServerRole || dnsServerRole.RTDNS
         }
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
@@ -207,13 +200,13 @@ export default {
                 data: {
                   result: [
                     {
-                      dnsServerRole: 'TLDNS',
+                      dnsServerRole: extraParams.dnsServerRole || dnsServerRole.RTDNS,
                       ipLocationCountry: 'China',
                       ipLocationId: 'CN',
                       count: 161
                     },
                     {
-                      dnsServerRole: 'RTDNS',
+                      dnsServerRole: extraParams.dnsServerRole || dnsServerRole.RTDNS,
                       ipLocationCountry: 'Japan',
                       ipLocationId: 'JP',
                       count: 222
@@ -231,9 +224,6 @@ export default {
                 })
               }
               this.chartData = response.data.result
-              this.table.tableData = response.data.result
-              this.table.tableColumns = this.getTableTitle(response.data.result)
-              this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
               this.resultType = response.data.resultType
               if (this.chartInfo.type === 12) {
                 const newArr = []
@@ -252,7 +242,12 @@ export default {
                   }
                 })
               }
-              if (this.isSingleValue) {
+              if (this.isTable) {
+                this.table.tableData = response.data.result
+                // this.table.tableColumns = chartParams.columns
+                // this.table.tableColumns = this.getTableTitle(response.data.result)
+                this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
+              } else if (this.isSingleValue) {
                 if (chartParams && chartParams.dataKey) {
                   if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
                     this.chartData = response.data.result[chartParams.dataKey]
@@ -395,7 +390,19 @@ export default {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
+    let table = {}
+    if (isTable(props.chartInfo.type)) {
+      table = {
+        pageSize: chartTableDefaultPageSize,
+        limit: chartTableTopOptions[0], // top-n
+        orderBy: props.chartInfo.params.columns.order[0],
+        tableColumns: props.chartInfo.params.columns, // table字段
+        tableData: [], // table的所有数据
+        currentPageData: [] // table当前页的数据
+      }
+    }
     return {
+      table,
       chartTimeFilter,
       isEcharts: isEcharts(props.chartInfo.type),
       isEchartsTimeBar: isEchartsTimeBar(props.chartInfo.type),
