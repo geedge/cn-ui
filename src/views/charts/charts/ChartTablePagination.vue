@@ -29,7 +29,6 @@ export default {
   },
   computed: {
     totalPage () {
-      console.log(this.total,this.pageSize);
       const remainder = this.total % this.pageSize
       if (remainder) {
         return parseInt(this.total / this.pageSize) + 1

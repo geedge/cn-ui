@@ -1,40 +1,57 @@
-.cn-chart-header-button{
+.cn-chart-header-button {
     display: flex;
-    .cn-chart-header-button-all{
-        border: 1px solid #0091FF;
+    button:first-of-type{
+        border-radius: 2px 0 0 2px;
+
+    }
+    .cn-chart-header-button-all {
+        border-color: #0091FF;
         color: #0091FF;
         background-color: #FFFFFF;
+        border-radius: 2px 0 0 2px;
+
     }
-    .cn-chart-header-button-critical{
-        border: 1px solid #0091FF;
+
+    .cn-chart-header-button-critical {
+        border-color: #0091FF;
         color: #0091FF;
+        border-radius: 2px;
         background-color: #FFFFFF;
 
     }
-    .cn-chart-header-button-high{
-        border: 1px solid #0091FF;
+
+    .cn-chart-header-button-high {
+        border-color: #0091FF;
+        border-radius: 2px;
         background-color: #FFFFFF;
         color: #0091FF;
     }
-    .cn-chart-header-button-low{
-        border: 1px solid #0091FF;
+
+    .cn-chart-header-button-low {
+        border-color: #0091FF;
+        border-radius: 2px;
         background-color: #FFFFFF;
         color: #0091FF;
     }
-    .cn-chart-header-button-info{
-        border: 1px solid #0091FF;
+
+    .cn-chart-header-button-info {
+        border-color: #0091FF;
+        border-radius: 2px;
         background-color: #FFFFFF;
         color: #0091FF;
     }
-    .cn-chart-header-button-medium{
+
+    .cn-chart-header-button-medium {
         border: 1px solid #0091FF;
+        border-radius: 2px;
         background-color: #FFFFFF;
         color: #0091FF;
     }
-    .el-button--default{
+
+    .el-button--default {
         height: 24px;
-        border-radius: 2px 0 0 2px;
-        min-height:24px;
+        border-radius: 2px;
+        min-height: 24px;
         display: flex;
         justify-content: center;
         align-items: center;

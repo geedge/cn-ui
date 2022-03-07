@@ -1,76 +1,81 @@
 <template>
   <div class="cn-chart-alarm-info">
     <div class="cn-chart-alarm-info-mainContent">
-    <div
-      class="cn-chart-alarm-content"
-      v-for="(value, index) in chartData"
-      :key="index"
-    >
-      <div class="cn-alarm-info-main">
-        <div class="cn-alarm-info-main-left">
-          <div
-            class="cn-chart-alarm-info-icon"
-            :style="{
-              background: eventSeverityColor[value.eventSeverity],
-              opacity: 0.1,
-            }"
-          ></div>
-          <i
-            class="cn-icon cn-icon-alert"
-            :style="{
-              color: eventSeverityColor[value.eventSeverity],
-              opacity: 1,
-            }"
-          ></i>
-        </div>
-        <div class="cn-alarm-info-textContent">
-          <div class="cn-alarm-info-main-title">
-            <!-- <span v-if="value.entityType === 'domain'">{{ value.domain }}</span>
+      <div
+        class="cn-chart-alarm-content"
+        v-for="(value, index) in result ? result : []"
+        :key="index"
+      >
+        <div class="cn-alarm-info-main">
+          <div class="cn-alarm-info-main-left">
+            <div
+              class="cn-chart-alarm-info-icon"
+              :style="{
+                background: eventSeverityColor[value.eventSeverity],
+                opacity: 0.1,
+              }"
+            ></div>
+            <i
+              class="cn-icon cn-icon-alert"
+              :style="{
+                color: eventSeverityColor[value.eventSeverity],
+                opacity: 1,
+              }"
+            ></i>
+          </div>
+          <div class="cn-alarm-info-textContent">
+            <div class="cn-alarm-info-main-title">
+              <!-- <span v-if="value.entityType === 'domain'">{{ value.domain }}</span>
             <span v-if="value.entityType === 'app'">{{ value.appName }}</span>
             <span v-if="value.entityType === 'ip'">{{ value.serverIp }}</span> -->
-            111.111.1.1
-          </div>
-
-          <div class="cn-alarm-info-bottom">
-            <div
-              class="cn-alarm-info-bottom-type"
-              :style="{ 'color': eventSeverityColor[value.eventSeverity] ,'border-color':eventSeverityColor[value.eventSeverity]}"
-            >
-              <!-- {{$t(`${value.eventType}`)}} -->
-              {{ value.eventType }}
+              111.111.1.1
             </div>
 
-            <div class="cn-alarm-info-bottom-middle">
-              <i class="cn-icon cn-icon-time2"></i>
-
-              <div class="cn-alarm-info-bottom-time">
-               &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
-              </div>
-              <div>{{ changeDate(value.startTime) }}</div>
-            </div>
-
-            <div class="cn-alarm-info-bottom-right">
-              <i class="cn-icon cn-icon-time2"></i>
-              <div class="cn-alarm-info-bottom-time">
-                &nbsp;{{ $t(`dns.duration`) }}:&nbsp;&nbsp;&nbsp;
-              </div>
-
+            <div class="cn-alarm-info-bottom">
               <div
-                class="cn-alarm-info-bottom-circle"
-                :style="{ background: eventSeverityColor[value.eventSeverity] }"
-              ></div>
-              &nbsp;&nbsp;&nbsp;
-              <div>
-                {{
-                  unitConvert(value.endTime - value.startTime, 'time').join(' ')
-                }}
+                class="cn-alarm-info-bottom-type"
+                :style="{
+                  color: eventSeverityColor[value.eventSeverity],
+                  'border-color': eventSeverityColor[value.eventSeverity],
+                }"
+              >
+                {{ value.eventType }}
               </div>
+              <div class="cn-alarm-info-bottom-middle">
+                <i class="cn-icon cn-icon-time2"></i>
+
+                <div class="cn-alarm-info-bottom-time">
+                  &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
+                </div>
+                <div>{{ changeDate(value.startTime) }}</div>
+              </div>:&nbsp;&nbsp;&nbsp;
+
+              <div class="cn-alarm-info-bottom-right">
+                <i class="cn-icon cn-icon-time2"></i>
+                <div class="cn-alarm-info-bottom-time">
+                  &nbsp;{{ $t(`dns.duration`) }}:&nbsp;&nbsp;&nbsp;
+                </div>
+
+                <div
+                  class="cn-alarm-info-bottom-circle"
+                  :style="{
+                    background: eventSeverityColor[value.eventSeverity],
+                  }"
+                ></div>
+                &nbsp;&nbsp;&nbsp;
+                <div>
+                  {{
+                    unitConvert(value.endTime - value.startTime, 'time').join(
+                      ' ',
+                    )
+                  }}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
       </div>
-    </div>
-
     </div>
     <chart-table-pagination
       ref="tablePagination"
@@ -102,37 +107,141 @@ export default {
       pageSizeForAlarm: 9,
       eventSeverityColor: eventSeverityColor,
       pageNo: 1,
-      alarmInfoCount: {
-        
-      },
-      fromChartData:''
+      alarmInfoCount: {},
+      fromChartData: '',
+      result: [
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type1111111111111111111111111111111111',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 111111111111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type111111111111111111111111111111111111',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+        {
+          entityType: 'ip',
+          serverIp: '1.2.3.4',
+          domain: '',
+          appName: 'wechat',
+          eventSeverity: 'high',
+          eventType: 'type',
+          startTime: 1111111111,
+          durationMs: 60000,
+          endTime: 1111111112,
+        },
+      ],
     }
   },
   watch: {
     tabHandleClickType: {
       deep: true,
       handler(n) {
-        this.getData(1,n)
+        this.getData(1, n)
       },
     },
   },
-  created(){
-    this.getData(1,'All')
+  created() {
+    this.getData(1, 'All')
   },
   components: {
     ChartTablePagination,
   },
   methods: {
     unitConvert,
-    getData(val,n) {
+    getData(val, n) {
       this.pageNo = val
       const now = window.$dayJs.tz().valueOf()
       const extraParams = {
         pageNo: val,
         pageSize: this.pageSizeForAlarm,
-        eventSeverity: n? (n==='All'?'':n ): this.tabHandleClickType === 'All'?'':this.tabHandleClickType
+        eventSeverity: n
+          ? n === 'All'
+            ? ''
+            : n
+          : this.tabHandleClickType === 'All'
+          ? ''
+          : this.tabHandleClickType,
       }
-      console.log('extraParams',extraParams);
       this.$emit('getAlarmInfo', null, extraParams)
       const queryParams = {
         startTime: Math.floor(now / 1000 - 3600),
