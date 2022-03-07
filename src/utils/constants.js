@@ -140,6 +140,7 @@ export const chartTableColumnMapping = {
   domain: 'overall.domain',
   appName: 'overall.appName',
   queryRate: 'dns.queryRate',
+  queryCount: 'dns.queryCount',
   dnsLatency: 'dns.averageResolveLatency',
   responseFailRate: 'dns.responseFailureRate'
 }

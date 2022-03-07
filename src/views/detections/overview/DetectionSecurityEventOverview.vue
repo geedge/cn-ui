@@ -178,7 +178,7 @@ export default {
           return 'T0'
         }
         const eventStartTime = event.startTime
-        const entityStartTime = this.basicInfo ? this.basicInfo.startTime : ''
+        const entityStartTime = this.detection.startTime
 
         if (!_.isEmpty(diffSeconds) && !_.isEmpty(eventStartTime) && !_.isEmpty(entityStartTime)) {
           const suffix = unitConvert(diffSeconds, unitTypes.time, 's', null, 0).join('')
@@ -196,7 +196,6 @@ export default {
     getMillisecond,
     query () {
       Promise.all([this.queryBasic(), this.queryEvent()]).then(responses => {
-        console.info(responses)
         responses[0] && (this.basicInfo = responses[0])
         responses[1] && (this.events = responses[1])
       })
