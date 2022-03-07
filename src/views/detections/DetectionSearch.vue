@@ -41,6 +41,11 @@ export default {
           label: 'Security type'
         },
         {
+          name: 'event_type',
+          type: 'string',
+          label: 'Event type'
+        },
+        {
           name: 'victim_ip',
           type: 'string',
           label: 'Victim IP'

@@ -31,6 +31,9 @@
             <span v-else-if="c === 'packets' || c === 'sessions'">
                 {{unitConvert(row[c], unitTypes.number).join(' ')}}
             </span>
+            <span v-else-if="c === 'responseFailRate'">
+                {{unitConvert(row[c] * 100, unitTypes.percent).join(' ')}}%
+            </span>
             <span v-else>
                 {{row[c]}}
             </span>

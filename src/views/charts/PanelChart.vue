@@ -53,6 +53,7 @@ import {
   isEcharts,
   isSingleValue,
   isTable,
+  isBasicTable,
   isActiveIpTable,
   isTitle,
   isMap,
@@ -148,14 +149,6 @@ export default {
             num: 345
           }
         ] // table的所有数据
-      },
-      table: {
-        pageSize: chartTableDefaultPageSize,
-        limit: chartTableTopOptions[0], // top-n
-        orderBy: 'sessions',
-        tableColumns: [], // table字段
-        tableData: [], // table的所有数据
-        currentPageData: [] // table当前页的数据
       },
       tabHandleClickType: ''
     }
@@ -255,7 +248,7 @@ export default {
               }
               if (this.isTable) {
                 this.table.tableData = response.data.result
-                // this.table.tableColumns = chartParams.columns
+                this.table.tableColumns = chartParams.columns
                 // this.table.tableColumns = this.getTableTitle(response.data.result)
                 this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
               } else if (this.isSingleValue) {
@@ -405,7 +398,7 @@ export default {
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
     let table = {}
-    if (isTable(props.chartInfo.type)) {
+    if (isBasicTable(props.chartInfo.type)) {
       table = {
         pageSize: chartTableDefaultPageSize,
         limit: chartTableTopOptions[0], // top-n

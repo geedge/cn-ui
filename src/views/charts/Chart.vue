@@ -16,7 +16,7 @@
         :chart-data="chartData"
         :query-params="queryParams"
         :entity="entity"
-        @query="query"
+        @getChartData="getChartData"
         @showLoading="showLoading"
       ></chart-map>
 
@@ -365,6 +365,9 @@ export default {
     },
     getAlarmInfo (url, extraParams, isRefresh, timeFilter) {
       this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
+    },
+    getChartData (url, extraParams) {
+      this.$emit('getChartData', url, extraParams)
     },
     initEchartsWithTable () {
       this.$refs['chart' + this.chartInfo.id] &&

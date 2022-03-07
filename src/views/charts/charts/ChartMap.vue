@@ -14,7 +14,7 @@
             class="legend__circle-marker"
             :style="`background-color:${markerColors[index].background};border: 1px solid ${markerColors[index].border};`"
         ></div>
-        <div class="legend__value">{{legend.value}}</div>
+        <div class="legend__value">{{unitConvert(legend.value, unitTypes.number).join(' ')}}</div>
         <div class="legend__name">{{legend.name}}</div>
       </div>
     </div>
@@ -25,17 +25,19 @@
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { getGeoData, replaceUrlPlaceholder } from '@/utils/tools'
-import { storageKey, dnsServerRole } from '@/utils/constants'
+import { storageKey, dnsServerRole, unitTypes } from '@/utils/constants'
 import { isMapBlock, isMapPoint } from './tools'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { HeatLegend } from '@/components/amcharts/heatLegend'
 import { getData } from '@/utils/api'
 import chartMixin from './chart-mixin'
+import _ from 'lodash'
 
 export default {
   name: 'ChartMap',
   data () {
     return {
+      unitTypes,
       myChart: null,
       mapPictureUrl: '/Tiles/{z}/{x}/{y}.png',
       showMapBackButton: false,
@@ -62,15 +64,12 @@ export default {
           name: this.$t('dns.publicRecursiveDomainServers'),
           type: dnsServerRole.OPRDNS,
           value: 0
-        }/*,
-        {
-          name: this.$t('dns.rootDomainServers'),
-          value: 0
         },
         {
-          name: this.$t('dns.rootDomainServers'),
+          name: this.$t('dns.selfBuiltDomainServers'),
+          type: dnsServerRole.SBDNS,
           value: 0
-        } */
+        }
       ],
       markerColors: [
         {
@@ -102,6 +101,7 @@ export default {
   },
   mixins: [chartMixin],
   methods: {
+    unitConvert,
     initMap (id) {
       const chart = am4Core.create(id, am4Maps.MapChart)
       chart.geodata = getGeoData(storageKey.iso36112WorldLow)
@@ -144,6 +144,16 @@ export default {
           }
         }
       })
+      // dns地图legend上的数据
+      if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
+        setTimeout(() => {
+          this.chartInfo.params.legendUrl.forEach((url, i) => {
+            getData(url).then(data => {
+              this.legends[i].value = data
+            })
+          })
+        })
+      }
     },
     loadAm4ChartMap (polygonSeries, country, chartData) {
       // chartData不为空是下钻
@@ -288,7 +298,7 @@ export default {
     },
     changeLegend (index) {
       this.currentLegendIndex = index
-      this.$emit('query', { dnsServerRole: this.legends[index].type })
+      this.$emit('getChartData', null, { dnsServerRole: this.legends[index].type })
     },
     dnsTypeI18n (role) {
       let i18n = ''
