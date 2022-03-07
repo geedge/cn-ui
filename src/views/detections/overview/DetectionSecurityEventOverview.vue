@@ -156,6 +156,7 @@ import { api } from '@/utils/api'
 import { getMillisecond } from '@/utils/date-util'
 import { eventSeverityColor, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
+import _ from 'lodash'
 export default {
   name: 'DetectionOverview',
   props: {
@@ -179,7 +180,7 @@ export default {
         const eventStartTime = event.startTime
         const entityStartTime = this.basicInfo ? this.basicInfo.startTime : ''
 
-        if (!this.$_.isEmpty(diffSeconds) && !this.$_.isEmpty(eventStartTime) && !this.$_.isEmpty(entityStartTime)) {
+        if (!_.isEmpty(diffSeconds) && !_.isEmpty(eventStartTime) && !_.isEmpty(entityStartTime)) {
           const suffix = unitConvert(diffSeconds, unitTypes.time, 's', null, 0).join('')
           if (eventStartTime > entityStartTime) {
             return `T0+${suffix}`

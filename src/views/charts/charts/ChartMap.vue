@@ -1,6 +1,24 @@
 <template>
-  <div class="map-back" v-show="showMapBackButton" @click="mapBack">&lt; back</div>
-  <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+  <div class="cn-chart__map">
+    <div class="map-back" v-show="showMapBackButton" @click="mapBack">&lt; back</div>
+    <div class="map-drawing" :id="`chart${chartInfo.id}`"></div>
+    <div class="map-chart__legends" v-if="chartInfo.params.hasLegend">
+      <div
+          class="map-chart__legend"
+          :class="`${currentLegendIndex === index ? 'map-chart__legend--active' : ''}`"
+          v-for="(legend, index) in legends"
+          :key="index"
+          @click="changeLegend(index)"
+      >
+        <div
+            class="legend__circle-marker"
+            :style="`background-color:${markerColors[index].background};border: 1px solid ${markerColors[index].border};`"
+        ></div>
+        <div class="legend__value">{{legend.value}}</div>
+        <div class="legend__name">{{legend.name}}</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -22,7 +40,64 @@ export default {
       mapPictureUrl: '/Tiles/{z}/{x}/{y}.png',
       showMapBackButton: false,
       polygonSeries: null, // 世界地图series
-      countrySeries: null // 下钻国家series
+      countrySeries: null, // 下钻国家series
+      currentLegendIndex: 0,
+      legends: [
+        {
+          name: this.$t('dns.rootDomainServers'),
+          type: dnsServerRole.RTDNS,
+          value: 0
+        },
+        {
+          name: this.$t('dns.topLevelDomainServers'),
+          type: dnsServerRole.TLDNS,
+          value: 0
+        },
+        {
+          name: this.$t('dns.authoritativeDomainServers'),
+          type: dnsServerRole.ADNS,
+          value: 0
+        },
+        {
+          name: this.$t('dns.publicRecursiveDomainServers'),
+          type: dnsServerRole.OPRDNS,
+          value: 0
+        }/*,
+        {
+          name: this.$t('dns.rootDomainServers'),
+          value: 0
+        },
+        {
+          name: this.$t('dns.rootDomainServers'),
+          value: 0
+        }*/
+      ],
+      markerColors: [
+        {
+          background: '#C0DEFE',
+          border: '#68AFFC'
+        },
+        {
+          background: '#DBCFFA',
+          border: '#AA8CF2'
+        },
+        {
+          background: '#A0E8E0',
+          border: '#1CC9B5'
+        },
+        {
+          background: '#FFE1B5',
+          border: '#FFB84E'
+        },
+        {
+          background: '#FDC6C6',
+          border: '#FA7777'
+        },
+        {
+          background: '#ECC6F7',
+          border: '#B620E0'
+        }
+      ]
     }
   },
   mixins: [chartMixin],
@@ -156,7 +231,6 @@ export default {
               border: this.circleColor[d.dnsServerRole].border
             })
           })
-          console.info(seriesData)
           const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
           imageSeries.data = seriesData
           imageSeries.dataFields.value = 'count'
@@ -211,6 +285,10 @@ export default {
         this.polygonSeries.show()
         this.myChart.goHome()
       })
+    },
+    changeLegend (index) {
+      this.currentLegendIndex = index
+      this.$emit('query', { dnsServerRole: this.legends[index].type })
     },
     dnsTypeI18n (role) {
       let i18n = ''
