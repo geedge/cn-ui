@@ -2,7 +2,7 @@
   <div class="chart-two-situation-statistics">
     <div
       class="situation-statistics-main"
-      v-for="(value, key,index) in result ? result : []"
+      v-for="(value, key,index) in chartData ? chartData : []"
       :key="index"
     >
       <div class="situation-statistics-top">
@@ -32,16 +32,16 @@ export default {
   },
   data() {
     return {
-      result: {
-        doh: {
-          count: 111,
-          percent: 0.85,
-        },
-        dot: {
-          count: 111,
-          percent: 80.85,
-        },
-      },
+      // result: {
+      //   doh: {
+      //     count: 111,
+      //     percent: 0.85,
+      //   },
+      //   dot: {
+      //     count: 111,
+      //     percent: 80.85,
+      //   },
+      // },
     }
   },
 }
