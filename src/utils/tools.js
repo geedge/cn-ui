@@ -444,12 +444,18 @@ export function lineToHump (name) {
 }
 // 下划线转换空格首位大写
 export function lineToSpace (name) {
+  if (_.isEmpty(name)) {
+    return ''
+  }
   return _.upperFirst(name.replace(/\_(\w)/g, function (all, letter) {
     return ` ${letter.toUpperCase()}`
   }))
 }
 // 驼峰转换下划线
 export function humpToLine (name) {
+  if (_.isEmpty(name)) {
+    return ''
+  }
   return name.replace(/([A-Z])/g, '_$1').toLowerCase()
 }
 // 搜索功能：对象转字符串

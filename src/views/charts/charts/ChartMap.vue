@@ -7,9 +7,8 @@
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { getGeoData, replaceUrlPlaceholder } from '@/utils/tools'
-import { storageKey } from '@/utils/constants'
-
-import { isMapBlock } from './tools'
+import { storageKey, dnsServerRole } from '@/utils/constants'
+import { isMapBlock, isMapPoint } from './tools'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { HeatLegend } from '@/components/amcharts/heatLegend'
 import { getData } from '@/utils/api'
@@ -72,6 +71,7 @@ export default {
       })
     },
     loadAm4ChartMap (polygonSeries, country, chartData) {
+      // chartData不为空是下钻
       if (chartData) {
         this.$emit('showLoading', true)
       }
@@ -111,8 +111,9 @@ export default {
             showValue: (r.value || r.value === 0) ? valueToRangeValue(r.value, chartParams.unitType).join(' ') : ''
           }))
           !this.$_.isEmpty(seriesData) && (polygonSeries.data = [...seriesData])
+          // 数据全为0的情况，legend只显示1个颜色
           const sorted = seriesData.sort((a, b) => b.value - a.value)
-          const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0 // 数据全为0的情况，legend只显示1个颜色
+          const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0
 
           polygonSeries.heatRules.push({
             property: 'fill',
@@ -142,6 +143,56 @@ export default {
           heatLegend.valueAxis.renderer.labels.template.adapter.add('text', function (labelText) {
             return ''
           })
+        } else if (data && this.isMapPoint) {
+          const seriesData = []
+          data.forEach(d => {
+            seriesData.push({
+              id: d.ipLocationId,
+              count: d.count,
+              dnsServerRole: d.dnsServerRole,
+              location: d.ipLocationCity || d.ipLocationProvince || d.ipLocationCountry,
+              desc: this.$t(this.dnsTypeI18n(d.dnsServerRole)),
+              color: this.circleColor[d.dnsServerRole].background,
+              border: this.circleColor[d.dnsServerRole].border
+            })
+          })
+          console.info(seriesData)
+          const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+          imageSeries.data = seriesData
+          imageSeries.dataFields.value = 'count'
+
+          const imageTemplate = imageSeries.mapImages.template
+          imageTemplate.nonScaling = true
+
+          imageTemplate.adapter.add('latitude', function (latitude, target) {
+            const polygon = polygonSeries.getPolygonById(target.dataItem.dataContext.id)
+            if (polygon) {
+              return polygon.visualLatitude
+            }
+            return latitude
+          })
+
+          imageTemplate.adapter.add('longitude', function (longitude, target) {
+            const polygon = polygonSeries.getPolygonById(target.dataItem.dataContext.id)
+            if (polygon) {
+              return polygon.visualLongitude
+            }
+            return longitude
+          })
+
+          const circle = imageTemplate.createChild(am4Core.Circle)
+          circle.propertyFields.fill = 'color'
+          circle.propertyFields.stroke = 'border'
+          circle.strokeWidth = 1
+          circle.tooltipText = '[bold]{location}[/]\n{desc}: {count}'
+
+          imageSeries.heatRules.push({
+            target: circle,
+            property: 'radius',
+            min: 6,
+            max: 25,
+            dataField: 'value'
+          })
         }
       } catch (e) {
         console.error(e)
@@ -160,6 +211,37 @@ export default {
         this.polygonSeries.show()
         this.myChart.goHome()
       })
+    },
+    dnsTypeI18n (role) {
+      let i18n = ''
+      switch (role) {
+        case dnsServerRole.RTDNS: {
+          i18n = 'dns.rootDomainServers'
+          break
+        }
+        case dnsServerRole.TLDNS: {
+          i18n = 'dns.topLevelDomainServers'
+          break
+        }
+        case dnsServerRole.OPRDNS: {
+          i18n = 'dns.publicRecursiveDomainServers'
+          break
+        }
+        case dnsServerRole.ADNS: {
+          i18n = 'dns.authoritativeDomainServers'
+          break
+        }
+        case dnsServerRole.SBDNS: {
+          i18n = 'dns.selfBuiltDomainServers'
+          break
+        }
+        case dnsServerRole.RTDNSM: {
+          i18n = 'RTDNSM'
+          break
+        }
+        default: break
+      }
+      return i18n
     },
     generateTooltipHTML () {
       return `
@@ -206,8 +288,35 @@ export default {
     }
   },
   setup (props) {
+    const circleColor = {}
+    circleColor[dnsServerRole.RTDNS] = {
+      background: '#C0DEFE',
+      border: '#478AD5'
+    }
+    circleColor[dnsServerRole.TLDNS] = {
+      background: '#DBCFFA',
+      border: '#AA8CF2'
+    }
+    circleColor[dnsServerRole.ADNS] = {
+      background: '#A0E8E0',
+      border: '#1CC9B5'
+    }
+    circleColor[dnsServerRole.OPRDNS] = {
+      background: '#FFE1B5',
+      border: '#FFB84E'
+    }
+    circleColor[dnsServerRole.SBDNS] = {
+      background: '#FDC6C6',
+      border: '#FA7777'
+    }
+    circleColor[dnsServerRole.RTDNSM] = {
+      background: '#ECC6F7',
+      border: '#BF49DF'
+    }
     return {
-      isMapBlock: isMapBlock(props.chartInfo.type)
+      circleColor,
+      isMapBlock: isMapBlock(props.chartInfo.type),
+      isMapPoint: isMapPoint(props.chartInfo.type)
     }
   }
 }

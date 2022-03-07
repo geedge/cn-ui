@@ -29,7 +29,7 @@ export function getMillisecond (time) {
       ms = Math.floor(time * (10 ** (0 - difference)))
     }
   }
-  return ms
+  return ms ? Number(ms) : null
 }
 // 初始化日期
 export function getNowTime (interval) {
@@ -39,4 +39,8 @@ export function getNowTime (interval) {
     startTime,
     endTime
   }
+}
+// 日期格式转换
+export function rTime (date) {
+  return window.$dayJs.tz(new Date(date)).format('YYYY-MM-DD HH:mm:ss')
 }

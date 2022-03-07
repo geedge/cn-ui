@@ -130,7 +130,19 @@ export const unitTypes = {
 export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量
 export const chartTableTopOptions = [10, 100] // table类型图表的TOP-N选项
 export const chartActiveIpTableOrderOptions = ['machine'] // active ip table类型图表的order 选项
-// table类型图表的TOP-N选项
+// table类型图表column映射
+export const chartTableColumnMapping = {
+  sessions: 'overall.sessions',
+  packets: 'overall.packets',
+  bytes: 'overall.bytes',
+  clientIp: 'overall.clientIp',
+  serverIp: 'overall.serverIp',
+  domain: 'overall.domain',
+  appName: 'overall.appName',
+  queryRate: 'dns.queryRate',
+  dnsLatency: 'dns.averageResolveLatency',
+  responseFailRate: 'dns.responseFailureRate'
+}
 export const chartPieTableTopOptions = [
   { name: 'Sessions', value: 'sessions' },
   { name: 'Packets', value: 'packets' },
@@ -169,6 +181,20 @@ export const detectionPageType = {
   securityEvent: 'securityEvent',
   performanceEvent: 'performanceEvent'
 }
+
+export const dnsServerRole = {
+  RTDNS: 'RTDNS',
+  TLDNS: 'TLDNS',
+  OPRDNS: 'OPRDNS',
+  ADNS: 'ADNS',
+  SBDNS: 'SBDNS',
+  RTDNSM: 'RTDNSM'
+}
+
+export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
+  '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
+  '#E97CCC', '#FEA69E', '#0F8AB2', '#57CBAC',
+  '#5888BC', '#63B6AC', '#EDC6B2', '#D5746B']
 
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',

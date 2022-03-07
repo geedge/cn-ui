@@ -27,6 +27,8 @@
       {{ chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name }}
     </div>
     <template v-if="isCurrentTable">
+    <div class="chart-header__title" v-else-if="!isBasicTable" :class="{'chart-header__title--block': isBlock}" :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
+    <template v-if="isBasicTable">
       <div class="chart-header__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{
           chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name
@@ -257,6 +259,7 @@ export default {
   },
   data() {
     return {
+      chartTableColumnMapping,
       dropdownMenuShow: false,
       errorText: '',
       isFocus:false,
@@ -369,7 +372,7 @@ export default {
       isBlock: isBlock(props.chartInfo.type),
       isTabs: isTabs(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
-      isCurrentTable: isCurrentTable(props.chartInfo.type),
+      isBasicTable: isBasicTable(props.chartInfo.type),
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isGroup: isGroup(props.chartInfo.type),

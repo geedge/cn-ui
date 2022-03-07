@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { getChartColor } from '@/views/charts/charts/chart-options'
+import { getChartColor } from '@/views/charts/charts/tools'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 export default {
   name: 'StatisticsLegend',

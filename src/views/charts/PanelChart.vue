@@ -48,7 +48,7 @@
 <script>
 import ChartHeader from './ChartHeader'
 import Chart from '@/views/charts/Chart'
-import testData from './charts/testData'
+import { dnsServerRole, chartPieTableTopOptions, chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
 import {
   isEcharts,
   isSingleValue,
@@ -81,7 +81,7 @@ import {
 import { tableTitleMapping, legendMapping } from '@/views/charts/charts/chart-table-title'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
-import { chartPieTableTopOptions, chartTableDefaultPageSize, chartTableTopOptions } from '@/utils/constants'
+
 import { get } from '@/utils/http'
 import { ref } from 'vue'
 import _ from 'lodash'
@@ -194,6 +194,10 @@ export default {
           ...extraParams
         }
         const requestUrl = url || (chartParams && chartParams.url)
+        // 默认参数特殊处理
+        if (requestUrl && requestUrl.indexOf('dnsServerRole') > -1) {
+          this.queryParams.dnsServerRole = extraParams.dnsServerRole || dnsServerRole.RTDNS
+        }
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
             // if (this.chartInfo.type === 23 && testData) {
@@ -201,6 +205,27 @@ export default {
             // } else if (this.chartInfo.type === 24 && testData) {
             //   response = testData.data2
             // }
+            if (this.chartInfo.type === 3) {
+              response = {
+                code: 200,
+                data: {
+                  result: [
+                    {
+                      dnsServerRole: extraParams.dnsServerRole || dnsServerRole.RTDNS,
+                      ipLocationCountry: 'China',
+                      ipLocationId: 'CN',
+                      count: 161
+                    },
+                    {
+                      dnsServerRole: extraParams.dnsServerRole || dnsServerRole.RTDNS,
+                      ipLocationCountry: 'Japan',
+                      ipLocationId: 'JP',
+                      count: 222
+                    }
+                  ]
+                }
+              }
+            }
             if (response.code === 200) {
               if (Array.isArray(response.data.result)) {
                 response.data.result.forEach(item => {
@@ -210,9 +235,6 @@ export default {
                 })
               }
               this.chartData = response.data.result
-              this.table.tableData = response.data.result
-              this.table.tableColumns = this.getTableTitle(response.data.result)
-              this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
               this.resultType = response.data.resultType
               if (this.chartInfo.type === 12) {
                 const newArr = []
@@ -231,7 +253,12 @@ export default {
                   }
                 })
               }
-              if (this.isSingleValue) {
+              if (this.isTable) {
+                this.table.tableData = response.data.result
+                // this.table.tableColumns = chartParams.columns
+                // this.table.tableColumns = this.getTableTitle(response.data.result)
+                this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
+              } else if (this.isSingleValue) {
                 if (chartParams && chartParams.dataKey) {
                   if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
                     this.chartData = response.data.result[chartParams.dataKey]
@@ -377,7 +404,19 @@ export default {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
+    let table = {}
+    if (isTable(props.chartInfo.type)) {
+      table = {
+        pageSize: chartTableDefaultPageSize,
+        limit: chartTableTopOptions[0], // top-n
+        orderBy: props.chartInfo.params.columns.order[0],
+        tableColumns: props.chartInfo.params.columns, // table字段
+        tableData: [], // table的所有数据
+        currentPageData: [] // table当前页的数据
+      }
+    }
     return {
+      table,
       chartTimeFilter,
       isEcharts: isEcharts(props.chartInfo.type),
       isEchartsTimeBar: isEchartsTimeBar(props.chartInfo.type),

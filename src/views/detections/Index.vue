@@ -14,9 +14,16 @@
     ></detection-search>
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
-      <div class="detection__event-severity-bar" :id="`eventSeverityTrendBar${pageType}`">
-        <detection-no-data v-if="isEventSeverityNoData"></detection-no-data>
+      <div class="entity__loading" style="background: #eff2f5;opacity: .6;" v-show="loading">
+        <i class="el-icon-loading"></i>
       </div>
+      <template v-if="isEventSeverityNoData">
+         <div class="no-data detection__event-severity-bar" >No data</div>
+      </template>
+      <template v-if="!isEventSeverityNoData">
+        <div class="detection__event-severity-bar"  :id="`eventSeverityTrendBar${pageType}`">
+        </div>
+      </template>
       <div style="display: flex; flex-grow: 1">
         <detection-filter
             :filter-data="filterData[pageType]"
@@ -31,25 +38,38 @@
               <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.severity')}}</div>
               </div>
-              <div class="chart-content" :id="`eventSeverityPie${pageType}`">
-                <detection-no-data v-if="isStatisticsSeverityNoData"></detection-no-data>
-              </div>
+              <template v-if="isStatisticsSeverityNoData">
+                <div class="no-data chart-content" >No data</div>
+              </template>
+              <template v-if="!isStatisticsSeverityNoData">
+                <div class="chart-content" :id="`eventSeverityPie${pageType}`">
+                </div>
+              </template>
+
             </div>
             <div class="statistics__category">
               <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.categoryProportion')}}</div>
               </div>
-              <div class="chart-content" :id="`detectionCategoryPer${pageType}`">
-                <detection-no-data v-if="isStatisticsCategoryNoData"></detection-no-data>
-              </div>
+              <template v-if="isStatisticsCategoryNoData">
+                <div class="no-data chart-content" >No data</div>
+              </template>
+              <template v-if="!isStatisticsCategoryNoData">
+                <div class="chart-content" :id="`detectionCategoryPer${pageType}`">
+                </div>
+              </template>
             </div>
             <div class="statistics__active-attack">
               <div class="chart-header">
                 <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeAttacker') : $t('detections.activeEntity')}}</div>
               </div>
-              <div class="chart-content" style="" :id="`detectionActiveAttacker${pageType}`">
-                <detection-no-data v-if="isStatisticsActiveAttackNoData"></detection-no-data>
-              </div>
+              <template v-if="isStatisticsActiveAttackNoData">
+                <div class="no-data chart-content" >No data</div>
+              </template>
+              <template v-if="!isStatisticsActiveAttackNoData">
+                <div class="chart-content" :id="`detectionActiveAttacker${pageType}`">
+                </div>
+              </template>
             </div>
           </div>
           <detection-list
@@ -87,7 +107,7 @@ import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize, detectionPageType } from '@/utils/constants'
-import { getNowTime, getSecond } from '@/utils/date-util'
+import { getNowTime, getSecond, rTime } from '@/utils/date-util'
 import { ref } from 'vue'
 import * as echarts from 'echarts'
 import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
@@ -183,8 +203,8 @@ export default {
             data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
           },
           {
-            title: this.$t('detections.securityType'),
-            column: 'securityType',
+            title: this.$t('detections.eventType'),
+            column: 'eventType',
             collapse: false,
             value: [],
             data: [] // 从接口动态获取
@@ -193,24 +213,122 @@ export default {
       },
       listData: [],
       listLoading: false,
-      eventSeverityData: [],
       severityPerOption: null,
       severityPerData: [],
       categoryPerOption: null,
       categoryPerData: [],
       activeAttackOption: null,
       activeAttackData: [],
-      isEventSeverityNoData: true,
-      isStatisticsSeverityNoData: true,
-      isStatisticsCategoryNoData: true,
-      isStatisticsActiveAttackNoData: true
+      eventSeverityData: [],
+      statisticsSeverityData: [],
+      statisticsCategoryData: [],
+      statisticsActiveAttackData: [],
+      isEventSeverityNoData: false,
+      isStatisticsSeverityNoData: false,
+      isStatisticsCategoryNoData: false,
+      isStatisticsActiveAttackNoData: false,
+      loading: false
     }
   },
   methods: {
     // 初始化顶部大柱状图
     initEventSeverityTrendData (params) {
+      this.loading = true
       getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
         /* data = [
+          {
+            "stat_time": "2022-01-01T10:07:03.008Z",
+            "event_severity": "critical",
+            "count": 5
+          },
+          {
+            "stat_time": "2022-01-02T10:07:03.008Z",
+            "event_severity": "critical",
+            "count": 15
+          },{
+            "stat_time": "2022-01-03T10:07:03.008Z",
+            "event_severity": "critical",
+            "count": 25
+          },
+          {
+            "stat_time": "2022-01-04T10:07:03.008Z",
+            "event_severity": "critical",
+            "count": 7
+          },{
+            "stat_time": "2022-01-01T10:07:03.008Z",
+            "event_severity": "high",
+            "count": 8
+          },
+          {
+            "stat_time": "2022-01-02T10:07:03.008Z",
+            "event_severity": "high",
+            "count": 2
+          },{
+            "stat_time": "2022-01-03T10:07:03.008Z",
+            "event_severity": "high",
+            "count": 25
+          },
+          {
+            "stat_time": "2022-01-04T10:07:03.008Z",
+            "event_severity": "high",
+            "count": 7
+          },{
+            "stat_time": "2022-01-01T10:07:03.008Z",
+            "event_severity": "medium",
+            "count": 9
+          },
+          {
+            "stat_time": "2022-01-02T10:07:03.008Z",
+            "event_severity": "medium",
+            "count": 15
+          },{
+            "stat_time": "2022-01-03T10:07:03.008Z",
+            "event_severity": "medium",
+            "count": 35
+          },
+          {
+            "stat_time": "2022-01-04T10:07:03.008Z",
+            "event_severity": "medium",
+            "count": 7
+          },{
+            "stat_time": "2022-01-01T10:07:03.008Z",
+            "event_severity": "low",
+            "count": 5
+          },
+          {
+            "stat_time": "2022-01-02T10:07:03.008Z",
+            "event_severity": "low",
+            "count": 1
+          },{
+            "stat_time": "2022-01-03T10:07:03.008Z",
+            "event_severity": "low",
+            "count": 25
+          },
+          {
+            "stat_time": "2022-01-04T10:07:03.008Z",
+            "event_severity": "low",
+            "count": 17
+          },{
+            "stat_time": "2022-01-01T10:07:03.008Z",
+            "event_severity": "info",
+            "count": 5
+          },
+          {
+            "stat_time": "2022-01-02T10:07:03.008Z",
+            "event_severity": "info",
+            "count": 15
+          },{
+            "stat_time": "2022-01-03T10:07:03.008Z",
+            "event_severity": "info",
+            "count": 25
+          },
+          {
+            "stat_time": "2022-01-04T10:07:03.008Z",
+            "event_severity": "info",
+            "count": 27
+          },
+        ] */
+        /* data2 = [
           {
             legend: 'critical',
             values: [[1435781430781, '999'], [1435781431781, '222'], [1435781432781, '11'], [1435781433781, '3']]
@@ -229,23 +347,40 @@ export default {
             values: [[1435781430781, '5'], [1435781431781, '7'], [1435781432781, '5'], [1435781433781, '8']]
           }
         ] */
+        this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
-          const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
-          const detectionChart = echarts.init(chartDom)
-          const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
+          const dataMap = new Map()
           data.forEach(item => {
-            eventSeverityTrendOption.series[Number(getSeriesIndex(item.legend))].data = item.values.map(v => Number(v[1]))
+            if (item.eventSeverity) {
+              if (!dataMap.has(item.eventSeverity)) {
+                const count = [[item.statTime, item.count]]
+                dataMap.set(item.eventSeverity, count)
+              } else {
+                dataMap.get(item.eventSeverity).push([item.statTime, item.count])
+              }
+            }
           })
-          eventSeverityTrendOption.xAxis.data = data[0].values.map(v => [window.$dayJs.tz(Number(v[0])).format('YYYY-MM-DD HH:mm:ss')])
-          this.$nextTick(() => {
-            detectionChart.setOption(eventSeverityTrendOption)
+          const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
+          const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
+          dataMap.forEach(function (value, key) {
+            eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
           })
-          this.isEventSeverityNoData = false
+          eventSeverityTrendOption.xAxis.data = dataMap.get('critical').map(v => rTime(v[0]))
+          const detectionChart = echarts.init(chartDom)
+          detectionChart.setOption(eventSeverityTrendOption)
+          // this.isEventSeverityNoData = false
+        } else {
+          // this.isEventSeverityNoData = true
         }
       }).catch(error => {
 
+      }).finally(() => {
+        this.$nextTick(() => {
+          this.loading = false
+        })
       })
     },
+
     // 初始化左侧事件严重等级和小饼图
     initEventSeverityData (params) {
       getData(api.detection[this.pageType].eventSeverity, params).then(data => {
@@ -267,6 +402,8 @@ export default {
             count: 300
           }
         ] */
+        this.statisticsSeverityData = data
+        // this.isStatisticsSeverityNoData = true
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
@@ -276,7 +413,28 @@ export default {
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           detectionChart.setOption(eventSeverityOption)
-          this.isStatisticsSeverityNoData = false
+          // this.isStatisticsSeverityNoData = false
+        }
+      }).catch(error => {
+
+      })
+    },
+    initEventTypeData (params) {
+      getData(api.detection[this.pageType].eventType, params).then(data => {
+        this.statisticsCategoryData = data
+        if (!this.$_.isEmpty(data)) {
+          this.filterData[this.pageType][1].data = data.map(r => ({
+            label: r.eventType,
+            value: r.eventType,
+            count: r.count
+          }))
+          const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
+          const detectionChart = echarts.init(chartDom)
+          const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
+          securityTypeOption.series[0].data = data.map(d => {
+            return { value: d.count, name: d.eventType }
+          })
+          detectionChart.setOption(securityTypeOption)
         }
       }).catch(error => {
 
@@ -284,41 +442,20 @@ export default {
     },
     initSecurityTypeData (params) {
       getData(api.detection[this.pageType].securityType, params).then(data => {
-        /* data = [
-          {
-            attackType: 'command and control',
-            count: 1048
-          }, {
-            attackType: 'payload delivery',
-            count: 735
-          }, {
-            attackType: 'cryptomining',
-            count: 580
-          }, {
-            attackType: 'phishing',
-            count: 484
-          }, {
-            attackType: 'dga',
-            count: 300
-          }, {
-            attackType: 'ddos',
-            count: 50
-          }
-        ] */
+        this.statisticsCategoryData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][1].data = data.map(r => ({
-            label: r.attackType,
-            value: r.attackType,
+            label: r.securityType,
+            value: r.securityType,
             count: r.count
           }))
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
-            return { value: d.count, name: d.attackType, itemStyle: { color: getAttackColor(d.attackType) } }
+            return { value: d.count, name: d.securityType, itemStyle: { color: getAttackColor(d.securityType) } }
           })
           detectionChart.setOption(securityTypeOption)
-          this.isStatisticsCategoryNoData = false
         }
       }).catch(error => {
 
@@ -376,6 +513,8 @@ export default {
             count: 55355
           }
         ] */
+
+        this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][4].data = data.map(r => ({
             label: r.offenderIp,
@@ -395,7 +534,7 @@ export default {
             return [d.count, d.offenderIp]
           }).reverse()
           detectionChart.setOption(offenderIpOption)
-          this.isStatisticsActiveAttackNoData = false
+          // this.isStatisticsActiveAttackNoData = false
         }
       }).catch(error => {
 
@@ -550,15 +689,17 @@ export default {
             count: 50
           }
         ] */
-        const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
-        const detectionChart = echarts.init(chartDom)
-        const option = this.$_.cloneDeep(activeAttackBar)
-        option.series[0].data = data.map(d => {
-          return [d.count, d.name]
-        }).reverse()
-        detectionChart.setOption(option)
+        this.statisticsActiveAttackData = data
+        if (!this.$_.isEmpty(data)) {
+          const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
+          const detectionChart = echarts.init(chartDom)
+          const option = this.$_.cloneDeep(activeAttackBar)
+          option.series[0].data = data.map(d => {
+            return [d.count, d.name]
+          }).reverse()
+          detectionChart.setOption(option)
+        }
       }).catch(error => {
-
       })
     },
     computeFilterPage (data) {
@@ -571,7 +712,9 @@ export default {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
+        q: this.q,
+        pageSize: this.pageObj.pageSize,
+        pageNo: this.pageObj.pageNo
       }
       getData(api.detection[this.pageType].listBasic, params).then(data => {
         if (this.pageType === detectionPageType.securityEvent) {
@@ -874,14 +1017,27 @@ export default {
       }).catch(error => {
 
       })
+      getData(api.detection[this.pageType].listCount, params).then(data => {
+        this.pageObj.total = data
+      }).catch(error => {
+
+      })
     },
     timeRefreshChange () {
+      this.initNoData()
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
       }
     },
+    initNoData () {
+      this.isEventSeverityNoData = false
+      this.isStatisticsSeverityNoData = false
+      this.isStatisticsCategoryNoData = false
+      this.isStatisticsActiveAttackNoData = false
+    },
     reload (s, e, v) {
+      this.initNoData()
       this.dateTimeRangeChange(s, e, v)
     },
     // methods
@@ -889,6 +1045,7 @@ export default {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
     search (metaList, formatSql) {
+      this.initNoData()
       if (formatSql) {
         this.q = formatSql
         this.metaList = metaList
@@ -900,7 +1057,16 @@ export default {
       this.queryList()
       this.queryListTotal()
     },
+    resetFilterData () {
+      this.filterData.securityEvent.forEach(d => {
+        d.data = []
+      })
+      this.filterData.performanceEvent.forEach(d => {
+        d.data = []
+      })
+    },
     queryFilter () {
+      this.resetFilterData()
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -908,14 +1074,15 @@ export default {
       }
       this.initEventSeverityTrendData(params)
       this.initEventSeverityData(params)
-      this.initSecurityTypeData(params)
       if (this.pageType === detectionPageType.securityEvent) {
         this.initOffenderIpData(params)
         this.initOffenderLocationData(params)
         this.initVictimIpData(params)
         this.initVictimLocationData(params)
+        this.initSecurityTypeData(params)
       } else if (this.pageType === detectionPageType.performanceEvent) {
         this.initActiveEntity(params)
+        this.initEventTypeData(params)
       }
     },
     queryListTotal () {
@@ -961,6 +1128,68 @@ export default {
     this.queryList()
   },
   watch: {
+    eventSeverityData: {
+      deep: true,
+      handler (n) {
+        if (!n || n.length === 0) {
+          this.timeout = setTimeout(() => {
+            this.isEventSeverityNoData = true
+            // this.$set(this.isEventSeverityNoData ,true)
+            this.loading = false
+          }, 500)
+        } else {
+          clearTimeout(this.timeout)
+          // this.$set(this.isEventSeverityNoData ,false)
+          this.isEventSeverityNoData = false
+          this.loading = false
+        }
+      }
+    },
+    statisticsSeverityData: {
+      deep: true,
+      handler (n) {
+        if (!n || n.length === 0) {
+          this.timeout = setTimeout(() => {
+            // this.$set(this.isStatisticsSeverityNoData ,true)
+            this.isStatisticsSeverityNoData = true
+          }, 500)
+        } else {
+          clearTimeout(this.timeout)
+          // this.$set(this.isStatisticsSeverityNoData ,false)
+          this.isStatisticsSeverityNoData = false
+        }
+      }
+    },
+    statisticsCategoryData: {
+      deep: true,
+      handler (n) {
+        if (!n || n.length === 0) {
+          this.timeout = setTimeout(() => {
+            this.isStatisticsCategoryNoData = true
+            // this.$set(this.isStatisticsCategoryNoData ,true)
+          }, 500)
+        } else {
+          clearTimeout(this.timeout)
+          // this.$set(this.isStatisticsCategoryNoData ,false)
+          this.isStatisticsCategoryNoData = false
+        }
+      }
+    },
+    statisticsActiveAttackData: {
+      deep: true,
+      handler (n) {
+        if (!n || n.length === 0) {
+          this.timeout = setTimeout(() => {
+            this.isStatisticsActiveAttackNoData = true
+            // this.$set(this.isStatisticsActiveAttackNoData ,true)
+          }, 500)
+        } else {
+          clearTimeout(this.timeout)
+          // this.$set(this.isStatisticsActiveAttackNoData ,false)
+          this.isStatisticsActiveAttackNoData = false
+        }
+      }
+    },
     timeFilter (n) {
       this.search(this.metaList, this.q)
     },
@@ -1016,7 +1245,6 @@ export default {
   setup () {
     const { params } = useRoute()
     const pageType = params.typeName
-
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const timeFilter = ref({ startTime, endTime, dateRangeValue })

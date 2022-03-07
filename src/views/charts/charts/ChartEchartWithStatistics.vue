@@ -6,14 +6,10 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'
 import StatisticsLegend from '@/views/charts/charts/StatisticsLegend'
 import {
-  lineWithStatistics
-} from '@/views/charts/charts/options/line'
-import {
   getChartColor
-} from '@/views/charts/charts/chart-options'
+} from '@/views/charts/charts/tools'
 import chartEchartMixin from './chart-echart-mixin'
 
 export default {

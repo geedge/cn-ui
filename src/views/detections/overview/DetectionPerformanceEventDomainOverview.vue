@@ -8,7 +8,7 @@
       <div class="overview__title">Fields</div>
       <div class="overview__row">
         <div class="row__label">{{$t('entities.category')}}</div>
-        <div class="row__content">{{basicInfo.domainCategoryName}}</div>
+        <div class="row__content">{{basicInfo.domainCategoryName || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{$t('entities.group')}}</div>
@@ -39,8 +39,7 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
-import { api } from '@/utils/api'
+import { api, getData } from '@/utils/api'
 import { eventSeverityColor } from '@/utils/constants'
 export default {
   name: 'DetectionPerformanceEventDomainOverview',
@@ -78,35 +77,17 @@ export default {
   },
   methods: {
     query () {
-      this.basicInfo = {
-        clientLocationCountry: 1212,
-        clientLocationProvince: '112.2.2.3',
-        clientLocationRegion: 'China',
-        clientAsn: 'Hebei',
-        serverLocationCountry: 'Xingtai',
-        serverLocationProvince: 'hehe',
-        serverLocationRegion: '2.2.2.2',
-        serverAsn: 'China',
-        domainCategoryName: 'Hebei',
-        domainCategoryGroup: 'Xingtai',
-        domainReputationScore: 'hehe',
-        domainReputationLevel: 'high',
-        appCategory: 'vpn',
-        appSubcategory: 'foreign vpn',
-        appRisk: 'critical'
-      }
-      /* this.queryBasic().then(responses => {
-      }) */
+      this.queryBasic().then(responses => {
+        responses && (this.basicInfo = responses)
+      })
     },
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detection.performanceEvent.overviewBasic, { serverIp: this.detection.appName }).then(response => {
-            if (response.code === 200) {
-              resolve(response.data.list)
-            } else {
-              reject(response)
-            }
+          getData(api.detection.performanceEvent.overviewBasic, { appName: this.detection.appName,startTime: this.detection.startTime }).then(data => {
+            resolve(data[0])
+          }).catch(error => {
+            reject(error)
           })
         } catch (e) {
           reject(e)

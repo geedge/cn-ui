@@ -1,6 +1,6 @@
 import unitConvert from '@/utils/unit-convert'
-import { chartColor } from '@/views/charts/charts/chart-options'
 import { tooLongFormatter } from '../tools'
+import { chartColor } from '@/utils/constants'
 
 export const pieWithTable = {
   tooltip: {
