@@ -16,6 +16,7 @@
         :order-pie-table="orderPieTable"
         @loadMore="loadMore"
         @refresh="refresh"
+        @tabHandleClick="tabHandleClick"
         @groupShow="groupShow"
         @showFullscreen="showFullscreen"
         @tableChange="tableChange"
@@ -37,7 +38,9 @@
         :table="table"
         :is-fullscreen="isFullscreen"
         :order-pie-table="orderPieTable"
+        @getChartData="getChartData"
         @showLoading="showLoading"
+        :tabHandleClickType="tabHandleClickType"
     ></chart>
   </div>
 </template>
@@ -153,7 +156,8 @@ export default {
         tableColumns: [], // table字段
         tableData: [], // table的所有数据
         currentPageData: [] // table当前页的数据
-      }
+      },
+      tabHandleClickType:''
     }
   },
   computed: {
@@ -289,6 +293,9 @@ export default {
       this.standaloneTimeRange.endTime = myEndTime
       this.emitter.emit('chart-pageNo')
       this.getChartData(null, {}, true, chartTimeFilter)
+    },
+    tabHandleClick(value){
+      this.tabHandleClickType = value
     },
     showFullscreen (show) {
       this.$emit('showFullscreen', show, this.chartInfo)

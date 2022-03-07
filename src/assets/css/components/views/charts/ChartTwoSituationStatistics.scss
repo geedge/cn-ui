@@ -1,19 +1,28 @@
 
 .chart-two-situation-statistics{
+    padding-top: 22px;
     .situation-statistics-top {
         display: flex;
         align-items: center;
-        
-        .situation-statistics-main-right{
-            margin-left: 40px;
+        margin-left: 33px;
+        padding-top: 22px;
+        .situation-statistics-main-left{
+            display: block;
+            .el-progress__text span{
+                font-size: 16px;
+            }
         }
-    }
-    .situation-statistics-bottom {
-        display: flex;
-        align-items: center;
-        
         .situation-statistics-main-right{
-            margin-left: 40px;
+            margin-left: 22px;
+            :first-child{
+                font-size: 18px;
+                color: #333;
+            }
+            :last-child{
+                margin-top: 5px;
+                font-size: 14px;
+                color: #666666;
+            }
         }
-    }
+      }
 }

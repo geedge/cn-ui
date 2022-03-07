@@ -184,6 +184,7 @@
         v-else-if="isSingleSupportStatistics"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :query-params="queryParams"
         @showLoading="showLoading"
         :entity="entity"
       ></chart-one-Situation-Statistics>
@@ -192,9 +193,21 @@
         v-else-if="isTwoSupportStatistics"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :query-params="queryParams"
         @showLoading="showLoading"
         :entity="entity"
       ></chart-two-Situation-Statistics>
+
+      <chart-alarm-info
+      v-else-if="isAlarmInfo"
+        :chart-info="chartInfo"
+        :chart-data="chartData"
+        :query-params="queryParams"
+        @showLoading="showLoading"
+        :tabHandleClickType="tabHandleClickType"
+        @getAlarmInfo="getAlarmInfo"
+        :entity="entity">
+      </chart-alarm-info>
     </template>
   </div>
 </template>
@@ -226,6 +239,7 @@ import ChartRelationShip from '@/views/charts/charts/ChartRelationShip'
 import ChartSanKey from '@/views/charts/charts/ChartSanKey'
 import ChartOneSituationStatistics from '@/views/charts/charts/ChartOneSituationStatistics'
 import ChartTwoSituationStatistics from '@/views/charts/charts/ChartTwoSituationStatistics'
+import ChartAlarmInfo from '@/views/charts/charts/ChartAlarmInfo'
 import {
   isEcharts,
   isEchartsLine,
@@ -260,7 +274,8 @@ import {
   isAppRelatedDomain,
   isBlock,
   isSingleSupportStatistics,
-  isTwoSupportStatistics
+  isTwoSupportStatistics,
+  isAlarmInfo
 } from './charts/tools'
 import _ from 'lodash'
 
@@ -292,7 +307,13 @@ export default {
     ChartEchartIpHostedDomain,
     ChartEchartAppRelateDomain,
     ChartOneSituationStatistics,
-    ChartTwoSituationStatistics
+    ChartTwoSituationStatistics,
+    ChartAlarmInfo
+  },
+  data(){
+    return{
+      tabHandleClickType:''
+    }
   },
   props: {
     chartInfo: Object,
@@ -306,7 +327,8 @@ export default {
     entity: Object,
     isError: Boolean,
     table: Object,
-    orderPieTable: Object
+    orderPieTable: Object,
+    tabHandleClickType:String
   },
   computed: {
     isNoData () {
@@ -320,7 +342,8 @@ export default {
         !this.isActiveIpTable &&
         !this.isMap &&
         !this.isSingleSupportStatistics &&
-        !this.isTwoSupportStatistics
+        !this.isTwoSupportStatistics &&
+        !this.isAlarmInfo
       )
     },
     chartOption () {
@@ -329,7 +352,7 @@ export default {
       } else {
         return getOption(this.chartInfo.type)
       }
-    }
+    },
   },
   methods: {
     resize () {
@@ -339,17 +362,26 @@ export default {
     showLoading (show) {
       this.$emit('showLoading', show)
     },
+    getAlarmInfo(url,extraParams){
+      this.$emit('getChartData',url,extraParams)
+    },
     initEchartsWithTable () {
       this.$refs['chart' + this.chartInfo.id] &&
         this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(
           `chart${this.chartInfo.id}`
         )
-    }
+    },
   },
   watch: {
     chartData: {
       deep: true,
       handler (n) {}
+    },
+    tabHandleClickType:{
+      deep:true,
+      handler(n){
+        this.tabHandleClickType = n
+      }
     }
   },
   setup (props) {
@@ -390,8 +422,9 @@ export default {
       isAppBasicInfo: isAppBasicInfo(props.chartInfo.type),
       isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
       isSingleSupportStatistics: isSingleSupportStatistics(props.chartInfo.type),
-      isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type)
+      isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type),
+      isAlarmInfo: isAlarmInfo(props.chartInfo.type),
     }
-  }
+  },
 }
 </script>

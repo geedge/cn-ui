@@ -1,10 +1,28 @@
-.situation-statistics-main {
-    display: flex;
-    align-items: center;
-    margin-left: 50px;
-    margin-top: 20px;
-    
-    .situation-statistics-main-right{
-        margin-left: 40px;
-    }
-  }
+.chart-one-situation-statistics{
+    padding-top: 22px;
+    .situation-statistics-main {
+        display: flex;
+        align-items: center;
+        margin-left: 33px;
+        .situation-statistics-main-left{
+            display: block;
+            width: 76px;
+            height: 76px;
+            .el-progress__text span{
+                font-size: 16px;
+            }
+        }
+        .situation-statistics-main-right{
+            margin-left: 22px;
+            :first-child{
+                font-size: 18px;
+                color: #333;
+            }
+            :last-child{
+                margin-top: 5px;
+                font-size: 14px;
+                color: #666666;
+            }
+        }
+      }
+}

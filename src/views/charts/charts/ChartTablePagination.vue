@@ -18,16 +18,18 @@ import { chartTableDefaultPageSize } from '@/utils/constants'
 export default {
   name: 'ChartTablePagination',
   props: {
-    total: Number
+    total: Number,
+    pageSizeForAlarm:Number
   },
   data () {
     return {
-      pageSize: chartTableDefaultPageSize,
+      pageSize: this.pageSizeForAlarm?this.pageSizeForAlarm:chartTableDefaultPageSize,
       pageNo: 1
     }
   },
   computed: {
     totalPage () {
+      console.log(this.total,this.pageSize);
       const remainder = this.total % this.pageSize
       if (remainder) {
         return parseInt(this.total / this.pageSize) + 1
