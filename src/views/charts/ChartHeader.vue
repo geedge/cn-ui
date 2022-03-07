@@ -18,15 +18,6 @@
       </span>
       {{ chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name }}
     </div>
-    <div
-      class="chart-header__title"
-      v-else-if="!isCurrentTable"
-      :class="{ 'chart-header__title--block': isBlock }"
-      :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name"
-    >
-      {{ chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name }}
-    </div>
-    <template v-if="isCurrentTable">
     <div class="chart-header__title" v-else-if="!isBasicTable" :class="{'chart-header__title--block': isBlock}" :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
     <template v-if="isBasicTable">
       <div class="chart-header__title">
@@ -170,7 +161,7 @@
       v-if="
         !isTitle &&
         !isTabs &&
-        !isCurrentTable &&
+        !isBasicTable &&
         !isActiveIpTable &&
         !isEchartsWithTable &&
         !isAlarmInfo
@@ -224,10 +215,10 @@ import {
   isBlock,
   isTable,
   isActiveIpTable,
-  isCurrentTable,
+  isBasicTable,
   isGroup,
   isEchartsWithTable,
-  isAlarmInfo,
+  isAlarmInfo
 } from './charts/tools'
 import ChartError from '@/views/charts/ChartError'
 import { getNowTime } from '@/utils/date-util'
@@ -237,6 +228,7 @@ import {
   chartActiveIpTableOrderOptions,
   chartPieTableTopOptions,
   eventSeverity,
+  chartTableColumnMapping
 } from '@/utils/constants'
 
 export default {

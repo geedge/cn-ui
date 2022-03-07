@@ -6,11 +6,11 @@
           type="circle"
           :color="chartInfo.params.color"
           width="76"
-          :percentage="chartData.percent"
+          :percentage="chartData ? chartData.percent : 0"
         />
       </div>
       <div class="situation-statistics-main-right">
-        <div>{{ chartData.count }}</div>
+        <div>{{ chartData ? (chartData.count || '-') : '-' }}</div>
         <div class="situation-statistic-main-right-font">{{ $t(`dns.numberOfNodes`) }}</div>
       </div>
     </div>
