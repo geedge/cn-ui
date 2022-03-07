@@ -19,11 +19,11 @@ export default {
   name: 'ChartTablePagination',
   props: {
     total: Number,
-    pageSizeForAlarm:Number
+    pageSizeForAlarm: Number
   },
   data () {
     return {
-      pageSize: this.pageSizeForAlarm?this.pageSizeForAlarm:chartTableDefaultPageSize,
+      pageSize: this.pageSizeForAlarm ? this.pageSizeForAlarm : chartTableDefaultPageSize,
       pageNo: 1
     }
   },

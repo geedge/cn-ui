@@ -84,7 +84,7 @@ export default {
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
-          getData(api.detection.performanceEvent.overviewBasic, { appName: this.detection.appName,startTime: this.detection.startTime }).then(data => {
+          getData(api.detection.performanceEvent.overviewBasic, { appName: this.detection.appName, startTime: this.detection.startTime }).then(data => {
             resolve(data[0])
           }).catch(error => {
             reject(error)

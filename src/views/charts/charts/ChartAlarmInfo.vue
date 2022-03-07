@@ -101,8 +101,9 @@ export default {
     chartInfo: Object,
     chartData: [Array, Object],
     tabHandleClickType: String,
+    queryParams: Object
   },
-  data() {
+  data () {
     return {
       pageSizeForAlarm: 9,
       eventSeverityColor: eventSeverityColor,
@@ -119,7 +120,7 @@ export default {
           eventType: 'type1111111111111111111111111111111111',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 111111111111111112,
+          endTime: 111111111111111112
         },
         {
           entityType: 'ip',
@@ -130,7 +131,7 @@ export default {
           eventType: 'type111111111111111111111111111111111111',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
+          endTime: 1111111112
         },
         {
           entityType: 'ip',
@@ -141,7 +142,7 @@ export default {
           eventType: 'type',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
+          endTime: 1111111112
         },
         {
           entityType: 'ip',
@@ -152,7 +153,7 @@ export default {
           eventType: 'type',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
+          endTime: 1111111112
         },
         {
           entityType: 'ip',
@@ -163,7 +164,7 @@ export default {
           eventType: 'type',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
+          endTime: 1111111112
         },
         {
           entityType: 'ip',
@@ -174,7 +175,7 @@ export default {
           eventType: 'type',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
+          endTime: 1111111112
         },
         {
           entityType: 'ip',
@@ -185,7 +186,7 @@ export default {
           eventType: 'type',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
+          endTime: 1111111112
         },
         {
           entityType: 'ip',
@@ -196,7 +197,7 @@ export default {
           eventType: 'type',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
+          endTime: 1111111112
         },
         {
           entityType: 'ip',
@@ -207,30 +208,31 @@ export default {
           eventType: 'type',
           startTime: 1111111111,
           durationMs: 60000,
-          endTime: 1111111112,
-        },
-      ],
+          endTime: 1111111112
+        }
+      ]
     }
   },
   watch: {
     tabHandleClickType: {
       deep: true,
-      handler(n) {
+      handler (n) {
         this.getData(1, n)
-      },
-    },
+      }
+    }
   },
-  created() {
+  created () {
     this.getData(1, 'All')
   },
   components: {
-    ChartTablePagination,
+    ChartTablePagination
   },
   methods: {
     unitConvert,
-    getData(val, n) {
+    getData (val, n) {
       this.pageNo = val
       const now = window.$dayJs.tz().valueOf()
+      console.log(window.$dayJs.tz())
       const extraParams = {
         pageNo: val,
         pageSize: this.pageSizeForAlarm,
@@ -239,31 +241,31 @@ export default {
             ? ''
             : n
           : this.tabHandleClickType === 'All'
-          ? ''
-          : this.tabHandleClickType,
+            ? ''
+            : this.tabHandleClickType
       }
-      this.$emit('getAlarmInfo', null, extraParams)
-      const queryParams = {
-        startTime: Math.floor(now / 1000 - 3600),
-        endTime: Math.floor(now / 1000),
+      const query = {
+        startTime: this.queryParams.startTime,
+        endTime: this.queryParams.endTime,
         eventSeverity:
-          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType,
+          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType
       }
+      this.$emit('getAlarmInfo', null, extraParams, false, { startTime: query.startTime, endTime: query.endTime })
 
       get('/interface/dns/alarmInfoCount', {
-        ...queryParams,
+        ...query
       }).then((response) => {
         if (response.code === 200) {
           this.alarmInfoCount = response.data
         }
       })
     },
-    changeDate(value) {
+    changeDate (value) {
       return window.$dayJs.tz(value).format('YYYY-MM-DD HH:mm:ss')
     },
-    pageJump(val) {
+    pageJump (val) {
       this.getData(val)
-    },
-  },
+    }
+  }
 }
 </script>

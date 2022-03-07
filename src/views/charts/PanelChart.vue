@@ -157,7 +157,7 @@ export default {
         tableData: [], // table的所有数据
         currentPageData: [] // table当前页的数据
       },
-      tabHandleClickType:''
+      tabHandleClickType: ''
     }
   },
   computed: {
@@ -321,7 +321,7 @@ export default {
       this.emitter.emit('chart-pageNo')
       this.getChartData(null, {}, true, chartTimeFilter)
     },
-    tabHandleClick(value){
+    tabHandleClick (value) {
       this.tabHandleClickType = value
     },
     showFullscreen (show) {

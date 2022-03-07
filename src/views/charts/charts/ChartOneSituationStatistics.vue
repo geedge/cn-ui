@@ -22,7 +22,7 @@ export default {
   name: 'ChartOneSituationStatistics',
   props: {
     chartInfo: Object,
-    chartData: [Array, Object],
-  },
+    chartData: [Array, Object]
+  }
 }
 </script>

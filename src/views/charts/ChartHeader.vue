@@ -232,24 +232,24 @@ export default {
     chartInfo: Object,
     errorInfo: {
       type: String,
-      default: '',
+      default: ''
     },
     isError: {
       type: Boolean,
-      default: false,
+      default: false
     },
     table: Object,
-    orderPieTable: Object,
+    orderPieTable: Object
   },
   components: {
-    ChartError,
+    ChartError
   },
-  data() {
+  data () {
     return {
       chartTableColumnMapping,
       dropdownMenuShow: false,
       errorText: '',
-      isFocus:false,
+      isFocus: false,
       isFocusAll: true,
       activeIpTable: {
         // ActiveIpTable select
@@ -257,37 +257,37 @@ export default {
         tableData: [
           {
             name: '192.168.20.21',
-            num: 111,
+            num: 111
           },
           {
             name: '192.168.20.22',
-            num: 345,
+            num: 345
           },
           {
             name: '192.168.20.23',
-            num: 111,
+            num: 111
           },
           {
             name: '192.168.20.24',
-            num: 345,
+            num: 345
           },
           {
             name: '192.168.20.25',
-            num: 111,
+            num: 111
           },
           {
             name: '192.168.20.26',
-            num: 345,
-          },
-        ], // table的所有数据
-      },
+            num: 345
+          }
+        ] // table的所有数据
+      }
     }
   },
   methods: {
-    refresh() {
+    refresh () {
       this.$emit('refresh')
     },
-    timeRefreshChange() {
+    timeRefreshChange () {
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.chartTimeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
@@ -295,56 +295,56 @@ export default {
         this.$emit('refresh')
       }
     },
-    reload(s, e, v) {
+    reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
     },
-    groupShow() {
+    groupShow () {
       this.$emit('groupShow', this.chartInfo)
     },
-    dateTimeRangeChange(s, e, v) {
+    dateTimeRangeChange (s, e, v) {
       this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }
       this.$emit('refresh', this.chartTimeFilter)
     },
-    tableLimitChange() {
+    tableLimitChange () {
       this.$emit('tableChange')
     },
-    activeIpTableLimitChange() {
+    activeIpTableLimitChange () {
       this.$emit('tableChange')
     },
-    orderPieTableChange() {
+    orderPieTableChange () {
       this.$emit('orderPieTableChange', this.orderPieTable)
     },
-    tabHandleClick(item) {
+    tabHandleClick (item) {
       this.isFocus = item
       this.isFocusAll = false
-      if(item === 'All'){
+      if (item === 'All') {
         this.isFocusAll = true
-      }else{
+      } else {
         this.isFocusAll = false
       }
       this.$emit('tabHandleClick', item)
-    },
+    }
   },
-  beforeCreate() {
+  beforeCreate () {
     this.$emit('tabHandleClick', 'All')
   },
-  watch:{
-    isFocus:{
-      deep:true,
-      handler(n){
+  watch: {
+    isFocus: {
+      deep: true,
+      handler (n) {
       }
     }
   },
   computed: {
-    showRefreshButton() {
+    showRefreshButton () {
       // 自己是group且父元素是block时，不显示刷新按钮
       // TODO 父元素是block，且只有自己一个子元素时，不显示刷新按钮
       const isGroupAndParentIsBlock =
         this.$_.get(this.chartInfo.parent, 'type') === 95 && this.isGroup
       return !isGroupAndParentIsBlock
-    },
+    }
   },
-  setup(props) {
+  setup (props) {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     // entity详情内的chart时间工具不是公共的，需要单独定义
@@ -363,8 +363,8 @@ export default {
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isGroup: isGroup(props.chartInfo.type),
-      isAlarmInfo: isAlarmInfo(props.chartInfo.type),
+      isAlarmInfo: isAlarmInfo(props.chartInfo.type)
     }
-  },
+  }
 }
 </script>

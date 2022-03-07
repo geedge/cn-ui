@@ -48,6 +48,9 @@
                     .cn-alarm-info-main-title {
                         font-size: 16px;
                         line-height: 19px;
+                        font-family: Roboto-Regular;
+                        color: #333333;
+                        font-weight: 400;
                     }
 
                     .cn-alarm-info-bottom {
@@ -64,16 +67,20 @@
                             display: flex;
                             margin-left: 20px;
                             height: 14px;
-                            .cn-icon-time2{
+
+                            .cn-icon-time2 {
                                 color: #8FA1BE;
                                 width: 10px;
                                 height: 10px;
                                 font-size: 12px;
                             }
+
                             .cn-alarm-info-bottom-time {
+                                font-family: PingFangSC-Regular;
+                                font-size: 12px;
                                 color: #999999;
                                 line-height: 14px;
-                                font-size: 12px;
+                                font-weight: 400;
                             }
                         }
 
@@ -82,16 +89,20 @@
                             display: flex;
                             justify-content: center;
                             align-items: center;
-                            .cn-icon-time2{
+
+                            .cn-icon-time2 {
                                 color: #8FA1BE;
                                 width: 10px;
                                 height: 10px;
                                 font-size: 12px;
                             }
+
                             .cn-alarm-info-bottom-time {
-                                color: #999999;
-                                line-height: 14px;
+                                font-family: PingFangSC-Regular;
                                 font-size: 12px;
+                                color: #999999;
+                                line-height: 17px;
+                                font-weight: 400;
                             }
                         }
 
@@ -117,6 +128,11 @@
                             width: 5px;
                             height: 5px;
                             border-radius: 50%;
+                            font-family: Roboto-Black;
+                            font-size: 12px;
+                            color: #666666;
+                            line-height: 17px;
+                            font-weight: 400;
                         }
                     }
 

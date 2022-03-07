@@ -97,7 +97,7 @@ export const api = {
       listCount: '/interface/detection/performance/list/count',
       overviewBasic: '/interface/detection/performance/detail/overview/basic'
     }
-  },
+  }
 }
 
 /* panel */

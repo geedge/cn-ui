@@ -311,9 +311,9 @@ export default {
     ChartTwoSituationStatistics,
     ChartAlarmInfo
   },
-  data(){
-    return{
-      tabHandleClickType:''
+  data () {
+    return {
+      tabHandleClickType: ''
     }
   },
   props: {
@@ -329,7 +329,7 @@ export default {
     isError: Boolean,
     table: Object,
     orderPieTable: Object,
-    tabHandleClickType:String
+    tabHandleClickType: String
   },
   computed: {
     isNoData () {
@@ -353,7 +353,7 @@ export default {
       } else {
         return getOption(this.chartInfo.type)
       }
-    },
+    }
   },
   methods: {
     resize () {
@@ -363,8 +363,8 @@ export default {
     showLoading (show) {
       this.$emit('showLoading', show)
     },
-    getAlarmInfo(url,extraParams){
-      this.$emit('getChartData',url,extraParams)
+    getAlarmInfo (url, extraParams, isRefresh, timeFilter) {
+      this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
     },
     initEchartsWithTable () {
       this.$refs['chart' + this.chartInfo.id] &&
@@ -381,9 +381,9 @@ export default {
       deep: true,
       handler (n) {}
     },
-    tabHandleClickType:{
-      deep:true,
-      handler(n){
+    tabHandleClickType: {
+      deep: true,
+      handler (n) {
         this.tabHandleClickType = n
       }
     }
@@ -427,8 +427,8 @@ export default {
       isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
       isSingleSupportStatistics: isSingleSupportStatistics(props.chartInfo.type),
       isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type),
-      isAlarmInfo: isAlarmInfo(props.chartInfo.type),
+      isAlarmInfo: isAlarmInfo(props.chartInfo.type)
     }
-  },
+  }
 }
 </script>

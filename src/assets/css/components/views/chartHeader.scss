@@ -1,9 +1,11 @@
 .cn-chart-header-button {
     display: flex;
-    button:first-of-type{
+
+    button:first-of-type {
         border-radius: 2px 0 0 2px;
 
     }
+
     .cn-chart-header-button-all {
         border-color: #0091FF;
         color: #0091FF;
@@ -55,5 +57,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        font-family: Roboto-Regular;
+        font-size: 12px;
+        font-weight: 400;
     }
 }

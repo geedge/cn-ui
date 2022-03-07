@@ -28,9 +28,9 @@ export default {
   name: 'ChartTwoSituationStatistics',
   props: {
     chartInfo: Object,
-    chartData: [Array, Object],
+    chartData: [Array, Object]
   },
-  data() {
+  data () {
     return {
       // result: {
       //   doh: {
@@ -43,6 +43,6 @@ export default {
       //   },
       // },
     }
-  },
+  }
 }
 </script>

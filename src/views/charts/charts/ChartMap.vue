@@ -70,7 +70,7 @@ export default {
         {
           name: this.$t('dns.rootDomainServers'),
           value: 0
-        }*/
+        } */
       ],
       markerColors: [
         {
