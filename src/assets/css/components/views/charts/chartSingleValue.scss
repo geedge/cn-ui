@@ -7,35 +7,42 @@
     .single-value__icon {
       width: 38px;
       height: 38px;
+
       i {
         font-size: 15px;
       }
     }
+
     .single-value__content {
       .content__data {
         font-size: 14px;
         color: #333;
+
         .single-value__unit {
           font-size: 14px;
           color: #333;
         }
       }
+
       .content__title {
         font-size: 12px;
       }
     }
   }
+
   &.cn-chart__single-value--icon-left {
     display: flex;
     align-items: center;
     height: 100%;
     width: 100%;
+
     .single-value-icon__box {
       display: flex;
       align-items: center;
       justify-content: center;
       flex: 0 0 40%;
     }
+
     .single-value__icon {
       display: flex;
       justify-content: center;
@@ -43,6 +50,7 @@
       height: 72px;
       background-color: $--chart-single-value-icon-background-color;
       border-radius: 50%;
+
       i {
         display: flex;
         align-items: center;
@@ -50,17 +58,20 @@
         color: $--color-primary;
       }
     }
+
     .single-value__content {
       display: flex;
       flex-direction: column;
       max-width: 60%;
       padding-right: 10px;
+
       .content__data {
         padding-bottom: 7%;
         font-size: 24px;
         color: #333333;
         font-weight: bold;
       }
+
       .content__title {
         overflow: hidden;
         white-space: nowrap;
@@ -68,11 +79,13 @@
         font-size: 16px;
         color: #666666;
       }
+
       &.single-value__content--with-chart {
         .content__title {
           border-bottom: 1px solid $--content-right-background-color;
         }
       }
+
       .single-value__unit {
         font-weight: normal;
         padding-left: 10px;
@@ -81,6 +94,7 @@
       }
     }
   }
+
   &.cn-chart__single-value--icon-right {
     display: flex;
     flex-direction: row-reverse;
@@ -88,29 +102,34 @@
     align-items: center;
     height: 100%;
     width: 100%;
+
     .single-value-icon__box {
       flex: 0 0 80px;
     }
+
     .single-value__icon {
       background-color: $--chart-single-value-icon-background-color;
       border-radius: 50%;
       position: relative;
       width: 56px;
       height: 56px;
+
       i {
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         font-size: 24px;
         color: $--color-primary;
       }
     }
+
     .single-value__content {
       display: flex;
       height: 100%;
       flex-direction: column;
       padding: 0 10px;
+
       .content__title {
         display: flex;
         align-items: center;
@@ -118,6 +137,7 @@
         font-size: 16px;
         color: #666666;
       }
+
       .content__data {
         display: flex;
         padding-top: 5%;
@@ -129,6 +149,7 @@
       }
     }
   }
+
   &.cn-chart__single-value--icon-right--color {
     display: flex;
     flex-direction: row-reverse;
@@ -136,6 +157,7 @@
     align-items: center;
     height: 100%;
     width: 100%;
+
     .single-value__content {
       display: flex;
       height: 100%;
@@ -160,20 +182,23 @@
             fill: currentColor;
             overflow: hidden;
           }
+
           i {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%, -50%);
             font-size: 24px;
           }
         }
       }
-      .single-value__data{
+
+      .single-value__data {
         display: flex;
         height: 100%;
         flex-direction: column;
         padding-left: 20px;
+
         .content__title {
           display: flex;
           align-items: end;
@@ -182,6 +207,7 @@
           color: #666666;
           padding-bottom: 5px;
         }
+
         .content__data {
           display: flex;
           padding-top: 5%;
@@ -194,16 +220,19 @@
       }
     }
   }
+
   &.cn-chart__single-value--chart {
     display: flex;
     padding: 13px 20px;
     height: 100%;
     width: 100%;
+
     .single-value__content {
       display: flex;
       height: 100%;
       width: 100%;
       flex-direction: column;
+
       .content__title {
         display: flex;
         align-items: center;
@@ -211,6 +240,7 @@
         font-size: 16px;
         color: #666666;
       }
+
       .content__data {
         display: flex;
         align-items: center;
@@ -219,10 +249,100 @@
         color: #333333;
         font-weight: bold;
       }
+
       .content__chart {
         flex: auto
       }
     }
   }
-}
 
+  &.cn-chart__single-value--icon-doh {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    background: #FFFFFF;
+    border: 1px solid #E7EAED;
+    box-shadow: 0 2px 4px 0 rgba(51, 51, 51, 0.02);
+    border-radius: 2px;
+
+    .single-value-icon__box {
+      flex: 0 0 80px;
+    }
+
+    .single-value__icon {
+      background-color: $--chart-single-value-icon-background-color;
+      border-radius: 50%;
+      position: relative;
+      width: 56px;
+      height: 56px;
+
+      i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 24px;
+        color: $--color-primary;
+      }
+    }
+
+    .single-value__content {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      margin-left: 20px;
+
+      .content__title {
+        display: flex;
+        align-items: center;
+        margin: 16px 0 27px 0;
+        font-family: PingFangSC-Medium;
+        font-size: 16px;
+        color: #333333;
+        line-height: 22px;
+        font-weight: 500;
+      }
+
+      .content__data {
+        display: flex;
+        padding-top: 5%;
+        height: 50%;
+        flex: auto;
+        font-size: 24px;
+        color: #333333;
+        font-weight: bold;
+
+        .content__data__doh {
+          .content__data__doh__count {
+            font-family: Roboto-Medium;
+            font-size: 30px;
+            color: #333333;
+            font-weight: 500;
+          }
+
+          .content__data__doh__percent {
+            margin-top: 10px;
+            font-family: Roboto-Black;
+            font-size: 14px;
+            color: #666666;
+            font-weight: 400;
+
+            span {
+              font-family: Roboto-Medium;
+              font-size: 14px;
+              color: #FC8157;
+              font-weight: 500;
+              margin-left: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
