@@ -458,6 +458,12 @@ export function humpToLine (name) {
   }
   return name.replace(/([A-Z])/g, '_$1').toLowerCase()
 }
+//排序功能
+export function sortBy (i) {
+  return function (a, b) {
+    return b[i] - a[i]
+  }
+}
 // 搜索功能：对象转字符串
 export function objToStr (obj) {
   return Object.keys(obj).map(k => {
