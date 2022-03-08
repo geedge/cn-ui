@@ -1,64 +1,78 @@
 .cn-chart-header-button {
-    display: flex;
-
-    button:first-of-type {
-        border-radius: 2px 0 0 2px;
-
-    }
-
-    .cn-chart-header-button-all {
-        border-color: #0091FF;
-        color: #0091FF;
-        background-color: #FFFFFF;
-        border-radius: 2px 0 0 2px;
-
-    }
-
-    .cn-chart-header-button-critical {
-        border-color: #0091FF;
-        color: #0091FF;
-        border-radius: 2px;
-        background-color: #FFFFFF;
-
-    }
-
-    .cn-chart-header-button-high {
-        border-color: #0091FF;
-        border-radius: 2px;
-        background-color: #FFFFFF;
-        color: #0091FF;
-    }
-
-    .cn-chart-header-button-low {
-        border-color: #0091FF;
-        border-radius: 2px;
-        background-color: #FFFFFF;
-        color: #0091FF;
-    }
-
-    .cn-chart-header-button-info {
-        border-color: #0091FF;
-        border-radius: 2px;
-        background-color: #FFFFFF;
-        color: #0091FF;
-    }
-
-    .cn-chart-header-button-medium {
-        border: 1px solid #0091FF;
-        border-radius: 2px;
-        background-color: #FFFFFF;
-        color: #0091FF;
-    }
-
-    .el-button--default {
-        height: 24px;
-        border-radius: 2px;
-        min-height: 24px;
+    .cn-chart-header-button-group {
         display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: Roboto-Regular;
-        font-size: 12px;
-        font-weight: 400;
+
+        .el-button {
+            border-radius: 0%;
+        }
+
+        .el-button:hover {
+            background: #FFFFFF;
+            border-color: #0091FF;
+        }
+
+        .el-button:last-of-type {
+            border-radius: 0 2px 2px 0;
+
+        }
+        .el-button:first-of-type{
+            border-radius: 2px 0 0 2px;
+
+        }
+        .cn-chart-header-button-all  {
+            border-color: #0091FF;
+            color: #0091FF;
+            background-color: #FFFFFF;
+           z-index: 1;
+        }
+
+        .cn-chart-header-button-critical {
+            border-color: #0091FF;
+            color: #0091FF;
+            background-color: #FFFFFF;
+           z-index: 1;
+
+        }
+
+        .cn-chart-header-button-high {
+            border-color: #0091FF;
+            background-color: #FFFFFF;
+           z-index: 1;
+           color: #0091FF;
+        }
+
+        .cn-chart-header-button-low {
+            border-color: #0091FF;
+            background-color: #FFFFFF;
+           z-index: 1;
+           color: #0091FF;
+        }
+
+        .cn-chart-header-button-info {
+            border-color: #0091FF;
+            background-color: #FFFFFF;
+           z-index: 1;
+           color: #0091FF;
+        }
+
+        .cn-chart-header-button-medium {
+            border-color: #0091FF;
+            background-color: #FFFFFF;
+           z-index: 1;
+           color: #0091FF;
+        }
+
+        .el-button--default {
+            height: 24px;
+            min-height: 24px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-family: Roboto-Regular;
+            font-size: 12px;
+            font-weight: 400;
+        }
     }
+
+
 }

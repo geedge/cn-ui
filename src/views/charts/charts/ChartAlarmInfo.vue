@@ -231,8 +231,6 @@ export default {
     unitConvert,
     getData (val, n) {
       this.pageNo = val
-      const now = window.$dayJs.tz().valueOf()
-      console.log(window.$dayJs.tz())
       const extraParams = {
         pageNo: val,
         pageSize: this.pageSizeForAlarm,

@@ -132,21 +132,26 @@
 
     <template v-else-if="isAlarmInfo">
       <div class="cn-chart-header-button">
+        <el-button-group class="cn-chart-header-button-group">
         <el-button
           :class="isFocusAll ? 'cn-chart-header-button-all' : ''"
           @click="tabHandleClick('All')"
+          size="small"
           >{{ $t('dns.all') }}</el-button
         >
         <el-button
           :label="value"
           :name="value"
+          plain:true
           v-for="(value, key) in eventSeverity"
           :key="key"
+          size="small"
           :class=" isFocus === value ? 'cn-chart-header-button-' + value : ''"
           @click="tabHandleClick(value)"
         >
           {{ value }}
         </el-button>
+      </el-button-group>
       </div>
     </template>
 
@@ -296,6 +301,7 @@ export default {
       }
     },
     reload (s, e, v) {
+      console.log(s,e,v);
       this.dateTimeRangeChange(s, e, v)
     },
     groupShow () {
@@ -303,6 +309,7 @@ export default {
     },
     dateTimeRangeChange (s, e, v) {
       this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }
+      console.log(this.chartTimeFilter);
       this.$emit('refresh', this.chartTimeFilter)
     },
     tableLimitChange () {
