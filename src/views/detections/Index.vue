@@ -1096,11 +1096,11 @@ export default {
       this.$refs.search.changeParams(params)
     },
     pageSize (val) {
-      this.pageObj.pageSize = val
+      this.pageObj.pageSize = val || 20
       this.search(this.metaList, this.q)
     },
     pageNo (val) {
-      this.pageObj.pageNo = val
+      this.pageObj.pageNo = val || 1
       this.search(this.metaList, this.q)
     },
     // 点击上一页箭头

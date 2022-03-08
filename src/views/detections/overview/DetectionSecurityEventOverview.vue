@@ -180,7 +180,7 @@ export default {
         const eventStartTime = event.startTime
         const entityStartTime = this.detection.startTime
 
-        if (!_.isEmpty(diffSeconds) && !_.isEmpty(eventStartTime) && !_.isEmpty(entityStartTime)) {
+        if (_.isNumber(diffSeconds) && _.isNumber(eventStartTime) && _.isNumber(entityStartTime)) {
           const suffix = unitConvert(diffSeconds, unitTypes.time, 's', null, 0).join('')
           if (eventStartTime > entityStartTime) {
             return `T0+${suffix}`
@@ -197,13 +197,13 @@ export default {
     query () {
       Promise.all([this.queryBasic(), this.queryEvent()]).then(responses => {
         responses[0] && (this.basicInfo = responses[0])
-        responses[1] && (this.events = responses[1])
+        responses[1] && (this.events = responses[1].sort((e1, e2) => e1.startTime - e2.startTime))
       })
     },
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detection.securityEvent.overviewBasic, { eventId: this.detection.eventId, startTime: this.detection.startTime }).then(response => {
+          get(api.detection.securityEvent.overviewBasic, { eventId: this.detection.eventId, startTime: this.detection.startTime, endTime: this.detection.endTime }).then(response => {
             if (response.code === 200) {
               resolve(response.data.result[0])
             } else {

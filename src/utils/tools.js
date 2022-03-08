@@ -442,14 +442,17 @@ export function lineToHump (name) {
     return letter.toUpperCase()
   })
 }
-// 下划线转换空格首位大写
+// 驼峰转空格，首字母小写
+export function humpToSpace (name) {
+  const str = name.replace(/([A-Z])/g, ' $1')
+  return str.split(' ').map(s => _.lowerFirst(s)).join(' ')
+}
+// 下划线转换空格
 export function lineToSpace (name) {
   if (_.isEmpty(name)) {
     return ''
   }
-  return _.upperFirst(name.replace(/\_(\w)/g, function (all, letter) {
-    return ` ${letter.toUpperCase()}`
-  }))
+  return name.replace(/\_(\w)/g, ' ')
 }
 // 驼峰转换下划线
 export function humpToLine (name) {

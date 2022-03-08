@@ -193,32 +193,6 @@ export default {
         }
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
-            // if (this.chartInfo.type === 23 && testData) {
-            //   response = testData.data
-            // } else if (this.chartInfo.type === 24 && testData) {
-            //   response = testData.data2
-            // }
-            if (this.chartInfo.type === 3) {
-              response = {
-                code: 200,
-                data: {
-                  result: [
-                    {
-                      dnsServerRole: extraParams.dnsServerRole || dnsServerRole.RTDNS,
-                      ipLocationCountry: 'China',
-                      ipLocationId: 'CN',
-                      count: 161
-                    },
-                    {
-                      dnsServerRole: extraParams.dnsServerRole || dnsServerRole.RTDNS,
-                      ipLocationCountry: 'Japan',
-                      ipLocationId: 'JP',
-                      count: 222
-                    }
-                  ]
-                }
-              }
-            }
             if (response.code === 200) {
               if (Array.isArray(response.data.result)) {
                 response.data.result.forEach(item => {
