@@ -43,6 +43,8 @@ export default {
       showMapBackButton: false,
       polygonSeries: null, // 世界地图series
       countrySeries: null, // 下钻国家series
+      worldImageSeries: null, // 世界地图圆点series
+      countryImageSeries: null, // 下钻国家圆点series
       currentLegendIndex: 0,
       legends: [
         {
@@ -107,43 +109,56 @@ export default {
       chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
       this.myChart = chart
-      const polygonSeries = chart.series.push(new am4Maps.MapPolygonSeries())
-      polygonSeries.useGeodata = true
-      polygonSeries.exclude = ['AQ'] // 排除南极洲
-      polygonSeries.tooltip.getFillFromObject = false
-      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
-      this.polygonSeries = polygonSeries
-      const polygonTemplate = polygonSeries.mapPolygons.template
-      polygonTemplate.tooltipHTML = this.generateTooltipHTML()
-      polygonTemplate.nonScalingStroke = true
-      polygonTemplate.strokeWidth = 0.5
-      polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
-      this.loadAm4ChartMap(this.polygonSeries)
+
+      this.polygonSeries = this.polygonSeriesFactory()
+
+      if (this.isMapPoint) {
+        this.worldImageSeries = this.imageSeriesFactory()
+      }
+
+      this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+
       // 地图点击事件
-      polygonTemplate.events.on('hit', async ev => {
-        const countryId = ev.target.dataItem.dataContext.id
-        if (countryId) {
-          ev.target.series.chart.zoomToMapObject(ev.target)
-          ev.target.isHover = false
-          this.countrySeries = chart.series.push(new am4Maps.MapPolygonSeries())
-          this.countrySeries.tooltip.getFillFromObject = false
-          this.countrySeries.tooltip.background.fill = am4Core.color('#FFFFFF')
-          const countryTemplate = this.countrySeries.mapPolygons.template
-          countryTemplate.tooltipHTML = this.generateTooltipHTML()
-          countryTemplate.nonScalingStroke = true
-          countryTemplate.strokeWidth = 0.5
-          countryTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
-          const geoData = getGeoData(countryId)
-          if (geoData) {
-            this.countrySeries.geodata = geoData
-            this.polygonSeries.hide()
-            const country = ev.target.dataItem.dataContext.serverCountry
-            const queryParams = { ...this.queryParams, country }
-            const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-            this.loadAm4ChartMap(this.countrySeries, ev.target.dataItem.dataContext.serverCountry, chartData)
+      if (this.isMapBlock) {
+        this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
+          const countryId = ev.target.dataItem.dataContext.id
+          if (countryId) {
+            ev.target.series.chart.zoomToMapObject(ev.target)
+            ev.target.isHover = false
+            const geoData = getGeoData(countryId)
+            if (geoData) {
+              this.countrySeries = this.polygonSeriesFactory()
+              this.countrySeries.geodata = geoData
+              this.polygonSeries.hide()
+              const country = ev.target.dataItem.dataContext.serverCountry
+              const queryParams = { ...this.queryParams, country }
+              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+              this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
+            }
           }
-        }
-      })
+        })
+      } else if (this.isMapPoint) {
+        this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
+          const countryId = ev.target.dataItem.dataContext.id
+          ev.target.isHover = false
+          if (countryId) {
+            const targetMapObject = this.polygonSeries.getPolygonById(countryId)
+            targetMapObject.series.chart.zoomToMapObject(targetMapObject)
+            const geoData = getGeoData(countryId)
+            if (geoData) {
+              this.countrySeries = this.polygonSeriesFactory()
+              this.countrySeries.geodata = geoData
+              this.countryImageSeries = this.imageSeriesFactory()
+              this.polygonSeries.hide()
+              this.worldImageSeries.hide()
+              const country = ev.target.dataItem.dataContext.location
+              const queryParams = { ...this.queryParams, ipLocationCountry: country }
+              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+              this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
+            }
+          }
+        })
+      }
       // dns地图legend上的数据
       if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
         setTimeout(() => {
@@ -155,7 +170,60 @@ export default {
         })
       }
     },
-    loadAm4ChartMap (polygonSeries, country, chartData) {
+    polygonSeriesFactory () {
+      const polygonSeries = this.myChart.series.push(new am4Maps.MapPolygonSeries())
+      polygonSeries.useGeodata = true
+      polygonSeries.exclude = ['AQ'] // 排除南极洲
+      polygonSeries.tooltip.getFillFromObject = false
+      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+      const polygonTemplate = polygonSeries.mapPolygons.template
+      polygonTemplate.tooltipHTML = this.generateTooltipHTML()
+      polygonTemplate.nonScalingStroke = true
+      polygonTemplate.strokeWidth = 0.5
+      polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
+      return polygonSeries
+    },
+    imageSeriesFactory (dataField) {
+      const vm = this
+      const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+      imageSeries.dataFields.value = dataField || 'count'
+
+      const imageTemplate = imageSeries.mapImages.template
+      imageTemplate.nonScaling = true
+
+      imageTemplate.adapter.add('latitude', function (latitude, target) {
+        const polygon = vm.polygonSeries.getPolygonById(target.dataItem.dataContext.id)
+        if (polygon) {
+          return polygon.visualLatitude
+        }
+        return latitude
+      })
+
+      imageTemplate.adapter.add('longitude', function (longitude, target) {
+        const polygon = vm.polygonSeries.getPolygonById(target.dataItem.dataContext.id)
+        if (polygon) {
+          return polygon.visualLongitude
+        }
+        return longitude
+      })
+
+      const circle = imageTemplate.createChild(am4Core.Circle)
+      circle.propertyFields.fill = 'color'
+      circle.propertyFields.stroke = 'border'
+      circle.strokeWidth = 1
+      circle.tooltipText = '[bold]{location}[/]\n{desc}: {count}'
+
+      imageSeries.heatRules.push({
+        target: circle,
+        property: 'radius',
+        min: 6,
+        max: 25,
+        dataField: 'value'
+      })
+
+      return imageSeries
+    },
+    loadAm4ChartMap (polygonSeries, imageSeries, country, chartData) {
       // chartData不为空是下钻
       if (chartData) {
         this.$emit('showLoading', true)
@@ -163,6 +231,7 @@ export default {
       try {
         // 清除数据
         polygonSeries.data.splice(0)
+
         // 清除legend
         this.myChart.children.each((s, i) => {
           if (s && s.className !== 'Container') {
@@ -237,46 +306,11 @@ export default {
               dnsServerRole: d.dnsServerRole,
               location: d.ipLocationCity || d.ipLocationProvince || d.ipLocationCountry,
               desc: this.$t(this.dnsTypeI18n(d.dnsServerRole)),
-              color: this.circleColor[d.dnsServerRole].background,
-              border: this.circleColor[d.dnsServerRole].border
+              color: this.circleColor[d.dnsServerRole.toUpperCase()].background,
+              border: this.circleColor[d.dnsServerRole.toUpperCase()].border
             })
           })
-          const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
           imageSeries.data = seriesData
-          imageSeries.dataFields.value = 'count'
-
-          const imageTemplate = imageSeries.mapImages.template
-          imageTemplate.nonScaling = true
-
-          imageTemplate.adapter.add('latitude', function (latitude, target) {
-            const polygon = polygonSeries.getPolygonById(target.dataItem.dataContext.id)
-            if (polygon) {
-              return polygon.visualLatitude
-            }
-            return latitude
-          })
-
-          imageTemplate.adapter.add('longitude', function (longitude, target) {
-            const polygon = polygonSeries.getPolygonById(target.dataItem.dataContext.id)
-            if (polygon) {
-              return polygon.visualLongitude
-            }
-            return longitude
-          })
-
-          const circle = imageTemplate.createChild(am4Core.Circle)
-          circle.propertyFields.fill = 'color'
-          circle.propertyFields.stroke = 'border'
-          circle.strokeWidth = 1
-          circle.tooltipText = '[bold]{location}[/]\n{desc}: {count}'
-
-          imageSeries.heatRules.push({
-            target: circle,
-            property: 'radius',
-            min: 6,
-            max: 25,
-            dataField: 'value'
-          })
         }
       } catch (e) {
         console.error(e)
@@ -290,9 +324,15 @@ export default {
     },
     mapBack () {
       this.countrySeries.hide()
+      if (this.isMapPoint) {
+        this.countryImageSeries.hide()
+      }
       this.$nextTick(() => {
         this.showMapBackButton = false
         this.polygonSeries.show()
+        if (this.isMapPoint) {
+          this.worldImageSeries.show()
+        }
         this.myChart.goHome()
       })
     },
@@ -302,7 +342,7 @@ export default {
     },
     dnsTypeI18n (role) {
       let i18n = ''
-      switch (role) {
+      switch (role.toUpperCase()) {
         case dnsServerRole.RTDNS: {
           i18n = 'dns.rootDomainServers'
           break

@@ -5,10 +5,10 @@
 <script>
 import unitConvert from '@/utils/unit-convert'
 import * as echarts from 'echarts'
-import { lineToSpace,sortBy } from '@/utils/tools'
+import { lineToSpace, sortBy, humpToSpace } from '@/utils/tools'
 import { unitTypes } from '@/utils/constants'
 import chartEchartMixin from './chart-echart-mixin'
-import { getOption, isEchartsPie } from './tools'
+import { isEchartsPie } from './tools'
 import { legendMapping } from '@/views/charts/charts/chart-table-title'
 
 export default {
@@ -106,7 +106,7 @@ export default {
         this.chartOption.series = this.chartData.map(r => {
           return {
             ...seriesTemplate,
-            name: legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] ? legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] : lineToSpace(r.legend),
+            name: legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] ? legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] : humpToSpace(r.legend),
             data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType])
           }
         })

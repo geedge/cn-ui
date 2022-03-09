@@ -8,10 +8,10 @@
       <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[detection.eventSecurity]}`"></div>
       <div class="cn-detection__row">
         <div class="cn-detection__header" v-if="pageType === detectionPageType.securityEvent">
-          <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp}}
+          <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp || '-'}}
           <span class="line">-------</span>
           <span class="circle"></span>
-          <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp}}
+          <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp || '-'}}
         </div>
         <div class="cn-detection__header" v-else-if="pageType === detectionPageType.performanceEvent">
           <div class="cn-entity__icon"><i :class="iconClass"></i></div>
@@ -23,44 +23,44 @@
               <div class="basic-info__item" v-if="detection.eventSecurity">
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detection.list.eventSecurity')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.eventSecurity}}</span>
+                <span>{{detection.eventSecurity || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.eventSeverity">
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detections.eventSeverity')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.eventSeverity}}</span>
+                <span>{{detection.eventSeverity || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.securityType">
                 <i class="cn-icon cn-icon-event-type"></i>
                 <span>{{$t('detection.list.securityType')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.securityType}}</span>
+                <span>{{detection.securityType || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.eventType">
                 <i class="cn-icon cn-icon-event-type"></i>
                 <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.eventType}}</span>
+                <span>{{detection.eventType || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.malwareName">
                 <i class="cn-icon cn-icon-trojan"></i>
                 <span>{{$t('detection.list.malwareName')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.malwareName}}</span>
+                <span>{{detection.malwareName || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.cryptominingPool">
                 <i class="cn-icon cn-icon-mining-pool"></i>
                 <span>{{$t('detection.list.cryptominingPool')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.cryptominingPool}}</span>
+                <span>{{detection.cryptominingPool || '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
                 <span>{{$t('detection.list.startTime')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{dayJs.tz(getMillisecond(detection.startTime)).format('YYYY-MM-DD HH:mm:ss')}}</span>
+                <span>{{dayJs.tz(getMillisecond(detection.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
                 <span>{{$t('overall.duration')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span style="display: inline-block;height: 6px;width: 6px;border-radius: 50%;margin-right: 8px;"
                       :style="pointColor(detection)"></span>
-                <span>{{unitConvert(detection.durationMs, 'time', null, null, 0).join(' ')}}</span>
+                <span>{{unitConvert(detection.durationMs, 'time', null, null, 0).join(' ') || '-'}}</span>
               </div>
             </div>
           </div>
