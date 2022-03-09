@@ -100,6 +100,15 @@ export default {
               unitType: chartParams.unitType ? chartParams.unitType : 'number'
             }
           })
+        }else {
+          this.chartOption.series[0].data = this.chartData.map(d => {
+            return {
+              name: lineToSpace(d.name),
+              data: d,
+              value: parseInt(d.num),
+              unitType: chartParams.unitType ? chartParams.unitType : 'number'
+            }
+          })
         }
       } else {
         const seriesTemplate = this.chartOption.series[0]

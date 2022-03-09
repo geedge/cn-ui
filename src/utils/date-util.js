@@ -42,5 +42,5 @@ export function getNowTime (interval) {
 }
 // 日期格式转换
 export function rTime (date) {
-  return window.$dayJs.tz(new Date(date)).format('YYYY-MM-DD HH:mm:ss')
+  return window.$dayJs.tz(new Date(date)).format('mm:ss')
 }
