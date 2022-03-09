@@ -43,10 +43,6 @@ export default {
         },
       },
     }
-  },
-  mounted(){
-    console.log(this.chartInfo);
-    console.log(this.chartData);
   }
 }
 </script>

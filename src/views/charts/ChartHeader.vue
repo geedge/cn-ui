@@ -301,7 +301,6 @@ export default {
       }
     },
     reload (s, e, v) {
-      console.log(s,e,v);
       this.dateTimeRangeChange(s, e, v)
     },
     groupShow () {

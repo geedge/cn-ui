@@ -167,12 +167,9 @@ export default {
         this.$_.isEmpty(this.chartData) || this.$_.get(this, 'chartData')
           ? this.chartData
           : ''
-      console.log(value)
       const unitType = this.chartInfo.params.unitType
-      console.log(unitType)
 
       const result = unitConvert(value, unitType)
-      console.log(result)
 
       switch (unitType) {
         case unitTypes.percent: {
@@ -186,7 +183,6 @@ export default {
         default:
           break
       }
-      console.log(result)
       return result
     },
     singleValueClass() {
