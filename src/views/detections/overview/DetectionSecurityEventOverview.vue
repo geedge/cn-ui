@@ -172,13 +172,14 @@ export default {
   },
   computed: {
     formatT0 () {
+      const vm = this
       return function (event) {
         const diffSeconds = event.diffSeconds
         if (diffSeconds === 0) {
           return 'T0'
         }
         const eventStartTime = event.startTime
-        const entityStartTime = this.detection.startTime
+        const entityStartTime = vm.detection.startTime
 
         if (_.isNumber(diffSeconds) && _.isNumber(eventStartTime) && _.isNumber(entityStartTime)) {
           const suffix = unitConvert(diffSeconds, unitTypes.time, 's', null, 0).join('')
