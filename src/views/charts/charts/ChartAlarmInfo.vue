@@ -3,7 +3,7 @@
     <div class="cn-chart-alarm-info-mainContent">
       <div
         class="cn-chart-alarm-content"
-        v-for="(value, index) in result ? result : []"
+        v-for="(value, index) in chartData ? chartData : []"
         :key="index"
       >
         <div class="cn-alarm-info-main">
@@ -25,10 +25,9 @@
           </div>
           <div class="cn-alarm-info-textContent">
             <div class="cn-alarm-info-main-title">
-              <!-- <span v-if="value.entityType === 'domain'">{{ value.domain }}</span>
+              <span v-if="value.entityType === 'domain'">{{ value.domain }}</span>
             <span v-if="value.entityType === 'app'">{{ value.appName }}</span>
-            <span v-if="value.entityType === 'ip'">{{ value.serverIp }}</span> -->
-              111.111.1.1
+            <span v-if="value.entityType === 'ip'">{{ value.serverIp }}</span>
             </div>
 
             <div class="cn-alarm-info-bottom">
@@ -110,107 +109,7 @@ export default {
       pageNo: 1,
       alarmInfoCount: {},
       fromChartData: '',
-      result: [
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type1111111111111111111111111111111111',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 111111111111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type111111111111111111111111111111111111',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        },
-        {
-          entityType: 'ip',
-          serverIp: '1.2.3.4',
-          domain: '',
-          appName: 'wechat',
-          eventSeverity: 'high',
-          eventType: 'type',
-          startTime: 1111111111,
-          durationMs: 60000,
-          endTime: 1111111112
-        }
-      ]
+      
     }
   },
   watch: {
