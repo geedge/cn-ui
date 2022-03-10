@@ -25,9 +25,11 @@
           </div>
           <div class="cn-alarm-info-textContent">
             <div class="cn-alarm-info-main-title">
-              <span v-if="value.entityType === 'domain'">{{ value.domain }}</span>
-            <span v-if="value.entityType === 'app'">{{ value.appName }}</span>
-            <span v-if="value.entityType === 'ip'">{{ value.serverIp }}</span>
+              <span v-if="value.entityType === 'domain'">{{
+                value.domain
+              }}</span>
+              <span v-if="value.entityType === 'app'">{{ value.appName }}</span>
+              <span v-if="value.entityType === 'ip'">{{ value.serverIp }}</span>
             </div>
 
             <div class="cn-alarm-info-bottom">
@@ -46,8 +48,9 @@
                 <div class="cn-alarm-info-bottom-time">
                   &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
                 </div>
-                <div>{{ changeDate(value.startTime) }}</div>
-              </div>:&nbsp;&nbsp;&nbsp;
+                <div>{{ value.startTime ? dayJs.tz(getMillisecond(value.startTime)).format('YYYY-MM-DD HH:mm:ss') : '-' }}</div>
+              </div>
+              &nbsp;&nbsp;&nbsp;
 
               <div class="cn-alarm-info-bottom-right">
                 <i class="cn-icon cn-icon-time2"></i>
@@ -70,7 +73,6 @@
                   }}
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -93,6 +95,7 @@ import _ from 'lodash'
 import unitConvert from '@/utils/unit-convert'
 import ChartTablePagination from '@/views/charts/charts/ChartTablePagination'
 import { get } from '@/utils/http'
+import { getMillisecond } from '@/utils/date-util'
 
 export default {
   name: 'isAlarmInfo',
@@ -100,35 +103,65 @@ export default {
     chartInfo: Object,
     chartData: [Array, Object],
     tabHandleClickType: String,
-    queryParams: Object
+    queryParams: Object,
   },
-  data () {
+  data() {
     return {
       pageSizeForAlarm: 9,
       eventSeverityColor: eventSeverityColor,
       pageNo: 1,
       alarmInfoCount: {},
       fromChartData: '',
-      
     }
   },
   watch: {
     tabHandleClickType: {
       deep: true,
-      handler (n) {
-        this.getData(1, n)
-      }
-    }
-  },
-  created () {
-    this.getData(1, 'All')
+      handler(n) {
+          this.$nextTick(() => {
+            this.getData(1, n)
+          })
+      },
+    },
+    alarmInfoCount: {
+      deep: true,
+      handler(n) {
+      },
+    },
+    queryParams: {
+      deep: true,
+      handler(n) {
+        if(n.startTime && n.endTime ){
+            this.getCount(1)
+          
+        }
+      },
+    },
   },
   components: {
-    ChartTablePagination
+    ChartTablePagination,
   },
   methods: {
     unitConvert,
-    getData (val, n) {
+    getMillisecond,
+    getCount(){
+      let countQuery = {
+          startTime: this.queryParams.startTime,
+          endTime: this.queryParams.endTime,
+          eventSeverity:
+            this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType,
+        }
+        this.$nextTick(() => {
+          get('/interface/dns/alarmInfoCount', {
+            ...countQuery,
+          }).then((response) => {
+            if (response.code === 200) {
+              this.alarmInfoCount = response.data
+            }
+          })
+        })
+    },
+    getData(val, n) {
       this.pageNo = val
       const extraParams = {
         pageNo: val,
@@ -138,17 +171,19 @@ export default {
             ? ''
             : n
           : this.tabHandleClickType === 'All'
-            ? ''
-            : this.tabHandleClickType
+          ? ''
+          : this.tabHandleClickType
       }
       const query = {
         startTime: this.queryParams.startTime,
         endTime: this.queryParams.endTime,
         eventSeverity:
-          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType
+          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType,
       }
-      this.$emit('getAlarmInfo', null, extraParams, false, { startTime: query.startTime, endTime: query.endTime })
-
+      this.$emit('getAlarmInfo', null, extraParams, false, {
+        startTime: query.startTime,
+        endTime: query.endTime
+      })
       get('/interface/dns/alarmInfoCount', {
         ...query
       }).then((response) => {
@@ -157,12 +192,9 @@ export default {
         }
       })
     },
-    changeDate (value) {
-      return window.$dayJs.tz(value).format('YYYY-MM-DD HH:mm:ss')
-    },
-    pageJump (val) {
+    pageJump(val) {
       this.getData(val)
-    }
-  }
+    },
+  },
 }
 </script>

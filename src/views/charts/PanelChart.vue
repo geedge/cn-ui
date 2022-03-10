@@ -26,7 +26,7 @@
     <!-- 数据查询后传入chart组件，chart组件内不查询，只根据接传递的数据来渲染 -->
     <chart
         ref="chart"
-        v-if="((!isGroup) || !(chartInfo.params && chartInfo.params.collapse)) && !isTitle"
+        v-if="((!isGroup) || !(chartInfo.params && chartInfo.params.collapse)) && !isTitle "
         :chart-data="chartData"
         :result-type="resultType"
         :chart-info="chartInfo"
@@ -77,7 +77,8 @@ import {
   isCryptocurrencyEventList,
   isAppBasicInfo,
   isAppRelatedDomain,
-  isBlock
+  isBlock,
+  isAlarmInfo
 } from './charts/tools'
 import { tableTitleMapping, legendMapping } from '@/views/charts/charts/chart-table-title'
 import { replaceUrlPlaceholder } from '@/utils/tools'
@@ -179,11 +180,18 @@ export default {
           this.queryTimeRange = { startTime: getSecond(this.chartTimeFilter.startTime), endTime: getSecond(this.chartTimeFilter.endTime) }
         }
         const chartParams = this.chartInfo.params
+        if(isAlarmInfo && JSON.stringify(extraParams) === '{}'){
+          extraParams = {
+            pageNo : 1,
+            pageSize : 9
+          }
+        }
         // 接口查询参数
         this.queryParams = {
           ...this.handleQueryParams(),
           ...this.queryTimeRange,
           ...this.entity,
+          
           ...extraParams
         }
         const requestUrl = url || (chartParams && chartParams.url)
@@ -411,7 +419,8 @@ export default {
       isDomainDnsRecord: isDomainDnsRecord(props.chartInfo.type),
       isCryptocurrencyEventList: isCryptocurrencyEventList(props.chartInfo.type),
       isAppBasicInfo: isAppBasicInfo(props.chartInfo.type),
-      isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type)
+      isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
+      isAlarmInfo:isAlarmInfo(props.chartInfo.type)
     }
   }
 }

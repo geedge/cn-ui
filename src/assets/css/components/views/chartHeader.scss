@@ -1,7 +1,7 @@
 .cn-chart-header-button {
+    display: flex;
     .cn-chart-header-button-group {
         display: flex;
-
         .el-button {
             border-radius: 0%;
         }
@@ -74,5 +74,9 @@
         }
     }
 
-
+    .header__operation-btn {
+        margin-left: 12px;
+        cursor: pointer;
+        color: #999;
+      }
 }

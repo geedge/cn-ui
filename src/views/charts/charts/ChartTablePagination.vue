@@ -37,6 +37,14 @@ export default {
       }
     }
   },
+  watch:{
+    pageSizeForAlarm:{
+      deep:true,
+    },
+    total:{
+      deep:true,
+    }
+  },
   methods: {
     current (val) {
       this.$emit('pageJump', val)

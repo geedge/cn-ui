@@ -18,7 +18,14 @@
       </span>
       {{ chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name }}
     </div>
-    <div class="chart-header__title" v-else-if="!isBasicTable" :class="{'chart-header__title--block': isBlock}" :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name}}</div>
+    <div
+      class="chart-header__title"
+      v-else-if="!isBasicTable"
+      :class="{ 'chart-header__title--block': isBlock }"
+      :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name"
+    >
+      {{ chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name }}
+    </div>
     <template v-if="isBasicTable">
       <div class="chart-header__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{
@@ -73,8 +80,14 @@
             popper-class="option-popper"
             @change="tableLimitChange"
           >
-            <template v-for="(item, index) in table.tableColumns.order" :key="item.prop">
-              <el-option :value="item" :label="$t(chartTableColumnMapping[item])"></el-option>
+            <template
+              v-for="(item, index) in table.tableColumns.order"
+              :key="item.prop"
+            >
+              <el-option
+                :value="item"
+                :label="$t(chartTableColumnMapping[item])"
+              ></el-option>
             </template>
           </el-select>
         </div>
@@ -133,25 +146,30 @@
     <template v-else-if="isAlarmInfo">
       <div class="cn-chart-header-button">
         <el-button-group class="cn-chart-header-button-group">
-        <el-button
-          :class="isFocusAll ? 'cn-chart-header-button-all' : ''"
-          @click="tabHandleClick('All')"
-          size="small"
-          >{{ $t('dns.all') }}</el-button
-        >
-        <el-button
-          :label="value"
-          :name="value"
-          plain:true
-          v-for="(value, key) in eventSeverity"
-          :key="key"
-          size="small"
-          :class=" isFocus === value ? 'cn-chart-header-button-' + value : ''"
-          @click="tabHandleClick(value)"
-        >
-          {{ value }}
-        </el-button>
-      </el-button-group>
+          <el-button
+            :class="isFocusAll ? 'cn-chart-header-button-all' : ''"
+            @click="tabHandleClick('All')"
+            size="small"
+            >{{ $t('dns.all') }}</el-button
+          >
+          <el-button
+            :label="value"
+            :name="value"
+            plain:true
+            v-for="(value, key) in eventSeverity"
+            :key="key"
+            size="small"
+            :class="isFocus === value ? 'cn-chart-header-button-' + value : ''"
+            @click="tabHandleClick(value)"
+          >
+            {{ value }}
+          </el-button>
+        </el-button-group>
+        <div>
+          <span class="header__operation-btn" @click="refresh"
+            ><i class="cn-icon cn-icon-refresh"></i
+          ></span>
+        </div>
       </div>
     </template>
 
@@ -218,7 +236,7 @@ import {
   isBasicTable,
   isGroup,
   isEchartsWithTable,
-  isAlarmInfo
+  isAlarmInfo,
 } from './charts/tools'
 import ChartError from '@/views/charts/ChartError'
 import { getNowTime } from '@/utils/date-util'
@@ -228,7 +246,7 @@ import {
   chartActiveIpTableOrderOptions,
   chartPieTableTopOptions,
   eventSeverity,
-  chartTableColumnMapping
+  chartTableColumnMapping,
 } from '@/utils/constants'
 
 export default {
@@ -237,19 +255,19 @@ export default {
     chartInfo: Object,
     errorInfo: {
       type: String,
-      default: ''
+      default: '',
     },
     isError: {
       type: Boolean,
-      default: false
+      default: false,
     },
     table: Object,
-    orderPieTable: Object
+    orderPieTable: Object,
   },
   components: {
-    ChartError
+    ChartError,
   },
-  data () {
+  data() {
     return {
       chartTableColumnMapping,
       dropdownMenuShow: false,
@@ -262,37 +280,37 @@ export default {
         tableData: [
           {
             name: '192.168.20.21',
-            num: 111
+            num: 111,
           },
           {
             name: '192.168.20.22',
-            num: 345
+            num: 345,
           },
           {
             name: '192.168.20.23',
-            num: 111
+            num: 111,
           },
           {
             name: '192.168.20.24',
-            num: 345
+            num: 345,
           },
           {
             name: '192.168.20.25',
-            num: 111
+            num: 111,
           },
           {
             name: '192.168.20.26',
-            num: 345
-          }
-        ] // table的所有数据
-      }
+            num: 345,
+          },
+        ], // table的所有数据
+      },
     }
   },
   methods: {
-    refresh () {
+    refresh() {
       this.$emit('refresh')
     },
-    timeRefreshChange () {
+    timeRefreshChange() {
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.chartTimeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
@@ -300,57 +318,52 @@ export default {
         this.$emit('refresh')
       }
     },
-    reload (s, e, v) {
+    reload(s, e, v) {
       this.dateTimeRangeChange(s, e, v)
     },
-    groupShow () {
+    groupShow() {
       this.$emit('groupShow', this.chartInfo)
     },
-    dateTimeRangeChange (s, e, v) {
+    dateTimeRangeChange(s, e, v) {
       this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }
-      console.log(this.chartTimeFilter);
+      console.log(this.chartTimeFilter)
       this.$emit('refresh', this.chartTimeFilter)
     },
-    tableLimitChange () {
+    tableLimitChange() {
       this.$emit('tableChange')
     },
-    activeIpTableLimitChange () {
+    activeIpTableLimitChange() {
       this.$emit('tableChange')
     },
-    orderPieTableChange () {
+    orderPieTableChange() {
       this.$emit('orderPieTableChange', this.orderPieTable)
     },
-    tabHandleClick (item) {
+    tabHandleClick(item) {
       this.isFocus = item
-      this.isFocusAll = false
       if (item === 'All') {
         this.isFocusAll = true
       } else {
         this.isFocusAll = false
       }
       this.$emit('tabHandleClick', item)
-    }
-  },
-  beforeCreate () {
-    this.$emit('tabHandleClick', 'All')
+    },
   },
   watch: {
     isFocus: {
       deep: true,
-      handler (n) {
-      }
-    }
+      handler(n) {},
+    },
   },
   computed: {
-    showRefreshButton () {
+    showRefreshButton() {
       // 自己是group且父元素是block时，不显示刷新按钮
       // TODO 父元素是block，且只有自己一个子元素时，不显示刷新按钮
       const isGroupAndParentIsBlock =
         this.$_.get(this.chartInfo.parent, 'type') === 95 && this.isGroup
       return !isGroupAndParentIsBlock
-    }
+    },
   },
-  setup (props) {
+  setup(props) {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     // entity详情内的chart时间工具不是公共的，需要单独定义
@@ -369,8 +382,8 @@ export default {
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
       isEchartsWithTable: isEchartsWithTable(props.chartInfo.type),
       isGroup: isGroup(props.chartInfo.type),
-      isAlarmInfo: isAlarmInfo(props.chartInfo.type)
+      isAlarmInfo: isAlarmInfo(props.chartInfo.type),
     }
-  }
+  },
 }
 </script>

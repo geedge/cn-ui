@@ -200,14 +200,15 @@
       ></chart-two-Situation-Statistics>
 
       <chart-alarm-info
-      v-else-if="isAlarmInfo"
+        v-else-if="isAlarmInfo"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :query-params="queryParams"
         @showLoading="showLoading"
         :tabHandleClickType="tabHandleClickType"
         @getAlarmInfo="getAlarmInfo"
-        :entity="entity">
+        :entity="entity"
+      >
       </chart-alarm-info>
     </template>
   </div>
@@ -276,7 +277,7 @@ import {
   isBlock,
   isSingleSupportStatistics,
   isTwoSupportStatistics,
-  isAlarmInfo
+  isAlarmInfo,
 } from './charts/tools'
 import _ from 'lodash'
 
@@ -309,11 +310,11 @@ export default {
     ChartEchartAppRelateDomain,
     ChartOneSituationStatistics,
     ChartTwoSituationStatistics,
-    ChartAlarmInfo
+    ChartAlarmInfo,
   },
-  data () {
+  data() {
     return {
-      tabHandleClickType: ''
+      tabHandleClickType: '',
     }
   },
   props: {
@@ -329,10 +330,10 @@ export default {
     isError: Boolean,
     table: Object,
     orderPieTable: Object,
-    tabHandleClickType: String
+    tabHandleClickType: String,
   },
   computed: {
-    isNoData () {
+    isNoData() {
       return (
         !this.loading &&
         (_.isEmpty(this.chartData) || this.isError) &&
@@ -347,51 +348,54 @@ export default {
         !this.isAlarmInfo
       )
     },
-    chartOption () {
+    chartOption() {
       if (this.customChartOption) {
         return _.cloneDeep(this.customChartOption)
       } else {
         return getOption(this.chartInfo.type)
       }
-    }
+    },
   },
   methods: {
-    resize () {
+    resize() {
       this.$refs['chart' + this.chartInfo.id] &&
         this.$refs['chart' + this.chartInfo.id].resize()
     },
-    showLoading (show) {
+    showLoading(show) {
       this.$emit('showLoading', show)
     },
-    getAlarmInfo (url, extraParams, isRefresh, timeFilter) {
+    getAlarmInfo(url, extraParams, isRefresh, timeFilter) {
       this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
     },
-    getChartData (url, extraParams) {
+    getChartData(url, extraParams) {
       this.$emit('getChartData', url, extraParams)
     },
-    initEchartsWithTable () {
+    initEchartsWithTable() {
       this.$refs['chart' + this.chartInfo.id] &&
         this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(
-          `chart${this.chartInfo.id}`
+          `chart${this.chartInfo.id}`,
         )
     },
-    query (params) {
+    query(params) {
       this.$emit('query', params)
-    }
+    },
   },
   watch: {
     chartData: {
       deep: true,
-      handler (n) {}
+      handler(n) {},
     },
     tabHandleClickType: {
       deep: true,
-      handler (n) {
+      handler(n) {
         this.tabHandleClickType = n
-      }
-    }
+      },
+    },
+    queryParams: {
+      deep: true,
+    },
   },
-  setup (props) {
+  setup(props) {
     return {
       isEcharts: isEcharts(props.chartInfo.type),
       isEchartsLine: isEchartsLine(props.chartInfo.type),
@@ -404,7 +408,7 @@ export default {
       isSingleValue: isSingleValue(props.chartInfo.type),
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chartInfo.type),
       isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(
-        props.chartInfo.type
+        props.chartInfo.type,
       ),
       isRelationShip: isRelationShip(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
@@ -424,14 +428,16 @@ export default {
       isDomainWhois: isDomainWhois(props.chartInfo.type),
       isDomainDnsRecord: isDomainDnsRecord(props.chartInfo.type),
       isCryptocurrencyEventList: isCryptocurrencyEventList(
-        props.chartInfo.type
+        props.chartInfo.type,
       ),
       isAppBasicInfo: isAppBasicInfo(props.chartInfo.type),
       isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
-      isSingleSupportStatistics: isSingleSupportStatistics(props.chartInfo.type),
+      isSingleSupportStatistics: isSingleSupportStatistics(
+        props.chartInfo.type,
+      ),
       isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type),
-      isAlarmInfo: isAlarmInfo(props.chartInfo.type)
+      isAlarmInfo: isAlarmInfo(props.chartInfo.type),
     }
-  }
+  },
 }
 </script>
