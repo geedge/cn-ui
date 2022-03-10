@@ -52,7 +52,7 @@ export const multipleBarOption = {
   legend: {
     icon: 'circle',
     top: 10,
-    right: 10,
+    right: 30,
     itemWidth: 10, // 设置宽度
     itemHeight: 10 // 设置高度
   },
@@ -72,7 +72,7 @@ export const multipleBarOption = {
     },
     axisLabel: {
       color: '#737373',
-      interval: 0
+      interval: 'auto'
     },
     splitLine: {
       show: false
@@ -104,6 +104,10 @@ export const multipleBarOption = {
     {
       name: 'critical',
       type: 'bar',
+      stack:'eventSeverityTrend',
+      emphasis: {
+        focus: 'series'
+      },
       barWidth: 15,
       seriesLayoutBy: 'row',
       itemStyle: {
@@ -113,6 +117,10 @@ export const multipleBarOption = {
     {
       name: 'high',
       type: 'bar',
+      stack:'eventSeverityTrend',
+      emphasis: {
+        focus: 'series'
+      },
       barWidth: 15,
       seriesLayoutBy: 'row',
       itemStyle: {
@@ -122,6 +130,10 @@ export const multipleBarOption = {
     {
       name: 'medium',
       type: 'bar',
+      stack:'eventSeverityTrend',
+      emphasis: {
+        focus: 'series'
+      },
       barWidth: 15,
       seriesLayoutBy: 'row',
       itemStyle: {
@@ -131,6 +143,10 @@ export const multipleBarOption = {
     {
       name: 'low',
       type: 'bar',
+      stack:'eventSeverityTrend',
+      emphasis: {
+        focus: 'series'
+      },
       barWidth: 15,
       seriesLayoutBy: 'row',
       itemStyle: {
@@ -140,6 +156,10 @@ export const multipleBarOption = {
     {
       name: 'info',
       type: 'bar',
+      stack:'eventSeverityTrend',
+      emphasis: {
+        focus: 'series'
+      },
       barWidth: 15,
       seriesLayoutBy: 'row',
       itemStyle: {

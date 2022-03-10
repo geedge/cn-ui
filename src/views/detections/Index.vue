@@ -235,137 +235,147 @@ export default {
     initEventSeverityTrendData (params) {
       this.loading = true
       getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
-        /* data = [
+        /*data = [
           {
-            "stat_time": "2022-01-01T10:07:03.008Z",
-            "event_severity": "critical",
+            "statTime": "2022-01-01T10:07:03.008Z",
+            "eventSeverity": "critical",
             "count": 5
           },
           {
-            "stat_time": "2022-01-02T10:07:03.008Z",
-            "event_severity": "critical",
+            "statTime": "2022-01-02T10:07:03.008Z",
+            "eventSeverity": "critical",
             "count": 15
           },{
-            "stat_time": "2022-01-03T10:07:03.008Z",
-            "event_severity": "critical",
+            "statTime": "2022-01-03T10:07:03.008Z",
+            "eventSeverity": "critical",
             "count": 25
           },
           {
-            "stat_time": "2022-01-04T10:07:03.008Z",
-            "event_severity": "critical",
+            "statTime": "2022-01-04T10:07:03.008Z",
+            "eventSeverity": "critical",
             "count": 7
           },{
-            "stat_time": "2022-01-01T10:07:03.008Z",
-            "event_severity": "high",
+            "statTime": "2022-01-01T10:07:03.008Z",
+            "eventSeverity": "high",
             "count": 8
           },
           {
-            "stat_time": "2022-01-02T10:07:03.008Z",
-            "event_severity": "high",
+            "statTime": "2022-01-02T10:07:03.008Z",
+            "eventSeverity": "high",
             "count": 2
           },{
-            "stat_time": "2022-01-03T10:07:03.008Z",
-            "event_severity": "high",
+            "statTime": "2022-01-03T10:07:03.008Z",
+            "eventSeverity": "high",
             "count": 25
           },
           {
-            "stat_time": "2022-01-04T10:07:03.008Z",
-            "event_severity": "high",
+            "statTime": "2022-01-04T10:07:03.008Z",
+            "eventSeverity": "high",
             "count": 7
           },{
-            "stat_time": "2022-01-01T10:07:03.008Z",
-            "event_severity": "medium",
+            "statTime": "2022-01-01T10:07:03.008Z",
+            "eventSeverity": "medium",
             "count": 9
           },
           {
-            "stat_time": "2022-01-02T10:07:03.008Z",
-            "event_severity": "medium",
+            "statTime": "2022-01-02T10:07:03.008Z",
+            "eventSeverity": "medium",
             "count": 15
           },{
-            "stat_time": "2022-01-03T10:07:03.008Z",
-            "event_severity": "medium",
+            "statTime": "2022-01-03T10:07:03.008Z",
+            "eventSeverity": "medium",
             "count": 35
           },
           {
-            "stat_time": "2022-01-04T10:07:03.008Z",
-            "event_severity": "medium",
+            "statTime": "2022-01-04T10:07:03.008Z",
+            "eventSeverity": "medium",
             "count": 7
           },{
-            "stat_time": "2022-01-01T10:07:03.008Z",
-            "event_severity": "low",
+            "statTime": "2022-01-01T10:07:03.008Z",
+            "eventSeverity": "low",
             "count": 5
           },
           {
-            "stat_time": "2022-01-02T10:07:03.008Z",
-            "event_severity": "low",
+            "statTime": "2022-01-02T10:07:03.008Z",
+            "eventSeverity": "low",
             "count": 1
           },{
-            "stat_time": "2022-01-03T10:07:03.008Z",
-            "event_severity": "low",
+            "statTime": "2022-01-03T10:07:03.008Z",
+            "eventSeverity": "low",
             "count": 25
           },
           {
-            "stat_time": "2022-01-04T10:07:03.008Z",
-            "event_severity": "low",
+            "statTime": "2022-01-04T10:07:03.008Z",
+            "eventSeverity": "low",
             "count": 17
           },{
-            "stat_time": "2022-01-01T10:07:03.008Z",
-            "event_severity": "info",
+            "statTime": "2022-01-01T10:07:03.008Z",
+            "eventSeverity": "info",
             "count": 5
           },
           {
-            "stat_time": "2022-01-02T10:07:03.008Z",
-            "event_severity": "info",
+            "statTime": "2022-01-02T10:07:03.008Z",
+            "eventSeverity": "info",
             "count": 15
           },{
-            "stat_time": "2022-01-03T10:07:03.008Z",
-            "event_severity": "info",
+            "statTime": "2022-01-03T10:07:03.008Z",
+            "eventSeverity": "info",
             "count": 25
           },
           {
-            "stat_time": "2022-01-04T10:07:03.008Z",
-            "event_severity": "info",
+            "statTime": "2022-01-04T10:07:03.008Z",
+            "eventSeverity": "info",
             "count": 27
           },
-        ] */
-        /* data2 = [
-          {
-            legend: 'critical',
-            values: [[1435781430781, '999'], [1435781431781, '222'], [1435781432781, '11'], [1435781433781, '3']]
-          },
-          {
-            legend: 'high',
-            values: [[1435781430781, '2'], [1435781431781, '3'], [1435781432781, '6'], [1435781433781, '4']]
-          }, {
-            legend: 'medium',
-            values: [[1435781430781, '4'], [1435781431781, '1'], [1435781432781, '5'], [1435781433781, '3']]
-          }, {
-            legend: 'low',
-            values: [[1435781430781, '1'], [1435781431781, '4'], [1435781432781, '1'], [1435781433781, '3']]
-          }, {
-            legend: 'info',
-            values: [[1435781430781, '5'], [1435781431781, '7'], [1435781432781, '5'], [1435781433781, '8']]
-          }
-        ] */
+        ]*/
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
           const dataMap = new Map()
           data.forEach(item => {
             if (item.eventSeverity) {
               if (!dataMap.has(item.eventSeverity)) {
-                const count = [[item.statTime, item.count]]
+                const count = [[rTime(item.statTime), item.count]]
                 dataMap.set(item.eventSeverity, count)
               } else {
-                dataMap.get(item.eventSeverity).push([item.statTime, item.count])
+                dataMap.get(item.eventSeverity).push([rTime(item.statTime), item.count])
               }
             }
           })
+
           const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
+
+          let xData = []
           dataMap.forEach(function (value, key) {
-            eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
+            //eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
+            value.forEach(item => {
+              if(xData.indexOf(item[0]) < 0){
+                xData.push(item[0])
+              }
+            })
           })
-          eventSeverityTrendOption.xAxis.data = dataMap.get('critical').map(v => rTime(v[0]))
+          eventSeverityTrendOption.series.forEach(serie => {
+            let seriesData = []
+            xData.forEach(item => {
+              if(dataMap.has(serie.name)){
+                let hasX = dataMap.get(serie.name).some(function(v) {
+                  if (item == v[0]) {
+                    seriesData.push(Number(v[1]))
+                    return true;
+                  }
+                })
+                if(!hasX){
+                  seriesData.push(0)
+                }
+              }else {
+                seriesData.push(0)
+              }
+            })
+            serie.data = seriesData
+          })
+
+          //eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
+          eventSeverityTrendOption.xAxis.data = xData
           const detectionChart = echarts.init(chartDom)
           detectionChart.setOption(eventSeverityTrendOption)
           // this.isEventSeverityNoData = false

@@ -24,8 +24,7 @@ export const line = {
       formatter: function (value, index, a, b) {
         return unitConvert(value, unitTypes.number).join(' ')
       }
-    },
-    minInterval: 1
+    }
   },
   animation: false,
   grid: {
