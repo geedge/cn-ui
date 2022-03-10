@@ -334,19 +334,48 @@ export default {
           data.forEach(item => {
             if (item.eventSeverity) {
               if (!dataMap.has(item.eventSeverity)) {
-                const count = [[item.statTime, item.count]]
+                const count = [[rTime(item.statTime), item.count]]
                 dataMap.set(item.eventSeverity, count)
               } else {
-                dataMap.get(item.eventSeverity).push([item.statTime, item.count])
+                dataMap.get(item.eventSeverity).push([rTime(item.statTime), item.count])
               }
             }
           })
+
           const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
+
+          let xData = []
           dataMap.forEach(function (value, key) {
-            eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
+            //eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
+            value.forEach(item => {
+              if(xData.indexOf(item[0]) < 0){
+                xData.push(item[0])
+              }
+            })
           })
-          eventSeverityTrendOption.xAxis.data = dataMap.get('critical').map(v => rTime(v[0]))
+          eventSeverityTrendOption.series.forEach(serie => {
+            let seriesData = []
+            xData.forEach(item => {
+              if(dataMap.has(serie.name)){
+                let hasX = dataMap.get(serie.name).some(function(v) {
+                  if (item == v[0]) {
+                    seriesData.push(Number(v[1]))
+                    return true;
+                  }
+                })
+                if(!hasX){
+                  seriesData.push(0)
+                }
+              }else {
+                seriesData.push(0)
+              }
+            })
+            serie.data = seriesData
+          })
+
+          //eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
+          eventSeverityTrendOption.xAxis.data = xData
           const detectionChart = echarts.init(chartDom)
           detectionChart.setOption(eventSeverityTrendOption)
           // this.isEventSeverityNoData = false
