@@ -15,10 +15,10 @@
             </div>
             <div class="single-value__content">
               <div>
-                <span>{{$t('entities.category')}}</span>
+                <span style="color: #666;">{{$t('entities.category')}}</span>
               </div>
               <div>
-                <span>{{$_.get(chartData, "category") || '-'}}</span>
+                <span style="color: #333; font-weight: bold;">{{$_.get(chartData, "category") || '-'}}</span>
               </div>
             </div>
           </div>
@@ -28,10 +28,10 @@
             </div>
             <div class="single-value__content">
               <div>
-                <span>{{$t('entities.subcategory')}}</span>
+                <span style="color: #666;">{{$t('entities.subcategory')}}</span>
               </div>
               <div>
-                <span>{{$_.get(chartData, "subcategory") || '-'}}</span>
+                <span style="color: #333; font-weight: bold;">{{$_.get(chartData, "subcategory") || '-'}}</span>
               </div>
             </div>
           </div>
@@ -41,10 +41,10 @@
             </div>
             <div class="single-value__content">
               <div>
-                <span>{{$t('entities.reputationLevel')}}</span>
+                <span style="color: #666;">{{$t('entities.reputationLevel')}}</span>
               </div>
               <div>
-                <span>{{$_.get(chartData, "risk") || '-'}}</span>
+                <span style="color: #333; font-weight: bold;">{{$_.get(chartData, "risk") || '-'}}</span>
               </div>
             </div>
           </div>

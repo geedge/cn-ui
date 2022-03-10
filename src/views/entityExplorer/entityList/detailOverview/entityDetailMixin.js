@@ -149,6 +149,12 @@ export default {
             this.entityData.sslConLatency = response.data.result.sslConLatency
             this.entityData.sequenceGapLossPercent = response.data.result.sequenceGapLossPercent
             this.entityData.pktRetransPercent = response.data.result.pktRetransPercent
+
+            this.singleValues.chartDatas.splice(0, 1, this.$_.get(this.entityData, 'establishLatency'))
+            this.singleValues.chartDatas.splice(1, 1, this.$_.get(this.entityData, 'httpResponseLatency'))
+            this.singleValues.chartDatas.splice(2, 1, this.$_.get(this.entityData, 'sslConLatency'))
+            this.singleValues.chartDatas.splice(3, 1, this.$_.get(this.entityData, 'sequenceGapLossPercent'))
+            this.singleValues.chartDatas.splice(4, 1, this.$_.get(this.entityData, 'pktRetransPercent'))
           }
         })
       }
@@ -224,12 +230,13 @@ export default {
 
     queryEntityDetail () {
       this.queryEntityDetailTraffic()
-      this.queryEntityDetailRelation()
+      // this.queryEntityDetailRelation()
       this.queryEntityDetailAlert()
       this.queryEntityDetailSecurity()
       this.queryEntityDetailNetworkQuantity()
       this.queryEntityDetailLinkOutUrl()
       this.queryEntityDetailLinkInUrl()
+      this.queryRelated()
     }
   },
   setup () {
@@ -241,7 +248,6 @@ export default {
   },
   mounted () {
     if (this.listMode === 'list') {
-      this.entityData = _.cloneDeep(this.entity)
       this.chartOption = _.cloneDeep(entityListLineOption)
       setTimeout(() => { this.queryEntityDetail() })
     }
