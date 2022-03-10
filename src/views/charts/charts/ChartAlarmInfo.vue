@@ -39,6 +39,7 @@
                   color: eventSeverityColor[value.eventSeverity],
                   'border-color': eventSeverityColor[value.eventSeverity],
                 }"
+                :title="value.eventType"
               >
                 {{ value.eventType }}
               </div>
