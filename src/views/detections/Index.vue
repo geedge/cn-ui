@@ -67,7 +67,7 @@
                 <div class="no-data chart-content" >No data</div>
               </template>
               <template v-if="!isStatisticsActiveAttackNoData">
-                <div class="chart-content" :id="`detectionActiveAttacker${pageType}`">
+                <div class="chart-content" style="padding-left: 5px;" :id="`detectionActiveAttacker${pageType}`">
                 </div>
               </template>
             </div>
@@ -112,6 +112,7 @@ import { ref } from 'vue'
 import * as echarts from 'echarts'
 import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
+import { reverseSortBy ,sortBy ,extensionEchartY} from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import DetectionNoData from '@/views/detections/DetectionNoData'
 
@@ -538,7 +539,7 @@ export default {
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
-          data.sort(this.sortBy('count'))
+          data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
           offenderIpOption.series[0].data = data.map(d => {
             return [d.count, d.offenderIp]
@@ -550,11 +551,7 @@ export default {
 
       })
     },
-    sortBy (i) {
-      return function (a, b) {
-        return b[i] - a[i]
-      }
-    },
+
     initVictimIpData (params) {
       getData(api.detection[this.pageType].victimIp, params).then(data => {
         /* data = [
@@ -704,14 +701,19 @@ export default {
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           const option = this.$_.cloneDeep(activeAttackBar)
+
+          data.sort(reverseSortBy('count'))
+          data = data.slice(0, 5)
           option.series[0].data = data.map(d => {
             return [d.count, d.name]
           }).reverse()
           detectionChart.setOption(option)
+          extensionEchartY(detectionChart)//y轴标签过长时，鼠标悬浮，显示所有内容
         }
       }).catch(error => {
       })
     },
+
     computeFilterPage (data) {
       return {
         showMore: data.length > 10,
