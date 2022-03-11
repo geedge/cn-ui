@@ -4,11 +4,11 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.location')}}</div>
-        <div class="row__content">{{entityData.ipLocationCountry || '-'}}</div>
+        <div class="row__content">{{ipLocationRegion(entity)}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">ASN</div>
-        <div class="row__content">{{entityData.ipAsn || '-'}}</div>
+        <div class="row__content">{{entity.ipAsn || '-'}}</div>
       </div>
     </div>
   </div>
@@ -252,12 +252,31 @@ export default {
       timer: null
     }
   },
+  computed: {
+    ipLocationRegion () {
+      return function (entityData) {
+        const hasProvinceAndCity = entityData.ipLocationProvince && entityData.ipLocationCity &&
+            entityData.ipLocationProvince !== 'null' && entityData.ipLocationCity !== 'null'
+        const hasProvince = entityData.ipLocationProvince && entityData.ipLocationProvince !== 'null'
+        const hasCity = entityData.ipLocationCity && entityData.ipLocationCity !== 'null'
+        if (hasProvinceAndCity) {
+          return `${entityData.ipLocationProvince}, ${entityData.ipLocationCity}`
+        } else if (hasProvince) {
+          return entityData.ipLocationProvince
+        } else if (hasCity) {
+          return entityData.ipLocationCity
+        } else {
+          return '-'
+        }
+      }
+    }
+  },
   methods: {
     getQueryParams () {
       const queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000),
-        ip: this.entityData.ipAddr
+        ip: this.entity.ipAddr
       }
       return queryParams
     },
@@ -271,24 +290,10 @@ export default {
           this.chartData = response.data.result
         }
       })
-    }
-  },
-  watch: {
-    entityData: {
-      deep: true,
-      handler (n) {
-        if (n) {
-          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
-          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
-          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
-          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
-          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
-          this.$nextTick(() => {
-            this.getRelatedServerDataOne(this.relatedServerDomainUrl)
-            this.getRelatedServerDataTow(this.relatedServerAppUrl)
-          })
-        }
-      }
+    },
+    queryRelated () {
+      this.getRelatedServerDataOne(this.relatedServerDomainUrl)
+      this.getRelatedServerDataTwo(this.relatedServerAppUrl)
     }
   },
   mounted () {

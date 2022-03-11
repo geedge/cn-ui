@@ -264,7 +264,7 @@ export default {
       const queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000),
-        appName: this.entityData.appName
+        appName: this.entity.appName
       }
       return queryParams
     },
@@ -278,25 +278,10 @@ export default {
           this.chartData = response.data.result
         }
       })
-    }
-  },
-  watch: {
-    entityData: {
-      immediate: true,
-      deep: true,
-      handler (n) {
-        if (n) {
-          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
-          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
-          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
-          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
-          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
-          this.$nextTick(() => {
-            this.getRelatedServerDataOne(this.relatedServerDomainUrl)
-            this.getRelatedServerDataTow(this.relatedServerIpUrl)
-          })
-        }
-      }
+    },
+    queryRelated () {
+      this.getRelatedServerDataOne(this.relatedServerDomainUrl)
+      this.getRelatedServerDataTwo(this.relatedServerIpUrl)
     }
   },
   mounted () {

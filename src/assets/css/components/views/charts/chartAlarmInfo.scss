@@ -66,6 +66,10 @@
                         align-items: center;
                         flex-wrap: wrap;
 
+                        &>div {
+                            margin-bottom: 4px;
+                        }
+
                         .cn-alarm-info-bottom-middle {
                             display: flex;
                             margin-left: 20px;

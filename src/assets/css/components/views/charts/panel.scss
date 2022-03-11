@@ -213,7 +213,8 @@
         &>.cn-chart {
           position: relative;
           border-radius: 2px;
-          height: 100%;
+          flex-grow: 1;
+          overflow: auto;
           width: 100%;
           .chart-drawing {
             height: 100%;

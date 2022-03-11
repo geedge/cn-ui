@@ -272,7 +272,7 @@ export default {
       const queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000),
-        domain: this.entityData.domainName
+        domain: this.entity.domainName
       }
       return queryParams
     },
@@ -290,28 +290,21 @@ export default {
     getBasicProperties () {
       get(this.basicProperties, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          this.entityData = response.data.result
+          this.entityData = {
+            ...this.entityData,
+            domainCategory: response.data.result.domainCategory,
+            domainCategoryGroup: response.data.result.domainCategoryGroup,
+            domainDescription: response.data.result.domainDescription,
+            domainReputationScore: response.data.result.domainReputationScore,
+            domainWhoisAddress: response.data.result.domainWhoisAddress,
+            domainWhoisOrg: response.data.result.domainWhoisOrg
+          }
         }
       })
-    }
-  },
-  watch: {
-    entityData: {
-      immediate: true,
-      deep: true,
-      handler (n) {
-        if (n) {
-          this.singleValues.chartDatas.splice(0, 1, this.$_.get(n, 'establishLatency'))
-          this.singleValues.chartDatas.splice(1, 1, this.$_.get(n, 'httpResponseLatency'))
-          this.singleValues.chartDatas.splice(2, 1, this.$_.get(n, 'sslConLatency'))
-          this.singleValues.chartDatas.splice(3, 1, this.$_.get(n, 'sequenceGapLossPercent'))
-          this.singleValues.chartDatas.splice(4, 1, this.$_.get(n, 'pktRetransPercent'))
-          this.$nextTick(() => {
-            this.getRelatedServerDataOne(this.relatedServerAppUrl)
-            this.getRelatedServerDataTow(this.relatedServerIpUrl)
-          })
-        }
-      }
+    },
+    queryRelated () {
+      this.getRelatedServerDataOne(this.relatedServerAppUrl)
+      this.getRelatedServerDataTwo(this.relatedServerIpUrl)
     }
   },
   mounted () {

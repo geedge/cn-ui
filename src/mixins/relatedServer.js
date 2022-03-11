@@ -24,7 +24,7 @@ export default {
         }
       })
     },
-    getRelatedServerDataTow (relationshipUrlTow, refTow) {
+    getRelatedServerDataTwo (relationshipUrlTow, refTow) {
       get(relationshipUrlTow, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           const relationshipDataTwo = response.data.result
