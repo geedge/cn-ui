@@ -437,6 +437,7 @@ export default {
       ),
       isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type),
       isAlarmInfo: isAlarmInfo(props.chartInfo.type),
+      
     }
   },
 }

@@ -1,106 +1,107 @@
 <template>
   <div class="cn-chart-alarm-info">
-    <div class="cn-chart-alarm-info-mainContent">
-      <div
-        class="cn-chart-alarm-content"
-        v-for="(value, index) in chartData ? chartData : []"
-        :key="index"
-      >
-        <div class="cn-alarm-info-main">
-          <div class="cn-alarm-info-main-left">
-            <div
-              class="cn-chart-alarm-info-icon"
-              :style="{
-                background: eventSeverityColor[value.eventSeverity],
-                opacity: 0.1,
-              }"
-            ></div>
-            <i
-              class="cn-icon cn-icon-alert"
-              :style="{
-                color: eventSeverityColor[value.eventSeverity],
-                opacity: 1,
-              }"
-            ></i>
-          </div>
-          <div class="cn-alarm-info-textContent">
-            <div class="cn-alarm-info-main-title" >
-              <div v-if="value.entityType === 'domain'" :title="value.domain" >
-              <span >{{
-                value.domain
-              }}</span>
-              </div>
-              <div v-if="value.entityType === 'app'" :title="value.appName" >
-              <span >{{ value.appName }}</span>
-              </div>
-              <div v-if="value.entityType === 'ip'" :title="value.serverIp" >
-              <span >{{ value.serverIp }}</span>
-              </div>
-            </div>
-
-            <div class="cn-alarm-info-bottom">
+    <div class="no-data" v-if="isNoData">No data</div>
+    <template v-else>
+      <div class="cn-chart-alarm-info-mainContent">
+        <div
+          class="cn-chart-alarm-content"
+          v-for="(value, index) in chartData ? chartData : []"
+          :key="index"
+        >
+          <div class="cn-alarm-info-main">
+            <div class="cn-alarm-info-main-left">
               <div
-                class="cn-alarm-info-bottom-type"
+                class="cn-chart-alarm-info-icon"
+                :style="{
+                  background: eventSeverityColor[value.eventSeverity],
+                  opacity: 0.1,
+                }"
+              ></div>
+              <i
+                class="cn-icon cn-icon-alert"
                 :style="{
                   color: eventSeverityColor[value.eventSeverity],
-                  'border-color': eventSeverityColor[value.eventSeverity],
+                  opacity: 1,
                 }"
-                :title="value.eventType"
-              >
-                {{ value.eventType }}
-              </div>
-              <div class="cn-alarm-info-bottom-middle">
-                <i class="cn-icon cn-icon-time2"></i>
-
-                <div class="cn-alarm-info-bottom-time">
-                  &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
+              ></i>
+            </div>
+            <div class="cn-alarm-info-textContent">
+              <div class="cn-alarm-info-main-title">
+                <div v-if="value.entityType === 'domain'" :title="value.domain">
+                  <span>{{ value.domain }}</span>
                 </div>
-                <div>
-                  {{
-                    value.startTime
-                      ? dayJs
-                          .tz(getMillisecond(value.startTime))
-                          .format('YYYY-MM-DD HH:mm:ss')
-                      : '-'
-                  }}
+                <div v-if="value.entityType === 'app'" :title="value.appName">
+                  <span>{{ value.appName }}</span>
+                </div>
+                <div v-if="value.entityType === 'ip'" :title="value.serverIp">
+                  <span>{{ value.serverIp }}</span>
                 </div>
               </div>
-              &nbsp;&nbsp;&nbsp;
 
-              <div class="cn-alarm-info-bottom-right">
-                <i class="cn-icon cn-icon-time2"></i>
-                <div class="cn-alarm-info-bottom-time">
-                  &nbsp;{{ $t(`dns.duration`) }}:&nbsp;&nbsp;&nbsp;
-                </div>
-
+              <div class="cn-alarm-info-bottom">
                 <div
-                  class="cn-alarm-info-bottom-circle"
+                  class="cn-alarm-info-bottom-type"
                   :style="{
-                    background: eventSeverityColor[value.eventSeverity],
+                    color: eventSeverityColor[value.eventSeverity],
+                    'border-color': eventSeverityColor[value.eventSeverity],
                   }"
-                ></div>
+                  :title="value.eventType"
+                >
+                  {{ value.eventType }}
+                </div>
+                <div class="cn-alarm-info-bottom-middle">
+                  <i class="cn-icon cn-icon-time2"></i>
+
+                  <div class="cn-alarm-info-bottom-time">
+                    &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
+                  </div>
+                  <div>
+                    {{
+                      value.startTime
+                        ? dayJs
+                            .tz(getMillisecond(value.startTime))
+                            .format('YYYY-MM-DD HH:mm:ss')
+                        : '-'
+                    }}
+                  </div>
+                </div>
                 &nbsp;&nbsp;&nbsp;
-                <div>
-                  {{
-                    unitConvert(value.endTime - value.startTime, 'time').join(
-                      ' ',
-                    )
-                  }}
+
+                <div class="cn-alarm-info-bottom-right">
+                  <i class="cn-icon cn-icon-time2"></i>
+                  <div class="cn-alarm-info-bottom-time">
+                    &nbsp;{{ $t(`dns.duration`) }}:&nbsp;&nbsp;&nbsp;
+                  </div>
+
+                  <div
+                    class="cn-alarm-info-bottom-circle"
+                    :style="{
+                      background: eventSeverityColor[value.eventSeverity],
+                    }"
+                  ></div>
+                  &nbsp;&nbsp;&nbsp;
+                  <div>
+                    {{
+                      unitConvert(value.endTime - value.startTime, 'time').join(
+                        ' ',
+                      )
+                    }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <chart-table-pagination
-      ref="tablePagination"
-      class="cn-chart-alarm-info-pagination"
-      :total="alarmInfoCount.result"
-      :pageSizeForAlarm="pageSizeForAlarm"
-      v-model:currentPage="pageNo"
-      @pageJump="pageJump"
-    ></chart-table-pagination>
+      <chart-table-pagination
+        ref="tablePagination"
+        class="cn-chart-alarm-info-pagination"
+        :total="alarmInfoCount.result"
+        :pageSizeForAlarm="pageSizeForAlarm"
+        v-model:currentPage="pageNo"
+        @pageJump="pageJump"
+      ></chart-table-pagination>
+    </template>
   </div>
 </template>
 
@@ -127,6 +128,7 @@ export default {
       pageNo: 1,
       alarmInfoCount: {},
       fromChartData: '',
+      isNoData:false
       // result: [
       //   {
       //     entityType: 'ip',
@@ -141,6 +143,15 @@ export default {
       //   },
       // ],
     }
+  },
+  computed: {
+    isNoData() {
+      let isNoData = true
+      if (!this.$_.isEmpty(this.chartData)) {
+        isNoData = false
+      }
+      return isNoData
+    },
   },
   watch: {
     tabHandleClickType: {
