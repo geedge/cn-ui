@@ -66,7 +66,7 @@
 <script>
 import PanelChart from '@/views/charts/PanelChart'
 import VueGridLayout from 'vue-grid-layout'
-import { getGroupHeight, getTypeCategory } from './charts/tools'
+import { getGroupHeight, getTypeCategory, isGroup } from './charts/tools'
 import _ from 'lodash'
 
 export default {
@@ -126,7 +126,7 @@ export default {
           if (item.params.collapse) {
             item.h = 1
           } else {
-            item.h = getGroupHeight(item.children) + 1.5
+            item.h = getGroupHeight(item.children) + 0.4 + 1
           }
         }
       })
@@ -139,13 +139,8 @@ export default {
         const children = parent.children.find(item => item.id === chart.id)
         children.h = chart.h
         children.params = chart.params
-        let sumGroup = 0
-        childrenList.forEach(item => {
-          if (item.type === 94) {
-            sumGroup++
-          }
-        })
-        parent.h = getGroupHeight(childrenList) + sumGroup * 0.5
+        // 第二个是空隙，第三个是标题的高度
+        parent.h = getGroupHeight(childrenList) + 0.4 + 1
         this.copyDataList = [...this.copyDataList]
       }, 100)
     }
