@@ -229,7 +229,7 @@ export const activeAttackBar = {
     },
     show: true,
     className: 'nz-chart-tooltip',
-    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 400px !important'
   },
   xAxis: {
     axisTick: { show: false },
@@ -252,11 +252,15 @@ export const activeAttackBar = {
     axisTick: { show: false },
     axisLine: { show: false },
     axisLabel: {
-      show: true
+      show: true,
+      width:95,
+      overflow:'truncate',
+
     },
     splitLine: {
       show: false
-    }
+    },
+    triggerEvent: true,
   },
   series: [{
     barWidth: 5,

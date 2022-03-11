@@ -5,7 +5,7 @@
 <script>
 import unitConvert from '@/utils/unit-convert'
 import * as echarts from 'echarts'
-import { lineToSpace, sortBy, humpToSpace } from '@/utils/tools'
+import { lineToSpace, reverseSortBy, humpToSpace } from '@/utils/tools'
 import { unitTypes } from '@/utils/constants'
 import chartEchartMixin from './chart-echart-mixin'
 import { isEchartsPie } from './tools'
@@ -68,7 +68,7 @@ export default {
           }
           let chartDataTmp = []
           let otherData = []
-          this.chartData.sort(sortBy('num'))
+          this.chartData.sort(reverseSortBy('num'))
 
           if(this.chartData.length>5){
             chartDataTmp = this.chartData.slice(0, 5)
