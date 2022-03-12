@@ -132,7 +132,8 @@ export default {
       pageObj: {
         pageNo: 1,
         pageSize: defaultPageSize,
-        total: 0
+        total: 0,
+        resetPageNo: true
       },
       q: '',
       detectionPageType,
@@ -1065,9 +1066,13 @@ export default {
         this.q = ''
         this.metaList = []
       }
+      if (this.pageObj.resetPageNo) {
+        this.pageObj.pageNo = 1
+      } else {
+        this.pageObj.resetPageNo = true
+      }
       this.queryFilter()
       this.queryList()
-      this.queryListTotal()
     },
     resetFilterData () {
       this.filterData.securityEvent.forEach(d => {
@@ -1097,9 +1102,6 @@ export default {
         this.initEventTypeData(params)
       }
     },
-    queryListTotal () {
-
-    },
     filter (filterColumn) {
       const params = {}
       params[filterColumn] = this.filterData[this.pageType].find(f => {
@@ -1113,6 +1115,7 @@ export default {
     },
     pageNo (val) {
       this.pageObj.pageNo = val || 1
+      this.pageObj.resetPageNo = false
       this.search(this.metaList, this.q)
     },
     // 点击上一页箭头

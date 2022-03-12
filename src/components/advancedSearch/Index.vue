@@ -20,7 +20,6 @@
         @changeMode="changeMode"
         @search="search"
     ></tag-mode>
-<!--    <div class="search-tip&#45;&#45;error">something error...</div>-->
   </div>
 </template>
 
@@ -102,7 +101,19 @@ export default {
           ElMessage.error(this.$t('tip.invalidExpression'))
         }
       }
+    },
+    enterListener (event) {
+      if (event.keyCode === 13) {
+        this.$refs.tagMode && this.$refs.tagMode.search()
+        this.$refs.textMode && this.$refs.textMode.search()
+      }
     }
+  },
+  mounted () {
+    document.addEventListener('keydown', this.enterListener)
+  },
+  unmounted () {
+    document.removeEventListener('keydown', this.enterListener)
   },
   setup (props) {
     // 默认为文本模式

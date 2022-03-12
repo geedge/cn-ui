@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1645687921203') format('woff2'),
-       url('iconfont.woff?t=1645687921203') format('woff'),
-       url('iconfont.ttf?t=1645687921203') format('truetype');
+  src: url('iconfont.woff2?t=1647073084945') format('woff2'),
+       url('iconfont.woff?t=1647073084945') format('woff'),
+       url('iconfont.ttf?t=1647073084945') format('truetype');
 }
 
 .cn-icon {
@@ -13,6 +13,26 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.cn-icon-intercept:before {
+  content: "\e600";
+}
+
+.cn-icon-fraudulent-app:before {
+  content: "\e601";
+}
+
+.cn-icon-fraudulent-ip:before {
+  content: "\e602";
+}
+
+.cn-icon-fraudulent-domain:before {
+  content: "\e603";
+}
+
+.cn-icon-partly-cloudy:before {
+  content: "\e604";
+}
+
 .cn-icon-detection:before {
   content: "\e766";
 }
@@ -21,7 +41,7 @@
   content: "\e764";
 }
 
-.cn-icon-qingchu:before {
+.cn-icon-clear:before {
   content: "\e765";
 }
 

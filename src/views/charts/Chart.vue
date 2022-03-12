@@ -210,6 +210,11 @@
         :entity="entity"
       >
       </chart-alarm-info>
+      <chart-domain-recursive-resolve
+        :chart-data="chartData"
+        v-else-if="isDomainRecursiveResolve"
+      ></chart-domain-recursive-resolve>
+
     </template>
   </div>
 </template>
@@ -242,6 +247,7 @@ import ChartSanKey from '@/views/charts/charts/ChartSanKey'
 import ChartOneSituationStatistics from '@/views/charts/charts/ChartOneSituationStatistics'
 import ChartTwoSituationStatistics from '@/views/charts/charts/ChartTwoSituationStatistics'
 import ChartAlarmInfo from '@/views/charts/charts/ChartAlarmInfo'
+import ChartDomainRecursiveResolve from '@/views/charts/charts/ChartDomainRecursiveResolve'
 import {
   isEcharts,
   isEchartsLine,
@@ -278,6 +284,7 @@ import {
   isSingleSupportStatistics,
   isTwoSupportStatistics,
   isAlarmInfo,
+  isDomainRecursiveResolve
 } from './charts/tools'
 import _ from 'lodash'
 
@@ -311,6 +318,7 @@ export default {
     ChartOneSituationStatistics,
     ChartTwoSituationStatistics,
     ChartAlarmInfo,
+    ChartDomainRecursiveResolve
   },
   data() {
     return {
@@ -428,17 +436,17 @@ export default {
       isDomainWhois: isDomainWhois(props.chartInfo.type),
       isDomainDnsRecord: isDomainDnsRecord(props.chartInfo.type),
       isCryptocurrencyEventList: isCryptocurrencyEventList(
-        props.chartInfo.type,
+        props.chartInfo.type
       ),
       isAppBasicInfo: isAppBasicInfo(props.chartInfo.type),
       isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
       isSingleSupportStatistics: isSingleSupportStatistics(
-        props.chartInfo.type,
+        props.chartInfo.type
       ),
       isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type),
       isAlarmInfo: isAlarmInfo(props.chartInfo.type),
-      
+      isDomainRecursiveResolve: isDomainRecursiveResolve(props.chartInfo.type)
     }
-  },
+  }
 }
 </script>

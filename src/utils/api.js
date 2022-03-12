@@ -130,13 +130,21 @@ export async function getEntityFilter (params) {
 export async function getDictList (params) {
   return await getData(api.dict, params, true)
 }
-
+function handleResult (response) {
+  if (response.data.list || response.data.result) {
+    return response.data.list || response.data.result
+  } else if (response.data.result === 0) {
+    return response.data.result
+  } else {
+    return response.data
+  }
+}
 export async function getData (url, params = {}, isQueryList) {
   const request = new Promise((resolve, reject) => {
     try {
       get(url, params).then(response => {
         if (response.code === 200) {
-          resolve(isQueryList ? response.data.list || response.data.result : response.data.result || response.data)
+          resolve(handleResult(response))
         } else {
           reject(response)
         }

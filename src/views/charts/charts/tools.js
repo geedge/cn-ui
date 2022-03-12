@@ -167,6 +167,10 @@ export function isSingleSupportStatistics (type) {
 export function isTwoSupportStatistics (type) {
   return type === 87
 }
+/* 域名递归解析 */
+export function isDomainRecursiveResolve (type) {
+  return type === 88
+}
 /* 组 */
 export function isGroup (type) {
   return type === 94
