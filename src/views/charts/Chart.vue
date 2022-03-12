@@ -6,6 +6,7 @@
       <chart-tabs
         v-if="isTabs"
         :chart-info="chartInfo"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         :entity="entity"
       ></chart-tabs>
@@ -14,6 +15,7 @@
         v-else-if="isMap && !isIpBasicInfo"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         :entity="entity"
         @getChartData="getChartData"
@@ -24,14 +26,16 @@
         v-else-if="isSingleValue"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-single-value>
 
       <chart-block
-        v-else-if="isBlock"
         ref="chart"
-        :timeFilter="queryParams"
+        v-else-if="isBlock"
+        :time-filter="timeFilter"
+        :query-params="queryParams"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :entity="entity"
@@ -39,7 +43,8 @@
 
       <chart-group
         v-else-if="isGroup"
-        :timeFilter="queryParams"
+        :query-params="queryParams"
+        :time-filter="timeFilter"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :entity="entity"
@@ -47,6 +52,8 @@
 
       <ip-basic-info
         v-else-if="isIpBasicInfo"
+        :time-filter="timeFilter"
+        :query-params="queryParams"
         :chart-info="chartInfo"
         :chart-data="chartData"
         :entity="entity"
@@ -57,6 +64,7 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :result-type="resultType"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-time-bar>
@@ -66,6 +74,7 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :result-type="resultType"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-category-bar>
@@ -75,6 +84,7 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :result-type="resultType"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-ip-open-port-bar>
@@ -84,6 +94,7 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :table="table"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-table>
@@ -93,6 +104,7 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :table="table"
+        :time-filter="timeFilter"
         :query-params="queryParams"
       ></chart-active-ip-table>
 
@@ -100,6 +112,7 @@
         v-else-if="isAppBasicInfo"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
       ></chart-app-basic-info>
 
@@ -107,6 +120,7 @@
         v-else-if="isDomainWhois"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
       ></chart-domain-whois>
 
@@ -114,6 +128,7 @@
         v-else-if="isDomainDnsRecord"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
       ></chart-domain-dns-record>
 
@@ -121,6 +136,7 @@
         v-else-if="isCryptocurrencyEventList"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
       ></chart-cryptocurrency-event-list>
 
@@ -128,6 +144,7 @@
         v-else-if="isRelationShip"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
       ></chart-relation-ship>
 
@@ -135,6 +152,7 @@
         v-else-if="isSankey"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         :entity="entity"
       ></chart-san-key>
@@ -144,6 +162,8 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :result-type="resultType"
+        :time-filter="timeFilter"
+        :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-echart>
 
@@ -152,6 +172,8 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :result-type="resultType"
+        :time-filter="timeFilter"
+        :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-echart-with-statistics>
 
@@ -160,6 +182,7 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :query-params="queryParams"
+        :time-filter="timeFilter"
         :result-type="resultType"
         :order-pie-table="orderPieTable"
         @showLoading="showLoading"
@@ -167,8 +190,10 @@
 
       <chart-echart-ip-hosted-domain
         v-else-if="isIpHostedDomain"
-        :chart-info="chartInfo"
         :chart-data="chartData"
+        :chart-info="chartInfo"
+        :time-filter="timeFilter"
+        :query-params="queryParams"
         @showLoading="showLoading"
         :entity="entity"
       ></chart-echart-ip-hosted-domain>
@@ -179,6 +204,8 @@
         :chart-data="chartData"
         @showLoading="showLoading"
         :entity="entity"
+        :time-filter="timeFilter"
+        :query-params="queryParams"
       ></chart-echart-app-relate-domain>
 
       <chart-one-Situation-Statistics
@@ -186,14 +213,16 @@
         :chart-info="chartInfo"
         :chart-data="chartData"
         :query-params="queryParams"
-        @showLoading="showLoading"
+        :time-filter="timeFilter"
         :entity="entity"
+        @showLoading="showLoading"
       ></chart-one-Situation-Statistics>
 
       <chart-two-Situation-Statistics
         v-else-if="isTwoSupportStatistics"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         @showLoading="showLoading"
         :entity="entity"
@@ -203,6 +232,7 @@
         v-else-if="isAlarmInfo"
         :chart-info="chartInfo"
         :chart-data="chartData"
+        :time-filter="timeFilter"
         :query-params="queryParams"
         @showLoading="showLoading"
         :tabHandleClickType="tabHandleClickType"
@@ -212,6 +242,8 @@
       </chart-alarm-info>
       <chart-domain-recursive-resolve
         :chart-data="chartData"
+        :time-filter="timeFilter"
+        :query-params="queryParams"
         v-else-if="isDomainRecursiveResolve"
       ></chart-domain-recursive-resolve>
 
@@ -337,8 +369,9 @@ export default {
     entity: Object,
     isError: Boolean,
     table: Object,
+    timeFilter: Object,
     orderPieTable: Object,
-    tabHandleClickType: String,
+    tabHandleClickType: String
   },
   computed: {
     isNoData() {
@@ -389,19 +422,12 @@ export default {
     },
   },
   watch: {
-    chartData: {
-      deep: true,
-      handler(n) {},
-    },
     tabHandleClickType: {
       deep: true,
       handler(n) {
         this.tabHandleClickType = n
       },
-    },
-    queryParams: {
-      deep: true,
-    },
+    }
   },
   setup(props) {
     return {

@@ -146,6 +146,7 @@ export default {
       callback({ startTime: myStartTime, endTime: myEndTime })
     },
     timeRefreshChange () {
+      // 不是自选时间
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)

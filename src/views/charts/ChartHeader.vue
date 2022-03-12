@@ -311,11 +311,12 @@ export default {
       this.$emit('refresh')
     },
     timeRefreshChange() {
+      // 不是自选时间
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.chartTimeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
       } else {
-        this.$emit('refresh')
+        this.$emit('refresh', this.chartTimeFilter)
       }
     },
     reload(s, e, v) {
@@ -326,7 +327,6 @@ export default {
     },
     dateTimeRangeChange(s, e, v) {
       this.chartTimeFilter = { startTime: s, endTime: e, dateRangeValue: v }
-      console.log(this.chartTimeFilter)
       this.$emit('refresh', this.chartTimeFilter)
     },
     tableLimitChange() {

@@ -38,6 +38,7 @@
         :table="table"
         :is-fullscreen="isFullscreen"
         :order-pie-table="orderPieTable"
+        :time-filter="timeFilter"
         @getChartData="getChartData"
         @showLoading="showLoading"
         :tabHandleClickType="tabHandleClickType"
@@ -191,7 +192,7 @@ export default {
           ...this.handleQueryParams(),
           ...this.queryTimeRange,
           ...this.entity,
-          
+
           ...extraParams
         }
         const requestUrl = url || (chartParams && chartParams.url)
@@ -288,13 +289,20 @@ export default {
       this.$refs.chart.resize()
     },
     refresh (chartTimeFilter) {
-      const myEndTime = window.$dayJs.tz().valueOf()
-      const myStartTime = myEndTime - this.chartTimeFilter.dateRangeValue * 60 * 1000
-      this.standaloneTimeRange.use = true
-      this.standaloneTimeRange.startTime = myStartTime
-      this.standaloneTimeRange.endTime = myEndTime
-      this.emitter.emit('chart-pageNo')
-      this.getChartData(null, {}, true, chartTimeFilter)
+      if (chartTimeFilter) {
+        this.timeFilter.startTime = chartTimeFilter.startTime
+        this.timeFilter.endTime = chartTimeFilter.endTime
+        this.timeFilter.dateRangeValue = chartTimeFilter.dateRangeValue
+        this.getChartData(null, {}, true, chartTimeFilter)
+      } else {
+        const myEndTime = window.$dayJs.tz().valueOf()
+        const myStartTime = myEndTime - this.timeFilter.dateRangeValue * 60 * 1000
+        this.standaloneTimeRange.use = true
+        this.standaloneTimeRange.startTime = myStartTime
+        this.standaloneTimeRange.endTime = myEndTime
+        this.emitter.emit('chart-pageNo')
+        this.getChartData(null, {}, true)
+      }
     },
     tabHandleClick (value) {
       this.tabHandleClickType = value
@@ -371,9 +379,6 @@ export default {
   mounted () {
     this.showLoading(true)
     this.getChartData()
-    // setTimeout(() => {
-    //   this.getChartData()
-    // }, 200)
   },
   setup (props) {
     const dateRangeValue = 60
