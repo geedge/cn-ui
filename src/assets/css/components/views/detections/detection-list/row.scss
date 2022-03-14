@@ -1,5 +1,6 @@
 .cn-detection--list {
   display: flex;
+
   .cn-detection__collapse {
     margin-bottom: 1px;
     padding-top: 18px;
@@ -19,6 +20,7 @@
         transform: rotate(90deg);
       }
     }
+
     span:hover {
       cursor: pointer;
     }
@@ -28,6 +30,7 @@
       font-size: 12px;
     }
   }
+
   .cn-detection__case {
     flex: 1;
     display: flex;
@@ -48,6 +51,7 @@
       height: 20px;
       border-radius: 12px;
     }
+
     .cn-detection__row {
       display: flex;
       flex-direction: column;
@@ -63,26 +67,41 @@
         padding-bottom: 3px;
         color: #333333;
         align-items: center;
+
         i {
-          color:#7b8fa2;
+          color: #7b8fa2;
           margin-right: 5px;
-          font-size:18px;
+          font-size: 18px;
         }
+
         .line {
-          color:#da5656;
-          margin-left:12px;
+          color: #da5656;
+          margin-left: 12px;
           font-size: xx-small;
           font-weight: bold;
         }
+
         .circle {
-          width:10px;
-          height:10px;
-          border:2px solid #da5656;
+          width: 10px;
+          height: 10px;
+          border: 2px solid #da5656;
           border-radius: 10px;
           margin-top: 4px;
-          margin-right:12px;
+          margin-right: 12px;
+        }
+
+        .domain {
+          background: #EFF2F5;
+          border-radius: 2px;
+          font-family: Roboto-Italic;
+          font-size: 14px;
+          color: #333333;
+          letter-spacing: 0;
+          line-height: 14px;
+          font-weight: 400;
         }
       }
+
       .cn-detection__body {
         display: flex;
         flex-direction: column;
@@ -101,22 +120,27 @@
               padding-right: 40px;
               display: flex;
               align-items: center;
+
               i {
                 padding-right: 6px;
                 color: #8FA1BE;
                 font-size: 14px;
               }
+
               span {
                 font-size: 14px;
               }
+
               span:first-of-type {
                 color: #999;
               }
+
               span:last-of-type {
                 color: #666;
               }
             }
           }
+
           .show-detail {
             flex-shrink: 0;
             padding: 0 30px;
@@ -130,6 +154,7 @@
         }
       }
     }
+
     .cn-detection__detail-overview {
       flex-basis: 100%;
       padding: 0 10px;

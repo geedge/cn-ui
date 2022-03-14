@@ -11,6 +11,7 @@
           <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp || '-'}}
           <span class="line">-------</span>
           <span class="circle"></span>
+          <span class="domain">{{detection.domain }}</span>
           <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp || '-'}}
         </div>
         <div class="cn-detection__header" v-else-if="pageType === detectionPageType.performanceEvent">

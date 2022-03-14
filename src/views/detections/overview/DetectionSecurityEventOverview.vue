@@ -104,11 +104,18 @@
     <div class="overview__right">
       <div class="overview__title">{{$t('detections.goToVictim')}}</div>
       <div class="overview__row">
-        <div class="row__content row__content--link">{{$t('detections.viewDetailOf', {ip: basicInfo.victimIp})}}</div>
+        <div class="row__content">
+          <span >{{$t('detections.viewDetailOf')}}</span> &nbsp;
+          <span class="row__content--link" @click="goDetail('ip',basicInfo.victimIp)">{{basicInfo.victimIp}}</span>
+          </div>
       </div>
       <div class="overview__title">{{$t('detections.goToOffender')}}</div>
       <div class="overview__row">
-        <div class="row__content row__content--link">{{$t('detections.viewDetailOf', {ip: basicInfo.offenderIp})}}</div>
+        <div class="row__content ">
+          <span>{{$t('detections.viewDetailOf')}}</span> &nbsp;
+          <span class="row__content--link" @click="goDetail('ip',basicInfo.offenderIp)">{{basicInfo.offenderIp}}</span>
+          <span class="row__content--link" @click="goDetail('domain',basicInfo.domain)">{{basicInfo.domain}}</span>
+          </div>
       </div>
       <div class="overview__title">{{$t('detections.goToHunt')}}</div>
       <div class="overview__row">
@@ -230,6 +237,16 @@ export default {
           reject(e)
         }
       })
+    },
+    goDetail(type,name){
+      const { href } = this.$router.resolve({
+        path: '/entityDetail',
+        query: {
+          entityType: type,
+          name: name
+        }
+      })
+      window.open(href, '_blank')
     }
   },
   mounted () {

@@ -36,12 +36,22 @@
       .row__content {
         display: flex;
         color: #3976CB;
-
+        
         &.row__content--link {
           font-style: italic;
           text-decoration: underline;
           color: #1890FF;
           cursor: pointer;
+        }
+        .row__content--link{
+          font-style: italic;
+          text-decoration: underline;
+          color: #1890FF;
+          cursor: pointer;
+        }
+        span{
+          font-style: italic;
+          color: #1890FF;
         }
       }
     }
