@@ -79,9 +79,19 @@ export default {
       this.$emit('showLoading', true)
       try {
         this.myChart.setOption(this.chartOption)
+        this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart))
         if (chartNum && chartNum == 2) {
           this.myChart2.setOption(this.chartOption)
+          this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart2))
         }
+        let _this = this
+        window.addEventListener("resize", function(){
+          _this.$store.getters.getChartList.forEach(chart =>{
+            if(chart){
+              chart.resize()
+            }
+          })
+        });
       } finally {
         setTimeout(() => {
           this.$emit('showLoading', false)
