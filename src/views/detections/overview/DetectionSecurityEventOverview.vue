@@ -11,7 +11,7 @@
               >{{ detection.victimIp }}</span
             >&nbsp;
             <span>
-              attempted to access a command&control server (C&C) indicated by
+              {{$t('detection.commandAndControl')}}
             </span>
             <span class="row__content--link">{{
               detection.iocValue
@@ -24,8 +24,7 @@
               >{{ detection.victimIp }}</span
             >&nbsp;
             <span>
-              attempted to access a malware distribution server (payload
-              delivery) indicated by
+              {{$t('detection.payloadAndDelivery')}}
             </span>
             <span class="row__content--link">{{
               detection.iocValue

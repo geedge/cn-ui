@@ -6,22 +6,22 @@
         <div class="row__content">
           <span
               class="row__content--link"
-              @click="goDetail('app', detection.app_name)"
-              >{{ detection.app_name }}</span
+              @click="goDetail('app', detection.appName)"
+              >{{ detection.appName }}</span
             >
             <template v-if="detection.eventType === 'dns error'">
             <span>
-              ’s rate of DNS query errors is abnormally high.
+              {{$t('detections.dnsQueryError')}}
             </span>
           </template>
           <template v-if="detection.eventType === 'http error'">
             <span>
-              ’s rate of HTTP query errors is abnormally high.
+              {{$t('detections.httpQueryError')}}
             </span>
           </template>
           <template v-if="detection.eventType === 'high dns response time'">
             <span>
-              ’s average of DNS response time is abnormally high.
+              {{$t('detections.responseTime')}}
             </span>
           </template>
         </div>
