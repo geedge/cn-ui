@@ -3,7 +3,28 @@
     <div class="overview__left">
       <div class="overview__title">{{$t('overall.remark')}}</div>
       <div class="overview__row">
-        <div class="row__content">{{basicInfo.malwareDescription || '-'}}</div>
+        <div class="row__content">
+          <span
+              class="row__content--link"
+              @click="goDetail('app', detection.app_name)"
+              >{{ detection.app_name }}</span
+            >
+            <template v-if="detection.eventType === 'dns error'">
+            <span>
+              ’s rate of DNS query errors is abnormally high.
+            </span>
+          </template>
+          <template v-if="detection.eventType === 'http error'">
+            <span>
+              ’s rate of HTTP query errors is abnormally high.
+            </span>
+          </template>
+          <template v-if="detection.eventType === 'high dns response time'">
+            <span>
+              ’s average of DNS response time is abnormally high.
+            </span>
+          </template>
+        </div>
       </div>
       <div class="overview__title">Fields</div>
       <div class="overview__row">
@@ -89,7 +110,17 @@ export default {
           reject(e)
         }
       })
-    }
+    },
+    goDetail(type, name) {
+      const { href } = this.$router.resolve({
+        path: '/entityDetail',
+        query: {
+          entityType: type,
+          name: name,
+        },
+      })
+      window.open(href, '_blank')
+    },
   },
   mounted () {
     this.query()
