@@ -167,6 +167,10 @@ export function isSingleSupportStatistics (type) {
 export function isTwoSupportStatistics (type) {
   return type === 87
 }
+/* 域名递归解析 */
+export function isDomainRecursiveResolve (type) {
+  return type === 88
+}
 /* 组 */
 export function isGroup (type) {
   return type === 94
@@ -219,7 +223,16 @@ export function getLayout (type) {
 
 export function getGroupHeight (arr) {
   if (arr.length) {
-    let lastItem = []
+    let minYArr = [...arr]
+    minYArr.sort((a, b) => {
+      return a.y - b.y
+    })
+    let maxYArr = [...arr]
+    maxYArr.sort((a, b) => {
+      return (b.y + b.h) - (a.y + a.h)
+    })
+    return maxYArr[0].y + maxYArr[0].h - minYArr[0].y
+    /*let lastItem = []
     let maxY = arr[0].y
     arr.forEach((children, index) => {
       if (maxY === children.y) {
@@ -238,7 +251,7 @@ export function getGroupHeight (arr) {
     if (maxY < 0) {
       maxY = 0
     }
-    return maxHeight + maxY
+    return maxHeight + maxY*/
   } else {
     return 1
   }

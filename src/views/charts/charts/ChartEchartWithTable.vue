@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     handleQueryParams (queryParams) {
-      this.timeFilter = {
+      return this.timeFilter = {
         startTime: Number(queryParams.startTime) * 1000,
         endTime: Number(queryParams.endTime) * 1000
       }

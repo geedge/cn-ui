@@ -308,6 +308,12 @@ export default {
       })
     }
   },
+  mounted () {
+    const vm = this
+    this.emitter.on('advanced-search', function () {
+      vm.search()
+    })
+  },
   watch: {
     convertMetaList: {
       immediate: true,

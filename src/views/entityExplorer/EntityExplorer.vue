@@ -157,6 +157,8 @@ export default {
 
       pageObj: {
         pageNo: 1,
+        // 是否重置pageNo，在执行新搜索时是true
+        resetPageNo: true,
         pageSize: defaultPageSize,
         total: 0
       },
@@ -482,6 +484,11 @@ export default {
       if (!this.showList) {
         this.showList = true
       }
+      if (this.pageObj.resetPageNo) {
+        this.pageObj.pageNo = 1
+      } else {
+        this.pageObj.resetPageNo = true
+      }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
       if (formatSql) {
         // entity_type处理，不查其他两种entity_type对应的左侧筛选
@@ -529,6 +536,7 @@ export default {
     },
     pageNo (val) {
       this.pageObj.pageNo = val
+      this.pageObj.resetPageNo = false
       this.search(this.metaList, this.q)
     },
     // 点击上一页箭头
@@ -558,6 +566,9 @@ export default {
         value: name
       }
       this.$refs.search.addParams([params])
+      this.$nextTick(() => {
+        this.emitter.emit('advanced-search')
+      })
     },
     /* 查询filter数据 */
     queryFilter (params) {

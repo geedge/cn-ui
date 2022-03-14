@@ -410,3 +410,14 @@ export const iso36112 = {
   SZ: 'eswatiniLow',
   MN: 'mongoliaLow'
 }
+
+export const reg = {
+  // 不严格ipv4
+  notStrictIpv4: /(?:[0-9]{1,}\.){0,}[0-9]{1,}(\.)?/g,
+  // 不严格Ipv4带单引号
+  notStrictWithQuotIpv4: /'(?:[0-9]{1,}\.){0,}[0-9]{1,}(\.)?'/g,
+  // 不严格ipv6
+  notStrictIpv6: /(:{0,}[a-fA-F\d]{0,}){0,}:+([a-fA-F\d]{0,}:{0,}){0,}/g,
+  // 不严格Ipv6带单引号
+  notStrictWithQuotIpv6: /'(:{0,}[a-fA-F\d]{0,}){0,}:+([a-fA-F\d]{0,}:{0,}){0,}'/g
+}

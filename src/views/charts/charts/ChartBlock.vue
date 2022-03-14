@@ -14,9 +14,6 @@ import chartMixin from '@/views/charts/charts/chart-mixin'
 export default {
   name: 'ChartBlock',
   mixins: [chartMixin],
-  props: {
-    timeFilter: Object
-  },
   data () {
     return {
       dataList: [],
@@ -26,14 +23,11 @@ export default {
   },
   mounted () {
     this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
-    // this.time = JSON.parse(JSON.stringify(this.timeFilter))
     this.firstShow = true
   },
   methods: {
     reload () {
-      console.log(123132)
       this.dataList = JSON.parse(JSON.stringify(this.chartInfo.children))
-      // this.time = JSON.parse(JSON.stringify(this.timeFilter))
     }
   }
 }

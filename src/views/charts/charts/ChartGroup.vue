@@ -1,6 +1,7 @@
 <template>
   <panel-chart-list
       :time-filter="timeFilter"
+      :query-params="queryParams"
       :data-list="chartInfo.children"
       :panel-lock="true"
       :entity="entity"
@@ -15,10 +16,8 @@ export default {
   name: 'ChartGroup',
   mixins: [chartMixin],
   props: {
-    timeFilter: Object
-  },
-  mounted () {
-    console.info(this.chartInfo)
+    timeFilter: Object,
+    queryParams: Object
   }
 }
 </script>

@@ -23,6 +23,7 @@ import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import { columnType } from '@/components/advancedSearch/meta/meta'
 import { ElMessage } from 'element-plus'
+import { reg } from '@/utils/constants'
 
 export default {
   name: 'TextMode',
@@ -53,7 +54,20 @@ export default {
     search () {
       let originalSql = this.codeMirror.getValue()
       if (originalSql) {
-        originalSql = originalSql.replace(/"/g, '')
+        originalSql = originalSql.replaceAll(/"/g, '')
+        // 为解决ip无法校验通过的问题，先将带引号的ip转为不带引号的，再把不带引号的转为带引号的
+        originalSql = originalSql.replaceAll(reg.notStrictWithQuotIpv4, function (word) {
+          return word.replaceAll(/'/g, '')
+        })
+        originalSql = originalSql.replaceAll(reg.notStrictIpv4, function (word) {
+          return `'${word}'`
+        })
+        originalSql = originalSql.replaceAll(reg.notStrictWithQuotIpv6, function (word) {
+          return word.replaceAll(/'/g, '')
+        })
+        originalSql = originalSql.replaceAll(reg.notStrictIpv6, function (word) {
+          return `'${word}'`
+        })
         const parser = new SqlParser(originalSql, this.columnList)
         const errorList = parser.validate()
         if (this.$_.isEmpty(errorList)) {
@@ -144,6 +158,10 @@ export default {
   },
   mounted () {
     this.initCodeMirror()
+    const vm = this
+    this.emitter.on('advanced-search', function () {
+      vm.search()
+    })
   }
 }
 </script>
