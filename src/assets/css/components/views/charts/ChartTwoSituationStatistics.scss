@@ -1,18 +1,18 @@
 
-.chart-two-situation-statistics{
+.cn-chart__two-situation-statistics{
     padding-top: 22px;
-    .chart-two-situation-statistics-top {
+    .box__body {
         display: flex;
         align-items: center;
         margin-left: 33px;
         padding-top: 22px;
-        .chart-two-situation-statistics-main-left{
+        .body__progress{
             display: block;
             .el-progress__text span{
                 font-size: 16px;
             }
         }
-        .chart-two-situation-statistics-main-right{
+        .body__count{
             margin-left: 22px;
             :first-child{
                 font-size: 18px;

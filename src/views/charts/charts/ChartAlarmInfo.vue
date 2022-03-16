@@ -1,17 +1,17 @@
 <template>
-  <div class="cn-chart-alarm-info">
+  <div class="cn-chart__alarm-info">
     <div class="no-data" v-if="isNoData">No data</div>
     <template v-else>
-      <div class="cn-chart-alarm-info-mainContent">
+      <div class="alarm-info__box">
         <div
-          class="cn-chart-alarm-content"
+          class="box__body"
           v-for="(value, index) in chartData ? chartData : []"
           :key="index"
         >
-          <div class="cn-alarm-info-main">
-            <div class="cn-alarm-info-main-left">
+          <div class="body__content">
+            <div class="content__icon-box">
               <div
-                class="cn-chart-alarm-info-icon"
+                class="icon-box__icon"
                 :style="{
                   background: eventSeverityColor[value.eventSeverity],
                   opacity: 0.1,
@@ -25,8 +25,8 @@
                 }"
               ></i>
             </div>
-            <div class="cn-alarm-info-textContent">
-              <div class="cn-alarm-info-main-title">
+            <div class="content__text-box">
+              <div class="text-box__title">
                 <div v-if="value.entityType === 'domain'" :title="value.domain">
                   <span>{{ value.domain }}</span>
                 </div>
@@ -38,9 +38,9 @@
                 </div>
               </div>
 
-              <div class="cn-alarm-info-bottom">
+              <div class="text-box__text">
                 <div
-                  class="cn-alarm-info-bottom-type"
+                  class="text__type"
                   :style="{
                     color: eventSeverityColor[value.eventSeverity],
                     'border-color': eventSeverityColor[value.eventSeverity],
@@ -49,10 +49,10 @@
                 >
                   {{ value.eventType }}
                 </div>
-                <div class="cn-alarm-info-bottom-middle">
+                <div class="text__time-box">
                   <i class="cn-icon cn-icon-time2"></i>
 
-                  <div class="cn-alarm-info-bottom-time">
+                  <div class="time-box__start-time">
                     &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
                   </div>
                   <div>
@@ -67,14 +67,14 @@
                 </div>
                 &nbsp;&nbsp;&nbsp;
 
-                <div class="cn-alarm-info-bottom-right">
+                <div class="text__duration-box">
                   <i class="cn-icon cn-icon-time2"></i>
-                  <div class="cn-alarm-info-bottom-time">
+                  <div class="time-box__start-time">
                     &nbsp;{{ $t(`dns.duration`) }}:&nbsp;&nbsp;&nbsp;
                   </div>
 
                   <div
-                    class="cn-alarm-info-bottom-circle"
+                    class="duration-box__circle"
                     :style="{
                       background: eventSeverityColor[value.eventSeverity],
                     }"
@@ -95,7 +95,7 @@
       </div>
       <chart-table-pagination
         ref="tablePagination"
-        class="cn-chart-alarm-info-pagination"
+        class="alarm-info__pagination"
         :total="alarmInfoCount.result"
         :pageSizeForAlarm="pageSizeForAlarm"
         v-model:currentPage="pageNo"

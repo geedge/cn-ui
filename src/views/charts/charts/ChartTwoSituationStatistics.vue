@@ -1,12 +1,12 @@
 <template>
-  <div class="chart-two-situation-statistics">
+  <div class="cn-chart__two-situation-statistics">
     <div
-      class="chart-two-situation-statistics-main"
+      class="two-situation-statistics__box"
       v-for="(value, key,index) in result ? result : []"
       :key="index"
     >
-      <div class="chart-two-situation-statistics-top">
-        <div class="chart-two-situation-statistics-main-left">
+      <div class="box__body">
+        <div class="body__progress">
           <el-progress
             type="circle"
             :color="chartInfo.params.color[index]"
@@ -14,7 +14,7 @@
             :percentage="value.percent ? value.percent : 0"
           />
         </div>
-        <div class="chart-two-situation-statistics-main-right">
+        <div class="body__count">
           <div>{{ value.count ? value.count : '-' }}</div>
           <div>{{ $t(`dns.numberOfNodesSupporting${key}Protocol`) }}</div>
         </div>

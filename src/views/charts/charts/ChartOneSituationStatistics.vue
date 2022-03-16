@@ -1,7 +1,7 @@
 <template>
-  <div class="chart-one-situation-statistics">
-    <div class="situation-statistics-main">
-      <div class="situation-statistics-main-left">
+  <div class="cn-chart__one-situation-statistics">
+    <div class="one-situation-statistics__box">
+      <div class="box__progress">
         <el-progress
           type="circle"
           :color="chartInfo.params.color"
@@ -9,9 +9,9 @@
           :percentage="$_.get(chartData, 'percent', '-') "
         />
       </div>
-      <div class="situation-statistics-main-right">
+      <div class="box__count">
         <div> {{ $_.get(chartData, 'count', '-') }} </div>
-        <div class="situation-statistic-main-right-font">{{ $t(`dns.numberOfNodes`) }}</div>
+        <div>{{ $t(`dns.numberOfNodes`) }}</div>
       </div>
     </div>
   </div>

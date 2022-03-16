@@ -208,7 +208,7 @@
         :query-params="queryParams"
       ></chart-echart-app-relate-domain>
 
-      <chart-one-Situation-Statistics
+      <chart-one-situation-statistics
         v-else-if="isSingleSupportStatistics"
         :chart-info="chartInfo"
         :chart-data="chartData"
@@ -216,9 +216,9 @@
         :time-filter="timeFilter"
         :entity="entity"
         @showLoading="showLoading"
-      ></chart-one-Situation-Statistics>
+      ></chart-one-situation-statistics>
 
-      <chart-two-Situation-Statistics
+      <chart-two-situation-statistics
         v-else-if="isTwoSupportStatistics"
         :chart-info="chartInfo"
         :chart-data="chartData"
@@ -226,7 +226,7 @@
         :query-params="queryParams"
         @showLoading="showLoading"
         :entity="entity"
-      ></chart-two-Situation-Statistics>
+      ></chart-two-situation-statistics>
 
       <chart-alarm-info
         v-else-if="isAlarmInfo"
