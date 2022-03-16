@@ -22,10 +22,10 @@
         <div class="row__label row__label--width130">{{$t('entities.org')}}</div>
         <div class="row__content">{{entityData.domainWhoisOrg || '-'}}</div>
       </div>
-      <div class="overview__row">
-        <div class="row__label row__label--width130">{{$t('overall.remark')}}</div>
+<!--      <div class="overview__row">
+        <div class="row__label row__label&#45;&#45;width130">{{$t('overall.remark')}}</div>
         <div class="row__content">{{entityData.domainDescription || '-'}}</div>
-      </div>
+      </div>-->
     </div>
   </div>
   <div class="overview-item">

@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow-y: auto; height: 100%; color: #555;">{{linuxLineSymbolConvert}}</div>
+  <div style="overflow-y: auto; height: 100%; color: #555; white-space: pre;">{{linuxLineSymbolConvert}}</div>
 </template>
 
 <script>

@@ -379,6 +379,7 @@ export default {
   mounted () {
     this.showLoading(true)
     this.getChartData()
+    this.$store.commit('cleanChartList')
   },
   setup (props) {
     const dateRangeValue = 60

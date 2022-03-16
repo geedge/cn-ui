@@ -14,7 +14,8 @@ const panel = {
     chartLastPosition: {
       x: 0,
       y: 0
-    }
+    },
+    chartList:[]
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -55,6 +56,12 @@ const panel = {
     },
     setChartListId (state, id) {
       state.chartListId = id
+    },
+    setChartList (state, chart) {
+      state.chartList.push(chart)
+    },
+    cleanChartList (state) {
+      state.chartList = []
     }
   },
   getters: {
@@ -93,6 +100,9 @@ const panel = {
     },
     getChartListId (state, id) {
       return state.chartListId
+    },
+    getChartList (state) {
+      return state.chartList
     }
   },
   actions: {
