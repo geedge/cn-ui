@@ -72,7 +72,7 @@ export default {
               this.entityData.max = t.aggregation.max
               this.entityData.avg = t.aggregation.avg
             } else if (t.legend === 'bytesSentRate') {
-              this.entityData.bytesSentRate = _.nth(t.values,-3)[1]
+              this.entityData.bytesSentRate = _.nth(t.values, -3)[1]
               this.chartOptionSent = {
                 ...this.chartOption,
                 series: [
@@ -88,7 +88,7 @@ export default {
                       }
                     },
                     color: '#69b072',
-                    data: _.dropRight(t.values,2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                    data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
                     showSymbol: false
                   }
                 ]

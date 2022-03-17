@@ -37,12 +37,12 @@ export default {
       }
     }
   },
-  watch:{
-    pageSizeForAlarm:{
-      deep:true,
+  watch: {
+    pageSizeForAlarm: {
+      deep: true
     },
-    total:{
-      deep:true,
+    total: {
+      deep: true
     }
   },
   methods: {

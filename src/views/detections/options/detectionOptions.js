@@ -104,7 +104,7 @@ export const multipleBarOption = {
     {
       name: 'critical',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -117,7 +117,7 @@ export const multipleBarOption = {
     {
       name: 'high',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -130,7 +130,7 @@ export const multipleBarOption = {
     {
       name: 'medium',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -143,7 +143,7 @@ export const multipleBarOption = {
     {
       name: 'low',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -156,7 +156,7 @@ export const multipleBarOption = {
     {
       name: 'info',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -253,14 +253,14 @@ export const activeAttackBar = {
     axisLine: { show: false },
     axisLabel: {
       show: true,
-      width:95,
-      overflow:'truncate',
+      width: 95,
+      overflow: 'truncate'
 
     },
     splitLine: {
       show: false
     },
-    triggerEvent: true,
+    triggerEvent: true
   },
   series: [{
     barWidth: 5,

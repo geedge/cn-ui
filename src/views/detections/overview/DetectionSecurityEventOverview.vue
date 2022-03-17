@@ -173,9 +173,7 @@
           <span>{{ $t('detections.viewDetailOf') }}</span> &nbsp;
           <span
             class="row__content--link"
-            @click="goDetail('ip', basicInfo.victimIp)"
-            >{{ basicInfo.victimIp }}</span
-          >
+            @click="goDetail('ip', basicInfo.victimIp)"></span>
         </div>
       </div>
       <div class="overview__title">{{ $t('detections.goToOffender') }}</div>
@@ -287,18 +285,18 @@ import _ from 'lodash'
 export default {
   name: 'DetectionOverview',
   props: {
-    detection: Object,
+    detection: Object
   },
-  data() {
+  data () {
     return {
       eventSeverityColor,
       basicInfo: {},
       events: [],
-      reference: 'https://attack.mitre.org',
+      reference: 'https://attack.mitre.org'
     }
   },
   computed: {
-    formatT0() {
+    formatT0 () {
       const vm = this
       return function (event) {
         const diffSeconds = event.diffSeconds
@@ -318,7 +316,7 @@ export default {
             unitTypes.time,
             's',
             null,
-            0,
+            0
           ).join('')
           if (eventStartTime > entityStartTime) {
             return `T0+${suffix}`
@@ -328,26 +326,26 @@ export default {
         }
         return ''
       }
-    },
+    }
   },
   methods: {
     getMillisecond,
-    query() {
+    query () {
       Promise.all([this.queryBasic(), this.queryEvent()]).then((responses) => {
         responses[0] && (this.basicInfo = responses[0])
         responses[1] &&
           (this.events = responses[1].sort(
-            (e1, e2) => e1.startTime - e2.startTime,
+            (e1, e2) => e1.startTime - e2.startTime
           ))
       })
     },
-    queryBasic() {
+    queryBasic () {
       return new Promise((resolve, reject) => {
         try {
           get(api.detection.securityEvent.overviewBasic, {
             eventId: this.detection.eventId,
             startTime: this.detection.startTime,
-            endTime: this.detection.endTime,
+            endTime: this.detection.endTime
           }).then((response) => {
             if (response.code === 200) {
               resolve(response.data.result[0])
@@ -360,13 +358,13 @@ export default {
         }
       })
     },
-    queryEvent() {
+    queryEvent () {
       return new Promise((resolve, reject) => {
         try {
           get(api.detection.securityEvent.overviewEvent, {
             startTime: this.detection.startTime,
             offenderIp: this.detection.offenderIp,
-            victimIp: this.detection.victimIp,
+            victimIp: this.detection.victimIp
           }).then((response) => {
             if (response.code === 200) {
               resolve(response.data.result)
@@ -379,19 +377,19 @@ export default {
         }
       })
     },
-    goDetail(type, name) {
+    goDetail (type, name) {
       const { href } = this.$router.resolve({
         path: '/entityDetail',
         query: {
           entityType: type,
-          name: name,
-        },
+          name: name
+        }
       })
       window.open(href, '_blank')
-    },
+    }
   },
-  mounted() {
+  mounted () {
     this.query()
-  },
+  }
 }
 </script>

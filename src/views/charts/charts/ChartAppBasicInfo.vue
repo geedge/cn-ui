@@ -4,9 +4,9 @@
       <div style="display: flex; justify-content: space-between; width: 100%;">
         <el-descriptions :column="1" style="padding: 20px 30px;">
           <el-descriptions-item :label="$t('overall.appName') + ':'">{{$_.get(chartData, "name") || '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.appFullName') + ':'">{{$_.get(chartData, "allName") || '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.technology') + ':'">{{$_.get(chartData, "tech") || '-'}}</el-descriptions-item>
-          <el-descriptions-item :label="$t('overall.remark') + ':'">{{$_.get(chartData, "description") || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.appFullName') + ':'">{{$_.get(chartData, "appLongname") || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.technology') + ':'">{{$_.get(chartData, "appTechnology") || '-'}}</el-descriptions-item>
+          <el-descriptions-item :label="$t('overall.remark') + ':'">{{$_.get(chartData, "appDescription") || '-'}}</el-descriptions-item>
         </el-descriptions>
         <div class="cn-chart__body-single">
           <div class="cn-chart__body-single-table">

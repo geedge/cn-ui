@@ -119,16 +119,16 @@ export default {
     chartInfo: Object,
     chartData: [Array, Object],
     tabHandleClickType: String,
-    queryParams: Object,
+    queryParams: Object
   },
-  data() {
+  data () {
     return {
       pageSizeForAlarm: 9,
       eventSeverityColor: eventSeverityColor,
       pageNo: 1,
       alarmInfoCount: {},
       fromChartData: '',
-      isNoData:false
+      isNoData: false
       // result: [
       //   {
       //     entityType: 'ip',
@@ -145,52 +145,52 @@ export default {
     }
   },
   computed: {
-    isNoData() {
+    isNoData () {
       let isNoData = true
       if (!this.$_.isEmpty(this.chartData)) {
         isNoData = false
       }
       return isNoData
-    },
+    }
   },
   watch: {
     tabHandleClickType: {
       deep: true,
-      handler(n) {
+      handler (n) {
         this.$nextTick(() => {
           this.getData(1, n)
         })
-      },
+      }
     },
     alarmInfoCount: {
       deep: true,
-      handler(n) {},
+      handler (n) {}
     },
     queryParams: {
       deep: true,
-      handler(n) {
+      handler (n) {
         if (n.startTime && n.endTime) {
           this.getCount(1)
         }
-      },
-    },
+      }
+    }
   },
   components: {
-    ChartTablePagination,
+    ChartTablePagination
   },
   methods: {
     unitConvert,
     getMillisecond,
-    getCount() {
-      let countQuery = {
+    getCount () {
+      const countQuery = {
         startTime: this.queryParams.startTime,
         endTime: this.queryParams.endTime,
         eventSeverity:
-          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType,
+          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType
       }
       this.$nextTick(() => {
         get('/interface/dns/alarmInfoCount', {
-          ...countQuery,
+          ...countQuery
         }).then((response) => {
           if (response.code === 200) {
             this.alarmInfoCount = response.data
@@ -198,7 +198,7 @@ export default {
         })
       })
     },
-    getData(val, n) {
+    getData (val, n) {
       this.pageNo = val
       const extraParams = {
         pageNo: val,
@@ -208,30 +208,30 @@ export default {
             ? ''
             : n
           : this.tabHandleClickType === 'All'
-          ? ''
-          : this.tabHandleClickType,
+            ? ''
+            : this.tabHandleClickType
       }
       const query = {
         startTime: this.queryParams.startTime,
         endTime: this.queryParams.endTime,
         eventSeverity:
-          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType,
+          this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType
       }
       this.$emit('getAlarmInfo', null, extraParams, false, {
         startTime: query.startTime,
-        endTime: query.endTime,
+        endTime: query.endTime
       })
       get('/interface/dns/alarmInfoCount', {
-        ...query,
+        ...query
       }).then((response) => {
         if (response.code === 200) {
           this.alarmInfoCount = response.data
         }
       })
     },
-    pageJump(val) {
+    pageJump (val) {
       this.getData(val)
-    },
-  },
+    }
+  }
 }
 </script>

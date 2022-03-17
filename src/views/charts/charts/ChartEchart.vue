@@ -37,10 +37,10 @@ export default {
       this.handleYaxis()
 
       if (this.isEchartsPie) {
-        if(chartParams.size && chartParams.size === 'small'){
+        if (chartParams.size && chartParams.size === 'small') {
           this.chartOption.series[0] = {
             ...this.chartOption.series[0],
-            radius : ['30%', '45%'],
+            radius: ['30%', '45%'],
             label: {
               show: false
             },
@@ -50,18 +50,18 @@ export default {
           }
           this.chartOption.legend = {
             ...this.chartOption.legend,
-            left :'60%',
-            itemGap:5,
-            itemWidth:8,
-            itemHeight:8,
+            left: '60%',
+            itemGap: 5,
+            itemWidth: 8,
+            itemHeight: 8,
             formatter: function (name) {
               return name.length > 9 ? name.substr(0, 9) + '...' : name
-              //return echarts.format.truncateText(name, 6, '…');
+              // return echarts.format.truncateText(name, 6, '…');
             },
             tooltip: {
               show: true
             },
-            textStyle: { //图例文字的样式
+            textStyle: { // 图例文字的样式
               color: '#666666',
               fontSize: 12,
               fontWeight: 400
@@ -71,23 +71,23 @@ export default {
           let otherData = []
           this.chartData.sort(reverseSortBy('num'))
 
-          if(this.chartData.length>5){
+          if (this.chartData.length > 5) {
             chartDataTmp = this.chartData.slice(0, 5)
-            chartDataTmp.forEach(data=>{
-              if(data.name===''){
+            chartDataTmp.forEach(data => {
+              if (data.name === '') {
                 data.name = ' '
               }
             })
             let otherSum = 0
             otherData = this.chartData.slice(5)
-            otherData.forEach(data=>{
-              otherSum = otherSum+data.num
+            otherData.forEach(data => {
+              otherSum = otherSum + data.num
             })
-            chartDataTmp.push({'num':otherSum,'name':'other'})
-          } else if(this.chartData.length<=5){
+            chartDataTmp.push({ num: otherSum, name: 'other' })
+          } else if (this.chartData.length <= 5) {
             chartDataTmp = this.chartData.slice(0, this.chartData.length)
-            chartDataTmp.forEach(data=>{
-              if(data.name===''){
+            chartDataTmp.forEach(data => {
+              if (data.name === '') {
                 data.name = ' '
               }
             })
@@ -101,7 +101,7 @@ export default {
               unitType: chartParams.unitType ? chartParams.unitType : 'number'
             }
           })
-        }else {
+        } else {
           this.chartOption.series[0].data = this.chartData.map(d => {
             return {
               name: lineToSpace(d.name),

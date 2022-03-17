@@ -39,7 +39,12 @@
     <div class="overview__right">
       <div class="overview__title">{{$t('detections.goToEntity')}}</div>
       <div class="overview__row">
-        <div class="row__content row__content--link">{{$t('detections.viewDetailOf', {ip: detection.serverIp})}}</div>
+        <div class="row__content">
+          <span>{{ $t('detections.viewDetailOf') }}</span> &nbsp;
+          <span
+              class="row__content--link"
+              @click="goDetail('ip', detection.serverIp)">{{detection.serverIp}}</span>
+        </div>
       </div>
       <div class="overview__title">{{$t('detections.goToHunt')}}</div>
       <div class="overview__row">
@@ -103,16 +108,16 @@ export default {
         }
       })
     },
-    goDetail(type, name) {
+    goDetail (type, name) {
       const { href } = this.$router.resolve({
         path: '/entityDetail',
         query: {
           entityType: type,
-          name: name,
-        },
+          name: name
+        }
       })
       window.open(href, '_blank')
-    },
+    }
   },
   mounted () {
     this.query()

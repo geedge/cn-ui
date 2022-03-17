@@ -15,7 +15,7 @@ const panel = {
       x: 0,
       y: 0
     },
-    chartList:[]
+    chartList: []
   },
   mutations: {
     setShowRightBox (state, flag) {

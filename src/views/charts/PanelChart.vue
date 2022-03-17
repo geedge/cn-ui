@@ -181,10 +181,10 @@ export default {
           this.queryTimeRange = { startTime: getSecond(this.chartTimeFilter.startTime), endTime: getSecond(this.chartTimeFilter.endTime) }
         }
         const chartParams = this.chartInfo.params
-        if(isAlarmInfo && JSON.stringify(extraParams) === '{}'){
+        if (isAlarmInfo && JSON.stringify(extraParams) === '{}') {
           extraParams = {
-            pageNo : 1,
-            pageSize : 9
+            pageNo: 1,
+            pageSize: 9
           }
         }
         // 接口查询参数
@@ -426,7 +426,7 @@ export default {
       isCryptocurrencyEventList: isCryptocurrencyEventList(props.chartInfo.type),
       isAppBasicInfo: isAppBasicInfo(props.chartInfo.type),
       isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
-      isAlarmInfo:isAlarmInfo(props.chartInfo.type)
+      isAlarmInfo: isAlarmInfo(props.chartInfo.type)
     }
   }
 }

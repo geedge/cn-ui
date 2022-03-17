@@ -139,30 +139,30 @@ export default {
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
-    queryParams: Object,
+    queryParams: Object
   },
-  data() {
+  data () {
     return {
       icon: '',
       color: '',
       type: 0,
       chartOption: null,
-      timer: null,
+      timer: null
     }
   },
   watch: {
     chartInfo: {
       deep: true,
       immediate: true,
-      handler(n) {
+      handler (n) {
         this.icon = n.params.icon
         this.color = n.params.color
         this.type = n.type
-      },
-    },
+      }
+    }
   },
   computed: {
-    handleSingleValue() {
+    handleSingleValue () {
       const value =
         this.$_.isEmpty(this.chartData) || this.$_.get(this, 'chartData')
           ? this.chartData
@@ -185,7 +185,7 @@ export default {
       }
       return result
     },
-    singleValueClass() {
+    singleValueClass () {
       return function (type) {
         let c
         switch (type) {
@@ -214,10 +214,10 @@ export default {
         }
         return c
       }
-    },
+    }
   },
   methods: {
-    chartSingleValueTotal() {
+    chartSingleValueTotal () {
       const chartParams = this.$_.get(this.chartInfo, 'params') || {}
       if (this.type === 52) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
@@ -234,29 +234,29 @@ export default {
                 data: r.values.map((v) => [
                   Number(v[0]) * 1000,
                   Number(v[1]),
-                  chartParams.unitType,
+                  chartParams.unitType
                 ]),
                 lineStyle: {
-                  color: getChartColor[i],
-                },
+                  color: getChartColor[i]
+                }
               }
             })
             myChart.setOption(this.chartOption)
-          },
+          }
         )
       }
-    },
+    }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(
       () =>
         (this.timer = setTimeout(() => {
           this.chartSingleValueTotal()
-        }, 200)),
+        }, 200))
     )
   },
-  deactivated() {
+  deactivated () {
     clearTimeout(this.timer)
-  },
+  }
 }
 </script>

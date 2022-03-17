@@ -223,16 +223,16 @@ export function getLayout (type) {
 
 export function getGroupHeight (arr) {
   if (arr.length) {
-    let minYArr = [...arr]
+    const minYArr = [...arr]
     minYArr.sort((a, b) => {
       return a.y - b.y
     })
-    let maxYArr = [...arr]
+    const maxYArr = [...arr]
     maxYArr.sort((a, b) => {
       return (b.y + b.h) - (a.y + a.h)
     })
     return maxYArr[0].y + maxYArr[0].h - minYArr[0].y
-    /*let lastItem = []
+    /* let lastItem = []
     let maxY = arr[0].y
     arr.forEach((children, index) => {
       if (maxY === children.y) {
@@ -251,7 +251,7 @@ export function getGroupHeight (arr) {
     if (maxY < 0) {
       maxY = 0
     }
-    return maxHeight + maxY*/
+    return maxHeight + maxY */
   } else {
     return 1
   }

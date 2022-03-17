@@ -35,13 +35,13 @@ export default {
       result: {
         doh: {
           count: 111,
-          percent: 0.85,
+          percent: 0.85
         },
         dot: {
           count: 111,
-          percent: 80.85,
-        },
-      },
+          percent: 80.85
+        }
+      }
     }
   }
 }

@@ -352,9 +352,9 @@ export default {
     ChartAlarmInfo,
     ChartDomainRecursiveResolve
   },
-  data() {
+  data () {
     return {
-      tabHandleClickType: '',
+      tabHandleClickType: ''
     }
   },
   props: {
@@ -374,7 +374,7 @@ export default {
     tabHandleClickType: String
   },
   computed: {
-    isNoData() {
+    isNoData () {
       return (
         !this.loading &&
         (_.isEmpty(this.chartData) || this.isError) &&
@@ -389,47 +389,47 @@ export default {
         !this.isAlarmInfo
       )
     },
-    chartOption() {
+    chartOption () {
       if (this.customChartOption) {
         return _.cloneDeep(this.customChartOption)
       } else {
         return getOption(this.chartInfo.type)
       }
-    },
+    }
   },
   methods: {
-    resize() {
+    resize () {
       this.$refs['chart' + this.chartInfo.id] &&
         this.$refs['chart' + this.chartInfo.id].resize()
     },
-    showLoading(show) {
+    showLoading (show) {
       this.$emit('showLoading', show)
     },
-    getAlarmInfo(url, extraParams, isRefresh, timeFilter) {
+    getAlarmInfo (url, extraParams, isRefresh, timeFilter) {
       this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
     },
-    getChartData(url, extraParams) {
+    getChartData (url, extraParams) {
       this.$emit('getChartData', url, extraParams)
     },
-    initEchartsWithTable() {
+    initEchartsWithTable () {
       this.$refs['chart' + this.chartInfo.id] &&
         this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(
-          `chart${this.chartInfo.id}`,
+          `chart${this.chartInfo.id}`
         )
     },
-    query(params) {
+    query (params) {
       this.$emit('query', params)
-    },
+    }
   },
   watch: {
     tabHandleClickType: {
       deep: true,
-      handler(n) {
+      handler (n) {
         this.tabHandleClickType = n
-      },
+      }
     }
   },
-  setup(props) {
+  setup (props) {
     return {
       isEcharts: isEcharts(props.chartInfo.type),
       isEchartsLine: isEchartsLine(props.chartInfo.type),
@@ -442,7 +442,7 @@ export default {
       isSingleValue: isSingleValue(props.chartInfo.type),
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chartInfo.type),
       isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(
-        props.chartInfo.type,
+        props.chartInfo.type
       ),
       isRelationShip: isRelationShip(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),

@@ -200,21 +200,21 @@ export default {
   name: 'Row',
   props: {
     index: Number,
-    timeFilter: Object,
+    timeFilter: Object
   },
   components: {
-    DetailOverview,
+    DetailOverview
   },
   mixins: [entityListMixin, entityDetailMixin, relatedServer],
-  data() {
+  data () {
     return {
       isCollapse: true, // 是否是折叠状态
       trafficUrl: '',
-      entityType: '',
+      entityType: ''
     }
   },
   computed: {
-    ipLocationRegion() {
+    ipLocationRegion () {
       return function (entityData) {
         const hasProvinceAndCity =
           entityData.ipLocationProvince &&
@@ -237,7 +237,7 @@ export default {
         }
       }
     },
-    entityType() {
+    entityType () {
       let type
       switch (this.entityData.entityType) {
         case 'ip': {
@@ -257,12 +257,12 @@ export default {
       }
       this.entityType = type
       return type
-    },
+    }
   },
   watch: {
     entityData: {
       deep: true,
-      handler(n) {
+      handler (n) {
         if (n.entityType) {
           switch (n.entityType) {
             case 'ip': {
@@ -281,35 +281,35 @@ export default {
               break
           }
         }
-      },
-    },
+      }
+    }
   },
-  setup() {
+  setup () {
     return {
       unitConvert,
-      unitTypes,
+      unitTypes
     }
   },
   methods: {
     /* 切换折叠状态 */
-    switchCollapse() {
+    switchCollapse () {
       this.isCollapse = !this.isCollapse
       this.$emit('switchCollapse', this.isCollapse, this.index)
     },
     /* 设为折叠状态 */
-    collapse() {
+    collapse () {
       this.isCollapse = true
     },
-    getQueryParams() {
+    getQueryParams () {
       const queryParams = {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000),
         appName: this.entityType,
-        domain:this.entityType,
-        ip:this.entityType
+        domain: this.entityType,
+        ip: this.entityType
       }
       return queryParams
-    },
-  },
+    }
+  }
 }
 </script>

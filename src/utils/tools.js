@@ -461,68 +461,68 @@ export function humpToLine (name) {
   }
   return name.replace(/([A-Z])/g, '_$1').toLowerCase()
 }
-//排序功能:从大到小，降序排列
+// 排序功能:从大到小，降序排列
 export function reverseSortBy (i) {
   return function (a, b) {
     return b[i] - a[i]
   }
 }
 
-//排序功能:从小到大，升序排列
+// 排序功能:从小到大，升序排列
 export function sortBy (i) {
   return function (a, b) {
     return a[i] - b[i]
   }
 }
 
-//echart图标，y轴鼠标悬浮时，显示标签所有内容
-export  function extensionEchartY(chart){
-  //判断是否创建过div框,如果创建过就不再创建了
-  //该div用来盛放文本显示内容的，方便对其悬浮位置进行处理
-  let id = document.getElementById("extension")
-  if(!id) {
-    let div = "<div id = 'extension' style=\"display:block\"></div>"
-    let contentDiv = document.createElement("div")
-    contentDiv.setAttribute('id','extension')
-    contentDiv.setAttribute('style','display:block')
+// echart图标，y轴鼠标悬浮时，显示标签所有内容
+export function extensionEchartY (chart) {
+  // 判断是否创建过div框,如果创建过就不再创建了
+  // 该div用来盛放文本显示内容的，方便对其悬浮位置进行处理
+  const id = document.getElementById('extension')
+  if (!id) {
+    const div = "<div id = 'extension' style=\"display:block\"></div>"
+    const contentDiv = document.createElement('div')
+    contentDiv.setAttribute('id', 'extension')
+    contentDiv.setAttribute('style', 'display:block')
     document.documentElement.append(contentDiv)
   }
-  chart.on('mouseover', function(params) {
-    //注意这里，我是以Y轴显示内容过长为例，如果是x轴的话，需要改为xAxis
-    if(params.componentType === "yAxis") {
-      //设置悬浮文本的位置以及样式
-      let extEle = document.getElementById("extension")
-      extEle.style.cssText = "display:inline;position:absolute;" +
-          "    padding: 12px;" +
-          "    max-width: 400px !important;" +
-          "    color: #666;" +
-          "    background-color: rgb(255, 255, 255);" +
-          "    font-size: 14px;" +
-          "    line-height: 20px;" +
-          "    font-weight:400; " +
-          "    font-family: \"Microsoft YaHei\"" +
-          "    border-style: solid;" +
-          "    border-width: 1px;" +
-          "    border-radius: 4px;" +
-          "    border-color: transparent !important;" +
-          "    box-shadow: rgb(0 0 0 / 30%) 0px 0px 3px;" +
-          "    white-space: nowrap;" +
-          "    z-index: 99999999;"
+  chart.on('mouseover', function (params) {
+    // 注意这里，我是以Y轴显示内容过长为例，如果是x轴的话，需要改为xAxis
+    if (params.componentType === 'yAxis') {
+      // 设置悬浮文本的位置以及样式
+      const extEle = document.getElementById('extension')
+      extEle.style.cssText = 'display:inline;position:absolute;' +
+          '    padding: 12px;' +
+          '    max-width: 400px !important;' +
+          '    color: #666;' +
+          '    background-color: rgb(255, 255, 255);' +
+          '    font-size: 14px;' +
+          '    line-height: 20px;' +
+          '    font-weight:400; ' +
+          '    font-family: "Microsoft YaHei"' +
+          '    border-style: solid;' +
+          '    border-width: 1px;' +
+          '    border-radius: 4px;' +
+          '    border-color: transparent !important;' +
+          '    box-shadow: rgb(0 0 0 / 30%) 0px 0px 3px;' +
+          '    white-space: nowrap;' +
+          '    z-index: 99999999;'
 
-      extEle.innerHTML = params.value;
-      document.documentElement.onmousemove = function(event) {
-        let extEle = document.getElementById("extension")
-        let xx = event.pageX - extEle.offsetWidth - 20
-        let yy = event.pageY + 20
-        extEle.style.cssText = extEle.style.cssText+"top:"+yy+"px;left:"+xx+"px;"
+      extEle.innerHTML = params.value
+      document.documentElement.onmousemove = function (event) {
+        const extEle = document.getElementById('extension')
+        const xx = event.pageX - extEle.offsetWidth - 20
+        const yy = event.pageY + 20
+        extEle.style.cssText = extEle.style.cssText + 'top:' + yy + 'px;left:' + xx + 'px;'
       }
     }
   })
-  chart.on('mouseout', function(params) {
-    //注意这里，我是以Y轴显示内容过长为例，如果是x轴的话，需要改为xAxis
-    if(params.componentType == "yAxis") {
-      let extEle = document.getElementById("extension")
-      extEle.style.cssText = "display:none;"
+  chart.on('mouseout', function (params) {
+    // 注意这里，我是以Y轴显示内容过长为例，如果是x轴的话，需要改为xAxis
+    if (params.componentType == 'yAxis') {
+      const extEle = document.getElementById('extension')
+      extEle.style.cssText = 'display:none;'
     }
   })
 }

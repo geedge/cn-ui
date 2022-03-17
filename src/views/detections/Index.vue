@@ -112,7 +112,7 @@ import { ref } from 'vue'
 import * as echarts from 'echarts'
 import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
-import { reverseSortBy ,sortBy ,extensionEchartY} from '@/utils/tools'
+import { reverseSortBy, sortBy, extensionEchartY } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import DetectionNoData from '@/views/detections/DetectionNoData'
 
@@ -237,7 +237,7 @@ export default {
     initEventSeverityTrendData (params) {
       this.loading = true
       getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
-        /*data = [
+        /* data = [
           {
             "statTime": "2022-01-01T10:07:03.008Z",
             "eventSeverity": "critical",
@@ -329,7 +329,7 @@ export default {
             "eventSeverity": "info",
             "count": 27
           },
-        ]*/
+        ] */
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
           const dataMap = new Map()
@@ -347,36 +347,36 @@ export default {
           const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
 
-          let xData = []
+          const xData = []
           dataMap.forEach(function (value, key) {
-            //eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
+            // eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
             value.forEach(item => {
-              if(xData.indexOf(item[0]) < 0){
+              if (xData.indexOf(item[0]) < 0) {
                 xData.push(item[0])
               }
             })
           })
           eventSeverityTrendOption.series.forEach(serie => {
-            let seriesData = []
+            const seriesData = []
             xData.forEach(item => {
-              if(dataMap.has(serie.name)){
-                let hasX = dataMap.get(serie.name).some(function(v) {
+              if (dataMap.has(serie.name)) {
+                const hasX = dataMap.get(serie.name).some(function (v) {
                   if (item == v[0]) {
                     seriesData.push(Number(v[1]))
-                    return true;
+                    return true
                   }
                 })
-                if(!hasX){
+                if (!hasX) {
                   seriesData.push(0)
                 }
-              }else {
+              } else {
                 seriesData.push(0)
               }
             })
             serie.data = seriesData
           })
 
-          //eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
+          // eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
           eventSeverityTrendOption.xAxis.data = xData
           const detectionChart = echarts.init(chartDom)
           detectionChart.setOption(eventSeverityTrendOption)
@@ -709,7 +709,7 @@ export default {
             return [d.count, d.name]
           }).reverse()
           detectionChart.setOption(option)
-          extensionEchartY(detectionChart)//y轴标签过长时，鼠标悬浮，显示所有内容
+          extensionEchartY(detectionChart)// y轴标签过长时，鼠标悬浮，显示所有内容
         }
       }).catch(error => {
       })
