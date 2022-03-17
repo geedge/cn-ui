@@ -8,7 +8,7 @@ import * as echarts from 'echarts'
 import { lineToSpace, reverseSortBy, humpToSpace } from '@/utils/tools'
 import { unitTypes } from '@/utils/constants'
 import chartEchartMixin from './chart-echart-mixin'
-import { isEchartsPie } from './tools'
+import { isEchartsLine, isEchartsPie } from './tools'
 import { legendMapping } from '@/views/charts/charts/chart-table-title'
 
 export default {
@@ -23,7 +23,8 @@ export default {
   },
   setup (props) {
     return {
-      isEchartsPie: isEchartsPie(props.chartInfo.type)
+      isEchartsPie: isEchartsPie(props.chartInfo.type),
+      isEchartsLine: isEchartsLine(props.chartInfo.type)
     }
   },
   methods: {
@@ -113,11 +114,15 @@ export default {
       } else {
         const seriesTemplate = this.chartOption.series[0]
         this.chartOption.series = this.chartData.map(r => {
-          return {
+          const serie = {
             ...seriesTemplate,
             name: legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] ? legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] : humpToSpace(r.legend),
             data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType])
           }
+          if (this.isEchartsLine) {
+            serie.data = serie.data.slice(1, serie.data.length - 2)
+          }
+          return serie
         })
       }
 
