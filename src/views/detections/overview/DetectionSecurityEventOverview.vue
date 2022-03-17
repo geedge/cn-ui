@@ -173,7 +173,7 @@
           <span>{{ $t('detections.viewDetailOf') }}</span> &nbsp;
           <span
             class="row__content--link"
-            @click="goDetail('ip', basicInfo.victimIp)"></span>
+            @click="goDetail('ip', basicInfo.victimIp)">{{ basicInfo.victimIp }}</span>
         </div>
       </div>
       <div class="overview__title">{{ $t('detections.goToOffender') }}</div>

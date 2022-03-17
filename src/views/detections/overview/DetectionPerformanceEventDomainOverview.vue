@@ -6,9 +6,8 @@
         <div class="row__content">
             <span
               class="row__content--link"
-              @click="goDetail('domain', detection.domain)"
-              >{{ detection.domain }}</span
-            >
+              @click="goDetail('domain', computeSecondaryDomain(detection.domain))"
+              >{{ computeSecondaryDomain(detection.domain) }}</span>
           <template v-if="detection.eventType === 'dns error'">
             <span>
               {{$t('detections.dnsQueryError')}}
