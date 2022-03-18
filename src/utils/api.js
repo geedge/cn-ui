@@ -45,8 +45,8 @@ export const api = {
   entityAppDetailNetworkQuantity: '/interface/entity/detail/overview/app/networkQuantity',
   entityAppDetailLinkIn: '/interface/entity/detail/overview/app/linkIn',
   entityAppDetailLinkOut: '/interface/entity/detail/overview/app/linkOut',
-  entityAppDetailAlert: '/interface/entity/detail/overview/app/alert',
-  entityAppDetailSecurity: '/interface/entity/detail/overview/app/security',
+  entityAppDetailAlert: '/interface/entity/detail/overview/app/performanceEvent',
+  entityAppDetailSecurity: '/interface/entity/detail/overview/app/securityEvent',
   entityAppRelatedServerDomain: '/interface/entity/detail/overview/app/relatedDomain',
   entityAppRelatedServerIp: '/interface/entity/detail/overview/app/relatedServerIp',
   // domain detail
@@ -56,8 +56,8 @@ export const api = {
   entityDomainDetailNetworkQuantity: '/interface/entity/detail/overview/domain/networkQuantity',
   entityDomainDetailLinkIn: '/interface/entity/detail/overview/domain/linkIn',
   entityDomainDetailLinkOut: '/interface/entity/detail/overview/domain/linkOut',
-  entityDomainDetailAlert: '/interface/entity/detail/overview/domain/alert',
-  entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/security',
+  entityDomainDetailAlert: '/interface/entity/detail/overview/domain/performanceEvent',
+  entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/securityEvent',
   entityDomainRelatedServerIp: '/interface/entity/detail/overview/domain/relatedServerIp',
   entityDomainRelatedServerApp: '/interface/entity/detail/overview/domain/relatedApp',
   // ip detail
@@ -69,8 +69,8 @@ export const api = {
   entityIpDetailNetworkQuantity: '/interface/entity/detail/overview/ip/networkQuantity',
   entityIpDetailLinkIn: '/interface/entity/detail/overview/ip/linkIn',
   entityIpDetailLinkOut: '/interface/entity/detail/overview/ip/linkOut',
-  entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
-  entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security',
+  entityIpDetailAlert: '/interface/entity/detail/overview/ip/performanceEvent',
+  entityIpDetailSecurity: '/interface/entity/detail/overview/ip/securityEvent',
   entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
   entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp',
   // detection
