@@ -28,7 +28,7 @@
             v-for="(c, i) in table.tableColumns"
             show-overflow-tooltip
             :key="i"
-            :label="$t(chartTableOrderOptionsMapping[c])"
+            :label="c"
             :prop="c"
         >
           <template #default="{ row }">

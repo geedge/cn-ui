@@ -154,14 +154,14 @@
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-entity-alert"></i>
                 <span>{{ $t('entities.recentAlert') }}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ entityData.alertCount || '-' }}</span>
+                <span>{{ entityData.performanceCount}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-safe"></i>
                 <span
                   >{{ $t('entities.recentSecurity') }}&nbsp;:&nbsp;&nbsp;</span
                 >
-                <span>{{ entityData.securityCount || '-' }}</span>
+                <span>{{ entityData.securityCount}}</span>
               </div>
             </div>
             <div

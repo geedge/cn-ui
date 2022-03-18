@@ -192,6 +192,7 @@ import _ from 'lodash'
 import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
+import { getSecond } from '@/utils/date-util'
 
 export default {
   name: 'App',
@@ -209,7 +210,7 @@ export default {
       networkQuantityUrl: api.entityAppDetailNetworkQuantity,
       linkInUrl: api.entityAppDetailLinkIn,
       linkOutUrl: api.entityAppDetailLinkOut,
-      alertUrl: api.entityAppDetailAlert,
+      performanceUrl: api.entityIpDetailPerformance,
       securityUrl: api.entityAppDetailSecurity,
       trafficUrlMap: api.entityAppDetailTrafficMap,
       relatedServerDomainUrl: api.entityAppRelatedServerDomain,
@@ -266,8 +267,8 @@ export default {
   methods: {
     getQueryParams () {
       const queryParams = {
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000),
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
         appName: this.entity.appName
       }
       return queryParams

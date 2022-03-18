@@ -180,6 +180,7 @@ import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
+import { getSecond } from '@/utils/date-util'
 
 export default {
   name: 'Ip',
@@ -198,7 +199,7 @@ export default {
       networkQuantityUrl: api.entityIpDetailNetworkQuantity,
       linkInUrl: api.entityIpDetailLinkIn,
       linkOutUrl: api.entityIpDetailLinkOut,
-      alertUrl: api.entityIpDetailAlert,
+      performanceUrl: api.entityIpDetailPerformance,
       securityUrl: api.entityIpDetailSecurity,
       relatedServerDomainUrl: api.entityIpRelatedServerDomain,
       relatedServerAppUrl: api.entityIpRelatedServerApp,
@@ -274,8 +275,8 @@ export default {
   methods: {
     getQueryParams () {
       const queryParams = {
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000),
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
         ip: this.entity.ipAddr
       }
       return queryParams

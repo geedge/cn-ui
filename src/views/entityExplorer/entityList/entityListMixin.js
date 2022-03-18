@@ -4,6 +4,7 @@ import { api } from '@/utils/api'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { riskLevelMapping, unitTypes } from '@/utils/constants'
+import { getSecond } from '@/utils/date-util'
 
 export default {
   props: {
@@ -149,27 +150,61 @@ export default {
     },
     querySecurity () {
       const queryParams = {
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000),
-        entityType: this.entityData.entityType,
-        name: this.entityName
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
-      get(api.entitySecurityNum, queryParams).then(response => {
+      let url
+      switch (this.entityData.entityType) {
+        case ('ip'): {
+          url = api.entityIpDetailSecurity
+          queryParams.ip = this.entityName
+          break
+        }
+        case ('domain'): {
+          url = api.entityDomainDetailSecurity
+          queryParams.domain = this.entityName
+          break
+        }
+        case ('app'): {
+          url = api.entityAppDetailSecurity
+          queryParams.appName = this.entityName
+          break
+        }
+        default: break
+      }
+      get(url, queryParams).then(response => {
         if (response.code === 200) {
-          this.entityData.securityCount = response.data.result[0].count
+          this.entityData.securityCount = response.data.result && response.data.result.length
         }
       })
     },
-    queryAlert () {
+    queryPerformance () {
       const queryParams = {
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000),
-        entityType: this.entityData.entityType,
-        name: this.entityName
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
-      get(api.entityAlertNum, queryParams).then(response => {
+      let url
+      switch (this.entityData.entityType) {
+        case ('ip'): {
+          url = api.entityIpDetailPerformance
+          queryParams.ip = this.entityName
+          break
+        }
+        case ('domain'): {
+          url = api.entityDomainDetailPerformance
+          queryParams.domain = this.entityName
+          break
+        }
+        case ('app'): {
+          url = api.entityAppDetailPerformance
+          queryParams.appName = this.entityName
+          break
+        }
+        default: break
+      }
+      get(url, queryParams).then(response => {
         if (response.code === 200) {
-          this.entityData.alertCount = response.data.result[0].value
+          this.entityData.performanceCount = response.data.result && response.data.result.length
         }
       })
     },
@@ -259,7 +294,7 @@ export default {
     this.entityData = _.cloneDeep(this.entity)
     setTimeout(() => { this.queryTraffic() })
     setTimeout(() => { this.querySecurity() })
-    setTimeout(() => { this.queryAlert() })
+    setTimeout(() => { this.queryPerformance() })
     if (this.listMode === 'block') {
       setTimeout(() => { this.queryTrafficLine() })
     }

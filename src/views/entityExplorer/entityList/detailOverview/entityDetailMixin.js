@@ -210,8 +210,8 @@ export default {
       }
     },
 
-    queryEntityDetailAlert () {
-      get(this.alertUrl, this.getQueryParams()).then(response => {
+    queryEntityDetailPerformance () {
+      get(this.performanceUrl, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.entityData.alertNum = response.data.result.length
           this.entityData.alertList = response.data.result
@@ -230,8 +230,7 @@ export default {
 
     queryEntityDetail () {
       this.queryEntityDetailTraffic()
-      // this.queryEntityDetailRelation()
-      this.queryEntityDetailAlert()
+      this.queryEntityDetailPerformance()
       this.queryEntityDetailSecurity()
       this.queryEntityDetailNetworkQuantity()
       this.queryEntityDetailLinkOutUrl()
