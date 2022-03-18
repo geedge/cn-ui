@@ -93,7 +93,8 @@ export const api = {
       activeEntity: '/interface/detection/performance/filter/activeEntity',
       listBasic: '/interface/detection/performance/list/basic',
       listCount: '/interface/detection/performance/list/count',
-      overviewBasic: '/interface/detection/performance/detail/overview/basic'
+      overviewBasic: '/interface/detection/performance/detail/overview/basic',
+      metric:'/interface/detection/performance/detail/overview/metric'
     }
   }
 }

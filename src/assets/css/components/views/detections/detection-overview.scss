@@ -8,6 +8,18 @@
     display: flex;
     flex-direction: column;
 
+     .overview__metric {
+       display:flex;
+       flex-direction: row;
+       padding-top: 10px;
+
+       .metric__column {
+         display:flex;
+         flex-direction: column;
+         margin-right: 15px;
+       }
+     }
+
     .overview__title {
       padding: 10px 0;
       color: #333;
@@ -31,6 +43,19 @@
         padding-right: 20px;
         min-width: 100px;
         color: #6B717B;
+      }
+
+      .row__charts {
+        height: 20px;
+        width: 80px;
+      }
+
+      .row__content--metric {
+        display: flex;
+        flex-wrap: nowrap;
+        color: #666666;
+        font-size:14px;
+        font-weight: 400;
       }
 
       .row__content {
