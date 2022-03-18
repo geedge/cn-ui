@@ -131,7 +131,7 @@
           }
           .header__operations {
             display: flex;
-            justify-content: end;
+            justify-content: flex-end;
             align-items: center;
 
             .header__operation-btn {
@@ -225,7 +225,7 @@
               border-bottom: 1px solid $--content-right-background-color;
               .header__operations {
                 display: flex;
-                justify-content: end;
+                justify-content: flex-end;
                 align-items: center;
 
                 .header__operation.header__operation--echarts {
