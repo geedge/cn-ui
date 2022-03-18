@@ -143,6 +143,7 @@ export const chartTableColumnMapping = {
   dnsLatency: 'dns.averageResolveLatency',
   responseFailRate: 'dns.responseFailureRate'
 }
+export const chartTableOrderOptionsMapping = {}
 export const chartPieTableTopOptions = [
   { name: 'Sessions', value: 'sessions' },
   { name: 'Packets', value: 'packets' },
