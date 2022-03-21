@@ -67,6 +67,7 @@ import { unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import * as echarts from 'echarts'
+import { markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
 import { sortBy,reverseSortBy } from '@/utils/tools'
 export default {
@@ -127,7 +128,7 @@ export default {
     },
 
     initChart(){
-      this.metricChart = echarts.init(document.getElementById('detectionMetricChartDomain'))
+      this.metricChart = markRaw(echarts.init(document.getElementById('detectionMetricChartDomain')))
       this.chartOptionMetric = _.cloneDeep(this.chartOption)
 
       this.metricList.sort(reverseSortBy(0))//将返回的数据按时间降序排序，方便找到实线和虚线的交点
