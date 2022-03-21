@@ -126,10 +126,10 @@
         <div class="row__content">{{entityData.performanceNum || '-'}}</div>
       </div>
       <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
-        <div class="row__label row__label--width160">{{performance.startTime}}</div>
+        <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(performance.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high">{{performance.eventSeverity}}</div>
-          <div>{{performance.name}}</div>
+          <div>{{performance.eventType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
@@ -149,7 +149,7 @@
         <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(security.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high">{{security.eventSeverity}}</div>
-          <div>{{security.sourceName}}</div>
+          <div>{{security.securityType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
