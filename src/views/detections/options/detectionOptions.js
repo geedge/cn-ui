@@ -289,16 +289,33 @@ export const activeAttackBar = {
 }
 export const metricOption = {
   tooltip: {
-    appendToBody: true,
+    show:true,
     trigger: 'axis',
+    formatter(params){
+      let str = '<div>'
+      let item = params[0]
+      const tData = item.data[0]
+      str += '<div style="margin-bottom: 5px">'
+      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += '</div>'
+      str += '<div class="cn-chart-tooltip-box">'
+      str += item.marker
+      str += `<span class="cn-chart-tooltip-content"> 
+      ${item.seriesName}
+      </span>`
+          str += `<span class="cn-chart-tooltip-value">
+          ${unitConvert(item.data[1], item.data[2]).join(' ')}
+      </span>`
+      str += '</div>'
+      return str
+    },
+    className: 'nz-chart-tooltip',
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important',
     textStyle: {
       width: '20px',
       overflow: 'truncate'
     },
-    //formatter: axisFormatter,
-    show: true,
-    className: 'nz-chart-tooltip',
-    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important'
+    appendToBody: true
   },
   xAxis: {
     type: 'time',
