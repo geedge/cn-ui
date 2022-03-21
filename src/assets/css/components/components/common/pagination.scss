@@ -66,3 +66,11 @@
     border-color: rgba(154,154,154,0.20);
   }
 }
+.entity__pagination .pagination {
+  .el-pager li.more + li {
+    display: none;
+  }
+  .el-pager li.number:not(:last-of-type) {
+    display: inline-block !important;
+  }
+}
