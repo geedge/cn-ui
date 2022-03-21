@@ -213,8 +213,8 @@ export default {
     queryEntityDetailPerformance () {
       get(this.performanceUrl, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          this.entityData.alertNum = response.data.result.length
-          this.entityData.alertList = response.data.result
+          this.entityData.performanceNum = response.data.result.length
+          this.entityData.performanceList = response.data.result
         }
       })
     },

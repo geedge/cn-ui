@@ -135,17 +135,17 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
-        <div class="row__content">{{entityData.alertNum || '-'}}</div>
+        <div class="row__content">{{entityData.performanceNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font"   v-for="(alert, index) in entityData.alertList" :key="index">
-        <div class="row__label row__label--width160">{{alert.startTime}}</div>
+      <div class="overview__row overview__row--small-font"   v-for="(performance, index) in entityData.performanceList" :key="index">
+        <div class="row__label row__label--width160">{{performance.startTime}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{alert.alertSeverity}}</div>
-          <div>{{alert.alertName}}</div>
+          <div class="alert-level-tag alert-level-tag--high">{{performance.eventSeverity}}</div>
+          <div>{{performance.name}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
-      <div class="overview__row overview__row--small-font" v-if="entityData.alertList && entityData.alertList.length > 3">
+      <div class="overview__row overview__row--small-font" v-if="entityData.performanceList && entityData.performanceList.length > 3">
         <div class="show-more">{{$t('overall.showMore')}}>></div>
       </div>
     </div>
@@ -160,7 +160,7 @@
       <div class="overview__row overview__row--small-font"   v-for="(security, index) in entityData.securityList" :key="index">
         <div class="row__label row__label--width160">{{security.startTime}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{security.securitySeverity}}</div>
+          <div class="alert-level-tag alert-level-tag--high">{{security.eventSeverity}}</div>
           <div>{{security.sourceName}}</div>
         </div>
         <div class="row__desc"></div>
@@ -210,7 +210,7 @@ export default {
       networkQuantityUrl: api.entityAppDetailNetworkQuantity,
       linkInUrl: api.entityAppDetailLinkIn,
       linkOutUrl: api.entityAppDetailLinkOut,
-      performanceUrl: api.entityIpDetailPerformance,
+      performanceUrl: api.entityAppDetailPerformance,
       securityUrl: api.entityAppDetailSecurity,
       trafficUrlMap: api.entityAppDetailTrafficMap,
       relatedServerDomainUrl: api.entityAppRelatedServerDomain,

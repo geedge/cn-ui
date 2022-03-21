@@ -1,7 +1,7 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112 } from '@/utils/constants'
+import { storageKey, iso36112, topDomain } from '@/utils/constants'
 import { getIso36112JsonData } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
@@ -604,6 +604,31 @@ export function copyValue (item) {
   const creatDom = document.getElementById('creatDom')
   creatDom.parentNode.removeChild(creatDom)
   ElMessage.success(i18n.global.t('tip.copySuccess'))
+}
+
+export function computeSecondaryDomain (name) {
+  // 命中的顶级域名
+  let hitTopDomain = ''
+  // 同顶级域名比对
+  const hits = []
+  topDomain.forEach(td => {
+    const hitIndex = name.lastIndexOf(td)
+    if (hitIndex > -1 && hitIndex + td.length === name.length) {
+      hits.push(td)
+    }
+  })
+  if (hits.length > 0) {
+    hits.sort((a, b) => {
+      return b.split('.').length - a.split('.').length
+    })
+    hitTopDomain = hits[0]
+  } else {
+    const arr = name.split('.')
+    hitTopDomain = arr[arr.length - 1]
+  }
+  const index = name.lastIndexOf(hitTopDomain)
+  const preArr = name.substring(0, index).split('.')
+  return [preArr[preArr.length - 2], hitTopDomain].join('.')
 }
 
 export function getCurrentRoute () {
