@@ -123,17 +123,17 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
-        <div class="row__content">{{entityData.alertNum || '-'}}</div>
+        <div class="row__content">{{entityData.performanceNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font" v-for="(alert, index) in entityData.alertList" :key="index">
-        <div class="row__label row__label--width160">{{alert.startTime}}</div>
+      <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
+        <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(performance.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{alert.alertSeverity}}</div>
-          <div>{{alert.alertName}}</div>
+          <div class="alert-level-tag alert-level-tag--high">{{performance.eventSeverity}}</div>
+          <div>{{performance.eventType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
-      <div class="overview__row overview__row--small-font" v-if="entityData.alertList && entityData.alertList.length > 3">
+      <div class="overview__row overview__row--small-font" v-if="entityData.performanceList && entityData.performanceList.length > 3">
         <div class="show-more">{{$t('overall.showMore')}}>></div>
       </div>
     </div>
@@ -146,10 +146,10 @@
         <div class="row__content">{{entityData.securityNum || '-'}}</div>
       </div>
       <div class="overview__row overview__row--small-font" v-for="(security, index) in entityData.securityList" :key="index">
-        <div class="row__label row__label--width160">{{security.startTime}}</div>
+        <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(security.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{security.securitySeverity}}</div>
-          <div>{{security.sourceName}}</div>
+          <div class="alert-level-tag alert-level-tag--high">{{security.eventSeverity}}</div>
+          <div>{{security.securityType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
@@ -180,7 +180,7 @@ import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
-import { getSecond } from '@/utils/date-util'
+import { getSecond, getMillisecond } from '@/utils/date-util'
 
 export default {
   name: 'Ip',
@@ -191,7 +191,6 @@ export default {
   },
   data () {
     return {
-      // entityData: {}
       entityType: 'ip',
       trafficUrl: api.entityIpDetailTraffic,
       trafficUrlMap: api.entityIpDetailTrafficMap,
@@ -273,6 +272,7 @@ export default {
     }
   },
   methods: {
+    getMillisecond,
     getQueryParams () {
       const queryParams = {
         startTime: getSecond(this.timeFilter.startTime),
