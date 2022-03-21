@@ -160,8 +160,8 @@ export default {
 
           get(api.detection.performanceEvent.metric, {
             domain: this.detection.domain,
-            startTime: this.searchStartTime,
-            endTime: this.searchEndTime,
+            startTime: this.searchStartTime*1000,
+            endTime: this.searchEndTime*1000,
           }).then((response) => {
             if (response.code === 200) {
               resolve(response.data.result[0])
