@@ -79,7 +79,7 @@ export default {
     return {
       eventSeverityColor,
       basicInfo: {},
-      metricList:[[1435781430781, "1"], [1435781431781, "5"],[1435781432781, "5"], [1435781433781, "3"],[1435781434781, "4"], [1435781435781, "5"]],
+      metricList:[],
     }
   },
   computed: {
@@ -112,14 +112,18 @@ export default {
       })
       this.queryMetric().then(responses => {
         responses && (this.metricList = responses.values)
-        this.initChart()
+        if(this.metricList.length>0){
+          this.initChart()
+        }else {
+          let chartDom = document.getElementById('detectionMetricChartDomain')
+          chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
+        }
       }).catch(error => {
         console.log(error)
       }).finally(() => {
         setTimeout(() => {
           try {
             this.$nextTick(() => {
-              console.log(this.metricChart)
               this.metricChart && this.metricChart.resize()
             })
           } catch (e) {}
@@ -147,7 +151,6 @@ export default {
       }
 
       this.chartOptionMetric && this.metricChart.setOption(this.chartOptionMetric)
-      console.log(this.chartOptionMetric)
     },
 
     queryMetric() {
