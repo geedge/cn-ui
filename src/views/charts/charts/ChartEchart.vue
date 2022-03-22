@@ -132,46 +132,48 @@ export default {
           }
           if (this.isEchartsLine) {
             serie.data = serie.data.slice(1, serie.data.length - 2)
-            serie.markLine = {
-              silent: true,
-              symbol: 'none',
-              label: {
-                    distance:[-50,0],
-                formatter(params) {
-                  const arr = unitConvert(
-                    params.value,
-                    chartParams.unitType,
-                  ).join(' ')
-                  let desc = ''
-                  switch (params.dataIndex) {
-                    case 0: {
-                      desc = 'P50'
-                      break
+            if (this.chartData.length === 1) {
+              serie.markLine = {
+                silent: true,
+                symbol: 'none',
+                label: {
+                  distance: [-50, 0],
+                  formatter(params) {
+                    const arr = unitConvert(
+                      params.value,
+                      chartParams.unitType,
+                    ).join(' ')
+                    let desc = ''
+                    switch (params.dataIndex) {
+                      case 0: {
+                        desc = 'P50'
+                        break
+                      }
+                      case 1: {
+                        desc = 'P90'
+                        break
+                      }
+                      default:
+                        break
                     }
-                    case 1: {
-                      desc = 'P90'
-                      break
-                    }
-                    default:
-                      break
-                  }
-                  return `${arr} (${desc})`
+                    return `${arr} (${desc})`
+                  },
                 },
-              },
-              data: [
-                {
-                  name: 'P50',
-                  yAxis: this.chartData[0].aggregation.p50
-                    ? this.chartData[0].aggregation.p50
-                    : 50,
-                },
-                {
-                  name: 'P90',
-                  yAxis: this.chartData[0].aggregation.p90
-                    ? this.chartData[0].aggregation.p90
-                    : 90,
-                },
-              ],
+                data: [
+                  {
+                    name: 'P50',
+                    yAxis: this.chartData[0].aggregation.p50
+                      ? this.chartData[0].aggregation.p50
+                      : 50,
+                  },
+                  {
+                    name: 'P90',
+                    yAxis: this.chartData[0].aggregation.p90
+                      ? this.chartData[0].aggregation.p90
+                      : 90,
+                  },
+                ],
+              }
             }
           }
           return serie
