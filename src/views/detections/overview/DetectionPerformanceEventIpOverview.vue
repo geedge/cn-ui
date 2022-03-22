@@ -137,11 +137,13 @@ export default {
         if(this.metricList.length>0){
           this.initChart()
         }else {
-          let chartDom = document.getElementById('detectionMetricChartDomain')
+          let chartDom = document.getElementById('detectionMetricChartIp')
           chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
         }
       }).catch(error => {
         console.log(error)
+        let chartDom = document.getElementById('detectionMetricChartIp')
+        chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
       }).finally(() => {
         setTimeout(() => {
           try {
@@ -159,18 +161,19 @@ export default {
 
       this.metricList.sort(reverseSortBy(0))//将返回的数据按时间降序排序，方便找到实线和虚线的交点
       //let endIndex = (this.metricList). findIndex ((item) => item[0]  <=  1435781434781 );
-      let endIndex = (this.metricList). findIndex ((item) => item[0]  <=  this.detection.endTime*1000 );
+      console.log(this.detection)
+      let endIndex = (this.metricList). findIndex ((item) => item[0]  <=  this.detection.endTime );
       endIndex = this.metricList.length-endIndex
 
 
       this.metricList.sort(sortBy(0))//将返回的数据按时间升序排序，方便找到实线和虚线的交点
       //let startIndex = (this.metricList). findIndex ((item) => item[0]  >=  1435781432781 );
-      let startIndex = (this.metricList). findIndex ((item) => item[0]  >=  this.detection.startTime*1000 );
+      let startIndex = (this.metricList). findIndex ((item) => item[0]  >=  this.detection.startTime );
 
       if(startIndex >-1 && endIndex >-1){
-        this.chartOptionMetric.series[0].data = this.metricList.slice(0,startIndex).map(v => [Number(v[0]), Number(v[1]), unitTypes.number])
-        this.chartOptionMetric.series[1].data = this.metricList.slice(startIndex-1,endIndex).map(v => [Number(v[0]), Number(v[1]), unitTypes.number])
-        this.chartOptionMetric.series[2].data = this.metricList.slice(endIndex-1,this.metricList.length).map(v => [Number(v[0]), Number(v[1]), unitTypes.number])
+        this.chartOptionMetric.series[0].data = this.metricList.slice(0,startIndex).map(v => [Number(v[0])*1000, Number(v[1]), unitTypes.number])
+        this.chartOptionMetric.series[1].data = this.metricList.slice(startIndex-1,endIndex).map(v => [Number(v[0])*1000, Number(v[1]), unitTypes.number])
+        this.chartOptionMetric.series[2].data = this.metricList.slice(endIndex-1,this.metricList.length).map(v => [Number(v[0])*1000, Number(v[1]), unitTypes.number])
       }
 
       this.chartOptionMetric && this.metricChart.setOption(this.chartOptionMetric)
