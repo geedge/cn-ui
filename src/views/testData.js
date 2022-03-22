@@ -295,6 +295,126 @@ export const lineData = [
 ]
 export const lineData2 = []
 export const lineData3 = []
+export const sunData1 = [
+  {
+    name: '西安\n29.60%',
+    children: [
+      {
+        name: '257\n14.34%',
+        value: 323703329611
+      },
+      {
+        name: '1281\n13.59%',
+        value: 306756738292
+      },
+      {
+        name: '2817\n1.68%',
+        value: 37855258599
+      }
+    ]
+  },
+  {
+    name: '太原\n56.35%',
+    children: [
+      {
+        name: '513\n11.42%',
+        value: 257854520910
+      },
+      {
+        name: '769\n1.44%',
+        value: 32505330352
+      },
+      {
+        name: '1537\n15.18%',
+        value: 342760056836
+      },
+      {
+        name: '2049\n15.30%',
+        value: 345397981930
+      },
+      {
+        name: '2305\n13.01%',
+        value: 293586032267
+      }
+    ]
+  },
+  {
+    name: '西宁\n14.04%',
+    children: [
+      {
+        name: '1025\n14.04%',
+        value: 317022957702
+      }
+    ]
+  }
+]
+export const sunData2 = [
+  {
+    name: '西安\n57.32%',
+    children: [
+      {
+        name: '256\n14.58%',
+        value: 167621458351
+      },
+      {
+        name: '1280\n14.51%',
+        value: 166817230697
+      },
+      {
+        name: '2816\n28.24%',
+        value: 324792075239
+      }
+    ]
+  },
+  {
+    name: '太原\n41.78%',
+    children: [
+      {
+        name: '512\n3.17%',
+        value: 36512384529
+      },
+      {
+        name: '768\n21.67%',
+        value: 249173998609
+      },
+      {
+        name: '1536\n3.92%',
+        value: 45084239753
+      },
+      {
+        name: '1792\n3.24%',
+        value: 37293491619
+      },
+      {
+        name: '2048\n4.01%',
+        value: 46098857586
+      },
+      {
+        name: '2304\n5.77%',
+        value: 66314220417
+      }
+    ]
+  },
+  {
+    name: '西宁\n0.90%',
+    children: [
+      {
+        name: '1024\n0.90%',
+        value: 10309648628
+      }
+    ]
+  }
+]
+export const sunOption = {
+  silent: true,
+  series: {
+    type: 'sunburst',
+    radius: [0, '90%'],
+    label: {
+      rotate: 'radial'
+    }
+  }
+}
 export const lineOption = {
   tooltip: {
     trigger: 'axis'

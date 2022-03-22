@@ -23,12 +23,16 @@
       <div id="pieCanvas4" style="margin-bottom: 100px; height: 500px; width: 100%;"></div>
       <div style="padding-left: 30px; font-size: 18px; font-weight: bold; color: #666;">入占比</div>
       <div id="pieCanvas5" style="margin-bottom: 100px; height: 500px; width: 100%;"></div>-->
+      <div style="padding-left: 30px; font-size: 18px; font-weight: bold; color: #666;">入</div>
+      <div id="sunCanvas1" style="margin-bottom: 100px; height: 500px; width: 100%;"></div>
+      <div style="padding-left: 30px; font-size: 18px; font-weight: bold; color: #666;">出</div>
+      <div id="sunCanvas2" style="margin-bottom: 100px; height: 500px; width: 100%;"></div>
     </div>
   </div>
 </template>
 
 <script>
-import { lineData, lineOption } from './testData'
+import { lineData, lineOption, sunData1, sunData2, sunOption } from './testData'
 import * as echarts from 'echarts'
 import { getMillisecond } from '@/utils/date-util'
 import unitConvert from '@/utils/unit-convert'
@@ -80,6 +84,16 @@ export default {
         lineChart.setOption(option)
       })
     },
+    initSunChart (index) {
+      const option = this.$_.cloneDeep(sunOption)
+      const data = index === 1 ? sunData1 : sunData2
+      option.series.data = data
+      const dom = document.getElementById('sunCanvas' + index)
+      const lineChart = echarts.init(dom)
+      this.$nextTick(() => {
+        lineChart.setOption(option)
+      })
+    }
     /* initPie (index) {
       const data = pieData[index].map(p => {
         return {
@@ -102,6 +116,8 @@ export default {
     this.initLine(lineData2, 3)
     this.initLine(lineData3, 6)*/
     this.initLineChart()
+    this.initSunChart(1)
+    this.initSunChart(2)
     /* this.initPie(0)
     this.initPie(1)
     this.initPie(2)

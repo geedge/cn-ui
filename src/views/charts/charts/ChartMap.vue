@@ -32,13 +32,13 @@ import { HeatLegend } from '@/components/amcharts/heatLegend'
 import { getData } from '@/utils/api'
 import chartMixin from './chart-mixin'
 import _ from 'lodash'
+import { shallowRef } from 'vue'
 
 export default {
   name: 'ChartMap',
   data () {
     return {
       unitTypes,
-      myChart: null,
       mapPictureUrl: '/Tiles/{z}/{x}/{y}.png',
       showMapBackButton: false,
       polygonSeries: null, // 世界地图series
@@ -109,66 +109,67 @@ export default {
       chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
       this.myChart = chart
+      setTimeout(() => {
+        this.polygonSeries = this.polygonSeriesFactory()
 
-      this.polygonSeries = this.polygonSeriesFactory()
+        if (this.isMapPoint) {
+          this.worldImageSeries = this.imageSeriesFactory()
+        }
 
-      if (this.isMapPoint) {
-        this.worldImageSeries = this.imageSeriesFactory()
-      }
+        this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
 
-      this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
-
-      // 地图点击事件
-      if (this.isMapBlock) {
-        this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
-          const countryId = ev.target.dataItem.dataContext.id
-          if (countryId) {
-            ev.target.series.chart.zoomToMapObject(ev.target)
+        // 地图点击事件
+        if (this.isMapBlock) {
+          this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
+            const countryId = ev.target.dataItem.dataContext.id
+            if (countryId) {
+              ev.target.series.chart.zoomToMapObject(ev.target)
+              ev.target.isHover = false
+              const geoData = getGeoData(countryId)
+              if (geoData) {
+                this.countrySeries = this.polygonSeriesFactory()
+                this.countrySeries.geodata = geoData
+                this.polygonSeries.hide()
+                const country = ev.target.dataItem.dataContext.serverCountry
+                const queryParams = { ...this.queryParams, country }
+                const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+                this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
+              }
+            }
+          })
+        } else if (this.isMapPoint) {
+          this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
+            const countryId = ev.target.dataItem.dataContext.id
             ev.target.isHover = false
-            const geoData = getGeoData(countryId)
-            if (geoData) {
-              this.countrySeries = this.polygonSeriesFactory()
-              this.countrySeries.geodata = geoData
-              this.polygonSeries.hide()
-              const country = ev.target.dataItem.dataContext.serverCountry
-              const queryParams = { ...this.queryParams, country }
-              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-              this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
+            if (countryId) {
+              const targetMapObject = this.polygonSeries.getPolygonById(countryId)
+              targetMapObject.series.chart.zoomToMapObject(targetMapObject)
+              const geoData = getGeoData(countryId)
+              if (geoData) {
+                this.countrySeries = this.polygonSeriesFactory()
+                this.countrySeries.geodata = geoData
+                this.countryImageSeries = this.imageSeriesFactory()
+                this.polygonSeries.hide()
+                this.worldImageSeries.hide()
+                const country = ev.target.dataItem.dataContext.location
+                const queryParams = { ...this.queryParams, ipLocationCountry: country }
+                const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+                this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
+              }
             }
-          }
-        })
-      } else if (this.isMapPoint) {
-        this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
-          const countryId = ev.target.dataItem.dataContext.id
-          ev.target.isHover = false
-          if (countryId) {
-            const targetMapObject = this.polygonSeries.getPolygonById(countryId)
-            targetMapObject.series.chart.zoomToMapObject(targetMapObject)
-            const geoData = getGeoData(countryId)
-            if (geoData) {
-              this.countrySeries = this.polygonSeriesFactory()
-              this.countrySeries.geodata = geoData
-              this.countryImageSeries = this.imageSeriesFactory()
-              this.polygonSeries.hide()
-              this.worldImageSeries.hide()
-              const country = ev.target.dataItem.dataContext.location
-              const queryParams = { ...this.queryParams, ipLocationCountry: country }
-              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-              this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
-            }
-          }
-        })
-      }
-      // dns地图legend上的数据
-      if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
-        setTimeout(() => {
-          this.chartInfo.params.legendUrl.forEach((url, i) => {
-            getData(url).then(data => {
-              this.legends[i].value = data
+          })
+        }
+        // dns地图legend上的数据
+        if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
+          setTimeout(() => {
+            this.chartInfo.params.legendUrl.forEach((url, i) => {
+              getData(url).then(data => {
+                this.legends[i].value = data
+              })
             })
           })
-        })
-      }
+        }
+      })
     },
     polygonSeriesFactory () {
       const polygonSeries = this.myChart.series.push(new am4Maps.MapPolygonSeries())
@@ -442,6 +443,7 @@ export default {
       border: '#BF49DF'
     }
     return {
+      myChart: shallowRef(null),
       circleColor,
       isMapBlock: isMapBlock(props.chartInfo.type),
       isMapPoint: isMapPoint(props.chartInfo.type)
