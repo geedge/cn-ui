@@ -64,17 +64,36 @@ export const line = {
       symbol: 'none',
       data: [],
       markLine: {
-        label :{
-          position: 'middle'
+        silent: true,
+        symbol: 'none',
+        label: {
+          formatter(params) {
+            console.log(params);
+            // console.log(chartInfo.params.unitType);
+            const arr = unitConvert(params.value, unitTypes.number).join(' ')
+            let desc = ''
+            switch (params.dataIndex) {
+              case 0: {
+                desc = 'P50'
+                break
+              }
+              case 1: {
+                desc = 'P90'
+                break
+              }
+              default: break
+            }
+            console.log(`${arr} (${desc})`);
+            return `${arr} (${desc})`
+          }
         },
         data: [
           {
             name: 'P50',
-            yAxis: 50 ,
-            position:'middle',
-
+            yAxis: '',
           },
-          { yAxis: 90, name: 'P90' }]
+          { yAxis: '', 
+          name: 'P90' }]
       }
     }
   ]

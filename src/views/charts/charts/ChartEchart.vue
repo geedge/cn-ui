@@ -14,22 +14,21 @@ import { legendMapping } from '@/views/charts/charts/chart-table-title'
 export default {
   name: 'ChartEchart',
   mixins: [chartEchartMixin],
-  data () {
-    return {
-    }
+  data() {
+    return {}
   },
   props: {
-    resultType: Object
+    resultType: Object,
+    chartInfo: Object,
   },
-  setup (props) {
+  setup(props) {
     return {
       isEchartsPie: isEchartsPie(props.chartInfo.type),
-      isEchartsLine: isEchartsLine(props.chartInfo.type)
+      isEchartsLine: isEchartsLine(props.chartInfo.type),
     }
   },
   methods: {
-    initEcharts (id) {
-      console.log('chartechart里的',id);
+    initEcharts(id) {
       this.initDom(id)
       const chartParams = this.chartInfo.params
       if (chartParams.showLegend === false) {
@@ -43,11 +42,11 @@ export default {
             ...this.chartOption.series[0],
             radius: ['30%', '45%'],
             label: {
-              show: false
+              show: false,
             },
             labelLine: {
-              show: false
-            }
+              show: false,
+            },
           }
           this.chartOption.legend = {
             ...this.chartOption.legend,
@@ -60,13 +59,14 @@ export default {
               // return echarts.format.truncateText(name, 6, '…');
             },
             tooltip: {
-              show: true
+              show: true,
             },
-            textStyle: { // 图例文字的样式
+            textStyle: {
+              // 图例文字的样式
               color: '#666666',
               fontSize: 12,
-              fontWeight: 400
-            }
+              fontWeight: 400,
+            },
           }
           let chartDataTmp = []
           let otherData = []
@@ -74,55 +74,105 @@ export default {
 
           if (this.chartData.length > 5) {
             chartDataTmp = this.chartData.slice(0, 5)
-            chartDataTmp.forEach(data => {
+            chartDataTmp.forEach((data) => {
               if (data.name === '') {
                 data.name = ' '
               }
             })
             let otherSum = 0
             otherData = this.chartData.slice(5)
-            otherData.forEach(data => {
+            otherData.forEach((data) => {
               otherSum = otherSum + data.num
             })
             chartDataTmp.push({ num: otherSum, name: 'other' })
           } else if (this.chartData.length <= 5) {
             chartDataTmp = this.chartData.slice(0, this.chartData.length)
-            chartDataTmp.forEach(data => {
+            chartDataTmp.forEach((data) => {
               if (data.name === '') {
                 data.name = ' '
               }
             })
           }
 
-          this.chartOption.series[0].data = chartDataTmp.map(d => {
+          this.chartOption.series[0].data = chartDataTmp.map((d) => {
             return {
               name: lineToSpace(d.name),
               data: d,
               value: parseInt(d.num),
-              unitType: chartParams.unitType ? chartParams.unitType : 'number'
+              unitType: chartParams.unitType ? chartParams.unitType : 'number',
             }
           })
         } else {
-          this.chartOption.series[0].data = this.chartData.map(d => {
+          this.chartOption.series[0].data = this.chartData.map((d) => {
             return {
               name: lineToSpace(d.name),
               data: d,
               value: parseInt(d.num),
-              unitType: chartParams.unitType ? chartParams.unitType : 'number'
+              unitType: chartParams.unitType ? chartParams.unitType : 'number',
             }
           })
         }
       } else {
-        console.log('chartOption',this.chartOption);
         const seriesTemplate = this.chartOption.series[0]
-        this.chartOption.series = this.chartData.map(r => {
+        this.chartOption.series = this.chartData.map((r) => {
           const serie = {
             ...seriesTemplate,
-            name: legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] ? legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`] : humpToSpace(r.legend),
-            data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType])
+            name: legendMapping[
+              `${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`
+            ]
+              ? legendMapping[
+                  `${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`
+                ]
+              : humpToSpace(r.legend),
+            data: r.values.map((v) => [
+              Number(v[0]) * 1000,
+              Number(v[1]),
+              chartParams.unitType,
+            ]),
           }
           if (this.isEchartsLine) {
             serie.data = serie.data.slice(1, serie.data.length - 2)
+            serie.markLine = {
+              silent: true,
+              symbol: 'none',
+              label: {
+                    distance:[-50,0],
+                formatter(params) {
+                  const arr = unitConvert(
+                    params.value,
+                    chartParams.unitType,
+                  ).join(' ')
+                  let desc = ''
+                  switch (params.dataIndex) {
+                    case 0: {
+                      desc = 'P50'
+                      break
+                    }
+                    case 1: {
+                      desc = 'P90'
+                      break
+                    }
+                    default:
+                      break
+                  }
+                  return `${arr} (${desc})`
+                },
+              },
+              data: [
+                {
+                  name: 'P50',
+                  yAxis: this.chartData[0].aggregation.p50
+                    ? this.chartData[0].aggregation.p50
+                    : 50,
+                },
+                {
+                  name: 'P90',
+                  yAxis: this.chartData[0].aggregation.p90
+                    ? this.chartData[0].aggregation.p90
+                    : 90,
+                },
+              ],
+            }
           }
           return serie
         })
@@ -133,23 +183,28 @@ export default {
 
       const gridTemplate = this.chartOption.grid
       if (chartParams.unitType === unitTypes.byte) {
-        this.chartOption.yAxis.axisLabel.formatter = function (value, index, a, b) {
+        this.chartOption.yAxis.axisLabel.formatter = function (
+          value,
+          index,
+          a,
+          b,
+        ) {
           return unitConvert(value, unitTypes.byte).join(' ')
         }
         this.chartOption.grid = {
           ...gridTemplate,
           top: gridTop,
-          left: 75
+          left: 75,
         }
       } else {
         this.chartOption.grid = {
           ...gridTemplate,
-          top: gridTop
+          top: gridTop,
         }
       }
 
       this.loadEchart()
-    }
-  }
+    },
+  },
 }
 </script>
