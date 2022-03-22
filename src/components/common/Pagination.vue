@@ -9,7 +9,7 @@
         :current-page="pageObj.pageNo"
         :page-sizes="pageSizes?pageSizes:[20, 50, 100]"
         :page-size="Number(pageObj.pageSize)"
-        layout="total, prev, pager, next, slot"
+        :layout="layout"
         :total="pageObj.total"
       >
         <el-select v-model="pageSize" :placeholder="pageSize+$t('pageSize')" size="mini"  :popper-append-to-body="appendToBody" class="pagination-size-select" @change="size" :popper-class="popClass" @visible-change="popperVisible">
@@ -31,7 +31,11 @@ export default {
     tableId: {},
     postPageSizes: {},
     appendToBody: { default: true },
-    popClass: {}
+    popClass: {},
+    layout: {
+      type: String,
+      default: 'total, prev, pager, next, slot'
+    }
   },
   data () {
     return {

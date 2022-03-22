@@ -171,15 +171,15 @@ export default {
       let className
       switch (this.from) {
         case ('ip'): {
-          className = 'cn-icon cn-icon-ip ip-green'
+          className = 'cn-icon cn-icon-ip2 ip-green'
           break
         }
         case ('domain'): {
-          className = 'cn-icon cn-icon-domain domain-blue'
+          className = 'cn-icon cn-icon-domain2 domain-blue'
           break
         }
         case ('app'): {
-          className = 'cn-icon cn-icon-app app-orange'
+          className = 'cn-icon cn-icon-app2 app-orange'
           break
         }
         default: break

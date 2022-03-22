@@ -74,7 +74,7 @@ export default {
               this.entityData.p50 = t.aggregation.p50
               this.entityData.p90 = t.aggregation.p90
             } else if (t.legend === 'bytesSentRate') {
-              this.entityData.bytesSentRate = _.nth(t.values,-3)[1]
+              this.entityData.bytesSentRate = _.nth(t.values, -3)[1]
               this.chartOptionSent = {
                 ...this.chartOption,
                 series: [
@@ -90,7 +90,7 @@ export default {
                       }
                     },
                     color: '#69b072',
-                    data: _.dropRight(t.values,2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                    data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
                     showSymbol: false
                   }
                 ]
@@ -212,11 +212,11 @@ export default {
       }
     },
 
-    queryEntityDetailAlert () {
-      get(this.alertUrl, this.getQueryParams()).then(response => {
+    queryEntityDetailPerformance () {
+      get(this.performanceUrl, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          this.entityData.alertNum = response.data.result.length
-          this.entityData.alertList = response.data.result
+          this.entityData.performanceNum = response.data.result.length
+          this.entityData.performanceList = response.data.result
         }
       })
     },
@@ -232,8 +232,7 @@ export default {
 
     queryEntityDetail () {
       this.queryEntityDetailTraffic()
-      // this.queryEntityDetailRelation()
-      this.queryEntityDetailAlert()
+      this.queryEntityDetailPerformance()
       this.queryEntityDetailSecurity()
       this.queryEntityDetailNetworkQuantity()
       this.queryEntityDetailLinkOutUrl()

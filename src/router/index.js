@@ -49,6 +49,10 @@ const routes = [
       {
         path: '/chart',
         component: () => import('@/views/settings/Chart')
+      },
+      {
+        path: '/temp',
+        component: () => import('@/views/Temp')
       }
     ]
   }

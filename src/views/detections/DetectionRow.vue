@@ -133,15 +133,15 @@ export default {
       let className
       switch (this.detection.entityType) {
         case ('ip'): {
-          className = 'cn-icon cn-icon-ip'
+          className = 'cn-icon cn-icon-ip2'
           break
         }
         case ('domain'): {
-          className = 'cn-icon cn-icon-domain'
+          className = 'cn-icon cn-icon-domain2'
           break
         }
         case ('app'): {
-          className = 'cn-icon cn-icon-app'
+          className = 'cn-icon cn-icon-app2'
           break
         }
         default:

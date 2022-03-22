@@ -1,6 +1,7 @@
 import {
   chartColor,
-  tooLongFormatter
+  tooLongFormatter,
+  axisFormatter
 } from '@/views/charts/charts/tools'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
@@ -104,7 +105,7 @@ export const multipleBarOption = {
     {
       name: 'critical',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -117,7 +118,7 @@ export const multipleBarOption = {
     {
       name: 'high',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -130,7 +131,7 @@ export const multipleBarOption = {
     {
       name: 'medium',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -143,7 +144,7 @@ export const multipleBarOption = {
     {
       name: 'low',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -156,7 +157,7 @@ export const multipleBarOption = {
     {
       name: 'info',
       type: 'bar',
-      stack:'eventSeverityTrend',
+      stack: 'eventSeverityTrend',
       emphasis: {
         focus: 'series'
       },
@@ -253,14 +254,14 @@ export const activeAttackBar = {
     axisLine: { show: false },
     axisLabel: {
       show: true,
-      width:95,
-      overflow:'truncate',
+      width: 95,
+      overflow: 'truncate'
 
     },
     splitLine: {
       show: false
     },
-    triggerEvent: true,
+    triggerEvent: true
   },
   series: [{
     barWidth: 5,
@@ -285,4 +286,94 @@ export const activeAttackBar = {
     },
     barCategoryGap: '10%'
   }]
+}
+export const metricOption = {
+  tooltip: {
+    show:true,
+    trigger: 'axis',
+    formatter(params){
+      let str = '<div>'
+      let item = params[0]
+      const tData = item.data[0]
+      str += '<div style="margin-bottom: 5px">'
+      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += '</div>'
+      str += '<div class="cn-chart-tooltip-box">'
+      str += item.marker
+      str += `<span class="cn-chart-tooltip-content"> 
+      ${item.seriesName}
+      </span>`
+          str += `<span class="cn-chart-tooltip-value">
+          ${unitConvert(item.data[1], item.data[2]).join(' ')}
+      </span>`
+      str += '</div>'
+      return str
+    },
+    className: 'nz-chart-tooltip',
+    extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 300px !important',
+    textStyle: {
+      width: '20px',
+      overflow: 'truncate'
+    },
+    appendToBody: true
+  },
+  xAxis: {
+    type: 'time',
+    show: false
+  },
+  yAxis: {
+    type: 'value',
+    show: false
+  },
+  animation: false,
+  grid: {
+    left: 0,
+    bottom: 2,
+    top: 5,
+    right: 0
+  },
+  legend: {
+    show: false
+  },
+  series: [
+      {
+        name:'metric',
+        type: 'line',
+        legendHoverLink: false,
+        lineStyle: {
+          width: 1,
+          type:'dashed'
+        },
+        color: '#ec836c',
+        data: [],
+        showSymbol: false
+      },
+      {
+        name:'metric',
+        type: 'line',
+        legendHoverLink: false,
+        lineStyle: {
+          width: 1,
+          type:'solid'
+        },
+        areaStyle: {
+          color: 'rgba(244, 187, 174, 0.59)'
+        },
+        color: '#ec836c',
+        data: [],
+        showSymbol: false
+      },
+      {
+        name:'metric',
+        type: 'line',
+        legendHoverLink: false,
+        lineStyle: {
+          width: 1,
+          type:'dashed'
+        },
+        color: '#ec836c',
+        data: [],
+        showSymbol: false
+      }
+   ]
 }

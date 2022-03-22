@@ -67,8 +67,7 @@ export default {
         {
           name: 'entity_type',
           type: 'string',
-          // label: this.$t('overall.type')
-          label: 'Type'
+          label: 'Entity type'
         },
         {
           name: 'ip_addr',
@@ -78,31 +77,42 @@ export default {
         {
           name: 'ip_location_country',
           type: 'string',
-          // label: this.$t('overall.country')
-          label: 'Country'
+          label: 'IP.Country'
         },
         {
           name: 'ip_location_province',
           type: 'string',
-          // label: this.$t('overall.province')
-          label: 'Province'
+          label: 'IP.Province'
         },
         {
           name: 'ip_location_city',
           type: 'string',
-          // label: this.$t('overall.city')
-          label: 'City'
+          label: 'IP.City'
         },
         {
           name: 'ip_asn',
           type: 'string',
-          // label: this.$t('entities.asn')
-          label: 'ASN'
+          label: 'IP.ASN'
         },
         {
-          name: 'ip_os',
+          name: 'dns_server_role',
           type: 'string',
-          label: 'OS'
+          label: 'IP.DNS server role'
+        },
+        {
+          name: 'dns_server_org',
+          type: 'string',
+          label: 'IP.DNS server organization'
+        },
+        {
+          name: 'dns_server_os',
+          type: 'string',
+          label: 'IP.Operating system'
+        },
+        {
+          name: 'dns_server_software',
+          type: 'string',
+          label: 'IP.DNS server software'
         },
         {
           name: 'domain_name',
@@ -112,61 +122,82 @@ export default {
         {
           name: 'domain_category',
           type: 'string',
-          // label: this.$t('entities.domainCategory')
-          label: 'Domain category'
+          label: 'Domain.Category'
         },
         {
           name: 'domain_category_group',
           type: 'string',
-          // label: this.$t('entities.domainDetail.categoryGroup')
-          label: 'Domain category group'
-        },
-        {
-          name: 'domain_reputation_score',
-          type: 'long',
-          // label: this.$t('entities.domainDetail.reputationValue')
-          label: 'Domain reputation score'
+          label: 'Domain.Category group'
         },
         {
           name: 'domain_reputation_level',
           type: 'string',
-          // label: this.$t('entities.reputationLevel')
-          label: 'Domain reputation level'
+          label: 'Domain.Reputation'
         },
         {
           name: 'domain_whois_email',
           type: 'string',
-          label: 'Domain whois email'
+          label: 'Domain.Whois email'
         },
         {
           name: 'domain_whois_name_servers',
           type: 'string',
-          label: 'Domain whois ns'
+          label: 'Domain.Whois nameserver'
         },
         {
           name: 'domain_whois_registrar',
           type: 'string',
-          label: 'Domain whois registrar'
+          label: 'Domain.Whois registrar'
         },
         {
           name: 'domain_whois_org',
           type: 'string',
-          label: 'Domain whois organization'
+          label: 'Domain.Whois organization'
+        },
+        {
+          name: 'domain_whois_address',
+          type: 'string',
+          label: 'Domain.Whois address'
         },
         {
           name: 'domain_whois_city',
           type: 'string',
-          label: 'Domain whois city'
+          label: 'Domain.Whois city'
         },
         {
           name: 'domain_whois_state',
           type: 'string',
-          label: 'Domain whois state'
+          label: 'Domain.Whois state'
         },
         {
           name: 'domain_whois_country',
           type: 'string',
-          label: 'Domain whois country'
+          label: 'Domain.Whois country'
+        },
+        {
+          name: 'domain_icp_owner',
+          type: 'string',
+          label: 'Domain.ICP owner'
+        },
+        {
+          name: 'domain_icp_company_name',
+          type: 'string',
+          label: 'Domain.ICP company'
+        },
+        {
+          name: 'domain_icp_company_type',
+          type: 'string',
+          label: 'Domain.ICP company type'
+        },
+        {
+          name: 'domain_icp_site_license',
+          type: 'string',
+          label: 'Domain.ICP site license'
+        },
+        {
+          name: 'domain_icp_site_name',
+          type: 'string',
+          label: 'Domain.ICP site'
         },
         {
           name: 'app_name',
@@ -174,22 +205,39 @@ export default {
           label: 'APP'
         },
         {
+          name: 'app_id',
+          type: 'string',
+          label: 'APP.ID'
+        },
+        {
           name: 'app_category',
           type: 'string',
-          // label: this.$t('trafficSummary.appCategory')
-          label: 'APP category'
+          label: 'APP.Category'
         },
         {
           name: 'app_subcategory',
           type: 'string',
-          // label: this.$t('entities.domainDetail.appSubcategory')
-          label: 'APP subcategory'
+          label: 'APP.Subcategory'
         },
         {
           name: 'app_risk',
           type: 'string',
-          // label: this.$t('trafficSummary.appRisk')
-          label: 'APP risk'
+          label: 'APP.Risk'
+        },
+        {
+          name: 'app_description',
+          type: 'string',
+          label: 'APP.Description'
+        },
+        {
+          name: 'app_longname',
+          type: 'string',
+          label: 'APP.Long name'
+        },
+        {
+          name: 'app_technology',
+          type: 'string',
+          label: 'APP.Technology'
         }
       ],
       operatorList: ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],

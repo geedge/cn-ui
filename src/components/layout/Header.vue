@@ -18,7 +18,7 @@
         <el-option v-for="(value, key) in entityType" :label="value" :key="key" :value="key">
           <template v-if="value === entityType.ip"><i style="color: #23BF9A;" class="cn-icon cn-icon-ip"></i></template>
           <template v-else-if="value === entityType.domain"><i style="color: #23BF9A;" class="cn-icon cn-icon-domain"></i></template>
-          <template v-else-if="value === entityType.app"><i style="color: #23BF9A;" class="cn-icon cn-icon-app"></i></template>
+          <template v-else-if="value === entityType.app"><i style="color: #23BF9A;" class="cn-icon cn-icon-app2"></i></template>
           {{value}}
         </el-option>
         <template #prefix>

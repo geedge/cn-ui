@@ -34,8 +34,6 @@ export const api = {
   entityNew: '/interface/entity/index/new',
   entityActive: '/interface/entity/index/active',
   entityTraffic: '/interface/entity/list/traffic',
-  entityAlertNum: '/interface/entity/list/alertNum',
-  entitySecurityNum: '/interface/entity/list/detectionNum',
   ipBytes: '/interface/entity/detail/ip/bytes',
   domainBytes: '/interface/entity/detail/domain/bytes',
   appBytes: '/interface/entity/detail/app/bytes',
@@ -45,8 +43,8 @@ export const api = {
   entityAppDetailNetworkQuantity: '/interface/entity/detail/overview/app/networkQuantity',
   entityAppDetailLinkIn: '/interface/entity/detail/overview/app/linkIn',
   entityAppDetailLinkOut: '/interface/entity/detail/overview/app/linkOut',
-  entityAppDetailAlert: '/interface/entity/detail/overview/app/alert',
-  entityAppDetailSecurity: '/interface/entity/detail/overview/app/security',
+  entityAppDetailPerformance: '/interface/entity/detail/overview/app/performanceEvent',
+  entityAppDetailSecurity: '/interface/entity/detail/overview/app/securityEvent',
   entityAppRelatedServerDomain: '/interface/entity/detail/overview/app/relatedDomain',
   entityAppRelatedServerIp: '/interface/entity/detail/overview/app/relatedServerIp',
   // domain detail
@@ -56,8 +54,8 @@ export const api = {
   entityDomainDetailNetworkQuantity: '/interface/entity/detail/overview/domain/networkQuantity',
   entityDomainDetailLinkIn: '/interface/entity/detail/overview/domain/linkIn',
   entityDomainDetailLinkOut: '/interface/entity/detail/overview/domain/linkOut',
-  entityDomainDetailAlert: '/interface/entity/detail/overview/domain/alert',
-  entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/security',
+  entityDomainDetailPerformance: '/interface/entity/detail/overview/domain/performanceEvent',
+  entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/securityEvent',
   entityDomainRelatedServerIp: '/interface/entity/detail/overview/domain/relatedServerIp',
   entityDomainRelatedServerApp: '/interface/entity/detail/overview/domain/relatedApp',
   // ip detail
@@ -69,8 +67,8 @@ export const api = {
   entityIpDetailNetworkQuantity: '/interface/entity/detail/overview/ip/networkQuantity',
   entityIpDetailLinkIn: '/interface/entity/detail/overview/ip/linkIn',
   entityIpDetailLinkOut: '/interface/entity/detail/overview/ip/linkOut',
-  entityIpDetailAlert: '/interface/entity/detail/overview/ip/alert',
-  entityIpDetailSecurity: '/interface/entity/detail/overview/ip/security',
+  entityIpDetailPerformance: '/interface/entity/detail/overview/ip/performanceEvent',
+  entityIpDetailSecurity: '/interface/entity/detail/overview/ip/securityEvent',
   entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
   entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp',
   // detection
@@ -95,7 +93,8 @@ export const api = {
       activeEntity: '/interface/detection/performance/filter/activeEntity',
       listBasic: '/interface/detection/performance/list/basic',
       listCount: '/interface/detection/performance/list/count',
-      overviewBasic: '/interface/detection/performance/detail/overview/basic'
+      overviewBasic: '/interface/detection/performance/detail/overview/basic',
+      metric:'/interface/detection/performance/detail/overview/metric'
     }
   }
 }

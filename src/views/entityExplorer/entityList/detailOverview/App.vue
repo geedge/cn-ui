@@ -4,19 +4,23 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">APP ID</div>
-        <div class="row__content">{{entityData.appId|| '-'}}</div>
+        <div class="row__content">{{entity.appId|| '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.category')}}</div>
-        <div class="row__content">{{entityData.appCategory|| '-'}}</div>
+        <div class="row__content">{{entity.appCategory|| '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.subcategory')}}</div>
-        <div class="row__content">{{entityData.appSubcategory || '-'}}</div>
+        <div class="row__content">{{entity.appSubcategory || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.riskLevel')}}</div>
-        <div class="row__content">{{appRisk(entityData.appRisk) || '-'}}</div>
+        <div class="row__content">{{appRisk(entity.appRisk) || '-'}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('overall.remark')}}</div>
+        <div class="row__content">{{entity.appDescription || '-'}}</div>
       </div>
     </div>
   </div>
@@ -131,17 +135,17 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
-        <div class="row__content">{{entityData.alertNum || '-'}}</div>
+        <div class="row__content">{{entityData.performanceNum || '-'}}</div>
       </div>
-      <div class="overview__row overview__row--small-font"   v-for="(alert, index) in entityData.alertList" :key="index">
-        <div class="row__label row__label--width160">{{alert.startTime}}</div>
+      <div class="overview__row overview__row--small-font"   v-for="(performance, index) in entityData.performanceList" :key="index">
+        <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(performance.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{alert.alertSeverity}}</div>
-          <div>{{alert.alertName}}</div>
+          <div class="alert-level-tag alert-level-tag--high">{{performance.eventSeverity}}</div>
+          <div>{{performance.eventType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
-      <div class="overview__row overview__row--small-font" v-if="entityData.alertList && entityData.alertList.length > 3">
+      <div class="overview__row overview__row--small-font" v-if="entityData.performanceList && entityData.performanceList.length > 3">
         <div class="show-more">{{$t('overall.showMore')}}>></div>
       </div>
     </div>
@@ -154,10 +158,10 @@
         <div class="row__content">{{entityData.securityNum || '-'}}</div>
       </div>
       <div class="overview__row overview__row--small-font"   v-for="(security, index) in entityData.securityList" :key="index">
-        <div class="row__label row__label--width160">{{security.startTime}}</div>
+        <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(security.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{security.securitySeverity}}</div>
-          <div>{{security.sourceName}}</div>
+          <div class="alert-level-tag alert-level-tag--high">{{security.eventSeverity}}</div>
+          <div>{{security.securityType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
@@ -188,6 +192,7 @@ import _ from 'lodash'
 import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
+import { getSecond, getMillisecond } from '@/utils/date-util'
 
 export default {
   name: 'App',
@@ -205,7 +210,7 @@ export default {
       networkQuantityUrl: api.entityAppDetailNetworkQuantity,
       linkInUrl: api.entityAppDetailLinkIn,
       linkOutUrl: api.entityAppDetailLinkOut,
-      alertUrl: api.entityAppDetailAlert,
+      performanceUrl: api.entityAppDetailPerformance,
       securityUrl: api.entityAppDetailSecurity,
       trafficUrlMap: api.entityAppDetailTrafficMap,
       relatedServerDomainUrl: api.entityAppRelatedServerDomain,
@@ -260,10 +265,11 @@ export default {
     }
   },
   methods: {
+    getMillisecond,
     getQueryParams () {
       const queryParams = {
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000),
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
         appName: this.entity.appName
       }
       return queryParams

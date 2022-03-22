@@ -1,11 +1,9 @@
 import unitConvert from '@/utils/unit-convert'
-import { unitTypes } from '@/utils/constants'
+import { unitTypes, chartColor } from '@/utils/constants'
 import {
   categoryVerticalFormatter,
-  chartColor,
   getCharBartColor,
-  timeVerticalFormatter,
-  tooLongFormatter
+  timeVerticalFormatter
 } from '@/views/charts/charts/tools'
 
 export const ipOpenPortBar = {
