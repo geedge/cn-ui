@@ -62,7 +62,20 @@ export const line = {
       type: 'line',
       smooth: false,
       symbol: 'none',
-      data: []
+      data: [],
+      markLine: {
+        label :{
+          position: 'middle'
+        },
+        data: [
+          {
+            name: 'P50',
+            yAxis: 50 ,
+            position:'middle',
+
+          },
+          { yAxis: 90, name: 'P90' }]
+      }
     }
   ]
 }

@@ -71,6 +71,8 @@ export default {
             if (t.legend === 'bytesRate') {
               this.entityData.max = t.aggregation.max
               this.entityData.avg = t.aggregation.avg
+              this.entityData.p50 = t.aggregation.p50
+              this.entityData.p90 = t.aggregation.p90
             } else if (t.legend === 'bytesSentRate') {
               this.entityData.bytesSentRate = _.nth(t.values,-3)[1]
               this.chartOptionSent = {

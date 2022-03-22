@@ -29,6 +29,7 @@ export default {
   },
   methods: {
     initEcharts (id) {
+      console.log('chartechart里的',id);
       this.initDom(id)
       const chartParams = this.chartInfo.params
       if (chartParams.showLegend === false) {
@@ -112,6 +113,7 @@ export default {
           })
         }
       } else {
+        console.log('chartOption',this.chartOption);
         const seriesTemplate = this.chartOption.series[0]
         this.chartOption.series = this.chartData.map(r => {
           const serie = {

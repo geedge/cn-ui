@@ -46,6 +46,7 @@ export default {
         !this.myChart && (this.myChart = echarts.init(dom))
       }
       this.chartOption = this.$_.cloneDeep(getOption(this.chartInfo.type))
+      console.log('chartOption mixin里的',id,this.chartOption);
     },
     // 出来y轴相关配置
     handleYaxis () {
