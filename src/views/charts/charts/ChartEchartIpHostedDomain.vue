@@ -21,10 +21,6 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'
-import {
-  ipHostedDomain
-} from '@/views/charts/charts/options/pie'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { get } from '@/utils/http'
 import chartEchartMixin from './chart-echart-mixin'
@@ -43,57 +39,56 @@ export default {
     initEcharts (id) {
       this.initDom(id, 2)
       const chartParams = this.chartInfo.params
-      this.$emit('showLoading', true)
+      const domains = this.chartData.toString()
       const byType = new Promise(resolve => {
-        get(replaceUrlPlaceholder(chartParams.byTypeUrl, { ip: this.entity.ip })).then(response => {
+        get(replaceUrlPlaceholder(chartParams.byCategoryUrl, { domains: domains })).then(response => {
           if (response.code === 200) {
             if (this.$_.isEmpty(response.data.result)) {
               // this.noData0 = true
             } else {
               // this.noData0 = false
-              const chartOption = this.$_.cloneDeep(this.chartOption)
+              //chartOption = this.$_.cloneDeep(this.chartOption)
               const data = response.data.result.map(d => {
                 return {
                   data: d,
-                  name: d.category,
-                  value: parseInt(d.count),
+                  name: d.categoryName,
+                  value: parseInt(d.uniqDomains),
                   unitType: chartParams.unitType
                 }
               })
-              chartOption.series[0].data = data
-              this.myChart.setOption(chartOption)
+              this.chartOption.series[0].data = data
+              //this.myChart.setOption(this.chartOption)
             }
           }
-          resolve()
+           resolve()
         })
       })
       const byCredit = new Promise(resolve => {
-        get(replaceUrlPlaceholder(chartParams.byCreditUrl, { ip: this.entity.ip })).then(response => {
+        get(replaceUrlPlaceholder(chartParams.byReputationUrl, { domains: domains })).then(response => {
           if (response.code === 200) {
             if (this.$_.isEmpty(response.data.result)) {
               // this.noData1 = true
             } else {
               // this.noData1 = false
-              const chartOption = this.$_.cloneDeep(this.chartOption)
+              //this.chartOption2 = this.$_.cloneDeep(this.chartOption)
               const data = response.data.result.map(d => {
                 return {
                   data: d,
-                  name: d.reputation,
-                  value: parseInt(d.count),
+                  name: d.reputationLevel,
+                  value: parseInt(d.uniqDomains),
                   unitType: chartParams.unitType
                 }
               })
-              chartOption.series[0].data = data
-              this.myChart2.setOption(chartOption)
+              this.chartOption2.series[0].data = data
+             // this.myChart2.setOption(this.chartOption2)
             }
           }
-          resolve()
+           resolve()
         })
       })
+
       Promise.all([byType, byCredit]).finally(response => {
-        setTimeout(() => {
-          this.$emit('showLoading', false)
-        }, 1000)
+         this.loadEchart(2)
       })
     }
   }

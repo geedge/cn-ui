@@ -31,7 +31,8 @@ export default {
   },
   data () {
     return {
-      chartOption: null
+      chartOption: null,
+      chartOption2: null
     }
   },
   methods: {
@@ -41,6 +42,7 @@ export default {
         const dom2 = document.getElementById(id + '-1')
         !this.myChart && (this.myChart = echarts.init(dom))
         !this.myChart2 && (this.myChart2 = echarts.init(dom2))
+        this.chartOption2 = this.$_.cloneDeep(getOption(this.chartInfo.type))
       } else {
         const dom = document.getElementById(id)
         !this.myChart && (this.myChart = echarts.init(dom))
@@ -81,7 +83,7 @@ export default {
         this.myChart.setOption(this.chartOption)
         this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart))
         if (chartNum && chartNum == 2) {
-          this.myChart2.setOption(this.chartOption)
+          this.myChart2.setOption(this.chartOption2)
           this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart2))
         }
         const _this = this

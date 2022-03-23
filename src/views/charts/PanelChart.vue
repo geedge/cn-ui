@@ -251,7 +251,9 @@ export default {
             }
           }).finally(() => {
             setTimeout(() => {
-              this.loading = false
+              if(!(this.chartInfo.type === 33 || this.chartInfo.type === 34)){
+                this.loading = false
+              }
             }, 200)
           })
         } else if (this.chartInfo.type === 94) {

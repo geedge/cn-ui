@@ -56,7 +56,7 @@ export const ipHostedDomain = {
   legend: {
     orient: 'vertical',
     type: 'plain',
-    right: '8%',
+    left: '67%',
     top: 'middle',
     icon: 'circle',
     itemWidth: 10, // 设置宽度
@@ -64,7 +64,10 @@ export const ipHostedDomain = {
     itemGap: 20,
     tooltip: {
       show: true
-    }
+    },
+    formatter: function (name) {
+      return name.length > 9 ? name.substr(0, 9) + '...' : name
+    },
   },
   series: [
     {
@@ -76,9 +79,20 @@ export const ipHostedDomain = {
       label: {
         formatter: '{d}%'
       },
+      //right:'20%',
+      labelLine:{
+        length:6,
+        length2:6
+      } ,
       tooltip: {
         formatter: function (param, index, callback) {
-          return `${param.name}: ${unitConvert(param.value, param.data.unitType).join(' ')}`
+          if(param.data.unitType){
+            let tip = unitConvert(param.value, param.data.unitType)
+            tip = tip?tip.join(' '):''
+            return `${param.name}: ${tip}`
+          }else {
+            return `${param.name}: ${param.value}`
+          }
         }
       },
       emphasis: {
