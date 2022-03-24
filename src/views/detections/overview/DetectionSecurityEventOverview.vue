@@ -8,14 +8,11 @@
             <span
               class="row__content--link"
               @click="goDetail('ip', detection.victimIp)"
-              >{{ detection.victimIp }}</span
-            >&nbsp;
+              >{{ detection.victimIp }}</span>&nbsp;
             <span>
               {{$t('detection.commandAndControl')}}
             </span>
-            <span class="row__content--link">{{
-              detection.iocValue
-            }}</span></template
+            <span class="row__content--link" @click="goDetail('ip', basicInfo.iocValue)">{{basicInfo.iocValue || '-'}}</span></template
           >
           <template v-else>
             <span
@@ -26,10 +23,11 @@
             <span>
               {{$t('detection.payloadAndDelivery')}}
             </span>
-            <span class="row__content--link">{{
-              detection.iocValue
-            }}</span></template
-          >
+            <span class="row__content--link"
+                  @click="goDetail('ip', basicInfo.iocValue)"
+            >{{
+                basicInfo.iocValue
+            }}</span></template>
         </div>
       </div>
       <div class="overview__title">Fields</div>
@@ -96,9 +94,7 @@
         <div class="row__content">
           <div
             class="row__tag"
-            :style="`background-color:${
-              eventSeverityColor[basicInfo.domainReputationLevel]
-            }`"
+            :style="`background-color:${eventSeverityColor[basicInfo.domainReputationLevel]}`"
           >
             {{ basicInfo.domainReputationLevel || '-' }}
           </div>
@@ -184,7 +180,7 @@
             class="row__content--link"
             @click="goDetail('ip', basicInfo.offenderIp)"
             >{{ basicInfo.offenderIp }}</span
-          >
+          >&nbsp;&nbsp;
           <span
             class="row__content--link"
             @click="goDetail('domain', basicInfo.domain)"
@@ -378,14 +374,16 @@ export default {
       })
     },
     goDetail (type, name) {
-      const { href } = this.$router.resolve({
-        path: '/entityDetail',
-        query: {
-          entityType: type,
-          name: name
-        }
-      })
-      window.open(href, '_blank')
+      if (name) {
+        const { href } = this.$router.resolve({
+          path: '/entityDetail',
+          query: {
+            entityType: type,
+            name: name
+          }
+        })
+        window.open(href, '_blank')
+      }
     }
   },
   mounted () {

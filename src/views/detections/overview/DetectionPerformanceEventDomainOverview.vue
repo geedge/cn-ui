@@ -7,7 +7,7 @@
             <span
                     class="row__content--link"
                     @click="goDetail('domain', computeSecondaryDomain(detection.domain))"
-            >{{ computeSecondaryDomain(detection.domain) }}</span>
+            >{{detection.domain}}</span>
           <template v-if="detection.eventType === 'dns error'">
             <span>
               {{$t('detections.dnsQueryError')}}
@@ -52,7 +52,7 @@
           <span>{{ $t('detections.viewDetailOf') }}</span> &nbsp;
           <span
                   class="row__content--link"
-                  @click="goDetail('domain', computeSecondaryDomain(detection.domain))">{{computeSecondaryDomain(detection.domain)}}</span>
+                  @click="goDetail('domain', computeSecondaryDomain(detection.domain))">{{detection.domain}}</span>
         </div>
       </div>
       <div class="overview__title">{{$t('detections.goToHunt')}}</div>
@@ -63,7 +63,7 @@
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.metric')}}</div>
           <div class="overview__row">
-            <div class="row__content--metric ">{{detection.domain  || '-'}}</div>
+            <div class="row__content--metric ">{{detection.eventType  || '-'}}</div>
           </div>
         </div>
         <div class="metric__column">
@@ -226,6 +226,7 @@
               domain: this.detection.domain,
               startTime: this.searchStartTime,
               endTime: this.searchEndTime,
+              eventType: this.detection.eventType
             }).then((response) => {
               if (response.code === 200) {
                 resolve(response.data.result[0])

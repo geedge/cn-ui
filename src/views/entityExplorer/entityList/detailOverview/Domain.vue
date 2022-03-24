@@ -139,7 +139,7 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
-        <div class="row__content">{{entityData.performanceNum || '-'}}</div>
+        <div class="row__content">{{entityData.performanceNum}}</div>
       </div>
       <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
         <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(performance.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
@@ -159,7 +159,7 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label">{{$t('entities.recentSecurity')}}</div>
-        <div class="row__content">{{entityData.securityNum || '-'}}</div>
+        <div class="row__content">{{entityData.securityNum}}</div>
       </div>
       <div class="overview__row overview__row--small-font" v-for="(security, i) in entityData.securityList" :key="i">
         <div class="row__label row__label--width160">{{dayJs.tz(getMillisecond(security.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>

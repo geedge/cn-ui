@@ -9,9 +9,9 @@
       <div class="cn-detection__row">
         <div class="cn-detection__header" v-if="pageType === detectionPageType.securityEvent">
           <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp || '-'}}
+          <div v-if="detection.domain" class="domain">{{detection.domain}}</div>
           <span class="line">-------</span>
           <span class="circle"></span>
-          <span class="domain">{{detection.domain }}</span>
           <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp || '-'}}
         </div>
         <div class="cn-detection__header" v-else-if="pageType === detectionPageType.performanceEvent">

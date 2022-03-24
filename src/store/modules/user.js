@@ -67,7 +67,7 @@ const user = {
             }
           })
         } else {
-          ElMessage.error('No menu') // TODO 国际化
+          ElMessage.error('No menu')
         }
       })
     },
