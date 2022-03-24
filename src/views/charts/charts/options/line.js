@@ -89,8 +89,7 @@ export const lineWithStatistics = {
       formatter: function (value, index) {
         return unitConvert(value, unitTypes.number).join(' ')
       }
-    },
-    minInterval: 1
+    }
   },
   color: chartColor,
   grid: {
@@ -138,8 +137,7 @@ export const lineStack = {
       formatter: function (value, index) {
         return unitConvert(value, unitTypes.number).join(' ')
       }
-    },
-    minInterval: 1
+    }
   },
   grid: {
     left: 55,
