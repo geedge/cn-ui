@@ -4,7 +4,7 @@
       <div class="hosted-domain__list">
          <div class="hosted-domain__list-title">{{$t('overall.domain')}}</div>
          <div class="hosted-domain__list-body">
-            <div class="hosted-domain__list-row" v-for="(data, i) in chartData" :key="i">{{data}}</div>
+            <div class="hosted-domain__list-row" v-for="(data, i) in chartData" :key="i">{{data.domain}}</div>
          </div>
       </div>
       <div class="hosted-domain__chart">
@@ -39,7 +39,10 @@ export default {
     initEcharts (id) {
       this.initDom(id, 2)
       const chartParams = this.chartInfo.params
-      const domains = this.chartData.toString()
+      const domains = this.chartData.map(function(item,i){
+        return item.domain
+      }).join(',')
+
       const byType = new Promise(resolve => {
         get(replaceUrlPlaceholder(chartParams.byCategoryUrl, { domains: domains })).then(response => {
           if (response.code === 200) {
