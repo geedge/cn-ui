@@ -60,7 +60,7 @@
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.value')}}</div>
           <div class="overview__row">
-            <div class="row__charts"  id="detectionMetricChartIp" ></div>
+            <div class="row__charts"  :id="`detectionMetricChartIp${detection.serverIp}`" ></div>
           </div>
         </div>
         <div class="metric__column">
@@ -136,12 +136,12 @@ export default {
         if(this.metricList.length>0){
           this.initChart()
         }else {
-          let chartDom = document.getElementById('detectionMetricChartIp')
+          let chartDom = document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)
           chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
         }
       }).catch(error => {
         console.log(error)
-        let chartDom = document.getElementById('detectionMetricChartIp')
+        let chartDom = document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)
         chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
       }).finally(() => {
         setTimeout(() => {
@@ -155,7 +155,7 @@ export default {
     },
 
     initChart(){
-      this.metricChart = markRaw(echarts.init(document.getElementById('detectionMetricChartIp')))
+      this.metricChart = markRaw(echarts.init(document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)))
       this.chartOptionMetric = _.cloneDeep(this.chartOption)
 
       this.metricList.sort(reverseSortBy(0))//将返回的数据按时间降序排序，方便找到实线和虚线的交点

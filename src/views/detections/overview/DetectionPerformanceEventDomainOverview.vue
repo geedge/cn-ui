@@ -69,7 +69,7 @@
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.value')}}</div>
           <div class="overview__row">
-            <div class="row__charts" id="detectionMetricChartDomain" ></div>
+            <div class="row__charts" :id="`detectionMetricChartDomain${detection.domain}`" ></div>
           </div>
         </div>
         <div class="metric__column">
@@ -174,12 +174,12 @@
           if(this.metricList.length>0){
             this.initChart()
           }else {
-            let chartDom = document.getElementById('detectionMetricChartDomain')
+            let chartDom = document.getElementById(`detectionMetricChartDomain${this.detection.domain}`)
             chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
           }
         }).catch(error => {
           console.log(error)
-          let chartDom = document.getElementById('detectionMetricChartDomain')
+          let chartDom = document.getElementById(`detectionMetricChartDomain${this.detection.domain}`)
           chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
         }).finally(() => {
           setTimeout(() => {
@@ -193,7 +193,7 @@
       },
 
       initChart(){
-        this.metricChart = markRaw(echarts.init(document.getElementById('detectionMetricChartDomain')))//使用markRaw的原因：vue3+echart5 遇到的坑 Cannot read properties of undefined (reading 'type')
+        this.metricChart = markRaw(echarts.init(document.getElementById(`detectionMetricChartDomain${this.detection.domain}`)))//使用markRaw的原因：vue3+echart5 遇到的坑 Cannot read properties of undefined (reading 'type')
         this.chartOptionMetric = _.cloneDeep(this.chartOption)
 
         this.metricList.sort(reverseSortBy(0))//将返回的数据按时间降序排序，方便找到实线和虚线的交点
