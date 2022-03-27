@@ -251,9 +251,9 @@ export default {
             }
           }).finally(() => {
             setTimeout(() => {
-              if(!(isIpHostedDomain(this.chartInfo.type) || isAppRelatedDomain(this.chartInfo.type)) ){
+              if (!(isIpHostedDomain(this.chartInfo.type) || isAppRelatedDomain(this.chartInfo.type))) {
                 this.loading = false
-              }else if(!this.chartData || this.chartData.length === 0){
+              } else if (!this.chartData || this.chartData.length === 0) {
                 this.loading = false
               }
             }, 200)
