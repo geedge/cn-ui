@@ -24,6 +24,7 @@ export default {
         sentChart: null,
         receivedChart: null
       },
+      chartOption: null,
       queryParams: {}
     }
   },
@@ -237,20 +238,16 @@ export default {
       this.queryEntityDetailNetworkQuantity()
       this.queryEntityDetailLinkOutUrl()
       this.queryEntityDetailLinkInUrl()
-      this.queryRelated()
     }
   },
   setup () {
     return {
-      chartOption: entityListLineOption,
       unitTypes,
       unitConvert
     }
   },
   mounted () {
-    if (this.listMode === 'list') {
-      this.chartOption = _.cloneDeep(entityListLineOption)
-      setTimeout(() => { this.queryEntityDetail() })
-    }
+    this.chartOption = _.cloneDeep(entityListLineOption)
+    setTimeout(() => { this.queryEntityDetail() })
   }
 }

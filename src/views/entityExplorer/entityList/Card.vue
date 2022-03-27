@@ -45,19 +45,25 @@
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-entity-alert"></i>{{$t('entities.recentAlert')}}：</span>
-          <div class="body__row-value" :title="entityData.alertCount">{{entityData.alertCount || '-'}}</div>
+          <div class="body__row-value" :title="entityData.performanceCount">{{entityData.performanceCount}}</div>
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-safe"></i>{{$t('entities.recentSecurity')}}：</span>
-          <div class="body__row-value" :title="entityData.securityCount">{{entityData.securityCount || '-'}}</div>
+          <div class="body__row-value" :title="entityData.securityCount">{{entityData.securityCount}}</div>
         </div>
         <!-- 曲线-->
         <div class="body__drawing-box">
-          <div class="body__drawing" :id="`entityListChart${entityData.ipAddr}`"></div>
+          <div class="body__drawing" :id="`entityListChart${entityData.ipAddr}${listMode}`"></div>
         </div>
         <div class="body__statics">
-          <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate || 0}} bps</div>
-          <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i>{{entityData.bytesSentRate || 0}} bps</div>
+          <div class="entity-statics-down">
+            <i class="cn-icon cn-icon-fall entity-statics-icon"></i>
+            {{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+          </div>
+          <div class="entity-statics-up" >
+            <i class="cn-icon cn-icon-rise"></i>
+            {{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+          </div>
           <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
       </template>
@@ -76,19 +82,24 @@
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-entity-alert"></i>{{$t('entities.recentAlert')}}：</span>
-          <div class="body__row-value" :title="entityData.alertCount">{{entityData.alertCount || '-'}}</div>
+          <div class="body__row-value" :title="entityData.performanceCount">{{entityData.performanceCount}}</div>
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-safe"></i>{{$t('entities.recentSecurity')}}：</span>
-          <div class="body__row-value" :title="entityData.securityCount">{{entityData.securityCount || '-'}}</div>
+          <div class="body__row-value" :title="entityData.securityCount">{{entityData.securityCount}}</div>
         </div>
         <!-- 曲线-->
         <div class="body__drawing-box">
-          <div class="body__drawing" :id="`entityListChart${entityData.domainName}`"></div>
+          <div class="body__drawing" :id="`entityListChart${entityData.domainName}${listMode}`"></div>
         </div>
         <div class="body__statics">
-          <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate || 0}} bps</div>
-          <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i>{{entityData.bytesSentRate || 0}} bps</div>
+          <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>
+            {{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+          </div>
+          <div class="entity-statics-up" >
+            <i class="cn-icon cn-icon-rise"></i>
+            {{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+          </div>
           <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
       </template>
@@ -107,15 +118,15 @@
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-entity-alert"></i>{{$t('entities.recentAlert')}}：</span>
-          <div class="body__row-value" :title="entityData.alertCount">{{entityData.alertCount || '-'}}</div>
+          <div class="body__row-value" :title="entityData.performanceCount">{{entityData.performanceCount}}</div>
         </div>
         <div class="body__row">
           <span class="body__row-label"><i class="cn-icon cn-icon-safe"></i>{{$t('entities.recentSecurity')}}：</span>
-          <div class="body__row-value" :title="entityData.securityCount">{{entityData.securityCount || '-'}}</div>
+          <div class="body__row-value" :title="entityData.securityCount">{{entityData.securityCount}}</div>
         </div>
         <!-- 曲线-->
         <div class="body__drawing-box">
-                <div class="body__drawing" :id="`entityListChart${entityData.appName}`"></div>
+          <div class="body__drawing" :id="`entityListChart${entityData.appName}${listMode}`"></div>
         </div>
         <div class="body__statics">
           <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}</div>
@@ -129,16 +140,8 @@
 
 <script>
 import entityListMixin from './entityListMixin'
-import { unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'Card',
-  mixins: [entityListMixin],
-  setup () {
-    return {
-      unitTypes,
-      unitConvert
-    }
-  }
+  mixins: [entityListMixin]
 }
 </script>
