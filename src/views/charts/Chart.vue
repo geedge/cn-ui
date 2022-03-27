@@ -299,13 +299,12 @@ import {
   isMapLine,
   isMapBlock,
   isSingleValueWithEcharts,
-  isSingleValueWithEchartsTemp,
+  isSingleValueWithPercent,
   isRelationShip,
   isTabs,
   isGroup,
   isSankey,
   isIpBasicInfo,
-  isIpOpenPort,
   isIpHostedDomain,
   isDomainWhois,
   isDomainDnsRecord,
@@ -441,9 +440,7 @@ export default {
       isEchartsWithStatistics: isEchartsWithStatistics(props.chartInfo.type),
       isSingleValue: isSingleValue(props.chartInfo.type),
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chartInfo.type),
-      isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(
-        props.chartInfo.type
-      ),
+      isSingleValueWithPercent: isSingleValueWithPercent(props.chartInfo.type),
       isRelationShip: isRelationShip(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
       isBasicTable: isBasicTable(props.chartInfo.type),
@@ -458,7 +455,6 @@ export default {
       isSankey: isSankey(props.chartInfo.type),
       isIpBasicInfo: isIpBasicInfo(props.chartInfo.type),
       isIpHostedDomain: isIpHostedDomain(props.chartInfo.type),
-      isIpOpenPort: isIpOpenPort(props.chartInfo.type),
       isDomainWhois: isDomainWhois(props.chartInfo.type),
       isDomainDnsRecord: isDomainDnsRecord(props.chartInfo.type),
       isCryptocurrencyEventList: isCryptocurrencyEventList(

@@ -5,17 +5,21 @@ import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
+import unitConvert from '@/utils/unit-convert'
 
 export default {
   props: {
     entity: Object,
     timeFilter: {},
-    listMode: ''
+    listMode: String
   },
   data () {
     return {
       entityData: {},
-      chartOption: null
+      trafficUrl: '',
+      chartOption: null,
+      unitTypes,
+      unitConvert
     }
   },
   computed: {
@@ -38,6 +42,26 @@ export default {
       }
       return className
     },
+    entityType () {
+      let type
+      switch (this.entityData.entityType) {
+        case 'ip': {
+          type = this.entityData.ipAddr
+          break
+        }
+        case 'domain': {
+          type = this.entityData.domainName
+          break
+        }
+        case 'app': {
+          type = this.entityData.appName
+          break
+        }
+        default:
+          break
+      }
+      return type
+    },
     entityName () {
       let name
       switch (this.entityData.entityType) {
@@ -56,25 +80,6 @@ export default {
         default: break
       }
       return name
-    },
-    queryUrl () {
-      let url
-      switch (this.entityData.entityType) {
-        case ('ip'): {
-          url = api.ipBytes
-          break
-        }
-        case ('domain'): {
-          url = api.domainBytes
-          break
-        }
-        case ('app'): {
-          url = api.appBytes
-          break
-        }
-        default: break
-      }
-      return url
     },
     appRisk () {
       return function (level) {
@@ -128,26 +133,6 @@ export default {
       })
       window.open(href, '_blank')
     },
-    queryTraffic () {
-      const queryParams = {
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000),
-        entityType: this.entityData.entityType,
-        name: this.entityName
-      }
-      get(api.entityTraffic, queryParams).then(response => {
-        if (response.code === 200) {
-          response.data.result.forEach(t => {
-            if (t.legend === 'bytesSentRate') {
-              this.entityData.bytesSentRate = t.aggregation.last
-            }
-            if (t.legend === 'bytesReceivedRate') {
-              this.entityData.bytesReceivedRate = t.aggregation.last
-            }
-          })
-        }
-      })
-    },
     querySecurity () {
       const queryParams = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -174,7 +159,7 @@ export default {
       }
       get(url, queryParams).then(response => {
         if (response.code === 200) {
-          this.entityData.securityCount = response.data.result && response.data.result.length
+          this.entityData.securityCount = response.data.result ? response.data.result.length : 0
         }
       })
     },
@@ -204,99 +189,129 @@ export default {
       }
       get(url, queryParams).then(response => {
         if (response.code === 200) {
-          this.entityData.performanceCount = response.data.result && response.data.result.length
+          this.entityData.performanceCount = response.data.result ? response.data.result.length : 0
         }
       })
     },
-
-    queryTrafficLine () {
-      let chartOption
-      this.chartOption = this.$_.cloneDeep(entityListLineOption)
-      get(this.queryUrl, this.queryParams).then(response => {
-        if (response.code === 200) {
-          const seriesTemplate = this.chartOption.series[0]
-          const series = response.data.result.map((r, i) => {
-            if (r.legend === 'bytes_sent_rate') {
-              return {
-                ...seriesTemplate,
-                name: this.$t('entities.sentThroughput'), // 'bytes_sent_rate',//legendMapping[`ip_${r.legend}`],
-                data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+    getQueryParams () {
+      return {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        appName: this.entityType,
+        domain: this.entityType,
+        ip: this.entityType
+      }
+    },
+    queryEntityDetailTraffic () {
+      get(this.trafficUrl, this.getQueryParams()).then(response => {
+        if (response.code === 200 && response.data.result && response.data.result.length > 0) {
+          let sentSeries
+          let receivedSeries
+          response.data.result.forEach(t => {
+            if (t.legend === 'bytesRate') {
+              this.entityData.max = t.aggregation.max
+              this.entityData.avg = t.aggregation.avg
+              this.entityData.p50 = t.aggregation.p50
+              this.entityData.p90 = t.aggregation.p90
+            } else if (t.legend === 'bytesSentRate') {
+              this.entityData.bytesSentRate = _.nth(t.values, -3)[1]
+              sentSeries = {
+                name: this.$t('entities.sentThroughput'),
+                type: 'line',
+                legendHoverLink: false,
                 itemStyle: {
                   normal: {
-                    color: '#69b072',
                     lineStyle: {
-                      width: 1.5
+                      width: 1
                     }
                   }
                 },
-                smooth: true,
-                areaStyle: {
-                  opacity: 0.8,
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                      offset: 0,
-                      color: '#f0fff8'
-                    },
-                    {
-                      offset: 1,
-                      color: '#f0fff8'
-                    }
-                  ])
-                }
+                color: '#69b072',
+                data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                showSymbol: false
               }
-            } else if (r.legend === 'bytes_received_rate') {
-              return {
-                ...seriesTemplate,
-                name: this.$t('entities.receivedThroughput'), // legendMapping[`ip_${r.legend}`],
-                data: r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+            } else if (t.legend === 'bytesReceivedRate') {
+              this.entityData.bytesReceivedRate = t.aggregation.last
+              receivedSeries = {
+                name: this.$t('entities.receivedThroughput'),
+                type: 'line',
+                legendHoverLink: false,
                 itemStyle: {
                   normal: {
-                    color: '#7899c6',
                     lineStyle: {
-                      width: 1.5
+                      width: 1
                     }
                   }
                 },
-                smooth: true,
-                areaStyle: {
-                  opacity: 0.8,
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                      offset: 0,
-                      color: '#f0f4ff'
-                    },
-                    {
-                      offset: 1,
-                      color: '#f0f4ff'
-                    }
-                  ])
-                }
+                color: '#7899c6',
+                data: t.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                showSymbol: false
               }
             }
-            return {}
           })
-          chartOption = {
-            ...this.chartOption,
-            series
+          if (this.listMode === 'block') {
+            const chart = echarts.init(document.getElementById(`entityListChart${this.entityName}${this.listMode}`))
+            chart.setOption({
+              ...this.chartOption,
+              series: [sentSeries, receivedSeries]
+            })
+          } else if (this.listMode === 'list') {
+            const sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}${this.listMode}`))
+            const receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}${this.listMode}`))
+            sentChart.setOption({
+              ...this.chartOption,
+              series: [sentSeries]
+            })
+            receivedChart.setOption({
+              ...this.chartOption,
+              series: [receivedSeries]
+            })
           }
         }
       }).finally(() => {
-        this.$nextTick(() => {
-          if (chartOption) {
-            const myChart = echarts.init(document.getElementById(`entityListChart${this.entityName}`))
-            myChart.setOption(chartOption)
-          }
-        })
+        setTimeout(() => {
+          try {
+            this.$nextTick(() => {
+              this.sentChart && this.sentChart.resize()
+              this.receivedChart && this.receivedChart.resize()
+            })
+          } catch (e) {}
+        }, 250)
       })
     }
   },
-  mounted () {
-    this.entityData = _.cloneDeep(this.entity)
-    setTimeout(() => { this.queryTraffic() })
-    setTimeout(() => { this.querySecurity() })
-    setTimeout(() => { this.queryPerformance() })
-    if (this.listMode === 'block') {
-      setTimeout(() => { this.queryTrafficLine() })
+  watch: {
+    entityData: {
+      deep: true,
+      handler (n) {
+        if (n.entityType) {
+          switch (n.entityType) {
+            case 'ip': {
+              this.trafficUrl = api.entityIpDetailTraffic
+              break
+            }
+            case 'domain': {
+              this.trafficUrl = api.entityDomainDetailTraffic
+              break
+            }
+            case 'app': {
+              this.trafficUrl = api.entityAppDetailTraffic
+              break
+            }
+            default:
+              break
+          }
+        }
+      }
     }
+  },
+  mounted () {
+    this.chartOption = _.cloneDeep(entityListLineOption)
+    this.entityData = _.cloneDeep(this.entity)
+    setTimeout(() => {
+      this.querySecurity()
+      this.queryEntityDetailTraffic()
+      this.queryPerformance()
+    })
   }
 }

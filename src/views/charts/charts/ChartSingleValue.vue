@@ -4,7 +4,7 @@
     :class="singleValueClass(type)"
     :style="{ backgroundColor: color }"
   >
-    <div class="single-value-icon__box" v-if="type !== 54">
+    <div class="single-value-icon__box" v-if="!isCommon3SingleValue(type)">
       <div
         class="single-value__icon"
         :style="`background-color: ${
@@ -17,7 +17,7 @@
         ></i>
       </div>
     </div>
-    <div class="single-value__content" v-if="type === 51">
+    <div class="single-value__content" v-if="isCommonSingleValue(type)">
       <div class="content__data">
         <span>{{
           handleSingleValue[0] || handleSingleValue[0] === 0
@@ -34,7 +34,7 @@
     </div>
     <div
       class="single-value__content single-value__content--with-chart"
-      v-if="type === 52"
+      v-if="isSingleValueWithEcharts(type)"
     >
       <div class="content__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{
@@ -61,7 +61,7 @@
         <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
       </div>
     </div>
-    <div class="single-value__content" v-if="type === 53">
+    <div class="single-value__content" v-if="isCommon2SingleValue(type)">
       <div class="content__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{
           chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name
@@ -76,7 +76,7 @@
         <span class="single-value__unit">{{ handleSingleValue[1] }}</span>
       </div>
     </div>
-    <div class="single-value__content" v-if="type === 54">
+    <div class="single-value__content" v-if="isCommon3SingleValue(type)">
       <div class="single-value-icon__box">
         <div class="single-value__icon">
           <!-- 使用图标-->
@@ -102,7 +102,7 @@
       </div>
     </div>
 
-    <div class="single-value__content" v-if="type === 55">
+    <div class="single-value__content" v-if="isSingleValueWithPercent(type)">
       <div>
       <div class="content__title">
         <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{
@@ -131,8 +131,13 @@ import { unitTypes } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import * as echarts from 'echarts'
-import { getOption, getChartColor } from '@/views/charts/charts/tools'
-import _ from 'lodash'
+import {
+  getOption,
+  getChartColor,
+  isCommonSingleValue,
+  isSingleValueWithEcharts,
+  isCommon2SingleValue, isSingleValueWithPercent, isCommon3SingleValue
+} from '@/views/charts/charts/tools'
 
 export default {
   name: 'chartSingleValue',
@@ -188,38 +193,30 @@ export default {
     singleValueClass () {
       return function (type) {
         let c
-        switch (type) {
-          case 51: {
-            c = 'cn-chart__single-value--icon-left'
-            break
-          }
-          case 55: {
-            c = 'cn-chart__single-value--icon-doh'
-            break
-          }
-          case 52: {
-            c = 'cn-chart__single-value--chart'
-            break
-          }
-          case 53: {
-            c = 'cn-chart__single-value--icon-right'
-            break
-          }
-          case 54: {
-            c = 'cn-chart__single-value--icon-right--color'
-            break
-          }
-          default:
-            break
+        if (this.isCommonSingleValue(type)) {
+          c = 'cn-chart__single-value--icon-left'
+        } else if (this.isSingleValueWithEcharts(type)) {
+          c = 'cn-chart__single-value--chart'
+        } else if (this.isCommon2SingleValue(type)) {
+          c = 'cn-chart__single-value--icon-right'
+        } else if (this.isCommon3SingleValue(type)) {
+          c = 'cn-chart__single-value--icon-right--color'
+        } else if (this.isSingleValueWithPercent(type)) {
+          c = 'cn-chart__single-value--icon-doh'
         }
         return c
       }
     }
   },
   methods: {
+    isCommonSingleValue,
+    isSingleValueWithEcharts,
+    isCommon2SingleValue,
+    isCommon3SingleValue,
+    isSingleValueWithPercent,
     chartSingleValueTotal () {
       const chartParams = this.$_.get(this.chartInfo, 'params') || {}
-      if (this.type === 52) {
+      if (isSingleValueWithEcharts(this.type)) {
         const dom = document.getElementById(`chart${this.chartInfo.id}`)
         const myChart = echarts.init(dom)
         this.chartOption = this.$_.cloneDeep(getOption(this.type))

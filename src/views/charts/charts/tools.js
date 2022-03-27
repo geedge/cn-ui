@@ -17,43 +17,32 @@ export function getCharBartColor (index) {
 }
 
 const typeOptionMappings = [
-  { value: 11, option: line }, // 常规折线图
-  { value: 12, option: lineWithStatistics }, // 带统计表格的折线图
-  { value: 13, option: lineStack }, // 折线堆叠图
-  { value: 22, option: ipOpenPortBar }, // ip详情--开放端口的柱状图
-  { value: 23, option: timeBar }, // 矿机所属单位
-  { value: 24, option: categoryBar }, // 挖矿事件统计
-  { value: 31, option: pieWithTable }, // 常规饼图
-  { value: 32, option: pieWithTable }, // 带表格饼图
-  { value: 33, option: ipHostedDomain }, // ip详情--托管域名
-  { value: 34, option: ipHostedDomain }, // app详情--相关域名
-  { value: 42, option: relationShip }, // 关系图
-  { value: 43, option: sankey }, // 桑基图
-  { value: 52, option: singleValueLine } // 单值图中的折线图
+  { value: 101, option: line }, // 常规折线图
+  { value: 102, option: lineWithStatistics }, // 带统计表格的折线图
+  { value: 103, option: lineStack }, // 折线堆叠图
+  { value: 202, option: ipOpenPortBar }, // ip详情--开放端口的柱状图
+  { value: 203, option: timeBar }, // 矿机所属单位
+  { value: 204, option: categoryBar }, // 挖矿事件统计
+  { value: 301, option: pieWithTable }, // 常规饼图
+  { value: 302, option: pieWithTable }, // 带表格饼图
+  { value: 303, option: ipHostedDomain }, // ip详情--托管域名
+  { value: 304, option: ipHostedDomain }, // app详情--相关域名
+  { value: 402, option: relationShip }, // 关系图
+  { value: 403, option: sankey }, // 桑基图
+  { value: 502, option: singleValueLine } // 单值图中的折线图
 ]
 export function getOption (type) {
   const mapping = typeOptionMappings.find(m => m.value === type)
   return mapping && mapping.option ? _.cloneDeep(mapping.option) : null
 }
 
-/* 柱状图:挖矿事件统计(time类型柱状图) */
-export function isEchartsTimeBar (type) {
-  return type === 23
-}
-/* 柱状图:矿机所属单位(category类型柱状图) */
-export function isEchartsCategoryBar (type) {
-  return type === 24
-}
-export function isIpOpenPortBar (type) {
-  return type === 22
-}
 /* 饼图柱状图等 */
 export function isEcharts (type) {
-  return type >= 11 && type <= 50
+  return type >= 101 && type <= 500
 }
 /* 地图 */
 export function isMap (type) {
-  return type >= 1 && type <= 10
+  return type >= 1 && type <= 100
 }
 /* 连线地图 */
 export function isMapLine (type) {
@@ -67,117 +56,137 @@ export function isMapBlock (type) {
 export function isMapPoint (type) {
   return type === 3
 }
-/* 普通折线图 */
-export function isEchartsLine (type) {
-  return type === 11
-}
-/* 普通饼图 */
-export function isEchartsPie (type) {
-  return type === 32
-}
-/* 带统计的折线图 */
-export function isEchartsWithStatistics (type) {
-  return type === 12
-}
-/* 关系图 */
-export function isRelationShip (type) {
-  return type === 42
-}
-/* 桑基图 */
-export function isSankey (type) {
-  return type === 43
-}
-/* 单值 */
-export function isSingleValue (type) {
-  return type >= 51 && type <= 60
-}
-/* 带折线图的单值 */
-export function isSingleValueWithEcharts (type) {
-  return type === 52
-}
-/* 带折线图的单值 */
-export function isSingleValueWithEchartsTemp (type) {
-  return type === 55
-}
-/* 带Table的饼图 */
-export function isEchartsWithTable (type) {
-  return type === 31
-}
-/* table */
-export function isTable (type) {
-  return type >= 61 && type <= 70
-}
-/* basic table */
-export function isBasicTable (type) {
-  return type === 61
-}
-/* table */
-export function isActiveIpTable (type) {
-  return type === 63
-}
-/* title */
-export function isTitle (type) {
-  return type === 93
-}
-/* tabs */
-export function isTabs (type) {
-  return type === 91
-}
 /* IP实体基本信息 */
 export function isIpBasicInfo (type) {
   return type === 4
 }
+/* 普通折线图 */
+export function isEchartsLine (type) {
+  return type === 101
+}
+/* 带统计的折线图 */
+export function isEchartsWithStatistics (type) {
+  return type === 102
+}
 /* IP实体开放端口 */
-export function isIpOpenPort (type) {
-  return type === 22
+export function isIpOpenPortBar (type) {
+  return type === 202
+}
+/* 柱状图:挖矿事件统计(time类型柱状图) */
+export function isEchartsTimeBar (type) {
+  return type === 203
+}
+/* 柱状图:矿机所属单位(category类型柱状图) */
+export function isEchartsCategoryBar (type) {
+  return type === 204
+}
+/* 带Table的饼图 */
+export function isEchartsWithTable (type) {
+  return type === 301
+}
+/* 普通饼图 */
+export function isEchartsPie (type) {
+  return type === 302
 }
 /* IP实体托管域名 */
 export function isIpHostedDomain (type) {
-  return type === 33
+  return type === 303
 }
 /* APP实体相关域名 */
 export function isAppRelatedDomain (type) {
-  return type === 34
+  return type === 304
 }
-/* APP实体基本信息 */
-export function isAppBasicInfo (type) {
-  return type === 82
+/* 关系图 */
+export function isRelationShip (type) {
+  return type === 402
 }
-/* DOMAIN实体Whois */
-export function isDomainWhois (type) {
-  return type === 83
+/* 桑基图 */
+export function isSankey (type) {
+  return type === 403
+}
+/* 单值 */
+export function isSingleValue (type) {
+  return type >= 501 && type <= 600
+}
+/* 常规单值图 */
+export function isCommonSingleValue (type) {
+  return type === 501
+}
+/* 带折线图的单值 */
+export function isSingleValueWithEcharts (type) {
+  return type === 502
+}
+/* 常规单值图2 */
+export function isCommon2SingleValue (type) {
+  return type === 503
+}
+/* 常规单值图3 */
+export function isCommon3SingleValue (type) {
+  return type === 504
+}
+/* 带折线图的单值 */
+export function isSingleValueWithPercent (type) {
+  return type === 505
+}
+/* table */
+export function isTable (type) {
+  return type >= 601 && type <= 700
+}
+/* basic table */
+export function isBasicTable (type) {
+  return type === 601
 }
 /* DOMAIN实体DNS记录 */
 export function isDomainDnsRecord (type) {
-  return type === 62
+  return type === 602
+}
+/* table */
+export function isActiveIpTable (type) {
+  return type === 603
+}
+/* APP实体基本信息 */
+export function isAppBasicInfo (type) {
+  return type === 702
+}
+/* DOMAIN实体Whois */
+export function isDomainWhois (type) {
+  return type === 703
 }
 /* 告警信息 */
 export function isAlarmInfo (type) {
-  return type === 84
+  return type === 704
 }
 /* 近期挖矿事件 */
 export function isCryptocurrencyEventList (type) {
-  return type === 85
+  return type === 705
 }
 /* 单支持情况统计 */
 export function isSingleSupportStatistics (type) {
-  return type === 86
+  return type === 706
 }
 /* 两个支持情况统计 */
 export function isTwoSupportStatistics (type) {
-  return type === 87
+  return type === 707
 }
 /* 域名递归解析 */
 export function isDomainRecursiveResolve (type) {
-  return type === 88
+  return type === 708
+}
+/* tabs */
+export function isTabs (type) {
+  return type === 801
+}
+/* title */
+export function isTitle (type) {
+  return type === 803
 }
 /* 组 */
 export function isGroup (type) {
-  return type === 94
+  return type === 804
 }
 /* 实体详情块 */
 export function isBlock (type) {
-  return type === 95
+  return type === 805
 }
 
 /* 根据type获取图表分类 */
@@ -215,7 +224,7 @@ export function getLayout (type) {
   if (!isSingleValue(type) && !isTitle(type)) {
     layout.push(layoutConstant.HEADER)
   }
-  if (type === 12 || type === 31) {
+  if (isEchartsWithStatistics(type) || isEchartsWithTable(type)) {
     layout.push(layoutConstant.FOOTER)
   }
   return layout

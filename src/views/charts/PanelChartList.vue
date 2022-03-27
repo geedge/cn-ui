@@ -22,7 +22,7 @@
           :y="item.y"
           :static="item.static"
           :ref="'grid-item' + item.id"
-          :isResizable = "item.type === 'group' ? false: null"
+          :isResizable="isGroup ? false: null"
           dragAllowFrom=".chart-header"
           dragIgnoreFrom=".chart-header__tools"
           v-bind="anchorPoint(item)"
@@ -188,18 +188,7 @@ export default {
           })
           setTimeout(() => {
             this.copyDataList.forEach(item => {
-              // if (item.type === 95) {
-              //   console.log(item.h, item.name)
-              //   item.children.forEach(children => {
-              //     console.log(children.name, children.h, children.y)
-              //   })
-              //   let parentH = 1.5
-              //   parentH += getGroupHeight(item.children)
-              //   if (parentH !== item.h) {
-              //     item.h = parentH
-              //   }
-              // }
-              if (item.type === 94 && !item.firstShow) {
+              if (isGroup(item.type) && !item.firstShow) {
                 item.firstShow = true
                 this.copyDataList = [...this.copyDataList]
                 this.emitter.emit('groupParentCalcHeight', { chart: item, childrenList: this.copyDataList })

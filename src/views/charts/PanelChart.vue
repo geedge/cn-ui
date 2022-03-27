@@ -26,7 +26,7 @@
     <!-- 数据查询后传入chart组件，chart组件内不查询，只根据接传递的数据来渲染 -->
     <chart
         ref="chart"
-        v-if="((!isGroup) || !(chartInfo.params && chartInfo.params.collapse)) && !isTitle "
+        v-if="(!isGroup || !(chartInfo.params && chartInfo.params.collapse)) && !isTitle "
         :chart-data="chartData"
         :result-type="resultType"
         :chart-info="chartInfo"
@@ -65,13 +65,13 @@ import {
   isMapLine,
   isMapBlock,
   isSingleValueWithEcharts,
-  isSingleValueWithEchartsTemp,
+  isSingleValueWithPercent,
   isRelationShip,
   isTabs,
   isGroup,
   isSankey,
   isIpBasicInfo,
-  isIpOpenPort,
+  isIpOpenPortBar,
   isIpHostedDomain,
   isDomainWhois,
   isDomainDnsRecord,
@@ -212,7 +212,7 @@ export default {
               }
               this.chartData = response.data.result
               this.resultType = response.data.resultType
-              if (this.chartInfo.type === 12) {
+              if (isEchartsWithStatistics(this.chartInfo.type)) {
                 const newArr = []
                 _.forEach(this.chartData, function (value, key) {
                   _.forEach(value.values, function (value, key) {
@@ -251,16 +251,16 @@ export default {
             }
           }).finally(() => {
             setTimeout(() => {
-              if(!(this.chartInfo.type === 33 || this.chartInfo.type === 34) ){
+              if(!(isIpHostedDomain(this.chartInfo.type) || isAppRelatedDomain(this.chartInfo.type)) ){
                 this.loading = false
               }else if(!this.chartData || this.chartData.length === 0){
                 this.loading = false
               }
             }, 200)
           })
-        } else if (this.chartInfo.type === 94) {
+        } else if (isGroup(this.chartInfo.type)) {
           this.chartInfo.children = [...this.chartInfo.children]
-        } else if (this.chartInfo.type === 95) {
+        } else if (isBlock(this.chartInfo.type)) {
           if (!this.chartInfo.firstShow) {
             this.chartInfo.firstShow = true
           } else {
@@ -410,7 +410,7 @@ export default {
       isEchartsWithStatistics: isEchartsWithStatistics(props.chartInfo.type),
       isSingleValue: isSingleValue(props.chartInfo.type),
       isSingleValueWithEcharts: isSingleValueWithEcharts(props.chartInfo.type),
-      isSingleValueWithEchartsTemp: isSingleValueWithEchartsTemp(props.chartInfo.type),
+      isSingleValueWithPercent: isSingleValueWithPercent(props.chartInfo.type),
       isRelationShip: isRelationShip(props.chartInfo.type),
       isTable: isTable(props.chartInfo.type),
       isActiveIpTable: isActiveIpTable(props.chartInfo.type),
@@ -424,7 +424,7 @@ export default {
       isSankey: isSankey(props.chartInfo.type),
       isIpBasicInfo: isIpBasicInfo(props.chartInfo.type),
       isIpHostedDomain: isIpHostedDomain(props.chartInfo.type),
-      isIpOpenPort: isIpOpenPort(props.chartInfo.type),
+      isIpOpenPortBar: isIpOpenPortBar(props.chartInfo.type),
       isDomainWhois: isDomainWhois(props.chartInfo.type),
       isDomainDnsRecord: isDomainDnsRecord(props.chartInfo.type),
       isCryptocurrencyEventList: isCryptocurrencyEventList(props.chartInfo.type),

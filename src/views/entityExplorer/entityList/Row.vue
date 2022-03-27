@@ -101,17 +101,17 @@
                   <!-- 曲线-->
                   <div
                     class="row__charts"
-                    :id="`entityDetailSend${entityType}`"
+                    :id="`entityDetailSend${entityType}${listMode}`"
                     v-if="entityData.entityType === 'domain'"
                   ></div>
                   <div
                     class="row__charts"
-                    :id="`entityDetailSend${entityType}`"
+                    :id="`entityDetailSend${entityType}${listMode}`"
                     v-if="entityData.entityType === 'app'"
                   ></div>
                   <div
                     class="row__charts"
-                    :id="`entityDetailSend${entityType}`"
+                    :id="`entityDetailSend${entityType}${listMode}`"
                     v-if="entityData.entityType === 'ip'"
                   ></div>
                 </div>
@@ -136,17 +136,17 @@
 
                   <div
                     class="row__charts"
-                    :id="`entityDetailReceived${entityType}`"
+                    :id="`entityDetailReceived${entityType}${listMode}`"
                     v-if="entityData.entityType === 'domain'"
                   ></div>
                   <div
                     class="row__charts"
-                    :id="`entityDetailReceived${entityType}`"
+                    :id="`entityDetailReceived${entityType}${listMode}`"
                     v-if="entityData.entityType === 'app'"
                   ></div>
                   <div
                     class="row__charts"
-                    :id="`entityDetailReceived${entityType}`"
+                    :id="`entityDetailReceived${entityType}${listMode}`"
                     v-if="entityData.entityType === 'ip'"
                   ></div>
                 </div>
@@ -166,10 +166,9 @@
             </div>
             <div
               class="show-detail"
-              :style="{ visibility: !isCollapse ? 'visible' : 'hidden' }"
               @click="showDetail"
             >
-              {{ $t('overall.detail') }}>>
+              {{ $t('overall.detail') }}>
             </div>
           </div>
         </div>
@@ -188,29 +187,24 @@
 </template>
 
 <script>
-import entityListMixin from './entityListMixin'
 import DetailOverview from '@/views/entityExplorer/entityList/detailOverview/DetailOverview'
-import { unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
-import entityDetailMixin from './detailOverview/entityDetailMixin'
+import entityListMixin from './entityListMixin'
 import relatedServer from '@/mixins/relatedServer'
-import { api } from '@/utils/api'
 
 export default {
   name: 'Row',
   props: {
     index: Number,
-    timeFilter: Object
+    timeFilter: Object,
+    listMode: String
   },
   components: {
     DetailOverview
   },
-  mixins: [entityListMixin, entityDetailMixin, relatedServer],
+  mixins: [entityListMixin, relatedServer],
   data () {
     return {
-      isCollapse: true, // 是否是折叠状态
-      trafficUrl: '',
-      entityType: ''
+      isCollapse: true // 是否是折叠状态
     }
   },
   computed: {
@@ -236,58 +230,6 @@ export default {
           return '-'
         }
       }
-    },
-    entityType () {
-      let type
-      switch (this.entityData.entityType) {
-        case 'ip': {
-          type = this.entityData.ipAddr
-          break
-        }
-        case 'domain': {
-          type = this.entityData.domainName
-          break
-        }
-        case 'app': {
-          type = this.entityData.appName
-          break
-        }
-        default:
-          break
-      }
-      this.entityType = type
-      return type
-    }
-  },
-  watch: {
-    entityData: {
-      deep: true,
-      handler (n) {
-        if (n.entityType) {
-          switch (n.entityType) {
-            case 'ip': {
-              this.trafficUrl = api.entityIpDetailTraffic
-              break
-            }
-            case 'domain': {
-              this.trafficUrl = api.entityDomainDetailTraffic
-              break
-            }
-            case 'app': {
-              this.trafficUrl = api.entityAppDetailTraffic
-              break
-            }
-            default:
-              break
-          }
-        }
-      }
-    }
-  },
-  setup () {
-    return {
-      unitConvert,
-      unitTypes
     }
   },
   methods: {
@@ -299,16 +241,6 @@ export default {
     /* 设为折叠状态 */
     collapse () {
       this.isCollapse = true
-    },
-    getQueryParams () {
-      const queryParams = {
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000),
-        appName: this.entityType,
-        domain: this.entityType,
-        ip: this.entityType
-      }
-      return queryParams
     }
   }
 }

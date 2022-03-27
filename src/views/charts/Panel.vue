@@ -45,7 +45,11 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
-import { getGroupHeight, getTypeCategory } from '@/views/charts/charts/tools'
+import {
+  isGroup,
+  isBlock,
+  getGroupHeight
+} from './charts/tools'
 
 export default {
   name: 'Panel',
@@ -115,7 +119,7 @@ export default {
     recursionParamsConvert (chart) {
       chart.params = chart.params ? JSON.parse(chart.params) : {}
       chart.firstShow = false
-      if (chart.type === 94) {
+      if (isGroup(chart.type)) {
         chart.oldH = chart.h
         /* chart.params = {
           collapse: false
@@ -125,10 +129,10 @@ export default {
           chart.h = 1
         }
       }
-      if (chart.type === 95) {
+      if (isBlock(chart.type)) {
         let sumGroup = 0
         chart.children.forEach(item => {
-          if (item.type === 94) {
+          if (isGroup(item.type)) {
             sumGroup++
           }
         })
