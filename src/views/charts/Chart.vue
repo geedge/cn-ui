@@ -247,6 +247,24 @@
         v-else-if="isDomainRecursiveResolve"
       ></chart-domain-recursive-resolve>
 
+      <chart-detection-security
+        :chart-data="chartData"
+        :time-filter="timeFilter"
+        :chart-info="chartInfo"
+        :query-params="queryParams"
+        v-else-if="isDetectionSecurity"
+        @getDetectionData="getDetectionData"
+      ></chart-detection-security>
+
+      <chart-detection-service
+        :chart-data="chartData"
+        :time-filter="timeFilter"
+        :chart-info="chartInfo"
+        :query-params="queryParams"
+        v-else-if="isDetectionService"
+        @getDetectionData="getDetectionData"
+      ></chart-detection-service>
+
     </template>
   </div>
 </template>
@@ -280,6 +298,8 @@ import ChartOneSituationStatistics from '@/views/charts/charts/ChartOneSituation
 import ChartTwoSituationStatistics from '@/views/charts/charts/ChartTwoSituationStatistics'
 import ChartAlarmInfo from '@/views/charts/charts/ChartAlarmInfo'
 import ChartDomainRecursiveResolve from '@/views/charts/charts/ChartDomainRecursiveResolve'
+import chartDetectionSecurity from '@/views/charts/charts/chartDetectionSecurity'
+import chartDetectionService from '@/views/charts/charts/chartDetectionService'
 import {
   isEcharts,
   isEchartsLine,
@@ -315,7 +335,9 @@ import {
   isSingleSupportStatistics,
   isTwoSupportStatistics,
   isAlarmInfo,
-  isDomainRecursiveResolve
+  isDomainRecursiveResolve,
+  isDetectionSecurity,
+  isDetectionService
 } from './charts/tools'
 import _ from 'lodash'
 
@@ -349,7 +371,9 @@ export default {
     ChartOneSituationStatistics,
     ChartTwoSituationStatistics,
     ChartAlarmInfo,
-    ChartDomainRecursiveResolve
+    ChartDomainRecursiveResolve,
+    chartDetectionSecurity,
+    chartDetectionService
   },
   data () {
     return {
@@ -385,7 +409,9 @@ export default {
         !this.isMap &&
         !this.isSingleSupportStatistics &&
         !this.isTwoSupportStatistics &&
-        !this.isAlarmInfo
+        !this.isAlarmInfo &&
+        !this.isDetectionSecurity &&
+        !this.isDetectionService
       )
     },
     chartOption () {
@@ -410,6 +436,9 @@ export default {
     getChartData (url, extraParams) {
       this.$emit('getChartData', url, extraParams)
     },
+    getDetectionData (url, extraParams, isRefresh, timeFilter) {
+      this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
+    },
     initEchartsWithTable () {
       this.$refs['chart' + this.chartInfo.id] &&
         this.$refs['chart' + this.chartInfo.id].initEchartsWithTable(
@@ -424,7 +453,14 @@ export default {
     tabHandleClickType: {
       deep: true,
       handler (n) {
+        console.log(n)
         this.tabHandleClickType = n
+      }
+    },
+    chartData: {
+      deep: true,
+      immediate: true,
+      handler (n) {
       }
     }
   },
@@ -467,7 +503,9 @@ export default {
       ),
       isTwoSupportStatistics: isTwoSupportStatistics(props.chartInfo.type),
       isAlarmInfo: isAlarmInfo(props.chartInfo.type),
-      isDomainRecursiveResolve: isDomainRecursiveResolve(props.chartInfo.type)
+      isDomainRecursiveResolve: isDomainRecursiveResolve(props.chartInfo.type),
+      isDetectionSecurity: isDetectionSecurity(props.chartInfo.type),
+      isDetectionService: isDetectionService(props.chartInfo.type)
     }
   }
 }

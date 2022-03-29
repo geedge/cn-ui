@@ -7,7 +7,7 @@
   >
     <!-- title和工具栏，支持浮动 -->
     <chart-header
-        v-if="!isFullscreen && showHeader && !isSingleValue && !isTabs"
+        v-if="!isFullscreen && showHeader && !isSingleValue && !isTabs && !isDetectionSecurity && !isDetectionService"
         :is-error="isError"
         :error-info="errorInfo"
         :chart-data="chartData"
@@ -79,7 +79,9 @@ import {
   isAppBasicInfo,
   isAppRelatedDomain,
   isBlock,
-  isAlarmInfo
+  isAlarmInfo,
+  isDetectionSecurity,
+  isDetectionService
 } from './charts/tools'
 import { tableTitleMapping, legendMapping } from '@/views/charts/charts/chart-table-title'
 import { replaceUrlPlaceholder } from '@/utils/tools'
@@ -165,7 +167,7 @@ export default {
   },
   methods: {
     /* 参数 extraParams 额外请求参数，isRefresh 是否是刷新 */
-    getChartData (url, extraParams = {}, isRefresh, chartTimeFilter) {
+    getChartData (url, extraParams = {}, isRefresh, chartTimeFilter, num) {
       const vm = this
       this.loading = true
       this.standaloneTimeRange.use = !!isRefresh
@@ -187,12 +189,17 @@ export default {
             pageSize: 9
           }
         }
+        if ((isDetectionService && JSON.stringify(extraParams) === '{}') || (isDetectionSecurity && JSON.stringify(extraParams) === '{}')) {
+          extraParams = {
+            pageNo: 1,
+            pageSize: 6
+          }
+        }
         // 接口查询参数
         this.queryParams = {
           ...this.handleQueryParams(),
           ...this.queryTimeRange,
           ...this.entity,
-
           ...extraParams
         }
         const requestUrl = url || (chartParams && chartParams.url)
@@ -430,7 +437,9 @@ export default {
       isCryptocurrencyEventList: isCryptocurrencyEventList(props.chartInfo.type),
       isAppBasicInfo: isAppBasicInfo(props.chartInfo.type),
       isAppRelatedDomain: isAppRelatedDomain(props.chartInfo.type),
-      isAlarmInfo: isAlarmInfo(props.chartInfo.type)
+      isAlarmInfo: isAlarmInfo(props.chartInfo.type),
+      isDetectionService: isDetectionService(props.chartInfo.type),
+      isDetectionSecurity: isDetectionSecurity(props.chartInfo.type)
     }
   }
 }

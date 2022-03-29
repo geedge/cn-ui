@@ -189,6 +189,13 @@ export function isBlock (type) {
   return type === 805
 }
 
+export function isDetectionSecurity (type) {
+  return type === 709
+}
+
+export function isDetectionService (type) {
+  return type === 710
+}
 /* 根据type获取图表分类 */
 const typeCategory = {
   MAP: 'map',
