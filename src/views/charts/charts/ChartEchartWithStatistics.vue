@@ -11,6 +11,7 @@ import {
   getChartColor
 } from '@/views/charts/charts/tools'
 import chartEchartMixin from './chart-echart-mixin'
+import unitConvert from '@/utils/unit-convert'
 
 export default {
   name: 'ChartEchartWithStatistics',
@@ -56,23 +57,188 @@ export default {
           }
         }
       })
+
+      let markLine = {
+        silent: true,
+        symbol: 'none',
+        label: {
+          distance: [-50, 0],
+          formatter(params) {
+            const arr = unitConvert(
+                params.value,
+                chartParams.unitType,
+            ).join(' ')
+            let desc = ''
+            switch (params.dataIndex) {
+              case 0: {
+                desc = 'P50'
+                break
+              }
+              case 1: {
+                desc = 'P90'
+                break
+              }
+              default:
+                break
+            }
+            return `${arr} (${desc})`
+          },
+        },
+        data: [
+          {
+            name: 'P50',
+            yAxis: this.chartData[0].aggregation.p50
+                ? this.chartData[0].aggregation.p50
+                : 50,
+          },
+          {
+            name: 'P90',
+            yAxis: this.chartData[0].aggregation.p90
+                ? this.chartData[0].aggregation.p90
+                : 90,
+          },
+        ],
+      }
+
+      if(this.statisticsData.length === 1){
+        let serieTmp = this.chartOption.series[0]
+        this.chartOption.series[0] = {
+          ...serieTmp,
+          markLine:markLine
+        }
+      }
       this.loadEchart()
     },
+
+    dispatchLegendSelectAction(name) {
+      this.myChart.dispatchAction({
+        type: 'legendSelect',
+        name: name
+      })
+    },
+
+    dispatchLegendUnSelectAction(name) {
+      this.myChart.dispatchAction({
+        type: 'legendUnSelect',
+        name: name
+      })
+    },
+
     toggleStatisticsLegend (index) {
-      this.statisticsData[index].active = !this.statisticsData[index].active
-      this.statisticsData.forEach((d, i) => {
-        if (d.active) {
-          this.myChart.dispatchAction({
-            type: 'legendSelect',
-            name: d.legend
+      let legendNum = this.statisticsData.length
+      const chartParams = this.chartInfo.params
+      let markLine = {
+        silent: true,
+        symbol: 'none',
+        label: {
+          distance: [-50, 0],
+          formatter(params) {
+            const arr = unitConvert(
+                params.value,
+                chartParams.unitType,
+            ).join(' ')
+            let desc = ''
+            switch (params.dataIndex) {
+              case 0: {
+                desc = 'P50'
+                break
+              }
+              case 1: {
+                desc = 'P90'
+                break
+              }
+              default:
+                break
+            }
+            return `${arr} (${desc})`
+          },
+        },
+        data: [
+          {
+            name: 'P50',
+            yAxis: this.chartData[0].aggregation.p50
+                ? this.chartData[0].aggregation.p50
+                : 50,
+          },
+          {
+            name: 'P90',
+            yAxis: this.chartData[0].aggregation.p90
+                ? this.chartData[0].aggregation.p90
+                : 90,
+          },
+        ],
+      }
+      if(legendNum > 1){
+        let selectedNum = this.statisticsData.filter(item => {return item.active === true}).length //点击前，高亮legend个数
+        if(selectedNum === legendNum){//全部曲线高亮时
+          this.statisticsData.forEach((item, indexTmp) => {
+            if(indexTmp === index){
+              item.active = true
+              this.dispatchLegendSelectAction(item.legend)
+            }else {
+              item.active = false
+              this.dispatchLegendUnSelectAction(item.legend)
+            }
+          })
+        } else if(selectedNum === 1 && this.statisticsData[index].active){//多条曲线，且只有一条曲线高亮, 且点击的曲线为高亮曲线时
+          this.statisticsData.forEach((item) => {
+            item.active = true
+            this.dispatchLegendSelectAction(item.legend)
           })
         } else {
-          this.myChart.dispatchAction({
-            type: 'legendUnSelect',
-            name: d.legend
+          this.statisticsData[index].active = !this.statisticsData[index].active
+          this.statisticsData.forEach((item, i) => {
+            if (item.active) {
+              this.dispatchLegendSelectAction(item.legend)
+            } else {
+              this.dispatchLegendUnSelectAction(item.legend)
+            }
           })
         }
-      })
+
+        let selectedAfterNum = this.statisticsData.filter((item,i) => {return item.active === true}).length //点击后，高亮legend个数
+        if(selectedAfterNum === 1) {//点击后只有一条曲线高亮
+          const chartParams = this.chartInfo.params
+          //多条曲线，且只有一条曲线高亮时，显示P50 P90 分位值，不止一个时隐藏标线
+          let selectedName = this.statisticsData.filter((item,i) => {return item.active === true})[0].legend
+
+          let serieArray = []
+          this.chartOption.series.forEach((item,i) =>{
+            if(item.name === selectedName){
+              item.markLine = markLine
+            }
+            serieArray.push(item)
+          })
+          this.myChart.setOption({
+            series:serieArray
+          })
+        }else {//不止一条线高亮时隐藏标线
+          let serieArray = []
+          this.chartOption.series.forEach((item,i) =>{
+            item.markLine = []
+            serieArray.push(item)
+          })
+          this.myChart.setOption({
+            series:serieArray
+          })
+        }
+      }else {
+        this.statisticsData[index].active = !this.statisticsData[index].active
+        this.statisticsData.forEach((item, i) => {
+          if (item.active) {
+            this.dispatchLegendSelectAction(item.legend)
+          } else {
+            this.dispatchLegendUnSelectAction(item.legend)
+          }
+        })
+
+        let selectedAfterNum = this.statisticsData.filter((item,i) => {return item.active === true}).length //点击后，高亮legend个数
+        if(selectedAfterNum === 1) {//点击后只有一条曲线高亮
+          this.chartOption.series[0].markLine = markLine
+        }else {
+          this.chartOption.series[0].markLine = []
+        }
+      }
     }
   },
   watch: {

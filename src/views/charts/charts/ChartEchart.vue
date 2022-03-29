@@ -132,7 +132,7 @@ export default {
           }
           if (this.isEchartsLine) {
             serie.data = serie.data.slice(1, serie.data.length - 2)
-            if (this.chartData.length === 1) {
+            if (this.chartData.length === 1) {//只有一条曲线
               serie.markLine = {
                 silent: true,
                 symbol: 'none',
@@ -174,6 +174,8 @@ export default {
                   },
                 ],
               }
+            } else if(this.chartData.length > 1){//有多条曲线
+              this.handleLegendClick()//自定义legend的点击事件
             }
           }
           return serie
@@ -207,6 +209,138 @@ export default {
 
       this.loadEchart()
     },
+
+    //点击前，高亮legend个数
+    getSelectedNum(params){
+      let selectedNum = 0
+      let legendItem = params.selected
+      for(let name in legendItem){
+        if(name === params.name){
+          if(!legendItem[name]){
+            selectedNum = selectedNum + 1
+          }
+        }else {
+          if(legendItem[name]){
+            selectedNum = selectedNum + 1
+          }
+        }
+      }
+      return selectedNum
+    },
+    //点击后：高亮legend个数
+    getAfterSelectedNum(params){
+      let selectedNum = 0
+      let legendItem = params.selected
+      for(let name in legendItem){
+          if(legendItem[name]){
+            selectedNum = selectedNum + 1
+          }
+      }
+      return selectedNum
+    },
+
+    //自定义legend的点击事件:此方法只处理多条曲线的情况（单条曲线正常切换legend和曲线）
+    handleLegendClick(){
+      const self = this
+      // legend点击事件
+      this.myChart.off('legendselectchanged')
+      this.myChart.on('legendselectchanged', function (params) {
+        let legendNum = Object.keys(params.selected).length
+        let selectedNum = self.getSelectedNum(params)
+
+        let legendItem = params.selected
+        if(selectedNum === legendNum){//点击前：全部曲线高亮
+          for(let name in legendItem){
+            if (name === params.name) {
+              legendItem[name] = true
+            }else {
+              legendItem[name] = false
+            }
+          }
+        }else if(selectedNum === 1 && !params.selected[params.name]){//点击前：多条曲线，且只有一条曲线高亮时
+          for(let name in legendItem){
+            legendItem[name] = true
+          }
+        }
+        self.myChart.setOption({
+          legend: {
+            selected: legendItem
+          }
+        })
+
+        if(self.getAfterSelectedNum(params) === 1){//点击后只有一条曲线高亮
+          const chartParams = self.chartInfo.params
+          //多条曲线，且只有一条曲线高亮时，显示P50 P90 分位值，不止一个时隐藏标线
+          let selectedName = ''
+          for(let name in legendItem){
+            if(legendItem[name]){
+              selectedName = name
+            }
+          }
+          let markLine = {
+            silent: true,
+            symbol: 'none',
+            label: {
+              distance: [-50, 0],
+              formatter(params) {
+                const arr = unitConvert(
+                    params.value,
+                    chartParams.unitType,
+                ).join(' ')
+                let desc = ''
+                switch (params.dataIndex) {
+                  case 0: {
+                    desc = 'P50'
+                    break
+                  }
+                  case 1: {
+                    desc = 'P90'
+                    break
+                  }
+                  default:
+                    break
+                }
+                return `${arr} (${desc})`
+              },
+            },
+            data: [
+              {
+                name: 'P50',
+                yAxis: self.chartData[0].aggregation.p50
+                    ? self.chartData[0].aggregation.p50
+                    : 50,
+              },
+              {
+                name: 'P90',
+                yAxis: self.chartData[0].aggregation.p90
+                    ? self.chartData[0].aggregation.p90
+                    : 90,
+              },
+            ],
+          }
+          let serieArray = []
+          self.chartOption.series.forEach((item,i) =>{
+            if(item.name === selectedName){
+              item.markLine = markLine
+            }
+            serieArray.push(item)
+          })
+          self.myChart.setOption({
+            series:serieArray
+          })
+        } else {//不止一条线高亮时隐藏标线
+          let serieArray = []
+          self.chartOption.series.forEach((item,i) =>{
+            item.markLine = []
+            serieArray.push(item)
+          })
+          self.myChart.setOption({
+            series:serieArray
+          })
+        }
+      })
+    }
+
   },
 }
 </script>
