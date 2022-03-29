@@ -24,6 +24,8 @@
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { get } from '@/utils/http'
 import chartEchartMixin from './chart-echart-mixin'
+import { reverseSortBy } from '@/utils/tools'
+
 
 export default {
   name: 'ChartEchartIpHostedDomain',
@@ -51,7 +53,7 @@ export default {
             } else {
               // this.noData0 = false
               //chartOption = this.$_.cloneDeep(this.chartOption)
-              const data = response.data.result.map(d => {
+              const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
                 return {
                   data: d,
                   name: d.categoryName,
@@ -74,7 +76,7 @@ export default {
             } else {
               // this.noData1 = false
               //this.chartOption2 = this.$_.cloneDeep(this.chartOption)
-              const data = response.data.result.map(d => {
+              const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
                 return {
                   data: d,
                   name: d.reputationLevel,

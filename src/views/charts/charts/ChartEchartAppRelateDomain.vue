@@ -26,6 +26,7 @@ import {
 } from '@/views/charts/charts/options/pie'
 import chartEchartMixin from './chart-echart-mixin'
 import { get,post } from '@/utils/http'
+import { reverseSortBy } from '@/utils/tools'
 
 export default {
   name: 'ChartEchartAppRelateDomain',
@@ -56,7 +57,7 @@ export default {
                 } else {
                    // this.noData0 = false
                    //const chartOption = this.$_.cloneDeep(this.chartOption)
-                   const data = response.data.result.map(d => {
+                   const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
                       return {
                          data: d,
                          name: d.categoryName,
@@ -79,7 +80,7 @@ export default {
                 } else {
                    // this.noData1 = false
                    //const chartOption = this.$_.cloneDeep(this.chartOption)
-                   const data = response.data.result.map(d => {
+                   const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
                       return {
                          data: d,
                          name: d.reputationLevel,
