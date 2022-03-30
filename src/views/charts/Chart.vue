@@ -409,9 +409,7 @@ export default {
         !this.isMap &&
         !this.isSingleSupportStatistics &&
         !this.isTwoSupportStatistics &&
-        !this.isAlarmInfo &&
-        !this.isDetectionSecurity &&
-        !this.isDetectionService
+        !this.isAlarmInfo
       )
     },
     chartOption () {

@@ -1,14 +1,14 @@
 <template>
   <div class="service cn-detection--list">
     <div class="cn-detection-table">
-      <detections-table
+      <chart-detections-table
           v-for="(data, index) in chartData"
           :detection="data"
           :timeFilter="timeFilter"
           :key="index"
           :ref="`detectionRow${index}`"
           :index="index"
-      ></detections-table>
+      ></chart-detections-table>
     </div>
     <div class="cn-chart__footer" v-show="pageObj.total > 0">
       <chart-detection-pagination
@@ -23,7 +23,7 @@
 
 <script>
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
-import detectionsTable from '@/views/detections/detectionsTable'
+import chartDetectionsTable from '@/views/charts/charts/chartDetectionsTable'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 export default {
@@ -37,7 +37,7 @@ export default {
   },
   components: {
     chartDetectionPagination,
-    detectionsTable
+    chartDetectionsTable
   },
   data () {
     return {
