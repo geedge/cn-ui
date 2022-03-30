@@ -50,7 +50,7 @@
             <div class="basic-info__item">
               <i class="cn-icon cn-icon-time2"></i>
               <span>{{$t('overall.duration')}}&nbsp;:&nbsp;&nbsp;</span>
-              <span style="display: inline-block;height: 6px;width: 6px;border-radius: 50%;margin-right: 8px;"></span>
+              <span style="display: inline-block;height: 6px;width: 6px;border-radius: 50%;margin-right: 8px;" :style="pointColor(detection)"></span>
               <span>{{unitConvert(detection.durationMs, 'time', null, null, 0).join(' ') || '-'}}</span>
             </div>
           </div>
@@ -98,6 +98,17 @@ export default {
         default: break
       }
       return className
+    },
+    pointColor () {
+      return function (detection) {
+        let color = '#8FA1BE'
+        if (detection.startTime && detection.endTime) {
+          if (getMillisecond(detection.endTime) - getMillisecond(detection.startTime) < 5 * 60 * 1000) {
+            color = '#D84C4C'
+          }
+        }
+        return { backgroundColor: color }
+      }
     }
   },
   methods: {
