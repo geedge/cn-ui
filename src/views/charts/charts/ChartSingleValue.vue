@@ -4,7 +4,7 @@
     :class="singleValueClass(type)"
     :style="{ backgroundColor: color }"
   >
-    <div class="single-value-icon__box" v-if="!isCommon3SingleValue(type)">
+    <div class="single-value-icon__box" v-if="!isCommon3SingleValue(type) && !isDetectionsProtocol(type)">
       <div
         class="single-value__icon"
         :style="`background-color: ${
@@ -122,13 +122,37 @@
 
       </div>
     </div>
+    <div class="single-value__content" v-if="isDetectionsProtocol(type)">
+        <div class="content__data">
+          <div class="content__data-protocol">
+            <div class="content__data-protocol-icon" :style="{backgroundColor: chartInfo.params.iconBackgroundColor[0]}">
+              <i :class="chartInfo.params.icon[0]" :style="{color: chartInfo.params.iconColor[0]}"></i>
+            </div>
+            <div class="content__data-protocol-value">
+              <div class="content__data-protocol-value-title">{{$t('protocol.requestVolume')}}</div>
+              <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'bytes'), chartInfo.params.unitType).join(' ')}}</div>
+            </div>
+            <div class="content__data-protocol-percent">占比&nbsp;&nbsp;&nbsp;<span>{{unitConvert($_.get(chartData, 'bytesPercent') * 100, unitTypes.percent).join(' ')+'%' }}</span></div>
+          </div>
+          <div class="content__data-protocol">
+            <div class="content__data-protocol-icon" :style="{backgroundColor: chartInfo.params.iconBackgroundColor[1]}">
+              <i :class="chartInfo.params.icon[1]" :style="{color: chartInfo.params.iconColor[1]}"></i>
+            </div>
+            <div class="content__data-protocol-value">
+              <div class="content__data-protocol-value-title">{{$t('protocol.totalFlow')}}</div>
+              <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'count'), chartInfo.params.unitType).join(' ')}}</div>
+            </div>
+            <div class="content__data-protocol-percent">占比&nbsp;&nbsp;&nbsp;<span>{{ unitConvert($_.get(chartData, 'countPercent') * 100, unitTypes.percent).join(' ')+'%' }}</span></div>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
 import unitConvert from '@/utils/unit-convert'
-import { unitTypes } from '@/utils/constants'
 import { get } from '@/utils/http'
+import { unitTypes } from '@/utils/constants'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import * as echarts from 'echarts'
 import {
@@ -136,7 +160,10 @@ import {
   getChartColor,
   isCommonSingleValue,
   isSingleValueWithEcharts,
-  isCommon2SingleValue, isSingleValueWithPercent, isCommon3SingleValue
+  isCommon2SingleValue,
+  isSingleValueWithPercent,
+  isCommon3SingleValue,
+  isDetectionsProtocol
 } from '@/views/charts/charts/tools'
 
 export default {
@@ -148,6 +175,8 @@ export default {
   },
   data () {
     return {
+      unitConvert,
+      unitTypes,
       icon: '',
       color: '',
       type: 0,
@@ -203,6 +232,8 @@ export default {
           c = 'cn-chart__single-value--icon-right--color'
         } else if (this.isSingleValueWithPercent(type)) {
           c = 'cn-chart__single-value--icon-doh'
+        } else if (this.isDetectionsProtocol(type)) {
+          c = 'cn-chart__single-value--protocol'
         }
         return c
       }
@@ -214,6 +245,7 @@ export default {
     isCommon2SingleValue,
     isCommon3SingleValue,
     isSingleValueWithPercent,
+    isDetectionsProtocol,
     chartSingleValueTotal () {
       const chartParams = this.$_.get(this.chartInfo, 'params') || {}
       if (isSingleValueWithEcharts(this.type)) {

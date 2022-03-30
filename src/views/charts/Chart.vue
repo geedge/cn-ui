@@ -337,7 +337,8 @@ import {
   isAlarmInfo,
   isDomainRecursiveResolve,
   isDetectionSecurity,
-  isDetectionService
+  isDetectionService,
+  isDetectionsProtocol
 } from './charts/tools'
 import _ from 'lodash'
 
@@ -503,7 +504,8 @@ export default {
       isAlarmInfo: isAlarmInfo(props.chartInfo.type),
       isDomainRecursiveResolve: isDomainRecursiveResolve(props.chartInfo.type),
       isDetectionSecurity: isDetectionSecurity(props.chartInfo.type),
-      isDetectionService: isDetectionService(props.chartInfo.type)
+      isDetectionService: isDetectionService(props.chartInfo.type),
+      isDetectionsProtocol: isDetectionsProtocol(props.chartInfo.type)
     }
   }
 }

@@ -136,6 +136,10 @@ export function isTable (type) {
 export function isBasicTable (type) {
   return type === 601
 }
+/* DNS加密协议 */
+export function isDetectionsProtocol (type) {
+  return type === 508
+}
 /* DOMAIN实体DNS记录 */
 export function isDomainDnsRecord (type) {
   return type === 602
@@ -196,6 +200,7 @@ export function isDetectionSecurity (type) {
 export function isDetectionService (type) {
   return type === 710
 }
+
 /* 根据type获取图表分类 */
 const typeCategory = {
   MAP: 'map',
