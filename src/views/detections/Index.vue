@@ -29,7 +29,6 @@
             :filter-data="filterData[pageType]"
             :q="q"
             :time-filter="timeFilter"
-            @filter="filter"
         ></detection-filter>
 
         <div class="detection__list">
@@ -41,7 +40,7 @@
               <template v-if="isStatisticsSeverityNoData">
                 <div class="no-data chart-content" >No data</div>
               </template>
-              <template v-if="!isStatisticsSeverityNoData">
+              <template v-else>
                 <div class="chart-content" :id="`eventSeverityPie${pageType}`">
                 </div>
               </template>
@@ -54,7 +53,7 @@
               <template v-if="isStatisticsCategoryNoData">
                 <div class="no-data chart-content" >No data</div>
               </template>
-              <template v-if="!isStatisticsCategoryNoData">
+              <template v-else>
                 <div class="chart-content" :id="`detectionCategoryPer${pageType}`">
                 </div>
               </template>
@@ -66,7 +65,7 @@
               <template v-if="isStatisticsActiveAttackNoData">
                 <div class="no-data chart-content" >No data</div>
               </template>
-              <template v-if="!isStatisticsActiveAttackNoData">
+              <template v-else>
                 <div class="chart-content" style="padding-left: 5px;" :id="`detectionActiveAttacker${pageType}`">
                 </div>
               </template>
@@ -237,99 +236,6 @@ export default {
     initEventSeverityTrendData (params) {
       this.loading = true
       getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
-        /* data = [
-          {
-            "statTime": "2022-01-01T10:07:03.008Z",
-            "eventSeverity": "critical",
-            "count": 5
-          },
-          {
-            "statTime": "2022-01-02T10:07:03.008Z",
-            "eventSeverity": "critical",
-            "count": 15
-          },{
-            "statTime": "2022-01-03T10:07:03.008Z",
-            "eventSeverity": "critical",
-            "count": 25
-          },
-          {
-            "statTime": "2022-01-04T10:07:03.008Z",
-            "eventSeverity": "critical",
-            "count": 7
-          },{
-            "statTime": "2022-01-01T10:07:03.008Z",
-            "eventSeverity": "high",
-            "count": 8
-          },
-          {
-            "statTime": "2022-01-02T10:07:03.008Z",
-            "eventSeverity": "high",
-            "count": 2
-          },{
-            "statTime": "2022-01-03T10:07:03.008Z",
-            "eventSeverity": "high",
-            "count": 25
-          },
-          {
-            "statTime": "2022-01-04T10:07:03.008Z",
-            "eventSeverity": "high",
-            "count": 7
-          },{
-            "statTime": "2022-01-01T10:07:03.008Z",
-            "eventSeverity": "medium",
-            "count": 9
-          },
-          {
-            "statTime": "2022-01-02T10:07:03.008Z",
-            "eventSeverity": "medium",
-            "count": 15
-          },{
-            "statTime": "2022-01-03T10:07:03.008Z",
-            "eventSeverity": "medium",
-            "count": 35
-          },
-          {
-            "statTime": "2022-01-04T10:07:03.008Z",
-            "eventSeverity": "medium",
-            "count": 7
-          },{
-            "statTime": "2022-01-01T10:07:03.008Z",
-            "eventSeverity": "low",
-            "count": 5
-          },
-          {
-            "statTime": "2022-01-02T10:07:03.008Z",
-            "eventSeverity": "low",
-            "count": 1
-          },{
-            "statTime": "2022-01-03T10:07:03.008Z",
-            "eventSeverity": "low",
-            "count": 25
-          },
-          {
-            "statTime": "2022-01-04T10:07:03.008Z",
-            "eventSeverity": "low",
-            "count": 17
-          },{
-            "statTime": "2022-01-01T10:07:03.008Z",
-            "eventSeverity": "info",
-            "count": 5
-          },
-          {
-            "statTime": "2022-01-02T10:07:03.008Z",
-            "eventSeverity": "info",
-            "count": 15
-          },{
-            "statTime": "2022-01-03T10:07:03.008Z",
-            "eventSeverity": "info",
-            "count": 25
-          },
-          {
-            "statTime": "2022-01-04T10:07:03.008Z",
-            "eventSeverity": "info",
-            "count": 27
-          },
-        ] */
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
           const dataMap = new Map()
@@ -396,26 +302,7 @@ export default {
     // 初始化左侧事件严重等级和小饼图
     initEventSeverityData (params) {
       getData(api.detection[this.pageType].eventSeverity, params).then(data => {
-        /* data = [
-          {
-            eventSeverity: 'critical',
-            count: 1048
-          }, {
-            eventSeverity: 'high',
-            count: 735
-          }, {
-            eventSeverity: 'medium',
-            count: 580
-          }, {
-            eventSeverity: 'low',
-            count: 484
-          }, {
-            eventSeverity: 'info',
-            count: 300
-          }
-        ] */
         this.statisticsSeverityData = data
-        // this.isStatisticsSeverityNoData = true
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
@@ -425,7 +312,16 @@ export default {
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
           detectionChart.setOption(eventSeverityOption)
-          // this.isStatisticsSeverityNoData = false
+
+          const vm = this
+          detectionChart.off('click')
+          detectionChart.on('click', e => {
+            if (this.pageType === 'performanceEvent') {
+              vm.filterData.performanceEvent[0].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[0].value, e.data.name)
+            } else if (this.pageType === 'securityEvent') {
+              vm.filterData.securityEvent[0].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[0].value, e.data.name)
+            }
+          })
         }
       }).catch(error => {
 
@@ -447,6 +343,12 @@ export default {
             return { value: d.count, name: d.eventType }
           })
           detectionChart.setOption(securityTypeOption)
+
+          const vm = this
+          detectionChart.off('click')
+          detectionChart.on('click', e => {
+            vm.filterData.performanceEvent[1].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[1].value, e.data.name)
+          })
         }
       }).catch(error => {
 
@@ -468,6 +370,12 @@ export default {
             return { value: d.count, name: d.securityType, itemStyle: { color: getAttackColor(d.securityType) } }
           })
           detectionChart.setOption(securityTypeOption)
+
+          const vm = this
+          detectionChart.off('click')
+          detectionChart.on('click', e => {
+            vm.filterData.securityEvent[1].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[1].value, e.data.name)
+          })
         }
       }).catch(error => {
 
@@ -475,57 +383,6 @@ export default {
     },
     initOffenderIpData (params) {
       getData(api.detection[this.pageType].offenderIp, params).then(data => {
-        /* data = [
-          {
-            offenderIp: '192.168.12.21',
-            count: 99999
-          }, {
-            offenderIp: '193.168.22.21',
-            count: 88888
-          }, {
-            offenderIp: '194.168.32.21',
-            count: 77777
-          }, {
-            offenderIp: '195.168.42.21',
-            count: 66666
-          }, {
-            offenderIp: '196.168.52.21',
-            count: 55555
-          },
-          {
-            offenderIp: '192.168.12.21',
-            count: 44444
-          }, {
-            offenderIp: '192.168.22.21',
-            count: 98888
-          }, {
-            offenderIp: '192.168.32.21',
-            count: 97777
-          }, {
-            offenderIp: '192.168.42.21',
-            count: 96666
-          }, {
-            offenderIp: '192.168.52.21',
-            count: 55555
-          },
-          {
-            offenderIp: '193.168.12.21',
-            count: 91999
-          }, {
-            offenderIp: '193.168.22.21',
-            count: 88688
-          }, {
-            offenderIp: '193.168.32.21',
-            count: 77747
-          }, {
-            offenderIp: '193.168.42.21',
-            count: 66666
-          }, {
-            offenderIp: '193.168.52.21',
-            count: 55355
-          }
-        ] */
-
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][4].data = data.map(r => ({
@@ -546,7 +403,12 @@ export default {
             return [d.count, d.offenderIp]
           }).reverse()
           detectionChart.setOption(offenderIpOption)
-          // this.isStatisticsActiveAttackNoData = false
+
+          const vm = this
+          detectionChart.off('click')
+          detectionChart.on('click', e => {
+            vm.filterData.securityEvent[4].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[4].value, e.data[1])
+          })
         }
       }).catch(error => {
 
@@ -555,92 +417,6 @@ export default {
 
     initVictimIpData (params) {
       getData(api.detection[this.pageType].victimIp, params).then(data => {
-        /* data = [
-          {
-            victimIp: '1.2.6.8',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.9',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.0',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.1',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.2',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.3',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.4',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.5',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.6',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.7',
-            count: 50
-          },
-          {
-            victimIp: '1.2.7.8',
-            count: 50
-          },
-          {
-            victimIp: '1.2.8.8',
-            count: 50
-          },
-          {
-            victimIp: '1.2.9.8',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.18',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.28',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.38',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.48',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.58',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.68',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.78',
-            count: 50
-          },
-          {
-            victimIp: '1.2.6.88',
-            count: 50
-          }
-        ] */
         this.filterData[this.pageType][2].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][2].data)
         this.filterData[this.pageType][2].showMore = showMore
@@ -651,12 +427,6 @@ export default {
     },
     initVictimLocationData (params) {
       getData(api.detection[this.pageType].victimLocation, params).then(data => {
-        /* data = [
-          {
-            victimLocationCountry: 'china',
-            count: 50
-          }
-        ] */
         this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
         this.filterData[this.pageType][3].showMore = showMore
@@ -667,12 +437,6 @@ export default {
     },
     initOffenderLocationData (params) {
       getData(api.detection[this.pageType].offenderLocation, params).then(data => {
-        /* data = [
-          {
-            offenderLocationCountry: 'china',
-            count: 50
-          }
-        ] */
         this.filterData[this.pageType][5].data = data.map(r => ({ label: r.offenderLocationCountry, value: r.offenderLocationCountry, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][5].data)
         this.filterData[this.pageType][5].showMore = showMore
@@ -683,20 +447,6 @@ export default {
     },
     initActiveEntity (params) {
       getData(api.detection[this.pageType].activeEntity, params).then(data => {
-        /* data = [
-          {
-            name: 'csdn.net',
-            count: 250
-          },
-          {
-            name: 'duokan',
-            count: 150
-          },
-          {
-            name: '2.3.2.2',
-            count: 50
-          }
-        ] */
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
@@ -710,11 +460,26 @@ export default {
           }).reverse()
           detectionChart.setOption(option)
           extensionEchartY(detectionChart)// y轴标签过长时，鼠标悬浮，显示所有内容
+
+          const vm = this
+          detectionChart.off('click')
+          detectionChart.on('click', e => {
+            vm.filterData.performanceEvent[0].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[0].value, e.data[1])
+          })
         }
       }).catch(error => {
       })
     },
-
+    triggerFilterDataValue (array, value) {
+      const r = [...array]
+      const index = array.indexOf(value)
+      if (index > -1) {
+        r.splice(index, 1)
+      } else {
+        r.push(value)
+      }
+      return r
+    },
     computeFilterPage (data) {
       return {
         showMore: data.length > 10,
@@ -730,302 +495,6 @@ export default {
         pageNo: this.pageObj.pageNo
       }
       getData(api.detection[this.pageType].listBasic, params).then(data => {
-        if (this.pageType === detectionPageType.securityEvent) {
-          /* data = [
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'critical',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 978456923589
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'high',
-              cryptominingPool: 'a',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'low',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'medium',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              cryptominingPool: 'a',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              malwareName: 'the great wall',
-              durationMs: 600000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              cryptominingPool: 'a',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              cryptominingPool: 'a',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              cryptominingPool: 'a',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              malwareName: 'the great wall',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              cryptominingPool: 'a',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              eventId: 1212,
-              securityType: 'ddos',
-              offenderIp: '1.1.1.1',
-              victimIp: '2.2.2.2',
-              eventSecurity: 'info',
-              cryptominingPool: 'a',
-              durationMs: 60000,
-              startTime: 1111111111
-            }
-          ] */
-        } else if (this.pageType === detectionPageType.performanceEvent) {
-          /* data = [
-            {
-              entityType: 'ip',
-              eventType: 'Dns error',
-              serverIp: '2.2.2.2',
-              eventSecurity: 'critical',
-              durationMs: 60000,
-              startTime: 978456923589
-            },
-            {
-              entityType: 'ip',
-              eventType: 'ddos',
-              serverIp: '2.2.2.2',
-              eventSecurity: 'high',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'ip',
-              eventType: 'ddos',
-              serverIp: '2.2.2.2',
-              eventSecurity: 'low',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'domain',
-              eventType: 'ddos',
-              domain: 'csdn.net',
-              eventSecurity: 'medium',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'domain',
-              eventType: 'ddos',
-              domain: 'amazon.com',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'domain',
-              eventType: 'ddos',
-              domain: 'qiniu.com',
-              eventSecurity: 'info',
-              durationMs: 600000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            },
-            {
-              entityType: 'app',
-              eventType: 'ddos',
-              appName: 'Samsung',
-              eventSecurity: 'info',
-              durationMs: 60000,
-              startTime: 1111111111
-            }
-          ] */
-        }
-
         this.listData = data
       }).catch(error => {
 
@@ -1101,13 +570,6 @@ export default {
         this.initActiveEntity(params)
         this.initEventTypeData(params)
       }
-    },
-    filter (filterColumn) {
-      const params = {}
-      params[filterColumn] = this.filterData[this.pageType].find(f => {
-        return f.column === filterColumn
-      }).value
-      this.$refs.search.changeParams(params)
     },
     pageSize (val) {
       this.pageObj.pageSize = val || 20
@@ -1211,6 +673,7 @@ export default {
     'filterData.securityEvent.0.value': {
       deep: true,
       handler (n, o) {
+        console.info(n, o)
         this.$refs.search.changeParams({ column: this.filterData.securityEvent[0].column, oldValue: o, newValue: n })
       }
     },
