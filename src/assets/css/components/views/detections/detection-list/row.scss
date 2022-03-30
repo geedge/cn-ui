@@ -182,6 +182,9 @@
   .cn-detection__header {
     margin-bottom: 8px;
   }
+  .cn-detection-table {
+    overflow: auto;
+  }
   .cn-detection__case-severity {
     display: flex;
     width: 38px;

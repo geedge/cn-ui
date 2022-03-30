@@ -10,12 +10,12 @@
         :index="index"
       ></chart-detections-table>
     </div>
-    <div class="cn-detection__footer" v-show="pageObj.total > 0">
+    <div class="cn-detection__footer">
       <chart-detection-pagination
           ref="pagination"
           :page-obj="pageObj"
           @pageJump="pageJump"
-          :pageSizeForAlarm="pageSizeForAlarm"
+          :pageSizeForAlarm="pageObj.pageSize"
       ></chart-detection-pagination>
     </div>
   </div>
@@ -48,8 +48,7 @@ export default {
         pageSize: 6,
         total: 0,
         resetPageNo: true
-      },
-      pageSizeForAlarm: 6
+      }
     }
   },
   methods: {
@@ -63,7 +62,7 @@ export default {
       this.pageObj.pageNo = val
       const extraParams = {
         pageNo: val,
-        pageSize: this.pageSizeForAlarm
+        pageSize: this.pageSize
       }
       this.$emit('getDetectionData', this.chartInfo.params.url, extraParams, false, {
         startTime: this.queryParams.startTime,
