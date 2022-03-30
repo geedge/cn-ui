@@ -40,7 +40,7 @@ import { unitTypes } from '@/utils/constants'
 export default {
   name: 'Temp',
   methods: {
-    /*initLine (lineData, index) {
+    /* initLine (lineData, index) {
       const data = lineData.map(d => {
         return [getMillisecond(new Date(d[0]).getTime()), d[index]]
       })
@@ -70,7 +70,7 @@ export default {
       this.$nextTick(() => {
         lineChart.setOption(option)
       })
-    },*/
+    }, */
     initLineChart () {
       // 数据转为需要的格式：[[timestamp, value]]
       const data = lineData.map(d => {
@@ -111,10 +111,10 @@ export default {
     } */
   },
   mounted () {
-    /*this.initLine(lineData2, 1)
+    /* this.initLine(lineData2, 1)
     this.initLine(lineData2, 2)
     this.initLine(lineData2, 3)
-    this.initLine(lineData3, 6)*/
+    this.initLine(lineData3, 6) */
     this.initLineChart()
     this.initSunChart(1)
     this.initSunChart(2)

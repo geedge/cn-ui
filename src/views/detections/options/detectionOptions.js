@@ -289,11 +289,11 @@ export const activeAttackBar = {
 }
 export const metricOption = {
   tooltip: {
-    show:true,
+    show: true,
     trigger: 'axis',
-    formatter(params){
+    formatter (params) {
       let str = '<div>'
-      let item = params[0]
+      const item = params[0]
       const tData = item.data[0]
       str += '<div style="margin-bottom: 5px">'
       str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
@@ -303,7 +303,7 @@ export const metricOption = {
       str += `<span class="cn-chart-tooltip-content"> 
       ${item.seriesName}
       </span>`
-          str += `<span class="cn-chart-tooltip-value">
+      str += `<span class="cn-chart-tooltip-value">
           ${unitConvert(item.data[1], item.data[2]).join(' ')}
       </span>`
       str += '</div>'
@@ -336,44 +336,44 @@ export const metricOption = {
     show: false
   },
   series: [
-      {
-        name:'metric',
-        type: 'line',
-        legendHoverLink: false,
-        lineStyle: {
-          width: 1,
-          type:'dashed'
-        },
-        color: '#ec836c',
-        data: [],
-        showSymbol: false
+    {
+      name: 'metric',
+      type: 'line',
+      legendHoverLink: false,
+      lineStyle: {
+        width: 1,
+        type: 'dashed'
       },
-      {
-        name:'metric',
-        type: 'line',
-        legendHoverLink: false,
-        lineStyle: {
-          width: 1,
-          type:'solid'
-        },
-        areaStyle: {
-          color: 'rgba(244, 187, 174, 0.59)'
-        },
-        color: '#ec836c',
-        data: [],
-        showSymbol: false
+      color: '#ec836c',
+      data: [],
+      showSymbol: false
+    },
+    {
+      name: 'metric',
+      type: 'line',
+      legendHoverLink: false,
+      lineStyle: {
+        width: 1,
+        type: 'solid'
       },
-      {
-        name:'metric',
-        type: 'line',
-        legendHoverLink: false,
-        lineStyle: {
-          width: 1,
-          type:'dashed'
-        },
-        color: '#ec836c',
-        data: [],
-        showSymbol: false
-      }
-   ]
+      areaStyle: {
+        color: 'rgba(244, 187, 174, 0.59)'
+      },
+      color: '#ec836c',
+      data: [],
+      showSymbol: false
+    },
+    {
+      name: 'metric',
+      type: 'line',
+      legendHoverLink: false,
+      lineStyle: {
+        width: 1,
+        type: 'dashed'
+      },
+      color: '#ec836c',
+      data: [],
+      showSymbol: false
+    }
+  ]
 }

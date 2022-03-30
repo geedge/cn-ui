@@ -67,7 +67,7 @@ export const ipHostedDomain = {
     },
     formatter: function (name) {
       return name.length > 9 ? name.substr(0, 9) + '...' : name
-    },
+    }
   },
   series: [
     {
@@ -79,18 +79,18 @@ export const ipHostedDomain = {
       label: {
         formatter: '{d}%'
       },
-      //right:'20%',
-      labelLine:{
-        length:6,
-        length2:6
-      } ,
+      // right:'20%',
+      labelLine: {
+        length: 6,
+        length2: 6
+      },
       tooltip: {
         formatter: function (param, index, callback) {
-          if(param.data.unitType){
+          if (param.data.unitType) {
             let tip = unitConvert(param.value, param.data.unitType)
-            tip = tip?tip.join(' '):''
+            tip = tip ? tip.join(' ') : ''
             return `${param.name}: ${tip}`
-          }else {
+          } else {
             return `${param.name}: ${param.value}`
           }
         }

@@ -52,7 +52,7 @@ export default {
       })
     },
     search () {
-      let originalSql = this.codeMirror.getValue()
+      let originalSql = this.codeMirror.getValue().trim()
       if (originalSql) {
         originalSql = originalSql.replaceAll(/"/g, '')
         // 为解决ip无法校验通过的问题，先将带引号的ip转为不带引号的，再把不带引号的转为带引号的
@@ -116,7 +116,7 @@ export default {
         const column = this.columnList.find(c => c.name === param.column)
         current = `${current ? current + ' AND ' : ''}${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`
       })
-      toRaw(this.codeMirror).setValue(current)
+      toRaw(this.codeMirror).setValue(current.trim())
     },
     removeParams (params) {
       let current = this.codeMirror.getValue()
@@ -129,7 +129,7 @@ export default {
           current = current.replace(piece, '')
         })
       })
-      toRaw(this.codeMirror).setValue(current)
+      toRaw(this.codeMirror).setValue(current.trim())
     },
     changeParams (params) {
       let current = this.codeMirror.getValue()
@@ -141,7 +141,7 @@ export default {
         const newSqlPiece = `${param.newParam.column}${handleOperatorSpace(param.newParam.operator)}${this.handleValue(param.newParam.value, newColumn, param.newParam.operator)}`.trim()
         current = current.replace(oldSqlPiece, newSqlPiece)
       })
-      toRaw(this.codeMirror).setValue(current)
+      toRaw(this.codeMirror).setValue(current.trim())
     }
   },
   watch: {

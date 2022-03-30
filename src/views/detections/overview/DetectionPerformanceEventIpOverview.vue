@@ -88,7 +88,7 @@ import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
-import { sortBy,reverseSortBy } from '@/utils/tools'
+import { sortBy, reverseSortBy } from '@/utils/tools'
 export default {
   name: 'DetectionPerformanceEventIpOverview',
   props: {
@@ -97,10 +97,10 @@ export default {
   data () {
     return {
       basicInfo: {},
-      metricList:[],
+      metricList: [],
       metricChart: null,
-      searchStartTime:null,
-      searchEndTime:null
+      searchStartTime: null,
+      searchEndTime: null
     }
   },
   computed: {
@@ -133,15 +133,15 @@ export default {
       })
       this.queryMetric().then(responses => {
         responses && (this.metricList = responses.values)
-        if(this.metricList.length>0){
+        if (this.metricList.length > 0) {
           this.initChart()
-        }else {
-          let chartDom = document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)
+        } else {
+          const chartDom = document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)
           chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
         }
       }).catch(error => {
         console.log(error)
-        let chartDom = document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)
+        const chartDom = document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)
         chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
       }).finally(() => {
         setTimeout(() => {
@@ -154,37 +154,36 @@ export default {
       })
     },
 
-    initChart(){
+    initChart () {
       this.metricChart = markRaw(echarts.init(document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)))
       this.chartOptionMetric = _.cloneDeep(this.chartOption)
 
-      this.metricList.sort(reverseSortBy(0))//将返回的数据按时间降序排序，方便找到实线和虚线的交点
-      //let endIndex = (this.metricList). findIndex ((item) => item[0]  <=  1435781434781 );
+      this.metricList.sort(reverseSortBy(0))// 将返回的数据按时间降序排序，方便找到实线和虚线的交点
+      // let endIndex = (this.metricList). findIndex ((item) => item[0]  <=  1435781434781 );
       console.log(this.detection)
-      let endIndex = (this.metricList). findIndex ((item) => item[0]  <=  this.detection.endTime );
-      endIndex = this.metricList.length-endIndex
+      let endIndex = (this.metricList).findIndex((item) => item[0] <= this.detection.endTime)
+      endIndex = this.metricList.length - endIndex
 
+      this.metricList.sort(sortBy(0))// 将返回的数据按时间升序排序，方便找到实线和虚线的交点
+      // let startIndex = (this.metricList). findIndex ((item) => item[0]  >=  1435781432781 );
+      const startIndex = (this.metricList).findIndex((item) => item[0] >= this.detection.startTime)
 
-      this.metricList.sort(sortBy(0))//将返回的数据按时间升序排序，方便找到实线和虚线的交点
-      //let startIndex = (this.metricList). findIndex ((item) => item[0]  >=  1435781432781 );
-      let startIndex = (this.metricList). findIndex ((item) => item[0]  >=  this.detection.startTime );
-
-      if(startIndex >-1 && endIndex >-1){
-        this.chartOptionMetric.series[0].data = this.metricList.slice(0,startIndex).map(v => [Number(v[0])*1000, Number(v[1]), unitTypes.number])
-        this.chartOptionMetric.series[1].data = this.metricList.slice(startIndex-1,endIndex).map(v => [Number(v[0])*1000, Number(v[1]), unitTypes.number])
-        this.chartOptionMetric.series[2].data = this.metricList.slice(endIndex-1,this.metricList.length).map(v => [Number(v[0])*1000, Number(v[1]), unitTypes.number])
+      if (startIndex > -1 && endIndex > -1) {
+        this.chartOptionMetric.series[0].data = this.metricList.slice(0, startIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
+        this.chartOptionMetric.series[1].data = this.metricList.slice(startIndex - 1, endIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
+        this.chartOptionMetric.series[2].data = this.metricList.slice(endIndex - 1, this.metricList.length).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
       }
 
       this.chartOptionMetric && this.metricChart.setOption(this.chartOptionMetric)
     },
 
-    queryMetric() {
+    queryMetric () {
       return new Promise((resolve, reject) => {
         try {
-          let allTime = this.detection.endTime-this.detection.startTime
-          let nowTime = getSecond(new Date())
-          this.searchStartTime = this.detection.startTime-allTime/2
-          this.searchEndTime = _.min([nowTime,(this.detection.endTime+allTime/2)])
+          const allTime = this.detection.endTime - this.detection.startTime
+          const nowTime = getSecond(new Date())
+          this.searchStartTime = this.detection.startTime - allTime / 2
+          this.searchEndTime = _.min([nowTime, (this.detection.endTime + allTime / 2)])
 
           get(api.detection.performanceEvent.metric, {
             domain: this.detection.domain,
@@ -230,11 +229,11 @@ export default {
   },
   mounted () {
     this.query()
-  } ,
+  },
   setup () {
     return {
-      chartOption: metricOption,
+      chartOption: metricOption
     }
-  },
+  }
 }
 </script>

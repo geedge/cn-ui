@@ -141,6 +141,9 @@ export default {
         }
         this.$refs.search.changeParams([{ newParam, oldParam }])
       }
+      this.$nextTick(() => {
+        this.emitter.emit('advanced-search')
+      })
     }
   }
 }
