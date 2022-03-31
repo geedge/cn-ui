@@ -394,20 +394,26 @@
         .content__data-protocol-value {
           display: flex;
           flex: 1;
-          justify-content: center;
-          flex-direction: column;
-          padding-left: 5%;
+          justify-content: space-around;
           .content__data-protocol-value-title {
             flex-shrink: 0;
             display: flex;
+            width: 120px;
+            padding-left: 10%;
             margin-bottom: 7px;
             font-size: 14px;
             color: #666666;
             font-weight: 400;
           }
+          .content__data-protocol-values {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
           .content__data-protocol-value-num {
             flex-shrink: 0;
             display: flex;
+            padding-left: 10%;
             font-size: 26px;
             color: #333333;
             font-weight: 500;
