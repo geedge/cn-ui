@@ -77,13 +77,13 @@ export default {
         return allZero
       }
     },
-    loadEchart (chartNum) {
+    loadEchart (chartNum,refresh=false) {
       this.$emit('showLoading', true)
       try {
-        this.myChart.setOption(this.chartOption)
+        this.myChart.setOption(this.chartOption,refresh)
         this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart))
         if (chartNum && chartNum == 2) {
-          this.myChart2.setOption(this.chartOption2)
+          this.myChart2.setOption(this.chartOption2,refresh)
           this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart2))
         }
         const _this = this

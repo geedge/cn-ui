@@ -140,7 +140,7 @@ export default {
                   distance: [-50, 0],
                   formatter(params) {
                     const arr = unitConvert(
-                      params.value,
+                        Number(params.value),
                       chartParams.unitType,
                     ).join(' ')
                     let desc = ''
@@ -277,50 +277,51 @@ export default {
               selectedName = name
             }
           }
-          let markLine = {
-            silent: true,
-            symbol: 'none',
-            label: {
-              distance: [-50, 0],
-              formatter(params) {
-                const arr = unitConvert(
-                    params.value,
-                    chartParams.unitType,
-                ).join(' ')
-                let desc = ''
-                switch (params.dataIndex) {
-                  case 0: {
-                    desc = 'P50'
-                    break
-                  }
-                  case 1: {
-                    desc = 'P90'
-                    break
-                  }
-                  default:
-                    break
-                }
-                return `${arr} (${desc})`
-              },
-            },
-            data: [
-              {
-                name: 'P50',
-                yAxis: self.chartData[0].aggregation.p50
-                    ? self.chartData[0].aggregation.p50
-                    : 50,
-              },
-              {
-                name: 'P90',
-                yAxis: self.chartData[0].aggregation.p90
-                    ? self.chartData[0].aggregation.p90
-                    : 90,
-              },
-            ],
-          }
+
           let serieArray = []
           self.chartOption.series.forEach((item,i) =>{
             if(item.name === selectedName){
+              let markLine = {
+                silent: true,
+                symbol: 'none',
+                label: {
+                  distance: [-50, 0],
+                  formatter(params) {
+                    const arr = unitConvert(
+                        Number(params.value),
+                        chartParams.unitType,
+                    ).join(' ')
+                    let desc = ''
+                    switch (params.dataIndex) {
+                      case 0: {
+                        desc = 'P50'
+                        break
+                      }
+                      case 1: {
+                        desc = 'P90'
+                        break
+                      }
+                      default:
+                        break
+                    }
+                    return `${arr} (${desc})`
+                  },
+                },
+                data: [
+                  {
+                    name: 'P50',
+                    yAxis: self.chartData[i].aggregation.p50
+                        ? self.chartData[i].aggregation.p50
+                        : 50,
+                  },
+                  {
+                    name: 'P90',
+                    yAxis: self.chartData[i].aggregation.p90
+                        ? self.chartData[i].aggregation.p90
+                        : 90,
+                  },
+                ],
+              }
               item.markLine = markLine
             }
             serieArray.push(item)

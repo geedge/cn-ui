@@ -57,57 +57,55 @@ export default {
           }
         }
       })
-
-      let markLine = {
-        silent: true,
-        symbol: 'none',
-        label: {
-          distance: [-50, 0],
-          formatter(params) {
-            const arr = unitConvert(
-                params.value,
-                chartParams.unitType,
-            ).join(' ')
-            let desc = ''
-            switch (params.dataIndex) {
-              case 0: {
-                desc = 'P50'
-                break
-              }
-              case 1: {
-                desc = 'P90'
-                break
-              }
-              default:
-                break
-            }
-            return `${arr} (${desc})`
-          },
-        },
-        data: [
-          {
-            name: 'P50',
-            yAxis: this.chartData[0].aggregation.p50
-                ? this.chartData[0].aggregation.p50
-                : 50,
-          },
-          {
-            name: 'P90',
-            yAxis: this.chartData[0].aggregation.p90
-                ? this.chartData[0].aggregation.p90
-                : 90,
-          },
-        ],
-      }
-
       if(this.statisticsData.length === 1){
+        let markLine = {
+          silent: true,
+          symbol: 'none',
+          label: {
+            distance: [-50, 0],
+            formatter(params) {
+              const arr = unitConvert(
+                  Number(params.value),
+                  chartParams.unitType,
+              ).join(' ')
+              let desc = ''
+              switch (params.dataIndex) {
+                case 0: {
+                  desc = 'P50'
+                  break
+                }
+                case 1: {
+                  desc = 'P90'
+                  break
+                }
+                default:
+                  break
+              }
+              return `${arr} (${desc})`
+            },
+          },
+          data: [
+            {
+              name: 'P50',
+              yAxis: this.chartData[0].aggregation.p50
+                  ? this.chartData[0].aggregation.p50
+                  : 50,
+            },
+            {
+              name: 'P90',
+              yAxis: this.chartData[0].aggregation.p90
+                  ? this.chartData[0].aggregation.p90
+                  : 90,
+            },
+          ],
+        }
         let serieTmp = this.chartOption.series[0]
         this.chartOption.series[0] = {
           ...serieTmp,
           markLine:markLine
         }
       }
-      this.loadEchart()
+      this.loadEchart(1,true)
     },
 
     dispatchLegendSelectAction(name) {
@@ -127,47 +125,6 @@ export default {
     toggleStatisticsLegend (index) {
       let legendNum = this.statisticsData.length
       const chartParams = this.chartInfo.params
-      let markLine = {
-        silent: true,
-        symbol: 'none',
-        label: {
-          distance: [-50, 0],
-          formatter(params) {
-            const arr = unitConvert(
-                params.value,
-                chartParams.unitType,
-            ).join(' ')
-            let desc = ''
-            switch (params.dataIndex) {
-              case 0: {
-                desc = 'P50'
-                break
-              }
-              case 1: {
-                desc = 'P90'
-                break
-              }
-              default:
-                break
-            }
-            return `${arr} (${desc})`
-          },
-        },
-        data: [
-          {
-            name: 'P50',
-            yAxis: this.chartData[0].aggregation.p50
-                ? this.chartData[0].aggregation.p50
-                : 50,
-          },
-          {
-            name: 'P90',
-            yAxis: this.chartData[0].aggregation.p90
-                ? this.chartData[0].aggregation.p90
-                : 90,
-          },
-        ],
-      }
       if(legendNum > 1){
         let selectedNum = this.statisticsData.filter(item => {return item.active === true}).length //点击前，高亮legend个数
         if(selectedNum === legendNum){//全部曲线高亮时
@@ -205,6 +162,47 @@ export default {
           let serieArray = []
           this.chartOption.series.forEach((item,i) =>{
             if(item.name === selectedName){
+              let markLine = {
+                silent: true,
+                symbol: 'none',
+                label: {
+                  distance: [-50, 0],
+                  formatter(params) {
+                    const arr = unitConvert(
+                        Number(params.value),
+                        chartParams.unitType,
+                    ).join(' ')
+                    let desc = ''
+                    switch (params.dataIndex) {
+                      case 0: {
+                        desc = 'P50'
+                        break
+                      }
+                      case 1: {
+                        desc = 'P90'
+                        break
+                      }
+                      default:
+                        break
+                    }
+                    return `${arr} (${desc})`
+                  },
+                },
+                data: [
+                  {
+                    name: 'P50',
+                    yAxis: this.chartData[i].aggregation.p50
+                        ? this.chartData[i].aggregation.p50
+                        : 50,
+                  },
+                  {
+                    name: 'P90',
+                    yAxis: this.chartData[i].aggregation.p90
+                        ? this.chartData[i].aggregation.p90
+                        : 90,
+                  },
+                ],
+              }
               item.markLine = markLine
             }
             serieArray.push(item)
@@ -234,6 +232,47 @@ export default {
 
         let selectedAfterNum = this.statisticsData.filter((item,i) => {return item.active === true}).length //点击后，高亮legend个数
         if(selectedAfterNum === 1) {//点击后只有一条曲线高亮
+          let markLine = {
+            silent: true,
+            symbol: 'none',
+            label: {
+              distance: [-50, 0],
+              formatter(params) {
+                const arr = unitConvert(
+                    Number(params.value),
+                    chartParams.unitType,
+                ).join(' ')
+                let desc = ''
+                switch (params.dataIndex) {
+                  case 0: {
+                    desc = 'P50'
+                    break
+                  }
+                  case 1: {
+                    desc = 'P90'
+                    break
+                  }
+                  default:
+                    break
+                }
+                return `${arr} (${desc})`
+              },
+            },
+            data: [
+              {
+                name: 'P50',
+                yAxis: this.chartData[0].aggregation.p50
+                    ? this.chartData[0].aggregation.p50
+                    : 50,
+              },
+              {
+                name: 'P90',
+                yAxis: this.chartData[0].aggregation.p90
+                    ? this.chartData[0].aggregation.p90
+                    : 90,
+              },
+            ],
+          }
           this.chartOption.series[0].markLine = markLine
         }else {
           this.chartOption.series[0].markLine = []
