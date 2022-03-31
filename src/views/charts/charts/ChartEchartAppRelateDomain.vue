@@ -25,7 +25,7 @@ import {
   ipHostedDomain
 } from '@/views/charts/charts/options/pie'
 import chartEchartMixin from './chart-echart-mixin'
-import { get,post } from '@/utils/http'
+import { get, post } from '@/utils/http'
 import { reverseSortBy } from '@/utils/tools'
 
 export default {
@@ -42,63 +42,63 @@ export default {
       this.initDom(id, 2)
       const chartParams = this.chartInfo.params
       const domains = this.chartData.toString()
-      //const domains = "office.com,dbank.com"
+      // const domains = "office.com,dbank.com"
       this.$emit('showLoading', true)
 
-      let typeUrl = chartParams.byCategoryUrl.slice(0,chartParams.byCategoryUrl.indexOf('?'))
-      let reputationUrlUrl = chartParams.byReputationUrl.slice(0,chartParams.byReputationUrl.indexOf('?'))
+      const typeUrl = chartParams.byCategoryUrl.slice(0, chartParams.byCategoryUrl.indexOf('?'))
+      const reputationUrlUrl = chartParams.byReputationUrl.slice(0, chartParams.byReputationUrl.indexOf('?'))
 
-       const byType = new Promise(resolve => {
-          post(typeUrl, { domains: domains }).then(response => {
-          //post(replaceUrlPlaceholder(chartParams.byCategoryUrl, { domains: domains })).then(response => {
-             if (response.code === 200) {
-                if (this.$_.isEmpty(response.data.result)) {
-                   // this.noData0 = true
-                } else {
-                   // this.noData0 = false
-                   //const chartOption = this.$_.cloneDeep(this.chartOption)
-                   const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
-                      return {
-                         data: d,
-                         name: d.categoryName,
-                         value: parseInt(d.uniqDomains),
-                         unitType: chartParams.unitType
-                      }
-                   })
-                   this.chartOption.series[0].data = data
+      const byType = new Promise(resolve => {
+        get(typeUrl, { domains: domains }).then(response => {
+          // post(replaceUrlPlaceholder(chartParams.byCategoryUrl, { domains: domains })).then(response => {
+          if (response.code === 200) {
+            if (this.$_.isEmpty(response.data.result)) {
+              // this.noData0 = true
+            } else {
+              // this.noData0 = false
+              // const chartOption = this.$_.cloneDeep(this.chartOption)
+              const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
+                return {
+                  data: d,
+                  name: d.categoryName,
+                  value: parseInt(d.uniqDomains),
+                  unitType: chartParams.unitType
                 }
-             }
-          }).finally(() =>{
-             resolve()
-          })
-       })
-       const byReputation = new Promise(resolve => {
-          post(reputationUrlUrl, { domains: domains }).then(response => {
-             if (response.code === 200) {
-                if (this.$_.isEmpty(response.data.result)) {
-                   // this.noData1 = true
-                } else {
-                   // this.noData1 = false
-                   //const chartOption = this.$_.cloneDeep(this.chartOption)
-                   const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
-                      return {
-                         data: d,
-                         name: d.reputationLevel,
-                         value: parseInt(d.uniqDomains),
-                         unitType: chartParams.unitType
-                      }
-                   })
-                   this.chartOption2.series[0].data = data
-                   //this.myChart2.setOption(chartOption)
+              })
+              this.chartOption.series[0].data = data
+            }
+          }
+        }).finally(() => {
+          resolve()
+        })
+      })
+      const byReputation = new Promise(resolve => {
+        get(reputationUrlUrl, { domains: domains }).then(response => {
+          if (response.code === 200) {
+            if (this.$_.isEmpty(response.data.result)) {
+              // this.noData1 = true
+            } else {
+              // this.noData1 = false
+              // const chartOption = this.$_.cloneDeep(this.chartOption)
+              const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
+                return {
+                  data: d,
+                  name: d.reputationLevel,
+                  value: parseInt(d.uniqDomains),
+                  unitType: chartParams.unitType
                 }
-             }
-          }).finally(() =>{
-             resolve()
-          })
-       })
-       Promise.all([byType, byReputation]).finally(response => {
-          this.loadEchart(2)
-       })
+              })
+              this.chartOption2.series[0].data = data
+              // this.myChart2.setOption(chartOption)
+            }
+          }
+        }).finally(() => {
+          resolve()
+        })
+      })
+      Promise.all([byType, byReputation]).finally(response => {
+        this.loadEchart(2)
+      })
     }
   }
 }

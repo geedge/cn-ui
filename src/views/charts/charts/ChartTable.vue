@@ -12,7 +12,7 @@
             v-for="(c, i) in table.tableColumns.common"
             show-overflow-tooltip
             :key="i"
-            :label="$t(chartTableColumnMapping[c])"
+            :label="$t(chartTableColumnMapping[c] || c)"
             :prop="c"
         >
         </el-table-column>
@@ -20,10 +20,10 @@
             v-for="(c, i) in table.tableColumns.order"
             show-overflow-tooltip
             :key="i"
-            :label="$t(chartTableColumnMapping[c])"
+            :label="$t(chartTableColumnMapping[c] || c)"
             :prop="c"
         >
-          <template #header>{{$t(chartTableColumnMapping[c])}}</template>
+          <template #header>{{$t(chartTableColumnMapping[c] || c)}}</template>
           <template #default="{ row }">
             <span v-if="c === 'bytes'">
                 {{unitConvert(row[c], unitTypes.byte).join(' ')}}

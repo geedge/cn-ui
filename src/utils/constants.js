@@ -138,6 +138,7 @@ export const chartTableColumnMapping = {
   serverIp: 'overall.serverIp',
   domain: 'overall.domain',
   appName: 'overall.appName',
+  dnsQname: 'QName',
   queryRate: 'dns.queryRate',
   queryCount: 'dns.queryCount',
   dnsLatency: 'dns.averageResolveLatency',
