@@ -347,17 +347,19 @@
   }
 
   &.cn-chart__single-value--protocol {
-    display: flex;
     height: 100%;
     width: 100%;
-    justify-content: center;
-    flex-direction: column;
     .single-value__content {
       display: flex;
       justify-content: center;
+      width: 100%;
+      height: 100%;
       .content__data {
+        width: 90%;
+        height: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: center;
       }
       .content__data-protocol:nth-of-type(1) {
         margin-bottom: 50px;
@@ -378,7 +380,8 @@
         display: flex;
         height: 68px;
         width: 100%;
-        text-align: center;
+        text-align: left;
+        justify-content: center;
         .content__data-protocol-icon {
           flex-shrink: 0;
           display: flex;
@@ -387,15 +390,13 @@
           height: 100%;
           line-height: 68px;
           border-radius: 100%;
-          margin-right: 8px;
         }
         .content__data-protocol-value {
-          flex-shrink: 0;
           display: flex;
+          flex: 1;
           justify-content: center;
           flex-direction: column;
-          text-align: left;
-          margin-right: 20px;
+          padding-left: 5%;
           .content__data-protocol-value-title {
             flex-shrink: 0;
             display: flex;
@@ -407,7 +408,7 @@
           .content__data-protocol-value-num {
             flex-shrink: 0;
             display: flex;
-            font-size: 28px;
+            font-size: 26px;
             color: #333333;
             font-weight: 500;
           }
@@ -415,6 +416,7 @@
         .content__data-protocol-percent {
           flex-shrink: 0;
           display: flex;
+          height: 68px;
           font-size: 14px;
           color: #666666;
           font-weight: 400;
