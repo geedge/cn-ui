@@ -21,11 +21,9 @@
 </template>
 
 <script>
-import { replaceUrlPlaceholder } from '@/utils/tools'
+import { replaceUrlPlaceholder, reverseSortBy } from '@/utils/tools'
 import { get } from '@/utils/http'
 import chartEchartMixin from './chart-echart-mixin'
-import { reverseSortBy } from '@/utils/tools'
-
 
 export default {
   name: 'ChartEchartIpHostedDomain',
@@ -41,7 +39,7 @@ export default {
     initEcharts (id) {
       this.initDom(id, 2)
       const chartParams = this.chartInfo.params
-      const domains = this.chartData.map(function(item,i){
+      const domains = this.chartData.map(function (item, i) {
         return item.domain
       }).join(',')
 
@@ -52,7 +50,7 @@ export default {
               // this.noData0 = true
             } else {
               // this.noData0 = false
-              //chartOption = this.$_.cloneDeep(this.chartOption)
+              // chartOption = this.$_.cloneDeep(this.chartOption)
               const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
                 return {
                   data: d,
@@ -62,10 +60,10 @@ export default {
                 }
               })
               this.chartOption.series[0].data = data
-              //this.myChart.setOption(this.chartOption)
+              // this.myChart.setOption(this.chartOption)
             }
           }
-           resolve()
+          resolve()
         })
       })
       const byCredit = new Promise(resolve => {
@@ -75,7 +73,7 @@ export default {
               // this.noData1 = true
             } else {
               // this.noData1 = false
-              //this.chartOption2 = this.$_.cloneDeep(this.chartOption)
+              // this.chartOption2 = this.$_.cloneDeep(this.chartOption)
               const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
                 return {
                   data: d,
@@ -85,15 +83,15 @@ export default {
                 }
               })
               this.chartOption2.series[0].data = data
-             // this.myChart2.setOption(this.chartOption2)
+              // this.myChart2.setOption(this.chartOption2)
             }
           }
-           resolve()
+          resolve()
         })
       })
 
       Promise.all([byType, byCredit]).finally(response => {
-         this.loadEchart(2)
+        this.loadEchart(2)
       })
     }
   }
