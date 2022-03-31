@@ -98,6 +98,58 @@ export default {
           background: '#ECC6F7',
           border: '#B620E0'
         }
+      ],
+      keyMapping: [
+        {
+          key: 'sessions',
+          label: this.$t('overall.sessions'),
+          unitType: unitTypes.number
+        },
+        {
+          key: 'establishLatency',
+          label: this.$t('networkAppPerformance.tripTime'),
+          unitType: unitTypes.time
+        },
+        {
+          key: 'httpResponseLatency',
+          label: this.$t('networkAppPerformance.httpResponse'),
+          unitType: unitTypes.time
+        },
+        {
+          key: 'sslConLatency',
+          label: this.$t('networkAppPerformance.sslResponse'),
+          unitType: unitTypes.time
+        },
+        {
+          key: 'sequenceGapLossPercent',
+          label: this.$t('networkAppPerformance.packetLossRate'),
+          unitType: unitTypes.percent
+        },
+        {
+          key: 'pktRetransPercent',
+          label: this.$t('networkAppPerformance.retransmissionRate'),
+          unitType: unitTypes.percent
+        },
+        {
+          key: 'packets',
+          label: this.$t('overall.packets'),
+          unitType: unitTypes.number
+        },
+        {
+          key: 'sentBytes',
+          label: this.$t('overall.sent'),
+          unitType: unitTypes.byte
+        },
+        {
+          key: 'receivedBytes',
+          label: this.$t('overall.received'),
+          unitType: unitTypes.byte
+        },
+        {
+          key: 'count',
+          label: this.$t('overall.count'),
+          unitType: unitTypes.number
+        }
       ]
     }
   },
@@ -174,9 +226,11 @@ export default {
       polygonSeries.useGeodata = true
       polygonSeries.exclude = ['AQ'] // 排除南极洲
       polygonSeries.tooltip.getFillFromObject = false
-      polygonSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
+      polygonSeries.tooltip.background.fill = am4Core.color('#41495D')
+      polygonSeries.tooltip.background.filters.clear()
+      polygonSeries.tooltip.background.stroke = '#41495D'
       const polygonTemplate = polygonSeries.mapPolygons.template
-      polygonTemplate.tooltipHTML = this.generateTooltipHTML()
+      polygonTemplate.tooltipHTML = this.generatePolygonTooltipHTML()
       polygonTemplate.nonScalingStroke = true
       polygonTemplate.strokeWidth = 0.5
       polygonTemplate.fill = am4Core.color('rgba(176,196,222,.5)')
@@ -210,7 +264,11 @@ export default {
       circle.propertyFields.fill = 'color'
       circle.propertyFields.stroke = 'border'
       circle.strokeWidth = 1
-      circle.tooltipText = '[bold]{location}[/]\n{desc}: {count}'
+      circle.tooltipHTML = this.generatePolygonTooltipHTML()
+      imageSeries.tooltip.getFillFromObject = false
+      imageSeries.tooltip.background.fill = am4Core.color('#41495D')
+      imageSeries.tooltip.background.filters.clear()
+      imageSeries.tooltip.background.stroke = '#41495D'
 
       imageSeries.heatRules.push({
         target: circle,
@@ -242,7 +300,7 @@ export default {
         const chartParams = this.chartInfo.params
         const data = chartData || this.chartData
         if (data && this.isMapBlock) {
-          const sumData = []
+          /* const sumData = []
           data.forEach(r => {
             const hit = sumData.find(s => s.id === r.serverId)
             const { key, labelText } = this.getDataKey(r)
@@ -258,11 +316,15 @@ export default {
                 value
               })
             }
+          }) */
+          const seriesData = data.map(r => {
+            return {
+              ...this.convertMapData(r),
+              id: r.serverId,
+              serverCountry: r.serverCountry,
+              value: r[chartParams.valueColumn]
+            }
           })
-          const seriesData = sumData.map(r => ({
-            ...r,
-            showValue: (r.value || r.value === 0) ? valueToRangeValue(r.value, chartParams.unitType).join(' ') : ''
-          }))
           !this.$_.isEmpty(seriesData) && (polygonSeries.data = [...seriesData])
           // 数据全为0的情况，legend只显示1个颜色
           const sorted = seriesData.sort((a, b) => b.value - a.value)
@@ -297,7 +359,7 @@ export default {
             return ''
           })
         } else if (data && this.isMapPoint) {
-          const seriesData = []
+          /* const seriesData = []
           data.forEach(d => {
             seriesData.push({
               id: d.ipLocationId,
@@ -308,7 +370,16 @@ export default {
               color: this.circleColor[d.dnsServerRole.toUpperCase()].background,
               border: this.circleColor[d.dnsServerRole.toUpperCase()].border
             })
-          })
+          }) */
+          const seriesData = data.map(r => ({
+            ...this.convertMapData(r),
+            id: r.ipLocationId,
+            dnsServerRole: r.dnsServerRole,
+            name: r.ipLocationCity || r.ipLocationProvince || r.ipLocationCountry,
+            desc: this.$t(this.dnsTypeI18n(r.dnsServerRole)),
+            color: this.circleColor[r.dnsServerRole.toUpperCase()].background,
+            border: this.circleColor[r.dnsServerRole.toUpperCase()].border
+          }))
           imageSeries.data = seriesData
         }
       } catch (e) {
@@ -370,16 +441,23 @@ export default {
       }
       return i18n
     },
-    generateTooltipHTML () {
-      return `
+    generatePolygonTooltipHTML () {
+      let html = `
         <div class="map-tooltip" style="padding-bottom: 10px;">
           <div class="map-tooltip__title">{name}</div>
-          <div class="map-tooltip__content">
-            <span>{labelText}</span>
-            <span>{showValue}</span>
+          <div class="map-tooltip__content">`
+      this.keyMapping.forEach(mapping => {
+        html += `
+            <div class="content-row" style="display: none; display: {${mapping.key}Display}">
+              <span class="row__label">{${mapping.key}Label}:</span>
+              <span class="row__value">{${mapping.key}ShowValue}</span>
+            </div>
+        `
+      })
+      html += `
           </div>
-        </div>
-      `
+        </div>`
+      return html
     },
     getDataKey (r) {
       let key = ''
@@ -404,6 +482,22 @@ export default {
         labelText = this.$t('overall.sessions')
       }
       return { key, labelText }
+    },
+    convertMapData (data) {
+      const converted = {}
+      this.keyMapping.forEach(mapping => {
+        if (data[mapping.key] || data[mapping.key] === 0) {
+          converted[mapping.key] = Number(data[mapping.key])
+          converted[`${mapping.key}Label`] = mapping.label
+          converted[`${mapping.key}ShowValue`] = valueToRangeValue(data[mapping.key], mapping.unitType).join(' ')
+          converted[`${mapping.key}Display`] = 'block'
+        } else {
+          converted[mapping.key] = ''
+          converted[`${mapping.key}Label`] = ''
+          converted[`${mapping.key}Display`] = 'none'
+        }
+      })
+      return converted
     }
   },
   watch: {
