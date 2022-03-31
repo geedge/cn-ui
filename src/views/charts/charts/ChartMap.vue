@@ -371,7 +371,7 @@ export default {
               border: this.circleColor[d.dnsServerRole.toUpperCase()].border
             })
           }) */
-          const seriesData = data.map(r => ({
+          imageSeries.data = data.map(r => ({
             ...this.convertMapData(r),
             id: r.ipLocationId,
             dnsServerRole: r.dnsServerRole,
@@ -380,7 +380,6 @@ export default {
             color: this.circleColor[r.dnsServerRole.toUpperCase()].background,
             border: this.circleColor[r.dnsServerRole.toUpperCase()].border
           }))
-          imageSeries.data = seriesData
         }
       } catch (e) {
         console.error(e)

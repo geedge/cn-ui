@@ -183,13 +183,13 @@ export default {
           this.queryTimeRange = { startTime: getSecond(this.chartTimeFilter.startTime), endTime: getSecond(this.chartTimeFilter.endTime) }
         }
         const chartParams = this.chartInfo.params
-        if (isAlarmInfo && JSON.stringify(extraParams) === '{}') {
+        if (this.isAlarmInfo && JSON.stringify(extraParams) === '{}') {
           extraParams = {
             pageNo: 1,
             pageSize: 9
           }
         }
-        if (isDetectionService || isDetectionSecurity) {
+        if (this.isDetectionService || this.isDetectionSecurity) {
           extraParams = {
             pageNo: 1,
             pageSize: 6
