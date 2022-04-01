@@ -58,6 +58,8 @@ export const api = {
   entityDomainDetailSecurity: '/interface/entity/detail/overview/domain/securityEvent',
   entityDomainRelatedServerIp: '/interface/entity/detail/overview/domain/relatedServerIp',
   entityDomainRelatedServerApp: '/interface/entity/detail/overview/domain/relatedApp',
+  entityDetectionsIp: '/interface/entity/detail/overview/ip/dnsInfo',
+  entityDetectionsIpQueryRate: '/interface/entity/detail/overview/ip/dnsQueryRate',
   // ip detail
   entityIpDetailTraffic: '/interface/entity/detail/overview/ip/traffic',
   entityIpDetailTrafficMap: '/interface/entity/detail/ip/trafficMap',

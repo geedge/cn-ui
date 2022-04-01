@@ -12,6 +12,41 @@
       </div>
     </div>
   </div>
+  <div class="overview-item" v-if="entityData.dnsServerRole">
+    <div class="overview__title">{{$t('overall.dnsServerInfo')}}</div>
+    <div class="overview__content">
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.role')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerRole', '-')}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.mechanism')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerOrg', '-')}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.software')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerSoftware', '-')}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.system')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerOs', '-')}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.protocol')}}</div>
+        <div class="row__content">{{detectionIpSupporting(entityData)}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.queryRate')}}</div>
+        <div class="row__contents">
+          <div class="row__content">
+            <div class="row__charts-msg">{{unitConvert(entityData.queryRate, unitTypes.byte).join(' ')}}ps</div>
+            <!-- 曲线-->
+            <div class="row__charts" :id="`entityDnsServerInfo${entityData.ipAddr}`"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.traffic')}}</div>
     <div class="overview__content">
@@ -202,6 +237,8 @@ export default {
       securityUrl: api.entityIpDetailSecurity,
       relatedServerDomainUrl: api.entityIpRelatedServerDomain,
       relatedServerAppUrl: api.entityIpRelatedServerApp,
+      entityDetectionsIpUrl: api.entityDetectionsIp,
+      entityDetectionsIpQueryRateUrl: api.entityDetectionsIpQueryRate,
       listMode: 'list',
       chartData: null,
       singleValues: {
@@ -268,6 +305,25 @@ export default {
         } else {
           return '-'
         }
+      }
+    },
+    detectionIpSupporting () {
+      return function (entityData) {
+        let result = ''
+        if (entityData.dnssecSupport) {
+          result += 'DNSSec/'
+        }
+        if (entityData.dohSupport) {
+          result += 'DoH/'
+        }
+        if (entityData.dotSupport) {
+          result += 'Dot'
+        }
+        result = result.substr(0, result.length - 1)
+        if (!result) {
+          result = '-'
+        }
+        return result
       }
     }
   },

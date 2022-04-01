@@ -1,17 +1,19 @@
 .cn-chart__ip-basic {
   display: flex;
-  .el-descriptions {
-    padding-top: 30px;
+  padding: 30px  60px 0 30px;
+  .cn-chart__ip-basic-info {
+    padding-right: 80px;
   }
   &>.el-descriptions {
     flex: 0 0 350px;
-    padding: 30px 36px;
   }
   .chart-location {
     display: flex;
     flex: 1;
     flex-direction: column;
-    padding: 0 20px 20px 0;
+  }
+  .el-descriptions :not(.is-bordered) td {
+    padding-bottom: 5px !important;
   }
   .el-descriptions__content {
     color: #3976CB;

@@ -20,6 +20,7 @@ export default {
         alertNum: 0,
         chartOptionSent: null,
         chartOptionReceived: null,
+        chartDetectionQueryRate: null,
         chartOption: null,
         sentChart: null,
         receivedChart: null
@@ -231,6 +232,52 @@ export default {
       })
     },
 
+    queryDnsServerInfo () {
+      get(this.entityDetectionsIpUrl, this.getQueryParams()).then(response => {
+        if (response.code === 200) {
+          this.entityData.dnsServerRole = response.data.result.dnsServerRole
+          this.entityData.dnsServerOrg = response.data.result.dnsServerOrg
+          this.entityData.dnsServerSoftware = response.data.result.dnsServerSoftware
+          this.entityData.dnsServerOs = response.data.result.dnsServerOs
+          this.entityData.dohSupport = response.data.result.dohSupport
+          this.entityData.dotSupport = response.data.result.dotSupport
+          this.entityData.dnssecSupport = response.data.result.dnssecSupport
+        }
+      })
+    },
+
+    queryDnsServerInfoRate () {
+      this.detectionChart = echarts.init(document.getElementById(`entityDnsServerInfo${this.entityName}`))
+      get(this.entityDetectionsIpQueryRateUrl, this.getQueryParams()).then(response => {
+        if (response.code === 200 && response.data.result && response.data.result.length > 0) {
+          response.data.result.forEach(t => {
+            this.entityData.queryRate = _.nth(t.values, -3)[1]
+            this.chartDetectionQueryRate = {
+              ...this.chartOption,
+              series: [
+                {
+                  name: this.$t('entities.sentThroughput'),
+                  type: 'line',
+                  legendHoverLink: false,
+                  itemStyle: {
+                    normal: {
+                      lineStyle: {
+                        width: 1
+                      }
+                    }
+                  },
+                  color: '#69b072',
+                  data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                  showSymbol: false
+                }
+              ]
+            }
+          })
+          this.detectionChart.setOption(this.chartDetectionQueryRate)
+        }
+      })
+    },
+
     queryEntityDetail () {
       this.queryEntityDetailTraffic()
       this.queryEntityDetailPerformance()
@@ -238,6 +285,15 @@ export default {
       this.queryEntityDetailNetworkQuantity()
       this.queryEntityDetailLinkOutUrl()
       this.queryEntityDetailLinkInUrl()
+      if (this.entity.entityType === 'ip') {
+        this.queryDnsServerInfo()
+        this.$nextTick(() => {
+          setTimeout(() => {
+            if (!this.entityData.dnsServerRole) return
+            this.queryDnsServerInfoRate()
+          }, 200)
+        })
+      }
     }
   },
   setup () {
