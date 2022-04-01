@@ -128,6 +128,14 @@ export function isCommon3SingleValue (type) {
 export function isSingleValueWithPercent (type) {
   return type === 505
 }
+/* 带分位值的单值 */
+export function isSingleValueWithPercentileLeft (type) {
+  return type === 506
+}
+/* 带分位值的单值 */
+export function isSingleValueWithPercentileRight (type) {
+  return type === 507
+}
 /* table */
 export function isTable (type) {
   return type >= 601 && type <= 700
