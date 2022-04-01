@@ -57,16 +57,16 @@ export default {
           }
         }
       })
-      if(this.statisticsData.length === 1){
-        let markLine = {
+      if (this.statisticsData.length === 1) {
+        const markLine = {
           silent: true,
           symbol: 'none',
           label: {
             distance: [-50, 0],
-            formatter(params) {
+            formatter (params) {
               const arr = unitConvert(
-                  Number(params.value),
-                  chartParams.unitType,
+                Number(params.value),
+                chartParams.unitType
               ).join(' ')
               let desc = ''
               switch (params.dataIndex) {
@@ -82,40 +82,40 @@ export default {
                   break
               }
               return `${arr} (${desc})`
-            },
+            }
           },
           data: [
             {
               name: 'P50',
               yAxis: this.chartData[0].aggregation.p50
-                  ? this.chartData[0].aggregation.p50
-                  : 50,
+                ? this.chartData[0].aggregation.p50
+                : 50
             },
             {
               name: 'P90',
               yAxis: this.chartData[0].aggregation.p90
-                  ? this.chartData[0].aggregation.p90
-                  : 90,
-            },
-          ],
+                ? this.chartData[0].aggregation.p90
+                : 90
+            }
+          ]
         }
-        let serieTmp = this.chartOption.series[0]
+        const serieTmp = this.chartOption.series[0]
         this.chartOption.series[0] = {
           ...serieTmp,
-          markLine:markLine
+          markLine: markLine
         }
       }
-      this.loadEchart(1,true)
+      this.loadEchart(1, true)
     },
 
-    dispatchLegendSelectAction(name) {
+    dispatchLegendSelectAction (name) {
       this.myChart.dispatchAction({
         type: 'legendSelect',
         name: name
       })
     },
 
-    dispatchLegendUnSelectAction(name) {
+    dispatchLegendUnSelectAction (name) {
       this.myChart.dispatchAction({
         type: 'legendUnSelect',
         name: name
@@ -123,21 +123,21 @@ export default {
     },
 
     toggleStatisticsLegend (index) {
-      let legendNum = this.statisticsData.length
+      const legendNum = this.statisticsData.length
       const chartParams = this.chartInfo.params
-      if(legendNum > 1){
-        let selectedNum = this.statisticsData.filter(item => {return item.active === true}).length //点击前，高亮legend个数
-        if(selectedNum === legendNum){//全部曲线高亮时
+      if (legendNum > 1) {
+        const selectedNum = this.statisticsData.filter(item => { return item.active === true }).length // 点击前，高亮legend个数
+        if (selectedNum === legendNum) { // 全部曲线高亮时
           this.statisticsData.forEach((item, indexTmp) => {
-            if(indexTmp === index){
+            if (indexTmp === index) {
               item.active = true
               this.dispatchLegendSelectAction(item.legend)
-            }else {
+            } else {
               item.active = false
               this.dispatchLegendUnSelectAction(item.legend)
             }
           })
-        } else if(selectedNum === 1 && this.statisticsData[index].active){//多条曲线，且只有一条曲线高亮, 且点击的曲线为高亮曲线时
+        } else if (selectedNum === 1 && this.statisticsData[index].active) { // 多条曲线，且只有一条曲线高亮, 且点击的曲线为高亮曲线时
           this.statisticsData.forEach((item) => {
             item.active = true
             this.dispatchLegendSelectAction(item.legend)
@@ -153,24 +153,24 @@ export default {
           })
         }
 
-        let selectedAfterNum = this.statisticsData.filter((item,i) => {return item.active === true}).length //点击后，高亮legend个数
-        if(selectedAfterNum === 1) {//点击后只有一条曲线高亮
+        const selectedAfterNum = this.statisticsData.filter((item, i) => { return item.active === true }).length // 点击后，高亮legend个数
+        if (selectedAfterNum === 1) { // 点击后只有一条曲线高亮
           const chartParams = this.chartInfo.params
-          //多条曲线，且只有一条曲线高亮时，显示P50 P90 分位值，不止一个时隐藏标线
-          let selectedName = this.statisticsData.filter((item,i) => {return item.active === true})[0].legend
+          // 多条曲线，且只有一条曲线高亮时，显示P50 P90 分位值，不止一个时隐藏标线
+          const selectedName = this.statisticsData.filter((item, i) => { return item.active === true })[0].legend
 
-          let serieArray = []
-          this.chartOption.series.forEach((item,i) =>{
-            if(item.name === selectedName){
-              let markLine = {
+          const serieArray = []
+          this.chartOption.series.forEach((item, i) => {
+            if (item.name === selectedName) {
+              const markLine = {
                 silent: true,
                 symbol: 'none',
                 label: {
                   distance: [-50, 0],
-                  formatter(params) {
+                  formatter (params) {
                     const arr = unitConvert(
-                        Number(params.value),
-                        chartParams.unitType,
+                      Number(params.value),
+                      chartParams.unitType
                     ).join(' ')
                     let desc = ''
                     switch (params.dataIndex) {
@@ -186,41 +186,41 @@ export default {
                         break
                     }
                     return `${arr} (${desc})`
-                  },
+                  }
                 },
                 data: [
                   {
                     name: 'P50',
                     yAxis: this.chartData[i].aggregation.p50
-                        ? this.chartData[i].aggregation.p50
-                        : 50,
+                      ? this.chartData[i].aggregation.p50
+                      : 50
                   },
                   {
                     name: 'P90',
                     yAxis: this.chartData[i].aggregation.p90
-                        ? this.chartData[i].aggregation.p90
-                        : 90,
-                  },
-                ],
+                      ? this.chartData[i].aggregation.p90
+                      : 90
+                  }
+                ]
               }
               item.markLine = markLine
             }
             serieArray.push(item)
           })
           this.myChart.setOption({
-            series:serieArray
+            series: serieArray
           })
-        }else {//不止一条线高亮时隐藏标线
-          let serieArray = []
-          this.chartOption.series.forEach((item,i) =>{
+        } else { // 不止一条线高亮时隐藏标线
+          const serieArray = []
+          this.chartOption.series.forEach((item, i) => {
             item.markLine = []
             serieArray.push(item)
           })
           this.myChart.setOption({
-            series:serieArray
+            series: serieArray
           })
         }
-      }else {
+      } else {
         this.statisticsData[index].active = !this.statisticsData[index].active
         this.statisticsData.forEach((item, i) => {
           if (item.active) {
@@ -230,17 +230,17 @@ export default {
           }
         })
 
-        let selectedAfterNum = this.statisticsData.filter((item,i) => {return item.active === true}).length //点击后，高亮legend个数
-        if(selectedAfterNum === 1) {//点击后只有一条曲线高亮
-          let markLine = {
+        const selectedAfterNum = this.statisticsData.filter((item, i) => { return item.active === true }).length // 点击后，高亮legend个数
+        if (selectedAfterNum === 1) { // 点击后只有一条曲线高亮
+          const markLine = {
             silent: true,
             symbol: 'none',
             label: {
               distance: [-50, 0],
-              formatter(params) {
+              formatter (params) {
                 const arr = unitConvert(
-                    Number(params.value),
-                    chartParams.unitType,
+                  Number(params.value),
+                  chartParams.unitType
                 ).join(' ')
                 let desc = ''
                 switch (params.dataIndex) {
@@ -256,25 +256,25 @@ export default {
                     break
                 }
                 return `${arr} (${desc})`
-              },
+              }
             },
             data: [
               {
                 name: 'P50',
                 yAxis: this.chartData[0].aggregation.p50
-                    ? this.chartData[0].aggregation.p50
-                    : 50,
+                  ? this.chartData[0].aggregation.p50
+                  : 50
               },
               {
                 name: 'P90',
                 yAxis: this.chartData[0].aggregation.p90
-                    ? this.chartData[0].aggregation.p90
-                    : 90,
-              },
-            ],
+                  ? this.chartData[0].aggregation.p90
+                  : 90
+              }
+            ]
           }
           this.chartOption.series[0].markLine = markLine
-        }else {
+        } else {
           this.chartOption.series[0].markLine = []
         }
       }
