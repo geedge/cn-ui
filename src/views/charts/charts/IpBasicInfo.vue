@@ -9,10 +9,10 @@
         <el-descriptions-item label="DNS PTR:">{{(chartData && chartData.dnsPtr) || '-'}}</el-descriptions-item>
       </el-descriptions>
       <el-descriptions :column="1" v-if="detectionsData.dnsServerRole">
-        <el-descriptions-item :label="$t('overall.dnsServerInfo.role') + ':'">{{$_.get(detectionsData, 'dnsServerRole', '-')}}</el-descriptions-item>
-        <el-descriptions-item :label="$t('overall.dnsServerInfo.mechanism') + ':'">{{$_.get(detectionsData, 'dnsServerOrg', '-')}}</el-descriptions-item>
-        <el-descriptions-item :label="$t('overall.dnsServerInfo.software') + ':'">{{$_.get(detectionsData, 'dnsServerSoftware', '-')}}</el-descriptions-item>
-        <el-descriptions-item :label="$t('overall.dnsServerInfo.system') + ':'">{{$_.get(detectionsData, 'dnsServerOs', '-')}}</el-descriptions-item>
+        <el-descriptions-item :label="$t('overall.dnsServerInfo.role') + ':'">{{$_.get(detectionsData, 'dnsServerRole') || '-'}}</el-descriptions-item>
+        <el-descriptions-item :label="$t('overall.dnsServerInfo.mechanism') + ':'">{{$_.get(detectionsData, 'dnsServerOrg') || '-'}}</el-descriptions-item>
+        <el-descriptions-item :label="$t('overall.dnsServerInfo.software') + ':'">{{$_.get(detectionsData, 'dnsServerSoftware') || '-'}}</el-descriptions-item>
+        <el-descriptions-item :label="$t('overall.dnsServerInfo.system') + ':'">{{$_.get(detectionsData, 'dnsServerOs') || '-'}}</el-descriptions-item>
         <el-descriptions-item :label="$t('overall.dnsServerInfo.protocol') + ':'">{{detectionIpSupporting(detectionsData)}}</el-descriptions-item>
       </el-descriptions>
     </div>

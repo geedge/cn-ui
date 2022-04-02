@@ -17,23 +17,23 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.role')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'dnsServerRole', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerRole') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.mechanism')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'dnsServerOrg', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerOrg') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.software')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'dnsServerSoftware', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerSoftware') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.system')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'dnsServerOs', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'dnsServerOs') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.protocol')}}</div>
-        <div class="row__content">{{detectionIpSupporting(entityData)}}</div>
+        <div class="row__content">{{detectionIpSupporting(entityData) || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.queryRate')}}</div>
