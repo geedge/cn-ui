@@ -292,19 +292,21 @@ export default {
   computed: {
     ipLocationRegion () {
       return function (entityData) {
-        const hasProvinceAndCity = entityData.ipLocationProvince && entityData.ipLocationCity &&
-            entityData.ipLocationProvince !== 'null' && entityData.ipLocationCity !== 'null'
-        const hasProvince = entityData.ipLocationProvince && entityData.ipLocationProvince !== 'null'
-        const hasCity = entityData.ipLocationCity && entityData.ipLocationCity !== 'null'
-        if (hasProvinceAndCity) {
-          return `${entityData.ipLocationProvince}, ${entityData.ipLocationCity}`
-        } else if (hasProvince) {
-          return entityData.ipLocationProvince
-        } else if (hasCity) {
-          return entityData.ipLocationCity
-        } else {
-          return '-'
+        let result = ''
+        if (entityData.ipLocationCountry) {
+          result += `${entityData.ipLocationCountry},`
         }
+        if (entityData.ipLocationCountry) {
+          result += `${entityData.ipLocationProvince},`
+        }
+        if (entityData.ipLocationCountry) {
+          result += `${entityData.ipLocationCity},`
+        }
+        result = result.substr(0, result.length - 1)
+        if (!result) {
+          result = '-'
+        }
+        return result
       }
     },
     detectionIpSupporting () {
