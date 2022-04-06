@@ -54,6 +54,12 @@
           color: #8FA1BE;
           cursor: pointer;
         }
+        &.overview__row--single-value {
+          flex-wrap: nowrap;
+          .cn-chart__single-value--detail-overview {
+            margin-right: 60px;
+          }
+        }
         .row__label {
           color: #6B717B;
           padding-right: 20px;

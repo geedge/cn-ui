@@ -186,7 +186,6 @@ export default {
           const nowTime = getSecond(new Date())
           this.searchStartTime = this.detection.startTime - allTime / 2
           this.searchEndTime = _.min([nowTime, (this.detection.endTime + allTime / 2)])
-          console.info(this.detection)
           get(api.detection.performanceEvent.metric, {
             serverIp: this.detection.serverIp,
             startTime: this.searchStartTime,

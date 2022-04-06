@@ -143,7 +143,8 @@ export const chartTableColumnMapping = {
   queryRate: 'dns.queryRate',
   queryCount: 'dns.queryCount',
   dnsLatency: 'dns.averageResolveLatency',
-  responseFailRate: 'dns.responseFailureRate'
+  responseFailRate: 'dns.responseFailureRate',
+  ip: 'IP'
 }
 export const chartTableOrderOptionsMapping = {}
 export const chartPieTableTopOptions = [
