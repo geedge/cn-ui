@@ -89,6 +89,8 @@ import * as echarts from 'echarts'
 import { markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
 import { sortBy, reverseSortBy } from '@/utils/tools'
+import _ from 'lodash'
+
 export default {
   name: 'DetectionPerformanceEventIpOverview',
   props: {
@@ -184,9 +186,9 @@ export default {
           const nowTime = getSecond(new Date())
           this.searchStartTime = this.detection.startTime - allTime / 2
           this.searchEndTime = _.min([nowTime, (this.detection.endTime + allTime / 2)])
-
+          console.info(this.detection)
           get(api.detection.performanceEvent.metric, {
-            domain: this.detection.domain,
+            serverIp: this.detection.serverIp,
             startTime: this.searchStartTime,
             endTime: this.searchEndTime,
             eventType: this.detection.eventType
