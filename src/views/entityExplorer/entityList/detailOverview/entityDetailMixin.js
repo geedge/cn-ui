@@ -148,17 +148,58 @@ export default {
       if (this.networkQuantityUrl) {
         get(this.networkQuantityUrl, this.getQueryParams()).then(response => {
           if (response.code === 200) {
-            this.entityData.establishLatency = response.data.result.establishLatency
-            this.entityData.httpResponseLatency = response.data.result.httpResponseLatency
-            this.entityData.sslConLatency = response.data.result.sslConLatency
-            this.entityData.sequenceGapLossPercent = response.data.result.sequenceGapLossPercent
-            this.entityData.pktRetransPercent = response.data.result.pktRetransPercent
+            this.entityData.establishLatencyAvg = response.data.result.establishLatencyAvg
+            this.entityData.establishLatencyP50 = response.data.result.establishLatencyP50
+            this.entityData.establishLatencyP90 = response.data.result.establishLatencyP90
 
-            this.singleValues.chartDatas.splice(0, 1, this.$_.get(this.entityData, 'establishLatency'))
-            this.singleValues.chartDatas.splice(1, 1, this.$_.get(this.entityData, 'httpResponseLatency'))
-            this.singleValues.chartDatas.splice(2, 1, this.$_.get(this.entityData, 'sslConLatency'))
-            this.singleValues.chartDatas.splice(3, 1, this.$_.get(this.entityData, 'sequenceGapLossPercent'))
-            this.singleValues.chartDatas.splice(4, 1, this.$_.get(this.entityData, 'pktRetransPercent'))
+            this.entityData.httpResponseLantencyAvg = response.data.result.httpResponseLantencyAvg
+            this.entityData.httpResponseLantencyP50 = response.data.result.httpResponseLantencyP50
+            this.entityData.httpResponseLantencyP90 = response.data.result.httpResponseLantencyP90
+
+            this.entityData.sslConLatencyAvg = response.data.result.sslConLatencyAvg
+            this.entityData.sslConLatencyP50 = response.data.result.sslConLatencyP50
+            this.entityData.sslConLatencyP90 = response.data.result.sslConLatencyP90
+
+            this.entityData.sequenceGapLossAvg = response.data.result.sequenceGapLossAvg
+            this.entityData.sequenceGapLossP50 = response.data.result.sequenceGapLossP50
+            this.entityData.sequenceGapLossP90 = response.data.result.sequenceGapLossP90
+
+            this.entityData.pktRetransAvg = response.data.result.pktRetransAvg
+            this.entityData.pktRetransP50 = response.data.result.pktRetransP50
+            this.entityData.pktRetransP90 = response.data.result.pktRetransP90
+
+            const establishLatency = {
+              value: this.entityData.establishLatencyAvg,
+              p50: this.entityData.establishLatencyP50,
+              p90: this.entityData.establishLatencyP90
+            }
+            this.singleValues.chartDatas.splice(0, 1, establishLatency)
+            const httpResponseLatency = {
+              value: this.entityData.httpResponseLantencyAvg,
+              p50: this.entityData.httpResponseLantencyP50,
+              p90: this.entityData.httpResponseLantencyP90
+            }
+            this.singleValues.chartDatas.splice(1, 1, httpResponseLatency)
+            const sslConLatency = {
+              value: this.entityData.sslConLatencyAvg,
+              p50: this.entityData.sslConLatencyP50,
+              p90: this.entityData.sslConLatencyP90
+            }
+            this.singleValues.chartDatas.splice(2, 1, sslConLatency)
+            const sequenceGapLoss = {
+              value: this.entityData.sequenceGapLossAvg,
+              p50: this.entityData.sequenceGapLossP50,
+              p90: this.entityData.sequenceGapLossP90
+            }
+            this.singleValues.chartDatas.splice(3, 1, sequenceGapLoss)
+            const pktRetransPercent = {
+              value: this.entityData.pktRetransAvg,
+              p50: this.entityData.pktRetransP50,
+              p90: this.entityData.pktRetransP90
+            }
+            this.singleValues.chartDatas.splice(4, 1, pktRetransPercent)
+
+            console.log(this.singleValues.chartDatas)
           }
         })
       }
@@ -181,7 +222,7 @@ export default {
               })
               const max = parseFloat(sorted[0].bytes)
               const maxId = parseFloat(sortedId[0].commonIngressLinkId)
-              this.entityData.linkInPercent = (parseFloat(max / sum)).toFixed(2)
+              this.entityData.linkInPercent = (parseFloat(max / sum) * 100).toFixed(2)
               this.entityData.linkInId = maxId
             }
           }
@@ -206,7 +247,7 @@ export default {
               })
               const max = parseFloat(sorted[0].bytes)
               const maxId = parseFloat(sortedId[0].commonEgressLinkId)
-              this.entityData.linkOutPercent = (parseFloat(max / sum)).toFixed(2)
+              this.entityData.linkOutPercent = (parseFloat(max / sum) * 100).toFixed(2)
               this.entityData.linkOutId = maxId
             }
           }

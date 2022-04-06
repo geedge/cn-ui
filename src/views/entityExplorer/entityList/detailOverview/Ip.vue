@@ -123,7 +123,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.networkQuality')}}</div>
     <div class="overview__content">
-      <div class="overview__row">
+      <div class="overview__row" style="flex-wrap: nowrap;">
         <chart-single-value
             v-for="(chartInfo, i) in singleValues.chartInfos"
             :chart-info="chartInfo"

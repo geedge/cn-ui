@@ -35,12 +35,11 @@
     <div class="single-value__content" v-if="isSingleValueWithPercentileRight(type)">
       <div class="data__title-in-one">
         <div class="content__data">
-          <span>{{
+          <span style="white-space: nowrap;">{{
             handleSingleValue[0] || handleSingleValue[0] === 0
               ? handleSingleValue[0]
               : '-'
-          }}</span>
-          <span class="single-value__unit">{{ handleSingleValue[1] }}</span>
+          }}</span><span class="single-value__unit">{{handleSingleValue[1] }}</span>
         </div>
         <div class="content__title title-background-color">
             <span :title="chartInfo.i18n ? $t(chartInfo.i18n) : chartInfo.name">{{
@@ -281,7 +280,7 @@ export default {
     handleSingleValue () {
       let value = null
       if (this.type === 506 || this.type === 507) {
-        value = this.chartData && (this.chartData[0].value || this.chartData[0].value === 0) ? this.chartData[0].value : ''
+        value = this.chartData && (this.chartData.value || this.chartData.value === 0) ? this.chartData.value : ''
       } else {
         value = this.$_.isEmpty(this.chartData) || this.$_.get(this, 'chartData')
           ? this.chartData
@@ -294,8 +293,8 @@ export default {
       let p50 = ''
       let p90 = ''
       if (this.type === 506 || this.type === 507) {
-        p50 = this.chartData ? unitConvert(this.chartData[0].p50, unitType) : ''
-        p90 = this.chartData ? unitConvert(this.chartData[0].p90, unitType) : ''
+        p50 = this.chartData ? unitConvert(this.chartData.p50, unitType) : ''
+        p90 = this.chartData ? unitConvert(this.chartData.p90, unitType) : ''
       }
 
       switch (unitType) {
