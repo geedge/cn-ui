@@ -248,7 +248,7 @@ export default {
               icon: 'cn-icon cn-icon-time',
               unitType: unitTypes.time
             },
-            type: 501,
+            type: 507,
             i18n: 'entities.avgRoundTripTime'
           },
           {
@@ -256,7 +256,7 @@ export default {
               icon: 'cn-icon cn-icon-http',
               unitType: unitTypes.time
             },
-            type: 501,
+            type: 507,
             i18n: 'entities.httpResponseLatency'
           },
           {
@@ -264,7 +264,7 @@ export default {
               icon: 'cn-icon cn-icon-ssl',
               unitType: unitTypes.time
             },
-            type: 501,
+            type: 507,
             i18n: 'entities.sslConLatency'
           },
           {
@@ -272,7 +272,7 @@ export default {
               icon: 'cn-icon cn-icon-package-loss',
               unitType: unitTypes.percent
             },
-            type: 501,
+            type: 507,
             i18n: 'entities.sequenceGapLossPercent'
           },
           {
@@ -280,7 +280,7 @@ export default {
               icon: 'cn-icon cn-icon-upload',
               unitType: unitTypes.percent
             },
-            type: 501,
+            type: 507,
             i18n: 'entities.pktRetransPercent'
           }
         ],
