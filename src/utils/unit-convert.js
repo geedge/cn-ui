@@ -94,6 +94,8 @@ export default function unitConvert (value, unitType, sourceUnit, targetUnit, do
         const r = (value * 100).toFixed(dot)
         if (_.isNaN(r)) {
           return ['-', '']
+        } else if (r == 0) {
+          return [0, '%']
         } else {
           return [r, '%']
         }

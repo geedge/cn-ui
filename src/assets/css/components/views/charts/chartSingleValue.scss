@@ -1,4 +1,8 @@
 .cn-chart__single-value {
+  .single-value__unit {
+    padding-left: 6px;
+  }
+
   &.cn-chart__single-value--detail-overview.cn-chart__single-value--icon-left {
     width: unset;
     flex: 0 0 240px;
@@ -561,7 +565,6 @@
       }
 
       .single-value__unit {
-        font-weight: normal;
         padding-right: 10px;
         color: #333333;
         font-size: 14px;
@@ -675,7 +678,6 @@
       }
 
       .single-value__unit {
-        font-weight: normal;
         color: #333333;
         font-size: 22px;
         font-weight: bold;
