@@ -12,10 +12,10 @@
       <div v-for="(item, index) in data" :key="index" class="table-below-box" :class="{'table-below-box--inactivated': !item.active}" @click="toggleLegend(index)">
         <div class="table__below-color"><div :style="{backgroundColor: getChartColor(index)}"></div></div>
         <div class="table__below-title" :title="item.legend">{{item.legend}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.avg">{{valueToRangeValue(item.aggregation.avg, chartInfo.params.unitType).join(' ')}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.max">{{valueToRangeValue(item.aggregation.max, chartInfo.params.unitType).join(' ')}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.p50">{{valueToRangeValue(item.aggregation.p50, chartInfo.params.unitType).join(' ')}}</div>
-        <div class="table__below-statistics" :title="item.aggregation.p90">{{valueToRangeValue(item.aggregation.p90, chartInfo.params.unitType).join(' ')}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.avg">{{valueToRangeValue(item.aggregation.avg, chartInfo.params.unitType).join('')}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.max">{{valueToRangeValue(item.aggregation.max, chartInfo.params.unitType).join('')}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.p50">{{valueToRangeValue(item.aggregation.p50, chartInfo.params.unitType).join('')}}</div>
+        <div class="table__below-statistics" :title="item.aggregation.p90">{{valueToRangeValue(item.aggregation.p90, chartInfo.params.unitType).join('')}}</div>
       </div>
     </div>
   </div>

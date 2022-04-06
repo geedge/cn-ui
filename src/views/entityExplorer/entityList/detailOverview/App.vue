@@ -119,13 +119,13 @@
           <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
           <span class="tag__value">{{entityData.linkOutId ? entityData.linkOutId : '-'}},</span>
           <span class="tag__desc">{{$t('entities.percentage')}}</span>
-          <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
+          <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') : '-'}}</span>
         </div>
         <div class="overview__tag">
           <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
           <span class="tag__value">{{entityData.linkInId ? entityData.linkInId : '-'}},</span>
           <span class="tag__desc">{{$t('entities.percentage')}}</span>
-          <span class="tag__value">{{entityData.linkInPercent ? unitConvert(entityData.linkInPercent, unitTypes.percent).join(' ') + '%' : '-'}}</span>
+          <span class="tag__value">{{entityData.linkInPercent ? unitConvert(entityData.linkInPercent, unitTypes.percent).join(' ') : '-'}}</span>
         </div>
       </div>
     </div>

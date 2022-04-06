@@ -6,7 +6,7 @@
           type="circle"
           :color="chartInfo.params.color"
           width="76"
-          :percentage="$_.get(chartData, 'percent', '-') "
+          :percentage="Math.floor(($_.get(chartData, 'percent', '-') * 100) * 100) / 100"
         />
       </div>
       <div class="box__count">
