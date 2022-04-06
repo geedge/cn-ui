@@ -51,7 +51,7 @@
       <div class="content__percentile">
         <div class="circle__content">
           <div class="circle circle-p50"></div>
-          <div><span class="percentile__title-color">P50:</span><span>
+          <div><span class="percentile__title-color">P50: </span><span>
             {{(handleSingleValue[2] || handleSingleValue[2] === 0)
             ?handleSingleValue[2]
             :'-'}}
@@ -59,7 +59,7 @@
         </div>
         <div class="circle__content">
           <div class="circle circle-p90"></div>
-          <div><span class="percentile__title-color">P90:</span><span>
+          <div><span class="percentile__title-color">P90: </span><span>
             {{(handleSingleValue[3]|| handleSingleValue[3] === 0)
             ?handleSingleValue[3]
             :'-'}}
@@ -84,7 +84,7 @@
       <div class="content__percentile">
         <div class="circle__content">
           <div class="circle circle-p50"></div>
-          <div><span class="percentile__title-color">P50:</span><span>
+          <div><span class="percentile__title-color">P50: </span><span>
             {{(handleSingleValue[2]|| handleSingleValue[2] === 0)
             ?handleSingleValue[2]
             :'-'}}
@@ -92,7 +92,7 @@
         </div>
         <div class="circle__content">
           <div class="circle circle-p90"></div>
-          <div><span class="percentile__title-color">P90:</span><span>
+          <div><span class="percentile__title-color">P90: </span><span>
             {{(handleSingleValue[3]|| handleSingleValue[3] === 0)
             ?handleSingleValue[3]
             :'-'}}
@@ -260,13 +260,26 @@ export default {
         this.color = n.params.color
         this.type = n.type
       }
+    },
+    chartData: {
+      deep: true,
+      handler (n) {
+        if (this.chartData && this.chartData.length > 0) {
+          // this.handleSingleValue()
+        }
+      }
     }
   },
   computed: {
     handleSingleValue () {
-      const value = this.$_.isEmpty(this.chartData) || this.$_.get(this, 'chartData')
-        ? this.chartData
-        : ''
+      let value = null
+      if (this.type === 506 || this.type === 507) {
+        value = this.chartData && (this.chartData[0].value || this.chartData[0].value === 0) ? this.chartData[0].value : ''
+      } else {
+        value = this.$_.isEmpty(this.chartData) || this.$_.get(this, 'chartData')
+          ? this.chartData
+          : ''
+      }
 
       const unitType = this.chartInfo.params.unitType
       const result = unitConvert(value, unitType)
@@ -281,8 +294,8 @@ export default {
       switch (unitType) {
         case unitTypes.percent: {
           result[0] = result[0] < 0.01 ? '< 0.01' : result[0]
-          result[2] = (p50 && (p50[0] || Number(p50[0]) === 0)) ? p50[0] + '%' : ''
-          result[3] = (p90 && (p90[0] || Number(p90[0]) === 0)) ? p90[0] + '%' : ''
+          result[2] = (p50 && (p50[0] || Number(p50[0]) === 0)) ? p50[0] + p50[1] : ''
+          result[3] = (p90 && (p90[0] || Number(p90[0]) === 0)) ? p90[0] + p90[1] : ''
           break
         }
         case unitTypes.time: {
