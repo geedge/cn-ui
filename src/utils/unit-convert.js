@@ -3,6 +3,7 @@ import _ from 'lodash'
 
 const numberUnit = ['', 'K', 'M', 'G', 'T', 'P', 'E']
 const byteUnit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
+const bpsUnit = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps', 'Ebps']
 const timeUnit = [ // 时间单位步进倍数，以ms为基数
   { unit: 'ms', step: 1 },
   { unit: 's', step: 1000 },
@@ -31,7 +32,10 @@ function asciiCompute (num, ascii = 1000, units, dot = 2) {
 export function numberUnitConvert (value, sourceUnit, targetUnit, dot = 2) {
   return asciiCompute(value, 1000, numberUnit, dot)
 }
-export function byteUnitConvert (value, sourceUnit = 'B', targetUnit, dot = 2) {
+export function bpsUnitConvert (value, sourceUnit, targetUnit, dot = 2) {
+  return asciiCompute(value, 1000, bpsUnit, dot)
+}
+export function byteUnitConvert (value, unitType, sourceUnit = 'B', targetUnit, dot = 2) {
   return asciiCompute(value, 1024, byteUnit, dot)
 }
 /* 时间单位转换，例如将ms转为h */
@@ -87,13 +91,21 @@ export default function unitConvert (value, unitType, sourceUnit, targetUnit, do
         return timeUnitFormatter(value, sourceUnit, targetUnit, dot)
       }
       case unitTypes.percent: {
-        return [value, '%']
+        const r = (value * 100).toFixed(dot)
+        if (_.isNaN(r)) {
+          return ['-', '']
+        } else {
+          return [r, '%']
+        }
       }
       case unitTypes.number: {
         return numberUnitConvert(value, sourceUnit, targetUnit, dot)
       }
+      case unitTypes.bps: {
+        return bpsUnitConvert(value, sourceUnit, targetUnit, dot)
+      }
       case unitTypes.byte: {
-        return byteUnitConvert(value, sourceUnit, targetUnit, dot)
+        return byteUnitConvert(value, unitType, sourceUnit, targetUnit, dot)
       }
     }
   }
@@ -131,7 +143,7 @@ export function valueToRangeValue (value, unitType) {
       }
       case unitTypes.percent: {
         if (values[0] < 0.01) {
-          return ['<0.01', '']
+          return ['<0.01', '%']
         }
         break
       }

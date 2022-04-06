@@ -102,11 +102,7 @@ export default {
     timeFilter: Object, // 时间范围
     isFullscreen: Boolean,
     panelLock: Boolean,
-    entity: Object,
-    showHeader: {
-      type: Boolean,
-      default: true
-    }
+    entity: Object
   },
   data () {
     return {
@@ -163,6 +159,9 @@ export default {
     },
     headerHPadding () {
       return this.$store.getters.getHeaderHPadding
+    },
+    showHeader () {
+      return this.chartInfo.params && this.chartInfo.params.showHeader
     }
   },
   methods: {

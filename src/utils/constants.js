@@ -123,6 +123,7 @@ export const unitTypes = {
   time: 'time',
   number: 'number',
   byte: 'byte',
+  bps: 'bps',
   string: 'string',
   percent: 'percent'
 }

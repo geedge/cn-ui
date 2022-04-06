@@ -30,7 +30,6 @@
         <panel-chart
             :ref="'chart' + item.id"
             :chart-info="item"
-            :show-header="true"
             :time-filter="timeFilter"
             :entity="entity"
             @groupShow="groupShow"
