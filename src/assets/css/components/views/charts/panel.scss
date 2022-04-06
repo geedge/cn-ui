@@ -469,12 +469,12 @@
             flex-shrink: 1;
             flex-grow: 1;
             overflow: hidden;
-            min-width: 50%;
+            min-width: calc(50% - 37px);
             text-overflow: ellipsis;
             white-space: nowrap;
           }
           .table__below-statistics {
-            width: calc((50% - 27px)/4);
+            width: calc((50% + 10px)/4);
             flex-shrink: 0;
             overflow: hidden;
             text-overflow: ellipsis;
