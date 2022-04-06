@@ -6,6 +6,7 @@
           :detection="data"
           :timeFilter="timeFilter"
           :key="index"
+          :service="true"
           :ref="`detectionRow${index}`"
           :index="index"
       ></chart-detections-table>

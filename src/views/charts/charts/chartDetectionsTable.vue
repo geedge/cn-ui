@@ -2,12 +2,17 @@
   <div class="cn-detection__case">
     <div class="cn-detection__case-severity"><i :class="iconClass" class="cn-icon cn-icon-alert-level"></i></div>
     <div class="cn-detection__row">
-      <div class="cn-detection__header">
+      <div v-if="security" class="cn-detection__header">
         <span :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-attacker"></i>{{detection.offenderIp || '-'}}</span>
         <div :class="iconClass" class="domain cn-detection-domain">{{detection.domain}}</div>
         <span class="line">-------</span>
         <span class="circle"></span>
         <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp || '-'}}
+      </div>
+      <div v-if="service" class="cn-detection__header">
+        <span v-if="detection.entityType === 'app'" :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-app2"></i>{{detection.appName || '-'}}</span>
+        <span v-else-if="detection.entityType === 'ip'" :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-ip2"></i>{{detection.serverIp || '-'}}</span>
+        <span v-else-if="detection.entityType === 'domain'" :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-domain2"></i>{{detection.domain || '-'}}</span>
       </div>
       <div class="cn-detection__body">
         <div class="body__basic-info">
@@ -22,26 +27,26 @@
               <span>{{$t('detections.eventSeverity')}}&nbsp;:&nbsp;&nbsp;</span>
               <span>{{detection.eventSeverity || '-'}}</span>
             </div>
-            <div class="basic-info__item">
+            <div class="basic-info__item" v-if="security">
               <i class="cn-icon cn-icon-event-type"></i>
               <span>{{$t('detection.list.securityType')}}&nbsp;:&nbsp;&nbsp;</span>
               <span>{{detection.securityType || '-'}}</span>
             </div>
-            <div class="basic-info__item">
+            <div class="basic-info__item" v-else-if="service">
               <i class="cn-icon cn-icon-event-type"></i>
               <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
               <span>{{detection.eventType || '-'}}</span>
             </div>
-            <div class="basic-info__item">
+            <div class="basic-info__item" v-if="security">
               <i class="cn-icon cn-icon-trojan"></i>
               <span>{{$t('detection.list.malwareName')}}&nbsp;:&nbsp;&nbsp;</span>
               <span>{{detection.malwareName || '-'}}</span>
             </div>
-            <div class="basic-info__item">
-              <i class="cn-icon cn-icon-mining-pool"></i>
-              <span>{{$t('detection.list.cryptominingPool')}}&nbsp;:&nbsp;&nbsp;</span>
-              <span>{{detection.cryptominingPool || '-'}}</span>
-            </div>
+<!--            <div class="basic-info__item" v-if="security">-->
+<!--              <i class="cn-icon cn-icon-mining-pool"></i>-->
+<!--              <span>{{$t('detection.list.cryptominingPool')}}&nbsp;:&nbsp;&nbsp;</span>-->
+<!--              <span>{{detection.cryptominingPool || '-'}}</span>-->
+<!--            </div>-->
             <div class="basic-info__item">
               <i class="cn-icon cn-icon-time2"></i>
               <span>{{$t('detection.list.startTime')}}&nbsp;:&nbsp;&nbsp;</span>
@@ -69,6 +74,8 @@ export default {
     index: Number,
     timeFilter: Object,
     detection: Object,
+    security: Boolean,
+    service: Boolean,
     pageType: String // 安全事件、服务质量
   },
   computed: {
