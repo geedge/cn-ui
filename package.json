@@ -9,7 +9,7 @@
     "analyz": "cross-env NODE_ENV=production npm_config_report=true npm run build"
   },
   "dependencies": {
-    "@amcharts/amcharts4": "^4.10.20",
+    "@amcharts/amcharts4": "^4.10.24",
     "@amcharts/amcharts4-geodata": "^4.1.20",
     "axios": "^0.21.1",
     "babel-plugin-lodash": "^3.3.4",

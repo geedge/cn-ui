@@ -160,7 +160,7 @@ export default {
       const chart = am4Core.create(id, am4Maps.MapChart)
       chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
-      this.myChart = chart
+      this.myChart = shallowRef(chart)
       this.polygonSeries = this.polygonSeriesFactory()
 
       if (this.isMapPoint) {
