@@ -270,23 +270,15 @@ export default {
         this.color = n.params.color
         this.type = n.type
       }
-    },
-    chartData: {
-      deep: true,
-      handler (n) {
-        if (this.chartData && this.chartData.length > 0) {
-          // this.handleSingleValue()
-        }
-      }
     }
   },
   computed: {
     handleSingleValue () {
       let value = null
-      if (this.type === 506 || this.type === 507) {
-        value = this.chartData && (this.chartData.value || this.chartData.value === 0) ? this.chartData.value : ''
+      if (this.isSingleValueWithPercentileLeft(this.chartInfo.type) || this.isSingleValueWithPercentileRight(this.chartInfo.type)) {
+        value = (this.chartData && (this.chartData.value || this.chartData.value === 0)) ? this.chartData.value : ''
       } else {
-        value = this.$_.isEmpty(this.chartData) || this.$_.get(this, 'chartData')
+        value = (this.chartData || this.chartData === 0)
           ? this.chartData
           : ''
       }
@@ -296,7 +288,7 @@ export default {
 
       let p50 = ''
       let p90 = ''
-      if (this.type === 506 || this.type === 507) {
+      if (this.isSingleValueWithPercentileLeft(this.chartInfo.type) || this.isSingleValueWithPercentileRight(this.chartInfo.type)) {
         p50 = this.chartData ? unitConvert(this.chartData.p50, unitType) : ''
         p90 = this.chartData ? unitConvert(this.chartData.p90, unitType) : ''
       }

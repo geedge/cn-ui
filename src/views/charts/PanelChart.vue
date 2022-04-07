@@ -244,12 +244,12 @@ export default {
                 if (chartParams && chartParams.dataKey) {
                   if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
                     this.chartData = response.data.result[chartParams.dataKey]
-                  } else if (response.data.result && (response.data.result[chartParams.dataKey + 'Avg'] || response.data.result[chartParams.dataKey + 'Avg'] === 0)) {
-                    this.chartData = [{
-                      value: response.data.result[chartParams.dataKey + 'Avg'],
+                  } else if (response.data.result && (response.data.result[chartParams.dataKey + 'Value'] || response.data.result[chartParams.dataKey + 'Value'] === 0)) {
+                    this.chartData = {
+                      value: response.data.result[chartParams.dataKey + 'Value'],
                       p50: response.data.result[chartParams.dataKey + 'P50'],
                       p90: response.data.result[chartParams.dataKey + 'P90']
-                    }]
+                    }
                   } else {
                     this.chartData = null
                   }

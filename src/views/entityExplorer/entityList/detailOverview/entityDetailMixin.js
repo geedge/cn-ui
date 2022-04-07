@@ -148,58 +148,56 @@ export default {
       if (this.networkQuantityUrl) {
         get(this.networkQuantityUrl, this.getQueryParams()).then(response => {
           if (response.code === 200) {
-            this.entityData.establishLatencyAvg = response.data.result.establishLatencyAvg
+            this.entityData.establishLatencyValue = response.data.result.establishLatencyValue
             this.entityData.establishLatencyP50 = response.data.result.establishLatencyP50
             this.entityData.establishLatencyP90 = response.data.result.establishLatencyP90
 
-            this.entityData.httpResponseLantencyAvg = response.data.result.httpResponseLantencyAvg
+            this.entityData.httpResponseLantencyValue = response.data.result.httpResponseLantencyValue
             this.entityData.httpResponseLantencyP50 = response.data.result.httpResponseLantencyP50
             this.entityData.httpResponseLantencyP90 = response.data.result.httpResponseLantencyP90
 
-            this.entityData.sslConLatencyAvg = response.data.result.sslConLatencyAvg
+            this.entityData.sslConLatencyValue = response.data.result.sslConLatencyValue
             this.entityData.sslConLatencyP50 = response.data.result.sslConLatencyP50
             this.entityData.sslConLatencyP90 = response.data.result.sslConLatencyP90
 
-            this.entityData.sequenceGapLossAvg = response.data.result.sequenceGapLossAvg
-            this.entityData.sequenceGapLossP50 = response.data.result.sequenceGapLossP50
-            this.entityData.sequenceGapLossP90 = response.data.result.sequenceGapLossP90
+            this.entityData.sequenceGapLossPercentValue = response.data.result.sequenceGapLossPercentValue
+            this.entityData.sequenceGapLossPercentP50 = response.data.result.sequenceGapLossPercentP50
+            this.entityData.sequenceGapLossPercentP90 = response.data.result.sequenceGapLossPercentP90
 
-            this.entityData.pktRetransAvg = response.data.result.pktRetransAvg
-            this.entityData.pktRetransP50 = response.data.result.pktRetransP50
-            this.entityData.pktRetransP90 = response.data.result.pktRetransP90
+            this.entityData.pktRetransPercentValue = response.data.result.pktRetransPercentValue
+            this.entityData.pktRetransPercentP50 = response.data.result.pktRetransPercentP50
+            this.entityData.pktRetransPercentP90 = response.data.result.pktRetransPercentP90
 
             const establishLatency = {
-              value: this.entityData.establishLatencyAvg,
+              value: this.entityData.establishLatencyValue,
               p50: this.entityData.establishLatencyP50,
               p90: this.entityData.establishLatencyP90
             }
             this.singleValues.chartDatas.splice(0, 1, establishLatency)
             const httpResponseLatency = {
-              value: this.entityData.httpResponseLantencyAvg,
+              value: this.entityData.httpResponseLantencyValue,
               p50: this.entityData.httpResponseLantencyP50,
               p90: this.entityData.httpResponseLantencyP90
             }
             this.singleValues.chartDatas.splice(1, 1, httpResponseLatency)
             const sslConLatency = {
-              value: this.entityData.sslConLatencyAvg,
+              value: this.entityData.sslConLatencyValue,
               p50: this.entityData.sslConLatencyP50,
               p90: this.entityData.sslConLatencyP90
             }
             this.singleValues.chartDatas.splice(2, 1, sslConLatency)
             const sequenceGapLoss = {
-              value: this.entityData.sequenceGapLossAvg,
-              p50: this.entityData.sequenceGapLossP50,
-              p90: this.entityData.sequenceGapLossP90
+              value: this.entityData.sequenceGapLossPercentValue,
+              p50: this.entityData.sequenceGapLossPercentP50,
+              p90: this.entityData.sequenceGapLossPercentP90
             }
             this.singleValues.chartDatas.splice(3, 1, sequenceGapLoss)
             const pktRetransPercent = {
-              value: this.entityData.pktRetransAvg,
-              p50: this.entityData.pktRetransP50,
-              p90: this.entityData.pktRetransP90
+              value: this.entityData.pktRetransPercentValue,
+              p50: this.entityData.pktRetransPercentP50,
+              p90: this.entityData.pktRetransPercentP90
             }
             this.singleValues.chartDatas.splice(4, 1, pktRetransPercent)
-
-            console.log(this.singleValues.chartDatas)
           }
         })
       }

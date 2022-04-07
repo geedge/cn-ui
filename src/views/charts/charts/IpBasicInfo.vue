@@ -137,7 +137,6 @@ export default {
     queryDetection () {
       get(this.entityDetectionsIpUrl, this.queryParams).then(response => {
         if (response.code === 200) {
-          console.log(response)
           this.detectionsData = response.data.result
         }
       })
