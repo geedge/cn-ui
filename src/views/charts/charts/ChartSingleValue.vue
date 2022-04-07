@@ -200,10 +200,10 @@
             <div class="content__data-protocol-icon" :style="{backgroundColor: chartInfo.params.iconBackgroundColor[0]}">
               <i :class="chartInfo.params.icon[0]" :style="{color: chartInfo.params.iconColor[0]}"></i>
             </div>
-            <div class="content__data-protocol-value">
-              <div class="content__data-protocol-value-title">{{$t('protocol.requestVolume')}}</div>
-              <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'bytes'), chartInfo.params.unitType).join('')}}</div>
-            </div>
+          </div>
+          <div class="content__data-protocol-value">
+            <div class="content__data-protocol-value-title">{{$t('protocol.requestVolume')}}</div>
+            <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'bytes'), chartInfo.params.unitType).join('')}}</div>
           </div>
           <div class="content__data-protocol-percent"><span>{{$t('protocol.proportion')}}</span>&nbsp;<span>{{unitConvert($_.get(chartData, 'bytesPercent'), unitTypes.percent).join('')}}</span></div>
         </div>
@@ -212,10 +212,10 @@
             <div class="content__data-protocol-icon" :style="{backgroundColor: chartInfo.params.iconBackgroundColor[1]}">
               <i :class="chartInfo.params.icon[1]" :style="{color: chartInfo.params.iconColor[1]}"></i>
             </div>
-            <div class="content__data-protocol-value">
-              <div class="content__data-protocol-value-title">{{$t('protocol.totalFlow')}}</div>
-              <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'count'), chartInfo.params.unitType).join('')}}</div>
-            </div>
+          </div>
+          <div class="content__data-protocol-value">
+            <div class="content__data-protocol-value-title">{{$t('protocol.totalFlow')}}</div>
+            <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'count'), chartInfo.params.unitType).join('')}}</div>
           </div>
           <div class="content__data-protocol-percent"><span>{{$t('protocol.proportion')}}</span>&nbsp;<span>{{unitConvert($_.get(chartData, 'countPercent'), unitTypes.percent).join('')}}</span></div>
         </div>

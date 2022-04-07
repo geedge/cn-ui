@@ -355,14 +355,13 @@
     width: 100%;
     .single-value__content {
       display: flex;
-      flex-direction: column;
       width: 100%;
       height: 100%;
+      flex-direction: column;
       .single-value__data {
         display: flex;
         flex-direction: column;
         padding: 10px 20px 10px 18px;
-
         .content__title {
           font-size: 16px;
           color: #333333;
@@ -372,7 +371,6 @@
         width: 100%;
         height: 100%;
         display: flex;
-        margin: auto;
         flex-direction: column;
         justify-content: center;
       }
@@ -394,60 +392,42 @@
       .content__data-protocol {
         display: flex;
         height: 68px;
-        width: 100%;
         text-align: left;
-        justify-content: space-evenly;
         .content__data-protocol-all {
-          display: flex;
-          width: 180px;
-          justify-content: space-between;
+          flex: 1.5;
         }
         .content__data-protocol-icon {
-          flex-shrink: 0;
           display: flex;
-          justify-content: center;
           width: 68px;
           height: 100%;
+          margin: auto;
           line-height: 68px;
           border-radius: 100%;
+          justify-content: center;
           i {
             font-size: 26px;
           }
         }
         .content__data-protocol-value {
-          display: flex;
-          flex-direction: column;
-          width: 110px;
+          flex: 2;
           justify-content: space-around;
           .content__data-protocol-value-title {
-            flex-shrink: 0;
-            display: flex;
             margin-bottom: 7px;
             font-size: 14px;
             color: #666666;
             font-weight: 400;
           }
-          .content__data-protocol-values {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-          }
           .content__data-protocol-value-num {
-            flex-shrink: 0;
-            display: flex;
             font-size: 26px;
             color: #333333;
             font-weight: 500;
           }
         }
         .content__data-protocol-percent {
-          flex-shrink: 0;
-          display: flex;
+          flex: 2;
           height: 68px;
-          width: 130px;
-          justify-content: center;
           text-align: left;
-          font-size: 14px;
+          font-size: 12px;
           color: #666666;
           font-weight: 400;
           line-height: 95px;
