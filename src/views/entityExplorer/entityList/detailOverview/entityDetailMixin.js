@@ -222,7 +222,7 @@ export default {
               })
               const max = parseFloat(sorted[0].bytes)
               const maxId = parseFloat(sortedId[0].commonIngressLinkId)
-              this.entityData.linkInPercent = (parseFloat(max / sum) * 100).toFixed(2)
+              this.entityData.linkInPercent = (parseFloat(max / sum)).toFixed(2)
               this.entityData.linkInId = maxId
             }
           }
@@ -247,7 +247,7 @@ export default {
               })
               const max = parseFloat(sorted[0].bytes)
               const maxId = parseFloat(sortedId[0].commonEgressLinkId)
-              this.entityData.linkOutPercent = (parseFloat(max / sum) * 100).toFixed(2)
+              this.entityData.linkOutPercent = (parseFloat(max / sum)).toFixed(2)
               this.entityData.linkOutId = maxId
             }
           }
