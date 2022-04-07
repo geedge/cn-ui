@@ -106,7 +106,11 @@ export default {
             dataIndex: index
           })
           self.selectPieChartName = params.name
-          self.loadPieTableData(params.name)
+          if (self.chartInfo.params.riskMapping) {
+            self.loadPieTableData(riskLevelMapping.find(m => params.name === m.name).value)
+          } else {
+            self.loadPieTableData(params.name)
+          }
         } else {
           self.myChart.dispatchAction({
             type: 'unselect',
