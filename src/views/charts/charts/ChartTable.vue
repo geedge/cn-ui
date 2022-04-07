@@ -34,6 +34,9 @@
             <span v-else-if="c === 'responseFailRate'">
                 {{unitConvert(row[c], unitTypes.percent).join(' ')}}
             </span>
+            <span v-else-if="c === 'dnsLatency'">
+                {{unitConvert(row[c], unitTypes.time).join(' ')}}
+            </span>
             <span v-else>
                 {{row[c]}}
             </span>

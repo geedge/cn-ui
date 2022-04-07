@@ -1,4 +1,4 @@
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { format } from 'echarts'
 import _ from 'lodash'
 import { line, lineWithStatistics, lineStack, singleValueLine } from './options/line'
@@ -329,7 +329,7 @@ export function axisFormatter (params) {
         ${item.seriesName}
     </span>`
     str += `<span class="cn-chart-tooltip-value">
-        ${unitConvert(item.data[1], item.data[2]).join(' ')}
+        ${valueToRangeValue(item.data[1], item.data[2]).join(' ')}
     </span>`
     str += '</div>'
   })
