@@ -72,7 +72,7 @@ export default {
         {
           name: 'ip_addr',
           type: 'string',
-          label: 'IP'
+          label: 'IP.Address'
         },
         {
           name: 'ip_location_country',
@@ -117,7 +117,7 @@ export default {
         {
           name: 'domain_name',
           type: 'string',
-          label: 'Domain'
+          label: 'Domain.Name'
         },
         {
           name: 'domain_category',
@@ -202,7 +202,7 @@ export default {
         {
           name: 'app_name',
           type: 'string',
-          label: 'APP'
+          label: 'APP.Name'
         },
         {
           name: 'app_id',
