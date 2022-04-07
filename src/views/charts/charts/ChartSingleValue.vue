@@ -179,7 +179,7 @@
             {{ $_.get(chartData, 'count', '-') }}
           </div>
           <div class="content__data__doh__percent">
-            占比<span>{{ $_.get(chartData, 'percent', '-') }}%</span>
+            {{$t('protocol.proportion')}}<span>{{ $_.get(chartData, 'percent', '-') }}%</span>
           </div>
         </div>
       </div>
@@ -203,7 +203,7 @@
             <div class="content__data-protocol-value-title">{{$t('protocol.requestVolume')}}</div>
             <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'bytes'), chartInfo.params.unitType).join(' ')}}</div>
           </div>
-          <div class="content__data-protocol-percent">占比&nbsp;&nbsp;<span>{{unitConvert($_.get(chartData, 'bytesPercent') * 100, unitTypes.percent).join('')}}</span></div>
+          <div class="content__data-protocol-percent">{{$t('protocol.proportion')}}&nbsp;&nbsp;<span>{{unitConvert($_.get(chartData, 'bytesPercent') * 100, unitTypes.percent).join('')}}</span></div>
         </div>
         <div class="content__data-protocol">
           <div class="content__data-protocol-icon" :style="{backgroundColor: chartInfo.params.iconBackgroundColor[1]}">
@@ -213,7 +213,7 @@
             <div class="content__data-protocol-value-title">{{$t('protocol.totalFlow')}}</div>
             <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'count'), chartInfo.params.unitType).join(' ')}}</div>
           </div>
-          <div class="content__data-protocol-percent">占比&nbsp;&nbsp;<span>{{ unitConvert($_.get(chartData, 'countPercent') * 100, unitTypes.percent).join('')}}</span></div>
+          <div class="content__data-protocol-percent">{{$t('protocol.proportion')}}&nbsp;&nbsp;<span>{{ unitConvert($_.get(chartData, 'countPercent') * 100, unitTypes.percent).join('')}}</span></div>
         </div>
       </div>
     </div>
