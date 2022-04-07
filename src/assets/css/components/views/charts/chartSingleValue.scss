@@ -410,7 +410,9 @@
         }
         .content__data-protocol-value {
           flex: 2;
-          justify-content: space-around;
+          display: flex;
+          justify-content: space-between;
+          flex-direction: column;
           .content__data-protocol-value-title {
             margin-bottom: 7px;
             font-size: 14px;
@@ -425,9 +427,11 @@
         }
         .content__data-protocol-percent {
           flex: 2;
+          display: flex;
+          justify-content: center;
           height: 68px;
           text-align: left;
-          font-size: 12px;
+          font-size: 14px;
           color: #666666;
           font-weight: 400;
           line-height: 95px;
