@@ -4,6 +4,7 @@
     <chart-no-data v-if="isNoData"></chart-no-data>
     <template v-else>
       <chart-tabs
+        ref="chart"
         v-if="isTabs"
         :chart-info="chartInfo"
         :time-filter="timeFilter"
@@ -42,6 +43,7 @@
       ></chart-block>
 
       <chart-group
+        ref="chart"
         v-else-if="isGroup"
         :query-params="queryParams"
         :time-filter="timeFilter"
@@ -452,14 +454,7 @@ export default {
     tabHandleClickType: {
       deep: true,
       handler (n) {
-        console.log(n)
         this.tabHandleClickType = n
-      }
-    },
-    chartData: {
-      deep: true,
-      immediate: true,
-      handler (n) {
       }
     }
   },

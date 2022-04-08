@@ -76,7 +76,6 @@ export default {
       const data = lineData.map(d => {
         return [getMillisecond(new Date(d[2]).getTime()), d[1]]
       })
-      console.info(JSON.stringify(data))
       const option = this.$_.cloneDeep(lineOption)
       option.series.data = data
       const dom = document.getElementById('lineCanvas')

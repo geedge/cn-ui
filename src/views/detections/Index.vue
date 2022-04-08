@@ -673,7 +673,6 @@ export default {
     'filterData.securityEvent.0.value': {
       deep: true,
       handler (n, o) {
-        console.info(n, o)
         this.$refs.search.changeParams({ column: this.filterData.securityEvent[0].column, oldValue: o, newValue: n })
       }
     },

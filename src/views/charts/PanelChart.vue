@@ -165,21 +165,21 @@ export default {
     }
   },
   methods: {
-    /* 参数 extraParams 额外请求参数，isRefresh 是否是刷新 */
-    getChartData (url, extraParams = {}, isRefresh, chartTimeFilter, num) {
+    /* 参数 extraParams 额外请求参数 */
+    getChartData (url, extraParams = {}, chartTimeFilter, num) {
       const vm = this
       this.loading = true
-      this.standaloneTimeRange.use = !!isRefresh
       try {
-        // 单个图表刷新时，使用单独的时间
         if (chartTimeFilter) {
-          this.queryTimeRange = { startTime: getSecond(chartTimeFilter.startTime), endTime: getSecond(chartTimeFilter.endTime) }
+          // 图表自带timeFilter刷新时
+          this.queryTimeRange = { startTime: getSecond(chartTimeFilter.startTime), endTime: getSecond(chartTimeFilter.endTime), dateRangeValue: chartTimeFilter.dateRangeValue }
         } else if (this.standaloneTimeRange.use) {
-          this.queryTimeRange = { startTime: getSecond(this.standaloneTimeRange.startTime), endTime: getSecond(this.standaloneTimeRange.endTime) }
+          // 单个图表刷新时，使用单独的时间
+          this.queryTimeRange = { startTime: getSecond(this.standaloneTimeRange.startTime), endTime: getSecond(this.standaloneTimeRange.endTime), dateRangeValue: this.timeFilter.dateRangeValue }
         } else if (this.timeFilter) {
-          this.queryTimeRange = { startTime: getSecond(this.timeFilter.startTime), endTime: getSecond(this.timeFilter.endTime) }
+          this.queryTimeRange = { startTime: getSecond(this.timeFilter.startTime), endTime: getSecond(this.timeFilter.endTime), dateRangeValue: this.timeFilter.dateRangeValue }
         } else {
-          this.queryTimeRange = { startTime: getSecond(this.chartTimeFilter.startTime), endTime: getSecond(this.chartTimeFilter.endTime) }
+          this.queryTimeRange = { startTime: getSecond(this.chartTimeFilter.startTime), endTime: getSecond(this.chartTimeFilter.endTime), dateRangeValue: this.chartTimeFilter.dateRangeValue }
         }
         const chartParams = this.chartInfo.params
         if (this.isAlarmInfo && JSON.stringify(extraParams) === '{}') {
@@ -270,9 +270,9 @@ export default {
               }
             }, 200)
           })
-        } else if (isGroup(this.chartInfo.type)) {
-          this.chartInfo.children = [...this.chartInfo.children]
-        } else if (isBlock(this.chartInfo.type)) {
+        } else if (this.isGroup || this.isTabs) {
+          this.$refs.chart.$refs.chart.reload()
+        } else if (this.isBlock) {
           if (!this.chartInfo.firstShow) {
             this.chartInfo.firstShow = true
           } else {
@@ -309,15 +309,19 @@ export default {
         this.timeFilter.startTime = chartTimeFilter.startTime
         this.timeFilter.endTime = chartTimeFilter.endTime
         this.timeFilter.dateRangeValue = chartTimeFilter.dateRangeValue
-        this.getChartData(null, {}, true, chartTimeFilter)
+        this.getChartData(null, {}, chartTimeFilter)
       } else {
-        const myEndTime = window.$dayJs.tz().valueOf()
-        const myStartTime = myEndTime - this.timeFilter.dateRangeValue * 60 * 1000
-        this.standaloneTimeRange.use = true
-        this.standaloneTimeRange.startTime = myStartTime
-        this.standaloneTimeRange.endTime = myEndTime
+        if (this.timeFilter.dateRangeValue && this.timeFilter.dateRangeValue > 0) {
+          const myEndTime = window.$dayJs.tz().valueOf()
+          const myStartTime = myEndTime - this.timeFilter.dateRangeValue * 60 * 1000
+          this.standaloneTimeRange.use = true
+          this.standaloneTimeRange.startTime = myStartTime
+          this.standaloneTimeRange.endTime = myEndTime
+        } else {
+          this.standaloneTimeRange.use = false
+        }
         this.emitter.emit('chart-pageNo')
-        this.getChartData(null, {}, true)
+        this.getChartData(null, {})
       }
     },
     tabHandleClick (value) {

@@ -6,7 +6,7 @@
       :ref="`chart-${chartInfo.id}`"
   >
     <el-tab-pane
-        v-for="tab in chartInfo.children"
+        v-for="tab in dataList"
         :label="tab.i18n ? $t(tab.i18n) : tab.name" :name="`${tab.id}`"
         :key="tab.id"
         :ref="`chart-${chartInfo.id}`"
@@ -29,14 +29,6 @@ import chartMixin from '@/views/charts/charts/chart-mixin'
 
 export default {
   name: 'ChartTabs',
-  computed: {
-    timeFilter () {
-      return {
-        startTime: this.queryParams.startTime,
-        endTime: this.queryParams.endTime
-      }
-    }
-  },
   mixins: [chartMixin],
   methods: {
     showFullscreen () {
@@ -44,6 +36,9 @@ export default {
     },
     changeTab (tab) {
       this.activeTab = tab.paneName
+    },
+    reload () {
+      this.dataList = _.cloneDeep(this.dataList)
     }
   },
   setup (props) {
@@ -51,8 +46,10 @@ export default {
     if (!_.isEmpty(props.chartInfo.children)) {
       activeTab = `${props.chartInfo.children[0].id}`
     }
+    const dataList = [...props.chartInfo.children]
     return {
-      activeTab
+      activeTab,
+      dataList
     }
   }
 }
