@@ -262,13 +262,7 @@ export default {
               this.errorInfo = response.msg || response.message || 'Unknown'
             }
           }).finally(() => {
-            setTimeout(() => {
-              if (!(isIpHostedDomain(this.chartInfo.type) || isAppRelatedDomain(this.chartInfo.type))) {
-                this.loading = false
-              } else if (!this.chartData || this.chartData.length === 0) {
-                this.loading = false
-              }
-            }, 200)
+            this.loading = false
           })
         } else if (this.isGroup || this.isTabs) {
           this.$refs.chart.$refs.chart.reload()
