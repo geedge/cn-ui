@@ -39,7 +39,7 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { post } from '@/utils/http'
+import { post, get } from '@/utils/http'
 export default {
 
   name: 'Login',
@@ -65,6 +65,12 @@ export default {
       post('sys/login', { username: this.username, pin: this.pin }).then(
         res => {
           if (res.code === 200) {
+            if (!this.$_.isEmpty(res.data.lang)) {
+              localStorage.setItem('cn-language', res.data.lang)
+            }
+            if (!this.$_.isEmpty(res.data.theme)) {
+              localStorage.setItem('cn-theme', res.data.theme)
+            }
             this.loginSuccess(res)
             localStorage.setItem('cn-username', this.username)
           } else if (res.code === 518005) {
@@ -82,7 +88,31 @@ export default {
         this.blockOperation.query = false
         this.$message.error(this.$t('tip.unknownError'))
       })
+    },
+    appearance () {
+      get('/sys/appearance').then(res => {
+        if (res.code === 200) {
+          this.appearanceOut(res.data)
+        }
+      })
+    },
+    appearanceOut (data) {
+      if (this.$_.isEmpty(localStorage.getItem('cn-language'))) {
+        localStorage.setItem('cn-language', data.lang)
+      }
+      if (this.$_.isEmpty(localStorage.getItem('cn-sys-timezone'))) {
+        localStorage.setItem('cn-sys-timezone', data.timezone)
+      }
+      if (this.$_.isEmpty(localStorage.getItem('cn-theme'))) {
+        localStorage.setItem('cn-theme', data.theme)
+      }
+      if (this.$_.isEmpty(localStorage.getItem('cn-date-format'))) {
+        localStorage.setItem('cn-date-format', data.dateFormat)
+      }
     }
+  },
+  mounted () {
+    this.appearance()
   }
 }
 </script>

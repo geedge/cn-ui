@@ -54,6 +54,36 @@
               </template>
             </el-select>
           </el-form-item>
+          <!--i18n-->
+          <el-form-item :label="$t('config.i18n.lang')" prop="i18n">
+            <el-select id="account-input-roleIds"
+                       v-model="editObject.lang"
+                       class="right-box__select"
+                       clearable
+                       collapse-tags
+                       placeholder=""
+                       popper-class="right-box-select-dropdown prevent-clickoutside"
+                       size="small">
+              <template v-for="lang in langData" :key="lang.value">
+                <el-option :label="lang.label" :value="lang.value"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
+          <!--theme-->
+          <el-form-item :label="$t('config.user.theme')" prop="i18n">
+            <el-select id="account-input-roleIds"
+                       v-model="editObject.theme"
+                       class="right-box__select"
+                       clearable
+                       collapse-tags
+                       placeholder=""
+                       popper-class="right-box-select-dropdown prevent-clickoutside"
+                       size="small">
+              <template v-for="theme in themeData" :key="theme.value">
+                <el-option :label="theme.label" :value="theme.value"></el-option>
+              </template>
+            </el-select>
+          </el-form-item>
           <!--enable-->
           <el-form-item :label="$t('config.user.enable')">
             <el-switch
@@ -86,6 +116,7 @@
 <script>
 import rightBoxMixin from '@/mixins/right-box'
 import { get, post, put } from '@/utils/http'
+import { themeData, langData } from '@/utils/constants'
 export default {
   name: 'UserBox',
   mixins: [rightBoxMixin],
@@ -137,7 +168,9 @@ export default {
           { type: 'email', message: this.$t('validate.email') }
         ]
       },
-      roleData: []
+      roleData: [],
+      themeData,
+      langData
     }
   },
   setup () {

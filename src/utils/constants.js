@@ -7,6 +7,8 @@ export const storageKey = {
   languages: 'cn-languages',
   language: 'cn-language',
   timezone: 'cn-timezone',
+  theme: 'cn-theme',
+  dateFormat: 'cn-date-format',
   timezoneOffset: 'cn-timezone-offset',
   timezoneLocalOffset: 'cn-timezone-local-offset',
   token: 'cn-token',
@@ -194,6 +196,16 @@ export const dnsServerRole = {
   SBDNS: 'SBDNS',
   RTDNSM: 'RTDNSM'
 }
+
+export const themeData = [
+  { value: 'light', label: 'light' },
+  { value: 'dark', label: 'dark' }
+]
+
+export const langData = [
+  { value: 'zh', label: 'zh' },
+  { value: 'en', label: 'en' }
+]
 
 export const performanceMetricMapping = {
   'dns error': 'DNS Error Rate',
