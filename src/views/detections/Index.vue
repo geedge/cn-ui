@@ -4,7 +4,7 @@
   >
     <!-- 顶部工具栏，在列表页显示 -->
     <div class="explorer-top-tools">
-      <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
+      <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
       <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
     </div>
     <!-- 搜索组件 -->
@@ -722,7 +722,7 @@ export default {
   setup () {
     const { params } = useRoute()
     const pageType = params.typeName
-    const dateRangeValue = 60
+    const dateRangeValue = 60 * 24
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const timeFilter = ref({ startTime, endTime, dateRangeValue })
 
