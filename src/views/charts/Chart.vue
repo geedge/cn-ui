@@ -403,9 +403,11 @@ export default {
     isNoData () {
       return (
         !this.loading &&
-        (_.isEmpty(this.chartData) || this.isError) &&
+        (!this.chartData || _.isEmpty(this.chartData) || this.isError) &&
         !this.isSingleValue &&
         !this.isTabs &&
+        !this.isBlock &&
+        !this.isGroup &&
         !this.isDomainDnsRecord &&
         !this.isCryptocurrencyEventList &&
         !this.isActiveIpTable &&
