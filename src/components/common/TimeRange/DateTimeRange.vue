@@ -91,6 +91,9 @@ export default {
     endTime: {
       type: Number,
       default: window.$dayJs.tz().valueOf()
+    },
+    dateRange: {
+      type: Number
     }
     /* useRefresh: {
       type: Boolean,
@@ -113,8 +116,7 @@ export default {
     const address = localStorage.getItem('cn-sys-timezone')
     const utc = localStorage.getItem('cn-timezone-offset')
     const rangeHistory = ref(localStorage.getItem('date-range-history') ? JSON.parse(localStorage.getItem('date-range-history')) : [])
-    const dateRangeValue = ref(60)
-    dateRangeValue.value = 60
+    const dateRangeValue = props.dateRange ? ref(props.dateRange) : ref(60)
     const isCustom = ref(false)
     const dateRangeArr = [
       {

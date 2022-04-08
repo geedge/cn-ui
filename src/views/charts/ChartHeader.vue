@@ -4,7 +4,7 @@
     :class="{
       'chart-header--title-chart': isTitle,
       'is-group-collapse': isGroup,
-      'panel-chart-block': isBlock,
+      'panel-chart-block': isBlock
     }"
   >
     <div class="chart-header__title" v-if="isGroup">
@@ -193,6 +193,7 @@
           class="date-time-range"
           :start-time="chartTimeFilter.startTime"
           :end-time="chartTimeFilter.endTime"
+          :date-range="chartTimeFilter.dateRangeValue"
           ref="dateTimeRange"
           @change="reload"
         />
@@ -246,8 +247,9 @@ import {
   chartActiveIpTableOrderOptions,
   chartPieTableTopOptions,
   eventSeverity,
-  chartTableColumnMapping
+  chartTableColumnMapping, panelTypeAndRouteMapping
 } from '@/utils/constants'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'ChartHeader',
@@ -364,7 +366,12 @@ export default {
     }
   },
   setup (props) {
-    const dateRangeValue = 60
+    const { currentRoute } = useRouter()
+
+    function isEntityDetail (r) {
+      return r.indexOf('entityDetail') > -1
+    }
+    const dateRangeValue = isEntityDetail(currentRoute.value.path) ? 60 * 24 : 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     // entity详情内的chart时间工具不是公共的，需要单独定义
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })

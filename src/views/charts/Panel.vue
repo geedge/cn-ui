@@ -2,7 +2,7 @@
   <div style="padding: 10px 10px 20px 10px; overflow: auto" v-if="!isEntityDetail">
     <div id="cn-panel" class="cn-panel2">
       <div class="panel__time">
-        <date-time-range class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" ref="dateTimeRange" @change="reload"/>
+        <date-time-range class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
         <time-refresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
       </div>
       <panel-chart-list
@@ -78,14 +78,18 @@ export default {
     }
   },
   setup (props, ctx) {
-    // data
-    const dateRangeValue = 60
-    const { startTime, endTime } = getNowTime(dateRangeValue)
-    const timeFilter = ref({ startTime, endTime, dateRangeValue })
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
     panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
+
+    function isEntityDetail (t) {
+      return [4, 5, 6].indexOf(t) > -1
+    }
+    // date
+    const dateRangeValue = isEntityDetail(panelType) ? 60 * 24 : 60
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    const timeFilter = ref({ startTime, endTime, dateRangeValue })
     return {
       panelType,
       panel,
