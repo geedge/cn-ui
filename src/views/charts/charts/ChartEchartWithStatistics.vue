@@ -12,6 +12,7 @@ import {
 } from '@/views/charts/charts/tools'
 import chartEchartMixin from './chart-echart-mixin'
 import unitConvert from '@/utils/unit-convert'
+import {unitTypes} from "@/utils/constants";
 
 export default {
   name: 'ChartEchartWithStatistics',
@@ -103,6 +104,25 @@ export default {
         this.chartOption.series[0] = {
           ...serieTmp,
           markLine: markLine
+        }
+      }
+      const gridTemplate = this.chartOption.grid
+      // option中默认单位是数字，当单位是字节、百分比、时间时，额外处理
+      if (chartParams.unitType === unitTypes.byte) {
+        this.chartOption.yAxis.axisLabel.formatter = function (value) {
+          return unitConvert(value, unitTypes.byte).join('')
+        }
+        this.chartOption.grid = {
+          ...gridTemplate,
+          left: 75
+        }
+      } else if (chartParams.unitType === unitTypes.percent) {
+        this.chartOption.yAxis.axisLabel.formatter = function (value) {
+          return unitConvert(value, unitTypes.percent).join('')
+        }
+      } else if (chartParams.unitType === unitTypes.time) {
+        this.chartOption.yAxis.axisLabel.formatter = function (value) {
+          return unitConvert(value, unitTypes.time).join('')
         }
       }
       this.loadEchart(1, true)

@@ -21,8 +21,8 @@ export const line = {
   yAxis: {
     type: 'value',
     axisLabel: {
-      formatter: function (value, index, a, b) {
-        return unitConvert(value, unitTypes.number).join(' ')
+      formatter: function (value) {
+        return unitConvert(value, unitTypes.number, null, null, 0).join(' ')
       }
     }
   },
@@ -30,7 +30,7 @@ export const line = {
   grid: {
     left: 55,
     bottom: 30,
-    top: 100,
+    top: 20,
     right: 25
   },
   color: chartColor,
@@ -87,7 +87,7 @@ export const lineWithStatistics = {
     type: 'value',
     axisLabel: {
       formatter: function (value, index) {
-        return unitConvert(value, unitTypes.number).join(' ')
+        return unitConvert(value, unitTypes.number, null, null, 0).join(' ')
       }
     }
   },

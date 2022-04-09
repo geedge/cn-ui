@@ -182,31 +182,33 @@ export default {
         })
       }
 
-      const rows = (this.chartData.length - 1) / 4 + 1 // 根据legend个数动态预留legend空间
-      const gridTop = 10 + 27 * rows
-
       const gridTemplate = this.chartOption.grid
+      // option中默认单位是数字，当单位是字节、百分比、时间时，额外处理
       if (chartParams.unitType === unitTypes.byte) {
-        this.chartOption.yAxis.axisLabel.formatter = function (
-          value,
-          index,
-          a,
-          b
-        ) {
-          return unitConvert(value, unitTypes.byte).join(' ')
+        this.chartOption.yAxis.axisLabel.formatter = function (value) {
+          return unitConvert(value, unitTypes.byte).join('')
         }
         this.chartOption.grid = {
           ...gridTemplate,
-          top: gridTop,
           left: 75
         }
-      } else {
-        this.chartOption.grid = {
-          ...gridTemplate,
-          top: gridTop
+      } else if (chartParams.unitType === unitTypes.percent) {
+        this.chartOption.yAxis.axisLabel.formatter = function (value) {
+          return unitConvert(value, unitTypes.percent).join('')
+        }
+      } else if (chartParams.unitType === unitTypes.time) {
+        this.chartOption.yAxis.axisLabel.formatter = function (value) {
+          return unitConvert(value, unitTypes.time).join('')
         }
       }
 
+      if (chartParams.showLegend) {
+        const rows = (this.chartData.length - 1) / 4 + 1 // 根据legend个数动态预留legend空间
+        this.chartOption.grid = {
+          ...this.chartOption.grid,
+          top: 10 + 27 * rows
+        }
+      }
       this.loadEchart()
     },
 
