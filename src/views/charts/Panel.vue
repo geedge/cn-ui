@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 10px 10px 20px 10px; overflow: auto" v-if="!isEntityDetail">
+  <div style="padding: 10px 10px 20px 10px; overflow: auto" v-if="!isEntityDetail" @scroll="wholeScreenScroll">
     <div id="cn-panel" class="cn-panel2">
       <div class="panel__time">
         <date-time-range class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
@@ -11,6 +11,7 @@
           :data-list="chartList"
           :panel-lock="panelLock"
           :entity="entity"
+          :whole-screen-scroll="panel.params && panel.params.wholeScreenScroll"
       >
       </panel-chart-list>
     </div>
@@ -26,14 +27,6 @@
             :entity="entity"
         >
         </panel-chart-list>
-<!--        <template v-for="chart in chartList" :key="chart.id">
-          <chart
-              :chart="chart"
-              :ref="`chart-${chart.id}`"
-              :entity="entity"
-              @getCurrentTimeRange="getCurrentTimeRange"
-          ></chart>
-        </template>-->
       </div>
     </div>
   </div>
@@ -45,6 +38,7 @@ import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
+import { scrollToTop } from '@/utils/tools'
 import {
   isGroup,
   isBlock,
@@ -66,7 +60,11 @@ export default {
       detailTabs: [],
       detailChartList: [],
       currentTab: '',
-      isCryptocurrency: false// 是否为挖矿列表
+      isCryptocurrency: false, // 是否为挖矿列表
+      scroll: {
+        prevent: false, // 阻止滚动
+        prevScrollTop: 0 // 前一次滚动条位置
+      }
     }
   },
   async mounted () {
@@ -104,6 +102,11 @@ export default {
         this.panel = panels[0]
       }
       if (this.panel.id) {
+        if (this.panel.params) {
+          this.panel.params = JSON.parse(this.panel.params)
+        } else {
+          this.panel.params = {}
+        }
         const allCharts = (await getChartList({ panelId: this.panel.id, pageSize: -1 })).map(chart => {
           chart.i = chart.id
           this.recursionParamsConvert(chart)
@@ -180,6 +183,41 @@ export default {
     },
     groupParentCalcHeight (params) {
       this.$refs.panelChartList.groupParentCalcHeight(params.chart, params.childrenList)
+    },
+    wholeScreenScroll (e) {
+      return
+      if (this.scroll.prevent) {
+        return
+      }
+      this.scroll.prevent = true
+      const clientHeight = e.target.clientHeight
+      const currentScrollTop = e.target.scrollTop
+      console.info(this.scroll.prevScrollTop, currentScrollTop)
+      if (currentScrollTop > this.scroll.prevScrollTop) {
+        // 向下滚动，若top在clientHeight内，则整屏滚动下去
+        this.scroll.prevScrollTop = currentScrollTop
+        if (currentScrollTop < clientHeight) {
+          scrollToTop(e.target, clientHeight, 200, 'down')
+          setTimeout(() => {
+            this.scroll.prevScrollTop = e.target.scrollTop
+          }, 210)
+        }
+      } else if (currentScrollTop < this.scroll.prevScrollTop) {
+        // 向上滚动，若top在clientHeight内，则滚动到最顶部
+        this.scroll.prevScrollTop = currentScrollTop
+        if (currentScrollTop < clientHeight) {
+          //console.info('up', this.scroll.prevScrollTop, currentScrollTop)
+          scrollToTop(e.target, 0, 200, 'up')
+          setTimeout(() => {
+            this.scroll.prevScrollTop = e.target.scrollTop
+            //console.info('up2', this.scroll.prevScrollTop, currentScrollTop)
+          }, 210)
+        }
+      }
+      const vm = this
+      setTimeout(() => {
+        vm.scroll.prevent = false
+      }, 210)
     }
   }
 }
