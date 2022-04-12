@@ -62,7 +62,7 @@
     <el-checkbox v-model="checkbox" @change="builtinReportCheckbox"></el-checkbox>
     <div class="table-operation-all-span">
       <span>{{ $t('overall.all') }}</span>
-      <span :disabled="downloadAgentFlag" @click="batchDownload">{{$t('report.batchDow')}}</span>
+      <span :disabled="downloadAgentFlag" :class="{'table-operation-all-checkbox': checkbox}" @click="batchDownload">{{$t('report.batchDow')}}</span>
     </div>
   </div>
 </template>
@@ -124,7 +124,7 @@ export default {
     },
     batchDownload: function () {
       this.downloadAgentFlag = true
-      get('/report/export', { id: this.checkboxIds }).then(data => {
+      get('/report/job/batchDownloadPdf', { ids: this.checkboxIds }).then(data => {
         this.downloadAgentFlag = false
         let fileName = 'confagent'
         const disposition = data.headers['content-disposition']
