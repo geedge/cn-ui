@@ -198,6 +198,11 @@ export const dnsServerRole = {
   RTDNSM: 'RTDNSM'
 }
 
+// 整屏滚动的路径映射
+export const wholeScreenRouterMapping = {
+  dns: '/panel/dnsServiceInsights'
+}
+
 export const themeData = [
   { value: 'light', label: 'light' },
   { value: 'dark', label: 'dark' }

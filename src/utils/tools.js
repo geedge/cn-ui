@@ -652,3 +652,35 @@ export function arrayIsEqual (arr1, arr2) {
     }
   }
 }
+
+export function scrollToTop (dom, toTop, duration, direction) {
+  const clientHeight = dom.clientHeight
+  const currentTop = dom.scrollTop
+  const totalScrollDistance = Math.abs(currentTop - toTop)
+  let scrollY = currentTop
+  let oldTimestamp = null
+
+  function step (newTimestamp) {
+    if (oldTimestamp !== null) {
+      if (direction === 'up') {
+        scrollY -= totalScrollDistance * (newTimestamp - oldTimestamp) / duration
+        console.info(scrollY)
+        if (scrollY < 0) {
+          dom.scrollTop = 0
+          return
+        }
+        dom.scrollTop = scrollY
+      } else if (direction === 'down') {
+        scrollY += totalScrollDistance * (newTimestamp - oldTimestamp) / duration
+        if (scrollY > clientHeight) {
+          dom.scrollTop = clientHeight
+          return
+        }
+        dom.scrollTop = scrollY
+      }
+    }
+    oldTimestamp = newTimestamp
+    window.requestAnimationFrame(step)
+  }
+  window.requestAnimationFrame(step)
+}

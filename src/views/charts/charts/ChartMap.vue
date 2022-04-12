@@ -202,7 +202,7 @@ export default {
               this.countryImageSeries = this.imageSeriesFactory()
               this.polygonSeries.hide()
               this.worldImageSeries.hide()
-              const country = ev.target.dataItem.dataContext.location
+              const country = ev.target.dataItem.dataContext.name
               const queryParams = { ...this.queryParams, ipLocationCountry: country }
               const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
               this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
@@ -300,23 +300,6 @@ export default {
         const chartParams = this.chartInfo.params
         const data = chartData || this.chartData
         if (data && this.isMapBlock) {
-          /* const sumData = []
-          data.forEach(r => {
-            const hit = sumData.find(s => s.id === r.serverId)
-            const { key, labelText } = this.getDataKey(r)
-            const value = Number(r[key]) || 0
-            if (hit) {
-              hit.value += value
-            } else {
-              sumData.push({
-                id: r.serverId,
-                serverCountry: r.serverCountry,
-                key,
-                labelText,
-                value
-              })
-            }
-          }) */
           const seriesData = data.map(r => {
             return {
               ...this.convertMapData(r),
@@ -359,18 +342,6 @@ export default {
             return ''
           })
         } else if (data && this.isMapPoint) {
-          /* const seriesData = []
-          data.forEach(d => {
-            seriesData.push({
-              id: d.ipLocationId,
-              count: d.count,
-              dnsServerRole: d.dnsServerRole,
-              location: d.ipLocationCity || d.ipLocationProvince || d.ipLocationCountry,
-              desc: this.$t(this.dnsTypeI18n(d.dnsServerRole)),
-              color: this.circleColor[d.dnsServerRole.toUpperCase()].background,
-              border: this.circleColor[d.dnsServerRole.toUpperCase()].border
-            })
-          }) */
           imageSeries.data = data.map(r => ({
             ...this.convertMapData(r),
             id: r.ipLocationId,

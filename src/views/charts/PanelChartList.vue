@@ -1,4 +1,7 @@
 <template>
+  <div style="height: calc(100vh - 70px);width: 100%;background-color: lightyellow;display: none;" v-if="wholeScreenScroll">
+    <dns-screen v-if="currentPath === wholeScreenRouterMapping.dns"></dns-screen>
+  </div>
   <div :id='`chartList${(isGroup ? "Group" : "") + timestamp}`' class="chart-list" ref="layoutBox">
     <grid-layout
         ref="layout"
@@ -67,17 +70,22 @@ import PanelChart from '@/views/charts/PanelChart'
 import VueGridLayout from 'vue-grid-layout'
 import { getGroupHeight, getTypeCategory, isGroup } from './charts/tools'
 import _ from 'lodash'
+import { useRouter } from 'vue-router'
+import DnsScreen from '@/views/charts/wholeScreenScroll/DnsScreen'
+import { wholeScreenRouterMapping } from '@/utils/constants'
 
 export default {
   name: 'PanelChartList',
   components: {
     PanelChart,
+    DnsScreen,
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem
   },
   props: {
     timeFilter: Object, // 时间范围
     panelLock: { type: Boolean, default: true },
+    wholeScreenScroll: { type: Boolean, default: false },
     isGroup: Boolean,
     entity: Object,
     dataList: Array // 看板中所有图表信息
@@ -99,7 +107,8 @@ export default {
         chartInfo: {}
       },
       scrollTop: 0,
-      scrollTopTimer: null
+      scrollTopTimer: null,
+      wholeScreenRouterMapping
     }
   },
   methods: {
@@ -153,6 +162,12 @@ export default {
           return ''
         }
       }
+    }
+  },
+  setup (props) {
+    const { currentRoute } = useRouter()
+    return {
+      currentPath: currentRoute.value.path
     }
   },
   watch: {
