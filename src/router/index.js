@@ -31,6 +31,10 @@ const routes = [
         component: () => import('@/views/settings/I18n')
       },
       {
+        path: '/report/builtIn',
+        component: () => import('@/views/report/builtinReport')
+      },
+      {
         path: '/operationLog',
         component: () => import('@/views/settings/OperationLog')
       },

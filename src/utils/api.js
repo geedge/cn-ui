@@ -18,6 +18,8 @@ export const api = {
   galaxyProxy: '/galaxy/setting',
   operationLog: '/sys/log',
   chartList: '/visual/chart/list',
+  // 报告相关
+  builtinReport: '/report/job',
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',

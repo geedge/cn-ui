@@ -156,6 +156,15 @@ export default {
       deep: true,
       handler (n, o) {
       }
+    },
+    tableData: {
+      immediate: true,
+      deep: true,
+      handler (n, o) {
+        if (n) {
+          this.checkbox = n
+        }
+      }
     }
   }
 }

@@ -30,7 +30,8 @@ export const fromRoute = {
   user: 'user',
   galaxyProxy: 'galaxyProxy',
   chart: 'chart',
-  cryptocurrency: 'cryptocurrency'
+  cryptocurrency: 'cryptocurrency',
+  builtinReport: 'builtinReport'
 }
 
 /* panel类别和名称之间的映射 */

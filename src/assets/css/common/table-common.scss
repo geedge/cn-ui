@@ -46,7 +46,7 @@
       border: 1px solid #E6EAED;
 
     }
-    .top-tool-search.margin-r-20 {
+    .top-tool-search {
      .top-tool-btn {
        border-left: none;
      }
@@ -178,6 +178,9 @@
       .table-operation-items {
         display: flex;
         justify-content: center;
+        .table-operation-item--down {
+          margin-right: 16px;
+        }
         .table-operation-item {
           display: flex;
           height: 22px;

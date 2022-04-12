@@ -55,6 +55,14 @@ export default {
           this.copy(row)
           break
         }
+        case 'download': {
+          this.download(row)
+          break
+        }
+        case 'preview': {
+          this.preview(row)
+          break
+        }
         default:
           break
       }
@@ -137,6 +145,40 @@ export default {
       this.object = { ...u, name: 'Copy from ' + u.name, id: '' }
       this.rightBox.show = true
     },
+    download (u) {
+      get('/report/job/downloadPdf', { id: u.id }).then(data => {
+        this.downloadAgentFlag = false
+        let fileName = 'confBuiltin'
+        const disposition = data.headers['content-disposition']
+        if (disposition) {
+          fileName = disposition.split(';')[1].split('filename=')[1]
+        }
+        // 由于ie不支持download属性，故需要做兼容判断
+        if (navigator.appVersion.toString().indexOf('.NET') > 0) {
+          // ie独有的msSaveBlob属性，data.data为Blob文件流
+          window.navigator.msSaveBlob(data.data, fileName)
+        } else {
+          // 以下流程即为文章开始的下载流程
+          const url = window.URL.createObjectURL(data.data)
+          const link = document.createElement('a')
+          link.style.display = 'none'
+          link.href = url
+          link.download = fileName
+          document.body.appendChild(link)
+          link.click()
+          window.URL.revokeObjectURL(link.href)
+        }
+      }).catch(() => {
+        this.downloadAgentFlag = false
+      })
+    },
+    preview (u) {
+      get('/report/job/view', { id: u.id }).then(res => {
+        if (res.code === 200) {
+          console.log(res)
+        }
+      })
+    },
     esc () {
       this.rightBox.show = false
     },
@@ -151,7 +193,7 @@ export default {
     },
     search (params) {
       this.pageObj.pageNo = 1
-      this.getTableData({ q: params })
+      this.getTableData(params)
     }
   },
   watch: {
