@@ -58,9 +58,9 @@
       </template>
     </el-table-column>
   </el-table>
-  <div class="pagination-all">
+  <div class="table-operation-all">
     <el-checkbox v-model="checkbox" @change="builtinReportCheckbox"></el-checkbox>
-    <div class="pagination-all-span">
+    <div class="table-operation-all-span">
       <span>{{ $t('overall.all') }}</span>
       <span :disabled="downloadAgentFlag" @click="batchDownload">{{$t('report.batchDow')}}</span>
     </div>
