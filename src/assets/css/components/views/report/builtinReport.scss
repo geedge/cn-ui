@@ -33,6 +33,15 @@
   }
   .cn-builtin-right {
     flex: 1;
+    .list-page .main-container {
+      padding: 0;
+      .cn-table {
+        height: calc(100% - 61px) !important;
+        .el-table--fit.el-table--border {
+          height: calc(100% - 55px) !important;
+        }
+      }
+    }
     .el-table__header th:first-of-type .el-checkbox:last-of-type {
       border-left: none;
       display: none;
