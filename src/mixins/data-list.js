@@ -3,6 +3,7 @@ import { defaultPageSize, fromRoute, position } from '@/utils/constants'
 import { get, del } from '@/utils/http'
 import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
+import axios from 'axios'
 export default {
   components: {
     pagination
@@ -74,7 +75,7 @@ export default {
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
-      this.searchLabel = { ...this.searchLabel, ...this.pageObj }
+      this.searchLabel = { ...this.searchLabel, ...this.pageObj}
       this.tools.loading = true
       delete this.searchLabel.total
       let listUrl = this.url
@@ -146,37 +147,48 @@ export default {
       this.rightBox.show = true
     },
     download (u) {
-      get('/report/job/downloadPdf', { id: u.id }).then(data => {
-        this.downloadAgentFlag = false
-        let fileName = 'confBuiltin'
-        const disposition = data.headers['content-disposition']
-        if (disposition) {
-          fileName = disposition.split(';')[1].split('filename=')[1]
-        }
-        // 由于ie不支持download属性，故需要做兼容判断
-        if (navigator.appVersion.toString().indexOf('.NET') > 0) {
-          // ie独有的msSaveBlob属性，data.data为Blob文件流
-          window.navigator.msSaveBlob(data.data, fileName)
+      const fileName = 'builtinReport' + '-' + this.getTimeString() + '.pdf'
+      const params = {
+        id: u.id
+      }
+      axios.get('/report/job/downloadPdf', { responseType: 'blob', params: params }).then(res => {
+        if (window.navigator.msSaveOrOpenBlob) {
+          // 兼容ie11
+          const blobObject = new Blob([res.data])
+          window.navigator.msSaveOrOpenBlob(blobObject, fileName)
         } else {
-          // 以下流程即为文章开始的下载流程
-          const url = window.URL.createObjectURL(data.data)
-          const link = document.createElement('a')
-          link.style.display = 'none'
-          link.href = url
-          link.download = fileName
-          document.body.appendChild(link)
-          link.click()
-          window.URL.revokeObjectURL(link.href)
+          const url = URL.createObjectURL(new Blob([res.data]))
+          const a = document.createElement('a')
+          document.body.appendChild(a) // 此处增加了将创建的添加到body当中
+          a.href = url
+          a.download = fileName
+          a.target = '_blank'
+          a.click()
+          a.remove() // 将a标签移除
         }
-      }).catch(() => {
-        this.downloadAgentFlag = false
+      }, error => {
+        const $self = this
+        const reader = new FileReader()
+        reader.onload = function (event) {
+          const responseText = reader.result
+          const exception = JSON.parse(responseText)
+          if (exception.message) {
+            $self.$message.error(exception.message)
+          } else {
+            console.error(error)
+          }
+        }
+        reader.readAsText(error.response.data)
       })
     },
     preview (u) {
-      get('/report/job/view', { id: u.id }).then(res => {
-        if (res.code === 200) {
-          console.log(res)
-        }
+      const params = {
+        id: u.id
+      }
+      axios.get('/report/job/view', { params: params }).then(res => {
+        const prevWindow = window.open('', '')
+        prevWindow.document.write(res.data)
+        prevWindow.focus()
       })
     },
     esc () {
@@ -194,6 +206,20 @@ export default {
     search (params) {
       this.pageObj.pageNo = 1
       this.getTableData(params)
+    },
+    getTimeString () {
+      const split = '-'
+      const date = new Date()
+      const year = date.getFullYear()
+      const month = this.formatNum(date.getMonth() + 1)
+      const day = this.formatNum(date.getDate())
+      const hours = this.formatNum(date.getHours())
+      const minutes = this.formatNum(date.getMinutes())
+      const seconds = this.formatNum(date.getSeconds())
+      return year + split + month + split + day + ' ' + hours + split + minutes + split + seconds
+    },
+    formatNum (num) {
+      return num > 9 ? num : '0' + num
     }
   },
   watch: {

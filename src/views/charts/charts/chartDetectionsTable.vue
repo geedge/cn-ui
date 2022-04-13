@@ -4,7 +4,7 @@
     <div class="cn-detection__row">
       <div v-if="security" class="cn-detection__header">
         <span :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-attacker"></i>{{detection.offenderIp || '-'}}</span>
-        <div :class="iconClass" class="domain cn-detection-domain">{{detection.domain}}</div>
+        <div :class="iconClass" class="domain cn-detection-domain" v-if="detection.domain">{{detection.domain}}</div>
         <span class="line">-------</span>
         <span class="circle"></span>
         <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp || '-'}}

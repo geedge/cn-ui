@@ -4,10 +4,10 @@
       <div class="cn-builtin-left-title">
         {{$t('report.category')}}
       </div>
-      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === ''}" @click="builtinTabs('')">
+      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === ''}" @click="builtinTabs('', '')">
         {{$t('dns.all')}}
       </div>
-      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === item.id}" v-for="item in builtinReportLeftMenu" :key="item.id" @click="builtinTabs(item.id)">
+      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === item.id}" v-for="item in builtinReportLeftMenu" :key="item.id" @click="builtinTabs(item, item.id)">
         {{item.name}}
       </div>
     </div>
@@ -85,9 +85,9 @@ export default {
         }
       })
     },
-    builtinTabs (id) {
+    builtinTabs (data, id) {
       this.builtinId = id
-      this.getTableData({ id: this.builtinId })
+      this.getTableData({ name: data.name, tempId: data.id })
     }
   },
   mounted () {
