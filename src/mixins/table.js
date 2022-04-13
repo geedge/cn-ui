@@ -41,7 +41,7 @@ export default {
     tableOperation ([command, row, param]) {
       switch (command) {
         default:
-          this.$emit(command, row)
+          this.$emit(command, row, param)
           break
       }
     },

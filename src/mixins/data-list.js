@@ -42,7 +42,7 @@ export default {
     asce: tableSort.asce,
     desc: tableSort.desc,
     strToDate: tableSort.strToDate,
-    tableOperation ([command, row]) {
+    tableOperation ([command, row, param]) {
       switch (command) {
         case 'edit': {
           this.edit(row)
@@ -57,7 +57,7 @@ export default {
           break
         }
         case 'download': {
-          this.download(row)
+          this.download(row, param)
           break
         }
         case 'preview': {
@@ -146,12 +146,24 @@ export default {
       this.object = { ...u, name: 'Copy from ' + u.name, id: '' }
       this.rightBox.show = true
     },
-    download (u) {
-      const fileName = 'builtinReport' + '-' + this.getTimeString() + '.pdf'
-      const params = {
-        id: u.id
+    download (u, n) {
+      let fileName = ''
+      let url = ''
+      let params = {}
+      if (n === 'builtin') {
+        fileName = 'builtinReport' + '-' + this.getTimeString() + '.zip' // 文件名称
+        url = '/report/job/batchDownloadPdf' // 批量 zip 下载
+        params = {
+          ids: u
+        }
+      } else {
+        fileName = 'builtinReport' + '-' + this.getTimeString() + '.pdf' // 文件名称
+        url = '/report/job/downloadPdf' // 单个 pdf 下载
+        params = {
+          id: u.id
+        }
       }
-      axios.get('/report/job/downloadPdf', { responseType: 'blob', params: params }).then(res => {
+      axios.get(url, { responseType: 'blob', params: params }).then(res => {
         if (window.navigator.msSaveOrOpenBlob) {
           // 兼容ie11
           const blobObject = new Blob([res.data])
