@@ -46,9 +46,7 @@ export default {
         lineNumbers: false
       })
       this.codeMirror.setOption('extraKeys', {
-        Enter: (cm) => {
-          this.search()
-        }
+        Enter: (cm) => {}
       })
     },
     search () {
@@ -68,6 +66,18 @@ export default {
         originalSql = originalSql.replaceAll(reg.notStrictIpv6, function (word) {
           return `'${word}'`
         })
+
+        let tempArr = originalSql.split(' ')
+        tempArr = tempArr.map(t => {
+          if (t.lastIndexOf("'") !== (t.length - 1) && t.indexOf("'") !== 0) {
+            if (reg.containChinese.test(t)) {
+              return `'${t}'`
+            }
+          }
+          return t
+        })
+        originalSql = tempArr.join(' ')
+
         const parser = new SqlParser(originalSql, this.columnList)
         const errorList = parser.validate()
         if (this.$_.isEmpty(errorList)) {

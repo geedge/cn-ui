@@ -43,6 +43,7 @@ const user = {
   },
   actions: {
     loginSuccess (store, res) {
+      console.info(res)
       window.$dayJs.tz.setDefault(res.data.timezone)
       localStorage.setItem('cn-token', res.data.token)
       localStorage.setItem('cn-sys-name', res.data.systemName)
@@ -52,22 +53,39 @@ const user = {
       localStorage.setItem('cn-sys-timezone', res.data.timezone)
       localStorage.setItem('cn-timezone-offset', dayjs.tz().utcOffset() / 60)
       localStorage.setItem('cn-timezone-local-offset', dayjs().utcOffset() / 60)
-      post('/sys/user/permissions', { token: res.data.token }).then(res => {
-        const menuList = sortByOrderNum(res.data.menus)
+      post('/sys/user/permissions', { token: res.data.token }).then(res2 => {
+        const menuList = sortByOrderNum(res2.data.menus)
         store.commit('setMenuList', menuList)
-        store.commit('setButtonList', res.data.buttons)
-        store.commit('setRoleList', res.data.roles)
+        store.commit('setButtonList', res2.data.buttons)
+        store.commit('setRoleList', res2.data.roles)
 
-        const welcomeMenu = getWelcomeMenu(menuList)
-        if (welcomeMenu) {
+        if (res.loginSuccessPath) {
+          let tempArr = res.loginSuccessPath.split('?')
+          const path = tempArr[0]
+          const query = {}
+          if (tempArr[1]) {
+            tempArr = tempArr[1].split('&')
+            tempArr.forEach(t => {
+              const kv = t.split('=')
+              query[kv[0]] = kv[1]
+            })
+          }
           router.push({
-            path: welcomeMenu.route,
-            query: {
-              t: +new Date()
-            }
+            path: path,
+            query: query
           })
         } else {
-          ElMessage.error('No menu')
+          const welcomeMenu = getWelcomeMenu(menuList)
+          if (welcomeMenu) {
+            router.push({
+              path: welcomeMenu.route,
+              query: {
+                t: +new Date()
+              }
+            })
+          } else {
+            ElMessage.error('No menu')
+          }
         }
       })
     },

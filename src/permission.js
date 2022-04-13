@@ -45,7 +45,7 @@ router.beforeEach(async (to, from, next) => {
     if (loginWhiteList.indexOf(to.path) !== -1) {
       next()
     } else {
-      next({ path: '/login' })
+      next({ path: '/login', query: { redirect: to.fullPath } })
     }
   }
 })

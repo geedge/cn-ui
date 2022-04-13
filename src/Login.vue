@@ -40,6 +40,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { post, get } from '@/utils/http'
+import { useRouter } from 'vue-router'
 export default {
 
   name: 'Login',
@@ -71,6 +72,7 @@ export default {
             if (!this.$_.isEmpty(res.data.theme)) {
               localStorage.setItem('cn-theme', res.data.theme)
             }
+            res.loginSuccessPath = this.loginSuccessPath
             this.loginSuccess(res)
             localStorage.setItem('cn-username', this.username)
           } else if (res.code === 518005) {
@@ -113,6 +115,12 @@ export default {
   },
   mounted () {
     this.appearance()
+  },
+  setup (props) {
+    const { currentRoute } = useRouter()
+    return {
+      loginSuccessPath: currentRoute.value.query.redirect
+    }
   }
 }
 </script>
