@@ -161,10 +161,10 @@ export default {
       chart.geodata = getGeoData(storageKey.iso36112WorldLow)
       chart.projection = new am4Maps.projections.Miller()
       this.myChart = shallowRef(chart)
-      this.polygonSeries = this.polygonSeriesFactory()
+      this.polygonSeries = shallowRef(this.polygonSeriesFactory())
 
       if (this.isMapPoint) {
-        this.worldImageSeries = this.imageSeriesFactory()
+        this.worldImageSeries = shallowRef(this.imageSeriesFactory())
       }
 
       this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
@@ -178,7 +178,7 @@ export default {
             ev.target.isHover = false
             const geoData = getGeoData(countryId)
             if (geoData) {
-              this.countrySeries = this.polygonSeriesFactory()
+              this.countrySeries = shallowRef(this.polygonSeriesFactory())
               this.countrySeries.geodata = geoData
               this.polygonSeries.hide()
               const country = ev.target.dataItem.dataContext.serverCountry
@@ -197,9 +197,9 @@ export default {
             targetMapObject.series.chart.zoomToMapObject(targetMapObject)
             const geoData = getGeoData(countryId)
             if (geoData) {
-              this.countrySeries = this.polygonSeriesFactory()
+              this.countrySeries = shallowRef(this.polygonSeriesFactory())
               this.countrySeries.geodata = geoData
-              this.countryImageSeries = this.imageSeriesFactory()
+              this.countryImageSeries = shallowRef(this.imageSeriesFactory())
               this.polygonSeries.hide()
               this.worldImageSeries.hide()
               const country = ev.target.dataItem.dataContext.name
