@@ -4,12 +4,12 @@
 
 <script>
 import unitConvert from '@/utils/unit-convert'
-import * as echarts from 'echarts'
 import { lineToSpace, reverseSortBy, humpToSpace } from '@/utils/tools'
 import { unitTypes } from '@/utils/constants'
 import chartEchartMixin from './chart-echart-mixin'
 import { isEchartsLine, isEchartsPie } from './tools'
 import { legendMapping } from '@/views/charts/charts/chart-table-title'
+import _ from 'lodash'
 
 export default {
   name: 'ChartEchart',
@@ -133,46 +133,41 @@ export default {
           if (this.isEchartsLine) {
             serie.data = serie.data.slice(1, serie.data.length - 2)
             if (this.chartData.length === 1) { // 只有一条曲线
-              serie.markLine = {
-                silent: true,
-                symbol: 'none',
-                label: {
-                  distance: [-50, 0],
-                  formatter (params) {
-                    const arr = unitConvert(
-                      Number(params.value),
-                      chartParams.unitType
-                    ).join(' ')
-                    let desc = ''
-                    switch (params.dataIndex) {
-                      case 0: {
-                        desc = 'P50'
-                        break
+              if (!_.isNaN(parseFloat(this.chartData[0].aggregation.p50)) && !_.isNaN(parseFloat(this.chartData[0].aggregation.p90))) {
+                serie.markLine = {
+                  silent: true,
+                  symbol: 'none',
+                  label: {
+                    distance: [-50, 0],
+                    formatter (params) {
+                      const arr = unitConvert(Number(params.value), chartParams.unitType).join(' ')
+                      let desc = ''
+                      switch (params.dataIndex) {
+                        case 0: {
+                          desc = 'P50'
+                          break
+                        }
+                        case 1: {
+                          desc = 'P90'
+                          break
+                        }
+                        default:
+                          break
                       }
-                      case 1: {
-                        desc = 'P90'
-                        break
-                      }
-                      default:
-                        break
+                      return `${arr} (${desc})`
                     }
-                    return `${arr} (${desc})`
-                  }
-                },
-                data: [
-                  {
-                    name: 'P50',
-                    yAxis: this.chartData[0].aggregation.p50
-                      ? this.chartData[0].aggregation.p50
-                      : 50
                   },
-                  {
-                    name: 'P90',
-                    yAxis: this.chartData[0].aggregation.p90
-                      ? this.chartData[0].aggregation.p90
-                      : 90
-                  }
-                ]
+                  data: [
+                    {
+                      name: 'P50',
+                      yAxis: this.chartData[0].aggregation.p50
+                    },
+                    {
+                      name: 'P90',
+                      yAxis: this.chartData[0].aggregation.p90
+                    }
+                  ]
+                }
               }
             } else if (this.chartData.length > 1) { // 有多条曲线
               this.handleLegendClick()// 自定义legend的点击事件
@@ -283,48 +278,43 @@ export default {
           const serieArray = []
           self.chartOption.series.forEach((item, i) => {
             if (item.name === selectedName) {
-              const markLine = {
-                silent: true,
-                symbol: 'none',
-                label: {
-                  distance: [-50, 0],
-                  formatter (params) {
-                    const arr = unitConvert(
-                      Number(params.value),
-                      chartParams.unitType
-                    ).join(' ')
-                    let desc = ''
-                    switch (params.dataIndex) {
-                      case 0: {
-                        desc = 'P50'
-                        break
+              if (!_.isNaN(parseFloat(self.chartData[i].aggregation.p50)) && !_.isNaN(parseFloat(self.chartData[i].aggregation.p90))) {
+                const markLine = {
+                  silent: true,
+                  symbol: 'none',
+                  label: {
+                    distance: [-50, 0],
+                    formatter (params) {
+                      const arr = unitConvert(Number(params.value), chartParams.unitType).join(' ')
+                      let desc = ''
+                      switch (params.dataIndex) {
+                        case 0: {
+                          desc = 'P50'
+                          break
+                        }
+                        case 1: {
+                          desc = 'P90'
+                          break
+                        }
+                        default:
+                          break
                       }
-                      case 1: {
-                        desc = 'P90'
-                        break
-                      }
-                      default:
-                        break
+                      return `${arr} (${desc})`
                     }
-                    return `${arr} (${desc})`
-                  }
-                },
-                data: [
-                  {
-                    name: 'P50',
-                    yAxis: self.chartData[i].aggregation.p50
-                      ? self.chartData[i].aggregation.p50
-                      : 50
                   },
-                  {
-                    name: 'P90',
-                    yAxis: self.chartData[i].aggregation.p90
-                      ? self.chartData[i].aggregation.p90
-                      : 90
-                  }
-                ]
+                  data: [
+                    {
+                      name: 'P50',
+                      yAxis: self.chartData[i].aggregation.p50
+                    },
+                    {
+                      name: 'P90',
+                      yAxis: self.chartData[i].aggregation.p90
+                    }
+                  ]
+                }
+                item.markLine = markLine
               }
-              item.markLine = markLine
             }
             serieArray.push(item)
           })
