@@ -11,7 +11,7 @@
     }
   }
   .chart-list {
-    &>.vue-grid-layout>.vue-grid-item {
+    &>.vue-grid-layout>.vue-grid-item, &>.dns-screen {
       &>.panel-chart {
         border: 1px solid $--chart-box-border-color;
         background-color: #FFFFFF;

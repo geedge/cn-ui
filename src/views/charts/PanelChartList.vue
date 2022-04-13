@@ -1,12 +1,17 @@
 <template>
-  <div style="height: calc(100vh - 70px);width: 100%;background-color: lightyellow;display: none;" v-if="wholeScreenScroll">
-    <dns-screen v-if="currentPath === wholeScreenRouterMapping.dns"></dns-screen>
+  <div style="height: calc(100vh - 70px);width: 100%;" v-if="wholeScreenScroll">
+    <dns-screen v-if="currentPath === wholeScreenRouterMapping.dns"
+                :copy-data-list="copyDataList"
+                ref="dnsScreen"
+                :time-filter="timeFilter"
+                :entity="entity">
+    </dns-screen>
   </div>
   <div :id='`chartList${(isGroup ? "Group" : "") + timestamp}`' class="chart-list" ref="layoutBox">
     <grid-layout
         ref="layout"
         v-if="gridLayoutShow"
-        v-model:layout="copyDataList"
+        v-model:layout="normalCopyDataList"
         :col-num="30"
         :is-draggable="!panelLock"
         :is-resizable="!panelLock"
@@ -16,7 +21,7 @@
         :use-css-transforms="false"
     >
       <grid-item
-          v-for="item in copyDataList"
+          v-for="item in normalCopyDataList"
           :key="item.id"
           :h="item.h"
           :i="item.i"
@@ -95,7 +100,7 @@ export default {
       gridLayoutLoading: false,
       gridLayoutShow: false,
       rowHeight: 40,
-      copyDataList: [],
+      copyDataList: [], // 所有的图表
       noData: false, // no data
       tempDom: { height: '', width: '' },
       stepWidth: null,
@@ -120,8 +125,12 @@ export default {
     },
     reload () {
       this.copyDataList.forEach(item => {
-        this.$refs['chart' + item.id].getChartData()
+        if (this.$refs['chart' + item.id]) {
+          this.$refs['chart' + item.id].getChartData()
+        }
       })
+
+      this.$refs.dnsScreen.reload()
     },
     showFullscreen (show, chartInfo) {
       this.fullscreen.chartInfo = chartInfo
@@ -162,6 +171,11 @@ export default {
           return ''
         }
       }
+    },
+    normalCopyDataList: function () {
+      return this.copyDataList.filter(function (item) {
+        return item.y >= 0
+      })
     }
   },
   setup (props) {

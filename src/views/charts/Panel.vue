@@ -185,7 +185,6 @@ export default {
       this.$refs.panelChartList.groupParentCalcHeight(params.chart, params.childrenList)
     },
     wholeScreenScroll (e) {
-      return
       if (this.scroll.prevent) {
         return
       }
@@ -206,11 +205,11 @@ export default {
         // 向上滚动，若top在clientHeight内，则滚动到最顶部
         this.scroll.prevScrollTop = currentScrollTop
         if (currentScrollTop < clientHeight) {
-          //console.info('up', this.scroll.prevScrollTop, currentScrollTop)
+          // console.info('up', this.scroll.prevScrollTop, currentScrollTop)
           scrollToTop(e.target, 0, 200, 'up')
           setTimeout(() => {
             this.scroll.prevScrollTop = e.target.scrollTop
-            //console.info('up2', this.scroll.prevScrollTop, currentScrollTop)
+            // console.info('up2', this.scroll.prevScrollTop, currentScrollTop)
           }, 210)
         }
       }

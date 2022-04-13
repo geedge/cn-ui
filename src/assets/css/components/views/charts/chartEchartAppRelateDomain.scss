@@ -65,7 +65,7 @@
     }
   }
 }
-.cn-panel2 .chart-list > .vue-grid-layout > .vue-grid-item > .panel-chart .chart-header {
+.cn-panel2 .chart-list > .vue-grid-layout > .vue-grid-item > .panel-chart .chart-header,.cn-panel2 .chart-list > .dns-screen> .panel-chart .chart-header {
   border-bottom: 1px solid $--right-box-border-color;
 }
 .cn-panel2 .chart-list > .vue-grid-layout > .vue-grid-item > .panel-chart .chart-header.is-group-collapse {

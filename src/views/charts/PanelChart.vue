@@ -206,6 +206,7 @@ export default {
         if (requestUrl && requestUrl.indexOf('dnsServerRole') > -1) {
           this.queryParams.dnsServerRole = extraParams.dnsServerRole || dnsServerRole.RTDNS
         }
+
         if (requestUrl) {
           get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
             if (response.code === 200) {
