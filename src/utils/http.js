@@ -2,7 +2,7 @@ import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 
 axios.interceptors.request.use(config => {
-  const token = localStorage.getItem('cn-token')
+  const token = localStorage.getItem(storageKey.token)
   if (token) {
     config.headers.Authorization = token // 请求头token
   }

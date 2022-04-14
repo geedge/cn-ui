@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { storageKey } from '@/utils/constants'
 export default {
   props: {
     customTableTitle: Array, // 自定义的title
@@ -51,9 +52,9 @@ export default {
     }
   },
   created () {
-    const localStorageTitle = JSON.parse(localStorage.getItem('cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId))
+    const localStorageTitle = JSON.parse(localStorage.getItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId))
     if (localStorageTitle) {
-      localStorage.setItem('cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId, JSON.stringify(localStorageTitle))
+      localStorage.setItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId, JSON.stringify(localStorageTitle))
     }
   },
   watch: {
@@ -92,10 +93,8 @@ export default {
     // 点击第二个cancel
     save () {
       this.$emit('update', this.custom)
-      localStorage.setItem(
-        'cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId,
-        JSON.stringify(this.custom)
-      )
+      localStorage.setItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId,
+        JSON.stringify(this.custom))
       this.esc()
     }
   },

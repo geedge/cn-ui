@@ -8,7 +8,6 @@
       @header-dragend="dragend"
       @sort-change="tableDataSort"
       @selection-change="selectionChange"
-      @select="select"
   >
     <el-table-column
         :resizable="false"
@@ -69,7 +68,7 @@
     </el-table-column>
   </el-table>
   <div class="table-operation-all">
-    <el-checkbox v-model="checkboxAll" @change="builtinReportCheckbox(tableData)"></el-checkbox>
+    <el-checkbox v-model="checkboxAll" @change="selectAll(tableData)"></el-checkbox>
     <div class="table-operation-all-span">
       <span>{{ $t('overall.all') }}</span>
       <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="tableOperation(['download', this.checkboxIds, 'builtin'])">
@@ -128,7 +127,7 @@ export default {
       this.checkboxAll = objs.length > 0 || objs.length === this.tableData.length
       this.batchDow = objs.length > 0
     },
-    builtinReportCheckbox (objs) {
+    selectAll (objs) {
       if (objs) {
         objs.forEach(item => {
           this.$refs.dataTable.toggleAllSelection(item)

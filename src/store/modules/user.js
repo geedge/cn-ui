@@ -4,6 +4,9 @@ import { sortByOrderNum, getWelcomeMenu } from '@/permission'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { ElMessage } from 'element-plus' // dependent on utc plugin
+import { storageKey } from '@/utils/constants'
+import { api } from '@/utils/api'
+
 dayjs.extend(utc)
 
 const user = {
@@ -45,15 +48,15 @@ const user = {
     loginSuccess (store, res) {
       console.info(res)
       window.$dayJs.tz.setDefault(res.data.timezone)
-      localStorage.setItem('cn-token', res.data.token)
-      localStorage.setItem('cn-sys-name', res.data.systemName)
+      localStorage.setItem(storageKey.token, res.data.token)
+      localStorage.setItem(storageKey.sysName, res.data.systemName)
       if (res.systemLogo) {
-        localStorage.setItem('cn-sys-logo', res.data.systemLogo)
+        localStorage.setItem(storageKey.sysLogo, res.data.systemLogo)
       }
-      localStorage.setItem('cn-sys-timezone', res.data.timezone)
-      localStorage.setItem('cn-timezone-offset', dayjs.tz().utcOffset() / 60)
-      localStorage.setItem('cn-timezone-local-offset', dayjs().utcOffset() / 60)
-      post('/sys/user/permissions', { token: res.data.token }).then(res2 => {
+      localStorage.setItem(storageKey.sysTimezone, res.data.timezone)
+      localStorage.setItem(storageKey.timezoneOffset, dayjs.tz().utcOffset() / 60)
+      localStorage.setItem(storageKey.timezoneLocalOffset, dayjs().utcOffset() / 60)
+      post(api.permissions, { token: res.data.token }).then(res2 => {
         const menuList = sortByOrderNum(res2.data.menus)
         store.commit('setMenuList', menuList)
         store.commit('setButtonList', res2.data.buttons)
@@ -90,9 +93,9 @@ const user = {
       })
     },
     logoutSuccess (store, res) {
-      localStorage.removeItem('cn-username')
-      localStorage.removeItem('cn-username')
-      localStorage.removeItem('cn-token')
+      localStorage.removeItem(storageKey.username)
+      localStorage.removeItem(storageKey.username)
+      localStorage.removeItem(storageKey.token)
     }
   }
 }

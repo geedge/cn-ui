@@ -7,7 +7,7 @@
       <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === ''}" @click="builtinTabs('', '')">
         {{$t('dns.all')}}
       </div>
-      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === item.id}" v-for="item in builtinReportLeftMenu" :key="item.id" @click="builtinTabs(item, item.id)">
+      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === item.id}" v-for="item in builtinReportLeftMenu" :key="item.id" @click="builtinTabs(item.id)">
         {{item.name}}
       </div>
     </div>
@@ -56,10 +56,10 @@ export default {
   name: 'Report',
   data () {
     return {
-      builtinReportLeftMenu: [],
+      builtinReportLeftMenu: [], // 左侧列表菜单数据
       builtinColor: false,
       builtinId: '',
-      url: api.builtinReport,
+      url: api.reportJob,
       blankObject: { // 空白对象
         id: '',
         name: '',
@@ -78,20 +78,20 @@ export default {
     builtinReportTable
   },
   methods: {
-    builtinReportData () {
-      get('/report/temp').then(res => {
+    queryGetTempData () {
+      get(api.reportTemp).then(res => {
         if (res.code === 200) {
           this.builtinReportLeftMenu = res.data.list
         }
       })
     },
-    builtinTabs (data, id) {
+    builtinTabs (id) {
       this.builtinId = id
-      this.getTableData({ name: data.name, tempId: data.id })
+      this.getTableData({ tempId: id })
     }
   },
   mounted () {
-    this.builtinReportData()
+    this.queryGetTempData()
   }
 }
 </script>

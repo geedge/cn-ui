@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import user from './modules/user'
 import panel from './modules/panel'
+import { storageKey } from '@/utils/constants'
 
 const store = createStore({
   modules: {
@@ -9,7 +10,7 @@ const store = createStore({
   },
   state () {
     return {
-      isShrink: localStorage.getItem('cn-left-menu-shrink') === 'true',
+      isShrink: localStorage.getItem(storageKey.leftMenuShrink) === 'true',
       i18n: false,
 
       showEntityTypeSelector: false, // 在entity explore页面时，控制header显示实体类型选择框
@@ -33,7 +34,7 @@ const store = createStore({
   mutations: {
     isShrink (state) {
       state.isShrink = !state.isShrink
-      localStorage.setItem('cn-left-menu-shrink', state.isShrink)
+      localStorage.setItem(storageKey.leftMenuShrink, state.isShrink)
     },
     loadI18n (state) {
       state.i18n = true

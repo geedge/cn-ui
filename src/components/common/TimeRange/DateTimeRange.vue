@@ -80,6 +80,7 @@
 <script>
 import { ref, computed } from 'vue'
 import MyDatePicker from '../MyDatePicker'
+import { storageKey } from '@/utils/constants'
 
 export default {
   name: 'DateTimeRange',
@@ -113,9 +114,9 @@ export default {
     const myStartTime = ref(props.startTime)
     const myEndTime = ref(props.endTime)
     const timeArr = ref([myStartTime.value, myEndTime.value])
-    const address = localStorage.getItem('cn-sys-timezone')
-    const utc = localStorage.getItem('cn-timezone-offset')
-    const rangeHistory = ref(localStorage.getItem('date-range-history') ? JSON.parse(localStorage.getItem('date-range-history')) : [])
+    const address = localStorage.getItem(storageKey.sysTimezone)
+    const utc = localStorage.getItem(storageKey.timezoneOffset)
+    const rangeHistory = ref(localStorage.getItem(storageKey.dataRangeHistory) ? JSON.parse(localStorage.getItem(storageKey.dataRangeHistory)) : [])
     const dateRangeValue = props.dateRange ? ref(props.dateRange) : ref(60)
     const isCustom = ref(false)
     const dateRangeArr = [
@@ -235,7 +236,7 @@ export default {
         start: myStartTime.value,
         end: myEndTime.value
       })
-      localStorage.setItem('date-range-history', JSON.stringify(rangeHistory.value))
+      localStorage.setItem(storageKey.dataRangeHistory, JSON.stringify(rangeHistory.value))
       ctx.emit('change', myStartTime.value, myEndTime.value, dateRangeValue)
       dropdownFlag.value = false
     }

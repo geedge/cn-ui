@@ -41,6 +41,9 @@
 import { mapActions } from 'vuex'
 import { post, get } from '@/utils/http'
 import { useRouter } from 'vue-router'
+import { storageKey } from '@/utils/constants'
+import { api } from '@/utils/api'
+
 export default {
 
   name: 'Login',
@@ -63,18 +66,18 @@ export default {
         return
       }
       this.loading = true
-      post('sys/login', { username: this.username, pin: this.pin }).then(
+      post(api.operationLog, { username: this.username, pin: this.pin }).then(
         res => {
           if (res.code === 200) {
             if (!this.$_.isEmpty(res.data.lang)) {
-              localStorage.setItem('cn-language', res.data.lang)
+              localStorage.setItem(storageKey.language, res.data.lang)
             }
             if (!this.$_.isEmpty(res.data.theme)) {
-              localStorage.setItem('cn-theme', res.data.theme)
+              localStorage.setItem(storageKey.theme, res.data.theme)
             }
             res.loginSuccessPath = this.loginSuccessPath
             this.loginSuccess(res)
-            localStorage.setItem('cn-username', this.username)
+            localStorage.setItem(storageKey.username, this.username)
           } else if (res.code === 518005) {
             this.$message.error(this.$t('Incorrect username or password'))
             this.loading = false
@@ -92,24 +95,24 @@ export default {
       })
     },
     appearance () {
-      get('/sys/appearance').then(res => {
+      get(api.appearance).then(res => {
         if (res.code === 200) {
           this.appearanceOut(res.data)
         }
       })
     },
     appearanceOut (data) {
-      if (this.$_.isEmpty(localStorage.getItem('cn-language'))) {
-        localStorage.setItem('cn-language', data.lang)
+      if (this.$_.isEmpty(localStorage.getItem(storageKey.language))) {
+        localStorage.setItem(storageKey.language, data.lang)
       }
-      if (this.$_.isEmpty(localStorage.getItem('cn-sys-timezone'))) {
-        localStorage.setItem('cn-sys-timezone', data.timezone)
+      if (this.$_.isEmpty(localStorage.getItem(storageKey.sysTimezone))) {
+        localStorage.setItem(storageKey.sysTimezone, data.timezone)
       }
-      if (this.$_.isEmpty(localStorage.getItem('cn-theme'))) {
-        localStorage.setItem('cn-theme', data.theme)
+      if (this.$_.isEmpty(localStorage.getItem(storageKey.theme))) {
+        localStorage.setItem(storageKey.theme, data.theme)
       }
-      if (this.$_.isEmpty(localStorage.getItem('cn-date-format'))) {
-        localStorage.setItem('cn-date-format', data.dateFormat)
+      if (this.$_.isEmpty(localStorage.getItem(storageKey.dateFormat))) {
+        localStorage.setItem(storageKey.dateFormat, data.dateFormat)
       }
     }
   },

@@ -82,13 +82,14 @@
 <script>
 import table from '@/mixins/table'
 import { put } from '@/utils/http'
+import { storageKey } from '@/utils/constants'
 
 export default {
   name: 'userTable',
   mixins: [table],
   data () {
     return {
-      loginName: localStorage.getItem('cn-username'),
+      loginName: localStorage.getItem(storageKey.username),
       tableTitle: [ // 原始table列
         {
           label: 'ID',

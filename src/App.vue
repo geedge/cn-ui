@@ -4,11 +4,12 @@
   </div>
 </template>
 <script>
+import { storageKey } from '@/utils/constants'
 export default {
   name: 'App',
   setup () {
     // 处理刷新后  $dayJs的时区变为默认的问题
-    const timezone = localStorage.getItem('cn-sys-timezone') || ''
+    const timezone = localStorage.getItem(storageKey.sysTimezone) || ''
     if (timezone) {
       window.$dayJs.tz.setDefault(timezone)
     } else {

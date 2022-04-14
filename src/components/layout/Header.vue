@@ -91,6 +91,7 @@
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
 import { entityType, storageKey } from '@/utils/constants'
+import { api } from '@/utils/api'
 
 export default {
   name: 'Header',
@@ -104,7 +105,7 @@ export default {
     }
     return {
       username: 'admin', // sessionStorage.getItem('cn-username'),
-      language: localStorage.getItem('cn-language') ? localStorage.getItem('cn-language') : 'en',
+      language: localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : 'en',
       showChangePin: false,
       from: '', // entity类型
       changePassForm: {
@@ -171,8 +172,8 @@ export default {
       this.showChangePin = false
     },
     changeLocal (lang) {
-      if (lang !== localStorage.getItem('cn-language')) {
-        localStorage.setItem('cn-language', lang)
+      if (lang !== localStorage.getItem(storageKey.language)) {
+        localStorage.setItem(storageKey.language, lang)
         window.location.reload()
       }
     },
@@ -181,10 +182,10 @@ export default {
     },
     logout () {
       localStorage.removeItem(storageKey.token)
-      get('/logout')
+      get(api.logout)
     },
     refreshLang () {
-      this.language = localStorage.getItem('cn-language')
+      this.language = localStorage.getItem(storageKey.language)
       this.$i18n.locale = this.language
       this.$nextTick(() => {
         window.location.reload()
@@ -196,7 +197,7 @@ export default {
     submit () {
       this.$refs.changePassForm.validate((valid) => {
         if (valid) {
-          put('sys/user/pin', { oldPin: this.changePassForm.oldPwd, newPin: this.changePassForm.newPwd }).then(res => {
+          put(api.pin, { oldPin: this.changePassForm.oldPwd, newPin: this.changePassForm.newPwd }).then(res => {
             if (res.code === 200) {
               this.$message.success('Success')
               this.showChangePin = false

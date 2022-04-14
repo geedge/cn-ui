@@ -116,7 +116,9 @@
 <script>
 import rightBoxMixin from '@/mixins/right-box'
 import { get, post, put } from '@/utils/http'
-import { themeData, langData } from '@/utils/constants'
+import { themeData, langData, storageKey } from '@/utils/constants'
+import { api } from '@/utils/api'
+
 export default {
   name: 'UserBox',
   mixins: [rightBoxMixin],
@@ -131,8 +133,8 @@ export default {
       }
     }
     return {
-      url: 'sys/user',
-      loginName: localStorage.getItem('cn-username'),
+      url: api.user,
+      loginName: localStorage.getItem(storageKey.username),
       rules: { // 表单校验规则
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
@@ -180,7 +182,7 @@ export default {
   },
   methods: {
     isCurrentUser (username) {
-      return localStorage.getItem('cn-username') === username
+      return localStorage.getItem(storageKey.username) === username
     },
     /* 密码失去焦点 检验确认密码 */
     pinBlur () {
@@ -222,7 +224,7 @@ export default {
       })
     },
     getRoleData () {
-      get('sys/role?pageSize=-1').then(response => {
+      get(api.role, { pageSize: -1 }).then(response => {
         if (response.code === 200) {
           this.roleData = response.data.list
         }

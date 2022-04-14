@@ -59,6 +59,8 @@
 <script>
 import axios from 'axios'
 import { post } from '@/utils/http'
+import { storageKey } from '@/utils/constants'
+
 export default {
   name: 'TopToolMoreOptions',
   props: {
@@ -107,7 +109,7 @@ export default {
         if (this.paramsType) {
           form.append('type', this.paramsType)
         }
-        form.append('language', localStorage.getItem('cn-language') ? localStorage.getItem('cn-language') : 'en')
+        form.append('language', localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : 'en')
         post(this.importUrl, form, { 'Content-Type': 'multipart/form-data' }).then(response => {
           if (response.code == 200 && response.msg == 'success') {
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.importSuccess') })
@@ -127,7 +129,7 @@ export default {
       this.importFile = null
     },
     downloadTemplate () {
-      const language = localStorage.getItem('cn-language') || 'en' // 初始未选择默认 en 英文
+      const language = localStorage.getItem(storageKey.language) || 'en' // 初始未选择默认 en 英文
       const fileName = this.exportFileName + '-' + this.$t('overall.template') + '-' + this.getTimeString() + '.json'
 
       let url = null
@@ -158,7 +160,7 @@ export default {
         })
       }
       params.pageSize = -1
-      params.language = localStorage.getItem('cn-language') || 'en'
+      params.language = localStorage.getItem(storageKey.language) || 'en'
 
       this.export(this.exportUrl, params, this.exportFileName + '-' + this.getTimeString() + '.json')
       this.closeDialog()

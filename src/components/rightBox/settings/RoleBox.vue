@@ -50,6 +50,8 @@
 <script>
 import rightBoxMixin from '@/mixins/right-box'
 import { get, post, put } from '@/utils/http'
+import { api } from '@/utils/api'
+
 export default {
   name: 'userBox',
   mixins: [rightBoxMixin],
@@ -64,7 +66,7 @@ export default {
   data () {
     return {
       editRole: {},
-      url: 'sys/role',
+      url: api.role,
       rightBox: { model: { show: false } },
       rules: { // 表单校验规则
         name: [
@@ -110,7 +112,7 @@ export default {
       return new Promise(resolve => {
         self.menus = []
         if (self.editRole.id) {
-          get('/sys/role/menu/' + self.editRole.id).then(response => {
+          get(api.menu + self.editRole.id).then(response => {
             if (response.code == 200) {
               self.menus = response.data.menus
               self.selectedIds = response.data.selectedIds
@@ -120,7 +122,7 @@ export default {
             resolve()
           })
         } else {
-          get('/sys/menu').then(response => {
+          get(api.sysMenu).then(response => {
             if (response.code == 200) {
               self.menus = response.data.list
             } else {

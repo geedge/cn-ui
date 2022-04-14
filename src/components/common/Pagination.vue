@@ -22,6 +22,7 @@
 
 <script>
 import { defaultPageSize } from '@/utils/constants'
+import { storageKey } from '@/utils/constants'
 
 export default {
   name: 'pagination',
@@ -132,7 +133,7 @@ export default {
       this.pageSize = this.postPageSizes[0]
       this.resetPageSizes()
     } else {
-      const pageSize = localStorage.getItem('cn-pageSize-' + localStorage.getItem('cn-username') + '-' + this.tableId)
+      const pageSize = localStorage.getItem(storageKey.pageSize + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId)
       if (pageSize != 'undefined' && pageSize != null) {
         this.pageSize = parseInt(pageSize)
       }

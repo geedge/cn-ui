@@ -112,6 +112,7 @@ import unitConvert from '@/utils/unit-convert'
 import ChartTablePagination from '@/views/charts/charts/ChartTablePagination'
 import { get } from '@/utils/http'
 import { getMillisecond } from '@/utils/date-util'
+import { api } from '@/utils/api'
 
 export default {
   name: 'isAlarmInfo',
@@ -189,7 +190,7 @@ export default {
           this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType
       }
       this.$nextTick(() => {
-        get('/interface/dns/alarmInfoCount', {
+        get(api.dashboard.DnsServiceInsights.alarmInfoCount, {
           ...countQuery
         }).then((response) => {
           if (response.code === 200) {
@@ -221,7 +222,7 @@ export default {
         startTime: query.startTime,
         endTime: query.endTime
       })
-      get('/interface/dns/alarmInfoCount', {
+      get(api.dashboard.DnsServiceInsights.alarmInfoCount, {
         ...query
       }).then((response) => {
         if (response.code === 200) {

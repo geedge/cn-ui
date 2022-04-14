@@ -70,11 +70,13 @@
 </template>
 
 <script>
+import { storageKey } from '@/utils/constants'
+
 export default {
   name: 'LeftMenu',
   data () {
     return {
-      systemName: localStorage.getItem('cn-sys-name'),
+      systemName: localStorage.getItem(storageKey.sysName),
       logo: ''
     }
   },

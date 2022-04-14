@@ -11,15 +11,33 @@ import { storageKey } from '@/utils/constants'
 export const api = {
   // 系统相关
   permission: '/sys/user/permissions',
-  i18n: '/sys/i18n/lang',
   dict: '/sys/dict',
-  user: '/sys/user',
-  role: '/sys/role',
-  galaxyProxy: '/galaxy/setting',
+  logout: '/logout',
+  pin: 'sys/user/pin',
+  appearance: '/sys/appearance',
+  permissions: '/sys/user/permissions',
   operationLog: '/sys/log',
+  // user
+  user: '/sys/user',
+  // role
+  role: '/sys/role',
+  menu: '/sys/role/menu/',
+  sysMenu: '/sys/menu/',
+
+  // i18n
+  i18n: '/sys/i18n/lang',
+  i18nBox: '/sys/i18n',
+  // chart
   chartList: '/visual/chart/list',
+  // galaxyProxy
+  galaxyProxy: '/galaxy/setting',
+
   // 报告相关
-  builtinReport: '/report/job',
+  reportJob: '/report/job',
+  reportTemp: '/report/temp',
+  reportBatchDownloadPdf: '/report/job/batchDownloadPdf',
+  reportDownloadPdf: '/report/job/downloadPdf',
+  reportView: '/report/job/view',
   // 业务
   panel: '/visual/panel',
   chart: '/visual/chart',
@@ -100,6 +118,12 @@ export const api = {
       overviewBasic: '/interface/detection/performance/detail/overview/basic',
       metric: '/interface/detection/performance/detail/overview/metric'
     }
+  },
+  // Dashboard
+  dashboard: {
+    DnsServiceInsights: {
+      alarmInfoCount: '/interface/dns/alarmInfoCount'
+    }
   }
 }
 
@@ -172,7 +196,7 @@ export async function getConfigJson () {
 
 export async function getPermission () {
   const request = new Promise(resolve => {
-    post(api.permission, { token: localStorage.getItem('cn-token') }).then(response => {
+    post(api.permission, { token: localStorage.getItem(storageKey.token) }).then(response => {
       resolve({
         menuList: sortByOrderNum(response.data.menus),
         buttonList: response.data.buttons,

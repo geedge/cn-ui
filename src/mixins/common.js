@@ -1,5 +1,6 @@
 import { hasButton } from '@/permission'
 import { getMillisecond } from '@/utils/date-util'
+import { storageKey } from '@/utils/constants'
 export default {
   data () {
     return {
@@ -42,7 +43,7 @@ export default {
     utcTimeToSysTime (str) { // utc 0 到系统设置的时区
       let date = ''
       if (isNaN(str)) {
-        date = window.$dayJs(str).valueOf() + localStorage.getItem('cn-timezone-local-offset') * 60 * 60 * 1000
+        date = window.$dayJs(str).valueOf() + localStorage.getItem(storageKey.timezoneLocalOffset) * 60 * 60 * 1000
       } else {
         date = str
       }

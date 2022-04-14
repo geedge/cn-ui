@@ -133,7 +133,7 @@
 <script>
 import rightBoxMixin from '@/mixins/right-box'
 import { get, post, put } from '@/utils/http'
-import { panelTypeAndRouteMapping } from '@/utils/constants'
+import { panelTypeAndRouteMapping, storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { VAceEditor } from 'vue3-ace-editor'
 import 'ace-builds/src-noconflict/mode-javascript'
@@ -149,7 +149,7 @@ export default {
   data () {
     return {
       url: api.chart,
-      loginName: localStorage.getItem('cn-username'),
+      loginName: localStorage.getItem(storageKey.username),
       panelTypeAndRouteMapping: panelTypeAndRouteMapping,
       rules: { // 表单校验规则
         name: [
@@ -355,7 +355,7 @@ export default {
   },
   methods: {
     isCurrentUser (username) {
-      return localStorage.getItem('cn-username') === username
+      return localStorage.getItem(storageKey.username) === username
     },
     /* 密码失去焦点 检验确认密码 */
     pinBlur () {
@@ -397,7 +397,7 @@ export default {
       })
     },
     async getChartData (value) {
-      await get('/visual/chart?panelId=' + value).then(response => {
+      await get(api.chart, { panelId: value }).then(response => {
         if (response.code === 200) {
           this.chartData = response.data.list
         }

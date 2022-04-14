@@ -4,6 +4,9 @@ import { get, del } from '@/utils/http'
 import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
 import axios from 'axios'
+import { api } from '@/utils/api'
+import { storageKey } from '@/utils/constants'
+
 export default {
   components: {
     pagination
@@ -120,7 +123,7 @@ export default {
     },
     pageSize (val) {
       this.pageObj.pageSize = val
-      localStorage.setItem('cn-pageSize-' + localStorage.getItem('cn-username') + '-' + this.tableId, val)
+      localStorage.setItem(storageKey.pageSize + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId, val)
       this.getTableData()
     },
     add () {
@@ -153,13 +156,13 @@ export default {
       let params = {}
       if (n === 'builtin') {
         fileName = 'builtinReport' + '-' + this.getTimeString() + '.zip' // 文件名称
-        url = '/report/job/batchDownloadPdf' // 批量 zip 下载
+        url = api.reportBatchDownloadPdf // 批量 zip 下载
         params = {
           ids: u
         }
       } else {
         fileName = u.name + '.pdf' // 文件名称
-        url = '/report/job/downloadPdf' // 单个 pdf 下载
+        url = api.reportDownloadPdf // 单个 pdf 下载
         params = {
           id: u.id
         }
@@ -202,7 +205,7 @@ export default {
       const params = {
         id: u.id
       }
-      axios.get('/report/job/view', { params: params }).then(res => {
+      axios.get(api.reportView, { params: params }).then(res => {
         const prevWindow = window.open('', '')
         prevWindow.document.write(res.data)
         prevWindow.focus()
@@ -257,11 +260,11 @@ export default {
     }
   },
   mounted () {
-    const pageSize = localStorage.getItem('cn-pageSize-' + localStorage.getItem('cn-username') + '-' + this.tableId)
+    const pageSize = localStorage.getItem(storageKey.pageSize + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId)
     if (pageSize && pageSize !== 'undefined') {
       this.pageObj.pageSize = pageSize
     }
-    let localStorageTableTitle = localStorage.getItem('cn-tableTitle-' + localStorage.getItem('cn-username') + '-' + this.tableId)
+    let localStorageTableTitle = localStorage.getItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId)
     localStorageTableTitle = localStorageTableTitle ? JSON.parse(localStorageTableTitle) : this.$refs.dataTable.tableTitle
     this.tools.customTableTitle = this.$refs.dataTable.tableTitle.map((item, index) => { // 修复切换中英文的问题
       if (localStorageTableTitle[index]) {

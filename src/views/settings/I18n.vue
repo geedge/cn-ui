@@ -58,6 +58,7 @@ import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import i18nTable from '@/components/table/settings/I18nTable'
 import i18nBox from '@/components/rightBox/settings/I18nBox'
+import  { api } from '@/utils/api'
 import { put } from '@/utils/http'
 
 export default {
@@ -70,7 +71,7 @@ export default {
   },
   data () {
     return {
-      url: 'sys/i18n',
+      url: api.i18n,
       blankObject: { // 空白对象
         id: '',
         name: '',
