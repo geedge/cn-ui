@@ -17,16 +17,16 @@ export const api = {
   appearance: '/sys/appearance',
   permissions: '/sys/user/permissions',
   operationLog: '/sys/log',
+  login: '/sys/login',
   // user
   user: '/sys/user',
   // role
   role: '/sys/role',
   menu: '/sys/role/menu/',
   sysMenu: '/sys/menu/',
-
   // i18n
-  i18n: '/sys/i18n/lang',
-  i18nBox: '/sys/i18n',
+  i18nLang: '/sys/i18n/lang',
+  i18nSys: '/sys/i18n',
   // chart
   chartList: '/visual/chart/list',
   // galaxyProxy
@@ -212,7 +212,7 @@ export async function getI18n () {
   const langs = dictData.map(d => d.value).join(',')
   localStorage.setItem(storageKey.languages, langs)
   const request = new Promise(resolve => {
-    get(api.i18n, { l: langs }).then(response => {
+    get(api.i18nLang, { l: langs }).then(response => {
       response.data.cn = response.data.zh
       resolve(response.data)
     })

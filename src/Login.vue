@@ -66,7 +66,7 @@ export default {
         return
       }
       this.loading = true
-      post(api.operationLog, { username: this.username, pin: this.pin }).then(
+      post(api.login, { username: this.username, pin: this.pin }).then(
         res => {
           if (res.code === 200) {
             if (!this.$_.isEmpty(res.data.lang)) {

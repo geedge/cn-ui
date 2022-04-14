@@ -70,7 +70,7 @@ export default {
   mixins: [table],
   data () {
     return {
-      url: api.i18n,
+      url: api.i18nLang,
       tableTitle: [ // 原始table列
         {
           label: 'ID',

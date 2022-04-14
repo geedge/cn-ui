@@ -65,7 +65,7 @@ export default {
   mixins: [rightBoxMixin],
   data () {
     return {
-      url: api.i18nBox,
+      url: api.i18nSys,
       loginName: localStorage.getItem(storageKey.username),
       rules: { // 表单校验规则
         name: [
