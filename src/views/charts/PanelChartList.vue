@@ -101,6 +101,7 @@ export default {
       gridLayoutShow: false,
       rowHeight: 40,
       copyDataList: [], // 所有的图表
+      normalCopyDataList: [], // 非整屏滚动的图表
       noData: false, // no data
       tempDom: { height: '', width: '' },
       stepWidth: null,
@@ -148,6 +149,9 @@ export default {
         }
       })
       this.copyDataList = [...this.copyDataList]
+      this.normalCopyDataList = this.copyDataList.filter(function (item) {
+        return item.y >= -1
+      })
       this.emitter.emit('groupParentCalcHeight', { chart, childrenList: this.copyDataList })
     },
     groupParentCalcHeight (chart, childrenList) {
@@ -159,9 +163,13 @@ export default {
         // 第二个是空隙，第三个是标题的高度
         parent.h = getGroupHeight(childrenList) + 0.4 + 1
         this.copyDataList = [...this.copyDataList]
+        this.normalCopyDataList = this.copyDataList.filter(function (item) {
+          return item.y >= -1
+        })
       }, 100)
     }
   },
+
   computed: {
     anchorPoint () {
       return function (chart) {
@@ -171,11 +179,6 @@ export default {
           return ''
         }
       }
-    },
-    normalCopyDataList: function () {
-      return this.copyDataList.filter(function (item) {
-        return item.y >= 0
-      })
     }
   },
   setup (props) {
@@ -211,6 +214,9 @@ export default {
         })
         this.$nextTick(() => {
           this.copyDataList = JSON.parse(JSON.stringify(tempList))
+          this.normalCopyDataList = this.copyDataList.filter(function (item) {
+            return item.y >= -1
+          })
           setTimeout(() => {
             this.gridLayoutShow = true
           })
@@ -219,6 +225,9 @@ export default {
               if (isGroup(item.type) && !item.firstShow) {
                 item.firstShow = true
                 this.copyDataList = [...this.copyDataList]
+                this.normalCopyDataList = this.copyDataList.filter(function (item) {
+                  return item.y >= -1
+                })
                 this.emitter.emit('groupParentCalcHeight', { chart: item, childrenList: this.copyDataList })
               }
             })

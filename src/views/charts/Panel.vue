@@ -191,7 +191,6 @@ export default {
       this.scroll.prevent = true
       const clientHeight = e.target.clientHeight
       const currentScrollTop = e.target.scrollTop
-      console.info(this.scroll.prevScrollTop, currentScrollTop)
       if (currentScrollTop > this.scroll.prevScrollTop) {
         // 向下滚动，若top在clientHeight内，则整屏滚动下去
         this.scroll.prevScrollTop = currentScrollTop
@@ -205,11 +204,9 @@ export default {
         // 向上滚动，若top在clientHeight内，则滚动到最顶部
         this.scroll.prevScrollTop = currentScrollTop
         if (currentScrollTop < clientHeight) {
-          // console.info('up', this.scroll.prevScrollTop, currentScrollTop)
           scrollToTop(e.target, 0, 200, 'up')
           setTimeout(() => {
             this.scroll.prevScrollTop = e.target.scrollTop
-            // console.info('up2', this.scroll.prevScrollTop, currentScrollTop)
           }, 210)
         }
       }
