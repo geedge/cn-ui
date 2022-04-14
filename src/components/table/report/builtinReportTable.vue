@@ -109,7 +109,8 @@ export default {
         }, {
           label: this.$t('report.dataRange'),
           prop: 'dataRange',
-          show: true
+          show: true,
+          minWidth: 110
         }
       ],
       checkboxAll: false,
