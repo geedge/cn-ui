@@ -54,8 +54,16 @@
       </template>
       <template #default="scope">
         <div class="table-operation-items">
-          <div class="table-operation-item--down" @click="tableOperation(['download', scope.row])"><i class="cn-icon cn-icon-download2"></i></div>
-          <div class="table-operation-item--preview" @click="tableOperation(['preview', scope.row])"><i class="cn-icon cn-icon-preview"></i></div>
+          <div class="table-operation-item--down" @click="tableOperation(['download', scope.row])">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#cn-icon-download2"></use>
+            </svg>
+          </div>
+          <div class="table-operation-item--preview" @click="tableOperation(['preview', scope.row])">
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#cn-icon-preview"></use>
+            </svg>
+          </div>
         </div>
       </template>
     </el-table-column>
@@ -64,18 +72,22 @@
     <el-checkbox v-model="checkboxAll" @change="builtinReportCheckbox(tableData)"></el-checkbox>
     <div class="table-operation-all-span">
       <span>{{ $t('overall.all') }}</span>
-      <span :class="{'table-operation-all-checkbox': batchDow}" :disabled="checkboxAll" @click="tableOperation(['download', this.checkboxIds, 'builtin'])">{{$t('report.batchDow')}}</span>
+      <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="tableOperation(['download', this.checkboxIds, 'builtin'])">
+        <loading :loading="loading"></loading>
+        <span>{{$t('report.batchDow')}}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import table from '@/mixins/table'
+import Loading from '@/components/common/Loading'
 export default {
   name: 'builtinReportTable',
   mixins: [table],
-  props: {
-    builtinReportLeftMenu: Number
+  components: {
+    Loading
   },
   data () {
     return {
@@ -104,7 +116,8 @@ export default {
       checkboxIds: '',
       batchDow: false,
       builtinId: '',
-      indeterminate: false
+      indeterminate: false,
+      loading: false
     }
   },
   methods: {

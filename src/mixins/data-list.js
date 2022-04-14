@@ -147,6 +147,7 @@ export default {
       this.rightBox.show = true
     },
     download (u, n) {
+      if (this.$refs.dataTable.loading && n === 'builtin') return
       let fileName = ''
       let url = ''
       let params = {}
@@ -157,12 +158,14 @@ export default {
           ids: u
         }
       } else {
-        fileName = 'builtinReport' + '-' + this.getTimeString() + '.pdf' // 文件名称
+        fileName = u.name + '.pdf' // 文件名称
         url = '/report/job/downloadPdf' // 单个 pdf 下载
         params = {
           id: u.id
         }
       }
+      if (n === 'builtin') this.$refs.dataTable.loading = true
+      if (!u) return this.$refs.dataTable.loading = false
       axios.get(url, { responseType: 'blob', params: params }).then(res => {
         if (window.navigator.msSaveOrOpenBlob) {
           // 兼容ie11
@@ -178,6 +181,7 @@ export default {
           a.click()
           a.remove() // 将a标签移除
         }
+        if (n === 'builtin') this.$refs.dataTable.loading = false
       }, error => {
         const $self = this
         const reader = new FileReader()
@@ -191,6 +195,7 @@ export default {
           }
         }
         reader.readAsText(error.response.data)
+        if (n === 'builtin') this.$refs.dataTable.loading = false
       })
     },
     preview (u) {

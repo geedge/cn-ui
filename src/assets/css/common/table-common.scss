@@ -178,9 +178,6 @@
       .table-operation-items {
         display: flex;
         justify-content: center;
-        .table-operation-item--down {
-          margin-right: 16px;
-        }
         .table-operation-item {
           display: flex;
           height: 22px;
@@ -250,7 +247,7 @@
       box-shadow: 1px 0 $--right-box-border-color;
     }
     .el-table:not(.no-operation):not(.chart-table).el-table--border .el-table__header-wrapper th:nth-last-child(3) {
-      border-right: none !important;
+      //border-right: none !important;
       box-shadow: 1px 0 $--right-box-border-color;
     }
     .el-table__fixed-body-wrapper {

@@ -52,7 +52,8 @@
       bottom: 17px;
       z-index: 2;
       left: 20px;
-      height: 22px;
+      line-height: 24px;
+      height: 24px;
       display: flex;
       .el-checkbox {
         width: 14px;
@@ -65,33 +66,60 @@
         }
       }
       .table-operation-all-span {
-        span:nth-of-type(1) {
+        height: 24px;
+        display: flex;
+        span {
           margin: 0 10px;
           font-size: 14px;
           color: #666666;
           letter-spacing: 0;
           font-weight: 400;
         }
-        span:nth-of-type(2) {
-          font-size: 12px;
-          color: #FFFFFF;
+        .table-operation-back-down {
           font-weight: 500;
           height: 24px;
           background: #D7D7D7;
           border-radius: 2px;
-          padding: 3px 8px;
-          line-height: 16px;
+          line-height: 21px;
           cursor: pointer;
-          margin-top: 2px;
+          position: relative;
+          span {
+            margin: 3px 8px;
+            font-size: 12px;
+            color: #FFFFFF;
+          }
         }
-        span:nth-of-type(2).table-operation-all-checkbox {
+        .table-operation-back-down div {
+          color: #FFFFFF;
+          height: 24px;
+          background: #D7D7D7;
+          border-radius: 2px;
+          i {
+            font-size: 25px;
+            top: calc(50% - 12px);
+          }
+        }
+        .table-operation-back-down.table-operation-all-checkbox {
            background: #0091ff;
+         }
+        .table-operation-back-down.table-operation-all-loading {
+           background: #D7D7D7;
          }
       }
     }
     .table-operation-items {
       .table-operation-item--down {
+        margin-right: 16px;
         cursor: pointer;
+      }
+      .table-operation-item--down,.table-operation-item--preview {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        .icon {
+          height: 25px;
+          width: 25px;
+        }
       }
       .table-operation-item--preview {
         cursor: pointer;
