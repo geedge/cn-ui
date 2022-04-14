@@ -87,7 +87,11 @@ export default {
     },
     builtinTabs (id) {
       this.builtinId = id
-      this.getTableData({ tempId: id })
+      if (id !== '') {
+        this.getTableData({ tempId: id })
+      } else {
+        this.getTableData()
+      }
     }
   },
   mounted () {
