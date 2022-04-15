@@ -53,13 +53,15 @@
       </template>
       <template #default="scope">
         <div class="table-operation-items">
-          <div class="table-operation-item--down" @click="tableOperation(['download', scope.row])">
-            <svg class="icon" aria-hidden="true">
+          <div class="table-operation-item--down" @click="tableOperation(['download', scope.row, 1])">
+            <loading :loading="loadingTableId === scope.row.id"></loading>
+            <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
               <use xlink:href="#cn-icon-download2"></use>
             </svg>
           </div>
           <div class="table-operation-item--preview" @click="tableOperation(['preview', scope.row])">
-            <svg class="icon" aria-hidden="true">
+            <loading :loading="loadingPreviewId === scope.row.id"></loading>
+            <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
               <use xlink:href="#cn-icon-preview"></use>
             </svg>
           </div>
@@ -71,7 +73,7 @@
     <el-checkbox v-model="checkboxAll" @change="selectAll(tableData)"></el-checkbox>
     <div class="table-operation-all-span">
       <span>{{ $t('overall.all') }}</span>
-      <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="tableOperation(['download', this.checkboxIds, 'builtin'])">
+      <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="tableOperation(['download', this.checkboxIds, 2])">
         <loading :loading="loading"></loading>
         <span>{{$t('report.batchDow')}}</span>
       </div>
@@ -117,7 +119,10 @@ export default {
       batchDow: false,
       builtinId: '',
       indeterminate: false,
-      loading: false
+      loading: false,
+      loadingTableId: '',
+      loadingPreviewId: ''
+
     }
   },
   methods: {

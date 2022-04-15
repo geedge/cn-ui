@@ -150,25 +150,37 @@ export default {
       this.rightBox.show = true
     },
     download (u, n) {
-      if (this.$refs.dataTable.loading && n === 'builtin') return
+      if (this.$refs.dataTable.loading && n === 2) { // 批量下载
+        return
+      } else if (this.$refs.dataTable.loadingTableId === u.id && n === 1) { // 列表单个下载
+        return
+      }
       let fileName = ''
       let url = ''
       let params = {}
-      if (n === 'builtin') {
+      if (n === 2) { // 批量下载
         fileName = 'builtinReport' + '-' + this.getTimeString() + '.zip' // 文件名称
         url = api.reportBatchDownloadPdf // 批量 zip 下载
         params = {
           ids: u
         }
-      } else {
+      } else if (n === 1) {
         fileName = u.name + '.pdf' // 文件名称
         url = api.reportDownloadPdf // 单个 pdf 下载
         params = {
           id: u.id
         }
       }
-      if (n === 'builtin') this.$refs.dataTable.loading = true
-      if (!u) return this.$refs.dataTable.loading = false
+      if (n === 2) { // 批量下载
+        this.$refs.dataTable.loading = true
+      } else if (n === 1) { // 列表单个下载
+        this.$refs.dataTable.loadingTableId = u.id // 列表单个下载
+      }
+      if (!u && n === 2) { // 批量下载
+        return this.$refs.dataTable.loading = false
+      } else if (!u && n === 1) { // 列表单个下载
+        return this.$refs.dataTable.loadingTableId = u.id
+      }
       axios.get(url, { responseType: 'blob', params: params }).then(res => {
         if (window.navigator.msSaveOrOpenBlob) {
           // 兼容ie11
@@ -184,7 +196,11 @@ export default {
           a.click()
           a.remove() // 将a标签移除
         }
-        if (n === 'builtin') this.$refs.dataTable.loading = false
+        if (n === 2) { // 批量下载
+          this.$refs.dataTable.loading = false
+        } else if (n === 1) { // 列表单个下载
+          this.$refs.dataTable.loadingTableId = !u.id
+        }
       }, error => {
         const $self = this
         const reader = new FileReader()
@@ -198,17 +214,34 @@ export default {
           }
         }
         reader.readAsText(error.response.data)
-        if (n === 'builtin') this.$refs.dataTable.loading = false
+        if (n === 2) { // 批量下载
+          this.$refs.dataTable.loading = false
+        } else if (n === 1) { // 列表单个下载
+          this.$refs.dataTable.loadingTableId = !u.id
+        }
+      }).catch(() => {
+        if (n === 2) { // 批量下载
+          this.$refs.dataTable.loading = false
+        } else if (n === 1) { // 列表单个下载
+          this.$refs.dataTable.loadingTableId = !u.id
+        }
       })
     },
     preview (u) {
+      if (this.$refs.dataTable.loadingPreviewId === u.id) { // 列表单个下载
+        return
+      }
       const params = {
         id: u.id
       }
+      this.$refs.dataTable.loadingPreviewId = u.id
       axios.get(api.reportView, { params: params }).then(res => {
         const prevWindow = window.open('', '')
         prevWindow.document.write(res.data)
         prevWindow.focus()
+        this.$refs.dataTable.loadingPreviewId = !u.id
+      }).catch(() => {
+        this.$refs.dataTable.loadingPreviewId = !u.id
       })
     },
     esc () {
