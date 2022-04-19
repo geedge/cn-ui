@@ -3,7 +3,6 @@
 Object.defineProperty(exports, '__esModule', { value: true })
 
 const vue = require('vue')
-const dayjs = require('dayjs')
 const timePicker = require('../MytTimePicker')
 const locale = require('element-plus/lib/locale')
 const ElInput = require('element-plus/lib/el-input')

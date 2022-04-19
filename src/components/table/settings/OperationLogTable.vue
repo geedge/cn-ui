@@ -50,7 +50,7 @@
           </template>
         </span>
         <span v-else-if="item.prop === 'username'">{{formatUsername(scope.row)}}</span>
-        <span v-else-if="item.prop === 'ctime'">{{utcTimeToSysTime(scope.row[item.prop])}}</span>
+        <span v-else-if="item.prop === 'ctime'">{{dateFormatByAppearance(scope.row[item.prop])}}</span>
         <template v-else-if="item.prop === 'params' || item.prop === 'response'">
           <span>{{scope.row[item.prop]}}</span>
         </template>

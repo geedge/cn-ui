@@ -189,19 +189,30 @@ export default {
           const nowTime = getSecond(new Date())
           this.searchStartTime = this.detection.startTime - allTime / 2
           this.searchEndTime = _.min([nowTime, (this.detection.endTime + allTime / 2)])
-
-          get(api.detection.performanceEvent.metric, {
-            appName: this.detection.appName,
-            startTime: this.searchStartTime,
-            endTime: this.searchEndTime,
-            eventType: this.detection.eventType
-          }).then((response) => {
-            if (response.code === 200) {
-              resolve(response.data.result[0])
-            } else {
-              reject(response)
-            }
-          })
+          let url
+          if (this.detection.eventType === 'dns error') {
+            url = api.detection.performanceEvent.dnsErrorMetric
+          } else if (this.detection.eventType === 'http error') {
+            url = api.detection.performanceEvent.httpErrorMetric
+          } else if (this.detection.eventType === 'high dns response time') {
+            url = api.detection.performanceEvent.highDnsResponseTimeMetric
+          }
+          if (url) {
+            get(url, {
+              appName: this.detection.appName,
+              startTime: this.searchStartTime,
+              endTime: this.searchEndTime,
+              eventType: this.detection.eventType
+            }).then((response) => {
+              if (response.code === 200) {
+                resolve(response.data.result[0])
+              } else {
+                reject(response)
+              }
+            })
+          } else {
+            resolve()
+          }
         } catch (e) {
           reject(e)
         }

@@ -1,13 +1,9 @@
 import { post } from '@/utils/http'
 import router from '@/router'
 import { sortByOrderNum, getWelcomeMenu } from '@/permission'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import { ElMessage } from 'element-plus' // dependent on utc plugin
 import { storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
-
-dayjs.extend(utc)
 
 const user = {
   state () {
@@ -46,16 +42,7 @@ const user = {
   },
   actions: {
     loginSuccess (store, res) {
-      console.info(res)
-      window.$dayJs.tz.setDefault(res.data.timezone)
       localStorage.setItem(storageKey.token, res.data.token)
-      localStorage.setItem(storageKey.sysName, res.data.systemName)
-      if (res.systemLogo) {
-        localStorage.setItem(storageKey.sysLogo, res.data.systemLogo)
-      }
-      localStorage.setItem(storageKey.sysTimezone, res.data.timezone)
-      localStorage.setItem(storageKey.timezoneOffset, dayjs.tz().utcOffset() / 60)
-      localStorage.setItem(storageKey.timezoneLocalOffset, dayjs().utcOffset() / 60)
       post(api.permissions, { token: res.data.token }).then(res2 => {
         const menuList = sortByOrderNum(res2.data.menus)
         store.commit('setMenuList', menuList)
@@ -93,7 +80,6 @@ const user = {
       })
     },
     logoutSuccess (store, res) {
-      localStorage.removeItem(storageKey.username)
       localStorage.removeItem(storageKey.username)
       localStorage.removeItem(storageKey.token)
     }

@@ -37,8 +37,11 @@
             {{scope.row.startTime}}-{{scope.row.endTime}}
           </template>
         </span>
-        <span v-if="item.prop === 'type'">
+        <span v-else-if="item.prop === 'type'">
             {{scope.row.reportTemp.name}}
+        </span>
+        <span v-else-if="item.prop === 'state'">
+            {{getJobStatus(scope.row.state)}}
         </span>
         <span v-else>{{scope.row[item.prop]}}</span>
       </template>
@@ -52,7 +55,7 @@
         <div class="table-operation-title">{{$t('overall.option')}}</div>
       </template>
       <template #default="scope">
-        <div class="table-operation-items">
+        <div class="table-operation-items" v-if="scope.row.state === 1">
           <div class="table-operation-item--down" @click="tableOperation(['download', scope.row, 1])">
             <loading :loading="loadingTableId === scope.row.id"></loading>
             <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
@@ -112,6 +115,12 @@ export default {
           prop: 'dataRange',
           show: true,
           minWidth: 110
+        }, {
+          label: this.$t('overall.status'),
+          prop: 'state',
+          show: true,
+          width: 120,
+          sortable: 'custom'
         }
       ],
       checkboxAll: false,
@@ -126,6 +135,13 @@ export default {
     }
   },
   methods: {
+    getJobStatus (state) {
+      if (state === 0) {
+        return this.$t('overall.inProgress')
+      } else if (state === 1) {
+        return this.$t('overall.completed')
+      }
+    },
     selectionChange (objs) {
       this.$emit('selectionChange', objs)
       this.checkboxIds = objs.map(item => { return item.id }).join(',')

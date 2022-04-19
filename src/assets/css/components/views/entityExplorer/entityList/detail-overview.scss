@@ -55,9 +55,9 @@
           cursor: pointer;
         }
         &.overview__row--single-value {
-          flex-wrap: nowrap;
+          flex-wrap: wrap;
           .cn-chart__single-value--detail-overview {
-            margin-right: 60px;
+            margin-right: 30px;
           }
         }
         .row__label {

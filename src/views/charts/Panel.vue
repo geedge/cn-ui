@@ -185,7 +185,7 @@ export default {
       this.$refs.panelChartList.groupParentCalcHeight(params.chart, params.childrenList)
     },
     wholeScreenScroll (e) {
-      if (this.scroll.prevent) {
+      if (this.scroll.prevent || !this.panel.params || !this.panel.params.wholeScreenScroll) {
         return
       }
       this.scroll.prevent = true

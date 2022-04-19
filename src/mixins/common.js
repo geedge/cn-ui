@@ -1,5 +1,5 @@
 import { hasButton } from '@/permission'
-import { getMillisecond } from '@/utils/date-util'
+import { dateFormatByAppearance } from '@/utils/date-util'
 import { storageKey } from '@/utils/constants'
 export default {
   data () {
@@ -39,22 +39,8 @@ export default {
         query: false
       }
     },
-    // 时间相关
-    utcTimeToSysTime (str) { // utc 0 到系统设置的时区
-      let date = ''
-      if (isNaN(str)) {
-        date = window.$dayJs(str).valueOf() + localStorage.getItem(storageKey.timezoneLocalOffset) * 60 * 60 * 1000
-      } else {
-        date = str
-      }
-      date = window.$dayJs.tz(date).format('YYYY-MM-DD HH:mm:ss')
-      return date
-    },
-    utcTimeToLocalhost (str) { // 系统设置的时区 到 utc 0
-      return str
-    },
-    parseMsDate (time, format = 'YYYY-MM-DD HH:mm:ss') {
-      return this.dayJs.tz(parseFloat(time)).format(format)
+    dateFormatByAppearance (date) {
+      return dateFormatByAppearance(date)
     }
   }
 }

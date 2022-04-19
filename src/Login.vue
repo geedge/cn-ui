@@ -43,9 +43,11 @@ import { post, get } from '@/utils/http'
 import { useRouter } from 'vue-router'
 import { storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
 
 export default {
-
   name: 'Login',
   data () {
     return {
@@ -89,12 +91,13 @@ export default {
           }
         }
       ).catch(e => {
+        console.error(e)
         this.loading = false
         this.blockOperation.query = false
         this.$message.error(this.$t('tip.unknownError'))
       })
     },
-    appearance () {
+    queryAppearance () {
       get(api.appearance).then(res => {
         if (res.code === 200) {
           this.appearanceOut(res.data)
@@ -103,21 +106,22 @@ export default {
     },
     appearanceOut (data) {
       if (this.$_.isEmpty(localStorage.getItem(storageKey.language))) {
-        localStorage.setItem(storageKey.language, data.lang)
-      }
-      if (this.$_.isEmpty(localStorage.getItem(storageKey.sysTimezone))) {
-        localStorage.setItem(storageKey.sysTimezone, data.timezone)
+        localStorage.setItem(storageKey.language, data.lang || 'zh')
       }
       if (this.$_.isEmpty(localStorage.getItem(storageKey.theme))) {
-        localStorage.setItem(storageKey.theme, data.theme)
+        localStorage.setItem(storageKey.theme, data.theme || 'light')
       }
-      if (this.$_.isEmpty(localStorage.getItem(storageKey.dateFormat))) {
-        localStorage.setItem(storageKey.dateFormat, data.dateFormat)
-      }
+      localStorage.setItem(storageKey.sysTimezone, data.timezone)
+      window.$dayJs.tz.setDefault(data.timezone)
+      localStorage.setItem(storageKey.timezoneOffset, window.$dayJs.tz().utcOffset() / 60)
+      localStorage.setItem(storageKey.timezoneLocalOffset, dayjs().utcOffset() / 60)
+      localStorage.setItem(storageKey.dateFormat, data.dateFormat)
+      localStorage.setItem(storageKey.sysName, data.system_name)
+      localStorage.setItem(storageKey.sysLogo, data.system_logo)
     }
   },
   mounted () {
-    this.appearance()
+    this.queryAppearance()
   },
   setup (props) {
     const { currentRoute } = useRouter()

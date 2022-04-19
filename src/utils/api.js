@@ -116,7 +116,9 @@ export const api = {
       listBasic: '/interface/detection/performance/list/basic',
       listCount: '/interface/detection/performance/list/count',
       overviewBasic: '/interface/detection/performance/detail/overview/basic',
-      metric: '/interface/detection/performance/detail/overview/metric'
+      dnsErrorMetric: '/interface/detection/performance/detail/overview/metric',
+      httpErrorMetric: '/interface/detection/performance/detail/overview/metric',
+      highDnsResponseTimeMetric: '/interface/detection/performance/detail/overview/metric'
     }
   },
   // Dashboard

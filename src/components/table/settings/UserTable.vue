@@ -40,6 +40,14 @@
             <span>-</span>
           </template>
         </template>
+        <template v-else-if="item.prop === 'lastLoginTime'">
+          <template v-if="scope.row[item.prop]">
+            {{dateFormatByAppearance(scope.row[item.prop])}}
+          </template>
+          <template v-else>
+            <span>-</span>
+          </template>
+        </template>
         <template v-else-if="item.prop === 'status'">
           <el-switch
                   v-if="scope.row.id"
