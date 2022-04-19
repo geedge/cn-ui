@@ -285,6 +285,9 @@ export default {
           // eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
           eventSeverityTrendOption.xAxis.data = xData
           const detectionChart = echarts.init(chartDom)
+          window.addEventListener('resize', function () {
+            detectionChart.resize()
+          })
           detectionChart.setOption(eventSeverityTrendOption)
           // this.isEventSeverityNoData = false
         } else {
@@ -311,8 +314,8 @@ export default {
           })
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
+          this.echartsResize(detectionChart)
           detectionChart.setOption(eventSeverityOption)
-
           const vm = this
           detectionChart.off('click')
           detectionChart.on('click', e => {
@@ -338,6 +341,7 @@ export default {
           }))
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
+          this.echartsResize(detectionChart)
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType }
@@ -365,6 +369,7 @@ export default {
           }))
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
+          this.echartsResize(detectionChart)
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.securityType, itemStyle: { color: getAttackColor(d.securityType) } }
@@ -396,6 +401,7 @@ export default {
 
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
+          this.echartsResize(detectionChart)
           const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
           data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
@@ -451,8 +457,8 @@ export default {
         if (!this.$_.isEmpty(data)) {
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
           const detectionChart = echarts.init(chartDom)
+          this.echartsResize(detectionChart)
           const option = this.$_.cloneDeep(activeAttackBar)
-
           data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
           option.series[0].data = data.map(d => {
@@ -598,6 +604,11 @@ export default {
         const wraps = document.querySelector('#detectionList')
         wraps.scrollTop = 0
       })
+    },
+    echartsResize (detectionChart) {
+      window.addEventListener('resize', function () {
+        detectionChart.resize()
+      })
     }
   },
   mounted () {
@@ -718,6 +729,9 @@ export default {
         this.$refs.search.changeParams({ column: this.filterData.performanceEvent[1].column, oldValue: o, newValue: n })
       }
     }
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', function () {})
   },
   setup () {
     const { params } = useRoute()

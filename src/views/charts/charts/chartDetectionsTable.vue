@@ -3,16 +3,32 @@
     <div class="cn-detection__case-severity"><i :class="iconClass" class="cn-icon cn-icon-alert-level"></i></div>
     <div class="cn-detection__row">
       <div v-if="security" class="cn-detection__header">
-        <span :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-attacker"></i>{{detection.offenderIp || '-'}}</span>
-        <div :class="iconClass" class="domain cn-detection-domain" v-if="detection.domain">{{detection.domain}}</div>
+        <span>
+          <i :class="{ 'critical': detection.offenderIp === name}" class="cn-icon cn-icon-attacker"></i>
+          <span :class="{ 'critical': detection.offenderIp === name}">{{detection.offenderIp || '-'}}</span>
+        </span>
+        <div :class="{ 'critical': detection.offenderIp === name}" class="domain cn-detection-domain" v-if="detection.domain">{{detection.domain}}</div>
         <span class="line">-------</span>
         <span class="circle"></span>
-        <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp || '-'}}
+        <span>
+          <i :class="{ 'critical': detection.victimIp === name}" class="cn-icon cn-icon-attacked" ></i>
+          <soan :class="{ 'critical': detection.victimIp === name}">{{detection.victimIp || '-'}}</soan>
+        </span>
+
       </div>
       <div v-if="service" class="cn-detection__header">
-        <span v-if="detection.entityType === 'app'" :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-app2"></i>{{detection.appName || '-'}}</span>
-        <span v-else-if="detection.entityType === 'ip'" :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-ip2"></i>{{detection.serverIp || '-'}}</span>
-        <span v-else-if="detection.entityType === 'domain'" :class="iconClass"><i :class="iconClass" class="cn-icon cn-icon-domain2"></i>{{detection.domain || '-'}}</span>
+        <span v-if="detection.entityType === 'app'">
+          <i :class="{ 'critical': detection.appName === name}" class="cn-icon cn-icon-app2"></i>
+          <span :class="{ 'critical': detection.appName === name}">{{detection.appName || '-'}}</span>
+        </span>
+        <span v-else-if="detection.entityType === 'ip'">
+          <i :class="{ 'critical': detection.serverIp === name}" class="cn-icon cn-icon-ip2"></i>
+          <span :class="{ 'critical': detection.serverIp === name}">{{detection.serverIp || '-'}}</span>
+        </span>
+        <span v-else-if="detection.entityType === 'domain'">
+          <i :class="{ 'critical': detection.domain === name}" class="cn-icon cn-icon-domain2"></i>
+          <span :class="{ 'critical': detection.domain === name}">{{detection.domain || '-'}}</span>
+        </span>
       </div>
       <div class="cn-detection__body">
         <div class="body__basic-info">
@@ -78,6 +94,11 @@ export default {
     service: Boolean,
     pageType: String // 安全事件、服务质量
   },
+  data () {
+    return {
+      name: ''
+    }
+  },
   computed: {
     iconClass () {
       let className
@@ -117,6 +138,9 @@ export default {
         return { backgroundColor: color }
       }
     }
+  },
+  mounted () {
+    this.name = this.$route.query.name
   },
   methods: {
     unitConvert,
