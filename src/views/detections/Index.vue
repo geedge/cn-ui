@@ -285,9 +285,7 @@ export default {
           // eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
           eventSeverityTrendOption.xAxis.data = xData
           const detectionChart = echarts.init(chartDom)
-          window.addEventListener('resize', function () {
-            detectionChart.resize()
-          })
+          this.echartsResize(detectionChart)
           detectionChart.setOption(eventSeverityTrendOption)
           // this.isEventSeverityNoData = false
         } else {
