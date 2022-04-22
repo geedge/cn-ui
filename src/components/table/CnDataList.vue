@@ -69,9 +69,6 @@ export default {
     tableId: {
       type: String
     },
-    builtinId: {
-      type: Number
-    },
     tableTitle: {
       type: Array
     },
@@ -99,8 +96,7 @@ export default {
     },
     onsearch () {
       const params = {
-        q: this.keyWord,
-        id: this.builtinId
+        q: this.keyWord
       }
       this.$emit('search', params)
     }

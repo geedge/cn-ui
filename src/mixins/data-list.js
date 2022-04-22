@@ -76,8 +76,10 @@ export default {
     getTableData (params) {
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
+      } else {
+        this.searchLabel = {}
       }
-      this.searchLabel = { ...this.searchLabel, ...this.pageObj}
+      this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       this.tools.loading = true
       delete this.searchLabel.total
       let listUrl = this.url

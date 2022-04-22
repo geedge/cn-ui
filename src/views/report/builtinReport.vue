@@ -17,7 +17,6 @@
           :tableId="tableId"
           v-model:custom-table-title="tools.customTableTitle"
           :api="url"
-          :builtinId="builtinId"
           :from="fromRoute.builtinReport"
           :layout="['search']"
           @search="search"
