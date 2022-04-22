@@ -58,7 +58,10 @@ export default {
     this.emitter.on('chart-pageNo', function () {
       _this.resetPageNo()
     })
-    this.$el.querySelector('.el-pagination__jump').childNodes[0].nodeValue = ''
+    // console.log('this.$el==='+this.$el)
+    if (this.$el.querySelector) {
+      this.$el.querySelector('.el-pagination__jump').childNodes[0].nodeValue = ''
+    }
   }
 }
 </script>
