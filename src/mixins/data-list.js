@@ -178,9 +178,17 @@ export default {
         this.$refs.dataTable.loadingTableId = u.id // 列表单个下载
       }
       if (!u && n === 2) { // 批量下载
-        return this.$refs.dataTable.loading = false
+        this.$refs.dataTable.loading = false
+        return
       } else if (!u && n === 1) { // 列表单个下载
-        return this.$refs.dataTable.loadingTableId = u.id
+        this.$refs.dataTable.loadingTableId = u.id
+        return
+      }
+      // 判断是否成功登陆成功
+      if (!localStorage.getItem(storageKey.token) && n === 2) {
+        return window.location.replace('/')
+      } else if (!localStorage.getItem(storageKey.token) && n === 1) {
+        return window.location.replace('/')
       }
       axios.get(url, { responseType: 'blob', params: params }).then(res => {
         if (window.navigator.msSaveOrOpenBlob) {
@@ -237,6 +245,10 @@ export default {
       }
       this.$refs.dataTable.loadingPreviewId = u.id
       axios.get(api.reportView, { params: params }).then(res => {
+        if (!localStorage.getItem(storageKey.token)) {
+          this.$refs.dataTable.loadingPreviewId = !u.id
+          return
+        }
         const prevWindow = window.open('', '')
         prevWindow.document.write(res.data)
         prevWindow.focus()

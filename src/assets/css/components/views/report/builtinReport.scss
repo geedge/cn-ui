@@ -16,13 +16,12 @@
     }
     .cn-builtin-left-menu {
       width: 250px;
-      height: 46px;
+      word-break: normal;
       margin: auto;
       font-size: 14px;
       color: #333333;
       letter-spacing: 0;
-      line-height: 46px;
-      padding-left: 15px;
+      padding: 14px;
       cursor: pointer;
     }
     .cn-builtin-left-menu.cn-active {
