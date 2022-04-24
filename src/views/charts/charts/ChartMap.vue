@@ -157,68 +157,74 @@ export default {
   methods: {
     unitConvert,
     initMap (id) {
-      const chart = am4Core.create(id, am4Maps.MapChart)
-      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
-      chart.projection = new am4Maps.projections.Miller()
-      this.myChart = shallowRef(chart)
-      this.polygonSeries = shallowRef(this.polygonSeriesFactory())
+      try {
+        // 初始化插件
+        const chart = am4Core.create(id, am4Maps.MapChart)
+        chart.geodata = getGeoData(storageKey.iso36112WorldLow)
+        chart.projection = new am4Maps.projections.Miller()
+        this.myChart = shallowRef(chart)
+        // 初始化多边形series（即地图series）
+        this.polygonSeries = shallowRef(this.polygonSeriesFactory())
+        // 如果是散点地图，再初始化散点series。DNS dashboard的地图是散点地图
+        if (this.isMapPoint) {
+          this.worldImageSeries = shallowRef(this.imageSeriesFactory())
+        }
+        // 渲染
+        this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
 
-      if (this.isMapPoint) {
-        this.worldImageSeries = shallowRef(this.imageSeriesFactory())
-      }
-
-      this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
-
-      // 地图点击事件
-      if (this.isMapBlock) {
-        this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
-          const countryId = ev.target.dataItem.dataContext.id
-          if (countryId) {
-            ev.target.series.chart.zoomToMapObject(ev.target)
+        // 地图点击事件
+        if (this.isMapBlock) {
+          this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
+            const countryId = ev.target.dataItem.dataContext.id
+            if (countryId) {
+              ev.target.series.chart.zoomToMapObject(ev.target)
+              ev.target.isHover = false
+              const geoData = getGeoData(countryId)
+              if (geoData) {
+                this.countrySeries = shallowRef(this.polygonSeriesFactory())
+                this.countrySeries.geodata = geoData
+                this.polygonSeries.hide()
+                const country = ev.target.dataItem.dataContext.serverCountry
+                const queryParams = { ...this.queryParams, country }
+                const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+                this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
+              }
+            }
+          })
+        } else if (this.isMapPoint) {
+          this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
+            const countryId = ev.target.dataItem.dataContext.id
             ev.target.isHover = false
-            const geoData = getGeoData(countryId)
-            if (geoData) {
-              this.countrySeries = shallowRef(this.polygonSeriesFactory())
-              this.countrySeries.geodata = geoData
-              this.polygonSeries.hide()
-              const country = ev.target.dataItem.dataContext.serverCountry
-              const queryParams = { ...this.queryParams, country }
-              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-              this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
+            if (countryId) {
+              const targetMapObject = this.polygonSeries.getPolygonById(countryId)
+              targetMapObject.series.chart.zoomToMapObject(targetMapObject)
+              const geoData = getGeoData(countryId)
+              if (geoData) {
+                this.countrySeries = shallowRef(this.polygonSeriesFactory())
+                this.countrySeries.geodata = geoData
+                this.countryImageSeries = shallowRef(this.imageSeriesFactory())
+                this.polygonSeries.hide()
+                this.worldImageSeries.hide()
+                const country = ev.target.dataItem.dataContext.name
+                const queryParams = { ...this.queryParams, ipLocationCountry: country }
+                const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+                this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
+              }
             }
-          }
-        })
-      } else if (this.isMapPoint) {
-        this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
-          const countryId = ev.target.dataItem.dataContext.id
-          ev.target.isHover = false
-          if (countryId) {
-            const targetMapObject = this.polygonSeries.getPolygonById(countryId)
-            targetMapObject.series.chart.zoomToMapObject(targetMapObject)
-            const geoData = getGeoData(countryId)
-            if (geoData) {
-              this.countrySeries = shallowRef(this.polygonSeriesFactory())
-              this.countrySeries.geodata = geoData
-              this.countryImageSeries = shallowRef(this.imageSeriesFactory())
-              this.polygonSeries.hide()
-              this.worldImageSeries.hide()
-              const country = ev.target.dataItem.dataContext.name
-              const queryParams = { ...this.queryParams, ipLocationCountry: country }
-              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-              this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
-            }
-          }
-        })
-      }
-      // dns地图legend上的数据
-      if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
-        setTimeout(() => {
-          this.chartInfo.params.legendUrl.forEach((url, i) => {
-            getData(url).then(data => {
-              this.legends[i].value = data
+          })
+        }
+        // dns地图legend上的数据
+        if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
+          setTimeout(() => {
+            this.chartInfo.params.legendUrl.forEach((url, i) => {
+              getData(url).then(data => {
+                this.legends[i].value = data
+              })
             })
           })
-        })
+        }
+      } finally {
+        this.$emit('finishOneMap')
       }
     },
     polygonSeriesFactory () {
@@ -238,12 +244,14 @@ export default {
     },
     imageSeriesFactory (dataField) {
       const vm = this
+      // emcharts实例中增加地图图案series（用来在地图上画圆点、方块、连线等）
       const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+      // 指定接口数据中哪个字段名代表数值
       imageSeries.dataFields.value = dataField || 'count'
-
+      // 取出图案的默认模板，用来接下来做自定义更改
       const imageTemplate = imageSeries.mapImages.template
       imageTemplate.nonScaling = true
-
+      // 通过地区ID来获取经纬度，设置后无需自己提供经纬度
       imageTemplate.adapter.add('latitude', function (latitude, target) {
         const polygon = vm.polygonSeries.getPolygonById(target.dataItem.dataContext.id)
         if (polygon) {
@@ -251,7 +259,6 @@ export default {
         }
         return latitude
       })
-
       imageTemplate.adapter.add('longitude', function (longitude, target) {
         const polygon = vm.polygonSeries.getPolygonById(target.dataItem.dataContext.id)
         if (polygon) {
@@ -260,6 +267,7 @@ export default {
         return longitude
       })
 
+      // 设置图案样式
       const circle = imageTemplate.createChild(am4Core.Circle)
       circle.propertyFields.fill = 'color'
       circle.propertyFields.stroke = 'border'
@@ -313,6 +321,7 @@ export default {
           const sorted = seriesData.sort((a, b) => b.value - a.value)
           const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0
 
+          // 左下角热力图
           polygonSeries.heatRules.push({
             property: 'fill',
             target: polygonSeries.mapPolygons.template,
@@ -331,6 +340,7 @@ export default {
           heatLegend.marginLeft = 15
           heatLegend.valign = 'bottom'
 
+          // 计算热力图的最大值最小值
           const minRange = heatLegend.valueAxis.axisRanges.create()
           minRange.value = heatLegend.minValue
           minRange.label.text = minRange.value === 0 ? 0 : unitConvert(heatLegend.minValue, chartParams.unitType).join(' ')

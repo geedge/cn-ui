@@ -41,6 +41,7 @@
         :time-filter="timeFilter"
         @getChartData="getChartData"
         @showLoading="showLoading"
+        @handleSpecialChartFinishState="handleSpecialChartFinishState"
         :tabHandleClickType="tabHandleClickType"
     ></chart>
   </div>
@@ -150,7 +151,8 @@ export default {
           }
         ] // table的所有数据
       },
-      tabHandleClickType: ''
+      tabHandleClickType: '',
+      isFinish: false
     }
   },
   computed: {
@@ -264,21 +266,38 @@ export default {
             }
           }).finally(() => {
             this.loading = false
+            this.handleFinishState()
           })
         } else if (this.isGroup || this.isTabs) {
           this.$refs.chart.$refs.chart.reload()
+          this.handleFinishState()
         } else if (this.isBlock) {
           if (!this.chartInfo.firstShow) {
             this.chartInfo.firstShow = true
           } else {
             this.$refs.chart.$refs.chart.reload()
           }
+          this.handleFinishState()
         }
       } catch (e) {
         console.error(e)
         setTimeout(() => {
           this.loading = false
+          this.handleFinishState()
         }, 200)
+      } finally {
+        this.handleFinishState()
+      }
+    },
+    handleSpecialChartFinishState () {
+      this.$emit('finishOne')
+    },
+    handleFinishState () {
+      if (!this.isMap) {
+        if (!this.isFinish) {
+          this.isFinish = true
+          this.$emit('finishOne')
+        }
       }
     },
     handleQueryParams () {
@@ -400,9 +419,9 @@ export default {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
-    const table = ref({})
+    let table = {}
     if (isBasicTable(props.chartInfo.type)) {
-      table.value = {
+      table = {
         pageSize: chartTableDefaultPageSize,
         limit: chartTableTopOptions[0], // top-n
         orderBy: props.chartInfo.params.columns.order[0],
