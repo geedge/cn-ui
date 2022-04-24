@@ -158,16 +158,18 @@ export default {
     unitConvert,
     initMap (id) {
       try {
+        // 初始化插件
         const chart = am4Core.create(id, am4Maps.MapChart)
         chart.geodata = getGeoData(storageKey.iso36112WorldLow)
         chart.projection = new am4Maps.projections.Miller()
         this.myChart = shallowRef(chart)
+        // 初始化多边形series（即地图series）
         this.polygonSeries = shallowRef(this.polygonSeriesFactory())
-
+        // 如果是散点地图，再初始化散点series。DNS dashboard的地图是散点地图
         if (this.isMapPoint) {
           this.worldImageSeries = shallowRef(this.imageSeriesFactory())
         }
-
+        // 渲染
         this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
 
         // 地图点击事件
@@ -242,12 +244,14 @@ export default {
     },
     imageSeriesFactory (dataField) {
       const vm = this
+      // emcharts实例中增加地图图案series（用来在地图上画圆点、方块、连线等）
       const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
+      // 指定接口数据中哪个字段名代表数值
       imageSeries.dataFields.value = dataField || 'count'
-
+      // 取出图案的默认模板，用来接下来做自定义更改
       const imageTemplate = imageSeries.mapImages.template
       imageTemplate.nonScaling = true
-
+      // 通过地区ID来获取经纬度，设置后无需自己提供经纬度
       imageTemplate.adapter.add('latitude', function (latitude, target) {
         const polygon = vm.polygonSeries.getPolygonById(target.dataItem.dataContext.id)
         if (polygon) {
@@ -255,7 +259,6 @@ export default {
         }
         return latitude
       })
-
       imageTemplate.adapter.add('longitude', function (longitude, target) {
         const polygon = vm.polygonSeries.getPolygonById(target.dataItem.dataContext.id)
         if (polygon) {
@@ -264,6 +267,7 @@ export default {
         return longitude
       })
 
+      // 设置图案样式
       const circle = imageTemplate.createChild(am4Core.Circle)
       circle.propertyFields.fill = 'color'
       circle.propertyFields.stroke = 'border'
@@ -317,6 +321,7 @@ export default {
           const sorted = seriesData.sort((a, b) => b.value - a.value)
           const allZero = this.$_.isEmpty(sorted) || Number(sorted[0].value) === 0
 
+          // 左下角热力图
           polygonSeries.heatRules.push({
             property: 'fill',
             target: polygonSeries.mapPolygons.template,
@@ -335,6 +340,7 @@ export default {
           heatLegend.marginLeft = 15
           heatLegend.valign = 'bottom'
 
+          // 计算热力图的最大值最小值
           const minRange = heatLegend.valueAxis.axisRanges.create()
           minRange.value = heatLegend.minValue
           minRange.label.text = minRange.value === 0 ? 0 : unitConvert(heatLegend.minValue, chartParams.unitType).join(' ')

@@ -6,7 +6,6 @@ export const storageKey = {
   i18n: 'cn-i18n',
   languages: 'cn-languages',
   language: 'cn-language',
-  timezone: 'cn-timezone',
   theme: 'cn-theme',
   dateFormat: 'cn-date-format',
   timezoneOffset: 'cn-timezone-offset',
