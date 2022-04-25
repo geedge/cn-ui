@@ -131,12 +131,7 @@ export default {
             screenBoxDom.classList.remove('cn-panel2__whole-screen--collapse')
           }
         }
-      }/* else {
-        const panelListDom = document.getElementById('panelList')
-        if (panelListDom.scrollTop === 0 && e.deltaY < 0) {
-          this.scrolledOut = false
-        }
-      }*/
+      }
     },
     async init () {
       const panels = await getPanelList({ type: this.panelType })
@@ -211,6 +206,7 @@ export default {
         const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
       } else {
+        this.$refs.dnsScreen.reload()
         this.$refs.panelChartList.reload()
       }
     },
@@ -222,6 +218,7 @@ export default {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
       // this.chartList = [...this.chartList]
       this.$nextTick(() => {
+        this.$refs.dnsScreen.reload()
         this.$refs.panelChartList.reload()
       })
     },
