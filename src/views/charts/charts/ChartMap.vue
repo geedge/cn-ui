@@ -157,74 +157,70 @@ export default {
   methods: {
     unitConvert,
     initMap (id) {
-      try {
-        // 初始化插件
-        const chart = am4Core.create(id, am4Maps.MapChart)
-        chart.geodata = getGeoData(storageKey.iso36112WorldLow)
-        chart.projection = new am4Maps.projections.Miller()
-        this.myChart = shallowRef(chart)
-        // 初始化多边形series（即地图series）
-        this.polygonSeries = shallowRef(this.polygonSeriesFactory())
-        // 如果是散点地图，再初始化散点series。DNS dashboard的地图是散点地图
-        if (this.isMapPoint) {
-          this.worldImageSeries = shallowRef(this.imageSeriesFactory())
-        }
-        // 渲染
-        this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+      // 初始化插件
+      const chart = am4Core.create(id, am4Maps.MapChart)
+      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
+      chart.projection = new am4Maps.projections.Miller()
+      this.myChart = shallowRef(chart)
+      // 初始化多边形series（即地图series）
+      this.polygonSeries = shallowRef(this.polygonSeriesFactory())
+      // 如果是散点地图，再初始化散点series。DNS dashboard的地图是散点地图
+      if (this.isMapPoint) {
+        this.worldImageSeries = shallowRef(this.imageSeriesFactory())
+      }
+      // 渲染
+      this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
 
-        // 地图点击事件
-        if (this.isMapBlock) {
-          this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
-            const countryId = ev.target.dataItem.dataContext.id
-            if (countryId) {
-              ev.target.series.chart.zoomToMapObject(ev.target)
-              ev.target.isHover = false
-              const geoData = getGeoData(countryId)
-              if (geoData) {
-                this.countrySeries = shallowRef(this.polygonSeriesFactory())
-                this.countrySeries.geodata = geoData
-                this.polygonSeries.hide()
-                const country = ev.target.dataItem.dataContext.serverCountry
-                const queryParams = { ...this.queryParams, country }
-                const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-                this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
-              }
-            }
-          })
-        } else if (this.isMapPoint) {
-          this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
-            const countryId = ev.target.dataItem.dataContext.id
+      // 地图点击事件
+      if (this.isMapBlock) {
+        this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
+          const countryId = ev.target.dataItem.dataContext.id
+          if (countryId) {
+            ev.target.series.chart.zoomToMapObject(ev.target)
             ev.target.isHover = false
-            if (countryId) {
-              const targetMapObject = this.polygonSeries.getPolygonById(countryId)
-              targetMapObject.series.chart.zoomToMapObject(targetMapObject)
-              const geoData = getGeoData(countryId)
-              if (geoData) {
-                this.countrySeries = shallowRef(this.polygonSeriesFactory())
-                this.countrySeries.geodata = geoData
-                this.countryImageSeries = shallowRef(this.imageSeriesFactory())
-                this.polygonSeries.hide()
-                this.worldImageSeries.hide()
-                const country = ev.target.dataItem.dataContext.name
-                const queryParams = { ...this.queryParams, ipLocationCountry: country }
-                const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-                this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
-              }
+            const geoData = getGeoData(countryId)
+            if (geoData) {
+              this.countrySeries = shallowRef(this.polygonSeriesFactory())
+              this.countrySeries.geodata = geoData
+              this.polygonSeries.hide()
+              const country = ev.target.dataItem.dataContext.serverCountry
+              const queryParams = { ...this.queryParams, country }
+              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+              this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
             }
-          })
-        }
-        // dns地图legend上的数据
-        if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
-          setTimeout(() => {
-            this.chartInfo.params.legendUrl.forEach((url, i) => {
-              getData(url).then(data => {
-                this.legends[i].value = data
-              })
+          }
+        })
+      } else if (this.isMapPoint) {
+        this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
+          const countryId = ev.target.dataItem.dataContext.id
+          ev.target.isHover = false
+          if (countryId) {
+            const targetMapObject = this.polygonSeries.getPolygonById(countryId)
+            targetMapObject.series.chart.zoomToMapObject(targetMapObject)
+            const geoData = getGeoData(countryId)
+            if (geoData) {
+              this.countrySeries = shallowRef(this.polygonSeriesFactory())
+              this.countrySeries.geodata = geoData
+              this.countryImageSeries = shallowRef(this.imageSeriesFactory())
+              this.polygonSeries.hide()
+              this.worldImageSeries.hide()
+              const country = ev.target.dataItem.dataContext.name
+              const queryParams = { ...this.queryParams, ipLocationCountry: country }
+              const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+              this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
+            }
+          }
+        })
+      }
+      // dns地图legend上的数据
+      if (!_.isEmpty(this.chartInfo.params.legendUrl)) {
+        setTimeout(() => {
+          this.chartInfo.params.legendUrl.forEach((url, i) => {
+            getData(url).then(data => {
+              this.legends[i].value = data
             })
           })
-        }
-      } finally {
-        this.$emit('finishOneMap')
+        })
       }
     },
     polygonSeriesFactory () {

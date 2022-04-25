@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-list scroll-hide" style="display:grid;height:calc(100vh - 70px);width:100%;grid-template-columns:repeat(30,1fr);grid-template-rows:repeat(19,1fr);grid-gap:10px;padding-left: 10px;padding-right: 10px;">
+  <div class="chart-list" style="display:grid;height:calc(100vh - 90px);width:100%;grid-template-columns:repeat(30,1fr);grid-template-rows:repeat(19,1fr);grid-gap:10px;padding-left: 10px;padding-right: 10px;">
     <div v-for="item in dnsScreenDataList"
           :key="item.id"
           :ref="'grid-item' + item.id"
@@ -11,7 +11,6 @@
                 :chart-info="item"
                 :time-filter="timeFilter"
                 :entity="entity"
-                @finishOne="finishOne"
         ></panel-chart>
     </div>
   </div>
@@ -37,9 +36,6 @@ export default {
           this.$refs['chart' + item.id].getChartData()
         }
       })
-    },
-    finishOne () {
-      this.$emit('finishOne')
     }
   },
   computed: {

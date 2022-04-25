@@ -1,5 +1,4 @@
 .cn-panel2 {
-  position: relative;
   .panel__time {
     position: absolute;
     right: 10px;
@@ -10,6 +9,7 @@
       margin-left: 10px;
     }
   }
+  position: relative;
   .chart-list {
     &>.vue-grid-layout>.vue-grid-item, &>.dns-screen {
       &>.panel-chart {
@@ -495,7 +495,18 @@
     }
   }
 }
-
+.cn-panel2__whole-screen {
+  height: calc(100vh - 50px);
+  width: 100%;
+  padding: 20px 10px 0 10px;
+  transition: .2s all linear;
+  opacity: 1;
+}
+.cn-panel2__whole-screen.cn-panel2__whole-screen--collapse {
+  height: 0 !important;
+  padding-top: 0;
+  opacity: 0;
+}
 .entity-detail-tool {
   display: flex;
   justify-content: space-between;

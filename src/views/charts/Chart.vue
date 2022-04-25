@@ -21,7 +21,6 @@
         :entity="entity"
         @getChartData="getChartData"
         @showLoading="showLoading"
-        @finishOneMap="finishOneMap"
       ></chart-map>
 
       <chart-single-value
@@ -433,9 +432,6 @@ export default {
     },
     showLoading (show) {
       this.$emit('showLoading', show)
-    },
-    finishOneMap (show) {
-      this.$emit('handleSpecialChartFinishState', true)
     },
     getAlarmInfo (url, extraParams, isRefresh, timeFilter) {
       this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
