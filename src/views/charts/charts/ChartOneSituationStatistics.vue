@@ -5,7 +5,6 @@
         <el-progress
           type="circle"
           :color="chartInfo.params.color"
-          width="76"
           :percentage="Math.floor(($_.get(chartData, 'percent', '-') * 100) * 100) / 100"
         />
       </div>

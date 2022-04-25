@@ -44,14 +44,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      flex: 0 0 40%;
+      flex: 0 0 100px;
     }
 
     .single-value__icon {
       display: flex;
       justify-content: center;
-      width: 72px;
-      height: 72px;
+      width: 56px;
+      height: 56px;
       background-color: $--chart-single-value-icon-background-color;
       border-radius: 50%;
 
@@ -66,12 +66,12 @@
     .single-value__content {
       display: flex;
       flex-direction: column;
-      max-width: 60%;
+      width: 200px;
       padding-right: 10px;
 
       .content__data {
-        padding-bottom: 7%;
-        font-size: 20px;
+        padding-bottom: 10px;
+        font-size: 18px;
         color: #333333;
         font-weight: bold;
       }
@@ -80,7 +80,7 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        font-size: 16px;
+        font-size: 14px;
         color: #666666;
       }
 
@@ -105,10 +105,11 @@
     justify-content: space-around;
     align-items: center;
     height: 100%;
-    width: 100%;
+    width: 90%;
+    margin: auto;
 
     .single-value-icon__box {
-      flex: 0 0 80px;
+      flex: 0 0 74px;
     }
 
     .single-value__icon {
@@ -249,7 +250,7 @@
         display: flex;
         align-items: center;
         height: 25%;
-        font-size: 24px;
+        font-size: 18px;
         color: #333333;
         font-weight: bold;
       }
@@ -572,16 +573,15 @@
       display: flex;
       align-items: flex-start;
       justify-content: right;
-      margin-right:25px;
+      margin: 0 22px 22px 0;
       flex: 0 0 80;
-      margin-bottom: 25px;
     }
 
     .single-value__icon {
       display: flex;
       justify-content: center;
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       background-color: $--chart-single-value-icon-background-color;
       border-radius: 50%;
 
@@ -601,7 +601,7 @@
       margin-left:25px;
 
       .content__data {
-        margin-bottom: 7%;
+        margin-bottom: 5%;
         font-size: 22px;
         color: #333333;
         font-weight: bold;

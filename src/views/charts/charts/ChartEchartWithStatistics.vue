@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-drawing"  :style="`height: calc(100% - ${statisticsHeight}px)`" :id="`chart${chartInfo.id}`"></div>
+  <div class="chart-drawing" style="height: calc(100% - 17.5rem)" :id="`chart${chartInfo.id}`"></div>
   <div class="cn-chart__footer">
     <statistics-legend :data="statisticsData" :chart-info="chartInfo" @toggleLegend="toggleStatisticsLegend"></statistics-legend>
   </div>
@@ -19,8 +19,7 @@ export default {
   mixins: [chartEchartMixin],
   data () {
     return {
-      statisticsData: [],
-      statisticsHeight: 280
+      statisticsData: []
     }
   },
   props: {
@@ -28,13 +27,6 @@ export default {
   },
   components: {
     StatisticsLegend
-  },
-  mounted () {
-    // 动态计算统计信息的高度
-    if (this.chartData) {
-      const dataLen = this.chartData.length
-      this.statisticsHeight = (dataLen * 24) + 30 + 3 + 7 // 根据legend个数动态预留legend空间,7为其他
-    }
   },
   methods: {
     initEcharts (id) {

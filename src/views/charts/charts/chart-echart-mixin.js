@@ -77,6 +77,18 @@ export default {
         return allZero
       }
     },
+    chartResize () {
+      this.$store.getters.getChartList.forEach(chart => {
+        if (chart) {
+          chart.resize()
+        }
+      })
+    },
+    test () {
+      setTimeout(() => {
+        this.chartResize()
+      }, 400)
+    },
     loadEchart (chartNum, refresh = false) {
       this.$emit('showLoading', true)
       try {
@@ -86,20 +98,16 @@ export default {
           this.myChart2.setOption(this.chartOption2, refresh)
           this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart2))
         }
-        const _this = this
-        window.addEventListener('resize', function () {
-          _this.$store.getters.getChartList.forEach(chart => {
-            if (chart) {
-              chart.resize()
-            }
-          })
-        })
+        window.addEventListener('resize', this.$_.debounce(this.test, 400))
       } finally {
         setTimeout(() => {
           this.$emit('showLoading', false)
         }, 200)
       }
     }
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.test)
   },
   watch: {
     chartData: {

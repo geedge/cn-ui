@@ -58,11 +58,11 @@
         <div class="body__statics">
           <div class="entity-statics-down">
             <i class="cn-icon cn-icon-fall entity-statics-icon"></i>
-            {{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+            <span>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') : '-'}}</span>
           </div>
           <div class="entity-statics-up" >
             <i class="cn-icon cn-icon-rise"></i>
-            {{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+            <span>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') : '-'}}</span>
           </div>
           <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
@@ -94,11 +94,11 @@
         </div>
         <div class="body__statics">
           <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>
-            {{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+            <span>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.bps).join(' ') : '-'}}</span>
           </div>
           <div class="entity-statics-up" >
             <i class="cn-icon cn-icon-rise"></i>
-            {{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+            <span>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'}}</span>
           </div>
           <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
@@ -129,8 +129,8 @@
           <div class="body__drawing" :id="`entityListChart${entityData.appName}${listMode}`"></div>
         </div>
         <div class="body__statics">
-          <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}</div>
-          <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}</div>
+          <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i><span>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.bps).join(' ') : '-'}}</span></div>
+          <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i><span>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'}}</span></div>
           <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
         </div>
       </template>

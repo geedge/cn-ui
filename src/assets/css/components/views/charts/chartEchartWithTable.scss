@@ -10,7 +10,6 @@
           .cn-chart__body {
             flex: auto;
             display: flex;
-            overflow: hidden auto;
 
             .el-table {
               padding: 0 10px;
@@ -37,16 +36,19 @@
               height: calc(100% - 36px) !important;
             }*/
           }
-          .cn-chart__body.pie-with-table {
-            flex-basis: 40%;
-          }
+          //.cn-chart__body.pie-with-table {
+          //  flex-basis: 60%;
+          //}
           .cn-chart__footer.pie-with-table {
-            flex-basis: 60%;
             padding: 10px 30px 30px;
+            overflow: auto;
+            .pie-table .el-table__body-wrapper {
+              height: calc(100% - 40px) !important;
+            }
           }
         }
         .pie-table {
-          font-size: 14px;
+          font-size: 12px;
           color: #333333;
           font-weight: 500;
 

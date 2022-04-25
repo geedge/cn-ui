@@ -4,6 +4,7 @@ import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
+import { shallowRef } from 'vue'
 
 export default {
   props: {
@@ -26,7 +27,8 @@ export default {
         receivedChart: null
       },
       chartOption: null,
-      queryParams: {}
+      queryParams: {},
+      echartsArray: []
     }
   },
   computed: {
@@ -121,6 +123,7 @@ export default {
               }
             }
           })
+          this.echartsArray.push(shallowRef(this.sentChart), shallowRef(this.receivedChart))
           this.sentChart.setOption(this.chartOptionSent)
           this.receivedChart.setOption(this.chartOptionReceived)
         }
@@ -312,6 +315,7 @@ export default {
               ]
             }
           })
+          this.echartsArray.push(shallowRef(this.detectionChart))
           this.detectionChart.setOption(this.chartDetectionQueryRate)
         }
       })
@@ -333,6 +337,10 @@ export default {
           }, 200)
         })
       }
+    },
+
+    resize () {
+      this.echartsArray.forEach(item => { item.value.resize() })
     }
   },
   setup () {
@@ -342,7 +350,11 @@ export default {
     }
   },
   mounted () {
+    window.addEventListener('resize', this.$_.debounce(this.resize, 200))
     this.chartOption = _.cloneDeep(entityListLineOption)
     setTimeout(() => { this.queryEntityDetail() })
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.resize)
   }
 }

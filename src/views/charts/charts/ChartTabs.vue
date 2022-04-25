@@ -39,7 +39,13 @@ export default {
     },
     reload () {
       this.dataList = _.cloneDeep(this.dataList)
+    },
+    resize () {
+      this.$forceUpdate()
     }
+  },
+  mounted () {
+    window.addEventListener('resize', this.$_.debounce(this.resize, 300))
   },
   setup (props) {
     let activeTab = ''

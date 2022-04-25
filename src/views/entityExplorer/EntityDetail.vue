@@ -72,6 +72,7 @@ export default {
   },
   methods: {
     chartLoaded (chartList) {
+      this.chartList = chartList
       this.anchorPoints = []
       let anchorPoints = []
       const panelDom = document.querySelector('#detailWrapper')
@@ -103,7 +104,16 @@ export default {
     jumpToAnchor (anchor) {
       this.top = anchor.top
       document.querySelector('#detailWrapper').scrollTop = this.top
+    },
+    resize () {
+      this.chartLoaded(this.chartList)
     }
+  },
+  mounted () {
+    window.addEventListener('resize', this.$_.debounce(this.resize, 200))
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.resize)
   },
   computed: {
     iconClass () {

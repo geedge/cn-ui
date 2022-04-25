@@ -103,7 +103,7 @@ export default {
           label: 'ID',
           prop: 'id',
           show: true,
-          width: 80,
+          width: 100,
           sortable: 'custom'
         }, {
           label: this.$t('config.user.name'),

@@ -6,6 +6,7 @@ import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
 import unitConvert from '@/utils/unit-convert'
+import { shallowRef } from 'vue'
 
 export default {
   props: {
@@ -19,7 +20,8 @@ export default {
       trafficUrl: '',
       chartOption: null,
       unitTypes,
-      unitConvert
+      unitConvert,
+      echartsArray: []
     }
   },
   computed: {
@@ -251,6 +253,7 @@ export default {
           })
           if (this.listMode === 'block') {
             const chart = echarts.init(document.getElementById(`entityListChart${this.entityName}${this.listMode}`))
+            this.echartsArray.push(shallowRef(chart))
             chart.setOption({
               ...this.chartOption,
               series: [sentSeries, receivedSeries]
@@ -258,6 +261,7 @@ export default {
           } else if (this.listMode === 'list') {
             const sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}${this.listMode}`))
             const receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}${this.listMode}`))
+            this.echartsArray.push(shallowRef(sentChart), shallowRef(receivedChart))
             sentChart.setOption({
               ...this.chartOption,
               series: [sentSeries]
@@ -278,6 +282,9 @@ export default {
           } catch (e) {}
         }, 250)
       })
+    },
+    resize () {
+      this.echartsArray.forEach(item => { item.value.resize() })
     }
   },
   watch: {
@@ -306,6 +313,7 @@ export default {
     }
   },
   mounted () {
+    window.addEventListener('resize', this.$_.debounce(this.resize, 200))
     this.chartOption = _.cloneDeep(entityListLineOption)
     this.entityData = _.cloneDeep(this.entity)
     setTimeout(() => {
@@ -313,5 +321,8 @@ export default {
       this.queryEntityDetailTraffic()
       this.queryPerformance()
     })
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.resize)
   }
 }

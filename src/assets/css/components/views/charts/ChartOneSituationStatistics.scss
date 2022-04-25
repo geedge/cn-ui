@@ -5,10 +5,12 @@
         align-items: center;
         margin-left: 33px;
         height: 100%;
-        .box__progress{
+        .box__progress {
             display: block;
-            width: 76px;
-            height: 76px;
+            .el-progress-circle {
+                height: 80px !important;
+                width: 80px !important;
+            }
             .el-progress__text span{
                 font-size: 16px;
             }

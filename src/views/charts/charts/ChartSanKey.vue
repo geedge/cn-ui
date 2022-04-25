@@ -105,7 +105,16 @@ export default {
       this.chartOption.series[0].data = data
       this.chartOption.series[0].links = link
       this.myChart.setOption(this.chartOption)
+    },
+    resize () {
+      this.myChart.resize()
     }
+  },
+  mounted () {
+    window.addEventListener('resize', this.$_.debounce(this.resize))
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.resize)
   },
   watch: {
     chartData: {

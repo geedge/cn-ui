@@ -75,7 +75,7 @@ export default {
           label: this.$t('config.operationlog.id'),
           prop: 'id',
           show: true,
-          width: 80
+          width: 100
         }, {
           label: this.$t('config.operationlog.username'),
           prop: 'username',

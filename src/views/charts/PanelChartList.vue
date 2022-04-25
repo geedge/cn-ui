@@ -81,6 +81,7 @@ import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import DnsScreen from '@/views/charts/wholeScreenScroll/DnsScreen'
 import { wholeScreenRouterMapping } from '@/utils/constants'
+import { ref } from 'vue'
 
 export default {
   name: 'PanelChartList',
@@ -102,7 +103,6 @@ export default {
     return {
       gridLayoutLoading: false,
       gridLayoutShow: false,
-      rowHeight: 40,
       copyDataList: [], // 所有的图表
       normalCopyDataList: [], // 非整屏滚动的图表
       noData: false, // no data
@@ -183,9 +183,29 @@ export default {
           return item.y >= -1
         })
       }, 100)
+    },
+    chartHeightData (e) {
+      if (e.currentTarget.innerWidth < 1280) {
+        this.rowHeight = 25
+      } else if (e.currentTarget.innerWidth >= 1280 && e.currentTarget.innerWidth <= 1440) {
+        this.rowHeight = 25
+      } else if (e.currentTarget.innerWidth >= 1440 && e.currentTarget.innerWidth < 1920) {
+        this.rowHeight = 32.5
+      } else if (e.currentTarget.innerWidth >= 1920 && e.currentTarget.innerWidth <= 2048) {
+        this.rowHeight = 40
+      } else if (e.currentTarget.innerWidth >= 2048 && e.currentTarget.innerWidth <= 2560) {
+        this.rowHeight = 55
+      } else if (e.currentTarget.innerWidth > 2560) {
+        this.rowHeight = 55
+      }
     }
   },
-
+  mounted () {
+    window.addEventListener('resize', this.$_.debounce(this.chartHeightData, 100))
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.chartHeightData)
+  },
   computed: {
     anchorPoint () {
       return function (chart) {
@@ -199,7 +219,23 @@ export default {
   },
   setup (props) {
     const { currentRoute } = useRouter()
+    const htmlHeight = document.getElementsByTagName('html')[0].clientWidth
+    const rowHeight = ref(0)
+    if (htmlHeight < 1280) {
+      rowHeight.value = 25
+    } else if (htmlHeight >= 1280 && htmlHeight <= 1440) {
+      rowHeight.value = 25
+    } else if (htmlHeight >= 1440 && htmlHeight < 1920) {
+      rowHeight.value = 32.5
+    } else if (htmlHeight >= 1920 && htmlHeight <= 2048) {
+      rowHeight.value = 40
+    } else if (htmlHeight >= 2048 && htmlHeight <= 2560) {
+      rowHeight.value = 55
+    } else if (htmlHeight > 2560) {
+      rowHeight.value = 55
+    }
     return {
+      rowHeight,
       currentPath: currentRoute.value.path
     }
   },

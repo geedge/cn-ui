@@ -26,6 +26,8 @@ import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import PanelChartList from '@/views/charts/PanelChartList'
 const emitter = new bus()
 
+import 'lib-flexible'
+
 const _ = require('lodash') // lodash工具
 
 /* dayjs.extend(utc)

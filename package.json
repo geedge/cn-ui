@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.33",
     "node-sass": "^4.14.1",
+    "postcss-plugin-px2rem": "^0.8.1",
     "postcss-px2rem-exclude": "0.0.6",
     "sass-loader": "^8.0.2",
     "sass-resources-loader": "^2.2.1",

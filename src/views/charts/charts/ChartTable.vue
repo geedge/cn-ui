@@ -6,7 +6,7 @@
           tooltip-effect="light"
           :data="table.currentPageData"
       >
-        <el-table-column v-if="table.currentPageData.length" type="index" label="#">
+        <el-table-column :width="60" v-if="table.currentPageData.length" type="index" label="#">
         </el-table-column>
         <el-table-column
             v-for="(c, i) in table.tableColumns.common"

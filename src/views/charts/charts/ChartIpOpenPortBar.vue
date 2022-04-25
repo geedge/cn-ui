@@ -95,7 +95,16 @@ export default {
       this.chartOption.series[0].data = protocols
       this.chartOption.xAxis.data = protocols.map(p => p.name)
       this.myChart.setOption(this.chartOption)
+    },
+    resize () {
+      this.myChart.resize()
     }
+  },
+  mounted () {
+    window.addEventListener('resize', this.$_.debounce(this.resize, 200))
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.resize)
   },
   watch: {
     chartData: {
