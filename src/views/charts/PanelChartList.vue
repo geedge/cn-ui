@@ -1,18 +1,8 @@
 <template>
-   <div style="height: calc(100vh - 70px);width: 100%;" v-if="isWholeScreenScroll" id="dnsScreenAnchor">
-     <dns-screen v-if="currentPath === wholeScreenRouterMapping.dns"
-                 :copy-data-list="copyDataList"
-                 ref="dnsScreen"
-                 :time-filter="timeFilter"
-                 @finishOne="finishOne"
-                 :entity="entity">
-     </dns-screen>
-   </div>
   <div :id='`chartList${(isGroup ? "Group" : "") + timestamp}`' class="chart-list" ref="layoutBox">
     <grid-layout
-            id="gridLayout"
+        id="gridLayout"
         ref="layout"
-        v-if="gridLayoutShow"
         v-model:layout="normalCopyDataList"
         :col-num="30"
         :is-draggable="!panelLock"
@@ -44,7 +34,6 @@
             :entity="entity"
             @groupShow="groupShow"
             @showFullscreen="showFullscreen"
-            @finishOne="finishOne"
         ></panel-chart>
       </grid-item>
     </grid-layout>
@@ -76,7 +65,7 @@
 <script>
 import PanelChart from '@/views/charts/PanelChart'
 import VueGridLayout from 'vue-grid-layout'
-import { getGroupHeight, getTypeCategory, isGroup } from './charts/tools'
+import { getGroupHeight, isGroup, getTypeCategory } from './charts/tools'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
 import DnsScreen from '@/views/charts/wholeScreenScroll/DnsScreen'
@@ -87,14 +76,12 @@ export default {
   name: 'PanelChartList',
   components: {
     PanelChart,
-    DnsScreen,
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem
   },
   props: {
     timeFilter: Object, // 时间范围
     panelLock: { type: Boolean, default: true },
-    wholeScreenScroll: { type: Boolean, default: false },
     isGroup: Boolean,
     entity: Object,
     dataList: Array // 看板中所有图表信息
@@ -116,11 +103,7 @@ export default {
         chartInfo: {}
       },
       scrollTop: 0,
-      scrollTopTimer: null,
-      wholeScreenRouterMapping,
-      isWholeScreenScroll: false,
-      haveDoneChartNum: 0,
-      allDone: false
+      scrollTopTimer: null
     }
   },
   methods: {
@@ -136,22 +119,10 @@ export default {
           this.$refs['chart' + item.id].getChartData()
         }
       })
-
-      this.$refs.dnsScreen.reload()
     },
     showFullscreen (show, chartInfo) {
       this.fullscreen.chartInfo = chartInfo
       this.fullscreen.visible = show
-    },
-    finishOne () {
-      this.haveDoneChartNum++
-      // console.log("this.haveDoneChartNum="+this.haveDoneChartNum)
-      if (this.haveDoneChartNum >= this.copyDataList.length) {
-        // this.allDone = true
-        setTimeout(() => {
-          this.$emit('finish')
-        }, 200)
-      }
     },
     groupShow (chart) {
       this.copyDataList.forEach((item, index) => {
@@ -247,52 +218,45 @@ export default {
         this.gridLayoutShow = false
         this.gridLayoutLoading = true
 
-        this.isWholeScreenScroll = false
-
-        // const arr = this.$_.cloneDeep(n)
         this.noData = !n || n.length < 1
-        if (n) {
-          const tempList = n.map(item => {
-            if (item.params) {
-              item.params.showHeader = true
-            }
-            const height = item.h
-            return {
-              ...item,
-              i: item.id,
-              w: item.w,
-              h: height,
-              x: item.x || 0,
-              y: item.y || 0,
-              params: item.params,
-              category: getTypeCategory(item.type) // 类别，是echarts还是map等等
-            }
+        const tempList = n.map(item => {
+          if (item.params) {
+            item.params.showHeader = true
+          }
+          const height = item.h
+          return {
+            ...item,
+            i: item.id,
+            w: item.w,
+            h: height,
+            x: item.x || 0,
+            y: item.y || 0,
+            params: item.params,
+            category: getTypeCategory(item.type) // 类别，是echarts还是map等等
+          }
+        })
+        this.$nextTick(() => {
+          this.copyDataList = JSON.parse(JSON.stringify(tempList))
+          this.normalCopyDataList = this.copyDataList.filter(function (item) {
+            return item.y >= -1
           })
-          this.$nextTick(() => {
-            this.copyDataList = JSON.parse(JSON.stringify(tempList))
-            this.normalCopyDataList = this.copyDataList.filter(function (item) {
-              return item.y >= -1
-            })
-            setTimeout(() => {
-              this.gridLayoutShow = true
-              this.isWholeScreenScroll = this.wholeScreenScroll// 为了解决加载页面时，滚动条先长后短的问题，即 数据要一起显示
-            })
-
-            setTimeout(() => {
-              this.copyDataList.forEach(item => {
-                if (isGroup(item.type) && !item.firstShow) {
-                  item.firstShow = true
-                  this.copyDataList = [...this.copyDataList]
-                  this.normalCopyDataList = this.copyDataList.filter(function (item) {
-                    return item.y >= -1
-                  })
-                  this.emitter.emit('groupParentCalcHeight', { chart: item, childrenList: this.copyDataList })
-                }
-              })
-            }, 200)
-            this.gridLayoutLoading = false
+          setTimeout(() => {
+            this.gridLayoutShow = true
           })
-        }
+          setTimeout(() => {
+            this.copyDataList.forEach(item => {
+              if (isGroup(item.type) && !item.firstShow) {
+                item.firstShow = true
+                this.copyDataList = [...this.copyDataList]
+                this.normalCopyDataList = this.copyDataList.filter(function (item) {
+                  return item.y >= -1
+                })
+                this.emitter.emit('groupParentCalcHeight', { chart: item, childrenList: this.copyDataList })
+              }
+            })
+          }, 200)
+          this.gridLayoutLoading = false
+        })
       }
     }
   }
