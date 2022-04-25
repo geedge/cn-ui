@@ -77,7 +77,6 @@ export default {
       detailTabs: [],
       detailChartList: [],
       currentTab: '',
-      scrolledOut: false,
       isCryptocurrency: false, // 是否为挖矿列表
       wholeScreenRouterMapping
     }
@@ -109,9 +108,11 @@ export default {
     const timeFilter = ref({ startTime, endTime, dateRangeValue })
 
     const { currentRoute } = useRouter()
-
+    const currentPath = currentRoute.value.path
+    const scrolledOut = ref(!(Object.keys(wholeScreenRouterMapping).some(k => wholeScreenRouterMapping[k] === currentPath)))
     return {
-      currentPath: currentRoute.value.path,
+      scrolledOut,
+      currentPath,
       panelType,
       panel,
       timeFilter,
