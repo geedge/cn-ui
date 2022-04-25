@@ -4152,7 +4152,7 @@
       if (d.common_app_label === app7.common_app_label) {
         categoryData7.push(d.client_province)
         seriesData7.push(d.bytes / app7.bytes)
-        var prevApp = prevTop3AppProvinceTraffic.find(p => p.client_province === d.client_province && p.common_app_label === d.common_app_label))
+        var prevApp = prevTop3AppProvinceTraffic.find(p => p.client_province === d.client_province && p.common_app_label === d.common_app_label)
         if (prevApp) {
           prevSeriesData7.push(prevApp.bytes / prevApp7.bytes)
         } else {
