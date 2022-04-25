@@ -91,6 +91,9 @@ export default {
     }
     window.addEventListener('mousewheel', this.handleWholeScreen)
   },
+  beforeMount () {
+    window.removeEventListener('mousewheel', this.handleWholeScreen)
+  },
   setup (props, ctx) {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
