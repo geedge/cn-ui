@@ -5,12 +5,27 @@
     top: 10px;
     z-index: 2;
     display: flex;
+    &.panel__time--scrolled-out {
+      position: fixed;
+      top: 70px;
+      padding-right: 10px;
+    }
     &>div {
       margin-left: 10px;
     }
   }
   position: relative;
   .chart-list {
+    &.chart-list--screen {
+      display: grid;
+      height: calc(100vh - 90px);
+      width: 100%;
+      grid-template-columns: repeat(30,1fr);
+      grid-template-rows: repeat(19,1fr);
+      grid-gap: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
     &>.vue-grid-layout>.vue-grid-item, &>.dns-screen {
       &>.panel-chart {
         border: 1px solid $--chart-box-border-color;
@@ -506,6 +521,11 @@
       }
     }
   }
+}
+.panel-list {
+  padding: 10px 10px 20px 10px;
+  overflow: auto;
+  height: 100%;
 }
 .cn-panel2__whole-screen {
   height: calc(100vh - 50px);

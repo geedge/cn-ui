@@ -12,9 +12,9 @@
                   :entity="entity">
       </dns-screen>
     </div>
-    <div id="panelList" style="padding: 10px 10px 20px 10px; overflow: auto; height: 100%;" v-if="!isEntityDetail" >
+    <div id="panelList" v-if="!isEntityDetail" class="panel-list">
       <div id="cn-panel" class="cn-panel2">
-        <div class="panel__time" :style="scrolledOut ? '' : 'position: fixed; top: 70px; padding-right: 10px;'">
+        <div class="panel__time" :class="{ 'panel__time--scrolled-out': !scrolledOut }">
           <date-time-range class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
           <time-refresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
         </div>
