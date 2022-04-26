@@ -43,7 +43,7 @@
         <div class="row__label row__label--width130">{{$t('overall.throughput')}}</div>
         <div class="row__contents">
           <div class="row__content">
-            <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.bps).join(' ')}}</div>
+            <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__charts" :id="`entityDetailSend${entityData.domainName}`" ></div>
           </div>
