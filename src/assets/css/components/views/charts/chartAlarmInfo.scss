@@ -50,7 +50,6 @@
                         line-height: 19px;
                         font-family: Roboto-Regular;
                         color: #333333;
-                        max-width: 30%;
                         font-weight: 400;
                         white-space: nowrap;
                         text-overflow: ellipsis;
@@ -99,16 +98,16 @@
 
                             .cn-icon-time2 {
                                 color: #8FA1BE;
-                                width: 10px;
-                                height: 10px;
+                                width: 12px;
+                                height: 12px;
                                 font-size: 12px;
+                                line-height: 12px;
                             }
 
                             .time-box__start-time {
                                 font-family: PingFangSC-Regular;
                                 font-size: 12px;
                                 color: #999999;
-                                line-height: 17px;
                                 font-weight: 400;
                             }
                         }
