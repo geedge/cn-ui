@@ -94,8 +94,8 @@
                     entityData.bytesSentRate
                       ? unitConvert(
                           entityData.bytesSentRate,
-                          unitTypes.bps,
-                        ).join(' ')
+                          unitTypes.byte,
+                        ).join(' ') + 'ps'
                       : '-'
                   }}</span>
                   <!-- 曲线-->
