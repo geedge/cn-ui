@@ -612,7 +612,8 @@ export default {
   mounted () {
     this.queryFilter()
     this.queryList()
-    window.addEventListener('resize', this.$_.debounce(this.resize, 300))
+    this.debounceFunc = this.$_.debounce(this.resize, 300)
+    window.addEventListener('resize', this.debounceFunc)
   },
   watch: {
     eventSeverityData: {
@@ -730,7 +731,7 @@ export default {
     }
   },
   beforeUnmount () {
-    window.removeEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.debounceFunc)
   },
   setup () {
     const { params } = useRoute()

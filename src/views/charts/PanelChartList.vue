@@ -172,10 +172,11 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('resize', this.$_.debounce(this.chartHeightData, 100))
+    this.debounceFunc = this.$_.debounce(this.chartHeightData, 100)
+    window.addEventListener('resize', this.debounceFunc)
   },
   beforeUnmount () {
-    window.removeEventListener('resize', this.chartHeightData)
+    window.removeEventListener('resize', this.debounceFunc)
   },
   computed: {
     anchorPoint () {

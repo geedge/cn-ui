@@ -3,8 +3,8 @@
     <!--导航面包屑-->
     <div class="header__left">
       <span @click="shrink" class="shrink-button" :class="{'shrink-button--collapse': isShrink}"><i class="cn-icon cn-icon-expand"></i></span>
-      <el-breadcrumb separator="/" style="padding-left: 20px; padding-top: 6px;">
-        <el-breadcrumb-item :title="item" v-for="item in breadcrumb" :key="item" style="display: inline-block; max-width: 300px; height: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+      <el-breadcrumb class="header__left-breadcrumb" separator="/">
+        <el-breadcrumb-item class="header__left-breadcrumb-item" :title="item" v-for="item in breadcrumb" :key="item">
           {{item}}
         </el-breadcrumb-item>
       </el-breadcrumb>

@@ -111,10 +111,11 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('resize', this.$_.debounce(this.resize))
+    this.debounceFunc = this.$_.debounce(this.resize, 100)
+    window.addEventListener('resize', this.debounceFunc)
   },
   beforeUnmount () {
-    window.removeEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.debounceFunc)
   },
   watch: {
     chartData: {

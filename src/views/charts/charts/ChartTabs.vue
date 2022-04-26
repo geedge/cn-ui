@@ -45,7 +45,11 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('resize', this.$_.debounce(this.resize, 300))
+    this.debounceFunc = this.$_.debounce(this.resize, 300)
+    window.addEventListener('resize', this.debounceFunc)
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.debounceFunc)
   },
   setup (props) {
     let activeTab = ''

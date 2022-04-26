@@ -19,7 +19,8 @@ export default {
         refresh: false,
         query: false
       },
-      timeout: null
+      timeout: null,
+      debounceFunc: null
     }
   },
   methods: {

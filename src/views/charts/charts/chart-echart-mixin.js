@@ -84,7 +84,7 @@ export default {
         }
       })
     },
-    test () {
+    setTimeoutResize () {
       setTimeout(() => {
         this.chartResize()
       }, 400)
@@ -98,7 +98,6 @@ export default {
           this.myChart2.setOption(this.chartOption2, refresh)
           this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart2))
         }
-        window.addEventListener('resize', this.$_.debounce(this.test, 400))
       } finally {
         setTimeout(() => {
           this.$emit('showLoading', false)
@@ -106,8 +105,12 @@ export default {
       }
     }
   },
+  mounted () {
+    this.debounceFunc = this.$_.debounce(this.setTimeoutResize, 400)
+    window.addEventListener('resize', this.debounceFunc)
+  },
   beforeUnmount () {
-    window.removeEventListener('resize', this.test)
+    window.removeEventListener('resize', this.debounceFunc)
   },
   watch: {
     chartData: {

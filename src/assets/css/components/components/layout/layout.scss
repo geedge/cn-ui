@@ -15,6 +15,16 @@
     display: flex;
     align-items: center;
     flex-grow: 1;
+    .header__left-breadcrumb.el-breadcrumb {
+      padding-left: 20px;
+      .header__left-breadcrumb-item.el-breadcrumb-item {
+        display: inline-block; max-width: 300px;
+        height: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
 
     .shrink-button {
       margin-left: 20px;

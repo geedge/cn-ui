@@ -313,7 +313,8 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('resize', this.$_.debounce(this.resize, 200))
+    this.debounceFunc = this.$_.debounce(this.resize, 200)
+    window.addEventListener('resize', this.debounceFunc)
     this.chartOption = _.cloneDeep(entityListLineOption)
     this.entityData = _.cloneDeep(this.entity)
     setTimeout(() => {
@@ -323,6 +324,6 @@ export default {
     })
   },
   beforeUnmount () {
-    window.removeEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.debounceFunc)
   }
 }
