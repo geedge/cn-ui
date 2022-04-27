@@ -41,12 +41,18 @@
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
-            <div class="row__charts" :id="`entityDetailSend${entityData.appName}`" ></div>
+            <div class="row__content-loading">
+              <loading :loading-app="loadingApp"></loading>
+               <div class="row__charts" :id="`entityDetailSend${entityData.appName}`" ></div>
+            </div>
           </div>
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
-            <div class="row__charts" :id="`entityDetailReceived${entityData.appName}`" ></div>
+            <div class="row__content-loading">
+              <loading :loading-app="loadingApp"></loading>
+               <div class="row__charts" :id="`entityDetailReceived${entityData.appName}`" ></div>
+            </div>
           </div>
         </div>
       </div>
@@ -193,12 +199,14 @@ import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
 import { getSecond, getMillisecond } from '@/utils/date-util'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'App',
   mixins: [entityDetailMixin, relatedServer],
   components: {
     Chart,
+    Loading,
     ChartSingleValue
   },
   data () {
@@ -270,7 +278,8 @@ export default {
             i18n: 'entities.pktRetransPercent'
           }
         ],
-        chartDatas: [null, null, null, null, null]
+        chartDatas: [null, null, null, null, null],
+        loadingApp: false
       }
     }
   },

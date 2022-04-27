@@ -45,12 +45,18 @@
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
-            <div class="row__charts" :id="`entityDetailSend${entityData.domainName}`" ></div>
+            <div class="row__content-loading">
+              <loading :loading-domian="loadingDomain"></loading>
+              <div class="row__charts" :id="`entityDetailSend${entityData.domainName}`" ></div>
+            </div>
           </div>
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
-            <div class="row__charts" :id="`entityDetailReceived${entityData.domainName}`" ></div>
+            <div class="row__content-loading">
+              <loading :loading-domain="loadingDomian"></loading>
+              <div class="row__charts" :id="`entityDetailReceived${entityData.domainName}`" ></div>
+            </div>
           </div>
         </div>
       </div>
@@ -197,11 +203,13 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
 import { getSecond, getMillisecond } from '@/utils/date-util'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'Domain',
   components: {
     ChartSingleValue,
+    Loading,
     Chart
   },
   mixins: [entityDetailMixin, relatedServer],
@@ -275,7 +283,8 @@ export default {
             i18n: 'entities.pktRetransPercent'
           }
         ],
-        chartDatas: [null, null, null, null, null]
+        chartDatas: [null, null, null, null, null],
+        loadingDomain: false
       }
     }
   },

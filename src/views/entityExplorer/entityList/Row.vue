@@ -99,21 +99,24 @@
                       : '-'
                   }}</span>
                   <!-- 曲线-->
-                  <div
-                    class="row__charts"
-                    :id="`entityDetailSend${entityType}${listMode}`"
-                    v-if="entityData.entityType === 'domain'"
-                  ></div>
-                  <div
-                    class="row__charts"
-                    :id="`entityDetailSend${entityType}${listMode}`"
-                    v-if="entityData.entityType === 'app'"
-                  ></div>
-                  <div
-                    class="row__charts"
-                    :id="`entityDetailSend${entityType}${listMode}`"
-                    v-if="entityData.entityType === 'ip'"
-                  ></div>
+                  <div class="item-box-loading">
+                    <loading :loading="loading"></loading>
+                    <div
+                        class="row__charts"
+                        :id="`entityDetailSend${entityType}${listMode}`"
+                        v-if="entityData.entityType === 'domain'"
+                    ></div>
+                    <div
+                        class="row__charts"
+                        :id="`entityDetailSend${entityType}${listMode}`"
+                        v-if="entityData.entityType === 'app'"
+                    ></div>
+                    <div
+                        class="row__charts"
+                        :id="`entityDetailSend${entityType}${listMode}`"
+                        v-if="entityData.entityType === 'ip'"
+                    ></div>
+                  </div>
                 </div>
               </div>
 
@@ -134,21 +137,24 @@
                       : '-'
                   }}</span>
 
-                  <div
-                    class="row__charts"
-                    :id="`entityDetailReceived${entityType}${listMode}`"
-                    v-if="entityData.entityType === 'domain'"
-                  ></div>
-                  <div
-                    class="row__charts"
-                    :id="`entityDetailReceived${entityType}${listMode}`"
-                    v-if="entityData.entityType === 'app'"
-                  ></div>
-                  <div
-                    class="row__charts"
-                    :id="`entityDetailReceived${entityType}${listMode}`"
-                    v-if="entityData.entityType === 'ip'"
-                  ></div>
+                  <div class="item-box-loading">
+                    <loading :loading="loading"></loading>
+                    <div
+                      class="row__charts"
+                      :id="`entityDetailReceived${entityType}${listMode}`"
+                      v-if="entityData.entityType === 'domain'"
+                    ></div>
+                    <div
+                      class="row__charts"
+                      :id="`entityDetailReceived${entityType}${listMode}`"
+                      v-if="entityData.entityType === 'app'"
+                    ></div>
+                    <div
+                      class="row__charts"
+                      :id="`entityDetailReceived${entityType}${listMode}`"
+                      v-if="entityData.entityType === 'ip'"
+                    ></div>
+                  </div>
                 </div>
               </div>
               <div class="basic-info__item">
@@ -190,6 +196,7 @@
 import DetailOverview from '@/views/entityExplorer/entityList/detailOverview/DetailOverview'
 import entityListMixin from './entityListMixin'
 import relatedServer from '@/mixins/relatedServer'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'Row',
@@ -199,11 +206,13 @@ export default {
     listMode: String
   },
   components: {
+    Loading,
     DetailOverview
   },
   mixins: [entityListMixin, relatedServer],
   data () {
     return {
+      loading: false,
       isCollapse: true // 是否是折叠状态
     }
   },

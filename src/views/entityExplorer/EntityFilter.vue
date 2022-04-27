@@ -11,9 +11,12 @@
         <div class="filter__row" v-for="(item, i) in filter.data" :key="i"  @click="showTopDialog(i, item, filter)"  :ref="`entityTopTen`+i">
           <div class="row__label">
             <i :class="item.icon"></i>
-            <span>{{item.label}}</span>
+              <span>{{item.label}}</span>
           </div>
-          <div class="row__value">{{item.value}}</div>
+          <div class="row__value">
+            <loading :loading="loadingLeft"></loading>
+            <span>{{item.value}}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -36,15 +39,18 @@
 import EntityTop from '@/components/entities/EntityTop'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import Loading from '@/components/common/Loading'
 export default {
   name: 'EntityFilter',
   components: {
+    Loading,
     EntityTop
   },
   props: {
     filterData: Array,
     q: String,
-    timeFilter: Object
+    timeFilter: Object,
+    loadingLeft: Boolean
   },
   data () {
     return {

@@ -12,7 +12,8 @@ export default {
   props: {
     entity: Object,
     timeFilter: {},
-    listMode: String
+    listMode: String,
+    loading: Boolean
   },
   data () {
     return {
@@ -205,6 +206,7 @@ export default {
       }
     },
     queryEntityDetailTraffic () {
+      this.loading = true
       get(this.trafficUrl, this.getQueryParams()).then(response => {
         if (response.code === 200 && response.data.result && response.data.result.length > 0) {
           let sentSeries
@@ -271,6 +273,7 @@ export default {
               series: [receivedSeries]
             })
           }
+          this.loading = false
         }
       }).finally(() => {
         setTimeout(() => {

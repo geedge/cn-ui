@@ -41,7 +41,10 @@
           <div class="row__content">
             <div class="row__charts-msg">{{unitConvert(entityData.queryRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
-            <div class="row__charts" :id="`entityDnsServerInfo${entityData.ipAddr}`"></div>
+            <div class="row__content-loading">
+              <loading :loading="loading"></loading>
+              <div class="row__charts" :id="`entityDnsServerInfo${entityData.ipAddr}`"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -64,12 +67,18 @@
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
-            <div class="row__charts" :id="`entityDetailSend${entityData.ipAddr}`"></div>
+            <div class="row__content-loading">
+              <loading :loading-ip="loadingIp"></loading>
+              <div class="row__charts" :id="`entityDetailSend${entityData.ipAddr}`"></div>
+            </div>
           </div>
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
-            <div class="row__charts" :id="`entityDetailReceived${entityData.ipAddr}`"></div>
+            <div class="row__content-loading">
+              <loading :loading-ip="loadingIp"></loading>
+              <div class="row__charts" :id="`entityDetailReceived${entityData.ipAddr}`"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -216,11 +225,13 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
 import { getSecond, getMillisecond } from '@/utils/date-util'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'Ip',
   mixins: [entityDetailMixin, relatedServer],
   components: {
+    Loading,
     Chart,
     ChartSingleValue
   },
@@ -296,7 +307,8 @@ export default {
         ],
         chartDatas: [null, null, null, null, null]
       },
-      timer: null
+      timer: null,
+      loadingIp: false
     }
   },
   computed: {

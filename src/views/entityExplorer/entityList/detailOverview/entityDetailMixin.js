@@ -9,7 +9,10 @@ import { shallowRef } from 'vue'
 export default {
   props: {
     entity: Object,
-    timeFilter: Object
+    timeFilter: Object,
+    loadingIp: Boolean,
+    loadingApp: Boolean,
+    loadingDomain: Boolean
   },
   data () {
     return {
@@ -69,6 +72,13 @@ export default {
     queryEntityDetailTraffic () {
       this.sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}`))
       this.receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}`))
+      if (this.entityName === 'app') {
+        this.loadingApp = true
+      } else if (this.entityName === 'ip') {
+        this.loadingIp = true
+      } else if (this.entityName === 'domain') {
+        this.loadingDomain = true
+      }
       get(this.trafficUrl, this.getQueryParams()).then(response => {
         if (response.code === 200 && response.data.result && response.data.result.length > 0) {
           response.data.result.forEach(t => {
@@ -126,6 +136,13 @@ export default {
           this.echartsArray.push(shallowRef(this.sentChart), shallowRef(this.receivedChart))
           this.sentChart.setOption(this.chartOptionSent)
           this.receivedChart.setOption(this.chartOptionReceived)
+          if (this.entityName === 'app') {
+            this.loadingApp = false
+          } else if (this.entityName === 'ip') {
+            this.loadingIp = false
+          } else if (this.entityName === 'domain') {
+            this.loadingDomain = false
+          }
         }
       }).finally(() => {
         setTimeout(() => {

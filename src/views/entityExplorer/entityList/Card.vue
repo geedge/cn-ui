@@ -53,6 +53,7 @@
         </div>
         <!-- 曲线-->
         <div class="body__drawing-box">
+          <loading :loading="loading"></loading>
           <div class="body__drawing" :id="`entityListChart${entityData.ipAddr}${listMode}`"></div>
         </div>
         <div class="body__statics">
@@ -90,6 +91,7 @@
         </div>
         <!-- 曲线-->
         <div class="body__drawing-box">
+          <loading :loading="loading"></loading>
           <div class="body__drawing" :id="`entityListChart${entityData.domainName}${listMode}`"></div>
         </div>
         <div class="body__statics">
@@ -126,6 +128,7 @@
         </div>
         <!-- 曲线-->
         <div class="body__drawing-box">
+          <loading :loading="loading"></loading>
           <div class="body__drawing" :id="`entityListChart${entityData.appName}${listMode}`"></div>
         </div>
         <div class="body__statics">
@@ -140,8 +143,15 @@
 
 <script>
 import entityListMixin from './entityListMixin'
+import Loading from '@/components/common/Loading'
 export default {
   name: 'Card',
-  mixins: [entityListMixin]
+  components: { Loading },
+  mixins: [entityListMixin],
+  data () {
+    return {
+      loading: false
+    }
+  }
 }
 </script>

@@ -23,6 +23,7 @@
       <div style="display: flex; height: 100%;">
         <entity-filter
             :filter-data="filterData"
+            :loading-left="loadingLeft"
             :q="q"
             :time-filter="timeFilter"
             @filter="filter"
@@ -55,8 +56,11 @@
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
           <div class="overview-left">
-            <span>{{entityAppTotal}}</span>
-            <span>APP</span>
+            <span class="overview-left-loading">
+              <loading :loading="loading"></loading>
+              <span class="overview-left-loading-span">{{entityAppTotal}}</span>
+            </span>
+            <span class="overview-left-span">APP</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
@@ -74,8 +78,11 @@
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
           <div class="overview-left">
-            <span>{{entityDomainTotal}}</span>
-            <span>DOMAIN</span>
+            <span class="overview-left-loading">
+              <loading :loading="loading"></loading>
+              <span class="overview-left-loading-span">{{entityDomainTotal}}</span>
+            </span>
+            <span class="overview-left-span">DOMAIN</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
@@ -93,8 +100,11 @@
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
           <div class="overview-left">
-            <span>{{entityIpTotal}}</span>
-            <span>IP</span>
+            <span class="overview-left-loading">
+              <loading :loading="loading"></loading>
+              <span class="overview-left-loading-span">{{entityIpTotal}}</span>
+            </span>
+            <span class="overview-left-span">IP</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
@@ -127,10 +137,12 @@ import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import Pagination from '@/components/common/Pagination'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'entity-explorer',
   components: {
+    Loading,
     ExplorerSearch,
     DateTimeRange,
     TimeRefresh,
@@ -259,7 +271,9 @@ export default {
       q: '',
       metaList: [],
       limitFilterType: true, // 是否限定了filter的类型
-      listLoading: false
+      listLoading: false,
+      loading: false,
+      loadingLeft: false
     }
   },
   methods: {
@@ -415,6 +429,7 @@ export default {
         startTime: getSecond(params.startTime),
         endTime: getSecond(params.endTime)
       }
+      this.loadingLeft = true
       get(api.entityFilter, queryParams).then(response => {
         if (response.data && response.data.result) {
           switch (params.entityType) {
@@ -452,6 +467,7 @@ export default {
               break
             }
           }
+          this.loadingLeft = false
         }
       })
     },
@@ -500,18 +516,24 @@ export default {
       }
       // Total
       get(api.entityTotal, { entityType: 'app' }).then(response => {
+        this.loading = true
         if (response.code === 200) {
           this.entityAppTotal = response.data.result
+          this.loading = false
         }
       })
       get(api.entityTotal, { entityType: 'domain' }).then(response => {
+        this.loading = true
         if (response.code === 200) {
           this.entityDomainTotal = response.data.result
+          this.loading = false
         }
       })
       get(api.entityTotal, { entityType: 'ip' }).then(response => {
+        this.loading = true
         if (response.code === 200) {
           this.entityIpTotal = response.data.result
+          this.loading = false
         }
       })
       // New

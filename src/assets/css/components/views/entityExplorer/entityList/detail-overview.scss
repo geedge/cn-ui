@@ -99,6 +99,14 @@
           &.row__content--width200 {
             width: 200px;
           }
+          .row__content-loading {
+            position: relative;
+            .chart__loading i.el-icon-loading {
+              font-size: 14px;
+              top: calc(50% - 5px);
+              left: calc(50% - 4px);
+            }
+          }
         }
         .row__contents {
           display: flex;

@@ -79,14 +79,21 @@
         align-items: center;
         padding: 0 30px;
 
-        span:first-of-type {
-          font-size: 30px;
-          color: #333333;
-          font-weight: bold;
-        }
-        span:last-of-type {
+        .overview-left-span {
           font-size: 16px;
           color: #666666;
+        }
+        .overview-left-loading {
+          display: inline-block;
+          position: relative;
+          .overview-left-loading-span {
+            font-size: 30px;
+            color: #333333;
+            font-weight: bold;
+          }
+          .chart__loading i.el-icon-loading {
+            top: calc(50% - 12px);
+          }
         }
       }
       .overview-right {
