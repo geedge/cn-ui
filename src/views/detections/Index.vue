@@ -24,7 +24,7 @@
         <div class="detection__event-severity-bar"  :id="`eventSeverityTrendBar${pageType}`">
         </div>
       </template>
-      <div style="display: flex; flex-grow: 1">
+      <div style="display: flex; flex-grow: 1; overflow: hidden;">
         <detection-filter
             :filter-data="filterData[pageType]"
             :q="q"
