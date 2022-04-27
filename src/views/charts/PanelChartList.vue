@@ -156,17 +156,14 @@ export default {
       }, 100)
     },
     chartHeightData (e) {
-      if (e.currentTarget.innerWidth < 1280) {
+      const width = e.currentTarget.innerWidth
+      if (width < 1440) {
         this.rowHeight = 25
-      } else if (e.currentTarget.innerWidth >= 1280 && e.currentTarget.innerWidth <= 1440) {
-        this.rowHeight = 25
-      } else if (e.currentTarget.innerWidth >= 1440 && e.currentTarget.innerWidth < 1920) {
+      } else if (width >= 1440 && width < 1920) {
         this.rowHeight = 32.5
-      } else if (e.currentTarget.innerWidth >= 1920 && e.currentTarget.innerWidth <= 2048) {
+      } else if (width >= 1920 && width < 2560) {
         this.rowHeight = 40
-      } else if (e.currentTarget.innerWidth >= 2048 && e.currentTarget.innerWidth <= 2560) {
-        this.rowHeight = 55
-      } else if (e.currentTarget.innerWidth > 2560) {
+      } else {
         this.rowHeight = 55
       }
     }
@@ -191,19 +188,15 @@ export default {
   },
   setup (props) {
     const { currentRoute } = useRouter()
-    const htmlHeight = document.getElementsByTagName('html')[0].clientWidth
+    const clientWidth = document.getElementsByTagName('html')[0].clientWidth
     const rowHeight = ref(0)
-    if (htmlHeight < 1280) {
+    if (clientWidth < 1440) {
       rowHeight.value = 25
-    } else if (htmlHeight >= 1280 && htmlHeight <= 1440) {
-      rowHeight.value = 25
-    } else if (htmlHeight >= 1440 && htmlHeight < 1920) {
+    } else if (clientWidth >= 1440 && clientWidth < 1920) {
       rowHeight.value = 32.5
-    } else if (htmlHeight >= 1920 && htmlHeight <= 2048) {
+    } else if (clientWidth >= 1920 && clientWidth < 2560) {
       rowHeight.value = 40
-    } else if (htmlHeight >= 2048 && htmlHeight <= 2560) {
-      rowHeight.value = 55
-    } else if (htmlHeight > 2560) {
+    } else {
       rowHeight.value = 55
     }
     return {

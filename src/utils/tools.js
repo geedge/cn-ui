@@ -653,6 +653,29 @@ export function arrayIsEqual (arr1, arr2) {
   }
 }
 
+// 字体长度缓存记录，{ 'fontSize': { 'limitWidth': { 'text': xxx } } }
+const fontCache = {}
+// 处理文本超长
+export function truncateText (text, limitWidth, fontSize = 12, ellipsis = '...') {
+  if (!text || !limitWidth) {
+    return null
+  }
+  // hit cache
+  const cache = fontCache[`${fontSize}`] && fontCache[`${fontSize}`][`${limitWidth}`]
+  if (cache) {
+    const hit = Object.keys(cache).find(k => k === text)
+    if (hit) {
+      return cache[hit]
+    }
+  }
+  // 计算
+  const dom = document.createElement('span')
+  dom.classList.add('temp-dom')
+  dom.style.fontSize = `${fontSize}px`
+  dom.innerText = text
+  return dom.offsetWidth
+}
+
 export function scrollToTop (dom, toTop, duration, direction) {
   const clientHeight = dom.clientHeight
   const currentTop = dom.scrollTop

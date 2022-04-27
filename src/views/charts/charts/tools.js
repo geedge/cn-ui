@@ -337,7 +337,7 @@ export function axisFormatter (params) {
   return str
 }
 export function tooLongFormatter (name) {
-  return format.truncateText(name, 110, '12')
+  return format.truncateText(name, 110, '12px')
 }
 export function timeHorizontalFormatter (params) {
   let str = '<div>'
