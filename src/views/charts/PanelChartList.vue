@@ -155,7 +155,7 @@ export default {
         })
       }, 100)
     },
-    chartHeightData (e) {
+    changeChartRowHeight (e) {
       const width = e.currentTarget.innerWidth
       if (width < 1440) {
         this.rowHeight = 25
@@ -169,7 +169,7 @@ export default {
     }
   },
   mounted () {
-    this.debounceFunc = this.$_.debounce(this.chartHeightData, 100)
+    this.debounceFunc = this.$_.debounce(this.changeChartRowHeight, 100)
     window.addEventListener('resize', this.debounceFunc)
   },
   beforeUnmount () {
