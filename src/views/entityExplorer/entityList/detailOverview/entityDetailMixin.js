@@ -143,6 +143,14 @@ export default {
           } else if (this.entityName === 'domain') {
             this.loadingDomain = false
           }
+        } else {
+          if (this.entityName === 'app') {
+            this.loadingApp = false
+          } else if (this.entityName === 'ip') {
+            this.loadingIp = false
+          } else if (this.entityName === 'domain') {
+            this.loadingDomain = false
+          }
         }
       }).finally(() => {
         setTimeout(() => {

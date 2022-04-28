@@ -468,6 +468,8 @@ export default {
             }
           }
           this.loadingLeft = false
+        } else {
+          this.loadingLeft = false
         }
       })
     },
@@ -520,6 +522,8 @@ export default {
         if (response.code === 200) {
           this.entityAppTotal = response.data.result
           this.loading = false
+        } else {
+          this.loading = false
         }
       })
       get(api.entityTotal, { entityType: 'domain' }).then(response => {
@@ -527,12 +531,16 @@ export default {
         if (response.code === 200) {
           this.entityDomainTotal = response.data.result
           this.loading = false
+        } else {
+          this.loading = false
         }
       })
       get(api.entityTotal, { entityType: 'ip' }).then(response => {
         this.loading = true
         if (response.code === 200) {
           this.entityIpTotal = response.data.result
+          this.loading = false
+        } else {
           this.loading = false
         }
       })

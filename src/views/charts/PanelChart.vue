@@ -400,7 +400,7 @@ export default {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
-    let table = ref( '')
+    const table = ref('')
     if (isBasicTable(props.chartInfo.type)) {
       table.value = {
         pageSize: chartTableDefaultPageSize,
