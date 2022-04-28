@@ -76,8 +76,6 @@ export default {
     getTableData (params) {
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
-      } else {
-        this.searchLabel = {}
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       this.tools.loading = true

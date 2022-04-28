@@ -4,7 +4,7 @@
       <div class="cn-builtin-left-title">
         {{$t('report.category')}}
       </div>
-      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === ''}" @click="builtinTabs('', '')">
+      <div class="cn-builtin-left-menu" :class="{'cn-active': !builtinId}" @click="builtinTabs(null)">
         {{$t('dns.all')}}
       </div>
       <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === item.id}" v-for="item in builtinReportLeftMenu" :key="item.id" @click="builtinTabs(item.id)">
@@ -85,12 +85,8 @@ export default {
       })
     },
     builtinTabs (id) {
+      this.getTableData({ tempId: id })
       this.builtinId = id
-      if (id !== '') {
-        this.getTableData({ tempId: id })
-      } else {
-        this.getTableData()
-      }
     }
   },
   mounted () {

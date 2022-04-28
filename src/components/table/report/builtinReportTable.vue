@@ -119,7 +119,7 @@ export default {
           label: this.$t('overall.status'),
           prop: 'state',
           show: true,
-          width: 120,
+          width: 130,
           sortable: 'custom'
         }
       ],
