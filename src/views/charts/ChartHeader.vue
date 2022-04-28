@@ -264,7 +264,7 @@ export default {
       default: false
     },
     table: Object,
-    orderPieTable: Object
+    orderPieTable: String
   },
   components: {
     ChartError

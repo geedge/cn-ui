@@ -266,12 +266,14 @@ export default {
             this.loading = false
           })
         } else if (this.isGroup || this.isTabs) {
-          this.$refs.chart.$refs.chart.reload()
+          this.$refs.chart && this.$refs.chart.$refs.chart && this.$refs.chart.$refs.chart.reload()
         } else if (this.isBlock) {
           if (!this.chartInfo.firstShow) {
             this.chartInfo.firstShow = true
           } else {
-            this.$refs.chart.$refs.chart.reload()
+            if (this.$refs.chart && this.$refs.chart.$refs.chart) {
+              this.$refs.chart.$refs.chart.reload()
+            }
           }
         }
       } catch (e) {
@@ -400,7 +402,7 @@ export default {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
-    const table = ref('')
+    const table = ref({})
     if (isBasicTable(props.chartInfo.type)) {
       table.value = {
         pageSize: chartTableDefaultPageSize,

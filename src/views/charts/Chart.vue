@@ -396,7 +396,7 @@ export default {
     isError: Boolean,
     table: Object,
     timeFilter: Object,
-    orderPieTable: Object,
+    orderPieTable: String,
     tabHandleClickType: String
   },
   computed: {

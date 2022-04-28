@@ -11,22 +11,18 @@
 <script>
 import chartMixin from '@/views/charts/charts/chart-mixin'
 import _ from 'lodash'
+import { ref } from 'vue'
 
 export default {
   name: 'ChartBlock',
   mixins: [chartMixin],
-  data () {
-    return {
-      time: {},
-      firstShow: false
-    }
-  },
-  mounted () {
-    this.firstShow = true
-  },
   methods: {
     reload () {
-      this.dataList = _.cloneDeep(this.dataList)
+      const t = _.cloneDeep(this.dataList)
+      this.dataList = []
+      this.$nextTick(() => {
+        this.dataList = t
+      })
     }
   },
   setup (props) {
@@ -36,7 +32,7 @@ export default {
         return data1.x - data2.x
       })
     }
-    const dataList = copyAndSort(props.chartInfo.children)
+    const dataList = ref(copyAndSort(props.chartInfo.children))
     return {
       copyAndSort,
       dataList
