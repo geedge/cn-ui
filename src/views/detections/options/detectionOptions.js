@@ -5,6 +5,7 @@ import {
 } from '@/views/charts/charts/tools'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
+import { dateFormatByAppearance } from '@/utils/date-util'
 
 const severitySeriesIndexMappings = [
   { value: 'critical', index: '0' },
@@ -296,7 +297,7 @@ export const metricOption = {
       const item = params[0]
       const tData = item.data[0]
       str += '<div style="margin-bottom: 5px">'
-      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += dateFormatByAppearance(tData)
       str += '</div>'
       str += '<div class="cn-chart-tooltip-box">'
       str += item.marker

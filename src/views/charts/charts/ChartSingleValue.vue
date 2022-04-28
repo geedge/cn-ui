@@ -230,6 +230,7 @@ import { get } from '@/utils/http'
 import { unitTypes } from '@/utils/constants'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import * as echarts from 'echarts'
+import { dateFormatByAppearance } from '@/utils/date-util'
 import {
   getOption,
   getChartColor,
@@ -359,7 +360,7 @@ export default {
                 ...seriesTemplate,
                 name: r.legend,
                 data: r.values.map((v) => [
-                  Number(v[0]) * 1000,
+                  dateFormatByAppearance(Number(v[0]) * 1000),
                   Number(v[1]),
                   chartParams.unitType
                 ]),

@@ -7,6 +7,7 @@ import { pieWithTable, ipHostedDomain } from './options/pie'
 import { relationShip } from './options/graph'
 import { sankey } from './options/sankey'
 import { chartColor } from '@/utils/constants'
+import { dateFormatByAppearance } from '@/utils/date-util'
 
 export const chartBarColor = ['#0F8AB2', '#57CBAC']
 export function getChartColor (index) {
@@ -320,7 +321,7 @@ export function axisFormatter (params) {
     const tData = item.data[0]
     if (i === 0) {
       str += '<div style="margin-bottom: 5px">'
-      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += dateFormatByAppearance(tData)
       str += '</div>'
     }
     str += '<div class="cn-chart-tooltip-box">'
@@ -345,7 +346,7 @@ export function timeHorizontalFormatter (params) {
     const tData = item.data[1]
     if (i === 0) {
       str += '<div style="margin-bottom: 5px">'
-      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += dateFormatByAppearance(tData)
       str += '</div>'
     }
     str += '<div class="cn-chart-tooltip-box">'
@@ -388,7 +389,7 @@ export function timeVerticalFormatter (params) {
     const tData = item.data[0]
     if (i === 0) {
       str += '<div style="margin-bottom: 5px">'
-      str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+      str += dateFormatByAppearance(tData)
       str += '</div>'
     }
     str += '<div class="cn-chart-tooltip-box">'
@@ -417,7 +418,7 @@ export function timeBarTooltipFormatter (params, type) {
   let str = '<div>'
   const tData = params.data[index0]
   str += '<div style="margin-bottom: 5px">'
-  str += window.$dayJs.tz(tData).format('YYYY-MM-DD HH:mm:ss')
+  str += dateFormatByAppearance(tData)
   str += '</div>'
 
   str += '<div class="cn-chart-tooltip-box">'

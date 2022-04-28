@@ -58,9 +58,7 @@
                   <div>
                     {{
                       value.startTime
-                        ? dayJs
-                            .tz(getMillisecond(value.startTime))
-                            .format('YYYY-MM-DD HH:mm:ss')
+                        ? dateFormatByAppearance(value.startTime)
                         : '-'
                     }}
                   </div>

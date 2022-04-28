@@ -20,11 +20,11 @@
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('entities.creationDate')}}</div>
-          <div class="domain-detail-list__content">{{ dateFormatByAppearance($_.get(chartData, "createTime")) || '-'}}</div>
+          <div class="domain-detail-list__content">{{ dateFormatByAppearance($_.get(chartData, "createTime") * 1) || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('entities.expirationDate')}}</div>
-          <div class="domain-detail-list__content">{{ dateFormatByAppearance($_.get(chartData, "expirationTime")) || '-'}}</div>
+          <div class="domain-detail-list__content">{{ dateFormatByAppearance($_.get(chartData, "expirationTime") * 1) || '-'}}</div>
         </div>
       </div>
     </div>

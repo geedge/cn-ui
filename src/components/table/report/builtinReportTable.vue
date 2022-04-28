@@ -34,7 +34,7 @@
       <template #default="scope" :column="item">
         <span v-if="item.prop === 'dataRange'">
           <template v-if="scope.row.startTime && scope.row.endTime">
-            {{scope.row.startTime}}-{{scope.row.endTime}}
+            {{dateFormatByAppearance(scope.row.startTime)}}-{{dateFormatByAppearance(scope.row.endTime)}}
           </template>
         </span>
         <span v-else-if="item.prop === 'type'">

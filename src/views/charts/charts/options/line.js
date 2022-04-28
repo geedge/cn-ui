@@ -180,6 +180,7 @@ export const singleValueLine = {
     showContent: true,
     appendToBody: true,
     trigger: 'axis',
+    formatter: axisFormatter,
     textStyle: {
       width: '20px',
       overflow: 'truncate'

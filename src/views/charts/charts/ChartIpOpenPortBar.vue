@@ -17,8 +17,11 @@
                     :min-width="item.width"
             >
                 <template v-slot="scope" :column="item">
-                    <span v-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
-                    <template v-else>-</template>
+                  <span v-if="item.prop === 'utime'">
+                    {{ dateFormatByAppearance(scope.row[item.prop]) }}
+                  </span>
+                  <span v-else-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+                  <template v-else>-</template>
                 </template>
             </el-table-column>
         </el-table>

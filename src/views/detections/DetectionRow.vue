@@ -54,7 +54,7 @@
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
                 <span>{{$t('detection.list.startTime')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{dayJs.tz(getMillisecond(detection.startTime)).format('YYYY-MM-DD HH:mm:ss') || '-'}}</span>
+                <span>{{dateFormatByAppearance(detection.startTime) || '-'}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>

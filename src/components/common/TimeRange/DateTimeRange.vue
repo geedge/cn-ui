@@ -3,9 +3,9 @@
     <div @click="showDropdown" class="date-range-text">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-time"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
-        <div class="calendar-popover-text">{{ dayJs.tz(startTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+        <div class="calendar-popover-text">{{ dateFormatByAppearance(startTime) }}</div>
         <div class="calendar-popover-text"> -</div>
-        <div class="calendar-popover-text">{{ dayJs.tz(endTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+        <div class="calendar-popover-text">{{ dateFormatByAppearance(endTime) }}</div>
       </div>
       <div class="calendar-popover-text" v-else>
         {{ showDetail }}
@@ -33,11 +33,11 @@
             />
             <div class="content-title">From</div>
             <div @click="myDatePickerShow" tabindex="1" class="content-input">
-              {{ dayJs.tz(myStartTime).format('YYYY-MM-DD HH:mm:ss') }}
+              {{ dateFormatByAppearance(myStartTime) }}
             </div>
             <div class="content-title">To</div>
             <div @click="myDatePickerShow" tabindex="2" class="content-input">
-              {{ dayJs.tz(myEndTime).format('YYYY-MM-DD HH:mm:ss') }}
+              {{ dateFormatByAppearance(myEndTime) }}
             </div>
             <div>
               <el-button @click="timeRange" type="primary" size="mini">Apply time range</el-button>
@@ -46,9 +46,9 @@
             <div class="date-range-history">
               <div v-for="(item, index) in rangeHistoryArr" :key="index" class="date-range-history-item"
                    @click="historyChange(item)">
-                {{ dayJs.tz(item.start).format('YYYY-MM-DD HH:mm:ss') }}
+                {{ dateFormatByAppearance(item.start) }}
                 —
-                {{ dayJs.tz(item.end).format('YYYY-MM-DD HH:mm:ss') }}
+                {{ dateFormatByAppearance(item.end) }}
               </div>
             </div>
           </el-col>
