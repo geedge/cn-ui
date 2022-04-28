@@ -210,8 +210,10 @@ export default {
         const value = this.timeFilter.dateRangeValue
         this.$refs.dateTimeRange.quickChange(value)
       } else {
-        this.$refs.dnsScreen.reload()
         this.$refs.panelChartList.reload()
+        if (this.panel.params && this.panel.params.wholeScreenScroll) {
+          this.$refs.dnsScreen.reload()
+        }
       }
     },
     reload (s, e, v) {
@@ -222,7 +224,9 @@ export default {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
       // this.chartList = [...this.chartList]
       this.$nextTick(() => {
-        this.$refs.dnsScreen.reload()
+        if (this.panel.params && this.panel.params.wholeScreenScroll) {
+          this.$refs.dnsScreen.reload()
+        }
         this.$refs.panelChartList.reload()
       })
     },
