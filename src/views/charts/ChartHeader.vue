@@ -311,6 +311,9 @@ export default {
   methods: {
     refresh () {
       this.$emit('refresh')
+      if (this.isAlarmInfo) {
+        this.tabHandleClick('All')
+      }
     },
     timeRefreshChange () {
       // 不是自选时间

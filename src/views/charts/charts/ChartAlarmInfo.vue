@@ -13,16 +13,12 @@
               <div
                 class="icon-box__icon"
                 :style="{
-                  background: eventSeverityColor[value.eventSeverity],
-                  opacity: 0.1,
-                }"
+                  background: eventSeverityColor[value.eventSeverity], opacity: 0.1}"
               ></div>
               <i
                 class="cn-icon cn-icon-alert"
                 :style="{
-                  color: eventSeverityColor[value.eventSeverity],
-                  opacity: 1,
-                }"
+                  color: eventSeverityColor[value.eventSeverity], opacity: 1}"
               ></i>
             </div>
             <div class="content__text-box">
@@ -56,11 +52,7 @@
                     &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
                   </div>
                   <div>
-                    {{
-                      value.startTime
-                        ? dateFormatByAppearance(value.startTime)
-                        : '-'
-                    }}
+                    {{value.startTime ? dateFormatByAppearance(value.startTime) : '-'}}
                   </div>
                 </div>
                 &nbsp;&nbsp;&nbsp;
@@ -79,11 +71,7 @@
                   ></div>
                   &nbsp;&nbsp;&nbsp;
                   <div>
-                    {{
-                      unitConvert(value.endTime - value.startTime, 'time').join(
-                        ' ',
-                      )
-                    }}
+                    {{unitConvert(value.endTime - value.startTime, 'time').join(' ')}}
                   </div>
                 </div>
               </div>
@@ -105,11 +93,9 @@
 
 <script>
 import { eventSeverityColor } from '@/utils/constants'
-import _ from 'lodash'
 import unitConvert from '@/utils/unit-convert'
 import ChartTablePagination from '@/views/charts/charts/ChartTablePagination'
 import { get } from '@/utils/http'
-import { getMillisecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 
 export default {
@@ -126,21 +112,7 @@ export default {
       eventSeverityColor: eventSeverityColor,
       pageNo: 1,
       alarmInfoCount: {},
-      fromChartData: '',
-      isNoData: false
-      // result: [
-      //   {
-      //     entityType: 'ip',
-      //     serverIp: '1.2.3.41.2.3.41.2.3.41.2.3.41.2.3.41.2.3.4',
-      //     domain: '',
-      //     appName: 'wechat',
-      //     eventSeverity: 'high',
-      //     eventType: 'type',
-      //     startTime: 1111111111,
-      //     durationMs: 60000,
-      //     endTime: 1111111112,
-      //   },
-      // ],
+      fromChartData: ''
     }
   },
   computed: {
@@ -160,18 +132,6 @@ export default {
           this.getData(1, n)
         })
       }
-    },
-    alarmInfoCount: {
-      deep: true,
-      handler (n) {}
-    },
-    queryParams: {
-      deep: true,
-      handler (n) {
-        if (n.startTime && n.endTime) {
-          this.getCount(1)
-        }
-      }
     }
   },
   components: {
@@ -179,7 +139,6 @@ export default {
   },
   methods: {
     unitConvert,
-    getMillisecond,
     getCount () {
       const countQuery = {
         startTime: this.queryParams.startTime,
@@ -231,6 +190,9 @@ export default {
     pageJump (val) {
       this.getData(val)
     }
+  },
+  mounted () {
+    this.getCount()
   }
 }
 </script>

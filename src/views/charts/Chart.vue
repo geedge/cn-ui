@@ -380,7 +380,6 @@ export default {
   },
   data () {
     return {
-      tabHandleClickType: ''
     }
   },
   props: {
@@ -450,14 +449,6 @@ export default {
     },
     query (params) {
       this.$emit('query', params)
-    }
-  },
-  watch: {
-    tabHandleClickType: {
-      deep: true,
-      handler (n) {
-        this.tabHandleClickType = n
-      }
     }
   },
   setup (props) {
