@@ -30,7 +30,7 @@ export default {
   props: {
     resultType: Object,
     queryParams: Object,
-    orderPieTable: Object
+    orderPieTable: String
   },
   components: {
     PieTable

@@ -103,6 +103,9 @@
             justify-content: space-between;
             align-items: center;
 
+            .panel__time {
+              top: 7px;
+            }
             .header__operation-btn {
               margin-left: 12px;
               cursor: pointer;
