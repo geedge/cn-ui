@@ -36,6 +36,20 @@
     display: flex;
     flex-direction: row;
 
+    .cn-panel2 .chart-list {
+      .vue-grid-layout .vue-grid-item {
+        .panel-chart-group.panel-chart {
+          .panel-chart {
+            border: none;
+            box-shadow: none;
+            .chart-header {
+              border: none;
+            }
+          }
+        }
+      }
+    }
+
     .entity-detail__menu {
       flex: 0 0 240px;
       display: flex;
@@ -83,19 +97,6 @@
         .panel-chart-table.panel-chart {
           .cn-chart {
             height: calc(100% - 47px) !important;
-          }
-        }
-        .chart-list {
-          .vue-grid-layout .vue-grid-item {
-            .panel-chart-group.panel-chart {
-              .panel-chart {
-                border: none;
-                box-shadow: none;
-                .chart-header {
-                  border: none;
-                }
-              }
-            }
           }
         }
       }
