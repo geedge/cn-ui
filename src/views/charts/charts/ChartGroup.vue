@@ -12,6 +12,7 @@
 <script>
 import chartMixin from '@/views/charts/charts/chart-mixin'
 import _ from 'lodash'
+import { ref } from 'vue'
 
 export default {
   name: 'ChartGroup',
@@ -22,11 +23,15 @@ export default {
   },
   methods: {
     reload () {
-      this.dataList = _.cloneDeep(this.dataList)
+      const t = _.cloneDeep(this.dataList)
+      this.dataList = []
+      this.$nextTick(() => {
+        this.dataList = t
+      })
     }
   },
   setup (props) {
-    const dataList = [...props.chartInfo.children]
+    const dataList = ref([...props.chartInfo.children])
     return {
       dataList
     }
