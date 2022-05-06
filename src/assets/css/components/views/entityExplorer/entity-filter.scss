@@ -30,7 +30,6 @@
     }
     .filter__body {
       padding: 11px 0 21px 0;
-
       .filter__row {
         display: flex;
         justify-content: space-between;
@@ -71,9 +70,6 @@
     padding: 0 10px 10px 10px;
     border: 1px solid #EBEEF5;
     position: absolute;
-    top: 210px;
-    left: 580px;
-    width: 440px;
     color: #606266;
     background: #fff;
     border-radius: 4px;
@@ -107,6 +103,7 @@
         overflow: auto;
         display: flex;
         flex-direction: column;
+        position: relative;
         .filter-top-type {
           padding-left: 10px;
           font-size: 14px;

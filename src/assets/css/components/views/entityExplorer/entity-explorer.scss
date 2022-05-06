@@ -106,6 +106,15 @@
           height: 30px;
           align-items: center;
 
+          .right-label-loading {
+            position: relative;
+            .chart__loading i.el-icon-loading {
+              padding: 0;
+              top: calc(50% - 8px);
+              left: calc(50% - 9px);
+            }
+          }
+
           .right-label {
             width: 55px;
             font-size: 14px;

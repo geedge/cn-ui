@@ -1,5 +1,5 @@
 <template >
-  <div class="entity-pop-custom" v-ele-click-outside="esc"  v-bind:style="entityTopStyle">
+  <div class="entity-pop-custom" style="width: 440px" v-ele-click-outside="esc">
     <div class="pop-title" >
       <div>
         <i :class="item.icon"></i>
@@ -9,9 +9,7 @@
     </div>
     <div class="filter-top-box" >
       <div class="filter-top-body">
-        <div class="entity__loading" v-show="loading">
-          <i class="el-icon-loading"></i>
-        </div>
+        <loading :loading="loading"></loading>
         <div class="filter-top-type">{{item.value}}{{$t('overall.operator')}}{{item.label}}</div>
         <el-table
             :data="entityTopTenData"
@@ -46,16 +44,18 @@
 
 <script>
 import { riskLevelMapping } from '@/utils/constants'
+import Loading from '@/components/common/Loading'
 
 export default {
+  components: { Loading },
   props: {
     loading: Boolean
   },
   data () {
     return {
       entityTopStyle: {
-        // top:'300px',
-        left: '580px'
+        top: 0,
+        left: 0
       },
       custom: [],
       item: {},
@@ -66,13 +66,13 @@ export default {
     // 悬浮点击空白隐藏
     esc () {
       this.$emit('close')
+      this.item = {}
+      this.entityTopTenData = []
     },
     filter (row) {
       this.$emit('filter', row.name, this.item)
     },
-    initEntityTop (leftVal, itemVal, data, totalCount) {
-      // this.entityTopStyle.top = topVal+'px'
-      this.entityTopStyle.left = leftVal + 'px'
+    initEntityTop (itemVal, data, totalCount) {
       this.item = itemVal
       if (data.length > 0) {
         this.entityTopTenData = data.map(d => {

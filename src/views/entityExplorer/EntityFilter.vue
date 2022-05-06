@@ -8,7 +8,7 @@
     >
       <div class="filter__header">{{filter.title}}</div>
       <div class="filter__body">
-        <div class="filter__row" v-for="(item, i) in filter.data" :key="i"  @click="showTopDialog(i, item, filter)"  :ref="`entityTopTen`+i">
+        <div class="filter__row" v-for="(item, i) in filter.data" :key="i"  @click="showTopDialog(i, item, filter)"  :ref="'entityTopTen' + i + filter.type">
           <div class="row__label">
             <i :class="item.icon"></i>
               <span>{{item.label}}</span>
@@ -23,6 +23,7 @@
     <!-- 自定义table列 -->
     <transition name="el-zoom-in-top">
       <entity-top
+          :style="location"
           v-show="showTopTen"
           ref="entityTopTenPop"
           :loading="loading"
@@ -58,15 +59,22 @@ export default {
       topData: [],
       showTopTen: false, // 自定义列弹框是否显示
       entityTopTenData: [],
+      location: {
+        top: 0,
+        left: 0
+      },
+      currentColumn: '',
       loading: false
     }
   },
   methods: {
     showTopDialog (i, item, filter) {
+      this.currentColumn = item.column
       const type = filter.type
-      const width = this.$refs['entityTopTen' + i].offsetWidth
-      const offsetLeft = this.$refs['entityTopTen' + i].offsetLeft
-      const leftVal = offsetLeft + width
+      this.location.left = '17.5rem'
+      const offsetTop = this.$refs['entityTopTen' + i + filter.type].offsetTop
+      this.location.top = offsetTop + 'px'
+      this.showTopTen = true
       const queryParams = {
         q: this.q,
         entityType: type,
@@ -75,29 +83,26 @@ export default {
         startTime: parseInt(this.timeFilter.startTime / 1000),
         endTime: parseInt(this.timeFilter.endTime / 1000)
       }
-      this.timeout = setTimeout(() => {
-        this.loading = true
-      }, 500)
+      this.loading = true
       get(api.filterTop, queryParams).then(response => {
         if (response.code === 200) {
-          this.$refs.entityTopTenPop.initEntityTop(leftVal, item, response.data.result, filter.totalCount)
+          console.info(this.currentColumn, item.column)
+          if (this.currentColumn === item.column) {
+            this.$refs.entityTopTenPop.initEntityTop(item, response.data.result, filter.totalCount)
+          }
         } else {
-          this.$refs.entityTopTenPop.initEntityTop(leftVal, item, [], filter.totalCount)
+          this.$refs.entityTopTenPop.initEntityTop(item, [], filter.totalCount)
         }
-      }).catch(e => {
-        this.$refs.entityTopTenPop.initEntityTop(leftVal, item, [], filter.totalCount)
-      }).finally(() => {
-        clearTimeout(this.timeout)
         this.loading = false
-        this.showTopTen = true
+      }).catch(e => {
+        this.$refs.entityTopTenPop.initEntityTop(item, [], filter.totalCount)
+        this.loading = false
       })
     },
     filter (name, topData) {
       this.showTopTen = false
       this.$emit('filter', name, topData)
     }
-  },
-  mounted () {
   }
 }
 </script>
