@@ -1,7 +1,9 @@
 import unitConvert from '@/utils/unit-convert'
-import { unitTypes, chartColor } from '@/utils/constants'
+import { unitTypes, chartColor, storageKey } from '@/utils/constants'
 import { axisFormatter, tooLongFormatter } from '@/views/charts/charts/tools'
 
+const legendFontSize = localStorage.getItem(storageKey.echartLegendFontSize)
+const labelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
 export const line = {
   tooltip: {
     appendToBody: true,
@@ -49,12 +51,12 @@ export const line = {
     itemWidth: 10,
     textStyle: {
       padding: [0, 0, 0, 2],
-      fontSize: 14
+      fontSize: legendFontSize
     },
     formatter: tooLongFormatter
   },
   axisLabel: {
-    fontSize: 14
+    fontSize: labelFontSize
   },
   series: [
     {
@@ -99,10 +101,13 @@ export const lineWithStatistics = {
     right: 20
   },
   legend: {
-    show: false
+    show: false,
+    textStyle: {
+      fontSize: legendFontSize
+    }
   },
   axisLabel: {
-    fontSize: 14
+    fontSize: labelFontSize
   },
   series: [
     {
@@ -156,11 +161,11 @@ export const lineStack = {
     formatter: tooLongFormatter,
     textStyle: {
       padding: [0, 0, 0, 5],
-      fontSize: 14
+      fontSize: legendFontSize
     }
   },
   axisLabel: {
-    fontSize: 14
+    fontSize: labelFontSize
   },
   series: [
     {
@@ -180,7 +185,6 @@ export const singleValueLine = {
     showContent: true,
     appendToBody: true,
     trigger: 'axis',
-    formatter: axisFormatter,
     textStyle: {
       width: '20px',
       overflow: 'truncate'
@@ -203,7 +207,10 @@ export const singleValueLine = {
   },
   color: chartColor,
   legend: {
-    show: false
+    show: false,
+    textStyle: {
+      fontSize: legendFontSize
+    }
   },
   series: [
     {
@@ -253,7 +260,10 @@ export const entityListLine = {
   },
   color: chartColor,
   legend: {
-    show: false
+    show: false,
+    textStyle: {
+      fontSize: legendFontSize
+    }
   },
   series: [
     {

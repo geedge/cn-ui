@@ -12,6 +12,8 @@
 import Header from './Header'
 import LeftMenu from './LeftMenu'
 import Container from './Container'
+import { getEchartsFontSize } from '@/utils/tools'
+
 export default {
   name: 'Home',
   components: {
@@ -29,6 +31,9 @@ export default {
       this.containerShow = false
       this.$nextTick(() => { this.containerShow = true })
     }
+  },
+  created () {
+    getEchartsFontSize()
   }
 }
 </script>

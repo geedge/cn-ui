@@ -1,5 +1,6 @@
 import { shallowRef } from 'vue'
 import * as echarts from 'echarts'
+import { storageKey, echartsFontSize } from '@/utils/constants'
 import {
   isEchartsLine,
   isEchartsPie,
@@ -9,6 +10,7 @@ import {
   isAppRelatedDomain,
   getOption
 } from './tools'
+import { handleEchartFontSize, getEchartsFontSize } from '@/utils/tools'
 export default {
   props: {
     chartInfo: Object,
@@ -32,7 +34,8 @@ export default {
   data () {
     return {
       chartOption: null,
-      chartOption2: null
+      chartOption2: null,
+      isResizing: false
     }
   },
   methods: {
@@ -77,25 +80,115 @@ export default {
         return allZero
       }
     },
-    chartResize () {
-      this.$store.getters.getChartList.forEach(chart => {
-        if (chart) {
-          chart.resize()
-        }
-      })
+    chartResize (e) {
+      if (!this.isResizing) {
+        this.isResizing = true
+        // echarts相关图表文字动态调整大小
+        const oldLegendFontSize = localStorage.getItem(storageKey.echartLegendFontSize)
+        const oldLabelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
+        getEchartsFontSize(e)
+        const echartLegendFontSize = localStorage.getItem(storageKey.echartLegendFontSize)
+        const echartLabelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
+
+        const chartList = this.$store.getters.getChartList
+        chartList.forEach((item, index, arr) => {
+          try {
+            if (item) {
+              const chart = echarts.init(item.getDom())
+              let chartOption = item.getOption()
+
+              if (oldLegendFontSize != echartLegendFontSize) {
+                console.log('updateLegend....')
+                chartOption = {
+                  ...chartOption,
+                  legend: {
+                    ...chartOption.legend,
+                    textStyle: {
+                      fontSize: echartLegendFontSize
+                    }
+                  }
+                }
+              }
+              if (oldLabelFontSize != echartLabelFontSize) {
+                console.log('updateLabel....')
+                const newSeries = []
+                const chartType = chartOption.series[0].type
+                chartOption.series.forEach((series) => {
+                  const seriesNew = {
+                    ...series,
+                    label: {
+                      ...series.label,
+                      fontSize: echartLabelFontSize
+                    },
+                    markLine: {
+                      ...series.markLine,
+                      label: {
+                        fontSize: echartLabelFontSize
+                      }
+                    }
+                  }
+                  newSeries.push(seriesNew)
+                })
+
+                if (chartType === 'pie') {
+                  chartOption = {
+                    ...chartOption,
+                    axisLabel: {
+                      ...chartOption.axisLabel,
+                      fontSize: echartLabelFontSize
+                    },
+                    series: newSeries
+                  }
+                } else {
+                  chartOption = {
+                    ...chartOption,
+                    xAxis: {
+                      ...chartOption.xAxis,
+                      axisLabel: {
+                        fontSize: echartLabelFontSize
+                      }
+                    },
+                    yAxis: {
+                      ...chartOption.yAxis,
+                      axisLabel: {
+                        fontSize: echartLabelFontSize
+                      }
+                    },
+                    axisLabel: {
+                      ...chartOption.axisLabel,
+                      fontSize: echartLabelFontSize
+                    },
+                    series: newSeries
+                  }
+                }
+              }
+              if (oldLegendFontSize != echartLegendFontSize || oldLabelFontSize != echartLabelFontSize) {
+                chart.setOption(chartOption)
+              }
+              item.resize()
+            }
+          } catch (e) {
+            console.error(e)
+          }
+        })
+
+        setTimeout(() => {
+          this.isResizing = false
+        }, 200)
+      }
     },
-    setTimeoutResize () {
+    setTimeoutResize (e) {
       setTimeout(() => {
-        this.chartResize()
+        this.chartResize(e)
       }, 400)
     },
     loadEchart (chartNum, refresh = false) {
       this.$emit('showLoading', true)
       try {
-        this.myChart.setOption(this.chartOption, refresh)
+        this.myChart.setOption(handleEchartFontSize(this.chartOption), refresh)
         this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart))
         if (chartNum && chartNum == 2) {
-          this.myChart2.setOption(this.chartOption2, refresh)
+          this.myChart2.setOption(handleEchartFontSize(this.chartOption2), refresh)
           this.$store.commit('setChartList', this.$_.cloneDeep(this.myChart2))
         }
       } finally {

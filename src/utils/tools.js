@@ -1,7 +1,7 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112, topDomain } from '@/utils/constants'
+import { storageKey, iso36112, topDomain, echartsFontSize } from '@/utils/constants'
 import { getIso36112JsonData } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
@@ -633,6 +633,105 @@ export function computeSecondaryDomain (name) {
 
 export function getCurrentRoute () {
   return router.currentRoute && router.currentRoute.path
+}
+
+export function getEchartsFontSize (e) {
+  let clientWidth
+  if (e) {
+    clientWidth = e.currentTarget.innerWidth
+  } else {
+    clientWidth = document.getElementsByTagName('html')[0].clientWidth
+  }
+
+  let echartLegendFontSize = echartsFontSize.legendFirstFontSize
+  let echartLabelFontSize = echartsFontSize.labelFirstFontSize
+  if (clientWidth < 1920) {
+    echartLegendFontSize = echartsFontSize.legendFirstFontSize
+    echartLabelFontSize = echartsFontSize.labelFirstFontSize
+  } else if (clientWidth >= 1920 && clientWidth < 2560) {
+    echartLegendFontSize = echartsFontSize.legendSecondFontSize
+    echartLabelFontSize = echartsFontSize.labelSecondFontSize
+  } else if (clientWidth >= 2560) {
+    echartLegendFontSize = echartsFontSize.legendThirdFontSize
+    echartLabelFontSize = echartsFontSize.labelThirdFontSize
+  }
+  localStorage.setItem(storageKey.echartLegendFontSize, echartLegendFontSize)
+  localStorage.setItem(storageKey.echartLabelFontSize, echartLabelFontSize)
+}
+
+export function handleEchartFontSize (option) {
+  // echarts相关图表文字动态调整大小
+  getEchartsFontSize()
+  const echartLegendFontSize = localStorage.getItem(storageKey.echartLegendFontSize)
+  const echartLabelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
+  let chartOption = option
+  try {
+    const newSeries = []
+    const chartType = chartOption.series[0].type
+    chartOption.series.forEach((series) => {
+      const seriesNew = {
+        ...series,
+        label: {
+          ...series.label,
+          fontSize: echartLabelFontSize
+        },
+        markLine: {
+          ...series.markLine,
+          label: {
+            fontSize: echartLabelFontSize
+          }
+        }
+      }
+      newSeries.push(seriesNew)
+    })
+
+    if (chartType === 'pie') {
+      chartOption = {
+        ...chartOption,
+        legend: {
+          ...chartOption.legend,
+          textStyle: {
+            fontSize: echartLegendFontSize
+          }
+        },
+        axisLabel: {
+          ...chartOption.axisLabel,
+          fontSize: echartLabelFontSize
+        },
+        series: newSeries
+      }
+    } else {
+      chartOption = {
+        ...chartOption,
+        legend: {
+          ...chartOption.legend,
+          textStyle: {
+            fontSize: echartLegendFontSize
+          }
+        },
+        xAxis: {
+          ...chartOption.xAxis,
+          axisLabel: {
+            fontSize: echartLabelFontSize
+          }
+        },
+        yAxis: {
+          ...chartOption.yAxis,
+          axisLabel: {
+            fontSize: echartLabelFontSize
+          }
+        },
+        axisLabel: {
+          ...chartOption.axisLabel,
+          fontSize: echartLabelFontSize
+        },
+        series: newSeries
+      }
+    }
+  } catch (e) {
+    console.error(e)
+  }
+  return chartOption
 }
 
 // 判断数据相等

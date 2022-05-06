@@ -22,7 +22,9 @@ export const storageKey = {
   tablePageSizePrefix: 'cn-page-size',
   leftMenuShrink: 'cn-left-menu-shrink',
   unsavedChange: 'cn-unsaved-change',
-  entitySearchHistory: 'cn-entity-search-history'
+  entitySearchHistory: 'cn-entity-search-history',
+  echartLegendFontSize: 'echartLegendFontSize',
+  echartLabelFontSize: 'echartLabelFontSize'
 }
 
 // 统一定义跳转来源
@@ -64,6 +66,15 @@ export const entityType = {
   app: 'APP',
   domain: 'Domain',
   ip: 'IP'
+}
+
+export const echartsFontSize = {
+  legendFirstFontSize: 12, // <1920
+  legendSecondFontSize: 14, // >=1920 && <2560
+  legendThirdFontSize: 16, // >=2560
+  labelFirstFontSize: 12, // <1920
+  labelSecondFontSize: 12, // >=1920 && <2560
+  labelThirdFontSize: 14// >=2560
 }
 
 export const entityFilterType = {

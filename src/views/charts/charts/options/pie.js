@@ -1,7 +1,9 @@
 import unitConvert from '@/utils/unit-convert'
 import { tooLongFormatter } from '../tools'
-import { chartColor } from '@/utils/constants'
+import { chartColor, storageKey } from '@/utils/constants'
 
+const legendFontSize = localStorage.getItem(storageKey.echartLegendFontSize)
+const labelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
 export const pieWithTable = {
   tooltip: {
     appendToBody: true
@@ -20,6 +22,9 @@ export const pieWithTable = {
     formatter: tooLongFormatter,
     tooltip: {
       show: true
+    },
+    textStyle: {
+      fontSize: legendFontSize
     }
   },
   series: [
@@ -64,6 +69,9 @@ export const ipHostedDomain = {
     itemGap: 20,
     tooltip: {
       show: true
+    },
+    textStyle: {
+      fontSize: legendFontSize
     },
     formatter: function (name) {
       return name.length > 9 ? name.substr(0, 9) + '...' : name

@@ -12,7 +12,7 @@ import {
 } from '@/views/charts/charts/tools'
 import chartEchartMixin from './chart-echart-mixin'
 import unitConvert from '@/utils/unit-convert'
-import {unitTypes} from "@/utils/constants";
+import { unitTypes } from '@/utils/constants'
 
 export default {
   name: 'ChartEchartWithStatistics',
