@@ -1,6 +1,6 @@
 .detection-list {
   width: 100%;
-  height: calc(100% - 42px);
+  overflow: auto;
   flex: 1;
   position: relative;
 
