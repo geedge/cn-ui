@@ -51,9 +51,12 @@
                         font-family: Roboto-Regular;
                         color: #333333;
                         font-weight: 400;
-                        white-space: nowrap;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
+                        div {
+                            max-width: 400px;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+                        }
                     }
 
                     .text-box__text {
