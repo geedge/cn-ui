@@ -665,71 +665,71 @@ export function handleEchartFontSize (option) {
   const echartLegendFontSize = localStorage.getItem(storageKey.echartLegendFontSize)
   const echartLabelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
   let chartOption = option
-  try {
-    const newSeries = []
-    const chartType = chartOption.series[0].type
-    chartOption.series.forEach((series) => {
-      const seriesNew = {
-        ...series,
+  const newSeries = []
+  const chartType = chartOption.series[0].type
+  chartOption.series.forEach((series) => {
+    const seriesNew = {
+      ...series,
+      label: {
+        ...series.label,
+        fontSize: echartLabelFontSize
+      },
+      markLine: {
+        ...series.markLine,
         label: {
-          ...series.label,
           fontSize: echartLabelFontSize
-        },
-        markLine: {
-          ...series.markLine,
-          label: {
-            fontSize: echartLabelFontSize
-          }
         }
       }
-      newSeries.push(seriesNew)
-    })
-
-    if (chartType === 'pie') {
-      chartOption = {
-        ...chartOption,
-        legend: {
-          ...chartOption.legend,
-          textStyle: {
-            fontSize: echartLegendFontSize
-          }
-        },
-        axisLabel: {
-          ...chartOption.axisLabel,
-          fontSize: echartLabelFontSize
-        },
-        series: newSeries
-      }
-    } else {
-      chartOption = {
-        ...chartOption,
-        legend: {
-          ...chartOption.legend,
-          textStyle: {
-            fontSize: echartLegendFontSize
-          }
-        },
-        xAxis: {
-          ...chartOption.xAxis,
-          axisLabel: {
-            fontSize: echartLabelFontSize
-          }
-        },
-        yAxis: {
-          ...chartOption.yAxis,
-          axisLabel: {
-            fontSize: echartLabelFontSize
-          }
-        },
-        axisLabel: {
-          ...chartOption.axisLabel,
-          fontSize: echartLabelFontSize
-        },
-        series: newSeries
-      }
     }
-  } catch (e) {
-    console.error(e)
+    newSeries.push(seriesNew)
+  })
+
+  if (chartType === 'pie') {
+    chartOption = {
+      ...chartOption,
+      legend: {
+        ...chartOption.legend,
+        textStyle: {
+          ...chartOption.legend.textStyle,
+          fontSize: echartLegendFontSize
+        }
+      },
+      axisLabel: {
+        ...chartOption.axisLabel,
+        fontSize: echartLabelFontSize
+      },
+      series: newSeries
+    }
+  } else {
+    chartOption = {
+      ...chartOption,
+      legend: {
+        ...chartOption.legend,
+        textStyle: {
+          ...chartOption.legend.textStyle,
+          fontSize: echartLegendFontSize
+        }
+      },
+      xAxis: {
+        ...chartOption.xAxis,
+        axisLabel: {
+          ...chartOption.xAxis.axisLabel,
+          fontSize: echartLabelFontSize
+        }
+      },
+      yAxis: {
+        ...chartOption.yAxis,
+        axisLabel: {
+          ...chartOption.yAxis.axisLabel,
+          fontSize: echartLabelFontSize
+        }
+      },
+      axisLabel: {
+        ...chartOption.axisLabel,
+        fontSize: echartLabelFontSize
+      },
+      series: newSeries
+    }
   }
   return chartOption
 }

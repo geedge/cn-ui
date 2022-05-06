@@ -145,12 +145,14 @@ export default {
                     xAxis: {
                       ...chartOption.xAxis,
                       axisLabel: {
+                        ...chartOption.xAxis.axisLabel,
                         fontSize: echartLabelFontSize
                       }
                     },
                     yAxis: {
                       ...chartOption.yAxis,
                       axisLabel: {
+                        ...chartOption.yAxis.axisLabel,
                         fontSize: echartLabelFontSize
                       }
                     },
