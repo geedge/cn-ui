@@ -188,7 +188,7 @@ export default {
             pageSize: 9
           }
         }
-        if (this.isDetectionService || this.isDetectionSecurity) {
+        if ((this.isDetectionService || this.isDetectionSecurity) && JSON.stringify(extraParams) === '{}') {
           extraParams = {
             pageNo: 1,
             pageSize: 6
