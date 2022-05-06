@@ -57,7 +57,7 @@
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <loading :loading="loading"></loading>
+              <loading :loading="loadingApp"></loading>
               <span class="overview-left-loading-span">{{entityAppTotal}}</span>
             </span>
             <span class="overview-left-span">APP</span>
@@ -66,12 +66,18 @@
             <div class="right-row">
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
-              <div class="right-value">{{entityAppNew}}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingAppNew"></loading>
+                <div class="right-value">{{entityAppNew}}</div>
+              </div>
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
-              <div class="right-value">{{entityAppActive}}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingAppActive"></loading>
+                <div class="right-value">{{entityAppActive}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -79,7 +85,7 @@
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <loading :loading="loading"></loading>
+              <loading :loading="loadingDomain"></loading>
               <span class="overview-left-loading-span">{{entityDomainTotal}}</span>
             </span>
             <span class="overview-left-span">DOMAIN</span>
@@ -88,12 +94,18 @@
             <div class="right-row">
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
-              <div class="right-value">{{entityDomainNew}}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingDomainNew"></loading>
+                <div class="right-value">{{entityDomainNew}}</div>
+              </div>
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
-              <div class="right-value">{{entityDomainActive}}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingDomainActive"></loading>
+                <div class="right-value">{{entityDomainActive}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -101,7 +113,7 @@
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <loading :loading="loading"></loading>
+              <loading :loading="loadingIp"></loading>
               <span class="overview-left-loading-span">{{entityIpTotal}}</span>
             </span>
             <span class="overview-left-span">IP</span>
@@ -110,12 +122,18 @@
             <div class="right-row">
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
-              <div class="right-value">{{entityIpNew}}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingIpNew"></loading>
+                <div class="right-value">{{entityIpNew}}</div>
+              </div>
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
-              <div class="right-value">{{entityIpActive}}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingIpActive"></loading>
+                <div class="right-value">{{entityIpActive}}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -272,7 +290,20 @@ export default {
       metaList: [],
       limitFilterType: true, // 是否限定了filter的类型
       listLoading: false,
-      loading: false,
+      // 实体详情搜索页面 底部列表
+      loadingApp: false,
+      loadingDomain: false,
+      loadingIp: false,
+      // New
+      loadingAppNew: false,
+      loadingDomainNew: false,
+      loadingIpNew: false,
+      // Active
+      loadingAppActive: false,
+      loadingDomainActive: false,
+      loadingIpActive: false,
+
+      // 实体详情列表页面 左侧筛选条件
       loadingLeft: false
     }
   },
@@ -517,64 +548,73 @@ export default {
         endTime: parseInt(now / 1000)
       }
       // Total
+      this.loadingApp = true
+      this.loadingDomain = true
+      this.loadingIp = true
+      // New
+      this.loadingAppNew = true
+      this.loadingDomainNew = true
+      this.loadingIpNew = true
+      // Active
+      this.loadingAppActive = true
+      this.loadingDomainActive = true
+      this.loadingIpActive = true
+
       get(api.entityTotal, { entityType: 'app' }).then(response => {
-        this.loading = true
         if (response.code === 200) {
           this.entityAppTotal = response.data.result
-          this.loading = false
-        } else {
-          this.loading = false
         }
+        this.loadingApp = false
       })
       get(api.entityTotal, { entityType: 'domain' }).then(response => {
-        this.loading = true
         if (response.code === 200) {
           this.entityDomainTotal = response.data.result
-          this.loading = false
-        } else {
-          this.loading = false
         }
+        this.loadingDomain = false
       })
       get(api.entityTotal, { entityType: 'ip' }).then(response => {
-        this.loading = true
         if (response.code === 200) {
           this.entityIpTotal = response.data.result
-          this.loading = false
-        } else {
-          this.loading = false
         }
+        this.loadingIp = false
       })
       // New
       get(api.entityNew, { entityType: 'app', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityAppNew = response.data.result
         }
+        this.loadingAppNew = false
       })
       get(api.entityNew, { entityType: 'domain', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityDomainNew = response.data.result
         }
+        this.loadingDomainNew = false
       })
       get(api.entityNew, { entityType: 'ip', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityIpNew = response.data.result
         }
+        this.loadingIpNew = false
       })
       // Active
       get(api.entityActive, { entityType: 'app', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityAppActive = response.data.result
         }
+        this.loadingAppActive = false
       })
       get(api.entityActive, { entityType: 'domain', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityDomainActive = response.data.result
         }
+        this.loadingDomainActive = false
       })
       get(api.entityActive, { entityType: 'ip', ...timeFilter }).then(response => {
         if (response.code === 200) {
           this.entityIpActive = response.data.result
         }
+        this.loadingIpActive = false
       })
     },
     cleanFilterData (index) {
