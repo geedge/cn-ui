@@ -36,9 +36,7 @@
         <div class="row__content">
           {{
             basicInfo.startTime
-              ? dayJs
-                  .tz(getMillisecond(basicInfo.startTime))
-                  .format('YYYY-MM-DD HH:mm:ss')
+              ? dateFormatByAppearance(basicInfo.startTime)
               : '-'
           }}
         </div>

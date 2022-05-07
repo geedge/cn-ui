@@ -73,13 +73,13 @@
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.startTime')}}</div>
           <div class="overview__row">
-            <div class="row__content--metric ">{{dayJs.tz(detection.startTime*1000).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
+            <div class="row__content--metric ">{{dateFormatByAppearance(detection.startTime*1000) || '-'}}</div>
           </div>
         </div>
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.endTime')}}</div>
           <div class="overview__row">
-            <div class="row__content--metric ">{{dayJs.tz(detection.endTime*1000).format('YYYY-MM-DD HH:mm:ss') || '-'}}</div>
+            <div class="row__content--metric ">{{dateFormatByAppearance(detection.endTime*1000) || '-'}}</div>
           </div>
         </div>
       </div>
