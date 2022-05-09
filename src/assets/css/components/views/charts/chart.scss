@@ -102,21 +102,22 @@
   .domain-detail-list__row {
     display: table-row;
 
-    &:last-of-type {
-      .domain-detail-list__label, .domain-detail-list__content {
-        border-bottom: none;
-      }
-    }
+    //&:last-of-type {
+      //.domain-detail-list__label, .domain-detail-list__content {
+      //  border-bottom: none;
+      //}
+    //}
     .domain-detail-list__label {
       display: table-cell;
-      padding: 13px 30px;
+      padding: 8px 30px;
       border-bottom: 1px solid $--content-right-background-color;
       min-width: 170px;
+      font-size: 14px;
       color: #6B717B;
     }
     .domain-detail-list__content {
       display: table-cell;
-      padding: 13px 0 ;
+      font-size: 14px;
       border-bottom: 1px solid $--content-right-background-color;
       color: #3976CB;
     }
