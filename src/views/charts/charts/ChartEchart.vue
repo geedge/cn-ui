@@ -115,6 +115,9 @@ export default {
       } else {
         const seriesTemplate = this.chartOption.series[0]
         this.chartOption.series = this.chartData.map((r) => {
+          if (r.legend && legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`]) {
+            r.legend = this.$t(legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`])
+          }
           const serie = {
             ...seriesTemplate,
             name: legendMapping[
@@ -123,7 +126,7 @@ export default {
               ? legendMapping[
                   `${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`
               ]
-              : humpToSpace(r.legend),
+              : (legendMapping[r.legend] ? legendMapping[r.legend] : humpToSpace(r.legend)),
             data: r.values.map((v) => [
               Number(v[0]) * 1000,
               Number(v[1]),

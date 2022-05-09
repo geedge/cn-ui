@@ -13,6 +13,7 @@ import {
 import chartEchartMixin from './chart-echart-mixin'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
+import { legendMapping } from '@/views/charts/charts/chart-table-title'
 
 export default {
   name: 'ChartEchartWithStatistics',
@@ -41,6 +42,9 @@ export default {
       })
       const seriesTemplate = this.chartOption.series[0]
       this.chartOption.series = this.chartData.map((r, i) => {
+        if (r.legend && legendMapping[r.legend]) {
+          r.legend = this.$t(legendMapping[r.legend])
+        }
         return {
           ...seriesTemplate,
           name: r.legend,
