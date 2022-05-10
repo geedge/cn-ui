@@ -360,7 +360,7 @@ export default {
                 ...seriesTemplate,
                 name: r.legend,
                 data: r.values.map((v) => [
-                  dateFormatByAppearance(Number(v[0]) * 1000),
+                  Number(v[0]) * 1000,
                   Number(v[1]),
                   chartParams.unitType
                 ]),

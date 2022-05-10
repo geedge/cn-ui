@@ -185,6 +185,7 @@ export const singleValueLine = {
     showContent: true,
     appendToBody: true,
     trigger: 'axis',
+    formatter: axisFormatter,
     textStyle: {
       width: '20px',
       overflow: 'truncate'
@@ -208,6 +209,7 @@ export const singleValueLine = {
   color: chartColor,
   legend: {
     show: false,
+    formatter: tooLongFormatter,
     textStyle: {
       fontSize: legendFontSize
     }
