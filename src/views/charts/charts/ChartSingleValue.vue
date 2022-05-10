@@ -243,6 +243,7 @@ import {
   isCommon3SingleValue,
   isDetectionsProtocol
 } from '@/views/charts/charts/tools'
+import { legendMapping } from '@/views/charts/charts/chart-table-title'
 
 export default {
   name: 'chartSingleValue',
@@ -356,6 +357,9 @@ export default {
             const seriesTemplate = this.chartOption.series[0]
             const result = response.data.result
             this.chartOption.series = result.map((r, i) => {
+              if (r.legend && legendMapping[r.legend]) {
+                r.legend = this.$t(legendMapping[r.legend])
+              }
               return {
                 ...seriesTemplate,
                 name: r.legend,
