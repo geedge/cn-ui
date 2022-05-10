@@ -1,3 +1,5 @@
+import { dnsServerRole } from '@/utils/constants'
+
 const panel = {
   state: {
     showRightBox: false,
@@ -15,7 +17,8 @@ const panel = {
       x: 0,
       y: 0
     },
-    chartList: []
+    chartList: [],
+    currentMap: dnsServerRole.RTDNSM
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -62,6 +65,9 @@ const panel = {
     },
     cleanChartList (state) {
       state.chartList = []
+    },
+    setCurrentMap (state, currentMap) {
+      state.currentMap = currentMap
     }
   },
   getters: {
@@ -103,6 +109,9 @@ const panel = {
     },
     getChartList (state) {
       return state.chartList
+    },
+    getCurrentMap (state) {
+      return state.currentMap
     }
   },
   actions: {

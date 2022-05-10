@@ -204,7 +204,8 @@ export default {
         const requestUrl = url || (chartParams && chartParams.url)
         // 默认参数特殊处理
         if (requestUrl && requestUrl.indexOf('dnsServerRole') > -1) {
-          this.queryParams.dnsServerRole = extraParams.dnsServerRole || dnsServerRole.RTDNS
+          const currentMap = this.$store.getters.getCurrentMap
+          this.queryParams.dnsServerRole = extraParams.dnsServerRole || currentMap || dnsServerRole.RTDNSM
         }
 
         if (requestUrl) {

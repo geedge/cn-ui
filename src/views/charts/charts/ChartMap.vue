@@ -48,8 +48,8 @@ export default {
       currentLegendIndex: 0,
       legends: [
         {
-          name: this.$t('dns.rootDomainServers'),
-          type: dnsServerRole.RTDNS,
+          name: this.$t('dns.rtMirrors'),
+          type: dnsServerRole.RTDNSM,
           value: 0
         },
         {
@@ -68,15 +68,15 @@ export default {
           value: 0
         },
         {
-          name: this.$t('dns.rtMirrors'),
-          type: dnsServerRole.RTDNSM,
+          name: this.$t('dns.forwardServers'),
+          type: dnsServerRole.FWDNS,
           value: 0
         }
       ],
       markerColors: [
         {
-          background: '#C0DEFE',
-          border: '#68AFFC'
+          background: '#ECC6F7',
+          border: '#B620E0'
         },
         {
           background: '#DBCFFA',
@@ -91,8 +91,8 @@ export default {
           border: '#FFB84E'
         },
         {
-          background: '#ECC6F7',
-          border: '#B620E0'
+          background: '#C0DEFE',
+          border: '#68AFFC'
         },
         {
           background: '#FDC6C6',
@@ -420,10 +420,14 @@ export default {
     },
     changeLegend (index) {
       this.currentLegendIndex = index
+      this.$store.commit('setCurrentMap', this.legends[index].type)
       this.$emit('getChartData', null, { dnsServerRole: this.legends[index].type })
     },
     dnsTypeI18n (role) {
       let i18n = ''
+      if (!role) {
+        role = this.legends[this.currentLegendIndex].type
+      }
       switch (role.toUpperCase()) {
         case dnsServerRole.RTDNS: {
           i18n = 'dns.rootDomainServers'
@@ -446,7 +450,11 @@ export default {
           break
         }
         case dnsServerRole.RTDNSM: {
-          i18n = 'RTDNSM'
+          i18n = 'dns.rtMirrors'
+          break
+        }
+        case dnsServerRole.FWDNS: {
+          i18n = 'dns.forwardServers'
           break
         }
         default: break
@@ -522,9 +530,9 @@ export default {
   },
   setup (props) {
     const circleColor = {}
-    circleColor[dnsServerRole.RTDNS] = {
-      background: '#C0DEFE',
-      border: '#478AD5'
+    circleColor[dnsServerRole.RTDNSM] = {
+      background: '#ECC6F7',
+      border: '#BF49DF'
     }
     circleColor[dnsServerRole.TLDNS] = {
       background: '#DBCFFA',
@@ -542,9 +550,9 @@ export default {
       background: '#FDC6C6',
       border: '#FA7777'
     }
-    circleColor[dnsServerRole.RTDNSM] = {
-      background: '#ECC6F7',
-      border: '#BF49DF'
+    circleColor[dnsServerRole.FWDNS] = {
+      background: '#C0DEFE',
+      border: '#478AD5'
     }
     return {
       myChart: shallowRef(null),

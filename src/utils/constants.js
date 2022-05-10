@@ -209,7 +209,8 @@ export const dnsServerRole = {
   OPRDNS: 'OPRDNS',
   ADNS: 'ADNS',
   SBDNS: 'SBDNS',
-  RTDNSM: 'RTDNSM'
+  RTDNSM: 'RTDNSM',
+  FWDNS: 'FWDNS'
 }
 
 // 整屏滚动的路径映射
