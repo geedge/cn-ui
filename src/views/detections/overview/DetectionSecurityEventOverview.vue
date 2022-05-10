@@ -230,9 +230,7 @@
               </div>
               <div class="timeline__start-time">
                 {{
-                  dayJs
-                    .tz(getMillisecond(event.startTime))
-                    .format('YYYY-MM-DD HH:mm:ss')
+                  dateFormatByAppearance(event.startTime)
                 }}
               </div>
             </div>

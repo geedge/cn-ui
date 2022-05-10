@@ -230,7 +230,6 @@ import { get } from '@/utils/http'
 import { unitTypes } from '@/utils/constants'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import * as echarts from 'echarts'
-import { dateFormatByAppearance } from '@/utils/date-util'
 import {
   getOption,
   getChartColor,

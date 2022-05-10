@@ -262,7 +262,7 @@ export default {
       if (sql) {
         const oldHistory = localStorage.getItem(storageKey.entitySearchHistory)
         let arr = []
-        const newItem = { sql, date: window.$dayJs.tz(new Date().getTime()).format('YYYY-MM-DD HH:mm:ss') }
+        const newItem = { sql, date: this.dateFormatByAppearance(new Date()) }
         if (!this.$_.isEmpty(oldHistory)) {
           const oldArr = JSON.parse(oldHistory)
           oldArr.unshift(newItem)
