@@ -188,49 +188,53 @@ export default {
       } else if (!localStorage.getItem(storageKey.token) && n === 1) {
         return window.location.replace('/')
       }
-      axios.get(url, { responseType: 'blob', params: params }).then(res => {
-        if (window.navigator.msSaveOrOpenBlob) {
-          // 兼容ie11
-          const blobObject = new Blob([res.data])
-          window.navigator.msSaveOrOpenBlob(blobObject, fileName)
-        } else {
-          const url = URL.createObjectURL(new Blob([res.data]))
-          const a = document.createElement('a')
-          document.body.appendChild(a) // 此处增加了将创建的添加到body当中
-          a.href = url
-          a.download = fileName
-          a.target = '_blank'
-          a.click()
-          a.remove() // 将a标签移除
-        }
-        if (n === 2) { // 批量下载
-          this.$refs.dataTable.loading = false
-        } else if (n === 1) { // 列表单个下载
-          this.$refs.dataTable.loadingTableId = !u.id
-        }
-      }, error => {
-        const $self = this
-        const reader = new FileReader()
-        reader.onload = function (event) {
-          const responseText = reader.result
-          const exception = JSON.parse(responseText)
-          if (exception.message) {
-            $self.$message.error(exception.message)
-          } else {
-            console.error(error)
-          }
-        }
-        reader.readAsText(error.response.data)
-        if (n === 2) { // 批量下载
-          this.$refs.dataTable.loading = false
-        } else if (n === 1) { // 列表单个下载
-          this.$refs.dataTable.loadingTableId = !u.id
-        }
-      }).catch(() => {
-        if (n === 2) { // 批量下载
-          this.$refs.dataTable.loading = false
-        } else if (n === 1) { // 列表单个下载
-          this.$refs.dataTable.loadingTableId = !u.id
+      get(api.reportTemp).then(res => {
+        if (res.code === 200) {
+          axios.get(url, { responseType: 'blob', params: params }).then(res => {
+            if (window.navigator.msSaveOrOpenBlob) {
+              // 兼容ie11
+              const blobObject = new Blob([res.data])
+              window.navigator.msSaveOrOpenBlob(blobObject, fileName)
+            } else {
+              const url = URL.createObjectURL(new Blob([res.data]))
+              const a = document.createElement('a')
+              document.body.appendChild(a) // 此处增加了将创建的添加到body当中
+              a.href = url
+              a.download = fileName
+              a.target = '_blank'
+              a.click()
+              a.remove() // 将a标签移除
+            }
+            if (n === 2) { // 批量下载
+              this.$refs.dataTable.loading = false
+            } else if (n === 1) { // 列表单个下载
+              this.$refs.dataTable.loadingTableId = !u.id
+            }
+          }, error => {
+            const $self = this
+            const reader = new FileReader()
+            reader.onload = function (event) {
+              const responseText = reader.result
+              const exception = JSON.parse(responseText)
+              if (exception.message) {
+                $self.$message.error(exception.message)
+              } else {
+                console.error(error)
+              }
+            }
+            reader.readAsText(error.response.data)
+            if (n === 2) { // 批量下载
+              this.$refs.dataTable.loading = false
+            } else if (n === 1) { // 列表单个下载
+              this.$refs.dataTable.loadingTableId = !u.id
+            }
+          }).catch(() => {
+            if (n === 2) { // 批量下载
+              this.$refs.dataTable.loading = false
+            } else if (n === 1) { // 列表单个下载
+              this.$refs.dataTable.loadingTableId = !u.id
+            }
+          })
         }
       })
     },
