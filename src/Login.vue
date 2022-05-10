@@ -1,7 +1,7 @@
 <template>
   <div class="logins">
     <div class="inside">
-      <div class="title" style="margin-top:70px">
+      <div class="title">
         <img src="../public/images/cion.png" />
       </div>
       <el-form class="login__box">
@@ -158,9 +158,13 @@ export default {
 }
 
 .title {
-  /* margin-top: 70px; */
-  margin-left: 52px;
-  margin-right: 10px;
+  margin-top: 70px;
+  text-align: center;
+
+}
+.title > img {
+  height: 43px;
+  width: 248px;
 }
 .login--input{
   width: 300px;

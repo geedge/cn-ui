@@ -259,7 +259,8 @@ export default {
       color: '',
       type: 0,
       chartOption: null,
-      timer: null
+      timer: null,
+      myChart: ''
     }
   },
   watch: {
@@ -372,19 +373,28 @@ export default {
                 }
               }
             })
+            this.myChart = myChart
             myChart.setOption(this.chartOption)
           }
         )
       }
+    },
+    resize () {
+      if (this.myChart) this.myChart.resize()
     }
   },
   mounted () {
+    this.debounceFunc = this.$_.debounce(this.resize, 500)
+    window.addEventListener('resize', this.debounceFunc)
     this.$nextTick(
       () =>
         (this.timer = setTimeout(() => {
           this.chartSingleValueTotal()
         }, 200))
     )
+  },
+  beforeUnmount () {
+    window.addEventListener('resize', this.debounceFunc)
   },
   deactivated () {
     clearTimeout(this.timer)
