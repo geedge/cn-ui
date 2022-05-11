@@ -107,11 +107,14 @@
       }
     }
     .table-operation-items {
-      .table-operation-item--down {
+      .table-operation-item--no-border {
         margin-right: 16px;
         cursor: pointer;
       }
-      .table-operation-item--down,.table-operation-item--preview {
+      .table-operation-item--no-border:last-of-type {
+        margin-right: 0;
+      }
+      .table-operation-item--no-border {
         display: flex;
         justify-content: center;
         flex-direction: column;
@@ -127,9 +130,10 @@
           height: 25px;
           width: 25px;
         }
-      }
-      .table-operation-item--preview {
-        cursor: pointer;
+        .icon2 {
+          height: 16px;
+          width: 16px;
+        }
       }
     }
   }
