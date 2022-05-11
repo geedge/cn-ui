@@ -77,65 +77,6 @@ export const echartsFontSize = {
   labelThirdFontSize: 14// >=2560
 }
 
-export const entityFilterType = {
-  ip: [
-    {
-      column: 'country_distinct_count',
-      labelI18nCode: 'overall.country',
-      icon: 'cn-icon cn-icon-country'
-    },
-    {
-      column: 'province_distinct_count',
-      labelI18nCode: 'overall.province',
-      icon: 'cn-icon cn-icon-position'
-    },
-    {
-      column: 'city_distinct_count',
-      labelI18nCode: 'overall.city',
-      icon: 'cn-icon cn-icon-city'
-    },
-    {
-      column: 'asn_distinct_count',
-      labelI18nCode: 'entities.asn',
-      icon: 'cn-icon cn-icon-cloud'
-    }
-  ],
-  domain: [
-    {
-      column: 'categoryGroupDistinctCount',
-      labelI18nCode: 'entities.domainDetail.categoryGroup',
-      icon: 'cn-icon cn-icon-category'
-    },
-    {
-      column: 'categoryDistinctCount',
-      labelI18nCode: 'entities.category',
-      icon: 'cn-icon cn-icon-sub-category'
-    },
-    {
-      column: 'categoryGroupDistinctCount',
-      labelI18nCode: 'entities.reputationLevel',
-      icon: 'cn-icon cn-icon-credit'
-    }
-  ],
-  app: [
-    {
-      column: 'categoryDistinctCount',
-      labelI18nCode: 'entities.category',
-      icon: 'cn-icon cn-icon-category'
-    },
-    {
-      column: 'subcategoryDistinctCount',
-      labelI18nCode: 'entities.subcategory',
-      icon: 'cn-icon cn-icon-sub-category'
-    },
-    {
-      column: 'riskDistinctCount',
-      labelI18nCode: 'entities.risk',
-      icon: 'cn-icon cn-icon-risk'
-    }
-  ]
-}
-
 export const unitTypes = {
   time: 'time',
   number: 'number',

@@ -149,7 +149,7 @@ import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
-import { entityType, entityFilterType, defaultPageSize, riskLevelMapping } from '@/utils/constants'
+import { entityType, defaultPageSize, riskLevelMapping } from '@/utils/constants'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -202,28 +202,28 @@ export default {
               label: this.$t('overall.country'),
               column: 'countryDistinctCount',
               topColumn: 'ip_location_country', // top弹框查询字段
-              icon: entityFilterType.ip[0].icon,
+              icon: 'cn-icon cn-icon-country',
               value: 0
             },
             {
               label: this.$t('overall.province'),
               column: 'provinceDistinctCount',
               topColumn: 'ip_location_province', // top弹框查询字段
-              icon: entityFilterType.ip[1].icon,
+              icon: 'cn-icon cn-icon-position',
               value: 0
             },
             {
               label: this.$t('overall.city'),
               column: 'cityDistinctCount',
               topColumn: 'ip_location_city', // top弹框查询字段
-              icon: entityFilterType.ip[2].icon,
+              icon: 'cn-icon cn-icon-city',
               value: 0
             },
             {
               label: this.$t('entities.asn'),
               column: 'asnDistinctCount',
               topColumn: 'ip_asn', // top弹框查询字段
-              icon: entityFilterType.ip[3].icon,
+              icon: 'cn-icon cn-icon-cloud',
               value: 0
             }
           ]
@@ -237,21 +237,21 @@ export default {
               label: this.$t('entities.category'),
               column: 'categoryDistinctCount',
               topColumn: 'app_category', // top弹框查询字段
-              icon: entityFilterType.app[0].icon,
+              icon: 'cn-icon cn-icon-category',
               value: 0
             },
             {
               label: this.$t('entities.subcategory'),
               column: 'subcategoryDistinctCount',
               topColumn: 'app_subcategory', // top弹框查询字段
-              icon: entityFilterType.app[1].icon,
+              icon: 'cn-icon cn-icon-sub-category',
               value: 0
             },
             {
               label: this.$t('entities.risk'),
               column: 'riskDistinctCount',
               topColumn: 'app_risk', // top弹框查询字段
-              icon: entityFilterType.app[2].icon,
+              icon: 'cn-icon cn-icon-risk',
               value: 0
             }
           ]
@@ -265,21 +265,56 @@ export default {
               label: this.$t('entities.domainDetail.categoryGroup'),
               column: 'categoryGroupDistinctCount',
               topColumn: 'domain_category_group', // top弹框查询字段
-              icon: entityFilterType.domain[0].icon,
+              icon: 'cn-icon cn-icon-category',
               value: 0
             },
             {
               label: this.$t('entities.category'),
               column: 'categoryDistinctCount',
               topColumn: 'domain_category', // top弹框查询字段
-              icon: entityFilterType.domain[1].icon,
+              icon: 'cn-icon cn-icon-sub-category',
               value: 0
             },
             {
               label: this.$t('entities.reputationLevel'),
               column: 'reputationLevelDistinctCount',
               topColumn: 'domain_reputation_level', // top弹框查询字段
-              icon: entityFilterType.domain[2].icon,
+              icon: 'cn-icon cn-icon-credit',
+              value: 0
+            }
+          ]
+        },
+        {
+          type: 'dns',
+          title: 'DNS',
+          totalCount: 0,
+          data: [
+            {
+              label: this.$t('overall.dnsServerInfo.role'),
+              column: 'dnsServerRoleCount',
+              topColumn: 'dns_server_role',
+              icon: 'cn-icon cn-icon-role',
+              value: 0
+            },
+            {
+              label: this.$t('dns.managementOrganization'),
+              column: 'dnsServerOrgCount',
+              topColumn: 'dns_server_org',
+              icon: 'cn-icon cn-icon-org',
+              value: 0
+            },
+            {
+              label: this.$t('overall.dnsServerInfo.software'),
+              column: 'dnsServerSoftwareCount',
+              topColumn: 'dns_server_software',
+              icon: 'cn-icon cn-icon-software',
+              value: 0
+            },
+            {
+              label: this.$t('overall.dnsServerInfo.system'),
+              column: 'dnsServerOsCount',
+              topColumn: 'dns_server_os',
+              icon: 'cn-icon cn-icon-os',
               value: 0
             }
           ]

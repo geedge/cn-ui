@@ -10,6 +10,7 @@
     <!-- 搜索组件 -->
     <detection-search
         ref="search"
+        :page-type="pageType"
         @search="search"
     ></detection-search>
     <!-- 内容区 -->
@@ -230,7 +231,9 @@ export default {
       isStatisticsSeverityNoData: false,
       isStatisticsCategoryNoData: false,
       isStatisticsActiveAttackNoData: false,
-      loading: false
+      loading: false,
+
+      oldActiveEntitySearchValue: ''
     }
   },
   methods: {
@@ -462,7 +465,7 @@ export default {
           data.sort(reverseSortBy('count'))
           data = data.slice(0, 5)
           option.series[0].data = data.map(d => {
-            return [d.count, d.name]
+            return [d.count, d.name, d.entityType]
           }).reverse()
           detectionChart.setOption(option)
           extensionEchartY(detectionChart)// y轴标签过长时，鼠标悬浮，显示所有内容
@@ -470,7 +473,41 @@ export default {
           const vm = this
           detectionChart.off('click')
           detectionChart.on('click', e => {
-            vm.filterData.performanceEvent[0].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[0].value, e.data[1])
+            const entityType = e.data[2]
+            let column = ''
+            if (entityType) {
+              switch (entityType) {
+                case 'app': {
+                  column = 'app_name'
+                  break
+                }
+                case 'domain': {
+                  column = 'domain'
+                  break
+                }
+                case 'ip': {
+                  column = 'server_ip'
+                  break
+                }
+                default: {
+                  break
+                }
+              }
+              if (column) {
+                // 点击的name和上次的name一致，则清空该项条件
+                if (vm.oldActiveEntitySearchValue === e.data[1]) {
+                  vm.$refs.search.changeParams({ column: column, oldValue: [vm.oldActiveEntitySearchValue], newValue: [] })
+                  vm.$nextTick(() => {
+                    vm.oldActiveEntitySearchValue = ''
+                  })
+                } else {
+                  vm.$refs.search.changeParams({ column: column, oldValue: vm.oldActiveEntitySearchValue ? [vm.oldActiveEntitySearchValue] : [], newValue: [e.data[1]] })
+                  vm.$nextTick(() => {
+                    vm.oldActiveEntitySearchValue = e.data[1]
+                  })
+                }
+              }
+            }
           })
         }
       }).catch(error => {

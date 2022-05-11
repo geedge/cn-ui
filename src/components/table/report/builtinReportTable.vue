@@ -34,14 +34,14 @@
       <template #default="scope" :column="item">
         <span v-if="item.prop === 'dataRange'">
           <template v-if="scope.row.startTime && scope.row.endTime">
-            {{dateFormatByAppearance(scope.row.startTime)}}-{{dateFormatByAppearance(scope.row.endTime)}}
+            {{dateFormatByAppearance(scope.row.startTime)}}<span style="padding: 0 5px">-</span>{{dateFormatByAppearance(scope.row.endTime)}}
           </template>
         </span>
         <span v-else-if="item.prop === 'type'">
             {{scope.row.reportTemp.name}}
         </span>
         <span v-else-if="item.prop === 'state'">
-            {{getJobStatus(scope.row.state)}}
+            {{getJobStatus(scope.row)}}
         </span>
         <span v-else>{{scope.row[item.prop]}}</span>
       </template>
@@ -56,16 +56,22 @@
       </template>
       <template #default="scope">
         <div class="table-operation-items" v-if="scope.row.state === 1">
-          <div class="table-operation-item--down" @click="tableOperation(['download', scope.row, 1])">
+          <div class="table-operation-item--no-border" @click="tableOperation(['download', scope.row, 1])">
             <loading :loading="loadingTableId === scope.row.id"></loading>
             <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
               <use xlink:href="#cn-icon-download2"></use>
             </svg>
           </div>
-          <div class="table-operation-item--preview" @click="tableOperation(['preview', scope.row])">
+          <div class="table-operation-item--no-border" @click="tableOperation(['preview', scope.row])">
             <loading :loading="loadingPreviewId === scope.row.id"></loading>
             <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
               <use xlink:href="#cn-icon-preview"></use>
+            </svg>
+          </div>
+          <div class="table-operation-item--no-border" @click="tableOperation(['rerun', scope.row])">
+            <loading :loading="loadingPreviewId === scope.row.id"></loading>
+            <svg class="icon2" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
+              <use xlink:href="#cn-icon-refresh"></use>
             </svg>
           </div>
         </div>
@@ -101,11 +107,11 @@ export default {
           prop: 'name',
           show: true,
           sortable: 'custom'
-        }, {
+        }, /* {
           label: this.$t('config.chart.remark'),
           prop: 'remark',
           show: true
-        }, {
+        }, */{
           label: this.$t('overall.type'),
           prop: 'type',
           show: true,
@@ -115,6 +121,10 @@ export default {
           prop: 'dataRange',
           show: true,
           minWidth: 110
+        }, {
+          label: this.$t('overall.completionTime'),
+          prop: 'finishTime',
+          show: true
         }, {
           label: this.$t('overall.status'),
           prop: 'state',
@@ -135,11 +145,11 @@ export default {
     }
   },
   methods: {
-    getJobStatus (state) {
-      if (state === 0) {
-        return this.$t('overall.inProgress')
-      } else if (state === 1) {
+    getJobStatus (report) {
+      if (report.state === 1 && report.upload === 1) {
         return this.$t('overall.completed')
+      } else {
+        return this.$t('overall.inProgress')
       }
     },
     selectionChange (objs) {

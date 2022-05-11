@@ -4,7 +4,7 @@
       <div class="explorer-search__input">
         <advanced-search
             ref="search"
-            :column-list="columnList"
+            :column-list="columnList[pageType]"
             :operator-list="operatorList"
             :connection-list="connectionList"
             :full-text="false"
@@ -22,50 +22,79 @@
 <script>
 import AdvancedSearch from '@/components/advancedSearch/Index'
 import { humpToLine } from '@/utils/tools'
+import {columnType} from "@/components/advancedSearch/meta/meta";
+import SqlParser from "@/components/advancedSearch/meta/sql-parser";
 export default {
   name: 'DetectionSearch',
+  props: {
+    pageType: String
+  },
   components: {
     AdvancedSearch
   },
   data () {
     return {
-      columnList: [
-        {
-          name: 'event_severity',
-          type: 'string',
-          label: 'Event severity'
-        },
-        {
-          name: 'security_type',
-          type: 'string',
-          label: 'Security type'
-        },
-        {
-          name: 'event_type',
-          type: 'string',
-          label: 'Event type'
-        },
-        {
-          name: 'victim_ip',
-          type: 'string',
-          label: 'Victim IP'
-        },
-        {
-          name: 'victim_location_country',
-          type: 'string',
-          label: 'Victim location'
-        },
-        {
-          name: 'offender_ip',
-          type: 'string',
-          label: 'Offender IP'
-        },
-        {
-          name: 'offender_location_country',
-          type: 'string',
-          label: 'Offender location'
-        }
-      ],
+      columnList: {
+        securityEvent: [
+          {
+            name: 'event_severity',
+            type: 'string',
+            label: 'Event severity'
+          },
+          {
+            name: 'security_type',
+            type: 'string',
+            label: 'Security type'
+          },
+          {
+            name: 'victim_ip',
+            type: 'string',
+            label: 'Victim IP'
+          },
+          {
+            name: 'victim_location_country',
+            type: 'string',
+            label: 'Victim location'
+          },
+          {
+            name: 'offender_ip',
+            type: 'string',
+            label: 'Offender IP'
+          },
+          {
+            name: 'offender_location_country',
+            type: 'string',
+            label: 'Offender location'
+          }
+        ],
+        performanceEvent: [
+          {
+            name: 'event_severity',
+            type: 'string',
+            label: 'Event severity'
+          },
+          {
+            name: 'event_type',
+            type: 'string',
+            label: 'Event type'
+          },
+          {
+            name: 'app_name',
+            type: 'string',
+            label: 'APP name'
+          },
+          {
+            name: 'domain',
+            type: 'string',
+            label: 'Domain'
+          },
+          {
+            name: 'server_ip',
+            type: 'string',
+            label: 'IP'
+          }
+        ]
+      },
       operatorList: ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
       connectionList: [
         {
@@ -81,7 +110,18 @@ export default {
   },
   methods: {
     search (metaList, formatSql) {
-      this.$emit('search', metaList, formatSql)
+      let sql = formatSql
+      // 全文搜索处理
+      if (metaList && this.$_.isArray(metaList)) {
+        const hasFullText = metaList.some(meta => {
+          return meta.column && meta.column.type === columnType.fullText
+        })
+        if (hasFullText) {
+          const parser = new SqlParser(metaList, this.columnList[this.pageType])
+          sql = parser.parseMetaToSql(metaList, true)
+        }
+      }
+      this.$emit('search', metaList, sql)
     },
     changeParams (params) { // params: { column: columnName, oldValue: [...], newValue: [...] }
       // 向下传递时需要再转换一次param格式为[{column, operator, value}, ...]
