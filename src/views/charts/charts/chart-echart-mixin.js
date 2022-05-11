@@ -114,20 +114,38 @@ export default {
                 const newSeries = []
                 const chartType = chartOption.series[0].type
                 chartOption.series.forEach((series) => {
-                  const seriesNew = {
-                    ...series,
-                    label: {
-                      ...series.label,
-                      fontSize: echartLabelFontSize
-                    },
-                    markLine: {
-                      ...series.markLine,
+                  if (series.markLine) {
+                    const seriesNew = {
+                      ...series,
                       label: {
+                        ...series.label,
                         fontSize: echartLabelFontSize
+                      },
+                      markLine: {
+                        ...series.markLine,
+                        label: {
+                          ...series.markLine.label,
+                          fontSize: echartLabelFontSize
+                        }
                       }
                     }
+                    newSeries.push(seriesNew)
+                  } else {
+                    const seriesNew = {
+                      ...series,
+                      label: {
+                        ...series.label,
+                        fontSize: echartLabelFontSize
+                      },
+                      markLine: {
+                        ...series.markLine,
+                        label: {
+                          fontSize: echartLabelFontSize
+                        }
+                      }
+                    }
+                    newSeries.push(seriesNew)
                   }
-                  newSeries.push(seriesNew)
                 })
 
                 if (chartType === 'pie') {
