@@ -11,7 +11,7 @@ import { shallowRef } from 'vue'
 export default {
   props: {
     entity: Object,
-    timeFilter: {},
+    timeFilter: Object,
     listMode: String,
     loading: Boolean
   },

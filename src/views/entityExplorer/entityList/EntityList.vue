@@ -42,6 +42,8 @@
 <script>
 import Card from '@/views/entityExplorer/entityList/Card'
 import Row from '@/views/entityExplorer/entityList/Row'
+import { getNowTime } from '@/utils/date-util'
+import { ref } from 'vue'
 
 export default {
   name: 'EntityList',
@@ -50,8 +52,7 @@ export default {
     from: String,
     pageObj: Object,
     loading: Boolean,
-    listMode: String,
-    timeFilter: Object
+    listMode: String
   },
   components: {
     'entity-card': Card,
@@ -95,6 +96,15 @@ export default {
           this.noData = false
         }
       }
+    }
+  },
+  setup () {
+    // date
+    const dateRangeValue = 60
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    const timeFilter = ref({ startTime, endTime, dateRangeValue })
+    return {
+      timeFilter
     }
   }
 }

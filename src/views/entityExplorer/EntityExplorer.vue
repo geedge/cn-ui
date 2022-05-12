@@ -4,8 +4,8 @@
       :class="{'entity-explorer--show-list': showList}">
     <!-- 顶部工具栏，在列表页显示 -->
     <div class="explorer-top-tools" v-show="showList">
-      <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
-      <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
+<!--      <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
+      <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>-->
       <el-button-group size="mini">
         <el-button size="mini" @click="listMode = 'list'" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
         <el-button size="mini" @click="listMode = 'block'" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
@@ -25,14 +25,12 @@
             :filter-data="filterData"
             :loading-left="loadingLeft"
             :q="q"
-            :time-filter="timeFilter"
             @filter="filter"
         ></entity-filter>
         <entity-list
             :list-data="listData"
             :list-mode="listMode"
             :pageObj="pageObj"
-            :time-filter="timeFilter"
             @pageSize="pageSize"
             @pageNo="pageNo"
             :loading="listLoading"
@@ -428,24 +426,24 @@ export default {
           } else {
             this.limitFilterType = false
           }
-          this.queryFilter({ entityType: entityType, q: this.q, ...this.timeFilter })
-          this.queryList({ q: this.q, ...this.timeFilter, ...this.pageObj })
-          this.queryListTotal({ q: this.q, ...this.timeFilter })
+          this.queryFilter({ entityType: entityType, q: this.q })
+          this.queryList({ q: this.q, ...this.pageObj })
+          this.queryListTotal({ q: this.q })
         } else {
           this.limitFilterType = false
-          this.queryFilter({ entityType: 'ip', q: this.q, ...this.timeFilter })
-          this.queryFilter({ entityType: 'domain', q: this.q, ...this.timeFilter })
-          this.queryFilter({ entityType: 'app', q: this.q, ...this.timeFilter })
-          this.queryList({ q: this.q, ...this.timeFilter, ...this.pageObj })
-          this.queryListTotal({ q: this.q, ...this.timeFilter })
+          this.queryFilter({ entityType: 'ip', q: this.q })
+          this.queryFilter({ entityType: 'domain', q: this.q })
+          this.queryFilter({ entityType: 'app', q: this.q })
+          this.queryList({ q: this.q, ...this.pageObj })
+          this.queryListTotal({ q: this.q })
         }
       } else {
         this.limitFilterType = false
-        this.queryFilter({ entityType: 'ip', ...this.timeFilter })
-        this.queryFilter({ entityType: 'app', ...this.timeFilter })
-        this.queryFilter({ entityType: 'domain', ...this.timeFilter })
-        this.queryList({ ...this.timeFilter, ...this.pageObj })
-        this.queryListTotal({ ...this.timeFilter })
+        this.queryFilter({ entityType: 'ip' })
+        this.queryFilter({ entityType: 'app' })
+        this.queryFilter({ entityType: 'domain' })
+        this.queryList({ ...this.pageObj })
+        this.queryListTotal()
       }
     },
     pageSize (val) {
@@ -491,9 +489,9 @@ export default {
     /* 查询filter数据 */
     queryFilter (params) {
       const queryParams = {
-        ...params,
+        ...params/* ,
         startTime: getSecond(params.startTime),
-        endTime: getSecond(params.endTime)
+        endTime: getSecond(params.endTime) */
       }
       this.loadingLeft = true
       get(api.entityFilter, queryParams).then(response => {
@@ -542,9 +540,9 @@ export default {
     queryList (params) {
       this.listLoading = true
       const queryParams = {
-        ...params,
+        ...params/* ,
         startTime: parseInt(params.startTime / 1000),
-        endTime: parseInt(params.endTime / 1000)
+        endTime: parseInt(params.endTime / 1000) */
       }
       get(api.entityList, queryParams).then(response => {
         if (response.code === 200) {
@@ -560,9 +558,9 @@ export default {
 
     queryListTotal (params) {
       const queryParams = {
-        ...params,
+        ...params/* ,
         startTime: parseInt(params.startTime / 1000),
-        endTime: parseInt(params.endTime / 1000)
+        endTime: parseInt(params.endTime / 1000) */
       }
       get(api.entityListTotal, queryParams).then(response => {
         if (response.code === 200) {
@@ -662,13 +660,13 @@ export default {
   mounted () {
     this.getEntityIndexData()
   },
-  watch: {
+  /* watch: {
     timeFilter (n) {
       this.search(this.metaList, this.q)
     }
-  },
+  }, */
   setup () {
-    const dateRangeValue = 60 * 24
+    const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const timeFilter = ref({ startTime, endTime, dateRangeValue })
     return {
