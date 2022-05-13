@@ -3,6 +3,8 @@
   flex-direction: column;
   width: 280px;
   margin-right: 10px;
+  overflow: auto;
+  z-index: 1;
 
   .filter-case__header {
     background-color: #E1E6ED;
@@ -31,19 +33,22 @@
     .filter__body {
       padding: 11px 0 21px 0;
       .filter__row {
-        display: flex;
-        justify-content: space-between;
         padding: 0 15px;
         height: 26px;
         align-items: center;
         cursor: pointer;
         transition: all linear .2s;
+        .filter__row-popover {
+          display: flex;
+          line-height: 24px;
+        }
 
         &:hover, &.filter__row--active {
           background-color: #F3F7FA;
         }
         .row__label {
           font-size: 14px;
+          flex: 8;
           i {
             color: #8FA1BE;
           }
@@ -56,6 +61,8 @@
           color: #666;
           position: relative;
           display: inline-block;
+          text-align: center;
+          flex: 1;
           .chart__loading i.el-icon-loading {
             font-size: 18px;
             top: calc(50% - 10px);
@@ -65,63 +72,25 @@
       }
     }
   }
-
+}
+.filter__row-popover {
+  .pop-title {
+    i {
+      margin-right: 6px;
+    }
+  }
   .entity-pop-custom {
-    padding: 0 10px 10px 10px;
-    border: 1px solid #EBEEF5;
-    position: absolute;
-    color: #606266;
-    background: #fff;
-    border-radius: 4px;
-    z-index: 999999;
-    box-shadow: 0 0 10px #CCC;
-    box-sizing: border-box;
-
-    .el-button--mini{
-      padding: 5px 7px;
-    }
-    .pop-title{
-      margin-left: 10px;
-      margin-top:17px;
-      font-family: Roboto-Black;
-      font-size: 16px;
-      color: #333333;
-      letter-spacing: 0;
-      line-height: 16px;
-      font-weight: 400;
-      span {
-        padding-left: 6px;
-        color: #333;
-      }
-    }
     .filter-top-box {
       margin-top: 12px;
-      width: 100%;
-      height: fit-content;
-      .filter-top-body{
-        height: fit-content;
-        overflow: auto;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        .filter-top-type {
-          padding-left: 10px;
-          font-size: 14px;
-          color: #666666;
-          letter-spacing: 0;
-          font-weight: 400;
-        }
-
-        .top-table-percent{
-          display:grid;
-          grid-template-columns: 50% auto;
-          grid-template-rows: 100%;
-          grid-row-gap: 0px;
-          grid-column-gap: 0px;
-          .top-table-progress{
-            align-content: center;
-            padding-top: 8px;
-          }
+      .top-table-percent{
+        display:grid;
+        grid-template-columns: 50% auto;
+        grid-template-rows: 100%;
+        grid-row-gap: 0px;
+        grid-column-gap: 0px;
+        .top-table-progress{
+          align-content: center;
+          padding-top: 8px;
         }
       }
     }
