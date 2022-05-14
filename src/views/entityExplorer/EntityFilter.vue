@@ -53,6 +53,7 @@ export default {
   props: {
     filterData: Array,
     q: String,
+    timeFilter: Object,
     loadingLeft: Boolean
   },
   data () {
@@ -76,7 +77,9 @@ export default {
         q: this.q,
         entityType: filter.type,
         column: item.topColumn,
-        top: 10
+        top: 10,
+        startTime: parseInt(this.timeFilter.startTime / 1000),
+        endTime: parseInt(this.timeFilter.endTime / 1000)
       }
       this.loading = true
       this.popoverData = []
