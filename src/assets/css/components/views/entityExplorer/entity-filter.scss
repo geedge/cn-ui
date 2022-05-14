@@ -81,6 +81,9 @@
   }
   .entity-pop-custom {
     .filter-top-box {
+      .chart__loading {
+        height: calc(100% - 65px);
+      }
       margin-top: 12px;
       .top-table-percent{
         display:grid;

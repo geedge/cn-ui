@@ -201,6 +201,7 @@ export default {
               column: 'countryDistinctCount',
               topColumn: 'ip_location_country', // top弹框查询字段
               icon: 'cn-icon cn-icon-country',
+              showTopTen: false,
               value: 0
             },
             {
@@ -208,6 +209,7 @@ export default {
               column: 'provinceDistinctCount',
               topColumn: 'ip_location_province', // top弹框查询字段
               icon: 'cn-icon cn-icon-position',
+              showTopTen: false,
               value: 0
             },
             {
@@ -215,6 +217,7 @@ export default {
               column: 'cityDistinctCount',
               topColumn: 'ip_location_city', // top弹框查询字段
               icon: 'cn-icon cn-icon-city',
+              showTopTen: false,
               value: 0
             },
             {
@@ -222,6 +225,7 @@ export default {
               column: 'asnDistinctCount',
               topColumn: 'ip_asn', // top弹框查询字段
               icon: 'cn-icon cn-icon-cloud',
+              showTopTen: false,
               value: 0
             }
           ]
@@ -236,6 +240,7 @@ export default {
               column: 'categoryDistinctCount',
               topColumn: 'app_category', // top弹框查询字段
               icon: 'cn-icon cn-icon-category',
+              showTopTen: false,
               value: 0
             },
             {
@@ -243,6 +248,7 @@ export default {
               column: 'subcategoryDistinctCount',
               topColumn: 'app_subcategory', // top弹框查询字段
               icon: 'cn-icon cn-icon-sub-category',
+              showTopTen: false,
               value: 0
             },
             {
@@ -250,6 +256,7 @@ export default {
               column: 'riskDistinctCount',
               topColumn: 'app_risk', // top弹框查询字段
               icon: 'cn-icon cn-icon-risk',
+              showTopTen: false,
               value: 0
             }
           ]
@@ -264,6 +271,7 @@ export default {
               column: 'categoryGroupDistinctCount',
               topColumn: 'domain_category_group', // top弹框查询字段
               icon: 'cn-icon cn-icon-category',
+              showTopTen: false,
               value: 0
             },
             {
@@ -271,6 +279,7 @@ export default {
               column: 'categoryDistinctCount',
               topColumn: 'domain_category', // top弹框查询字段
               icon: 'cn-icon cn-icon-sub-category',
+              showTopTen: false,
               value: 0
             },
             {
@@ -278,13 +287,14 @@ export default {
               column: 'reputationLevelDistinctCount',
               topColumn: 'domain_reputation_level', // top弹框查询字段
               icon: 'cn-icon cn-icon-credit',
+              showTopTen: false,
               value: 0
             }
           ]
         },
         {
           type: 'dns',
-          title: 'DNS',
+          title: this.$t('dns.dnsServer'),
           totalCount: 0,
           data: [
             {
@@ -292,6 +302,7 @@ export default {
               column: 'dnsServerRoleCount',
               topColumn: 'dns_server_role',
               icon: 'cn-icon cn-icon-role',
+              showTopTen: false,
               value: 0
             },
             {
@@ -299,6 +310,7 @@ export default {
               column: 'dnsServerOrgCount',
               topColumn: 'dns_server_org',
               icon: 'cn-icon cn-icon-org',
+              showTopTen: false,
               value: 0
             },
             {
@@ -306,6 +318,7 @@ export default {
               column: 'dnsServerSoftwareCount',
               topColumn: 'dns_server_software',
               icon: 'cn-icon cn-icon-software',
+              showTopTen: false,
               value: 0
             },
             {
@@ -313,6 +326,7 @@ export default {
               column: 'dnsServerOsCount',
               topColumn: 'dns_server_os',
               icon: 'cn-icon cn-icon-os',
+              showTopTen: false,
               value: 0
             }
           ]
@@ -427,6 +441,7 @@ export default {
             this.limitFilterType = false
           }
           this.queryFilter({ entityType: entityType, q: this.q })
+          this.queryFilter({ entityType: 'dns', q: this.q })
           this.queryList({ q: this.q, ...this.pageObj })
           this.queryListTotal({ q: this.q })
         } else {
@@ -434,6 +449,7 @@ export default {
           this.queryFilter({ entityType: 'ip', q: this.q })
           this.queryFilter({ entityType: 'domain', q: this.q })
           this.queryFilter({ entityType: 'app', q: this.q })
+          this.queryFilter({ entityType: 'dns', q: this.q })
           this.queryList({ q: this.q, ...this.pageObj })
           this.queryListTotal({ q: this.q })
         }
@@ -442,6 +458,7 @@ export default {
         this.queryFilter({ entityType: 'ip' })
         this.queryFilter({ entityType: 'app' })
         this.queryFilter({ entityType: 'domain' })
+        this.queryFilter({ entityType: 'dns' })
         this.queryList({ ...this.pageObj })
         this.queryListTotal()
       }
@@ -524,6 +541,17 @@ export default {
                 d.value = response.data.result[d.column]
               })
               this.filterData[2].totalCount = response.data.result.count
+              if (this.limitFilterType) {
+                this.cleanFilterData(0)
+                this.cleanFilterData(1)
+              }
+              break
+            }
+            case 'dns': {
+              this.filterData[3].data.forEach(d => {
+                d.value = response.data.result[d.column]
+              })
+              this.filterData[3].totalCount = response.data.result.count
               if (this.limitFilterType) {
                 this.cleanFilterData(0)
                 this.cleanFilterData(1)

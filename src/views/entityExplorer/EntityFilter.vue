@@ -10,7 +10,7 @@
       <div class="filter__body">
 
         <div class="filter__row" v-for="(item, i) in filters.data" :key="i">
-          <el-popover popper-class="filter__row-popover" placement="right" :width="440" trigger="click">
+          <el-popover popper-class="filter__row-popover" placement="right" :width="440" trigger="click" v-model:visible="item.showTopTen">
             <template #reference>
               <div class="filter__row-popover" @click="showTopDialog(i, item, filters)">
                 <div class="row__label">
@@ -30,8 +30,7 @@
               :item-data="itemData"
               :total-count="totalCount"
               @filter="filter"
-              v-show="showTopTen"
-              @close="showTopTen = false"
+              @close="item.showTopTen = false"
             ></entity-top>
           </el-popover>
         </div>
@@ -72,15 +71,15 @@ export default {
   methods: {
     showTopDialog (i, item, filter) {
       this.currentColumn = item.column
-      const type = filter.type
-      this.showTopTen = true
+      item.showTopTen = true
       const queryParams = {
         q: this.q,
-        entityType: type,
+        entityType: filter.type,
         column: item.topColumn,
         top: 10
       }
       this.loading = true
+      this.popoverData = []
       get(api.filterTop, queryParams).then(response => {
         if (response.code === 200) {
           if (this.currentColumn === item.column) {
@@ -102,7 +101,7 @@ export default {
       })
     },
     filter (name, topData) {
-      this.showTopTen = false
+      topData.showTopTen = false
       this.$emit('filter', name, topData)
     }
   }
