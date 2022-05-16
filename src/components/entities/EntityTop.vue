@@ -18,7 +18,7 @@
             :row-style="rowStyle"
             :cell-style="{'text-align':'left','padding': '1px 0','border':'0px'}"
             class="customer-no-border-table"
-            style="width: 100%"
+            style="width: 100%; min-height: 293px;"
             @row-click="filter"
         >
           <el-table-column label="Top10" type="index" :index="indexMethod" width="81"/>

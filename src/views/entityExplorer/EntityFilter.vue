@@ -10,7 +10,7 @@
       <div class="filter__body">
 
         <div class="filter__row" v-for="(item, i) in filters.data" :key="i">
-          <el-popover popper-class="filter__row-popover" placement="right" :width="440" trigger="click" v-model:visible="item.showTopTen">
+          <el-popover popper-class="filter__row-popover" placement="right-start" :width="440" trigger="click" v-model:visible="item.showTopTen">
             <template #reference>
               <div class="filter__row-popover" @click="showTopDialog(i, item, filters)">
                 <div class="row__label">
