@@ -83,6 +83,7 @@ export default {
       }
       this.loading = true
       this.popoverData = []
+      this.itemData = {}
       get(api.filterTop, queryParams).then(response => {
         if (response.code === 200) {
           if (this.currentColumn === item.column) {

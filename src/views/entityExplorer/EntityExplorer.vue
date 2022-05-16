@@ -462,7 +462,7 @@ export default {
         this.queryFilter({ entityType: 'domain', ...this.timeFilter })
         this.queryFilter({ entityType: 'dns', ...this.timeFilter })
         this.queryList({ ...this.pageObj, ...this.timeFilter })
-        this.queryListTotal()
+        this.queryListTotal({ ...this.timeFilter })
       }
     },
     pageSize (val) {
