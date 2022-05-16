@@ -10,7 +10,7 @@
       <div class="filter__body">
 
         <div class="filter__row" v-for="(item, i) in filters.data" :key="i">
-          <el-popover popper-class="filter__row-popover" placement="right-start" :width="440" trigger="click" v-model:visible="item.showTopTen">
+          <el-popover popper-class="filter__row-popover" placement="right-start" :width="440" v-model:visible="item.showTopTen">
             <template #reference>
               <div class="filter__row-popover" @click="showTopDialog(i, item, filters)">
                 <div class="row__label">
@@ -28,9 +28,8 @@
               :loading="loading"
               :popover-data="popoverData"
               :item-data="itemData"
-              :total-count="totalCount"
+              :total-count="filters.totalCount"
               @filter="filter"
-              @close="item.showTopTen = false"
             ></entity-top>
           </el-popover>
         </div>
@@ -61,18 +60,25 @@ export default {
       topList: 'list',
       topData: [],
       entityTopTenData: [],
-      showTopTen: false, // 自定义列弹框是否显示
       currentColumn: '',
       loading: false,
       popoverData: [],
-      itemData: {},
-      totalCount: 0
+      itemData: {}
     }
   },
   methods: {
     showTopDialog (i, item, filter) {
-      this.currentColumn = item.column
+      if (this.currentColumn === item.column && item.showTopTen) {
+        item.showTopTen = false
+        return
+      }
+      this.filterData.forEach(f => {
+        f.data.forEach(ff => {
+          ff.showTopTen = false
+        })
+      })
       item.showTopTen = true
+      this.currentColumn = item.column
       const queryParams = {
         q: this.q,
         entityType: filter.type,
@@ -89,23 +95,19 @@ export default {
           if (this.currentColumn === item.column) {
             this.popoverData = response.data.result
             this.itemData = item
-            this.totalCount = filter.totalCount
           }
         } else {
           this.popoverData = []
           this.itemData = item
-          this.totalCount = filter.totalCount
         }
         this.loading = false
       }).catch(e => {
         this.popoverData = []
         this.itemData = item
-        this.totalCount = filter.totalCount
         this.loading = false
       })
     },
     filter (name, topData) {
-      topData.showTopTen = false
       this.$emit('filter', name, topData)
     }
   }
