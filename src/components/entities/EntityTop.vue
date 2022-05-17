@@ -6,7 +6,7 @@
         <span>{{itemData.label}}</span>
       </div>
     </div>
-    <button @click="esc" class="el-dialog__headerbtn" type="button"><i class="el-dialog__close el-icon el-icon-close"></i></button>
+<!--    <button @click="esc" class="el-dialog__headerbtn" type="button"><i class="el-dialog__close el-icon el-icon-close"></i></button>-->
     <div class="filter-top-box">
       <div class="filter-top-body">
         <loading :loading="loading"></loading>
@@ -33,8 +33,8 @@
             <el-table-column prop="percent" :label="$t('overall.percent')" >
               <template #default="scope">
                 <div class="top-table-percent" >
-                  {{(totalCount === 0 ? 0 : parseFloat(scope.row.count / totalCount) * 100).toFixed(2)}}%
-                  <div class="top-table-progress"><el-progress :percentage="(totalCount === 0 ? 0 : parseFloat(scope.row.count / totalCount) * 100).toFixed(2)" :show-text="false" color="#23BF9A"></el-progress></div>
+                  {{totalCount2(scope.row)}}%
+                  <div class="top-table-progress"><el-progress :percentage="totalCount2(scope.row)" :show-text="false" color="#23BF9A"></el-progress></div>
                 </div>
               </template>
             </el-table-column>
@@ -59,6 +59,13 @@ export default {
   data () {
     return {
       custom: []
+    }
+  },
+  computed: {
+    totalCount2 () {
+      return function (row) {
+        return (this.totalCount === 0 ? 0 : parseFloat(row.count / this.totalCount) * 100).toFixed(2)
+      }
     }
   },
   methods: {

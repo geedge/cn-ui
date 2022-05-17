@@ -28,7 +28,7 @@
               :loading="loading"
               :popover-data="popoverData"
               :item-data="itemData"
-              :total-count="filters.totalCount"
+              :total-count="totalCount"
               @filter="filter"
             ></entity-top>
           </el-popover>
@@ -61,9 +61,30 @@ export default {
       topData: [],
       entityTopTenData: [],
       currentColumn: '',
+      totalCount: 0,
       loading: false,
       popoverData: [],
       itemData: {}
+    }
+  },
+  watch: {
+    currentColumn (n, o) {
+      if (n === 'dnsServerOrgCount') {
+        this.totalCount = this.filterData[3].orgTotalCount
+      } else if (n === 'dnsServerSoftwareCount') {
+        this.totalCount = this.filterData[3].softwareTotalCount
+      } else if (n === 'dnsServerOsCount') {
+        this.totalCount = this.filterData[3].osTotalCount
+      } else {
+        let count = 0
+        this.filterData.forEach(f => {
+          const filter = f.data.some(d => d.column === n)
+          if (filter) {
+            count = f.totalCount
+          }
+        })
+        this.totalCount = count
+      }
     }
   },
   methods: {

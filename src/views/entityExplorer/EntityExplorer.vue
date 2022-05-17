@@ -298,6 +298,9 @@ export default {
           type: 'dns',
           title: this.$t('dns.dnsServer'),
           totalCount: 0,
+          osTotalCount: 0,
+          orgTotalCount: 0,
+          softwareTotalCount: 0,
           data: [
             {
               label: this.$t('overall.dnsServerInfo.role'),
@@ -554,6 +557,9 @@ export default {
                 d.value = response.data.result[d.column]
               })
               this.filterData[3].totalCount = response.data.result.count
+              this.filterData[3].osTotalCount = response.data.result.osTotalCount
+              this.filterData[3].orgTotalCount = response.data.result.orgTotalCount
+              this.filterData[3].softwareTotalCount = response.data.result.softwareTotalCount
               if (this.limitFilterType) {
                 this.cleanFilterData(0)
                 this.cleanFilterData(1)
