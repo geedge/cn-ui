@@ -313,6 +313,7 @@ export default {
       this.$emit('refresh')
       if (this.isAlarmInfo) {
         this.tabHandleClick('All')
+        this.emitter.emit('chart-info', 'All')
       }
     },
     timeRefreshChange () {
