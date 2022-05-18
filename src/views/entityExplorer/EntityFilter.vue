@@ -29,6 +29,7 @@
               :popover-data="popoverData"
               :item-data="itemData"
               :total-count="totalCount"
+              :top-column="item.topColumn"
               @filter="filter"
             ></entity-top>
           </el-popover>

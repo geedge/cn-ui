@@ -54,7 +54,8 @@ export default {
     loading: Boolean,
     popoverData: Array,
     itemData: Object,
-    totalCount: Number
+    totalCount: Number,
+    topColumn: String
   },
   data () {
     return {
