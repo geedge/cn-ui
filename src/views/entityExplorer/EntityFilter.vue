@@ -114,7 +114,13 @@ export default {
       get(api.filterTop, queryParams).then(response => {
         if (response.code === 200) {
           if (this.currentColumn === item.column) {
-            this.popoverData = response.data.result
+            if (filter.type === 'dns') {
+              this.popoverData = response.data.result.filter(f => {
+                return f.count > 0
+              })
+            } else {
+              this.popoverData = response.data.result
+            }
             this.itemData = item
           }
         } else {
