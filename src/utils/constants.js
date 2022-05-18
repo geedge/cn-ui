@@ -24,7 +24,8 @@ export const storageKey = {
   unsavedChange: 'cn-unsaved-change',
   entitySearchHistory: 'cn-entity-search-history',
   echartLegendFontSize: 'echartLegendFontSize',
-  echartLabelFontSize: 'echartLabelFontSize'
+  echartLabelFontSize: 'echartLabelFontSize',
+  tokenExpireCurrentPath: 'token-expire-current-path'
 }
 
 // 统一定义跳转来源

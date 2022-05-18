@@ -11,6 +11,9 @@ const loginWhiteList = ['/login', '/'] // 免登陆白名单
 const permissionWhiteList = [...loginWhiteList, '/entityDetail'] // 权限白名单
 
 router.beforeEach(async (to, from, next) => {
+  if (to.path.indexOf('/login') == -1) {
+    localStorage.setItem(storageKey.tokenExpireCurrentPath, to.fullPath)
+  }
   // 加载iso-3166-2资源
   loadGeoData()
   // 加载baseUrl
