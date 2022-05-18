@@ -68,12 +68,12 @@
               <use xlink:href="#cn-icon-preview"></use>
             </svg>
           </div>
-          <div class="table-operation-item--no-border" @click="tableOperation(['rerun', scope.row])">
+<!--          <div class="table-operation-item&#45;&#45;no-border" @click="tableOperation(['rerun', scope.row])">
             <loading :loading="loadingPreviewId === scope.row.id"></loading>
             <svg class="icon2" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
               <use xlink:href="#cn-icon-refresh"></use>
             </svg>
-          </div>
+          </div>-->
         </div>
       </template>
     </el-table-column>
