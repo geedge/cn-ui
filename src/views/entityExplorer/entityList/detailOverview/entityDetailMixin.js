@@ -9,10 +9,7 @@ import { shallowRef } from 'vue'
 export default {
   props: {
     entity: Object,
-    timeFilter: Object,
-    loadingIp: Boolean,
-    loadingApp: Boolean,
-    loadingDomain: Boolean
+    timeFilter: Object
   },
   data () {
     return {
@@ -31,7 +28,14 @@ export default {
       },
       chartOption: null,
       queryParams: {},
-      echartsArray: []
+      echartsArray: [],
+      performanceData: [],
+      securityData: [],
+      showMore: {
+        securityPageSize: 5,
+        performancePageSize: 5,
+        pageNo: 1
+      }
     }
   },
   computed: {
@@ -61,6 +65,36 @@ export default {
         })
         return (m && m.name) || level
       }
+    },
+    iconClass () {
+      return function (entityData) {
+        let className
+        switch (entityData.eventSeverity) {
+          case ('critical'): {
+            className = 'critical'
+            break
+          }
+          case ('high'): {
+            className = 'high'
+            break
+          }
+          case ('info'): {
+            className = 'info'
+            break
+          }
+          case ('medium'): {
+            className = 'medium'
+            break
+          }
+          case ('low'): {
+            className = 'low'
+            break
+          }
+          default:
+            break
+        }
+        return className
+      }
     }
   },
   methods: {
@@ -72,12 +106,15 @@ export default {
     queryEntityDetailTraffic () {
       this.sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}`))
       this.receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}`))
-      if (this.entityName === 'app') {
+      if (this.entity.entityType === 'app') {
         this.loadingApp = true
-      } else if (this.entityName === 'ip') {
+        this.loadingTraffic = true
+      } else if (this.entity.entityType === 'ip') {
         this.loadingIp = true
-      } else if (this.entityName === 'domain') {
+        this.loadingTraffic = true
+      } else if (this.entity.entityType === 'domain') {
         this.loadingDomain = true
+        this.loadingTraffic = true
       }
       get(this.trafficUrl, this.getQueryParams()).then(response => {
         if (response.code === 200 && response.data.result && response.data.result.length > 0) {
@@ -136,20 +173,26 @@ export default {
           this.echartsArray.push(shallowRef(this.sentChart), shallowRef(this.receivedChart))
           this.sentChart.setOption(this.chartOptionSent)
           this.receivedChart.setOption(this.chartOptionReceived)
-          if (this.entityName === 'app') {
+          if (this.entity.entityType === 'app') {
             this.loadingApp = false
-          } else if (this.entityName === 'ip') {
+            this.loadingTraffic = false
+          } else if (this.entity.entityType === 'ip') {
             this.loadingIp = false
-          } else if (this.entityName === 'domain') {
+            this.loadingTraffic = false
+          } else if (this.entity.entityType === 'domain') {
             this.loadingDomain = false
+            this.loadingTraffic = false
           }
         } else {
-          if (this.entityName === 'app') {
+          if (this.entity.entityType === 'app') {
             this.loadingApp = false
-          } else if (this.entityName === 'ip') {
+            this.loadingTraffic = false
+          } else if (this.entity.entityType === 'ip') {
             this.loadingIp = false
-          } else if (this.entityName === 'domain') {
+            this.loadingTraffic = false
+          } else if (this.entity.entityType === 'domain') {
             this.loadingDomain = false
+            this.loadingTraffic = false
           }
         }
       }).finally(() => {
@@ -173,6 +216,7 @@ export default {
     },
 
     queryEntityDetailNetworkQuantity () {
+      this.loadingNetworkQuality = true
       if (this.networkQuantityUrl) {
         get(this.networkQuantityUrl, this.getQueryParams()).then(response => {
           if (response.code === 200) {
@@ -227,11 +271,13 @@ export default {
             }
             this.singleValues.chartDatas.splice(4, 1, pktRetransPercent)
           }
+          this.loadingNetworkQuality = false
         })
       }
     },
 
     queryEntityDetailLinkInUrl () {
+      this.loadingIn = true
       if (this.linkInUrl) {
         get(this.linkInUrl, this.getQueryParams()).then(response => {
           if (response.code === 200) {
@@ -252,11 +298,13 @@ export default {
               this.entityData.linkInId = maxId
             }
           }
+          this.loadingIn = false
         })
       }
     },
 
     queryEntityDetailLinkOutUrl () {
+      this.loadingOut = true
       if (this.linkOutUrl) {
         get(this.linkOutUrl, this.getQueryParams()).then(response => {
           if (response.code === 200) {
@@ -277,26 +325,47 @@ export default {
               this.entityData.linkOutId = maxId
             }
           }
+          this.loadingOut = false
         })
       }
     },
 
     queryEntityDetailPerformance () {
+      this.loadingAlert = true
       get(this.performanceUrl, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.entityData.performanceNum = response.data.result.length
-          this.entityData.performanceList = response.data.result
+          this.performanceData = response.data.result
+          this.entityData.performanceList = this.getTargetPageData(1, this.showMore.performancePageSize, this.performanceData)
         }
+        this.loadingAlert = false
       })
     },
 
     queryEntityDetailSecurity () {
+      this.loadingSecurityEvents = true
       get(this.securityUrl, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.entityData.securityNum = response.data.result.length
-          this.entityData.securityList = response.data.result
+          this.securityData = response.data.result
+          this.entityData.securityList = this.getTargetPageData(1, this.showMore.securityPageSize, this.securityData)
         }
+        this.loadingSecurityEvents = false
       })
+    },
+
+    performanceShowMore (num) {
+      this.showMore.performancePageSize += num
+      this.entityData.performanceList = this.getTargetPageData(this.showMore.pageNo, this.showMore.performancePageSize, this.performanceData)
+    },
+
+    securityShowMore (num) {
+      this.showMore.securityPageSize += num
+      this.entityData.securityList = this.getTargetPageData(this.showMore.pageNo, this.showMore.securityPageSize, this.securityData)
+    },
+
+    getTargetPageData (pageNum, pageSize, data) {
+      return this.$_.slice(data, (pageNum - 1) * pageSize, pageNum * pageSize)
     },
 
     queryDnsServerInfo () {
@@ -310,10 +379,14 @@ export default {
           this.entityData.dotSupport = response.data.result.dotSupport
           this.entityData.dnssecSupport = response.data.result.dnssecSupport
         }
+        if (this.entityData.dnsServerRole) {
+          this.loadingDns = false
+        }
       })
     },
 
     queryDnsServerInfoRate () {
+      this.loading = true
       this.detectionChart = echarts.init(document.getElementById(`entityDnsServerInfo${this.entityName}`))
       get(this.entityDetectionsIpQueryRateUrl, this.getQueryParams()).then(response => {
         if (response.code === 200 && response.data.result && response.data.result.length > 0) {
@@ -343,6 +416,7 @@ export default {
           this.echartsArray.push(shallowRef(this.detectionChart))
           this.detectionChart.setOption(this.chartDetectionQueryRate)
         }
+        this.loading = false
       })
     },
 
@@ -354,6 +428,9 @@ export default {
       this.queryEntityDetailLinkOutUrl()
       this.queryEntityDetailLinkInUrl()
       if (this.entity.entityType === 'ip') {
+        if (!this.entityData.dnsServerRole) {
+          this.loadingDns = true
+        }
         this.queryDnsServerInfo()
         this.$nextTick(() => {
           setTimeout(() => {

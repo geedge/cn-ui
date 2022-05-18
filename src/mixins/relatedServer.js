@@ -16,21 +16,25 @@ export default {
   methods: {
     // 请求数据 relationshipUrlOne => 路由 refOne => ref
     getRelatedServerDataOne (relationshipUrlOne, refOne) {
+      this.loadingRelationshipOne = true
       get(relationshipUrlOne, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           const relationshipDataOne = response.data.result
           // 将请求数据 传入方法中
           this.relatedServerWidth(relationshipDataOne, refOne, 1)
         }
+        this.loadingRelationshipOne = false
       })
     },
     getRelatedServerDataTwo (relationshipUrlTow, refTow) {
+      this.loadingRelationshipTwo = true
       get(relationshipUrlTow, this.getQueryParams()).then(response => {
         if (response.code === 200) {
           const relationshipDataTwo = response.data.result
           // 将请求数据 传入方法中
           this.relatedServerWidth(relationshipDataTwo, refTow, 2)
         }
+        this.loadingRelationshipTwo = false
       })
     },
     // data => 数据， value => ref

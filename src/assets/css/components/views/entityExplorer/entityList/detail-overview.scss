@@ -35,6 +35,15 @@
       color: #333;
       font-size: 14px;
     }
+    .overview__content-loading.overview__content {
+      position: relative;
+      .chart__loading i.el-icon-loading {
+        left: calc(50% - 428px);
+      }
+    }
+    .overview__content-loading-net.overview__content {
+      position: relative;
+    }
     .overview__content {
       display: flex;
       flex-direction: column;
@@ -50,8 +59,11 @@
         &.overview__row--small-font {
           font-size: 12px;
         }
-        .show-more {
+        .show-more.show-more-disabled {
           color: #8FA1BE;
+        }
+        .show-more {
+          color: #3976CB;
           cursor: pointer;
         }
         &.overview__row--single-value {
@@ -86,8 +98,20 @@
             border-radius: 2px;
             color: white;
 
-            &.alert-level-tag--high {
-              background-color: #ED907B;
+            &.alert-level-tag--high.critical {
+              background-color: #D84C4C;
+            }
+            &.alert-level-tag--high.high {
+              background-color: #FF9A79;
+            }
+            &.alert-level-tag--high.info {
+              background-color: #D1BD50;
+            }
+            &.alert-level-tag--high.medium {
+              background-color: #FFB65A;
+            }
+            &.alert-level-tag--high.low {
+              background-color: #FFD82D;
             }
             &.alert-level-tag--middle {
               background-color: #FFAB66;
@@ -143,6 +167,9 @@
       .overview__tags.domain__tags {
         flex-direction: column;
         width: 70%;
+        .overview__domain-tabs-loading.overview__domain-tabs {
+          position: relative;
+        }
         .overview__domain-tabs {
           display: flex;
           margin: 0 0 8px 0;
@@ -226,7 +253,13 @@
 
     .overview__tags {
       display: flex;
-
+      .overview__tag-loading.overview__tag {
+        position: relative;
+        .chart__loading {
+          top: 0;
+          left: 0;
+        }
+      }
       .overview__tag {
         display: flex;
         padding: 6px 15px;

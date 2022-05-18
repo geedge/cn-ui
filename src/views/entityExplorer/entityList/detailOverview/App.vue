@@ -26,7 +26,8 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.traffic')}}</div>
-    <div class="overview__content">
+    <div class="overview__content overview__content-loading">
+      <loading :loading="loadingTraffic"></loading>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
         <div class="row__content">{{unitConvert(entityData.max, unitTypes.byte).join(' ')}}/s</div>
@@ -42,7 +43,7 @@
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <loading :loading-app="loadingApp"></loading>
+              <loading :loading="loadingApp"></loading>
                <div class="row__charts" :id="`entityDetailSend${entityData.appName}`" ></div>
             </div>
           </div>
@@ -50,7 +51,7 @@
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <loading :loading-app="loadingApp"></loading>
+              <loading :loading="loadingApp"></loading>
                <div class="row__charts" :id="`entityDetailReceived${entityData.appName}`" ></div>
             </div>
           </div>
@@ -62,7 +63,8 @@
     <div class="overview__title">{{$t('overall.relationship')}}</div>
     <div class="overview__content domain__content">
       <div class="overview__tags domain__tags" ref="relationship">
-        <div class="overview__domain-tabs">
+        <div class="overview__domain-tabs overview__domain-tabs-loading">
+          <loading :loading="loadingRelationshipOne"></loading>
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataOne.length}}</span>
@@ -81,7 +83,8 @@
             </div>
           </div>
         </div>
-        <div class="overview__domain-tabs">
+        <div class="overview__domain-tabs overview__domain-tabs-loading">
+          <loading :loading="loadingRelationshipTwo"></loading>
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataTwo.length}}</span>
@@ -105,7 +108,8 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.networkQuality')}}</div>
-    <div class="overview__content">
+    <div class="overview__content overview__content-loading-net">
+      <loading :loading="loadingNetworkQuality"></loading>
       <div class="overview__row overview__row--single-value">
         <chart-single-value
             v-for="(chartInfo, i) in singleValues.chartInfos"
@@ -121,13 +125,15 @@
     <div class="overview__title">{{$t('entities.accessLink')}}</div>
     <div class="overview__content">
       <div class="overview__tags">
-        <div class="overview__tag">
+        <div class="overview__tag overview__tag-loading">
+          <loading :loading="loadingOut"></loading>
           <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
           <span class="tag__value">{{entityData.linkOutId ? entityData.linkOutId : '-'}},</span>
           <span class="tag__desc">{{$t('entities.percentage')}}</span>
           <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') : '-'}}</span>
         </div>
-        <div class="overview__tag">
+        <div class="overview__tag overview__tag-loading">
+          <loading :loading="loadingIn"></loading>
           <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
           <span class="tag__value">{{entityData.linkInId ? entityData.linkInId : '-'}},</span>
           <span class="tag__desc">{{$t('entities.percentage')}}</span>
@@ -138,7 +144,8 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.alert')}}</div>
-    <div class="overview__content">
+    <div class="overview__content overview__content-loading">
+      <loading :loading="loadingAlert"></loading>
       <div class="overview__row">
         <div class="row__label">{{$t('entities.recentAlert')}}</div>
         <div class="row__content">{{entityData.performanceNum}}</div>
@@ -146,19 +153,20 @@
       <div class="overview__row overview__row--small-font"   v-for="(performance, index) in entityData.performanceList" :key="index">
         <div class="row__label row__label--width160">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{performance.eventSeverity}}</div>
+          <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
           <div>{{performance.eventType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
-      <div class="overview__row overview__row--small-font" v-if="entityData.performanceList && entityData.performanceList.length > 3">
-        <div class="show-more">{{$t('overall.showMore')}}>></div>
+      <div class="overview__row overview__row--small-font" v-if="performanceData && performanceData.length > 5">
+        <div class="show-more" :class="{'show-more-disabled': performanceData.length === entityData.performanceList.length}" @click="performanceShowMore(10)">{{$t('overall.showMore')}}>></div>
       </div>
     </div>
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('entities.securityEvents')}}</div>
-    <div class="overview__content">
+    <div class="overview__content overview__content-loading">
+      <loading :loading="loadingSecurityEvents"></loading>
       <div class="overview__row">
         <div class="row__label">{{$t('entities.recentSecurity')}}</div>
         <div class="row__content">{{entityData.securityNum}}</div>
@@ -166,13 +174,13 @@
       <div class="overview__row overview__row--small-font"   v-for="(security, index) in entityData.securityList" :key="index">
         <div class="row__label row__label--width160">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
         <div class="row__content row__content--width200">
-          <div class="alert-level-tag alert-level-tag--high">{{security.eventSeverity}}</div>
+          <div class="alert-level-tag alert-level-tag--high" :class="iconClass(security)">{{security.eventSeverity}}</div>
           <div>{{security.securityType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
-      <div class="overview__row overview__row--small-font" v-if="entityData.securityList && entityData.securityList.length > 3">
-        <div class="show-more">{{$t('overall.showMore')}}>></div>
+      <div class="overview__row overview__row--small-font" v-if="securityData && securityData.length > 5">
+        <div class="show-more" :class="{'show-more-disabled': securityData.length === entityData.securityList.length}" @click="securityShowMore(10)">{{$t('overall.showMore')}}>></div>
       </div>
     </div>
   </div>
@@ -279,7 +287,15 @@ export default {
           }
         ],
         chartDatas: [null, null, null, null, null],
-        loadingApp: false
+        loadingApp: false,
+        loadingTraffic: false,
+        loadingRelationshipOne: false,
+        loadingRelationshipTwo: false,
+        loadingNetworkQuality: false,
+        loadingOut: false,
+        loadingIn: false,
+        loadingAlert: false,
+        loadingSecurityEvents: false
       }
     }
   },
