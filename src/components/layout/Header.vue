@@ -181,6 +181,7 @@ export default {
       this.showChangePin = true
     },
     logout () {
+      sessionStorage.removeItem(storageKey.tokenExpireCurrentPath)
       localStorage.removeItem(storageKey.token)
       get(api.logout)
     },

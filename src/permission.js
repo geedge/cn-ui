@@ -12,7 +12,7 @@ const permissionWhiteList = [...loginWhiteList, '/entityDetail'] // 权限白名
 
 router.beforeEach(async (to, from, next) => {
   if (to.path.indexOf('/login') == -1) {
-    localStorage.setItem(storageKey.tokenExpireCurrentPath, to.fullPath)
+    sessionStorage.setItem(storageKey.tokenExpireCurrentPath, to.fullPath)
   }
   // 加载iso-3166-2资源
   loadGeoData()
@@ -46,7 +46,16 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     if (loginWhiteList.indexOf(to.path) !== -1) {
-      next()
+      const tokenExpireCurrentPath = sessionStorage.getItem(storageKey.tokenExpireCurrentPath)
+      if (to.path === '/login' && tokenExpireCurrentPath) {
+        if (hasParam(to.fullPath, 'redirect')) {
+          next()
+        } else {
+          next({ path: '/login', query: { redirect: tokenExpireCurrentPath } })
+        }
+      } else {
+        next()
+      }
     } else {
       next({ path: '/login', query: { redirect: to.fullPath } })
     }
@@ -67,6 +76,22 @@ export function hasMenu (menuList, route) {
     }
     return false
   })
+}
+
+export function hasParam (url, param) {
+  let hasParam = false
+  let tempArr = url.split('?')
+  const query = {}
+  if (tempArr[1]) {
+    tempArr = tempArr[1].split('&')
+    tempArr.forEach(t => {
+      const kv = t.split('=')
+      if (kv[0] === param) {
+        hasParam = true
+      }
+    })
+  }
+  return hasParam
 }
 
 export function hasButton (buttonList, code) {
