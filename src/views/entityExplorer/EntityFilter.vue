@@ -86,7 +86,6 @@ export default {
         })
         this.totalCount = count
       }
-      console.info('current-column-change', n, this.totalCount, this.filterData)
     }
   },
   methods: {
@@ -102,7 +101,6 @@ export default {
       })
       item.showTopTen = true
       this.currentColumn = item.column
-      console.info('show-top-dialog', item)
       const queryParams = {
         q: this.q,
         entityType: filter.type,
