@@ -146,7 +146,7 @@ export default {
           chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
         }
       }).catch(error => {
-        console.log(error)
+        console.error(error)
         const chartDom = document.getElementById(`detectionMetricChartApp${this.detection.appName}`)
         chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
       }).finally(() => {

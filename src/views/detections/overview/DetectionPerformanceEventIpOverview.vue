@@ -162,7 +162,6 @@ export default {
 
       this.metricList.sort(reverseSortBy(0))// 将返回的数据按时间降序排序，方便找到实线和虚线的交点
       // let endIndex = (this.metricList). findIndex ((item) => item[0]  <=  1435781434781 );
-      console.log(this.detection)
       let endIndex = (this.metricList).findIndex((item) => item[0] <= this.detection.endTime)
       endIndex = this.metricList.length - endIndex
 

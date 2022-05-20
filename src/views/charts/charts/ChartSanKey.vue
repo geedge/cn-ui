@@ -12,8 +12,10 @@ import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { sankey } from './options/sankey'
+import chartEchartMixin from './chart-echart-mixin'
 export default {
   name: 'ChartSanKey',
+  mixins: [chartEchartMixin],
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -25,9 +27,8 @@ export default {
     }
   },
   methods: {
-    init (id) {
+    initEcharts (id) {
       const vm = this
-      const chartParams = this.chartInfo.params
       const entityName = this.entity.ip || this.entity.domain || this.entity.app || this.entity.appName
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
@@ -105,29 +106,7 @@ export default {
       this.chartOption.series[0].data = data
       this.chartOption.series[0].links = link
       this.myChart.setOption(this.chartOption)
-    },
-    resize () {
-      this.myChart.resize()
-    }
-  },
-  mounted () {
-    this.debounceFunc = this.$_.debounce(this.resize, 100)
-    window.addEventListener('resize', this.debounceFunc)
-  },
-  beforeUnmount () {
-    window.removeEventListener('resize', this.debounceFunc)
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.init(`chart${this.chartInfo.id}`)
-      }
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

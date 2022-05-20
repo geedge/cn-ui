@@ -295,12 +295,6 @@ export default {
         }
       }
     }
-  },
-  watch: {
-    statisticsHeight (val) {
-      const dom = document.getElementById(`chart${this.chartInfo.id}`)
-      dom.style.cssText += `height: calc(100% - ${val}px)`
-    }
   }
 }
 </script>

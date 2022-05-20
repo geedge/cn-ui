@@ -167,7 +167,6 @@ export default {
   methods: {
     /* 参数 extraParams 额外请求参数 */
     getChartData (url, extraParams = {}, chartTimeFilter, num) {
-      const vm = this
       this.loading = true
       try {
         if (chartTimeFilter) {
@@ -214,7 +213,7 @@ export default {
               if (Array.isArray(response.data.result)) {
                 response.data.result.forEach(item => {
                   if (item.legend && legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${item.legend}`]) {
-                    item.legend = vm.$t(legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${item.legend}`])
+                    item.legend = this.$t(legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${item.legend}`])
                   }
                 })
               }

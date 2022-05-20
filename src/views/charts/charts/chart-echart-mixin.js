@@ -1,6 +1,6 @@
 import { shallowRef } from 'vue'
 import * as echarts from 'echarts'
-import { storageKey, echartsFontSize } from '@/utils/constants'
+import { storageKey } from '@/utils/constants'
 import {
   isEchartsLine,
   isEchartsPie,
@@ -98,7 +98,6 @@ export default {
               let chartOption = item.getOption()
 
               if (oldLegendFontSize != echartLegendFontSize) {
-                console.log('updateLegend....')
                 chartOption = {
                   ...chartOption,
                   legend: {
@@ -110,7 +109,6 @@ export default {
                 }
               }
               if (oldLabelFontSize != echartLabelFontSize) {
-                console.log('updateLabel....')
                 const newSeries = []
                 const chartType = chartOption.series[0].type
                 chartOption.series.forEach((series) => {
@@ -224,6 +222,16 @@ export default {
   },
   beforeUnmount () {
     window.removeEventListener('resize', this.debounceFunc)
+    if (this.myChart) {
+      this.myChart.off('legendselectchanged')
+      this.myChart.dispose()
+      this.myChart = null
+    }
+    if (this.myChart2) {
+      this.myChart2.off('legendselectchanged')
+      this.myChart2.dispose()
+      this.myChart2 = null
+    }
   },
   watch: {
     chartData: {

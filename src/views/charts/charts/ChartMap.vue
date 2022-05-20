@@ -174,23 +174,7 @@ export default {
 
         // 地图点击事件
         if (this.isMapBlock) {
-          this.polygonSeries.mapPolygons.template.events.on('hit', async ev => {
-            const countryId = ev.target.dataItem.dataContext.id
-            if (countryId) {
-              ev.target.series.chart.zoomToMapObject(ev.target)
-              ev.target.isHover = false
-              const geoData = getGeoData(countryId)
-              if (geoData) {
-                this.countrySeries = shallowRef(this.polygonSeriesFactory())
-                this.countrySeries.geodata = geoData
-                this.polygonSeries.hide()
-                const country = ev.target.dataItem.dataContext.serverCountry
-                const queryParams = { ...this.queryParams, country }
-                const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-                this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
-              }
-            }
-          })
+          this.polygonSeries.mapPolygons.template.events.on('hit', this.mapBlockHitEvent)
         } else if (this.isMapPoint) {
           /*
           this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
@@ -227,6 +211,23 @@ export default {
         }
       } finally {
         this.$emit('finishOneMap')
+      }
+    },
+    async mapBlockHitEvent (ev) {
+      const countryId = ev.target.dataItem.dataContext.id
+      if (countryId) {
+        ev.target.series.chart.zoomToMapObject(ev.target)
+        ev.target.isHover = false
+        const geoData = getGeoData(countryId)
+        if (geoData) {
+          this.countrySeries = shallowRef(this.polygonSeriesFactory())
+          this.countrySeries.geodata = geoData
+          this.polygonSeries.hide()
+          const country = ev.target.dataItem.dataContext.serverCountry
+          const queryParams = { ...this.queryParams, country }
+          const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
+          this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
+        }
       }
     },
     polygonSeriesFactory () {
@@ -527,6 +528,15 @@ export default {
         this.initMap(`chart${this.chartInfo.id}`)
       }
     }
+  },
+  beforeUnmount () {
+    this.polygonSeries.mapPolygons.template.events.off('hit', this.mapBlockHitEvent)
+    this.polygonSeries = null
+    this.countrySeries = null
+    this.worldImageSeries = null
+    this.countryImageSeries = null
+    this.myChart && this.myChart.dispose()
+    this.myChart = null
   },
   setup (props) {
     const circleColor = {}

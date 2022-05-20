@@ -41,14 +41,10 @@ import lodash from 'lodash'
 import { ipOpenPortBar } from '@/views/charts/charts/options/bar'
 import { getChartColor } from '@/views/charts/charts/tools'
 import * as echarts from 'echarts'
+import chartEchartMixin from './chart-echart-mixin'
 export default {
   name: 'ChartIpOpenPortBar',
-  setup () {
-    const myChart = null
-    return {
-      myChart
-    }
-  },
+  mixins: [chartEchartMixin],
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -57,7 +53,6 @@ export default {
   },
   data () {
     return {
-      chartOption: null,
       tableData: [],
       tableKey: [
         {
@@ -81,7 +76,7 @@ export default {
     }
   },
   methods: {
-    init (id) {
+    initEcharts (id) {
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
       this.tableData = lodash.cloneDeep(this.chartData)
@@ -98,29 +93,7 @@ export default {
       this.chartOption.series[0].data = protocols
       this.chartOption.xAxis.data = protocols.map(p => p.name)
       this.myChart.setOption(this.chartOption)
-    },
-    resize () {
-      this.myChart.resize()
-    }
-  },
-  mounted () {
-    this.debounceFunc = this.$_.debounce(this.resize, 200)
-    window.addEventListener('resize', this.debounceFunc)
-  },
-  beforeUnmount () {
-    window.removeEventListener('resize', this.debounceFunc)
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.init(`chart${this.chartInfo.id}`)
-      }
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

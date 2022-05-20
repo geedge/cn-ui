@@ -11,38 +11,24 @@ import { legendMapping } from '@/views/charts/charts/chart-table-title'
 import {
   timeBar
 } from '@/views/charts/charts/options/bar'
-import { getCharBartColor, timeBarTooltipFormatter } from '@/views/charts/charts/tools'
+import { getCharBartColor } from '@/views/charts/charts/tools'
+import chartEchartMixin from '@/views/charts/charts/chart-echart-mixin'
 
 export default {
   name: 'ChaetTimeBar',
-  setup () {
-    const myChart = null
-    return {
-      myChart
-    }
-  },
-  data () {
-    return {
-      chartOption: null
-    }
-  },
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
     resultType: Object,
     queryParams: Object
   },
+  mixins: [chartEchartMixin],
   methods: {
-    init (id) {
+    initEcharts (id) {
       const chartParams = this.chartInfo.params
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = this.$_.cloneDeep(timeBar)
-      // this.chartOption.tooltip.trigger = 'item'
-      // this.chartOption.tooltip.formatter = (params) => {
-      //   const str = timeBarTooltipFormatter(params, chartParams.direction)
-      //   return str
-      // }
       if (!chartParams.itemColorAlternately) {
         this.chartOption.series[0].itemStyle.color = function (params) {
           return getCharBartColor(0)
@@ -115,15 +101,6 @@ export default {
           })
         } catch (e) {}
         return allZero
-      }
-    }
-
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.init(`chart${this.chartInfo.id}`)
       }
     }
   }

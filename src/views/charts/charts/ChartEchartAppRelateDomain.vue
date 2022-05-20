@@ -20,29 +20,18 @@
 </template>
 
 <script>
-import * as echarts from 'echarts'
-import {
-  ipHostedDomain
-} from '@/views/charts/charts/options/pie'
 import chartEchartMixin from './chart-echart-mixin'
-import { get, post } from '@/utils/http'
+import { get } from '@/utils/http'
 import { reverseSortBy } from '@/utils/tools'
 
 export default {
   name: 'ChartEchartAppRelateDomain',
   mixins: [chartEchartMixin],
-  data () {
-    return {
-    }
-  },
-  props: {
-  },
   methods: {
     initEcharts (id) {
       this.initDom(id, 2)
       const chartParams = this.chartInfo.params
       const domains = this.chartData.toString()
-      // const domains = "office.com,dbank.com"
       this.$emit('showLoading', true)
 
       const typeUrl = chartParams.byCategoryUrl.slice(0, chartParams.byCategoryUrl.indexOf('?'))

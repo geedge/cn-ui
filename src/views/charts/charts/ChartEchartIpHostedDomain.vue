@@ -28,10 +28,6 @@ import chartEchartMixin from './chart-echart-mixin'
 export default {
   name: 'ChartEchartIpHostedDomain',
   mixins: [chartEchartMixin],
-  data () {
-    return {
-    }
-  },
   props: {
     entity: Object
   },
@@ -60,7 +56,6 @@ export default {
                 }
               })
               this.chartOption.series[0].data = data
-              // this.myChart.setOption(this.chartOption)
             }
           }
           resolve()

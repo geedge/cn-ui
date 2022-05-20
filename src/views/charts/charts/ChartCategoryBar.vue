@@ -3,24 +3,16 @@
 </template>
 
 <script>
-import unitConvert from '@/utils/unit-convert'
 import * as echarts from 'echarts'
-import { lineToSpace } from '@/utils/tools'
-import { unitTypes } from '@/utils/constants'
-import { legendMapping } from '@/views/charts/charts/chart-table-title'
 import {
   categoryBar
 } from '@/views/charts/charts/options/bar'
 import { getCharBartColor, categoryBarTooltipFormatter } from '@/views/charts/charts/tools'
+import chartEchartMixin from './chart-echart-mixin'
 
 export default {
   name: 'ChartCategoryBar',
-  data () {
-    return {
-      myChart: null,
-      chartOption: null
-    }
-  },
+  mixins: [chartEchartMixin],
   props: {
     chartInfo: Object,
     chartData: [Array, Object],
@@ -28,7 +20,7 @@ export default {
     queryParams: Object
   },
   methods: {
-    init (id) {
+    initEcharts (id) {
       const chartParams = this.chartInfo.params
       const dom = document.getElementById(id)
       !this.myChart && (this.myChart = echarts.init(dom))
@@ -53,7 +45,6 @@ export default {
         data: []
       }
       this.chartData.forEach((r, index) => {
-        // chartParams.direction === 'vertical' ? r.values.map(v => [Number(v[0]) * 1000, Number(v[1]), chartParams.unitType]) : r.values.map(v => [Number(v[1]), Number(v[0]) * 1000, chartParams.unitType])
         if (chartParams.direction === 'horizontal') {
           obj.data.push([Number(r.events), r.clientCountry + ' ' + r.clientRegion, chartParams.unitType])
         } else {
@@ -80,14 +71,6 @@ export default {
         setTimeout(() => {
           this.$emit('showLoading', false)
         }, 200)
-      }
-    }
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler (n) {
-        this.init(`chart${this.chartInfo.id}`)
       }
     }
   }

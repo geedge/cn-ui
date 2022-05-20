@@ -803,7 +803,6 @@ export function scrollToTop (dom, toTop, duration, direction) {
     if (oldTimestamp !== null) {
       if (direction === 'up') {
         scrollY -= totalScrollDistance * (newTimestamp - oldTimestamp) / duration
-        console.info(scrollY)
         if (scrollY < 0) {
           dom.scrollTop = 0
           return

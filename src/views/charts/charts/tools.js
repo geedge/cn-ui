@@ -383,7 +383,6 @@ export function categoryVerticalFormatter (params) {
   return str
 }
 export function timeVerticalFormatter (params) {
-  console.log(params)
   let str = '<div>'
   params.forEach((item, i) => {
     const tData = item.data[0]
@@ -406,7 +405,6 @@ export function timeVerticalFormatter (params) {
   return str
 }
 export function timeBarTooltipFormatter (params, type) {
-  console.log(params, type)
   let index1, index0
   if (type === 'vertical') {
     index0 = 0
@@ -435,7 +433,6 @@ export function timeBarTooltipFormatter (params, type) {
   return str
 }
 export function categoryBarTooltipFormatter (params, type) {
-  console.log(params, type)
   let index1, index0
   if (type === 'vertical') {
     index0 = 0

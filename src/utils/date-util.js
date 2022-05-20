@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { storageKey } from '@/utils/constants'
-// 获取初始化时间，默认最近一周
-Date.prototype.setStart = function () {
+// 获取初始化时间
+/* Date.prototype.setStart = function () {
   this.setHours(0)
   this.setMinutes(0)
   this.setSeconds(0)
@@ -10,7 +10,7 @@ Date.prototype.setEnd = function () {
   this.setHours(23)
   this.setMinutes(59)
   this.setSeconds(59)
-}
+} */
 // 将时间转化为秒
 export function getSecond (time) {
   const ms = getMillisecond(time)
