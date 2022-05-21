@@ -67,6 +67,8 @@ export const api = {
   entityAppDetailSecurity: '/interface/entity/detail/overview/app/securityEvent',
   entityAppRelatedServerDomain: '/interface/entity/detail/overview/app/relatedDomain',
   entityAppRelatedServerIp: '/interface/entity/detail/overview/app/relatedServerIp',
+  entityAppRelatedServerAppOverview: '/interface/entity/detail/app/serviceOverview',
+  entityAppDetailBasic: '/interface/entity/detail/app/basic',
   // domain detail
   entityDomainDetailBasic: '/interface/entity/detail/overview/domain/basic',
   entityDomainDetailTraffic: '/interface/entity/detail/overview/domain/traffic',
@@ -80,6 +82,7 @@ export const api = {
   entityDomainRelatedServerApp: '/interface/entity/detail/overview/domain/relatedApp',
   entityDetectionsIp: '/interface/entity/detail/overview/ip/dnsInfo',
   entityDetectionsIpQueryRate: '/interface/entity/detail/overview/ip/dnsQueryRate',
+  entityDomainRelatedServerDomainOverview: '/interface/entity/detail/domain/serviceOverview',
   // ip detail
   entityIpDetailTraffic: '/interface/entity/detail/overview/ip/traffic',
   entityIpDetailTrafficMap: '/interface/entity/detail/ip/trafficMap',
@@ -93,6 +96,8 @@ export const api = {
   entityIpDetailSecurity: '/interface/entity/detail/overview/ip/securityEvent',
   entityIpRelatedServerDomain: '/interface/entity/detail/overview/ip/relatedDomain',
   entityIpRelatedServerApp: '/interface/entity/detail/overview/ip/relatedApp',
+  entityIpRelatedServerIpOverview: '/interface/entity/detail/ip/serviceOverview',
+  entityIpDetailBasic: '/interface/entity/detail/ip/basic',
   // detection
   detection: {
     securityEvent: {

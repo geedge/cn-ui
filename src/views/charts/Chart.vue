@@ -148,6 +148,7 @@
         :chart-data="chartData"
         :time-filter="timeFilter"
         :query-params="queryParams"
+        :entity="entity"
       ></chart-relation-ship>
 
       <chart-san-key
