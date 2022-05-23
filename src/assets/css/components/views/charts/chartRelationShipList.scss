@@ -29,12 +29,14 @@
     }
   }
   .ship-body {
-    .ship-body-basicInfo {
-      position: relative;
-    }
     display: flex;
     flex-direction: column;
     margin: 7px;
+    .ship-body-basicInfo {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
     .ship-body-list.ship-body-child {
       display: flex;
       flex-direction: column;
@@ -85,6 +87,8 @@
         color: #666666;
         letter-spacing: 0;
         font-weight: 400;
+        display: flex;
+        flex: 1;
       }
       .security.ship-body-list-security-length {
         width: 140px;
@@ -94,7 +98,8 @@
         color: #333333;
         letter-spacing: 0;
         font-weight: 400;
-        word-wrap: break-word;
+        display: flex;
+        flex: 1;
       }
       .ship-body-list-value.security {
         font-size: 12px;
