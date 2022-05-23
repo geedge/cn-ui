@@ -119,6 +119,10 @@
           color: #333333;
           font-weight: 400;
           line-height: 19px;
+          i {
+            color: #23BF9A;
+            margin-right: 4px;
+          }
         }
         .ship-body-list-security-alert.critical {
           background-color: #D84C4C;

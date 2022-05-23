@@ -107,7 +107,7 @@
               </template>
             </template>
           </template>
-          <span v-else class="no-recent-alerts"><i class="cn-icon cn-icon-check"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+          <span v-else class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
         </div>
       </div>
     </div>
@@ -192,13 +192,10 @@ export default {
         this.tableName = params.data.name
         _this.timer = setTimeout(() => {
           _this.timers = setTimeout(() => {
-            console.log(dom.offsetHeight, params.event.event.offsetY, div.offsetTop)
             if (dom.offsetHeight > (params.event.event.offsetY + div.offsetHeight)) {
-              console.log(1)
               div.style.top = params.event.event.offsetY + 'px'
               div.style.left = params.event.event.offsetX + 'px'
             } else {
-              console.log(2)
               div.style.top = params.event.event.offsetY - div.offsetHeight + 'px'
               div.style.left = params.event.event.offsetX + 'px'
             }
