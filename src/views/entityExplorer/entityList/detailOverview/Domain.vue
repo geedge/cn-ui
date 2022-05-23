@@ -65,11 +65,11 @@
   </div>
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
-    <div class="overview__content domain__content overview__content-loading">
+    <div class="overview__content domain__content">
       <div class="overview__tags domain__tags" ref="relationship">
-        <div class="overview__domain-tabs">
-          <div class="overview__domain-tab overview__domain-tabs-loading">
-            <loading :loading="loadingRelationshipOne"></loading>
+        <div class="overview__domain-tabs overview__domain-tabs-loading">
+          <loading :loading="loadingRelationshipOne"></loading>
+          <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataOne.length}}</span>
               <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
@@ -87,9 +87,9 @@
             </div>
           </div>
         </div>
-        <div class="overview__domain-tabs">
-          <div class="overview__domain-tab overview__domain-tabs-loading">
-            <loading :loading="loadingRelationshipTwo"></loading>
+        <div class="overview__domain-tabs overview__domain-tabs-loading">
+          <loading :loading="loadingRelationshipTwo"></loading>
+          <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataTwo.length}}</span>
               <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
