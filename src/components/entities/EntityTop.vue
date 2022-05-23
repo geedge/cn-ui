@@ -33,8 +33,8 @@
             <el-table-column prop="percent" :label="$t('overall.percent')" >
               <template #default="scope">
                 <div class="top-table-percent" >
-                  {{totalCount2(scope.row)}}%
-                  <div class="top-table-progress"><el-progress :percentage="totalCount2(scope.row)" :show-text="false" color="#23BF9A"></el-progress></div>
+                  {{(this.totalCount === 0 ? 0 : parseFloat(scope.row.count / this.totalCount) * 100).toFixed(2)}}%
+                  <div class="top-table-progress"><el-progress :percentage="(this.totalCount === 0 ? 0 : parseFloat(scope.row.count / this.totalCount) * 100).toFixed(2)" :show-text="false" color="#23BF9A"></el-progress></div>
                 </div>
               </template>
             </el-table-column>
