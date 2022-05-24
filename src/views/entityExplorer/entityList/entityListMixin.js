@@ -12,8 +12,7 @@ export default {
   props: {
     entity: Object,
     timeFilter: Object,
-    listMode: String,
-    loading: Boolean
+    listMode: String
   },
   data () {
     return {

@@ -106,16 +106,7 @@ export default {
     queryEntityDetailTraffic () {
       this.sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}`))
       this.receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}`))
-      if (this.entity.entityType === 'app') {
-        this.loadingApp = true
-        this.loadingTraffic = true
-      } else if (this.entity.entityType === 'ip') {
-        this.loadingIp = true
-        this.loadingTraffic = true
-      } else if (this.entity.entityType === 'domain') {
-        this.loadingDomain = true
-        this.loadingTraffic = true
-      }
+      this.loadingTraffic = true
       get(this.trafficUrl, this.getQueryParams()).then(response => {
         if (response.code === 200 && response.data.result && response.data.result.length > 0) {
           response.data.result.forEach(t => {
@@ -173,27 +164,9 @@ export default {
           this.echartsArray.push(shallowRef(this.sentChart), shallowRef(this.receivedChart))
           this.sentChart.setOption(this.chartOptionSent)
           this.receivedChart.setOption(this.chartOptionReceived)
-          if (this.entity.entityType === 'app') {
-            this.loadingApp = false
-            this.loadingTraffic = false
-          } else if (this.entity.entityType === 'ip') {
-            this.loadingIp = false
-            this.loadingTraffic = false
-          } else if (this.entity.entityType === 'domain') {
-            this.loadingDomain = false
-            this.loadingTraffic = false
-          }
+          this.loadingTraffic = false
         } else {
-          if (this.entity.entityType === 'app') {
-            this.loadingApp = false
-            this.loadingTraffic = false
-          } else if (this.entity.entityType === 'ip') {
-            this.loadingIp = false
-            this.loadingTraffic = false
-          } else if (this.entity.entityType === 'domain') {
-            this.loadingDomain = false
-            this.loadingTraffic = false
-          }
+          this.loadingTraffic = false
         }
       }).finally(() => {
         setTimeout(() => {
@@ -456,6 +429,10 @@ export default {
     window.addEventListener('resize', this.debounceFunc)
     this.chartOption = _.cloneDeep(entityListLineOption)
     setTimeout(() => { this.queryEntityDetail() })
+    const _this = this
+    this.emitter.on('switch-collapse', function () {
+      setTimeout(() => { _this.queryEntityDetail() }, 400)
+    })
   },
   beforeUnmount () {
     window.removeEventListener('resize', this.debounceFunc)

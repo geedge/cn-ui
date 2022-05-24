@@ -53,6 +53,9 @@ export default {
     switchCollapse (isCollapse, index) {
       this.isCollapse = isCollapse
       this.collapseIndex = index
+      if (isCollapse) {
+        this.emitter.emit('switch-collapse')
+      }
     },
     collapse () {
       this.isCollapse = true

@@ -47,7 +47,6 @@
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <loading :loading="loadingDomain"></loading>
               <div class="row__charts" :id="`entityDetailSend${entityData.domainName}`" ></div>
             </div>
           </div>
@@ -55,7 +54,6 @@
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <loading :loading="loadingDomain"></loading>
               <div class="row__charts" :id="`entityDetailReceived${entityData.domainName}`" ></div>
             </div>
           </div>
@@ -292,7 +290,6 @@ export default {
           }
         ],
         chartDatas: [null, null, null, null, null],
-        loadingDomain: false,
         loadingTraffic: false,
         loadingRelationshipOne: false,
         loadingRelationshipTwo: false,
