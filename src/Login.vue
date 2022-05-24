@@ -77,7 +77,7 @@ export default {
             if (!this.$_.isEmpty(res.data.theme)) {
               localStorage.setItem(storageKey.theme, res.data.theme)
             }
-            res.loginSuccessPath = this.loginSuccessPath
+            res.loginSuccessPath = this.$route.query.redirect
             this.loginSuccess(res)
             localStorage.setItem(storageKey.username, this.username)
           } else if (res.code === 518005) {

@@ -89,6 +89,14 @@ export default {
       this.currentTab = this.detailTabs[0].id + ''
     }
     window.addEventListener('mousewheel', this.handleWholeScreen)
+
+    if (this.currentPath != wholeScreenRouterMapping.dns) {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.gotoAnchor(this.$route.query.anchor)
+        }, 200)
+      })
+    }
   },
   beforeMount () {
     window.removeEventListener('mousewheel', this.handleWholeScreen)
@@ -237,6 +245,12 @@ export default {
     },
     groupParentCalcHeight (params) {
       this.$refs.panelChartList.groupParentCalcHeight(params.chart, params.childrenList)
+    },
+    gotoAnchor (id) {
+      const anchor = document.getElementById(id)
+      if (anchor) {
+        anchor.scrollIntoView()
+      }
     }
   }
 }
