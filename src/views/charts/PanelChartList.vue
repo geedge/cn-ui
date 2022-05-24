@@ -179,7 +179,7 @@ export default {
     anchorPoint () {
       return function (chart) {
         if (!_.isEmpty(chart.params && chart.params.anchorPoint)) {
-          return { 'anchor-point': chart.params.anchorPoint }
+          return { id: chart.params.anchorPoint }
         } else {
           return ''
         }

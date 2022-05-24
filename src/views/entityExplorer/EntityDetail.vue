@@ -6,8 +6,8 @@
     </div>
     <main class="cn-body entity-detail__body">
       <div class="entity-detail__menu">
-        <template v-for="anchor in anchorPoints" :key="anchor.id">
-          <div class="menu-item" :class="{'menu-item--active': menuIsActive(anchor)}" @click="jumpToAnchor(anchor)">
+        <template v-for="(anchor,index) in anchorPoints" :key="anchor.id">
+          <div class="menu-item" :class="{'menu-item--active':anchor.isActive}" @click="jumpToAnchor(index,anchor)">
             <span>{{anchor.label}}</span>
           </div>
         </template>
@@ -37,7 +37,8 @@ export default {
       anchorPoints: [], // { id, label, top, height }
       top: 0,
       scrollHeight: 0,
-      clientHeight: 0
+      clientHeight: 0,
+      currentAnchor: 0
     }
   },
   setup (props, ctx) {
@@ -78,17 +79,19 @@ export default {
       const panelDom = document.querySelector('#detailWrapper')
       this.scrollHeight = panelDom.scrollHeight
       this.clientHeight = panelDom.clientHeight
-      chartList.forEach(chart => {
+      chartList.forEach((chart, index) => {
         if (chart.params.anchorPoint) {
-          const dom = document.querySelector(`[anchor-point='${chart.params.anchorPoint}']`)
+          const dom = document.querySelector(`[id='${chart.params.anchorPoint}']`)
           dom && anchorPoints.push({
             id: chart.params.anchorPoint,
+            isActive: index === 0,
             label: chart.i18n ? this.$t(chart.i18n) : chart.name,
             top: dom.offsetTop + 10/* ,
             height: document.querySelector(`#${chart.params.anchorPoint}}`).scrollHeight */
           })
         }
       })
+
       // 从小到大排序
       anchorPoints = anchorPoints.sort((a, b) => {
         return a.top - b.top
@@ -101,9 +104,18 @@ export default {
     scroll (e) {
       this.top = (e.target.scrollTop + 10) || 0
     },
-    jumpToAnchor (anchor) {
-      this.top = anchor.top
-      document.querySelector('#detailWrapper').scrollTop = this.top
+    jumpToAnchor (index, anchor) {
+      const anchorEle = document.getElementById(anchor.id)
+      this.anchorPoints.forEach((anchor, i) => {
+        if (index === i) {
+          anchor.isActive = true
+        } else {
+          anchor.isActive = false
+        }
+      })
+      if (anchorEle) {
+        anchorEle.scrollIntoView()
+      }
     },
     resize () {
       this.chartLoaded(this.chartList)
@@ -135,24 +147,6 @@ export default {
         default: break
       }
       return className
-    },
-    menuIsActive () {
-      return function (anchor) {
-        return this.currentAnchor ? this.currentAnchor.id === anchor.id : false
-      }
-    },
-    currentAnchor () {
-      let currentAnchor = null
-      if (this.top + this.clientHeight - 10 === this.scrollHeight) {
-        currentAnchor = this.anchorPoints[this.anchorPoints.length - 1]
-      } else {
-        this.anchorPoints.forEach(anchor => {
-          if (anchor.top <= this.top) {
-            currentAnchor = anchor
-          }
-        })
-      }
-      return currentAnchor
     }
   }
 }
