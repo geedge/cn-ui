@@ -1,6 +1,6 @@
 <template>
   <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
-  <div class="ship" v-show="showList" v-ele-click-outside="shipChangeDown" id="ship">
+  <div class="ship" :class="{'ship--show': showList}" v-ele-click-outside="shipChangeDown" id="ship">
     <div class="ship-title">
       <div class="ship-title-symbol" v-if="entityData.tableData.symbol"><img :src="entityData.tableData.symbol" /></div>
       <div class="ship-title-name">{{ $_.get(entityData.tableData, 'name') || '-' }}</div>
@@ -188,7 +188,44 @@ export default {
       handleData(data, links, this.chartData)
       const _this = this
       let queryParams = {}
-      this.myChart.on('mouseover', function (params) {
+      this.myChart.on('click', function (params) {
+        this.tableName = params.data.name
+        setTimeout(() => {
+          div.style.left = params.event.event.offsetX + 'px'
+          if (dom.offsetHeight > (params.event.event.offsetY + div.offsetHeight)) {
+            div.style.top = params.event.event.offsetY + 'px'
+            div.style.bottom = ''
+          } else {
+            div.style.top = ''
+            div.style.bottom = '10px'
+          }
+          _this.showList = true
+        }, 300)
+
+        if (params.data.type === 'ip') {
+          queryParams = {
+            ip: params.data.name,
+            startTime: getSecond(_this.timeFilter.startTime),
+            endTime: getSecond(_this.timeFilter.endTime)
+          }
+          _this.queryEntityDetail(_this.relationShipIpUrl, params, queryParams)
+        } else if (params.data.type === 'app_name') {
+          queryParams = {
+            appName: params.data.name,
+            startTime: getSecond(_this.timeFilter.startTime),
+            endTime: getSecond(_this.timeFilter.endTime)
+          }
+          _this.queryEntityDetail(_this.relationShipAppUrl, params, queryParams)
+        } else if (params.data.type === 'domain') {
+          queryParams = {
+            domain: params.data.name,
+            startTime: getSecond(_this.timeFilter.startTime),
+            endTime: getSecond(_this.timeFilter.endTime)
+          }
+          _this.queryEntityDetail(_this.relationShipDomainUrl, params, queryParams)
+        }
+      })
+      /*this.myChart.on('mouseover', function (params) {
         this.tableName = params.data.name
         _this.timer = setTimeout(() => {
           _this.timers = setTimeout(() => {
@@ -228,7 +265,7 @@ export default {
       this.myChart.on('mouseout', function (params) {
         clearTimeout(_this.timer)
         clearTimeout(_this.timers)
-      })
+      })*/
       this.chartOption.series[0].data = data
       this.chartOption.series[0].links = links
       this.myChart.setOption(this.chartOption)

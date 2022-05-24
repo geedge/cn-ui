@@ -1,3 +1,6 @@
+.ship--show.ship {
+  visibility: visible;
+}
 .ship {
   width: 320px;
   background: #FFFFFF;
@@ -6,6 +9,7 @@
   border-radius: 3px;
   position: absolute;
   display: flex;
+  visibility: hidden;
   flex-direction: column;
   .ship-title {
     display: flex;

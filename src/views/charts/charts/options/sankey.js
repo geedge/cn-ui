@@ -57,7 +57,7 @@ export const relationShip = {
       force: {
         repulsion: 350
       },
-      draggable: true,
+      animation: false,
       label: { show: true },
       edgeSymbol: ['none', 'arrow'],
       edgeSymbolSize: 7,
