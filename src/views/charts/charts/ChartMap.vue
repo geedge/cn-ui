@@ -530,7 +530,9 @@ export default {
     }
   },
   beforeUnmount () {
-    this.polygonSeries.mapPolygons.template.events.off('hit', this.mapBlockHitEvent)
+    if (this.polygonSeries) {
+      this.polygonSeries.mapPolygons.template.events.off('hit', this.mapBlockHitEvent)
+    }
     this.polygonSeries = null
     this.countrySeries = null
     this.worldImageSeries = null
