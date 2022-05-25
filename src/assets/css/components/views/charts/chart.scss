@@ -408,3 +408,25 @@
   cursor: pointer;
   z-index: 2;
 }
+.panel-chart__no-data.all-clear {
+  flex-direction: column;
+  .no-recent-alerts {
+    display: flex;
+    flex-direction: column;
+    color: #333333;
+    font-weight: 400;
+    text-align: center;
+    i {
+      color: #23BF9A;
+      font-size: 50px;
+    }
+    span {
+      font-size: 22px;
+      margin: 5px 0;
+    }
+  }
+  no-detection {
+    font-size: 12px;
+    color: #333;
+  }
+}

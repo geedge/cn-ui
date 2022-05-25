@@ -19,10 +19,13 @@ export default {
         chartOption: null,
         sentChart: null,
         receivedChart: null,
-        tableData: {}
+        tableData: {},
+        shipSeverity: []
       },
       chartOption: null,
-      echartsArray: []
+      echartsArray: [],
+      security: [],
+      performance: []
     }
   },
   computed: {
@@ -161,41 +164,47 @@ export default {
       })
     },
 
-    queryEntityDetailPerformance (urlObj, params, queryParams) {
+    queryEntityDetailAll (urlObj, params, queryParams) {
       this.loadingAlert = true
       get(urlObj.performanceUrl, queryParams).then(response => {
         if (response.code === 200) {
-          this.entityData.shipServerity = []
-          const criticalList = response.data.result.filter(item => item.eventSeverity === 'critical')
-          const highList = response.data.result.filter(item => item.eventSeverity === 'high')
-          const infoList = response.data.result.filter(item => item.eventSeverity === 'info')
-          const mediumList = response.data.result.filter(item => item.eventSeverity === 'medium')
-          const lowList = response.data.result.filter(item => item.eventSeverity === 'low')
-          this.entityData.shipServerity.push(
-            {
-              severityData: criticalList,
-              eventSeverity: 'critical'
-            }, {
-              severityData: highList,
-              eventSeverity: 'high'
-            }, {
-              severityData: infoList,
-              eventSeverity: 'info'
-            }, {
-              severityData: mediumList,
-              eventSeverity: 'medium'
-            }, {
-              severityData: lowList,
-              eventSeverity: 'low'
-            }
-          )
-          this.entityData.shipServerity.forEach(item => {
-            if (item.severityData.length > 0) {
-              this.entityData.showShipServerity = true
-            } else {
-              this.entityData.showShipServerity = false
-            }
-          })
+          this.performance = response.data.result
+        }
+      })
+      get(urlObj.securityUrl, queryParams).then(response => {
+        this.security = response.data.result
+      })
+      const severity = [...this.security, ...this.performance]
+      const criticalList = severity.filter(item => item.eventSeverity === 'critical')
+      const highList = severity.filter(item => item.eventSeverity === 'high')
+      const infoList = severity.filter(item => item.eventSeverity === 'info')
+      const mediumList = severity.filter(item => item.eventSeverity === 'medium')
+      const lowList = severity.filter(item => item.eventSeverity === 'low')
+      this.entityData.shipSeverity[0] = {
+        severityData: criticalList,
+        eventSeverity: 'critical'
+      }
+      this.entityData.shipSeverity[1] = {
+        severityData: highList,
+        eventSeverity: 'high'
+      }
+      this.entityData.shipSeverity[2] = {
+        severityData: infoList,
+        eventSeverity: 'info'
+      }
+      this.entityData.shipSeverity[3] = {
+        severityData: mediumList,
+        eventSeverity: 'medium'
+      }
+      this.entityData.shipSeverity[4] = {
+        severityData: lowList,
+        eventSeverity: 'low'
+      }
+      this.entityData.shipSeverity.forEach(item => {
+        if (item.severityData.length > 0) {
+          this.entityData.showShipServerity = true
+        } else {
+          this.entityData.showShipServerity = false
         }
         this.loadingAlert = false
       })
@@ -245,7 +254,7 @@ export default {
       this.entityData.tableData.symbol = params.data.symbol.slice(8)
       this.entityData.tableData.type = urlObj.entityType
       this.queryEntityDetailTraffic(urlObj, params, queryParams)
-      this.queryEntityDetailPerformance(urlObj, params, queryParams)
+      this.queryEntityDetailAll(urlObj, params, queryParams)
       this.queryEntityDetaServerOverview(urlObj, params, queryParams)
       this.getBasicProperties(urlObj, params, queryParams)
     },

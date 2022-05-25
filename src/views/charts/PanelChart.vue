@@ -36,6 +36,7 @@
         :loading="loading"
         :entity="entity"
         :table="table"
+        :active-tab="activeTab"
         :is-fullscreen="isFullscreen"
         :order-pie-table="orderPieTable"
         :time-filter="timeFilter"
@@ -102,7 +103,8 @@ export default {
     timeFilter: Object, // 时间范围
     isFullscreen: Boolean,
     panelLock: Boolean,
-    entity: Object
+    entity: Object,
+    activeTab: Number
   },
   data () {
     return {

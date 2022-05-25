@@ -32,6 +32,7 @@
             :chart-info="item"
             :time-filter="timeFilter"
             :entity="entity"
+            :active-tab="activeTab"
             @groupShow="groupShow"
             @showFullscreen="showFullscreen"
         ></panel-chart>
@@ -56,6 +57,7 @@
           :is-fullscreen="true"
           :panelLock="panelLock"
           :time-filter="timeFilter"
+          :active-tab="activeTab"
           @showFullscreen="showFullscreen"
       ></panel-chart>
     </el-dialog>
@@ -84,6 +86,7 @@ export default {
     panelLock: { type: Boolean, default: true },
     isGroup: Boolean,
     entity: Object,
+    activeTab: Number,
     dataList: Array // 看板中所有图表信息
   },
   data () {

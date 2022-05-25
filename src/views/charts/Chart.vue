@@ -1,7 +1,7 @@
 <template>
   <div class="cn-chart">
     <loading :loading="loading && !isTabs && !isBlock && !isGroup"></loading>
-    <chart-no-data v-if="isNoData"></chart-no-data>
+    <chart-no-data v-if="isNoData" :active-tab="activeTab"></chart-no-data>
     <template v-else>
       <chart-tabs
         ref="chart"
@@ -397,7 +397,8 @@ export default {
     table: Object,
     timeFilter: Object,
     orderPieTable: String,
-    tabHandleClickType: String
+    tabHandleClickType: String,
+    activeTab: Number
   },
   computed: {
     isNoData () {

@@ -55,6 +55,16 @@
         flex-wrap: wrap;
         padding: 2px 0;
         font-size: 14px;
+        .no-recent-alerts {
+          font-size: 12px;
+          color: #333333;
+          font-weight: 400;
+          line-height: 19px;
+          i {
+            color: #23BF9A;
+            margin-right: 4px;
+          }
+        }
 
         &.overview__row--small-font {
           font-size: 12px;

@@ -15,6 +15,7 @@
           v-if="activeTab == tab.id"
           :time-filter="timeFilter"
           :data-list="tab.children"
+          :active-tab="activeTab"
           :panel-lock="true"
           :entity="entity"
       >

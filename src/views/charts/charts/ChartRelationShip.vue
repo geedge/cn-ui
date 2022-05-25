@@ -100,7 +100,7 @@
         <div class="ship-body-list-title">{{$t('relationShip.alert')}}</div>
         <div class="ship-body-list-value security">
           <template v-if="entityData.showShipServerity">
-            <template v-for="(item, index) in entityData.shipServerity" :key="index">
+            <template v-for="(item, index) in entityData.shipSeverity" :key="index">
               <template v-if="item.severityData && item.severityData.length > 0">
                 <span class="ship-body-list-security-alert" :class="iconClass(item)">{{ item.eventSeverity }}</span>
                 <span class="ship-body-list-security-length">{{ item.severityData.length }}</span>
@@ -137,6 +137,7 @@ export default {
         entityType: 'ip',
         trafficUrl: api.entityIpDetailTraffic,
         performanceUrl: api.entityIpDetailPerformance,
+        securityUrl: api.entityIpDetailSecurity,
         ServerOverviewUrl: api.entityIpRelatedServerIpOverview,
         basicProperties: api.entityIpDetailBasic
       },
@@ -144,6 +145,7 @@ export default {
         entityType: 'domain',
         trafficUrl: api.entityDomainDetailTraffic,
         performanceUrl: api.entityDomainDetailPerformance,
+        securityUrl: api.entityDomainDetailSecurity,
         ServerOverviewUrl: api.entityDomainRelatedServerDomainOverview,
         basicProperties: api.entityDomainDetailBasic
       },
@@ -151,6 +153,7 @@ export default {
         entityType: 'app',
         trafficUrl: api.entityAppDetailTraffic,
         performanceUrl: api.entityAppDetailPerformance,
+        securityUrl: api.entityAppDetailSecurity,
         ServerOverviewUrl: api.entityAppRelatedServerAppOverview,
         basicProperties: api.entityAppDetailBasic
       },
