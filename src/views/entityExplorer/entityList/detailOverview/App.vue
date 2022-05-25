@@ -165,7 +165,7 @@
     <div class="overview__content overview__content-loading">
       <loading :loading="loadingSecurityEvents"></loading>
       <div class="overview__row">
-        <span v-if="entityData.securityList.length <= 0" class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+        <span v-if="securityData.length === 0" class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
       <div class="overview__row overview__row--small-font"   v-for="(security, index) in entityData.securityList" :key="index">
         <div class="row__label row__label--width160">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
