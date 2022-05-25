@@ -61,8 +61,9 @@ export default {
       this.pageObj.pageNo = val
       const extraParams = {
         pageNo: val,
-        pageSize: this.pageSize
+        pageSize: this.pageObj.pageSize
       }
+      console.log(this.pag)
       this.$emit('getDetectionData', this.chartInfo.params.url, extraParams, false, {
         startTime: this.queryParams.startTime,
         endTime: this.queryParams.endTime
