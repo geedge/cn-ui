@@ -107,7 +107,7 @@
               </template>
             </template>
           </template>
-          <span v-else class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+          <span v-else class="no-recent-alerts"><i style="font-size: 14px;" class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
         </div>
       </div>
     </div>
