@@ -1,6 +1,6 @@
 <template>
   <div class="chart__loading" v-show="showLoading">
-    <i class="el-icon-loading"></i>
+    <img :class="className" :src="path" alt="" :style="innerStyle">
   </div>
 </template>
 
@@ -8,7 +8,12 @@
 export default {
   name: 'loading',
   props: {
-    loading: Boolean
+    loading: Boolean,
+    size: {
+      type: String,
+      default: 'default' // large default small
+    },
+    innerStyle: String
   },
   data () {
     return {
@@ -30,6 +35,28 @@ export default {
       handler (n) {
         this.showLoading = n
       }
+    }
+  },
+  setup (props) {
+    const path = window.location.protocol + '//' + window.location.host + '/images/loading.gif'
+    let className = ''
+    switch (props.size) {
+      case 'large': {
+        className = 'loading-img--large'
+        break
+      }
+      case 'small': {
+        className = 'loading-img--small'
+        break
+      }
+      default: {
+        className = 'loading-img--default'
+        break
+      }
+    }
+    return {
+      path,
+      className
     }
   }
 }

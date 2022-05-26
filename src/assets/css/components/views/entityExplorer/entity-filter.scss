@@ -63,10 +63,9 @@
           display: inline-block;
           text-align: center;
           flex: 1;
-          .chart__loading i.el-icon-loading {
-            font-size: 18px;
-            top: calc(50% - 10px);
-            left: calc(50% - 8px);
+          .chart__loading img {
+            left: unset;
+            right: 0;
           }
         }
       }

@@ -14,9 +14,7 @@
     <el-table-column type="expand" min-width="5%">
       <template #default="props">
         <div style="position: relative">
-          <div class="chart__loading" style="top: 0; height: 100%; z-index: 1;" v-show="loading">
-            <i class="el-icon-loading"></i>
-          </div>
+          <loading :loading="loading"></loading>
           <el-table
               tooltip-effect="light"
               class="expand-table"
@@ -88,6 +86,7 @@ import unitConvert from '@/utils/unit-convert'
 import { get } from '@/utils/http'
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { unitTypes, riskLevelMapping } from '@/utils/constants'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'PieTable',
@@ -96,6 +95,9 @@ export default {
     chartInfo: Object,
     order: String,
     timeFilter: Object
+  },
+  components: {
+    Loading
   },
   watch: {
     tableData: {

@@ -100,7 +100,7 @@
                   }}</span>
                   <!-- 曲线-->
                   <div class="item-box-loading">
-                    <loading :loading="loading"></loading>
+                    <loading :loading="loading" size="small"></loading>
                     <div
                         class="row__charts"
                         :id="`entityDetailSend${entityType}${listMode}`"
@@ -138,7 +138,7 @@
                   }}</span>
 
                   <div class="item-box-loading">
-                    <loading :loading="loading"></loading>
+                    <loading :loading="loading" size="small"></loading>
                     <div
                       class="row__charts"
                       :id="`entityDetailReceived${entityType}${listMode}`"

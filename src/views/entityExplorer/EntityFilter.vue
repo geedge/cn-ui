@@ -18,7 +18,7 @@
                   <span>{{item.label}}</span>
                 </div>
                 <div class="row__value">
-                  <loading :loading="loadingLeft"></loading>
+                  <loading :loading="loadingLeft" size="small"></loading>
                   <span>{{item.value}}</span>
                 </div>
               </div>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import EntityTop from '@/components/entities/EntityTop'
+import EntityTop from '@/views/entityExplorer/EntityTop'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import Loading from '@/components/common/Loading'

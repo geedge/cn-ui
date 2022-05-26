@@ -1,8 +1,6 @@
 <template>
   <div class="entity-list" id="entityList">
-    <div class="entity__loading" style="background: #eff2f5;opacity: .6;" v-show="loading">
-      <i class="el-icon-loading"></i>
-    </div>
+    <loading :loading="loading"></loading>
     <div class="entity-list__content">
       <!-- 列表式 -->
       <template v-if="listMode === 'list'">
@@ -42,6 +40,7 @@
 <script>
 import Card from '@/views/entityExplorer/entityList/Card'
 import Row from '@/views/entityExplorer/entityList/Row'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'EntityList',
@@ -55,7 +54,8 @@ export default {
   },
   components: {
     'entity-card': Card,
-    'entity-row': Row
+    'entity-row': Row,
+    Loading
   },
   data () {
     return {

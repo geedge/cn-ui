@@ -387,16 +387,30 @@
   position: absolute;
   height: 100%;
   width: 100%;
+  left: 0;
+  top: 0;
   background-color: #fefefe;
   z-index: 1;
   opacity: .8;
 
-  i {
+  img {
     position: absolute;
-    left: calc(50% - 15px);
-    top: calc(50% - 15px);
-    font-size: 30px;
-    color: #aaa;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    &.loading-img--large {
+      height: 30px;
+      width: 30px;
+    }
+    &.loading-img--small {
+      height: 14px;
+      width: 14px;
+    }
+    &.loading-img--default {
+      height: 20px;
+      width: 20px;
+    }
   }
 }
 

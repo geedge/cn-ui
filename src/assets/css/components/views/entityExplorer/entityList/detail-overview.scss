@@ -265,14 +265,12 @@
       display: flex;
       .overview__tag-loading.overview__tag {
         position: relative;
-        .chart__loading {
-          top: 0;
-          left: 0;
-        }
       }
       .overview__tag {
         display: flex;
-        padding: 6px 15px;
+        padding: 0 15px;
+        height: 31px;
+        align-items: center;
         margin-right: 20px;
         background-color: #EFF6FE;
         font-size: 14px;
