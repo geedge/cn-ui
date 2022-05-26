@@ -144,8 +144,12 @@
     <div class="overview__title">{{$t('overall.alert')}}</div>
     <div class="overview__content overview__content-loading">
       <loading :loading="loadingAlert"></loading>
-      <div class="overview__row">
-        <span v-if="performanceData.length === 0" class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+      <div class="overview__row" v-if="performanceData.length === 0">
+        <span  class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+      </div>
+      <div class="overview__row" v-if="performanceData.length > 0">
+        <div class="row__label">{{$t('entities.recentAlert')}}</div>
+        <div class="row__content">{{entityData.performanceNum}}</div>
       </div>
       <div class="overview__row overview__row--small-font"   v-for="(performance, index) in entityData.performanceList" :key="index">
         <div class="row__label row__label--width160">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
@@ -164,8 +168,12 @@
     <div class="overview__title">{{$t('entities.securityEvents')}}</div>
     <div class="overview__content overview__content-loading">
       <loading :loading="loadingSecurityEvents"></loading>
-      <div class="overview__row">
-        <span v-if="securityData.length === 0" class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+      <div class="overview__row" v-if="securityData.length === 0">
+        <span class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+      </div>
+      <div class="overview__row" v-if="securityData.length > 0">
+        <div class="row__label">{{$t('entities.recentSecurity')}}</div>
+        <div class="row__content">{{entityData.securityNum}}</div>
       </div>
       <div class="overview__row overview__row--small-font"   v-for="(security, index) in entityData.securityList" :key="index">
         <div class="row__label row__label--width160">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
