@@ -167,6 +167,10 @@ export default {
     }
   },
   methods: {
+    reload () {
+      this.standaloneTimeRange.use = false
+      this.getChartData()
+    },
     /* 参数 extraParams 额外请求参数 */
     getChartData (url, extraParams = {}, chartTimeFilter, num) {
       this.loading = true
