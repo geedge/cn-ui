@@ -208,6 +208,7 @@ export default {
     this.emitter.on('chart-info', function (value) {
       _this.getData(1, value)
     })
+    this.getCount()
   }
 }
 </script>
