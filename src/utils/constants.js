@@ -25,7 +25,8 @@ export const storageKey = {
   entitySearchHistory: 'cn-entity-search-history',
   echartLegendFontSize: 'echartLegendFontSize',
   echartLabelFontSize: 'echartLabelFontSize',
-  tokenExpireCurrentPath: 'token-expire-current-path'
+  tokenExpireCurrentPath: 'token-expire-current-path',
+  performanceEndTimeInterval: 'performance-endTime-interval'
 }
 
 // 统一定义跳转来源

@@ -43,14 +43,14 @@
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-               <div class="row__charts" :id="`entityDetailSend${entityData.appName}`" ></div>
+               <div class="row__charts" :id="`entityDetailSend${entity.appName}`" ></div>
             </div>
           </div>
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-               <div class="row__charts" :id="`entityDetailReceived${entityData.appName}`" ></div>
+               <div class="row__charts" :id="`entityDetailReceived${entity.appName}`" ></div>
             </div>
           </div>
         </div>
@@ -157,6 +157,11 @@
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
           <div>{{performance.eventType}}</div>
         </div>
+        <div class="row__content-loading"  style="position: relative;" >
+          <loading :loading="!loadingAlert && loadingPerformance[index]?loadingPerformance[index]:false" :id="`loading${entity.ipAddr}_${index}`" size="small"></loading>
+          <div class="row__charts"  :id="`entityPerformanceChart${entity.appName}_${index}`"></div>
+        </div>
+
         <div class="row__desc"></div>
       </div>
       <div class="overview__row overview__row--small-font" v-if="performanceData && performanceData.length > 5">
@@ -195,7 +200,6 @@
         :entity="entityCopy"
         :query-params="queryParams"
         :hide-header="true"
-        :loading="loadingMap"
         @getCurrentTimeRange="getCurrentTimeRange"
     ></chart>
   </div>
@@ -299,8 +303,7 @@ export default {
         loadingOut: false,
         loadingIn: false,
         loadingAlert: false,
-        loadingSecurityEvents: false,
-        loadingMap: false
+        loadingSecurityEvents: false
       }
     }
   },
@@ -314,17 +317,21 @@ export default {
       }
       return queryParams
     },
+    getPerformanceQueryParams () {
+      const queryParams = {
+        appName: this.entity.appName
+      }
+      return queryParams
+    },
     handleRelationData (result) {
       this.entityData.domainCount = result.domainCount
       this.entityData.ipCount = result.ipCount
     },
     chartGetMap () {
-      this.loadingMap = true
       get((this.trafficUrlMap), this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.chartData = response.data.result
         }
-        this.loadingMap = false
       })
     },
     queryRelated () {
@@ -334,9 +341,9 @@ export default {
   },
   mounted () {
     this.queryParams = this.getQueryParams()
-    this.chartGetMap()
     this.$nextTick(() => {
       setTimeout(() => {
+        this.chartGetMap()
         this.queryRelated()
       }, 250)
     })

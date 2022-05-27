@@ -44,7 +44,7 @@
             <!-- 曲线-->
             <div class="row__content-loading">
               <loading :loading="!loadingDns && loading" size="small"></loading>
-              <div class="row__charts" :id="`entityDnsServerInfo${entityData.ipAddr}`"></div>
+              <div class="row__charts" :id="`entityDnsServerInfo${entity.ipAddr}`"></div>
             </div>
           </div>
         </div>
@@ -70,14 +70,14 @@
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <div class="row__charts" :id="`entityDetailSend${entityData.ipAddr}`"></div>
+              <div class="row__charts" :id="`entityDetailSend${entity.ipAddr}`"></div>
             </div>
           </div>
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <div class="row__charts" :id="`entityDetailReceived${entityData.ipAddr}`"></div>
+              <div class="row__charts" :id="`entityDetailReceived${entity.ipAddr}`"></div>
             </div>
           </div>
         </div>
@@ -183,6 +183,10 @@
         <div class="row__content row__content--width200">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
           <div>{{performance.eventType}}</div>
+        </div>
+        <div class="row__content-loading"  style="position: relative;" >
+          <loading :loading="!loadingAlert && loadingPerformance[index]?loadingPerformance[index]:false" :id="`loading${entity.ipAddr}_${index}`" size="small"></loading>
+          <div class="row__charts"  :id="`entityPerformanceChart${entity.ipAddr}_${index}`"></div>
         </div>
         <div class="row__desc"></div>
       </div>
@@ -382,6 +386,12 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         ip: this.entity.ipAddr
+      }
+      return queryParams
+    },
+    getPerformanceQueryParams () {
+      const queryParams = {
+        serverIp: this.entity.ipAddr
       }
       return queryParams
     },

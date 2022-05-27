@@ -2,9 +2,14 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
-import { riskLevelMapping, unitTypes } from '@/utils/constants'
+import { riskLevelMapping, unitTypes, storageKey } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import { shallowRef } from 'vue'
+import { shallowRef, markRaw } from 'vue'
+import { metricOption } from '@/views/detections/options/detectionOptions'
+import { sortBy, reverseSortBy } from '@/utils/tools'
+import { getSecond } from '@/utils/date-util'
+import { api } from '@/utils/api'
+import axios from 'axios'
 
 export default {
   props: {
@@ -27,6 +32,8 @@ export default {
         receivedChart: null
       },
       chartOption: null,
+      performanceChartBasicOption: null,
+      performanceChartOption: null,
       queryParams: {},
       echartsArray: [],
       performanceData: [],
@@ -35,13 +42,16 @@ export default {
         securityPageSize: 5,
         performancePageSize: 5,
         pageNo: 1
-      }
+      },
+      metricChart: null,
+      performanceChartList: [],
+      loadingPerformance: []
     }
   },
   computed: {
     entityName () {
       let name
-      switch (this.entityData.entityType) {
+      switch (this.entity.entityType) {
         case ('ip'): {
           name = this.entity.ipAddr
           break
@@ -179,7 +189,85 @@ export default {
         }, 250)
       })
     },
+    queryEntityDetailPerformanceChart (performanceList, startIndex) {
+      if (performanceList && performanceList.length > 0) {
+        const self = this
+        const performanceEndTimeInterval = axios.defaults.performanceEndTimeInterval
+        const allTime = Number(performanceEndTimeInterval || 86401)
 
+        performanceList.forEach((item, i) => {
+          const index = startIndex + i
+          this.loadingPerformance[index] = true
+          const startTime = getSecond(item.startTime)
+          const endTime = getSecond(item.startTime) + allTime
+          const nowTime = getSecond(new Date())
+          this.searchStartTime = startTime - allTime / 2
+          this.searchEndTime = _.min([nowTime, endTime + allTime / 2])
+          let url
+          if (item.eventType === 'dns error') {
+            url = api.detection.performanceEvent.dnsErrorMetric
+          } else if (item.eventType === 'http error') {
+            url = api.detection.performanceEvent.httpErrorMetric
+          } else if (item.eventType === 'high dns response time') {
+            url = api.detection.performanceEvent.highDnsResponseTimeMetric
+          }
+
+          if (url) {
+            get(url, {
+              ...self.getPerformanceQueryParams(),
+              startTime: self.searchStartTime,
+              endTime: self.searchEndTime,
+              eventType: item.eventType
+            }).then((response) => {
+              if (response.code === 200) {
+                const metricDataList = response.data.result[0] && response.data.result[0].values
+                this.$nextTick(() => {
+                  if (metricDataList && metricDataList.length > 0) {
+                    metricDataList.sort(reverseSortBy(0))// 将返回的数据按时间降序排序，方便找到实线和虚线的交点
+                    // let endIndex = (self.metricList). findIndex ((item) => item[0]  <=  1435781434781 );
+                    let endIndex = (metricDataList).findIndex((item) => item[0] <= endTime)
+                    endIndex = metricDataList.length - endIndex
+
+                    metricDataList.sort(sortBy(0))// 将返回的数据按时间升序排序，方便找到实线和虚线的交点
+                    // let startIndex = (self.metricList). findIndex ((item) => item[0]  >=  1435781432781 );
+                    const startIndex = metricDataList.findIndex((item) => item[0] >= startTime)
+
+                    const performanceChartOption = _.cloneDeep(metricOption)
+                    if (startIndex > -1 && endIndex > -1) {
+                      performanceChartOption.series[0].data = metricDataList.slice(0, startIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
+                      performanceChartOption.series[1].data = metricDataList.slice(startIndex - 1, endIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
+                      performanceChartOption.series[2].data = metricDataList.slice(endIndex - 1, metricDataList.length).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
+                    }
+                    const metricChart = markRaw(echarts.init(document.getElementById(`entityPerformanceChart${self.entityName}_${index}`)))
+                    performanceChartOption && metricChart.setOption(performanceChartOption)
+                    self.performanceChartList.push(metricChart)
+                    this.echartsArray.push(shallowRef(metricChart))
+                  } else {
+                    const chartDom = document.getElementById(`entityPerformanceChart${self.entityName}${index}`)
+                    chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
+                  }
+                })
+              }
+            }).catch(error => {
+              console.log(error)
+              const chartDom = document.getElementById(`entityPerformanceChart${self.entityName}${index}`)
+              chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
+            }).finally(() => {
+              setTimeout(() => {
+                try {
+                  this.$nextTick(() => {
+                    self.performanceChartList.forEach(item => {
+                      item && item.resize()
+                    })
+                    this.loadingPerformance[index] = false
+                  })
+                } catch (e) {}
+              }, 250)
+            })
+          }
+        })
+      }
+    },
     queryEntityDetailRelation () {
       get(this.relationUrl, this.getQueryParams()).then(response => {
         if (response.code === 200) {
@@ -310,6 +398,11 @@ export default {
           this.entityData.performanceNum = response.data.result.length
           this.performanceData = response.data.result
           this.entityData.performanceList = this.getTargetPageData(1, this.showMore.performancePageSize, this.performanceData)
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.queryEntityDetailPerformanceChart(this.entityData.performanceList, 0)
+            }, 200)
+          })
         }
         this.loadingAlert = false
       })
@@ -328,8 +421,16 @@ export default {
     },
 
     performanceShowMore (num) {
+      const startIndex = this.showMore.performancePageSize
       this.showMore.performancePageSize += num
       this.entityData.performanceList = this.getTargetPageData(this.showMore.pageNo, this.showMore.performancePageSize, this.performanceData)
+      this.$nextTick(() => {
+        setTimeout(() => {
+          if (this.entityData.performanceList && this.entityData.performanceList.length > 0) {
+            this.queryEntityDetailPerformanceChart(this.entityData.performanceList.slice(startIndex, this.entityData.performanceList.length), startIndex)
+          }
+        }, 200)
+      })
     },
 
     securityShowMore (num) {
@@ -436,5 +537,11 @@ export default {
   },
   beforeUnmount () {
     window.removeEventListener('resize', this.debounceFunc)
+    if (this.performanceChartList) {
+      this.performanceChartList.forEach(item => {
+        item.dispose()
+        item = null
+      })
+    }
   }
 }
