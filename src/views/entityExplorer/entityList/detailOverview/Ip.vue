@@ -222,6 +222,7 @@
         :entity="entityCopy"
         :query-params="queryParams"
         :hide-header="true"
+        :loading="loadingMap"
         @getCurrentTimeRange="getCurrentTimeRange"
     ></chart>
   </div>
@@ -330,7 +331,8 @@ export default {
       loadingOut: false,
       loadingIn: false,
       loadingAlert: false,
-      loadingSecurityEvents: false
+      loadingSecurityEvents: false,
+      loadingMap: false
     }
   },
   computed: {
@@ -388,10 +390,12 @@ export default {
       this.entityData.domainCount = result.domainCount
     },
     chartGetMap () {
+      this.loadingMap = true
       get((this.trafficUrlMap), this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.chartData = response.data.result
         }
+        this.loadingMap = false
       })
     },
     queryRelated () {
@@ -401,9 +405,9 @@ export default {
   },
   mounted () {
     this.queryParams = this.getQueryParams()
+    this.chartGetMap()
     this.$nextTick(() => {
       setTimeout(() => {
-        this.chartGetMap()
         this.queryRelated()
       }, 250)
     })

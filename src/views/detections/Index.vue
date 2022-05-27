@@ -15,9 +15,7 @@
     ></detection-search>
     <!-- 内容区 -->
     <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
-      <div class="entity__loading" style="background: #eff2f5;opacity: .6;" v-show="loading">
-        <i class="el-icon-loading"></i>
-      </div>
+      <loading :loading="loading"></loading>
       <template v-if="isEventSeverityNoData">
          <div class="no-data detection__event-severity-bar" >No data</div>
       </template>
@@ -108,18 +106,19 @@ import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize, detectionPageType } from '@/utils/constants'
 import { getNowTime, getSecond, rTime } from '@/utils/date-util'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import * as echarts from 'echarts'
 import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
 import { reverseSortBy, sortBy, extensionEchartY } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import DetectionNoData from '@/views/detections/DetectionNoData'
-import { shallowRef } from 'vue'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'Index',
   components: {
+    Loading,
     DetectionSearch,
     DateTimeRange,
     TimeRefresh,

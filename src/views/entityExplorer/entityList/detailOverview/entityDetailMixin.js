@@ -431,7 +431,7 @@ export default {
     setTimeout(() => { this.queryEntityDetail() })
     const _this = this
     this.emitter.on('switch-collapse', function () {
-      setTimeout(() => { _this.queryEntityDetail() }, 400)
+      setTimeout(() => { _this.queryEntityDetail() }, 200)
     })
   },
   beforeUnmount () {

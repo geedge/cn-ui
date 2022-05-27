@@ -27,7 +27,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.traffic')}}</div>
     <div class="overview__content overview__content-loading">
-      <loading :loading="loadingTraffic"></loading>
+      <loading :loading="loadingTraffic" size="small" inner-style="left: 8.75rem;" style="width: 50%;"></loading>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
         <div class="row__content">{{unitConvert(entityData.max, unitTypes.byte).join(' ')}}/s</div>
@@ -62,7 +62,7 @@
     <div class="overview__content domain__content">
       <div class="overview__tags domain__tags" ref="relationship">
         <div class="overview__domain-tabs overview__domain-tabs-loading">
-          <loading :loading="loadingRelationshipOne"></loading>
+          <loading :loading="loadingRelationshipOne" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataOne.length}}</span>
@@ -82,7 +82,7 @@
           </div>
         </div>
         <div class="overview__domain-tabs overview__domain-tabs-loading">
-          <loading :loading="loadingRelationshipTwo"></loading>
+          <loading :loading="loadingRelationshipTwo" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
           <div class="overview__domain-tab">
             <div class="overview__tag domain__tag">
               <span class="tag__value">{{relationshipDataTwo.length}}</span>
@@ -107,7 +107,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.networkQuality')}}</div>
     <div class="overview__content overview__content-loading-net">
-      <loading :loading="loadingNetworkQuality"></loading>
+      <loading :loading="loadingNetworkQuality" size="small"></loading>
       <div class="overview__row overview__row--single-value">
         <chart-single-value
             v-for="(chartInfo, i) in singleValues.chartInfos"
@@ -124,14 +124,14 @@
     <div class="overview__content">
       <div class="overview__tags">
         <div class="overview__tag overview__tag-loading">
-          <loading :loading="loadingOut"></loading>
+          <loading :loading="loadingOut" size="small"></loading>
           <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
           <span class="tag__value">{{entityData.linkOutId ? entityData.linkOutId : '-'}},</span>
           <span class="tag__desc">{{$t('entities.percentage')}}</span>
           <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') : '-'}}</span>
         </div>
         <div class="overview__tag overview__tag-loading">
-          <loading :loading="loadingIn"></loading>
+          <loading :loading="loadingIn" size="small"></loading>
           <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
           <span class="tag__value">{{entityData.linkInId ? entityData.linkInId : '-'}},</span>
           <span class="tag__desc">{{$t('entities.percentage')}}</span>
@@ -143,7 +143,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.alert')}}</div>
     <div class="overview__content overview__content-loading">
-      <loading :loading="loadingAlert"></loading>
+      <loading :loading="loadingAlert" size="small" inner-style="left: 10rem"></loading>
       <div class="overview__row" v-if="performanceData.length === 0">
         <span  class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
@@ -167,7 +167,7 @@
   <div class="overview-item">
     <div class="overview__title">{{$t('entities.securityEvents')}}</div>
     <div class="overview__content overview__content-loading">
-      <loading :loading="loadingSecurityEvents"></loading>
+      <loading :loading="loadingSecurityEvents" size="small" inner-style="left: 10rem"></loading>
       <div class="overview__row" v-if="securityData.length === 0">
         <span class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
@@ -195,6 +195,7 @@
         :entity="entityCopy"
         :query-params="queryParams"
         :hide-header="true"
+        :loading="loadingMap"
         @getCurrentTimeRange="getCurrentTimeRange"
     ></chart>
   </div>
@@ -298,7 +299,8 @@ export default {
         loadingOut: false,
         loadingIn: false,
         loadingAlert: false,
-        loadingSecurityEvents: false
+        loadingSecurityEvents: false,
+        loadingMap: false
       }
     }
   },
@@ -317,10 +319,12 @@ export default {
       this.entityData.ipCount = result.ipCount
     },
     chartGetMap () {
+      this.loadingMap = true
       get((this.trafficUrlMap), this.getQueryParams()).then(response => {
         if (response.code === 200) {
           this.chartData = response.data.result
         }
+        this.loadingMap = false
       })
     },
     queryRelated () {
@@ -330,9 +334,9 @@ export default {
   },
   mounted () {
     this.queryParams = this.getQueryParams()
+    this.chartGetMap()
     this.$nextTick(() => {
       setTimeout(() => {
-        this.chartGetMap()
         this.queryRelated()
       }, 250)
     })

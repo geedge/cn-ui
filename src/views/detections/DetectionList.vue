@@ -1,8 +1,6 @@
 <template>
   <div class="detection-list" id="detectionList">
-    <div class="detection__loading" style="background: #eff2f5;opacity: .6;" v-show="loading">
-      <i class="el-icon-loading"></i>
-    </div>
+    <loading :loading="loading"></loading>
     <div class="detection-list__content">
       <div class="detection-list--list">
         <div class="no-data" v-if="noData">No data</div>
@@ -24,9 +22,11 @@
 
 <script>
 import DetectionRow from '@/views/detections/DetectionRow'
+import Loading from '@/components/common/Loading'
 export default {
   name: 'DetectionList',
   components: {
+    Loading,
     DetectionRow
   },
   props: {
