@@ -112,7 +112,9 @@ export default {
       eventSeverityColor: eventSeverityColor,
       pageNo: 1,
       alarmInfoCount: {},
-      fromChartData: ''
+      fromChartData: '',
+      startTime: '',
+      endTime: ''
     }
   },
   computed: {
@@ -132,6 +134,16 @@ export default {
           this.getData(1, n)
         })
       }
+    },
+    queryParams: {
+      deep: true,
+      handler (n) {
+        if (n) {
+          this.startTime = n.startTime
+          this.endTime = n.endTime
+          this.getCount()
+        }
+      }
     }
   },
   components: {
@@ -141,8 +153,8 @@ export default {
     unitConvert,
     getCount () {
       const countQuery = {
-        startTime: this.queryParams.startTime,
-        endTime: this.queryParams.endTime,
+        startTime: this.startTime,
+        endTime: this.endTime,
         eventSeverity:
           this.tabHandleClickType === 'All' ? '' : this.tabHandleClickType
       }
@@ -196,7 +208,6 @@ export default {
     this.emitter.on('chart-info', function (value) {
       _this.getData(1, value)
     })
-    this.getCount()
   }
 }
 </script>
