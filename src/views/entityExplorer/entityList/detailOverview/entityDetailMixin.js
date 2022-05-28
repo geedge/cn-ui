@@ -45,7 +45,9 @@ export default {
       },
       metricChart: null,
       performanceChartList: [],
-      loadingPerformance: []
+      loadingPerformance: [],
+
+      performanceMetricEndTimeInterval: 3600 // 服务质量事件指标的结束时间与开始时间的秒间隔
     }
   },
   computed: {
@@ -191,18 +193,14 @@ export default {
     },
     queryEntityDetailPerformanceChart (performanceList, startIndex) {
       if (performanceList && performanceList.length > 0) {
-        const self = this
-        const performanceEndTimeInterval = axios.defaults.performanceEndTimeInterval
-        const allTime = Number(performanceEndTimeInterval || 86401)
-
         performanceList.forEach((item, i) => {
           const index = startIndex + i
           this.loadingPerformance[index] = true
           const startTime = getSecond(item.startTime)
-          const endTime = getSecond(item.startTime) + allTime
+          const endTime = getSecond(item.startTime) + this.performanceMetricEndTimeInterval
           const nowTime = getSecond(new Date())
-          this.searchStartTime = startTime - allTime / 2
-          this.searchEndTime = _.min([nowTime, endTime + allTime / 2])
+          const searchStartTime = startTime - this.performanceMetricEndTimeInterval / 2
+          const searchEndTime = _.min([nowTime, endTime + this.performanceMetricEndTimeInterval / 2])
           let url
           if (item.eventType === 'dns error') {
             url = api.detection.performanceEvent.dnsErrorMetric
@@ -214,9 +212,9 @@ export default {
 
           if (url) {
             get(url, {
-              ...self.getPerformanceQueryParams(),
-              startTime: self.searchStartTime,
-              endTime: self.searchEndTime,
+              ...this.getPerformanceQueryParams(),
+              startTime: searchStartTime,
+              endTime: searchEndTime,
               eventType: item.eventType
             }).then((response) => {
               if (response.code === 200) {
@@ -224,12 +222,10 @@ export default {
                 this.$nextTick(() => {
                   if (metricDataList && metricDataList.length > 0) {
                     metricDataList.sort(reverseSortBy(0))// 将返回的数据按时间降序排序，方便找到实线和虚线的交点
-                    // let endIndex = (self.metricList). findIndex ((item) => item[0]  <=  1435781434781 );
                     let endIndex = (metricDataList).findIndex((item) => item[0] <= endTime)
                     endIndex = metricDataList.length - endIndex
 
                     metricDataList.sort(sortBy(0))// 将返回的数据按时间升序排序，方便找到实线和虚线的交点
-                    // let startIndex = (self.metricList). findIndex ((item) => item[0]  >=  1435781432781 );
                     const startIndex = metricDataList.findIndex((item) => item[0] >= startTime)
 
                     const performanceChartOption = _.cloneDeep(metricOption)
@@ -238,25 +234,25 @@ export default {
                       performanceChartOption.series[1].data = metricDataList.slice(startIndex - 1, endIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
                       performanceChartOption.series[2].data = metricDataList.slice(endIndex - 1, metricDataList.length).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
                     }
-                    const metricChart = markRaw(echarts.init(document.getElementById(`entityPerformanceChart${self.entityName}_${index}`)))
+                    const metricChart = markRaw(echarts.init(document.getElementById(`entityPerformanceChart${this.entityName}_${index}`)))
                     performanceChartOption && metricChart.setOption(performanceChartOption)
-                    self.performanceChartList.push(metricChart)
+                    this.performanceChartList.push(metricChart)
                     this.echartsArray.push(shallowRef(metricChart))
                   } else {
-                    const chartDom = document.getElementById(`entityPerformanceChart${self.entityName}${index}`)
+                    const chartDom = document.getElementById(`entityPerformanceChart${this.entityName}${index}`)
                     chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
                   }
                 })
               }
             }).catch(error => {
-              console.log(error)
-              const chartDom = document.getElementById(`entityPerformanceChart${self.entityName}${index}`)
+              console.error(error)
+              const chartDom = document.getElementById(`entityPerformanceChart${this.entityName}${index}`)
               chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
             }).finally(() => {
               setTimeout(() => {
                 try {
                   this.$nextTick(() => {
-                    self.performanceChartList.forEach(item => {
+                    this.performanceChartList.forEach(item => {
                       item && item.resize()
                     })
                     this.loadingPerformance[index] = false

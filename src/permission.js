@@ -20,7 +20,6 @@ router.beforeEach(async (to, from, next) => {
   if (!axios.defaults.baseURL) {
     const config = await getConfigJson()
     axios.defaults.baseURL = config.baseUrl
-    axios.defaults.performanceEndTimeInterval = config.performanceEndTimeInterval
   }
   if (localStorage.getItem(storageKey.token)) {
     // 加载i18n

@@ -180,13 +180,13 @@
       </div>
       <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
         <div class="row__label row__label--width160">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
-        <div class="row__content row__content--width200">
+        <div class="row__content">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
           <div>{{performance.eventType}}</div>
         </div>
-        <div class="row__content-loading"  style="position: relative;" >
+        <div class="row__content-loading"  style="position: relative; padding-left: 10px;">
           <loading :loading="!loadingAlert && loadingPerformance[index]?loadingPerformance[index]:false" :id="`loading${entity.ipAddr}_${index}`" size="small"></loading>
-          <div class="row__charts"  :id="`entityPerformanceChart${entity.ipAddr}_${index}`"></div>
+          <div class="row__charts" :id="`entityPerformanceChart${entity.ipAddr}_${index}`"></div>
         </div>
         <div class="row__desc"></div>
       </div>
