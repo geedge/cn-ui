@@ -200,7 +200,7 @@
         :entity="entityCopy"
         :query-params="queryParams"
         :hide-header="true"
-        :loadingMap="loadingMap"
+        :loading="loadingMap"
         @getCurrentTimeRange="getCurrentTimeRange"
     ></chart>
   </div>
