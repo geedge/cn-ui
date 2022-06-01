@@ -228,47 +228,6 @@ export default {
           _this.queryEntityDetail(_this.relationShipDomainUrl, params, queryParams)
         }
       })
-      /*this.myChart.on('mouseover', function (params) {
-        this.tableName = params.data.name
-        _this.timer = setTimeout(() => {
-          _this.timers = setTimeout(() => {
-            if (dom.offsetHeight > (params.event.event.offsetY + div.offsetHeight)) {
-              div.style.top = params.event.event.offsetY + 'px'
-              div.style.left = params.event.event.offsetX + 'px'
-            } else {
-              div.style.top = params.event.event.offsetY - div.offsetHeight + 'px'
-              div.style.left = params.event.event.offsetX + 'px'
-            }
-            _this.showList = true
-          }, 300)
-          if (params.data.type === 'ip') {
-            queryParams = {
-              ip: params.data.name,
-              startTime: getSecond(_this.timeFilter.startTime),
-              endTime: getSecond(_this.timeFilter.endTime)
-            }
-            _this.queryEntityDetail(_this.relationShipIpUrl, params, queryParams)
-          } else if (params.data.type === 'app_name') {
-            queryParams = {
-              appName: params.data.name,
-              startTime: getSecond(_this.timeFilter.startTime),
-              endTime: getSecond(_this.timeFilter.endTime)
-            }
-            _this.queryEntityDetail(_this.relationShipAppUrl, params, queryParams)
-          } else if (params.data.type === 'domain') {
-            queryParams = {
-              domain: params.data.name,
-              startTime: getSecond(_this.timeFilter.startTime),
-              endTime: getSecond(_this.timeFilter.endTime)
-            }
-            _this.queryEntityDetail(_this.relationShipDomainUrl, params, queryParams)
-          }
-        }, 500)
-      })
-      this.myChart.on('mouseout', function (params) {
-        clearTimeout(_this.timer)
-        clearTimeout(_this.timers)
-      })*/
       this.chartOption.series[0].data = data
       this.chartOption.series[0].links = links
       this.myChart.setOption(this.chartOption)

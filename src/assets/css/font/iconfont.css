@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1652249170229') format('woff2'),
-       url('iconfont.woff?t=1652249170229') format('woff'),
-       url('iconfont.ttf?t=1652249170229') format('truetype');
+  src: url('iconfont.woff2?t=1653978200371') format('woff2'),
+       url('iconfont.woff?t=1653978200371') format('woff'),
+       url('iconfont.ttf?t=1653978200371') format('truetype');
 }
 
 .cn-icon {
@@ -11,6 +11,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-a-:before {
+  content: "\e77b";
+}
+
+.cn-icon-a-1:before {
+  content: "\e781";
+}
+
+.cn-icon-bianji:before {
+  content: "\e77c";
+}
+
+.cn-icon-chuangjian:before {
+  content: "\e77d";
+}
+
+.cn-icon-shijian:before {
+  content: "\e77e";
+}
+
+.cn-icon-shijianjihua:before {
+  content: "\e77f";
+}
+
+.cn-icon-shanchu:before {
+  content: "\e780";
+}
+
+.cn-icon-a-allclear:before {
+  content: "\e779";
 }
 
 .cn-icon-org:before {

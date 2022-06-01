@@ -35,6 +35,10 @@ const routes = [
         component: () => import('@/views/report/builtinReport')
       },
       {
+        path: '/report/test',
+        component: () => import('@/views/report/reportTest')
+      },
+      {
         path: '/operationLog',
         component: () => import('@/views/settings/OperationLog')
       },

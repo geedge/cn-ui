@@ -39,11 +39,71 @@
         .el-table--fit.el-table--border {
           height: calc(100% - 55px) !important;
         }
+        .el-table__header th:first-of-type {
+          border-right: none;
+        }
+        .has-gutter .el-table-column--selection .el-checkbox {
+          border-left: none;
+          display: none;
+        }
+        .el-table__expanded-cell {
+          .expand {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            .expand-cell {
+              display: flex;
+              background: #FFFFFF;
+              border: 1px solid #E7EAED;
+              border-radius: 2px;
+              margin-right: 16px;
+              width: 300px;
+              height: 97px;
+              .expand-right {
+                background: #F9F9F9;
+                border-radius: 2px;
+                width: 97px;
+                height: 95px;
+                position: relative;
+                .demo-progress {
+                  position: absolute;
+                  top: 21px;
+                  left: 18.5px;
+                }
+                .demo-progress,.demo-progress .el-progress-circle {
+                  width: 57px !important;
+                  height: 57px !important;
+                }
+              }
+              .expand-left {
+                text-align: center;
+                width: calc(100% - 97px);
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                .expand-name {
+                  font-size: 12px;
+                  color: #666666;
+                  font-weight: 400;
+                  margin-bottom: 4px;
+                }
+                .expand-time {
+                  font-size: 12px;
+                  color: #999999;
+                  font-weight: 400;
+                  margin-bottom: 4px;
+                }
+                .expand-icon {
+                  display: flex;
+                  justify-content: space-evenly;
+                  margin: 0 8px;
+                  font-size: 14px;
+                }
+              }
+            }
+          }
+        }
       }
-    }
-    .el-table__header th:first-of-type .el-checkbox:last-of-type {
-      border-left: none;
-      display: none;
     }
     .table-operation-all {
       width: 300px;
@@ -81,7 +141,6 @@
           border-radius: 2px;
           line-height: 21px;
           cursor: pointer;
-          position: relative;
           span {
             margin: 3px 8px;
             font-size: 12px;
@@ -110,6 +169,8 @@
       .table-operation-item--no-border {
         margin-right: 16px;
         cursor: pointer;
+        position: relative;
+        font-size: 16px;
       }
       .table-operation-item--no-border:last-of-type {
         margin-right: 0;
@@ -119,21 +180,6 @@
         justify-content: center;
         flex-direction: column;
         position: relative;
-        .chart__loading {
-          .el-icon-loading {
-            font-size: 12px;
-            left: calc(50% - 6px);
-            top: calc(50% - 6px);
-          }
-        }
-        .icon {
-          height: 25px;
-          width: 25px;
-        }
-        .icon2 {
-          height: 16px;
-          width: 16px;
-        }
       }
     }
   }

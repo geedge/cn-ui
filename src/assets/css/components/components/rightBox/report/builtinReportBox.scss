@@ -1,0 +1,113 @@
+.right-box.right-box-report {
+  .right-box__container {
+    .container__form {
+      .enable-tab {
+        display: flex;
+        .enable-tabs {
+          height: 32px;
+          width: 160px;
+          text-align: center;
+          border: 1px solid #E7EAED;
+          border-right: none;
+          line-height: 32px;
+        }
+        .enable-tabs:nth-of-type(4) {
+          border-right: 1px solid #E7EAED;
+        }
+        .enable-tabs.active {
+          border: 1px solid #1890FF;
+          border-radius: 2px;
+        }
+      }
+      .enable-tabs-per-month {
+        margin-top: 10px;
+        .enable-month-tab {
+          display: flex;
+          .el-checkbox {
+            height: 32px;
+            line-height: 32px;
+            margin-left: 14px;
+          }
+          .enable-month-tabs {
+            height: 32px;
+            width: 290px;
+            text-align: center;
+            border: 1px solid #E7EAED;
+            border-right: none;
+            line-height: 32px;
+          }
+          .enable-month-tabs:nth-of-type(2) {
+            border-right: 1px solid #E7EAED;
+          }
+          .enable-month-tabs.active {
+            border: 1px solid #1890FF;
+            border-radius: 2px;
+          }
+        }
+        .enable-month-data-tab {
+          margin-bottom: 20px;
+          .enable-month-data-tabs {
+            .el-checkbox-group {
+              width: calc(100% + 20px);
+              .el-checkbox:nth-of-type(10) {
+                margin-right: 0;
+              }
+              .el-checkbox {
+                height: 20px;
+                width: 36px;
+                line-height: 20px;
+              }
+            }
+          }
+          .enable-month-value {
+            width: 393px;
+            height: 17px;
+            font-size: 12px;
+            color: #666666;
+            letter-spacing: 0;
+            font-weight: 400;
+          }
+        }
+      }
+      .enable-month-moon {
+        .enable-month-moon-custom {
+          height: 30px;
+        }
+        .enable-month-all {
+          display: flex;
+          .enable-month-all-months.el-checkbox {
+            margin-right: 20px;
+          }
+        }
+        .enable-month-week {
+          display: flex;
+          .enable-month-week-all.el-checkbox {
+            margin-right: 20px;
+            height: 35px;
+            line-height: 35px;
+          }
+          .el-checkbox-group {
+            width: calc(100% - 52px);
+            height: 35px;
+            .el-checkbox {
+              line-height: 35px;
+            }
+          }
+        }
+      }
+      .el-input-single {
+        width: 200px;
+        height: 32px;
+        margin-top: 10px;
+        .el-input__inner {
+          text-align: center;
+        }
+      }
+      .right-box__select-single {
+        width: 430px;
+        height: 32px;
+        margin: 10px 0 0 10px;
+      }
+    }
+  }
+}
