@@ -62,14 +62,6 @@ export default {
       custom: []
     }
   },
-  computed: {
-    totalCount2 () {
-      return function (row) {
-        console.info(this.totalCount, row, (this.totalCount === 0 ? 0 : parseFloat(row.count / this.totalCount) * 100).toFixed(2))
-        return (this.totalCount === 0 ? 0 : parseFloat(row.count / this.totalCount) * 100).toFixed(2)
-      }
-    }
-  },
   methods: {
     indexMethod (index) {
       return index + 1

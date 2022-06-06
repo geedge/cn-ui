@@ -568,10 +568,10 @@ export default {
     dateTimeRangeChange (s, e, v) {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
-    search (metaList, formatSql) {
+    search ({ q, metaList }) {
       this.initNoData()
-      if (formatSql) {
-        this.q = formatSql
+      if (q) {
+        this.q = q
         this.metaList = metaList
       } else {
         this.q = ''

@@ -18,18 +18,17 @@ import 'codemirror/addon/hint/show-hint'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/display/placeholder'
 import 'codemirror/mode/sql/sql'
-import SqlParser, { stringInQuot, handleOperatorSpace } from '@/components/advancedSearch/meta/sql-parser'
+import Parser, { stringInQuot, handleOperatorSpace } from '@/components/advancedSearch/meta/parser'
 import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
+import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
-import { ElMessage } from 'element-plus'
-import { reg } from '@/utils/constants'
 
 export default {
   name: 'TextMode',
   props: {
     columnList: Array,
-    sql: String
+    str: String
   },
   data () {
     return {
@@ -50,67 +49,41 @@ export default {
       })
     },
     search () {
-      let originalSql = this.codeMirror.getValue().trim()
-      if (originalSql) {
-        originalSql = originalSql.replaceAll(/"/g, '')
-        // 为解决ip无法校验通过的问题，先将带引号的ip转为不带引号的，再把不带引号的转为带引号的
-        originalSql = originalSql.replaceAll(reg.notStrictWithQuotIpv4, function (word) {
-          return word.replaceAll(/'/g, '')
-        })
-        originalSql = originalSql.replaceAll(reg.notStrictIpv4, function (word) {
-          return `'${word}'`
-        })
-        originalSql = originalSql.replaceAll(reg.notStrictWithQuotIpv6, function (word) {
-          return word.replaceAll(/'/g, '')
-        })
-        originalSql = originalSql.replaceAll(reg.notStrictIpv6, function (word) {
-          return `'${word}'`
-        })
-
-        let tempArr = originalSql.split(' ')
-        tempArr = tempArr.map(t => {
-          if (t.lastIndexOf("'") !== (t.length - 1) && t.indexOf("'") !== 0) {
-            if (reg.containChinese.test(t)) {
-              return `'${t}'`
-            }
-          }
-          return t
-        })
-        originalSql = tempArr.join(' ')
-
-        const parser = new SqlParser(originalSql, this.columnList)
-        const errorList = parser.validate()
-        if (this.$_.isEmpty(errorList)) {
-          const { metaList, formatSql } = parser.formatSql()
-          toRaw(this.codeMirror).setValue(formatSql)
-          this.$emit('search', metaList, formatSql)
+      const str = this.codeMirror.getValue().trim()
+      if (str) {
+        const parser = new Parser(this.columnList)
+        const errorList = parser.validateStr(str)
+        if (_.isEmpty(errorList)) {
+          this.$emit('search', parser.parseStr(str))
         } else {
-          ElMessage.error(this.$t('tip.invalidExpression'))
+          // TODO 错误提示
         }
       } else {
-        this.$emit('search')
+        this.$emit('search', { q: '', str: '', metaList: [] })
       }
     },
     focus () {
       this.codeMirror.focus()
     },
     changeMode () {
-      const originalSql = this.codeMirror.getValue()
-      const parser = new SqlParser(originalSql, this.columnList)
-      const errorList = parser.validate()
-      if (this.$_.isEmpty(errorList)) {
-        const { metaList, formatSql } = parser.formatSql()
-        toRaw(this.codeMirror).setValue(formatSql)
-        this.$emit('changeMode', 'tag', metaList)
+      const str = this.codeMirror.getValue().trim()
+      if (str) {
+        const parser = new Parser(this.columnList)
+        const errorList = parser.validateStr(str)
+        if (_.isEmpty(errorList)) {
+          this.$emit('changeMode', 'tag', parser.parseStr(str))
+        } else {
+          this.$emit('changeMode', 'tag', { metaList: [], str: '' })
+        }
       } else {
-        this.$emit('changeMode', 'tag', [])
+        this.$emit('changeMode', 'tag', { str: '', metaList: [] })
       }
     },
     // 处理value，例如转换IN的值
     handleValue (value, column, operator) {
       const isArray = ['IN', 'NOT IN'].indexOf(operator) > -1
       if (isArray) {
-        if (this.$_.isArray(value)) {
+        if (_.isArray(value)) {
           value = value.map(v => column.type === columnType.string ? stringInQuot(v) : v)
           return `(${value.join(',')})`
         } else {
@@ -155,7 +128,7 @@ export default {
     }
   },
   watch: {
-    sql: {
+    str: {
       immediate: true,
       handler (n) {
         if (n) {

@@ -87,7 +87,7 @@
 <script>
 import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
-import SqlParser, { stringInQuot } from '@/components/advancedSearch/meta/sql-parser'
+import Parser, { stringInQuot } from '@/components/advancedSearch/meta/parser'
 export default {
   name: 'TagMode',
   props: {
@@ -205,6 +205,18 @@ export default {
       // 处理搜索值
       meta.value.isEditing = true
       meta.value.show = true
+      // 若是in或not in，column的type要改成array，否则是string
+      if (operator.toLowerCase().indexOf('in') > -1) {
+        meta.column.type = columnType.array
+        meta.value.type = columnType.array
+        meta.value.value = []
+      } else {
+        meta.column.type = columnType.string
+        meta.value.type = columnType.string
+        if (_.isArray(meta.value.value)) {
+          meta.value.value = ''
+        }
+      }
       this.$nextTick(() => {
         this.$refs.valueInput.focus()
       })
@@ -230,22 +242,32 @@ export default {
       })
     },
     search () {
-      const parser = new SqlParser(this.metaList, this.columnList)
-      const { metaList, formatSql } = parser.formatMetaList()
-      this.metaList = metaList
-      this.$emit('search', this.metaList, formatSql)
+      if (this.metaList.length > 0) {
+        const parser = new Parser(this.columnList)
+        const errorList = parser.validateMeta(this.metaList)
+        if (_.isEmpty(errorList)) {
+          this.$emit('search', parser.parseMeta(this.metaList))
+        } else {
+          // TODO 错误提示
+        }
+      } else {
+        this.$emit('search', { q: '', str: '', metaList: [] })
+      }
     },
     changeMode () {
-      const parser = new SqlParser(this.metaList, this.columnList)
-      const { metaList, formatSql } = parser.formatMetaList()
-      this.metaList = metaList
-      this.$emit('changeMode', 'text', formatSql)
+      const parser = new Parser(this.columnList)
+      const errorList = parser.validateMeta(this.metaList)
+      if (_.isEmpty(errorList)) {
+        this.$emit('changeMode', 'text', parser.parseMeta(this.metaList))
+      } else {
+        this.$emit('changeMode', 'text', { metaList: [], str: '' })
+      }
     },
     // 处理value，例如转换IN的值
     handleValue (value, column, operator) {
       const isArray = ['IN', 'NOT IN'].indexOf(operator) > -1
       if (isArray) {
-        if (this.$_.isArray(value)) {
+        if (_.isArray(value)) {
           value = value.map(v => column.type === columnType.string ? stringInQuot(v) : v)
           return `(${value.join(',')})`
         } else {
@@ -320,6 +342,7 @@ export default {
       deep: true,
       handler (n) {
         if (!_.isEmpty(n)) {
+          console.info(n)
           this.metaList = n
         }
       }

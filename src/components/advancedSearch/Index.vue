@@ -6,7 +6,7 @@
         v-if="searchMode === 'text'"
         ref="textMode"
         :column-list="columnList"
-        :sql="sql"
+        :str="str"
         @changeMode="changeMode"
         @search="search"
     ></text-mode>
@@ -29,8 +29,7 @@ import TextMode from '@/components/advancedSearch/TextMode'
 import { defaultOperatorList, defaultConnectionList } from '@/components/advancedSearch/meta/meta'
 import _ from 'lodash'
 import { ref } from 'vue'
-import SqlParser from '@/components/advancedSearch/meta/sql-parser'
-import { ElMessage } from 'element-plus'
+import Parser from '@/components/advancedSearch/meta/parser'
 export default {
   name: 'Index',
   components: {
@@ -39,7 +38,7 @@ export default {
   },
   data () {
     return {
-      sql: null,
+      str: null,
       metaList: null
     }
   },
@@ -62,15 +61,15 @@ export default {
     connectionList: Array
   },
   methods: {
-    search (metaList, formatSql) {
-      this.$emit('search', metaList, formatSql)
+    search (parseData) {
+      this.$emit('search', parseData)
     },
-    changeMode (mode, data) {
+    changeMode (mode, { str, metaList }) {
       this.searchMode = mode
       if (mode === 'text') {
-        this.sql = data
+        this.str = str
       } else if (mode === 'tag') {
-        this.metaList = data
+        this.metaList = metaList
       }
     },
     // params: [{column, operator, value}, ...]
@@ -88,17 +87,15 @@ export default {
       this.$refs.tagMode && this.$refs.tagMode.changeParams(params)
       this.$refs.textMode && this.$refs.textMode.changeParams(params)
     },
-    setSql (sql) {
+    setStr (str) {
       if (this.searchMode === 'text') {
-        this.sql = sql
+        this.str = str
       } else if (this.searchMode === 'tag') {
-        const parser = new SqlParser(sql, this.columnList)
-        const errorList = parser.validate()
-        if (this.$_.isEmpty(errorList)) {
-          const { metaList } = parser.formatSql()
+        const parser = new Parser(this.columnList)
+        const errorList = parser.validateStr(str)
+        if (_.isEmpty(errorList)) {
+          const { metaList } = parser.parseStr(str)
           this.metaList = metaList
-        } else {
-          ElMessage.error(this.$t('tip.invalidExpression'))
         }
       }
     },
