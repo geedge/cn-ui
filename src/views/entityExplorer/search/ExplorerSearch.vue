@@ -29,9 +29,9 @@
         <transition name="el-zoom-in-top">
           <div class="search__history" v-show="showHistory">
             <div class="history__items">
-              <div class="history__item" v-for="(h, i) in history" :key="i" @click="selectHistory(h.sql)">
+              <div class="history__item" v-for="(h, i) in history" :key="i" @click="selectHistory(h.str)">
                 <span class="item-date">{{h.date}}</span>
-                <div class="item-value" :title="h.sql">{{h.sql}}</div>
+                <div class="item-value" :title="h.str">{{h.str}}</div>
               </div>
             </div>
             <div class="clear-all">
@@ -47,8 +47,7 @@
 
 <script>
 import AdvancedSearch from '@/components/advancedSearch/Index'
-import { columnType } from '@/components/advancedSearch/meta/meta'
-import SqlParser from '@/components/advancedSearch/meta/sql-parser'
+import _ from 'lodash'
 import { storageKey } from '@/utils/constants'
 export default {
   name: 'CnSearch',
@@ -256,14 +255,13 @@ export default {
     }
   },
   methods: {
-    search (metaList, formatSql) {
-      let sql = formatSql
-      // 加入搜索记录，将记录数量控制在30以内
-      if (sql) {
+    search ({ str, q, metaList }) {
+      if (str) {
+        // 加入搜索记录，将记录数量控制在30以内
         const oldHistory = localStorage.getItem(storageKey.entitySearchHistory)
         let arr = []
-        const newItem = { sql, date: this.dateFormatByAppearance(new Date()) }
-        if (!this.$_.isEmpty(oldHistory)) {
+        const newItem = { str, date: this.dateFormatByAppearance(new Date()) }
+        if (!_.isEmpty(oldHistory)) {
           const oldArr = JSON.parse(oldHistory)
           oldArr.unshift(newItem)
           arr = [...oldArr]
@@ -275,23 +273,13 @@ export default {
         }
         localStorage.setItem(storageKey.entitySearchHistory, JSON.stringify(arr))
       }
-      // 全文搜索处理
-      if (metaList && this.$_.isArray(metaList)) {
-        const hasFullText = metaList.some(meta => {
-          return meta.column && meta.column.type === columnType.fullText
-        })
-        if (hasFullText) {
-          const parser = new SqlParser(metaList, this.columnList)
-          sql = parser.parseMetaToSql(metaList, true)
-        }
-      }
-      this.$emit('search', metaList, sql)
+      this.$emit('search', { q, metaList })
     },
     addParams (params) {
       this.$refs.search.addParams(params)
     },
-    selectHistory (sql) {
-      this.$refs.search.setSql(sql)
+    selectHistory (str) {
+      this.$refs.search.setStr(str)
       this.showHistory = false
       this.$nextTick(() => {
         if (this.$refs.search.$refs.textMode) {
@@ -307,7 +295,7 @@ export default {
       this.showHistory = !this.showHistory
       if (this.showHistory) {
         const history = localStorage.getItem(storageKey.entitySearchHistory)
-        if (!this.$_.isEmpty(history)) {
+        if (!_.isEmpty(history)) {
           this.history = JSON.parse(history)
         }
       }

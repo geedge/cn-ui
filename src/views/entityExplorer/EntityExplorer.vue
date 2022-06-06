@@ -154,6 +154,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
+import _ from 'lodash'
 import Pagination from '@/components/common/Pagination'
 import Loading from '@/components/common/Loading'
 
@@ -403,13 +404,13 @@ export default {
       ]
       let result = sql
       columns.forEach(c => {
-        result = this.$_.replace(result, c.original, c.target)
+        result = _.replace(result, c.original, c.target)
       })
       return result
     },
-    search (metaList, formatSql) {
-      if (formatSql) {
-        this.q = this.specialColumnHandle(formatSql)
+    search ({ q, metaList }) {
+      if (q) {
+        this.q = this.specialColumnHandle(q)
         this.metaList = metaList
       } else {
         this.q = ''
@@ -425,7 +426,7 @@ export default {
         this.pageObj.resetPageNo = true
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
-      if (formatSql) {
+      if (q) {
         // entity_type处理，不查其他两种entity_type对应的左侧筛选
         const entityTypeMeta = metaList.find(meta => {
           return meta.column && meta.column.name === 'entity_type'
@@ -470,12 +471,12 @@ export default {
     },
     pageSize (val) {
       this.pageObj.pageSize = val
-      this.search(this.metaList, this.q)
+      this.search({ metaList: this.metaList, q: this.q })
     },
     pageNo (val) {
       this.pageObj.pageNo = val
       this.pageObj.resetPageNo = false
-      this.search(this.metaList, this.q)
+      this.search({ metaList: this.metaList, q: this.q })
     },
     // 点击上一页箭头
     prev () {
@@ -698,7 +699,7 @@ export default {
   },
   watch: {
     timeFilter (n) {
-      this.search(this.metaList, this.q)
+      this.search({ metaList: this.metaList, q: this.q })
     }
   },
   setup () {

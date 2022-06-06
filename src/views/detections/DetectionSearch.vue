@@ -22,8 +22,6 @@
 <script>
 import AdvancedSearch from '@/components/advancedSearch/Index'
 import { humpToLine } from '@/utils/tools'
-import {columnType} from "@/components/advancedSearch/meta/meta";
-import SqlParser from "@/components/advancedSearch/meta/sql-parser";
 export default {
   name: 'DetectionSearch',
   props: {
@@ -109,7 +107,7 @@ export default {
     }
   },
   methods: {
-    search (metaList, formatSql) {
+    /*search (metaList, formatSql) {
       let sql = formatSql
       // 全文搜索处理
       if (metaList && this.$_.isArray(metaList)) {
@@ -122,6 +120,9 @@ export default {
         }
       }
       this.$emit('search', metaList, sql)
+    },*/
+    search ({ q, metaList }) {
+      this.$emit('search', { q, metaList })
     },
     changeParams (params) { // params: { column: columnName, oldValue: [...], newValue: [...] }
       // 向下传递时需要再转换一次param格式为[{column, operator, value}, ...]
