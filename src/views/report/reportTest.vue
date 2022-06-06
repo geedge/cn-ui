@@ -39,9 +39,9 @@
               :custom-table-title="tools.customTableTitle"
               :height="mainTableHeight"
               :table-data="tableData"
-              @download="download"
               @delete="del"
               @edit="edit"
+              @download="download"
               @preview="preview"
               @orderBy="tableDataSort"
               @reload="getTableData"
@@ -84,38 +84,67 @@ export default {
       builtinReportLeftMenu: [], // 左侧列表菜单数据
       builtinColor: false,
       builtinId: '',
-      url: api.reportJob,
-      blankObject: { // 空白对象
+      url: api.reportTemp,
+      blankObject: {
         id: '',
         name: '',
-        ctime: '',
+        type: '',
+        // config: '',
+        source: '',
+        cTime: '',
+        uTime: '',
+        htmContent: '',
         remark: '',
         uniq: '',
-        startTime: '',
-        endTime: ''
+        config: {
+          isRepeat: 0,
+          cronExpression: '',
+          startTime: '',
+          endTime: '',
+          queryConfig: {
+            key1: '',
+            key2: ''
+          },
+          schedulerConfig: {
+            // type: '',
+            week_dates: [1, 2, 3, 4, 5, 6, 7],
+            months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            month_dates: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+            month_week_dates: [0, 1, 2, 3, 4, 5, 6],
+            interval: 1
+          },
+          timeConfig: {
+            type: 'day',
+            offset: 0,
+            unit: ''
+          }
+        },
+        schedulerStart: '',
+        schedulerEnd: '',
+        category_id: 1
       },
       checkWeekListData: [
-        this.$t('report.sunday'),
-        this.$t('report.onMonday'),
-        this.$t('report.tuesday'),
-        this.$t('report.wednesday'),
-        this.$t('report.thursday'),
-        this.$t('report.friday'),
-        this.$t('report.saturday')
+        'report.sunday',
+        'report.onMonday',
+        'report.tuesday',
+        'report.wednesday',
+        'report.thursday',
+        'report.friday',
+        'report.saturday'
       ],
       checkMonthsListData: [
-        this.$t('report.january'),
-        this.$t('report.february'),
-        this.$t('report.march'),
-        this.$t('report.april'),
-        this.$t('report.may'),
-        this.$t('report.june'),
-        this.$t('report.july'),
-        this.$t('report.august'),
-        this.$t('report.september'),
-        this.$t('report.october'),
-        this.$t('report.november'),
-        this.$t('report.december')
+        'report.january',
+        'report.february',
+        'report.march',
+        'report.april',
+        'report.may',
+        'report.june',
+        'report.july',
+        'report.august',
+        'report.september',
+        'report.october',
+        'report.november',
+        'report.december'
       ],
       tableId: 'builtinReportTable'
     }
@@ -128,7 +157,14 @@ export default {
   },
   methods: {
     queryGetTempData () {
-      get(api.reportTemp).then(res => {
+      console.log(api.reportCategory)
+      get(api.reportCategory).then(res => {
+        this.builtinReportLeftMenu = [
+          { id: 1, name: 'Tencent网络服务质量监测报告(IDC精简版)' },
+          { id: 2, name: '网络服务质量监测报告(IDC精简版)' },
+          { id: 3, name: '出入口整体流量监测报告' },
+          { id: 4, name: '出入口字节跳动流量监测报告' }
+        ]
         if (res.code === 200) {
           this.builtinReportLeftMenu = res.data.list
         }
@@ -137,6 +173,21 @@ export default {
     builtinTabs (id) {
       this.getTableData({ tempId: id })
       this.builtinId = id
+    },
+    edit (u) {
+      get(this.url, { id: u.id, name: u.name }).then(response => {
+        if (response.code === 200) {
+          let dataList = []
+          dataList = response.data.list.map(item => {
+            return {
+              ...item,
+              config: JSON.parse(item.config)
+            }
+          })
+          this.object = dataList[0]
+          this.rightBox.show = true
+        }
+      })
     }
   },
   mounted () {

@@ -38,10 +38,10 @@ export default {
     }
   },
   methods: {
-    tableOperation ([command, row, param]) {
+    tableOperation ([command, row]) {
       switch (command) {
         default:
-          this.$emit(command, row, param)
+          this.$emit(command, row)
           break
       }
     },

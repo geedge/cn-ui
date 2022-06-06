@@ -63,7 +63,6 @@ export default {
         pageNo: val,
         pageSize: this.pageObj.pageSize
       }
-      console.log(this.pag)
       this.$emit('getDetectionData', this.chartInfo.params.url, extraParams, false, {
         startTime: this.queryParams.startTime,
         endTime: this.queryParams.endTime

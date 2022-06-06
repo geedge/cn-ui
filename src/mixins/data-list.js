@@ -44,7 +44,7 @@ export default {
     asce: tableSort.asce,
     desc: tableSort.desc,
     strToDate: tableSort.strToDate,
-    tableOperation ([command, row, param]) {
+    tableOperation ([command, row]) {
       switch (command) {
         case 'edit': {
           this.edit(row)
@@ -59,7 +59,7 @@ export default {
           break
         }
         case 'download': {
-          this.download(row, param)
+          this.download(row)
           break
         }
         case 'preview': {
@@ -90,7 +90,16 @@ export default {
           for (let i = 0; i < response.data.list.length; i++) {
             response.data.list[i].status = response.data.list[i].status + ''
           }
-          this.tableData = response.data.list
+          if (this.tableId === 'builtinReportTable') {
+            this.tableData = response.data.list.map(item => {
+              return {
+                ...item,
+                config: JSON.parse(item.config)
+              }
+            })
+          } else {
+            this.tableData = response.data.list
+          }
           this.pageObj.total = response.data.total
           // TODO 回到顶部
         }
@@ -148,44 +157,25 @@ export default {
       this.object = { ...u, name: 'Copy from ' + u.name, id: '' }
       this.rightBox.show = true
     },
-    download (u, n) {
-      if (this.$refs.dataTable.loading && n === 2) { // 批量下载
-        return
-      } else if (this.$refs.dataTable.loadingTableId === u.id && n === 1) { // 列表单个下载
+    download (u) {
+      if (this.$refs.dataTable.loadingTableId === u.id) { // 列表单个下载
         return
       }
       let fileName = ''
       let url = ''
       let params = {}
-      if (n === 2) { // 批量下载
-        fileName = 'builtinReport' + '-' + this.getTimeString() + '.zip' // 文件名称
-        url = api.reportBatchDownloadPdf // 批量 zip 下载
-        params = {
-          ids: u
-        }
-      } else if (n === 1) {
-        fileName = u.name + '.pdf' // 文件名称
-        url = api.reportDownloadPdf // 单个 pdf 下载
-        params = {
-          id: u.id
-        }
+      fileName = u.name + '.pdf' // 文件名称
+      url = api.reportDownloadPdf // 单个 pdf 下载
+      params = {
+        id: u.id
       }
-      if (n === 2) { // 批量下载
-        this.$refs.dataTable.loading = true
-      } else if (n === 1) { // 列表单个下载
-        this.$refs.dataTable.loadingTableId = u.id // 列表单个下载
-      }
-      if (!u && n === 2) { // 批量下载
-        this.$refs.dataTable.loading = false
-        return
-      } else if (!u && n === 1) { // 列表单个下载
+      this.$refs.dataTable.loadingTableId = u.id // 列表单个下载
+      if (!u) { // 列表单个下载
         this.$refs.dataTable.loadingTableId = u.id
         return
       }
       // 判断是否成功登陆成功
-      if (!localStorage.getItem(storageKey.token) && n === 2) {
-        return window.location.replace('/')
-      } else if (!localStorage.getItem(storageKey.token) && n === 1) {
+      if (!localStorage.getItem(storageKey.token)) {
         return window.location.replace('/')
       }
       get(api.reportTemp).then(res => {
@@ -205,11 +195,7 @@ export default {
               a.click()
               a.remove() // 将a标签移除
             }
-            if (n === 2) { // 批量下载
-              this.$refs.dataTable.loading = false
-            } else if (n === 1) { // 列表单个下载
-              this.$refs.dataTable.loadingTableId = !u.id
-            }
+            this.$refs.dataTable.loadingTableId = !u.id
           }, error => {
             const $self = this
             const reader = new FileReader()
@@ -223,17 +209,9 @@ export default {
               }
             }
             reader.readAsText(error.response.data)
-            if (n === 2) { // 批量下载
-              this.$refs.dataTable.loading = false
-            } else if (n === 1) { // 列表单个下载
-              this.$refs.dataTable.loadingTableId = !u.id
-            }
+            this.$refs.dataTable.loadingTableId = !u.id
           }).catch(() => {
-            if (n === 2) { // 批量下载
-              this.$refs.dataTable.loading = false
-            } else if (n === 1) { // 列表单个下载
-              this.$refs.dataTable.loadingTableId = !u.id
-            }
+            this.$refs.dataTable.loadingTableId = !u.id
           })
         }
       })

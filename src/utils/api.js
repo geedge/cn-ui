@@ -34,7 +34,9 @@ export const api = {
 
   // 报告相关
   reportJob: '/report/job',
+  reportJobCount: '/report/job/count',
   reportTemp: '/report/temp',
+  reportCategory: '/report/category',
   reportBatchDownloadPdf: '/report/job/batchDownloadPdf',
   reportDownloadPdf: '/report/job/downloadPdf',
   reportView: '/report/job/view',

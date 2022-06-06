@@ -11,7 +11,7 @@
           <div class="top-tool-right">
 <!--           <el-input v-model="keyWord" value="keyWord"></el-input>
             <el-button @click="onsearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>-->
-            <div v-if="showLayout.indexOf('search') > -1" class="top-tool-search" :class="{'margin-r-20': from !== fromRoute.builtinReport}">
+            <div v-if="showLayout.indexOf('search') > -1" class="top-tool-search margin-r-20">
               <div style="display: flex">
                 <el-input
                     v-model="keyWord"  size="small" @keyup.enter="onsearch"></el-input>

@@ -7,147 +7,68 @@
       border
       @header-dragend="dragend"
       @sort-change="tableDataSort"
+      @expand-change="dropExpandChange"
       @selection-change="selectionChange"
   >
     <el-table-column type="expand">
       <template #default="props">
-        <div class="expand">
-          <dov class="expand-cell">
-            <div class="expand-right">
-              <div class="demo-progress">
-                <el-progress type="circle" :percentage="percentage" :color="percentage === 100 ? '#5cb87a' : '#1989fa'" />
-              </div>
-            </div>
-            <div class="expand-left">
-              <div class="expand-name"><i class="cn-icon"></i>admin</div>
-              <div class="expand-time">
-                <div>{{ $t('report.creationTime') }}</div>
-                <div>{{props.row.startTime}}</div>
-              </div>
-              <div class="expand-icon">
-                <div class="table-operation-item--no-border" @click="tableOperation(['download', props.row, 1])">
-                  <loading :loading="loadingTableId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
-                    <use xlink:href="#cn-icon-download2"></use>
-                  </svg>
-                </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['preview', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-preview"></use>
-                  </svg>
-                </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['delete', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-shanchu"></use>
-                  </svg>
+        <div class="down">
+          <loading :loading="loadingDown"></loading>
+          <div class="block drop-down-time">
+            <el-date-picker
+                v-model="value"
+                size="small"
+                :format="format"
+                type="datetimerange"
+                range-separator="To"
+                start-placeholder="Start date"
+                end-placeholder="End date"
+                @change="datePickerChange(props)"
+            />
+          </div>
+          <div class="expand">
+            <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
+              <div class="expand-right">
+                <div class="demo-progress">
+                  <el-progress type="circle" :percentage="item.percent" :color="item.percent === 100 ? '#5cb87a' : '#1989fa'" />
                 </div>
               </div>
-            </div>
-          </dov>
-          <dov class="expand-cell">
-            <div class="expand-right">
-              <div class="demo-progress">
-                <el-progress type="circle" :percentage="percentage" :color="percentage === 100 ? '#5cb87a' : '#1989fa'" />
-              </div>
-            </div>
-            <div class="expand-left">
-              <div class="expand-name"><i class="cn-icon"></i>admin</div>
-              <div class="expand-time">
-                <div>{{ $t('report.creationTime') }}</div>
-                <div>{{props.row.startTime}}</div>
-              </div>
-              <div class="expand-icon">
-                <div class="table-operation-item--no-border" @click="tableOperation(['download', props.row, 1])">
-                  <loading :loading="loadingTableId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
-                    <use xlink:href="#cn-icon-download2"></use>
-                  </svg>
+              <div class="expand-left">
+                <div class="expand-name"><i class="cn-icon cn-icon-user"></i>{{ username }}</div>
+                <div class="expand-time">
+                  <div>{{ $t('report.creationTime') }}</div>
+                  <div>{{dateFormatByAppearance(item.ctime)}}</div>
                 </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['preview', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-preview"></use>
-                  </svg>
-                </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['delete', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-shanchu"></use>
-                  </svg>
+                <div class="expand-icon">
+                  <div class="table-operation-item--no-border" @click="tableOperation(['download', item])">
+                    <loading :loading="loadingTableId === item.id"></loading>
+                    <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
+                      <use xlink:href="#cn-icon-download2"></use>
+                    </svg>
+                  </div>
+                  <div class="table-operation-item--no-border" @click="tableOperation(['preview', item])">
+                    <loading :loading="loadingPreviewId === item.id"></loading>
+                    <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
+                      <use xlink:href="#cn-icon-preview"></use>
+                    </svg>
+                  </div>
+                  <div class="table-operation-item--no-border" @click="downDeleteQueryChange(item, props)">
+                    <svg class="icon" aria-hidden="true">
+                      <use xlink:href="#cn-icon-shanchu"></use>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
-          </dov>
-          <dov class="expand-cell">
-            <div class="expand-right">
-              <div class="demo-progress">
-                <el-progress type="circle" :percentage="percentage" :color="percentage === 100 ? '#5cb87a' : '#1989fa'" />
-              </div>
-            </div>
-            <div class="expand-left">
-              <div class="expand-name"><i class="cn-icon"></i>admin</div>
-              <div class="expand-time">
-                <div>{{ $t('report.creationTime') }}</div>
-                <div>{{props.row.startTime}}</div>
-              </div>
-              <div class="expand-icon">
-                <div class="table-operation-item--no-border" @click="tableOperation(['download', props.row, 1])">
-                  <loading :loading="loadingTableId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
-                    <use xlink:href="#cn-icon-download2"></use>
-                  </svg>
-                </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['preview', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-preview"></use>
-                  </svg>
-                </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['delete', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-shanchu"></use>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </dov>
-          <dov class="expand-cell">
-            <div class="expand-right">
-              <div class="demo-progress">
-                <el-progress type="circle" :percentage="percentage" :color="percentage === 100 ? '#5cb87a' : '#1989fa'" />
-              </div>
-            </div>
-            <div class="expand-left">
-              <div class="expand-name"><i class="cn-icon"></i>admin</div>
-              <div class="expand-time">
-                <div>{{ $t('report.creationTime') }}</div>
-                <div>{{props.row.startTime}}</div>
-              </div>
-              <div class="expand-icon">
-                <div class="table-operation-item--no-border" @click="tableOperation(['download', props.row, 1])">
-                  <loading :loading="loadingTableId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
-                    <use xlink:href="#cn-icon-download2"></use>
-                  </svg>
-                </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['preview', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-preview"></use>
-                  </svg>
-                </div>
-                <div class="table-operation-item--no-border" @click="tableOperation(['delete', props.row])">
-                  <loading :loading="loadingPreviewId === props.row.id"></loading>
-                  <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                    <use xlink:href="#cn-icon-shanchu"></use>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </dov>
+          </div>
+          <div class="cn-detection__footer">
+            <chart-detection-pagination
+                ref="pagination"
+                :page-obj="pageObj"
+                @pageJump="pageJump"
+                :pageSizeForAlarm="pageObj.pageSize"
+            ></chart-detection-pagination>
+          </div>
         </div>
       </template>
     </el-table-column>
@@ -174,20 +95,14 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <span v-if="item.prop === 'dataRange'">
-          <template v-if="scope.row.startTime && scope.row.endTime">
-            {{dateFormatByAppearance(scope.row.startTime)}}<span style="padding: 0 5px">-</span>{{dateFormatByAppearance(scope.row.endTime)}}
-          </template>
+        <span v-if="item.prop === 'timeLimit'">
+          {{scope.row.config.timeConfig.type}}
         </span>
-        <span v-else-if="item.prop === 'type'">
-            {{scope.row.reportTemp.name}}
-        </span>
-        <span v-else-if="item.prop === 'state'">
-            {{getJobStatus(scope.row)}}
+        <span v-else-if="item.prop === 'utime'">
+          {{dateFormatByAppearance(scope.row.utime)}}
         </span>
         <span v-else>{{scope.row[item.prop]}}</span>
       </template>
-
     </el-table-column>
     <el-table-column
         :resizable="false"
@@ -197,7 +112,7 @@
         <div class="table-operation-title">{{$t('overall.option')}}</div>
       </template>
       <template #default="scope">
-        <div class="table-operation-items" v-if="scope.row.state === 1">
+        <div class="table-operation-items">
           <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-bianji"></i></button>
           <button class="table-operation-item" @click="tableOperation(['delete', scope.row])"><i class="cn-icon cn-icon-shanchu"></i></button>
           <!--          <div class="table-operation-item&#45;&#45;no-border" @click="tableOperation(['rerun', scope.row])">
@@ -225,19 +140,30 @@
 <script>
 import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
+import { del, get } from '@/utils/http'
+import { api } from '@/utils/api'
+import { storageKey } from '@/utils/constants'
+import { ref } from 'vue'
+import { getSecond } from '@/utils/date-util'
+import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
 export default {
   name: 'builtinReportTable',
   mixins: [table],
   components: {
-    Loading
+    Loading,
+    chartDetectionPagination
   },
+  inject: ['reload'],
   data () {
     return {
+      format: localStorage.getItem(storageKey.dateFormat),
+      username: localStorage.getItem(storageKey.username),
       tableTitle: [ // 原始table列
         {
           label: 'ID',
           prop: 'id',
-          show: true
+          show: true,
+          minWidth: 80
         }, {
           label: this.$t('config.user.name'),
           prop: 'name',
@@ -249,29 +175,30 @@ export default {
           show: true
         }, {
           label: this.$t('report.timePlan'),
-          prop: 'timePlan',
+          prop: 'type',
           show: true,
           minWidth: 110
         }, {
           label: this.$t('report.operationUserName'),
-          prop: 'operationUserName',
-          show: true
+          prop: 'userName',
+          show: true,
+          minWidth: 170
         }, {
           label: this.$t('report.resultCount'),
           prop: 'resultCount',
           show: true,
-          width: 130
+          minWidth: 130
         }, {
           label: this.$t('report.lastModified'),
-          prop: 'LastModified',
+          prop: 'utime',
           show: true,
-          width: 130,
+          minWidth: 150,
           sortable: 'custom'
         }, {
           label: this.$t('report.lastExecutionTime'),
           prop: 'lastExecutionTime',
           show: true,
-          width: 130,
+          minWidth: 200,
           sortable: 'custom'
         }
       ],
@@ -281,9 +208,16 @@ export default {
       builtinId: '',
       indeterminate: false,
       loading: false,
+      loadingDown: false,
       loadingTableId: '',
       loadingPreviewId: '',
-      percentage: 80
+      downDataList: [],
+      pageObj: {
+        pageNo: 1,
+        pageSize: 30,
+        total: 0,
+        resetPageNo: true
+      }
     }
   },
   methods: {
@@ -308,6 +242,55 @@ export default {
       } else {
         this.$refs.dataTable.clearSelection()
       }
+    },
+    dropExpandChange (row, rows) {
+      const isExpand = rows.some(t => t.id === row.id)
+      if (isExpand) {
+        this.dropDownQueryChange({ tempId: row.id })
+      }
+    },
+    datePickerChange (props) {
+      const row = {
+        tempId: props.row.id,
+        startTime: getSecond(new Date(this.value[0]).getTime()),
+        endTime: getSecond(new Date(this.value[1]).getTime())
+      }
+      this.dropDownQueryChange(row)
+    },
+    dropDownQueryChange (row) {
+      this.loadingDown = true
+      get(api.reportJob, row).then(res => {
+        if (res.code === 200) {
+          this.downDataList = res.data.list
+        }
+        this.loadingDown = false
+      })
+    },
+    downDeleteQueryChange (row, props) {
+      this.$confirm(this.$t('tip.confirmDelete'), {
+        confirmButtonText: this.$t('tip.yes'),
+        cancelButtonText: this.$t('tip.no'),
+        type: 'warning'
+      }).then(() => {
+        del(api.reportJob + '?ids=' + row.id).then(response => {
+          if (response.code === 200) {
+            this.delFlag = true
+            this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
+            this.dropDownQueryChange({ tempId: props.row.id })
+          } else {
+            this.$message.error(response.msg)
+          }
+        })
+      })
+    },
+    pageJump (val) {
+
+    }
+  },
+  setup () {
+    const value = ref('')
+    return {
+      value
     }
   }
 }

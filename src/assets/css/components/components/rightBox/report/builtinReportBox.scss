@@ -1,9 +1,18 @@
 .right-box.right-box-report {
   .right-box__container {
     .container__form {
+      .el-height.el-form-item {
+        margin-bottom: 18px;
+        .el-form-item__content {
+          height: 20px;
+          line-height: 20px;
+        }
+      }
       .enable-tab {
         display: flex;
+        width: 100%;
         .enable-tabs {
+          flex: 1;
           height: 32px;
           width: 160px;
           text-align: center;
