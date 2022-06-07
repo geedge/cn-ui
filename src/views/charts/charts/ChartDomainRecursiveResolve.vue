@@ -1,8 +1,9 @@
 <template>
-  <div style="overflow-y: auto; height: 100%; color: #555; white-space: pre;">
+  <div class="domain-recursive-resolve" style="overflow-y: auto; height: 100%; color: #555; white-space: pre;padding: 6px 0px 6px 6px;">
     <el-table :data="linuxLineSymbolConvert"
               :show-header="false"
-              style="width: 100%"
+              :span-method="arraySpanMethod"
+              style="width: 100%;"
               tooltip-effect="light"
               :cell-style="setCellStyle">
       <el-table-column prop="c1" show-overflow-tooltip/>
@@ -23,19 +24,86 @@ export default {
     resultType: Object,
     queryParams: Object
   },
+  data () {
+    return {
+      /* dnsRecordType:[
+        'A',
+        'AAAA',
+        'AFSDB',
+        'ALIAS',
+        'CAA',
+        'CERT',
+        'CNAME',
+        'DHCID',
+        'DNAME',
+        'DNSKEY',
+        'DS',
+        'HINFO',
+        'HTTPS',
+        'LOC',
+        'MX',
+        'NAPTR',
+        'NS',
+        'NSEC',
+        'NSEC3',
+        'NSEC3PARAM',
+        'PTR',
+        'RP',
+        'RRSIG',
+        'SOA',
+        'SRV',
+        'TLSA',
+        'TXT'
+      ] */
+    }
+  },
   methods: {
     setCellStyle ({ row, column, rowIndex, columnIndex }) {
+      const padding = '2px'
+      const border = '0px'
+      const background = '#F5F7FA'
       if (columnIndex === 3) {
         return {
-          color: '#598bd1'
+          color: '#598bd1',
+          background: background,
+          border: border,
+          padding: padding
+        }
+      } else if (columnIndex === 4) {
+        return {
+          'font-weight': 'bold',
+          background: background,
+          border: border,
+          padding: padding
+        }
+      } else {
+        return {
+          background: background,
+          border: border,
+          padding: padding
         }
       }
-      if (columnIndex === 4) {
-        return {
-          'font-weight': 'bold'
+    },
+    arraySpanMethod  ({ row, column, rowIndex, columnIndex }) {
+      if (_.isEmpty(row.c2) && _.isEmpty(row.c3) &&
+          _.isEmpty(row.c4) && _.isEmpty(row.c5)) {
+        // [1,5]表示合并1行5列，[0,0]表示改行不显示
+        if (columnIndex === 0) {
+          // 定位到6行0列的ID，告诉该单元格合并1行2列
+          return [1, 5]
+        } else if (columnIndex > 0) {
+          // 定位到6行1列的姓名，告诉该单元格不显示
+          return [0, 0]
         }
       }
     }
+    /* isDnsRecordTypes(type){
+      if(_.indexOf(this.dnsRecordType, type)===-1){
+        return false
+      }else {
+        return true
+      }
+    } */
   },
   mounted () {
   },
@@ -45,18 +113,26 @@ export default {
       const linuxArray = []
       dataArray.forEach(item => {
         const content = item.replace(/[\r\n]/g, '')
-        if (!(content.length === 0 || _.startsWith(content, ';'))) { // 忽略空白行,   忽略以;开头的行
-          let rowArray = item.split('\t')
+        if (_.startsWith(content, ';')) {
+          const obj = {
+            c1: content,
+            c2: '',
+            c3: '',
+            c4: '',
+            c5: ''
+          }
+          linuxArray.push(obj)
+        } else if (content.length > 0) { // 忽略空白行
+          const separator = /\t+|\s+/
+          let rowArray = item.split(separator)
           _.remove(rowArray, function (n) {
             return _.isEmpty(n)
           })
-          if (rowArray.length < 5) {
-            const allElementArray = _.split(rowArray, ' ')
-            const specialArray = _.split(rowArray, ' ', 5)
-
-            allElementArray.forEach((item, index) => {
+          if (rowArray.length > 5) {
+            const specialArray = item.split(separator)
+            rowArray.forEach((i, index) => {
               if (index >= 5) {
-                specialArray[4] = specialArray[4] + ' ' + item
+                specialArray[4] = specialArray[4] + ' ' + i
               }
             })
             rowArray = specialArray
