@@ -1,16 +1,42 @@
 <template>
-  <div class="domain-recursive-resolve" style="overflow-y: auto; height: 100%; color: #555; white-space: pre;padding: 6px 0px 6px 6px;">
+  <div style="overflow-y: auto; height: 100%; color: #555; white-space: pre;padding: 6px 0px 6px 6px;">
     <el-table :data="linuxLineSymbolConvert"
               :show-header="false"
               :span-method="arraySpanMethod"
               style="width: 100%;"
               tooltip-effect="light"
               :cell-style="setCellStyle">
-      <el-table-column prop="c1" show-overflow-tooltip/>
+      <el-table-column prop="c1" class-name="domain-tooltip">
+        <template v-slot="scope" >
+          <el-tooltip ref='tooltip_c1'
+                      popper-class="domain-recursive-resolve-popper"
+                      effect="light"
+                      placement="top"
+                      hide-after="0"
+                      show-after="50"
+          >
+            <template #content>{{scope.row['c1']}}</template>
+            <div class="short-content">{{scope.row['c1']}}</div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column prop="c2" show-overflow-tooltip width="80"/>
       <el-table-column prop="c3" show-overflow-tooltip width="70"/>
       <el-table-column prop="c4" show-overflow-tooltip width="80" />
-      <el-table-column prop="c5" show-overflow-tooltip/>
+      <el-table-column prop="c5" class-name="domain-tooltip">
+        <template v-slot="scope" >
+          <el-tooltip ref='tooltip_c5'
+                  popper-class="domain-recursive-resolve-popper"
+                  effect="light"
+                  placement="top"
+                  hide-after="0"
+                  show-after="50"
+          >
+            <template #content>{{scope.row['c5']}}</template>
+            <div class="short-content">{{scope.row['c5']}}</div>
+          </el-tooltip>
+        </template>
+      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -152,3 +178,17 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+   .domain-recursive-resolve-popper{
+     max-width:550px;
+   }
+  .domain-tooltip {
+    .short-content{
+      cursor:default;
+      overflow:hidden;
+      white-space:nowrap;
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+    }
+  }
+</style>
