@@ -94,7 +94,7 @@ export default {
             this.tableData = response.data.list.map(item => {
               return {
                 ...item,
-                config: JSON.parse(item.config)
+                config: item.config ? JSON.parse(item.config) : {}
               }
             })
           } else {

@@ -1,16 +1,18 @@
 <template>
   <el-table
-      id="userTable"
+      id="reportTable"
       ref="dataTable"
       :data="tableData"
       :height="height"
       border
+      tooltip-effect="light"
+      :expand-row-keys="expandedIds"
       @header-dragend="dragend"
       @sort-change="tableDataSort"
       @expand-change="dropExpandChange"
       @selection-change="selectionChange"
   >
-    <el-table-column type="expand">
+    <el-table-column type="expand" width="30">
       <template #default="props">
         <div class="down">
           <loading :loading="loadingDown"></loading>
@@ -21,16 +23,20 @@
                 :format="format"
                 type="datetimerange"
                 range-separator="To"
-                start-placeholder="Start date"
-                end-placeholder="End date"
-                @change="datePickerChange(props)"
+                :start-placeholder="$t('detections.startTime')"
+                :end-placeholder="$t('detections.endTime')"
+                @change="datePickerChange(props.row)"
             />
           </div>
           <div class="expand">
             <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
               <div class="expand-right">
                 <div class="demo-progress">
-                  <el-progress type="circle" :percentage="item.percent" :color="item.percent === 100 ? '#5cb87a' : '#1989fa'" />
+                  <el-progress type="circle" :percentage="item.percent * 100" :color="item.percent === 1 ? '#21bf9a' : '#50b3ef'">
+                    <template #default="{ percentage }">
+                      <span style="font-size: 0.875rem;">{{ percentage }}%</span>
+                    </template>
+                  </el-progress>
                 </div>
               </div>
               <div class="expand-left">
@@ -66,7 +72,6 @@
                 ref="pagination"
                 :page-obj="pageObj"
                 @pageJump="pageJump"
-                :pageSizeForAlarm="pageObj.pageSize"
             ></chart-detection-pagination>
           </div>
         </div>
@@ -76,7 +81,7 @@
         :resizable="false"
         align="center"
         type="selection"
-        width="55">
+        width="30">
     </el-table-column>
     <el-table-column
         v-for="(item, index) in customTableTitles"
@@ -86,6 +91,7 @@
         :min-width="`${item.minWidth}`"
         :prop="item.prop"
         :resizable="true"
+        :show-overflow-tooltip="item.prop === 'timePlan'"
         :sort-orders="['ascending', 'descending']"
         :sortable="item.sortable"
         :width="`${item.width}`"
@@ -96,12 +102,18 @@
       </template>
       <template #default="scope" :column="item">
         <span v-if="item.prop === 'timeLimit'">
-          {{scope.row.config.timeConfig.type}}
+          {{handleTimeRange(scope.row)}}
         </span>
-        <span v-else-if="item.prop === 'utime'">
-          {{dateFormatByAppearance(scope.row.utime)}}
+        <span v-else-if="item.prop === 'timePlan'">
+          {{(scope.row.config && scope.row.config.schedulerConfig) || '-'}}
         </span>
-        <span v-else>{{scope.row[item.prop]}}</span>
+        <span v-else-if="item.prop === 'userName'">
+          {{(scope.row.sysUser && scope.row.sysUser.name) || '-'}}
+        </span>
+        <span v-else-if="item.prop === 'lastExecutionTime'">
+          {{scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-'}}
+        </span>
+        <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -115,12 +127,6 @@
         <div class="table-operation-items">
           <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-bianji"></i></button>
           <button class="table-operation-item" @click="tableOperation(['delete', scope.row])"><i class="cn-icon cn-icon-shanchu"></i></button>
-          <!--          <div class="table-operation-item&#45;&#45;no-border" @click="tableOperation(['rerun', scope.row])">
-                      <loading :loading="loadingPreviewId === scope.row.id"></loading>
-                      <svg class="icon2" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                        <use xlink:href="#cn-icon-refresh"></use>
-                      </svg>
-                    </div>-->
         </div>
       </template>
     </el-table-column>
@@ -163,42 +169,44 @@ export default {
           label: 'ID',
           prop: 'id',
           show: true,
-          minWidth: 80
+          width: 40
         }, {
           label: this.$t('config.user.name'),
           prop: 'name',
           show: true,
+          minWidth: 200,
           sortable: 'custom'
         }, {
           label: this.$t('report.timeLimit'),
           prop: 'timeLimit',
-          show: true
+          show: true,
+          minWidth: 110
         }, {
           label: this.$t('report.timePlan'),
-          prop: 'type',
+          prop: 'timePlan',
           show: true,
           minWidth: 110
         }, {
           label: this.$t('report.operationUserName'),
           prop: 'userName',
           show: true,
-          minWidth: 170
+          minWidth: 70
         }, {
           label: this.$t('report.resultCount'),
-          prop: 'resultCount',
+          prop: 'total',
           show: true,
-          minWidth: 130
-        }, {
+          minWidth: 50
+        }, /*{
           label: this.$t('report.lastModified'),
           prop: 'utime',
           show: true,
           minWidth: 150,
           sortable: 'custom'
-        }, {
+        }, */{
           label: this.$t('report.lastExecutionTime'),
-          prop: 'lastExecutionTime',
+          prop: 'lastTime',
           show: true,
-          minWidth: 200,
+          width: 170,
           sortable: 'custom'
         }
       ],
@@ -214,9 +222,24 @@ export default {
       downDataList: [],
       pageObj: {
         pageNo: 1,
-        pageSize: 30,
+        pageSize: 20,
         total: 0,
         resetPageNo: true
+      },
+      expandedIds: []
+    }
+  },
+  computed: {
+    handleTimeRange () {
+      return function (row) {
+        let str = ''
+        if (row.config && row.config.timeConfig && row.config.timeConfig.type) {
+          str += row.config.timeConfig.type
+          if (row.config.timeConfig.offset) {
+            str += ` ${row.config.timeConfig.offset} ${row.config.timeConfig.unit}`
+          }
+        }
+        return str
       }
     }
   },
@@ -243,25 +266,32 @@ export default {
         this.$refs.dataTable.clearSelection()
       }
     },
-    dropExpandChange (row, rows) {
-      const isExpand = rows.some(t => t.id === row.id)
-      if (isExpand) {
-        this.dropDownQueryChange({ tempId: row.id })
+    dropExpandChange (row, expandedRows) {
+      this.expandedIds = []
+      if (expandedRows.length > 0 && row) {
+        this.expandedIds.push(row.id)
+        this.datePickerChange(row)
       }
     },
-    datePickerChange (props) {
-      const row = {
-        tempId: props.row.id,
+    datePickerChange (row) {
+      const param = {
+        tempId: row.id,
         startTime: getSecond(new Date(this.value[0]).getTime()),
-        endTime: getSecond(new Date(this.value[1]).getTime())
+        endTime: getSecond(new Date(this.value[1]).getTime()),
+        ...this.pageObj
       }
-      this.dropDownQueryChange(row)
+      this.dropDownQueryChange(param)
     },
-    dropDownQueryChange (row) {
+    dropDownQueryChange (param) {
       this.loadingDown = true
-      get(api.reportJob, row).then(res => {
+      this.downDataList = []
+      get(api.reportJob, param).then(res => {
         if (res.code === 200) {
           this.downDataList = res.data.list
+          this.pageObj.total = res.data.total
+          this.$nextTick(() => {
+            this.$refs.dataTable.doLayout()
+          })
         }
         this.loadingDown = false
       })

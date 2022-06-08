@@ -1,5 +1,5 @@
 <template>
-  <div v-click-outside="{object: editRole, func: esc}" class="right-box right-box-role">
+  <div class="right-box right-box-role">
     <div class="right-box__header">
       <div class="header__title">{{editRole.id ? $t('config.roles.editRole') : $t('config.roles.createRole')}}</div>
       <div class="header__operation">

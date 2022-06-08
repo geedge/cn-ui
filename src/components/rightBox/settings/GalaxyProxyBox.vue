@@ -1,5 +1,5 @@
 <template>
-  <div v-click-outside="{object: editObject, func: esc}" class="right-box">
+  <div class="right-box">
     <div class="right-box__header">
       <div class="header__title">{{editObject.id ? $t('overall.edit') : $t('overall.new')}}</div>
       <div class="header__operation">

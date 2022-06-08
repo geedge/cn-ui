@@ -58,10 +58,9 @@
           :with-header="false"
           :size="700"
           destroy-on-close>
-        <builtin-report-box
+        <report-box
             :object="object"
-            :check-week-list-data="checkWeekListData"
-            :check-months-list-data="checkMonthsListData"
+            :category-list="builtinReportLeftMenu"
             @close="closeRightBox"
         />
       </el-drawer>
@@ -75,7 +74,7 @@ import builtinReportTable from '@/components/table/report/reportTestTable'
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
-import builtinReportBox from '@/components/rightBox/report/reportTestBox'
+import ReportBox from '@/components/rightBox/report/ReportBox'
 
 export default {
   name: 'Report',
@@ -89,43 +88,38 @@ export default {
         id: '',
         name: '',
         type: '',
-        // config: '',
         source: '',
         cTime: '',
         uTime: '',
-        htmContent: '',
         remark: '',
-        uniq: '',
         config: {
           isRepeat: 0,
+          isScheduler: 0,
           cronExpression: '',
           startTime: '',
           endTime: '',
-          queryConfig: {
-            key1: '',
-            key2: ''
-          },
+          queryConfig: {},
           schedulerConfig: {
-            // type: '',
-            week_dates: [1, 2, 3, 4, 5, 6, 7],
-            months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-            month_dates: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
-            month_week_dates: [0, 1, 2, 3, 4, 5, 6],
+            type: 'day',
+            weekDates: [],
+            months: [],
+            monthDates: [],
+            monthWeekDates: [],
             interval: 1
           },
           timeConfig: {
-            type: 'day',
-            offset: 0,
+            type: 'yesterday',
+            offset: 1,
             unit: ''
           }
         },
         schedulerStart: '',
         schedulerEnd: '',
-        category_id: 1
+        categoryId: ''
       },
       checkWeekListData: [
         'report.sunday',
-        'report.onMonday',
+        'report.monday',
         'report.tuesday',
         'report.wednesday',
         'report.thursday',
@@ -153,41 +147,63 @@ export default {
   components: {
     cnDataList,
     builtinReportTable,
-    builtinReportBox
+    ReportBox
   },
   methods: {
     queryGetTempData () {
-      console.log(api.reportCategory)
       get(api.reportCategory).then(res => {
-        this.builtinReportLeftMenu = [
-          { id: 1, name: 'Tencent网络服务质量监测报告(IDC精简版)' },
-          { id: 2, name: '网络服务质量监测报告(IDC精简版)' },
-          { id: 3, name: '出入口整体流量监测报告' },
-          { id: 4, name: '出入口字节跳动流量监测报告' }
-        ]
         if (res.code === 200) {
           this.builtinReportLeftMenu = res.data.list
         }
       })
     },
     builtinTabs (id) {
-      this.getTableData({ tempId: id })
+      this.getTableData({ categoryId: id })
       this.builtinId = id
     },
     edit (u) {
-      get(this.url, { id: u.id, name: u.name }).then(response => {
-        if (response.code === 200) {
-          let dataList = []
-          dataList = response.data.list.map(item => {
-            return {
-              ...item,
-              config: JSON.parse(item.config)
-            }
-          })
-          this.object = dataList[0]
-          this.rightBox.show = true
+      this.initConfig(u)
+      this.object = u
+      this.rightBox.show = true
+    },
+    initConfig (u) {
+      if (!u.config) {
+        u.config = {
+          isRepeat: 0,
+          cronExpression: '',
+          startTime: '',
+          endTime: '',
+          queryConfig: {},
+          schedulerConfig: {
+            type: 'day',
+            weekDates: [],
+            months: [],
+            monthDates: [],
+            monthWeekDates: [],
+            interval: 1
+          },
+          timeConfig: {
+            type: 'yesterday',
+            offset: 1,
+            unit: ''
+          }
         }
-      })
+      } else if (!u.config.schedulerConfig) {
+        u.config.schedulerConfig = {
+          type: 'day',
+          weekDates: [],
+          months: [],
+          monthDates: [],
+          monthWeekDates: [],
+          interval: 1
+        }
+      } else if (!u.config.timeConfig) {
+        u.config.timeConfig = {
+          type: 'yesterday',
+          offset: 1,
+          unit: ''
+        }
+      }
     }
   },
   mounted () {

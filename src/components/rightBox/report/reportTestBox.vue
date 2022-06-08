@@ -1,5 +1,5 @@
 <template>
-  <div v-click-outside="{object: editObject, func: esc}" class="right-box right-box-report">
+  <div class="right-box right-box-report">
     <div class="right-box__header">
       <div class="header__title">{{editObject.id ? $t('report.editBuiltin') : $t('report.createBuiltin')}}</div>
       <div class="header__operation">
