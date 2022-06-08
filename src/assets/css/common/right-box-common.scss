@@ -62,10 +62,6 @@
     }
   }
   .el-form-item__content {
-    .el-input-group--prepend {
-      width: 626px;
-      height: 32px;
-    }
     .input-box {
       .el-textarea {
         .el-textarea__inner {
@@ -264,14 +260,7 @@
 .right-box__select {
   width: 100%;
 }
-.right-box-select-dropdown {
-  width: 625px;
-}
-.right-box-select-report.right-box-select-dropdown {
-  width: 640px;
-}
 .el-select-last.right-box-select-dropdown {
-  width: 434px;
   left: 1698px;
 }
 .limit-height .el-cascader-menu {

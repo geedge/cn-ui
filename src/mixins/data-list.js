@@ -90,16 +90,7 @@ export default {
           for (let i = 0; i < response.data.list.length; i++) {
             response.data.list[i].status = response.data.list[i].status + ''
           }
-          if (this.tableId === 'builtinReportTable') {
-            this.tableData = response.data.list.map(item => {
-              return {
-                ...item,
-                config: item.config ? JSON.parse(item.config) : {}
-              }
-            })
-          } else {
-            this.tableData = response.data.list
-          }
+          this.tableData = response.data.list
           this.pageObj.total = response.data.total
           // TODO 回到顶部
         }

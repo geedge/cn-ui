@@ -228,14 +228,6 @@
               </template>
             </el-select>
           </el-form-item>
-<!--          <el-form-item :label="$t('report.categoryType')" prop="categoryType">-->
-<!--            <el-input v-model="editObject.config.queryConfig.key1" placeholder="" size="small">-->
-<!--              <template #prepend>Key</template>-->
-<!--            </el-input>-->
-<!--            <el-input v-model="editObject.config.queryConfig.key2" placeholder="" size="small">-->
-<!--              <template #prepend>Key</template>-->
-<!--            </el-input>-->
-<!--          </el-form-item>-->
         </el-form>
       </div>
     </div>

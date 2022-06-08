@@ -457,10 +457,10 @@ export const report = {
     { name: 'report.december', value: 12 }
   ],
   weekOptions: [
-    { name: '1', value: 1 },
-    { name: '2', value: 2 },
-    { name: '3', value: 3 },
-    { name: '4', value: 4 },
+    { name: 'report.1stWeek', value: 1 },
+    { name: 'report.2ndWeek', value: 2 },
+    { name: 'report.3rdWeek', value: 3 },
+    { name: 'report.4thWeek', value: 4 },
     { name: 'report.lastWeek', value: 5 }
   ]
 }

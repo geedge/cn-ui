@@ -18,7 +18,6 @@
             <el-select id="account-input-roleIds"
                        v-model="editObject.config.timeConfig.type"
                        class="right-box__select"
-                       clearable
                        collapse-tags
                        :disabled="!!editObject.id"
                        placeholder=""
@@ -66,7 +65,7 @@
             </div>
           </el-form-item>
           <!--startTime-->
-          <el-form-item :label="$t('report.dataStartTime')" prop="startTime" v-if="editObject.config.timeConfig.type === 'customize'">
+          <el-form-item :label="$t('report.dataStartTime')" prop="config.startTime" v-if="editObject.config.timeConfig.type === 'customize'">
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
@@ -83,7 +82,7 @@
             </div>
           </el-form-item>
           <!--endTime-->
-          <el-form-item :label="$t('report.dataEndTime')" prop="endTime" v-if="editObject.config.timeConfig.type === 'customize'">
+          <el-form-item :label="$t('report.dataEndTime')" prop="config.endTime" v-if="editObject.config.timeConfig.type === 'customize'">
             <div class="demo-datetime-picker">
               <div class="block">
                 <el-date-picker
@@ -100,7 +99,7 @@
             </div>
           </el-form-item >
           <el-form-item class="el-height">
-            <el-checkbox v-model="scheduleChecked" :disabled="editObject.config.timeConfig.type === 'customize' || editObject.id" :label="$t('report.enableTimeSchedule')" size="large" />
+            <el-checkbox v-model="scheduleChecked" :disabled="editObject.config.timeConfig.type === 'customize' || !!editObject.id" :label="$t('report.enableTimeSchedule')" size="large" />
           </el-form-item>
           <!--Enable time schedule-->
           <el-form-item prop="enableTimeSchedule" v-if="scheduleChecked">
@@ -170,7 +169,7 @@
                              size="small"
                              @change="()=>{ this.$forceUpdate() }">
                     <template v-for="time in weekOptions" :key="time.value">
-                      <el-option :label="time.name" :value="time.value"></el-option>
+                      <el-option :label="$t(time.name)" :value="time.value"></el-option>
                     </template>
                   </el-select>
                   <div class="enable-month-week">
@@ -216,7 +215,7 @@
             </div>
           </el-form-item>
           <!--categoryType-->
-          <el-form-item :label="$t('report.categoryType')" prop="categoryType">
+          <el-form-item :label="$t('report.categoryType')" prop="categoryId">
             <el-select id="account-input-roleIds"
                        v-model="editObject.categoryId"
                        class="right-box__select"
@@ -231,6 +230,12 @@
                 <el-option :label="category.name" :value="category.id"></el-option>
               </template>
             </el-select>
+          </el-form-item>
+          <!-- 参数 -->
+          <el-form-item :label="$t('config.operationlog.params')" prop="params" v-if="categoryParams.length > 0">
+            <el-input v-model="param.value" placeholder="" v-for="(param, index) in categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+              <template #prepend>{{param.key}}</template>
+            </el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -252,13 +257,14 @@ import { storageKey, report } from '@/utils/constants'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { post, put } from '@/utils/http'
-import { getMillisecond } from '@/utils/date-util'
+import { dateFormat, getMillisecond } from '@/utils/date-util'
 
 export default {
   name: 'ReportBox',
   mixins: [rightBoxMixin],
   props: {
-    categoryList: Array
+    categoryList: Array,
+    currentCategoryId: Number
   },
   data () {
     return {
@@ -287,9 +293,23 @@ export default {
       monthWeekdayCheckedAll: false,
       monthWeekdayIsIndeterminate: false,
 
+      categoryParams: [],
+
       rules: { // 表单校验规则
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+        ],
+        categoryId: [
+          { required: true, message: this.$t('validate.required'), trigger: 'change' }
+        ],
+        schedulerStart: [
+          { required: true, message: this.$t('validate.required'), trigger: 'change' }
+        ],
+        'config.startTime': [
+          { required: true, message: this.$t('validate.required'), trigger: 'change' }
+        ],
+        'config.endTime': [
+          { required: true, message: this.$t('validate.required'), trigger: 'change' }
         ]
       }
     }
@@ -301,6 +321,18 @@ export default {
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
     },
+    'editObject.categoryId': {
+      handler (n) {
+        const category = this.categoryList.find(c => c.id === n)
+        if (category && category.config && category.config.queryParam) {
+          this.categoryParams = Object.keys(category.config.queryParam).map(key => {
+            return { key: key, value: category.config.queryParam[key] }
+          })
+        } else {
+          this.categoryParams = []
+        }
+      }
+    },
     object: {
       deep: true,
       immediate: true,
@@ -309,6 +341,21 @@ export default {
         this.scheduleChecked = this.editObject.config.isScheduler === 1
         if (n.config.schedulerConfig && n.config.schedulerConfig.type) {
           this.scheduleType = n.config.schedulerConfig.type
+        }
+        if (n.schedulerStart) {
+          this.editObject.schedulerStart = dateFormat(this.editObject.schedulerStart, this.dateFormat)
+        }
+        if (n.schedulerEnd) {
+          this.editObject.schedulerEnd = dateFormat(this.editObject.schedulerEnd, this.dateFormat)
+        }
+        if (n.id) {
+          if (n.config.queryParam && Object.keys(n.config.queryParam).length > 0) {
+            this.categoryParams = Object.keys(n.config.queryParam).map(key => {
+              return { key: key, value: n.config.queryParam[key] }
+            })
+          }
+        } else if (this.currentCategoryId) {
+          this.editObject.categoryId = this.currentCategoryId
         }
       }
     }
@@ -352,7 +399,6 @@ export default {
           schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
         }
 
-        console.info(this.editObject.config)
         const copyObject = _.cloneDeep(this.editObject)
         if (startTime) {
           copyObject.config.startTime = startTime
@@ -365,6 +411,13 @@ export default {
         }
         if (schedulerEnd) {
           copyObject.schedulerEnd = schedulerEnd
+        }
+        if (this.categoryParams.length > 0) {
+          const queryParam = {}
+          this.categoryParams.forEach(p => {
+            queryParam[p.key] = p.value
+          })
+          copyObject.config.queryParam = queryParam
         }
         copyObject.config = JSON.stringify(copyObject.config)
         if (valid) {

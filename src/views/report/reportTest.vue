@@ -61,6 +61,7 @@
         <report-box
             :object="object"
             :category-list="builtinReportLeftMenu"
+            :current-category-id="builtinId"
             @close="closeRightBox"
         />
       </el-drawer>
@@ -88,7 +89,7 @@ export default {
         id: '',
         name: '',
         type: '',
-        source: '',
+        source: 'session_record_cn',
         cTime: '',
         uTime: '',
         remark: '',
@@ -98,7 +99,7 @@ export default {
           cronExpression: '',
           startTime: '',
           endTime: '',
-          queryConfig: {},
+          queryParam: {},
           schedulerConfig: {
             type: 'day',
             weekDates: [],
@@ -110,7 +111,7 @@ export default {
           timeConfig: {
             type: 'yesterday',
             offset: 1,
-            unit: ''
+            unit: 'hour'
           }
         },
         schedulerStart: '',
@@ -153,7 +154,40 @@ export default {
     queryGetTempData () {
       get(api.reportCategory).then(res => {
         if (res.code === 200) {
-          this.builtinReportLeftMenu = res.data.list
+          this.builtinReportLeftMenu = res.data.list.map(c => {
+            return {
+              ...c,
+              config: c.config ? JSON.parse(c.config) : {}
+            }
+          })
+        }
+      })
+    },
+    getTableData (params) {
+      if (params) {
+        this.searchLabel = { ...this.searchLabel, ...params }
+      }
+      this.searchLabel = { ...this.searchLabel, ...this.pageObj }
+      this.tools.loading = true
+      delete this.searchLabel.total
+      let listUrl = this.url
+      if (this.listUrl) {
+        listUrl = this.listUrl
+      }
+      get(listUrl, this.searchLabel).then(response => {
+        this.tools.loading = false
+        if (response.code === 200) {
+          for (let i = 0; i < response.data.list.length; i++) {
+            response.data.list[i].status = response.data.list[i].status + ''
+          }
+          this.tableData = response.data.list.map(item => {
+            return {
+              ...item,
+              config: item.config ? JSON.parse(item.config) : {}
+            }
+          })
+          this.pageObj.total = response.data.total
+          // TODO 回到顶部
         }
       })
     },
@@ -173,7 +207,7 @@ export default {
           cronExpression: '',
           startTime: '',
           endTime: '',
-          queryConfig: {},
+          queryParam: {},
           schedulerConfig: {
             type: 'day',
             weekDates: [],

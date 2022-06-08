@@ -4,9 +4,10 @@
       ref="dataTable"
       :data="tableData"
       :height="height"
+      :expand-row-keys="expandedIds"
+      row-key="id"
       border
       tooltip-effect="light"
-      :expand-row-keys="expandedIds"
       @header-dragend="dragend"
       @sort-change="tableDataSort"
       @expand-change="dropExpandChange"
@@ -150,7 +151,7 @@ import { del, get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { storageKey } from '@/utils/constants'
 import { ref } from 'vue'
-import { getSecond } from '@/utils/date-util'
+import { dateFormatToUTC } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
 export default {
   name: 'builtinReportTable',
@@ -196,13 +197,7 @@ export default {
           prop: 'total',
           show: true,
           minWidth: 50
-        }, /*{
-          label: this.$t('report.lastModified'),
-          prop: 'utime',
-          show: true,
-          minWidth: 150,
-          sortable: 'custom'
-        }, */{
+        }, {
           label: this.$t('report.lastExecutionTime'),
           prop: 'lastTime',
           show: true,
@@ -276,8 +271,8 @@ export default {
     datePickerChange (row) {
       const param = {
         tempId: row.id,
-        startTime: getSecond(new Date(this.value[0]).getTime()),
-        endTime: getSecond(new Date(this.value[1]).getTime()),
+        startTime: dateFormatToUTC(this.value[0]),
+        endTime: dateFormatToUTC(this.value[1]),
         ...this.pageObj
       }
       this.dropDownQueryChange(param)
@@ -314,7 +309,10 @@ export default {
       })
     },
     pageJump (val) {
-
+      this.pageObj.pageNo = val
+      if (this.expandedIds.length > 0) {
+        this.datePickerChange({ id: this.expandedIds[0] })
+      }
     }
   },
   setup () {

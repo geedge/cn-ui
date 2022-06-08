@@ -44,9 +44,9 @@ export function rTime (date) {
 // 时间格式转换
 export function dateFormat (date, format = 'YYYY-MM-DD HH:mm:ss') {
   let d = date
-  // date不是数字，则视为时间字符串，例如2022-02-22 22:22
+  // date不是数字，则视为utc时区的时间字符串，例如2022-02-22 22:22
   if (isNaN(date)) {
-    d = window.$dayJs(date).valueOf() + parseInt(localStorage.getItem('cn-timezone-local-offset'))
+    d = window.$dayJs(date).valueOf() + parseInt(localStorage.getItem(storageKey.timezoneLocalOffset)) * 3600000
   } else {
     d = getMillisecond(date)
   }
@@ -56,4 +56,16 @@ export function dateFormat (date, format = 'YYYY-MM-DD HH:mm:ss') {
 // 时间格式转换，使用appearance的时间格式
 export function dateFormatByAppearance (date) {
   return dateFormat(date, localStorage.getItem(storageKey.dateFormat))
+}
+// 带时区的日期转为utc日期
+export function dateFormatToUTC (date, format = 'YYYY-MM-DD HH:mm:ss') {
+  let d = date
+  // date不是数字，则视为utc时区的时间字符串，例如2022-02-22 22:22
+  if (isNaN(date)) {
+    d = window.$dayJs(date).valueOf() - parseInt(localStorage.getItem(storageKey.timezoneLocalOffset)) * 3600000
+  } else {
+    d = getMillisecond(date)
+  }
+  d = window.$dayJs(d).tz().format(format)
+  return d
 }
