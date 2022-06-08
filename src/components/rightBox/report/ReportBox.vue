@@ -22,7 +22,9 @@
                        :disabled="!!editObject.id"
                        placeholder=""
                        popper-class="right-box-select-dropdown right-box-select-report "
-                       size="small">
+                       size="small"
+                       @change="timeConfigTypeChange"
+            >
               <template v-for="time in timeRuleList" :key="time.value">
                 <el-option :label="time.name" :value="time.value"></el-option>
               </template>
@@ -44,7 +46,7 @@
               </el-select>
             </template>
             <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" style="display: flex;">
-              <el-input v-model="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder="" :disabled="!!editObject.id">
+              <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder="" :disabled="!!editObject.id">
                 <template #prepend><i @click="timeOffsetHandle('m')" class="cn-icon cn-icon-a-"></i></template>
                 <template #append><i @click="timeOffsetHandle('p')" class="cn-icon cn-icon-a-1"></i></template>
               </el-input>
@@ -108,7 +110,7 @@
             </div>
             <div class="enable-tabs-daily" v-if="scheduleType === scheduleTypeList[0].value">
               <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder="" style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
+              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder="" style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
                 <template #append>{{$t('report.day')}}</template>
               </el-input>
             </div>
@@ -321,6 +323,19 @@ export default {
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
     },
+    'editObject.config.schedulerConfig.interval': {
+      handler (n) {
+        if (!_.isNumber(n)) {
+          if (n) {
+            if (!_.isNumber(parseInt(n)) || _.isNaN(parseInt(n))) {
+              this.editObject.config.schedulerConfig.interval = 1
+            } else {
+              this.editObject.config.schedulerConfig.interval = parseInt(n)
+            }
+          }
+        }
+      }
+    },
     'editObject.categoryId': {
       handler (n) {
         const category = this.categoryList.find(c => c.id === n)
@@ -339,9 +354,21 @@ export default {
       handler (n) {
         this.editObject = JSON.parse(JSON.stringify(n))
         this.scheduleChecked = this.editObject.config.isScheduler === 1
-        if (n.config.schedulerConfig && n.config.schedulerConfig.type) {
-          this.scheduleType = n.config.schedulerConfig.type
+        if (n.config.schedulerConfig) {
+          if (n.config.schedulerConfig.type) {
+            this.scheduleType = n.config.schedulerConfig.type
+            // 初始化每月下面的tab、循环
+            if (this.scheduleType === 'month') {
+              if (n.config.schedulerConfig.monthDates && n.config.schedulerConfig.monthDates.length > 0) {
+                this.monthScheduleType = 'daily'
+              } else if (n.config.schedulerConfig.monthDates && n.config.schedulerConfig.weekDates.length > 0) {
+                this.monthScheduleType = 'weekly'
+              }
+              this.monthIsCycle = !(n.config.schedulerConfig.months && n.config.schedulerConfig.months.length > 0)
+            }
+          }
         }
+
         if (n.schedulerStart) {
           this.editObject.schedulerStart = dateFormat(this.editObject.schedulerStart, this.dateFormat)
         }
@@ -377,6 +404,11 @@ export default {
     typeChange (id) {
 
     },
+    timeConfigTypeChange (val) {
+      if (val === 'customize') {
+        this.scheduleChecked = false
+      }
+    },
     save () {
       if (this.blockOperation.save) { return }
       this.blockOperation.save = true
@@ -391,6 +423,13 @@ export default {
         }
         if (this.editObject.config && this.editObject.config.endTime) {
           endTime = getMillisecond(this.editObject.config.endTime)
+        }
+        if (this.editObject.config && this.editObject.config.schedulerConfig) {
+          if (['day', 'week', 'month'].indexOf(this.editObject.config.schedulerConfig.type) > -1) {
+            this.editObject.config.isRepeat = 1
+          } else {
+            this.editObject.config.isRepeat = 0
+          }
         }
         if (this.editObject.schedulerStart) {
           schedulerStart = getMillisecond(this.editObject.schedulerStart)
