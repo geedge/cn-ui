@@ -20,7 +20,7 @@
     ></explorer-search>
     <!-- 内容区 -->
     <div class="explorer-container" v-if="showList"  style="height: calc(100% - 20px); flex-direction: column">
-      <div style="display: flex; height: 100%;">
+      <div style="display: flex; height: auto;">
         <entity-filter
             :filter-data="filterData"
             :loading-left="loadingLeft"
@@ -37,18 +37,6 @@
             @pageNo="pageNo"
             :loading="listLoading"
         ></entity-list>
-      </div>
-      <div class="entity__pagination" style="position: absolute; bottom: 0; width: 100%;">
-        <Pagination
-            ref="pagination"
-            :page-obj="pageObj"
-            @pageNo='pageNo'
-            @pageSize='pageSize'
-            @size-change="pageSize"
-            @prev-click="prev"
-            @next-click="next"
-        >
-        </Pagination>
       </div>
     </div>
     <div class="explorer-foot" v-else>

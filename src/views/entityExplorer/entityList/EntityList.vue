@@ -1,7 +1,7 @@
 <template>
   <div class="entity-list" id="entityList">
     <loading :loading="loading"></loading>
-    <div class="entity-list__content">
+    <div class="entity-list__content" style="height:auto;">
       <!-- 列表式 -->
       <template v-if="listMode === 'list'">
         <div class="entity-list--list">
@@ -33,6 +33,20 @@
           ></entity-card>
         </div>
       </template>
+
+      <div class="entity__pagination" style="position: relative; bottom: 0; width: 100%;">
+        <Pagination
+                ref="pagination"
+                :page-obj="pageObj"
+                @pageNo='pageNo'
+                @pageSize='pageSize'
+                @size-change="pageSize"
+                @prev-click="prev"
+                @next-click="next"
+        >
+        </Pagination>
+      </div>
+
     </div>
   </div>
 </template>
@@ -41,6 +55,7 @@
 import Card from '@/views/entityExplorer/entityList/Card'
 import Row from '@/views/entityExplorer/entityList/Row'
 import Loading from '@/components/common/Loading'
+import Pagination from '@/components/common/Pagination'
 
 export default {
   name: 'EntityList',
@@ -55,7 +70,8 @@ export default {
   components: {
     'entity-card': Card,
     'entity-row': Row,
-    Loading
+    Loading,
+    Pagination
   },
   data () {
     return {
@@ -80,7 +96,38 @@ export default {
     collapse () {
       this.isCollapse = true
       this.$refs[`entityRow${this.collapseIndex}`].collapse()
+    },
+    pageNo (val) {
+      this.$emit('pageNo', val)
+    },
+    pageSize (val) {
+      this.$emit('pageSize', val)
+    },
+    // 点击上一页箭头
+    prev () {
+      this.$emit('prev')
+    },
+    // 点击下一页箭头
+    next () {
+      this.$emit('next')
+    },
+    // currentPage 改变时会触发
+    current (val) {
+      this.$emit('next', val)
+    },
+    handleScrollEntity (e) {
+      if(e.target.className==="cn-entity__shadow"){
+        let container = document.getElementById("cnContainer")
+        container.scrollTop += e.deltaY/2
+      }
     }
+  },
+  mounted () {
+    // 监听⿏标滚动事件
+    window.addEventListener('mousewheel', this.handleScrollEntity)
+  },
+  unmounted () {
+    window.removeEventListener('mousewheel', this.handleScrollEntity)
   },
   watch: {
     listData: {

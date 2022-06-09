@@ -48,7 +48,7 @@
   }
   .explorer-container {
     display: flex;
-    overflow: hidden;
+    overflow: visible; /*overflow: hidden;*/
     height: calc(100% - 120px);
     position: relative;
   }

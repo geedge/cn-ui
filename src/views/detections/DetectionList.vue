@@ -49,6 +49,13 @@ export default {
       noData: false
     }
   },
+  mounted () {
+    // 监听⿏标滚动事件
+    window.addEventListener('mousewheel', this.handleScroll)
+  },
+  unmounted () {
+    window.removeEventListener('mousewheel', this.handleScroll)
+  },
   methods: {
     switchCollapse (isCollapse, index) {
       this.isCollapse = isCollapse
@@ -60,6 +67,12 @@ export default {
     collapse () {
       this.isCollapse = true
       this.$refs[`detectionRow${this.collapseIndex}`].collapse()
+    },
+    handleScroll (e) {
+      if(e.target.className==="cn-detection__shadow"){
+        let container = document.getElementById("cnContainer")
+        container.scrollTop += e.deltaY/2
+      }
     }
   },
   watch: {

@@ -23,7 +23,7 @@
         <div class="detection__event-severity-bar"  :id="`eventSeverityTrendBar${pageType}`">
         </div>
       </template>
-      <div style="display: flex; flex-grow: 1; overflow: hidden;">
+      <div style="display: flex; flex-grow: 1; height: 100%;">
         <detection-filter
             :filter-data="filterData[pageType]"
             :q="q"
@@ -79,19 +79,19 @@
               @pageNo="pageNo"
               :loading="listLoading"
           ></detection-list>
+          <div class="entity__pagination" >
+            <Pagination
+                    ref="pagination"
+                    :page-obj="pageObj"
+                    @pageNo='pageNo'
+                    @pageSize='pageSize'
+                    @size-change="pageSize"
+                    @prev-click="prev"
+                    @next-click="next"
+            >
+            </Pagination>
+          </div>
         </div>
-      </div>
-      <div class="entity__pagination">
-        <Pagination
-            ref="pagination"
-            :page-obj="pageObj"
-            @pageNo='pageNo'
-            @pageSize='pageSize'
-            @size-change="pageSize"
-            @prev-click="prev"
-            @next-click="next"
-        >
-        </Pagination>
       </div>
     </div>
   </div>

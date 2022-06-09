@@ -145,6 +145,12 @@ export const detectionPageType = {
   performanceEvent: 'performanceEvent'
 }
 
+export const listScrollPath = [
+  "/entityExplorer",
+  "/detection/performanceEvent",
+  "/detection/securityEvent"
+]
+
 export const dnsServerRole = {
   RTDNS: 'RTDNS',
   TLDNS: 'TLDNS',
