@@ -30,6 +30,7 @@
             />
           </div>
           <div class="expand">
+            <chart-no-data v-if="downDataList.length === 0"></chart-no-data>
             <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
               <div class="expand-right">
                 <div class="demo-progress">
@@ -154,12 +155,14 @@ import { del, get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { storageKey } from '@/utils/constants'
 import { ref } from 'vue'
-import {dateFormatToUTC, getNowTime} from '@/utils/date-util'
+import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'builtinReportTable',
   mixins: [table],
   components: {
+    ChartNoData,
     Loading,
     chartDetectionPagination
   },

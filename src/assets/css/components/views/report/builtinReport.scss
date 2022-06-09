@@ -65,9 +65,12 @@
             margin: 15px 0 14px 0;
           }
           .expand {
-            margin: auto;
+            min-height: 95px;
             display: flex;
             flex-wrap: wrap;
+            .panel-chart__no-data {
+              line-height: 95px;
+            }
             .expand-cell {
               display: flex;
               background: #FFFFFF;
