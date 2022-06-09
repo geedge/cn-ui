@@ -408,7 +408,13 @@ export default {
       })
       return result
     },
-    search ({ q, metaList }) {
+    search (param) {
+      let q
+      let metaList
+      if (param) {
+        q = param.q
+        metaList = param.metaList
+      }
       if (q) {
         this.q = this.specialColumnHandle(q)
         this.metaList = metaList

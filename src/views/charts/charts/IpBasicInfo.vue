@@ -16,21 +16,21 @@
         <el-descriptions-item :label="$t('overall.dnsServerInfo.protocol') + ':'">{{detectionIpSupporting(detectionsData)}}</el-descriptions-item>
       </el-descriptions>
     </div>
-    <div class="chart-location">
+<!--    <div class="chart-location">
       <el-descriptions :column="1">
         <el-descriptions-item :label="$t('overall.location') + ':'">{{location}}</el-descriptions-item>
       </el-descriptions>
       <div class="chart-drawing" style="padding: 0 36px 30px 0;" :id="`chart${chartInfo.id}`"></div>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script>
 import chartMixin from '@/views/charts/charts/chart-mixin'
-import * as L from 'leaflet'
+/*import * as L from 'leaflet'
 import icon from 'leaflet/dist/images/marker-icon.png'
 import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-import 'leaflet/dist/leaflet.css'
+import 'leaflet/dist/leaflet.css'*/
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 export default {
@@ -46,7 +46,6 @@ export default {
   },
   computed: {
     location () {
-      this.$_.get()
       let location = ''
       if (this.chartInfo) {
         if (this.chartInfo.country) {
@@ -92,7 +91,7 @@ export default {
     }
   },
   methods: {
-    initMap (id) {
+    /*initMap (id) {
       L.Marker.prototype.options.icon = L.icon({
         iconUrl: icon,
         shadowUrl: iconShadow
@@ -114,13 +113,13 @@ export default {
       attribution.addAttribution(' © OpenStreetMap contributors')
       attribution.addTo(map)
 
-      /* L.control.zoom({
+      /!* L.control.zoom({
         position: 'bottomright',
         zoomInText: '<i class="nz-icon nz-icon-enlarge"></i>',
         zoomOutText: '<i class="nz-icon nz-icon-narrow"></i>',
         zoomInTitle: '',
         zoomOutTitle: ''
-      }).addTo(map) */
+      }).addTo(map) *!/
 
       this.myChart = map
       this.loadLeafletMap()
@@ -133,7 +132,7 @@ export default {
         })
         L.marker([this.chartData.latitude, this.chartData.longitude], { icon: myIcon }).addTo(this.myChart)
       }
-    },
+    },*/
     queryDetection () {
       get(this.entityDetectionsIpUrl, this.queryParams).then(response => {
         if (response.code === 200) {
@@ -147,13 +146,13 @@ export default {
       this.queryDetection()
     })
   },
-  watch: {
+  /*watch: {
     chartData: {
       deep: true,
       handler (n) {
         this.initMap(`chart${this.chartInfo.id}`)
       }
     }
-  }
+  }*/
 }
 </script>
