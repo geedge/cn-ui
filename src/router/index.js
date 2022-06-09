@@ -32,10 +32,6 @@ const routes = [
       },
       {
         path: '/report/builtIn',
-        component: () => import('@/views/report/builtinReport')
-      },
-      {
-        path: '/report/test',
         component: () => import('@/views/report/reportTest')
       },
       {
