@@ -19,7 +19,7 @@
           <loading :loading="loadingDown"></loading>
           <div class="block drop-down-time">
             <el-date-picker
-                v-model="value"
+                v-model="timeRange"
                 size="small"
                 :format="format"
                 type="datetimerange"
@@ -33,7 +33,7 @@
             <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
               <div class="expand-right">
                 <div class="demo-progress">
-                  <el-progress type="circle" :percentage="item.percent * 100" :color="item.percent === 1 ? '#21bf9a' : '#50b3ef'">
+                  <el-progress type="circle" :percentage="item.percent === 1 ? 100 : parseFloat(item.percent * 100).toFixed(2)" :color="item.percent === 1 ? '#21bf9a' : '#50b3ef'">
                     <template #default="{ percentage }">
                       <span style="font-size: 0.875rem;">{{ percentage }}%</span>
                     </template>
@@ -47,13 +47,13 @@
                   <div>{{dateFormatByAppearance(item.ctime)}}</div>
                 </div>
                 <div class="expand-icon">
-                  <div class="table-operation-item--no-border" @click="tableOperation(['download', item])">
+                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': item.percent < 1}" @click="reportOperation(['download', item])">
                     <loading :loading="loadingTableId === item.id"></loading>
                     <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
                       <use xlink:href="#cn-icon-download2"></use>
                     </svg>
                   </div>
-                  <div class="table-operation-item--no-border" @click="tableOperation(['preview', item])">
+                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': item.percent < 1}" @click="reportOperation(['preview', item])">
                     <loading :loading="loadingPreviewId === item.id"></loading>
                     <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
                       <use xlink:href="#cn-icon-preview"></use>
@@ -151,7 +151,7 @@ import { del, get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { storageKey } from '@/utils/constants'
 import { ref } from 'vue'
-import { dateFormatToUTC } from '@/utils/date-util'
+import {dateFormatToUTC, getNowTime} from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
 export default {
   name: 'builtinReportTable',
@@ -230,7 +230,7 @@ export default {
         let str = ''
         if (row.config && row.config.timeConfig && row.config.timeConfig.type) {
           str += row.config.timeConfig.type
-          if (row.config.timeConfig.offset) {
+          if (['today', 'yesterday', 'this', 'customize'].indexOf(row.config.timeConfig.type) === -1 && row.config.timeConfig.offset) {
             str += ` ${row.config.timeConfig.offset} ${row.config.timeConfig.unit}`
           }
         }
@@ -244,6 +244,11 @@ export default {
         return this.$t('overall.completed')
       } else {
         return this.$t('overall.inProgress')
+      }
+    },
+    reportOperation (arr) {
+      if (arr[1].percent === 1) {
+        this.tableOperation(arr)
       }
     },
     selectionChange (objs) {
@@ -271,8 +276,8 @@ export default {
     datePickerChange (row) {
       const param = {
         tempId: row.id,
-        startTime: dateFormatToUTC(this.value[0]),
-        endTime: dateFormatToUTC(this.value[1]),
+        startTime: dateFormatToUTC(this.timeRange[0]),
+        endTime: dateFormatToUTC(this.timeRange[1]),
         ...this.pageObj
       }
       this.dropDownQueryChange(param)
@@ -316,9 +321,10 @@ export default {
     }
   },
   setup () {
-    const value = ref('')
+    const { startTime, endTime } = getNowTime(60 * 24 * 30)
+    const timeRange = ref([startTime, endTime])
     return {
-      value
+      timeRange
     }
   }
 }

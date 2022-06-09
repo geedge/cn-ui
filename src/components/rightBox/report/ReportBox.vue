@@ -11,7 +11,7 @@
         <el-form ref="userForm" :model="editObject" :rules="rules" label-position="top" label-width="120px">
           <!--name-->
           <el-form-item :label="$t('report.name')" prop="name">
-            <el-input id="account-input-name" v-model="editObject.name" maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
+            <el-input id="account-input-name" v-model="editObject.name" maxlength="64" placeholder=" " show-word-limit size="small" type="text"></el-input>
           </el-form-item>
           <!--time limit-->
           <el-form-item :label="$t('report.timeLimit')" prop="timeLimit">
@@ -20,7 +20,7 @@
                        class="right-box__select"
                        collapse-tags
                        :disabled="!!editObject.id"
-                       placeholder=""
+                       placeholder=" "
                        popper-class="right-box-select-dropdown right-box-select-report "
                        size="small"
                        @change="timeConfigTypeChange"
@@ -34,9 +34,8 @@
                          :disabled="!!editObject.id"
                          v-model="editObject.config.timeConfig.unit"
                          class="right-box__select"
-                         clearable
                          collapse-tags
-                         placeholder=""
+                         placeholder=" "
                          popper-class="right-box-select-dropdown right-box-select-report "
                          size="small"
                          @change="()=>{ this.$forceUpdate() }">
@@ -46,17 +45,16 @@
               </el-select>
             </template>
             <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" style="display: flex;">
-              <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder="" :disabled="!!editObject.id">
+              <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder=" " :disabled="!!editObject.id">
                 <template #prepend><i @click="timeOffsetHandle('m')" class="cn-icon cn-icon-a-"></i></template>
                 <template #append><i @click="timeOffsetHandle('p')" class="cn-icon cn-icon-a-1"></i></template>
               </el-input>
               <el-select id="reportBoxTimeUnitSelect"
                          v-model="editObject.config.timeConfig.unit"
                          class="right-box__select right-box__select-single"
-                         clearable
                          collapse-tags
                          :disabled="!!editObject.id"
-                         placeholder=""
+                         placeholder=" "
                          popper-class="right-box-select-dropdown  el-select-last"
                          size="small"
                          @change="()=>{ this.$forceUpdate() }">
@@ -78,7 +76,7 @@
                     :disabled="!!editObject.id"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
-                    placeholder=""
+                    placeholder=" "
                 />
               </div>
             </div>
@@ -95,7 +93,7 @@
                     :disabled="!!editObject.id"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
-                    placeholder=""
+                    placeholder=" "
                 />
               </div>
             </div>
@@ -110,7 +108,7 @@
             </div>
             <div class="enable-tabs-daily" v-if="scheduleType === scheduleTypeList[0].value">
               <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder="" style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
+              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
                 <template #append>{{$t('report.day')}}</template>
               </el-input>
             </div>
@@ -135,7 +133,7 @@
                 <!-- 自定义月，循环 -->
                 <template v-if="monthIsCycle">
                   <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder="" style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
+                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
                     <template #append>{{$t('report.moon')}}</template>
                   </el-input>
                 </template>
@@ -165,7 +163,7 @@
                              v-model="editObject.config.schedulerConfig.monthWeekDates"
                              class="right-box__select"
                              multiple
-                             placeholder=""
+                             placeholder=" "
                              :disabled="!!editObject.id"
                              popper-class="right-box-select-dropdown right-box-select-report "
                              size="small"
@@ -195,7 +193,7 @@
                     :format="dateFormat"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
-                    placeholder=""
+                    placeholder=" "
                 />
               </div>
             </div>
@@ -211,7 +209,7 @@
                     :format="dateFormat"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
-                    placeholder=""
+                    placeholder=" "
                 />
               </div>
             </div>
@@ -221,9 +219,8 @@
             <el-select id="account-input-roleIds"
                        v-model="editObject.categoryId"
                        class="right-box__select"
-                       clearable
                        collapse-tags
-                       placeholder=""
+                       placeholder=" "
                        :disabled="!!editObject.id"
                        popper-class="right-box-select-dropdown right-box-select-report "
                        size="small"
@@ -235,7 +232,7 @@
           </el-form-item>
           <!-- 参数 -->
           <el-form-item :label="$t('config.operationlog.params')" prop="params" v-if="categoryParams.length > 0">
-            <el-input v-model="param.value" placeholder="" v-for="(param, index) in categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input>
           </el-form-item>
