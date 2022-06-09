@@ -568,7 +568,13 @@ export default {
     dateTimeRangeChange (s, e, v) {
       this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
     },
-    search ({ q, metaList }) {
+    search (param) {
+      let q
+      let metaList
+      if (param) {
+        q = param.q
+        metaList = param.metaList
+      }
       this.initNoData()
       if (q) {
         this.q = q

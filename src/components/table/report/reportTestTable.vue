@@ -114,6 +114,9 @@
         <span v-else-if="item.prop === 'lastExecutionTime'">
           {{scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-'}}
         </span>
+        <span v-else-if="item.prop === 'total'">
+          {{scope.row[item.prop] || 0}}
+        </span>
         <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column>
@@ -320,6 +323,7 @@ export default {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
             this.dropDownQueryChange({ tempId: props.row.id })
+            this.$emit('reload')
           } else {
             this.$message.error(response.msg)
           }
