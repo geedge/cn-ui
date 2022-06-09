@@ -232,13 +232,13 @@ export default {
       this.chartOption.series[0].links = links
       this.myChart.setOption(this.chartOption)
       function handleData (data, links, item) {
-        if (!data.some(d => d.name === item.name)) {
+        if (item && !data.some(d => d.name === item.name)) {
           data.push({ name: item.name, ...handleStyle(item) })
         }
-        if (!loadsh.isEmpty(item.from) && !loadsh.isEmpty(item.to)) {
+        if (item && !loadsh.isEmpty(item.from) && !loadsh.isEmpty(item.to)) {
           links.push({ target: item.to, source: item.from })
         }
-        if (!loadsh.isEmpty(item.leaf)) {
+        if (item && !loadsh.isEmpty(item.leaf)) {
           item.leaf.forEach(i => {
             handleData(data, links, i)
           })

@@ -38,7 +38,7 @@
           </template>
         </span>
         <span v-else-if="item.prop === 'type'">
-            {{scope.row.reportTemp.name}}
+            {{$_.get(scope.row.reportTemp, 'name')}}
         </span>
         <span v-else-if="item.prop === 'state'">
             {{getJobStatus(scope.row)}}
