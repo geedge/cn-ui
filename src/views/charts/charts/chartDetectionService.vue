@@ -77,6 +77,7 @@ export default {
     }
   },
   mounted () {
+    this.$emit('chartDetection', this.chartInfo.type)
     this.securityCount()
   }
 }

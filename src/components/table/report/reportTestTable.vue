@@ -30,7 +30,7 @@
             />
           </div>
           <div class="expand">
-            <chart-no-data v-if="downDataList.length === 0"></chart-no-data>
+            <chart-no-data v-if="downDataList.length === 0 && !loadingDown"></chart-no-data>
             <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
               <div class="expand-right">
                 <div class="demo-progress">

@@ -255,6 +255,7 @@
         :time-filter="timeFilter"
         :chart-info="chartInfo"
         :query-params="queryParams"
+        @chartDetection="chartDetection"
         v-else-if="isDetectionSecurity"
         @getDetectionData="getDetectionData"
       ></chart-detection-security>
@@ -264,6 +265,7 @@
         :time-filter="timeFilter"
         :chart-info="chartInfo"
         :query-params="queryParams"
+        @chartDetection="chartDetection"
         v-else-if="isDetectionService"
         @getDetectionData="getDetectionData"
       ></chart-detection-service>
@@ -381,6 +383,7 @@ export default {
   },
   data () {
     return {
+      activeTab: ''
     }
   },
   props: {
@@ -397,8 +400,7 @@ export default {
     table: Object,
     timeFilter: Object,
     orderPieTable: String,
-    tabHandleClickType: String,
-    activeTab: Number
+    tabHandleClickType: String
   },
   computed: {
     isNoData () {
@@ -451,6 +453,9 @@ export default {
     },
     query (params) {
       this.$emit('query', params)
+    },
+    chartDetection(type) {
+      this.activeTab = type
     }
   },
   setup (props) {
