@@ -18,11 +18,11 @@ export default {
       return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date()
     },
     entityDetectionStyle () {
-      let route = this.$route.name !== undefined ? this.$route.name : this.$route
-      if(listScrollPath.indexOf(route.path)>-1){
-        return "overflow:auto;"
-      }else {
-        return ""
+      const route = this.$route.name !== undefined ? this.$route.name : this.$route
+      if (listScrollPath.indexOf(route.path) > -1) {
+        return 'overflow:auto;'
+      } else {
+        return ''
       }
     }
   }

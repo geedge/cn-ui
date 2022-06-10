@@ -69,9 +69,9 @@ export default {
       this.$refs[`detectionRow${this.collapseIndex}`].collapse()
     },
     handleScroll (e) {
-      if(e.target.className==="cn-detection__shadow"){
-        let container = document.getElementById("cnContainer")
-        container.scrollTop += e.deltaY/2
+      if (e.target.className === 'cn-detection__shadow') {
+        const container = document.getElementById('cnContainer')
+        container.scrollTop += e.deltaY / 2
       }
     }
   },

@@ -116,9 +116,9 @@ export default {
       this.$emit('next', val)
     },
     handleScrollEntity (e) {
-      if(e.target.className==="cn-entity__shadow"){
-        let container = document.getElementById("cnContainer")
-        container.scrollTop += e.deltaY/2
+      if (e.target.className === 'cn-entity__shadow') {
+        const container = document.getElementById('cnContainer')
+        container.scrollTop += e.deltaY / 2
       }
     }
   },

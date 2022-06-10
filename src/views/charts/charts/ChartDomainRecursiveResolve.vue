@@ -52,7 +52,7 @@ export default {
   },
   data () {
     return {
-      /* dnsRecordType:[
+      dnsRecordType: [
         'A',
         'AAAA',
         'AFSDB',
@@ -80,7 +80,7 @@ export default {
         'SRV',
         'TLSA',
         'TXT'
-      ] */
+      ]
     }
   },
   methods: {
@@ -159,6 +159,16 @@ export default {
             rowArray.forEach((i, index) => {
               if (index >= 5) {
                 specialArray[4] = specialArray[4] + ' ' + i
+              }
+            })
+            const dnsTypes = specialArray[4].split(separator)
+            let isDnsTypeFinish = false
+            dnsTypes.forEach(item => {
+              if (!isDnsTypeFinish && this.dnsRecordType.indexOf(item) > -1) {
+                specialArray[3] = specialArray[3] + ' ' + item
+                specialArray[4] = specialArray[4].substring(specialArray[4].indexOf(item) + item.length)
+              } else {
+                isDnsTypeFinish = true
               }
             })
             rowArray = specialArray

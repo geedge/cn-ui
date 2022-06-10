@@ -146,9 +146,9 @@ export const detectionPageType = {
 }
 
 export const listScrollPath = [
-  "/entityExplorer",
-  "/detection/performanceEvent",
-  "/detection/securityEvent"
+  '/entityExplorer',
+  '/detection/performanceEvent',
+  '/detection/securityEvent'
 ]
 
 export const dnsServerRole = {
