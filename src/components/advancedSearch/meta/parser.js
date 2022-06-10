@@ -409,7 +409,6 @@ export default class Parser {
         token.setNext(tokenList[i + 1])
       }
     })
-    console.info('token:', tokenList)
     return {
       tokenList,
       errorList

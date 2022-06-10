@@ -454,7 +454,7 @@ export default {
     query (params) {
       this.$emit('query', params)
     },
-    chartDetection(type) {
+    chartDetection (type) {
       this.activeTab = type
     }
   },
