@@ -1,7 +1,7 @@
 <template>
   <div class="entity-list" id="entityList">
     <loading :loading="loading"></loading>
-    <div class="entity-list__content" style="height:auto;">
+    <div class="entity-list__content">
       <!-- 列表式 -->
       <template v-if="listMode === 'list'">
         <div class="entity-list--list">
