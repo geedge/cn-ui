@@ -2,9 +2,10 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
-import { riskLevelMapping, unitTypes } from '@/utils/constants'
+import { eventSeverity, riskLevelMapping, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { shallowRef } from 'vue'
+import { object } from '@amcharts/amcharts4/core'
 
 export default {
   props: {
@@ -174,15 +175,16 @@ export default {
         const alertAll = [...res[0].data.result, ...res[1].data.result]
         alertEventSeverity.forEach(d => {
           const eventArray = alertAll.filter(p => d === p.eventSeverity)
-          const eventArrayTwo = eventArray.find(t => d === t.eventSeverity)
-          if (eventArrayTwo) {
-            const eventObject = Object.keys(eventArrayTwo).map(e => {
+          const eventArrayMap = eventArray.map(t => { return { eventSeverity: t.eventSeverity } })
+          if (eventArrayMap) {
+            const eventObject = eventArrayMap.find(e => e.eventSeverity === d)
+            const eventObjectMap = object.keys(eventObject).map(m => {
               return {
-                eventSeverity: eventArrayTwo[e],
+                eventSeverity: eventObject[m],
                 length: eventArray.length
               }
             })
-            this.shipSeverity.push(...eventObject)
+            this.shipSeverity.push(...eventObjectMap)
           }
         })
       })
