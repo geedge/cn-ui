@@ -136,6 +136,7 @@ export default {
       })
     },
     filter (name, topData) {
+      this.showTopDialog('', topData)
       this.$emit('filter', name, topData)
     }
   }

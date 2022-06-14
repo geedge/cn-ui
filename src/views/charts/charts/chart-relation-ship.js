@@ -187,8 +187,8 @@ export default {
             this.shipSeverity.push(...eventObjectMap)
           }
         })
+        this.loadingAlert = false
       })
-      this.loadingAlert = false
     },
     getBasicProperties (urlObj, params, queryParams) {
       this.loadingIp = true
