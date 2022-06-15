@@ -61,7 +61,7 @@ export default {
       topList: 'list',
       topData: [],
       entityTopTenData: [],
-      currentColumn: '',
+      currentColumn: {},
       totalCount: 0,
       loading: false,
       popoverData: [],
@@ -70,16 +70,18 @@ export default {
   },
   watch: {
     currentColumn (n, o) {
-      if (n === 'dnsServerOrgCount') {
+      if (n.column === 'dnsServerOrgCount') {
         this.totalCount = this.filterData[3].orgTotalCount
-      } else if (n === 'dnsServerSoftwareCount') {
+      } else if (n.column === 'dnsServerSoftwareCount') {
         this.totalCount = this.filterData[3].softwareTotalCount
-      } else if (n === 'dnsServerOsCount') {
+      } else if (n.column === 'dnsServerOsCount') {
         this.totalCount = this.filterData[3].osTotalCount
+      } else if (n.column === 'categoryDistinctCount' && n.type === 'app') {
+        this.totalCount = this.filterData[1].totalCount
       } else {
         let count = 0
         this.filterData.forEach(f => {
-          const filter = f.data.some(d => d.column === n)
+          const filter = f.data.some(d => d.column === n.column)
           if (filter) {
             count = f.totalCount
           }
@@ -90,7 +92,7 @@ export default {
   },
   methods: {
     showTopDialog (i, item, filter) {
-      if (this.currentColumn === item.column && item.showTopTen) {
+      if (this.currentColumn.column === item.column && item.showTopTen) {
         item.showTopTen = false
         return
       }
@@ -100,7 +102,10 @@ export default {
         })
       })
       item.showTopTen = true
-      this.currentColumn = item.column
+      this.currentColumn = {
+        column: item.column,
+        type: filter.type
+      }
       const queryParams = {
         q: this.q,
         entityType: filter.type,
@@ -114,7 +119,7 @@ export default {
       this.itemData = {}
       get(api.filterTop, queryParams).then(response => {
         if (response.code === 200) {
-          if (this.currentColumn === item.column) {
+          if (this.currentColumn.column === item.column) {
             if (filter.type === 'dns') {
               this.popoverData = response.data.result.filter(f => {
                 return f.count > 0
