@@ -74,7 +74,7 @@ export default class Meta {
     if (this.meta === condition) {
       return (this.column.type === columnType.fullText)
         ? !_.isEmpty(this.column.name)
-        : !_.isEmpty(this.column.name) && !_.isEmpty(this.operator.value) && !_.isEmpty(this.value.value)
+        : !_.isEmpty(this.column.name) && !_.isEmpty(this.operator.value) && (!_.isEmpty(this.value.value) || (_.isNumber(this.value.value) && !_.isNaN(this.value.value)))
     } else if (this.meta === connection) {
       return !!this.value
     }

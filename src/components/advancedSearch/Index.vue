@@ -101,7 +101,7 @@ export default {
     },
     enterListener (event) {
       if (event.keyCode === 13) {
-        this.$refs.tagMode && this.$refs.tagMode.search()
+        this.$refs.tagMode && this.$refs.tagMode.enterSearch()
         this.$refs.textMode && this.$refs.textMode.search()
       }
     }
