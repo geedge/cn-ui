@@ -134,7 +134,7 @@
                 <template v-if="monthIsCycle">
                   <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
                   <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
-                    <template #append>{{$t('report.moon')}}</template>
+                    <template #append>{{$t('report.month')}}</template>
                   </el-input>
                 </template>
                 <!-- 自定义月，非循环 -->
@@ -316,9 +316,14 @@ export default {
   watch: {
     scheduleType (n, o) {
       this.editObject.config.schedulerConfig.type = n
+      this.cleanScheduleConfig()
     },
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
+      this.cleanScheduleConfig()
+    },
+    monthScheduleType (n) {
+      this.cleanScheduleConfig()
     },
     'editObject.config.schedulerConfig.interval': {
       handler (n) {
@@ -401,6 +406,19 @@ export default {
     typeChange (id) {
 
     },
+    cleanScheduleConfig () {
+      this.editObject.config.schedulerConfig.monthDates = []
+      this.editObject.config.schedulerConfig.weekDates = []
+      this.editObject.config.schedulerConfig.months = []
+      this.editObject.config.schedulerConfig.monthWeekDates = []
+      this.monthIsCycle = true
+      this.dateCheckedAll = false
+      this.dateIsIndeterminate = false
+      this.monthCheckedAll = false
+      this.monthIsIndeterminate = false
+      this.monthWeekdayCheckedAll = false
+      this.monthWeekdayIsIndeterminate = false
+    },
     timeConfigTypeChange (val) {
       if (val === 'customize') {
         this.scheduleChecked = false
@@ -411,52 +429,54 @@ export default {
       this.blockOperation.save = true
 
       this.$refs.userForm.validate((valid) => {
-        let startTime = ''
-        let endTime = ''
-        let schedulerStart = ''
-        let schedulerEnd = ''
-        if (this.editObject.config && this.editObject.config.startTime) {
-          startTime = getMillisecond(this.editObject.config.startTime)
-        }
-        if (this.editObject.config && this.editObject.config.endTime) {
-          endTime = getMillisecond(this.editObject.config.endTime)
-        }
-        if (this.editObject.config && this.editObject.config.schedulerConfig) {
-          if (['day', 'week', 'month'].indexOf(this.editObject.config.schedulerConfig.type) > -1) {
-            this.editObject.config.isRepeat = 1
-          } else {
-            this.editObject.config.isRepeat = 0
-          }
-        }
-        if (this.editObject.schedulerStart) {
-          schedulerStart = getMillisecond(this.editObject.schedulerStart)
-        }
-        if (this.editObject.schedulerEnd) {
-          schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
-        }
-
-        const copyObject = _.cloneDeep(this.editObject)
-        if (startTime) {
-          copyObject.config.startTime = startTime
-        }
-        if (endTime) {
-          copyObject.config.endTime = endTime
-        }
-        if (schedulerStart) {
-          copyObject.schedulerStart = schedulerStart
-        }
-        if (schedulerEnd) {
-          copyObject.schedulerEnd = schedulerEnd
-        }
-        if (this.categoryParams.length > 0) {
-          const queryParam = {}
-          this.categoryParams.forEach(p => {
-            queryParam[p.key] = p.value
-          })
-          copyObject.config.queryParam = queryParam
-        }
-        copyObject.config = JSON.stringify(copyObject.config)
         if (valid) {
+          let startTime = ''
+          let endTime = ''
+          let schedulerStart = ''
+          let schedulerEnd = ''
+          if (this.editObject.config && this.editObject.config.startTime) {
+            startTime = getMillisecond(this.editObject.config.startTime)
+          }
+          if (this.editObject.config && this.editObject.config.endTime) {
+            endTime = getMillisecond(this.editObject.config.endTime)
+          }
+          if (this.editObject.config && this.editObject.config.schedulerConfig) {
+            if (['day', 'week', 'month'].indexOf(this.editObject.config.schedulerConfig.type) > -1) {
+              this.editObject.config.isRepeat = 1
+            } else {
+              this.editObject.config.isRepeat = 0
+            }
+          }
+          if (this.editObject.schedulerStart) {
+            schedulerStart = getMillisecond(this.editObject.schedulerStart)
+          }
+          if (this.editObject.schedulerEnd) {
+            schedulerEnd = getMillisecond(this.editObject.schedulerEnd)
+          }
+
+          const copyObject = _.cloneDeep(this.editObject)
+          if (startTime) {
+            copyObject.config.startTime = startTime
+          }
+          if (endTime) {
+            copyObject.config.endTime = endTime
+          }
+          if (schedulerStart) {
+            copyObject.schedulerStart = schedulerStart
+          }
+          if (schedulerEnd) {
+            copyObject.schedulerEnd = schedulerEnd
+          }
+          if (this.categoryParams.length > 0) {
+            const queryParam = {}
+            this.categoryParams.forEach(p => {
+              queryParam[p.key] = p.value
+            })
+            copyObject.config.queryParam = queryParam
+          }
+          copyObject.config = JSON.stringify(copyObject.config)
+
+
           if (copyObject.id) {
             put(this.url, copyObject).then(res => {
               this.blockOperation.save = false
