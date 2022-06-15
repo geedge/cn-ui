@@ -1,7 +1,6 @@
 .cn-entity--block {
   box-sizing: border-box;
   margin: 0 10px 10px 0;
-  width: 321px;
   height: 329px;
   background: #FFFFFF;
   border-radius: 2px;
@@ -81,7 +80,7 @@
     padding-top: 10px;
     font-size: 14px;
     position: relative;
-    height:240px;
+    height: 245px;
 
     .body__row {
       display: flex;
@@ -130,40 +129,31 @@
       font-weight: 400;
     }
     .body__statics {
-      position: absolute;
-      bottom: 20px;
       display: flex;
       width: 100%;
       padding: 0 30px;
       font-size: 14px;
+      line-height: 45px;
       color: #666666;
+      justify-content: space-between;
       .entity-statics-down{
-        padding-right: 20px;
-        min-width: 80px;
-
         i {
           color:#5881B7;
-          font-size:14px;
-          padding-right:6px;
+          font-size: 14px;
+          padding-right: 6px;
         }
       }
-
       .entity-statics-up{
-        padding-right: 20px;
-        min-width: 80px;;
         i {
           color: #62B16C;
           font-size: 14px;
           padding-right: 6px;
         }
-
       }
       .body__detail {
         cursor: pointer;
         font-size: 14px;
         color: #3976CB;
-        position: absolute;
-        right: 30px;
       }
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="cn-entity--block">
+  <div class="cn-entity--block" style="width: 317.5px;">
     <div class="cn-entity__header">
       <div class="header__content" :title="entityData.ipAddr||entityData.domainName||entityData.appName">
         <div class="header__icon"><i :class="iconClass"></i></div>
@@ -65,7 +65,7 @@
             <i class="cn-icon cn-icon-rise"></i>
             <span>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') : '-'}}</span>
           </div>
-          <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
+          <div class="body__detail" @click="showDetail"><span>{{$t('overall.detail')}}</span>></div>
         </div>
       </template>
       <template v-else-if="entityData.entityType === 'domain'">
@@ -102,7 +102,7 @@
             <i class="cn-icon cn-icon-rise"></i>
             <span>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'}}</span>
           </div>
-          <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
+          <div class="body__detail" @click="showDetail"><span>{{$t('overall.detail')}}</span>></div>
         </div>
       </template>
       <template v-else-if="entityData.entityType === 'app'">
@@ -134,7 +134,7 @@
         <div class="body__statics">
           <div class="entity-statics-down"><i class="cn-icon cn-icon-fall entity-statics-icon"></i><span>{{entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.bps).join(' ') : '-'}}</span></div>
           <div class="entity-statics-up" ><i class="cn-icon cn-icon-rise"></i><span>{{entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'}}</span></div>
-          <div class="body__detail" @click="showDetail">{{$t('overall.detail')}}></div>
+          <div class="body__detail" @click="showDetail"><span>{{$t('overall.detail')}}</span>></div>
         </div>
       </template>
     </div>
