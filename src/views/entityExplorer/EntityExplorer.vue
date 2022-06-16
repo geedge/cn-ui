@@ -518,7 +518,7 @@ export default {
           switch (params.entityType) {
             case 'ip': {
               this.filterData[0].data.forEach(d => {
-                d.value = response.data.result[d.column]
+                d.value = response.data.result[d.column] || 0
               })
               this.filterData[0].totalCount = response.data.result.count
               if (this.limitFilterType) {
@@ -529,7 +529,7 @@ export default {
             }
             case 'app': {
               this.filterData[1].data.forEach(d => {
-                d.value = response.data.result[d.column]
+                d.value = response.data.result[d.column] || 0
               })
               this.filterData[1].totalCount = response.data.result.count
               if (this.limitFilterType) {
@@ -541,7 +541,7 @@ export default {
             }
             case 'domain': {
               this.filterData[2].data.forEach(d => {
-                d.value = response.data.result[d.column]
+                d.value = response.data.result[d.column] || 0
               })
               this.filterData[2].totalCount = response.data.result.count
               if (this.limitFilterType) {
@@ -553,7 +553,7 @@ export default {
             }
             case 'dns': {
               this.filterData[3].data.forEach(d => {
-                d.value = response.data.result[d.column]
+                d.value = response.data.result[d.column] || 0
               })
               /* this.filterData[3].totalCount = response.data.result.count
               this.filterData[3].osTotalCount = response.data.result.osTotalCount
