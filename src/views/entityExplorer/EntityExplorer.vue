@@ -441,7 +441,9 @@ export default {
             this.limitFilterType = false
           }
           this.queryFilter({ entityType: entityType, q: this.q, ...this.timeFilter })
-          this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
+          if (entityType === 'ip') {
+            this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
+          }
           this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
           this.queryListTotal({ q: this.q, ...this.timeFilter })
         } else {
@@ -533,6 +535,7 @@ export default {
               if (this.limitFilterType) {
                 this.cleanFilterData(0)
                 this.cleanFilterData(2)
+                this.cleanFilterData(3)
               }
               break
             }
@@ -544,6 +547,7 @@ export default {
               if (this.limitFilterType) {
                 this.cleanFilterData(0)
                 this.cleanFilterData(1)
+                this.cleanFilterData(3)
               }
               break
             }
@@ -551,14 +555,10 @@ export default {
               this.filterData[3].data.forEach(d => {
                 d.value = response.data.result[d.column]
               })
-              this.filterData[3].totalCount = response.data.result.count
+              /* this.filterData[3].totalCount = response.data.result.count
               this.filterData[3].osTotalCount = response.data.result.osTotalCount
               this.filterData[3].orgTotalCount = response.data.result.orgTotalCount
-              this.filterData[3].softwareTotalCount = response.data.result.softwareTotalCount
-              if (this.limitFilterType) {
-                this.cleanFilterData(0)
-                this.cleanFilterData(1)
-              }
+              this.filterData[3].softwareTotalCount = response.data.result.softwareTotalCount */
               break
             }
           }
