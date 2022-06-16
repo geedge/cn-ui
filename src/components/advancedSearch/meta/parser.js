@@ -1,6 +1,7 @@
 import Meta, { connection, condition, columnType } from './meta'
 import Token, { types } from './token'
 import ParserError, { errorTypes, errorDesc } from '@/components/advancedSearch/meta/error'
+import _ from 'lodash'
 
 const strReg = {
   all: /^[\da-zA-Z\s.'><!=-_(),%]$/,
@@ -96,6 +97,13 @@ export default class Parser {
             } else {
               str += `${meta.column.name}${meta.operator.value}'${meta.value.value}' `
             }
+          } else if (meta.column.type === columnType.number) {
+            if (_.isNumber(Number(meta.value.value))) {
+              str += `${meta.column.name}${meta.operator.value}${meta.value.value} `
+            } else {
+              this.errorList.push(new ParserError(i, errorTypes.typeError, errorDesc.typeError.number))
+              return
+            }
           }
         }
       }
@@ -135,6 +143,10 @@ export default class Parser {
             str += `${meta.column.name} ${meta.operator.value} '${meta.value.value}' `
           } else {
             str += `${meta.column.name}${meta.operator.value}'${meta.value.value}' `
+          }
+        } else if (meta.column.type === columnType.number) {
+          if (_.isNumber(Number(meta.value.value))) {
+            str += `${meta.column.name}${meta.operator.value}${meta.value.value} `
           }
         }
       }
@@ -555,7 +567,6 @@ export default class Parser {
             if (isInApostrophe) {
               if (meta.column.name) {
                 meta.value.value = token.value
-                meta.value.type = columnType.string
                 meta.column.type = columnType.string
               } else {
                 meta.column.type = columnType.fullText
@@ -589,7 +600,6 @@ export default class Parser {
                 if (isInApostrophe) {
                   if (prevToken && prevToken.prevToken && [types.commonOperator, types.letterOperator].indexOf(prevToken.prevToken.type) > -1) {
                     meta.value.value = token.value
-                    meta.value.type = columnType.string
                     meta.column.type = columnType.string
                   } else if (prevToken && (!prevToken.prevToken || prevToken.prevToken.type === types.connection)) {
                     meta.column.type = columnType.fullText
@@ -606,9 +616,19 @@ export default class Parser {
                     if (prevToken) {
                       // 前面是操作符，则是普通value；前面是连接符，是全文搜索
                       if ([types.commonOperator, types.letterOperator].indexOf(prevToken.type) > -1) {
-                        meta.value.value = token.value
-                        meta.value.type = columnType.string
-                        meta.column.type = columnType.string
+                        // 大于、小于号限制为number
+                        if (['>', '<', '>=', '<='].indexOf(prevToken.value) > -1) {
+                          if (_.isNumber(Number(token.value))) {
+                            meta.column.type = columnType.number
+                            meta.value.value = Number(token.value)
+                          } else {
+                            errorList.push(new ParserError(token.end, errorTypes.typeError, errorDesc.typeError.number))
+                            break
+                          }
+                        } else {
+                          meta.column.type = columnType.string
+                          meta.value.value = token.value
+                        }
                       } else if (prevToken.type === types.connection) {
                         meta.column.name = token.value
                         meta.column.type = columnType.fullText

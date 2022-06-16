@@ -23,6 +23,7 @@ import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
+import {handleErrorTip} from "@/components/advancedSearch/meta/error";
 
 export default {
   name: 'TextMode',
@@ -56,7 +57,7 @@ export default {
         if (_.isEmpty(errorList)) {
           this.$emit('search', parser.parseStr(str))
         } else {
-          // TODO 错误提示
+          this.$message.error(handleErrorTip(errorList[0]))
         }
       } else {
         this.$emit('search', { q: '', str: '', metaList: [] })
@@ -71,9 +72,12 @@ export default {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateStr(str)
         if (_.isEmpty(errorList)) {
-          this.$emit('changeMode', 'tag', parser.parseStr(str))
+          const metaList = parser.parseStr(str)
+          console.info(metaList)
+          this.$emit('changeMode', 'tag', metaList)
         } else {
           this.$emit('changeMode', 'tag', { metaList: [], str: '' })
+          console.info(errorList)
         }
       } else {
         this.$emit('changeMode', 'tag', { str: '', metaList: [] })

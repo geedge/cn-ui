@@ -428,13 +428,13 @@ export default {
         if (entityTypeMeta && entityTypeMeta.operator.value === '=') {
           let entityType = ''
           this.limitFilterType = false
-          if (entityTypeMeta.value.value.toLowerCase() === "'ip'") {
+          if (entityTypeMeta.value.value.toLowerCase() === 'ip') {
             this.limitFilterType = true
             entityType = 'ip'
-          } else if (entityTypeMeta.value.value.toLowerCase() === "'domain'") {
+          } else if (entityTypeMeta.value.value.toLowerCase() === 'domain') {
             this.limitFilterType = true
             entityType = 'domain'
-          } else if (entityTypeMeta.value.value.toLowerCase() === "'app'") {
+          } else if (entityTypeMeta.value.value.toLowerCase() === 'app') {
             this.limitFilterType = true
             entityType = 'app'
           } else {

@@ -87,6 +87,7 @@
 <script>
 import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
+import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import Parser, { stringInQuot } from '@/components/advancedSearch/meta/parser'
 export default {
   name: 'TagMode',
@@ -208,11 +209,11 @@ export default {
       // 若是in或not in，column的type要改成array，否则是string
       if (operator.toLowerCase().indexOf('in') > -1) {
         meta.column.type = columnType.array
-        meta.value.type = columnType.array
         meta.value.value = []
+      } else if (['>', '<', '>=', '<='].indexOf(operator) > -1) {
+        meta.column.type = columnType.number
       } else {
         meta.column.type = columnType.string
-        meta.value.type = columnType.string
         if (_.isArray(meta.value.value)) {
           meta.value.value = ''
         }
@@ -225,8 +226,50 @@ export default {
       meta.operator.isEditing = true
     },
     valueBlur (meta) {
-      meta.value.value = meta.value.value.replace(/"/g, "'")
-      meta.value.label = meta.value.value // label是显示，value是实际值；目前的需求label和value是相等的，
+      if (meta.column.type === columnType.array) {
+        let valueArr = []
+        if (!_.isArray(meta.value.value)) {
+          let value = meta.value.value.trim().replace(/"/g, "'")
+          if (value.indexOf('(') === 0 && value.indexOf(')') === value.length - 1) {
+            value = value.substring(1, value.length)
+            value = value.substring(0, value.length - 1)
+          }
+          valueArr = value.split(',')
+        } else {
+          valueArr = meta.value.value
+        }
+        meta.value.value = valueArr.map(v => {
+          let str = v.trim().replace(/"/g, "'")
+          if (str[0] === "'" && str[str.length - 1] === "'") {
+            str = str.substring(1, str.length)
+            str = str.substring(0, str.length - 1)
+          }
+          if (str.indexOf("'") > -1) {
+            str = str.replace(/'/g, "''")
+          }
+          return str
+        })
+        let label = '('
+        meta.value.value.forEach(v => {
+          label += `'${v}',`
+        })
+        label = label.substring(0, label.length - 1)
+        label += ')'
+        meta.value.label = label
+      } else {
+        if (!_.isNumber(meta.value.value)) {
+          let str = meta.value.value.trim().replace(/"/g, "'")
+          if (str[0] === "'" && str[str.length - 1] === "'") {
+            str = str.substring(1, str.length)
+            str = str.substring(0, str.length - 1)
+          }
+          if (str.indexOf("'") > -1) {
+            str = str.replace(/'/g, "''")
+          }
+          meta.value.value = str
+        }
+        meta.value.label = meta.value.value // label是显示，value是实际值
+      }
       meta.value.isEditing = !meta.isCompleteCondition()
     },
     valueClick (meta) {
@@ -241,6 +284,12 @@ export default {
         return meta.name === value
       })
     },
+    enterSearch () {
+      const isEditing = this.metaList.some(meta => meta.value.isEditing)
+      if (!isEditing) {
+        this.search()
+      }
+    },
     search () {
       if (this.metaList.length > 0) {
         const parser = new Parser(this.columnList)
@@ -248,7 +297,7 @@ export default {
         if (_.isEmpty(errorList)) {
           this.$emit('search', parser.parseMeta(this.metaList))
         } else {
-          // TODO 错误提示
+          this.$message.error(handleErrorTip(errorList[0]))
         }
       } else {
         this.$emit('search', { q: '', str: '', metaList: [] })

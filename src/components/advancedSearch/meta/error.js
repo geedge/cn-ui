@@ -1,3 +1,4 @@
+import i18n from '@/i18n'
 export const errorTypes = {
   illegalChar: 'parse.errorTip.illegalChar', // 非法字符
   syntaxError: 'parse.errorTip.syntaxError', // 语法错误，此i18n内容有占位符
@@ -15,8 +16,12 @@ export const errorDesc = {
   },
   typeError: {
     str: 'parse.errorTip.typeError.expectString', // Expected parameter type is string
+    number: 'parse.errorTip.typeError.expectNumber', // Expected parameter type is number
     meta: 'parse.errorTip.typeError.expectMetaArray' // Expected parameter type is Meta array
   }
+}
+export function handleErrorTip (error) {
+  return i18n.global.t(error.type) + ': ' + i18n.global.t(error.desc) + ', at index ' + error.index
 }
 export default class ParserError {
   constructor (index, type, desc) {
