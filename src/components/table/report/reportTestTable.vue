@@ -22,6 +22,7 @@
                 v-model="timeRange"
                 size="small"
                 :format="format"
+                :clearable="false"
                 type="datetimerange"
                 range-separator="To"
                 :start-placeholder="$t('detections.startTime')"
@@ -227,7 +228,8 @@ export default {
         total: 0,
         resetPageNo: true
       },
-      expandedIds: []
+      expandedIds: [],
+      interval: null
     }
   },
   computed: {
@@ -290,9 +292,12 @@ export default {
       if (expandedRows.length > 0 && row) {
         this.expandedIds.push(row.id)
         this.datePickerChange(row)
+      } else {
+        clearInterval(this.interval)
       }
     },
     datePickerChange (row) {
+      this.pageObj.pageNo = 1
       const param = {
         tempId: row.id,
         startTime: dateFormatToUTC(this.timeRange[0]),
@@ -313,6 +318,18 @@ export default {
           })
         }
         this.loadingDown = false
+        const showInterval = this.downDataList.find(item => item.percent !== 1)
+        if (this.downDataList && showInterval) {
+          this.intervalChange(param)
+        }
+      })
+    },
+    dataConversionProcessing (param) {
+      get(api.reportJob, param).then(res => {
+        if (res.code === 200) {
+          this.downDataList = res.data.list
+          this.pageObj.total = res.data.total
+        }
       })
     },
     downDeleteQueryChange (row, props) {
@@ -338,7 +355,16 @@ export default {
       if (this.expandedIds.length > 0) {
         this.datePickerChange({ id: this.expandedIds[0] })
       }
+    },
+    intervalChange (param) {
+      clearInterval(this.interval)
+      this.interval = setInterval(() => {
+        this.dataConversionProcessing(param)
+      }, 10000)
     }
+  },
+  beforeUnmount () {
+    clearInterval(this.interval)
   },
   setup () {
     const { startTime, endTime } = getNowTime(60 * 24 * 30)
