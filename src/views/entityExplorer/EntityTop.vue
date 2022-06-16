@@ -3,14 +3,13 @@
     <div class="pop-title">
       <div>
         <i :class="itemData.icon"></i>
-        <span>{{itemData.label}}</span>
+        <span>{{itemData.value}}{{$t('overall.operator')}} {{itemData.label}}</span>
       </div>
     </div>
 <!--    <button @click="esc" class="el-dialog__headerbtn" type="button"><i class="el-dialog__close el-icon el-icon-close"></i></button>-->
     <div class="filter-top-box">
       <div class="filter-top-body">
         <loading :loading="loading"></loading>
-        <div class="filter-top-type">{{itemData.value}}{{$t('overall.operator')}}{{itemData.label}}</div>
         <el-table
             :data="popoverData"
             :header-cell-style="tableHeaderCellStyle"
@@ -83,7 +82,7 @@ export default {
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
       if (rowIndex === 0) {
-        return 'padding-bottom:5px;padding-top:14px;'
+        return 'padding-bottom:5px;padding-top:7px;'
       }
     },
     tableHeaderRowStyle ({ row, rowIndex }) {
