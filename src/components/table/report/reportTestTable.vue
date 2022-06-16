@@ -213,7 +213,7 @@ export default {
         }
       ],
       checkboxAll: false,
-      checkboxIds: '',
+      checkboxIds: {},
       batchDow: false,
       builtinId: '',
       indeterminate: false,
@@ -274,7 +274,7 @@ export default {
     },
     selectionChange (objs) {
       this.$emit('selectionChange', objs)
-      this.checkboxIds = objs.map(item => { return item.id }).join(',')
+      this.checkboxIds.id = objs.map(item => { return item.id }).join(',')
       this.checkboxAll = objs.length > 0 || objs.length === this.tableData.length
       this.batchDow = objs.length > 0
     },
