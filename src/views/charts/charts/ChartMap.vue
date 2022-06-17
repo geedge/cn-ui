@@ -75,24 +75,24 @@ export default {
       ],
       markerColors: [
         {
-          background: '#ECC6F7',
-          border: '#B620E0'
-        },
-        {
-          background: '#DBCFFA',
-          border: '#AA8CF2'
-        },
-        {
-          background: '#A0E8E0',
-          border: '#1CC9B5'
+          background: '#EFF4FF',
+          border: '#5997FD'
         },
         {
           background: '#FFE1B5',
           border: '#FFB84E'
         },
         {
-          background: '#C0DEFE',
-          border: '#68AFFC'
+          background: '#FFE9E1',
+          border: '#FC815B'
+        },
+        {
+          background: '#A0E8E0',
+          border: '#1CC9B5'
+        },
+        {
+          background: '#EFF6FE',
+          border: '#35AFFF'
         },
         {
           background: '#FDC6C6',
@@ -543,24 +543,24 @@ export default {
   setup (props) {
     const circleColor = {}
     circleColor[dnsServerRole.RTDNSM] = {
-      background: '#ECC6F7',
-      border: '#BF49DF'
+      background: '#EFF4FF',
+      border: '#5997FD'
     }
     circleColor[dnsServerRole.TLDNS] = {
-      background: '#DBCFFA',
-      border: '#AA8CF2'
-    }
-    circleColor[dnsServerRole.ADNS] = {
-      background: '#A0E8E0',
-      border: '#1CC9B5'
-    }
-    circleColor[dnsServerRole.OPRDNS] = {
       background: '#FFE1B5',
       border: '#FFB84E'
     }
+    circleColor[dnsServerRole.ADNS] = {
+      background: '#FFE9E1',
+      border: '#FC815B'
+    }
+    circleColor[dnsServerRole.OPRDNS] = {
+      background: '#A0E8E0',
+      border: '#1CC9B5'
+    }
     circleColor[dnsServerRole.SBDNS] = {
-      background: '#FDC6C6',
-      border: '#FA7777'
+      background: '#EFF6FE',
+      border: '#35AFFF'
     }
     circleColor[dnsServerRole.FWDNS] = {
       background: '#C0DEFE',
