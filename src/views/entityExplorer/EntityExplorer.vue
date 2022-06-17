@@ -555,10 +555,10 @@ export default {
               this.filterData[3].data.forEach(d => {
                 d.value = response.data.result[d.column] || 0
               })
-              /* this.filterData[3].totalCount = response.data.result.count
+              this.filterData[3].totalCount = response.data.result.count
               this.filterData[3].osTotalCount = response.data.result.osTotalCount
               this.filterData[3].orgTotalCount = response.data.result.orgTotalCount
-              this.filterData[3].softwareTotalCount = response.data.result.softwareTotalCount */
+              this.filterData[3].softwareTotalCount = response.data.result.softwareTotalCount
               break
             }
           }

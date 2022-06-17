@@ -316,14 +316,20 @@ export default {
   watch: {
     scheduleType (n, o) {
       this.editObject.config.schedulerConfig.type = n
-      this.cleanScheduleConfig()
+      if (!this.editObject.id) {
+        this.cleanScheduleConfig()
+      }
     },
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
-      this.cleanScheduleConfig()
+      if (!this.editObject.id) {
+        this.cleanScheduleConfig()
+      }
     },
     monthScheduleType (n) {
-      this.cleanScheduleConfig()
+      if (!this.editObject.id) {
+        this.cleanScheduleConfig()
+      }
     },
     'editObject.config.schedulerConfig.interval': {
       handler (n) {
@@ -475,7 +481,6 @@ export default {
             copyObject.config.queryParam = queryParam
           }
           copyObject.config = JSON.stringify(copyObject.config)
-
 
           if (copyObject.id) {
             put(this.url, copyObject).then(res => {
