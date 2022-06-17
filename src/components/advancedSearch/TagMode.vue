@@ -141,7 +141,7 @@ export default {
       // 删除首个条件时，连带删除之后的第一个连接符；否则删除之前的第一个连接符
       if (index === 0) {
         if (this.metaList.length > 2) {
-          this.metaList = this.metaList.slice(0, 2)
+          this.metaList.splice(0, 2)
         } else {
           this.metaList = []
         }
