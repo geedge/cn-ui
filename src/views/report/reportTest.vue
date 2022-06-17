@@ -116,7 +116,8 @@ export default {
         },
         schedulerStart: '',
         schedulerEnd: '',
-        categoryId: ''
+        categoryId: '',
+        categoryParams: []
       },
       checkWeekListData: [
         'report.sunday',

@@ -231,8 +231,8 @@
             </el-select>
           </el-form-item>
           <!-- 参数 -->
-          <el-form-item :label="$t('config.operationlog.params')" prop="params" v-if="categoryParams.length > 0">
-            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+          <el-form-item :label="$t('config.operationlog.params')" prop="categoryParams" v-if="editObject.categoryParams.length > 0">
+            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input>
           </el-form-item>
@@ -257,6 +257,17 @@ import { api } from '@/utils/api'
 import _ from 'lodash'
 import { post, put } from '@/utils/http'
 import { dateFormat, getMillisecond } from '@/utils/date-util'
+
+const paramValidator = (rule, value, callback) => {
+  let validate = true
+  if (value && value.length > 0) {
+    const hasEmpty = value.some(v => {
+      return !v.value && v.value !== 0
+    })
+    validate = !hasEmpty
+  }
+  return validate
+}
 
 export default {
   name: 'ReportBox',
@@ -292,8 +303,6 @@ export default {
       monthWeekdayCheckedAll: false,
       monthWeekdayIsIndeterminate: false,
 
-      categoryParams: [],
-
       rules: { // 表单校验规则
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
@@ -309,6 +318,10 @@ export default {
         ],
         'config.endTime': [
           { required: true, message: this.$t('validate.required'), trigger: 'change' }
+        ],
+        categoryParams: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: paramValidator, message: this.$t('validate.required'), trigger: 'blur' }
         ]
       }
     }
@@ -331,6 +344,17 @@ export default {
         this.cleanScheduleConfig()
       }
     },
+    monthIsCycle (n) {
+      if (!this.editObject.id) {
+        if (n) {
+          this.editObject.config.schedulerConfig.months = []
+          this.monthCheckedAll = false
+          this.monthIsIndeterminate = false
+        } else {
+          this.editObject.config.schedulerConfig.interval = 1
+        }
+      }
+    },
     'editObject.config.schedulerConfig.interval': {
       handler (n) {
         if (!_.isNumber(n)) {
@@ -344,15 +368,30 @@ export default {
         }
       }
     },
+    'editObject.config.timeConfig.offset': {
+      handler (n) {
+        if (!_.isNumber(n)) {
+          if (n) {
+            if (!_.isNumber(parseInt(n)) || _.isNaN(parseInt(n))) {
+              this.editObject.config.timeConfig.offset = 1
+            } else {
+              this.editObject.config.timeConfig.offset = parseInt(n)
+            }
+          } else {
+            this.editObject.config.timeConfig.offset = 1
+          }
+        }
+      }
+    },
     'editObject.categoryId': {
       handler (n) {
         const category = this.categoryList.find(c => c.id === n)
         if (category && category.config && category.config.queryParam) {
-          this.categoryParams = Object.keys(category.config.queryParam).map(key => {
+          this.editObject.categoryParams = Object.keys(category.config.queryParam).map(key => {
             return { key: key, value: category.config.queryParam[key] }
           })
         } else {
-          this.categoryParams = []
+          this.editObject.categoryParams = []
         }
       }
     },
@@ -385,7 +424,7 @@ export default {
         }
         if (n.id) {
           if (n.config.queryParam && Object.keys(n.config.queryParam).length > 0) {
-            this.categoryParams = Object.keys(n.config.queryParam).map(key => {
+            this.editObject.categoryParams = Object.keys(n.config.queryParam).map(key => {
               return { key: key, value: n.config.queryParam[key] }
             })
           }
@@ -473,41 +512,86 @@ export default {
           if (schedulerEnd) {
             copyObject.schedulerEnd = schedulerEnd
           }
-          if (this.categoryParams.length > 0) {
+          if (this.editObject.categoryParams.length > 0) {
             const queryParam = {}
-            this.categoryParams.forEach(p => {
+            this.editObject.categoryParams.forEach(p => {
               queryParam[p.key] = p.value
             })
             copyObject.config.queryParam = queryParam
           }
-          copyObject.config = JSON.stringify(copyObject.config)
 
-          if (copyObject.id) {
-            put(this.url, copyObject).then(res => {
-              this.blockOperation.save = false
-              if (res.code === 200) {
-                this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
-                this.esc(true)
-              } else {
-                this.$message.error(res.msg)
-              }
-            })
+          // 校验scheduleConfig
+          if (this.validateScheduleConfig(copyObject)) {
+            copyObject.config = JSON.stringify(copyObject.config)
+            if (copyObject.id) {
+              put(this.url, copyObject).then(res => {
+                this.blockOperation.save = false
+                if (res.code === 200) {
+                  this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                  this.esc(true)
+                } else {
+                  this.$message.error(res.msg)
+                }
+              })
+            } else {
+              post(this.url, copyObject).then(res => {
+                this.blockOperation.save = false
+                if (res.code === 200) {
+                  this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                  this.esc(true)
+                } else {
+                  this.$message.error(res.msg)
+                }
+              })
+            }
           } else {
-            post(this.url, copyObject).then(res => {
-              this.blockOperation.save = false
-              if (res.code === 200) {
-                this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
-                this.esc(true)
-              } else {
-                this.$message.error(res.msg)
-              }
-            })
+            this.blockOperation.save = false
+            this.$message.error('Schedule config is required')
           }
         } else {
           this.blockOperation.save = false
           return false
         }
       })
+    },
+    validateScheduleConfig (obj) {
+      let validate = true
+      if (obj.config) {
+        if (obj.config.schedulerConfig) {
+          if (obj.config.schedulerConfig.type === 'day') {
+            if (!obj.config.schedulerConfig.interval) {
+              validate = false
+            }
+          } else if (obj.config.schedulerConfig.type === 'week') {
+            if (!obj.config.schedulerConfig.weekDates || obj.config.schedulerConfig.weekDates.length === 0) {
+              validate = false
+            }
+          } else if (obj.config.schedulerConfig.type === 'month') {
+            if (this.monthIsCycle) {
+              if (!obj.config.schedulerConfig.interval) {
+                validate = false
+              }
+            } else {
+              if (!obj.config.schedulerConfig.months || obj.config.schedulerConfig.months.length === 0) {
+                validate = false
+              }
+            }
+            if (this.monthScheduleType === 'daily') {
+              if (!obj.config.schedulerConfig.monthDates || obj.config.schedulerConfig.monthDates.length === 0) {
+                validate = false
+              }
+            } else if (this.monthScheduleType === 'weekly') {
+              if (!obj.config.schedulerConfig.weekDates || obj.config.schedulerConfig.weekDates.length === 0) {
+                validate = false
+              }
+              if (!obj.config.schedulerConfig.monthWeekDates || obj.config.schedulerConfig.monthWeekDates.length === 0) {
+                validate = false
+              }
+            }
+          }
+        }
+      }
+      return validate
     },
     dateCheckAllChange (checked) {
       this.editObject.config.schedulerConfig.monthDates = checked ? this.dateList : []
