@@ -105,7 +105,7 @@
               <span class="ship-body-list-security-length">{{ ship.length }}</span>
             </span>
           </template>
-          <span v-else class="no-recent-alerts"><i style="font-size: 14px;" class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
+          <span v-else-if="!loadingAlert && shipSeverity.length <= 0" class="no-recent-alerts"><i style="font-size: 14px;" class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
         </div>
       </div>
     </div>
