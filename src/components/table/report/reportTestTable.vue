@@ -137,11 +137,7 @@
                   </template>
                 </span>
               </template>
-              <el-row class="margin-l-10 margin-t-20">
-                <el-col :span="8" class="tooltip-column-name" >{{$t("report.name")}}</el-col>
-                <el-col :span="16">{{scope.row.name || '-'}}</el-col>
-              </el-row>
-               <el-row class="margin-l-10">
+               <el-row class="margin-l-10 margin-t-20">
                 <el-col :span="8" class="tooltip-column-name">{{$t("report.period")}}</el-col>
                 <el-col :span="16">{{handleConfigPeriod(scope.row)}}</el-col>
               </el-row>
