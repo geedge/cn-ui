@@ -108,7 +108,60 @@
           {{handleTimeRange(scope.row)}}
         </span>
         <span v-else-if="item.prop === 'timePlan'">
-          {{(scope.row.config && scope.row.config.schedulerConfig) || '-'}}
+          <template v-if="scope.row.config.isScheduler === 0">
+             {{$t('report.always')}}
+          </template>
+          <template v-else-if="scope.row.config.isScheduler === 1">
+            <el-popover
+                placement="right-start"
+                :width="270"
+                trigger="hover"
+                class="my-table"
+            >
+              <template #reference>
+                <span>
+                  <template v-if="scope.row.config.schedulerConfig.type === 'day'">
+                   {{$t('report.daily')}}
+                  </template>
+                  <template v-else-if="scope.row.config.schedulerConfig.type === 'week'">
+                    {{$t('report.weekly')}}
+                   </template>
+                  <template v-else-if="scope.row.config.schedulerConfig.type === 'month'">
+                    {{$t('report.monthly')}}
+                   </template>
+                  <template v-else-if="scope.row.config.schedulerConfig.type === ''">
+                    {{$t('report.oneTime')}}
+                  </template>
+                  <template v-else>
+                     -
+                  </template>
+                </span>
+              </template>
+              <el-row class="margin-l-10 margin-t-20">
+                <el-col :span="8" class="tooltip-column-name" >{{$t("report.name")}}</el-col>
+                <el-col :span="16">{{scope.row.name || '-'}}</el-col>
+              </el-row>
+               <el-row class="margin-l-10">
+                <el-col :span="8" class="tooltip-column-name">{{$t("report.period")}}</el-col>
+                <el-col :span="16">{{handleConfigPeriod(scope.row)}}</el-col>
+              </el-row>
+               <el-row class="margin-l-10">
+                <el-col :span="8"  class="tooltip-column-name">{{$t("report.custom")}}</el-col>
+                <el-col :span="16">{{handleConfigCustom(scope.row)}}</el-col>
+              </el-row>
+              <el-row class="margin-l-10">
+                <el-col :span="8" class="tooltip-column-name">{{$t("report.startTime")}}</el-col>
+                <el-col :span="16">{{scope.row.schedulerStart || '-'}}</el-col>
+              </el-row>
+               <el-row class="margin-l-10">
+                <el-col :span="8" class="tooltip-column-name" >{{$t("report.endTime")}}</el-col>
+                <el-col :span="16">{{scope.row.schedulerEnd || '-'}}</el-col>
+              </el-row>
+            </el-popover>
+          </template>
+          <template v-else>
+             -
+          </template>
         </span>
         <span v-else-if="item.prop === 'userName'">
           {{(scope.row.sysUser && scope.row.sysUser.name) || '-'}}
@@ -154,7 +207,7 @@ import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
 import { del, get } from '@/utils/http'
 import { api } from '@/utils/api'
-import { storageKey } from '@/utils/constants'
+import { storageKey, report } from '@/utils/constants'
 import { ref } from 'vue'
 import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
@@ -229,7 +282,22 @@ export default {
         resetPageNo: true
       },
       expandedIds: [],
-      interval: null
+      interval: null,
+      typeMappings: [
+        { key: 'day', value: this.$t('report.daily') },
+        { key: 'week', value: this.$t('report.weekly') },
+        { key: 'month', value: this.$t('report.monthly') },
+        { key: '', value: this.$t('report.oneTime') }
+      ],
+      typeUnitMappings: [
+        { key: 'day', value: this.$t('report.day') },
+        { key: 'week', value: this.$t('report.week') },
+        { key: 'month', value: this.$t('report.month') }
+      ],
+      scheduleTypeList: report.scheduleTypeList,
+      weekdayList: report.weekdayList,
+      monthList: report.monthList,
+      weekOptions: report.weekOptions
     }
   },
   computed: {
@@ -240,6 +308,78 @@ export default {
           str += row.config.timeConfig.type
           if (['today', 'yesterday', 'this', 'customize'].indexOf(row.config.timeConfig.type) === -1 && row.config.timeConfig.offset) {
             str += ` ${row.config.timeConfig.offset} ${row.config.timeConfig.unit}`
+          }
+        }
+        return str
+      }
+    },
+    handleConfigPeriod () {
+      return function (row) {
+        let str = ''
+        if (row.config && row.config.schedulerConfig) {
+          const type = row.config.schedulerConfig.type
+          if (type === '') {
+            str = this.$t('report.oneTime')
+          } else { // isRepeat=1 每天，每周，每月
+            const period = this.typeMappings.find(m => m.key === type)
+            const interval = row.config.schedulerConfig.interval
+            const months = row.config.schedulerConfig.months
+            if (interval > 1) {
+              const unit = this.typeUnitMappings.find(m => m.key === type)
+              if (unit) {
+                str = this.$t('report.every') + interval + unit.value
+              } else {
+                str = '-'
+              }
+            } else if (interval === 1) {
+              if (type === this.scheduleTypeList[2].value) { // 月
+                if (this.$_.isEmpty(months)) { // 空代表循环
+                  str = period.value
+                } else { // 非空代表不循环
+                  str = this.handleConfigArray(months, this.monthList)// X月，Y月
+                }
+              } else if (period) {
+                str = period.value
+              } else {
+                str = '-'
+              }
+            }
+          }
+        }
+        return str
+      }
+    },
+    handleConfigCustom () {
+      return function (row) {
+        let str = ''
+        if (row.config && row.config.schedulerConfig) {
+          const type = row.config.schedulerConfig.type
+          if (type === '') { // 单次
+            str = '-'
+          } else { // 每日，每周，每月
+            const period = this.typeMappings.find(m => m.key === type)
+            if (type === this.scheduleTypeList[0].value) { // 日
+              str = '-'
+            } else if (type === this.scheduleTypeList[1].value) { // 周
+              const weekDates = row.config.schedulerConfig.weekDates
+              str = this.handleConfigArray(weekDates, this.weekdayList)
+            } else if (type === this.scheduleTypeList[2].value) { // 月
+              const monthDates = row.config.schedulerConfig.monthDates// 日期
+              const monthWeekDates = row.config.schedulerConfig.monthWeekDates// 哪几周
+              const weekDates = row.config.schedulerConfig.weekDates// 周几
+              if (!this.$_.isEmpty(monthDates)) {
+                str = '日期-' + monthDates
+              } else {
+                if (!this.$_.isEmpty(monthWeekDates)) {
+                  str += '周-' + this.handleConfigArray(monthWeekDates, this.weekOptions)
+                }
+                if (!this.$_.isEmpty(weekDates)) {
+                  str += '    ' + this.handleConfigArray(weekDates, this.weekdayList)
+                }
+              }
+            } else {
+              str = '-'
+            }
           }
         }
         return str
@@ -289,10 +429,11 @@ export default {
     },
     dropExpandChange (row, expandedRows) {
       this.expandedIds = []
-      clearInterval(this.interval)
       if (expandedRows.length > 0 && row) {
         this.expandedIds.push(row.id)
         this.datePickerChange(row)
+      } else {
+        clearInterval(this.interval)
       }
     },
     datePickerChange (row) {
@@ -356,9 +497,20 @@ export default {
       }
     },
     intervalChange (param) {
+      clearInterval(this.interval)
       this.interval = setInterval(() => {
         this.dataConversionProcessing(param)
       }, 10000)
+    },
+    handleConfigArray (array, list) {
+      const group = []
+      array.forEach(item => {
+        const matchItem = list.find(m => m.value === item)
+        if (matchItem) {
+          group.push(this.$t(matchItem.name))
+        }
+      })
+      return group.toString()
     }
   },
   beforeUnmount () {
