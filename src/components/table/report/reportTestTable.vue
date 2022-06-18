@@ -290,9 +290,9 @@ export default {
         { key: '', value: this.$t('report.oneTime') }
       ],
       typeUnitMappings: [
-        { key: 'day', value: this.$t('report.day') },
+        { key: 'day', value: this.$t('report.days') },
         { key: 'week', value: this.$t('report.week') },
-        { key: 'month', value: this.$t('report.month') }
+        { key: 'month', value: this.$t('report.months') }
       ],
       scheduleTypeList: report.scheduleTypeList,
       weekdayList: report.weekdayList,
@@ -327,7 +327,7 @@ export default {
             if (interval > 1) {
               const unit = this.typeUnitMappings.find(m => m.key === type)
               if (unit) {
-                str = this.$t('report.every') + interval + unit.value
+                str = this.$t('report.every') + '   ' + interval + '   '+ unit.value
               } else {
                 str = '-'
               }
@@ -368,10 +368,10 @@ export default {
               const monthWeekDates = row.config.schedulerConfig.monthWeekDates// 哪几周
               const weekDates = row.config.schedulerConfig.weekDates// 周几
               if (!this.$_.isEmpty(monthDates)) {
-                str = '日期-' + monthDates
+                str = this.$t('report.date') + '-' + monthDates
               } else {
                 if (!this.$_.isEmpty(monthWeekDates)) {
-                  str += '周-' + this.handleConfigArray(monthWeekDates, this.weekOptions)
+                  str += this.$t('report.week') + '-' + this.handleConfigArray(monthWeekDates, this.weekOptions)
                 }
                 if (!this.$_.isEmpty(weekDates)) {
                   str += '    ' + this.handleConfigArray(weekDates, this.weekdayList)
