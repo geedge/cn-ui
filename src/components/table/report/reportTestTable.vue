@@ -117,6 +117,7 @@
                 :width="270"
                 trigger="hover"
                 class="my-table"
+                @show="handleConfig(scope.row)"
             >
               <template #reference>
                 <span>
@@ -139,11 +140,11 @@
               </template>
                <el-row class="margin-l-10 margin-t-20">
                 <el-col :span="8" class="tooltip-column-name">{{$t("report.period")}}</el-col>
-                <el-col :span="16">{{handleConfigPeriod(scope.row)}}</el-col>
+                <el-col :span="16">{{configPeriod}}</el-col>
               </el-row>
                <el-row class="margin-l-10">
                 <el-col :span="8"  class="tooltip-column-name">{{$t("report.custom")}}</el-col>
-                <el-col :span="16">{{handleConfigCustom(scope.row)}}</el-col>
+                <el-col :span="16">{{configCustom}}</el-col>
               </el-row>
               <el-row class="margin-l-10">
                 <el-col :span="8" class="tooltip-column-name">{{$t("report.startTime")}}</el-col>
@@ -293,7 +294,9 @@ export default {
       scheduleTypeList: report.scheduleTypeList,
       weekdayList: report.weekdayList,
       monthList: report.monthList,
-      weekOptions: report.weekOptions
+      weekOptions: report.weekOptions,
+      configPeriod: '',
+      configCustom: ''
     }
   },
   computed: {
@@ -304,78 +307,6 @@ export default {
           str += row.config.timeConfig.type
           if (['today', 'yesterday', 'this', 'customize'].indexOf(row.config.timeConfig.type) === -1 && row.config.timeConfig.offset) {
             str += ` ${row.config.timeConfig.offset} ${row.config.timeConfig.unit}`
-          }
-        }
-        return str
-      }
-    },
-    handleConfigPeriod () {
-      return function (row) {
-        let str = ''
-        if (row.config && row.config.schedulerConfig) {
-          const type = row.config.schedulerConfig.type
-          if (type === '') {
-            str = this.$t('report.oneTime')
-          } else { // isRepeat=1 每天，每周，每月
-            const period = this.typeMappings.find(m => m.key === type)
-            const interval = row.config.schedulerConfig.interval
-            const months = row.config.schedulerConfig.months
-            if (interval > 1) {
-              const unit = this.typeUnitMappings.find(m => m.key === type)
-              if (unit) {
-                str = this.$t('report.every') + '   ' + interval + '   '+ unit.value
-              } else {
-                str = '-'
-              }
-            } else if (interval === 1) {
-              if (type === this.scheduleTypeList[2].value) { // 月
-                if (this.$_.isEmpty(months)) { // 空代表循环
-                  str = period.value
-                } else { // 非空代表不循环
-                  str = this.handleConfigArray(months, this.monthList)// X月，Y月
-                }
-              } else if (period) {
-                str = period.value
-              } else {
-                str = '-'
-              }
-            }
-          }
-        }
-        return str
-      }
-    },
-    handleConfigCustom () {
-      return function (row) {
-        let str = ''
-        if (row.config && row.config.schedulerConfig) {
-          const type = row.config.schedulerConfig.type
-          if (type === '') { // 单次
-            str = '-'
-          } else { // 每日，每周，每月
-            const period = this.typeMappings.find(m => m.key === type)
-            if (type === this.scheduleTypeList[0].value) { // 日
-              str = '-'
-            } else if (type === this.scheduleTypeList[1].value) { // 周
-              const weekDates = row.config.schedulerConfig.weekDates
-              str = this.handleConfigArray(weekDates, this.weekdayList)
-            } else if (type === this.scheduleTypeList[2].value) { // 月
-              const monthDates = row.config.schedulerConfig.monthDates// 日期
-              const monthWeekDates = row.config.schedulerConfig.monthWeekDates// 哪几周
-              const weekDates = row.config.schedulerConfig.weekDates// 周几
-              if (!this.$_.isEmpty(monthDates)) {
-                str = this.$t('report.date') + '-' + monthDates
-              } else {
-                if (!this.$_.isEmpty(monthWeekDates)) {
-                  str += this.$t('report.week') + '-' + this.handleConfigArray(monthWeekDates, this.weekOptions)
-                }
-                if (!this.$_.isEmpty(weekDates)) {
-                  str += '    ' + this.handleConfigArray(weekDates, this.weekdayList)
-                }
-              }
-            } else {
-              str = '-'
-            }
           }
         }
         return str
@@ -507,6 +438,78 @@ export default {
         }
       })
       return group.toString()
+    },
+    handleConfig (row) {
+      this.handleConfigPeriod(row)
+      this.handleConfigCustom(row)
+    },
+    handleConfigPeriod (row) {
+      let str = ''
+      if (row.config && row.config.schedulerConfig) {
+        const type = row.config.schedulerConfig.type
+        if (type === '') {
+          str = this.$t('report.oneTime')
+        } else { // isRepeat=1 每天，每周，每月
+          const period = this.typeMappings.find(m => m.key === type)
+          const interval = row.config.schedulerConfig.interval
+          const months = row.config.schedulerConfig.months
+          if (interval > 1) {
+            const unit = this.typeUnitMappings.find(m => m.key === type)
+            if (unit) {
+              str = this.$t('report.every') + '   ' + interval + '   ' + unit.value
+            } else {
+              str = '-'
+            }
+          } else if (interval === 1) {
+            if (type === this.scheduleTypeList[2].value) { // 月
+              if (this.$_.isEmpty(months)) { // 空代表循环
+                str = period.value
+              } else { // 非空代表不循环
+                str = this.handleConfigArray(months, this.monthList)// X月，Y月
+              }
+            } else if (period) {
+              str = period.value
+            } else {
+              str = '-'
+            }
+          }
+        }
+      }
+      this.configPeriod = str
+    },
+    handleConfigCustom (row) {
+      let str = ''
+      if (row.config && row.config.schedulerConfig) {
+        const type = row.config.schedulerConfig.type
+        if (type === '') { // 单次
+          str = '-'
+        } else { // 每日，每周，每月
+          const period = this.typeMappings.find(m => m.key === type)
+          if (type === this.scheduleTypeList[0].value) { // 日
+            str = '-'
+          } else if (type === this.scheduleTypeList[1].value) { // 周
+            const weekDates = row.config.schedulerConfig.weekDates
+            str = this.handleConfigArray(weekDates, this.weekdayList)
+          } else if (type === this.scheduleTypeList[2].value) { // 月
+            const monthDates = row.config.schedulerConfig.monthDates// 日期
+            const monthWeekDates = row.config.schedulerConfig.monthWeekDates// 哪几周
+            const weekDates = row.config.schedulerConfig.weekDates// 周几
+            if (!this.$_.isEmpty(monthDates)) {
+              str = this.$t('report.date') + '-' + monthDates
+            } else {
+              if (!this.$_.isEmpty(monthWeekDates)) {
+                str += this.$t('report.week') + '-' + this.handleConfigArray(monthWeekDates, this.weekOptions)
+              }
+              if (!this.$_.isEmpty(weekDates)) {
+                str += '    ' + this.handleConfigArray(weekDates, this.weekdayList)
+              }
+            }
+          } else {
+            str = '-'
+          }
+        }
+      }
+      this.configCustom = str
     }
   },
   beforeUnmount () {
