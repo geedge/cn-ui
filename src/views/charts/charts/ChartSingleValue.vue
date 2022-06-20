@@ -17,7 +17,7 @@
         ></i>
       </div>
     </div>
-    <div class="single-value__content" v-if="isCommonSingleValue(type)">
+    <div class="single-value__content" style="width: 200px;" v-if="isCommonSingleValue(type)">
       <div class="content__data">
         <span>{{
           handleSingleValue[0] || handleSingleValue[0] === 0

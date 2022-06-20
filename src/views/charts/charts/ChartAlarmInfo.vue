@@ -55,7 +55,6 @@
                     {{value.startTime ? dateFormatByAppearance(value.startTime) : '-'}}
                   </div>
                 </div>
-                &nbsp;&nbsp;&nbsp;
 
                 <div class="text__duration-box">
                   <i class="cn-icon cn-icon-time2"></i>
