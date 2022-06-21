@@ -231,7 +231,7 @@
             </el-select>
           </el-form-item>
           <!-- 参数 -->
-          <el-form-item :label="$t('config.operationlog.params')" prop="categoryParams" v-if="editObject.categoryParams.length > 0">
+          <el-form-item :label="$t('config.operationlog.params')" prop="categoryParams" v-if="editObject.categoryParams && editObject.categoryParams.length > 0">
             <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input>
