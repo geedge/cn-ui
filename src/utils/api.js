@@ -194,15 +194,6 @@ export async function getData (url, params = {}, isQueryList) {
   return await request
 }
 
-export async function getConfigJson () {
-  const request = new Promise(resolve => {
-    get(`${process.env.BASE_URL}config.json?Timestamp=${new Date().getTime()}`).then(config => {
-      resolve(config)
-    })
-  })
-  return await request
-}
-
 export async function getPermission () {
   const request = new Promise(resolve => {
     post(api.permission, { token: localStorage.getItem(storageKey.token) }).then(response => {

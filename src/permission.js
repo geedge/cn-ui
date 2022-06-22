@@ -1,7 +1,7 @@
 import router from './router'
 import store from './store'
 import { ElMessage } from 'element-plus'
-import { getConfigJson, getPermission } from '@/utils/api'
+import { getPermission } from '@/utils/api'
 import { loadGeoData } from '@/utils/tools'
 import axios from 'axios'
 import { storageKey } from '@/utils/constants'
@@ -18,8 +18,7 @@ router.beforeEach(async (to, from, next) => {
   loadGeoData()
   // 加载baseUrl
   if (!axios.defaults.baseURL) {
-    const config = await getConfigJson()
-    axios.defaults.baseURL = config.baseUrl
+    axios.defaults.baseURL = BASE_CONFIG.baseUrl
   }
   if (localStorage.getItem(storageKey.token)) {
     // 加载i18n
