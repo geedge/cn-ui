@@ -49,11 +49,27 @@
         .el-table__row .el-table-column--selection .cell {
           padding: 0;
         }
+        .el-table__body-wrapper {
+          .el-table__expanded-cell {
+            z-index: 100;
+          }
+        }
+        .el-table__fixed,
+        .el-table__fixed-right {
+          .el-table__expanded-cell {
+            visibility: hidden;
+          }
+        }
         .el-table__expanded-cell {
           .down {
             margin-left: 32px;
             height: 100%;
             width: 1256px;
+            background: #fff; //盖住fixed产生的阴影
+            ::v-deep .is-leaf {
+              color: #1b2e3b;
+              background: #ebeef5;
+            }
             .cn-detection__footer {
               text-align: center;
               .el-pagination__jump {
@@ -92,7 +108,7 @@
                 background: #F9F9F9;
                 border-radius: 2px;
                 width: 97px;
-                height: 95px;
+                height: 94px;
                 position: relative;
                 .demo-progress {
                   position: absolute;
