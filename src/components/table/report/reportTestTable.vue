@@ -163,7 +163,7 @@
         <span v-else-if="item.prop === 'userName'">
           {{(scope.row.sysUser && scope.row.sysUser.name) || '-'}}
         </span>
-        <span v-else-if="item.prop === 'lastExecutionTime'">
+        <span v-else-if="item.prop === 'lastTime'">
           {{scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-'}}
         </span>
         <span v-else-if="item.prop === 'total'">
