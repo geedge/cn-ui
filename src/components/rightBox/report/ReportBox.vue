@@ -232,9 +232,28 @@
           </el-form-item>
           <!-- 参数 -->
           <el-form-item :label="$t('config.operationlog.params')" prop="categoryParams" v-if="editObject.categoryParams && editObject.categoryParams.length > 0">
-            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+<!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
-            </el-input>
+            </el-input>-->
+            <el-select v-model="param.value"
+                       v-for="(param, index) in editObject.categoryParams"
+                       :key="index"
+                       class="right-box__select right-box__select--param"
+                       placeholder=" "
+                       filterable
+                       :disabled="!!editObject.id"
+                       popper-class="right-box-select-dropdown right-box-select-report "
+                       size="small"
+            >
+              <template #prefix>
+                  {{param.key}}
+              </template>
+              <template v-for="paramOption in paramsOptions">
+                <template v-if="paramOption.key === param.key">
+                  <el-option :key="p" :value="p" v-for="p in paramOption.options"></el-option>
+                </template>
+              </template>
+            </el-select>
           </el-form-item>
         </el-form>
       </div>
@@ -255,7 +274,7 @@ import rightBoxMixin from '@/mixins/right-box'
 import { storageKey, report } from '@/utils/constants'
 import { api } from '@/utils/api'
 import _ from 'lodash'
-import { post, put } from '@/utils/http'
+import { get, post, put } from '@/utils/http'
 import { dateFormat, getMillisecond } from '@/utils/date-util'
 
 const paramValidator = (rule, value, callback) => {
@@ -323,7 +342,8 @@ export default {
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
           { validator: paramValidator, message: this.$t('validate.required'), trigger: 'blur' }
         ]
-      }
+      },
+      paramsOptions: []
     }
   },
   watch: {
@@ -390,6 +410,7 @@ export default {
           this.editObject.categoryParams = Object.keys(category.config.queryParam).map(key => {
             return { key: key, value: category.config.queryParam[key] }
           })
+          this.loadParamOptions()
         } else {
           this.editObject.categoryParams = []
         }
@@ -435,6 +456,22 @@ export default {
     }
   },
   methods: {
+    loadParamOptions () {
+      if (_.isArray(this.editObject.categoryParams) && !_.isEmpty(this.editObject.categoryParams)) {
+        this.editObject.categoryParams.forEach(param => {
+          if (!this.paramsOptions.some(p => p.key === param.key)) {
+            get(api.dict, { type: param.key, pageSize: -1 }).then(response => {
+              if (response.code === 200) {
+                this.paramsOptions.push({
+                  key: param.key,
+                  options: response.data.list.map(d => d.value)
+                })
+              }
+            })
+          }
+        })
+      }
+    },
     timeOffsetHandle (type) {
       if (type === 'p') {
         if (_.isNumber(this.editObject.config.timeConfig.offset)) {
