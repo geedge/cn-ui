@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { unitTypes, chartTableOrderOptionsMapping } from '@/utils/constants'
+import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'ChartActiveIpTable',
@@ -61,7 +61,6 @@ export default {
   },
   data () {
     return {
-      chartTableOrderOptionsMapping,
       unitConvert,
       unitTypes,
       activeIpTable: {

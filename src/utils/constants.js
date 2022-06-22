@@ -105,7 +105,9 @@ export const chartTableColumnMapping = {
   responseFailRate: 'dns.responseFailureRate',
   ip: 'IP'
 }
-export const chartTableOrderOptionsMapping = {}
+export const chartTableOrderOptionsMapping = {
+  lastTime: 'last_time'
+}
 export const chartPieTableTopOptions = [
   { name: 'Sessions', value: 'sessions' },
   { name: 'Packets', value: 'packets' },

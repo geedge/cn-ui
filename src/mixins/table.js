@@ -1,3 +1,4 @@
+import { chartTableOrderOptionsMapping } from '@/utils/constants'
 export default {
   props: {
     tableData: {
@@ -54,12 +55,13 @@ export default {
       })
     },
     tableDataSort (item) {
+      console.info(item)
       let orderBy = ''
       if (item.order === 'ascending') {
-        orderBy = item.prop
+        orderBy = chartTableOrderOptionsMapping[item.prop] || item.prop
       }
       if (item.order === 'descending') {
-        orderBy = '-' + item.prop
+        orderBy = '-' + chartTableOrderOptionsMapping[item.prop] || item.prop
       }
       this.$emit('orderBy', orderBy)
     }
