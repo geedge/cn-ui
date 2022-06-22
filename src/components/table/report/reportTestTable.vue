@@ -356,11 +356,10 @@ export default {
     },
     dropExpandChange (row, expandedRows) {
       this.expandedIds = []
+      clearInterval(this.interval)
       if (expandedRows.length > 0 && row) {
         this.expandedIds.push(row.id)
         this.datePickerChange(row)
-      } else {
-        clearInterval(this.interval)
       }
     },
     datePickerChange (row) {
