@@ -104,7 +104,7 @@ export default {
       }
     }
     return {
-      username: 'admin', // sessionStorage.getItem('cn-username'),
+      username: localStorage.getItem(storageKey.username),
       language: localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : 'en',
       showChangePin: false,
       from: '', // entity类型
