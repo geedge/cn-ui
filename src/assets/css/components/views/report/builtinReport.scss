@@ -49,9 +49,15 @@
         .el-table__row .el-table-column--selection .cell {
           padding: 0;
         }
+        .el-table__row.expanded {
+          td {
+            border-bottom: none;
+          }
+        }
         .el-table__body-wrapper {
           .el-table__expanded-cell {
             z-index: 100;
+            border-top: 1px solid #E7EAED;
           }
         }
         .el-table__fixed,
