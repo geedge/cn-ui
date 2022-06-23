@@ -82,6 +82,7 @@
     .filter-top-box {
       .chart__loading {
         height: calc(100% - 65px);
+        top: 64px;
       }
       .top-table-percent{
         display:grid;
@@ -92,6 +93,11 @@
         .top-table-progress{
           align-content: center;
           padding-top: 8px;
+        }
+      }
+      .customer-no-border-table {
+        .el-table__body-wrapper {
+          height: calc(100% - 36px);
         }
       }
     }
