@@ -572,8 +572,8 @@ export default {
       this.listLoading = true
       const queryParams = {
         ...params,
-        startTime: parseInt(params.startTime / 1000),
-        endTime: parseInt(params.endTime / 1000)
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime)
       }
       get(api.entityList, queryParams).then(response => {
         if (response.code === 200) {
@@ -590,8 +590,8 @@ export default {
     queryListTotal (params) {
       const queryParams = {
         ...params,
-        startTime: parseInt(params.startTime / 1000),
-        endTime: parseInt(params.endTime / 1000)
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime)
       }
       get(api.entityListTotal, queryParams).then(response => {
         if (response.code === 200) {
