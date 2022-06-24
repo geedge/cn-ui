@@ -55,13 +55,20 @@ export default {
       })
     },
     tableDataSort (item) {
-      console.info(item)
       let orderBy = ''
       if (item.order === 'ascending') {
-        orderBy = chartTableOrderOptionsMapping[item.prop] || item.prop
+        if (item.prop === 'lastTime') {
+          orderBy = chartTableOrderOptionsMapping[item.prop]
+        } else {
+          orderBy = item.prop
+        }
       }
       if (item.order === 'descending') {
-        orderBy = '-' + chartTableOrderOptionsMapping[item.prop] || item.prop
+        if (item.prop === 'lastTime') {
+          orderBy = '-' + chartTableOrderOptionsMapping[item.prop]
+        } else {
+          orderBy = '-' + item.prop
+        }
       }
       this.$emit('orderBy', orderBy)
     }
