@@ -39,7 +39,6 @@
     <el-drawer
             v-model="rightBox.show"
             direction="rtl"
-            :size="700"
             :with-header="false"
             destroy-on-close>
       <role-box :object="object" @close="closeRightBox"></role-box>

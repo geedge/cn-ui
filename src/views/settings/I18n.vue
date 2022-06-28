@@ -44,7 +44,6 @@
         v-model="rightBox.show"
         direction="rtl"
         :with-header="false"
-        :size="700"
         destroy-on-close>
       <i18n-box
           :object="object"

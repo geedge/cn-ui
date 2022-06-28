@@ -61,7 +61,6 @@
     <el-drawer
         v-model="rightBox.show"
         direction="rtl"
-        :size="700"
         :with-header="false"
         destroy-on-close>
       <galaxy-proxy-box :object="object" @close="closeRightBox"></galaxy-proxy-box>
