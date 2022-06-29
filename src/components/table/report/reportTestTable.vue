@@ -191,7 +191,7 @@
     <el-checkbox v-model="checkboxAll" @change="selectAll(tableData)"></el-checkbox>
     <div class="table-operation-all-span">
       <span>{{ $t('overall.all') }}</span>
-      <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="tableOperation(['delete', this.checkboxIds])">
+      <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
         <loading :loading="loading"></loading>
         <span>{{$t('report.batchDeletion')}}</span>
       </div>

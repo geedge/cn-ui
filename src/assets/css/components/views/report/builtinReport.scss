@@ -203,8 +203,7 @@
           height: 24px;
           background: #D7D7D7;
           border-radius: 2px;
-          line-height: 21px;
-          cursor: pointer;
+          cursor: not-allowed;
           span {
             margin: 3px 8px;
             font-size: 12px;
@@ -222,10 +221,11 @@
           }
         }
         .table-operation-back-down.table-operation-all-checkbox {
-           background: #0091ff;
+          background: #0091ff;
+          cursor: pointer;
          }
         .table-operation-back-down.table-operation-all-loading {
-           background: #D7D7D7;
+          background: #D7D7D7;
          }
       }
     }
