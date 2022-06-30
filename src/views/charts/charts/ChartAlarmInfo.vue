@@ -51,7 +51,7 @@
                   <div class="time-box__start-time">
                     &nbsp; {{ $t(`dns.startTime`) }}:&nbsp;&nbsp;&nbsp;
                   </div>
-                  <div>
+                  <div style="flex: 1;">
                     {{value.startTime ? dateFormatByAppearance(value.startTime) : '-'}}
                   </div>
                 </div>
