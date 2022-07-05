@@ -1,6 +1,7 @@
 <template>
   <div class="cn-builtin">
     <div class="cn-builtin-left">
+      <loading :loading="builtinLeftLoading"></loading>
       <div class="cn-builtin-left-title">
         {{$t('report.category')}}
       </div>
@@ -34,9 +35,10 @@
         <template #default>
           <builtin-report-table
               ref="dataTable"
-              v-loading="tools.loading"
+              :tools-loading="tools.loading"
               :api="url"
               :custom-table-title="tools.customTableTitle"
+              :category-list="builtinReportLeftMenu"
               :height="mainTableHeight"
               :table-data="tableData"
               @delete="del"
@@ -75,6 +77,7 @@ import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
 import ReportBox from '@/components/rightBox/report/ReportBox'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'Report',
@@ -141,17 +144,20 @@ export default {
         'report.november',
         'report.december'
       ],
-      tableId: 'builtinReportTable'
+      tableId: 'builtinReportTable',
+      builtinLeftLoading: false
     }
   },
   mixins: [dataListMixin],
   components: {
+    Loading,
     cnDataList,
     builtinReportTable,
     ReportBox
   },
   methods: {
     queryGetTempData () {
+      this.builtinLeftLoading = true
       get(api.reportCategory).then(res => {
         if (res.code === 200) {
           this.builtinReportLeftMenu = res.data.list.map(c => {
@@ -161,6 +167,7 @@ export default {
             }
           })
         }
+        this.builtinLeftLoading = false
       })
     },
     getTableData (params) {

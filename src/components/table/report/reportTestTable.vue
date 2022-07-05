@@ -6,6 +6,7 @@
       :height="height"
       :expand-row-keys="expandedIds"
       row-key="id"
+      v-loading="toolsLoading"
       border
       tooltip-effect="light"
       @header-dragend="dragend"
@@ -106,6 +107,11 @@
       <template #default="scope" :column="item">
         <span v-if="item.prop === 'timeLimit'">
           {{handleTimeRange(scope.row)}}
+        </span>
+        <span v-else-if="item.prop === 'categoryId'">
+          <span v-for="item in categoryList">
+            <span v-if="scope.row.categoryId === item.id">{{item.name}}</span>
+          </span>
         </span>
         <span v-else-if="item.prop === 'timePlan'">
           <template v-if="scope.row.config.isScheduler === 0">
@@ -217,6 +223,10 @@ export default {
     Loading,
     chartDetectionPagination
   },
+  props: {
+    categoryList: Array,
+    toolsLoading: Boolean
+  },
   inject: ['reload'],
   data () {
     return {
@@ -227,7 +237,12 @@ export default {
           label: 'ID',
           prop: 'id',
           show: true,
-          width: 40
+          width: 50
+        }, {
+          label: this.$t('report.categoryType'),
+          prop: 'categoryId',
+          show: true,
+          minWidth: 180
         }, {
           label: this.$t('config.user.name'),
           prop: 'name',
@@ -384,7 +399,7 @@ export default {
           })
         }
         this.loadingDown = false
-        const showInterval = this.downDataList.find(item => item.percent !== 1)
+        const showInterval = this.downDataList.find(item => item.percent !== 1 && item.state !== 2)
         if (this.downDataList && showInterval) {
           this.intervalChange(param)
         }
