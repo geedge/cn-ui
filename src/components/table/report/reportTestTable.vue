@@ -239,16 +239,16 @@ export default {
           show: true,
           width: 50
         }, {
-          label: this.$t('report.categoryType'),
-          prop: 'categoryId',
-          show: true,
-          minWidth: 180
-        }, {
           label: this.$t('config.user.name'),
           prop: 'name',
           show: true,
           minWidth: 200,
           sortable: 'custom'
+        }, {
+          label: this.$t('report.categoryType'),
+          prop: 'categoryId',
+          show: true,
+          minWidth: 180
         }, {
           label: this.$t('report.timeLimit'),
           prop: 'timeLimit',
