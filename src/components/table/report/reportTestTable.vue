@@ -154,11 +154,11 @@
               </el-row>
               <el-row class="margin-l-10">
                 <el-col :span="8" class="tooltip-column-name">{{$t("report.startTime")}}</el-col>
-                <el-col :span="16">{{scope.row.schedulerStart || '-'}}</el-col>
+                <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerStart) || '-'}}</el-col>
               </el-row>
                <el-row class="margin-l-10">
                 <el-col :span="8" class="tooltip-column-name" >{{$t("report.endTime")}}</el-col>
-                <el-col :span="16">{{scope.row.schedulerEnd || '-'}}</el-col>
+                <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerEnd) || '-'}}</el-col>
               </el-row>
             </el-popover>
           </template>
