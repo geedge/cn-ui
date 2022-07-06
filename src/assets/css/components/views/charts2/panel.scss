@@ -1,0 +1,25 @@
+.panel-box {
+  height: calc(100% - 20px);
+  .panel__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0 20px 20px;
+
+    .panel__title {
+      font-size: 20px;
+      color: #353636;
+    }
+    .panel__time {
+      display: flex;
+    }
+  }
+  .chart-list {
+    height: calc(100% - 46px);
+    overflow: auto;
+    &>.vue-grid-layout {
+      margin-top: -20px;
+    }
+  }
+}

@@ -42,7 +42,7 @@ export const fromRoute = {
 
 /* panel类别和名称之间的映射 */
 export const panelTypeAndRouteMapping = {
-  trafficSummary: 1,
+  networkOverview: 1,
   networkAppPerformance: 2,
   dnsServiceInsights: 3,
   ipEntityDetail: 4,

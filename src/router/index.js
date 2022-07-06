@@ -16,7 +16,7 @@ const routes = [
     children: [
       {
         path: '/panel/:typeName',
-        component: () => import('@/views/charts/Panel')
+        component: () => import('@/views/charts2/Panel')
       },
       {
         path: '/user',
