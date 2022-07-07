@@ -1,6 +1,5 @@
 # 自定义生命周期
 stages:
-  - gen_git-log
   - build_project
   - build_image
 
