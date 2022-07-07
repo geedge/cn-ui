@@ -216,7 +216,7 @@
             </div>
             <div v-else class="line-point"></div>
           </div>
-          <div class="row-timeline__card" style="height: 122px">
+          <div class="row-timeline__card">
             <div>
               <div class="timeline__severity timeline__severity--high">
                 <i
