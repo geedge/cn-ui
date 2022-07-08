@@ -46,4 +46,7 @@
 @import './components/rightBox/report/builtinReportBox';
 
 @import './views/charts2/panel';
+@import 'views/charts/NetworkOverviewLine';
+@import 'views/charts/NetworkOverviewDdosDetection';
+@import 'views/charts/NetworkOverviewPerformanceEvent';
 //@import '../chart';

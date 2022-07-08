@@ -150,12 +150,14 @@ export default {
       if (panels && panels.length > 0) {
         this.panel = panels[0]
       }
+      console.log(this.panel)
       if (this.panel.id) {
         if (this.panel.params) {
           this.panel.params = JSON.parse(this.panel.params)
         } else {
           this.panel.params = {}
         }
+        console.log(this.panel)
         const allCharts = (await getChartList({ panelId: this.panel.id, pageSize: -1 })).map(chart => {
           chart.i = chart.id
           this.recursionParamsConvert(chart)

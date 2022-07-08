@@ -1,0 +1,52 @@
+.ddos-detection {
+  display: flex;
+  height: 100%;
+  width: 85%;
+  margin: auto;
+  flex-direction: column;
+  justify-content: space-evenly;
+  .ddos-detection-type {
+    display: flex;
+    justify-content: space-between;
+    .ddos-detection-type-value {
+      display: flex;
+      flex-direction: column;
+      .ddos-detection-type-value-name {
+        font-family: NotoSansSChineseRegular;
+        font-size: 12px;
+        color: #575757;
+        line-height: 12px;
+        font-weight: 400;
+        margin-bottom: 12px;
+      }
+      .ddos-detection-type-value-number {
+        font-family: NotoSerifMyanmar-Medium;
+        font-size: 18px;
+        color: #E26154;
+        line-height: 12px;
+        font-weight: 500;
+      }
+    }
+  }
+  .el-button {
+    width: 117px;
+    min-height: 28px;
+    background: #FBFBFB;
+    border: 1px solid #C5C5C5;
+    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+    border-radius: 4px;
+    padding: 8px 5px;
+    span {
+      font-family: NotoSansHans-Medium;
+      font-size: 12px;
+      color: #575757;
+      font-weight: 500;
+      i {
+        transform: rotate(-90deg);
+        color: #575757;
+        font-size: 12px;
+        margin-left: 4px;
+      }
+    }
+  }
+}
