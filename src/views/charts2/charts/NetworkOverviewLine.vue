@@ -7,12 +7,12 @@
         <div class="line-select__operation">
           <el-select
               size="mini"
-              v-model="options"
+              v-model="value1"
               class="option__select select-topn"
               placeholder=""
               popper-class="option-popper"
           >
-            <el-option v-for="item in options" :key="item.value" :label="item.label"></el-option>
+            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </div>
       </div>
@@ -21,12 +21,12 @@
         <div class="line-select__operation">
           <el-select
               size="mini"
-              v-model="options"
+              v-model="value2"
               class="option__select select-topn"
               placeholder=""
               popper-class="option-popper"
           >
-            <el-option v-for="item in options" :key="item.value" :label="item.label"></el-option>
+            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </div>
       </div>
@@ -50,10 +50,10 @@ export default {
   },
   data () {
     return {
-      options: [
+      options1: [
         {
-          value: 'Option1',
-          label: 'Option1'
+          value: 'Bits',
+          label: 'Bits'
         },
         {
           value: 'Option2',
@@ -63,15 +63,23 @@ export default {
           value: 'Option3',
           label: 'Option3'
         },
+      ],
+      value1: '',
+      options2: [
         {
-          value: 'Option4',
-          label: 'Option4'
+          value: 'Average',
+          label: 'Average'
         },
         {
-          value: 'Option5',
-          label: 'Option5'
-        }
+          value: 'Option2',
+          label: 'Option2'
+        },
+        {
+          value: 'Option3',
+          label: 'Option3'
+        },
       ],
+      value2: '',
       mpackets: [42, 1, 2, 1, 12],
       unitConvert
     }
