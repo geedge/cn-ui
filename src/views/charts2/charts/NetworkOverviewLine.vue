@@ -1,27 +1,39 @@
 <template>
   <div class="line">
     <div id="chart"></div>
-    <div>
-      <div>
+    <div class="line-select">
+      <div class="line-select-metric">
         <span>{{$t('network.metric')}}:</span>
-        <el-select v-model="value" class="m-2" placeholder="Select" size="small">
-        <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-        />
-      </el-select></div>
-      <div>
+        <div class="line-select__operation">
+          <el-select
+              size="mini"
+              v-model="options"
+              class="option__select select-topn"
+              placeholder=""
+              popper-class="option-popper"
+          >
+            <el-option v-for="item in options" :key="item.value" :label="item.label"></el-option>
+          </el-select>
+        </div>
+      </div>
+      <div class="line-select-reference-line">
         <span>{{$t('network.referenceLine')}}:</span>
-        <el-select v-model="value" class="m-2" placeholder="Select" size="small">
-          <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-          />
-        </el-select>
+        <div class="line-select__operation">
+          <el-select
+              size="mini"
+              v-model="options"
+              class="option__select select-topn"
+              placeholder=""
+              popper-class="option-popper"
+          >
+            <el-option v-for="item in options" :key="item.value" :label="item.label"></el-option>
+          </el-select>
+        </div>
+      </div>
+    </div>
+    <div class="line-value">
+      <div class="line-value-mpackets" v-for="item in mpackets" :key="item">
+        <span>{{item}} </span><span>mpackets/s</span>
       </div>
     </div>
   </div>
@@ -30,7 +42,7 @@
 <script>
 import * as echarts from 'echarts'
 import { stackedLineChartOption } from '@/views/charts2/charts/options/pie'
-
+import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'NetworkOverviewLine',
   props: {
@@ -59,7 +71,9 @@ export default {
           value: 'Option5',
           label: 'Option5'
         }
-      ]
+      ],
+      mpackets: [42, 1, 2, 1, 12],
+      unitConvert
     }
   },
   methods: {

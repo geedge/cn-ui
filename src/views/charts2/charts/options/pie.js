@@ -1,4 +1,4 @@
-import { chartColor1, chartColor2 } from '@/utils/constants'
+import { chartColor1, chartColor2, chartColor3 } from '@/utils/constants'
 
 export const pieChartOption1 = {
   color: chartColor1,
@@ -67,6 +67,7 @@ export const pieChartOption2 = {
   ]
 }
 export const stackedLineChartOption = {
+  color: chartColor3,
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -80,11 +81,12 @@ export const stackedLineChartOption = {
     type: 'scroll',
     top: 10,
     left: 20,
-    itemGap: 8,
+    itemGap: 57,
     itemWidth: 14,
     itemHeight: 14
   },
   grid: {
+    top: '30%',
     left: '1%',
     right: '2%',
     bottom: 15,
