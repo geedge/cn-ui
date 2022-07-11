@@ -1,6 +1,5 @@
 # 自定义生命周期
 stages:
-  - gen_git-log
   - build_project
   - build_image
 
@@ -15,24 +14,6 @@ cache:
 before_script:
   - export CNUI_TAG=$(date +%Y%m%d%H%M%S)
 
-generate_git-log:
-  stage: gen_git-log
-  script:
-    - if (( `grep git-log.html ./public/index.html | wc -l` == 0 )); then         sed -i 's+</body>+<a style="position:fixed;bottom:20px;left:40px;z-index:999;color:white;" target="_blank" href="./git-log.html">更新记录</a>\n</body>+g' ./public/index.html;         echo "添加更新记录链接"; fi;
-    - echo "最近的100个提交记录"
-    - echo "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body><pre>" > ./public/git-log.html
-    - "git log -100 --pretty=format:'%ad : %s' >> ./public/git-log.html"
-    - echo "</pre></body></html>" >> ./public/git-log.html
-    - echo "处理 git-log.html 结束"
-  artifacts:
-    paths:
-      - public/index.html
-      - public/git-log.html
-  only:
-    - dev
-  tags:
-    - GN-XXG-Server
-
 build_project:
   stage: build_project
   script:
@@ -41,7 +22,7 @@ build_project:
     - echo "npm run build"
     - npm run build
   only:
-    - dev
+    - dev_copy
     - tags
   tags:
     - GN-XXG-Server
@@ -57,7 +38,7 @@ build_image:
     - sudo docker push 192.168.40.153:9080/cyber-narrator/cn-ui:$CNUI_TAG
   when: on_success
   only:
-    - dev
+    - dev_copy
   tags:
     - GN-XXG-Server
 
