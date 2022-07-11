@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+  <div class="chart-drawing chart-drawing-ship__width" :id="`chart${chartInfo.id}`"></div>
   <div class="ship" :class="{'ship--show': showList}" v-ele-click-outside="shipChangeDown" id="ship">
     <div class="ship-title">
       <div class="ship-title-symbol" v-if="entityData.tableData.symbol"><img :src="entityData.tableData.symbol" /></div>
