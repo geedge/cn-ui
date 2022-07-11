@@ -1,21 +1,48 @@
 import { chartColor1, chartColor2, chartColor3 } from '@/utils/constants'
+import * as echarts from 'echarts'
 
 export const pieChartOption1 = {
   color: chartColor1,
   legend: {
     orient: 'vertical',
-    top: 35,
-    left: '55%',
-    itemGap: 8,
+    top: 45,
+    left: '50%',
+    itemGap: 4,
     itemWidth: 15,
-    itemHeight: 7
+    itemHeight: 7,
+    textStyle: {
+      fontFamily: 'SimHei',
+      rich: {
+        a: {
+          width: 35,
+          align: 'left'
+        },
+        b: {
+          width: 6,
+          align: 'left',
+          fontSize: 12,
+          color: '#575757'
+        }
+      }
+    },
+    formatter: function (name) {
+      const data = pieChartOption1.series[0].data
+      let value
+      data.forEach(t => {
+        if (t.name === name) {
+          value = t.describe
+        }
+      })
+      const arr = ['{a|' + ' ' + name + '}' + '{b|' + value + '}']
+      return arr
+    }
   },
   series: [
     {
-      right: '40%',
+      right: '50%',
       name: 'Access From',
       type: 'pie',
-      radius: ['30%', '50%'],
+      radius: ['40%', '60%'],
       avoidLabelOverlap: false,
       label: {
         show: false
@@ -23,32 +50,52 @@ export const pieChartOption1 = {
       labelLine: {
         show: false
       },
-      data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' }
-      ]
+      data: []
     }
   ]
 }
 export const pieChartOption2 = {
   legend: {
     orient: 'vertical',
-    top: 35,
-    left: '55%',
-    itemGap: 8,
+    top: 45,
+    left: '50%',
+    itemGap: 4,
     itemWidth: 15,
-    itemHeight: 7
+    itemHeight: 7,
+    textStyle: {
+      fontFamily: 'SimHei',
+      rich: {
+        a: {
+          width: 35,
+          align: 'left'
+        },
+        b: {
+          width: 6,
+          align: 'left',
+          fontSize: 12,
+          color: '#575757'
+        }
+      }
+    },
+    formatter: function (name) {
+      const data = pieChartOption2.series[0].data
+      let value
+      data.forEach(t => {
+        if (t.name === name) {
+          value = t.describe
+        }
+      })
+      const arr = ['{a|' + ' ' + name + '}' + '{b|' + value + '}']
+      return arr
+    }
   },
   color: chartColor2,
   series: [
     {
-      right: '40%',
+      right: '50%',
       name: 'Access From',
       type: 'pie',
-      radius: ['30%', '50%'],
+      radius: ['40%', '60%'],
       avoidLabelOverlap: false,
       label: {
         show: false
@@ -56,13 +103,7 @@ export const pieChartOption2 = {
       labelLine: {
         show: false
       },
-      data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' }
-      ]
+      data: []
     }
   ]
 }
@@ -81,8 +122,8 @@ export const stackedLineChartOption = {
     type: 'scroll',
     top: 10,
     left: 20,
-    itemGap: 57,
-    itemWidth: 14,
+    itemGap: 60,
+    itemWidth: 11,
     itemHeight: 14
   },
   grid: {
@@ -94,9 +135,16 @@ export const stackedLineChartOption = {
   },
   xAxis: [
     {
-      type: 'category',
-      boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      type: 'time',
+      splitNumber: 12,
+      axisLabel: {
+        formatter: function (value) {
+          const data = new Date(value)
+          const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+          const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+          return h + ':' + m
+        }
+      }
     }
   ],
   yAxis: [
@@ -109,92 +157,146 @@ export const stackedLineChartOption = {
       name: 'Total',
       type: 'line',
       stack: 'Total',
+      symbol: 'circle',
       smooth: true,
       showSymbol: false,
-      symbolSize: 8,
-      symbol: 'circle',
-      lineStyle: {
-        width: 0
-      },
-      areaStyle: {},
       emphasis: {
         focus: 'series'
       },
-      data: [120, 132, 101, 134, 90, 230, 210]
+      lineStyle: {
+        color: chartColor3[0],
+        width: 1
+      },
+      areaStyle: {
+        opacity: 0.1,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: chartColor3[0]
+          },
+          {
+            offset: 1,
+            color: chartColor3[0]
+          }
+        ])
+      },
+      data: []
     },
     {
       name: 'Inbound',
       type: 'line',
       stack: 'Total',
+      symbol: 'circle',
       smooth: true,
       showSymbol: false,
-      symbolSize: 8,
-      symbol: 'circle',
-      lineStyle: {
-        width: 0
-      },
-      areaStyle: {},
       emphasis: {
         focus: 'series'
       },
-      data: [220, 182, 191, 234, 290, 330, 310]
+      lineStyle: {
+        color: chartColor3[1],
+        width: 1
+      },
+      areaStyle: {
+        opacity: 0.1,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: chartColor3[1]
+          },
+          {
+            offset: 1,
+            color: chartColor3[1]
+          }
+        ])
+      },
+      data: []
     },
     {
       name: 'Outbound',
       type: 'line',
       stack: 'Total',
+      symbol: 'circle',
       smooth: true,
       showSymbol: false,
-      symbolSize: 8,
-      symbol: 'circle',
-      lineStyle: {
-        width: 0
-      },
-      areaStyle: {},
       emphasis: {
         focus: 'series'
       },
-      data: [150, 232, 201, 154, 190, 330, 410]
+      lineStyle: {
+        color: chartColor3[2],
+        width: 1
+      },
+      areaStyle: {
+        opacity: 0.1,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: chartColor3[2]
+          },
+          {
+            offset: 1,
+            color: chartColor3[2]
+          }
+        ])
+      },
+      data: []
     },
     {
       name: 'Internal',
       type: 'line',
       stack: 'Total',
+      symbol: 'circle',
       smooth: true,
       showSymbol: false,
-      symbolSize: 8,
-      symbol: 'circle',
-      lineStyle: {
-        width: 0
-      },
-      areaStyle: {
-        color: '#35ADDA'
-      },
       emphasis: {
         focus: 'series'
       },
-      data: [320, 332, 301, 334, 390, 330, 320]
+      lineStyle: {
+        color: chartColor3[3],
+        width: 1
+      },
+      areaStyle: {
+        opacity: 0.1,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: chartColor3[3]
+          },
+          {
+            offset: 1,
+            color: chartColor3[3]
+          }
+        ])
+      },
+      data: []
     },
     {
       name: 'Other',
       type: 'line',
       stack: 'Total',
+      symbol: 'circle',
       smooth: true,
       showSymbol: false,
-      symbolSize: 8,
-      symbol: 'circle',
-      lineStyle: {
-        width: 0
-      },
-      label: {
-        show: true,
-        position: 'top'
-      },
-      areaStyle: {},
       emphasis: {
         focus: 'series'
       },
-      data: [820, 932, 901, 934, 1290, 1330, 1320]
+      lineStyle: {
+        color: chartColor3[4],
+        width: 1
+      },
+      areaStyle: {
+        opacity: 0.1,
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: chartColor3[4]
+          },
+          {
+            offset: 1,
+            color: chartColor3[4]
+          }
+        ])
+      },
+      data: []
     }
   ]
 }
