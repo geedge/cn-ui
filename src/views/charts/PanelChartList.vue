@@ -1,5 +1,5 @@
 <template>
-  <div :id='`chartList${(isGroup ? "Group" : "") + timestamp}`' class="chart-list" ref="layoutBox">
+  <div :id='`chartList${timestamp}`' class="chart-list" ref="layoutBox">
     <grid-layout
         id="gridLayout"
         ref="layout"
@@ -22,7 +22,6 @@
           :y="item.y"
           :static="item.static"
           :ref="'grid-item' + item.id"
-          :isResizable="isGroup ? false: null"
           dragAllowFrom=".chart-header"
           dragIgnoreFrom=".chart-header__tools"
           v-bind="anchorPoint(item)"
@@ -32,6 +31,7 @@
             :chart-info="item"
             :time-filter="timeFilter"
             :entity="entity"
+            :need-timeout="needTimeout"
             @groupShow="groupShow"
             @showFullscreen="showFullscreen"
         ></panel-chart>
@@ -56,6 +56,7 @@
           :is-fullscreen="true"
           :panelLock="panelLock"
           :time-filter="timeFilter"
+          :need-timeout="needTimeout"
           @showFullscreen="showFullscreen"
       ></panel-chart>
     </el-dialog>
@@ -68,8 +69,6 @@ import VueGridLayout from 'vue-grid-layout'
 import { getGroupHeight, isGroup, getTypeCategory } from './charts/tools'
 import _ from 'lodash'
 import { useRouter } from 'vue-router'
-import DnsScreen from '@/views/charts/wholeScreenScroll/DnsScreen'
-import { wholeScreenRouterMapping } from '@/utils/constants'
 import { ref } from 'vue'
 
 export default {
@@ -82,9 +81,9 @@ export default {
   props: {
     timeFilter: Object, // 时间范围
     panelLock: { type: Boolean, default: true },
-    isGroup: Boolean,
     entity: Object,
-    dataList: Array // 看板中所有图表信息
+    dataList: Array, // 看板中所有图表信息
+    needTimeout: Boolean // 对于tab和group，需要延迟渲染，避免丢失宽度
   },
   data () {
     return {
@@ -108,7 +107,7 @@ export default {
   },
   methods: {
     init () {
-      const dom = document.getElementById(this.isGroup ? `chartListGroup${this.timestamp}` : `chartList${this.timestamp}`)
+      const dom = document.getElementById(`chartList${this.timestamp}`)
       if (dom) {
         this.stepWidth = Math.floor(dom.offsetWidth / 12)
       }

@@ -38,6 +38,7 @@
         :table="table"
         :is-fullscreen="isFullscreen"
         :order-pie-table="orderPieTable"
+        :need-timeout="needTimeout"
         :time-filter="timeFilter"
         @getChartData="getChartData"
         @showLoading="showLoading"
@@ -102,7 +103,8 @@ export default {
     timeFilter: Object, // 时间范围
     isFullscreen: Boolean,
     panelLock: Boolean,
-    entity: Object
+    entity: Object,
+    needTimeout: Boolean
   },
   data () {
     return {
@@ -170,7 +172,7 @@ export default {
       this.getChartData()
     },
     /* 参数 extraParams 额外请求参数 */
-    getChartData (url, extraParams = {}, chartTimeFilter, num) {
+    getChartData (url, extraParams = {}, chartTimeFilter, isRefresh) {
       this.loading = true
       try {
         if (chartTimeFilter) {
@@ -267,7 +269,13 @@ export default {
               this.errorInfo = response.msg || response.message || 'Unknown'
             }
           }).finally(() => {
-            this.loading = false
+            if (this.needTimeout) {
+              setTimeout(() => {
+                this.loading = false
+              }, 3000)
+            } else {
+              this.loading = false
+            }
           })
         } else if (this.isGroup || this.isTabs) {
           this.$refs.chart && this.$refs.chart.$refs.chart && this.$refs.chart.$refs.chart.reload()

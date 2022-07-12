@@ -149,6 +149,7 @@
         :time-filter="timeFilter"
         :query-params="queryParams"
         :entity="entity"
+        :need-timeout="needTimeout"
       ></chart-relation-ship>
 
       <chart-san-key
@@ -166,6 +167,7 @@
         :chart-data="chartData"
         :result-type="resultType"
         :time-filter="timeFilter"
+        :need-timeout="needTimeout"
         :query-params="queryParams"
         @showLoading="showLoading"
       ></chart-echart>
@@ -400,7 +402,8 @@ export default {
     table: Object,
     timeFilter: Object,
     orderPieTable: String,
-    tabHandleClickType: String
+    tabHandleClickType: String,
+    needTimeout: Boolean
   },
   computed: {
     isNoData () {
@@ -437,13 +440,13 @@ export default {
       this.$emit('showLoading', show)
     },
     getAlarmInfo (url, extraParams, isRefresh, timeFilter) {
-      this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
+      this.$emit('getChartData', url, extraParams, timeFilter, isRefresh)
     },
     getChartData (url, extraParams) {
       this.$emit('getChartData', url, extraParams)
     },
     getDetectionData (url, extraParams, isRefresh, timeFilter) {
-      this.$emit('getChartData', url, extraParams, isRefresh, timeFilter)
+      this.$emit('getChartData', url, extraParams, timeFilter, isRefresh)
     },
     initEchartsWithTable () {
       this.$refs['chart' + this.chartInfo.id] &&

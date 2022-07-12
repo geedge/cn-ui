@@ -13,6 +13,7 @@ import {
 import { handleEchartFontSize, getEchartsFontSize } from '@/utils/tools'
 export default {
   props: {
+    needTimeout: Boolean,
     chartInfo: Object,
     chartData: [Object, Array, String] // 数据在父组件查询后传入，本组件内不查询，只根据接传递的数据来渲染
   },
@@ -238,7 +239,13 @@ export default {
       deep: true,
       handler (n) {
         if (this.chartData && this.chartData.length > 0) {
-          this.initEcharts(`chart${this.chartInfo.id}`)
+          if (this.needTimeout) {
+            setTimeout(() => {
+              this.initEcharts(`chart${this.chartInfo.id}`)
+            }, 3000)
+          } else {
+            this.initEcharts(`chart${this.chartInfo.id}`)
+          }
         }
       }
     }

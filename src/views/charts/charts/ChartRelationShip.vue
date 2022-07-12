@@ -114,7 +114,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import loadsh from 'lodash'
+import _ from 'lodash'
 import { relationShip } from './options/sankey'
 import ChartRelationShip from '@/views/charts/charts/chart-relation-ship'
 import { api } from '@/utils/api'
@@ -173,11 +173,11 @@ export default {
     chartData: [Array, Object],
     resultType: Object,
     queryParams: Object,
-    entity: Object
+    entity: Object,
+    needTimeout: Boolean
   },
   methods: {
     init (id) {
-      const chartParams = this.chartInfo.params
       const name = this.$route.query.name
       const path = window.location.protocol + '//' + window.location.host
       const dom = document.getElementById(id)
@@ -233,10 +233,10 @@ export default {
         if (item && !data.some(d => d.name === item.name)) {
           data.push({ name: item.name, ...handleStyle(item) })
         }
-        if (item && !loadsh.isEmpty(item.from) && !loadsh.isEmpty(item.to)) {
+        if (item && !_.isEmpty(item.from) && !_.isEmpty(item.to)) {
           links.push({ target: item.to, source: item.from })
         }
-        if (item && !loadsh.isEmpty(item.leaf)) {
+        if (item && !_.isEmpty(item.leaf)) {
           item.leaf.forEach(i => {
             handleData(data, links, i)
           })
@@ -296,7 +296,13 @@ export default {
     chartData: {
       deep: true,
       handler (n) {
-        this.init(`chart${this.chartInfo.id}`)
+        if (this.needTimeout) {
+          setTimeout(() => {
+            this.init(`chart${this.chartInfo.id}`)
+          }, 3000)
+        } else {
+          this.init(`chart${this.chartInfo.id}`)
+        }
       }
     }
   },
