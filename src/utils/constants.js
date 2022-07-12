@@ -4,6 +4,7 @@ export const storageKey = {
   iso36112Capital: 'cn-iso3611-2-capital',
   iso36112WorldLow: 'cn-iso3611-2-world-low',
   i18n: 'cn-i18n',
+  s3Enable: 'cn-s3-enable',
   languages: 'cn-languages',
   language: 'cn-language',
   theme: 'cn-theme',
@@ -151,6 +152,18 @@ export const listScrollPath = [
   '/entityExplorer',
   '/detection/performanceEvent',
   '/detection/securityEvent'
+]
+
+export const networkOverviewTable = [
+  'network.categories',
+  'network.providers',
+  'network.countries',
+  'network.applications',
+  'network.clientIps',
+  'network.serverIps',
+  'network.protocols',
+  'network.hosts',
+  'network.snis'
 ]
 
 export const dnsServerRole = {

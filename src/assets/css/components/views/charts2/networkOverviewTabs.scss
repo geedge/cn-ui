@@ -1,0 +1,110 @@
+.tabs {
+  height:100%;
+  .cn-chart__tabs {
+    height:100%;
+    background-color:white;
+    .tab-pane {
+      height:100%;
+      border: 1px solid #e4e7ed;
+      padding:1px;
+      border-radius: 5px;
+      .tab-table {
+        color:#484949;
+        font-size:12px;
+        border:0px;
+      }
+      .data-total{
+        display: flex !important;
+      }
+      .data-total-trend {
+        display: flex;
+        margin-left: 10px;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2px;
+      }
+      .data-total-trend-black {
+        background-color: #ededed;
+        border-radius: 18px;
+        width: 36px;
+        height: 18px;
+      }
+      .data-total-trend-green {
+        background-color: #eef2e8;
+        border-radius: 25px;
+        width: 50px;
+        height: 18px;
+        color:#94b072;
+      }
+      .data-total-trend-red {
+        background-color: #fbebe9;
+        border-radius: 25px;
+        width: 50px;
+        height: 18px;
+        color:#e97367;
+      }
+      .el-table--group::after,.el-table--border::after, .el-table::before {
+        height: 0px;
+      }
+    }
+    .el-tabs__nav-wrap::after {
+      height: 1px;
+      background-color: white ;
+    }
+    &>.el-tabs__header {
+      margin-bottom: 10px;
+    }
+    .el-tabs__nav.is-top {
+      margin-left:8px;
+      .el-tabs__active-bar {
+        display: none;
+      }
+      .el-tabs__item {
+        padding: 0 8px;
+        font-size:12px;
+        font-weight: bold;
+        color:#838383;
+      }
+      .el-tabs__item.is-top.is-active {
+        border-bottom: 2px solid #0091ff;
+        color:#0091ff;
+        height: 35px;
+      }
+    }
+    &>.el-tabs__content {
+      height: calc(100% - 40px);
+      border:none;
+    }
+  }
+  .tab-search {
+    position:absolute;
+    right:20px;
+    height:40px;
+    top:0px;
+    display:flex;
+    font-size:12px;
+    align-items: center;
+    .search-select {
+      margin-right:10px;
+      .option__select.select-column {
+        .el-input__inner {
+          width: 86px;
+          padding-left: 8px;
+          color:#2C72C6;
+          font-weight:400;
+        }
+      }
+      .option-popper {
+        .el-select-dropdown__item {
+          height: 24px;
+          line-height: 24px;
+          font-size: 12px;
+        }
+      }
+
+    }
+    .search-customize-tab {
+      color:#69a7de;
+    }
+  }
+}

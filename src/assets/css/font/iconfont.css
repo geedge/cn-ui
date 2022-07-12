@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1653978200371') format('woff2'),
-       url('iconfont.woff?t=1653978200371') format('woff'),
-       url('iconfont.ttf?t=1653978200371') format('truetype');
+  src: url('iconfont.woff2?t=1657611740064') format('woff2'),
+       url('iconfont.woff?t=1657611740064') format('woff'),
+       url('iconfont.ttf?t=1657611740064') format('truetype');
 }
 
 .cn-icon {
@@ -11,6 +11,94 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-Detection:before {
+  content: "\e792";
+}
+
+.cn-icon-Entity:before {
+  content: "\e793";
+}
+
+.cn-icon-Case:before {
+  content: "\e794";
+}
+
+.cn-icon-Hunt:before {
+  content: "\e795";
+}
+
+.cn-icon-Report1:before {
+  content: "\e796";
+}
+
+.cn-icon-a-KnowledgeBase:before {
+  content: "\e797";
+}
+
+.cn-icon-constant:before {
+  content: "\e78f";
+}
+
+.cn-icon-decline:before {
+  content: "\e790";
+}
+
+.cn-icon-rise1:before {
+  content: "\e791";
+}
+
+.cn-icon-sort:before {
+  content: "\e78c";
+}
+
+.cn-icon-a-NetworkAnalytics:before {
+  content: "\e786";
+}
+
+.cn-icon-navigation:before {
+  content: "\e787";
+}
+
+.cn-icon-up:before {
+  content: "\e788";
+}
+
+.cn-icon-left:before {
+  content: "\e789";
+}
+
+.cn-icon-a-NetworkPerformanceEvent:before {
+  content: "\e78a";
+}
+
+.cn-icon-refresh1:before {
+  content: "\e78b";
+}
+
+.cn-icon-a-DDosDetection:before {
+  content: "\e78d";
+}
+
+.cn-icon-Setting1:before {
+  content: "\e78e";
+}
+
+.cn-icon-add1:before {
+  content: "\e783";
+}
+
+.cn-icon-down:before {
+  content: "\e784";
+}
+
+.cn-icon-right:before {
+  content: "\e785";
+}
+
+.cn-icon-Data:before {
+  content: "\e782";
 }
 
 .cn-icon-a-:before {
