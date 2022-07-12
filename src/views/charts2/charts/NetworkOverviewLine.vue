@@ -1,6 +1,6 @@
 <template>
   <div class="line">
-    <div id="chart"></div>
+    <div class="chart-drawing" id="chart"></div>
     <div class="line-select">
       <div class="line-select-metric">
         <span>{{$t('network.metric')}}:</span>
@@ -33,7 +33,7 @@
     </div>
     <div class="line-value">
       <div class="line-value-mpackets" v-for="item in mpackets" :key="item">
-        <span>{{item}} </span><span>mpackets/s</span>
+        <span>{{unitConvert(item, unitTypes.number)[0]}}</span>{{unitConvert(item, unitTypes.number)[1]}}<span>packets/s</span>
       </div>
     </div>
   </div>
@@ -43,7 +43,9 @@
 import * as echarts from 'echarts'
 import { stackedLineChartOption } from '@/views/charts2/charts/options/pie'
 import unitConvert from '@/utils/unit-convert'
+import { unitTypes } from '@/utils/constants.js'
 import { shallowRef } from 'vue'
+import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 export default {
   name: 'NetworkOverviewLine',
   props: {
@@ -86,8 +88,9 @@ export default {
         }
       ],
       value2: '',
-      mpackets: [42, 1, 2, 1, 12],
+      mpackets: [4212211, 111, 112, 111, 1211],
       unitConvert,
+      unitTypes,
       chartDateObject: []
     }
   },
@@ -101,15 +104,15 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 100
+              rate: 10000000
             },
             {
               stat_time: 1652544300000,
-              rate: 50
+              rate: 20000000
             },
             {
               stat_time: 1652544600000,
-              rate: 20
+              rate: 30000000
             },
             {
               stat_time: 1652544900000,
@@ -117,123 +120,123 @@ export default {
             },
             {
               stat_time: 1652545200000,
-              rate: 45
+              rate: 40000000
             },
             {
               stat_time: 1652545500000,
-              rate: 100
+              rate: 11111111
             },
             {
               stat_time: 1652545800000,
-              rate: 27
+              rate: 11111111
             },
             {
               stat_time: 1652546100000,
-              rate: 45
+              rate: 11111111
             },
             {
               stat_time: 1652546400000,
-              rate: 67
+              rate: 11111111
             },
             {
               stat_time: 1652546700000,
-              rate: 87
+              rate: 8000000
             },
             {
               stat_time: 1652547000000,
-              rate: 32
+              rate: 11111111
             },
             {
               stat_time: 1652547300000,
-              rate: 56
+              rate: 11111111
             },
             {
               stat_time: 1652547600000,
-              rate: 25
+              rate: 11111111
             },
             {
               stat_time: 1652547900000,
-              rate: 56
+              rate: 11111111
             },
             {
               stat_time: 1652548200000,
-              rate: 15
+              rate: 9000000
             },
             {
               stat_time: 1652548500000,
-              rate: 54
+              rate: 11111111
             },
             {
               stat_time: 1652548800000,
-              rate: 56
+              rate: 11111111
             },
             {
               stat_time: 1652549100000,
-              rate: 76
+              rate: 11111111
             },
             {
               stat_time: 1652549400000,
-              rate: 79
+              rate: 11111111
             },
             {
               stat_time: 1652549700000,
-              rate: 76
+              rate: 11111111
             },
             {
               stat_time: 1652550000000,
-              rate: 34
+              rate: 11111111
             },
             {
               stat_time: 1652550300000,
-              rate: 34
+              rate: 11111111
             },
             {
               stat_time: 1652550600000,
-              rate: 34
+              rate: 11111111
             },
             {
               stat_time: 1652550900000,
-              rate: 34
+              rate: 11111111
             },
             {
               stat_time: 1652551200000,
-              rate: 34
+              rate: 11111111
             },
             {
               stat_time: 1652551500000,
-              rate: 65
+              rate: 11111111
             },
             {
               stat_time: 1652551800000,
-              rate: 66
+              rate: 11111111
             },
             {
               stat_time: 1652552100000,
-              rate: 34
+              rate: 11111111
             },
             {
               stat_time: 1652552400000,
-              rate: 23
+              rate: 11111111
             },
             {
               stat_time: 1652552700000,
-              rate: 32
+              rate: 11111111
             },
             {
               stat_time: 1652553000000,
-              rate: 54
+              rate: 11111111
             },
             {
               stat_time: 1652553300000,
-              rate: 32
+              rate: 11111111
             },
             {
               stat_time: 1652553600000,
-              rate: 43
+              rate: 11111111
             },
             {
               stat_time: 1652553900000,
-              rate: 46
+              rate: 11111111
             },
             {
               stat_time: 1652554200000,
@@ -241,7 +244,7 @@ export default {
             },
             {
               stat_time: 1652554500000,
-              rate: 34
+              rate: 11111111
             },
             {
               stat_time: 1652554800000,
@@ -469,11 +472,11 @@ export default {
             },
             {
               stat_time: 1652571600000,
-              rate: 13441235
+              rate: 33441235
             },
             {
               stat_time: 1652571900000,
-              rate: 13409372
+              rate: 33409372
             },
             {
               stat_time: 1652572200000,
@@ -1257,11 +1260,11 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 59770054
+              rate: 11000000
             },
             {
               stat_time: 1652544300000,
-              rate: 57705198
+              rate: 97705191
             },
             {
               stat_time: 1652544600000,
@@ -1269,11 +1272,11 @@ export default {
             },
             {
               stat_time: 1652544900000,
-              rate: 53932331
+              rate: 23932331
             },
             {
               stat_time: 1652545200000,
-              rate: 50820084
+              rate: 70820084
             },
             {
               stat_time: 1652545500000,
@@ -1285,7 +1288,7 @@ export default {
             },
             {
               stat_time: 1652546100000,
-              rate: 45092019
+              rate: 55092019
             },
             {
               stat_time: 1652546400000,
@@ -1309,7 +1312,7 @@ export default {
             },
             {
               stat_time: 1652547900000,
-              rate: 32593269
+              rate: 42593269
             },
             {
               stat_time: 1652548200000,
@@ -1605,7 +1608,7 @@ export default {
             },
             {
               stat_time: 1652570100000,
-              rate: 11730266
+              rate: 41730266
             },
             {
               stat_time: 1652570400000,
@@ -1625,11 +1628,11 @@ export default {
             },
             {
               stat_time: 1652571600000,
-              rate: 13441235
+              rate: 23441235
             },
             {
               stat_time: 1652571900000,
-              rate: 13409372
+              rate: 23409372
             },
             {
               stat_time: 1652572200000,
@@ -2413,7 +2416,7 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 59770054
+              rate: 12000000
             },
             {
               stat_time: 1652544300000,
@@ -2421,15 +2424,15 @@ export default {
             },
             {
               stat_time: 1652544600000,
-              rate: 54907153
+              rate: 84907153
             },
             {
               stat_time: 1652544900000,
-              rate: 53932331
+              rate: 83932331
             },
             {
               stat_time: 1652545200000,
-              rate: 50820084
+              rate: 60820084
             },
             {
               stat_time: 1652545500000,
@@ -2441,7 +2444,7 @@ export default {
             },
             {
               stat_time: 1652546100000,
-              rate: 45092019
+              rate: 25092019
             },
             {
               stat_time: 1652546400000,
@@ -2449,7 +2452,7 @@ export default {
             },
             {
               stat_time: 1652546700000,
-              rate: 42635307
+              rate: 62635307
             },
             {
               stat_time: 1652547000000,
@@ -2761,7 +2764,7 @@ export default {
             },
             {
               stat_time: 1652570100000,
-              rate: 11730266
+              rate: 21730266
             },
             {
               stat_time: 1652570400000,
@@ -2781,11 +2784,11 @@ export default {
             },
             {
               stat_time: 1652571600000,
-              rate: 13441235
+              rate: 73441235
             },
             {
               stat_time: 1652571900000,
-              rate: 13409372
+              rate: 73409372
             },
             {
               stat_time: 1652572200000,
@@ -3569,23 +3572,23 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 59770054
+              rate: 13000000
             },
             {
               stat_time: 1652544300000,
-              rate: 57705198
+              rate: 37705198
             },
             {
               stat_time: 1652544600000,
-              rate: 54907153
+              rate: 64907153
             },
             {
               stat_time: 1652544900000,
-              rate: 53932331
+              rate: 93932331
             },
             {
               stat_time: 1652545200000,
-              rate: 50820084
+              rate: 30820084
             },
             {
               stat_time: 1652545500000,
@@ -3597,7 +3600,7 @@ export default {
             },
             {
               stat_time: 1652546100000,
-              rate: 45092019
+              rate: 75092019
             },
             {
               stat_time: 1652546400000,
@@ -3605,7 +3608,7 @@ export default {
             },
             {
               stat_time: 1652546700000,
-              rate: 42635307
+              rate: 22635307
             },
             {
               stat_time: 1652547000000,
@@ -3621,7 +3624,7 @@ export default {
             },
             {
               stat_time: 1652547900000,
-              rate: 32593269
+              rate: 72593269
             },
             {
               stat_time: 1652548200000,
@@ -3917,7 +3920,7 @@ export default {
             },
             {
               stat_time: 1652570100000,
-              rate: 11730266
+              rate: 91730266
             },
             {
               stat_time: 1652570400000,
@@ -3937,11 +3940,11 @@ export default {
             },
             {
               stat_time: 1652571600000,
-              rate: 13441235
+              rate: 93441235
             },
             {
               stat_time: 1652571900000,
-              rate: 13409372
+              rate: 93409372
             },
             {
               stat_time: 1652572200000,
@@ -4725,19 +4728,19 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 59770054
+              rate: 14000000
             },
             {
               stat_time: 1652544300000,
-              rate: 57705198
+              rate: 77705198
             },
             {
               stat_time: 1652544600000,
-              rate: 54907153
+              rate: 24907153
             },
             {
               stat_time: 1652544900000,
-              rate: 53932331
+              rate: 33932331
             },
             {
               stat_time: 1652545200000,
@@ -4753,7 +4756,7 @@ export default {
             },
             {
               stat_time: 1652546100000,
-              rate: 45092019
+              rate: 15092019
             },
             {
               stat_time: 1652546400000,
@@ -4761,7 +4764,7 @@ export default {
             },
             {
               stat_time: 1652546700000,
-              rate: 42635307
+              rate: 82635307
             },
             {
               stat_time: 1652547000000,
@@ -4777,7 +4780,7 @@ export default {
             },
             {
               stat_time: 1652547900000,
-              rate: 32593269
+              rate: 12593269
             },
             {
               stat_time: 1652548200000,
@@ -5073,7 +5076,7 @@ export default {
             },
             {
               stat_time: 1652570100000,
-              rate: 11730266
+              rate: 31730266
             },
             {
               stat_time: 1652570400000,
@@ -5093,11 +5096,11 @@ export default {
             },
             {
               stat_time: 1652571600000,
-              rate: 13441235
+              rate: 63441235
             },
             {
               stat_time: 1652571900000,
-              rate: 13409372
+              rate: 63409372
             },
             {
               stat_time: 1652572200000,
@@ -5884,6 +5887,10 @@ export default {
       this.chartOption.series.forEach((t, i) => {
         t.data = this.chartDateObject[i].dateArr.map(t => [t.stat_time, t.rate])
       })
+      this.chartOption.tooltip.formatter = (params) => {
+        const str = stackedLineTooltipFormatter(params)
+        return str
+      }
       this.myChart.setOption(this.chartOption)
     },
     // 点击前，高亮legend个数

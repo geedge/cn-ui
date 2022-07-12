@@ -1,9 +1,11 @@
 .performance-event {
-  width: 100%;
+  height: 100%;
+  border: 1px solid #E2E5EC;
+  border-radius: 4px;
   .performance-event-pie {
     width: 100%;
     div {
-      height: 175px;
+      height: 165px;
       width: 324px;
     }
     .performance-event-pie-hr {

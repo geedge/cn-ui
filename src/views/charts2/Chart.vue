@@ -1,5 +1,5 @@
 <template>
-  <div class="cn-chart" style="background-color: lightgray;height: 100%;">
+  <div class="cn-chart" style="height: 100%;">
     <loading :loading="loading"></loading>
     <chart-no-data v-if="isNoData"></chart-no-data>
     <network-overview-line

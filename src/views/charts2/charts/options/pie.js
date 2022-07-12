@@ -1,4 +1,5 @@
-import { chartColor1, chartColor2, chartColor3 } from '@/utils/constants'
+import { chartColor1, chartColor2, chartColor3, chartColor4, unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 import * as echarts from 'echarts'
 
 export const pieChartOption1 = {
@@ -110,13 +111,7 @@ export const pieChartOption2 = {
 export const stackedLineChartOption = {
   color: chartColor3,
   tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross',
-      label: {
-        backgroundColor: '#6a7985'
-      }
-    }
+    trigger: 'axis'
   },
   legend: {
     type: 'scroll',
@@ -149,16 +144,24 @@ export const stackedLineChartOption = {
   ],
   yAxis: [
     {
-      type: 'value'
+      type: 'value',
+      axisLabel: {
+        formatter: function (value) {
+          return unitConvert(value, unitTypes.number).join('')
+        }
+      }
     }
   ],
   series: [
     {
       name: 'Total',
       type: 'line',
-      stack: 'Total',
       symbol: 'circle',
+      hoverAnimation: false,
       smooth: true,
+      symbolSize: function (value, params) {
+        return symbolSizeSortChange(0, value[0])
+      },
       showSymbol: false,
       emphasis: {
         focus: 'series'
@@ -185,9 +188,11 @@ export const stackedLineChartOption = {
     {
       name: 'Inbound',
       type: 'line',
-      stack: 'Total',
       symbol: 'circle',
       smooth: true,
+      symbolSize: function (value, params) {
+        return symbolSizeSortChange(1, value[0])
+      },
       showSymbol: false,
       emphasis: {
         focus: 'series'
@@ -214,9 +219,11 @@ export const stackedLineChartOption = {
     {
       name: 'Outbound',
       type: 'line',
-      stack: 'Total',
       symbol: 'circle',
       smooth: true,
+      symbolSize: function (value, params) {
+        return symbolSizeSortChange(2, value[0])
+      },
       showSymbol: false,
       emphasis: {
         focus: 'series'
@@ -243,9 +250,11 @@ export const stackedLineChartOption = {
     {
       name: 'Internal',
       type: 'line',
-      stack: 'Total',
       symbol: 'circle',
       smooth: true,
+      symbolSize: function (value, params) {
+        return symbolSizeSortChange(3, value[0])
+      },
       showSymbol: false,
       emphasis: {
         focus: 'series'
@@ -272,9 +281,11 @@ export const stackedLineChartOption = {
     {
       name: 'Other',
       type: 'line',
-      stack: 'Total',
       symbol: 'circle',
       smooth: true,
+      symbolSize: function (value, params) {
+        return symbolSizeSortChange(4, value[0])
+      },
       showSymbol: false,
       emphasis: {
         focus: 'series'
@@ -299,4 +310,29 @@ export const stackedLineChartOption = {
       data: []
     }
   ]
+}
+const sizes = [3, 6, 8, 9, 10]
+function symbolSizeSortChange (index, time) {
+  const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
+  const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
+  const outboundData = stackedLineChartOption.series[2].data.find(t => t[0] === time)
+  const internalData = stackedLineChartOption.series[3].data.find(t => t[0] === time)
+  const otherData = stackedLineChartOption.series[4].data.find(t => t[0] === time)
+  totalData[2] = 0
+  inboundData[2] = 1
+  outboundData[2] = 2
+  internalData[2] = 3
+  otherData[2] = 4
+  const dataIntegrationArray = [totalData, inboundData, outboundData, internalData, otherData]
+  dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
+  const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
+  // stackedLineChartOption.series[sortIndex].itemStyle = {
+  //   emphasis: {
+  //     borderColor: chartColor4[sortIndex],
+  //     borderWidth: 2,
+  //     shadowColor: chartColor4[sortIndex],
+  //     shadowBlur: sizes[sortIndex] + 2
+  //   }
+  // }
+  return sizes[sortIndex]
 }

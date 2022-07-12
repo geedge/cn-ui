@@ -195,6 +195,8 @@ export const chartColor2 = ['#86B565', '#A37FA7', '#EFAFC7', '#EFC48F', '#B4B1A8
 
 export const chartColor3 = ['#00A7AB', '#7FA054', '#35ADDA', '#E48F3E', '#98709B']
 
+export const chartColor4 = ['#E5F6F6', '#F2F6EE', '#EBF7FC', '#FCF4EB', '#F5F1F5']
+
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',
   [storageKey.iso36112WorldLow]: 'worldChinaLow',

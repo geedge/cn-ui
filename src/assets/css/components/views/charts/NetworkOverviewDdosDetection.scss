@@ -1,8 +1,9 @@
 .ddos-detection {
   display: flex;
   height: 100%;
-  width: 85%;
-  margin: auto;
+  padding: 0 20px;
+  border: 1px solid #E2E5EC;
+  border-radius: 4px;
   flex-direction: column;
   justify-content: space-evenly;
   .ddos-detection-type {

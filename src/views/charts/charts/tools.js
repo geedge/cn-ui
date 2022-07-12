@@ -459,3 +459,28 @@ export function categoryBarTooltipFormatter (params, type) {
   str += '</div>'
   return str
 }
+
+export function stackedLineTooltipFormatter (params) {
+  let str = '<div>'
+  params.forEach((item, i) => {
+    const tData = item.data[0]
+    if (i === 0) {
+      str += '<div style="margin-bottom: 5px">'
+      str += dateFormatByAppearance(tData)
+      str += '</div>'
+    }
+    str += '<div class="cn-chart-tooltip">'
+    str += '<span class="cn-chart-tooltip-box">'
+    str += item.marker
+    str += `<span class="cn-chart-tooltip-content"> 
+        ${item.seriesName}
+    </span>`
+    str += '</span>'
+    str += `<span class="cn-chart-tooltip-value cn-chart-tooltip__color">
+        ${unitConvert(item.data[1], 'number').join(' ')}
+    </span>`
+    str += '</div>'
+  })
+  str += '</div>'
+  return str
+}

@@ -1,9 +1,9 @@
 <template>
   <div class="performance-event">
     <div class="performance-event-pie">
-      <div id="chart1"></div>
+      <div class="chart-drawing" id="chart1"></div>
       <div class="performance-event-pie-hr"></div>
-      <div id="chart2"></div>
+      <div class="chart-drawing" id="chart2"></div>
     </div>
     <el-button class="pie-button" size="small">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
   </div>
