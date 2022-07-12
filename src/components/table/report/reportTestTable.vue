@@ -36,9 +36,10 @@
             <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
               <div class="expand-right">
                 <div class="demo-progress">
-                  <el-progress type="circle" :percentage="computePercent(item)" :color="computePercent(item) === 100 ? '#21bf9a' : '#50b3ef'">
+                  <el-progress :stroke-width="10" type="circle" :percentage="computePercent(item)" :color="computePercent(item) === 'Failed' ? '#D8A6A6' : (computePercent(item) === 100 ? '#21bf9a' : '#50b3ef')">
                     <template #default="{ percentage }">
-                      <span style="font-size: 0.875rem;">{{ percentage }}%</span>
+                      <span style="font-size: 0.875rem;" v-if="percentage !== 'Failed'">{{ percentage + '%' }}</span>
+                      <span style="font-size: 0.875rem;color: #C14843" v-else>{{percentage}}</span>
                     </template>
                   </el-progress>
                 </div>
@@ -50,13 +51,13 @@
                   <div>{{dateFormatByAppearance(item.ctime)}}</div>
                 </div>
                 <div class="expand-icon">
-                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) < 100}" @click="reportOperation(['download', item])">
+                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['download', item])">
                     <loading :loading="loadingTableId === item.id"></loading>
                     <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
                       <use xlink:href="#cn-icon-download2"></use>
                     </svg>
                   </div>
-                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) < 100}" @click="reportOperation(['preview', item])">
+                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['preview', item])">
                     <loading :loading="loadingPreviewId === item.id"></loading>
                     <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
                       <use xlink:href="#cn-icon-preview"></use>
@@ -329,11 +330,22 @@ export default {
     },
     computePercent () {
       return function (item) {
+        if (item.state === 2) {
+          return 'Failed'
+        }
         if (item.percent === 1) {
-          if (item.state === 1) {
-            return 100
+          if (localStorage.getItem(storageKey.s3Enable) == 1) {
+            if (item.state === 1 && item.upload === 1) {
+              return 100
+            } else {
+              return 99.99
+            }
           } else {
-            return 99.99
+            if (item.state === 1) {
+              return 100
+            } else {
+              return 99.99
+            }
           }
         } else {
           return parseFloat(item.percent * 100).toFixed(2)

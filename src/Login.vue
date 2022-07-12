@@ -44,6 +44,7 @@ import { useRouter } from 'vue-router'
 import { storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
 import dayjs from 'dayjs'
+import _ from 'lodash'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
@@ -71,15 +72,19 @@ export default {
       post(api.login, { username: this.username, pin: this.pin }).then(
         res => {
           if (res.code === 200) {
-            if (!this.$_.isEmpty(res.data.lang)) {
+            if (!_.isEmpty(res.data.lang)) {
               localStorage.setItem(storageKey.language, res.data.lang)
             }
-            if (!this.$_.isEmpty(res.data.theme)) {
+            if (!_.isEmpty(res.data.theme)) {
               localStorage.setItem(storageKey.theme, res.data.theme)
+            }
+            if (!_.isEmpty(res.data.s3_upload)) {
+              localStorage.setItem(storageKey.s3Enable, res.data.s3_upload)
             }
             res.loginSuccessPath = this.$route.query.redirect
             this.loginSuccess(res)
             localStorage.setItem(storageKey.username, this.username)
+            localStorage.setItem(storageKey.token, res.data.token)
           } else if (res.code === 518005) {
             this.$message.error(this.$t('Incorrect username or password'))
             this.loading = false
@@ -105,10 +110,10 @@ export default {
       })
     },
     appearanceOut (data) {
-      if (this.$_.isEmpty(localStorage.getItem(storageKey.language))) {
+      if (_.isEmpty(localStorage.getItem(storageKey.language))) {
         localStorage.setItem(storageKey.language, data.lang || 'zh')
       }
-      if (this.$_.isEmpty(localStorage.getItem(storageKey.theme))) {
+      if (_.isEmpty(localStorage.getItem(storageKey.theme))) {
         localStorage.setItem(storageKey.theme, data.theme || 'light')
       }
       localStorage.setItem(storageKey.sysTimezone, data.timezone)
