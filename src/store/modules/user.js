@@ -42,7 +42,6 @@ const user = {
   },
   actions: {
     loginSuccess (store, res) {
-      localStorage.setItem(storageKey.token, res.data.token)
       post(api.permissions, { token: res.data.token }).then(res2 => {
         const menuList = sortByOrderNum(res2.data.menus)
         store.commit('setMenuList', menuList)
