@@ -153,6 +153,18 @@ export const listScrollPath = [
   '/detection/securityEvent'
 ]
 
+export const networkOverviewTable = [
+  'network.categories',
+  'network.providers',
+  'network.countries',
+  'network.applications',
+  'network.clientIps',
+  'network.serverIps',
+  'network.protocols',
+  'network.hosts',
+  'network.snis'
+]
+
 export const dnsServerRole = {
   RTDNS: 'RTDNS',
   TLDNS: 'TLDNS',

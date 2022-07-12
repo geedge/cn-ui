@@ -14,6 +14,9 @@
         v-else-if="chart.type === typeMapping.networkOverview.performanceEvent"
         :chart="chart"
     ></network-overview-performance-event>
+    <network-overview-tabs
+         v-else-if="chart.type === typeMapping.networkOverview.table"
+    ></network-overview-tabs>
   </div>
 </template>
 
@@ -24,6 +27,7 @@ import { typeMapping } from '@/views/charts2/chart-tools'
 import NetworkOverviewLine from '@/views/charts2/charts/NetworkOverviewLine'
 import NetworkOverviewDdosDetection from '@/views/charts2/charts/NetworkOverviewDdosDetection'
 import NetworkOverviewPerformanceEvent from '@/views/charts2/charts/NetworkOverviewPerformanceEvent'
+import NetworkOverviewTabs from '@/views/charts2/charts/NetworkOverviewTabs'
 export default {
   name: 'Chart',
   components: {
@@ -31,7 +35,8 @@ export default {
     ChartNoData,
     NetworkOverviewLine,
     NetworkOverviewDdosDetection,
-    NetworkOverviewPerformanceEvent
+    NetworkOverviewPerformanceEvent,
+    NetworkOverviewTabs
   },
   props: {
     chart: Object
