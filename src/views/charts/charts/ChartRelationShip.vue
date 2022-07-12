@@ -161,7 +161,9 @@ export default {
       loadingIp: false,
       loadingDomain: false,
       loadingApp: false,
-      tableName: ''
+      tableName: '',
+
+      firstRender: true
     }
   },
   components: {
@@ -296,10 +298,11 @@ export default {
     chartData: {
       deep: true,
       handler (n) {
-        if (this.needTimeout) {
+        if (this.needTimeout && this.firstRender) {
+          this.firstRender = false
           setTimeout(() => {
             this.init(`chart${this.chartInfo.id}`)
-          }, 3000)
+          }, 5000)
         } else {
           this.init(`chart${this.chartInfo.id}`)
         }

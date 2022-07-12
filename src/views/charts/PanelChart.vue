@@ -152,7 +152,8 @@ export default {
           }
         ] // table的所有数据
       },
-      tabHandleClickType: ''
+      tabHandleClickType: '',
+      firstRender: true
     }
   },
   computed: {
@@ -269,10 +270,11 @@ export default {
               this.errorInfo = response.msg || response.message || 'Unknown'
             }
           }).finally(() => {
-            if (this.needTimeout) {
+            if (this.needTimeout && this.firstRender) {
+              this.firstRender = false
               setTimeout(() => {
                 this.loading = false
-              }, 3000)
+              }, 5000)
             } else {
               this.loading = false
             }

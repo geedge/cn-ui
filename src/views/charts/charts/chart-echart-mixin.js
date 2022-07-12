@@ -36,7 +36,8 @@ export default {
     return {
       chartOption: null,
       chartOption2: null,
-      isResizing: false
+      isResizing: false,
+      firstRender: true
     }
   },
   methods: {
@@ -239,10 +240,11 @@ export default {
       deep: true,
       handler (n) {
         if (this.chartData && this.chartData.length > 0) {
-          if (this.needTimeout) {
+          if (this.needTimeout && this.firstRender) {
+            this.firstRender = false
             setTimeout(() => {
               this.initEcharts(`chart${this.chartInfo.id}`)
-            }, 3000)
+            }, 5000)
           } else {
             this.initEcharts(`chart${this.chartInfo.id}`)
           }
