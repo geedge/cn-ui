@@ -8,7 +8,22 @@
 }
 $--font-path: '~@/assets/css/themes/src/fonts'; // 避免ele原字体加载语句出错
 
-@import './common';
+@font-face {
+  font-family: 'NotoSansSChineseRegular';
+  src: url('~@/assets/css/font/NotoSansHans-Regular-2.ttf') format('truetype');
+  font-weight: normal;
+  font-display: auto;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Helvetica-Bold';
+  src: url('~@/assets/css/font/Helvetica-Bold-02.ttf') format('truetype');
+  font-weight: normal;
+  font-display: auto;
+  font-style: normal;
+}
+
+@import './common.scss';
 
 /* 主题 */
 

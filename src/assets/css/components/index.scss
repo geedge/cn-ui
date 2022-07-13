@@ -25,7 +25,7 @@
 @import './views/detections/detection-list/row';
 @import './views/detections/detection-overview';
 // @import './views/charts/panel';
-@import 'views/charts/chartIpOpenPortBar';
+/*@import 'views/charts/chartIpOpenPortBar';
 @import './views/charts/chartTable';
 @import './views/charts/chartSingleValue';
 @import './views/charts/chartCryptocurrencyEventList';
@@ -41,13 +41,13 @@
 @import './views/charts/chartAlarmInfo';
 @import './views/chartHeader';
 @import './views/charts/chartMap';
-@import 'views/charts/chartRelationShipList';
+@import 'views/charts/chartRelationShipList';*/
 @import './views/report/builtinReport';
 @import './components/rightBox/report/builtinReportBox';
 
 @import './views/charts2/panel';
-@import 'views/charts/NetworkOverviewLine';
-@import 'views/charts/NetworkOverviewDdosDetection';
-@import 'views/charts/NetworkOverviewPerformanceEvent';
+@import 'views/charts2/networkOverviewLine';
+@import 'views/charts2/networkOverviewDdosDetection';
+@import 'views/charts2/networkOverviewPerformanceEvent';
 @import 'views/charts2/networkOverviewTabs';
 //@import '../chart';
