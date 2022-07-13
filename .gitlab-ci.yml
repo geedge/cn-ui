@@ -42,7 +42,7 @@ build_project:
     - echo "npm run build"
     - npm run build
   only:
-    - dev_copy
+    - dev
     - tags
   tags:
     - GN-XXG-Server
@@ -58,7 +58,7 @@ build_image:
     - sudo docker push 192.168.40.153:9080/cyber-narrator/cn-ui:$CNUI_TAG
   when: on_success
   only:
-    - dev_copy
+    - dev
   tags:
     - GN-XXG-Server
 
