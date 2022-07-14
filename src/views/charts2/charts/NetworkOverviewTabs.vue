@@ -4,7 +4,7 @@
              class="cn-chart__tabs"
              @tab-click="handleClick"
     >
-      <el-tab-pane  v-for="(tab,index) in networkOverviewTable"
+      <el-tab-pane  v-for="(tab,index) in networkOverviewTabs"
                     :label="$t(tab)"
                     :name="tab"
                     :key="index"
@@ -54,11 +54,12 @@
     </el-tabs>
     <div class="tab-search" >
       <div class="search-select" >
-        <span class="margin-r-10">{{$t('network.metric')}}:</span>
+        <span>{{$t('network.metric')}}:</span>
         <el-select v-model="metric"
                    class="option__select select-column"
                    placeholder=""
                    popper-class="option-popper"
+                   :popper-append-to-body="false"
                    size="mini">
           <el-option
                   v-for="item in options"
@@ -69,7 +70,7 @@
         </el-select>
       </div>
       <div class="search-customize-tab">
-        <i class="cn-icon-gear cn-icon"></i>  {{$t('network.customizeTabs')}}
+        <i class="cn-icon-gear cn-icon icon-gear"></i>  {{$t('network.customizeTabs')}}
       </div>
 
     </div>
@@ -79,10 +80,10 @@
 <script>
 import _ from 'lodash'
 import { ref } from 'vue'
-import { networkOverviewTable } from '@/utils/constants'
+import { networkOverviewTabs } from '@/utils/constants'
 
 export default {
-  name: 'NetworkOverviewTable',
+  name: 'NetworkOverviewTabs',
   data () {
     return {
       metric: '',
@@ -90,6 +91,14 @@ export default {
         {
           value: 'Bits',
           label: 'Bits'
+        },
+        {
+          value: 'Bits2',
+          label: 'Bits2'
+        },
+        {
+          value: 'Bits3',
+          label: 'Bits3'
         }
       ],
       tableData: [
@@ -221,21 +230,21 @@ export default {
       // this.activeTab = tab.paneName
     },
     tableCellStyle ({ row, column, rowIndex, columnIndex }) {
-      let style = 'border-right:0px;padding:7px 0 !important;'
+      let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;'
       if (rowIndex === this.tableData.length - 1) {
         style = style + 'border-bottom:0px !important;'
       }
       if (columnIndex === 0) {
-        style = style + 'color:#69a7de;'
+        style = style + 'color:#046ECA;'
       }
       return style
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
-      return 'border-right:0px;font-size:12px;color:#656565;padding:7px 0 !important;'
+      return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
     }
   },
   setup (props) {
-    let activeTab = ref(networkOverviewTable[0])
+    let activeTab = ref(networkOverviewTabs[0])
     if (props.chartInfo) {
       if (!_.isEmpty(props.chartInfo.children)) {
         activeTab = `${props.chartInfo.children[0].id}`
@@ -245,7 +254,7 @@ export default {
 
     return {
       activeTab,
-      networkOverviewTable
+      networkOverviewTabs
 
       // dataList
     }

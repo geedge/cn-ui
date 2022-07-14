@@ -154,7 +154,7 @@ export const listScrollPath = [
   '/detection/securityEvent'
 ]
 
-export const networkOverviewTable = [
+export const networkOverviewTabs = [
   'network.categories',
   'network.providers',
   'network.countries',
