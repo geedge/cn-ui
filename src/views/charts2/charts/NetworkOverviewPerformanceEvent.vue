@@ -61,12 +61,17 @@ export default {
         this.chartOption2.series[0].data = this.chartData2
         this.myChart2.setOption(pieChartOption2)
       }
+    },
+    resize () {
+      this.myChart.resize()
+      this.myChart2.resize()
     }
   },
   mounted () {
     this.timer = setTimeout(() => {
       this.init()
     }, 100)
+    window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {
     clearTimeout(this.timer)

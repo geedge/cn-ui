@@ -5907,7 +5907,6 @@ export default {
         return str
       }
       this.myChart.setOption(this.chartOption)
-      this.myChart.resize()
     },
 
     dispatchLegendSelectAction (name) {
@@ -5954,12 +5953,16 @@ export default {
           })
         }
       }
+    },
+    resize () {
+      this.myChart.resize()
     }
   },
   mounted () {
     this.timer = setTimeout(() => {
       this.init()
     }, 100)
+    window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {
     clearTimeout(this.timer)
