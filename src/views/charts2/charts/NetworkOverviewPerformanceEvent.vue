@@ -1,16 +1,19 @@
 <template>
   <div class="performance-event">
-    <div class="performance-event-pie">
-      <div class="chart-drawing" id="chart1"></div>
-      <div class="performance-event-pie-hr"></div>
-      <div class="chart-drawing" id="chart2"></div>
+    <div class="performance-event-title"><i class="cn-icon cn-icon-a-NetworkPerformanceEvent"></i>{{$t('network.networkPerEvent')}}</div>
+    <div class="performance-event-value">
+      <div class="performance-event-pie">
+        <div class="chart-drawing" id="chart1"></div>
+        <div class="performance-event-pie-hr"></div>
+        <div class="chart-drawing" id="chart2"></div>
+      </div>
+      <el-button class="pie-button" size="small">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
     </div>
-    <el-button class="pie-button" size="small">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
   </div>
 </template>
 
 <script>
-import { pieChartOption1, pieChartOption2 } from '@/views/charts2/charts/options/pie.js'
+import { pieChartOption1, pieChartOption2 } from '@/views/charts2/charts/options/echartOption.js'
 import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 export default {
@@ -38,7 +41,8 @@ export default {
         { value: 580, name: '333', describe: 'name3' },
         { value: 484, name: '444', describe: 'name4' },
         { value: 300, name: '555', describe: 'name5' }
-      ]
+      ],
+      timer: null
     }
   },
   methods: {
@@ -60,7 +64,12 @@ export default {
     }
   },
   mounted () {
-    this.init()
+    this.timer = setTimeout(() => {
+      this.init()
+    }, 100)
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
   }
 }
 </script>

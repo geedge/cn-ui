@@ -108,18 +108,14 @@ export const pieChartOption2 = {
     }
   ]
 }
+const sizes = [3, 6, 8, 9, 10]
 export const stackedLineChartOption = {
   color: chartColor3,
   tooltip: {
     trigger: 'axis'
   },
   legend: {
-    type: 'scroll',
-    top: 10,
-    left: 20,
-    itemGap: 60,
-    itemWidth: 11,
-    itemHeight: 14
+    show: false
   },
   grid: {
     top: '30%',
@@ -154,10 +150,8 @@ export const stackedLineChartOption = {
   ],
   series: [
     {
-      name: 'Total',
       type: 'line',
       symbol: 'circle',
-      hoverAnimation: false,
       smooth: true,
       symbolSize: function (value, params) {
         return symbolSizeSortChange(0, value[0])
@@ -169,6 +163,14 @@ export const stackedLineChartOption = {
       lineStyle: {
         color: chartColor3[0],
         width: 1
+      },
+      itemStyle: {
+        emphasis: {
+          borderColor: chartColor4[0],
+          borderWidth: 2,
+          shadowColor: chartColor4[0],
+          shadowBlur: sizes[0] + 2
+        }
       },
       areaStyle: {
         opacity: 0.1,
@@ -186,7 +188,6 @@ export const stackedLineChartOption = {
       data: []
     },
     {
-      name: 'Inbound',
       type: 'line',
       symbol: 'circle',
       smooth: true,
@@ -201,6 +202,14 @@ export const stackedLineChartOption = {
         color: chartColor3[1],
         width: 1
       },
+      itemStyle: {
+        emphasis: {
+          borderColor: chartColor4[1],
+          borderWidth: 2,
+          shadowColor: chartColor4[1],
+          shadowBlur: sizes[1] + 2
+        }
+      },
       areaStyle: {
         opacity: 0.1,
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -217,7 +226,6 @@ export const stackedLineChartOption = {
       data: []
     },
     {
-      name: 'Outbound',
       type: 'line',
       symbol: 'circle',
       smooth: true,
@@ -232,6 +240,14 @@ export const stackedLineChartOption = {
         color: chartColor3[2],
         width: 1
       },
+      itemStyle: {
+        emphasis: {
+          borderColor: chartColor4[2],
+          borderWidth: 2,
+          shadowColor: chartColor4[2],
+          shadowBlur: sizes[2] + 2
+        }
+      },
       areaStyle: {
         opacity: 0.1,
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -248,7 +264,6 @@ export const stackedLineChartOption = {
       data: []
     },
     {
-      name: 'Internal',
       type: 'line',
       symbol: 'circle',
       smooth: true,
@@ -263,6 +278,14 @@ export const stackedLineChartOption = {
         color: chartColor3[3],
         width: 1
       },
+      itemStyle: {
+        emphasis: {
+          borderColor: chartColor4[3],
+          borderWidth: 2,
+          shadowColor: chartColor4[3],
+          shadowBlur: sizes[3] + 2
+        }
+      },
       areaStyle: {
         opacity: 0.1,
         color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -279,7 +302,6 @@ export const stackedLineChartOption = {
       data: []
     },
     {
-      name: 'Other',
       type: 'line',
       symbol: 'circle',
       smooth: true,
@@ -293,6 +315,14 @@ export const stackedLineChartOption = {
       lineStyle: {
         color: chartColor3[4],
         width: 1
+      },
+      itemStyle: {
+        emphasis: {
+          borderColor: chartColor4[4],
+          borderWidth: 2,
+          shadowColor: chartColor4[4],
+          shadowBlur: sizes[4] + 2
+        }
       },
       areaStyle: {
         opacity: 0.1,
@@ -311,7 +341,6 @@ export const stackedLineChartOption = {
     }
   ]
 }
-const sizes = [3, 6, 8, 9, 10]
 function symbolSizeSortChange (index, time) {
   const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
   const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
@@ -326,13 +355,5 @@ function symbolSizeSortChange (index, time) {
   const dataIntegrationArray = [totalData, inboundData, outboundData, internalData, otherData]
   dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
   const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
-  // stackedLineChartOption.series[sortIndex].itemStyle = {
-  //   emphasis: {
-  //     borderColor: chartColor4[sortIndex],
-  //     borderWidth: 2,
-  //     shadowColor: chartColor4[sortIndex],
-  //     shadowBlur: sizes[sortIndex] + 2
-  //   }
-  // }
   return sizes[sortIndex]
 }

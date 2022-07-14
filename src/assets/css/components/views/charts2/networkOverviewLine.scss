@@ -5,6 +5,8 @@
   border: 1px solid #E2E5EC;
   border-radius: 4px;
   .chart-drawing {
+    height: 100%;
+    width: 100%;
     div:nth-of-type(2) {
       .cn-chart-tooltip {
         display: flex;
@@ -21,13 +23,9 @@
       }
     }
   }
-  #chart {
-    width: 1288px;
-    height: 340px;
-  }
   .line-select {
     line-height: 24px;
-    top: 10px;
+    top: 20px;
     right: 20px;
     display: flex;
     position: absolute;
@@ -89,16 +87,16 @@
   }
   .line-value {
     position: absolute;
-    top: 30px;
+    top: 20px;
     left: 27px;
-    height: 34px;
-    line-height: 34px;
     display: flex;
     .line-value-mpackets {
       margin-right: 30px;
+      display: flex;
+      flex-direction: column;
       span:nth-of-type(1) {
         font-family: 'Helvetica-Bold';
-        font-size: 20px;
+        font-size: 28px;
         color: #353636;
         margin-right: 4px;
       }
@@ -106,6 +104,43 @@
         font-size: 12px;
         color: #575757;
         font-weight: 400;
+      }
+      .table-below-box--inactivated.line-value-mpackets-name {
+        color: #ccc;
+        div:nth-of-type(1) {
+          background-color: #ccc !important;
+        }
+      }
+      .line-value-mpackets-name {
+        position: relative;
+        display: flex;
+        .mpackets-name {
+          flex: 1;
+          padding-left: 17px;
+        }
+        .total,.inbound,.outbound,.internal,.other {
+          width: 14px;
+          height: 14px;
+          border-radius: 50%;
+          position: absolute;
+          top: 50%;
+          margin-top: -7px;
+        }
+        .total {
+          background: #00A7AB;
+        }
+        .inbound {
+          background: #7FA054;
+        }
+        .outbound {
+          background: #35ADDA;
+        }
+        .internal {
+          background: #E48F3E;
+        }
+        .other {
+          background: #98709B;
+        }
       }
     }
   }

@@ -1,6 +1,15 @@
 <template>
   <div class="line">
     <div class="chart-drawing" id="chart"></div>
+    <div class="line-value">
+      <div class="line-value-mpackets" v-for="(item, index) in mpackets" :key="item">
+        <div class="line-value-mpackets-name" :class="{'table-below-box--inactivated': !item.active}" @click="legendSelectChange(index)">
+          <div :class="item.class"></div>
+          <div class="mpackets-name">{{$t(item.name)}}</div>
+        </div>
+        <div><span>{{unitConvert(item.number, unitTypes.number)[0]}}</span>{{unitConvert(item.number, unitTypes.number)[1]}}<span>packets/s</span></div>
+      </div>
+    </div>
     <div class="line-select">
       <div class="line-select-metric">
         <span>{{$t('network.metric')}}:</span>
@@ -31,17 +40,12 @@
         </div>
       </div>
     </div>
-    <div class="line-value">
-      <div class="line-value-mpackets" v-for="item in mpackets" :key="item">
-        <span>{{unitConvert(item, unitTypes.number)[0]}}</span>{{unitConvert(item, unitTypes.number)[1]}}<span>packets/s</span>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import { stackedLineChartOption } from '@/views/charts2/charts/options/pie'
+import { stackedLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants.js'
 import { shallowRef } from 'vue'
@@ -88,10 +92,17 @@ export default {
         }
       ],
       value2: '',
-      mpackets: [4212211, 111, 112, 111, 1211],
+      mpackets: [
+        { number: 4212211, name: 'network.total', class: 'total', active: true },
+        { number: 111, name: 'network.inbound', class: 'inbound', active: true },
+        { number: 112, name: 'network.outbound' , class: 'outbound', active: true },
+        { number: 111, name: 'network.internal', class: 'internal', active: true },
+        { number: 1211, name: 'network.other', class: 'other', active: true }
+      ],
       unitConvert,
       unitTypes,
-      chartDateObject: []
+      chartDateObject: [],
+      timer: null
     }
   },
   methods: {
@@ -104,139 +115,139 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 10000000
+              rate: 11000000
             },
             {
               stat_time: 1652544300000,
-              rate: 20000000
+              rate: 97705191
             },
             {
               stat_time: 1652544600000,
-              rate: 30000000
+              rate: 54907153
             },
             {
               stat_time: 1652544900000,
-              rate: 53932331
+              rate: 23932331
             },
             {
               stat_time: 1652545200000,
-              rate: 40000000
+              rate: 70820084
             },
             {
               stat_time: 1652545500000,
-              rate: 11111111
+              rate: 48744453
             },
             {
               stat_time: 1652545800000,
-              rate: 11111111
+              rate: 46345590
             },
             {
               stat_time: 1652546100000,
-              rate: 11111111
+              rate: 55092019
             },
             {
               stat_time: 1652546400000,
-              rate: 11111111
+              rate: 43861024
             },
             {
               stat_time: 1652546700000,
-              rate: 8000000
+              rate: 42635307
             },
             {
               stat_time: 1652547000000,
-              rate: 11111111
+              rate: 39513137
             },
             {
               stat_time: 1652547300000,
-              rate: 11111111
+              rate: 37251858
             },
             {
               stat_time: 1652547600000,
-              rate: 11111111
+              rate: 35641395
             },
             {
               stat_time: 1652547900000,
-              rate: 11111111
+              rate: 42593269
             },
             {
               stat_time: 1652548200000,
-              rate: 9000000
+              rate: 29854584
             },
             {
               stat_time: 1652548500000,
-              rate: 11111111
+              rate: 26270305
             },
             {
               stat_time: 1652548800000,
-              rate: 11111111
+              rate: 24115244
             },
             {
               stat_time: 1652549100000,
-              rate: 11111111
+              rate: 22159263
             },
             {
               stat_time: 1652549400000,
-              rate: 11111111
+              rate: 20260208
             },
             {
               stat_time: 1652549700000,
-              rate: 11111111
+              rate: 19824773
             },
             {
               stat_time: 1652550000000,
-              rate: 11111111
+              rate: 19364713
             },
             {
               stat_time: 1652550300000,
-              rate: 11111111
+              rate: 18511395
             },
             {
               stat_time: 1652550600000,
-              rate: 11111111
+              rate: 16811691
             },
             {
               stat_time: 1652550900000,
-              rate: 11111111
+              rate: 14849281
             },
             {
               stat_time: 1652551200000,
-              rate: 11111111
+              rate: 14545834
             },
             {
               stat_time: 1652551500000,
-              rate: 11111111
+              rate: 12822215
             },
             {
               stat_time: 1652551800000,
-              rate: 11111111
+              rate: 12061919
             },
             {
               stat_time: 1652552100000,
-              rate: 11111111
+              rate: 11483505
             },
             {
               stat_time: 1652552400000,
-              rate: 11111111
+              rate: 8830222
             },
             {
               stat_time: 1652552700000,
-              rate: 11111111
+              rate: 8316519
             },
             {
               stat_time: 1652553000000,
-              rate: 11111111
+              rate: 8039651
             },
             {
               stat_time: 1652553300000,
-              rate: 11111111
+              rate: 7780729
             },
             {
               stat_time: 1652553600000,
-              rate: 11111111
+              rate: 6873645
             },
             {
               stat_time: 1652553900000,
-              rate: 11111111
+              rate: 6960513
             },
             {
               stat_time: 1652554200000,
@@ -244,7 +255,7 @@ export default {
             },
             {
               stat_time: 1652554500000,
-              rate: 11111111
+              rate: 6319387
             },
             {
               stat_time: 1652554800000,
@@ -452,7 +463,7 @@ export default {
             },
             {
               stat_time: 1652570100000,
-              rate: 11730266
+              rate: 41730266
             },
             {
               stat_time: 1652570400000,
@@ -472,11 +483,11 @@ export default {
             },
             {
               stat_time: 1652571600000,
-              rate: 33441235
+              rate: 23441235
             },
             {
               stat_time: 1652571900000,
-              rate: 33409372
+              rate: 23409372
             },
             {
               stat_time: 1652572200000,
@@ -5881,64 +5892,77 @@ export default {
           ]
         }
       ]
-      if (this.chartDateObject.length > 1) { // 有多条曲线
-        this.myChart.on('legendselectchanged', this.handleLegendClick)
-      }
-      this.chartOption.series.forEach((t, i) => {
-        t.data = this.chartDateObject[i].dateArr.map(t => [t.stat_time, t.rate])
+      this.chartOption.series = this.chartOption.series.map((t, i) => {
+        return {
+          ...t,
+          name: this.mpackets[i].name,
+          data: this.chartDateObject[i].dateArr.map(t => [t.stat_time, t.rate])
+        }
       })
       this.chartOption.tooltip.formatter = (params) => {
+        params.forEach(t => {
+          t.seriesName = this.$t(t.seriesName)
+        })
         const str = stackedLineTooltipFormatter(params)
         return str
       }
       this.myChart.setOption(this.chartOption)
+      this.myChart.resize()
     },
-    // 点击前，高亮legend个数
-    getSelectedNum (params) {
-      let selectedNum = 0
-      const legendItem = params.selected
-      for (const name in legendItem) {
-        if (name === params.name) {
-          if (!legendItem[name]) {
-            selectedNum = selectedNum + 1
-          }
-        } else {
-          if (legendItem[name]) {
-            selectedNum = selectedNum + 1
-          }
-        }
-      }
-      return selectedNum
-    },
-    // 自定义legend的点击事件:此方法只处理多条曲线的情况（单条曲线正常切换legend和曲线）
-    handleLegendClick (params) {
-      // legend点击事件
-      const legendNum = Object.keys(params.selected).length
-      const selectedNum = this.getSelectedNum(params)
 
-      const legendItem = params.selected
-      if (selectedNum === legendNum) { // 点击前：全部曲线高亮
-        for (const name in legendItem) {
-          if (name === params.name) {
-            legendItem[name] = true
-          } else {
-            legendItem[name] = false
-          }
-        }
-      } else if (selectedNum === 1 && !params.selected[params.name]) { // 点击前：多条曲线，且只有一条曲线高亮时
-        for (const name in legendItem) {
-          legendItem[name] = true
+    dispatchLegendSelectAction (name) {
+      this.myChart.dispatchAction({
+        type: 'legendSelect',
+        name: name
+      })
+    },
+    dispatchLegendUnSelectAction (name) {
+      this.myChart.dispatchAction({
+        type: 'legendUnSelect',
+        name: name
+      })
+    },
+    legendSelectChange (index) {
+      const legendNum = this.mpackets.length
+      if (legendNum > 1) {
+        const selectedNum = this.mpackets.filter(item => {
+          return item.active === true
+        }).length // 点击前，高亮legend个数
+        if (selectedNum === legendNum) { // 全部曲线高亮时
+          this.mpackets.forEach((item, indexTmp) => {
+            if (indexTmp === index) {
+              item.active = true
+              this.dispatchLegendSelectAction(item.name)
+            } else {
+              item.active = false
+              this.dispatchLegendUnSelectAction(item.name)
+            }
+          })
+        } else if (selectedNum === 1 && this.mpackets[index].active) { // 多条曲线，且只有一条曲线高亮, 且点击的曲线为高亮曲线时
+          this.mpackets.forEach((item) => {
+            item.active = true
+            this.dispatchLegendSelectAction(item.name)
+          })
+        } else {
+          this.mpackets[index].active = !this.mpackets[index].active
+          this.mpackets.forEach((item, i) => {
+            if (item.active) {
+              this.dispatchLegendSelectAction(item.name)
+            } else {
+              this.dispatchLegendUnSelectAction(item.name)
+            }
+          })
         }
       }
-      this.myChart.setOption({
-        legend: {
-          selected: legendItem
-        }
-      })
     }
   },
   mounted () {
-    this.init()
+    this.timer = setTimeout(() => {
+      this.init()
+    }, 100)
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
   }
 }
 </script>

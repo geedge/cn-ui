@@ -78,6 +78,10 @@ export const legendMapping = {
   clientIpCount: i18n.global.t('entity.ip.clientIpCount'),
   serverIpCount: i18n.global.t('entity.ip.serverIpCount'),
   appCount: i18n.global.t('entity.ip.appCount'),
-  domainCount: i18n.global.t('entity.ip.domainCount')
-
+  domainCount: i18n.global.t('entity.ip.domainCount'),
+  network_total: i18n.global.t('network.total'),
+  network_inbound: i18n.global.t('network.inbound'),
+  network_outbound: i18n.global.t('network.outbound'),
+  network_internal: i18n.global.t('network.internal'),
+  network_other: i18n.global.t('network.other')
 }
