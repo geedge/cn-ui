@@ -7,7 +7,7 @@
           <div :class="item.class"></div>
           <div class="mpackets-name">{{$t(item.name)}}</div>
         </div>
-        <div><span>{{unitConvert(item.number, unitTypes.number)[0]}}</span>{{unitConvert(item.number, unitTypes.number)[1]}}<span>packets/s</span></div>
+        <div><span>{{unitConvert(item.number, unitTypes.number)[0]}}</span><span>{{unitConvert(item.number, unitTypes.number)[1]}}packets/s</span></div>
       </div>
     </div>
     <div class="line-select">

@@ -7,18 +7,16 @@
   .chart-drawing {
     height: 100%;
     width: 100%;
-    div:nth-of-type(2) {
+    .echarts-tooltip.echarts-tooltip-dark {
       .cn-chart-tooltip {
         display: flex;
         justify-content: space-between;
-        .cn-chart-tooltip-box {
-          .cn-chart-tooltip__color.cn-chart-tooltip-value {
-            font-family: NotoSansHans-Medium;
-            font-size: 12px;
-            color: #353636;
-            line-height: 12px;
-            font-weight: 500;
-          }
+        .cn-chart-tooltip-value.cn-chart-tooltip__color {
+          font-family: NotoSansHans-Medium;
+          font-size: 12px;
+          color: #353636;
+          line-height: 12px;
+          font-weight: 600;
         }
       }
     }
@@ -116,7 +114,7 @@
         display: flex;
         .mpackets-name {
           flex: 1;
-          padding-left: 17px;
+          padding-left: 19px;
         }
         .total,.inbound,.outbound,.internal,.other {
           width: 14px;

@@ -16,7 +16,8 @@ export const pieChartOption1 = {
       rich: {
         a: {
           width: 35,
-          align: 'left'
+          align: 'left',
+          fontWeight: 'bold'
         },
         b: {
           width: 6,
@@ -68,7 +69,8 @@ export const pieChartOption2 = {
       rich: {
         a: {
           width: 35,
-          align: 'left'
+          align: 'left',
+          fontWeight: 'bold'
         },
         b: {
           width: 6,
@@ -112,7 +114,8 @@ const sizes = [3, 6, 8, 9, 10]
 export const stackedLineChartOption = {
   color: chartColor3,
   tooltip: {
-    trigger: 'axis'
+    trigger: 'axis',
+    className: 'echarts-tooltip echarts-tooltip-dark'
   },
   legend: {
     show: false
