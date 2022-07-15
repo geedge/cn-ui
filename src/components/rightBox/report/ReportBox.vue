@@ -246,7 +246,7 @@
                        size="small"
             >
               <template #prefix>
-                  {{param.key}}
+                  {{$t(param.i18n)}}
               </template>
               <template v-for="paramOption in paramsOptions">
                 <template v-if="paramOption.key === param.key">
@@ -407,9 +407,10 @@ export default {
       handler (n) {
         const category = this.categoryList.find(c => c.id === n)
         if (category && category.config && category.config.queryParam) {
-          this.editObject.categoryParams = Object.keys(category.config.queryParam).map(key => {
-            return { key: key, value: category.config.queryParam[key] }
-          })
+          this.editObject.categoryParams = category.config.queryParam
+          if (!this.editObject.id) {
+            this.editObject.categoryParams.forEach(t => {t.value = ''})
+          }
           this.loadParamOptions()
         } else {
           this.editObject.categoryParams = []
@@ -444,10 +445,8 @@ export default {
           this.editObject.schedulerEnd = dateFormat(this.editObject.schedulerEnd, this.dateFormat)
         }
         if (n.id) {
-          if (n.config.queryParam && Object.keys(n.config.queryParam).length > 0) {
-            this.editObject.categoryParams = Object.keys(n.config.queryParam).map(key => {
-              return { key: key, value: n.config.queryParam[key] }
-            })
+          if (n.config.queryParam && n.config.queryParam.length > 0) {
+            this.editObject.categoryParams = n.config.queryParam
           }
         } else if (this.currentCategoryId) {
           this.editObject.categoryId = this.currentCategoryId
@@ -550,11 +549,7 @@ export default {
             copyObject.schedulerEnd = schedulerEnd
           }
           if (this.editObject.categoryParams.length > 0) {
-            const queryParam = {}
-            this.editObject.categoryParams.forEach(p => {
-              queryParam[p.key] = p.value
-            })
-            copyObject.config.queryParam = queryParam
+            copyObject.config.queryParam = this.editObject.categoryParams
           }
 
           // 校验scheduleConfig
