@@ -41,7 +41,7 @@
                     <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
-                    <i class="cn-icon-constant cn-icon"></i>
+                    <i class="cn-icon-constant cn-icon" style="line-height: 20px;"></i>
                   </div>
                 </template>
               </div>
