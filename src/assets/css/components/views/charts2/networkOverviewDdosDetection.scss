@@ -24,7 +24,8 @@
     .ddos-detection-type {
       display: flex;
       justify-content: space-between;
-      margin: 20px 0;
+      height: calc(100% - 65px);
+      margin-top: 20px;
       .ddos-detection-type-value {
         display: flex;
         flex-direction: column;

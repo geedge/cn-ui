@@ -1,5 +1,5 @@
 <template>
-  <div class="line">
+  <div class="line network">
     <div class="chart-drawing" id="chart"></div>
     <div class="line-value">
       <div class="line-value-mpackets" v-for="(item, index) in mpackets" :key="item">
