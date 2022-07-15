@@ -7,7 +7,7 @@
         text-color="#ffffff">
       <el-menu-item index="logo">
         <div id="home-to-overview" class="logo link">
-          <img alt="loading..." height="32" :src="logo?logo:require('../../assets/img/cn-logo-medium.svg')"/>
+          <img alt="loading..." height="32" :src="logo?logo:require('../../assets/img/logo.svg')"/>
           <span class="system-name">{{systemName && systemName !== 'undefined' ? systemName : 'dashboard.overview.contentTitle'}}</span>
         </div>
       </el-menu-item>
@@ -108,9 +108,6 @@ export default {
     },
     route () {
       return this.$route.path
-    },
-    isShrink () {
-      return this.$store.getters.getIsShrink
     }
   },
   methods: {

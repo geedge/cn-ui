@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1657611740064') format('woff2'),
-       url('iconfont.woff?t=1657611740064') format('woff'),
-       url('iconfont.ttf?t=1657611740064') format('truetype');
+  src: url('iconfont.woff2?t=1657871017803') format('woff2'),
+       url('iconfont.woff?t=1657871017803') format('woff'),
+       url('iconfont.ttf?t=1657871017803') format('truetype');
 }
 
 .cn-icon {
@@ -13,27 +13,63 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.cn-icon-Detection:before {
+.cn-icon-a-SocialNetwork:before {
+  content: "\e79b";
+}
+
+.cn-icon-Video:before {
+  content: "\e79c";
+}
+
+.cn-icon-VoIP:before {
+  content: "\e79d";
+}
+
+.cn-icon-Email:before {
+  content: "\e79e";
+}
+
+.cn-icon-Gaming:before {
+  content: "\e79f";
+}
+
+.cn-icon-a-FileSharing:before {
+  content: "\e7a0";
+}
+
+.cn-icon-Location:before {
+  content: "\e798";
+}
+
+.cn-icon-Events:before {
+  content: "\e799";
+}
+
+.cn-icon-Overview:before {
+  content: "\e79a";
+}
+
+.cn-icon-detection1:before {
   content: "\e792";
 }
 
-.cn-icon-Entity:before {
+.cn-icon-entity:before {
   content: "\e793";
 }
 
-.cn-icon-Case:before {
+.cn-icon-case:before {
   content: "\e794";
 }
 
-.cn-icon-Hunt:before {
+.cn-icon-hunt:before {
   content: "\e795";
 }
 
-.cn-icon-Report1:before {
+.cn-icon-report1:before {
   content: "\e796";
 }
 
-.cn-icon-a-KnowledgeBase:before {
+.cn-icon-knowledge-base:before {
   content: "\e797";
 }
 

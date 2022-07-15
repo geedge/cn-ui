@@ -1,60 +1,74 @@
 <template>
   <div class="cn-header">
-    <!--导航面包屑-->
-    <div class="header__left">
-      <span @click="shrink" class="shrink-button" :class="{'shrink-button--collapse': isShrink}"><i class="cn-icon cn-icon-expand"></i></span>
-      <el-breadcrumb class="header__left-breadcrumb" separator="/">
+    <div class="cn-header__banner">
+      <div class="banner__left">
+        <span @click="shrink" class="shrink-button" :class="{'shrink-button--collapse': showMenu}"><i class="cn-icon cn-icon-navigation"></i></span>
+        <img alt="loading..." height="26" :src="logo?logo:require('../../assets/img/logo-header.svg')"/>
+      </div>
+      <!--个人操作-->
+      <div class="personal">
+        <el-dropdown>
+          <div class="header-menu--item"><i class="cn-icon cn-icon-language"></i></div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>
+                <div id="header-to-english" :style="language === 'en'?'color:#0091ff':''" @click="changeLocal('en')">English</div>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <div id="header-to-chinese" :style="language === 'cn'?'color:#0091ff':''" @click="changeLocal('cn')">中文</div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-dropdown>
+          <div class='login-user header-menu--item'>{{username}}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item>
+                <div id="header-to-changepin" @click="showPinDialog">{{$t('overall.changePassword')}}</div>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <div id="header-to-logout" @click="logout">{{$t('overall.logout')}}</div>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+    </div>
+    <div class="cn-header__nav">
+      <i class="cn-icon cn-icon-a-NetworkAnalytics"></i>
+      <el-breadcrumb class="header__left-breadcrumb" separator=">">
         <el-breadcrumb-item class="header__left-breadcrumb-item" :title="item" v-for="item in breadcrumb" :key="item">
           {{item}}
         </el-breadcrumb-item>
       </el-breadcrumb>
-      <el-select
-          size="small"
-          v-model="from"
-          v-if="showEntityTypeSelector"
-          style="padding-left: 25px; width: 140px;"
-          class="entity-selector"
-      >
-        <el-option v-for="(value, key) in entityType" :label="value" :key="key" :value="key">
-          <template v-if="value === entityType.ip"><i style="color: #23BF9A;" class="cn-icon cn-icon-ip"></i></template>
-          <template v-else-if="value === entityType.domain"><i style="color: #23BF9A;" class="cn-icon cn-icon-domain"></i></template>
-          <template v-else-if="value === entityType.app"><i style="color: #23BF9A;" class="cn-icon cn-icon-app2"></i></template>
-          {{value}}
-        </el-option>
-        <template #prefix>
-          <i style="color: #23BF9A;" class="cn-icon" :class="`cn-icon-${from}`"></i>
-        </template>
-      </el-select>
     </div>
-    <!--个人操作-->
-    <div class="personal">
-      <el-dropdown>
-        <div class="header-menu--item"><i class="cn-icon cn-icon-language"></i></div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item>
-              <div id="header-to-english" :style="language === 'en'?'color:#0091ff':''" @click="changeLocal('en')">English</div>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <div id="header-to-chinese" :style="language === 'cn'?'color:#0091ff':''" @click="changeLocal('cn')">中文</div>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-dropdown>
-        <div class='login-user header-menu--item'>{{username}}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item>
-              <div id="header-to-changepin" @click="showPinDialog">{{$t('overall.changePassword')}}</div>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <div id="header-to-logout" @click="logout">{{$t('overall.logout')}}</div>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
+    <el-drawer
+        v-model="showMenu"
+        direction="ttb"
+        custom-class="cn-menu"
+        modal-class="cn-menu-modal"
+        :with-header="false"
+        :show-close="false"
+    >
+      <div class="cn-menu__left">
+        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id">
+          <i :class="menu.icon"></i>
+          <span>{{$t(menu.i18n || menu.name)}}</span>
+          <i class="cn-icon cn-icon-right"></i>
+        </div>
+      </div>
+      <div class="cn-menu__middle">
+        <div class="middle-menus middle-menus--network-analytics">
+          <div class="middle-menus__header">{{$t('overall.networkAnalytics')}}</div>
+          <div class="middle-menus__body">
+            <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
+              <div class="middle-menu" v-if="index < 5" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </el-drawer>
     <el-dialog v-model="showChangePin"
                width="30%"
                :before-close="handleClose">
@@ -117,10 +131,30 @@ export default {
         oldPwd: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }],
         newPwd: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }],
         newPwd2: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }, { validator: passwordComparison, trigger: 'blur' }]
-      }
+      },
+      showMenu: false
     }
   },
   computed: {
+    networkAnalyticsMenu () {
+      return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
+    },
+    otherMenu () {
+      return this.$store.getters.menuList.filter(menu => menu.code !== 'networkAnalytics')
+
+      /* function excludeButton (menu) {
+        for (let i = 0; i < menu.length; i++) {
+          if (menu[i].type === 2) {
+            menu.splice(i, 1)
+            i--
+          } else {
+            if (menu[i].children && menu[i].children.length > 0) {
+              excludeButton(menu[i].children)
+            }
+          }
+        }
+      } */
+    },
     breadcrumb () {
       const breadcrumbMap = []
       this.$store.getters.menuList.forEach(menu => {
@@ -142,11 +176,11 @@ export default {
     showEntityTypeSelector () {
       return this.$store.getters.getShowEntityTypeSelector
     },
-    isShrink () {
-      return this.$store.getters.getIsShrink
-    },
     storeFrom () {
       return this.$store.getters.from
+    },
+    route () {
+      return this.$route.path
     }
   },
   watch: {
@@ -193,7 +227,7 @@ export default {
       })
     },
     shrink () {
-      this.$store.commit('isShrink', !this.isShrink)
+      this.showMenu = !this.showMenu
     },
     submit () {
       this.$refs.changePassForm.validate((valid) => {
@@ -210,6 +244,22 @@ export default {
           return false
         }
       })
+    },
+    jump (route) {
+      if (route === this.route) {
+        this.refresh()
+        return
+      }
+      this.$router.push({
+        path: route,
+        query: {
+          t: +new Date()
+        }
+      })
+      this.showMenu = false
+    },
+    refresh () {
+      this.$emit('refresh')
     }
   }
 }

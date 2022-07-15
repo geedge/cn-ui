@@ -10,17 +10,12 @@ const store = createStore({
   },
   state () {
     return {
-      isShrink: localStorage.getItem(storageKey.leftMenuShrink) === 'true',
       i18n: false,
-
       showEntityTypeSelector: false, // 在entity explore页面时，控制header显示实体类型选择框
       from: '' // entity type
     }
   },
   getters: {
-    getIsShrink (state) {
-      return state.isShrink
-    },
     getShowEntityTypeSelector (state) {
       return state.showEntityTypeSelector
     },
@@ -32,10 +27,6 @@ const store = createStore({
     }
   },
   mutations: {
-    isShrink (state) {
-      state.isShrink = !state.isShrink
-      localStorage.setItem(storageKey.leftMenuShrink, state.isShrink)
-    },
     loadI18n (state) {
       state.i18n = true
     },

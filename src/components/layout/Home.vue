@@ -1,23 +1,18 @@
 <template>
   <div class="cn-home">
-    <left-menu @refresh="refresh"></left-menu>
-    <main ref="body" class="cn-body">
-      <cn-header></cn-header>
-      <cn-container v-if="containerShow" ref="container"></cn-container>
-    </main>
+    <cn-header @refresh="refresh"></cn-header>
+    <cn-container v-if="containerShow" ref="container"></cn-container>
   </div>
 </template>
 
 <script>
 import Header from './Header'
-import LeftMenu from './LeftMenu'
 import Container from './Container'
 import { getEchartsFontSize } from '@/utils/tools'
 
 export default {
   name: 'Home',
   components: {
-    LeftMenu,
     'cn-header': Header,
     'cn-container': Container
   },
