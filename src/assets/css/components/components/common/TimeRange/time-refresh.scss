@@ -4,8 +4,9 @@
 
   .cn-icon-refresh{
     font-size: 14px;
+    color:  #575757;
   }
-  .cn-icon-dropdown{
+  .cn-icon-dropdown {
     font-size: 14px;
     transition: all .3s;
     display: inline-block;
@@ -17,7 +18,8 @@
     position: absolute;
     z-index: 2;
     background: #FFFFFF;
-    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.77);
+    border: 1px solid #DEDEDE;
+    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
     border-radius: 2px;
     top: 30px;
     right: 0;
@@ -47,8 +49,22 @@
       color: #0091FF;
     }
   }
+  .el-button--mini.cn-button {
+    span {
+      font-size: 14px;
+      color: #2C72C6;
+      font-weight: 400;
+      .cn-button-label {
+        padding: 0 8px 0 3px;
+      }
+      i {
+        font-size: 14px;
+        color: #575757;
+      }
+    }
+  }
   .el-button--mini{
     padding: 4px 6px !important;
-    min-height: 26px !important;
+    min-height: 28px !important;
   }
 }

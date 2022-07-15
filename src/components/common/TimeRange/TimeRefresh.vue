@@ -2,9 +2,9 @@
     <div class="cn-refresh-box" v-ele-click-outside="dropdownShowFalse">
         <span>
             <el-button-group size="mini">
-              <el-button size="mini" @click="$emit('change')"><i class="cn-icon cn-icon-refresh"></i></el-button>
-              <el-button size="mini" @click="showRefreshList">
-                  {{interLabel}}
+              <el-button size="mini" @click="$emit('change')"><i class="cn-icon cn-icon-refresh1"></i></el-button>
+              <el-button class="cn-button" size="mini" @click="showRefreshList">
+                  <span class="cn-button-label" v-if="interLabel">{{interLabel}}</span>
                   <i class="cn-icon cn-icon-dropdown" :class="dropdownShow?'active' : ''"></i>
               </el-button>
             </el-button-group>
@@ -12,8 +12,8 @@
         <transition name="el-zoom-in-top">
             <div v-if="dropdownShow" class="refresh-list">
                 <div v-for="(item, index) in refreshArr" :key="index" @click="setRefresh(item)" class="refresh-list-item" :class="item.value==interval ? 'active' : ''">
-                    {{item.label}}
-                    <i v-if="item.value==interval" class="cn-icon cn-icon-check"></i>
+                  {{item.label}}
+                  <i v-if="item.value==interval" class="cn-icon cn-icon-check"></i>
                 </div>
             </div>
         </transition>

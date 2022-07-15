@@ -1,7 +1,7 @@
 <template>
   <div v-ele-click-outside="changeDropdown" style="position: relative" class="date-range-box">
     <div @click="showDropdown" class="date-range-text">
-      <div class="calendar-popover-text"><i class="cn-icon cn-icon-time"></i></div>
+      <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
         <div class="calendar-popover-text">{{ dateFormatByAppearance(startTime) }}</div>
         <div class="calendar-popover-text"> -</div>
@@ -10,8 +10,8 @@
       <div class="calendar-popover-text" v-else>
         {{ showDetail }}
       </div>
-      <div class="calendar-popover-text"><i class="cn-icon cn-icon-arrow-down"
-                                            :class="dropdownFlag ? 'cn-icon-arrow-down-active' : ''"></i></div>
+      <div class="calendar-popover-text calendar-popover__small"><i class="cn-icon cn-icon-dropdown"
+                                            :class="dropdownFlag ? 'cn-icon-up' : ''"></i></div>
     </div>
     <transition name="el-zoom-in-top">
       <div v-if="dropdownFlag" class="date-range-panel">

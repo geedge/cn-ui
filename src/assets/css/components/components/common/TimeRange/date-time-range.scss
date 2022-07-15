@@ -1,6 +1,7 @@
 .date-range-box {
   font-size: 14px;
   border-radius: 2px;
+  margin-right: 10px;
   display: flex;
   cursor: pointer;
 
@@ -31,12 +32,12 @@
     padding: 0 10px;
     display: flex;
     justify-content: space-around;
-    height: 26px;
     background: #FFFFFF;
-    border: 1px solid #E7EAED;
-    box-shadow: 0 2px 4px 0 rgba(51, 51, 51, 0.02);
+    border: 1px solid #DEDEDE;
+    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
     border-radius: 2px;
-    line-height: 26px;
+    height: 28px;
+    line-height: 28px;
     transition: width .3s;
 
     .cn-icon {
@@ -60,10 +61,19 @@
     padding: 14px 0 7px 8px;
   }
 
+  .calendar-popover-text.calendar-popover__small {
+    i {
+      font-weight: 300;
+      color: #575757;
+    }
+  }
   .calendar-popover-text {
     white-space: nowrap;
     display: inline-block;
     margin: 0 5px;
+    .cn-icon-Data {
+      color: #575757;
+    }
   }
 
   .calendar-popover-text:first-of-type {
