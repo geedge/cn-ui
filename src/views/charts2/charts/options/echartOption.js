@@ -6,7 +6,7 @@ export const pieChartOption1 = {
   color: chartColor1,
   legend: {
     orient: 'vertical',
-    top: 45,
+    top: 35,
     left: '50%',
     itemGap: 4,
     itemWidth: 15,
@@ -59,7 +59,7 @@ export const pieChartOption1 = {
 export const pieChartOption2 = {
   legend: {
     orient: 'vertical',
-    top: 45,
+    top: 35,
     left: '50%',
     itemGap: 4,
     itemWidth: 15,
