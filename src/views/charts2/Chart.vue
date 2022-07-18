@@ -17,6 +17,14 @@
     <network-overview-tabs
          v-else-if="chart.type === typeMapping.networkOverview.table"
     ></network-overview-tabs>
+    <npm-tabs
+        v-else-if="chart.type === typeMapping.npm.npmTabs"
+        @tabChange="index => $emit('tabChange', index)"
+    ></npm-tabs>
+    <npm-network-quantity
+        v-else-if="chart.type === typeMapping.npm.npmNetworkQuantity"
+        :chart="chart"
+    ></npm-network-quantity>
   </div>
 </template>
 
@@ -28,6 +36,8 @@ import NetworkOverviewLine from '@/views/charts2/charts/NetworkOverviewLine'
 import NetworkOverviewDdosDetection from '@/views/charts2/charts/NetworkOverviewDdosDetection'
 import NetworkOverviewPerformanceEvent from '@/views/charts2/charts/NetworkOverviewPerformanceEvent'
 import NetworkOverviewTabs from '@/views/charts2/charts/NetworkOverviewTabs'
+import NpmTabs from '@/views/charts2/charts/NpmTabs'
+import NpmNetworkQuantity from '@/views/charts2/charts/NpmNetworkQuantity'
 export default {
   name: 'Chart',
   components: {
@@ -36,7 +46,9 @@ export default {
     NetworkOverviewLine,
     NetworkOverviewDdosDetection,
     NetworkOverviewPerformanceEvent,
-    NetworkOverviewTabs
+    NetworkOverviewTabs,
+    NpmTabs,
+    NpmNetworkQuantity
   },
   props: {
     chart: Object

@@ -19,8 +19,19 @@
                  :h="item.h"
                  :i="item.i"
                  :key="item.i">
+        <!-- npm-tab特殊处理 -->
+        <template v-if="panelType === panelTypeAndRouteMapping.networkAppPerformance">
+          <chart
+            v-if="item.type === typeMapping.npm.npmTabs || item.params.tabIndex === npmTabIndex"
+            :id="item.id"
+            :chart="item"
+            @tabChange="index => { this.npmTabIndex = index }"
+          ></chart>
+        </template>
         <chart
-          :chart="item"
+            v-else
+            :id="item.id"
+            :chart="item"
         ></chart>
       </grid-item>
     </grid-layout>
@@ -31,17 +42,23 @@
 import VueGridLayout from 'vue-grid-layout'
 import _ from 'lodash'
 import Chart from '@/views/charts2/Chart'
+import { panelTypeAndRouteMapping } from '@/utils/constants'
+import { typeMapping } from '@/views/charts2/chart-tools'
 export default {
   name: 'ChartList',
   props: {
     timeFilter: Object,
+    panelType: Number,
     chartList: Array,
     panelLock: Boolean,
     entity: Object
   },
   data () {
     return {
-      layout: []
+      panelTypeAndRouteMapping,
+      typeMapping,
+      layout: [],
+      npmTabIndex: 0
     }
   },
   components: {

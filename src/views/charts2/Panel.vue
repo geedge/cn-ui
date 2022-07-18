@@ -22,6 +22,7 @@
         ref="chartList"
         :time-filter="timeFilter"
         :chart-list="chartList"
+        :panel-type="panelType"
         :panel-lock="panelLock"
         :entity="entity"
     ></chart-list>

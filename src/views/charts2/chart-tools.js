@@ -5,5 +5,9 @@ export const typeMapping = {
     performanceEvent: 302,
     table: 601,
     ddosDetection: 701
+  },
+  npm: {
+    npmTabs: 704,
+    npmNetworkQuantity: 703
   }
 }

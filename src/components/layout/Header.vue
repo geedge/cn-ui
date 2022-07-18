@@ -43,6 +43,8 @@
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
+
+    <!-- 菜单 -->
     <el-drawer
         v-model="showMenu"
         direction="ttb"
@@ -69,6 +71,8 @@
         </div>
       </div>
     </el-drawer>
+
+    <!-- 改密码 -->
     <el-dialog v-model="showChangePin"
                width="30%"
                :before-close="handleClose">

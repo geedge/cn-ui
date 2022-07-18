@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1657871017803') format('woff2'),
-       url('iconfont.woff?t=1657871017803') format('woff'),
-       url('iconfont.ttf?t=1657871017803') format('truetype');
+  src: url('iconfont.woff2?t=1658116710807') format('woff2'),
+       url('iconfont.woff?t=1658116710807') format('woff'),
+       url('iconfont.ttf?t=1658116710807') format('truetype');
 }
 
 .cn-icon {
@@ -13,39 +13,39 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.cn-icon-a-SocialNetwork:before {
+.cn-icon-social-network:before {
   content: "\e79b";
 }
 
-.cn-icon-Video:before {
+.cn-icon-video:before {
   content: "\e79c";
 }
 
-.cn-icon-VoIP:before {
+.cn-icon-voip:before {
   content: "\e79d";
 }
 
-.cn-icon-Email:before {
+.cn-icon-email:before {
   content: "\e79e";
 }
 
-.cn-icon-Gaming:before {
+.cn-icon-gaming:before {
   content: "\e79f";
 }
 
-.cn-icon-a-FileSharing:before {
+.cn-icon-file-sharing:before {
   content: "\e7a0";
 }
 
-.cn-icon-Location:before {
+.cn-icon-location:before {
   content: "\e798";
 }
 
-.cn-icon-Events:before {
+.cn-icon-events:before {
   content: "\e799";
 }
 
-.cn-icon-Overview:before {
+.cn-icon-overview:before {
   content: "\e79a";
 }
 
