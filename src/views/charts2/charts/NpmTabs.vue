@@ -51,8 +51,7 @@ export default {
     handleActiveBar (index) {
       const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.npm-tabs .el-tabs__item.is-active')
       const activeBar = document.querySelector('.npm-tabs .npm-tabs__active-bar')
-      activeBar.style.width = `${clientWidth + 2}px`
-      activeBar.style.left = `${offsetLeft + this.leftOffset + clientLeft - 1}px`
+      activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
     }
   },
   mounted () {
