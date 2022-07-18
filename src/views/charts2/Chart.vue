@@ -19,7 +19,7 @@
     ></network-overview-tabs>
     <npm-tabs
         v-else-if="chart.type === typeMapping.npm.npmTabs"
-        @tabChange="index => $emit('tabChange', index)"
+        @tabChange="npmTabChange"
     ></npm-tabs>
     <npm-network-quantity
         v-else-if="chart.type === typeMapping.npm.npmNetworkQuantity"
@@ -58,6 +58,11 @@ export default {
       typeMapping,
       loading: false,
       isNoData: false
+    }
+  },
+  methods: {
+    npmTabChange (index) {
+      this.$emit('npmTabChange', index)
     }
   }
 }

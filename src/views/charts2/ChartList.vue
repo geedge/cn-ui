@@ -25,7 +25,7 @@
             v-if="item.type === typeMapping.npm.npmTabs || item.params.tabIndex === npmTabIndex"
             :id="item.id"
             :chart="item"
-            @tabChange="index => { this.npmTabIndex = index }"
+            @npmTabChange="npmTabChange"
           ></chart>
         </template>
         <chart
@@ -71,6 +71,11 @@ export default {
       if (!_.isEmpty(n)) {
         this.layout = [...n]
       }
+    }
+  },
+  methods: {
+    npmTabChange (index) {
+      this.npmTabIndex = parseInt(index)
     }
   }
 }
