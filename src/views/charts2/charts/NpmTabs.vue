@@ -1,6 +1,7 @@
 <template>
   <div class="npm-tabs">
-    <el-tabs v-model="currentTab" ref="elTabs">
+    <div class="npm-tabs__active-bar"></div>
+    <el-tabs v-model="currentTab" ref="elTabs" type="border-card">
       <el-tab-pane>
         <template #label>
           <div class="npm-tab__label">
@@ -34,21 +35,29 @@ export default {
   name: 'NpmTabs',
   data () {
     return {
-      currentTab: 0
+      currentTab: 0,
+      leftOffset: 27
     }
   },
   watch: {
     currentTab (n) {
+      this.$nextTick(() => {
+        this.handleActiveBar(n)
+      })
       this.$emit('tabChange', n)
     }
   },
+  methods: {
+    handleActiveBar (index) {
+      const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.npm-tabs .el-tabs__item.is-active')
+      const activeBar = document.querySelector('.npm-tabs .npm-tabs__active-bar')
+      activeBar.style.width = `${clientWidth + 2}px`
+      activeBar.style.left = `${offsetLeft + this.leftOffset + clientLeft - 1}px`
+    }
+  },
   mounted () {
-    // 修正字体改变导致的active-bar宽度计算偏差
     setTimeout(() => {
-      const activeTab = document.querySelector('.npm-tabs .el-tabs__item.is-active')
-      const activeTabStyle = window.getComputedStyle(activeTab)
-      const activeBar = document.querySelector('.npm-tabs .el-tabs__active-bar')
-      activeBar.style.width = `${parseFloat(activeTabStyle.width) - parseFloat(activeTabStyle.paddingLeft)}px`
+      this.handleActiveBar(0)
     }, 200)
   }
 }

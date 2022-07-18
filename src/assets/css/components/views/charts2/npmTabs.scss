@@ -1,22 +1,42 @@
 .npm-tabs {
-  .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-    padding-left: 20px;
-  }
-  .el-tabs__nav-wrap::after {
-    height: 1px;
-    background-color: #E2E5EC;
-  }
-  .el-tabs--top .el-tabs__item {
-    padding: 0;
-  }
-  .el-tabs__active-bar.is-top {
-    top: 0;
+  position: relative;
+
+  .npm-tabs__active-bar {
+    position: absolute;
     height: 3px;
-    border-radius: 5px 2.5px 0 0;
+    top: 0;
+    background-color: #046EC9;
+    border-radius: 5px 5px 0 0;
+    transition: all linear .2s;
   }
+  .el-tabs.el-tabs--border-card {
+    position: absolute;
+    top: 3px;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+
+    &>.el-tabs__header {
+      background-color: white;
+      border-color: #E2E5EC;
+
+      .el-tabs__nav-wrap {
+        padding-left: 27px;
+      }
+      .el-tabs__item:first-child {
+       margin-left: 0;
+      }
+    }
+    .el-tabs__content {
+      display: none;
+    }
+  }
+
   .el-tabs__item.is-top {
+    height: 35px;
+    line-height: 35px;
+
     .npm-tab__label {
-      padding: 0 20px;
       color: #353636;
       font-size: 14px;
       font-weight: bold;
@@ -31,7 +51,6 @@
     &.is-active {
       .npm-tab__label {
         color: #353636;
-        box-shadow: 1px 0 0 0 #E2E5EC, inset 1px 0 0 #E2E5EC;
 
         i {
           color: #046EC9;
