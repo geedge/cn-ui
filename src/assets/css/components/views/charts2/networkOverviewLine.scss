@@ -12,7 +12,6 @@
         display: flex;
         justify-content: space-between;
         .cn-chart-tooltip-value.cn-chart-tooltip__color {
-          font-family: NotoSansHans-Medium;
           font-size: 12px;
           color: #353636;
           line-height: 12px;
@@ -29,7 +28,7 @@
     position: absolute;
     .line-select-metric,.line-select-reference-line {
       display: flex;
-      span {
+      &>span {
         font-size: 12px;
         color: #575757;
         font-weight: 400;
@@ -38,7 +37,7 @@
       .line-select__operation {
         height: 24px;
         margin-left: 3px;
-        box-shadow: 0 2px 4px 0 rgba(51,51,51,0.10);
+        box-shadow: none;
         border-radius: 2px;
         .option__select {
           pointer-events:none;
@@ -93,7 +92,7 @@
       display: flex;
       flex-direction: column;
       span:nth-of-type(1) {
-        font-family: 'Helvetica-Bold';
+        font-family: Helvetica-Bold;
         font-size: 28px;
         color: #353636;
         margin-right: 4px;

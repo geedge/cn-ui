@@ -17,6 +17,11 @@
     <network-overview-tabs
          v-else-if="chart.type === typeMapping.networkOverview.table"
     ></network-overview-tabs>
+    <network-overview-apps
+        v-else-if="chart.type === typeMapping.networkOverview.appList"
+        :chart="chart"
+    >
+    </network-overview-apps>
     <npm-tabs
         v-else-if="chart.type === typeMapping.npm.npmTabs"
         @tabChange="npmTabChange"
@@ -36,6 +41,7 @@ import NetworkOverviewLine from '@/views/charts2/charts/NetworkOverviewLine'
 import NetworkOverviewDdosDetection from '@/views/charts2/charts/NetworkOverviewDdosDetection'
 import NetworkOverviewPerformanceEvent from '@/views/charts2/charts/NetworkOverviewPerformanceEvent'
 import NetworkOverviewTabs from '@/views/charts2/charts/NetworkOverviewTabs'
+import NetworkOverviewApps from '@/views/charts2/charts/NetworkOverviewApps'
 import NpmTabs from '@/views/charts2/charts/NpmTabs'
 import NpmNetworkQuantity from '@/views/charts2/charts/NpmNetworkQuantity'
 export default {
@@ -47,6 +53,7 @@ export default {
     NetworkOverviewDdosDetection,
     NetworkOverviewPerformanceEvent,
     NetworkOverviewTabs,
+    NetworkOverviewApps,
     NpmTabs,
     NpmNetworkQuantity
   },
