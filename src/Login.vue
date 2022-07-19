@@ -78,9 +78,6 @@ export default {
             if (!_.isEmpty(res.data.theme)) {
               localStorage.setItem(storageKey.theme, res.data.theme)
             }
-            if (!_.isEmpty(res.data.s3_upload)) {
-              localStorage.setItem(storageKey.s3Enable, res.data.s3_upload)
-            }
             res.loginSuccessPath = this.$route.query.redirect
             this.loginSuccess(res)
             localStorage.setItem(storageKey.username, this.username)
@@ -116,6 +113,7 @@ export default {
       if (_.isEmpty(localStorage.getItem(storageKey.theme))) {
         localStorage.setItem(storageKey.theme, data.theme || 'light')
       }
+      localStorage.setItem(storageKey.s3Enable, data.s3_enable)
       localStorage.setItem(storageKey.sysTimezone, data.timezone)
       window.$dayJs.tz.setDefault(data.timezone)
       localStorage.setItem(storageKey.timezoneOffset, window.$dayJs.tz().utcOffset() / 60)

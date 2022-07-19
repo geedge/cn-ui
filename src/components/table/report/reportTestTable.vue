@@ -128,20 +128,22 @@
             >
               <template #reference>
                 <span>
-                  <template v-if="scope.row.config.schedulerConfig.type === 'day'">
-                   {{$t('report.daily')}}
-                  </template>
-                  <template v-else-if="scope.row.config.schedulerConfig.type === 'week'">
-                    {{$t('report.weekly')}}
-                   </template>
-                  <template v-else-if="scope.row.config.schedulerConfig.type === 'month'">
-                    {{$t('report.monthly')}}
-                   </template>
-                  <template v-else-if="scope.row.config.schedulerConfig.type === ''">
-                    {{$t('report.oneTime')}}
-                  </template>
-                  <template v-else>
-                     -
+                  <template v-if="scope.row.config.schedulerConfig">
+                    <template v-if="scope.row.config.schedulerConfig.type === 'day'">
+                     {{$t('report.daily')}}
+                    </template>
+                    <template v-else-if="scope.row.config.schedulerConfig.type === 'week'">
+                      {{$t('report.weekly')}}
+                     </template>
+                    <template v-else-if="scope.row.config.schedulerConfig.type === 'month'">
+                      {{$t('report.monthly')}}
+                     </template>
+                    <template v-else-if="scope.row.config.schedulerConfig.type === ''">
+                      {{$t('report.oneTime')}}
+                    </template>
+                    <template v-else>
+                       -
+                    </template>
                   </template>
                 </span>
               </template>
