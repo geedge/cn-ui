@@ -68,9 +68,112 @@
     height: calc(100% - 24px);
 
     .app-card {
-      height: 100%;
       border: 1px solid #E2E5EC;
       border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      .app-card-title {
+        display: flex;
+        padding: 0 12px;
+        margin-top: 10px;
+        justify-content: space-between;
+        .app-card-title-name {
+          font-size: 12px;
+          color: #353636;
+          font-weight: 400;
+          span .cn-icon {
+            font-size: 12px;
+            margin-right: 4px;
+          }
+        }
+      }
+      .app-card__bodys {
+        display: flex;
+        margin-top: 4px;
+        flex: 1;
+      }
+      .app-card__body {
+        flex: 1;
+        padding-left: 12px;
+        display: flex;
+        flex-direction: column;
+      }
+      .app-card__body-content {
+        display: flex;
+        margin-bottom: 6px;
+        .app-card__body-content-value {
+          display: flex;
+          .app-card__body-content-number {
+            font-family: Helvetica-Bold;
+            font-size: 20px;
+            color: #353636;
+            font-weight: 700;
+            margin-right: 28px;
+          }
+        }
+        .app-card__body-content-percent {
+          font-family: NotoSansHans-Medium;
+          font-size: 12px;
+          font-weight: 500;
+          height: 20px;
+          width: 68px;
+          line-height: 20px;
+          border-radius: 10px;
+          display: flex;
+          justify-content: center;
+          position: relative;
+          top: 50%;
+          color: #fff;
+          margin-top: -10px;
+        }
+        .app-card__body-content-percent.red {
+          background-color: rgb(226, 97, 84);
+        }
+        .app-card__body-content-percent.green {
+          background-color: rgb(126, 159, 84);
+        }
+      }
+      .app-card__body-previous {
+        display: flex;
+        font-size: 12px;
+        color: #353636;
+        font-weight: 400;
+      }
+      .chart__drawing {
+        flex: 1;
+      }
     }
+  }
+}
+.app-dropdown.el-popper.is-pure {
+  top: 720px !important;
+  .el-scrollbar {
+    .el-scrollbar__wrap {
+      .el-scrollbar__view.el-dropdown__list {
+        padding: 0;
+        margin: 0;
+        .el-dropdown-menu {
+          padding: 0;
+          .el-dropdown-menu__item {
+            padding-left: 5px;
+            max-height: 25px;
+            min-width: 80px;
+            line-height: 25px;
+            font-size: 12px;
+            font-family: Helvetica-Bold;
+            color: #353636;
+            font-weight: 400;
+            i {
+              color: #353636;
+              font-size: 12px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .el-popper__arrow {
+    display: none;
   }
 }

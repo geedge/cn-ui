@@ -1,6 +1,7 @@
-import { chartColor1, chartColor2, chartColor3, chartColor4, unitTypes } from '@/utils/constants'
+import { chartColor, chartColor1, chartColor2, chartColor3, chartColor4, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import * as echarts from 'echarts'
+import { axisFormatter } from '@/views/charts/charts/tools'
 
 export const pieChartOption1 = {
   color: chartColor1,
@@ -344,6 +345,46 @@ export const stackedLineChartOption = {
     }
   ]
 }
+
+export const appListChartOption = {
+  tooltip: {
+    appendToBody: true,
+    trigger: 'axis',
+    formatter: axisFormatter,
+    show: true
+  },
+  xAxis: {
+    show: false,
+    type: 'time'
+  },
+  yAxis: {
+    show: false,
+    type: 'value',
+    axisLabel: {
+      formatter: function (value) {
+        return unitConvert(value, unitTypes.number, null, null, 0).join(' ')
+      }
+    }
+  },
+  grid: {
+    left: 0,
+    right: 0
+  },
+  animation: false,
+  color: chartColor,
+  axisLabel: {},
+  series: [
+    {
+      name: '',
+      type: 'line',
+      smooth: false,
+      symbol: 'none',
+      data: [],
+      markLine: {}
+    }
+  ]
+}
+
 function symbolSizeSortChange (index, time) {
   const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
   const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
