@@ -213,7 +213,7 @@ export default {
 
         this.noData = !n || n.length < 1
         const tempList = n.map(item => {
-          if (item.params) {
+          if (item.params && typeof (item.params.showHeader) === 'undefined') {
             item.params.showHeader = true
           }
           const height = item.h
