@@ -84,12 +84,12 @@
             <el-tab-pane :label="$t('networkOverview.appType.provider')" :name="0">
               <div class="body__apps">
                 <div class="body__app" v-for="app in providerOptions" :key="app.name"  @click="appCheckedChange(app, 0)">
-                  <div class="body__app-title">
-                    <div class="body__app-title-left">
+                  <div class="body__app-content">
+                    <div class="body__app-left">
                       <span><i class="cn-icon cn-icon-mining-pool"></i></span>
-                      {{app.name}},{{app.desc}}
+                      <span class="body__app-left-title" :class="{'provide-show': app.provideShow}">{{app.name}},{{app.desc}}</span>
                     </div>
-                    <div class="body__app-title-right" v-if="app.provideShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
+                    <div class="body__app-content-right" v-if="app.provideShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
                   <div class="body__app-value">This is a description this is a description this is a description this is a description</div>
                 </div>
@@ -98,12 +98,12 @@
             <el-tab-pane :label="$t('networkOverview.appType.app')" :name="1">
               <div class="body__apps">
                 <div class="body__app" v-for="app in appOptions" :key="app.name" @click="appCheckedChange(app, 1)">
-                  <div class="body__app-title">
-                    <div class="body__app-title-left">
+                  <div class="body__app-content">
+                    <div class="body__app-left">
                       <span><i class="cn-icon cn-icon-mining-pool"></i></span>
-                      {{app.name}},{{app.desc}}
+                      <span class="body__app-left-title" :class="{'app-show': app.appShow}">{{app.name}},{{app.desc}}</span>
                     </div>
-                    <div class="body__app-title-right" v-if="app.appShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
+                    <div class="body__app-content-right" v-if="app.appShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
                   <div class="body__app-value">This is a description this is a description this is a description this is a description</div>
                 </div>

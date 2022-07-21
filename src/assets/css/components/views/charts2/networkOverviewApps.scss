@@ -264,15 +264,22 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            .body__app-title {
-              font-family: Helvetica-Bold;
-              font-size: 16px;
-              color: #353636;
-              font-weight: 700;
-              margin-bottom: 6px;
+            .body__app-content {
               display: flex;
               justify-content: space-between;
-              .body__app-title-left {
+              .body__app-left {
+                display: flex;
+                .body__app-left-title {
+                  font-family: Helvetica-Bold;
+                  font-size: 16px;
+                  color: #353636;
+                  font-weight: 700;
+                  margin-bottom: 6px;
+                }
+                .body__app-left-title.app-show,
+                .body__app-left-title.provide-show {
+                  color: #046ECA;
+                }
                 span {
                   i {
                     color: green;
@@ -281,7 +288,7 @@
                   }
                 }
               }
-              .body__app-title-right {
+              .body__app-content-right {
                 span {
                   i {
                     color: #046ECA;
