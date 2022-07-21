@@ -391,7 +391,6 @@ export default {
       deep: true,
       handler (n) {
         if (!_.isEmpty(n)) {
-          console.info(n)
           this.metaList = n
         }
       }
