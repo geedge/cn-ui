@@ -75,25 +75,43 @@
         <div class="add-app__header">
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
-            <div class="header__operation header__operation--cancel">{{$t('overall.cancel')}}</div>
+            <div class="header__operation header__operation--cancel" @click="cancelApp">{{$t('overall.cancel')}}</div>
             <div class="header__operation header__operation--save">{{$t('overall.save')}}</div>
           </div>
         </div>
         <div class="add-app__body">
-          <el-tabs v-model="appTypeTab">
+          <el-tabs v-model="appTypeTab" @tab-click="appTypeTabChange">
             <el-tab-pane :label="$t('networkOverview.appType.provider')" :name="0">
               <div class="body__apps">
-                <div class="body__app" v-for="app in providerOptions" :key="app.name">{{app.name}},{{app.desc}}</div>
+                <div class="body__app" v-for="app in providerOptions" :key="app.name"  @click="appCheckedChange(app, 0)">
+                  <div class="body__app-title">
+                    <div class="body__app-title-left">
+                      <span><i class="cn-icon cn-icon-mining-pool"></i></span>
+                      {{app.name}},{{app.desc}}
+                    </div>
+                    <div class="body__app-title-right" v-if="app.provideShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
+                  </div>
+                  <div class="body__app-value">This is a description this is a description this is a description this is a description</div>
+                </div>
               </div>
             </el-tab-pane>
             <el-tab-pane :label="$t('networkOverview.appType.app')" :name="1">
               <div class="body__apps">
-                <div class="body__app" v-for="app in appOptions" :key="app.name">{{app.name}},{{app.desc}}</div>
+                <div class="body__app" v-for="app in appOptions" :key="app.name" @click="appCheckedChange(app, 1)">
+                  <div class="body__app-title">
+                    <div class="body__app-title-left">
+                      <span><i class="cn-icon cn-icon-mining-pool"></i></span>
+                      {{app.name}},{{app.desc}}
+                    </div>
+                    <div class="body__app-title-right" v-if="app.appShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
+                  </div>
+                  <div class="body__app-value">This is a description this is a description this is a description this is a description</div>
+                </div>
               </div>
             </el-tab-pane>
           </el-tabs>
           <div class="body__searcher">
-            <el-input size="mini"></el-input>
+            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.searcher')" prefix-icon="el-icon-search"></el-input>
           </div>
         </div>
       </div>
@@ -114,7 +132,7 @@ export default {
   },
   setup () {
     return {
-      myChart: shallowRef(null)
+      myChart: shallowRef([])
     }
   },
   data () {
@@ -137,7 +155,10 @@ export default {
       // add弹框中的可选项
       providerOptions: [],
       appOptions: [],
-      appTypeTab: 0
+      appTypeTab: 0,
+      appShowName: false,
+      searcherApp: '',
+      appShowTypeTab: 0
     }
   },
   methods: {
@@ -557,7 +578,7 @@ export default {
     },
     initChart (obj) {
       const dom = document.getElementById(`chart${obj.name}`)
-      this.myChart = echarts.init(dom)
+      this.myChart.push(echarts.init(dom))
       this.chartOption = appListChartOption
       const seriesTemplate = this.chartOption.series[0]
       this.chartOption.series = [{
@@ -580,7 +601,9 @@ export default {
           ])
         }
       }]
-      this.myChart.setOption(this.chartOption)
+      this.myChart.forEach(t => {
+        t.setOption(this.chartOption)
+      })
     },
     addApp () {
       this.showAddApp = true
@@ -588,16 +611,50 @@ export default {
       for (let i = 0; i < 100; i++) {
         this.appOptions.push({
           name: letter[i % 26] + i,
-          desc: 'this is a really nice app'
+          desc: 'this is a really nice app',
+          appShow: false
         })
         this.providerOptions.push({
           name: letter[i % 26] + i,
-          desc: 'this is a really nice provider'
+          desc: 'this is a really nice provider',
+          provideShow: false
+        })
+      }
+    },
+    cancelApp () {
+      this.showAddApp = false
+    },
+    appTypeTabChange (val) {
+      this.appShowTypeTab = val.index
+    },
+    searcherAppChange (val) {
+      if (val) {
+        if (this.appShowTypeTab === 0) {
+          this.providerOptions = this.providerOptions.filter((t, i) => t.name.indexOf(val) > -1 || t.desc.indexOf(val) > -1)
+        } else if (this.appShowTypeTab === 1) {
+          this.appOptions = this.appOptions.filter((t, i) => t.name.indexOf(val) > -1 || t.desc.indexOf(val) > -1)
+        }
+      }
+    },
+    appCheckedChange (app, num) {
+      if (num === 0) {
+        this.providerOptions.forEach(t => {
+          if (t.name === app.name && t.desc === app.desc) {
+            t.provideShow = !t.provideShow
+          }
+        })
+      } else if (num === 1) {
+        this.appOptions.forEach(t => {
+          if (t.name === app.name && t.desc === app.desc) {
+            t.appShow = !t.appShow
+          }
         })
       }
     },
     resize () {
-      this.myChart.resize()
+      this.myChart.forEach(t => {
+        t.resize()
+      })
     }
   },
   mounted () {
