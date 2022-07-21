@@ -626,14 +626,19 @@ export default {
     },
     appTypeTabChange (val) {
       this.appShowTypeTab = val.index
+      this.searcherApp = ''
     },
     searcherAppChange (val) {
       if (val) {
-        if (this.appShowTypeTab === 0) {
+        this.addApp()
+        if (this.appShowTypeTab == 0) {
           this.providerOptions = this.providerOptions.filter((t, i) => t.name.indexOf(val) > -1 || t.desc.indexOf(val) > -1)
-        } else if (this.appShowTypeTab === 1) {
+        }
+        if (this.appShowTypeTab == 1) {
           this.appOptions = this.appOptions.filter((t, i) => t.name.indexOf(val) > -1 || t.desc.indexOf(val) > -1)
         }
+      } else {
+        this.addApp()
       }
     },
     appCheckedChange (app, num) {
