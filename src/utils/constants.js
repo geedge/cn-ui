@@ -155,15 +155,22 @@ export const listScrollPath = [
 ]
 
 export const networkOverviewTabs = [
-  'network.categories',
-  'network.providers',
+  'network.ips',
   'network.countries',
+  'network.asns',
   'network.applications',
-  'network.clientIps',
-  'network.serverIps',
+  'network.providers',
+  'network.domains',
   'network.protocols',
+  'network.idcTenants',
+  'network.provinces',
+  'network.cities',
+  'network.isps',
+  'network.applicationCategories',
+  'network.domainCategories',
   'network.hosts',
-  'network.snis'
+  'network.snis',
+  'network.protocolPorts'
 ]
 
 export const dnsServerRole = {

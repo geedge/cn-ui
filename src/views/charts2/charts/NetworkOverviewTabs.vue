@@ -4,18 +4,19 @@
              class="cn-chart__tabs"
              @tab-click="handleClick"
     >
-      <el-tab-pane  v-for="(tab,index) in networkOverviewTabs"
-                    :label="$t(tab)"
-                    :name="tab"
+    <template v-for="(tab,index) in list">
+      <el-tab-pane  v-if="tab.checked"
+                    :name="tab.label"
                     :key="index"
                     :ref="`chart-tab-${index}`"
                     class="tab-pane"
-
       >
-
+        <template #label>
+          {{$t(tab.label)}}
+        </template>
         <el-table
-                id="tabTable"
-                ref="dataTable"
+                :id="`tabTable_${index}`"
+                :ref="`dataTable_${index}`"
                 :data="tableData"
                 border
                 :cell-style="tableCellStyle"
@@ -41,7 +42,7 @@
                     <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
-                    <i class="cn-icon-constant cn-icon" style="line-height: 20px;"></i>
+                    <i class="cn-icon-constant cn-icon"></i>
                   </div>
                 </template>
               </div>
@@ -50,6 +51,7 @@
         </el-table>
 
       </el-tab-pane>
+    </template>
 
     </el-tabs>
     <div class="tab-search" >
@@ -69,11 +71,39 @@
           />
         </el-select>
       </div>
-      <div class="search-customize-tab">
-        <i class="cn-icon-gear cn-icon icon-gear"></i>  {{$t('network.customizeTabs')}}
-      </div>
+      <el-popover placement="left"
+                  :width="280"
+                  :show-arrow="false"
+                  :append-to-body="false"
+                  :offset="-91"
+                  :hide-after="0"
+                  title="Customize"
+                  popper-class="customize-tab__popper"
+                  trigger="click">
+        <template #reference>
+          <div class="search-customize-tab">
+            <i class="cn-icon-gear cn-icon icon-gear"></i>  {{$t('network.customize')}}
+          </div>
+        </template>
 
+        <div>
+          <transition-group name="drag" class="list" tag="ul">
+            <li v-for="(item, index) in list"
+                    :key="item.label"
+                    class="list-item"
+            >
+              <i class="cn-icon-sort cn-icon icon-drag"
+                 @dragenter="dragenter($event, index)"
+                 @dragover="dragover($event, index)"
+                 @dragstart="dragstart(index)"
+                 draggable="true"
+              ></i> <el-checkbox @change="tabChange" v-model="item.checked"  :label="$t(item.label) " size="small" />
+            </li>
+          </transition-group>
+        </div>
+      </el-popover>
     </div>
+
   </div>
 
 </template>
@@ -216,16 +246,97 @@ export default {
         }
       ],
       customTableTitles: [
-        { label: 'network.categories', prop: 'categories' },
+        { label: 'network.ips', prop: 'ips' },
         { label: 'network.total', prop: 'total' },
         { label: 'network.inbound', prop: 'inbound' },
         { label: 'network.outbound', prop: 'outbound' }
-      ]
+      ],
+      list: [
+        {
+          label: 'network.ips',
+          checked: true
+        }, {
+          label: 'network.countries',
+          checked: true
+        }, {
+          label: 'network.asns',
+          checked: true
+        }, {
+          label: 'network.applications',
+          checked: true
+        }, {
+          label: 'network.providers',
+          checked: true
+        }, {
+          label: 'network.domains',
+          checked: true
+        }, {
+          label: 'network.protocols',
+          checked: true
+        }, {
+          label: 'network.idcTenants',
+          checked: true
+        }, {
+          label: 'network.provinces',
+          checked: false
+        }, {
+          label: 'network.cities',
+          checked: false
+        }, {
+          label: 'network.isps',
+          checked: false
+        }, {
+          label: 'network.applicationCategories',
+          checked: false
+        }, {
+          label: 'network.domainCategories',
+          checked: false
+        }, {
+          label: 'network.hosts',
+          checked: false
+        }, {
+          label: 'network.snis',
+          checked: false
+        }, {
+          label: 'network.protocolPorts',
+          checked: false
+        }
+      ],
+      dragIndex: '',
+      enterIndex: '',
+      endIndex: ''
     }
   },
+  components: {
+
+  },
   methods: {
+    shuffle () {
+      this.list = _.shuffle(this.list)
+    },
+    tabChange () {
+      const tabList = this.list.filter(item => item.checked == true)
+      if (tabList && tabList.length > 0) {
+        this.activeTab = tabList[0].label
+        this.customTableTitles[0].label = this.$t(tabList[0].label)
+      }
+    },
+    dragstart (index) {
+      this.dragIndex = index
+    },
+    dragenter (e, index) {
+      e.preventDefault()
+      if (this.dragIndex !== index) {
+        const moving = this.list[this.dragIndex]
+        this.list.splice(this.dragIndex, 1)
+        this.list.splice(index, 0, moving)
+        this.dragIndex = index
+      }
+    },
+    dragover (e, index) {
+      e.preventDefault()
+    },
     handleClick (tab) {
-      console.log(tab)
       this.customTableTitles[0].label = tab.paneName
       // this.activeTab = tab.paneName
     },
@@ -243,11 +354,13 @@ export default {
       return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
     }
   },
+  mounted () {
+  },
   setup (props) {
-    let activeTab = ref(networkOverviewTabs[0])
+    const activeTab = ref(networkOverviewTabs[0])
     if (props.chartInfo) {
       if (!_.isEmpty(props.chartInfo.children)) {
-        activeTab = `${props.chartInfo.children[0].id}`
+        // activeTab = `${props.chartInfo.children[0].id}`
       }
       // const dataList = [...props.chartInfo.children]
     }
@@ -255,7 +368,6 @@ export default {
     return {
       activeTab,
       networkOverviewTabs
-
       // dataList
     }
   }

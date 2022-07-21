@@ -11,18 +11,19 @@
       padding:1px;
       border-radius: 4px;
       .tab-table {
-        border: 0;
+        border:0px;
       }
       .data-total{
-        display: flex;
-        height: 20px;
+        display: flex !important;
       }
       .data-total-trend {
         display: flex;
         margin-left: 6px;
         align-items: center;
         justify-content: center;
+        margin-top: 2px;
         border-radius: 10px;
+        font-weight:500;
       }
       .data-total-trend-black {
         background-color: rgba(113,113,113,0.12);
@@ -66,7 +67,7 @@
       }
       .el-tabs__item {
         margin: 0 20px 0 0;
-        padding: 0;
+        padding:0px;
         font-weight: 400;
         color:$grey;
         font-size:14px;
@@ -76,7 +77,7 @@
         color:$blue;
         height: 33px;
         margin:0 20px 0 0;
-        padding: 0;
+        padding:0px;
         font-weight:400;
       }
     }
@@ -126,7 +127,43 @@
         height:12px;
       }
     }
+    .search-customize-tab:hover {
+      cursor:pointer;
+    }
+    .grid-content{
+      min-height: 36px;
+    }
   }
+}
+.customize-tab__popper{
+  height:560px;/*calc(100% - 136px);*/
+  overflow:auto;
+
+  .list {
+    list-style: none;
+    padding-inline-start: 0px !important;
+    .drag-move {
+      transition: transform 0.3s;
+    }
+    .list-item {
+      width:100%;
+      color: #575757;
+      margin-bottom: 6px;
+      height: 24px;
+      line-height: 24px;
+      text-align: left;
+      font-weight:400;
+      font-size:12px;
+      font-family: Helvetica;
+
+      .icon-drag{
+        cursor: move;
+      }
+    }
+  }
+  /*top:0px !important;
+  right:200px !important;
+  transform: translateY(126px) !important;*/
 }
 .metric-select.el-select__popper {
   top: 27px !important;
