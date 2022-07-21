@@ -133,7 +133,7 @@ export default {
       ],
       tableData: [
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'up',
           trendValue: '33%',
@@ -141,7 +141,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trendValue: '6%',
           trend: '',
@@ -149,7 +149,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'up',
           trendValue: '6%',
@@ -157,7 +157,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -165,7 +165,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -173,7 +173,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: '',
           trendValue: '2%',
@@ -181,7 +181,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -189,7 +189,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -197,7 +197,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -205,7 +205,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'up',
           trendValue: '2%',
@@ -213,7 +213,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -221,7 +221,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -229,7 +229,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
@@ -237,7 +237,7 @@ export default {
           outbound: 0.89
         },
         {
-          categories: 'cate',
+          ips: 'cate',
           total: 10,
           trend: 'down',
           trendValue: '2%',
