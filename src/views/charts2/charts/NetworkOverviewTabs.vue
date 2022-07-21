@@ -58,7 +58,7 @@
         <el-select v-model="metric"
                    class="option__select select-column"
                    placeholder=""
-                   popper-class="option-popper"
+                   popper-class="option-popper metric-select"
                    :popper-append-to-body="false"
                    size="mini">
           <el-option

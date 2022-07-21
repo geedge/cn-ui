@@ -14,7 +14,7 @@
         .cn-chart-tooltip-value.cn-chart-tooltip__color {
           font-size: 12px;
           color: #353636;
-          line-height: 12px;
+          line-height: 21px;
           font-weight: 600;
         }
       }
@@ -82,15 +82,28 @@
       margin-left: 20px;
     }
   }
+  .line-value-active {
+    position: absolute;
+    height: 3px;
+    border-radius: 4px 0 0 0;
+    background: #046ECA;
+    top: 0;
+    z-index: 1;
+    transition: all linear .2s;
+  }
   .line-value {
     position: absolute;
-    top: 20px;
-    left: 27px;
+    top: 0;
+    left: 0;
     display: flex;
+    .line-value-mpackets.mousemove-cursor {
+      border-top: 4px solid #D3D0D8;
+      z-index: 0;
+    }
     .line-value-mpackets {
-      margin-right: 30px;
-      display: flex;
-      flex-direction: column;
+      cursor: pointer;
+      padding: 16px 0 0 20px;
+      border-top: 4px solid transparent;
       span:nth-of-type(1) {
         font-family: Helvetica-Bold;
         font-size: 28px;
@@ -102,12 +115,6 @@
         color: #575757;
         font-weight: 400;
       }
-      .table-below-box--inactivated.line-value-mpackets-name {
-        color: #ccc;
-        div:nth-of-type(1) {
-          background-color: #ccc !important;
-        }
-      }
       .line-value-mpackets-name {
         position: relative;
         display: flex;
@@ -115,7 +122,7 @@
           flex: 1;
           padding-left: 19px;
         }
-        .total,.inbound,.outbound,.internal,.other {
+        .total,.inbound,.outbound,.internal,.through,.other {
           width: 14px;
           height: 14px;
           border-radius: 50%;
@@ -135,8 +142,41 @@
         .internal {
           background: #E48F3E;
         }
+        .through {
+          background: #9FBC1D;
+        }
         .other {
           background: #98709B;
+        }
+      }
+    }
+  }
+}
+.el-select__popper.metric {
+  top: 218px !important;
+  .el-popper__arrow {
+    display: none;
+  }
+}
+.reference-line.el-select__popper {
+  left: 1545px !important;
+}
+.option-popper.el-select-dropdown {
+  .el-scrollbar {
+    .el-select-dropdown__wrap {
+      .el-scrollbar__view.el-select-dropdown__list {
+        .el-select-dropdown__item {
+          padding: 0 8px;
+          font-family: Helvetica;
+          height: 24px;
+          line-height: 24px;
+          font-size: 12px;
+          color: #575757;
+          font-weight: 400;
+        }
+        .el-select-dropdown__item:hover {
+          color: #2C72C6;
+          background: #fff;
         }
       }
     }

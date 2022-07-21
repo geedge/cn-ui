@@ -1,9 +1,17 @@
 <template>
   <div class="line network">
     <div class="chart-drawing" id="chart"></div>
-    <div class="line-value">
-      <div class="line-value-mpackets" v-for="(item, index) in mpackets" :key="item">
-        <div class="line-value-mpackets-name" :class="{'table-below-box--inactivated': !item.active}" @click="legendSelectChange(index)">
+    <div class="line-value-active"></div>
+    <div class="line-value" >
+      <div class="line-value-mpackets"
+           v-show="item.show"
+           :class=" {'is-active': activeShow === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
+           v-for="(item, index) in mpackets"
+           :key="index"
+           @mouseenter="mouseenter(item)"
+           @mouseleave="mouseleave(item)"
+           @click="activeChange(item, index)">
+        <div class="line-value-mpackets-name">
           <div :class="item.class"></div>
           <div class="mpackets-name">{{$t(item.name)}}</div>
         </div>
@@ -18,8 +26,8 @@
               size="mini"
               v-model="value1"
               class="option__select select-topn"
-              placeholder=""
-              popper-class="option-popper"
+              popper-class="option-popper metric"
+              @change="metricSelectChange"
           >
             <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -32,8 +40,8 @@
               size="mini"
               v-model="value2"
               class="option__select select-topn"
-              placeholder=""
-              popper-class="option-popper"
+              :disabled="activeShow === 'total'"
+              popper-class="option-popper reference-line"
           >
             <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -47,7 +55,7 @@
 import * as echarts from 'echarts'
 import { stackedLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert from '@/utils/unit-convert'
-import { unitTypes } from '@/utils/constants.js'
+import { unitTypes, chartColor3, chartColor4 } from '@/utils/constants.js'
 import { shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 export default {
@@ -64,16 +72,16 @@ export default {
     return {
       options1: [
         {
-          value: 'Bits',
-          label: 'Bits'
+          value: 'Bits/s',
+          label: 'Bits/s'
         },
         {
-          value: 'Option2',
-          label: 'Option2'
+          value: 'Packets/s',
+          label: 'Packets/s'
         },
         {
-          value: 'Option3',
-          label: 'Option3'
+          value: 'Sessions/s',
+          label: 'Sessions/s'
         }
       ],
       value1: '',
@@ -83,30 +91,44 @@ export default {
           label: 'Average'
         },
         {
-          value: 'Option2',
-          label: 'Option2'
+          value: '95th Percentile',
+          label: '95th Percentile'
         },
         {
-          value: 'Option3',
-          label: 'Option3'
+          value: 'Maximum',
+          label: 'Maximum'
         }
       ],
       value2: '',
       mpackets: [
-        { number: 4212211, name: 'network.total', class: 'total', active: true },
-        { number: 111, name: 'network.inbound', class: 'inbound', active: true },
-        { number: 112, name: 'network.outbound' , class: 'outbound', active: true },
-        { number: 111, name: 'network.internal', class: 'internal', active: true },
-        { number: 1211, name: 'network.other', class: 'other', active: true }
+        { number: 0, name: 'network.total', class: 'total', show: true, positioning: 0 },
+        { number: 2212, name: 'network.inbound', class: 'inbound', show: true, positioning: 1 },
+        { number: 0, name: 'network.outbound', class: 'outbound', show: true, positioning: 2 },
+        { number: 0, name: 'network.internal', class: 'internal', show: true, positioning: 3 },
+        { number: 1211, name: 'network.through', class: 'through', show: true, positioning: 4 },
+        { number: 0, name: 'network.other', class: 'other', show: true, positioning: 5 }
       ],
       unitConvert,
       unitTypes,
       chartDateObject: [],
-      timer: null
+      timer: null,
+      activeShow: 'total',
+      mousemoveCursor: '',
+      leftOffset: 0,
+      sizes: [3, 4, 6, 8, 9, 10]
+    }
+  },
+  watch: {
+    activeShow (n) {
+      this.$nextTick(() => {
+        this.handleActiveBar(n)
+      })
     }
   },
   methods: {
     init () {
+      const _this = this
+      this.mpackets = this.mpackets.filter(t => t.show === true)
       const dom = document.getElementById('chart')
       this.myChart = echarts.init(dom)
       this.chartOption = stackedLineChartOption
@@ -115,1155 +137,1155 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 11000000
+              rate: 0
             },
             {
               stat_time: 1652544300000,
-              rate: 97705191
+              rate: 0
             },
             {
               stat_time: 1652544600000,
-              rate: 54907153
+              rate: 0
             },
             {
               stat_time: 1652544900000,
-              rate: 23932331
+              rate: 0
             },
             {
               stat_time: 1652545200000,
-              rate: 70820084
+              rate: 0
             },
             {
               stat_time: 1652545500000,
-              rate: 48744453
+              rate: 0
             },
             {
               stat_time: 1652545800000,
-              rate: 46345590
+              rate: 0
             },
             {
               stat_time: 1652546100000,
-              rate: 55092019
+              rate: 0
             },
             {
               stat_time: 1652546400000,
-              rate: 43861024
+              rate: 0
             },
             {
               stat_time: 1652546700000,
-              rate: 42635307
+              rate: 0
             },
             {
               stat_time: 1652547000000,
-              rate: 39513137
+              rate: 0
             },
             {
               stat_time: 1652547300000,
-              rate: 37251858
+              rate: 0
             },
             {
               stat_time: 1652547600000,
-              rate: 35641395
+              rate: 0
             },
             {
               stat_time: 1652547900000,
-              rate: 42593269
+              rate: 0
             },
             {
               stat_time: 1652548200000,
-              rate: 29854584
+              rate: 0
             },
             {
               stat_time: 1652548500000,
-              rate: 26270305
+              rate: 0
             },
             {
               stat_time: 1652548800000,
-              rate: 24115244
+              rate: 0
             },
             {
               stat_time: 1652549100000,
-              rate: 22159263
+              rate: 0
             },
             {
               stat_time: 1652549400000,
-              rate: 20260208
+              rate: 0
             },
             {
               stat_time: 1652549700000,
-              rate: 19824773
+              rate: 0
             },
             {
               stat_time: 1652550000000,
-              rate: 19364713
+              rate: 0
             },
             {
               stat_time: 1652550300000,
-              rate: 18511395
+              rate: 0
             },
             {
               stat_time: 1652550600000,
-              rate: 16811691
+              rate: 0
             },
             {
               stat_time: 1652550900000,
-              rate: 14849281
+              rate: 0
             },
             {
               stat_time: 1652551200000,
-              rate: 14545834
+              rate: 0
             },
             {
               stat_time: 1652551500000,
-              rate: 12822215
+              rate: 0
             },
             {
               stat_time: 1652551800000,
-              rate: 12061919
+              rate: 0
             },
             {
               stat_time: 1652552100000,
-              rate: 11483505
+              rate: 0
             },
             {
               stat_time: 1652552400000,
-              rate: 8830222
+              rate: 0
             },
             {
               stat_time: 1652552700000,
-              rate: 8316519
+              rate: 0
             },
             {
               stat_time: 1652553000000,
-              rate: 8039651
+              rate: 0
             },
             {
               stat_time: 1652553300000,
-              rate: 7780729
+              rate: 0
             },
             {
               stat_time: 1652553600000,
-              rate: 6873645
+              rate: 0
             },
             {
               stat_time: 1652553900000,
-              rate: 6960513
+              rate: 0
             },
             {
               stat_time: 1652554200000,
-              rate: 6890352
+              rate: 0
             },
             {
               stat_time: 1652554500000,
-              rate: 6319387
+              rate: 0
             },
             {
               stat_time: 1652554800000,
-              rate: 6160476
+              rate: 0
             },
             {
               stat_time: 1652555100000,
-              rate: 6128487
+              rate: 0
             },
             {
               stat_time: 1652555400000,
-              rate: 5727151
+              rate: 0
             },
             {
               stat_time: 1652555700000,
-              rate: 5112335
+              rate: 0
             },
             {
               stat_time: 1652556000000,
-              rate: 4916237
+              rate: 0
             },
             {
               stat_time: 1652556300000,
-              rate: 4332243
+              rate: 0
             },
             {
               stat_time: 1652556600000,
-              rate: 4182951
+              rate: 0
             },
             {
               stat_time: 1652556900000,
-              rate: 3935808
+              rate: 0
             },
             {
               stat_time: 1652557200000,
-              rate: 3780119
+              rate: 0
             },
             {
               stat_time: 1652557500000,
-              rate: 4287550
+              rate: 0
             },
             {
               stat_time: 1652557800000,
-              rate: 3708335
+              rate: 0
             },
             {
               stat_time: 1652558100000,
-              rate: 3579655
+              rate: 0
             },
             {
               stat_time: 1652558400000,
-              rate: 4024462
+              rate: 0
             },
             {
               stat_time: 1652558700000,
-              rate: 4067459
+              rate: 0
             },
             {
               stat_time: 1652559000000,
-              rate: 3701036
+              rate: 0
             },
             {
               stat_time: 1652559300000,
-              rate: 3614789
+              rate: 0
             },
             {
               stat_time: 1652559600000,
-              rate: 3467837
+              rate: 0
             },
             {
               stat_time: 1652559900000,
-              rate: 2900363
+              rate: 0
             },
             {
               stat_time: 1652560200000,
-              rate: 2888851
+              rate: 0
             },
             {
               stat_time: 1652560500000,
-              rate: 2701209
+              rate: 0
             },
             {
               stat_time: 1652560800000,
-              rate: 2779434
+              rate: 0
             },
             {
               stat_time: 1652561100000,
-              rate: 2926322
+              rate: 0
             },
             {
               stat_time: 1652561400000,
-              rate: 2800990
+              rate: 0
             },
             {
               stat_time: 1652561700000,
-              rate: 3086460
+              rate: 0
             },
             {
               stat_time: 1652562000000,
-              rate: 2923915
+              rate: 0
             },
             {
               stat_time: 1652562300000,
-              rate: 3367917
+              rate: 0
             },
             {
               stat_time: 1652562600000,
-              rate: 3151884
+              rate: 0
             },
             {
               stat_time: 1652562900000,
-              rate: 3463305
+              rate: 0
             },
             {
               stat_time: 1652563200000,
-              rate: 4434079
+              rate: 0
             },
             {
               stat_time: 1652563500000,
-              rate: 5466455
+              rate: 0
             },
             {
               stat_time: 1652563800000,
-              rate: 6526085
+              rate: 0
             },
             {
               stat_time: 1652564100000,
-              rate: 5890882
+              rate: 0
             },
             {
               stat_time: 1652564400000,
-              rate: 6135859
+              rate: 0
             },
             {
               stat_time: 1652564700000,
-              rate: 6336279
+              rate: 0
             },
             {
               stat_time: 1652565000000,
-              rate: 6743536
+              rate: 0
             },
             {
               stat_time: 1652565300000,
-              rate: 7273884
+              rate: 0
             },
             {
               stat_time: 1652565600000,
-              rate: 7708789
+              rate: 0
             },
             {
               stat_time: 1652565900000,
-              rate: 8080154
+              rate: 0
             },
             {
               stat_time: 1652566200000,
-              rate: 8531700
+              rate: 0
             },
             {
               stat_time: 1652566500000,
-              rate: 9233987
+              rate: 0
             },
             {
               stat_time: 1652566800000,
-              rate: 9548847
+              rate: 0
             },
             {
               stat_time: 1652567100000,
-              rate: 9394714
+              rate: 0
             },
             {
               stat_time: 1652567400000,
-              rate: 9831384
+              rate: 0
             },
             {
               stat_time: 1652567700000,
-              rate: 10411296
+              rate: 0
             },
             {
               stat_time: 1652568000000,
-              rate: 10623099
+              rate: 0
             },
             {
               stat_time: 1652568300000,
-              rate: 11010882
+              rate: 0
             },
             {
               stat_time: 1652568600000,
-              rate: 10873315
+              rate: 0
             },
             {
               stat_time: 1652568900000,
-              rate: 9761416
+              rate: 0
             },
             {
               stat_time: 1652569200000,
-              rate: 10714727
+              rate: 0
             },
             {
               stat_time: 1652569500000,
-              rate: 10590923
+              rate: 0
             },
             {
               stat_time: 1652569800000,
-              rate: 11436613
+              rate: 0
             },
             {
               stat_time: 1652570100000,
-              rate: 41730266
+              rate: 0
             },
             {
               stat_time: 1652570400000,
-              rate: 12201731
+              rate: 0
             },
             {
               stat_time: 1652570700000,
-              rate: 13052837
+              rate: 0
             },
             {
               stat_time: 1652571000000,
-              rate: 12543164
+              rate: 0
             },
             {
               stat_time: 1652571300000,
-              rate: 12959328
+              rate: 0
             },
             {
               stat_time: 1652571600000,
-              rate: 23441235
+              rate: 0
             },
             {
               stat_time: 1652571900000,
-              rate: 23409372
+              rate: 0
             },
             {
               stat_time: 1652572200000,
-              rate: 14348181
+              rate: 0
             },
             {
               stat_time: 1652572500000,
-              rate: 15048904
+              rate: 0
             },
             {
               stat_time: 1652572800000,
-              rate: 15171239
+              rate: 0
             },
             {
               stat_time: 1652573100000,
-              rate: 16367221
+              rate: 0
             },
             {
               stat_time: 1652573400000,
-              rate: 17738880
+              rate: 0
             },
             {
               stat_time: 1652573700000,
-              rate: 19852960
+              rate: 0
             },
             {
               stat_time: 1652574000000,
-              rate: 18871128
+              rate: 0
             },
             {
               stat_time: 1652574300000,
-              rate: 19117694
+              rate: 0
             },
             {
               stat_time: 1652574600000,
-              rate: 19353638
+              rate: 0
             },
             {
               stat_time: 1652574900000,
-              rate: 20863662
+              rate: 0
             },
             {
               stat_time: 1652575200000,
-              rate: 19640832
+              rate: 0
             },
             {
               stat_time: 1652575500000,
-              rate: 20050025
+              rate: 0
             },
             {
               stat_time: 1652575800000,
-              rate: 22865748
+              rate: 0
             },
             {
               stat_time: 1652576100000,
-              rate: 23341169
+              rate: 0
             },
             {
               stat_time: 1652576400000,
-              rate: 23340054
+              rate: 0
             },
             {
               stat_time: 1652576700000,
-              rate: 22748911
+              rate: 0
             },
             {
               stat_time: 1652577000000,
-              rate: 19992563
+              rate: 0
             },
             {
               stat_time: 1652577300000,
-              rate: 20559226
+              rate: 0
             },
             {
               stat_time: 1652577600000,
-              rate: 22854285
+              rate: 0
             },
             {
               stat_time: 1652577900000,
-              rate: 23906020
+              rate: 0
             },
             {
               stat_time: 1652578200000,
-              rate: 24086505
+              rate: 0
             },
             {
               stat_time: 1652578500000,
-              rate: 22715176
+              rate: 0
             },
             {
               stat_time: 1652578800000,
-              rate: 23369407
+              rate: 0
             },
             {
               stat_time: 1652579100000,
-              rate: 25487989
+              rate: 0
             },
             {
               stat_time: 1652579400000,
-              rate: 26631762
+              rate: 0
             },
             {
               stat_time: 1652579700000,
-              rate: 28738473
+              rate: 0
             },
             {
               stat_time: 1652580000000,
-              rate: 30735243
+              rate: 0
             },
             {
               stat_time: 1652580300000,
-              rate: 31611725
+              rate: 0
             },
             {
               stat_time: 1652580600000,
-              rate: 31680369
+              rate: 0
             },
             {
               stat_time: 1652580900000,
-              rate: 31233004
+              rate: 0
             },
             {
               stat_time: 1652581200000,
-              rate: 32772112
+              rate: 0
             },
             {
               stat_time: 1652581500000,
-              rate: 34210528
+              rate: 0
             },
             {
               stat_time: 1652581800000,
-              rate: 35654000
+              rate: 0
             },
             {
               stat_time: 1652582100000,
-              rate: 36687596
+              rate: 0
             },
             {
               stat_time: 1652582400000,
-              rate: 36746922
+              rate: 0
             },
             {
               stat_time: 1652582700000,
-              rate: 39254800
+              rate: 0
             },
             {
               stat_time: 1652583000000,
-              rate: 39595388
+              rate: 0
             },
             {
               stat_time: 1652583300000,
-              rate: 39972111
+              rate: 0
             },
             {
               stat_time: 1652583600000,
-              rate: 40791647
+              rate: 0
             },
             {
               stat_time: 1652583900000,
-              rate: 40963501
+              rate: 0
             },
             {
               stat_time: 1652584200000,
-              rate: 42358692
+              rate: 0
             },
             {
               stat_time: 1652584500000,
-              rate: 43856693
+              rate: 0
             },
             {
               stat_time: 1652584800000,
-              rate: 44100684
+              rate: 0
             },
             {
               stat_time: 1652585100000,
-              rate: 44437389
+              rate: 0
             },
             {
               stat_time: 1652585400000,
-              rate: 45596587
+              rate: 0
             },
             {
               stat_time: 1652585700000,
-              rate: 46154917
+              rate: 0
             },
             {
               stat_time: 1652586000000,
-              rate: 45960880
+              rate: 0
             },
             {
               stat_time: 1652586300000,
-              rate: 46431276
+              rate: 0
             },
             {
               stat_time: 1652586600000,
-              rate: 49023068
+              rate: 0
             },
             {
               stat_time: 1652586900000,
-              rate: 49592063
+              rate: 0
             },
             {
               stat_time: 1652587200000,
-              rate: 50716723
+              rate: 0
             },
             {
               stat_time: 1652587500000,
-              rate: 53741920
+              rate: 0
             },
             {
               stat_time: 1652587800000,
-              rate: 56175285
+              rate: 0
             },
             {
               stat_time: 1652588100000,
-              rate: 57680307
+              rate: 0
             },
             {
               stat_time: 1652588400000,
-              rate: 59134913
+              rate: 0
             },
             {
               stat_time: 1652588700000,
-              rate: 57337066
+              rate: 0
             },
             {
               stat_time: 1652589000000,
-              rate: 57983261
+              rate: 0
             },
             {
               stat_time: 1652589300000,
-              rate: 56700289
+              rate: 0
             },
             {
               stat_time: 1652589600000,
-              rate: 55878496
+              rate: 0
             },
             {
               stat_time: 1652589900000,
-              rate: 57804474
+              rate: 0
             },
             {
               stat_time: 1652590200000,
-              rate: 58609166
+              rate: 0
             },
             {
               stat_time: 1652590500000,
-              rate: 58516659
+              rate: 0
             },
             {
               stat_time: 1652590800000,
-              rate: 56948867
+              rate: 0
             },
             {
               stat_time: 1652591100000,
-              rate: 56219935
+              rate: 0
             },
             {
               stat_time: 1652591400000,
-              rate: 54505463
+              rate: 0
             },
             {
               stat_time: 1652591700000,
-              rate: 53446587
+              rate: 0
             },
             {
               stat_time: 1652592000000,
-              rate: 52340375
+              rate: 0
             },
             {
               stat_time: 1652592300000,
-              rate: 52356666
+              rate: 0
             },
             {
               stat_time: 1652592600000,
-              rate: 51244146
+              rate: 0
             },
             {
               stat_time: 1652592900000,
-              rate: 53680531
+              rate: 0
             },
             {
               stat_time: 1652593200000,
-              rate: 54533580
+              rate: 0
             },
             {
               stat_time: 1652593500000,
-              rate: 53306910
+              rate: 0
             },
             {
               stat_time: 1652593800000,
-              rate: 52354353
+              rate: 0
             },
             {
               stat_time: 1652594100000,
-              rate: 49977580
+              rate: 0
             },
             {
               stat_time: 1652594400000,
-              rate: 46621574
+              rate: 0
             },
             {
               stat_time: 1652594700000,
-              rate: 47127087
+              rate: 0
             },
             {
               stat_time: 1652595000000,
-              rate: 49461339
+              rate: 0
             },
             {
               stat_time: 1652595300000,
-              rate: 51031827
+              rate: 0
             },
             {
               stat_time: 1652595600000,
-              rate: 51476867
+              rate: 0
             },
             {
               stat_time: 1652595900000,
-              rate: 53283867
+              rate: 0
             },
             {
               stat_time: 1652596200000,
-              rate: 54061215
+              rate: 0
             },
             {
               stat_time: 1652596500000,
-              rate: 54541970
+              rate: 0
             },
             {
               stat_time: 1652596800000,
-              rate: 55083629
+              rate: 0
             },
             {
               stat_time: 1652597100000,
-              rate: 55246097
+              rate: 0
             },
             {
               stat_time: 1652597400000,
-              rate: 53191619
+              rate: 0
             },
             {
               stat_time: 1652597700000,
-              rate: 50731653
+              rate: 0
             },
             {
               stat_time: 1652598000000,
-              rate: 51200237
+              rate: 0
             },
             {
               stat_time: 1652598300000,
-              rate: 51534337
+              rate: 0
             },
             {
               stat_time: 1652598600000,
-              rate: 50598044
+              rate: 0
             },
             {
               stat_time: 1652598900000,
-              rate: 49776256
+              rate: 0
             },
             {
               stat_time: 1652599200000,
-              rate: 49547090
+              rate: 0
             },
             {
               stat_time: 1652599500000,
-              rate: 48760323
+              rate: 0
             },
             {
               stat_time: 1652599800000,
-              rate: 48296686
+              rate: 0
             },
             {
               stat_time: 1652600100000,
-              rate: 46449632
+              rate: 0
             },
             {
               stat_time: 1652600400000,
-              rate: 49544863
+              rate: 0
             },
             {
               stat_time: 1652600700000,
-              rate: 49467691
+              rate: 0
             },
             {
               stat_time: 1652601000000,
-              rate: 49216775
+              rate: 0
             },
             {
               stat_time: 1652601300000,
-              rate: 49433036
+              rate: 0
             },
             {
               stat_time: 1652601600000,
-              rate: 48375747
+              rate: 0
             },
             {
               stat_time: 1652601900000,
-              rate: 46592737
+              rate: 0
             },
             {
               stat_time: 1652602200000,
-              rate: 48789567
+              rate: 0
             },
             {
               stat_time: 1652602500000,
-              rate: 48680754
+              rate: 0
             },
             {
               stat_time: 1652602800000,
-              rate: 48512774
+              rate: 0
             },
             {
               stat_time: 1652603100000,
-              rate: 49527122
+              rate: 0
             },
             {
               stat_time: 1652603400000,
-              rate: 48723705
+              rate: 0
             },
             {
               stat_time: 1652603700000,
-              rate: 48324787
+              rate: 0
             },
             {
               stat_time: 1652604000000,
-              rate: 46695340
+              rate: 0
             },
             {
               stat_time: 1652604300000,
-              rate: 47933425
+              rate: 0
             },
             {
               stat_time: 1652604600000,
-              rate: 48526356
+              rate: 0
             },
             {
               stat_time: 1652604900000,
-              rate: 48410775
+              rate: 0
             },
             {
               stat_time: 1652605200000,
-              rate: 48526193
+              rate: 0
             },
             {
               stat_time: 1652605500000,
-              rate: 48716345
+              rate: 0
             },
             {
               stat_time: 1652605800000,
-              rate: 48473771
+              rate: 0
             },
             {
               stat_time: 1652606100000,
-              rate: 48728770
+              rate: 0
             },
             {
               stat_time: 1652606400000,
-              rate: 50446075
+              rate: 0
             },
             {
               stat_time: 1652606700000,
-              rate: 50854376
+              rate: 0
             },
             {
               stat_time: 1652607000000,
-              rate: 50981863
+              rate: 0
             },
             {
               stat_time: 1652607300000,
-              rate: 51019977
+              rate: 0
             },
             {
               stat_time: 1652607600000,
-              rate: 51359469
+              rate: 0
             },
             {
               stat_time: 1652607900000,
-              rate: 52568453
+              rate: 0
             },
             {
               stat_time: 1652608200000,
-              rate: 54058483
+              rate: 0
             },
             {
               stat_time: 1652608500000,
-              rate: 53466258
+              rate: 0
             },
             {
               stat_time: 1652608800000,
-              rate: 52039836
+              rate: 0
             },
             {
               stat_time: 1652609100000,
-              rate: 52360322
+              rate: 0
             },
             {
               stat_time: 1652609400000,
-              rate: 52855579
+              rate: 0
             },
             {
               stat_time: 1652609700000,
-              rate: 52866074
+              rate: 0
             },
             {
               stat_time: 1652610000000,
-              rate: 52981945
+              rate: 0
             },
             {
               stat_time: 1652610300000,
-              rate: 51579715
+              rate: 0
             },
             {
               stat_time: 1652610600000,
-              rate: 52291658
+              rate: 0
             },
             {
               stat_time: 1652610900000,
-              rate: 52758547
+              rate: 0
             },
             {
               stat_time: 1652611200000,
-              rate: 55003147
+              rate: 0
             },
             {
               stat_time: 1652611500000,
-              rate: 56643555
+              rate: 0
             },
             {
               stat_time: 1652611800000,
-              rate: 54727710
+              rate: 0
             },
             {
               stat_time: 1652612100000,
-              rate: 57998594
+              rate: 0
             },
             {
               stat_time: 1652612400000,
-              rate: 53340115
+              rate: 0
             },
             {
               stat_time: 1652612700000,
-              rate: 58519563
+              rate: 0
             },
             {
               stat_time: 1652613000000,
-              rate: 57299719
+              rate: 0
             },
             {
               stat_time: 1652613300000,
-              rate: 57614166
+              rate: 0
             },
             {
               stat_time: 1652613600000,
-              rate: 57569555
+              rate: 0
             },
             {
               stat_time: 1652613900000,
-              rate: 57108456
+              rate: 0
             },
             {
               stat_time: 1652614200000,
-              rate: 55940414
+              rate: 0
             },
             {
               stat_time: 1652614500000,
-              rate: 56422300
+              rate: 0
             },
             {
               stat_time: 1652614800000,
-              rate: 58067580
+              rate: 0
             },
             {
               stat_time: 1652615100000,
-              rate: 59305259
+              rate: 0
             },
             {
               stat_time: 1652615400000,
-              rate: 59620542
+              rate: 0
             },
             {
               stat_time: 1652615700000,
-              rate: 59511278
+              rate: 0
             },
             {
               stat_time: 1652616000000,
-              rate: 58682948
+              rate: 0
             },
             {
               stat_time: 1652616300000,
-              rate: 59474819
+              rate: 0
             },
             {
               stat_time: 1652616600000,
-              rate: 60495833
+              rate: 0
             },
             {
               stat_time: 1652616900000,
-              rate: 61534299
+              rate: 0
             },
             {
               stat_time: 1652617200000,
-              rate: 62552948
+              rate: 0
             },
             {
               stat_time: 1652617500000,
-              rate: 61501072
+              rate: 0
             },
             {
               stat_time: 1652617800000,
-              rate: 59650889
+              rate: 0
             },
             {
               stat_time: 1652618100000,
-              rate: 58985415
+              rate: 0
             },
             {
               stat_time: 1652618400000,
-              rate: 59255183
+              rate: 0
             },
             {
               stat_time: 1652618700000,
-              rate: 60608863
+              rate: 0
             },
             {
               stat_time: 1652619000000,
-              rate: 61438380
+              rate: 0
             },
             {
               stat_time: 1652619300000,
-              rate: 62420546
+              rate: 0
             },
             {
               stat_time: 1652619600000,
-              rate: 62590594
+              rate: 0
             },
             {
               stat_time: 1652619900000,
-              rate: 62095950
+              rate: 0
             },
             {
               stat_time: 1652620200000,
-              rate: 63718903
+              rate: 0
             },
             {
               stat_time: 1652620500000,
-              rate: 68762818
+              rate: 0
             },
             {
               stat_time: 1652620800000,
-              rate: 70489441
+              rate: 0
             },
             {
               stat_time: 1652621100000,
-              rate: 73844737
+              rate: 0
             },
             {
               stat_time: 1652621400000,
-              rate: 73487290
+              rate: 0
             },
             {
               stat_time: 1652621700000,
-              rate: 73311188
+              rate: 0
             },
             {
               stat_time: 1652622000000,
-              rate: 73917769
+              rate: 0
             },
             {
               stat_time: 1652622300000,
-              rate: 73800247
+              rate: 0
             },
             {
               stat_time: 1652622600000,
-              rate: 76146932
+              rate: 0
             },
             {
               stat_time: 1652622900000,
-              rate: 75958696
+              rate: 0
             },
             {
               stat_time: 1652623200000,
-              rate: 74467543
+              rate: 0
             },
             {
               stat_time: 1652623500000,
-              rate: 73889830
+              rate: 0
             },
             {
               stat_time: 1652623800000,
-              rate: 74735585
+              rate: 0
             },
             {
               stat_time: 1652624100000,
-              rate: 75843471
+              rate: 0
             },
             {
               stat_time: 1652624400000,
-              rate: 77786588
+              rate: 0
             },
             {
               stat_time: 1652624700000,
-              rate: 76156466
+              rate: 0
             },
             {
               stat_time: 1652625000000,
-              rate: 73335410
+              rate: 0
             },
             {
               stat_time: 1652625300000,
-              rate: 71284149
+              rate: 0
             },
             {
               stat_time: 1652625600000,
-              rate: 69296435
+              rate: 0
             },
             {
               stat_time: 1652625900000,
-              rate: 68404328
+              rate: 0
             },
             {
               stat_time: 1652626200000,
-              rate: 67259702
+              rate: 0
             },
             {
               stat_time: 1652626500000,
-              rate: 68115684
+              rate: 0
             },
             {
               stat_time: 1652626800000,
-              rate: 67191500
+              rate: 0
             },
             {
               stat_time: 1652627100000,
-              rate: 65596427
+              rate: 0
             },
             {
               stat_time: 1652627400000,
-              rate: 62699903
+              rate: 0
             },
             {
               stat_time: 1652627700000,
-              rate: 61535977
+              rate: 0
             },
             {
               stat_time: 1652628000000,
-              rate: 61218758
+              rate: 0
             },
             {
               stat_time: 1652628300000,
-              rate: 68813468
+              rate: 0
             },
             {
               stat_time: 1652628600000,
-              rate: 71614061
+              rate: 0
             },
             {
               stat_time: 1652628900000,
-              rate: 72200135
+              rate: 0
             },
             {
               stat_time: 1652629200000,
-              rate: 72648480
+              rate: 0
             },
             {
               stat_time: 1652629500000,
-              rate: 71132614
+              rate: 0
             },
             {
               stat_time: 1652629800000,
-              rate: 70650928
+              rate: 0
             },
             {
               stat_time: 1652630100000,
-              rate: 70844773
+              rate: 0
             }
           ]
         },
@@ -4739,23 +4761,23 @@ export default {
           dateArr: [
             {
               stat_time: 1652544000000,
-              rate: 14000000
+              rate: 13000000
             },
             {
               stat_time: 1652544300000,
-              rate: 77705198
+              rate: 37705198
             },
             {
               stat_time: 1652544600000,
-              rate: 24907153
+              rate: 64907153
             },
             {
               stat_time: 1652544900000,
-              rate: 33932331
+              rate: 93932331
             },
             {
               stat_time: 1652545200000,
-              rate: 50820084
+              rate: 30820084
             },
             {
               stat_time: 1652545500000,
@@ -4767,7 +4789,7 @@ export default {
             },
             {
               stat_time: 1652546100000,
-              rate: 15092019
+              rate: 75092019
             },
             {
               stat_time: 1652546400000,
@@ -4775,7 +4797,7 @@ export default {
             },
             {
               stat_time: 1652546700000,
-              rate: 82635307
+              rate: 22635307
             },
             {
               stat_time: 1652547000000,
@@ -4791,7 +4813,7 @@ export default {
             },
             {
               stat_time: 1652547900000,
-              rate: 12593269
+              rate: 72593269
             },
             {
               stat_time: 1652548200000,
@@ -5087,7 +5109,7 @@ export default {
             },
             {
               stat_time: 1652570100000,
-              rate: 31730266
+              rate: 91730266
             },
             {
               stat_time: 1652570400000,
@@ -5107,11 +5129,11 @@ export default {
             },
             {
               stat_time: 1652571600000,
-              rate: 63441235
+              rate: 93441235
             },
             {
               stat_time: 1652571900000,
-              rate: 63409372
+              rate: 93409372
             },
             {
               stat_time: 1652572200000,
@@ -5890,12 +5912,1197 @@ export default {
               rate: 70844773
             }
           ]
+        },
+        {
+          dateArr: [
+            {
+              stat_time: 1652544000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652544300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652544600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652544900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652545200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652545500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652545800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652546100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652546400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652546700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652547000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652547300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652547600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652547900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652548200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652548500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652548800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652549100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652549400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652549700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652550000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652550300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652550600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652550900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652551200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652551500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652551800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652552100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652552400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652552700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652553000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652553300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652553600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652553900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652554200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652554500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652554800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652555100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652555400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652555700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652556000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652556300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652556600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652556900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652557200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652557500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652557800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652558100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652558400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652558700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652559000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652559300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652559600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652559900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652560200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652560500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652560800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652561100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652561400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652561700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652562000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652562300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652562600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652562900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652563200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652563500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652563800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652564100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652564400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652564700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652565000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652565300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652565600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652565900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652566200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652566500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652566800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652567100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652567400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652567700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652568000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652568300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652568600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652568900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652569200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652569500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652569800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652570100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652570400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652570700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652571000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652571300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652571600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652571900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652572200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652572500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652572800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652573100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652573400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652573700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652574000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652574300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652574600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652574900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652575200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652575500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652575800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652576100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652576400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652576700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652577000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652577300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652577600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652577900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652578200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652578500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652578800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652579100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652579400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652579700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652580000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652580300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652580600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652580900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652581200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652581500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652581800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652582100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652582400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652582700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652583000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652583300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652583600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652583900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652584200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652584500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652584800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652585100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652585400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652585700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652586000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652586300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652586600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652586900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652587200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652587500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652587800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652588100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652588400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652588700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652589000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652589300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652589600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652589900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652590200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652590500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652590800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652591100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652591400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652591700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652592000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652592300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652592600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652592900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652593200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652593500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652593800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652594100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652594400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652594700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652595000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652595300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652595600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652595900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652596200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652596500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652596800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652597100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652597400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652597700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652598000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652598300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652598600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652598900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652599200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652599500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652599800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652600100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652600400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652600700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652601000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652601300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652601600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652601900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652602200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652602500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652602800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652603100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652603400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652603700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652604000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652604300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652604600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652604900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652605200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652605500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652605800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652606100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652606400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652606700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652607000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652607300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652607600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652607900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652608200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652608500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652608800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652609100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652609400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652609700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652610000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652610300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652610600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652610900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652611200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652611500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652611800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652612100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652612400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652612700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652613000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652613300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652613600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652613900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652614200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652614500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652614800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652615100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652615400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652615700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652616000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652616300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652616600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652616900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652617200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652617500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652617800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652618100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652618400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652618700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652619000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652619300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652619600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652619900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652620200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652620500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652620800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652621100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652621400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652621700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652622000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652622300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652622600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652622900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652623200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652623500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652623800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652624100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652624400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652624700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652625000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652625300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652625600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652625900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652626200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652626500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652626800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652627100000,
+              rate: 0
+            },
+            {
+              stat_time: 1652627400000,
+              rate: 0
+            },
+            {
+              stat_time: 1652627700000,
+              rate: 0
+            },
+            {
+              stat_time: 1652628000000,
+              rate: 0
+            },
+            {
+              stat_time: 1652628300000,
+              rate: 0
+            },
+            {
+              stat_time: 1652628600000,
+              rate: 0
+            },
+            {
+              stat_time: 1652628900000,
+              rate: 0
+            },
+            {
+              stat_time: 1652629200000,
+              rate: 0
+            },
+            {
+              stat_time: 1652629500000,
+              rate: 0
+            },
+            {
+              stat_time: 1652629800000,
+              rate: 0
+            },
+            {
+              stat_time: 1652630100000,
+              rate: 0
+            }
+          ]
         }
       ]
-      this.chartOption.series = this.chartOption.series.map((t, i) => {
+      const chartOption = this.chartOption.series[0]
+      this.chartOption.series = this.mpackets.map((t, i) => {
         return {
-          ...t,
-          name: this.mpackets[i].name,
+          ...chartOption,
+          name: t.name,
+          lineStyle: {
+            color: chartColor3[t.positioning],
+            width: 1
+          },
+          symbolSize: function (value, params) {
+            return _this.symbolSizeSortChange(i, value[0])
+          },
+          itemStyle: {
+            emphasis: {
+              borderColor: chartColor4[t.positioning],
+              borderWidth: 2,
+              shadowColor: chartColor4[t.positioning],
+              shadowBlur: _this.sizes[t.positioning] + 2
+            }
+          },
+          areaStyle: {
+            opacity: 0.1,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: chartColor3[t.positioning]
+              },
+              {
+                offset: 1,
+                color: chartColor3[t.positioning]
+              }
+            ])
+          },
           data: this.chartDateObject[i].dateArr.map(t => [t.stat_time, t.rate])
         }
       })
@@ -5908,7 +7115,18 @@ export default {
       }
       this.myChart.setOption(this.chartOption)
     },
-
+    activeChange (item, index) {
+      this.activeShow = item.class
+      this.handleActiveBar(item.class)
+      this.legendSelectChange(item, index)
+    },
+    mouseenter (item) {
+      this.mousemoveCursor = item.class
+      this.handleActiveBar(item.class)
+    },
+    mouseleave () {
+      this.mousemoveCursor = ''
+    },
     dispatchLegendSelectAction (name) {
       this.myChart.dispatchAction({
         type: 'legendSelect',
@@ -5921,46 +7139,92 @@ export default {
         name: name
       })
     },
-    legendSelectChange (index) {
-      const legendNum = this.mpackets.length
-      if (legendNum > 1) {
-        const selectedNum = this.mpackets.filter(item => {
-          return item.active === true
-        }).length // 点击前，高亮legend个数
-        if (selectedNum === legendNum) { // 全部曲线高亮时
-          this.mpackets.forEach((item, indexTmp) => {
-            if (indexTmp === index) {
-              item.active = true
-              this.dispatchLegendSelectAction(item.name)
-            } else {
-              item.active = false
-              this.dispatchLegendUnSelectAction(item.name)
-            }
-          })
-        } else if (selectedNum === 1 && this.mpackets[index].active) { // 多条曲线，且只有一条曲线高亮, 且点击的曲线为高亮曲线时
-          this.mpackets.forEach((item) => {
-            item.active = true
-            this.dispatchLegendSelectAction(item.name)
-          })
-        } else {
-          this.mpackets[index].active = !this.mpackets[index].active
-          this.mpackets.forEach((item, i) => {
-            if (item.active) {
-              this.dispatchLegendSelectAction(item.name)
-            } else {
-              this.dispatchLegendUnSelectAction(item.name)
+    legendSelectChange (item, index) {
+      if (index === 0) {
+        this.mpackets.forEach((t) => {
+          this.dispatchLegendSelectAction(t.name)
+        })
+      } else {
+        if (this.mpackets[index].name == item.name) {
+          this.dispatchLegendSelectAction(item.name)
+          this.mpackets.forEach((t) => {
+            if (t.name !== item.name) {
+              this.dispatchLegendUnSelectAction(t.name)
             }
           })
         }
       }
     },
+    handleActiveBar (index) {
+      const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-mpackets.is-active')
+      const activeBar = document.querySelector('.network .line-value-active')
+      activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
+    },
     resize () {
       this.myChart.resize()
+    },
+    metricSelectChange (val) {
+      if (val === 'Sessions/s') {
+        this.mpackets.forEach((t, i) => {
+          if (i !== 0) {
+            t.show = false
+          }
+          this.legendSelectChange(t, 0)
+        })
+      } else {
+        this.mpackets.forEach((t, i) => {
+          t.show = true
+          this.legendSelectChange(t, 0)
+        })
+      }
+      this.activeShow = 'total'
+    },
+    symbolSizeSortChange (index, time) {
+      const dataIntegrationArray = []
+      if (stackedLineChartOption.series[0]) {
+        const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
+        dataIntegrationArray.push(totalData)
+        totalData[2] = 0
+      }
+      if (stackedLineChartOption.series[1]) {
+        const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
+        dataIntegrationArray.push(inboundData)
+        inboundData[2] = 1
+      }
+      if (stackedLineChartOption.series[2]) {
+        const outboundData = stackedLineChartOption.series[2].data.find(t => t[0] === time)
+        dataIntegrationArray.push(outboundData)
+        outboundData[2] = 2
+      }
+      if (stackedLineChartOption.series[3]) {
+        const internalData = stackedLineChartOption.series[3].data.find(t => t[0] === time)
+        dataIntegrationArray.push(internalData)
+        internalData[2] = 3
+      }
+      if (stackedLineChartOption.series[4]) {
+        const throughData = stackedLineChartOption.series[4].data.find(t => t[0] === time)
+        dataIntegrationArray.push(throughData)
+        throughData[2] = 4
+      }
+      if (stackedLineChartOption.series[5]) {
+        const otherData = stackedLineChartOption.series[5].data.find(t => t[0] === time)
+        dataIntegrationArray.push(otherData)
+        otherData[2] = 5
+      }
+      dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
+      const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
+      return this.sizes[sortIndex]
     }
   },
   mounted () {
+    this.mpackets.forEach(t => {
+      if (t.name !== 'network.total' && t.number === 0) {
+        t.show = false
+      }
+    })
     this.timer = setTimeout(() => {
       this.init()
+      this.handleActiveBar('inbound')
     }, 100)
     window.addEventListener('resize', this.resize)
   },

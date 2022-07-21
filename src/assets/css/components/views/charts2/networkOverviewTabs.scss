@@ -128,3 +128,9 @@
     }
   }
 }
+.metric-select.el-select__popper {
+  top: 27px !important;
+  .el-popper__arrow {
+    display: none;
+  }
+}

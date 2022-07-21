@@ -1,6 +1,5 @@
-import { chartColor, chartColor1, chartColor2, chartColor3, chartColor4, unitTypes } from '@/utils/constants'
+import { chartColor, chartColor1, chartColor2, chartColor3, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import * as echarts from 'echarts'
 import { axisFormatter } from '@/views/charts/charts/tools'
 
 export const pieChartOption1 = {
@@ -111,7 +110,6 @@ export const pieChartOption2 = {
     }
   ]
 }
-const sizes = [3, 6, 8, 9, 10]
 export const stackedLineChartOption = {
   color: chartColor3,
   tooltip: {
@@ -156,190 +154,11 @@ export const stackedLineChartOption = {
     {
       type: 'line',
       symbol: 'circle',
+      stack: 'network.total',
       smooth: true,
-      symbolSize: function (value, params) {
-        return symbolSizeSortChange(0, value[0])
-      },
       showSymbol: false,
       emphasis: {
         focus: 'series'
-      },
-      lineStyle: {
-        color: chartColor3[0],
-        width: 1
-      },
-      itemStyle: {
-        emphasis: {
-          borderColor: chartColor4[0],
-          borderWidth: 2,
-          shadowColor: chartColor4[0],
-          shadowBlur: sizes[0] + 2
-        }
-      },
-      areaStyle: {
-        opacity: 0.1,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: chartColor3[0]
-          },
-          {
-            offset: 1,
-            color: chartColor3[0]
-          }
-        ])
-      },
-      data: []
-    },
-    {
-      type: 'line',
-      symbol: 'circle',
-      smooth: true,
-      symbolSize: function (value, params) {
-        return symbolSizeSortChange(1, value[0])
-      },
-      showSymbol: false,
-      emphasis: {
-        focus: 'series'
-      },
-      lineStyle: {
-        color: chartColor3[1],
-        width: 1
-      },
-      itemStyle: {
-        emphasis: {
-          borderColor: chartColor4[1],
-          borderWidth: 2,
-          shadowColor: chartColor4[1],
-          shadowBlur: sizes[1] + 2
-        }
-      },
-      areaStyle: {
-        opacity: 0.1,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: chartColor3[1]
-          },
-          {
-            offset: 1,
-            color: chartColor3[1]
-          }
-        ])
-      },
-      data: []
-    },
-    {
-      type: 'line',
-      symbol: 'circle',
-      smooth: true,
-      symbolSize: function (value, params) {
-        return symbolSizeSortChange(2, value[0])
-      },
-      showSymbol: false,
-      emphasis: {
-        focus: 'series'
-      },
-      lineStyle: {
-        color: chartColor3[2],
-        width: 1
-      },
-      itemStyle: {
-        emphasis: {
-          borderColor: chartColor4[2],
-          borderWidth: 2,
-          shadowColor: chartColor4[2],
-          shadowBlur: sizes[2] + 2
-        }
-      },
-      areaStyle: {
-        opacity: 0.1,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: chartColor3[2]
-          },
-          {
-            offset: 1,
-            color: chartColor3[2]
-          }
-        ])
-      },
-      data: []
-    },
-    {
-      type: 'line',
-      symbol: 'circle',
-      smooth: true,
-      symbolSize: function (value, params) {
-        return symbolSizeSortChange(3, value[0])
-      },
-      showSymbol: false,
-      emphasis: {
-        focus: 'series'
-      },
-      lineStyle: {
-        color: chartColor3[3],
-        width: 1
-      },
-      itemStyle: {
-        emphasis: {
-          borderColor: chartColor4[3],
-          borderWidth: 2,
-          shadowColor: chartColor4[3],
-          shadowBlur: sizes[3] + 2
-        }
-      },
-      areaStyle: {
-        opacity: 0.1,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: chartColor3[3]
-          },
-          {
-            offset: 1,
-            color: chartColor3[3]
-          }
-        ])
-      },
-      data: []
-    },
-    {
-      type: 'line',
-      symbol: 'circle',
-      smooth: true,
-      symbolSize: function (value, params) {
-        return symbolSizeSortChange(4, value[0])
-      },
-      showSymbol: false,
-      emphasis: {
-        focus: 'series'
-      },
-      lineStyle: {
-        color: chartColor3[4],
-        width: 1
-      },
-      itemStyle: {
-        emphasis: {
-          borderColor: chartColor4[4],
-          borderWidth: 2,
-          shadowColor: chartColor4[4],
-          shadowBlur: sizes[4] + 2
-        }
-      },
-      areaStyle: {
-        opacity: 0.1,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: chartColor3[4]
-          },
-          {
-            offset: 1,
-            color: chartColor3[4]
-          }
-        ])
       },
       data: []
     }
@@ -390,13 +209,15 @@ function symbolSizeSortChange (index, time) {
   const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
   const outboundData = stackedLineChartOption.series[2].data.find(t => t[0] === time)
   const internalData = stackedLineChartOption.series[3].data.find(t => t[0] === time)
-  const otherData = stackedLineChartOption.series[4].data.find(t => t[0] === time)
+  const throughData = stackedLineChartOption.series[4].data.find(t => t[0] === time)
+  const otherData = stackedLineChartOption.series[5].data.find(t => t[0] === time)
   totalData[2] = 0
   inboundData[2] = 1
   outboundData[2] = 2
   internalData[2] = 3
-  otherData[2] = 4
-  const dataIntegrationArray = [totalData, inboundData, outboundData, internalData, otherData]
+  throughData[2] = 4
+  otherData[2] = 5
+  const dataIntegrationArray = [totalData, inboundData, outboundData, internalData, throughData, otherData]
   dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
   const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
   return sizes[sortIndex]
