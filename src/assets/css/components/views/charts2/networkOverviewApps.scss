@@ -145,8 +145,11 @@
     }
   }
 }
+.el-select__popper.select-top {
+  top: 27px !important;
+}
 .app-dropdown.el-popper.is-pure {
-  top: 720px !important;
+  top: 703px !important;
   .el-scrollbar {
     .el-scrollbar__wrap {
       .el-scrollbar__view.el-dropdown__list {

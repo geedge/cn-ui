@@ -26,7 +26,7 @@
               size="mini"
               v-model="value1"
               class="option__select select-topn"
-              popper-class="option-popper metric"
+              popper-class="metric"
               @change="metricSelectChange"
           >
             <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -39,9 +39,9 @@
           <el-select
               size="mini"
               v-model="value2"
-              class="option__select select-topn"
+              class="option__select"
               :disabled="activeShow === 'total'"
-              popper-class="option-popper reference-line"
+              popper-class="reference-line"
           >
             <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -84,7 +84,7 @@ export default {
           label: 'Sessions/s'
         }
       ],
-      value1: '',
+      value1: 'Bits/s',
       options2: [
         {
           value: 'Average',
@@ -99,7 +99,7 @@ export default {
           label: 'Maximum'
         }
       ],
-      value2: '',
+      value2: 'Average',
       mpackets: [
         { number: 0, name: 'network.total', class: 'total', show: true, positioning: 0 },
         { number: 2212, name: 'network.inbound', class: 'inbound', show: true, positioning: 1 },

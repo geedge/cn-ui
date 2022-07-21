@@ -6,9 +6,10 @@
         <el-select
             size="mini"
             v-model="metricFilter"
-            class="option__select select-topn"
+            class="option__select select-top"
             placeholder=""
-            popper-class="option-popper"
+            popper-class="option-popper select-top"
+            :popper-append-to-body="false"
         >
           <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
