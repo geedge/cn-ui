@@ -548,7 +548,7 @@ export default {
           if (schedulerEnd) {
             copyObject.schedulerEnd = schedulerEnd
           }
-          if (this.editObject.categoryParams.length > 0) {
+          if (this.editObject.categoryParams && this.editObject.categoryParams.length > 0) {
             copyObject.config.queryParam = this.editObject.categoryParams
           } else {
             copyObject.config.queryParam = []
