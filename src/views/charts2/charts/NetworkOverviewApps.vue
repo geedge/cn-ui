@@ -83,29 +83,29 @@
           <el-tabs v-model="appTypeTab" @tab-click="appTypeTabChange">
             <el-tab-pane :label="$t('networkOverview.appType.provider')" :name="0">
               <div class="body__apps">
-                <div class="body__app" v-for="app in providerOptions" :key="app.name"  @click="appCheckedChange(app, 0)">
+                <div class="body__app" :class="{'provide-show': app.provideShow}" v-for="app in providerOptions" :key="app.name"  @click="appCheckedChange(app, 0)">
                   <div class="body__app-content">
                     <div class="body__app-left">
                       <span><i class="cn-icon cn-icon-mining-pool"></i></span>
-                      <span class="body__app-left-title" :class="{'provide-show': app.provideShow}">{{app.name}},{{app.desc}}</span>
+                      <span class="body__app-left-title">{{app.name}}</span>
                     </div>
                     <div class="body__app-content-right" v-if="app.provideShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
-                  <div class="body__app-value">This is a description this is a description this is a description this is a description</div>
+                  <div class="body__app-value">{{app.desc}}</div>
                 </div>
               </div>
             </el-tab-pane>
             <el-tab-pane :label="$t('networkOverview.appType.app')" :name="1">
               <div class="body__apps">
-                <div class="body__app" v-for="app in appOptions" :key="app.name" @click="appCheckedChange(app, 1)">
+                <div class="body__app" :class="{'app-show': app.appShow}" v-for="app in appOptions" :key="app.name" @click="appCheckedChange(app, 1)">
                   <div class="body__app-content">
                     <div class="body__app-left">
                       <span><i class="cn-icon cn-icon-mining-pool"></i></span>
-                      <span class="body__app-left-title" :class="{'app-show': app.appShow}">{{app.name}},{{app.desc}}</span>
+                      <span class="body__app-left-title">{{app.name}}</span>
                     </div>
                     <div class="body__app-content-right" v-if="app.appShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
-                  <div class="body__app-value">This is a description this is a description this is a description this is a description</div>
+                  <div class="body__app-value">{{app.desc}}</div>
                 </div>
               </div>
             </el-tab-pane>
@@ -158,7 +158,9 @@ export default {
       appTypeTab: 0,
       appShowName: false,
       searcherApp: '',
-      appShowTypeTab: 0
+      appShowTypeTab: 0,
+      initialAppOptionsData: [],
+      initialProviderOptionsData: []
     }
   },
   methods: {
@@ -620,25 +622,22 @@ export default {
           provideShow: false
         })
       }
+      this.initialAppOptionsData = this.appOptions
+      this.initialProviderOptionsData = this.providerOptions
     },
     cancelApp () {
       this.showAddApp = false
     },
-    appTypeTabChange (val) {
-      this.appShowTypeTab = val.index
+    appTypeTabChange () {
       this.searcherApp = ''
     },
     searcherAppChange (val) {
       if (val) {
-        this.addApp()
-        if (this.appShowTypeTab == 0) {
-          this.providerOptions = this.providerOptions.filter((t, i) => t.name.indexOf(val) > -1 || t.desc.indexOf(val) > -1)
-        }
-        if (this.appShowTypeTab == 1) {
-          this.appOptions = this.appOptions.filter((t, i) => t.name.indexOf(val) > -1 || t.desc.indexOf(val) > -1)
-        }
+        this.providerOptions = this.initialProviderOptionsData.filter(t => t.name.indexOf(val) > -1)
+        this.appOptions = this.initialAppOptionsData.filter(t => t.name.indexOf(val) > -1)
       } else {
-        this.addApp()
+        this.providerOptions = this.initialProviderOptionsData
+        this.appOptions = this.initialAppOptionsData
       }
     },
     appCheckedChange (app, num) {
