@@ -23,6 +23,7 @@
         <template v-if="panelType === panelTypeAndRouteMapping.networkAppPerformance">
           <chart
             v-if="item.type === typeMapping.npm.npmTabs || item.params.tabIndex === npmTabIndex"
+            :time-filter="timeFilter"
             :id="item.id"
             :chart="item"
             @npmTabChange="npmTabChange"
@@ -30,6 +31,8 @@
         </template>
         <chart
             v-else
+            :time-filter="timeFilter"
+            :extra-params="extraParams"
             :id="item.id"
             :chart="item"
         ></chart>
@@ -51,7 +54,8 @@ export default {
     panelType: Number,
     chartList: Array,
     panelLock: Boolean,
-    entity: Object
+    entity: Object,
+    extraParams: Object
   },
   data () {
     return {

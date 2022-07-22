@@ -58,7 +58,9 @@ export default {
     NpmNetworkQuantity
   },
   props: {
-    chart: Object
+    chart: Object,
+    timeFilter: Object,
+    extraParams: Object
   },
   data () {
     return {
