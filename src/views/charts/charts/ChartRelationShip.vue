@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-drawing" :id="`chart${chartInfo.id}`"></div>
+  <div class="chart-drawing chart-drawing-ship__width" :id="`chart${chartInfo.id}`"></div>
   <div class="ship" :class="{'ship--show': showList}" v-ele-click-outside="shipChangeDown" id="ship">
     <div class="ship-title">
       <div class="ship-title-symbol" v-if="entityData.tableData.symbol"><img :src="entityData.tableData.symbol" /></div>
@@ -114,7 +114,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import loadsh from 'lodash'
+import _ from 'lodash'
 import { relationShip } from './options/sankey'
 import ChartRelationShip from '@/views/charts/charts/chart-relation-ship'
 import { api } from '@/utils/api'
@@ -161,7 +161,9 @@ export default {
       loadingIp: false,
       loadingDomain: false,
       loadingApp: false,
-      tableName: ''
+      tableName: '',
+
+      firstRender: true
     }
   },
   components: {
@@ -173,11 +175,11 @@ export default {
     chartData: [Array, Object],
     resultType: Object,
     queryParams: Object,
-    entity: Object
+    entity: Object,
+    needTimeout: Boolean
   },
   methods: {
     init (id) {
-      const chartParams = this.chartInfo.params
       const name = this.$route.query.name
       const path = window.location.protocol + '//' + window.location.host
       const dom = document.getElementById(id)
@@ -233,10 +235,10 @@ export default {
         if (item && !data.some(d => d.name === item.name)) {
           data.push({ name: item.name, ...handleStyle(item) })
         }
-        if (item && !loadsh.isEmpty(item.from) && !loadsh.isEmpty(item.to)) {
+        if (item && !_.isEmpty(item.from) && !_.isEmpty(item.to)) {
           links.push({ target: item.to, source: item.from })
         }
-        if (item && !loadsh.isEmpty(item.leaf)) {
+        if (item && !_.isEmpty(item.leaf)) {
           item.leaf.forEach(i => {
             handleData(data, links, i)
           })
@@ -296,7 +298,14 @@ export default {
     chartData: {
       deep: true,
       handler (n) {
-        this.init(`chart${this.chartInfo.id}`)
+        if (this.needTimeout && this.firstRender) {
+          this.firstRender = false
+          setTimeout(() => {
+            this.init(`chart${this.chartInfo.id}`)
+          }, 5000)
+        } else {
+          this.init(`chart${this.chartInfo.id}`)
+        }
       }
     }
   },

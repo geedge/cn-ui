@@ -550,6 +550,8 @@ export default {
           }
           if (this.editObject.categoryParams.length > 0) {
             copyObject.config.queryParam = this.editObject.categoryParams
+          } else {
+            copyObject.config.queryParam = []
           }
 
           // 校验scheduleConfig

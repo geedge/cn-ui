@@ -73,11 +73,9 @@ export default {
         const errorList = parser.validateStr(str)
         if (_.isEmpty(errorList)) {
           const metaList = parser.parseStr(str)
-          console.info(metaList)
           this.$emit('changeMode', 'tag', metaList)
         } else {
           this.$emit('changeMode', 'tag', { metaList: [], str: '' })
-          console.info(errorList)
         }
       } else {
         this.$emit('changeMode', 'tag', { str: '', metaList: [] })

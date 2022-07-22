@@ -17,6 +17,7 @@
           :data-list="tab.children"
           :active-tab="activeTab"
           :panel-lock="true"
+          :need-timeout="true"
           :entity="entity"
       >
       </panel-chart-list>

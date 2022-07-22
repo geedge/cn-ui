@@ -5,6 +5,7 @@
       :data-list="dataList"
       :panel-lock="true"
       :entity="entity"
+      :need-timeout="true"
   >
   </panel-chart-list>
 </template>

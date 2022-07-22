@@ -1,4 +1,8 @@
 .entity-detail.cn-home {
+  .panel-chart {
+    width: 100%;
+  }
+
   flex-direction: column;
 
   .entity-detail__header {
@@ -44,9 +48,6 @@
             box-shadow: none;
             .chart-header {
               border: none;
-            }
-            .chart-drawing {
-              width: 530px;
             }
           }
         }

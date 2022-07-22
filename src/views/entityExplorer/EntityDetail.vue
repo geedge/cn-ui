@@ -115,6 +115,7 @@ export default {
       })
       if (anchorEle) {
         anchorEle.scrollIntoView()
+        document.documentElement.scrollTop = document.documentElement.scrollTop - 30
       }
     },
     resize () {
