@@ -24,6 +24,7 @@
         :chart-list="chartList"
         :panel-type="panelType"
         :panel-lock="panelLock"
+        :extra-params="extraParams"
         :entity="entity"
     ></chart-list>
   </div>
@@ -50,7 +51,8 @@ export default {
   data () {
     return {
       chartList: [], // 普通panel的chart
-      panelLock: true
+      panelLock: true,
+      extraParams: {}
     }
   },
   async mounted () {
