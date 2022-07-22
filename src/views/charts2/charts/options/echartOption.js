@@ -203,22 +203,3 @@ export const appListChartOption = {
     }
   ]
 }
-
-function symbolSizeSortChange (index, time) {
-  const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
-  const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
-  const outboundData = stackedLineChartOption.series[2].data.find(t => t[0] === time)
-  const internalData = stackedLineChartOption.series[3].data.find(t => t[0] === time)
-  const throughData = stackedLineChartOption.series[4].data.find(t => t[0] === time)
-  const otherData = stackedLineChartOption.series[5].data.find(t => t[0] === time)
-  totalData[2] = 0
-  inboundData[2] = 1
-  outboundData[2] = 2
-  internalData[2] = 3
-  throughData[2] = 4
-  otherData[2] = 5
-  const dataIntegrationArray = [totalData, inboundData, outboundData, internalData, throughData, otherData]
-  dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
-  const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
-  return sizes[sortIndex]
-}

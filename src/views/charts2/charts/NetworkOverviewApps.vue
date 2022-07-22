@@ -609,35 +609,48 @@ export default {
     },
     addApp () {
       this.showAddApp = true
+      this.searcherApp = ''
       const letter = 'abcdefghijklmnopqrstuvwxyz'
+      const appOptions = []
+      const providerOptions = []
       for (let i = 0; i < 100; i++) {
-        this.appOptions.push({
+        appOptions.push({
           name: letter[i % 26] + i,
           desc: 'this is a really nice app',
           appShow: false
         })
-        this.providerOptions.push({
+        providerOptions.push({
           name: letter[i % 26] + i,
           desc: 'this is a really nice provider',
           provideShow: false
         })
       }
+      this.appOptions = appOptions
+      this.providerOptions = providerOptions
       this.initialAppOptionsData = this.appOptions
       this.initialProviderOptionsData = this.providerOptions
     },
     cancelApp () {
       this.showAddApp = false
     },
-    appTypeTabChange () {
+    appTypeTabChange (val) {
+      this.appShowTypeTab = val.index
       this.searcherApp = ''
+      this.searcherAppChange(this.searcherApp)
     },
     searcherAppChange (val) {
       if (val) {
-        this.providerOptions = this.initialProviderOptionsData.filter(t => t.name.indexOf(val) > -1)
-        this.appOptions = this.initialAppOptionsData.filter(t => t.name.indexOf(val) > -1)
+        if (this.appShowTypeTab == 0) {
+          this.providerOptions = this.initialProviderOptionsData.filter(t => t.name.indexOf(val) > -1)
+        } else if (this.appShowTypeTab == 1) {
+          this.appOptions = this.initialAppOptionsData.filter(t => t.name.indexOf(val) > -1)
+        }
       } else {
-        this.providerOptions = this.initialProviderOptionsData
-        this.appOptions = this.initialAppOptionsData
+        if (this.appShowTypeTab == 0) {
+          this.providerOptions = this.initialProviderOptionsData
+        } else if (this.appShowTypeTab == 1) {
+          this.appOptions = this.initialAppOptionsData
+        }
       }
     },
     appCheckedChange (app, num) {
