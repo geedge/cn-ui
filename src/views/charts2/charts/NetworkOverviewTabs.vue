@@ -110,18 +110,20 @@
             </el-tab-pane>
             <el-tab-pane :label="$t('network.metric')" name="metrics" width="50%" >
               <transition-group name="dragMetric" class="list" tag="ul" ref="metric">
-                <li v-for="(item, index) in customTableTitles"
-                    :key="item.label"
-                    class="list-item"
-                    @dragenter="dragMetricEnter($event, index)"
-                    @dragover="dragMetricOver($event, index)"
-                    @dragstart="dragMetricStart(index)"
-                    draggable="true"
-                >
-                  <i class="cn-icon-sort cn-icon icon-drag"
-                     :key="item.label"
-                  ></i> <el-checkbox @change="metricChange" v-model="item.checked"  :label="$t(item.label) " size="small" :key="item.label"/>
-                </li>
+                <template v-for="(item, index) in customTableTitles">
+                  <li v-if="item.tabColumn != true"
+                      :key="item.label"
+                      class="list-item"
+                      @dragenter="dragMetricEnter($event, index)"
+                      @dragover="dragMetricOver($event, index)"
+                      @dragstart="dragMetricStart(index)"
+                      draggable="true"
+                  >
+                    <i class="cn-icon-sort cn-icon icon-drag"
+                       :key="item.label"
+                    ></i> <el-checkbox @change="metricChange" v-model="item.checked"  :label="$t(item.label) " size="small" :key="item.label"/>
+                  </li>
+                </template>
               </transition-group>
             </el-tab-pane>
           </el-tabs>
