@@ -22,11 +22,11 @@
     overflow: auto;
     &>.vue-grid-layout {
       margin-top: -20px;
-      .header__operation--cancel:hover,.el-button:hover {
+      .header__operation--cancel:hover,.el-button:hover,.app-card-title-more-delete:hover {
         background: #EBF1F4;
         border: 1px solid rgba(0,0,0,0.15);
       }
-      .header__operation--cancel:active,.el-button:active {
+      .header__operation--cancel:active,.el-button:active,.app-card-title-more-delete:active {
         background: #E0E7EA;
         border: 1px solid rgba(0,0,0,0.15);
       }

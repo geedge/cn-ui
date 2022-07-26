@@ -40,42 +40,25 @@
         margin-left: 3px;
         box-shadow: none;
         border-radius: 2px;
-        .option__select {
-          pointer-events:none;
-          .el-input__inner {
-            width: 80px;
-            height: 24px;
-            padding-left: 4px;
+        .el-input__inner {
+          padding-left: 4px;
+          line-height: 24px;
+          height: 24px;
+          width: 80px;
+          font-size: 12px;
+          color: #2C72C6;
+          font-weight: 400;
+        }
+        .el-input__suffix {
+          display: flex;
+          .el-input__suffix-inner {
             line-height: 24px;
-            font-size: 12px;
-            color: #2C72C6;
-            font-weight: 400;
-          }
-          .el-input__suffix {
-            display: flex;
-            .el-input__suffix-inner {
+            .el-select__caret {
               line-height: 24px;
-              .el-select__caret {
-                line-height: 24px;
-                width: 16px;
-                color: #575757;
-              }
+              width: 16px;
+              color: #575757;
             }
           }
-        }
-        .option__select.select-column {
-          .el-input__inner {
-            width: 86px;
-            padding-left: 8px;
-          }
-        }
-        .icon-group-divide {
-          height: 14px;
-          width: 1px;
-          background-color: $--color-primary;
-        }
-        i {
-          font-size: 12px;
         }
       }
     }

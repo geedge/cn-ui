@@ -17,42 +17,25 @@
       margin-left: 3px;
       box-shadow: none;
       border-radius: 2px;
-      .option__select {
-        pointer-events:none;
-        .el-input__inner {
-          width: 80px;
-          height: 24px;
-          padding-left: 4px;
+      .el-input__inner {
+        width: 80px;
+        height: 24px;
+        padding-left: 4px;
+        line-height: 24px;
+        font-size: 12px;
+        color: #2C72C6;
+        font-weight: 400;
+      }
+      .el-input__suffix {
+        display: flex;
+        .el-input__suffix-inner {
           line-height: 24px;
-          font-size: 12px;
-          color: #2C72C6;
-          font-weight: 400;
-        }
-        .el-input__suffix {
-          display: flex;
-          .el-input__suffix-inner {
+          .el-select__caret {
             line-height: 24px;
-            .el-select__caret {
-              line-height: 24px;
-              width: 16px;
-              color: #575757;
-            }
+            width: 16px;
+            color: #575757;
           }
         }
-      }
-      .option__select.select-column {
-        .el-input__inner {
-          width: 86px;
-          padding-left: 8px;
-        }
-      }
-      .icon-group-divide {
-        height: 14px;
-        width: 1px;
-        background-color: $--color-primary;
-      }
-      i {
-        font-size: 12px;
       }
     }
   }
@@ -102,6 +85,40 @@
           span .cn-icon {
             font-size: 12px;
             margin-right: 4px;
+          }
+        }
+        .app-card-title-more {
+          position: relative;
+          .app-card-title-more-delete {
+            z-index: 1;
+            font-family: Helvetica;
+            position: absolute;
+            min-width: 96px;
+            line-height: 32px;
+            height: 32px;
+            top: 14px;
+            left: -68px;
+            background: #FFFFFF;
+            border: 1px solid #C5C5C5;
+            box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
+            border-radius: 2px;
+            font-size: 12px;
+            padding-left: 6.8px;
+            color: #353636;
+            font-weight: 400;
+            i {
+              margin-right: 5.67px;
+              font-size: 12px;
+              color: #575757;
+            }
+          }
+          .app-card-title-more-delete:hover {
+            background: #EBF1F4;
+            border: 1px solid rgba(0,0,0,0.15);
+          }
+          .app-card-title-more-delete:active {
+            background: #E0E7EA;
+            border: 1px solid rgba(0,0,0,0.15);
           }
         }
       }
@@ -326,7 +343,7 @@
     }
   }
 }
-.el-select__popper.select-top {
+.el-select__popper.app-metric {
   top: 27px !important;
 }
 .app-dropdown.el-popper.is-pure {

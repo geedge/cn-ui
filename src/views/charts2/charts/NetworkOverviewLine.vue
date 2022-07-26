@@ -25,7 +25,6 @@
           <el-select
               size="mini"
               v-model="value1"
-              class="option__select select-topn"
               popper-class="metric"
               @change="metricSelectChange"
           >
@@ -39,7 +38,6 @@
           <el-select
               size="mini"
               v-model="value2"
-              class="option__select"
               :disabled="activeShow === 'total'"
               popper-class="reference-line"
           >
