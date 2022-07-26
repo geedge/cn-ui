@@ -160,7 +160,8 @@ export default {
       searcherApp: '',
       appShowTypeTab: 0,
       initialAppOptionsData: [],
-      initialProviderOptionsData: []
+      initialProviderOptionsData: [],
+      myChartArray: []
     }
   },
   methods: {
@@ -575,37 +576,38 @@ export default {
             '0'
           ]
         ].map(v => [Number(v[0]) * 1000, Number(v[1]), 'time'])
-        this.initChart(app)
+        this.initChart(this.appData[i])
       })
     },
     initChart (obj) {
       const dom = document.getElementById(`chart${obj.name}`)
-      this.myChart.push(echarts.init(dom))
+      this.myChart = echarts.init(dom)
       this.chartOption = appListChartOption
       const seriesTemplate = this.chartOption.series[0]
-      this.chartOption.series = [{
-        ...seriesTemplate,
-        data: obj.lineData,
-        lineStyle: {
-          color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
-        },
-        areaStyle: {
-          opacity: 0.1,
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 0,
-              color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
-            },
-            {
-              offset: 1,
-              color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
-            }
-          ])
+      if (obj && obj.lineData) {
+        this.chartOption.series[0] = {
+          ...seriesTemplate,
+          data: obj.lineData,
+          lineStyle: {
+            color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
+          },
+          areaStyle: {
+            opacity: 0.1,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
+              },
+              {
+                offset: 1,
+                color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
+              }
+            ])
+          }
         }
-      }]
-      this.myChart.forEach(t => {
-        t.setOption(this.chartOption)
-      })
+        this.myChartArray.push(this.myChart)
+        this.myChart.setOption(this.chartOption)
+      }
     },
     addApp () {
       this.showAddApp = true
@@ -669,7 +671,7 @@ export default {
       }
     },
     resize () {
-      this.myChart.forEach(t => {
+      this.myChartArray.forEach(t => {
         t.resize()
       })
     }
