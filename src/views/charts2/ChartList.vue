@@ -71,9 +71,12 @@ export default {
     Chart
   },
   watch: {
-    chartList (n) {
-      if (!_.isEmpty(n)) {
-        this.layout = [...n]
+    chartList: {
+      deep: true,
+      handler (n) {
+        if (!_.isEmpty(n)) {
+          this.layout = [...n]
+        }
       }
     }
   },

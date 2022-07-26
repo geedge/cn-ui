@@ -57,6 +57,15 @@ export default {
   },
   async mounted () {
     await this.init()
+    const vm = this
+    this.emitter.on('reloadChartList', async function () {
+      vm.chartList = (await getChartList({ panelId: vm.panel.id, pageSize: -1 })).map(chart => {
+        chart.i = chart.id
+        // 递归初始化各属性
+        vm.initChartAttr(chart)
+        return chart
+      })
+    })
   },
   setup (props, ctx) {
     const panel = ref({})

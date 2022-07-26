@@ -18,12 +18,12 @@
       <div class="app-card" v-for="(app, index) in appData" :key="index">
         <div class="app-card-title">
           <div class="app-card-title-name">
-            <span><i class="cn-icon cn-icon-social-network"></i></span>
+            <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'"></i>
             <span>{{app.name}}</span>
           </div>
           <div class="app-card-title-more">
-            <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app.name)"></i></span>
-            <span class="app-card-title-more-delete" v-show="app.moreName"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+            <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app)"></i></span>
+            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreName"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
           </div>
         </div>
         <div class="app-card__bodys">
@@ -32,18 +32,16 @@
               <div class="app-card__body-content-value">
                 <div class="app-card__body-content-number">{{unitConvert(app.number, unitTypes.number).join(' ')}}</div>
                 <div class="app-card__body-content-percent" :class="app.trend === 'up' ? 'red' : 'green'">
-                  <div>
-                    <span v-if="app.trend === 'up'">+</span><span v-else-if="app.trend === 'down'">-</span>{{unitConvert(app.value, unitTypes.percent).join('')}}
-                  </div>
+                  <span v-if="app.trend === 'up'">+</span><span v-else-if="app.trend === 'down'">-</span>{{unitConvert(app.value, unitTypes.percent).join('')}}
                 </div>
               </div>
             </div>
             <div class="app-card__body-previous">
-              <div>previous 24 hours</div>
+              <div>Total</div>
               <div>{{unitConvert(app.number1, unitTypes.number).join(' ')}}</div>
             </div>
           </div>
-          <div class="chart__drawing" :id="`chart${app.name}`"></div>
+          <div class="chart__drawing" :id="`chart-${app.name}-${app.type}`"></div>
         </div>
       </div>
       <div class="app-card app-card--create">
@@ -63,7 +61,7 @@
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
             <div class="header__operation header__operation--cancel" @click="cancelApp">{{$t('overall.cancel')}}</div>
-            <div class="header__operation header__operation--save">{{$t('overall.save')}}</div>
+            <div class="header__operation header__operation--save" @click="save">{{$t('overall.save')}}</div>
           </div>
         </div>
         <div class="add-app__body">
@@ -98,7 +96,7 @@
             </el-tab-pane>
           </el-tabs>
           <div class="body__searcher">
-            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.searcher')" prefix-icon="el-icon-search"></el-input>
+            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="el-icon-search"></el-input>
           </div>
         </div>
       </div>
@@ -112,6 +110,10 @@ import { unitTypes } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
+import { put } from '@/utils/http'
+import { api } from '@/utils/api'
+import _ from 'lodash'
+
 export default {
   name: 'NetworkOverviewApps',
   props: {
@@ -126,13 +128,17 @@ export default {
     return {
       metricFilter: '',
       metricOptions: [],
-      chartOption: [],
       appData: [],
       // 假数据
       appTempData: [
         { value: 1.3912, number: 684600000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-mining-pool' },
         { value: 1.8934, number: 382100000000, previous: 24, number1: 3675, trend: 'up', icon: 'cn-icon-fraudulent-ip' },
         { value: 1.2054, number: 184600000000, previous: 24, number1: 3675, trend: 'up', icon: 'cn-icon-debug' },
+        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
+        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
+        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
+        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
+        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
         { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
         { value: 1.6415, number: 734100000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-authoritative-domain' }
       ],
@@ -148,6 +154,8 @@ export default {
       appShowTypeTab: 0,
       initialAppOptionsData: [],
       initialProviderOptionsData: [],
+      // 选中的app，不区分app和provider
+      toSaveApp: [],
       myChartArray: []
     }
   },
@@ -156,8 +164,10 @@ export default {
     init () {
       this.appData.forEach((app, i) => {
         // 根据app.name和app.type查除接口，获取数据
-        this.appData[i] = { ...app, ...this.appTempData[i] }
-        this.appData[i].lineData = [
+        app.value = this.appTempData[i].value
+        app.number = this.appTempData[i].number
+        app.number1 = this.appTempData[i].number1
+        app.lineData = [
           [
             '1658128320',
             '0'
@@ -563,17 +573,16 @@ export default {
             '0'
           ]
         ].map(v => [Number(v[0]) * 1000, Number(v[1]), 'time'])
-        this.initChart(this.appData[i])
+        this.initChart(app)
       })
     },
     initChart (obj) {
-      const dom = document.getElementById(`chart${obj.name}`)
-      this.myChart = echarts.init(dom)
-      this.chartOption = appListChartOption
-      const seriesTemplate = this.chartOption.series[0]
-      if (obj && obj.lineData) {
-        this.chartOption.series[0] = {
-          ...seriesTemplate,
+      let chart = this.myChart.find(m => m.name === obj.name && m.type === obj.type)
+      if (!chart) {
+        chart = echarts.init(document.getElementById(`chart-${obj.name}-${obj.type}`))
+        const chartOption = _.cloneDeep(appListChartOption)
+        chartOption.series = [{
+          ...chartOption.series[0],
           data: obj.lineData,
           lineStyle: {
             color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
@@ -591,9 +600,12 @@ export default {
               }
             ])
           }
-        }
-        this.myChartArray.push(this.myChart)
-        this.myChart.setOption(this.chartOption)
+        }]
+        chart.setOption(chartOption)
+        this.myChart.push(chart)
+        this.$nextTick(() => {
+          chart.resize()
+        })
       }
     },
     addApp () {
@@ -614,10 +626,16 @@ export default {
           provideShow: false
         })
       }
-      this.appOptions = appOptions
-      this.providerOptions = providerOptions
-      this.initialAppOptionsData = this.appOptions
-      this.initialProviderOptionsData = this.providerOptions
+      const oldApps = this.chart.params.app ? this.chart.params.app.filter(a => a.type === 'app') : []
+      const oldProviders = this.chart.params.app ? this.chart.params.app.filter(a => a.type === 'provider') : []
+      this.appOptions = appOptions.filter(a => {
+        return !oldApps.some(o => o.name === a.name)
+      })
+      this.providerOptions = providerOptions.filter(a => {
+        return !oldProviders.some(o => o.name === a.name)
+      })
+      this.initialAppOptionsData = [...this.appOptions]
+      this.initialProviderOptionsData = [...this.providerOptions]
     },
     cancelApp () {
       this.showAddApp = false
@@ -642,24 +660,82 @@ export default {
         }
       }
     },
+    // 保存变更，并且在增、删app后，根据当前app数量更改整体高度
+    saveChart (toSaveChart, length) {
+      return new Promise(resolve => {
+        const actuallyLength = this.appData.length + length + 1
+        toSaveChart.h = actuallyLength % 3 > 0 ? (Math.floor(actuallyLength / 3) + 1) * 2 + 2 : Math.floor(actuallyLength / 3) * 2 + 2
+        put(api.chart, toSaveChart).then(res => {
+          if (res.code === 200) {
+            this.emitter.emit('reloadChartList')
+            resolve()
+          }
+        })
+      })
+    },
+    del (app, index) {
+      const appData = _.cloneDeep(this.appData)
+      appData.splice(index, 1)
+      const toSaveChart = {
+        ...this.chart,
+        params: JSON.stringify({ app: appData })
+      }
+      this.saveChart(toSaveChart, -1).then(res => {
+        this.appData.splice(index, 1)
+      })
+    },
+    save () {
+      if (this.toSaveApp.length > 0) {
+        const toSaveParams = this.chart.params.app ? this.chart.params : { app: [] }
+        toSaveParams.app = [...toSaveParams.app, ...this.toSaveApp]
+        const toSaveChart = {
+          ...this.chart,
+          params: JSON.stringify(toSaveParams)
+        }
+        this.saveChart(toSaveChart, this.toSaveApp.length).then(res => {
+          this.appData = _.cloneDeep(toSaveParams.app)
+          this.$nextTick(() => {
+            this.init()
+            this.showAddApp = false
+            this.toSaveApp = []
+          })
+        })
+      }
+    },
     appCheckedChange (app, num) {
       if (num === 0) {
         this.providerOptions.forEach(t => {
-          if (t.name === app.name && t.desc === app.desc) {
+          if (t.name === app.name) {
             t.provideShow = !t.provideShow
+            if (t.provideShow) {
+              this.toSaveApp.push({ type: 'provider', name: app.name })
+            } else {
+              const index = this.toSaveApp.findIndex(a => a.name === app.name)
+              if (index > -1) {
+                this.toSaveApp.splice(index, 1)
+              }
+            }
           }
         })
       } else if (num === 1) {
         this.appOptions.forEach(t => {
-          if (t.name === app.name && t.desc === app.desc) {
+          if (t.name === app.name) {
             t.appShow = !t.appShow
+            if (t.appShow) {
+              this.toSaveApp.push({ type: 'app', name: app.name })
+            } else {
+              const index = this.toSaveApp.findIndex(a => a.name === app.name)
+              if (index > -1) {
+                this.toSaveApp.splice(index, 1)
+              }
+            }
           }
         })
       }
     },
-    moreChange (name) {
-      this.appData.forEach((t) => {
-        if (t.name === name) {
+    moreChange (app) {
+      this.appData.forEach(t => {
+        if (t.name === app.name && t.type === app.type) {
           t.moreName = !t.moreName
         } else {
           t.moreName = false
@@ -667,14 +743,14 @@ export default {
       })
     },
     resize () {
-      this.myChartArray.forEach(t => {
+      this.myChart.forEach(t => {
         t.resize()
       })
     }
   },
   mounted () {
-    if (this.chart.params.app) {
-      this.appData = this.chart.params.app
+    if (this.chart.params && this.chart.params.app) {
+      this.appData = _.cloneDeep(this.chart.params.app)
     }
     this.timer = setTimeout(() => {
       this.init()

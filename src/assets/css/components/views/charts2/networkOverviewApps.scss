@@ -79,12 +79,14 @@
         margin-top: 10px;
         justify-content: space-between;
         .app-card-title-name {
-          font-size: 12px;
-          color: #353636;
-          font-weight: 400;
-          span .cn-icon {
-            font-size: 12px;
-            margin-right: 4px;
+          span {
+            font-size: 16px;
+            color: #046ECA;
+          }
+          i {
+            color: #38ACD2;
+            font-size: 16px;
+            padding-right: 4px;
           }
         }
         .app-card-title-more {
@@ -139,11 +141,10 @@
         .app-card__body-content-value {
           display: flex;
           .app-card__body-content-number {
-            font-family: Helvetica-Bold;
-            font-size: 20px;
+            font-size: 14px;
             color: #353636;
             font-weight: 700;
-            margin-right: 28px;
+            margin-right: 6px;
           }
         }
         .app-card__body-content-percent {
