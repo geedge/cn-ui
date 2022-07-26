@@ -8,6 +8,7 @@ export const typeMapping = {
   },
   npm: {
     npmMap: 1,
+    npmLine: 101,
     npmAppCategoryScore: 702,
     npmTabs: 704,
     npmNetworkQuantity: 703

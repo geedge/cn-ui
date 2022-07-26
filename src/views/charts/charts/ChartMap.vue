@@ -39,7 +39,6 @@ export default {
   data () {
     return {
       unitTypes,
-      mapPictureUrl: '/Tiles/{z}/{x}/{y}.png',
       showMapBackButton: false,
       polygonSeries: null, // 世界地图series
       countrySeries: null, // 下钻国家series
@@ -247,7 +246,7 @@ export default {
     },
     imageSeriesFactory (dataField) {
       const vm = this
-      // emcharts实例中增加地图图案series（用来在地图上画圆点、方块、连线等）
+      // amcharts实例中增加地图图案series（用来在地图上画圆点、方块、连线等）
       const imageSeries = this.myChart.series.push(new am4Maps.MapImageSeries())
       // 指定接口数据中哪个字段名代表数值
       imageSeries.dataFields.value = dataField || 'count'

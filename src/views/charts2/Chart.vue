@@ -38,6 +38,10 @@
         v-else-if="chart.type === typeMapping.npm.npmMap"
         :chart="chart"
     ></npm-map>
+    <npm-line
+        v-else-if="chart.type === typeMapping.npm.npmLine"
+        :chart="chart"
+    ></npm-line>
   </div>
 </template>
 
@@ -54,9 +58,11 @@ import NpmTabs from '@/views/charts2/charts/NpmTabs'
 import NpmNetworkQuantity from '@/views/charts2/charts/NpmNetworkQuantity'
 import NpmAppCategoryScore from '@/views/charts2/charts/NpmAppCategoryScore'
 import NpmMap from '@/views/charts2/charts/NpmMap'
+import NpmLine from '@/views/charts2/charts/NpmLine'
 export default {
   name: 'Chart',
   components: {
+    NpmLine,
     NpmMap,
     NpmAppCategoryScore,
     Loading,

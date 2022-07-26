@@ -29,7 +29,6 @@ export default {
   data () {
     return {
       myChart: null,
-      mapPictureUrl: '/Tiles/{z}/{x}/{y}.png',
       entityDetectionsIpUrl: api.entityDetectionsIp,
       detectionsData: {}
     }
