@@ -6,9 +6,8 @@
         <el-select
             size="mini"
             v-model="metricFilter"
-            class="option__select select-top"
             placeholder=""
-            popper-class="option-popper select-top"
+            popper-class="app-metric"
             :popper-append-to-body="false"
         >
           <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -22,22 +21,10 @@
             <span><i class="cn-icon cn-icon-social-network"></i></span>
             <span>{{app.name}}</span>
           </div>
-          <el-row class="block-col-2">
-            <el-col>
-              <el-dropdown
-                trigger="click"
-                placement="bottom-end"
-                popper-class="app-dropdown"
-              >
-                <span><i class="cn-icon cn-icon-more-dark"></i></span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item><span><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span></el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </el-col>
-          </el-row>
+          <div class="app-card-title-more">
+            <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app.name)"></i></span>
+            <span class="app-card-title-more-delete" v-show="app.moreName"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+          </div>
         </div>
         <div class="app-card__bodys">
           <div class="app-card__body">
@@ -669,6 +656,15 @@ export default {
           }
         })
       }
+    },
+    moreChange (name) {
+      this.appData.forEach((t) => {
+        if (t.name === name) {
+          t.moreName = !t.moreName
+        } else {
+          t.moreName = false
+        }
+      })
     },
     resize () {
       this.myChartArray.forEach(t => {
