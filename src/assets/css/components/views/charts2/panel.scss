@@ -22,6 +22,20 @@
     overflow: auto;
     &>.vue-grid-layout {
       margin-top: -20px;
+      .header__operation--cancel:hover,.el-button:hover {
+        background: #EBF1F4;
+        border: 1px solid rgba(0,0,0,0.15);
+      }
+      .header__operation--cancel:active,.el-button:active {
+        background: #E0E7EA;
+        border: 1px solid rgba(0,0,0,0.15);
+      }
+      .header__operation--save:hover {
+        background: #57B8D9;
+      }
+      .header__operation--save:active {
+        background: #31A5CD;
+      }
     }
   }
 }
