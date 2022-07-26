@@ -7,6 +7,8 @@ export const typeMapping = {
     ddosDetection: 701
   },
   npm: {
+    npmMap: 1,
+    npmAppCategoryScore: 702,
     npmTabs: 704,
     npmNetworkQuantity: 703
   }

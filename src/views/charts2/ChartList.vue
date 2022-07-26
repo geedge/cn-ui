@@ -19,21 +19,11 @@
                  :h="item.h"
                  :i="item.i"
                  :key="item.i">
-        <!-- npm-tab特殊处理 -->
-        <template v-if="panelType === panelTypeAndRouteMapping.networkAppPerformance">
-          <chart
-            v-if="item.type === typeMapping.npm.npmTabs || item.params.tabIndex === npmTabIndex"
-            :time-filter="timeFilter"
-            :id="item.id"
-            :chart="item"
-            @npmTabChange="npmTabChange"
-          ></chart>
-        </template>
         <chart
-            v-else
             :time-filter="timeFilter"
             :extra-params="extraParams"
             :id="item.id"
+            @npmTabChange="npmTabChange"
             :chart="item"
         ></chart>
       </grid-item>
@@ -71,12 +61,18 @@ export default {
     Chart
   },
   watch: {
-    chartList: {
-      deep: true,
-      handler (n) {
-        if (!_.isEmpty(n)) {
+    chartList (n) {
+      if (!_.isEmpty(n)) {
+        if (this.panelType === panelTypeAndRouteMapping.networkAppPerformance) {
+          this.layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex)
+        } else {
           this.layout = [...n]
         }
+      }
+    },
+    npmTabIndex (n) {
+      if (this.panelType === panelTypeAndRouteMapping.networkAppPerformance) {
+        this.layout = this.chartList.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex)
       }
     }
   },

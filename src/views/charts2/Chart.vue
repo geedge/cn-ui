@@ -30,6 +30,14 @@
         v-else-if="chart.type === typeMapping.npm.npmNetworkQuantity"
         :chart="chart"
     ></npm-network-quantity>
+    <npm-app-category-score
+        v-else-if="chart.type === typeMapping.npm.npmAppCategoryScore"
+        :chart="chart"
+    ></npm-app-category-score>
+    <npm-map
+        v-else-if="chart.type === typeMapping.npm.npmMap"
+        :chart="chart"
+    ></npm-map>
   </div>
 </template>
 
@@ -44,9 +52,13 @@ import NetworkOverviewTabs from '@/views/charts2/charts/NetworkOverviewTabs'
 import NetworkOverviewApps from '@/views/charts2/charts/NetworkOverviewApps'
 import NpmTabs from '@/views/charts2/charts/NpmTabs'
 import NpmNetworkQuantity from '@/views/charts2/charts/NpmNetworkQuantity'
+import NpmAppCategoryScore from '@/views/charts2/charts/NpmAppCategoryScore'
+import NpmMap from '@/views/charts2/charts/NpmMap'
 export default {
   name: 'Chart',
   components: {
+    NpmMap,
+    NpmAppCategoryScore,
     Loading,
     ChartNoData,
     NetworkOverviewLine,
