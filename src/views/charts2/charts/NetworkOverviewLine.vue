@@ -7101,7 +7101,26 @@ export default {
               }
             ])
           },
-          data: this.chartDateObject[i].dateArr.map(t => [t.stat_time, t.rate])
+          data: this.chartDateObject[i].dateArr.map(t => [t.stat_time, t.rate]),
+          markLine: {
+            silent: true,
+            lineStyle: {
+              color: '#B4B1A8'
+            },
+            symbol: 'none',
+            data: [
+              { yAxis: 68000000 }
+            ],
+            label: {
+              formatter (params) {
+                const arr = unitConvert(params.value, unitTypes.number).join('')
+                return _this.value2 + '(' + arr + 'packets/s' + ')'
+              },
+              position: 'insideStartTop',
+              color: '#717171',
+              fontFamily: 'NotoSansSChineseRegular'
+            }
+          }
         }
       })
       this.chartOption.tooltip.formatter = (params) => {
@@ -7223,7 +7242,7 @@ export default {
     this.timer = setTimeout(() => {
       this.init()
       this.handleActiveBar('inbound')
-    }, 100)
+    }, 200)
     window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {
