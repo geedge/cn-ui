@@ -31,7 +31,7 @@ generate_git-log:
   only:
     - dev
   tags:
-    - GN-XXG-Server
+    - galaxy
 
 
 build_project:
@@ -45,7 +45,7 @@ build_project:
     - dev
     - tags
   tags:
-    - GN-XXG-Server
+    - galaxy
 
 build_image:
   stage: build_image
@@ -60,7 +60,7 @@ build_image:
   only:
     - dev
   tags:
-    - GN-XXG-Server
+    - galaxy
 
 
 build_release_image:
@@ -79,4 +79,4 @@ build_release_image:
   only:
     - tags
   tags:
-    - GN-XXG-Server
+    - galaxy
