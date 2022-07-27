@@ -38,9 +38,9 @@ build_project:
   stage: build_project
   script:
     - echo "npm install ..."
-    - npm install --save-dev --unsafe-perm
+    - cnpm install --save-dev --unsafe-perm
     - echo "npm run build"
-    - npm run build
+    - cnpm run build
   only:
     - dev
     - tags
