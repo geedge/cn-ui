@@ -5,6 +5,7 @@
     <network-overview-line
         v-if="chart.type === typeMapping.networkOverview.line"
         :chart="chart"
+        :time-filter="timeFilter"
     ></network-overview-line>
     <network-overview-ddos-detection
         v-else-if="chart.type === typeMapping.networkOverview.ddosDetection"
@@ -42,6 +43,18 @@
         v-else-if="chart.type === typeMapping.npm.npmLine"
         :chart="chart"
     ></npm-line>
+    <npm-events-header
+        v-else-if="chart.type === typeMapping.npm.npmEventsHeader"
+        :chart="chart"
+    ></npm-events-header>
+    <npm-events-by-type
+        v-else-if="chart.type === typeMapping.npm.npmEventsByType"
+        :chart="chart"
+    ></npm-events-by-type>
+    <npm-recent-events
+        v-else-if="chart.type === typeMapping.npm.npmRecentEvents"
+        :chart="chart"
+    ></npm-recent-events>
   </div>
 </template>
 
@@ -59,9 +72,15 @@ import NpmNetworkQuantity from '@/views/charts2/charts/NpmNetworkQuantity'
 import NpmAppCategoryScore from '@/views/charts2/charts/NpmAppCategoryScore'
 import NpmMap from '@/views/charts2/charts/NpmMap'
 import NpmLine from '@/views/charts2/charts/NpmLine'
+import NpmEventsByType from '@/views/charts2/charts/NpmEventsByType'
+import NpmRecentEvents from '@/views/charts2/charts/NpmRecentEvents'
+import NpmEventsHeader from '@/views/charts2/charts/NpmEventsHeader'
 export default {
   name: 'Chart',
   components: {
+    NpmEventsHeader,
+    NpmRecentEvents,
+    NpmEventsByType,
     NpmLine,
     NpmMap,
     NpmAppCategoryScore,

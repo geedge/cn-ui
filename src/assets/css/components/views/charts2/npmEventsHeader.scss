@@ -1,0 +1,56 @@
+.npm-header {
+  display: flex;
+  height: 100%;
+  .npm-header-body:nth-of-type(5) {
+    margin-right: 0;
+  }
+  .npm-header-body {
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    background: rgba(113,113,113,0.06);
+    border: 1px solid #E2E5EC;
+    border-radius: 4px;
+    padding: 0 14px 0 16px;
+    margin-right: 12px;
+    align-items: center;
+    flex: 1;
+    .npm-header-body-severity {
+      display: flex;
+      align-items: center;
+      .npm-header-body-severity-icon {
+        border-radius: 6px;
+        width: 12px;
+        height: 12px;
+        margin-right: 10px;
+      }
+      .critical {
+        background: rgb(226,97,84);
+      }
+      .high {
+        background: rgb(228,142,77);
+      }
+      .info {
+        background: rgb(136,175,101);
+      }
+      .medium {
+        background: rgb(231,179,78);
+      }
+      .low {
+        background: rgb(218,199,75);
+      }
+      .npm-header-body-severity-value {
+        font-family: NotoSansHans-Black;
+        font-size: 12px;
+        color: #575757;
+        font-weight: 900;
+      }
+    }
+    .npm-header-body-total {
+      font-family: Helvetica-Bold;
+      font-size: 16px;
+      color: #353636;
+      font-weight: 700;
+    }
+  }
+}

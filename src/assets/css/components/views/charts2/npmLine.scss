@@ -1,0 +1,59 @@
+.npm-line {
+  height: 100%;
+  width: 100%;
+  border: 1px solid #f0f0f0;
+  position: relative;
+  .npm-line-header {
+    position: absolute;
+    display: flex;
+    top: 21px;
+    right: 23px;
+    z-index: 1;
+    .npm-line-header-right {
+      display: flex;
+      margin-right: 10px;
+      align-items: center;
+    }
+    .npm-line-header-icon {
+      border-radius: 3px;
+      width: 16px;
+      height: 6px;
+      margin-right: 4px;
+    }
+    .npm-line-header-icon.icon0 {
+      background: #749F4D;
+    }
+    .npm-line-header-icon.icon1 {
+      background: #98709B;
+    }
+    .npm-line-header-icon.icon2 {
+      background: #E5A219;
+    }
+    .npm-line-header-value {
+      font-size: 12px;
+      color: #717171;
+      line-height: 12px;
+      font-weight: 400;
+    }
+    .npm-line-header-value.active {
+      color: #717171;
+      font-weight: 600;
+    }
+  }
+  .chart-drawing {
+    height: 100%;
+    width: 100%;
+    .echarts-tooltip.echarts-tooltip-dark {
+      .cn-chart-tooltip {
+        display: flex;
+        justify-content: space-between;
+        .cn-chart-tooltip-value.cn-chart-tooltip__color {
+          font-size: 12px;
+          color: #353636;
+          line-height: 21px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

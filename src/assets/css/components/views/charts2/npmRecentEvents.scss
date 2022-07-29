@@ -1,0 +1,79 @@
+.npm-recent {
+  height: calc(100% - 24px);
+  .npm-recent-title {
+    font-family: NotoSansHans-Medium;
+    font-size: 14px;
+    color: #353636;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .npm-recent-table {
+    border: 1px solid #E2E5EC;
+    border-radius: 4px;
+    .el-table__header-wrapper {
+      tr th {
+        padding: 5px 0;
+        .data-column__span {
+          font-family: NotoSansHans-Medium;
+          font-size: 12px;
+          color: #353636;
+          font-weight: 500;
+        }
+      }
+    }
+    .el-table__body-wrapper.is-scrolling-none {
+      tr td {
+        padding: 7px 0;
+      }
+    }
+  }
+  .data-recent-table{
+    display: flex !important;
+    height: 20px;
+    line-height: 20px;
+    .data-recent-table-severity {
+      font-family: NotoSansHans-Medium;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      padding: 0 6px;
+    }
+    .critical {
+      color: #E26154;
+      background: rgba(226,97,84, .18);
+    }
+    .high {
+      color: #E48E4D;
+      background: rgba(228,142,77, .18);
+    }
+    .info {
+      color: #88AF65;
+      background: rgba(136,175,101, .18);
+    }
+    .medium {
+      color: #E7B34E;
+      background: rgba(231,179,78, .18);
+    }
+    .low {
+      color: #DAC74B;
+      background: rgba(218,199,75, .18);
+    }
+    .data-recent-table-entity {
+      font-size: 12px;
+      color: #046ECA;
+      font-weight: 400
+    }
+    .data-recent-table-eventType {
+      font-family: NotoSansHans-Medium;
+      font-size: 12px;
+      color: #046ECA;
+      font-weight: 500;
+      background: #EBF1F4;
+      border-radius: 4px;
+      padding: 0 6px;
+    }
+  }
+  .el-table--group::after,.el-table--border::after, .el-table::before {
+    height: 0px;
+  }
+}
