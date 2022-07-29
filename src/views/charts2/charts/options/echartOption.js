@@ -4,7 +4,6 @@ import {
   chartColor2,
   chartColor3,
   chartColor5,
-  chartColor6,
   unitTypes
 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
@@ -119,7 +118,7 @@ export const pieChartOption2 = {
   ]
 }
 export const pieChartOption3 = {
-  color: chartColor6,
+  color: chartColor5,
   series: [
     {
       name: 'Access From',
@@ -241,7 +240,6 @@ export const appListChartOption = {
 }
 
 export const npmLineChartOption = {
-  color: chartColor5,
   title: {
     text: '',
     top: 20,

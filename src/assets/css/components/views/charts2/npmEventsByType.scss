@@ -1,6 +1,6 @@
 .npm-event {
-  height: calc(100% - 24px);
   width: 100%;
+  height: 100%;
   .npm-event-title {
     font-family: NotoSansHans-Medium;
     font-size: 14px;
@@ -10,7 +10,7 @@
   }
   .npm-event-pie {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 30px);
     border: 1px solid #E2E5EC;
     border-radius: 4px;
     display: flex;

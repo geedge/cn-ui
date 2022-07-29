@@ -1,5 +1,6 @@
 .npm-recent {
-  height: calc(100% - 24px);
+  height: 100%;
+  width: 100%;
   .npm-recent-title {
     font-family: NotoSansHans-Medium;
     font-size: 14px;
@@ -8,11 +9,13 @@
     margin-bottom: 10px;
   }
   .npm-recent-table {
+    height: calc(100% - 30px) !important;
     border: 1px solid #E2E5EC;
     border-radius: 4px;
+    padding: 1px;
     .el-table__header-wrapper {
       tr th {
-        padding: 5px 0;
+        padding: 4px 0;
         .data-column__span {
           font-family: NotoSansHans-Medium;
           font-size: 12px;
@@ -23,7 +26,7 @@
     }
     .el-table__body-wrapper.is-scrolling-none {
       tr td {
-        padding: 7px 0;
+        padding: 7.5px 0;
       }
     }
   }
