@@ -54,11 +54,11 @@
                 </template>
                 <template v-else-if="item.prop === 'total'">
                   {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="scope.row.totalTrend === 'up'" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{parseInt(scope.row.totalTrendValue / scope.row.pTotalTrendValue)}}%
+                  <div v-if="periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'up'" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total}}%
                   </div>
-                  <div v-else-if="scope.row.totalTrend === 'down'" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{parseInt(scope.row.totalTrendValue / scope.row.pTotalTrendValue)}}%
+                  <div v-else-if="periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'down'" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total}}%
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
@@ -66,11 +66,11 @@
                 </template>
                 <template v-else-if="item.prop === 'outbound'">
                   {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="scope.row.outboundTrend === 'up'" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{parseInt(scope.row.outboundTrendValue / scope.row.pOutboundTrendValue)}}%
+                  <div v-if="periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'up'" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).total}}%
                   </div>
-                  <div v-else-if="scope.row.outboundTrend === 'down'" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{parseInt(scope.row.outboundTrendValue / scope.row.pOutboundTrendValue)}}%
+                  <div v-else-if="periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'down'" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).total}}%
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
@@ -78,11 +78,11 @@
                 </template>
                 <template v-else-if="item.prop === 'inbound'">
                   {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="scope.row.inboundTrend === 'up'" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{parseInt(scope.row.inboundTrendValue / scope.row.pInboundTrendValue)}}%
+                  <div v-if="periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'up'" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).total}}%
                   </div>
-                  <div v-else-if="scope.row.inboundTrend === 'down'" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{parseInt(scope.row.inboundTrendValue / scope.row.pInboundTrendValue)}}%
+                  <div v-else-if="periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'down'" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).total}}%
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
@@ -134,15 +134,12 @@ export default {
           score: 3,
           icon: 'cn-icon cn-icon-video',
           total: 10,
-          totalTrend: 'up',
-          inboundTrend: 'down',
-          outboundTrend: '',
-          totalTrendValue: 6,
-          inboundTrendValue: 2,
-          outboundTrendValue: 3,
+          totalTrendValue: 5,
+          inboundTrendValue: 10,
+          outboundTrendValue: 8,
           pTotalTrendValue: 5,
-          pInboundTrendValue: 3,
-          pOutboundTrendValue: 6,
+          pInboundTrendValue: 7,
+          pOutboundTrendValue: 4,
           inbound: 0.1,
           outbound: 0.89
         },
@@ -151,15 +148,12 @@ export default {
           score: 2,
           icon: 'cn-icon cn-icon-social-network',
           total: 10,
-          totalTrend: 'down',
-          inboundTrend: 'down',
-          outboundTrend: 'down',
-          totalTrendValue: 6,
-          inboundTrendValue: 2,
-          outboundTrendValue: 3,
-          pTotalTrendValue: 5,
-          pInboundTrendValue: 3,
-          pOutboundTrendValue: 6,
+          totalTrendValue: 5,
+          inboundTrendValue: 6,
+          outboundTrendValue: 8,
+          pTotalTrendValue: 10,
+          pInboundTrendValue: 5,
+          pOutboundTrendValue: 4,
           inbound: 0.1,
           outbound: 0.89
         },
@@ -168,14 +162,12 @@ export default {
           score: 1,
           icon: 'cn-icon cn-icon-file-sharing',
           total: 10,
-          totalTrend: '',
-          inboundTrend: '',
-          totalTrendValue: 6,
-          inboundTrendValue: 2,
-          outboundTrendValue: 3,
+          totalTrendValue: 2,
+          inboundTrendValue: 6,
+          outboundTrendValue: 7,
           pTotalTrendValue: 5,
-          pInboundTrendValue: 3,
-          pOutboundTrendValue: 6,
+          pInboundTrendValue: 7,
+          pOutboundTrendValue: 8,
           inbound: 0.1,
           outbound: 0.89
         },
@@ -184,15 +176,12 @@ export default {
           score: 4,
           icon: 'cn-icon cn-icon-gaming',
           total: 10,
-          totalTrend: 'up',
-          inboundTrend: 'up',
-          outboundTrend: '',
-          totalTrendValue: 6,
-          inboundTrendValue: 2,
-          outboundTrendValue: 3,
+          totalTrendValue: 5,
+          inboundTrendValue: 5,
+          outboundTrendValue: 5,
           pTotalTrendValue: 5,
-          pInboundTrendValue: 3,
-          pOutboundTrendValue: 6,
+          pInboundTrendValue: 5,
+          pOutboundTrendValue: 5,
           inbound: 0.1,
           outbound: 0.89
         },
@@ -201,15 +190,12 @@ export default {
           score: 6,
           icon: 'cn-icon cn-icon-email',
           total: 10,
-          totalTrend: 'down',
-          inboundTrend: 'up',
-          outboundTrend: 'down',
-          totalTrendValue: 6,
-          inboundTrendValue: 2,
-          outboundTrendValue: 3,
-          pTotalTrendValue: 5,
-          pInboundTrendValue: 3,
-          pOutboundTrendValue: 6,
+          totalTrendValue: 2,
+          inboundTrendValue: 5,
+          outboundTrendValue: 6,
+          pTotalTrendValue: 4,
+          pInboundTrendValue: 10,
+          pOutboundTrendValue: 5,
           inbound: 0.1,
           outbound: 0.89
         },
@@ -218,15 +204,12 @@ export default {
           score: 5,
           icon: 'cn-icon cn-icon-voip',
           total: 10,
-          totalTrend: 'down',
-          inboundTrend: '',
-          outboundTrend: 'down',
-          totalTrendValue: 6,
-          inboundTrendValue: 2,
-          outboundTrendValue: 3,
-          pTotalTrendValue: 5,
-          pInboundTrendValue: 3,
-          pOutboundTrendValue: 6,
+          totalTrendValue: 5,
+          inboundTrendValue: 7,
+          outboundTrendValue: 9,
+          pTotalTrendValue: 10,
+          pInboundTrendValue: 2,
+          pOutboundTrendValue: 5,
           inbound: 0.1,
           outbound: 0.89
         }
@@ -253,6 +236,19 @@ export default {
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
       return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
+    },
+    periodicJudgmentCalculationChange (period, pperiod) {
+      const periodicData = {}
+      if (period > pperiod) {
+        periodicData.value = 'up'
+        periodicData.total = parseInt(((period - pperiod) / pperiod) * 100)
+      } else if (period < pperiod) {
+        periodicData.value = 'down'
+        periodicData.total = parseInt(((pperiod - period) / pperiod) * 100)
+      } else {
+        periodicData.value = ''
+      }
+      return periodicData
     }
   }
 }
