@@ -40,6 +40,7 @@
               v-model="value2"
               :disabled="activeShow === 'total'"
               popper-class="reference-line"
+              @change="referenceSelectChange"
           >
             <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -113,7 +114,8 @@ export default {
       activeShow: 'total',
       mousemoveCursor: '',
       leftOffset: 0,
-      sizes: [3, 4, 6, 8, 9, 10]
+      sizes: [3, 4, 6, 8, 9, 10],
+      echartsLabelValue: 'Average'
     }
   },
   watch: {
@@ -7114,7 +7116,7 @@ export default {
             label: {
               formatter (params) {
                 const arr = unitConvert(params.value, unitTypes.number).join('')
-                return _this.value2 + '(' + arr + 'packets/s' + ')'
+                return _this.echartsLabelValue + '(' + arr + 'packets/s' + ')'
               },
               position: 'insideStartTop',
               color: '#717171',
@@ -7195,6 +7197,12 @@ export default {
         })
       }
       this.activeShow = 'total'
+    },
+    referenceSelectChange (val) {
+      this.timer = setTimeout(() => {
+        this.init()
+      }, 200)
+      this.echartsLabelValue = val
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []

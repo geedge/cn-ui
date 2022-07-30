@@ -293,7 +293,6 @@ export const npmLineChartOption = {
     {
       type: 'line',
       symbol: 'circle',
-      stack: 'network.total',
       smooth: true,
       showSymbol: false,
       emphasis: {
