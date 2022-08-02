@@ -5,9 +5,9 @@
   border: 1px solid #E2E5EC;
   border-radius: 4px;
   .chart-drawing {
-    height: 100%;
+    height: 80%;
     width: 100%;
-    z-index: 0;
+    top: 70px;
     .echarts-tooltip.echarts-tooltip-dark {
       .cn-chart-tooltip {
         display: flex;
@@ -72,7 +72,6 @@
     border-radius: 4px 0 0 0;
     background: #046ECA;
     top: 0;
-    z-index: 1;
     transition: all linear .2s;
   }
   .line-value {
