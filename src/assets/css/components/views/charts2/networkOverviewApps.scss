@@ -346,6 +346,9 @@
 }
 .el-select__popper.app-metric {
   top: 27px !important;
+  .el-popper__arrow {
+    display: none;
+  }
 }
 .app-dropdown.el-popper.is-pure {
   .el-scrollbar {

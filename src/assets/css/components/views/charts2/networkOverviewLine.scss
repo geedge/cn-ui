@@ -136,7 +136,7 @@
     }
   }
 }
-.el-select__popper {
+.metric.el-select__popper,.reference-line.el-select__popper {
   top: 216px !important;
   .el-popper__arrow {
     display: none;
