@@ -10,49 +10,61 @@
     <network-overview-ddos-detection
         v-else-if="chart.type === typeMapping.networkOverview.ddosDetection"
         :chart="chart"
+        :time-filter="timeFilter"
     ></network-overview-ddos-detection>
     <network-overview-performance-event
         v-else-if="chart.type === typeMapping.networkOverview.performanceEvent"
         :chart="chart"
+        :time-filter="timeFilter"
     ></network-overview-performance-event>
     <network-overview-tabs
          v-else-if="chart.type === typeMapping.networkOverview.table"
+         :time-filter="timeFilter"
     ></network-overview-tabs>
     <network-overview-apps
         v-else-if="chart.type === typeMapping.networkOverview.appList"
         :chart="chart"
+        :time-filter="timeFilter"
     >
     </network-overview-apps>
     <npm-tabs
         v-else-if="chart.type === typeMapping.npm.npmTabs"
+        :time-filter="timeFilter"
         @tabChange="npmTabChange"
     ></npm-tabs>
     <npm-network-quantity
         v-else-if="chart.type === typeMapping.npm.npmNetworkQuantity"
+        :time-filter="timeFilter"
         :chart="chart"
     ></npm-network-quantity>
     <npm-app-category-score
         v-else-if="chart.type === typeMapping.npm.npmAppCategoryScore"
+        :time-filter="timeFilter"
         :chart="chart"
     ></npm-app-category-score>
     <npm-map
         v-else-if="chart.type === typeMapping.npm.npmMap"
+        :time-filter="timeFilter"
         :chart="chart"
     ></npm-map>
     <npm-line
         v-else-if="chart.type === typeMapping.npm.npmLine"
+        :time-filter="timeFilter"
         :chart="chart"
     ></npm-line>
     <npm-events-header
         v-else-if="chart.type === typeMapping.npm.npmEventsHeader"
+        :time-filter="timeFilter"
         :chart="chart"
     ></npm-events-header>
     <npm-events-by-type
         v-else-if="chart.type === typeMapping.npm.npmEventsByType"
+        :time-filter="timeFilter"
         :chart="chart"
     ></npm-events-by-type>
     <npm-recent-events
         v-else-if="chart.type === typeMapping.npm.npmRecentEvents"
+        :time-filter="timeFilter"
         :chart="chart"
     ></npm-recent-events>
   </div>

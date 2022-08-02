@@ -22,12 +22,11 @@ export const pieChartOption1 = {
       fontFamily: 'SimHei',
       rich: {
         a: {
-          width: 35,
+          width: 65,
           align: 'left',
           fontWeight: 'bold'
         },
         b: {
-          width: 6,
           align: 'left',
           fontSize: 12,
           color: '#575757'
@@ -39,10 +38,10 @@ export const pieChartOption1 = {
       let value
       data.forEach(t => {
         if (t.name === name) {
-          value = t.describe
+          value = t.value
         }
       })
-      const arr = ['{a|' + ' ' + name + '}' + '{b|' + value + '}']
+      const arr = ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
       return arr
     }
   },
@@ -75,12 +74,11 @@ export const pieChartOption2 = {
       fontFamily: 'SimHei',
       rich: {
         a: {
-          width: 35,
+          width: 65,
           align: 'left',
           fontWeight: 'bold'
         },
         b: {
-          width: 6,
           align: 'left',
           fontSize: 12,
           color: '#575757'
@@ -92,10 +90,10 @@ export const pieChartOption2 = {
       let value
       data.forEach(t => {
         if (t.name === name) {
-          value = t.describe
+          value = t.value
         }
       })
-      const arr = ['{a|' + ' ' + name + '}' + '{b|' + value + '}']
+      const arr = ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
       return arr
     }
   },
@@ -155,9 +153,9 @@ export const stackedLineChartOption = {
     show: false
   },
   grid: {
-    top: '30%',
-    left: '1%',
-    right: '2%',
+    top: '12%',
+    left: '2%',
+    right: '1.5%',
     bottom: 15,
     containLabel: true
   },

@@ -133,6 +133,14 @@ export const api = {
     DnsServiceInsights: {
       alarmInfoCount: '/interface/dns/alarmInfoCount'
     }
+  },
+  // networkOverview
+  netWorkOverview: {
+    totalTrafficAnalysis: 'interface/overview/totalTrafficAnalysis',
+    eventSeverity: '/interface/overview/eventSeverity',
+    eventType: '/interface/overview/eventType',
+    ddosEventAnalysis: '/interface/overview/ddosEventAnalysis',
+
   }
 }
 
