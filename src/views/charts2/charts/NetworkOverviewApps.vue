@@ -21,7 +21,7 @@
             <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'"></i>
             <span>{{app.name}}</span>
           </div>
-          <div class="app-card-title-more">
+          <div class="app-card-title-more" v-ele-click-outside="clickOutSide">
             <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app)"></i></span>
             <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreName"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
           </div>
@@ -110,14 +110,14 @@ import { unitTypes } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
-import { put } from '@/utils/http'
+import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
-
 export default {
   name: 'NetworkOverviewApps',
   props: {
-    chart: Object
+    chart: Object,
+    timeFilter: Object
   },
   setup () {
     return {
@@ -161,7 +161,16 @@ export default {
   },
   methods: {
     unitConvert,
+    clickOutSide () {
+      this.appData.forEach(t => {
+        t.moreName = false
+      })
+    },
     init () {
+      // const params = {
+      //   startTime: this.timeFilter.startTime,
+      //   endTime: this.timeFilter.endTime
+      // }
       this.appData.forEach((app, i) => {
         // 根据app.name和app.type查除接口，获取数据
         app.value = this.appTempData[i].value
@@ -737,8 +746,6 @@ export default {
       this.appData.forEach(t => {
         if (t.name === app.name && t.type === app.type) {
           t.moreName = !t.moreName
-        } else {
-          t.moreName = false
         }
       })
     },
