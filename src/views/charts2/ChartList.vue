@@ -35,7 +35,7 @@
 import VueGridLayout from 'vue-grid-layout'
 import _ from 'lodash'
 import Chart from '@/views/charts2/Chart'
-import { panelTypeAndRouteMapping } from '@/utils/constants'
+import {panelTypeAndRouteMapping, storageKey} from '@/utils/constants'
 import { typeMapping } from '@/views/charts2/chart-tools'
 export default {
   name: 'ChartList',
@@ -67,6 +67,17 @@ export default {
           this.layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex)
         } else {
           this.layout = [...n]
+        }
+        const overviewAppChart = n.find(c => c.type === typeMapping.networkOverview.appList)
+        let actuallyLength = 0
+        if (overviewAppChart) {
+          const params = overviewAppChart.params.app ? overviewAppChart.params : { app: [] }
+          if (params.app.some(p => p.user === parseInt(localStorage.getItem(storageKey.userId)))) {
+            actuallyLength = params.app.find(p => p.user === parseInt(localStorage.getItem(storageKey.userId))).list.length + 1
+          } else {
+            actuallyLength = params.app.find(p => p.user === 'default').list.length + 1
+          }
+          overviewAppChart.h = actuallyLength % 3 > 0 ? (Math.floor(actuallyLength / 3) + 1) * 2 + 2 : Math.floor(actuallyLength / 3) * 2 + 2
         }
       }
     },

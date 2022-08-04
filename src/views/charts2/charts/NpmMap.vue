@@ -1,6 +1,41 @@
 <template>
   <div class="cn-chart__map">
     <div class="map-canvas" id="npmMap"></div>
+    <div class="map-filter">
+      <el-select
+          size="mini"
+          v-model="trafficDirection"
+          class="map-select map-select__direction"
+      >
+        <el-option value="Server">Server</el-option>
+        <el-option value="Client">Client</el-option>
+      </el-select>
+      <el-select
+          size="mini"
+          v-model="location"
+          class="map-select map-select__location"
+          clearable
+          placeholder="All"
+          filterable
+      >
+        <template #prefix><i class="cn-icon cn-icon-location" style="color: #575757;"></i></template>
+        <el-option v-for="(country, index) in locationOptions" :key="index" :value="country.value">{{country.label}}</el-option>
+      </el-select>
+    </div>
+    <div class="map-legend">
+      <div class="map-legend__row">
+        <div class="map-legend__symbol map-legend__symbol--green"></div>
+        <div class="map-legend__desc">{{$t('npm.highScore')}}</div>
+      </div>
+      <div class="map-legend__row">
+        <div class="map-legend__symbol map-legend__symbol--yellow"></div>
+        <div class="map-legend__desc">{{$t('npm.middleScore')}}</div>
+      </div>
+      <div class="map-legend__row">
+        <div class="map-legend__symbol map-legend__symbol--red"></div>
+        <div class="map-legend__desc">{{$t('npm.lowScore')}}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -11,14 +46,19 @@ import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { getGeoData } from '@/utils/tools'
 import { storageKey } from '@/utils/constants'
+import locationOptions from '@/views/charts2/charts/locationOptions'
 
 export default {
   name: 'NpmMap',
   data () {
     return {
+      locationOptions,
       mapTestData,
       myChart: null,
-      polygonSeries: null
+      polygonSeries: null,
+      // Server | Client
+      trafficDirection: 'Server',
+      location: ''
     }
   },
   methods: {

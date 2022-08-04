@@ -81,6 +81,7 @@ export default {
             res.loginSuccessPath = this.$route.query.redirect
             this.loginSuccess(res)
             localStorage.setItem(storageKey.username, this.username)
+            localStorage.setItem(storageKey.userId, '1')
             localStorage.setItem(storageKey.token, res.data.token)
           } else if (res.code === 518005) {
             this.$message.error(this.$t('Incorrect username or password'))

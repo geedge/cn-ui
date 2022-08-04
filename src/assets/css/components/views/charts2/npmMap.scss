@@ -1,6 +1,7 @@
 .cn-chart__map {
   height: 100%;
   width: 100%;
+  position: relative;
   border-radius: 4px;
   overflow: hidden;
 
@@ -8,5 +9,58 @@
     height: 100%;
     width: 100%;
     background-color: #CAD2D3;
+  }
+  .map-filter {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+    .map-select {
+      margin-left: 10px;
+
+      .el-input__inner {
+        color: #2C72C6;
+      }
+      &.map-select__direction {
+        width: 110px;
+      }
+    }
+  }
+  .map-legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 92px;
+    bottom: 10px;
+    left: 10px;
+    position: absolute;
+    padding: 0 10px;
+    background-color: white;
+
+    .map-legend__row {
+      display: flex;
+      align-items: center;
+      height: 23px;
+
+      .map-legend__symbol {
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+
+        &.map-legend__symbol--green {
+          background-color: #7E9F54;
+        }
+        &.map-legend__symbol--yellow {
+          background-color: #E5A219;
+        }
+        &.map-legend__symbol--red {
+          background-color: #E26154;
+        }
+      }
+      .map-legend__desc {
+        padding-left: 5px;
+        color: #575757;
+      }
+    }
   }
 }

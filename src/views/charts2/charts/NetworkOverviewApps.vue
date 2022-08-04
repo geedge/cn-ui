@@ -106,7 +106,7 @@
 
 <script>
 import unitConvert from '@/utils/unit-convert'
-import { unitTypes } from '@/utils/constants'
+import { storageKey, unitTypes } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
@@ -126,8 +126,21 @@ export default {
   },
   data () {
     return {
-      metricFilter: '',
-      metricOptions: [],
+      metricFilter: 'Bits/s',
+      metricOptions: [
+        {
+          value: 'Bits/s',
+          label: 'Bits/s'
+        },
+        {
+          value: 'Packets/s',
+          label: 'Packets/s'
+        },
+        {
+          value: 'Sessions/s',
+          label: 'Sessions/s'
+        }
+      ],
       appData: [],
       // 假数据
       appTempData: [
@@ -173,9 +186,9 @@ export default {
       // }
       this.appData.forEach((app, i) => {
         // 根据app.name和app.type查除接口，获取数据
-        app.value = this.appTempData[i].value
-        app.number = this.appTempData[i].number
-        app.number1 = this.appTempData[i].number1
+        app.value = this.appTempData[i % 10].value
+        app.number = this.appTempData[i % 10].number
+        app.number1 = this.appTempData[i % 10].number1
         app.lineData = [
           [
             '1658128320',
@@ -635,8 +648,8 @@ export default {
           provideShow: false
         })
       }
-      const oldApps = this.chart.params.app ? this.chart.params.app.filter(a => a.type === 'app') : []
-      const oldProviders = this.chart.params.app ? this.chart.params.app.filter(a => a.type === 'provider') : []
+      const oldApps = this.appData ? this.appData.filter(a => a.type === 'app') : []
+      const oldProviders = this.appData ? this.appData.filter(a => a.type === 'provider') : []
       this.appOptions = appOptions.filter(a => {
         return !oldApps.some(o => o.name === a.name)
       })
@@ -670,10 +683,8 @@ export default {
       }
     },
     // 保存变更，并且在增、删app后，根据当前app数量更改整体高度
-    saveChart (toSaveChart, length) {
+    saveChart (toSaveChart) {
       return new Promise(resolve => {
-        const actuallyLength = this.appData.length + length + 1
-        toSaveChart.h = actuallyLength % 3 > 0 ? (Math.floor(actuallyLength / 3) + 1) * 2 + 2 : Math.floor(actuallyLength / 3) * 2 + 2
         put(api.chart, toSaveChart).then(res => {
           if (res.code === 200) {
             this.emitter.emit('reloadChartList')
@@ -685,24 +696,59 @@ export default {
     del (app, index) {
       const appData = _.cloneDeep(this.appData)
       appData.splice(index, 1)
+      const toSaveParams = this.chart.params.app ? this.chart.params : { app: [] }
+      if (toSaveParams.app.some(p => p.user === parseInt(localStorage.getItem(storageKey.userId)))) {
+        toSaveParams.app.forEach(p => {
+          if (p.user === parseInt(localStorage.getItem(storageKey.userId))) {
+            p.list = appData.map(p => {
+              return {
+                type: p.type,
+                name: p.name
+              }
+            })
+          }
+        })
+      } else {
+        toSaveParams.app.push({
+          user: parseInt(localStorage.getItem(storageKey.userId)),
+          list: appData.map(p => {
+            return {
+              type: p.type,
+              name: p.name
+            }
+          })
+        })
+      }
       const toSaveChart = {
         ...this.chart,
-        params: JSON.stringify({ app: appData })
+        params: JSON.stringify(toSaveParams)
       }
-      this.saveChart(toSaveChart, -1).then(res => {
+      this.saveChart(toSaveChart).then(res => {
         this.appData.splice(index, 1)
       })
     },
     save () {
       if (this.toSaveApp.length > 0) {
         const toSaveParams = this.chart.params.app ? this.chart.params : { app: [] }
-        toSaveParams.app = [...toSaveParams.app, ...this.toSaveApp]
+        if (toSaveParams.app.some(p => p.user === parseInt(localStorage.getItem(storageKey.userId)))) {
+          toSaveParams.app.forEach(p => {
+            if (p.user === parseInt(localStorage.getItem(storageKey.userId))) {
+              p.list = [...p.list, ...this.toSaveApp]
+            }
+          })
+        } else {
+          const defaultApp = toSaveParams.app.find(p => p.user === 'default')
+          toSaveParams.app.push({
+            user: parseInt(localStorage.getItem(storageKey.userId)),
+            list: [...defaultApp.list, ...this.toSaveApp]
+          })
+        }
         const toSaveChart = {
           ...this.chart,
           params: JSON.stringify(toSaveParams)
         }
-        this.saveChart(toSaveChart, this.toSaveApp.length).then(res => {
-          this.appData = _.cloneDeep(toSaveParams.app)
+        this.saveChart(toSaveChart).then(res => {
+          this.appData = _.cloneDeep(toSaveParams.app.find(p => p.user === parseInt(localStorage.getItem(storageKey.userId))).list)
           this.$nextTick(() => {
             this.init()
             this.showAddApp = false
@@ -757,7 +803,13 @@ export default {
   },
   mounted () {
     if (this.chart.params && this.chart.params.app) {
-      this.appData = _.cloneDeep(this.chart.params.app)
+      const userId = parseInt(localStorage.getItem(storageKey.userId))
+      const apps = _.cloneDeep(this.chart.params.app)
+      let app = apps.find(p => p.user === userId)
+      if (!app) {
+        app = apps.find(p => p.user === 'default')
+      }
+      this.appData = app.list
     }
     this.timer = setTimeout(() => {
       this.init()

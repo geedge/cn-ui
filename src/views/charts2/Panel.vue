@@ -38,6 +38,7 @@ import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
 import ChartList from '@/views/charts2/ChartList'
+import { typeMapping } from '@/views/charts2/chart-tools'
 
 export default {
   name: 'Panel',
@@ -59,6 +60,7 @@ export default {
     await this.init()
     const vm = this
     this.emitter.on('reloadChartList', async function () {
+      vm.chartList = []
       vm.chartList = (await getChartList({ panelId: vm.panel.id, pageSize: -1 })).map(chart => {
         chart.i = chart.id
         // 递归初始化各属性
