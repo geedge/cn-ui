@@ -16,6 +16,8 @@
 import { pieChartOption1, pieChartOption2 } from '@/views/charts2/charts/options/echartOption.js'
 import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
 export default {
   name: 'NetworkOverviewPerformanceEvent',
   setup () {
@@ -24,42 +26,110 @@ export default {
       myChart2: shallowRef(null)
     }
   },
+  props: {
+    timeFilter: Object
+  },
   data () {
     return {
-      chartOption: {},
-      chartOption2: {},
-      chartData: [
-        { value: 1048, name: '666', describe: 'Critical' },
-        { value: 735, name: '777', describe: 'High' },
-        { value: 580, name: '888', describe: 'Medium' },
-        { value: 484, name: '999', describe: 'Low' },
-        { value: 300, name: '100', describe: 'Info' }
-      ],
-      chartData2: [
-        { value: 1048, name: '111', describe: 'name1' },
-        { value: 735, name: '222', describe: 'name2' },
-        { value: 580, name: '333', describe: 'name3' },
-        { value: 484, name: '444', describe: 'name4' },
-        { value: 300, name: '555', describe: 'name5' }
-      ],
       timer: null
     }
   },
   methods: {
     init () {
+      const params = {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime
+      }
+      const result1 = [
+        {
+          eventType: 'name1',
+          total: 121113
+        },
+        {
+          eventType: 'name2',
+          total: 2343123
+        },
+        {
+          eventType: 'name3',
+          total: 2343123
+        },
+        {
+          eventType: 'name4',
+          total: 2343123
+        },
+        {
+          eventType: 'name5',
+          total: 2343123
+        }
+      ]
+      const result2 = [
+        {
+          eventSeverity: 'Critical',
+          total: 1231111
+        },
+        {
+          eventSeverity: 'High',
+          total: 2343123
+        },
+        {
+          eventSeverity: 'Medium',
+          total: 2343123
+        },
+        {
+          eventSeverity: 'low',
+          total: 2343123
+        },
+        {
+          eventSeverity: 'Info',
+          total: 2343123
+        }
+      ]
       const dom = document.getElementById('chart1')
       const dom2 = document.getElementById('chart2')
       if (dom) {
         this.myChart = echarts.init(dom)
         this.chartOption = pieChartOption1
-        this.chartOption.series[0].data = this.chartData
-        this.myChart.setOption(pieChartOption1)
+        get(api.netWorkOverview.eventSeverity, params).then(res => {
+          res.data.result = result1
+          if (res.code === 200) {
+            res.data.result = res.data.result.map(t => {
+              console.log()
+              return {
+                name: t.eventType,
+                value: t.total
+              }
+            })
+            if (res.data.result.length <= 0) {
+              this.chartOption.legend.show = false
+            } else {
+              this.chartOption.legend.show = true
+            }
+            this.chartOption.series[0].data = res.data.result
+            this.myChart.setOption(this.chartOption)
+          }
+        })
       }
       if (dom2) {
         this.myChart2 = echarts.init(dom2)
         this.chartOption2 = pieChartOption2
-        this.chartOption2.series[0].data = this.chartData2
-        this.myChart2.setOption(pieChartOption2)
+        get(api.netWorkOverview.eventSeverity, params).then(res => {
+          res.data.result = result2
+          if (res.code === 200) {
+            res.data.result = res.data.result.map(t => {
+              return {
+                name: t.eventSeverity,
+                value: t.total
+              }
+            })
+            if (res.data.result.length <= 0) {
+              this.chartOption2.legend.show = false
+            } else {
+              this.chartOption2.legend.show = true
+            }
+            this.chartOption2.series[0].data = res.data.result
+            this.myChart2.setOption(this.chartOption2)
+          }
+        })
       }
     },
     resize () {
