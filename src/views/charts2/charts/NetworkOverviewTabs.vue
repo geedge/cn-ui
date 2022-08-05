@@ -51,7 +51,8 @@
                   </div>
                 </template>
                 <template v-else-if="item.prop === 'tab'" >
-                  <div class="data-click" @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
+                  <div class="data-click" v-if='drillDown' @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
+                  <div v-else >{{scope.row['tab']}}</div>
                 </template>
                 <template v-else>
                   {{scope.row[item.prop]}}
@@ -66,7 +67,7 @@
 
     </el-tabs>
     <div class="tab-search" >
-      <div class="search-select" >
+      <div class="search-select"  v-if="drillDown">
         <span>{{$t('network.metric')}}:</span>
         <el-select v-model="metric"
                    class="option__select select-column"
@@ -193,7 +194,8 @@ export default {
         through: 'throughBitsRate'
       },
       metricUnit: 'bytes',
-      loading: false
+      loading: false,
+      drillDown:false
     }
   },
   props: {
@@ -841,6 +843,10 @@ export default {
     }
   },
   mounted () {
+    if(this.chart.params && this.chart.params.drillDown){
+      this.drillDown = this.chart.params.drillDown
+    }
+
     this.list = this.$_.cloneDeep(networkOverviewTabList)
     if (this.$store.getters.getNetworkOverviewTabList.length > 0) {
       this.list = this.$store.getters.getNetworkOverviewTabList
