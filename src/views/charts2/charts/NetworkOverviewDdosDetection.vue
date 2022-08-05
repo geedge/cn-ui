@@ -24,6 +24,7 @@
 <script>
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
+import { getSecond } from '@/utils/date-util'
 export default {
   name: 'NetworkOverviewDdosDetection',
   props: {
@@ -37,8 +38,8 @@ export default {
   methods: {
     ddosDetectDataRequests () {
       const params = {
-        startTime: this.timeFilter.startTime,
-        endTime: this.timeFilter.endTime
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
       get(api.netWorkOverview.ddosEventAnalysis, params).then(res => {
         if (res.code === 200) {

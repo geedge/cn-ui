@@ -60,6 +60,7 @@ import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import _ from 'lodash'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import { getSecond } from '@/utils/date-util'
 export default {
   name: 'NetworkOverviewLine',
   props: {
@@ -138,176 +139,10 @@ export default {
         val = 'Bits/s'
       }
       const params = {
-        startTime: this.timeFilter.startTime,
-        endTime: this.timeFilter.endTime
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
-      const result = [
-        {
-          type: 'bytes',
-          totalBitsRate: {
-            analysis: {
-              avg: 20,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '20'], [1435781431781, '25'], [1435781432781, '30']]
-          },
-          inboundBitsRate: {
-            analysis: {
-              avg: 1,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '2'], [1435781431781, '3'], [1435781432781, '4']]
-          },
-          outboundBitsRate: {
-            analysis: {
-              avg: 3,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '5'], [1435781431781, '6'], [1435781432781, '7']]
-          },
-          internalBitsRate: {
-            analysis: {
-              avg: 4,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '7'], [1435781431781, '8'], [1435781432781, '9']]
-          },
-          externalBitsRate: {
-            analysis: {
-              avg: 5,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '9'], [1435781431781, '10'], [1435781432781, '11']]
-          },
-          otherBitsRate: {
-            analysis: {
-              avg: 2,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '11'], [1435781431781, '12'], [1435781432781, '13']]
-          }
-        },
-        {
-          type: 'packets',
-          totalPacketsRate: {
-            analysis: {
-              avg: 20,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '20'], [1435781431781, '30'], [1435781432781, '40'], [1435781433781, '50']]
-          },
-          inboundPacketsRate: {
-            analysis: {
-              avg: 3,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '10'], [1435781431781, '11'], [1435781432781, '12'], [1435781433781, '15']]
-          },
-          outboundPacketsRate: {
-            analysis: {
-              avg: 2,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '14'], [1435781431781, '15'], [1435781432781, '21'], [1435781433781, '10']]
-          },
-          internalPacketsRate: {
-            analysis: {
-              avg: 3,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '4'], [1435781431781, '9'], [1435781432781, '8'], [1435781433781, '10']]
-          },
-          externalPacketsRate: {
-            analysis: {
-              avg: 6,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '22'], [1435781431781, '12'], [1435781432781, '23'], [1435781433781, '24']]
-          },
-          otherPacketsRate: {
-            analysis: {
-              avg: 2,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [[1435781430781, '11'], [1435781431781, '12'], [1435781432781, '13'], [1435781433781, '14']]
-          }
-        },
-        {
-          type: 'sessions',
-          totalSessionsRate: {
-            analysis: {
-              avg: 20,
-              max: 3,
-              min: 1,
-              p95: 2.85
-            },
-            values: [
-              [1435781430781, '22'], [1435781431781, '12'], [1435781432781, '23'], [1435781433781, '24']
-            ]
-          }
-        }
-      ]
-      result.forEach((t, i) => {
-        if (t.type === 'bytes' && val === 'Bits/s') {
-          this.mpackets[0].analysis = t.totalBitsRate.analysis
-          this.mpackets[1].analysis = t.inboundBitsRate.analysis
-          this.mpackets[2].analysis = t.outboundBitsRate.analysis
-          this.mpackets[3].analysis = t.internalBitsRate.analysis
-          this.mpackets[4].analysis = t.externalBitsRate.analysis
-          this.mpackets[5].analysis = t.otherBitsRate.analysis
-          this.mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-          this.mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-          this.mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-          this.mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-          this.mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
-          this.mpackets[5].data = t.otherBitsRate.values ? t.otherBitsRate.values : []
-          this.echartsInit(this.mpackets)
-        } else if (t.type === 'packets' && val === 'Packets/s') {
-          this.mpackets[0].analysis = t.totalPacketsRate.analysis
-          this.mpackets[1].analysis = t.inboundPacketsRate.analysis
-          this.mpackets[2].analysis = t.outboundPacketsRate.analysis
-          this.mpackets[3].analysis = t.internalPacketsRate.analysis
-          this.mpackets[4].analysis = t.externalPacketsRate.analysis
-          this.mpackets[5].analysis = t.otherPacketsRate.analysis
-          this.mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
-          this.mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
-          this.mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
-          this.mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-          this.mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
-          this.mpackets[5].data = t.otherPacketsRate.values ? t.otherPacketsRate.values : []
-          this.echartsInit(this.mpackets)
-        } else if (t.type === 'sessions' && val === 'Sessions/s') {
-          this.mpackets[0].analysis = t.totalSessionsRate.analysis
-          this.mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
-          this.echartsInit(this.mpackets)
-        }
-      })
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
-        // res.data.result = result
         if (res.code === 200) {
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
@@ -316,13 +151,18 @@ export default {
               this.mpackets[2].analysis = t.outboundBitsRate.analysis
               this.mpackets[3].analysis = t.internalBitsRate.analysis
               this.mpackets[4].analysis = t.externalBitsRate.analysis
-              this.mpackets[5].analysis = t.otherBitsRate.analysis
+              this.mpackets[5].analysis = t.other.analysis
               this.mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
               this.mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
               this.mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
               this.mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
               this.mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
-              this.mpackets[5].data = t.otherBitsRate.values ? t.otherBitsRate.values : []
+              this.mpackets[5].data = t.other.values ? t.other.values : []
+              this.mpackets.forEach(t => {
+                if (t.name !== 'network.total' && t.analysis.avg == 0) {
+                  t.show = false
+                }
+              })
               this.echartsInit(this.mpackets)
             } else if (t.type === 'packets' && val === 'Packets/s') {
               this.mpackets[0].analysis = t.totalPacketsRate.analysis
@@ -330,13 +170,18 @@ export default {
               this.mpackets[2].analysis = t.outboundPacketsRate.analysis
               this.mpackets[3].analysis = t.internalPacketsRate.analysis
               this.mpackets[4].analysis = t.externalPacketsRate.analysis
-              this.mpackets[5].analysis = t.otherPacketsRate.analysis
+              this.mpackets[5].analysis = t.other.analysis
               this.mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
               this.mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
               this.mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
               this.mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
               this.mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
-              this.mpackets[5].data = t.otherPacketsRate.values ? t.otherPacketsRate.values : []
+              this.mpackets[5].data = t.other.values ? t.other.values : []
+              this.mpackets.forEach(t => {
+                if (t.name !== 'network.total' && t.analysis.avg == 0) {
+                  t.show = false
+                }
+              })
               this.echartsInit(this.mpackets)
             } else if (t.type === 'sessions' && val === 'Sessions/s') {
               this.mpackets[0].analysis = t.totalSessionsRate.analysis
@@ -344,15 +189,6 @@ export default {
               this.echartsInit(this.mpackets)
             }
           })
-        }
-      })
-      this.mpackets.forEach(t => {
-        if (t.name === 'network.total') {
-          t.show = true
-        } else {
-          if (this.$_.isEmpty(t.analysis) || t.analysis.avg === 0) {
-            t.show = false
-          }
         }
       })
     },
@@ -371,6 +207,7 @@ export default {
             color: chartColor3[t.positioning],
             width: 1
           },
+          stack: t.name !== 'network.total' ? 'network.total' : '',
           symbolSize: function (value, params) {
             return _this.symbolSizeSortChange(i, value[0])
           },
@@ -505,6 +342,7 @@ export default {
           }
           this.legendSelectChange(t, 0)
         })
+        this.activeShow = 'total'
       } else if (!this.activeShow) {
         this.mpackets.forEach((t, i) => {
           t.show = true

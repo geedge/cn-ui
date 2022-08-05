@@ -22,7 +22,7 @@ export const pieChartOption1 = {
       fontFamily: 'SimHei',
       rich: {
         a: {
-          width: 65,
+          width: 60,
           align: 'left',
           fontWeight: 'bold'
         },
@@ -37,10 +37,11 @@ export const pieChartOption1 = {
       const data = pieChartOption1.series[0].data
       let value
       data.forEach(t => {
-        if (t.name === name) {
+        if (t.name == name) {
           value = t.value
         }
       })
+      name = name.length > 9 ? name.substr(0, 9) + '...' : name
       const arr = ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
       return arr
     }
@@ -74,7 +75,7 @@ export const pieChartOption2 = {
       fontFamily: 'SimHei',
       rich: {
         a: {
-          width: 65,
+          width: 60,
           align: 'left',
           fontWeight: 'bold'
         },
@@ -89,10 +90,11 @@ export const pieChartOption2 = {
       const data = pieChartOption2.series[0].data
       let value
       data.forEach(t => {
-        if (t.name === name) {
+        if (t.name == name) {
           value = t.value
         }
       })
+      name = name.length > 9 ? name.substr(0, 9) + '...' : name
       const arr = ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
       return arr
     }
@@ -187,7 +189,6 @@ export const stackedLineChartOption = {
     {
       type: 'line',
       symbol: 'circle',
-      stack: 'network.total',
       smooth: true,
       showSymbol: false,
       emphasis: {

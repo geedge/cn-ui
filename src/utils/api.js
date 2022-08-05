@@ -136,11 +136,12 @@ export const api = {
   },
   // networkOverview
   netWorkOverview: {
-    totalTrafficAnalysis: 'interface/overview/totalTrafficAnalysis',
+    totalTrafficAnalysis: '/interface/overview/totalTrafficAnalysis',
     eventSeverity: '/interface/overview/eventSeverity',
     eventType: '/interface/overview/eventType',
     ddosEventAnalysis: '/interface/overview/ddosEventAnalysis',
-
+    applicationCycleTrafficTotal: '/interface/overview/applicationCycleTrafficTotal',
+    appCompanyTrafficAnalysis: '/interface/overview/appCompanyTrafficAnalysis'
   }
 }
 
