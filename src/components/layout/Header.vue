@@ -240,9 +240,6 @@ export default {
     storeFrom () {
       return this.$store.getters.from
     },
-    breadcrumbColumnValueListAll () {
-      return this.$store.getters.getBreadcrumbColumnValueList
-    },
     route () {
       return this.$route.path
     }
