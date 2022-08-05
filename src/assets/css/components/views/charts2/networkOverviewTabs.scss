@@ -3,6 +3,9 @@
   $grey:#353636;
   height:100%;
   font-size:12px;
+  .tab-hide{
+    margin-top:40px;
+  }
   .cn-chart__tabs {
     height:100%;
     .tab-pane {
@@ -12,6 +15,9 @@
       border-radius: 4px;
       .tab-table {
         border:0px;
+        .data-click:hover{
+          cursor: pointer;
+        }
       }
       .data-total{
         display: flex !important;
@@ -84,6 +90,9 @@
     .el-tabs__content {
       height: calc(100% - 40px);
       border:none;
+      .el-table__body-wrapper {
+        height: calc(100% - 32px) !important;
+      }
     }
   }
   .tab-search {
