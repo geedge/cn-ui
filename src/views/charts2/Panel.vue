@@ -1,7 +1,7 @@
 <template>
   <div class="panel-box">
     <div class="panel__header">
-      <div class="panel__title">{{panel.i18n ? $t(panel.i18n) : panel.name}}</div>
+      <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}</div>
       <div class="panel__time">
         <date-time-range
             class="date-time-range"
@@ -38,7 +38,6 @@ import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
 import ChartList from '@/views/charts2/ChartList'
-import { typeMapping } from '@/views/charts2/chart-tools'
 
 export default {
   name: 'Panel',
@@ -53,10 +52,12 @@ export default {
     return {
       chartList: [], // 普通panel的chart
       panelLock: true,
-      extraParams: {}
+      extraParams: {},
+      panelName: ''
     }
   },
   async mounted () {
+    this.panelName = this.$store.getters.getPanelName
     await this.init()
     const vm = this
     this.emitter.on('reloadChartList', async function () {
@@ -107,6 +108,16 @@ export default {
           this.initChartAttr(chart)
           return chart
         })
+
+        if (this.$store.getters.getBreadcrumbColumnName || this.$store.getters.getBreadcrumbColumnValue) { // networkOverview页面
+          const list = this.chartList.filter(item => {
+            return (item.type === 102 || item.type === 601)
+          })
+          list.forEach(item => {
+            item.w = 24
+          })
+          this.chartList = ref(list)
+        }
       }
     },
     initChartAttr (chart) {

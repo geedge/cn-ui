@@ -23,6 +23,7 @@
             :time-filter="timeFilter"
             :extra-params="extraParams"
             :id="item.id"
+            ref="chartGrid"
             @npmTabChange="npmTabChange"
             :chart="item"
         ></chart>
@@ -35,7 +36,7 @@
 import VueGridLayout from 'vue-grid-layout'
 import _ from 'lodash'
 import Chart from '@/views/charts2/Chart'
-import {panelTypeAndRouteMapping, storageKey} from '@/utils/constants'
+import { panelTypeAndRouteMapping, storageKey } from '@/utils/constants'
 import { typeMapping } from '@/views/charts2/chart-tools'
 export default {
   name: 'ChartList',
@@ -90,6 +91,10 @@ export default {
   methods: {
     npmTabChange (index) {
       this.npmTabIndex = parseInt(index)
+    },
+    resizeLine () {
+      console.log(this.$refs)
+      this.$refs.chartGrid.resizeLine()
     }
   }
 }

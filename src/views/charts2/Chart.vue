@@ -6,6 +6,7 @@
         v-if="chart.type === typeMapping.networkOverview.line"
         :chart="chart"
         :time-filter="timeFilter"
+        ref="networkLine"
     ></network-overview-line>
     <network-overview-ddos-detection
         v-else-if="chart.type === typeMapping.networkOverview.ddosDetection"
@@ -17,9 +18,12 @@
         :chart="chart"
         :time-filter="timeFilter"
     ></network-overview-performance-event>
-    <network-overview-tabs
+    <network-overview-tabs @getChartData="getChartData"
          v-else-if="chart.type === typeMapping.networkOverview.table"
          :time-filter="timeFilter"
+         :chart="chart"
+         :chartData="chartData"
+         :ref="`tab${chart.id}`"
     ></network-overview-tabs>
     <network-overview-apps
         v-else-if="chart.type === typeMapping.networkOverview.appList"
@@ -87,6 +91,9 @@ import NpmLine from '@/views/charts2/charts/NpmLine'
 import NpmEventsByType from '@/views/charts2/charts/NpmEventsByType'
 import NpmRecentEvents from '@/views/charts2/charts/NpmRecentEvents'
 import NpmEventsHeader from '@/views/charts2/charts/NpmEventsHeader'
+import { get } from '@/utils/http'
+import { getNowTime, getSecond } from '@/utils/date-util'
+import { ref } from 'vue'
 export default {
   name: 'Chart',
   components: {
@@ -115,12 +122,91 @@ export default {
     return {
       typeMapping,
       loading: false,
-      isNoData: false
+      isNoData: false,
+      chartData: null,
+      queryParams: {}
+    }
+  },
+  mounted () {
+    this.getChartData()
+  },
+  setup (props) {
+    const dateRangeValue = 60
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
+    const table = ref({})
+    return {
+      table,
+      chartTimeFilter
     }
   },
   methods: {
     npmTabChange (index) {
       this.$emit('npmTabChange', index)
+    },
+    reload () {
+      this.getChartData()
+    },
+    /* 参数 extraParams 额外请求参数 */
+    getChartData (url, extraParams = {}, chartTimeFilter) {
+      try {
+        if (chartTimeFilter) {
+          // 图表自带timeFilter刷新时
+          this.queryTimeRange = {
+            startTime: getSecond(chartTimeFilter.startTime),
+            endTime: getSecond(chartTimeFilter.endTime)
+          }
+        } else if (this.timeFilter) {
+          this.queryTimeRange = {
+            startTime: getSecond(this.timeFilter.startTime),
+            endTime: getSecond(this.timeFilter.endTime)
+          }
+        } else {
+          this.queryTimeRange = {
+            startTime: getSecond(this.chartTimeFilter.startTime),
+            endTime: getSecond(this.chartTimeFilter.endTime)
+          }
+        }
+        const chartParams = this.chart.params
+        // 接口查询参数
+        this.queryParams = {
+          ...this.queryTimeRange,
+          ...extraParams
+        }
+        let requestUrl = url
+
+        if (this.chart.type === 601) {
+          const chartObj = this.$refs['tab' + this.chart.id]
+          requestUrl = url || chartObj.getCurUrl()
+          this.queryParams = {
+            ...chartObj.handleQueryParams(extraParams),
+            ...this.queryTimeRange
+          }
+        }
+        if (requestUrl) {
+          get(requestUrl, this.queryParams).then(response => {
+            if (response.code === 200) {
+              this.chartData = response.data.result
+            } else {
+              if (this.chart.type === 601) {
+                this.$refs['tab' + this.chart.id].loading = false
+              }
+            }
+          })
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    resizeLine () {
+      this.$nextTick(function () {
+        setTimeout(() => {
+          console.log(this.$refs)
+          if (this.$refs.networkLine) {
+            this.$refs.networkLine.resize()
+          }
+        }, 250)
+      })
     }
   }
 }

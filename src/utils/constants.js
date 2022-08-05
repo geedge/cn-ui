@@ -174,6 +174,192 @@ export const networkOverviewTabs = [
   'network.protocolPorts'
 ]
 
+export const operationType = {
+  mainMenu: 0, // 菜单
+  secondMenu: 1, // 二级菜单
+  thirdMenu: 3, // 三级菜单
+  fourthMenu: 4, // 四级菜单
+  changeTab: 5, // 切换tab
+  changeMetric: 6, // 切换metric
+  customize: 7// 操作Customize
+}
+
+export const networkOverviewTableUrlName = {
+  ips: 'ips',
+  countries: 'countries',
+  asns: 'asns',
+  applications: 'applications',
+  providers: 'providers',
+  domains: 'domains',
+  protocols: 'protocols',
+  idcTenants: 'idcTenants',
+  provinces: 'provinces',
+  cities: 'cities',
+  isps: 'isps',
+  applicationCategories: 'applicationCategories',
+  domainCategories: 'domainCategories',
+  hosts: 'hosts',
+  snis: 'snis',
+  protocolPorts: 'protocolPorts'
+}
+
+export const networkOverviewSearchUrl = {
+  curUrl: '/interface/overview/dimensionTrafficAnalysis',
+  cycleUrl: '/interface/overview/dimensionCycleTrafficAnalysis',
+  drilldownCurUrl: '/interface/overview/drilldown/dimensionTrafficAnalysis',
+  drilldownCycleUrl: '/interface/overview/drilldown/dimensionCycleTrafficAnalysis',
+  drilldownList: '/interface/overview/drilldown/list'
+
+}
+
+export const networkOverviewTabList = [
+  {
+    label: 'network.ips',
+    prop: 'ip',
+    queryCycleTotalProp: 'ips',
+    dillDownProp: ['common_client_ip', 'common_server_ip'],
+    checked: true,
+    url: '/interface/overview/ipsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/ipsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.countries',
+    prop: 'country',
+    queryCycleTotalProp: 'countries',
+    dillDownProp: ['client_country', 'server_country'],
+    checked: true,
+    url: '/interface/overview/countriesTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/countriesCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.asns',
+    prop: 'asn',
+    queryCycleTotalProp: 'asns',
+    dillDownProp: ['client_asn', 'server_asn'],
+    checked: true,
+    url: '/interface/overview/asnsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/asnsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.applications',
+    prop: 'appLabel',
+    queryCycleTotalProp: 'applications',
+    dillDownProp: ['common_app_label'],
+    checked: true,
+    url: '/interface/overview/applicationsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/applicationsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.providers',
+    prop: 'appCompany',
+    queryCycleTotalProp: 'providers',
+    dillDownProp: ['app_company'],
+    checked: true,
+    url: '/interface/overview/providersTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/providersCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.domains',
+    prop: 'domain',
+    queryCycleTotalProp: 'domains',
+    dillDownProp: ['domain'],
+    checked: true,
+    url: '/interface/overview/domainsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/domainsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.protocols',
+    prop: 'l7Protocol',
+    queryCycleTotalProp: 'protocols',
+    dillDownProp: ['common_l7_protocol'],
+    checked: true,
+    url: '/interface/overview/protocolsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/protocolsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.idcTenants',
+    prop: 'idcRenter',
+    queryCycleTotalProp: 'idcTenants',
+    dillDownProp: ['client_idc_renter', 'server_idc_renter'],
+    checked: true,
+    url: '/interface/overview/idcTenantsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/idcTenantsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.provinces',
+    prop: 'province',
+    queryCycleTotalProp: 'provinces',
+    dillDownProp: ['client_province', 'server_province'],
+    checked: false,
+    url: '/interface/overview/provincesTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/provincesCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.cities',
+    prop: 'city',
+    queryCycleTotalProp: 'cities',
+    dillDownProp: ['client_region', 'server_region'],
+    checked: false,
+    url: '/interface/overview/citiesTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/citiesCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.isps',
+    prop: 'isp',
+    queryCycleTotalProp: 'isps',
+    dillDownProp: ['client_isp', 'server_isp'],
+    checked: false,
+    url: '/interface/overview/ispsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/ispsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.applicationCategories',
+    prop: 'appSubcategory',
+    queryCycleTotalProp: 'applicationCategories',
+    dillDownProp: ['app_subcategory'],
+    checked: false,
+    url: '/interface/overview/applicationCategoriesTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/applicationCategoriesCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.domainCategories',
+    prop: 'domainCategoryName',
+    queryCycleTotalProp: 'domainCategories',
+    dillDownProp: ['domain_category_name'],
+    checked: false,
+    url: '/interface/overview/domainCategoriesTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/domainCategoriesCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.hosts',
+    prop: 'httpHost',
+    queryCycleTotalProp: 'hosts',
+    dillDownProp: ['http_host'],
+    checked: false,
+    url: '/interface/overview/hostsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/hostsCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.snis',
+    prop: 'sslSni',
+    queryCycleTotalProp: 'snis',
+    dillDownProp: ['ssl_sni'],
+    checked: false,
+    url: '/interface/overview/snisTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/snisCycleTrafficTotal',
+    disabled: false
+  }, {
+    label: 'network.protocolPorts',
+    prop: 'protocolPort',
+    queryCycleTotalProp: 'protocolports',
+    dillDownProp: ['common_l7_protocol', 'common_server_port '],
+    checked: false,
+    url: '/interface/overview/protocolPortsTrafficAnalysis',
+    cycleTotalUrl: '/interface/overview/protocolPortsCycleTrafficTotal',
+    disabled: false
+  }
+]
+
 export const dnsServerRole = {
   RTDNS: 'RTDNS',
   TLDNS: 'TLDNS',

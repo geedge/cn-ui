@@ -38,8 +38,49 @@
     <div class="cn-header__nav">
       <i class="cn-icon cn-icon-a-NetworkAnalytics"></i>
       <el-breadcrumb class="header__left-breadcrumb" separator=">">
-        <el-breadcrumb-item class="header__left-breadcrumb-item" :title="item" v-for="item in breadcrumb" :key="item">
-          {{item}}
+        <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item}`" :title="item" v-for="(item,index) in breadcrumb" :key="item">
+          <template v-if="index===3">
+            <div class="header__left-breadcrumb-item-select">
+              <el-popover placement="bottom-start"
+                          ref="breadcrumbPopover"
+                          :show-arrow="false"
+                          :append-to-body="false"
+                          :hide-after="0"
+                          :show-after="0"
+                          popper-class="breadcrumb__popper"
+                          @show="showBreadcrumbPopover(item)"
+                          @hide="hideBreadcrumbPopover()"
+                          trigger="click">
+                <template #reference>
+                  <div class="breadcrumb-button"  id="breadcrumbButton" :class="showBackground?'breadcrumb-button__active':''"  >
+                     <span  id="breadcrumbValue"> {{item}}</span><i class="cn-icon-xiala cn-icon"></i>
+                  </div>
+                </template>
+                <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
+                  <div class="search-input">
+                    <el-input placeholder="Filter options"
+                              size="mini"
+                              v-model="dropDownValue"
+                              @input="dropDownSearch"></el-input>
+                  </div>
+                  <ul class="select-dropdown" id="breadcrumbSelectDropdown"  @scroll="scrollList()">
+                    <li v-for="item in breadcrumbColumnValueListShow" title='' :key="item" :id="item" class="select-dropdown__item" @click="changeValue(item)" :class="selected?'':''">
+                      <span>{{item}}</span>
+                    </li>
+                  </ul>
+                </el-row>
+              </el-popover>
+            </div>
+          </template>
+          <template v-else-if="index===2">
+            <span class="route-menu" @click="jump(path,item,'',3)">{{item}}</span>
+          </template>
+          <template v-else-if="index===1">
+            <span class="route-menu" @click="jump(path,'','',2)">{{item}}</span>
+          </template>
+          <template v-else>
+            <span>{{item}}</span>
+          </template>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -108,8 +149,10 @@
 <script>
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
-import { entityType, storageKey } from '@/utils/constants'
+import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl } from '@/utils/constants'
 import { api } from '@/utils/api'
+import { ref } from 'vue'
+import { getNowTime, getSecond } from '@/utils/date-util'
 
 export default {
   name: 'Header',
@@ -136,7 +179,14 @@ export default {
         newPwd: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }],
         newPwd2: [{ required: true, message: this.$t('validate.required'), trigger: 'blur' }, { validator: passwordComparison, trigger: 'blur' }]
       },
-      showMenu: false
+      showMenu: false,
+      dropDownValue: '',
+      breadcrumbColumnValueListShow: [],
+      valueMeta: [],
+      showBackground: false,
+      selected: false,
+      valueMenuId: '',
+      curPageNum: 1
     }
   },
   computed: {
@@ -163,15 +213,22 @@ export default {
       const breadcrumbMap = []
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
-          breadcrumbMap.push({ name: this.$t(menu.i18n), path: menu.route })
+          breadcrumbMap.push({ name: this.$t(menu.i18n), path: menu.route, columnName: menu.columnName, columnValue: menu.columnValue })
         } else if (!this.$_.isEmpty(menu.children)) {
           menu.children.forEach(child => {
-            breadcrumbMap.push({ name: child.i18n ? this.$t(child.i18n) : child.name, parentName: menu.i18n ? this.$t(menu.i18n) : menu.name, path: child.route })
+            breadcrumbMap.push({ name: child.i18n ? this.$t(child.i18n) : child.name, parentName: menu.i18n ? this.$t(menu.i18n) : menu.name, path: child.route, columnName: child.columnName, columnValue: child.columnValue })
           })
         }
       })
       const breadcrumb = breadcrumbMap.find(b => this.path === b.path)
-      return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
+
+      if (breadcrumb.columnValue) {
+        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, this.$t(breadcrumb.columnName), breadcrumb.columnValue] : []
+      } else if (breadcrumb.columnName) {
+        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, this.$t(breadcrumb.columnName)] : []
+      } else {
+        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
+      }
     },
     path () {
       const { path } = useRoute()
@@ -182,6 +239,9 @@ export default {
     },
     storeFrom () {
       return this.$store.getters.from
+    },
+    breadcrumbColumnValueListAll () {
+      return this.$store.getters.getBreadcrumbColumnValueList
     },
     route () {
       return this.$route.path
@@ -201,7 +261,11 @@ export default {
     this.from = Object.keys(this.entityType)[0]
   },
   setup () {
+    const dateRangeValue = 60
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
     return {
+      chartTimeFilter,
       entityType // 所有entity类型，用于header下拉框选择
     }
   },
@@ -230,6 +294,77 @@ export default {
         window.location.reload()
       })
     },
+    initDropdownList (currentValue) {
+      const columnName = this.$store.getters.getBreadcrumbColumnName
+      let type = 'ip'
+      const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
+      if (tabObjGroup && tabObjGroup.length > 0) {
+        const curTab = tabObjGroup[0]
+        if (curTab) {
+          type = curTab.prop
+        }
+      }
+      const params = {
+        startTime: getSecond(this.chartTimeFilter.startTime),
+        endTime: getSecond(this.chartTimeFilter.endTime),
+        limit: 10 * this.curPageNum++,
+        type: type,
+        name: this.dropDownValue ? this.dropDownValue : ''
+      }
+      get(networkOverviewSearchUrl.drilldownList, params).then(response => {
+        if (response.code === 200) {
+          this.breadcrumbColumnValueListShow = response.data.result
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.breadcrumbColumnValueListShow.forEach(item => {
+                const selectedDom = document.getElementById(item)
+                if (selectedDom) {
+                  if (item === currentValue) {
+                    selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+                  } else {
+                    selectedDom.style.cssText = ''
+                  }
+                }
+              })
+            }, 250)
+          })
+        }
+      })
+    },
+    showBreadcrumbPopover (valueMenuId) {
+      this.curPageNum = 1
+      this.showBackground = true
+      this.dropDownValue = ''
+      const currentValue = document.getElementById('breadcrumbValue').innerText
+      this.initDropdownList(currentValue)
+      this.valueMenuId = 'breadcrumb' + valueMenuId
+    },
+    hideBreadcrumbPopover () {
+      this.showBackground = false
+    },
+    changeValue (value) {
+      // 设置面包屑显示的内容及hover时的title
+      document.getElementById('breadcrumbValue').innerText = value
+      document.getElementById('breadcrumbButton').setAttribute('title', value)
+      document.getElementById(this.valueMenuId).setAttribute('title', value)
+      this.$refs.breadcrumbPopover.hide()
+      const columnName = this.$store.getters.getBreadcrumbColumnName
+
+      const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
+      if (tabObjGroup && tabObjGroup.length > 0) {
+        const curTab = tabObjGroup[0]
+        if (curTab) {
+          const queryCondition = []
+          const searchProps = curTab.dillDownProp
+          searchProps.forEach(item => {
+            queryCondition.push(item + "='" + value + "'")
+          })
+          this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+        }
+      }
+
+      this.jump(this.path, columnName, value, operationType.fourthMenu)
+    },
     shrink () {
       this.showMenu = !this.showMenu
     },
@@ -249,7 +384,53 @@ export default {
         }
       })
     },
-    jump (route) {
+    jump (route, columnName, columnValue, opeType) {
+      if (opeType) {
+        this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        this.$store.commit('setTabOperationType', opeType)
+      } else {
+        this.$store.commit('setTabOperationType', operationType.mainMenu)
+      }
+      if (!columnName) { // 点击第二级菜单
+        this.$store.commit('setNetworkOverviewTabList', [])
+      }
+      // 清空网络概况的特殊面包屑
+      this.$store.getters.menuList.forEach(menu => {
+        if (!this.$_.isEmpty(menu.children)) {
+          menu.children.forEach(child => {
+            if (this.$route.path === child.route) {
+              if (columnValue) { // 点击的为值
+                child.columnValue = columnValue
+                child.columnName = columnName
+                this.$store.commit('setBreadcrumbColumnValue', columnValue)
+                this.$store.commit('setBreadcrumbColumnName', columnName)
+                this.$store.commit('setPanelName', columnValue)
+              } else if (columnName) { // 点击的为列名
+                child.columnValue = ''
+                child.columnName = columnName
+                this.$store.commit('setBreadcrumbColumnValue', '')
+                this.$store.commit('setBreadcrumbColumnName', columnName)
+                this.$store.commit('setPanelName', columnName)
+                const tabList = this.$store.getters.getNetworkOverviewTabList
+                const curTab = tabList.filter(item => this.$t(item.label) === columnName)[0]
+                this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+                this.$store.commit('setQueryCondition', '')
+                this.$store.commit('setNetworkOverviewBeforeTab', null)
+              } else {
+                child.columnName = ''
+                child.columnValue = ''
+                this.$store.commit('setBreadcrumbColumnValue', '')
+                this.$store.commit('setBreadcrumbColumnName', '')
+                this.$store.commit('setPanelName', '')
+                this.$store.commit('setBreadcrumbColumnValueList', [])
+                this.$store.commit('setNetworkOverviewCurrentTab', null)
+                this.$store.commit('setQueryCondition', '')
+                this.$store.commit('setNetworkOverviewBeforeTab', null)
+              }
+            }
+          })
+        }
+      })
       if (route === this.route) {
         this.refresh()
         return
@@ -262,8 +443,24 @@ export default {
       })
       this.showMenu = false
     },
+    dropDownSearch () {
+      this.curPageNum = 1
+      this.initDropdownList()
+    },
     refresh () {
       this.$emit('refresh')
+    },
+    refreshPanel (menu) {
+      if (this.breadcrumb.length >= 4) {
+        const breadList = this.breadcrumb.splice(3, this.breadcrumb.length - 3)
+        this.breadcrumb = ref(breadList)
+      }
+    },
+    scrollList () {
+      const obj = document.getElementById('breadcrumbSelectDropdown')
+      if (obj.scrollTop + obj.clientHeight === obj.scrollHeight) {
+        this.initDropdownList()
+      }
     }
   }
 }
