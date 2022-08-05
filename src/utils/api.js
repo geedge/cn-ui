@@ -141,7 +141,9 @@ export const api = {
     eventType: '/interface/overview/eventType',
     ddosEventAnalysis: '/interface/overview/ddosEventAnalysis',
     applicationCycleTrafficTotal: '/interface/overview/applicationCycleTrafficTotal',
-    appCompanyTrafficAnalysis: '/interface/overview/appCompanyTrafficAnalysis'
+    applicationTrafficAnalysis: '/interface/overview/applicationTrafficAnalysis',
+    appCompanyTrafficAnalysis: '/interface/overview/appCompanyTrafficAnalysis',
+    appCompanyCycleTrafficTotal: '/interface/overview/appCompanyCycleTrafficTotal'
   }
 }
 

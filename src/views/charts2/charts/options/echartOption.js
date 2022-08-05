@@ -178,6 +178,9 @@ export const stackedLineChartOption = {
   yAxis: [
     {
       type: 'value',
+      splitLine: {
+        show: false
+      },
       axisLabel: {
         formatter: function (value) {
           return unitConvert(value, unitTypes.number).join('')

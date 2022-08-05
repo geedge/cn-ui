@@ -122,8 +122,8 @@ export default {
       sizes: [3, 4, 6, 8, 9, 10],
       echartsLabelValue: '',
       echartsType: 'Bits/s',
-      echartsData: {}
-
+      echartsData: {},
+      dynamicVariable: ''
     }
   },
   watch: {
@@ -134,13 +134,16 @@ export default {
     }
   },
   methods: {
-    init (val) {
+    init (val, n) {
       if (!val) {
         val = 'Bits/s'
       }
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
+      }
+      if (n) {
+        params.q = n
       }
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
@@ -342,7 +345,6 @@ export default {
           }
           this.legendSelectChange(t, 0)
         })
-        this.activeShow = 'total'
       } else if (!this.activeShow) {
         this.mpackets.forEach((t, i) => {
           t.show = true
@@ -401,6 +403,10 @@ export default {
     }
   },
   mounted () {
+    const _this = this
+    this.emitter.on('get-chart-data', function (value) {
+      _this.init('', value)
+    })
     if (this.chart) {
       this.echartsData = _.cloneDeep(this.chart)
     }
