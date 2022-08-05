@@ -9,6 +9,7 @@
             placeholder=""
             popper-class="app-metric"
             :popper-append-to-body="false"
+            @change="metricChange"
         >
           <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
@@ -30,15 +31,15 @@
           <div class="app-card__body">
             <div class="app-card__body-content">
               <div class="app-card__body-content-value">
-                <div class="app-card__body-content-number">{{unitConvert(app.number, unitTypes.number).join(' ')}}</div>
+                <div class="app-card__body-content-number">{{unitConvert(app.rate, unitTypes.number).join(' ')}}</div>
                 <div class="app-card__body-content-percent" :class="app.trend === 'up' ? 'red' : 'green'">
-                  <span v-if="app.trend === 'up'">+</span><span v-else-if="app.trend === 'down'">-</span>{{unitConvert(app.value, unitTypes.percent).join('')}}
+                  <span v-if="app.trend === 'up'">+</span><span v-else-if="app.trend === 'down'">-</span>{{unitConvert(periodicJudgmentCalculationChange(app.rate, app.pRate).total, unitTypes.percent).join('')}}
                 </div>
               </div>
             </div>
             <div class="app-card__body-previous">
               <div>Total</div>
-              <div>{{unitConvert(app.number1, unitTypes.number).join(' ')}}</div>
+              <div>{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
             </div>
           </div>
           <div class="chart__drawing" :id="`chart-${app.name}-${app.type}`"></div>
@@ -113,6 +114,7 @@ import { shallowRef } from 'vue'
 import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
+import { getSecond } from '@/utils/date-util'
 export default {
   name: 'NetworkOverviewApps',
   props: {
@@ -143,18 +145,7 @@ export default {
       ],
       appData: [],
       // 假数据
-      appTempData: [
-        { value: 1.3912, number: 684600000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-mining-pool' },
-        { value: 1.8934, number: 382100000000, previous: 24, number1: 3675, trend: 'up', icon: 'cn-icon-fraudulent-ip' },
-        { value: 1.2054, number: 184600000000, previous: 24, number1: 3675, trend: 'up', icon: 'cn-icon-debug' },
-        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
-        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
-        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
-        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
-        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
-        { value: 1.2506, number: 584800000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-language' },
-        { value: 1.6415, number: 734100000000, previous: 24, number1: 3675, trend: 'down', icon: 'cn-icon-authoritative-domain' }
-      ],
+      appTempData: [],
       unitTypes,
       timer: null,
       showAddApp: false,
@@ -169,7 +160,8 @@ export default {
       initialProviderOptionsData: [],
       // 选中的app，不区分app和provider
       toSaveApp: [],
-      myChartArray: []
+      myChartArray: [],
+      appShowType: 'bytes'
     }
   },
   methods: {
@@ -180,423 +172,347 @@ export default {
       })
     },
     init () {
-      // const params = {
-      //   startTime: this.timeFilter.startTime,
-      //   endTime: this.timeFilter.endTime
-      // }
-      this.appData.forEach((app, i) => {
-        // 根据app.name和app.type查除接口，获取数据
-        app.value = this.appTempData[i % 10].value
-        app.number = this.appTempData[i % 10].number
-        app.number1 = this.appTempData[i % 10].number1
-        app.lineData = [
-          [
-            '1658128320',
-            '0'
-          ],
-          [
-            '1658129184',
-            '0'
-          ],
-          [
-            '1658130048',
-            '0'
-          ],
-          [
-            '1658130912',
-            '0'
-          ],
-          [
-            '1658131776',
-            '0'
-          ],
-          [
-            '1658132640',
-            '0'
-          ],
-          [
-            '1658133504',
-            '0'
-          ],
-          [
-            '1658134368',
-            '0'
-          ],
-          [
-            '1658135232',
-            '0'
-          ],
-          [
-            '1658136096',
-            '0'
-          ],
-          [
-            '1658136960',
-            '0'
-          ],
-          [
-            '1658137824',
-            '0'
-          ],
-          [
-            '1658138688',
-            '0'
-          ],
-          [
-            '1658139552',
-            '0'
-          ],
-          [
-            '1658140416',
-            '0'
-          ],
-          [
-            '1658141280',
-            '0'
-          ],
-          [
-            '1658142144',
-            '0'
-          ],
-          [
-            '1658143008',
-            '0'
-          ],
-          [
-            '1658143872',
-            '0'
-          ],
-          [
-            '1658144736',
-            '1'
-          ],
-          [
-            '1658145600',
-            '0'
-          ],
-          [
-            '1658146464',
-            '0'
-          ],
-          [
-            '1658147328',
-            '0'
-          ],
-          [
-            '1658148192',
-            '0'
-          ],
-          [
-            '1658149056',
-            '0'
-          ],
-          [
-            '1658149920',
-            '0'
-          ],
-          [
-            '1658150784',
-            '0'
-          ],
-          [
-            '1658151648',
-            '0'
-          ],
-          [
-            '1658152512',
-            '0'
-          ],
-          [
-            '1658153376',
-            '0'
-          ],
-          [
-            '1658154240',
-            '1'
-          ],
-          [
-            '1658155104',
-            '0'
-          ],
-          [
-            '1658155968',
-            '0'
-          ],
-          [
-            '1658156832',
-            '0'
-          ],
-          [
-            '1658157696',
-            '0'
-          ],
-          [
-            '1658158560',
-            '0'
-          ],
-          [
-            '1658159424',
-            '0'
-          ],
-          [
-            '1658160288',
-            '0'
-          ],
-          [
-            '1658161152',
-            '0'
-          ],
-          [
-            '1658162016',
-            '0'
-          ],
-          [
-            '1658162880',
-            '0'
-          ],
-          [
-            '1658163744',
-            '0'
-          ],
-          [
-            '1658164608',
-            '0'
-          ],
-          [
-            '1658165472',
-            '0'
-          ],
-          [
-            '1658166336',
-            '0'
-          ],
-          [
-            '1658167200',
-            '0'
-          ],
-          [
-            '1658168064',
-            '0'
-          ],
-          [
-            '1658168928',
-            '0'
-          ],
-          [
-            '1658169792',
-            '0'
-          ],
-          [
-            '1658170656',
-            '0'
-          ],
-          [
-            '1658171520',
-            '0'
-          ],
-          [
-            '1658172384',
-            '0'
-          ],
-          [
-            '1658173248',
-            '0'
-          ],
-          [
-            '1658174112',
-            '0'
-          ],
-          [
-            '1658174976',
-            '0'
-          ],
-          [
-            '1658175840',
-            '0'
-          ],
-          [
-            '1658176704',
-            '0'
-          ],
-          [
-            '1658177568',
-            '0'
-          ],
-          [
-            '1658178432',
-            '0'
-          ],
-          [
-            '1658179296',
-            '0'
-          ],
-          [
-            '1658180160',
-            '0'
-          ],
-          [
-            '1658181024',
-            '0'
-          ],
-          [
-            '1658181888',
-            '0'
-          ],
-          [
-            '1658182752',
-            '0'
-          ],
-          [
-            '1658183616',
-            '0'
-          ],
-          [
-            '1658184480',
-            '0'
-          ],
-          [
-            '1658185344',
-            '0'
-          ],
-          [
-            '1658186208',
-            '0'
-          ],
-          [
-            '1658187072',
-            '0'
-          ],
-          [
-            '1658187936',
-            '0'
-          ],
-          [
-            '1658188800',
-            '0'
-          ],
-          [
-            '1658189664',
-            '0'
-          ],
-          [
-            '1658190528',
-            '0'
-          ],
-          [
-            '1658191392',
-            '0'
-          ],
-          [
-            '1658192256',
-            '0'
-          ],
-          [
-            '1658193120',
-            '0'
-          ],
-          [
-            '1658193984',
-            '0'
-          ],
-          [
-            '1658194848',
-            '0'
-          ],
-          [
-            '1658195712',
-            '0'
-          ],
-          [
-            '1658196576',
-            '0'
-          ],
-          [
-            '1658197440',
-            '0'
-          ],
-          [
-            '1658198304',
-            '0'
-          ],
-          [
-            '1658199168',
-            '0'
-          ],
-          [
-            '1658200032',
-            '0'
-          ],
-          [
-            '1658200896',
-            '0'
-          ],
-          [
-            '1658201760',
-            '0'
-          ],
-          [
-            '1658202624',
-            '0'
-          ],
-          [
-            '1658203488',
-            '0'
-          ],
-          [
-            '1658204352',
-            '0'
-          ],
-          [
-            '1658205216',
-            '0'
-          ],
-          [
-            '1658206080',
-            '0'
-          ],
-          [
-            '1658206944',
-            '0'
-          ],
-          [
-            '1658207808',
-            '0'
-          ],
-          [
-            '1658208672',
-            '0'
-          ],
-          [
-            '1658209536',
-            '0'
-          ],
-          [
-            '1658210400',
-            '0'
-          ],
-          [
-            '1658211264',
-            '0'
-          ],
-          [
-            '1658212128',
-            '0'
-          ],
-          [
-            '1658212992',
-            '0'
-          ],
-          [
-            '1658213856',
-            '0'
-          ],
-          [
-            '1658214720',
-            '0'
-          ]
-        ].map(v => [Number(v[0]) * 1000, Number(v[1]), 'time'])
-        this.initChart(app)
+      this.appDataQuery(this.appData)
+    },
+    appDataQuery (data) {
+      const appLabels = []
+      const providerLabels = []
+      let appData = []
+      let providerData = []
+      data.forEach(t => {
+        if (t.type === 'app') {
+          appLabels.push(t)
+        } else if (t.type === 'provider') {
+          providerLabels.push(t)
+        }
       })
+      if (appLabels) {
+        const params = {
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime),
+          appLabels: appLabels.map(item => {
+            return item.name
+          }).join(',')
+        }
+        const app1 = get(api.netWorkOverview.applicationCycleTrafficTotal, params)
+        const app2 = get(api.netWorkOverview.applicationTrafficAnalysis, params)
+        this.resultTotal = [
+          {
+            type: 'bytes',
+            analysis: {
+              rate: 2,
+              total: 3145435
+            }
+          },
+          {
+            type: 'packets',
+            analysis: {
+              rate: 2,
+              total: 3245435
+            }
+          },
+          {
+            type: 'sessions',
+            analysis: {
+              rate: 2,
+              total: 23345
+            }
+          }
+        ]
+        this.resultAnalysis = [
+          {
+            type: 'bytes',
+            l11: {
+              analysis: {
+                rate: 2
+              },
+              values: [
+                [
+                  1435781430781,
+                  '12'
+                ],
+                [
+                  1435781431781,
+                  '13'
+                ]
+              ]
+            },
+            a0: {
+              analysis: {
+                rate: 4
+              },
+              values: [
+                [
+                  1435781430781,
+                  '12'
+                ],
+                [
+                  1435781431781,
+                  '31'
+                ]
+              ]
+            }
+          },
+          {
+            type: 'packets',
+            l11: {
+              analysis: {
+                rate: 3
+              },
+              values: [
+                [
+                  1435781430781,
+                  '13'
+                ],
+                [
+                  1435781431781,
+                  '21'
+                ]
+              ]
+            },
+            a0: {
+              analysis: {
+                rate: 3
+              },
+              values: [
+                [
+                  1435781430781,
+                  '11'
+                ],
+                [
+                  1435781431781,
+                  '21'
+                ]
+              ]
+            }
+          },
+          {
+            type: 'sessions',
+            l11: {
+              analysis: {
+                rate: 2
+              },
+              values: [
+                [
+                  1435781430781,
+                  '1'
+                ],
+                [
+                  1435781431781,
+                  '1'
+                ]
+              ]
+            }
+          }
+        ]
+        this.resultTotal.forEach(t => {
+          this.resultAnalysis.forEach((v, i) => {
+            if (t.type === v.type) {
+              this.resultAnalysis[i].total = t
+            }
+          })
+        })
+        appData = this.resultAnalysis
+        Promise.all([app1, app2]).then(res => {
+          if (res.code === 200) {
+            console.log(1)
+          }
+        })
+        this.appData.forEach((app, i) => {
+          if (app.type === 'app') {
+            appData.forEach(t => {
+              if (t.type === this.appShowType && this.appShowType === 'bytes') {
+                // app.value = t.total.analysis.rate === 0 ? 0 : (t[app.name].analysis.rate - t.total.analysis.rate) / t.total.analysis.rate
+                app.rate = t[app.name].analysis.rate
+                app.pRate = t.total.analysis.rate
+                app.total = t.total.analysis.total
+                app.lineData = t[app.name].values.map(v => [Number(v[0]), Number(v[1]), 'time'])
+                app.trend = this.periodicJudgmentCalculationChange(app.rate, app.pRate).value
+              }
+            })
+            this.initChart(app)
+          }
+        })
+      }
+      if (providerLabels) {
+        const params = {
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime),
+          appCompanies: providerLabels.map(item => { return item.name }).join(',')
+        }
+        const app1 = get(api.netWorkOverview.appCompanyCycleTrafficTotal, params)
+        const app2 = get(api.netWorkOverview.appCompanyTrafficAnalysis, params)
+        this.resultTotal = [
+          {
+            type: 'bytes',
+            analysis: {
+              rate: 20,
+              total: 3245435
+            }
+          },
+          {
+            type: 'packets',
+            analysis: {
+              rate: 2,
+              total: 3245435
+            }
+          },
+          {
+            type: 'sessions',
+            analysis: {
+              rate: 2,
+              total: 23345
+            }
+          }
+        ]
+        this.resultAnalysis = [
+          {
+            type: 'bytes',
+            l11: {
+              analysis: {
+                rate: 2
+              },
+              values: [
+                [
+                  1435781430781,
+                  '12'
+                ],
+                [
+                  1435781431781,
+                  '13'
+                ]
+              ]
+            },
+            a0: {
+              analysis: {
+                rate: 6
+              },
+              values: [
+                [
+                  1435781430781,
+                  '12'
+                ],
+                [
+                  1435781431781,
+                  '31'
+                ]
+              ]
+            },
+            d3: {
+              analysis: {
+                rate: 8
+              },
+              values: [
+                [
+                  1435781430781,
+                  '121'
+                ],
+                [
+                  1435781431781,
+                  '131'
+                ],
+                [
+                  1435781432781,
+                  '321'
+                ],
+                [
+                  1435781433781,
+                  '331'
+                ]
+              ]
+            }
+          },
+          {
+            type: 'packets',
+            l11: {
+              analysis: {
+                rate: 3
+              },
+              values: [
+                [
+                  1435781430781,
+                  '13'
+                ],
+                [
+                  1435781431781,
+                  '21'
+                ]
+              ]
+            },
+            a0: {
+              analysis: {
+                rate: 3
+              },
+              values: [
+                [
+                  1435781430781,
+                  '11'
+                ],
+                [
+                  1435781431781,
+                  '21'
+                ]
+              ]
+            }
+          },
+          {
+            type: 'sessions',
+            l11: {
+              analysis: {
+                rate: 2
+              },
+              values: [
+                [
+                  1435781430781,
+                  '1'
+                ],
+                [
+                  1435781431781,
+                  '1'
+                ]
+              ]
+            }
+          }
+        ]
+        this.resultTotal.forEach(t => {
+          this.resultAnalysis.forEach((v, i) => {
+            if (t.type === v.type) {
+              this.resultAnalysis[i].total = t
+            }
+          })
+        })
+        Promise.all([app1, app2]).then(res => {
+          if (res.code === 200) {
+            console.log(1)
+          }
+        })
+        providerData = this.resultAnalysis
+        this.appData.forEach((app, i) => {
+          if (app.type === 'provider') {
+            providerData.forEach(t => {
+              if (t.type === this.appShowType && this.appShowType === 'bytes') {
+                // app.value = t.total.analysis.rate === 0 ? 0 : (t[app.name].analysis.rate - t.total.analysis.rate) / t.total.analysis.rate
+                app.rate = t[app.name].analysis.rate
+                app.pRate = t.total.analysis.rate
+                app.total = t.total.analysis.total
+                app.lineData = t[app.name].values.map(v => [Number(v[0]), Number(v[1]), 'time'])
+                app.trend = this.periodicJudgmentCalculationChange(app.rate, app.pRate).value
+              }
+            })
+            this.initChart(app)
+          }
+        })
+      }
+    },
+    metricChange (value) {
+      if (value === 'Bits/s') {
+        this.appShowType = 'bytes'
+      } else if (value === 'Packets/s') {
+        this.appShowType = 'packets'
+      } else if (value === 'Sessions/s') {
+        this.appShowType = 'sessions'
+      }
+      this.init()
     },
     initChart (obj) {
       let chart = this.myChart.find(m => m.name === obj.name && m.type === obj.type)
@@ -794,6 +710,19 @@ export default {
           t.moreName = !t.moreName
         }
       })
+    },
+    periodicJudgmentCalculationChange (period, pperiod) {
+      const periodicData = {}
+      if (period > pperiod) {
+        periodicData.value = 'up'
+        periodicData.total = (period - pperiod) / pperiod
+      } else if (period < pperiod) {
+        periodicData.value = 'down'
+        periodicData.total = (pperiod - period) / pperiod
+      } else {
+        periodicData.value = ''
+      }
+      return periodicData
     },
     resize () {
       this.myChart.forEach(t => {

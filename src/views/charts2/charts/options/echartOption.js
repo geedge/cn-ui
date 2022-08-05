@@ -10,6 +10,9 @@ import unitConvert from '@/utils/unit-convert'
 import { axisFormatter } from '@/views/charts/charts/tools'
 
 export const pieChartOption1 = {
+  tooltip: {
+    show: false
+  },
   color: chartColor1,
   legend: {
     orient: 'vertical',
@@ -32,6 +35,9 @@ export const pieChartOption1 = {
           color: '#575757'
         }
       }
+    },
+    tooltip: {
+      show: true
     },
     formatter: function (name) {
       const data = pieChartOption1.series[0].data
@@ -64,6 +70,9 @@ export const pieChartOption1 = {
   ]
 }
 export const pieChartOption2 = {
+  tooltip: {
+    show: false
+  },
   legend: {
     orient: 'vertical',
     top: 35,
@@ -85,6 +94,9 @@ export const pieChartOption2 = {
           color: '#575757'
         }
       }
+    },
+    tooltip: {
+      show: true
     },
     formatter: function (name) {
       const data = pieChartOption2.series[0].data

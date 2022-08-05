@@ -18,6 +18,7 @@ import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import { getSecond } from '@/utils/date-util'
 export default {
   name: 'NetworkOverviewPerformanceEvent',
   setup () {
@@ -37,66 +38,20 @@ export default {
   methods: {
     init () {
       const params = {
-        startTime: this.timeFilter.startTime,
-        endTime: this.timeFilter.endTime
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
-      const result1 = [
-        {
-          eventType: 'name1',
-          total: 121113
-        },
-        {
-          eventType: 'name2',
-          total: 2343123
-        },
-        {
-          eventType: 'name3',
-          total: 2343123
-        },
-        {
-          eventType: 'name4',
-          total: 2343123
-        },
-        {
-          eventType: 'name5',
-          total: 2343123
-        }
-      ]
-      const result2 = [
-        {
-          eventSeverity: 'Critical',
-          total: 1231111
-        },
-        {
-          eventSeverity: 'High',
-          total: 2343123
-        },
-        {
-          eventSeverity: 'Medium',
-          total: 2343123
-        },
-        {
-          eventSeverity: 'low',
-          total: 2343123
-        },
-        {
-          eventSeverity: 'Info',
-          total: 2343123
-        }
-      ]
       const dom = document.getElementById('chart1')
       const dom2 = document.getElementById('chart2')
       if (dom) {
         this.myChart = echarts.init(dom)
         this.chartOption = pieChartOption1
         get(api.netWorkOverview.eventSeverity, params).then(res => {
-          res.data.result = result1
           if (res.code === 200) {
             res.data.result = res.data.result.map(t => {
-              console.log()
               return {
-                name: t.eventType,
-                value: t.total
+                name: t.eventSeverity,
+                value: t.count
               }
             })
             if (res.data.result.length <= 0) {
@@ -112,13 +67,12 @@ export default {
       if (dom2) {
         this.myChart2 = echarts.init(dom2)
         this.chartOption2 = pieChartOption2
-        get(api.netWorkOverview.eventSeverity, params).then(res => {
-          res.data.result = result2
+        get(api.netWorkOverview.eventType, params).then(res => {
           if (res.code === 200) {
             res.data.result = res.data.result.map(t => {
               return {
-                name: t.eventSeverity,
-                value: t.total
+                name: t.eventType,
+                value: t.count
               }
             })
             if (res.data.result.length <= 0) {
