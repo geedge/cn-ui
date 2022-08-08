@@ -5,65 +5,65 @@
              :class="showTabs?'':'tab-hide'"
              @tab-click="handleClick"
     >
-    <template v-for="(tab,index) in list">
-      <el-tab-pane  v-if="tab.checked"
-                    :name="tab.label"
-                    :key="index"
-                    :ref="`chart-tab-${index}`"
-                    class="tab-pane"
-      >
-        <template #label>
-          {{$t(tab.label)}}
-        </template>
-        <el-table
-                :id="`tabTable_${index}`"
-                :ref="`dataTable_${index}`"
-                :data="tableData"
-                border
-                v-loading="loading"
-                :cell-style="tableCellStyle"
-                :header-cell-style="tableHeaderCellStyle"
-                class="tab-table"
-                height="100%"
+      <template v-for="(tab,index) in list">
+        <el-tab-pane  v-if="tab.checked"
+                      :name="tab.label"
+                      :key="index"
+                      :ref="`chart-tab-${index}`"
+                      class="tab-pane"
         >
-          <template v-for="(item,index) in customTableTitles">
-              <el-table-column
-                    v-if="item.checked"
-                    class="data-column"
-            >
-              <template #header>
-                <span class="data-column__span">{{$t(item.label)}}</span>
-              </template>
-              <template  #default="scope" :column="item">
-                <template v-if="item.prop === 'total'"  >
-                  <div class="data-total" >
-                    {{scope.row[item.prop]}}
-                    <div v-if="scope.row['trend'] === 'up'" class="data-total-trend data-total-trend-red">
-                      <i class="cn-icon-rise1 cn-icon"></i>{{scope.row['trendValue']}}
-                    </div>
-                    <div v-else-if="scope.row['trend'] === 'down'" class="data-total-trend data-total-trend-green">
-                      <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
-                    </div>
-                    <div v-else-if="scope.row['trend'] === 'noChange'" class="data-total-trend data-total-trend-black">
-                      <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
-                    </div>
-
-                  </div>
-                </template>
-                <template v-else-if="item.prop === 'tab'" >
-                  <div class="data-click" v-if='drillDown' @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
-                  <div v-else >{{scope.row['tab']}}</div>
-                </template>
-                <template v-else>
-                  {{scope.row[item.prop]}}
-                </template>
-              </template>
-            </el-table-column>
+          <template #label>
+            {{$t(tab.label)}}
           </template>
-        </el-table>
+          <el-table
+                  :id="`tabTable_${index}`"
+                  :ref="`dataTable_${index}`"
+                  :data="tableData"
+                  border
+                  v-loading="loading"
+                  :cell-style="tableCellStyle"
+                  :header-cell-style="tableHeaderCellStyle"
+                  class="tab-table"
+                  height="100%"
+          >
+            <template v-for="(item,index) in customTableTitles">
+              <el-table-column
+                      v-if="item.checked"
+                      class="data-column"
+              >
+                <template #header>
+                  <span class="data-column__span">{{$t(item.label)}}</span>
+                </template>
+                <template  #default="scope" :column="item">
+                  <template v-if="item.prop === 'total'"  >
+                    <div class="data-total" >
+                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
+                      <div v-if="scope.row['trend'] === 'up'" class="data-total-trend data-total-trend-red">
+                        <i class="cn-icon-rise1 cn-icon"></i>{{scope.row['trendValue']}}
+                      </div>
+                      <div v-else-if="scope.row['trend'] === 'down'" class="data-total-trend data-total-trend-green">
+                        <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
+                      </div>
+                      <div v-else-if="scope.row['trend'] === 'noChange'" class="data-total-trend data-total-trend-black">
+                        <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
+                      </div>
 
-      </el-tab-pane>
-    </template>
+                    </div>
+                  </template>
+                  <template v-else-if="item.prop === 'tab'" >
+                    <div class="data-click" v-if='drillDown' @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
+                    <div v-else >{{scope.row['tab']}}</div>
+                  </template>
+                  <template v-else>
+                    {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
+                  </template>
+                </template>
+              </el-table-column>
+            </template>
+          </el-table>
+
+        </el-tab-pane>
+      </template>
 
     </el-tabs>
     <div class="tab-search" >
@@ -99,45 +99,45 @@
           </div>
         </template>
 
-          <el-tabs v-model="activeCustomize"
-                   @tab-click="handleCustomizeClick"
-                   type="card"
-          >
-            <el-tab-pane :label="$t('network.tabs')" name="tabs" width="50%"  v-if="showTabs" >
-              <transition-group name="dragTabs" class="list" tag="ul" ref="tabs">
-                <li v-for="(item, index) in list"
+        <el-tabs v-model="activeCustomize"
+                 @tab-click="handleCustomizeClick"
+                 type="card"
+        >
+          <el-tab-pane :label="$t('network.tabs')" name="tabs" width="50%"  v-if="showTabs" >
+            <transition-group name="dragTabs" class="list" tag="ul" ref="tabs">
+              <li v-for="(item, index) in list"
+                  :key="item.label"
+                  class="list-item"
+                  @dragenter="dragenter($event, index)"
+                  @dragover="dragover($event, index)"
+                  @dragstart="dragstart(index)"
+                  draggable="true"
+              >
+                <i class="cn-icon-sort cn-icon icon-drag"
+                   :key="item.label"
+                ></i> <el-checkbox @change="tabChange(index)" :disabled="item.disabled"  v-model="item.checked"  :label="$t(item.label) " size="small"  :key="item.label"/>
+              </li>
+            </transition-group>
+          </el-tab-pane>
+          <el-tab-pane :label="$t('network.metric')" name="metrics" width="50%" >
+            <transition-group name="dragMetric" class="list" tag="ul" ref="metric">
+              <template v-for="(item, index) in customTableTitles">
+                <li v-if="item.tabColumn != true"
                     :key="item.label"
                     class="list-item"
-                    @dragenter="dragenter($event, index)"
-                    @dragover="dragover($event, index)"
-                    @dragstart="dragstart(index)"
+                    @dragenter="dragMetricEnter($event, index)"
+                    @dragover="dragMetricOver($event, index)"
+                    @dragstart="dragMetricStart(index)"
                     draggable="true"
                 >
                   <i class="cn-icon-sort cn-icon icon-drag"
                      :key="item.label"
-                  ></i> <el-checkbox @change="tabChange(index)" :disabled="item.disabled"  v-model="item.checked"  :label="$t(item.label) " size="small"  :key="item.label"/>
+                  ></i> <el-checkbox @change="metricChange" v-model="item.checked"  :label="$t(item.label) " size="small" :key="item.label"/>
                 </li>
-              </transition-group>
-            </el-tab-pane>
-            <el-tab-pane :label="$t('network.metric')" name="metrics" width="50%" >
-              <transition-group name="dragMetric" class="list" tag="ul" ref="metric">
-                <template v-for="(item, index) in customTableTitles">
-                  <li v-if="item.tabColumn != true"
-                      :key="item.label"
-                      class="list-item"
-                      @dragenter="dragMetricEnter($event, index)"
-                      @dragover="dragMetricOver($event, index)"
-                      @dragstart="dragMetricStart(index)"
-                      draggable="true"
-                  >
-                    <i class="cn-icon-sort cn-icon icon-drag"
-                       :key="item.label"
-                    ></i> <el-checkbox @change="metricChange" v-model="item.checked"  :label="$t(item.label) " size="small" :key="item.label"/>
-                  </li>
-                </template>
-              </transition-group>
-            </el-tab-pane>
-          </el-tabs>
+              </template>
+            </transition-group>
+          </el-tab-pane>
+        </el-tabs>
       </el-popover>
     </div>
 
@@ -146,8 +146,9 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { networkOverviewTabs, networkOverviewTabList, operationType, networkOverviewSearchUrl } from '@/utils/constants'
+import { networkOverviewTabs, networkOverviewTabList, operationType, networkOverviewSearchUrl, unitTypes } from '@/utils/constants'
 import { get } from '@/utils/http'
+import unitConvert from '@/utils/unit-convert'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -156,6 +157,8 @@ export default {
       metric: 'Bits/s',
       orderBy: 'bytesTotal',
       tab: 'ip',
+      unitConvert,
+      unitTypes,
       options: [
         {
           value: 'Bits/s',
@@ -195,7 +198,7 @@ export default {
       },
       metricUnit: 'bytes',
       loading: false,
-      drillDown:false
+      drillDown: false
     }
   },
   props: {
@@ -570,12 +573,12 @@ export default {
       })
       this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
       /*
-      * 点击表格第一列后
-          1.顶部面包屑增加两级，分别是列名和值；
-          2.panel标题变更为值；
-          3.当前panel只保留折线图和表格；
-          4.面包屑上的值可点击下拉，切换内容；
-      * */
+        * 点击表格第一列后
+            1.顶部面包屑增加两级，分别是列名和值；
+            2.panel标题变更为值；
+            3.当前panel只保留折线图和表格；
+            4.面包屑上的值可点击下拉，切换内容；
+        * */
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -843,7 +846,7 @@ export default {
     }
   },
   mounted () {
-    if(this.chart.params && this.chart.params.drillDown){
+    if (this.chart.params && this.chart.params.drillDown) {
       this.drillDown = this.chart.params.drillDown
     }
 
