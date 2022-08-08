@@ -144,6 +144,21 @@ export const api = {
     applicationTrafficAnalysis: '/interface/overview/applicationTrafficAnalysis',
     appCompanyTrafficAnalysis: '/interface/overview/appCompanyTrafficAnalysis',
     appCompanyCycleTrafficTotal: '/interface/overview/appCompanyCycleTrafficTotal'
+  },
+  npm: {
+    overview: {
+      tcpSessionDelay: '/interface/application/performance/overview/tcpSessionDelay',
+      httpResponseDelay: '/interface/application/performance/overview/httpResponseDelay',
+      sslConDelay: '/interface/application/performance/overview/sslConDelay',
+      tcpLostlenPercent: '/interface/application/performance/overview/tcpLostlenPercent',
+      packetRetransPercent: '/interface/application/performance/overview/packetRetransPercent'
+    },
+    location: {
+
+    },
+    events: {
+
+    }
   }
 }
 
