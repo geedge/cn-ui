@@ -16,7 +16,6 @@
         line-height: 40px;
         text-align: center;
         margin: 0 5px 12.3px 0;
-        font-family: NotoSansHans-Medium;
         font-size: 14px;
         color: #353636;
         font-weight: 500;
@@ -75,10 +74,9 @@
         tr th {
           padding: 5px 0;
           .data-column__span {
-            font-family: NotoSansHans-Medium;
             font-size: 12px;
             color: #353636;
-            font-weight: 500;
+            font-weight: 600;
           }
         }
       }
@@ -105,7 +103,6 @@
       }
       .data-score {
         border-radius: 10px;
-        font-family: NotoSansHans-Medium;
         font-size: 12px;
         color: #FFFFFF;
         font-weight: 500;

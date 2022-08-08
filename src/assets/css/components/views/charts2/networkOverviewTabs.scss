@@ -231,7 +231,6 @@
       text-align: left;
       font-weight:400;
       font-size:12px;
-      font-family: Helvetica;
 
       .icon-drag{
         cursor: move;
@@ -250,7 +249,6 @@
         border-radius: 2px;
       }
       .el-checkbox__input.is-checked + .el-checkbox__label,.el-checkbox__input + .el-checkbox__label {
-        font-family: Helvetica;
         font-size: 12px;
         color: #575757;
         font-weight: 400;
