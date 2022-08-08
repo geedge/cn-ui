@@ -259,10 +259,9 @@ export const npmLineChartOption = {
     top: 20,
     left: 20,
     textStyle: {
-      fontFamily: 'NotoSansSChineseRegular',
       fontSize: 14,
       color: '#353636',
-      fontWeight: 400
+      fontWeight: 500
     }
   },
   tooltip: {
@@ -282,7 +281,7 @@ export const npmLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 12,
+      splitNumber: 8,
       axisLabel: {
         formatter: function (value) {
           const data = new Date(value)
@@ -296,6 +295,9 @@ export const npmLineChartOption = {
   yAxis: [
     {
       type: 'value',
+      splitLine: {
+        show: false
+      },
       axisLabel: {
         formatter: function (value) {
           return unitConvert(value, unitTypes.number).join('')

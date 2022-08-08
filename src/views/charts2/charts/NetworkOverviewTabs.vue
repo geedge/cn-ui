@@ -555,7 +555,6 @@ export default {
       this.$emit('getChartData', this.getCurUrl(), queryParams)
     },
     handleTabValue (columnName, columnValue) {
-      this.emitter.emit('get-chart-data', columnValue)
       const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
       const tabGroup = this.list.filter(item => item.label === columnName)
       if (tabGroup && tabGroup.length > 0) {

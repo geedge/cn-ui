@@ -190,9 +190,7 @@ export default {
         const params = {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
-          appLabels: appLabels.map(item => {
-            return item.name
-          }).join(',')
+          appLabels: appLabels.map(item => { return item.name }).join(',')
         }
         const app1 = get(api.netWorkOverview.applicationCycleTrafficTotal, params)
         const app2 = get(api.netWorkOverview.applicationTrafficAnalysis, params)

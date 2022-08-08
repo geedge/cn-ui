@@ -1,8 +1,8 @@
 <template>
   <div class="line network">
-    <div class="chart-drawing" id="chart"></div>
-    <div class="line-value-active"></div>
-    <div class="line-value" >
+    <div class="chart-drawing" v-show="showMarkLine" id="chart"></div>
+    <div class="line-value-active" v-if="activeShow"></div>
+    <div class="line-value">
       <div class="line-value-mpackets"
            v-show="item.show"
            :class=" {'is-active': activeShow === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
@@ -105,12 +105,12 @@ export default {
       ],
       value2: 'Average',
       mpackets: [
-        { analysis: {}, name: 'network.total', class: 'total', show: true, positioning: 0, data: [] },
-        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, positioning: 1, data: [] },
-        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, positioning: 2, data: [] },
-        { analysis: {}, name: 'network.internal', class: 'internal', show: true, positioning: 3, data: [] },
-        { analysis: {}, name: 'network.through', class: 'through', show: true, positioning: 4, data: [] },
-        { analysis: {}, name: 'network.other', class: 'other', show: true, positioning: 5, data: [] }
+        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [] },
+        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [] },
+        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [] },
+        { analysis: {}, name: 'network.internal', class: 'internal', show: true, invertTab: true, positioning: 3, data: [] },
+        { analysis: {}, name: 'network.through', class: 'through', show: true, invertTab: true, positioning: 4, data: [] },
+        { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [] }
       ],
       unitConvert,
       unitTypes,
@@ -123,7 +123,8 @@ export default {
       echartsLabelValue: '',
       echartsType: 'Bits/s',
       echartsData: {},
-      dynamicVariable: ''
+      dynamicVariable: '',
+      showMarkLine: true
     }
   },
   watch: {
@@ -134,7 +135,7 @@ export default {
     }
   },
   methods: {
-    init (val, n) {
+    init (val, show) {
       if (!val) {
         val = 'Bits/s'
       }
@@ -142,8 +143,9 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      if (n) {
-        params.q = n
+      const condition = this.$store.getters.getQueryCondition
+      if (condition) {
+        params.q = condition
       }
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
@@ -166,7 +168,7 @@ export default {
                   t.show = false
                 }
               })
-              this.echartsInit(this.mpackets)
+              this.echartsInit(this.mpackets, show)
             } else if (t.type === 'packets' && val === 'Packets/s') {
               this.mpackets[0].analysis = t.totalPacketsRate.analysis
               this.mpackets[1].analysis = t.inboundPacketsRate.analysis
@@ -185,17 +187,17 @@ export default {
                   t.show = false
                 }
               })
-              this.echartsInit(this.mpackets)
+              this.echartsInit(this.mpackets, show)
             } else if (t.type === 'sessions' && val === 'Sessions/s') {
               this.mpackets[0].analysis = t.totalSessionsRate.analysis
               this.mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
-              this.echartsInit(this.mpackets)
+              this.echartsInit(this.mpackets, show)
             }
           })
         }
       })
     },
-    echartsInit (echartsData) {
+    echartsInit (echartsData, show) {
       const _this = this
       echartsData = echartsData.filter(t => t.show === true)
       const dom = document.getElementById('chart')
@@ -254,22 +256,31 @@ export default {
           }
         }
       })
-      if (this.echartsLabelValue === 'Average') {
+      if (!show) {
         this.chartOption.series.forEach((t, i) => {
+          t.markLine.label.show = false
+          t.markLine = []
+        })
+      }
+      if (this.echartsLabelValue === 'Average' && show) {
+        this.chartOption.series.forEach((t, i) => {
+          t.markLine.label.show = true
           t.markLine.data = [
             {
               yAxis: echartsData[i].analysis.avg
             }
           ]
         })
-      } else if (this.echartsLabelValue === '95th Percentile') {
+      } else if (this.echartsLabelValue === '95th Percentile' && show) {
         this.chartOption.series.forEach((t, i) => {
+          t.markLine.label.show = true
           t.markLine.data = [
             { yAxis: echartsData[i].analysis.p95 }
           ]
         })
-      } else if (this.echartsLabelValue === 'Maximum') {
+      } else if (this.echartsLabelValue === 'Maximum' && show) {
         this.chartOption.series.forEach((t, i) => {
+          t.markLine.label.show = true
           t.markLine.data = [
             { yAxis: echartsData[i].analysis.max }
           ]
@@ -282,6 +293,7 @@ export default {
         const str = stackedLineTooltipFormatter(params)
         return str
       }
+      this.showMarkLine = true
       this.myChart.setOption(this.chartOption)
     },
     activeChange (item, index) {
@@ -291,8 +303,9 @@ export default {
         this.echartsLabelValue = this.echartsLabelValue
       }
       this.activeShow = item.class
-      this.legendSelectChange(item, index)
-      this.init(this.echartsType)
+      this.legendSelectChange(item, index, 'active')
+      this.showMarkLine = !item.invertTab
+      this.init(this.echartsType, this.showMarkLine, item.invertTab)
     },
     mouseenter (item) {
       this.mousemoveCursor = item.class
@@ -313,15 +326,31 @@ export default {
         name: name
       })
     },
-    legendSelectChange (item, index) {
+    legendSelectChange (item, index, val) {
       if (item.data.length <= 0) return ''
       if (index === 'index') {
+        this.activeShow = !item.class
         this.dispatchLegendSelectAction(item.name)
-      } else if (this.mpackets[index].name == item.name) {
+      } else if (this.mpackets[index].name === item.name) {
         this.dispatchLegendSelectAction(item.name)
         this.mpackets.forEach((t) => {
           if (t.name !== item.name) {
             this.dispatchLegendUnSelectAction(t.name)
+          }
+        })
+      }
+      if (val === 'active') {
+        this.mpackets.forEach(t => {
+          if (item.name === t.name) {
+            t.invertTab = !t.invertTab
+          } else {
+            t.invertTab = true
+          }
+          if (t.invertTab && item.name === t.name) {
+            this.activeShow = !t.class
+            this.mpackets.forEach((e) => {
+              this.dispatchLegendSelectAction(e.name)
+            })
           }
         })
       }
@@ -340,6 +369,7 @@ export default {
       this.echartsType = val
       if (val === 'Sessions/s') {
         this.mpackets.forEach((t, i) => {
+          this.activeShow = !t.class
           if (i !== 0) {
             t.show = false
           }
@@ -351,13 +381,14 @@ export default {
           this.legendSelectChange(t, 'index')
         })
       } else if (this.activeShow) {
-        this.activeShow = 'total'
         this.mpackets.forEach((t, i) => {
           t.show = true
+          this.legendSelectChange(t, 'index')
         })
       }
       this.handleActiveBar()
-      this.init(val)
+      this.showMarkLine = !this.showMarkLine
+      this.init(val, this.showMarkLine)
     },
     referenceSelectChange (val) {
       this.echartsLabelValue = val
@@ -403,10 +434,6 @@ export default {
     }
   },
   mounted () {
-    const _this = this
-    this.emitter.on('get-chart-data', function (value) {
-      _this.init('', value)
-    })
     if (this.chart) {
       this.echartsData = _.cloneDeep(this.chart)
     }
