@@ -14,6 +14,7 @@ export const typeMapping = {
     npmTabs: 704,
     npmEventsHeader: 705,
     npmNetworkQuantity: 703,
-    npmRecentEvents: 602
+    npmRecentEvents: 602,
+    appEventTable: 603
   }
 }

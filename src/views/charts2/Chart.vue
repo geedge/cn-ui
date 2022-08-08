@@ -25,6 +25,13 @@
          :chartData="chartData"
          :ref="`tab${chart.id}`"
     ></network-overview-tabs>
+    <npm-app-event-table @getChartData="getChartData"
+         v-else-if="chart.type === typeMapping.npm.appEventTable"
+         :time-filter="timeFilter"
+         :chart="chart"
+         :chartData="chartData"
+         :ref="`tab${chart.id}`"
+    ></npm-app-event-table>
     <network-overview-apps
         v-else-if="chart.type === typeMapping.networkOverview.appList"
         :chart="chart"
@@ -84,6 +91,7 @@ import NetworkOverviewPerformanceEvent from '@/views/charts2/charts/NetworkOverv
 import NetworkOverviewTabs from '@/views/charts2/charts/NetworkOverviewTabs'
 import NetworkOverviewApps from '@/views/charts2/charts/NetworkOverviewApps'
 import NpmTabs from '@/views/charts2/charts/NpmTabs'
+import NpmAppEventTable from '@/views/charts2/charts/NpmAppEventTable'
 import NpmNetworkQuantity from '@/views/charts2/charts/NpmNetworkQuantity'
 import NpmAppCategoryScore from '@/views/charts2/charts/NpmAppCategoryScore'
 import NpmMap from '@/views/charts2/charts/NpmMap'
@@ -111,7 +119,8 @@ export default {
     NetworkOverviewTabs,
     NetworkOverviewApps,
     NpmTabs,
-    NpmNetworkQuantity
+    NpmNetworkQuantity,
+    NpmAppEventTable
   },
   props: {
     chart: Object,
@@ -175,7 +184,7 @@ export default {
         }
         let requestUrl = url
 
-        if (this.chart.type === 601) {
+        if (this.chart.type === typeMapping.networkOverview.table) {
           const chartObj = this.$refs['tab' + this.chart.id]
           requestUrl = url || chartObj.getCurUrl()
           this.queryParams = {
