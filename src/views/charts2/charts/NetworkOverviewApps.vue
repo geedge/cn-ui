@@ -24,7 +24,7 @@
           </div>
           <div class="app-card-title-more" v-ele-click-outside="clickOutSide">
             <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app)"></i></span>
-            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreName"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
           </div>
         </div>
         <div class="app-card__bodys">
@@ -115,6 +115,7 @@ import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
+import { appTestData, appPrevTestData, providerTestData, providerPrevTestData } from './appsTestData'
 export default {
   name: 'NetworkOverviewApps',
   props: {
@@ -168,339 +169,90 @@ export default {
     unitConvert,
     clickOutSide () {
       this.appData.forEach(t => {
-        t.moreName = false
+        t.moreOptions = false
       })
     },
     init () {
-      this.appDataQuery(this.appData)
-    },
-    appDataQuery (data) {
-      const appLabels = []
-      const providerLabels = []
-      let appData = []
-      let providerData = []
-      data.forEach(t => {
-        if (t.type === 'app') {
-          appLabels.push(t)
-        } else if (t.type === 'provider') {
-          providerLabels.push(t)
+      // this.appDataQuery(this.appData)
+      const appCards = []
+      const providerCards = []
+      this.appData.forEach(d => {
+        if (d.type === 'app') {
+          appCards.push(d)
+        } else if (d.type === 'provider') {
+          providerCards.push(d)
         }
       })
-      if (appLabels) {
-        const params = {
+      let prevRequest
+      let request
+      let params
+      if (appCards.length > 0) {
+        params = {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
-          appLabels: appLabels.map(item => { return item.name }).join(',')
+          appLabels: appCards.map(item => {
+            return item.name
+          }).join(',')
         }
-        const app1 = get(api.netWorkOverview.applicationCycleTrafficTotal, params)
-        const app2 = get(api.netWorkOverview.applicationTrafficAnalysis, params)
-        this.resultTotal = [
-          {
-            type: 'bytes',
-            analysis: {
-              rate: 2,
-              total: 3145435
-            }
-          },
-          {
-            type: 'packets',
-            analysis: {
-              rate: 2,
-              total: 3245435
-            }
-          },
-          {
-            type: 'sessions',
-            analysis: {
-              rate: 2,
-              total: 23345
-            }
-          }
-        ]
-        this.resultAnalysis = [
-          {
-            type: 'bytes',
-            l11: {
-              analysis: {
-                rate: 2
-              },
-              values: [
-                [
-                  1435781430781,
-                  '12'
-                ],
-                [
-                  1435781431781,
-                  '13'
-                ]
-              ]
-            },
-            a0: {
-              analysis: {
-                rate: 4
-              },
-              values: [
-                [
-                  1435781430781,
-                  '12'
-                ],
-                [
-                  1435781431781,
-                  '31'
-                ]
-              ]
-            }
-          },
-          {
-            type: 'packets',
-            l11: {
-              analysis: {
-                rate: 3
-              },
-              values: [
-                [
-                  1435781430781,
-                  '13'
-                ],
-                [
-                  1435781431781,
-                  '21'
-                ]
-              ]
-            },
-            a0: {
-              analysis: {
-                rate: 3
-              },
-              values: [
-                [
-                  1435781430781,
-                  '11'
-                ],
-                [
-                  1435781431781,
-                  '21'
-                ]
-              ]
-            }
-          },
-          {
-            type: 'sessions',
-            l11: {
-              analysis: {
-                rate: 2
-              },
-              values: [
-                [
-                  1435781430781,
-                  '1'
-                ],
-                [
-                  1435781431781,
-                  '1'
-                ]
-              ]
-            }
-          }
-        ]
-        this.resultTotal.forEach(t => {
-          this.resultAnalysis.forEach((v, i) => {
-            if (t.type === v.type) {
-              this.resultAnalysis[i].total = t
-            }
-          })
-        })
-        appData = this.resultAnalysis
-        Promise.all([app1, app2]).then(res => {
-          if (res.code === 200) {
-            console.log(1)
-          }
-        })
-        this.appData.forEach((app, i) => {
-          if (app.type === 'app') {
-            appData.forEach(t => {
-              if (t.type === this.appShowType && this.appShowType === 'bytes') {
-                // app.value = t.total.analysis.rate === 0 ? 0 : (t[app.name].analysis.rate - t.total.analysis.rate) / t.total.analysis.rate
-                app.rate = t[app.name].analysis.rate
-                app.pRate = t.total.analysis.rate
-                app.total = t.total.analysis.total
-                app.lineData = t[app.name].values.map(v => [Number(v[0]), Number(v[1]), 'time'])
-                app.trend = this.periodicJudgmentCalculationChange(app.rate, app.pRate).value
-              }
-            })
-            this.initChart(app)
-          }
-        })
+        prevRequest = get(api.netWorkOverview.applicationCycleTrafficTotal, params)
+        request = get(api.netWorkOverview.applicationTrafficAnalysis, params)
+        this.handleData(prevRequest, request, 'app')
       }
-      if (providerLabels) {
-        const params = {
+      if (providerCards.length > 0) {
+        params = {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
-          appCompanies: providerLabels.map(item => { return item.name }).join(',')
+          appLabels: providerCards.map(item => {
+            return item.name
+          }).join(',')
         }
-        const app1 = get(api.netWorkOverview.appCompanyCycleTrafficTotal, params)
-        const app2 = get(api.netWorkOverview.appCompanyTrafficAnalysis, params)
-        this.resultTotal = [
-          {
-            type: 'bytes',
-            analysis: {
-              rate: 20,
-              total: 3245435
-            }
-          },
-          {
-            type: 'packets',
-            analysis: {
-              rate: 2,
-              total: 3245435
-            }
-          },
-          {
-            type: 'sessions',
-            analysis: {
-              rate: 2,
-              total: 23345
-            }
+        prevRequest = get(api.netWorkOverview.appCompanyCycleTrafficTotal, params)
+        request = get(api.netWorkOverview.appCompanyTrafficAnalysis, params)
+        this.handleData(prevRequest, request, 'provider')
+      }
+    },
+    handleData (prevRequest, request, _t) {
+      Promise.all([prevRequest, request]).then(res => {
+        // if (res[0].code === 200 && res[1].code === 200) {
+        if (true) {
+          // const prevData = res[0].data.result
+          // const data = res[1].data.result
+          let prevData
+          let data
+          if (_t === 'app') {
+            prevData = appPrevTestData
+            data = appTestData
+          } else if (_t === 'provider') {
+            prevData = providerPrevTestData
+            data = providerTestData
           }
-        ]
-        this.resultAnalysis = [
-          {
-            type: 'bytes',
-            l11: {
-              analysis: {
-                rate: 2
-              },
-              values: [
-                [
-                  1435781430781,
-                  '12'
-                ],
-                [
-                  1435781431781,
-                  '13'
-                ]
-              ]
-            },
-            a0: {
-              analysis: {
-                rate: 6
-              },
-              values: [
-                [
-                  1435781430781,
-                  '12'
-                ],
-                [
-                  1435781431781,
-                  '31'
-                ]
-              ]
-            },
-            d3: {
-              analysis: {
-                rate: 8
-              },
-              values: [
-                [
-                  1435781430781,
-                  '121'
-                ],
-                [
-                  1435781431781,
-                  '131'
-                ],
-                [
-                  1435781432781,
-                  '321'
-                ],
-                [
-                  1435781433781,
-                  '331'
-                ]
-              ]
-            }
-          },
-          {
-            type: 'packets',
-            l11: {
-              analysis: {
-                rate: 3
-              },
-              values: [
-                [
-                  1435781430781,
-                  '13'
-                ],
-                [
-                  1435781431781,
-                  '21'
-                ]
-              ]
-            },
-            a0: {
-              analysis: {
-                rate: 3
-              },
-              values: [
-                [
-                  1435781430781,
-                  '11'
-                ],
-                [
-                  1435781431781,
-                  '21'
-                ]
-              ]
-            }
-          },
-          {
-            type: 'sessions',
-            l11: {
-              analysis: {
-                rate: 2
-              },
-              values: [
-                [
-                  1435781430781,
-                  '1'
-                ],
-                [
-                  1435781431781,
-                  '1'
-                ]
-              ]
-            }
+          let toCompareType = 'bytes'
+          if (this.metricFilter === 'Sessions/s') {
+            toCompareType = 'sessions'
+          } else if (this.metricFilter === 'Packets/s') {
+            toCompareType = 'packets'
           }
-        ]
-        this.resultTotal.forEach(t => {
-          this.resultAnalysis.forEach((v, i) => {
-            if (t.type === v.type) {
-              this.resultAnalysis[i].total = t
+          data.forEach(d => {
+            if (d.type === toCompareType) {
+              const prevTypeData = prevData.find(p => p.type === toCompareType)
+              Object.keys(d).forEach(app => {
+                if (app !== 'type') {
+                  this.appData.forEach(d2 => {
+                    if (d2.type === _t && d2.name === app) {
+                      d2.rate = d[app].analysis.rate
+                      d2.pRate = prevTypeData ? (prevTypeData[app] ? prevTypeData[app].rate : 0) : 0
+                      d2.total = d[app].analysis.total
+                      d2.lineData = d[app].values.map(v => [Number(v[0]), Number(v[1]), 'time'])
+                      d2.trend = this.periodicJudgmentCalculationChange(d2.rate, d2.pRate).value
+                      this.initChart(d2)
+                    }
+                  })
+                }
+              })
             }
           })
-        })
-        Promise.all([app1, app2]).then(res => {
-          if (res.code === 200) {
-            console.log(1)
-          }
-        })
-        providerData = this.resultAnalysis
-        this.appData.forEach((app, i) => {
-          if (app.type === 'provider') {
-            providerData.forEach(t => {
-              if (t.type === this.appShowType && this.appShowType === 'bytes') {
-                // app.value = t.total.analysis.rate === 0 ? 0 : (t[app.name].analysis.rate - t.total.analysis.rate) / t.total.analysis.rate
-                app.rate = t[app.name].analysis.rate
-                app.pRate = t.total.analysis.rate
-                app.total = t.total.analysis.total
-                app.lineData = t[app.name].values.map(v => [Number(v[0]), Number(v[1]), 'time'])
-                app.trend = this.periodicJudgmentCalculationChange(app.rate, app.pRate).value
-              }
-            })
-            this.initChart(app)
-          }
-        })
-      }
+        }
+      })
     },
     metricChange (value) {
       if (value === 'Bits/s') {
@@ -705,7 +457,7 @@ export default {
     moreChange (app) {
       this.appData.forEach(t => {
         if (t.name === app.name && t.type === app.type) {
-          t.moreName = !t.moreName
+          t.moreOptions = !t.moreOptions
         }
       })
     },
@@ -713,12 +465,13 @@ export default {
       const periodicData = {}
       if (period > pperiod) {
         periodicData.value = 'up'
-        periodicData.total = (period - pperiod) / pperiod
+        periodicData.total = pperiod === 0 ? 0 : (period - pperiod) / pperiod
       } else if (period < pperiod) {
         periodicData.value = 'down'
         periodicData.total = (pperiod - period) / pperiod
       } else {
         periodicData.value = ''
+        periodicData.total = 0
       }
       return periodicData
     },
@@ -737,11 +490,9 @@ export default {
         app = apps.find(p => p.user === 'default')
       }
       this.appData = app.list
-    }
-    this.timer = setTimeout(() => {
       this.init()
-    }, 100)
-    window.addEventListener('resize', this.resize)
+      window.addEventListener('resize', this.resize)
+    }
   }
 }
 </script>

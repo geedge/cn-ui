@@ -40,25 +40,83 @@
 </template>
 
 <script>
-import mapTestData from '@/views/charts2/charts/mapTestData'
+import { mapData, mapData2, drillDownData } from '@/views/charts2/charts/mapTestData'
 import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { getGeoData } from '@/utils/tools'
-import { storageKey } from '@/utils/constants'
+import { storageKey, unitTypes } from '@/utils/constants'
 import locationOptions from '@/views/charts2/charts/locationOptions'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 
 export default {
   name: 'NpmMap',
   data () {
     return {
       locationOptions,
-      mapTestData,
+      mapData,
+      mapData2,
+      drillDownData,
       myChart: null,
       polygonSeries: null,
+      countrySeries: null,
+      worldImageSeries: null,
+      countryImageSeries: null,
       // Server | Client
       trafficDirection: 'Server',
-      location: ''
+      location: '',
+      keyMapping: [
+        {
+          key: 'sessions',
+          label: this.$t('overall.sessions'),
+          unitType: unitTypes.number
+        },
+        {
+          key: 'establishLatency',
+          label: this.$t('networkAppPerformance.tripTime'),
+          unitType: unitTypes.time
+        },
+        {
+          key: 'httpResponseLatency',
+          label: this.$t('networkAppPerformance.httpResponse'),
+          unitType: unitTypes.time
+        },
+        {
+          key: 'sslConLatency',
+          label: this.$t('networkAppPerformance.sslResponse'),
+          unitType: unitTypes.time
+        },
+        {
+          key: 'sequenceGapLossPercent',
+          label: this.$t('networkAppPerformance.packetLossRate'),
+          unitType: unitTypes.percent
+        },
+        {
+          key: 'pktRetransPercent',
+          label: this.$t('networkAppPerformance.retransmissionRate'),
+          unitType: unitTypes.percent
+        },
+        {
+          key: 'packets',
+          label: this.$t('overall.packets'),
+          unitType: unitTypes.number
+        },
+        {
+          key: 'sentBytes',
+          label: this.$t('overall.sent'),
+          unitType: unitTypes.byte
+        },
+        {
+          key: 'receivedBytes',
+          label: this.$t('overall.received'),
+          unitType: unitTypes.byte
+        },
+        {
+          key: 'count',
+          label: this.$t('overall.count'),
+          unitType: unitTypes.number
+        }
+      ]
     }
   },
   methods: {
@@ -74,6 +132,82 @@ export default {
       }
       this.myChart = shallowRef(chart)
       this.polygonSeries = shallowRef(this.polygonSeriesFactory())
+      this.worldImageSeries = shallowRef(this.imageSeriesFactory())
+      // 渲染
+      this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+      this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
+        const countryId = ev.target.dataItem.dataContext.id
+        ev.target.isHover = false
+        if (countryId) {
+          const targetMapObject = this.polygonSeries.getPolygonById(countryId)
+          targetMapObject.series.chart.zoomToMapObject(targetMapObject)
+          const geoData = getGeoData(countryId)
+          if (geoData) {
+            this.countrySeries = shallowRef(this.polygonSeriesFactory())
+            this.countrySeries.geodata = geoData
+            this.countryImageSeries = shallowRef(this.imageSeriesFactory())
+            this.polygonSeries.hide()
+            this.worldImageSeries.hide()
+            const country = ev.target.dataItem.dataContext.name
+            const queryParams = { ...this.queryParams, ipLocationCountry: country }
+            const chartData = this.drillDownData
+            this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
+          }
+        }
+      })
+    },
+    loadAm4ChartMap (polygonSeries, imageSeries, country, chartData) {
+      // chartData不为空是下钻
+      if (chartData) {
+        this.$emit('showLoading', true)
+      }
+      try {
+        // 清除数据
+        polygonSeries.data.splice(0)
+
+        // 清除legend
+        this.myChart.children.each((s, i) => {
+          if (s && s.className !== 'Container') {
+            this.myChart.children.removeIndex(i)
+          }
+        })
+
+        this.showMapBackButton = !!country
+        const data = chartData || this.mapData
+        imageSeries.data = data.map(r => ({
+          ...this.convertMapData(r),
+          id: r.ipLocationId || r.Country,
+          dnsServerRole: r.dnsServerRole,
+          name: r.ipLocationCity || r.ipLocationProvince || r.ipLocationCountry || r.Country,
+          desc: 'hehe',
+          color: '#7E9F54',
+          border: '#7E9F54'
+        }))
+      } catch (e) {
+        console.error(e)
+      } finally {
+        if (chartData) {
+          setTimeout(() => {
+            this.$emit('showLoading', false)
+          }, 200)
+        }
+      }
+    },
+    convertMapData (data) {
+      const converted = {}
+      this.keyMapping.forEach(mapping => {
+        if (data[mapping.key] || data[mapping.key] === 0) {
+          converted[mapping.key] = Number(data[mapping.key])
+          converted[`${mapping.key}Label`] = mapping.label
+          converted[`${mapping.key}ShowValue`] = valueToRangeValue(data[mapping.key], mapping.unitType).join(' ')
+          converted[`${mapping.key}Display`] = 'block'
+        } else {
+          converted[mapping.key] = ''
+          converted[`${mapping.key}Label`] = ''
+          converted[`${mapping.key}Display`] = 'none'
+        }
+      })
+      return converted
     },
     polygonSeriesFactory () {
       const polygonSeries = this.myChart.series.push(new am4Maps.MapPolygonSeries())
@@ -120,7 +254,7 @@ export default {
       circle.propertyFields.fill = 'color'
       circle.propertyFields.stroke = 'border'
       circle.strokeWidth = 1
-      circle.tooltipHTML = this.generatePolygonTooltipHTML()
+      // circle.tooltipHTML = this.generatePolygonTooltipHTML()
       imageSeries.tooltip.getFillFromObject = false
       imageSeries.tooltip.background.fill = am4Core.color('#41495D')
       imageSeries.tooltip.background.filters.clear()
@@ -129,8 +263,8 @@ export default {
       imageSeries.heatRules.push({
         target: circle,
         property: 'radius',
-        min: 6,
-        max: 25,
+        min: 15,
+        max: 15,
         dataField: 'value'
       })
 
