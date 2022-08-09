@@ -375,12 +375,7 @@ export default {
           }
           this.legendSelectChange(t, 0)
         })
-      } else if (!this.activeShow) {
-        this.mpackets.forEach((t, i) => {
-          t.show = true
-          this.legendSelectChange(t, 'index')
-        })
-      } else if (this.activeShow) {
+      } else {
         this.mpackets.forEach((t, i) => {
           t.show = true
           this.legendSelectChange(t, 'index')

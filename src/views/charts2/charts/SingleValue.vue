@@ -4,9 +4,14 @@
       <div class="single-value__title">{{$t(npmNetworkName[index].name)}}</div>
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.establishLatencyAvg, unitTypes.time).join(' ')}}</div>
-        <div class="single-value__content-value" :class="npm.trend === 'up' ? 'red' : 'green'">
-          <div><i class="cn-icon" :class="npm.trend === 'up' ? 'cn-icon-rise1' : 'cn-icon-decline'"></i></div>
-          <div>{{npm.value}}%</div>
+        <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else class="single-value__content-trend single-value__content-trend-black">
+          <i class="cn-icon-constant cn-icon"></i>
         </div>
       </div>
       <div class="single-value__circle">
@@ -18,9 +23,14 @@
       <div class="single-value__title">{{$t(npmNetworkName[index].name)}}</div>
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.httpResponseLatencyAvg, unitTypes.time).join(' ')}}</div>
-        <div class="single-value__content-value" :class="npm.trend === 'up' ? 'red' : 'green'">
-          <div><i class="cn-icon" :class="npm.trend === 'up' ? 'cn-icon-rise1' : 'cn-icon-decline'"></i></div>
-          <div>{{npm.value}}%</div>
+        <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else class="single-value__content-trend single-value__content-trend-black">
+          <i class="cn-icon-constant cn-icon"></i>
         </div>
       </div>
       <div class="single-value__circle">
@@ -32,9 +42,14 @@
       <div class="single-value__title">{{$t(npmNetworkName[index].name)}}</div>
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.sslConLatencyAvg, unitTypes.time).join(' ')}}</div>
-        <div class="single-value__content-value" :class="npm.trend === 'up' ? 'red' : 'green'">
-          <div><i class="cn-icon" :class="npm.trend === 'up' ? 'cn-icon-rise1' : 'cn-icon-decline'"></i></div>
-          <div>{{npm.value}}%</div>
+        <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else class="single-value__content-trend single-value__content-trend-black">
+          <i class="cn-icon-constant cn-icon"></i>
         </div>
       </div>
       <div class="single-value__circle">
@@ -46,9 +61,14 @@
       <div class="single-value__title">{{$t(npmNetworkName[index].name)}}</div>
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.sequenceGapLossAvg, unitTypes.percent).join(' ')}}</div>
-        <div class="single-value__content-value" :class="npm.trend === 'up' ? 'red' : 'green'">
-          <div><i class="cn-icon" :class="npm.trend === 'up' ? 'cn-icon-rise1' : 'cn-icon-decline'"></i></div>
-          <div>{{npm.value}}%</div>
+        <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else class="single-value__content-trend single-value__content-trend-black">
+          <i class="cn-icon-constant cn-icon"></i>
         </div>
       </div>
       <div class="single-value__circle">
@@ -60,9 +80,14 @@
       <div class="single-value__title">{{$t(npmNetworkName[index].name)}}</div>
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.pktRetransAvg, unitTypes.percent).join(' ')}}</div>
-        <div class="single-value__content-value" :class="npm.trend === 'up' ? 'red' : 'green'">
-          <div><i class="cn-icon" :class="npm.trend === 'up' ? 'cn-icon-rise1' : 'cn-icon-decline'"></i></div>
-          <div>{{npm.value}}%</div>
+        <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+        </div>
+        <div v-else class="single-value__content-trend single-value__content-trend-black">
+          <i class="cn-icon-constant cn-icon"></i>
         </div>
       </div>
       <div class="single-value__circle">
@@ -115,6 +140,9 @@ export default {
       } else if (period < pperiod) {
         periodicData.value = 'down'
         periodicData.total = parseInt(((pperiod - period) / pperiod) * 100)
+      } else {
+        periodicData.value = ''
+        periodicData.total = 0
       }
       return periodicData
     }
@@ -122,7 +150,7 @@ export default {
   mounted () {
     this.timer = setTimeout(() => {
       this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData)
-    }, 200)
+    }, 500)
   },
   beforeUnmount () {
     clearTimeout(this.timer)

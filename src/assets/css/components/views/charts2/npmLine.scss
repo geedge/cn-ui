@@ -14,6 +14,14 @@
       margin-right: 10px;
       align-items: center;
     }
+    .npm-line-header-right.active {
+      .npm-line-header-icon {
+        background: #ccc;
+      }
+      .npm-line-header-value {
+        color: #ccc;
+      }
+    }
     .npm-line-header-icon {
       border-radius: 3px;
       width: 16px;
@@ -34,10 +42,6 @@
       color: #717171;
       line-height: 12px;
       font-weight: 400;
-    }
-    .npm-line-header-value.active {
-      color: #717171;
-      font-weight: 600;
     }
   }
   .chart-drawing {
