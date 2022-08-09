@@ -256,6 +256,7 @@ export default {
   },
   mounted () {
     this.from = Object.keys(this.entityType)[0]
+    this.initDropdownList()
   },
   setup () {
     const dateRangeValue = 60
@@ -291,7 +292,8 @@ export default {
         window.location.reload()
       })
     },
-    initDropdownList (currentValue) {
+    initDropdownList () {
+      const currentValue = document.getElementById('breadcrumbValue')?document.getElementById('breadcrumbValue').innerText:''
       const columnName = this.$store.getters.getBreadcrumbColumnName
       let type = 'ip'
       const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
@@ -312,28 +314,26 @@ export default {
         if (response.code === 200) {
           this.breadcrumbColumnValueListShow = response.data.result
           this.$nextTick(() => {
-            setTimeout(() => {
-              this.breadcrumbColumnValueListShow.forEach(item => {
-                const selectedDom = document.getElementById(item)
-                if (selectedDom) {
-                  if (item === currentValue) {
-                    selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
-                  } else {
-                    selectedDom.style.cssText = ''
-                  }
+            this.breadcrumbColumnValueListShow.forEach(item => {
+              const selectedDom = document.getElementById(item)
+              if (selectedDom) {
+                if (item === currentValue) {
+                  selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+                } else {
+                  selectedDom.style.cssText = ''
                 }
-              })
-            }, 250)
+              }
+            })
           })
         }
       })
     },
     showBreadcrumbPopover (valueMenuId) {
+      this.breadcrumbColumnValueListShow.splice(0,this.breadcrumbColumnValueListShow.length)
       this.curPageNum = 1
       this.showBackground = true
       this.dropDownValue = ''
-      const currentValue = document.getElementById('breadcrumbValue').innerText
-      this.initDropdownList(currentValue)
+      this.initDropdownList()
       this.valueMenuId = 'breadcrumb' + valueMenuId
     },
     hideBreadcrumbPopover () {
@@ -344,9 +344,8 @@ export default {
       document.getElementById('breadcrumbValue').innerText = value
       document.getElementById('breadcrumbButton').setAttribute('title', value)
       document.getElementById(this.valueMenuId).setAttribute('title', value)
-      this.$refs.breadcrumbPopover.hide()
+      document.getElementById('breadcrumbButton').click()
       const columnName = this.$store.getters.getBreadcrumbColumnName
-
       const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
       if (tabObjGroup && tabObjGroup.length > 0) {
         const curTab = tabObjGroup[0]
