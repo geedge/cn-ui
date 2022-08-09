@@ -40,23 +40,20 @@
         border-radius: 10px;
         font-weight:500;
         font-size: 12px;
+        height: 20px;
+        padding: 0 5px;
       }
       .single-value__content-trend-black {
         background-color: rgba(113,113,113,0.12);
         color: #717171;
         width: 36px;
-        height: 20px;
       }
       .single-value__content-trend-green {
         background-color: rgba(126,159,84,0.12);
-        width: 52px;
-        height: 20px;
         color:#7E9F54;
       }
       .single-value__content-trend-red {
         background-color: rgba(226,97,84,0.12);
-        width: 52px;
-        height: 20px;
         color:#E26154;
         .cn-icon-rise1 {
           color: #E44D3E;

@@ -54,11 +54,11 @@
                 </template>
                 <template v-else-if="item.prop === 'total'">
                   {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'up'" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total}}%
+                  <div v-if="chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'up' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
                   </div>
-                  <div v-else-if="periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'down'" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total}}%
+                  <div v-else-if="chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'down' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
@@ -66,11 +66,11 @@
                 </template>
                 <template v-else-if="item.prop === 'outbound'">
                   {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'up'" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).total}}%
+                  <div v-if="chainCalculation(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'up' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
                   </div>
-                  <div v-else-if="periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'down'" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).total}}%
+                  <div v-else-if="chainCalculation(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'down' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
@@ -78,11 +78,11 @@
                 </template>
                 <template v-else-if="item.prop === 'inbound'">
                   {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'up'" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).total}}%
+                  <div v-if="chainCalculation(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'up' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
                   </div>
-                  <div v-else-if="periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'down'" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{periodicJudgmentCalculationChange(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).total}}%
+                  <div v-else-if="chainCalculation(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'down' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
@@ -237,16 +237,18 @@ export default {
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
       return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
     },
-    periodicJudgmentCalculationChange (period, pperiod) {
+    chainCalculation (period, pperiod) {
       const periodicData = {}
       if (period > pperiod) {
         periodicData.value = 'up'
-        periodicData.total = parseInt(((period - pperiod) / pperiod) * 100)
+        console.log((period - pperiod), pperiod)
+        periodicData.total = (period - pperiod) / pperiod
       } else if (period < pperiod) {
         periodicData.value = 'down'
-        periodicData.total = parseInt(((pperiod - period) / pperiod) * 100)
+        periodicData.total = (pperiod - period) / pperiod
       } else {
         periodicData.value = ''
+        periodicData.total = 0
       }
       return periodicData
     }

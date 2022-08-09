@@ -5,10 +5,10 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.establishLatencyAvg, unitTypes.time).join(' ')}}</div>
         <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -24,10 +24,10 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.httpResponseLatencyAvg, unitTypes.time).join(' ')}}</div>
         <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -43,10 +43,10 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.sslConLatencyAvg, unitTypes.time).join(' ')}}</div>
         <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -62,10 +62,10 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.sequenceGapLossAvg, unitTypes.percent).join(' ')}}</div>
         <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -81,10 +81,10 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.pktRetransAvg, unitTypes.percent).join(' ')}}</div>
         <div v-if="npm.trend === 'up' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.trend === 'down' && npm.value !== 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{npm.value}}%
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -136,10 +136,10 @@ export default {
       const periodicData = {}
       if (period > pperiod) {
         periodicData.value = 'up'
-        periodicData.total = parseInt(((period - pperiod) / pperiod) * 100)
+        periodicData.total = (period - pperiod) / pperiod
       } else if (period < pperiod) {
         periodicData.value = 'down'
-        periodicData.total = parseInt(((pperiod - period) / pperiod) * 100)
+        periodicData.total = (pperiod - period) / pperiod
       } else {
         periodicData.value = ''
         periodicData.total = 0
