@@ -241,7 +241,6 @@ export default {
       const periodicData = {}
       if (period > pperiod) {
         periodicData.value = 'up'
-        console.log((period - pperiod), pperiod)
         periodicData.total = (period - pperiod) / pperiod
       } else if (period < pperiod) {
         periodicData.value = 'down'

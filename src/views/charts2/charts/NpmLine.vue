@@ -1,7 +1,7 @@
 <template>
   <div class="npm-line">
     <div class="npm-line-header" v-if="chartData.params && chartData.params.showLegend">
-      <div class="npm-line-header-right" v-for="(item, index) in chartOptionLineData" :key="index" @click="legendSelectChange(item, index)">
+      <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
         <div class="npm-line-header-icon" :class="'icon' + index"></div>
         <div class="npm-line-header-value">{{$t(item.legend)}}</div>
       </div>
@@ -31,9 +31,9 @@ export default {
     return {
       chartData: {},
       chartOptionLineData: [
-        { legend: 'network.total', index: 0 },
-        { legend: 'network.inbound', index: 1 },
-        { legend: 'network.outbound', index: 2 }
+        { legend: 'network.total', index: 0, invertTab: true },
+        { legend: 'network.inbound', index: 1, invertTab: true },
+        { legend: 'network.outbound', index: 2, invertTab: true }
       ],
       timer: null,
       myChartArray: []
@@ -101,20 +101,56 @@ export default {
         name: name
       })
     },
-    legendSelectChange (item, index) {
-      if (index === 0) {
-        this.chartOptionLineData.forEach((t) => {
-          this.dispatchLegendSelectAction(t.legend)
-        })
-      } else {
-        if (this.chartOptionLineData[index].legend == item.legend) {
-          this.dispatchLegendSelectAction(item.legend)
-          this.chartOptionLineData.forEach((t) => {
-            if (t.legend !== item.legend) {
-              this.dispatchLegendUnSelectAction(t.legend)
+    highlightEvent (item) {
+      this.chartOptionLineData.forEach(t => {
+        if (t.legend === item.legend) {
+          t.invertTab = !t.invertTab
+        } else {
+          t.show = t.invertTab
+        }
+      })
+      const legend = this.chartOptionLineData.filter(t => t.invertTab)
+      const legends = this.chartOptionLineData.filter(t => !t.invertTab)
+      this.chartOptionLineData.forEach(t => {
+        if ((t.legend === item.legend) && t.invertTab) {
+          legend.forEach(r => {
+            r.show = false
+          })
+        } else if ((t.legend !== item.legend) && !t.invertTab) {
+          legends.forEach(r => {
+            if (r.legend === item.legend) {
+              r.show = false
             }
           })
         }
+      })
+      if (legend.length === 0) {
+        this.chartOptionLineData.forEach((t, i) => {
+          t.invertTab = true
+        })
+      }
+      this.legendSelectChange(legends, legend)
+    },
+    legendSelectChange (legends, legend) {
+      if (legends.length > 0) {
+        this.chartOptionLineData.forEach(t => {
+          legends.forEach(r => {
+            if (t.legend !== r.legend) {
+              this.dispatchLegendUnSelectAction(t.legend)
+            }
+            if (!t.show) {
+              this.dispatchLegendSelectAction(t.legend)
+            }
+          })
+        })
+      } else if (legend.length > 0) {
+        this.chartOptionLineData.forEach(t => {
+          legend.forEach(r => {
+            if (t.legend !== r.legend) {
+              this.dispatchLegendSelectAction(t.legend)
+            }
+          })
+        })
       }
     },
     resize () {
