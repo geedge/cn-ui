@@ -26,7 +26,7 @@
             height="100%"
     >
       <template v-for="(item, index) in customTableTitles" :key="index">
-        <el-table-column class="data-column">
+        <el-table-column class="data-column" :min-width="columnWidth(index)">
           <template #header>
             <span class="data-column__span">{{$t(item.label)}}</span>
           </template>
@@ -63,7 +63,6 @@
               <template v-else-if="item.prop === 'eventCount'">
                 <span class="data-eventCount">{{scope.row[item.prop]}}</span>
               </template>
-              <span v-else-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
               <span v-else>-</span>
             </div>
           </template>
@@ -139,6 +138,17 @@ export default {
         { label: 'network.eventType', prop: 'eventType' },
         { label: 'network.eventCount', prop: 'eventCount' }
       ]
+    }
+  },
+  methods:{
+    columnWidth(index){
+      if(index===0 || index===1){
+        return "20%"
+      }else if(index===2){
+        return "35%"
+      }else if(index===3){
+        return "15%"
+      }
     }
   },
   computed: {

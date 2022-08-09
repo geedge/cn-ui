@@ -45,7 +45,7 @@
                         <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
                       </div>
                       <div v-else-if="scope.row['trend'] === 'noChange'" class="data-total-trend data-total-trend-black">
-                        <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
+                        <i class="cn-icon-constant cn-icon"></i>{{scope.row['trendValue']}}
                       </div>
 
                     </div>
@@ -487,6 +487,10 @@ export default {
                   trend = 'noChange'
                 }
                 trendPercent = trendPercent + '%'
+                if(trendPercent==='0%'){
+                  trend = 'noChange'
+                  trendPercent = ''
+                }
               }
             }
             this.tableData.push({
