@@ -15,7 +15,15 @@
           <div :class="item.class"></div>
           <div class="mpackets-name">{{$t(item.name)}}</div>
         </div>
-        <div><span>{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span><span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}packets/s</span></div>
+        <div class="line-value-unit">
+          <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
+          <span class="line-value-unit-number2">
+            <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span>
+            <span v-if="echartsType === 'Bits/s'">bps</span>
+            <span v-else-if="echartsType === 'Packets/s'">packets/s</span>
+            <span v-else-if="echartsType === 'Sessions/s'">sessions/s</span>
+          </span>
+        </div>
       </div>
     </div>
     <div class="line-select">
