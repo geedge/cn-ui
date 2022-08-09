@@ -1,6 +1,6 @@
 <template>
   <div class="npm-app">
-    <div class="npm-app-left">
+<!--    <div class="npm-app-left">
       <div class="npm-app-letter">
         <div v-for="(letter, index) in colorPatchData" :key="index">
           {{letter.letter}}
@@ -106,13 +106,18 @@
           </el-table-column>
         </template>
       </el-table>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script>
-import { unitTypes } from '@/utils/constants'
+import { unitTypes, npmCategoryInfoMapping } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
+import { api } from '@/utils/api'
+import { getSecond } from '@/utils/date-util'
+import { get } from '@/utils/http'
+import { getChainRatio } from '@/utils/tools'
+
 export default {
   name: 'NpmAppCategoryScore',
   data () {
@@ -128,92 +133,7 @@ export default {
         { letter: 'E' },
         { letter: 'F' }
       ],
-      tableData: [
-        {
-          category: 'network.video',
-          score: 3,
-          icon: 'cn-icon cn-icon-video',
-          total: 10,
-          totalTrendValue: 5,
-          inboundTrendValue: 10,
-          outboundTrendValue: 8,
-          pTotalTrendValue: 5,
-          pInboundTrendValue: 7,
-          pOutboundTrendValue: 4,
-          inbound: 0.1,
-          outbound: 0.89
-        },
-        {
-          category: 'network.socialNetwork',
-          score: 2,
-          icon: 'cn-icon cn-icon-social-network',
-          total: 10,
-          totalTrendValue: 5,
-          inboundTrendValue: 6,
-          outboundTrendValue: 8,
-          pTotalTrendValue: 10,
-          pInboundTrendValue: 5,
-          pOutboundTrendValue: 4,
-          inbound: 0.1,
-          outbound: 0.89
-        },
-        {
-          category: 'network.fileSharing',
-          score: 1,
-          icon: 'cn-icon cn-icon-file-sharing',
-          total: 10,
-          totalTrendValue: 2,
-          inboundTrendValue: 6,
-          outboundTrendValue: 7,
-          pTotalTrendValue: 5,
-          pInboundTrendValue: 7,
-          pOutboundTrendValue: 8,
-          inbound: 0.1,
-          outbound: 0.89
-        },
-        {
-          category: 'network.gaming',
-          score: 4,
-          icon: 'cn-icon cn-icon-gaming',
-          total: 10,
-          totalTrendValue: 5,
-          inboundTrendValue: 5,
-          outboundTrendValue: 5,
-          pTotalTrendValue: 5,
-          pInboundTrendValue: 5,
-          pOutboundTrendValue: 5,
-          inbound: 0.1,
-          outbound: 0.89
-        },
-        {
-          category: 'network.email',
-          score: 6,
-          icon: 'cn-icon cn-icon-email',
-          total: 10,
-          totalTrendValue: 2,
-          inboundTrendValue: 5,
-          outboundTrendValue: 6,
-          pTotalTrendValue: 4,
-          pInboundTrendValue: 10,
-          pOutboundTrendValue: 5,
-          inbound: 0.1,
-          outbound: 0.89
-        },
-        {
-          category: 'network.voip',
-          score: 5,
-          icon: 'cn-icon cn-icon-voip',
-          total: 10,
-          totalTrendValue: 5,
-          inboundTrendValue: 7,
-          outboundTrendValue: 9,
-          pTotalTrendValue: 10,
-          pInboundTrendValue: 2,
-          pOutboundTrendValue: 5,
-          inbound: 0.1,
-          outbound: 0.89
-        }
-      ],
+      tableData: [],
       customTableTitles: [
         { label: 'network.category', prop: 'category' },
         { label: 'network.score', prop: 'score' },
@@ -222,6 +142,9 @@ export default {
         { label: 'network.inbound', prop: 'inbound' }
       ]
     }
+  },
+  props: {
+    timeFilter: Object
   },
   methods: {
     tableCellStyle ({ row, column, rowIndex, columnIndex }) {
@@ -250,7 +173,87 @@ export default {
         periodicData.total = 0
       }
       return periodicData
+    },
+    init (params) {
+      if (!params) {
+        params = {
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime)
+        }
+      }
+      // 获取table后三列内容
+      const currentTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 0 })
+      const lastCycleTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 1 })
+      Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
+        const prevData = res[1].data.result
+        const data = res[0].data.result
+        if (data && data.length > 0) {
+          const tableData = data.map(d => {
+            const mapping = npmCategoryInfoMapping.find(mapping => mapping.appSubcategory === d.appSubcategory)
+            const result = {
+              ...mapping,
+              ...d,
+              bytesRateChainRatio: '-',
+              inboundBytesRateChainRatio: '-',
+              outboundBytesRateChainRatio: '-'
+            }
+
+            const prev = prevData.find(p => p.appSubcategory === d.appSubcategory)
+            if (prev) {
+              result.bytesRateChainRatio = prev.totalBitsRate === 0 ? '-' : getChainRatio(d.totalBitsRate, prev.totalBitsRate)
+              result.inboundBytesRateChainRatio = prev.inboundBitsRate === 0 ? '-' : getChainRatio(d.inboundBitsRate, prev.inboundBitsRate)
+              result.outboundBytesRateChainRatio = prev.outboundBitsRate === 0 ? '-' : getChainRatio(d.outboundBitsRate, prev.outboundBitsRate)
+            }
+            return result
+          })
+          // 计算分数
+          const tcpRequest = get(api.npm.overview.appTcpSessionDelay, params)
+          const httpRequest = get(api.npm.overview.appHttpResponseDelay, params)
+          const sslRequest = get(api.npm.overview.appSslConDelay, params)
+          const tcpLostRequest = get(api.npm.overview.appTcpLostlenPercent, params)
+          const packetRetransRequest = get(api.npm.overview.appPacketRetransPercent, params)
+          Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res => {
+            const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+            res.forEach((r, i) => {
+              if (r.code === 200) {
+                tableData.forEach(t => {
+                  let score = 0
+                  const find = r.data.result.find(d => d.appSubcategory === t.appSubcategory)
+                  if (find) {
+                    score = this.computeScore(find, i)
+                  }
+                  t[keyPre[i] + 'Score'] = score
+                })
+              } else {
+                tableData.forEach(t => {
+                  t[keyPre[i] + 'Score'] = 0
+                })
+              }
+            })
+            tableData.forEach(t => {
+              t.score = (t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6
+            })
+            console.info(tableData)
+          })
+        }
+      })
+    },
+    computeScore (data, index) {
+      if (index === 0) {
+        return 0.3 * (data.establishLatencyMs - 500) / (50 - 500)
+      } else if (index === 1) {
+        return 0.05 * (data.httpResponseLatency - 500) / (50 - 500)
+      } else if (index === 2) {
+        return 0.05 * (data.sslConLatency - 500) / (50 - 500)
+      } else if (index === 3) {
+        return 0.3 * (data.tcpLostlenPercent - 0.5) / (0.01 - 0.5)
+      } else if (index === 4) {
+        return 0.3 * (data.pktRetransPercent - 0.5) / (0.01 - 0.5)
+      }
     }
+  },
+  mounted () {
+    this.init()
   }
 }
 </script>

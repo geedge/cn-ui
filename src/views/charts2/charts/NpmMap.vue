@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapData, mapData2, drillDownData } from '@/views/charts2/charts/mapTestData'
+import { mapData, drillDownData } from '@/views/charts2/charts/mapTestData'
 import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
@@ -55,7 +55,6 @@ export default {
     return {
       locationOptions,
       mapData,
-      mapData2,
       drillDownData,
       myChart: null,
       polygonSeries: null,
@@ -64,59 +63,7 @@ export default {
       countryImageSeries: null,
       // Server | Client
       trafficDirection: 'Server',
-      location: '',
-      keyMapping: [
-        {
-          key: 'sessions',
-          label: this.$t('overall.sessions'),
-          unitType: unitTypes.number
-        },
-        {
-          key: 'establishLatency',
-          label: this.$t('networkAppPerformance.tripTime'),
-          unitType: unitTypes.time
-        },
-        {
-          key: 'httpResponseLatency',
-          label: this.$t('networkAppPerformance.httpResponse'),
-          unitType: unitTypes.time
-        },
-        {
-          key: 'sslConLatency',
-          label: this.$t('networkAppPerformance.sslResponse'),
-          unitType: unitTypes.time
-        },
-        {
-          key: 'sequenceGapLossPercent',
-          label: this.$t('networkAppPerformance.packetLossRate'),
-          unitType: unitTypes.percent
-        },
-        {
-          key: 'pktRetransPercent',
-          label: this.$t('networkAppPerformance.retransmissionRate'),
-          unitType: unitTypes.percent
-        },
-        {
-          key: 'packets',
-          label: this.$t('overall.packets'),
-          unitType: unitTypes.number
-        },
-        {
-          key: 'sentBytes',
-          label: this.$t('overall.sent'),
-          unitType: unitTypes.byte
-        },
-        {
-          key: 'receivedBytes',
-          label: this.$t('overall.received'),
-          unitType: unitTypes.byte
-        },
-        {
-          key: 'count',
-          label: this.$t('overall.count'),
-          unitType: unitTypes.number
-        }
-      ]
+      location: ''
     }
   },
   methods: {
@@ -132,7 +79,7 @@ export default {
       }
       this.myChart = shallowRef(chart)
       this.polygonSeries = shallowRef(this.polygonSeriesFactory())
-      this.worldImageSeries = shallowRef(this.imageSeriesFactory())
+      this.worldImageSeries = shallowRef(this.imageSeriesFactory('score'))
       // 渲染
       this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
       this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
@@ -145,7 +92,7 @@ export default {
           if (geoData) {
             this.countrySeries = shallowRef(this.polygonSeriesFactory())
             this.countrySeries.geodata = geoData
-            this.countryImageSeries = shallowRef(this.imageSeriesFactory())
+            this.countryImageSeries = shallowRef(this.imageSeriesFactory('score'))
             this.polygonSeries.hide()
             this.worldImageSeries.hide()
             const country = ev.target.dataItem.dataContext.name
@@ -175,13 +122,10 @@ export default {
         this.showMapBackButton = !!country
         const data = chartData || this.mapData
         imageSeries.data = data.map(r => ({
-          ...this.convertMapData(r),
-          id: r.ipLocationId || r.Country,
-          dnsServerRole: r.dnsServerRole,
-          name: r.ipLocationCity || r.ipLocationProvince || r.ipLocationCountry || r.Country,
-          desc: 'hehe',
-          color: '#7E9F54',
-          border: '#7E9F54'
+          score: r.score,
+          id: r.locationId,
+          color: this.scoreColor(r.score),
+          border: this.scoreColor(r.score)
         }))
       } catch (e) {
         console.error(e)
@@ -194,20 +138,15 @@ export default {
       }
     },
     convertMapData (data) {
-      const converted = {}
-      this.keyMapping.forEach(mapping => {
-        if (data[mapping.key] || data[mapping.key] === 0) {
-          converted[mapping.key] = Number(data[mapping.key])
-          converted[`${mapping.key}Label`] = mapping.label
-          converted[`${mapping.key}ShowValue`] = valueToRangeValue(data[mapping.key], mapping.unitType).join(' ')
-          converted[`${mapping.key}Display`] = 'block'
-        } else {
-          converted[mapping.key] = ''
-          converted[`${mapping.key}Label`] = ''
-          converted[`${mapping.key}Display`] = 'none'
-        }
-      })
-      return converted
+    },
+    scoreColor (score) {
+      if (score >= 0 && score <= 2) {
+        return '#E26154'
+      } else if (score > 2 && score <= 4) {
+        return '#E5A219'
+      } else if (score > 4 && score <= 6) {
+        return '#7E9F54'
+      }
     },
     polygonSeriesFactory () {
       const polygonSeries = this.myChart.series.push(new am4Maps.MapPolygonSeries())

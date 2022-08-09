@@ -754,3 +754,11 @@ export function scrollToTop (dom, toTop, duration, direction) {
   }
   window.requestAnimationFrame(step)
 }
+
+export function getChainRatio (current, prev) {
+  if (prev === 0) {
+    return '-'
+  } else {
+    return (current - prev) / prev
+  }
+}

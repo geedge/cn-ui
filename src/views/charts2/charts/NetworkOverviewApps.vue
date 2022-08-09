@@ -202,7 +202,7 @@ export default {
         params = {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
-          appLabels: providerCards.map(item => {
+          appCompanies: providerCards.map(item => {
             return item.name
           }).join(',')
         }
@@ -213,11 +213,11 @@ export default {
     },
     handleData (prevRequest, request, _t) {
       Promise.all([prevRequest, request]).then(res => {
-        // if (res[0].code === 200 && res[1].code === 200) {
-        if (true) {
-          // const prevData = res[0].data.result
-          // const data = res[1].data.result
-          let prevData
+        if (res[0].code === 200 && res[1].code === 200) {
+        // if (true) {
+          const prevData = res[0].data.result
+          const data = res[1].data.result
+          /*let prevData
           let data
           if (_t === 'app') {
             prevData = appPrevTestData
@@ -225,7 +225,7 @@ export default {
           } else if (_t === 'provider') {
             prevData = providerPrevTestData
             data = providerTestData
-          }
+          }*/
           let toCompareType = 'bytes'
           if (this.metricFilter === 'Sessions/s') {
             toCompareType = 'sessions'

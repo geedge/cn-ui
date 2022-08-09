@@ -151,7 +151,14 @@ export const api = {
       httpResponseDelay: '/interface/application/performance/overview/httpResponseDelay',
       sslConDelay: '/interface/application/performance/overview/sslConDelay',
       tcpLostlenPercent: '/interface/application/performance/overview/tcpLostlenPercent',
-      packetRetransPercent: '/interface/application/performance/overview/packetRetransPercent'
+      packetRetransPercent: '/interface/application/performance/overview/packetRetransPercent',
+      // app类别评分
+      appTrafficAnalysis: '/interface/application/performance/overview/appTrafficAnalysis',
+      appTcpSessionDelay: '/interface/application/performance/overview/appTcpSessionDelay',
+      appHttpResponseDelay: '/interface/application/performance/overview/appHttpResponseDelay',
+      appSslConDelay: '/interface/application/performance/overview/appSslConDelay',
+      appTcpLostlenPercent: '/interface/application/performance/overview/appTcpLostlenPercent',
+      appPacketRetransPercent: '/interface/application/performance/overview/appPacketRetransPercent'
     },
     location: {
 

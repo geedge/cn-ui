@@ -370,6 +370,40 @@ export const dnsServerRole = {
   FWDNS: 'FWDNS'
 }
 
+// npm页-应用评分-类别名称、icon、i18n映射
+export const npmCategoryInfoMapping = [
+  {
+    appSubcategory: 'multimedia-streaming',
+    icon: 'cn-icon cn-icon-video',
+    i18n: 'network.video'
+  },
+  {
+    appSubcategory: 'social-networking',
+    icon: 'cn-icon cn-icon-social-network',
+    i18n: 'network.socialNetwork'
+  },
+  {
+    appSubcategory: 'file-sharing',
+    icon: 'cn-icon cn-icon-file-sharing',
+    i18n: 'network.fileSharing'
+  },
+  {
+    appSubcategory: 'voip-video',
+    icon: 'cn-icon cn-icon-voip',
+    i18n: 'network.voip'
+  },
+  {
+    appSubcategory: 'gaming',
+    icon: 'cn-icon cn-icon-gaming',
+    i18n: 'network.gaming'
+  },
+  {
+    appSubcategory: 'email',
+    icon: 'cn-icon cn-icon-email',
+    i18n: 'network.email'
+  }
+]
+
 // 整屏滚动的路径映射
 export const wholeScreenRouterMapping = {
   dns: '/panel/dnsServiceInsights'
