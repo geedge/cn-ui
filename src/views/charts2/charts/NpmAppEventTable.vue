@@ -140,14 +140,14 @@ export default {
       ]
     }
   },
-  methods:{
-    columnWidth(index){
-      if(index===0 || index===1){
-        return "20%"
-      }else if(index===2){
-        return "35%"
-      }else if(index===3){
-        return "15%"
+  methods: {
+    columnWidth (index) {
+      if (index === 0 || index === 1) {
+        return '20%'
+      } else if (index === 2) {
+        return '35%'
+      } else if (index === 3) {
+        return '15%'
       }
     }
   },

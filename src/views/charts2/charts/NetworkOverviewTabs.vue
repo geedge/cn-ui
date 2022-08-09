@@ -39,13 +39,13 @@
                     <div class="data-total" >
                       {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
                       <div v-if="scope.row['trend'] === 'up'" class="data-total-trend data-total-trend-red">
-                        <i class="cn-icon-rise1 cn-icon"></i>{{scope.row['trendValue']}}
+                        <i class="cn-icon-rise1 cn-icon"></i><span>{{scope.row['trendValue']}}</span>
                       </div>
                       <div v-else-if="scope.row['trend'] === 'down'" class="data-total-trend data-total-trend-green">
-                        <i class="cn-icon-decline cn-icon"></i>{{scope.row['trendValue']}}
+                        <i class="cn-icon-decline cn-icon"></i><span>{{scope.row['trendValue']}}</span>
                       </div>
                       <div v-else-if="scope.row['trend'] === 'noChange'" class="data-total-trend data-total-trend-black">
-                        <i class="cn-icon-constant cn-icon"></i>{{scope.row['trendValue']}}
+                        <i class="cn-icon-constant cn-icon"></i><span>{{scope.row['trendValue']}}</span>
                       </div>
 
                     </div>
@@ -487,7 +487,7 @@ export default {
                   trend = 'noChange'
                 }
                 trendPercent = trendPercent + '%'
-                if(trendPercent==='0%'){
+                if (trendPercent === '0%') {
                   trend = 'noChange'
                   trendPercent = ''
                 }
