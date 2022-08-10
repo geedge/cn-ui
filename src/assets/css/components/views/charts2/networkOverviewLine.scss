@@ -26,6 +26,19 @@
     right: 20px;
     display: flex;
     position: absolute;
+    .line-select-metric {}
+    .line-select__operation {
+      .el-input__inner {
+        width: 100px;
+      }
+    }
+    .line-select-reference-line {
+      .line-select__operation {
+        .el-input__inner {
+          width: 127px;
+        }
+      }
+    }
     .line-select-metric,.line-select-reference-line {
       display: flex;
       align-items: center;
@@ -44,7 +57,6 @@
           padding-left: 4px;
           line-height: 24px;
           height: 24px;
-          width: 80px;
           font-size: 12px;
           color: #2C72C6;
           font-weight: 400;
