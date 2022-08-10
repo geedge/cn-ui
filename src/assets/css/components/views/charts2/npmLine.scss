@@ -14,6 +14,9 @@
       margin-right: 10px;
       align-items: center;
     }
+    .npm-line-header-right:last-child {
+      margin-right: 0;
+    }
     .npm-line-header-right.active {
       .npm-line-header-icon {
         background: #ccc;

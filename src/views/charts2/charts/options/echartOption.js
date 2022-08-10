@@ -258,7 +258,7 @@ export const appListChartOption = {
 export const npmLineChartOption = {
   title: {
     text: '',
-    top: 20,
+    top: 14.5,
     left: 20,
     textStyle: {
       fontSize: 14,
@@ -274,8 +274,8 @@ export const npmLineChartOption = {
     show: false
   },
   grid: {
-    top: '25%',
-    left: '4%',
+    top: '21%',
+    left: '4.6%',
     right: '4%',
     bottom: 15,
     containLabel: true

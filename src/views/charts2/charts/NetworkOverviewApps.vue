@@ -32,9 +32,13 @@
             <div class="app-card__body-content">
               <div class="app-card__body-content-value">
                 <div class="app-card__body-content-number">{{unitConvert(app.rate, unitTypes.number).join(' ')}}</div>
-                <div class="app-card__body-content-percent" :class="app.trend === 'up' ? 'red' : 'green'">
-                  <span v-if="app.trend === 'up'">+</span><span v-else-if="app.trend === 'down'">-</span>{{unitConvert(periodicJudgmentCalculationChange(app.rate, app.pRate).total, unitTypes.percent).join('')}}
+                <div class="app-card__body-content-percent red" v-if="app.value > 0">
+                  +{{unitConvert(app.value, unitTypes.percent).join('')}}
                 </div>
+                <div class="app-card__body-content-percent green" v-else-if="app.value < 0">
+                  -{{unitConvert(app.value, unitTypes.percent).join('').replaceAll('-', '')}}
+                </div>
+                <div v-else></div>
               </div>
             </div>
             <div class="app-card__body-previous">
@@ -116,6 +120,7 @@ import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
 import { appTestData, appPrevTestData, providerTestData, providerPrevTestData } from './appsTestData'
+import { getChainRatio } from '@/utils/tools'
 export default {
   name: 'NetworkOverviewApps',
   props: {
@@ -243,7 +248,7 @@ export default {
                       d2.pRate = prevTypeData ? (prevTypeData[app] ? prevTypeData[app].rate : 0) : 0
                       d2.total = d[app].analysis.total
                       d2.lineData = d[app].values.map(v => [Number(v[0]), Number(v[1]), 'time'])
-                      d2.trend = this.periodicJudgmentCalculationChange(d2.rate, d2.pRate).value
+                      d2.value = getChainRatio(d2.rate, d2.pRate)
                       this.initChart(d2)
                     }
                   })
@@ -460,20 +465,6 @@ export default {
           t.moreOptions = !t.moreOptions
         }
       })
-    },
-    periodicJudgmentCalculationChange (period, pperiod) {
-      const periodicData = {}
-      if (period > pperiod) {
-        periodicData.value = 'up'
-        periodicData.total = pperiod === 0 ? 0 : (period - pperiod) / pperiod
-      } else if (period < pperiod) {
-        periodicData.value = 'down'
-        periodicData.total = (pperiod - period) / pperiod
-      } else {
-        periodicData.value = ''
-        periodicData.total = 0
-      }
-      return periodicData
     },
     resize () {
       this.myChart.forEach(t => {

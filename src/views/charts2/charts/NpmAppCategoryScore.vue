@@ -1,6 +1,6 @@
 <template>
   <div class="npm-app">
-<!--    <div class="npm-app-left">
+   <div class="npm-app-left">
       <div class="npm-app-letter">
         <div v-for="(letter, index) in colorPatchData" :key="index">
           {{letter.letter}}
@@ -9,27 +9,39 @@
       <div class="npm-app-body">
         <div class="npm-app-body-patch">
           <div class="npm-app-body-icon"><span><i class="cn-icon cn-icon-video"></i></span></div>
-          <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[0].score >= index + 1}"></div>
+          <template v-if="tableData.length > 0">
+            <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[0].score >= index + 1}"></div>
+          </template>
         </div>
         <div class="npm-app-body-patch">
           <div class="npm-app-body-icon"><span><i class="cn-icon cn-icon-social-network"></i></span></div>
-          <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[1].score >= index + 1}"></div>
+          <template v-if="tableData.length > 0">
+            <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[4].score >= index + 1}"></div>
+          </template>
         </div>
         <div class="npm-app-body-patch">
           <div class="npm-app-body-icon"><span><i class="cn-icon cn-icon-file-sharing"></i></span></div>
-          <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[2].score >= index + 1}"></div>
+          <template v-if="tableData.length > 0">
+            <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[1].score >= index + 1}"></div>
+          </template>
         </div>
         <div class="npm-app-body-patch">
           <div class="npm-app-body-icon"><span><i class="cn-icon cn-icon-gaming"></i></span></div>
-          <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[3].score >= index + 1}"></div>
+          <template v-if="tableData.length > 0">
+            <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[3].score >= index + 1}"></div>
+          </template>
         </div>
         <div class="npm-app-body-patch">
           <div class="npm-app-body-icon"><span><i class="cn-icon cn-icon-email"></i></span></div>
-          <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[4].score >= index + 1}"></div>
+          <template v-if="tableData.length > 0">
+            <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[5].score >= index + 1}"></div>
+          </template>
         </div>
         <div class="npm-app-body-patch">
           <div class="npm-app-body-icon"><span><i class="cn-icon cn-icon-voip"></i></span></div>
-          <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[5].score >= index + 1}"></div>
+          <template v-if="tableData.length > 0">
+            <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': tableData[2].score >= index + 1}"></div>
+          </template>
         </div>
       </div>
     </div>
@@ -50,39 +62,39 @@
               <div class="data-total">
                 <template v-if="item.prop === 'category'">
                   <span class="data-total-category-icon"><i :class="scope.row.icon"></i></span>
-                  <span class="data-total-category-value">{{$t(scope.row[item.prop])}}</span>
+                  <span class="data-total-category-value">{{$t(scope.row.i18n)}}</span>
                 </template>
                 <template v-else-if="item.prop === 'total'">
-                  {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'up' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
+                  {{unitConvert(scope.row.totalPacketsRate, unitTypes.bps).join('')}}
+                  <div v-if="scope.row.bytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(scope.row.bytesRateChainRatio, unitTypes.percent).join('')}}
                   </div>
-                  <div v-else-if="chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).value === 'down' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
+                  <div v-else-if="scope.row.bytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(scope.row.bytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
                   </div>
                 </template>
                 <template v-else-if="item.prop === 'outbound'">
-                  {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="chainCalculation(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'up' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
+                  {{unitConvert(scope.row.outboundPacketsRate, unitTypes.bps).join('')}}
+                  <div v-if="scope.row.outboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(scope.row.outboundBytesRateChainRatio, unitTypes.percent).join('')}}
                   </div>
-                  <div v-else-if="chainCalculation(scope.row.outboundTrendValue, scope.row.pOutboundTrendValue).value === 'down' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
+                  <div v-else-if="scope.row.outboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(scope.row.outboundBytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
                   </div>
                 </template>
                 <template v-else-if="item.prop === 'inbound'">
-                  {{unitConvert(scope.row[item.prop], unitTypes.bps).join('')}}
-                  <div v-if="chainCalculation(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'up' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-red">
-                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
+                  {{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join('')}}
+                  <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(scope.row.inboundBytesRateChainRatio, unitTypes.percent).join('')}}
                   </div>
-                  <div v-else-if="chainCalculation(scope.row.inboundTrendValue, scope.row.pInboundTrendValue).value === 'down' && chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total !== 0" class="data-total-trend data-total-trend-green">
-                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(chainCalculation(scope.row.totalTrendValue, scope.row.pTotalTrendValue).total, unitTypes.percent).join('')}}
+                  <div v-else-if="scope.row.inboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(scope.row.inboundBytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                   </div>
                   <div v-else class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
@@ -106,7 +118,7 @@
           </el-table-column>
         </template>
       </el-table>
-    </div>-->
+    </div>
   </div>
 </template>
 
@@ -147,33 +159,19 @@ export default {
     timeFilter: Object
   },
   methods: {
-    tableCellStyle ({ row, column, rowIndex, columnIndex }) {
-      let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;'
-      if (rowIndex === this.tableData.length - 1) {
-        style = style + 'border-bottom:0px !important;'
-      }
-      if (columnIndex === 0) {
-        style = style + 'color:#046ECA;'
-      }
-      return style
-    },
-    tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
-      return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
-    },
-    chainCalculation (period, pperiod) {
-      const periodicData = {}
-      if (period > pperiod) {
-        periodicData.value = 'up'
-        periodicData.total = (period - pperiod) / pperiod
-      } else if (period < pperiod) {
-        periodicData.value = 'down'
-        periodicData.total = (pperiod - period) / pperiod
-      } else {
-        periodicData.value = ''
-        periodicData.total = 0
-      }
-      return periodicData
-    },
+    // tableCellStyle ({ row, column, rowIndex, columnIndex }) {
+    //   let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;'
+    //   if (rowIndex === this.tableData.length - 1) {
+    //     style = style + 'border-bottom:0px !important;'
+    //   }
+    //   if (columnIndex === 0) {
+    //     style = style + 'color:#046ECA;'
+    //   }
+    //   return style
+    // },
+    // tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
+    //   return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
+    // },
     init (params) {
       if (!params) {
         params = {
@@ -200,9 +198,9 @@ export default {
 
             const prev = prevData.find(p => p.appSubcategory === d.appSubcategory)
             if (prev) {
-              result.bytesRateChainRatio = prev.totalBitsRate === 0 ? '-' : getChainRatio(d.totalBitsRate, prev.totalBitsRate)
-              result.inboundBytesRateChainRatio = prev.inboundBitsRate === 0 ? '-' : getChainRatio(d.inboundBitsRate, prev.inboundBitsRate)
-              result.outboundBytesRateChainRatio = prev.outboundBitsRate === 0 ? '-' : getChainRatio(d.outboundBitsRate, prev.outboundBitsRate)
+              result.bytesRateChainRatio = getChainRatio(d.totalBitsRate, prev.totalBitsRate)
+              result.inboundBytesRateChainRatio = getChainRatio(d.inboundBitsRate, prev.inboundBitsRate)
+              result.outboundBytesRateChainRatio = getChainRatio(d.outboundBitsRate, prev.outboundBitsRate)
             }
             return result
           })
@@ -231,8 +229,12 @@ export default {
               }
             })
             tableData.forEach(t => {
-              t.score = (t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6
+              t.score = Math.ceil((t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6)
+              if (t.score > 6) {
+                t.score = 6
+              }
             })
+            this.tableData = tableData
             console.info(tableData)
           })
         }
