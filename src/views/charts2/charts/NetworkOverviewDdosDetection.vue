@@ -2,7 +2,8 @@
  <div class="ddos-detection">
    <div class="ddos-detection-title"><i class="cn-icon cn-icon-a-DDosDetection"></i>{{$t('network.ddosDetection')}}</div>
    <div class="ddos-detection-value">
-     <div class="ddos-detection-type">
+     <chart-no-data v-if="isNoData"></chart-no-data>
+     <div class="ddos-detection-type" v-else>
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.numberOfAttacks')}}</div>
          <div class="ddos-detection-type-value-number">{{$_.get(ddosData, 'attackerCount') || 0}}</div>
@@ -25,14 +26,19 @@
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
 import { getSecond } from '@/utils/date-util'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NetworkOverviewDdosDetection',
   props: {
     timeFilter: Object
   },
+  components: {
+    ChartNoData
+  },
   data () {
     return {
-      ddosData: {}
+      ddosData: {},
+      isNoData: false
     }
   },
   methods: {
@@ -43,6 +49,11 @@ export default {
       }
       get(api.netWorkOverview.ddosEventAnalysis, params).then(res => {
         if (res.code === 200) {
+          // res.data.result.length = 0
+          if (res.data.result.length === 0) {
+            this.isNoData = true
+            return
+          }
           this.ddosData = res.data.result[0]
         }
       })

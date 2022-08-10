@@ -1,5 +1,5 @@
 <template>
-  <div class="single-value" v-for="(npm, index) in npmNetworkCycleData" :key="index">
+  <div class="single-value" v-for="(npm, index) in npmNetworkData" :key="index">
     <template v-if="index === 0">
       <div class="single-value__title">{{$t(npmNetworkName[index].name)}}</div>
       <div class="single-value__content">

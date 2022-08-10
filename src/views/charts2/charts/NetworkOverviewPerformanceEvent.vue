@@ -3,12 +3,16 @@
     <div class="performance-event-title"><i class="cn-icon cn-icon-a-NetworkPerformanceEvent"></i>{{$t('network.networkPerEvent')}}</div>
     <div class="performance-event-value">
       <div class="performance-event-pie">
-        <div class="chart-drawing" id="chart1"></div>
-        <div class="performance-event-pie-hr"></div>
-        <div class="chart-drawing" id="chart2"></div>
+        <chart-no-data v-if="isNoData"></chart-no-data>
+        <div class="chart-drawing" id="chart1" v-else></div>
       </div>
-      <el-button class="pie-button" size="small">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
+      <div class="performance-event-pie-hr"></div>
+      <div class="performance-event-pie">
+        <chart-no-data v-if="isNoData2"></chart-no-data>
+        <div class="chart-drawing" id="chart2" v-else></div>
+      </div>
     </div>
+    <el-button class="pie-button" size="small">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
   </div>
 </template>
 
@@ -19,6 +23,7 @@ import { shallowRef } from 'vue'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NetworkOverviewPerformanceEvent',
   setup () {
@@ -30,9 +35,14 @@ export default {
   props: {
     timeFilter: Object
   },
+  components: {
+    ChartNoData
+  },
   data () {
     return {
-      timer: null
+      timer: null,
+      isNoData: false,
+      isNoData2: false
     }
   },
   methods: {
@@ -48,6 +58,11 @@ export default {
         this.chartOption = pieChartOption1
         get(api.netWorkOverview.eventSeverity, params).then(res => {
           if (res.code === 200) {
+            // res.data.result.length = 0
+            if (res.data.result.length === 0) {
+              this.isNoData = true
+              return
+            }
             res.data.result = res.data.result.map(t => {
               return {
                 name: t.eventSeverity,
@@ -69,6 +84,11 @@ export default {
         this.chartOption2 = pieChartOption2
         get(api.netWorkOverview.eventType, params).then(res => {
           if (res.code === 200) {
+            // res.data.result.length = 0
+            if (res.data.result.length === 0) {
+              this.isNoData2 = true
+              return
+            }
             res.data.result = res.data.result.map(t => {
               return {
                 name: t.eventType,

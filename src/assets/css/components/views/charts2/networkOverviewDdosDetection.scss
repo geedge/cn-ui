@@ -21,6 +21,9 @@
     padding: 0 20px;
     display: flex;
     flex-direction: column;
+    .panel-chart__no-data {
+      height: calc(100% - 46px);
+    }
     .ddos-detection-type {
       display: flex;
       justify-content: space-between;

@@ -1,60 +1,63 @@
 <template>
   <div class="line network">
-    <div class="chart-drawing" v-show="showMarkLine" id="chart"></div>
-    <div class="line-value-active" v-if="activeShow"></div>
-    <div class="line-value">
-      <div class="line-value-mpackets"
-           v-show="item.show"
-           :class=" {'is-active': activeShow === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
-           v-for="(item, index) in mpackets"
-           :key="index"
-           @mouseenter="mouseenter(item)"
-           @mouseleave="mouseleave(item)"
-           @click="activeChange(item, index)">
-        <div class="line-value-mpackets-name">
-          <div :class="item.class"></div>
-          <div class="mpackets-name">{{$t(item.name)}}</div>
-        </div>
-        <div class="line-value-unit">
-          <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
-          <span class="line-value-unit-number2">
+    <chart-no-data v-if="isNoData"></chart-no-data>
+    <template v-else>
+      <div class="chart-drawing" v-show="showMarkLine" id="chart"></div>
+      <div class="line-value-active" v-if="activeShow"></div>
+      <div class="line-value">
+        <div class="line-value-mpackets"
+             v-show="item.show"
+             :class=" {'is-active': activeShow === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
+             v-for="(item, index) in mpackets"
+             :key="index"
+             @mouseenter="mouseenter(item)"
+             @mouseleave="mouseleave(item)"
+             @click="activeChange(item, index)">
+          <div class="line-value-mpackets-name">
+            <div :class="item.class"></div>
+            <div class="mpackets-name">{{$t(item.name)}}</div>
+          </div>
+          <div class="line-value-unit">
+            <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
+            <span class="line-value-unit-number2">
             <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span>
             <span v-if="echartsType === 'Bits/s'">bps</span>
             <span v-else-if="echartsType === 'Packets/s'">packets/s</span>
             <span v-else-if="echartsType === 'Sessions/s'">sessions/s</span>
           </span>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="line-select">
-      <div class="line-select-metric">
-        <span>{{$t('network.metric')}}:</span>
-        <div class="line-select__operation">
-          <el-select
-              size="mini"
-              v-model="value1"
-              popper-class="metric"
-              @change="metricSelectChange"
-          >
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
+      <div class="line-select">
+        <div class="line-select-metric">
+          <span>{{$t('network.metric')}}:</span>
+          <div class="line-select__operation">
+            <el-select
+                size="mini"
+                v-model="value1"
+                popper-class="metric"
+                @change="metricSelectChange"
+            >
+              <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="line-select-reference-line">
+          <span>{{$t('network.referenceLine')}}:</span>
+          <div class="line-select__operation">
+            <el-select
+                size="mini"
+                v-model="value2"
+                :disabled="activeShow === ''"
+                popper-class="reference-line"
+                @change="referenceSelectChange"
+            >
+              <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </div>
         </div>
       </div>
-      <div class="line-select-reference-line">
-        <span>{{$t('network.referenceLine')}}:</span>
-        <div class="line-select__operation">
-          <el-select
-              size="mini"
-              v-model="value2"
-              :disabled="activeShow === ''"
-              popper-class="reference-line"
-              @change="referenceSelectChange"
-          >
-            <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </div>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -69,11 +72,15 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NetworkOverviewLine',
   props: {
     chart: Object,
     timeFilter: Object
+  },
+  components: {
+    ChartNoData
   },
   setup () {
     return {
@@ -132,7 +139,8 @@ export default {
       echartsType: 'Bits/s',
       echartsData: {},
       dynamicVariable: '',
-      showMarkLine: true
+      showMarkLine: true,
+      isNoData: false
     }
   },
   watch: {
@@ -157,6 +165,11 @@ export default {
       }
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
+          // res.data.result.length = 0
+          if (res.data.result.length === 0) {
+            this.isNoData = true
+            return
+          }
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               this.mpackets[0].analysis = t.totalBitsRate.analysis

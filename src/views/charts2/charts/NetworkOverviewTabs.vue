@@ -66,7 +66,7 @@
       </template>
 
     </el-tabs>
-    <div class="tab-search" >
+    <div class="tab-search">
       <div class="search-select"  v-if="drillDown">
         <span>{{$t('network.metric')}}:</span>
         <el-select v-model="metric"
@@ -140,7 +140,6 @@
         </el-tabs>
       </el-popover>
     </div>
-
   </div>
 
 </template>
