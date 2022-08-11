@@ -477,7 +477,7 @@ export function stackedLineTooltipFormatter (params) {
     </span>`
     str += '</span>'
     str += `<span class="cn-chart-tooltip-value cn-chart-tooltip__color">
-        ${unitConvert(item.data[1], 'number').join(' ')}
+        ${unitConvert(item.data[1], item.value[2]).join(' ')}
     </span>`
     str += '</div>'
   })

@@ -1,13 +1,11 @@
 .line.network {
   height: 100%;
   width: 100%;
-  position: relative;
   border: 1px solid #E2E5EC;
   border-radius: 4px;
   .chart-drawing {
     height: 80%;
     width: 100%;
-    top: 70px;
     .echarts-tooltip.echarts-tooltip-dark {
       .cn-chart-tooltip {
         display: flex;
@@ -21,137 +19,142 @@
       }
     }
   }
-  .line-select {
-    top: 20px;
-    right: 20px;
+  .line-header {
     display: flex;
-    position: absolute;
-    .line-select-metric {}
-    .line-select__operation {
-      .el-input__inner {
-        width: 100px;
-      }
-    }
-    .line-select-reference-line {
-      .line-select__operation {
-        .el-input__inner {
-          width: 127px;
-        }
-      }
-    }
-    .line-select-metric,.line-select-reference-line {
+    justify-content: space-between;
+    .line-select.line-header-right {
       display: flex;
-      align-items: center;
-      span {
-        font-size: 12px;
-        color: #575757;
-        font-weight: 400;
-        margin-right: 3px;
-      }
+      //flex: 1;
       .line-select__operation {
-        height: 24px;
-        margin-left: 3px;
-        box-shadow: none;
-        border-radius: 2px;
         .el-input__inner {
-          padding-left: 4px;
-          line-height: 24px;
-          height: 24px;
-          font-size: 12px;
-          color: #2C72C6;
-          font-weight: 400;
+          width: 100px;
         }
-        .el-input__suffix {
-          display: flex;
-          .el-input__suffix-inner {
+      }
+      .line-select-reference-line {
+        margin-right: 20px;
+        .line-select__operation {
+          .el-input__inner {
+            width: 127px;
+          }
+        }
+      }
+      .line-select-metric,.line-select-reference-line {
+        display: flex;
+        align-items: center;
+        span {
+          font-size: 12px;
+          color: #575757;
+          font-weight: 400;
+          margin-right: 3px;
+        }
+        .line-select__operation {
+          height: 24px;
+          margin-left: 3px;
+          box-shadow: none;
+          border-radius: 2px;
+          .el-input__inner {
+            padding-left: 4px;
             line-height: 24px;
-            .el-select__caret {
+            height: 24px;
+            font-size: 12px;
+            color: #2C72C6;
+            font-weight: 400;
+          }
+          .el-input__suffix {
+            display: flex;
+            .el-input__suffix-inner {
               line-height: 24px;
-              width: 16px;
-              color: #575757;
+              .el-select__caret {
+                line-height: 24px;
+                width: 16px;
+                color: #575757;
+              }
+            }
+          }
+        }
+      }
+      .line-select-reference-line {
+        margin-left: 20px;
+      }
+    }
+    .line-header-left {
+      .line-value-active {
+        position: absolute;
+        height: 3px;
+        border-radius: 4px 0 0 0;
+        background: #046ECA;
+        top: 0;
+        z-index: 1;
+        transition: all linear .2s;
+      }
+      .line-value {
+        //position: absolute;
+        //top: 0;
+        //left: 0;
+        display: flex;
+        .line-value-mpackets.mousemove-cursor {
+          border-top: 4px solid #D3D0D8;
+          z-index: 0;
+        }
+        .line-value-mpackets {
+          cursor: pointer;
+          padding: 16px 0 0 20px;
+          border-top: 4px solid transparent;
+          .line-value-unit {
+            .line-value-unit-number {
+              font-family: Helvetica-Bold;
+              font-size: 28px;
+              color: #353636;
+              margin-right: 4px;
+            }
+            .line-value-unit-number2 {
+              font-size: 0;
+              span {
+                font-size: 12px;
+                color: #575757;
+                font-weight: 400;
+              }
+            }
+          }
+          .line-value-mpackets-name {
+            position: relative;
+            display: flex;
+            .mpackets-name {
+              flex: 1;
+              padding-left: 19px;
+            }
+            .total,.inbound,.outbound,.internal,.through,.other {
+              width: 14px;
+              height: 14px;
+              border-radius: 50%;
+              position: absolute;
+              top: 50%;
+              margin-top: -7px;
+            }
+            .total {
+              background: #00A7AB;
+            }
+            .inbound {
+              background: #7FA054;
+            }
+            .outbound {
+              background: #35ADDA;
+            }
+            .internal {
+              background: #E48F3E;
+            }
+            .through {
+              background: #9FBC1D;
+            }
+            .other {
+              background: #98709B;
             }
           }
         }
       }
     }
-    .line-select-reference-line {
-      margin-left: 20px;
-    }
   }
-  .line-value-active {
-    position: absolute;
-    height: 3px;
-    border-radius: 4px 0 0 0;
-    background: #046ECA;
-    top: 0;
-    z-index: 1;
-    transition: all linear .2s;
-  }
-  .line-value {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    .line-value-mpackets.mousemove-cursor {
-      border-top: 4px solid #D3D0D8;
-      z-index: 0;
-    }
-    .line-value-mpackets {
-      cursor: pointer;
-      padding: 16px 0 0 20px;
-      border-top: 4px solid transparent;
-      .line-value-unit {
-        .line-value-unit-number {
-          font-family: Helvetica-Bold;
-          font-size: 28px;
-          color: #353636;
-          margin-right: 4px;
-        }
-        .line-value-unit-number2 {
-          font-size: 0;
-          span {
-            font-size: 12px;
-            color: #575757;
-            font-weight: 400;
-          }
-        }
-      }
-      .line-value-mpackets-name {
-        position: relative;
-        display: flex;
-        .mpackets-name {
-          flex: 1;
-          padding-left: 19px;
-        }
-        .total,.inbound,.outbound,.internal,.through,.other {
-          width: 14px;
-          height: 14px;
-          border-radius: 50%;
-          position: absolute;
-          top: 50%;
-          margin-top: -7px;
-        }
-        .total {
-          background: #00A7AB;
-        }
-        .inbound {
-          background: #7FA054;
-        }
-        .outbound {
-          background: #35ADDA;
-        }
-        .internal {
-          background: #E48F3E;
-        }
-        .through {
-          background: #9FBC1D;
-        }
-        .other {
-          background: #98709B;
-        }
-      }
-    }
-  }
+
 }
 .metric.el-select__popper,.reference-line.el-select__popper {
   top: 216px !important;

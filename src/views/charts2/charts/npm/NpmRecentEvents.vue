@@ -15,10 +15,10 @@
           </template>
           <template  #default="scope" :column="item">
             <div class="data-recent-table">
-              <template v-if="item.prop === 'severity'">
-                <span class="data-recent-table-severity" :class="iconClass(scope.row)">{{$t(scope.row[item.prop])}}</span>
+              <template v-if="item.prop === 'eventSeverity'">
+                <span class="data-recent-table-severity" :class="scope.row[item.prop]">{{$t(scope.row[item.prop])}}</span>
               </template>
-              <template v-else-if="item.prop === 'entity'">
+              <template v-else-if="item.prop === 'eventKey'">
                 <span class="data-recent-table-entity">{{$t(scope.row[item.prop])}}</span>
               </template>
               <template v-else-if="item.prop === 'eventType'">
@@ -35,82 +35,42 @@
 </template>
 
 <script>
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
+import { getSecond } from '@/utils/date-util'
+
 export default {
   name: 'NpmRecentEvents',
+  props: {
+    chart: Object,
+    timeFilter: Object
+  },
   data () {
     return {
-      tableData: [
-        {
-          severity: 'Critical',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }, {
-          severity: 'High',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }, {
-          severity: 'Critical',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }, {
-          severity: 'Medium',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }, {
-          severity: 'Low',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }, {
-          severity: 'Info',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }, {
-          severity: 'Critical',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }, {
-          severity: 'Critical',
-          entity: 'command adn control',
-          eventType: 'dns error'
-        }
-      ],
+      tableData: [],
       customTableTitles: [
-        { label: 'network.severity', prop: 'severity' },
-        { label: 'network.entity', prop: 'entity' },
+        { label: 'network.severity', prop: 'eventSeverity' },
+        { label: 'network.entity', prop: 'eventKey' },
         { label: 'detections.eventType', prop: 'eventType' }
       ]
     }
   },
-  computed: {
-    iconClass () {
-      return function (row) {
-        let className
-        switch (row.severity) {
-          case ('Critical'): {
-            className = 'critical'
-            break
-          }
-          case ('High'): {
-            className = 'high'
-            break
-          }
-          case ('Info'): {
-            className = 'info'
-            break
-          }
-          case ('Medium'): {
-            className = 'medium'
-            break
-          }
-          case ('Low'): {
-            className = 'low'
-            break
-          }
-          default: break
-        }
-        return className
+  methods: {
+    recentEventsListData () {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        limit: 1
       }
+      get(api.npm.events.recentEvents, params).then(res => {
+        if (res.code === 200) {
+          this.tableData = res.data.result
+        }
+      })
     }
+  },
+  mounted () {
+    this.recentEventsListData()
   }
 }
 </script>

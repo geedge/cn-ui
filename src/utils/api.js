@@ -161,10 +161,18 @@ export const api = {
       appPacketRetransPercent: '/interface/application/performance/overview/appPacketRetransPercent'
     },
     location: {
-
+      // 折线图
+      thoughput: '/interface/application/performance/location/thoughput',
+      tcpConnectionEstablishLatency: '/interface/application/performance/location/tcpConnectionEstablishLatency',
+      httpResponseLatency: '/interface/application/performance/location/httpResponseLatency',
+      sslHandshakeLatency: '/interface/application/performance/location/sslHandshakeLatency',
+      packetsLoss: '/interface/application/performance/location/packetsLoss',
+      packetsRetrains: '/interface/application/performance/location/packetsRetrains',
     },
     events: {
-
+      list: '/interface/overview/event/list',
+      recentEvents: '/interface/overview/event/recentEvents',
+      dimensionEvents: '/interface/overview/event/dimensionEvents'
     }
   }
 }

@@ -39,6 +39,9 @@
             height: 8px;
             margin-right: 5px;
           }
+          .npm-event-pie-legend-type-severity {
+            text-transform: capitalize;
+          }
           .critical {
             background: rgb(226,97,84);
           }
