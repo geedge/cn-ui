@@ -6,7 +6,7 @@ import store from '@/store'
 import App from '@/App.vue'
 import { hasPermission } from '@/permission'
 import commonMixin from '@/mixins/common'
-import { cancelWithChange, clickOutside, noData } from '@/utils/tools'
+import { cancelWithChange, noData } from '@/utils/tools'
 import { ClickOutside } from 'element-plus/lib/directives'
 import i18n from '@/i18n'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
@@ -15,18 +15,13 @@ import '@/assets/css/main.scss' // 样式入口
 import VueGridLayout from 'vue-grid-layout'
 import ElementPlus from 'element-plus'
 import bus from 'tiny-emitter'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc' // dependent on utc plugin
-import timezone from 'dayjs/plugin/timezone'
-import advancedFormat from 'dayjs/plugin/advancedFormat'
-import weekday from 'dayjs/plugin/weekday'
 
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import PanelChartList from '@/views/charts/PanelChartList'
-const emitter = new bus()
-
 import 'lib-flexible'
+
+const emitter = new bus()
 
 const _ = require('lodash') // lodash工具
 
@@ -46,7 +41,6 @@ app.use(hljsVuePlugin)
 app.use(VueGridLayout)
 
 app.directive('has', hasPermission) // 注册指令
-app.directive('click-outside', clickOutside)
 app.directive('ele-click-outside', ClickOutside)
 app.directive('cancel', cancelWithChange)
 app.directive('no-data', noData)

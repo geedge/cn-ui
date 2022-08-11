@@ -8,11 +8,14 @@ export const typeMapping = {
   },
   npm: {
     npmMap: 1,
+    npmIpMap: 2,
     npmLine: 101,
+    npmTrafficLine: 104,
     npmEventsByType: 301,
     npmAppCategoryScore: 702,
     npmTabs: 704,
     npmEventsHeader: 705,
+    relatedSessions: 706,
     npmNetworkQuantity: 703,
     npmRecentEvents: 602,
     appEventTable: 603

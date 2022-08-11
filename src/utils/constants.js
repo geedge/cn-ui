@@ -50,7 +50,8 @@ export const panelTypeAndRouteMapping = {
   ipEntityDetail: 4,
   domainEntityDetail: 5,
   appEntityDetail: 6,
-  cryptocurrency: 7
+  cryptocurrency: 7,
+  ipDrillDownTest: 8
 }
 
 /* operationLog state 执行状态属性 值与名称之间的映射 */

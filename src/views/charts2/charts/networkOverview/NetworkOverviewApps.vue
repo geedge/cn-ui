@@ -119,7 +119,7 @@ import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
-import { appTestData, appPrevTestData, providerTestData, providerPrevTestData } from './appsTestData'
+import { appTestData, appPrevTestData, providerTestData, providerPrevTestData } from '../appsTestData'
 import { getChainRatio } from '@/utils/tools'
 export default {
   name: 'NetworkOverviewApps',

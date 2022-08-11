@@ -41,6 +41,7 @@
     <npm-tabs
         v-else-if="chart.type === typeMapping.npm.npmTabs"
         :time-filter="timeFilter"
+        :chart="chart"
         @tabChange="npmTabChange"
     ></npm-tabs>
     <npm-network-quantity
@@ -78,6 +79,21 @@
         :time-filter="timeFilter"
         :chart="chart"
     ></npm-recent-events>
+    <related-sessions
+        v-else-if="chart.type === typeMapping.npm.relatedSessions"
+        :time-filter="timeFilter"
+        :chart="chart"
+    ></related-sessions>
+    <npm-ip-map
+        v-else-if="chart.type === typeMapping.npm.npmIpMap"
+        :time-filter="timeFilter"
+        :chart="chart"
+    ></npm-ip-map>
+    <npm-traffic-line
+        v-else-if="chart.type === typeMapping.npm.npmTrafficLine"
+        :time-filter="timeFilter"
+        :chart="chart"
+    ></npm-traffic-line>
   </div>
 </template>
 
@@ -85,20 +101,23 @@
 import Loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { typeMapping } from '@/views/charts2/chart-tools'
-import NetworkOverviewLine from '@/views/charts2/charts/NetworkOverviewLine'
-import NetworkOverviewDdosDetection from '@/views/charts2/charts/NetworkOverviewDdosDetection'
-import NetworkOverviewPerformanceEvent from '@/views/charts2/charts/NetworkOverviewPerformanceEvent'
-import NetworkOverviewTabs from '@/views/charts2/charts/NetworkOverviewTabs'
-import NetworkOverviewApps from '@/views/charts2/charts/NetworkOverviewApps'
-import NpmTabs from '@/views/charts2/charts/NpmTabs'
-import NpmAppEventTable from '@/views/charts2/charts/NpmAppEventTable'
-import NpmNetworkQuantity from '@/views/charts2/charts/NpmNetworkQuantity'
-import NpmAppCategoryScore from '@/views/charts2/charts/NpmAppCategoryScore'
-import NpmMap from '@/views/charts2/charts/NpmMap'
-import NpmLine from '@/views/charts2/charts/NpmLine'
-import NpmEventsByType from '@/views/charts2/charts/NpmEventsByType'
-import NpmRecentEvents from '@/views/charts2/charts/NpmRecentEvents'
-import NpmEventsHeader from '@/views/charts2/charts/NpmEventsHeader'
+import NetworkOverviewLine from '@/views/charts2/charts/networkOverview/NetworkOverviewLine'
+import NetworkOverviewDdosDetection from '@/views/charts2/charts/networkOverview/NetworkOverviewDdosDetection'
+import NetworkOverviewPerformanceEvent from '@/views/charts2/charts/networkOverview/NetworkOverviewPerformanceEvent'
+import NetworkOverviewTabs from '@/views/charts2/charts/networkOverview/NetworkOverviewTabs'
+import NetworkOverviewApps from '@/views/charts2/charts/networkOverview/NetworkOverviewApps'
+import NpmTabs from '@/views/charts2/charts/npm/NpmTabs'
+import NpmAppEventTable from '@/views/charts2/charts/npm/NpmAppEventTable'
+import NpmNetworkQuantity from '@/views/charts2/charts/npm/NpmNetworkQuantity'
+import NpmAppCategoryScore from '@/views/charts2/charts/npm/NpmAppCategoryScore'
+import NpmMap from '@/views/charts2/charts/npm/NpmMap'
+import NpmLine from '@/views/charts2/charts/npm/NpmLine'
+import NpmEventsByType from '@/views/charts2/charts/npm/NpmEventsByType'
+import NpmRecentEvents from '@/views/charts2/charts/npm/NpmRecentEvents'
+import NpmEventsHeader from '@/views/charts2/charts/npm/NpmEventsHeader'
+import RelatedSessions from '@/views/charts2/charts/npm/RelatedSessions'
+import NpmIpMap from '@/views/charts2/charts/npm/NpmIpMap'
+import NpmTrafficLine from '@/views/charts2/charts/npm/NpmTrafficLine'
 import { get } from '@/utils/http'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
@@ -120,7 +139,10 @@ export default {
     NetworkOverviewApps,
     NpmTabs,
     NpmNetworkQuantity,
-    NpmAppEventTable
+    NpmAppEventTable,
+    RelatedSessions,
+    NpmIpMap,
+    NpmTrafficLine
   },
   props: {
     chart: Object,
@@ -210,7 +232,6 @@ export default {
     resizeLine () {
       this.$nextTick(function () {
         setTimeout(() => {
-          console.log(this.$refs)
           if (this.$refs.networkLine) {
             this.$refs.networkLine.resize()
           }
