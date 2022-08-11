@@ -20,10 +20,7 @@
           <div class="line-value-unit">
             <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
             <span class="line-value-unit-number2">
-            <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span>
-            <span v-if="echartsType === 'Bits/s'">bps</span>
-            <span v-else-if="echartsType === 'Packets/s'">packets/s</span>
-            <span v-else-if="echartsType === 'Sessions/s'">sessions/s</span>
+            <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span><span v-if="item.unitType">{{item.unitType}}</span>
           </span>
           </div>
         </div>
@@ -48,7 +45,7 @@
             <el-select
                 size="mini"
                 v-model="value2"
-                :disabled="activeShow === ''"
+                :disabled="!activeShow"
                 popper-class="reference-line"
                 @change="referenceSelectChange"
             >
@@ -120,12 +117,12 @@ export default {
       ],
       value2: 'Average',
       mpackets: [
-        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [] },
-        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [] },
-        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [] },
-        { analysis: {}, name: 'network.internal', class: 'internal', show: true, invertTab: true, positioning: 3, data: [] },
-        { analysis: {}, name: 'network.through', class: 'through', show: true, invertTab: true, positioning: 4, data: [] },
-        { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [] }
+        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' },
+        { analysis: {}, name: 'network.internal', class: 'internal', show: true, invertTab: true, positioning: 3, data: [], unitType: '' },
+        { analysis: {}, name: 'network.through', class: 'through', show: true, invertTab: true, positioning: 4, data: [], unitType: '' },
+        { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [], unitType: '' }
       ],
       unitConvert,
       unitTypes,
@@ -151,7 +148,7 @@ export default {
     }
   },
   methods: {
-    init (val, show) {
+    init (val, show, active) {
       if (!val) {
         val = 'Bits/s'
       }
@@ -172,46 +169,73 @@ export default {
           }
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
-              this.mpackets[0].analysis = t.totalBitsRate.analysis
-              this.mpackets[1].analysis = t.inboundBitsRate.analysis
-              this.mpackets[2].analysis = t.outboundBitsRate.analysis
-              this.mpackets[3].analysis = t.internalBitsRate.analysis
-              this.mpackets[4].analysis = t.externalBitsRate.analysis
-              this.mpackets[5].analysis = t.other.analysis
-              this.mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-              this.mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-              this.mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-              this.mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-              this.mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
-              this.mpackets[5].data = t.other.values ? t.other.values : []
-              this.mpackets.forEach(t => {
-                if (t.name !== 'network.total' && t.analysis.avg == 0) {
-                  t.show = false
+              const mpackets = _.cloneDeep(this.mpackets)
+              mpackets[0].analysis = t.totalBitsRate.analysis
+              mpackets[1].analysis = t.inboundBitsRate.analysis
+              mpackets[2].analysis = t.outboundBitsRate.analysis
+              mpackets[3].analysis = t.internalBitsRate.analysis
+              mpackets[4].analysis = t.externalBitsRate.analysis
+              mpackets[5].analysis = t.other.analysis
+              mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
+              mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
+              mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
+              mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
+              mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
+              mpackets[5].data = t.other.values ? t.other.values : []
+              mpackets.forEach(e => {
+                e.unitType = 'bps'
+                if (e.name !== 'network.total' && e.analysis.avg == 0) {
+                  e.show = false
+                } else {
+                  e.show = true
+                  if (!active && show !== this.echartsLabelValue) {
+                    this.legendSelectChange(e, 'index')
+                  }
                 }
               })
+              this.mpackets = mpackets
               this.echartsInit(this.mpackets, show)
             } else if (t.type === 'packets' && val === 'Packets/s') {
-              this.mpackets[0].analysis = t.totalPacketsRate.analysis
-              this.mpackets[1].analysis = t.inboundPacketsRate.analysis
-              this.mpackets[2].analysis = t.outboundPacketsRate.analysis
-              this.mpackets[3].analysis = t.internalPacketsRate.analysis
-              this.mpackets[4].analysis = t.externalPacketsRate.analysis
-              this.mpackets[5].analysis = t.other.analysis
-              this.mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
-              this.mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
-              this.mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
-              this.mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-              this.mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
-              this.mpackets[5].data = t.other.values ? t.other.values : []
-              this.mpackets.forEach(t => {
-                if (t.name !== 'network.total' && t.analysis.avg == 0) {
-                  t.show = false
+              const mpackets = _.cloneDeep(this.mpackets)
+              mpackets[0].analysis = t.totalPacketsRate.analysis
+              mpackets[1].analysis = t.inboundPacketsRate.analysis
+              mpackets[2].analysis = t.outboundPacketsRate.analysis
+              mpackets[3].analysis = t.internalPacketsRate.analysis
+              mpackets[4].analysis = t.externalPacketsRate.analysis
+              mpackets[5].analysis = t.other.analysis
+              mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
+              mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
+              mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
+              mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
+              mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
+              mpackets[5].data = t.other.values ? t.other.values : []
+              mpackets.forEach(e => {
+                e.unitType = 'packets/s'
+                if (e.name !== 'network.total' && e.analysis.avg == 0) {
+                  e.show = false
+                } else {
+                  e.show = true
+                  if (!active && show !== this.echartsLabelValue) {
+                    this.legendSelectChange(e, 'index')
+                  }
                 }
               })
+              this.mpackets = mpackets
               this.echartsInit(this.mpackets, show)
             } else if (t.type === 'sessions' && val === 'Sessions/s') {
-              this.mpackets[0].analysis = t.totalSessionsRate.analysis
-              this.mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
+              const mpackets = _.cloneDeep(this.mpackets)
+              mpackets[0].analysis = t.totalSessionsRate.analysis
+              mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
+              mpackets.forEach((e, i) => {
+                if (i !== 0) {
+                  e.show = false
+                }
+                e.unitType = 'sessions/s'
+                if (show !== this.echartsLabelValue) {
+                  this.legendSelectChange(e, 0)
+                }
+              })
+              this.mpackets = mpackets
               this.echartsInit(this.mpackets, show)
             }
           })
@@ -326,7 +350,7 @@ export default {
       this.activeShow = item.class
       this.legendSelectChange(item, index, 'active')
       this.showMarkLine = !item.invertTab
-      this.init(this.echartsType, this.showMarkLine, item.invertTab)
+      this.init(this.echartsType, this.showMarkLine, 'active')
     },
     mouseenter (item) {
       this.mousemoveCursor = item.class
@@ -336,19 +360,18 @@ export default {
       this.mousemoveCursor = ''
     },
     dispatchLegendSelectAction (name) {
-      this.myChart.dispatchAction({
+      this.myChart && this.myChart.dispatchAction({
         type: 'legendSelect',
         name: name
       })
     },
     dispatchLegendUnSelectAction (name) {
-      this.myChart.dispatchAction({
+      this.myChart && this.myChart.dispatchAction({
         type: 'legendUnSelect',
         name: name
       })
     },
     legendSelectChange (item, index, val) {
-      if (item.data.length <= 0) return ''
       if (index === 'index') {
         this.activeShow = !item.class
         this.dispatchLegendSelectAction(item.name)
@@ -388,20 +411,7 @@ export default {
     },
     metricSelectChange (val) {
       this.echartsType = val
-      if (val === 'Sessions/s') {
-        this.mpackets.forEach((t, i) => {
-          this.activeShow = !t.class
-          if (i !== 0) {
-            t.show = false
-          }
-          this.legendSelectChange(t, 0)
-        })
-      } else {
-        this.mpackets.forEach((t, i) => {
-          t.show = true
-          this.legendSelectChange(t, 'index')
-        })
-      }
+      this.activeShow = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
       this.init(val, this.showMarkLine)
@@ -409,7 +419,7 @@ export default {
     referenceSelectChange (val) {
       this.echartsLabelValue = val
       this.timer = setTimeout(() => {
-        this.init(this.echartsType)
+        this.init(this.echartsType, val)
       }, 200)
     },
     symbolSizeSortChange (index, time) {
