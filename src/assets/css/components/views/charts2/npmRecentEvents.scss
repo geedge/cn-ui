@@ -26,6 +26,20 @@
       tr td {
         padding: 7.5px 0;
       }
+      .el-table__empty-block .el-table__empty-text {
+        line-height: 25px;
+        .table-no-data {
+          .icon {
+            width: 30px;
+            height: 30px;
+          }
+          .table-no-data__title {
+            font-size: 14px;
+            color: #575757;
+            font-weight: 400;
+          }
+        }
+      }
     }
   }
   .data-recent-table {

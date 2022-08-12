@@ -30,6 +30,15 @@
           </template>
         </el-table-column>
       </template>
+      <template v-slot:empty>
+        <div class="table-no-data">
+          <svg class="icon" aria-hidden="true">
+            <use xlink:href="#cn-icon-a-allclear"></use>
+          </svg>
+          <div class="table-no-data__title">{{ $t('npm.thereNoEvents') }}</div>
+        </div>
+        <!-- <div v-else>&nbsp;</div>-->
+      </template>
     </el-table>
   </div>
 </template>
@@ -52,7 +61,8 @@ export default {
         { label: 'network.severity', prop: 'eventSeverity' },
         { label: 'network.entity', prop: 'eventKey' },
         { label: 'detections.eventType', prop: 'eventType' }
-      ]
+      ],
+      isNoData: true
     }
   },
   methods: {
@@ -60,7 +70,7 @@ export default {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        limit: 1
+        limit: 8
       }
       get(api.npm.events.recentEvents, params).then(res => {
         if (res.code === 200) {

@@ -158,7 +158,11 @@ export const api = {
       appHttpResponseDelay: '/interface/application/performance/overview/appHttpResponseDelay',
       appSslConDelay: '/interface/application/performance/overview/appSslConDelay',
       appTcpLostlenPercent: '/interface/application/performance/overview/appTcpLostlenPercent',
-      appPacketRetransPercent: '/interface/application/performance/overview/appPacketRetransPercent'
+      appPacketRetransPercent: '/interface/application/performance/overview/appPacketRetransPercent',
+      // 各维度下钻会话统计
+      relatedSessions: '/interface/application/performance/relatedSessions',
+      // 各维度下钻流量曲线图
+      trafficGraph: '/interface/application/performance/overview/drilldown/drilldown/dimension/trafficGraph'
     },
     location: {
       // 折线图
@@ -167,7 +171,7 @@ export const api = {
       httpResponseLatency: '/interface/application/performance/location/httpResponseLatency',
       sslHandshakeLatency: '/interface/application/performance/location/sslHandshakeLatency',
       packetsLoss: '/interface/application/performance/location/packetsLoss',
-      packetsRetrains: '/interface/application/performance/location/packetsRetrains',
+      packetsRetrains: '/interface/application/performance/location/packetsRetrains'
     },
     events: {
       list: '/interface/overview/event/list',

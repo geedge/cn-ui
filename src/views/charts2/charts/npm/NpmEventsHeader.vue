@@ -19,11 +19,13 @@ export default {
   name: 'NpmEventsHeader',
   props: {
     chart: Object,
-    timeFilter: Object
+    timeFilter: Object,
+    // type: String
   },
   data () {
     return {
-      chartData: []
+      chartData: [],
+      type: 'severity'
     }
   },
   methods: {
@@ -31,11 +33,24 @@ export default {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        type: 'severity'
+        type: this.type
       }
       get(api.npm.events.list, params).then(res => {
         if (res.code === 200) {
-          this.chartData = res.data.result
+          res.data.result.forEach(t => {
+            if (t.eventSeverity === 'critical') {
+              t.index = 0
+            } else if (t.eventSeverity === 'high') {
+              t.index = 1
+            } else if (t.eventSeverity === 'info') {
+              t.index = 4
+            } else if (t.eventSeverity === 'low') {
+              t.index = 3
+            } else if (t.eventSeverity === 'medium') {
+              t.index = 2
+            }
+          })
+          this.chartData = res.data.result.sort((a, b) => { return a.index - b.index })
         }
       })
     }

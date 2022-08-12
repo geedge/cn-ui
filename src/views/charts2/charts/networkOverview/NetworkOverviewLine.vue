@@ -138,7 +138,6 @@ export default {
       sizes: [3, 4, 6, 8, 9, 10],
       echartsLabelValue: '',
       echartsType: 'Bits/s',
-      echartsData: {},
       dynamicVariable: '',
       showMarkLine: true,
       isNoData: false
@@ -286,7 +285,7 @@ export default {
               }
             ])
           },
-          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1])]),
+          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
           markLine: {
             silent: true,
             lineStyle: {
@@ -464,9 +463,6 @@ export default {
     }
   },
   mounted () {
-    if (this.chart) {
-      this.echartsData = _.cloneDeep(this.chart)
-    }
     this.timer = setTimeout(() => {
       this.init()
     }, 200)

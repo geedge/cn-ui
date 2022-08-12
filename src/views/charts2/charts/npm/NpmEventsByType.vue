@@ -8,15 +8,15 @@
           <div class="npm-event-pie-legend-title">{{ $t('overall.type') }}</div>
           <template v-for="(legend, index) in chartData" :key="index">
             <div class="npm-event-pie-legend-type">
-              <div class="npm-event-pie-legend-type-icon" :class="iconClass(legend)"></div>
-              <div>{{legend.severity}}</div>
+              <div class="npm-event-pie-legend-type-icon" :class="legend.eventSeverity"></div>
+              <div class="npm-event-pie-legend-type-severity">{{legend.eventSeverity}}</div>
             </div>
           </template>
         </div>
         <div class="npm-event-pie-legend">
           <div class="npm-event-pie-legend-title">{{ $t('network.total') }}</div>
           <template v-for="(legend, index) in chartData" :key="index">
-            <div class="npm-event-pie-legend-total">{{legend.total}}</div>
+            <div class="npm-event-pie-legend-total">{{legend.count}}</div>
           </template>
         </div>
       </div>
@@ -26,11 +26,19 @@
 
 <script>
 import { shallowRef } from 'vue'
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
 import * as echarts from 'echarts'
 import { pieChartOption3 } from '@/views/charts2/charts/options/echartOption'
+import { getSecond } from '@/utils/date-util'
 
 export default {
   name: 'NpmEventsByType',
+  props: {
+    chart: Object,
+    timeFilter: Object,
+    type: String
+  },
   setup () {
     return {
       myChart: shallowRef(null)
@@ -38,45 +46,8 @@ export default {
   },
   data () {
     return {
-      chartData: [
-        { value: 1048, severity: 'Critical', total: 323 },
-        { value: 1315, severity: 'High', total: 178 },
-        { value: 5810, severity: 'Medium', total: 223 },
-        { value: 4184, severity: 'Low', total: 178 },
-        { value: 3100, severity: 'Info', total: 323 }
-      ],
+      chartData: [],
       timer: null
-    }
-  },
-  computed: {
-    iconClass () {
-      return function (row) {
-        let className
-        switch (row.severity) {
-          case ('Critical'): {
-            className = 'critical'
-            break
-          }
-          case ('High'): {
-            className = 'high'
-            break
-          }
-          case ('Info'): {
-            className = 'info'
-            break
-          }
-          case ('Medium'): {
-            className = 'medium'
-            break
-          }
-          case ('Low'): {
-            className = 'low'
-            break
-          }
-          default: break
-        }
-        return className
-      }
     }
   },
   methods: {
@@ -95,7 +66,7 @@ export default {
         formatter: function () {
           let num = 0
           _this.chartData.forEach(t => {
-            num += t.total
+            num += t.count
           })
           return num
         }
@@ -110,6 +81,37 @@ export default {
       })
       this.myChart.setOption(this.chartOption)
     },
+    eventsVyTypeData () {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        type: 'severity'
+      }
+      get(api.npm.events.list, params).then(res => {
+        if (res.code === 200) {
+          res.data.result.forEach(t => {
+            if (t.eventSeverity === 'critical') {
+              t.index = 0
+            } else if (t.eventSeverity === 'high') {
+              t.index = 1
+            } else if (t.eventSeverity === 'info') {
+              t.index = 4
+            } else if (t.eventSeverity === 'low') {
+              t.index = 3
+            } else if (t.eventSeverity === 'medium') {
+              t.index = 2
+            }
+          })
+          this.chartData = res.data.result.sort((a, b) => { return a.index - b.index })
+          this.chartData = this.chartData.map(t => {
+            return {
+              ...t,
+              value: t.count
+            }
+          })
+        }
+      })
+    },
     resize () {
       this.myChart.resize()
     }
@@ -118,6 +120,7 @@ export default {
     this.timer = setTimeout(() => {
       this.init()
     }, 100)
+    this.eventsVyTypeData()
     window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {

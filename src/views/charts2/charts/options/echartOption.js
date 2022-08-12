@@ -320,3 +320,74 @@ export const npmLineChartOption = {
     }
   ]
 }
+
+export const trafficLineChartOption = {
+  color: chartColor3,
+  tooltip: {
+    trigger: 'axis',
+    className: 'echarts-tooltip echarts-tooltip-dark'
+  },
+  legend: {
+    show: true,
+    left: '0.8%',
+    top: '4%',
+    padding: 2,
+    orient: 'horizontal',
+    icon: 'circle',
+    itemGap: 20,
+    itemWidth: 8,
+    textStyle: {
+      padding: [0, 0, 0, 2],
+      fontSize: 12,
+      color: '#717171',
+      fontWeight: 400,
+      fontFamily: 'NotoSansSChineseRegular'
+    }
+  },
+  grid: {
+    top: '21%',
+    left: '2%',
+    right: '1%',
+    bottom: 20,
+    containLabel: true
+  },
+  xAxis: [
+    {
+      type: 'time',
+      splitNumber: 12,
+      axisLabel: {
+        formatter: function (value) {
+          const data = new Date(value)
+          const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+          const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+          return h + ':' + m
+        }
+      }
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      splitLine: {
+        show: false
+      },
+      axisLabel: {
+        formatter: function (value) {
+          return unitConvert(value, unitTypes.number).join('')
+        }
+      }
+    }
+  ],
+  series: [
+    {
+      type: 'line',
+      symbol: 'circle',
+      smooth: true,
+      showSymbol: false,
+      emphasis: {
+        focus: 'series'
+      },
+      data: []
+    }
+  ]
+}

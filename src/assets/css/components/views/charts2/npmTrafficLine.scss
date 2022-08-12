@@ -1,0 +1,32 @@
+.npm-traffic-line {
+  height: 100%;
+  width: 100%;
+  .npm-traffic-line-title {
+    font-size: 14px;
+    color: #353636;
+    font-weight: 600;
+    height: 32px;
+  }
+  .npm-traffic-line-body {
+    border: 1px solid #E2E5EC;
+    border-radius: 4px;
+    height: calc(100% - 32px);
+    width: 100%;
+    .chart-drawing {
+      height: 100%;
+      width: 100%;
+      .echarts-tooltip.echarts-tooltip-dark {
+        .cn-chart-tooltip {
+          display: flex;
+          justify-content: space-between;
+          .cn-chart-tooltip-value.cn-chart-tooltip__color {
+            font-size: 12px;
+            color: #353636;
+            line-height: 21px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}

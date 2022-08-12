@@ -1,0 +1,86 @@
+.npm-sessions {
+  height: 100%;
+  width: 100%;
+  .npm-sessions-title {
+    font-size: 14px;
+    color: #353636;
+    font-weight: 500;
+  }
+  .npm-sessions-div {
+    display: flex;
+    margin: 10px 0 10px 0;
+    width: 100%;
+    height: 12px;
+    .npm-sessions-div-red {
+      height: 100%;
+      background: #E26154;
+      border: 1px solid #E26154;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+      border-left: none;
+    }
+    .npm-sessions-div-green {
+      height: 100%;
+      background: #7E9F54;
+      border: 1px solid #7E9F54;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      border-right: none;
+    }
+  }
+
+  .npm-sessions-body {
+    display: flex;
+    justify-content: space-between;
+    .npm-sessions-body-left {
+      display: flex;
+      .npm-sessions-as-clients.right {
+        margin-right: 45px;
+      }
+      .npm-sessions-as-clients {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .npm-sessions-as-client {
+          display: flex;
+          align-items: center;
+          .npm-sessions-as-client-i18n {
+            ont-size: 12px;
+            color: #717171;
+            font-weight: 400;
+          }
+          .npm-sessions-as-client-percent {
+            font-size: 18px;
+            color: #353636;
+            font-weight: 700;
+          }
+          .npm-sessions-as-client-green,.npm-sessions-as-client-red {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+          }
+          .npm-sessions-as-client-green {
+            background: green;
+          }
+          .npm-sessions-as-client-red {
+            background: red;
+          }
+        }
+      }
+    }
+    .npm-sessions-body-right {
+      text-align: right;
+      .npm-sessions-Progress-number {
+        font-size: 14px;
+        color: #353636;
+        font-weight: 700;
+      }
+      .npm-sessions-Progress-unit {
+        font-size: 12px;
+        color: #717171;
+        font-weight: 400;
+      }
+    }
+
+  }
+}
