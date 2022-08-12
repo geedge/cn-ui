@@ -13,63 +13,68 @@
     border: 1px solid #E2E5EC;
     border-radius: 4px;
     display: flex;
-    align-items: center;
-    .npm-event-pie-legends {
+    .npm-event-pies {
+      height: 100%;
+      width: 100%;
       display: flex;
-      width: 40%;
-      justify-content: space-around;
-      .npm-event-pie-legend {
-        .npm-event-pie-legend-title {
-          font-size: 12px;
-          color: #575757;
-          line-height: 12px;
-          font-weight: 400;
-          margin-bottom: 15px;
-        }
-        .npm-event-pie-legend-type {
-          font-size: 12px;
-          color: #353636;
-          line-height: 12px;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          margin-bottom: 11px;
-          .npm-event-pie-legend-type-icon {
-            width: 8px;
-            height: 8px;
-            margin-right: 5px;
+      align-items: center;
+      .chart-drawing {
+        height: 100%;
+        width: 50%;
+      }
+      .npm-event-pie-legends {
+        display: flex;
+        width: 40%;
+        justify-content: space-around;
+        .npm-event-pie-legend {
+          .npm-event-pie-legend-title {
+            font-size: 12px;
+            color: #575757;
+            line-height: 12px;
+            font-weight: 400;
+            margin-bottom: 15px;
           }
-          .npm-event-pie-legend-type-severity {
-            text-transform: capitalize;
+          .npm-event-pie-legend-type {
+            font-size: 12px;
+            color: #353636;
+            line-height: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            margin-bottom: 11px;
+            .npm-event-pie-legend-type-icon {
+              width: 8px;
+              height: 8px;
+              margin-right: 5px;
+            }
+            .npm-event-pie-legend-type-severity {
+              text-transform: capitalize;
+            }
+            .critical {
+              background: rgb(226,97,84);
+            }
+            .high {
+              background: rgb(228,142,77);
+            }
+            .info {
+              background: rgb(136,175,101);
+            }
+            .medium {
+              background: rgb(231,179,78);
+            }
+            .low {
+              background: rgb(218,199,75);
+            }
           }
-          .critical {
-            background: rgb(226,97,84);
+          .npm-event-pie-legend-total {
+            font-size: 12px;
+            color: #353636;
+            line-height: 12px;
+            font-weight: 600;
+            margin-bottom: 11px;
           }
-          .high {
-            background: rgb(228,142,77);
-          }
-          .info {
-            background: rgb(136,175,101);
-          }
-          .medium {
-            background: rgb(231,179,78);
-          }
-          .low {
-            background: rgb(218,199,75);
-          }
-        }
-        .npm-event-pie-legend-total {
-          font-size: 12px;
-          color: #353636;
-          line-height: 12px;
-          font-weight: 600;
-          margin-bottom: 11px;
         }
       }
-    }
-    .chart-drawing {
-      height: 100%;
-      width: 50%;
     }
   }
 }

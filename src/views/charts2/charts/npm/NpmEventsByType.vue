@@ -2,22 +2,25 @@
   <div class="npm-event">
     <div class="npm-event-title">{{$t('network.eventByType')}}</div>
     <div class="npm-event-pie">
-      <div class="chart-drawing" id="chart"></div>
-      <div class="npm-event-pie-legends">
-        <div class="npm-event-pie-legend">
-          <div class="npm-event-pie-legend-title">{{ $t('overall.type') }}</div>
-          <template v-for="(legend, index) in chartData" :key="index">
-            <div class="npm-event-pie-legend-type">
-              <div class="npm-event-pie-legend-type-icon" :class="legend.eventSeverity"></div>
-              <div class="npm-event-pie-legend-type-severity">{{legend.eventSeverity}}</div>
-            </div>
-          </template>
-        </div>
-        <div class="npm-event-pie-legend">
-          <div class="npm-event-pie-legend-title">{{ $t('network.total') }}</div>
-          <template v-for="(legend, index) in chartData" :key="index">
-            <div class="npm-event-pie-legend-total">{{legend.count}}</div>
-          </template>
+      <chart-no-data v-if="isNoData"></chart-no-data>
+      <div class="npm-event-pies" v-else>
+        <div class="chart-drawing" id="chart"></div>
+        <div class="npm-event-pie-legends">
+          <div class="npm-event-pie-legend">
+            <div class="npm-event-pie-legend-title">{{ $t('overall.type') }}</div>
+            <template v-for="(legend, index) in chartData" :key="index">
+              <div class="npm-event-pie-legend-type">
+                <div class="npm-event-pie-legend-type-icon" :class="legend.eventSeverity"></div>
+                <div class="npm-event-pie-legend-type-severity">{{legend.eventSeverity}}</div>
+              </div>
+            </template>
+          </div>
+          <div class="npm-event-pie-legend">
+            <div class="npm-event-pie-legend-title">{{ $t('network.total') }}</div>
+            <template v-for="(legend, index) in chartData" :key="index">
+              <div class="npm-event-pie-legend-total">{{legend.count}}</div>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -31,6 +34,7 @@ import { api } from '@/utils/api'
 import * as echarts from 'echarts'
 import { pieChartOption3 } from '@/views/charts2/charts/options/echartOption'
 import { getSecond } from '@/utils/date-util'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 
 export default {
   name: 'NpmEventsByType',
@@ -38,6 +42,9 @@ export default {
     chart: Object,
     timeFilter: Object,
     type: String
+  },
+  components: {
+    ChartNoData
   },
   setup () {
     return {
@@ -47,7 +54,8 @@ export default {
   data () {
     return {
       chartData: [],
-      timer: null
+      timer: null,
+      isNoData: false
     }
   },
   methods: {
@@ -89,6 +97,9 @@ export default {
       }
       get(api.npm.events.list, params).then(res => {
         if (res.code === 200) {
+          if (res.data.result.length <= 0) {
+            this.isNoData = true
+          }
           res.data.result.forEach(t => {
             if (t.eventSeverity === 'critical') {
               t.index = 0
@@ -109,6 +120,9 @@ export default {
               value: t.count
             }
           })
+          this.init()
+        } else {
+          this.isNoData = true
         }
       })
     },
@@ -118,9 +132,8 @@ export default {
   },
   mounted () {
     this.timer = setTimeout(() => {
-      this.init()
+      this.eventsVyTypeData()
     }, 100)
-    this.eventsVyTypeData()
     window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {

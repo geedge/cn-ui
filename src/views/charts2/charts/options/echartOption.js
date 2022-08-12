@@ -256,16 +256,6 @@ export const appListChartOption = {
 }
 
 export const npmLineChartOption = {
-  title: {
-    text: '',
-    top: 14.5,
-    left: 20,
-    textStyle: {
-      fontSize: 14,
-      color: '#353636',
-      fontWeight: 500
-    }
-  },
   tooltip: {
     trigger: 'axis',
     className: 'echarts-tooltip echarts-tooltip-dark'

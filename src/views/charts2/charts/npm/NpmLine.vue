@@ -1,12 +1,37 @@
 <template>
   <div class="npm-line">
-    <div class="npm-line-header" v-if="chartData.params && chartData.params.showLegend">
-      <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
-        <div class="npm-line-header-icon" :class="'icon' + index"></div>
-        <div class="npm-line-header-value">{{$t(item.legend)}}</div>
+    <template v-if="chartData.id === 11">
+      <div class="npm-line-header">
+        <div class="npm-line-header-title">{{chartData.name}}</div>
+        <div class="npm-line-header-rights" v-if="chartData.params && chartData.params.showLegend">
+          <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
+            <div class="npm-line-header-icon" :class="'icon' + index"></div>
+            <div class="npm-line-header-value">{{$t(item.legend)}}</div>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    </template>
+    <template v-if="chartData.id === 12">
+      <div class="npm-line-title">{{chartData.name}}</div>
+      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    </template>
+    <template v-if="chartData.id === 13">
+      <div class="npm-line-title">{{chartData.name}}</div>
+      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    </template>
+    <template v-if="chartData.id === 14">
+      <div class="npm-line-title">{{chartData.name}}</div>
+      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    </template>
+    <template v-if="chartData.id === 15">
+      <div class="npm-line-title">{{chartData.name}}</div>
+      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    </template>
+    <template v-if="chartData.id === 16">
+      <div class="npm-line-title">{{chartData.name}}</div>
+      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    </template>
   </div>
 </template>
 
@@ -16,11 +41,18 @@ import { npmLineChartOption } from '@/views/charts2/charts/options/echartOption.
 import { shallowRef } from 'vue'
 import _ from 'lodash'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
+import { getSecond } from '@/utils/date-util'
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
 
 export default {
   name: 'NpmLine',
   props: {
-    chart: Object
+    chart: Object,
+    timeFilter: Object,
+    // side: String,
+    // country: String,
+    // province: String
   },
   setup () {
     return {
@@ -36,32 +68,49 @@ export default {
         { legend: 'network.outbound', index: 2, invertTab: true }
       ],
       timer: null,
-      myChartArray: []
+      myChartArray: [],
+      side: 'server',
+      country: '北京',
+      province: '北京'
     }
   },
   methods: {
     init () {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        side: this.side,
+        country: this.country,
+        province: this.province
+      }
+      console.log(this.chartData)
+      if (this.chartData.id === 11) {
+        get(api.npm.location.thoughput, params).then(res => {
+          if (res.code === 200) {
+            console.log(res)
+          }
+        })
+      }
+      this.echartsInit()
+    },
+    echartsInit () {
       const dom = document.getElementById(`chart${this.chartData.name}`)
       this.myChart = echarts.init(dom)
       this.chartOption = npmLineChartOption
       const seriesTemplate = this.chartOption.series[0]
-      this.chartOption.title.text = this.chartData.i18n ? this.chartData.i18n : this.chartData.name
       this.chartOption.color = this.chartData.params.color
       let result = [
         {
-          values: [[1435781430781, '1'], [1435781431781, '2']],
-          legend: 'network.total',
-          color: '#749F4D'
+          type: 'inboundBytesRate',
+          values: [[1435781430781, '3'], [1435781431781, '4']]
         },
         {
-          values: [[1435781430781, '1'], [1435781431781, '2']],
-          legend: 'network.inbound',
-          color: '#98709B'
+          type: 'totalBytesRate',
+          values: [[1435781430781, '5'], [1435781431781, '6']]
         },
         {
-          values: [[1435781430781, '1'], [1435781431781, '2']],
-          legend: 'network.outbound',
-          color: '#E5A219'
+          type: 'outboundBytesRate',
+          values: [[1435781430781, '2'], [1435781431781, '9']]
         }
       ]
       result = result.filter(item => this.chartData.params.color.indexOf(item.color) > -1)
