@@ -235,7 +235,7 @@ export default {
               }
             })
             this.tableData = tableData
-            console.info(tableData)
+            // console.info(tableData)
           })
         }
       })

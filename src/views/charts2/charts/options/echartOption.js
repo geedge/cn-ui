@@ -264,9 +264,9 @@ export const npmLineChartOption = {
     show: false
   },
   grid: {
-    top: '21%',
+    top: '13%',
     left: '4.6%',
-    right: '4%',
+    right: '3%',
     bottom: 15,
     containLabel: true
   },

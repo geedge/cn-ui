@@ -2,17 +2,28 @@
   height: 100%;
   width: 100%;
   border: 1px solid #f0f0f0;
-  position: relative;
+  .npm-line-title {
+    font-size: 14px;
+    color: #353636;
+    font-weight: 500;
+    margin: 20px 0 0 20px;
+  }
   .npm-line-header {
-    position: absolute;
     display: flex;
-    top: 21px;
-    right: 23px;
-    z-index: 1;
-    .npm-line-header-right {
+    margin: 20px 20px 0 20px;
+    justify-content: space-between;
+    .npm-line-header-title {
+      font-size: 14px;
+      color: #353636;
+      font-weight: 500;
+    }
+    .npm-line-header-rights {
       display: flex;
-      margin-right: 10px;
-      align-items: center;
+      .npm-line-header-right {
+        display: flex;
+        margin-right: 10px;
+        align-items: center;
+      }
     }
     .npm-line-header-right:last-child {
       margin-right: 0;
@@ -48,7 +59,7 @@
     }
   }
   .chart-drawing {
-    height: 100%;
+    height: calc(100% - 41px);
     width: 100%;
     .echarts-tooltip.echarts-tooltip-dark {
       .cn-chart-tooltip {

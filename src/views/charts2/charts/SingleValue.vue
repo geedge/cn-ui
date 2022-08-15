@@ -1,4 +1,4 @@
-<template>
+<template v-if="npmNetworkCycleData.length > 0 && npmNetworkLastCycleData.length > 0">
   <div class="single-value" v-for="(npm, index) in npmNetworkData" :key="index">
     <template v-if="index === 0">
       <div class="single-value__title">{{$t(npmNetworkName[index].name)}}</div>
@@ -102,19 +102,33 @@
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { getChainRatio } from '@/utils/tools'
+import { getSecond } from '@/utils/date-util'
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
 export default {
   name: 'SingleValue',
   props: {
     npmNetworkCycleData: Array,
-    npmNetworkLastCycleData: Array,
-    npmNetworkName: Array
+    npmNetworkName: Array,
+    timeFilter: Object
   },
   data () {
     return {
       unitTypes,
       unitConvert,
       npmNetworkData: [],
-      timer: null
+      npmNetworkLastCycleData: []
+    }
+  },
+  watch: {
+    npmNetworkCycleData: {
+      deep: true,
+      immediate: true,
+      handler (n) {
+        if (n) {
+          this.npmNetworkLastCycleQuery()
+        }
+      }
     }
   },
   methods: {
@@ -132,17 +146,27 @@ export default {
         })
       })
       this.npmNetworkData = cycle
-    }
-  },
-  mounted () {
-    this.timer = setTimeout(() => {
-      if (this.npmNetworkCycleData.length > 0 && this.npmNetworkLastCycleData.length > 0) {
-        this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData)
+    },
+    npmNetworkLastCycleQuery () {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        cycle: 1
       }
-    }, 500)
-  },
-  beforeUnmount () {
-    clearTimeout(this.timer)
+      const tcp = get(api.npm.overview.tcpSessionDelay, params)
+      const http = get(api.npm.overview.httpResponseDelay, params)
+      const ssl = get(api.npm.overview.sslConDelay, params)
+      const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
+      const packetPercent = get(api.npm.overview.packetRetransPercent, params)
+      Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+        res.forEach(t => {
+          if (t.code === 200) {
+            this.npmNetworkLastCycleData.push(t.data.result)
+            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData)
+          }
+        })
+      })
+    }
   }
 }
 </script>

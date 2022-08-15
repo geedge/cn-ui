@@ -2,8 +2,8 @@
   <div class="npm-network-quantity">
     <single-value
       :npm-network-cycle-data="npmNetworkCycleData"
-      :npm-network-last-cycle-data="npmNetworkLastCycleData"
       :npm-network-name="npmNetworkName"
+      :time-filter="timeFilter"
     ></single-value>
   </div>
 </template>
@@ -30,8 +30,7 @@ export default {
         { name: 'networkAppPerformance.packetLoss' },
         { name: 'overall.packetRetrans' }
       ],
-      npmNetworkCycleData: [],
-      npmNetworkLastCycleData: []
+      npmNetworkCycleData: []
     }
   },
   methods: {
@@ -53,30 +52,11 @@ export default {
           }
         })
       })
-    },
-    npmNetworkLastCycleQuery () {
-      const params = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        cycle: 1
-      }
-      const tcp = get(api.npm.overview.tcpSessionDelay, params)
-      const http = get(api.npm.overview.httpResponseDelay, params)
-      const ssl = get(api.npm.overview.sslConDelay, params)
-      const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
-      const packetPercent = get(api.npm.overview.packetRetransPercent, params)
-      Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
-        res.forEach(t => {
-          if (t.code === 200) {
-            this.npmNetworkLastCycleData.push(t.data.result)
-          }
-        })
-      })
     }
+
   },
   mounted () {
     this.npmNetworkCycleQuery()
-    this.npmNetworkLastCycleQuery()
   }
 }
 </script>

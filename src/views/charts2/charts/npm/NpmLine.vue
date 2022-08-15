@@ -2,35 +2,41 @@
   <div class="npm-line">
     <template v-if="chartData.id === 11">
       <div class="npm-line-header">
-        <div class="npm-line-header-title">{{chartData.name}}</div>
-        <div class="npm-line-header-rights" v-if="chartData.params && chartData.params.showLegend">
+        <div class="npm-line-header-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+        <div class="npm-line-header-rights" v-if="chartData.params && chartData.params.showLegend && !throughputName">
           <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
             <div class="npm-line-header-icon" :class="'icon' + index"></div>
             <div class="npm-line-header-value">{{$t(item.legend)}}</div>
           </div>
         </div>
       </div>
-      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <chart-no-data v-if="throughputName"></chart-no-data>
+      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-if="chartData.id === 12">
-      <div class="npm-line-title">{{chartData.name}}</div>
-      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    <template v-else-if="chartData.id === 12">
+      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <chart-no-data v-if="tcpName"></chart-no-data>
+      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-if="chartData.id === 13">
-      <div class="npm-line-title">{{chartData.name}}</div>
-      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    <template v-else-if="chartData.id === 13">
+      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <chart-no-data v-if="httpName"></chart-no-data>
+      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-if="chartData.id === 14">
-      <div class="npm-line-title">{{chartData.name}}</div>
-      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    <template v-else-if="chartData.id === 14">
+      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <chart-no-data v-if="sslName"></chart-no-data>
+      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-if="chartData.id === 15">
-      <div class="npm-line-title">{{chartData.name}}</div>
-      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    <template v-else-if="chartData.id === 15">
+      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <chart-no-data v-if="packetsLossName"></chart-no-data>
+      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-if="chartData.id === 16">
-      <div class="npm-line-title">{{chartData.name}}</div>
-      <div class="chart-drawing" :id="`chart${chartData.name}`"></div>
+    <template v-else-if="chartData.id === 16">
+      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <chart-no-data v-if="packetsRetrainsName"></chart-no-data>
+      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
   </div>
 </template>
@@ -44,6 +50,8 @@ import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
+import { throughputData, tcpData, httpData, sslData, packetsLossData, packetsRetrainsData } from '@/views/charts2/charts/npmLineData'
 
 export default {
   name: 'NpmLine',
@@ -54,6 +62,9 @@ export default {
     // country: String,
     // province: String
   },
+  components: {
+    ChartNoData
+  },
   setup () {
     return {
       myChart: shallowRef()
@@ -63,15 +74,26 @@ export default {
     return {
       chartData: {},
       chartOptionLineData: [
-        { legend: 'network.total', index: 0, invertTab: true },
-        { legend: 'network.inbound', index: 1, invertTab: true },
-        { legend: 'network.outbound', index: 2, invertTab: true }
+        { legend: 'network.total', index: 0, invertTab: true, color: '#749F4D' },
+        { legend: 'network.inbound', index: 1, invertTab: true, color: '#98709B' },
+        { legend: 'network.outbound', index: 2, invertTab: true, color: '#E5A219' }
+      ],
+      npmLineColor: [
+        { legend: '', color: '#749F4D' },
+        { legend: '', color: '#98709B' },
+        { legend: '', color: '#E5A219' }
       ],
       timer: null,
       myChartArray: [],
       side: 'server',
       country: '北京',
-      province: '北京'
+      province: '北京',
+      throughputName: '',
+      tcpName: '',
+      httpName: '',
+      sslName: '',
+      packetsLossName: '',
+      packetsRetrainsName: ''
     }
   },
   methods: {
@@ -83,60 +105,97 @@ export default {
         country: this.country,
         province: this.province
       }
-      console.log(this.chartData)
       if (this.chartData.id === 11) {
+        throughputData.forEach((t, i) => {
+          if (t.type === 'totalBytesRate') {
+            this.chartOptionLineData[i].values = t.values
+          } else if (t.type === 'inboundBytesRate') {
+            this.chartOptionLineData[i].values = t.values
+          } else if (t.type === 'outboundBytesRate') {
+            this.chartOptionLineData[i].values = t.values
+          }
+        })
+        const result = this.chartOptionLineData.filter(t => this.chartData.params.color.indexOf(t.color) > -1)
         get(api.npm.location.thoughput, params).then(res => {
           if (res.code === 200) {
-            console.log(res)
+            this.echartsInit(result, this.chartData.name, this.chartData.params.unitType)
+          } else {
+            this.throughputName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+          }
+        })
+      } else if (this.chartData.id === 12) {
+        get(api.npm.location.tcpConnectionEstablishLatency, params).then(res => {
+          if (res.code === 200) {
+            this.echartsInit(tcpData, this.chartData.name, this.chartData.params.unitType)
+          } else {
+            this.tcpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+          }
+        })
+      } else if (this.chartData.id === 13) {
+        get(api.npm.location.httpResponseLatency, params).then(res => {
+          if (res.code === 200) {
+            this.echartsInit(httpData, this.chartData.name, this.chartData.params.unitType)
+          } else {
+            this.httpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+          }
+        })
+      } else if (this.chartData.id === 14) {
+        get(api.npm.location.sslHandshakeLatency, params).then(res => {
+          if (res.code === 200) {
+            this.echartsInit(sslData, this.chartData.name, this.chartData.params.unitType)
+          } else {
+            this.sslName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+          }
+        })
+      } else if (this.chartData.id === 15) {
+        get(api.npm.location.packetsLoss, params).then(res => {
+          if (res.code === 200) {
+            this.echartsInit(packetsLossData, this.chartData.name, this.chartData.params.unitType)
+          } else {
+            this.packetsLossName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+          }
+        })
+      } else if (this.chartData.id === 16) {
+        get(api.npm.location.packetsRetrains, params).then(res => {
+          if (res.code === 200) {
+            this.echartsInit(packetsRetrainsData, this.chartData.name, this.chartData.params.unitType)
+          } else {
+            this.packetsRetrainsName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
         })
       }
-      this.echartsInit()
     },
-    echartsInit () {
-      const dom = document.getElementById(`chart${this.chartData.name}`)
-      this.myChart = echarts.init(dom)
-      this.chartOption = npmLineChartOption
-      const seriesTemplate = this.chartOption.series[0]
-      this.chartOption.color = this.chartData.params.color
-      let result = [
-        {
-          type: 'inboundBytesRate',
-          values: [[1435781430781, '3'], [1435781431781, '4']]
-        },
-        {
-          type: 'totalBytesRate',
-          values: [[1435781430781, '5'], [1435781431781, '6']]
-        },
-        {
-          type: 'outboundBytesRate',
-          values: [[1435781430781, '2'], [1435781431781, '9']]
-        }
-      ]
-      result = result.filter(item => this.chartData.params.color.indexOf(item.color) > -1)
-      this.chartOption.series = result.map((t, i) => {
-        return {
-          ...seriesTemplate,
-          name: t.legend,
-          stack: this.chartData.params.isStack ? 'network.total' : '',
-          lineStyle: {
-            width: 1
-          },
-          areaStyle: {
-            opacity: 0.1
-          },
-          data: t.values.map((v) => [Number(v[0]) * 1000, Number(v[1]), this.chartData.params.unitType])
-        }
-      })
-      this.chartOption.tooltip.formatter = (params) => {
-        params.forEach(t => {
-          t.seriesName = this.$t(t.seriesName)
+    echartsInit (data, name, type) {
+      const dom = document.getElementById(`chart${name}`)
+      if (dom) {
+        this.myChart = echarts.init(dom)
+        this.chartOption = npmLineChartOption
+        const seriesTemplate = this.chartOption.series[0]
+        this.chartOption.color = this.chartData.params.color
+        this.chartOption.series = data.map((t, i) => {
+          return {
+            ...seriesTemplate,
+            name: t.legend ? t.legend : t.type,
+            stack: this.chartData.params.isStack ? 'network.total' : '',
+            lineStyle: {
+              width: 1
+            },
+            areaStyle: {
+              opacity: 0.1
+            },
+            data: t.values.map((v) => [Number(v[0]) * 1000, Number(v[1]), type])
+          }
         })
-        const str = stackedLineTooltipFormatter(params)
-        return str
+        this.chartOption.tooltip.formatter = (params) => {
+          params.forEach(t => {
+            t.seriesName = this.$t(t.seriesName)
+          })
+          const str = stackedLineTooltipFormatter(params)
+          return str
+        }
+        this.myChartArray.push(this.myChart)
+        this.myChart.setOption(this.chartOption)
       }
-      this.myChartArray.push(this.myChart)
-      this.myChart.setOption(this.chartOption)
     },
     dispatchLegendSelectAction (name) {
       this.myChart.dispatchAction({
