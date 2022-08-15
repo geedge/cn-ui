@@ -46,7 +46,6 @@ export const packetsRetrainsData = [
 
 export const npmTrafficLine = [
   {
-    type: 'bytes',
     totalBitsRate: {
       values: [
         [
@@ -109,87 +108,6 @@ export const npmTrafficLine = [
     },
     other: {
       values: [[1435781430781, '1'], [1435781431781, '1']]
-    }
-  },
-  {
-    type: 'packets',
-    totalPacketsRate: {
-      values: [
-        [
-          1435781430781,
-          '1'
-        ],
-        [
-          1435781431781,
-          '1'
-        ]
-      ]
-    },
-    inboundPacketsRate: {
-      values: [
-        [
-          1435781430781,
-          '1'
-        ],
-        [
-          1435781431781,
-          '1'
-        ]
-      ]
-    },
-    outboundPacketsRate: {
-      values: [
-        [
-          1435781430781,
-          '1'
-        ],
-        [
-          1435781431781,
-          '1'
-        ]
-      ]
-    },
-    internalPacketsRate: {
-      values: [
-        [
-          1435781430781,
-          '1'
-        ],
-        [
-          1435781431781,
-          '1'
-        ]
-      ]
-    },
-    externalPacketsRate: {
-      values: [
-        [
-          1435781430781,
-          '1'
-        ],
-        [
-          1435781431781,
-          '1'
-        ]
-      ]
-    },
-    other: {
-      values: [[1435781430781, '1'], [1435781431781, '1']]
-    }
-  },
-  {
-    type: 'sessions',
-    totalSessionsRate: {
-      values: [
-        [
-          1435781430781,
-          '1'
-        ],
-        [
-          1435781431781,
-          '1'
-        ]
-      ]
     }
   }
 ]

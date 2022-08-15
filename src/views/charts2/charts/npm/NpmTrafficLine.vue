@@ -21,6 +21,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import { npmTrafficLine } from '@/views/charts2/charts/npmLineData'
 import _ from 'lodash'
 export default {
   name: 'NpmTrafficLine',
@@ -54,7 +55,7 @@ export default {
         { name: 'network.internal', show: true, positioning: 3, data: [], unitType: '' },
         { name: 'network.through', show: true, positioning: 4, data: [], unitType: '' },
         { name: 'network.other', show: true, positioning: 5, data: [], unitType: '' }
-      ],
+      ]
     }
   },
   methods: {
@@ -70,113 +71,40 @@ export default {
       //   params.q = condition
       //   params.type = this.type
       // }
-      // const result = npmTrafficLine
-      // result.forEach((t, i) => {
-      //   if (t.type === 'bytes') {
-      //     const mpackets = _.cloneDeep(this.mpackets)
-      //     mpackets[0].analysis = t.totalBitsRate.analysis
-      //     mpackets[1].analysis = t.inboundBitsRate.analysis
-      //     mpackets[2].analysis = t.outboundBitsRate.analysis
-      //     mpackets[3].analysis = t.internalBitsRate.analysis
-      //     mpackets[4].analysis = t.externalBitsRate.analysis
-      //     mpackets[5].analysis = t.other.analysis
-      //     mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-      //     mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-      //     mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-      //     mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-      //     mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
-      //     mpackets[5].data = t.other.values ? t.other.values : []
-      //     this.mpackets = mpackets
-      //     this.echartsInit(this.mpackets)
-      //   } else if (t.type === 'packets') {
-      //     const mpackets = _.cloneDeep(this.mpackets)
-      //     mpackets[0].analysis = t.totalPacketsRate.analysis
-      //     mpackets[1].analysis = t.inboundPacketsRate.analysis
-      //     mpackets[2].analysis = t.outboundPacketsRate.analysis
-      //     mpackets[3].analysis = t.internalPacketsRate.analysis
-      //     mpackets[4].analysis = t.externalPacketsRate.analysis
-      //     mpackets[5].analysis = t.other.analysis
-      //     mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
-      //     mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
-      //     mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
-      //     mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-      //     mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
-      //     mpackets[5].data = t.other.values ? t.other.values : []
-      //     this.mpackets = mpackets
-      //     this.echartsInit(this.mpackets)
-      //   } else if (t.type === 'sessions') {
-      //     const mpackets = _.cloneDeep(this.mpackets)
-      //     mpackets[0].analysis = t.totalSessionsRate.analysis
-      //     mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
-      //     this.mpackets = mpackets
-      //     this.echartsInit(this.mpackets)
-      //   }
-      // })
       get(api.npm.overview.trafficGraph, params).then((res) => {
         if (res.code === 200) {
           // res.data.result.length = 0
+          res.data.result = npmTrafficLine
           if (res.data.result.length === 0) {
             this.isNoData = true
             return
           }
           res.data.result.forEach((t, i) => {
-            if (t.type === 'bytes') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalBitsRate.analysis
-              mpackets[1].analysis = t.inboundBitsRate.analysis
-              mpackets[2].analysis = t.outboundBitsRate.analysis
-              mpackets[3].analysis = t.internalBitsRate.analysis
-              mpackets[4].analysis = t.externalBitsRate.analysis
-              mpackets[5].analysis = t.other.analysis
-              mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-              mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-              mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-              mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-              mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
-              mpackets[5].data = t.other.values ? t.other.values : []
-              mpackets.forEach(e => {
-                e.unitType = 'bps'
-                if (e.name !== 'network.total' && e.analysis.avg == 0) {
-                  e.show = false
-                }
-              })
-              this.mpackets = mpackets
-              this.echartsInit(this.mpackets)
-            } else if (t.type === 'packets') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalPacketsRate.analysis
-              mpackets[1].analysis = t.inboundPacketsRate.analysis
-              mpackets[2].analysis = t.outboundPacketsRate.analysis
-              mpackets[3].analysis = t.internalPacketsRate.analysis
-              mpackets[4].analysis = t.externalPacketsRate.analysis
-              mpackets[5].analysis = t.other.analysis
-              mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
-              mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
-              mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
-              mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-              mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
-              mpackets[5].data = t.other.values ? t.other.values : []
-              mpackets.forEach(e => {
-                e.unitType = 'packets/s'
-                if (e.name !== 'network.total' && e.analysis.avg == 0) {
-                  e.show = false
-                }
-              })
-              this.mpackets = mpackets
-              this.echartsInit(this.mpackets)
-            } else if (t.type === 'sessions') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalSessionsRate.analysis
-              mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
-              mpackets.forEach((e, i) => {
-                if (i !== 0) {
-                  e.show = false
-                }
-                e.unitType = 'sessions/s'
-              })
-              this.mpackets = mpackets
-              this.echartsInit(this.mpackets)
-            }
+            const mpackets = _.cloneDeep(this.mpackets)
+            mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
+            mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
+            mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
+            mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
+            mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
+            mpackets[5].data = t.other.values ? t.other.values : []
+            this.mpackets = mpackets
+            this.echartsInit(this.mpackets)
+            // else if (t.type === 'packets') {
+            //   const mpackets = _.cloneDeep(this.mpackets)
+            //   mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
+            //   mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
+            //   mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
+            //   mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
+            //   mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
+            //   mpackets[5].data = t.other.values ? t.other.values : []
+            //   this.mpackets = mpackets
+            //   this.echartsInit(this.mpackets)
+            // } else if (t.type === 'sessions') {
+            //   const mpackets = _.cloneDeep(this.mpackets)
+            //   mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
+            //   this.mpackets = mpackets
+            //   this.echartsInit(this.mpackets)
+            // }
           })
         }
       })
