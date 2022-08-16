@@ -159,13 +159,16 @@
           justify-content: center;
           position: relative;
           top: 50%;
-          color: #fff;
+          color: #717171;
           margin-top: -10px;
+          background-color: rgba(113, 113, 113, 0.12);
         }
         .app-card__body-content-percent.red {
+          color: #fff;
           background-color: rgb(226, 97, 84);
         }
         .app-card__body-content-percent.green {
+          color: #fff;
           background-color: rgb(126, 159, 84);
         }
       }

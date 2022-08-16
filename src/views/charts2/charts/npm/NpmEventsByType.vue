@@ -7,7 +7,7 @@
         <div class="chart-drawing" id="chart"></div>
         <div class="npm-event-pie-legends">
           <div class="npm-event-pie-legend">
-            <div class="npm-event-pie-legend-title">{{ $t('overall.type') }}</div>
+            <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('overall.type') }}</div>
             <template v-for="(legend, index) in chartData" :key="index">
               <div class="npm-event-pie-legend-type">
                 <div class="npm-event-pie-legend-type-icon" :class="legend.eventSeverity"></div>
@@ -16,7 +16,7 @@
             </template>
           </div>
           <div class="npm-event-pie-legend">
-            <div class="npm-event-pie-legend-title">{{ $t('network.total') }}</div>
+            <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('network.total') }}</div>
             <template v-for="(legend, index) in chartData" :key="index">
               <div class="npm-event-pie-legend-total">{{legend.count}}</div>
             </template>
@@ -99,6 +99,7 @@ export default {
         if (res.code === 200) {
           if (res.data.result.length <= 0) {
             this.isNoData = true
+            return
           }
           res.data.result.forEach(t => {
             if (t.eventSeverity === 'critical') {

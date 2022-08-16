@@ -38,7 +38,7 @@
                 <div class="app-card__body-content-percent green" v-else-if="app.value < 0">
                   -{{unitConvert(app.value, unitTypes.percent).join('').replaceAll('-', '')}}
                 </div>
-                <div v-else></div>
+                <div v-else-if="app.value === '-' || app.value === 0" class="app-card__body-content-percent">0</div>
               </div>
             </div>
             <div class="app-card__body-previous">

@@ -10,9 +10,10 @@
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
-        <div v-else class="single-value__content-trend single-value__content-trend-black">
+        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
         </div>
+        <div v-else></div>
       </div>
       <div class="single-value__circle">
         <div class="single-value__circle-p95">P95: {{unitConvert(npm.establishLatencyP95, unitTypes.time).join(' ')}}</div>
@@ -29,9 +30,10 @@
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
-        <div v-else class="single-value__content-trend single-value__content-trend-black">
+        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
         </div>
+        <div v-else></div>
       </div>
       <div class="single-value__circle">
         <div class="single-value__circle-p95">P95: {{unitConvert(npm.httpResponseLatencyP95, unitTypes.time).join(' ')}}</div>
@@ -48,9 +50,10 @@
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
-        <div v-else class="single-value__content-trend single-value__content-trend-black">
+        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
         </div>
+        <div v-else></div>
       </div>
       <div class="single-value__circle">
         <div class="single-value__circle-p95">P95: {{unitConvert(npm.sslConLatencyP95, unitTypes.time).join(' ')}}</div>
@@ -67,9 +70,10 @@
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
-        <div v-else class="single-value__content-trend single-value__content-trend-black">
+        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
         </div>
+        <div v-else></div>
       </div>
       <div class="single-value__circle">
         <div class="single-value__circle-p95">P95: {{unitConvert(npm.sequenceGapLossP95, unitTypes.percent).join(' ')}}</div>
@@ -86,9 +90,10 @@
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
-        <div v-else class="single-value__content-trend single-value__content-trend-black">
+        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
         </div>
+        <div v-else></div>
       </div>
       <div class="single-value__circle">
         <div class="single-value__circle-p95">P95: {{unitConvert(npm.pktRetransP95, unitTypes.percent).join(' ')}}</div>
@@ -138,7 +143,6 @@ export default {
           Object.keys(t).forEach(r => {
             Object.keys(e).forEach(d => {
               if (r === d) {
-                t.trend = getChainRatio(t[r], e[d])
                 t.value = getChainRatio(t[r], e[d])
               }
             })
