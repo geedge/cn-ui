@@ -341,6 +341,12 @@
               color: #717171;
               line-height: 18px;
               font-weight: 400;
+              max-height: 54px;
+              overflow: hidden; //超出的文本隐藏
+              text-overflow: ellipsis; //溢出用省略号显示
+              display: -webkit-box;
+              -webkit-line-clamp: 3; // 超出多少行
+              -webkit-box-orient: vertical;
             }
           }
         }

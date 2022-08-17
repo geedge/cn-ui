@@ -205,6 +205,7 @@ export default {
   },
   beforeUnmount () {
     clearTimeout(this.timer)
+    window.removeEventListener('resize', this.resize)
   }
 }
 </script>
