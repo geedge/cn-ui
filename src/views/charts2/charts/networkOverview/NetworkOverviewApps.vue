@@ -72,30 +72,34 @@
         <div class="add-app__body">
           <el-tabs v-model="appTypeTab" @tab-click="appTypeTabChange">
             <el-tab-pane :label="$t('networkOverview.appType.provider')" :name="0">
-              <div class="body__apps">
-                <div class="body__app" :class="{'provide-show': app.provideShow}" v-for="app in providerOptions" :key="app.name"  @click="appCheckedChange(app, 0)">
+              <div class="body__apps" :class="{'body__apps-no-grid': providerOptions.length === 0}">
+                <chart-no-data v-if="providerOptions.length === 0"></chart-no-data>
+                <div class="body__app" v-else :class="{'provide-show': app.provideShow}" v-for="(app, index) in providerOptions" :key="index"  @click="appCheckedChange(app, 0)">
                   <div class="body__app-content">
                     <div class="body__app-left">
-                      <span><i class="cn-icon cn-icon-mining-pool"></i></span>
-                      <span class="body__app-left-title">{{app.name}}</span>
+                      <span><i class="cn-icon" :class="app.icon"></i></span>
+                      <span class="body__app-left-title">{{app.value}}</span>
                     </div>
                     <div class="body__app-content-right" v-if="app.provideShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
-                  <div class="body__app-value">{{app.desc}}</div>
+                  <div class="body__app-value" v-if="app.remark" :title="app.remark">{{app.remark}}</div>
+                  <div v-else>-</div>
                 </div>
               </div>
             </el-tab-pane>
             <el-tab-pane :label="$t('networkOverview.appType.app')" :name="1">
-              <div class="body__apps">
-                <div class="body__app" :class="{'app-show': app.appShow}" v-for="app in appOptions" :key="app.name" @click="appCheckedChange(app, 1)">
+              <div class="body__apps" :class="{'body__apps-no-grid': appOptions.length === 0}">
+                <chart-no-data v-if="appOptions.length === 0"></chart-no-data>
+                <div class="body__app" v-else :class="{'app-show': app.appShow}" v-for="(app, index) in appOptions" :key="index" @click="appCheckedChange(app, 1)">
                   <div class="body__app-content">
                     <div class="body__app-left">
-                      <span><i class="cn-icon cn-icon-mining-pool"></i></span>
-                      <span class="body__app-left-title">{{app.name}}</span>
+                      <span><i class="cn-icon" :class="app.icon"></i></span>
+                      <span class="body__app-left-title">{{app.value}}</span>
                     </div>
                     <div class="body__app-content-right" v-if="app.appShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
-                  <div class="body__app-value">{{app.desc}}</div>
+                  <div class="body__app-value" v-if="app.remark" :title="app.remark">{{app.remark}}</div>
+                  <div v-else>-</div>
                 </div>
               </div>
             </el-tab-pane>
@@ -103,6 +107,7 @@
           <div class="body__searcher">
             <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="el-icon-search"></el-input>
           </div>
+          <div class="body__loading" v-if="loading"><loading :loading="loading"></loading></div>
         </div>
       </div>
     </el-drawer>
@@ -119,14 +124,20 @@ import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
-import { appTestData, appPrevTestData, providerTestData, providerPrevTestData } from '../appsTestData'
 import { getChainRatio } from '@/utils/tools'
+import loading from '@/components/common/Loading'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NetworkOverviewApps',
   props: {
     chart: Object,
     timeFilter: Object
   },
+  components: {
+    loading,
+    ChartNoData
+  },
+
   setup () {
     return {
       myChart: shallowRef([])
@@ -162,12 +173,32 @@ export default {
       appShowName: false,
       searcherApp: '',
       appShowTypeTab: 0,
-      initialAppOptionsData: [],
-      initialProviderOptionsData: [],
       // 选中的app，不区分app和provider
       toSaveApp: [],
       myChartArray: [],
-      appShowType: 'bytes'
+      appShowType: 'bytes',
+      pageObj: { // 分页对象
+        pageNo: 1,
+        pageSize: 24,
+        pages: 0
+      },
+      loading: false,
+      timerScroll: null,
+      offset: 0,
+      flag: false,
+      timerSearc: null
+    }
+  },
+  watch: {
+    showAddApp: {
+      deep: true,
+      handler (n) {
+        if (n) {
+          window.addEventListener('scroll', this.handleScroll, true)
+        } else {
+          window.removeEventListener('scroll', this.handleScroll, true)
+        }
+      }
     }
   },
   methods: {
@@ -222,7 +253,7 @@ export default {
         // if (true) {
           const prevData = res[0].data.result
           const data = res[1].data.result
-          /*let prevData
+          /* let prevData
           let data
           if (_t === 'app') {
             prevData = appPrevTestData
@@ -230,7 +261,7 @@ export default {
           } else if (_t === 'provider') {
             prevData = providerPrevTestData
             data = providerTestData
-          }*/
+          } */
           let toCompareType = 'bytes'
           if (this.metricFilter === 'Sessions/s') {
             toCompareType = 'sessions'
@@ -301,34 +332,100 @@ export default {
         })
       }
     },
+    handleScroll (e) {
+      const clientHeight = e.target.clientHeight
+      const scrollTop = e.target.scrollTop
+      const scrollHeight = e.target.scrollHeight
+      if (scrollTop && (clientHeight + scrollTop) >= scrollHeight) {
+        if (this.pageObj.pages > this.pageObj.pageNo) {
+          this.pageObj.pageNo++
+          this.loading = true
+          const params = {
+            startTime: getSecond(this.timeFilter.startTime),
+            endTime: getSecond(this.timeFilter.endTime),
+            pageSize: this.pageObj.pageSize,
+            pageNo: this.pageObj.pageNo
+          }
+          if (this.appShowTypeTab == 0) {
+            params.type = 'overviewProvide'
+            get(api.dict, params).then(res => {
+              if (res.code === 200) {
+                res.data.list.forEach(t => {
+                  this.toSaveApp.forEach(e => {
+                    if (t.value === e.name) {
+                      t.provideShow = e.provideShow
+                    }
+                  })
+                })
+                this.providerOptions.push(...res.data.list)
+                this.pageObj.pages = res.data.pages
+                this.appListData([], this.providerOptions)
+              }
+              this.loading = false
+            })
+          } else if (this.appShowTypeTab == 1) {
+            params.type = 'overviewApp'
+            get(api.dict, params).then(res => {
+              if (res.code === 200) {
+                res.data.list.forEach(t => {
+                  this.toSaveApp.forEach(e => {
+                    if (t.value === e.name) {
+                      t.appShow = e.appShow
+                    }
+                  })
+                })
+                this.appOptions.push(...res.data.list)
+                this.pageObj.pages = res.data.pages
+                this.appListData(this.appOptions, [])
+              }
+              this.loading = false
+            })
+          }
+        }
+      }
+    },
     addApp () {
       this.showAddApp = true
       this.searcherApp = ''
       const letter = 'abcdefghijklmnopqrstuvwxyz'
-      const appOptions = []
-      const providerOptions = []
-      for (let i = 0; i < 100; i++) {
-        appOptions.push({
-          name: letter[i % 26] + i,
-          desc: 'this is a really nice app',
-          appShow: false
+      this.providerOptions = []
+      this.appOptions = []
+      this.pageObj.pageNo = 1
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        pageSize: this.pageObj.pageSize,
+        pageNo: this.pageObj.pageNo
+      }
+      if (this.appShowTypeTab == 0) {
+        params.type = 'overviewProvide'
+        get(api.dict, params).then(res => {
+          if (res.code === 200) {
+            this.providerOptions.push(...res.data.list)
+            this.pageObj.pages = res.data.pages
+            this.appListData([], this.providerOptions)
+          }
         })
-        providerOptions.push({
-          name: letter[i % 26] + i,
-          desc: 'this is a really nice provider',
-          provideShow: false
+      } else if (this.appShowTypeTab == 1) {
+        params.type = 'overviewApp'
+        get(api.dict, params).then(res => {
+          if (res.code === 200) {
+            this.appOptions.push(...res.data.list)
+            this.pageObj.pages = res.data.pages
+            this.appListData(this.appOptions, [])
+          }
         })
       }
+    },
+    appListData (appOptions, providerOptions) {
       const oldApps = this.appData ? this.appData.filter(a => a.type === 'app') : []
       const oldProviders = this.appData ? this.appData.filter(a => a.type === 'provider') : []
       this.appOptions = appOptions.filter(a => {
-        return !oldApps.some(o => o.name === a.name)
+        return !oldApps.some(o => o.name === a.value)
       })
       this.providerOptions = providerOptions.filter(a => {
-        return !oldProviders.some(o => o.name === a.name)
+        return !oldProviders.some(o => o.name === a.value)
       })
-      this.initialAppOptionsData = [...this.appOptions]
-      this.initialProviderOptionsData = [...this.providerOptions]
     },
     cancelApp () {
       this.showAddApp = false
@@ -336,22 +433,62 @@ export default {
     appTypeTabChange (val) {
       this.appShowTypeTab = val.index
       this.searcherApp = ''
-      this.searcherAppChange(this.searcherApp)
+      this.addApp(val.index)
+      window.addEventListener('scroll', this.scrollChange, true)
+      this.timerScroll = setTimeout(() => {
+        window.removeEventListener('scroll', this.scrollChange, true)
+      }, 300)
+    },
+    scrollChange (e) {
+      e.target.scrollTop = 0
     },
     searcherAppChange (val) {
-      if (val) {
-        if (this.appShowTypeTab == 0) {
-          this.providerOptions = this.initialProviderOptionsData.filter(t => t.name.indexOf(val) > -1)
-        } else if (this.appShowTypeTab == 1) {
-          this.appOptions = this.initialAppOptionsData.filter(t => t.name.indexOf(val) > -1)
+      clearTimeout(this.timerSearc)
+      this.timerSearc = setTimeout(() => {
+        if (this.flag) {
+          return false
         }
-      } else {
-        if (this.appShowTypeTab == 0) {
-          this.providerOptions = this.initialProviderOptionsData
-        } else if (this.appShowTypeTab == 1) {
-          this.appOptions = this.initialAppOptionsData
+        this.flag = true
+        if (!val) {
+          this.pageObj.pageNo = 1
         }
-      }
+        const params = {
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime),
+          pageSize: this.pageObj.pageSize,
+          pageNo: this.pageObj.pageNo
+        }
+        if (this.appShowTypeTab == 0) {
+          params.type = 'overviewProvide'
+          get(api.dict, params).then(res => {
+            if (res.code === 200) {
+              res.data.list.forEach(t => {
+                this.toSaveApp.forEach(e => {
+                  if (t.value === e.name) {
+                    t.provideShow = e.provideShow
+                  }
+                })
+              })
+              this.providerOptions = res.data.list.filter(t => t.value.indexOf(val) > -1)
+            }
+          })
+        } else if (this.appShowTypeTab == 1) {
+          params.type = 'overviewApp'
+          get(api.dict, params).then(res => {
+            if (res.code === 200) {
+              res.data.list.forEach(t => {
+                this.toSaveApp.forEach(e => {
+                  if (t.value === e.name) {
+                    t.appShow = e.appShow
+                  }
+                })
+              })
+              this.appOptions = res.data.list.filter(t => t.value.indexOf(val) > -1)
+            }
+          })
+        }
+        this.flag = false
+      }, 500)
     },
     // 保存变更，并且在增、删app后，根据当前app数量更改整体高度
     saveChart (toSaveChart) {
@@ -431,12 +568,12 @@ export default {
     appCheckedChange (app, num) {
       if (num === 0) {
         this.providerOptions.forEach(t => {
-          if (t.name === app.name) {
+          if (t.value === app.value) {
             t.provideShow = !t.provideShow
             if (t.provideShow) {
-              this.toSaveApp.push({ type: 'provider', name: app.name })
+              this.toSaveApp.push({ type: 'provider', name: app.value, provideShow: t.provideShow })
             } else {
-              const index = this.toSaveApp.findIndex(a => a.name === app.name)
+              const index = this.toSaveApp.findIndex(a => a.name === app.value)
               if (index > -1) {
                 this.toSaveApp.splice(index, 1)
               }
@@ -445,12 +582,12 @@ export default {
         })
       } else if (num === 1) {
         this.appOptions.forEach(t => {
-          if (t.name === app.name) {
+          if (t.value === app.value) {
             t.appShow = !t.appShow
             if (t.appShow) {
-              this.toSaveApp.push({ type: 'app', name: app.name })
+              this.toSaveApp.push({ type: 'app', name: app.value, appShow: t.appShow })
             } else {
-              const index = this.toSaveApp.findIndex(a => a.name === app.name)
+              const index = this.toSaveApp.findIndex(a => a.name === app.value)
               if (index > -1) {
                 this.toSaveApp.splice(index, 1)
               }
@@ -484,6 +621,11 @@ export default {
       this.init()
       window.addEventListener('resize', this.resize)
     }
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.resize)
+    clearTimeout(this.timerScroll)
+    clearTimeout(this.timerSearc)
   }
 }
 </script>

@@ -233,9 +233,16 @@
         }
       }
       .add-app__body {
+        display: flex;
+        flex-direction: column;
         position: relative;
         flex: 1;
         background-color: #EBF1F4;
+        .body__loading {
+          width: 100%;
+          flex: 1;
+          position: relative;
+        }
         .el-tabs__item.is-top {
           height: 32px;
         }
@@ -269,8 +276,12 @@
         .el-tabs__header {
           padding-left: 20px;
         }
+        .body__apps-no-grid.body__apps {
+          height: 410px;
+          display: flex;
+        }
         .body__apps {
-          height: 420px;
+          height: 410px;
           padding: 0 20px;
           overflow: auto;
           display: grid;
@@ -320,7 +331,7 @@
 
                 span {
                   i {
-                    color: green;
+                    color: #38ACD2;
                     margin-right: 2px;
                     font-size: 16px;
                   }
