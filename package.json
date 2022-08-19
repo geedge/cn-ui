@@ -16,6 +16,7 @@
     "codemirror": "^5.65.1",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.5",
+    "dexie": "^3.2.2",
     "echarts": "^5.1.1",
     "element-plus": "^1.0.2-beta.44",
     "lib-flexible": "^0.3.2",

@@ -99,7 +99,7 @@ import unitConvert from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
-import { getChainRatio } from '@/utils/tools'
+import { getChainRatio, computeScore } from '@/utils/tools'
 
 export default {
   name: 'NpmAppCategoryScore',
@@ -189,7 +189,7 @@ export default {
                   let score = 0
                   const find = r.data.result.find(d => d.appSubcategory === t.appSubcategory)
                   if (find) {
-                    score = this.computeScore(find, i)
+                    score = computeScore(find, i)
                   }
                   t[keyPre[i] + 'Score'] = score
                 })
@@ -210,19 +210,6 @@ export default {
           })
         }
       })
-    },
-    computeScore (data, index) {
-      if (index === 0) {
-        return 0.3 * (data.establishLatencyMs - 500) / (50 - 500)
-      } else if (index === 1) {
-        return 0.05 * (data.httpResponseLatency - 500) / (50 - 500)
-      } else if (index === 2) {
-        return 0.05 * (data.sslConLatency - 500) / (50 - 500)
-      } else if (index === 3) {
-        return 0.3 * (data.tcpLostlenPercent - 0.5) / (0.01 - 0.5)
-      } else if (index === 4) {
-        return 0.3 * (data.pktRetransPercent - 0.5) / (0.01 - 0.5)
-      }
     }
   },
   mounted () {

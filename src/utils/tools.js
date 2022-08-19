@@ -1,10 +1,11 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112, topDomain, echartsFontSize } from '@/utils/constants'
+import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName } from '@/utils/constants'
 import { getIso36112JsonData } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
+import { db } from '@/indexedDB'
 
 export const tableSort = {
   // 是否需要排序
@@ -482,32 +483,43 @@ export function strToObj (n) {
   return paramsObj
 }
 // 加载geo数据
-export function loadGeoData (key) {
+export function loadGeoData () {
   const keys = []
-  if (key) {
-    keys.push(key)
-  } else {
-    keys.push(storageKey.iso36112Capital)
-    keys.push(storageKey.iso36112WorldLow)
-  }
+  keys.push(storageKey.iso36112Capital)
+  keys.push(storageKey.iso36112WorldLow)
   keys.forEach(async k => {
-    if (!localStorage.getItem(k)) {
+    const queryData = await db[dbGeoDataTableName].get({ name: k })
+    if (!queryData) {
       const data = await getIso36112JsonData(iso36112[k])
       if (data) {
-        localStorage.setItem(k, JSON.stringify(data))
+        db[dbGeoDataTableName].add({
+          name: k,
+          geo: data
+        })
       }
     }
   })
-  return localStorage.getItem(key)
 }
 
-/* 返回geodata对象 */
-export function getGeoData (key) {
-  const data = localStorage.getItem(key)
+/* 返回geodata对象
+*  使用indexedDB缓存地图数据
+*  */
+export async function getGeoData (key) {
+  const data = await db[dbGeoDataTableName].get({ name: key })
   if (data) {
-    return JSONParse(data)
+    return data.geo
   } else {
-    return JSONParse(loadGeoData(key))
+    if (iso36112[key]) {
+      const d = await getIso36112JsonData(iso36112[key])
+      if (d) {
+        db[dbGeoDataTableName].add({
+          name: key,
+          geo: d
+        })
+        return d[key]
+      }
+    }
+    return null
   }
 }
 
@@ -761,4 +773,66 @@ export function getChainRatio (current, prev) {
   } else {
     return (current - prev) / prev
   }
+}
+
+export function computeScore (data, index) {
+  let score = 0
+  let k = 0
+  if (index === 0) {
+    k = 0.3
+    if (!data.establishLatencyMs && data.establishLatencyMs !== 0) {
+      score = 0
+    } else if (data.establishLatencyMs <= 50) {
+      score = 1
+    } else if (data.establishLatencyMs > 500) {
+      score = 0
+    } else {
+      score = (data.establishLatencyMs - 500) / (50 - 500)
+    }
+  } else if (index === 1) {
+    k = 0.05
+    if (!data.httpResponseLatency && data.httpResponseLatency !== 0) {
+      score = 1
+    } else if (data.httpResponseLatency <= 50) {
+      score = 1
+    } else if (data.httpResponseLatency > 500) {
+      score = 0
+    } else {
+      score = (data.httpResponseLatency - 500) / (50 - 500)
+    }
+  } else if (index === 2) {
+    k = 0.05
+    if (!data.sslConLatency && data.sslConLatency !== 0) {
+      score = 1
+    } else if (data.sslConLatency <= 50) {
+      score = 1
+    } else if (data.sslConLatency > 500) {
+      score = 0
+    } else {
+      score = (data.sslConLatency - 500) / (50 - 500)
+    }
+  } else if (index === 3) {
+    k = 0.3
+    if (!data.tcpLostlenPercent && data.tcpLostlenPercent !== 0) {
+      score = 0
+    } else if (data.tcpLostlenPercent <= 0.01) {
+      score = 1
+    } else if (data.tcpLostlenPercent > 0.5) {
+      score = 0
+    } else {
+      score = (data.tcpLostlenPercent - 0.5) / (0.01 - 0.5)
+    }
+  } else if (index === 4) {
+    k = 0.3
+    if (!data.pktRetransPercent && data.pktRetransPercent !== 0) {
+      score = 0
+    } else if (data.pktRetransPercent <= 0.01) {
+      score = 1
+    } else if (data.pktRetransPercent > 0.5) {
+      score = 0
+    } else {
+      score = (data.pktRetransPercent - 0.5) / (0.01 - 0.5)
+    }
+  }
+  return score * k
 }

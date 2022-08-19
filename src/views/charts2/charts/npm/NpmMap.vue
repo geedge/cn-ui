@@ -44,13 +44,19 @@ import { mapData, drillDownData } from '@/views/charts2/charts/mapTestData'
 import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
-import { getGeoData } from '@/utils/tools'
+import { computeScore, getGeoData } from '@/utils/tools'
 import { storageKey, unitTypes } from '@/utils/constants'
 import locationOptions from '@/views/charts2/charts/locationOptions'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
+import { getSecond } from '@/utils/date-util'
+import { api, getData } from '@/utils/api'
+import { get } from '@/utils/http'
 
 export default {
   name: 'NpmMap',
+  props: {
+    timeFilter: Object
+  },
   data () {
     return {
       locationOptions,
@@ -67,10 +73,11 @@ export default {
     }
   },
   methods: {
-    initMap () {
+    async initMap () {
       // 初始化插件
+      const geoData = await getGeoData(storageKey.iso36112WorldLow)
       const chart = am4Core.create('npmMap', am4Maps.MapChart)
-      chart.geodata = getGeoData(storageKey.iso36112WorldLow)
+      chart.geodata = geoData
       chart.projection = new am4Maps.projections.Miller()
       chart.homeZoomLevel = 2
       chart.homeGeoPoint = {
@@ -82,26 +89,6 @@ export default {
       this.worldImageSeries = shallowRef(this.imageSeriesFactory('score'))
       // 渲染
       this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
-      this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
-        const countryId = ev.target.dataItem.dataContext.id
-        ev.target.isHover = false
-        if (countryId) {
-          const targetMapObject = this.polygonSeries.getPolygonById(countryId)
-          targetMapObject.series.chart.zoomToMapObject(targetMapObject)
-          const geoData = getGeoData(countryId)
-          if (geoData) {
-            this.countrySeries = shallowRef(this.polygonSeriesFactory())
-            this.countrySeries.geodata = geoData
-            this.countryImageSeries = shallowRef(this.imageSeriesFactory('score'))
-            this.polygonSeries.hide()
-            this.worldImageSeries.hide()
-            const country = ev.target.dataItem.dataContext.name
-            const queryParams = { ...this.queryParams, ipLocationCountry: country }
-            const chartData = this.drillDownData
-            this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries, country, chartData)
-          }
-        }
-      })
     },
     loadAm4ChartMap (polygonSeries, imageSeries, country, chartData) {
       // chartData不为空是下钻
@@ -120,13 +107,57 @@ export default {
         })
 
         this.showMapBackButton = !!country
-        const data = chartData || this.mapData
-        imageSeries.data = data.map(r => ({
-          score: r.score,
-          id: r.locationId,
-          color: this.scoreColor(r.score),
-          border: this.scoreColor(r.score)
-        }))
+        if (chartData) {
+          imageSeries.data = chartData.map(r => ({
+            score: r.score,
+            id: r[this.trafficDirection.toLowerCase() + 'Id'],
+            color: this.scoreColor(r.score),
+            border: this.scoreColor(r.score)
+          }))
+        } else {
+          const params = {
+            startTime: getSecond(this.timeFilter.startTime),
+            endTime: getSecond(this.timeFilter.endTime),
+            side: this.trafficDirection.toLowerCase()
+          }
+          getData(api.npm.location.map, params).then(res => {
+            // 计算分数
+            const tcpRequest = get(api.npm.location.mapTcp, params)
+            const httpRequest = get(api.npm.location.mapHttp, params)
+            const sslRequest = get(api.npm.location.mapSsl, params)
+            const tcpLostRequest = get(api.npm.location.mapPacketLoss, params)
+            const packetRetransRequest = get(api.npm.location.mapPacketRetrans, params)
+            Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
+              const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+              const mapData = res
+              if (!country) {
+                res2.forEach((r, i) => {
+                  if (r.code === 200) {
+                    mapData.forEach(t => {
+                      let score = 0
+                      const find = r.data.result.find(d => d.country === t.country)
+                      if (find) {
+                        score = computeScore(find, i)
+                      }
+                      t[keyPre[i] + 'Score'] = score
+                    })
+                  } else {
+                    mapData.forEach(t => {
+                      t[keyPre[i] + 'Score'] = 0
+                    })
+                  }
+                })
+                mapData.forEach(t => {
+                  t.score = Math.ceil((t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6)
+                  if (t.score > 6) {
+                    t.score = 6
+                  }
+                })
+                this.loadMarkerData(imageSeries, mapData)
+              }
+            })
+          })
+        }
       } catch (e) {
         console.error(e)
       } finally {
@@ -137,7 +168,15 @@ export default {
         }
       }
     },
-    convertMapData (data) {
+    loadMarkerData (imageSeries, data) {
+      imageSeries.data = data.map(r => ({
+        score: r.score,
+        name: r.province || r.country,
+        throughput: r.totalPacketsRate,
+        id: r[this.trafficDirection.toLowerCase() + 'Id'],
+        color: this.scoreColor(r.score),
+        border: this.scoreColor(r.score)
+      }))
     },
     scoreColor (score) {
       if (score >= 0 && score <= 2) {
@@ -147,6 +186,23 @@ export default {
       } else if (score > 4 && score <= 6) {
         return '#7E9F54'
       }
+    },
+    generatePolygonTooltipHTML () {
+      const html = `
+        <div class="map-tooltip" style="padding-bottom: 10px;">
+          <div class="map-tooltip__title">{name}</div>
+          <div class="map-tooltip__content">
+            <div class="content-row">
+              <div class="row__label">Score</div>
+              <div class="row__value">{score}</div>
+            </div>
+            <div class="content-row">
+              <div class="row__label">Throughput</div>
+              <div class="row__value">{throughput}</div>
+            </div>
+          </div>
+        </div>`
+      return html
     },
     polygonSeriesFactory () {
       const polygonSeries = this.myChart.series.push(new am4Maps.MapPolygonSeries())
@@ -193,11 +249,12 @@ export default {
       circle.propertyFields.fill = 'color'
       circle.propertyFields.stroke = 'border'
       circle.strokeWidth = 1
-      // circle.tooltipHTML = this.generatePolygonTooltipHTML()
+      circle.fillOpacity = 0.8
+      circle.tooltipHTML = this.generatePolygonTooltipHTML()
       imageSeries.tooltip.getFillFromObject = false
-      imageSeries.tooltip.background.fill = am4Core.color('#41495D')
+      imageSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
       imageSeries.tooltip.background.filters.clear()
-      imageSeries.tooltip.background.stroke = '#41495D'
+      imageSeries.tooltip.background.stroke = '#C5C5C5'
 
       imageSeries.heatRules.push({
         target: circle,

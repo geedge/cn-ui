@@ -166,6 +166,12 @@ export const api = {
     },
     location: {
       // 折线图
+      map: '/interface/application/performance/location/networkMap',
+      mapTcp: '/interface/application/performance/location/tcpSessionDelay',
+      mapHttp: '/interface/application/performance/location/httpResponseDelay',
+      mapSsl: '/interface/application/performance/location/sslConDelay',
+      mapPacketLoss: '/interface/application/performance/location/tcpLostlenPercent',
+      mapPacketRetrans: '/interface/application/performance/location/packetRetransPercent',
       thoughput: '/interface/application/performance/location/thoughput',
       tcpConnectionEstablishLatency: '/interface/application/performance/location/tcpConnectionEstablishLatency',
       httpResponseLatency: '/interface/application/performance/location/httpResponseLatency',

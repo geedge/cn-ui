@@ -97,7 +97,7 @@ export const mapData = [
   },
   {
     "score": 1,
-    "locationId": "",
+    "locationId": "CN-AH",
     "direction": "server",
     "locationCountry": "moldova"
   },
@@ -181,9 +181,9 @@ export const mapData = [
   },
   {
     "score": 6,
-    "locationId": "",
+    "locationId": "RU",
     "direction": "server",
-    "locationCountry": "united kingdom"
+    "locationCountry": "russia"
   },
   {
     "score": 6,
@@ -205,4 +205,29 @@ export const mapData = [
   }
 ]
 export const drillDownData = [
+  {
+    "score": 1,
+    "locationId": "CN-AH",
+    "direction": "server",
+    "locationCountry": "moldova"
+  },
+  {
+    "score": 3,
+    "locationId": "CN-SH",
+    "direction": "server",
+    "locationCountry": "moldova"
+  },
+  {
+    "score": 6,
+    "locationId": "CN-CQ",
+    "direction": "server",
+    "locationCountry": "moldova"
+  },
+  {
+    "score": 2,
+    "locationId": "CN-FJ",
+    "direction": "server",
+    "locationCountry": "moldova"
+  }
+
 ]

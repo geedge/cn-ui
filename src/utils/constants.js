@@ -1,5 +1,7 @@
 export const defaultPageSize = 20
 
+export const dbName = 'cn-db'
+export const dbGeoDataTableName = 'geodata'
 export const storageKey = {
   iso36112Capital: 'cn-iso3611-2-capital',
   iso36112WorldLow: 'cn-iso3611-2-world-low',
@@ -29,6 +31,7 @@ export const storageKey = {
   echartLabelFontSize: 'echartLabelFontSize',
   tokenExpireCurrentPath: 'token-expire-current-path'
 }
+export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
 // 统一定义跳转来源
 export const fromRoute = {
