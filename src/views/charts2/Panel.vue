@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
+  import {useRoute, useRouter} from 'vue-router'
 import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
@@ -74,7 +74,16 @@ export default {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
-    panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
+    let router = useRouter()
+    let thirdPanel = router.currentRoute.value.params.thirdPanel
+    let fourthPanel = router.currentRoute.value.params.fourthPanel
+    if(fourthPanel){
+      panelType = Number(fourthPanel)
+    }else if(thirdPanel){
+      panelType = Number(thirdPanel)
+    }else {
+      panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
+    }
 
     function isEntityDetail (t) {
       return [4, 5, 6].indexOf(t) > -1
@@ -108,16 +117,6 @@ export default {
           this.initChartAttr(chart)
           return chart
         })
-
-        if (this.$store.getters.getBreadcrumbColumnName || this.$store.getters.getBreadcrumbColumnValue) { // networkOverview页面
-          const list = this.chartList.filter(item => {
-            return (item.type === 102 || item.type === 601)
-          })
-          list.forEach(item => {
-            item.w = 24
-          })
-          this.chartList = ref(list)
-        }
       }
     },
     initChartAttr (chart) {

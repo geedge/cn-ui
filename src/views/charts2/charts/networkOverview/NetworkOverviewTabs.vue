@@ -35,7 +35,7 @@
                   <span class="data-column__span">{{$t(item.label)}}</span>
                 </template>
                 <template  #default="scope" :column="item">
-                  <template v-if="item.prop === 'total'"  >
+                  <template v-if="item.columnType === tableColumnType.chainRatio"  >
                     <div class="data-total" >
                       {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
                       <div v-if="scope.row['trend'] === 'up'" class="data-total-trend data-total-trend-red">
@@ -45,14 +45,13 @@
                         <i class="cn-icon-decline cn-icon"></i><span>{{scope.row['trendValue']}}</span>
                       </div>
                       <div v-else-if="scope.row['trend'] === 'noChange'" class="data-total-trend data-total-trend-black">
-                        <i class="cn-icon-constant cn-icon"></i><span>{{scope.row['trendValue']}}</span>
+                        <i class="cn-icon-constant cn-icon"></i>
                       </div>
 
                     </div>
                   </template>
-                  <template v-else-if="item.prop === 'tab'" >
-                    <div class="data-click" v-if='drillDown' @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
-                    <div v-else >{{scope.row['tab']}}</div>
+                  <template v-else-if="item.columnType === tableColumnType.dillDown" >
+                    <div class="data-click" @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
                   </template>
                   <template v-else>
                     {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
@@ -66,8 +65,8 @@
       </template>
 
     </el-tabs>
-    <div class="tab-search">
-      <div class="search-select"  v-if="drillDown">
+    <div class="tab-search" >
+      <div class="search-select"  v-if="hasMetricSearch">
         <span>{{$t('network.metric')}}:</span>
         <el-select v-model="metric"
                    class="option__select select-column"
@@ -140,19 +139,23 @@
         </el-tabs>
       </el-popover>
     </div>
+
   </div>
 
 </template>
 <script>
 import { ref } from 'vue'
-import { networkOverviewTabs, networkOverviewTabList, operationType, networkOverviewSearchUrl, unitTypes } from '@/utils/constants'
+import {operationType, unitTypes,networkTable,tableColumnType } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
+import { getChainRatio } from '@/utils/tools'
 
 export default {
   name: 'NetworkOverviewTabs',
   data () {
     return {
+      dragIndex: '',
+      dragMetricIndex: '',
       metric: 'Bits/s',
       orderBy: 'bytesTotal',
       tab: 'ip',
@@ -172,20 +175,10 @@ export default {
           label: 'Sessions/s'
         }
       ],
-      customTableTitles: [
-        { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true },
-        { label: 'network.total', prop: 'total', checked: true, tabColumn: false },
-        { label: 'network.inbound', prop: 'inbound', checked: true, tabColumn: false },
-        { label: 'network.outbound', prop: 'outbound', checked: true, tabColumn: false },
-        { label: 'network.internal', prop: 'internal', checked: true, tabColumn: false },
-        { label: 'network.through', prop: 'through', checked: true, tabColumn: false }
-      ],
-      list: this.$_.cloneDeep(networkOverviewTabList),
-      dragIndex: '',
-      dragMetricIndex: '',
+      customTableTitles: [],
+      list: [],//当前状态列表
+      networkTabList: [],//原始状态列表
       showBackground: false,
-      tabUrl: networkOverviewTabList[0].url,
-      cycleTotalUrl: networkOverviewTabList[0].cycleTotalUrl,
       tableData: [],
       showTabs: true,
       columnNameGroup: {
@@ -197,7 +190,14 @@ export default {
       },
       metricUnit: 'bytes',
       loading: false,
-      drillDown: false
+      drillDown: false,
+      tableColumnType:tableColumnType,
+      curTable:{},//当前的表格类型
+      tableType:'',
+      hasMetricSearch:true,
+      activeTab:'',
+      activeCustomize:'',
+      networkSearchUrl:{}
     }
   },
   props: {
@@ -218,9 +218,6 @@ export default {
       }
     }
   },
-  computed: {
-
-  },
   methods: {
     changeMetric () {
       const beforeType = this.$store.getters.getTabOperationBeforeType
@@ -231,68 +228,56 @@ export default {
       const curTab = this.getCurTab()
       const label = curTab.label
       if (this.metric === 'Bits/s') {
-        this.columnNameGroup = {
-          total: 'bytesTotal',
-          inbound: 'inboundBitsRate',
-          outbound: 'outboundBitsRate',
-          internal: 'internalBitsRate',
-          through: 'throughBitsRate'
-        }
+        this.columnNameGroup = this.curTable.bytesColumnNameGroup
         this.orderBy = 'bytesTotal'
         this.metricUnit = 'bytes'
-
+        const titleGroup = []
         if (this.customTableTitles.length === 2) {
-          this.customTableTitles = [
-            { label: label, prop: 'tab', checked: true, tabColumn: true },
-            { label: 'network.total', prop: 'total', checked: this.customTableTitles[1].checked, tabColumn: false },
-            { label: 'network.inbound', prop: 'inbound', checked: this.customTableTitles[2] ? this.customTableTitles[2].checked : true, tabColumn: false },
-            { label: 'network.outbound', prop: 'outbound', checked: this.customTableTitles[3] ? this.customTableTitles[3].checked : true, tabColumn: false },
-            { label: 'network.internal', prop: 'internal', checked: this.customTableTitles[4] ? this.customTableTitles[4].checked : true, tabColumn: false },
-            { label: 'network.through', prop: 'through', checked: this.customTableTitles[5] ? this.customTableTitles[5].checked : true, tabColumn: false }
-          ]
+          this.curTable.column.forEach((item,index) => {
+            if (item.tabColumn) {
+              item.label = label
+            }
+            if(index===1){
+              item.checked = this.customTableTitles[1].checked
+            }
+            titleGroup.push(item)
+          })
         } else {
-          const titleGroup = []
           this.customTableTitles.forEach(item => {
             if (item.tabColumn) {
               item.label = label
             }
             titleGroup.push(item)
           })
-          this.customTableTitles = titleGroup
         }
+        this.customTableTitles = titleGroup
+
       } else if (this.metric === 'Packets/s') {
-        this.columnNameGroup = {
-          total: 'packetsTotal',
-          inbound: 'inboundPacketsRate',
-          outbound: 'outboundPacketsRate',
-          internal: 'internalPacketsRate',
-          through: 'throughPacketsRate'
-        }
+        this.columnNameGroup = this.curTable.packetsColumnNameGroup
         this.orderBy = 'packetsTotal'
         this.metricUnit = 'packets'
+        const titleGroup = []
         if (this.customTableTitles.length === 2) {
-          this.customTableTitles = [
-            { label: label, prop: 'tab', checked: true, tabColumn: true },
-            { label: 'network.total', prop: 'total', checked: this.customTableTitles[1].checked, tabColumn: false },
-            { label: 'network.inbound', prop: 'inbound', checked: this.customTableTitles[2] ? this.customTableTitles[2].checked : true, tabColumn: false },
-            { label: 'network.outbound', prop: 'outbound', checked: this.customTableTitles[3] ? this.customTableTitles[3].checked : true, tabColumn: false },
-            { label: 'network.internal', prop: 'internal', checked: this.customTableTitles[4] ? this.customTableTitles[4].checked : true, tabColumn: false },
-            { label: 'network.through', prop: 'through', checked: this.customTableTitles[5] ? this.customTableTitles[5].checked : true, tabColumn: false }
-          ]
+          this.curTable.column.forEach((item,index) => {
+            if (item.tabColumn) {
+              item.label = label
+            }
+            if(index===1){
+              item.checked = this.customTableTitles[1].checked
+            }
+            titleGroup.push(item)
+          })
         } else {
-          const titleGroup = []
           this.customTableTitles.forEach(item => {
             if (item.tabColumn) {
               item.label = label
             }
             titleGroup.push(item)
           })
-          this.customTableTitles = titleGroup
         }
+        this.customTableTitles = titleGroup
       } else if (this.metric === 'Sessions/s') {
-        this.columnNameGroup = {
-          total: 'sessionsRate'
-        }
+        this.columnNameGroup = this.curTable.sessionsColumnNameGroup
         this.orderBy = 'sessions'
         this.metricUnit = 'sessions'
         let totalChecked = true
@@ -302,8 +287,8 @@ export default {
           }
         })
         this.customTableTitles = [
-          { label: label, prop: 'tab', checked: true, tabColumn: true },
-          { label: 'network.total', prop: 'total', checked: totalChecked, tabColumn: false }
+          { label: label, prop: 'tab', checked: true, tabColumn: true,columnType:this.curTable.column[0].columnType},
+          { label: 'network.total', prop: 'total', checked: totalChecked, tabColumn: false,columnType:this.curTable.column[1].columnType}
         ]
       }
       let queryParams = {
@@ -334,7 +319,7 @@ export default {
       if (tabObjGroup && tabObjGroup.length > 0) {
         return tabObjGroup[0]
       } else {
-        return tabObjGroup = networkOverviewTabList.filter(item => item.checked)[0]
+        return tabObjGroup = this.networkTabList.filter(item => item.checked)[0]
       }
     },
     initData () {
@@ -357,7 +342,7 @@ export default {
         }
         this.showTabs = true
       } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        // 此处的id为tab- name
+        // 此处的id为tab-name
         this.list.forEach(item => {
           const tabDom = document.getElementById('tab-' + item.label)
           const paneDom = document.getElementById('pane-' + item.label)
@@ -472,23 +457,30 @@ export default {
           cycleTotalList = response.data.result
           tableDataTmp.forEach(item => {
             const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
-            let trend = ''
+            let trend = ''//空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
             let trendPercent = ''
             if (cycle) {
               const totalDiff = item.total - cycle[this.metricUnit]
-              if (cycle[this.metricUnit]) {
-                trendPercent = Math.round((Math.abs(totalDiff) / cycle[this.metricUnit]) * 100)
-                if (totalDiff > 0) {
-                  trend = 'up'
-                } else if (totalDiff < 0) {
-                  trend = 'down'
-                } else {
-                  trend = 'noChange'
-                }
-                trendPercent = trendPercent + '%'
-                if (trendPercent === '0%') {
-                  trend = 'noChange'
+              if (cycle[this.metricUnit] && cycle[this.metricUnit]!=0) {
+                let chainRatio = getChainRatio(item.total, cycle[this.metricUnit])
+                if (chainRatio === '-') {
+                  trend = ''
                   trendPercent = ''
+                }else {
+                  trendPercent = Math.round(Math.abs(chainRatio)* 100)
+                  if (totalDiff > 0) {
+                    trend = 'up'
+                    trendPercent = trendPercent + '%'
+                  } else if (totalDiff < 0) {
+                    trend = 'down'
+                    trendPercent = trendPercent + '%'
+                  } else {
+                    trend = 'noChange'//横向图标
+                  }
+                  if (trendPercent === '0%') {
+                    trend = 'noChange'
+                    trendPercent = ''
+                  }
                 }
               }
             }
@@ -539,8 +531,6 @@ export default {
         })
       }
 
-      this.tabUrl = tabList[0].url
-      this.cycleTotalUrl = tabList[0].cycleTotalUrl
       this.$store.commit('setNetworkOverviewCurrentTab', tabList[0])
 
       let queryParams = {
@@ -603,9 +593,11 @@ export default {
           })
         }
       })
+      let toPanel = null
       this.list.forEach((item, index) => {
         if (item.label === columnName) {
           item.checked = false
+          toPanel = item.panelId
         }
         if (oldCurTab && (item.label === oldCurTab.label)) {
           item.checked = true
@@ -621,8 +613,6 @@ export default {
       }
 
       const tab = this.list.filter(item => item.checked)
-      this.tabUrl = tab.url
-      this.cycleTotalUrl = tab.cycleTotalUrl
 
       // 如果面包屑的columnValue有值，则不更新valueList
       const valueList = []
@@ -631,9 +621,14 @@ export default {
       })
       this.$store.commit('setBreadcrumbColumnValueList', valueList)
       this.$router.push({
+        name:'panel',
         path: this.$route.path,
         query: {
           t: +new Date()
+        },
+        params:{
+          thirdPanel:this.curTable.panelIdOfThirdMenu,
+          fourthPanel:toPanel
         }
       })
     },
@@ -688,8 +683,6 @@ export default {
       if (tabObjGroup && tabObjGroup.length > 0) {
         const curTab = tabObjGroup[0]
         this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-        this.tabUrl = curTab.url
-        this.cycleTotalUrl = curTab.cycleTotalUrl
         this.tab = curTab.prop
 
         let queryParams = {
@@ -713,9 +706,9 @@ export default {
     getCurUrl () {
       const condition = this.$store.getters.getQueryCondition
       if (condition) {
-        return networkOverviewSearchUrl.drilldownCurUrl
+        return this.networkSearchUrl.drilldownCurUrl
       } else {
-        return networkOverviewSearchUrl.curUrl
+        return this.networkSearchUrl.curUrl
       }
     },
     handleQueryParams (extraParams) {
@@ -723,7 +716,7 @@ export default {
       const name = this.$store.getters.getBreadcrumbColumnName
       let tabList = this.$store.getters.getNetworkOverviewTabList
       if (tabList.length === 0 || !tabList) {
-        tabList = this.$_.cloneDeep(networkOverviewTabList)
+        tabList = this.$_.cloneDeep(this.networkTabList)
       }
 
       const curOperationType = this.$store.getters.getTabOperationType
@@ -740,14 +733,14 @@ export default {
           this.customTableTitles[0].label = tabCheckedGroup[0].label
         }
       } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        const networkOverviewTabList = []
+        const networkTabList = []
         tabList.forEach(item => {
           if (this.$t(item.label) === name) {
             item.checked = true
           }
-          networkOverviewTabList.push(item)
+          networkTabList.push(item)
         })
-        this.$store.commit('setNetworkOverviewTabList', networkOverviewTabList)
+        this.$store.commit('setNetworkOverviewTabList', networkTabList)
 
         const breadcrumbColumnNameUrl = tabList.filter(item => this.$t(item.label) === name)
         if (breadcrumbColumnNameUrl && breadcrumbColumnNameUrl.length > 0) {
@@ -770,7 +763,7 @@ export default {
           this.$store.commit('setNetworkOverviewCurrentTab', curTab)
         }
       } else if (curOperationType === operationType.secondMenu) { // 点击第二级菜单，点击菜单
-        const list = this.$_.cloneDeep(networkOverviewTabList)
+        const list = this.$_.cloneDeep(this.networkTabList)
         const tabObjGroup = list.filter(item => item.checked)
         if (tabObjGroup && tabObjGroup.length > 0) {
           const curTab = tabObjGroup[0]
@@ -783,7 +776,7 @@ export default {
         if (!curTab) {
           let list = this.$store.getters.getNetworkOverviewTabList
           if (list.length === 0 || !list) {
-            list = this.$_.cloneDeep(networkOverviewTabList)
+            list = this.$_.cloneDeep(this.networkTabList)
           }
           const tabObjGroup = list.filter(item => item.checked)
           if (tabObjGroup && tabObjGroup.length > 0) {
@@ -799,7 +792,7 @@ export default {
 
       if (JSON.stringify(extraParams) === '{}') {
         extraParams = {
-          type: queryType || networkOverviewTabList[0].prop,
+          type: queryType || this.networkTabList[0].prop,
           orderBy: this.orderBy ? this.orderBy : 'bytesTotal',
           limit: 10
         }
@@ -813,9 +806,9 @@ export default {
     gerCycleUrl () {
       const condition = this.$store.getters.getQueryCondition
       if (condition) {
-        return networkOverviewSearchUrl.drilldownCycleUrl
+        return this.networkSearchUrl.drilldownCycleUrl
       } else {
-        return networkOverviewSearchUrl.cycleUrl
+        return this.networkSearchUrl.cycleUrl
       }
     },
     handleCustomizeClick (tab) {
@@ -841,7 +834,7 @@ export default {
         if (tabObjGroup && tabObjGroup.length > 0) {
           curTab = tabObjGroup[0]
         } else {
-          curTab = networkOverviewTabList[0]
+          curTab = this.networkTabList[0]
         }
         this.$store.commit('setNetworkOverviewCurrentTab', curTab)
       }
@@ -852,8 +845,17 @@ export default {
     if (this.chart.params && this.chart.params.drillDown) {
       this.drillDown = this.chart.params.drillDown
     }
+    //当前表格相关数据初始化
+    this.tableType = this.chart.params?this.chart.params.name:'networkOverview'
+    this.curTable = networkTable[this.tableType]?networkTable[this.tableType]:networkTable[0]
+    this.hasMetricSearch = this.curTable.hasMetricSearch
+    this.customTableTitles =  this.$_.cloneDeep(this.curTable.column)
+    this.list = this.$_.cloneDeep(this.curTable.tabList)
+    this.networkTabList = this.curTable.tabList
+    this.activeTab = this.networkTabList[0].label
+    this.activeCustomize = ref('tabs')
+    this.networkSearchUrl = this.curTable.url
 
-    this.list = this.$_.cloneDeep(networkOverviewTabList)
     if (this.$store.getters.getNetworkOverviewTabList.length > 0) {
       this.list = this.$store.getters.getNetworkOverviewTabList
     } else {
@@ -880,17 +882,9 @@ export default {
       })
     }
   },
-  setup (props) {
-    const activeTab = networkOverviewTabList[0].label
-    const activeCustomize = ref('tabs')
-    return {
-      activeTab,
-      activeCustomize,
-      networkOverviewTabs
-    }
-  },
+  setup (props) {},
   destroyed () {
-    this.$store.commit('setNetworkOverviewTabList', this.list)
+    this.$store.commit('setNetworkOverviewTabList', this.list)//保存状态
   }
 }
 </script>

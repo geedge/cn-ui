@@ -158,7 +158,7 @@ export const listScrollPath = [
   '/detection/performanceEvent',
   '/detection/securityEvent'
 ]
-
+/*
 export const networkOverviewTabs = [
   'network.ips',
   'network.countries',
@@ -176,18 +176,18 @@ export const networkOverviewTabs = [
   'network.hosts',
   'network.snis',
   'network.protocolPorts'
-]
+]*/
 
 export const operationType = {
   mainMenu: 0, // 菜单
   secondMenu: 1, // 二级菜单
   thirdMenu: 3, // 三级菜单
-  fourthMenu: 4, // 四级菜单
+  fourthMenu: 4, // 四级菜单:点击顶部第四级菜单 OR 点击表格的第一列的值
   changeTab: 5, // 切换tab
   changeMetric: 6, // 切换metric
   customize: 7// 操作Customize
 }
-
+/*
 export const networkOverviewTableUrlName = {
   ips: 'ips',
   countries: 'countries',
@@ -205,15 +205,62 @@ export const networkOverviewTableUrlName = {
   hosts: 'hosts',
   snis: 'snis',
   protocolPorts: 'protocolPorts'
+}*/
+
+//列的类型：下钻列，环比列，普通列
+export const tableColumnType = {
+  dillDown:'dillDown',
+  chainRatio:'chainRatio',
+  normal:'normal'
 }
 
+//AppPerformance类型表格的列
+export const customTableTitlesForAppPerformance = [
+  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true,columnType:tableColumnType.dillDown},
+  { label: 'network.score', prop: 'score', checked: true, tabColumn: false,columnType:tableColumnType.normal},
+  { label: 'networkAppPerformance.throughput', prop: 'throughput', checked: true, tabColumn: false,columnType:tableColumnType.chainRatio},
+  { label: 'networkAppPerformance.tcpConnectionEstablishLatency', prop: 'tcpConnectionEstablishLatency', checked: true, tabColumn: false,columnType:tableColumnType.chainRatio},
+  { label: 'networkAppPerformance.packetLoss', prop: 'packetLoss', checked: false, tabColumn: false,columnType:tableColumnType.normal},
+  { label: 'networkAppPerformance.packetRetrans', prop: 'packetRetrans', checked: false, tabColumn: false,columnType:tableColumnType.normal},
+  { label: 'networkAppPerformance.sslResponseLatency', prop: 'sslResponseLatency', checked: false, tabColumn: false,columnType:tableColumnType.normal},
+  { label: 'networkAppPerformance.httpResponseLatency', prop: 'httpResponseLatency', checked: false, tabColumn: false,columnType:tableColumnType.normal}
+]
+
+//NetworkOverview类型表格的列
+export const customTableTitlesForNetworkOverview = [
+  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true,columnType:tableColumnType.dillDown},
+  { label: 'network.total', prop: 'total', checked: true, tabColumn: false,columnType:tableColumnType.chainRatio},
+  { label: 'network.inbound', prop: 'inbound', checked: true, tabColumn: false,columnType:tableColumnType.normal},
+  { label: 'network.outbound', prop: 'outbound', checked: true, tabColumn: false,columnType:tableColumnType.normal},
+  { label: 'network.internal', prop: 'internal', checked: true, tabColumn: false,columnType:tableColumnType.normal},
+  { label: 'network.through', prop: 'through', checked: true, tabColumn: false,columnType:tableColumnType.normal}
+]
+
+//networkOverview:接口url
 export const networkOverviewSearchUrl = {
   curUrl: '/interface/overview/dimensionTrafficAnalysis',
   cycleUrl: '/interface/overview/dimensionCycleTrafficAnalysis',
   drilldownCurUrl: '/interface/overview/drilldown/dimensionTrafficAnalysis',
   drilldownCycleUrl: '/interface/overview/drilldown/dimensionCycleTrafficAnalysis',
   drilldownList: '/interface/overview/drilldown/list'
+}
+//npm:接口url
+export const npmSearchUrl = {
+  curUrl: '/interface/application/performance/overview/dimensionTrafficAnalysis',
+  cycleUrl: '/interface/application/performance/overview/dimensionCycleTrafficAnalysis',
+  drilldownCurUrl: '/interface/application/performance/overview/drilldown/dimensionTrafficAnalysis',
+  drilldownCycleUrl: '/interface/application/performance/overview/drilldown/dimensionCycleTrafficAnalysis',
+  drilldownList: '/interface/overview/drilldown/list'
+}
 
+/* panel类别和名称之间的映射 */
+export const drillDownPanelTypeMapping = {
+  npmOverviewIp: 8,
+  npmOverviewDomain: 9,
+  npmOverviewApp: 10,
+  npmOverviewCommon: 11,
+  npmThirdMenu: 12,
+  networkOverview: 13,
 }
 
 export const networkOverviewTabList = [
@@ -223,146 +270,306 @@ export const networkOverviewTabList = [
     queryCycleTotalProp: 'ips',
     dillDownProp: ['common_client_ip', 'common_server_ip'],
     checked: true,
-    url: '/interface/overview/ipsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/ipsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.countries',
     prop: 'country',
     queryCycleTotalProp: 'countries',
     dillDownProp: ['client_country', 'server_country'],
     checked: true,
-    url: '/interface/overview/countriesTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/countriesCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.asns',
     prop: 'asn',
     queryCycleTotalProp: 'asns',
     dillDownProp: ['client_asn', 'server_asn'],
     checked: true,
-    url: '/interface/overview/asnsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/asnsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.applications',
     prop: 'appLabel',
     queryCycleTotalProp: 'applications',
     dillDownProp: ['common_app_label'],
     checked: true,
-    url: '/interface/overview/applicationsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/applicationsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.providers',
     prop: 'appCompany',
     queryCycleTotalProp: 'providers',
     dillDownProp: ['app_company'],
     checked: true,
-    url: '/interface/overview/providersTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/providersCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.domains',
     prop: 'domain',
     queryCycleTotalProp: 'domains',
     dillDownProp: ['domain'],
     checked: true,
-    url: '/interface/overview/domainsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/domainsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
     dillDownProp: ['common_l7_protocol'],
     checked: true,
-    url: '/interface/overview/protocolsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/protocolsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.idcTenants',
     prop: 'idcRenter',
     queryCycleTotalProp: 'idcTenants',
     dillDownProp: ['client_idc_renter', 'server_idc_renter'],
     checked: true,
-    url: '/interface/overview/idcTenantsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/idcTenantsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.provinces',
     prop: 'province',
     queryCycleTotalProp: 'provinces',
     dillDownProp: ['client_province', 'server_province'],
     checked: false,
-    url: '/interface/overview/provincesTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/provincesCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.cities',
     prop: 'city',
     queryCycleTotalProp: 'cities',
     dillDownProp: ['client_region', 'server_region'],
     checked: false,
-    url: '/interface/overview/citiesTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/citiesCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.isps',
     prop: 'isp',
     queryCycleTotalProp: 'isps',
     dillDownProp: ['client_isp', 'server_isp'],
     checked: false,
-    url: '/interface/overview/ispsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/ispsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.applicationCategories',
     prop: 'appSubcategory',
     queryCycleTotalProp: 'applicationCategories',
     dillDownProp: ['app_subcategory'],
     checked: false,
-    url: '/interface/overview/applicationCategoriesTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/applicationCategoriesCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.domainCategories',
     prop: 'domainCategoryName',
     queryCycleTotalProp: 'domainCategories',
     dillDownProp: ['domain_category_name'],
     checked: false,
-    url: '/interface/overview/domainCategoriesTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/domainCategoriesCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.hosts',
     prop: 'httpHost',
     queryCycleTotalProp: 'hosts',
     dillDownProp: ['http_host'],
     checked: false,
-    url: '/interface/overview/hostsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/hostsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.snis',
     prop: 'sslSni',
     queryCycleTotalProp: 'snis',
     dillDownProp: ['ssl_sni'],
     checked: false,
-    url: '/interface/overview/snisTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/snisCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',
     dillDownProp: ['common_l7_protocol', 'common_server_port '],
     checked: false,
-    url: '/interface/overview/protocolPortsTrafficAnalysis',
-    cycleTotalUrl: '/interface/overview/protocolPortsCycleTrafficTotal',
-    disabled: false
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.networkOverview
   }
 ]
+
+export const networkAppPerformanceTabList = [
+  {
+    label: 'network.ips',//tab名称对应的il8n
+    prop: 'ip',//接口返回数据中，tab第一列对应的属性名
+    queryCycleTotalProp: 'ips',//SQL中查询不同纬度的列名称
+    dillDownProp: ['common_client_ip', 'common_server_ip'],//下钻时，传递的查询条件，即接口的q参数
+    checked: true,//自定义设置中，是否默认选中
+    disabled: false,//自定义设置中，是否可操作（选中或取消选中）
+    panelId:drillDownPanelTypeMapping.npmOverviewIp//下钻后展示的panelId
+  }, {
+    label: 'network.countries',
+    prop: 'country',
+    queryCycleTotalProp: 'countries',
+    dillDownProp: ['client_country', 'server_country'],
+    checked: true,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.asns',
+    prop: 'asn',
+    queryCycleTotalProp: 'asns',
+    dillDownProp: ['client_asn', 'server_asn'],
+    checked: true,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.applications',
+    prop: 'appLabel',
+    queryCycleTotalProp: 'applications',
+    dillDownProp: ['common_app_label'],
+    checked: true,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewApp
+  }, {
+    label: 'network.providers',
+    prop: 'appCompany',
+    queryCycleTotalProp: 'providers',
+    dillDownProp: ['app_company'],
+    checked: true,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.domains',
+    prop: 'domain',
+    queryCycleTotalProp: 'domains',
+    dillDownProp: ['domain'],
+    checked: true,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewDomain
+  }, {
+    label: 'network.protocols',
+    prop: 'l7Protocol',
+    queryCycleTotalProp: 'protocols',
+    dillDownProp: ['common_l7_protocol'],
+    checked: true,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.idcTenants',
+    prop: 'idcRenter',
+    queryCycleTotalProp: 'idcTenants',
+    dillDownProp: ['client_idc_renter', 'server_idc_renter'],
+    checked: true,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.provinces',
+    prop: 'province',
+    queryCycleTotalProp: 'provinces',
+    dillDownProp: ['client_province', 'server_province'],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.cities',
+    prop: 'city',
+    queryCycleTotalProp: 'cities',
+    dillDownProp: ['client_region', 'server_region'],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.isps',
+    prop: 'isp',
+    queryCycleTotalProp: 'isps',
+    dillDownProp: ['client_isp', 'server_isp'],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.applicationCategories',
+    prop: 'appSubcategory',
+    queryCycleTotalProp: 'applicationCategories',
+    dillDownProp: ['app_subcategory'],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.domainCategories',
+    prop: 'domainCategoryName',
+    queryCycleTotalProp: 'domainCategories',
+    dillDownProp: ['domain_category_name'],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.hosts',
+    prop: 'httpHost',
+    queryCycleTotalProp: 'hosts',
+    dillDownProp: ['http_host'],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.snis',
+    prop: 'sslSni',
+    queryCycleTotalProp: 'snis',
+    dillDownProp: ['ssl_sni'],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.protocolPorts',
+    prop: 'protocolPort',
+    queryCycleTotalProp: 'protocolports',
+    dillDownProp: ['common_l7_protocol', 'common_server_port '],
+    checked: false,
+    disabled: false,
+    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+  }
+]
+
+export const bytesColumnNameGroup = {
+  total: 'bytesTotal',
+  inbound: 'inboundBitsRate',
+  outbound: 'outboundBitsRate',
+  internal: 'internalBitsRate',
+  through: 'throughBitsRate'
+}
+
+export const packetsColumnNameGroup = {
+  total: 'packetsTotal',
+  inbound: 'inboundPacketsRate',
+  outbound: 'outboundPacketsRate',
+  internal: 'internalPacketsRate',
+  through: 'throughPacketsRate'
+}
+
+export const sessionsColumnNameGroup = {
+  total: 'sessionsRate'
+}
+
+//不同表格类型对应的相关数据
+export const networkTable = {
+  networkOverview:{
+    tabList:networkOverviewTabList,//tab列表
+    column:customTableTitlesForNetworkOverview,//列
+    url:networkOverviewSearchUrl,//接口url
+    hasMetricSearch:true,//顶部是否有metric下拉列表
+    panelIdOfThirdMenu:drillDownPanelTypeMapping.networkOverview,
+    bytesColumnNameGroup:bytesColumnNameGroup,
+    packetsColumnNameGroup:packetsColumnNameGroup,
+    sessionsColumnNameGroup:sessionsColumnNameGroup
+  },
+  networkAppPerformance:{
+    tabList:networkAppPerformanceTabList,
+    column:customTableTitlesForAppPerformance,
+    url:npmSearchUrl,
+    hasMetricSearch:false,//是否有metric下拉列表
+    panelIdOfThirdMenu:drillDownPanelTypeMapping.npmThirdMenu,
+    bytesColumnNameGroup:{},//无metric下拉列表条件，用不到此3个属性
+    packetsColumnNameGroup:{},//无metric下拉列表条件，用不到此3个属性
+    sessionsColumnNameGroup:{}//无metric下拉列表条件，用不到此3个属性
+  }
+}
 
 export const dnsServerRole = {
   RTDNS: 'RTDNS',

@@ -41,7 +41,6 @@ const panel = {
     panelName: '', // 网络概况的Panel的名称
     breadcrumbColumnName: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
     breadcrumbColumnValue: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
-
     breadcrumbColumnValueList: [], // 第四级面包屑的下拉列表
     networkOverviewCurrentTab: null, // 只代表选中的tab，有时会与面包屑中显示的值不同
     networkOverviewBeforeTab: null, // 点击表格的值时使用，记录点击当前tab表格的值之前点击的表格值所属的tab

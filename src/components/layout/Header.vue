@@ -149,7 +149,7 @@
 <script>
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
-import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl } from '@/utils/constants'
+import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl,drillDownPanelTypeMapping } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -293,7 +293,7 @@ export default {
       })
     },
     initDropdownList () {
-      const currentValue = document.getElementById('breadcrumbValue')?document.getElementById('breadcrumbValue').innerText:''
+      const currentValue = document.getElementById('breadcrumbValue') ? document.getElementById('breadcrumbValue').innerText : ''
       const columnName = this.$store.getters.getBreadcrumbColumnName
       let type = 'ip'
       const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
@@ -329,7 +329,7 @@ export default {
       })
     },
     showBreadcrumbPopover (valueMenuId) {
-      this.breadcrumbColumnValueListShow.splice(0,this.breadcrumbColumnValueListShow.length)
+      this.breadcrumbColumnValueListShow.splice(0, this.breadcrumbColumnValueListShow.length)
       this.curPageNum = 1
       this.showBackground = true
       this.dropDownValue = ''
@@ -427,6 +427,17 @@ export default {
           })
         }
       })
+
+      if(opeType===3){
+        this.$router.push({
+          params:{...this.$route.params,fourthPanel:''}
+        })
+      }else if(opeType!=4){
+        this.$router.push({
+          params:{...this.$route.params,fourthPanel:'',thirdPanel:''}
+        })
+      }
+
       if (route === this.route) {
         this.refresh()
         return
