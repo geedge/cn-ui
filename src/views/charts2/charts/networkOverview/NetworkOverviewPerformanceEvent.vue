@@ -64,9 +64,21 @@ export default {
               return
             }
             res.data.result = res.data.result.map(t => {
+              if (t.eventSeverity === 'critical') {
+                t.index = 0
+              } else if (t.eventSeverity === 'high') {
+                t.index = 1
+              } else if (t.eventSeverity === 'medium') {
+                t.index = 1
+              } else if (t.eventSeverity === 'low') {
+                t.index = 3
+              } else if (t.eventSeverity === 'info') {
+                t.index = 4
+              }
               return {
                 name: t.eventSeverity,
-                value: t.count
+                value: t.count,
+                index: t.index
               }
             })
             if (res.data.result.length <= 0) {
@@ -74,7 +86,7 @@ export default {
             } else {
               this.chartOption.legend.show = true
             }
-            this.chartOption.series[0].data = res.data.result
+            this.chartOption.series[0].data = res.data.result.sort((a, b) => { return a.index - b.index })
             this.myChart.setOption(this.chartOption)
           }
         })

@@ -4,7 +4,7 @@
     <div class="npm-traffic-line-body">
       <chart-no-data v-if="isNoData"></chart-no-data>
       <template v-else>
-        <div class="chart-drawing" id="chart"></div>
+        <div class="chart-drawing" :id="chartData.name"></div>
       </template>
     </div>
   </div>
@@ -21,7 +21,6 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
-import { npmTrafficLine } from '@/views/charts2/charts/npmLineData'
 import _ from 'lodash'
 export default {
   name: 'NpmTrafficLine',
@@ -45,8 +44,8 @@ export default {
       unitConvert,
       unitTypes,
       isNoData: false,
-      ip: '192.68.44.54',
-      side: 'client',
+      ip: '116.178.236.216',
+      side: '',
       type: 'ip',
       mpackets: [
         { name: 'network.total', show: true, positioning: 0, data: [], unitType: '' },
@@ -55,18 +54,25 @@ export default {
         { name: 'network.internal', show: true, positioning: 3, data: [], unitType: '' },
         { name: 'network.through', show: true, positioning: 4, data: [], unitType: '' },
         { name: 'network.other', show: true, positioning: 5, data: [], unitType: '' }
-      ]
+      ],
+      chartData: {}
     }
   },
   methods: {
     init () {
+      const condition = this.$store.getters.getQueryCondition
+      console.log(condition)
+      if (this.chartData.id === 24) {
+        this.side = 'client'
+      } else {
+        this.side = 'server'
+      }
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         q: `ip='${this.ip}' and side='${this.side}'`,
         type: 'ip'
       }
-      // const condition = this.$store.getters.getQueryCondition
       // if (condition) {
       //   params.q = condition
       //   params.type = this.type
@@ -74,21 +80,22 @@ export default {
       get(api.npm.overview.trafficGraph, params).then((res) => {
         if (res.code === 200) {
           // res.data.result.length = 0
-          res.data.result = npmTrafficLine
           if (res.data.result.length === 0) {
             this.isNoData = true
             return
           }
           res.data.result.forEach((t, i) => {
-            const mpackets = _.cloneDeep(this.mpackets)
-            mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-            mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-            mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-            mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-            mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
-            mpackets[5].data = t.other.values ? t.other.values : []
-            this.mpackets = mpackets
-            this.echartsInit(this.mpackets)
+            if (t.type === 'bytes') {
+              const mpackets = _.cloneDeep(this.mpackets)
+              mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
+              mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
+              mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
+              mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
+              mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
+              mpackets[5].data = t.other.values ? t.other.values : []
+              this.mpackets = mpackets
+              this.echartsInit(this.mpackets)
+            }
             // else if (t.type === 'packets') {
             //   const mpackets = _.cloneDeep(this.mpackets)
             //   mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
@@ -106,11 +113,13 @@ export default {
             //   this.echartsInit(this.mpackets)
             // }
           })
+        } else {
+          this.isNoData = true
         }
       })
     },
     echartsInit (echartsData) {
-      const dom = document.getElementById('chart')
+      const dom = document.getElementById(this.chartData.name)
       this.myChart = echarts.init(dom)
       this.chartOption = trafficLineChartOption
       const chartOption = this.chartOption.series[0]
@@ -198,6 +207,9 @@ export default {
     }
   },
   mounted () {
+    if (this.chart) {
+      this.chartData = _.cloneDeep(this.chart)
+    }
     this.timer = setTimeout(() => {
       this.init()
     }, 200)

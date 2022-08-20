@@ -227,12 +227,7 @@ export const appListChartOption = {
   },
   yAxis: {
     show: false,
-    type: 'value',
-    axisLabel: {
-      formatter: function (value) {
-        return unitConvert(value, unitTypes.number, null, null, 0).join(' ')
-      }
-    }
+    type: 'value'
   },
   grid: {
     left: 0,

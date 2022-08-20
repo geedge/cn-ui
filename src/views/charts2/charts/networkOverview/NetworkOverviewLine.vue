@@ -295,7 +295,7 @@ export default {
             label: {
               formatter (params) {
                 const arr = unitConvert(params.value, unitTypes.number).join('')
-                return _this.echartsLabelValue + '(' + arr + 'packets/s' + ')'
+                return _this.echartsLabelValue + '(' + arr + echartsData[0].unitType + ')'
               },
               position: 'insideStartTop',
               color: '#717171',

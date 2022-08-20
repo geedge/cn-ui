@@ -107,7 +107,7 @@
           <div class="body__searcher">
             <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="el-icon-search"></el-input>
           </div>
-          <div class="body__loading" v-if="loading"><loading :loading="loading"></loading></div>
+          <div class="body__loading"><loading :loading="loading"></loading></div>
         </div>
       </div>
     </el-drawer>
@@ -127,6 +127,7 @@ import { getSecond } from '@/utils/date-util'
 import { getChainRatio } from '@/utils/tools'
 import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 export default {
   name: 'NetworkOverviewApps',
   props: {
@@ -172,7 +173,6 @@ export default {
       appTypeTab: 0,
       appShowName: false,
       searcherApp: '',
-      appShowTypeTab: 0,
       // 选中的app，不区分app和provider
       toSaveApp: [],
       myChartArray: [],
@@ -186,13 +186,15 @@ export default {
       timerScroll: null,
       offset: 0,
       flag: false,
-      timerSearc: null
+      timerSearc: null,
+      timerHandle: null
     }
   },
   watch: {
     showAddApp: {
       deep: true,
       handler (n) {
+        this.searcherApp = ''
         if (n) {
           window.addEventListener('scroll', this.handleScroll, true)
         } else {
@@ -307,7 +309,7 @@ export default {
         const chartOption = _.cloneDeep(appListChartOption)
         chartOption.series = [{
           ...chartOption.series[0],
-          data: obj.lineData,
+          data: obj.lineData.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
           lineStyle: {
             color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
           },
@@ -325,6 +327,13 @@ export default {
             ])
           }
         }]
+        chartOption.tooltip.formatter = (params) => {
+          params.forEach(t => {
+            t.seriesName = this.$t(t.seriesName)
+          })
+          const str = appStackedLineTooltipFormatter(params)
+          return str
+        }
         chart.setOption(chartOption)
         this.myChart.push(chart)
         this.$nextTick(() => {
@@ -338,82 +347,74 @@ export default {
       const scrollHeight = e.target.scrollHeight
       if (scrollTop && (clientHeight + scrollTop) >= scrollHeight) {
         if (this.pageObj.pages > this.pageObj.pageNo) {
-          this.pageObj.pageNo++
           this.loading = true
-          const params = {
-            startTime: getSecond(this.timeFilter.startTime),
-            endTime: getSecond(this.timeFilter.endTime),
-            pageSize: this.pageObj.pageSize,
-            pageNo: this.pageObj.pageNo
-          }
-          if (this.appShowTypeTab == 0) {
-            params.type = 'overviewProvide'
-            get(api.dict, params).then(res => {
-              if (res.code === 200) {
-                res.data.list.forEach(t => {
-                  this.toSaveApp.forEach(e => {
-                    if (t.value === e.name) {
-                      t.provideShow = e.provideShow
-                    }
-                  })
-                })
-                this.providerOptions.push(...res.data.list)
-                this.pageObj.pages = res.data.pages
-                this.appListData([], this.providerOptions)
-              }
-              this.loading = false
-            })
-          } else if (this.appShowTypeTab == 1) {
-            params.type = 'overviewApp'
-            get(api.dict, params).then(res => {
-              if (res.code === 200) {
-                res.data.list.forEach(t => {
-                  this.toSaveApp.forEach(e => {
-                    if (t.value === e.name) {
-                      t.appShow = e.appShow
-                    }
-                  })
-                })
-                this.appOptions.push(...res.data.list)
-                this.pageObj.pages = res.data.pages
-                this.appListData(this.appOptions, [])
-              }
-              this.loading = false
-            })
-          }
+          this.pageObj.pageNo = this.pageObj.pageNo + 1
+          this.addApp(this.pageObj.pageNo, this.searcherApp, this.loading)
         }
       }
     },
-    addApp () {
+    addApp (pageNo, val, show) {
       this.showAddApp = true
-      this.searcherApp = ''
       const letter = 'abcdefghijklmnopqrstuvwxyz'
-      this.providerOptions = []
-      this.appOptions = []
-      this.pageObj.pageNo = 1
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         pageSize: this.pageObj.pageSize,
-        pageNo: this.pageObj.pageNo
+        q: ''
       }
-      if (this.appShowTypeTab == 0) {
+      if (val && show) { // 搜索有值 并且 true
+        params.q = val
+        params.pageNo = pageNo
+      } else if (!val && show) { // 搜索无值 并且 true
+        val = ''
+        params.pageNo = pageNo
+      } else if (val && !show) { // 搜索有值 并且 false
+        params.q = val
+        params.pageNo = 1
+      } else {
+        params.pageNo = 1
+      }
+      if (this.appTypeTab == 0) {
         params.type = 'overviewProvide'
         get(api.dict, params).then(res => {
           if (res.code === 200) {
-            this.providerOptions.push(...res.data.list)
             this.pageObj.pages = res.data.pages
-            this.appListData([], this.providerOptions)
+            res.data.list.forEach(t => {
+              this.toSaveApp.forEach(e => {
+                if (t.value === e.name) {
+                  t.provideShow = e.provideShow
+                }
+              })
+            })
+            if (val && !show) {
+              this.providerOptions = res.data.list
+            } else {
+              this.providerOptions.push(...res.data.list)
+              this.appListData([], this.providerOptions)
+            }
           }
+          this.loading = false
         })
-      } else if (this.appShowTypeTab == 1) {
+      } else if (this.appTypeTab == 1) {
         params.type = 'overviewApp'
         get(api.dict, params).then(res => {
           if (res.code === 200) {
-            this.appOptions.push(...res.data.list)
             this.pageObj.pages = res.data.pages
-            this.appListData(this.appOptions, [])
+            res.data.list.forEach(t => {
+              this.toSaveApp.forEach(e => {
+                if (t.value === e.name) {
+                  t.appShow = e.appShow
+                }
+              })
+            })
+            if (val && !show) {
+              this.appOptions = res.data.list
+            } else {
+              this.appOptions.push(...res.data.list)
+              this.appListData(this.appOptions, [])
+            }
           }
+          this.loading = false
         })
       }
     },
@@ -431,63 +432,30 @@ export default {
       this.showAddApp = false
     },
     appTypeTabChange (val) {
-      this.appShowTypeTab = val.index
+      this.pageObj.pageNo = 1
       this.searcherApp = ''
-      this.addApp(val.index)
+      this.addApp()
       window.addEventListener('scroll', this.scrollChange, true)
       this.timerScroll = setTimeout(() => {
         window.removeEventListener('scroll', this.scrollChange, true)
-      }, 300)
+      }, 500)
     },
     scrollChange (e) {
       e.target.scrollTop = 0
     },
     searcherAppChange (val) {
       clearTimeout(this.timerSearc)
+      window.addEventListener('scroll', this.scrollChange, true)
       this.timerSearc = setTimeout(() => {
         if (this.flag) {
           return false
         }
         this.flag = true
-        if (!val) {
-          this.pageObj.pageNo = 1
-        }
-        const params = {
-          startTime: getSecond(this.timeFilter.startTime),
-          endTime: getSecond(this.timeFilter.endTime),
-          pageSize: this.pageObj.pageSize,
-          pageNo: this.pageObj.pageNo
-        }
-        if (this.appShowTypeTab == 0) {
-          params.type = 'overviewProvide'
-          get(api.dict, params).then(res => {
-            if (res.code === 200) {
-              res.data.list.forEach(t => {
-                this.toSaveApp.forEach(e => {
-                  if (t.value === e.name) {
-                    t.provideShow = e.provideShow
-                  }
-                })
-              })
-              this.providerOptions = res.data.list.filter(t => t.value.indexOf(val) > -1)
-            }
-          })
-        } else if (this.appShowTypeTab == 1) {
-          params.type = 'overviewApp'
-          get(api.dict, params).then(res => {
-            if (res.code === 200) {
-              res.data.list.forEach(t => {
-                this.toSaveApp.forEach(e => {
-                  if (t.value === e.name) {
-                    t.appShow = e.appShow
-                  }
-                })
-              })
-              this.appOptions = res.data.list.filter(t => t.value.indexOf(val) > -1)
-            }
-          })
-        }
+        this.pageObj.pageNo = 1
+        this.searcherApp = val
+        this.addApp(this.pageObj.pageNo, val)
         this.flag = false
+        window.removeEventListener('scroll', this.scrollChange, true)
       }, 500)
     },
     // 保存变更，并且在增、删app后，根据当前app数量更改整体高度
