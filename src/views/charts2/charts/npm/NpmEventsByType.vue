@@ -35,17 +35,17 @@ import * as echarts from 'echarts'
 import { pieChartOption3 } from '@/views/charts2/charts/options/echartOption'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
   name: 'NpmEventsByType',
   props: {
-    chart: Object,
-    timeFilter: Object,
     type: String
   },
   components: {
     ChartNoData
   },
+  mixins: [chartMixin],
   setup () {
     return {
       myChart: shallowRef(null)
@@ -95,9 +95,10 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         type: 'severity'
       }
+      this.toggleLoading(true)
       get(api.npm.events.list, params).then(res => {
         if (res.code === 200) {
-          if (res.data.result.length <= 0) {
+          if (!res.data.result || res.data.result.length === 0) {
             this.isNoData = true
             return
           }
@@ -125,6 +126,8 @@ export default {
         } else {
           this.isNoData = true
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     },
     resize () {

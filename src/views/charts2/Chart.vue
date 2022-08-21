@@ -1,22 +1,24 @@
 <template>
   <div class="cn-chart" style="height: 100%; width: 100%;">
     <loading :loading="loading"></loading>
-    <chart-no-data v-if="isNoData"></chart-no-data>
     <network-overview-line
         v-if="chart.type === typeMapping.networkOverview.line"
         :chart="chart"
         :time-filter="timeFilter"
         ref="networkLine"
+        @toggleLoading="toggleLoading"
     ></network-overview-line>
     <network-overview-ddos-detection
         v-else-if="chart.type === typeMapping.networkOverview.ddosDetection"
         :chart="chart"
         :time-filter="timeFilter"
+        @toggleLoading="toggleLoading"
     ></network-overview-ddos-detection>
     <network-overview-performance-event
         v-else-if="chart.type === typeMapping.networkOverview.performanceEvent"
         :chart="chart"
         :time-filter="timeFilter"
+        @toggleLoading="toggleLoading"
     ></network-overview-performance-event>
     <network-overview-tabs @getChartData="getChartData"
          v-else-if="chart.type === typeMapping.networkOverview.table"
@@ -24,6 +26,7 @@
          :chart="chart"
          :chartData="chartData"
          :ref="`tab${chart.id}`"
+         @toggleLoading="toggleLoading"
     ></network-overview-tabs>
     <npm-app-event-table @getChartData="getChartData"
          v-else-if="chart.type === typeMapping.npm.appEventTable"
@@ -31,11 +34,13 @@
          :chart="chart"
          :chartData="chartData"
          :ref="`tab${chart.id}`"
+         @toggleLoading="toggleLoading"
     ></npm-app-event-table>
     <network-overview-apps
         v-else-if="chart.type === typeMapping.networkOverview.appList"
         :chart="chart"
         :time-filter="timeFilter"
+        @toggleLoading="toggleLoading"
     >
     </network-overview-apps>
     <npm-tabs
@@ -43,63 +48,73 @@
         :time-filter="timeFilter"
         :chart="chart"
         @tabChange="npmTabChange"
+        @toggleLoading="toggleLoading"
     ></npm-tabs>
     <npm-network-quantity
         v-else-if="chart.type === typeMapping.npm.npmNetworkQuantity"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-network-quantity>
     <npm-app-category-score
         v-else-if="chart.type === typeMapping.npm.npmAppCategoryScore"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-app-category-score>
     <npm-map
         v-else-if="chart.type === typeMapping.npm.npmMap"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-map>
     <npm-line
         v-else-if="chart.type === typeMapping.npm.npmLine"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-line>
     <npm-events-header
         v-else-if="chart.type === typeMapping.npm.npmEventsHeader"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-events-header>
     <npm-events-by-type
         v-else-if="chart.type === typeMapping.npm.npmEventsByType"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-events-by-type>
     <npm-recent-events
         v-else-if="chart.type === typeMapping.npm.npmRecentEvents"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-recent-events>
     <related-sessions
         v-else-if="chart.type === typeMapping.npm.relatedSessions"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></related-sessions>
     <npm-ip-map
         v-else-if="chart.type === typeMapping.npm.npmIpMap"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-ip-map>
     <npm-traffic-line
         v-else-if="chart.type === typeMapping.npm.npmTrafficLine"
         :time-filter="timeFilter"
         :chart="chart"
+        @toggleLoading="toggleLoading"
     ></npm-traffic-line>
   </div>
 </template>
 
 <script>
 import Loading from '@/components/common/Loading'
-import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { typeMapping } from '@/views/charts2/chart-tools'
 import NetworkOverviewLine from '@/views/charts2/charts/networkOverview/NetworkOverviewLine'
 import NetworkOverviewDdosDetection from '@/views/charts2/charts/networkOverview/NetworkOverviewDdosDetection'
@@ -131,7 +146,6 @@ export default {
     NpmMap,
     NpmAppCategoryScore,
     Loading,
-    ChartNoData,
     NetworkOverviewLine,
     NetworkOverviewDdosDetection,
     NetworkOverviewPerformanceEvent,
@@ -152,8 +166,7 @@ export default {
   data () {
     return {
       typeMapping,
-      loading: false,
-      isNoData: false,
+      loading: true,
       chartData: null,
       queryParams: {}
     }
@@ -237,6 +250,9 @@ export default {
           }
         }, 250)
       })
+    },
+    toggleLoading (loading) {
+      this.loading = loading
     }
   }
 }

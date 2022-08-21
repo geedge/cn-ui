@@ -74,12 +74,9 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'NetworkOverviewLine',
-  props: {
-    chart: Object,
-    timeFilter: Object
-  },
   components: {
     ChartNoData
   },
@@ -88,6 +85,7 @@ export default {
       myChart: shallowRef(null)
     }
   },
+  mixins: [chartMixin],
   data () {
     return {
       options1: [
@@ -139,8 +137,7 @@ export default {
       echartsLabelValue: '',
       echartsType: 'Bits/s',
       dynamicVariable: '',
-      showMarkLine: true,
-      isNoData: false
+      showMarkLine: true
     }
   },
   watch: {
@@ -163,13 +160,10 @@ export default {
       if (condition) {
         params.q = condition
       }
+      this.toggleLoading(true)
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
-          // res.data.result.length = 0
-          if (res.data.result.length === 0) {
-            this.isNoData = true
-            return
-          }
+          this.isNoData = res.data.result.length === 0
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
@@ -243,6 +237,10 @@ export default {
             }
           })
         }
+      }).catch(e => {
+        this.isNoData = true
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     },
     echartsInit (echartsData, show) {

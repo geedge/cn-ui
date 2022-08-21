@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'NpmTabs',
   data () {
@@ -24,6 +25,7 @@ export default {
       tabs: []
     }
   },
+  mixins: [chartMixin],
   props: {
     chart: Object
   },
@@ -43,6 +45,7 @@ export default {
     }
   },
   mounted () {
+    this.toggleLoading(false)
     if (this.chart.params && this.chart.params.tabs) {
       this.tabs = this.chart.params.tabs
     }

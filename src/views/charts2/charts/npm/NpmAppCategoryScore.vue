@@ -1,5 +1,6 @@
 <template>
   <div class="npm-app">
+    <chart-no-data v-if="isNoData"></chart-no-data>
     <div class="npm-app-left">
       <div class="npm-app-letter">
         <div v-for="(letter, index) in colorPatchData" :key="index">
@@ -100,7 +101,9 @@ import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { getChainRatio, computeScore } from '@/utils/tools'
-
+import chartMixin from '@/views/charts2/chart-mixin'
+import Loading from '@/components/common/Loading'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NpmAppCategoryScore',
   data () {
@@ -126,23 +129,12 @@ export default {
       ]
     }
   },
-  props: {
-    timeFilter: Object
+  components: {
+    Loading,
+    ChartNoData
   },
+  mixins: [chartMixin],
   methods: {
-    // tableCellStyle ({ row, column, rowIndex, columnIndex }) {
-    //   let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;'
-    //   if (rowIndex === this.tableData.length - 1) {
-    //     style = style + 'border-bottom:0px !important;'
-    //   }
-    //   if (columnIndex === 0) {
-    //     style = style + 'color:#046ECA;'
-    //   }
-    //   return style
-    // },
-    // tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
-    //   return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
-    // },
     init (params) {
       if (!params) {
         params = {
@@ -153,10 +145,12 @@ export default {
       // 获取table后三列内容
       const currentTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 0 })
       const lastCycleTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 1 })
+      this.toggleLoading(true)
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
         const prevData = res[1].data.result
         const data = res[0].data.result
         if (data && data.length > 0) {
+          this.isNoData = false
           const tableData = data.map(d => {
             const mapping = npmCategoryInfoMapping.find(mapping => mapping.appSubcategory === d.appSubcategory)
             const result = {
@@ -206,9 +200,12 @@ export default {
               }
             })
             this.tableData = tableData
-            // console.info(tableData)
           })
+        } else {
+          this.isNoData = true
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     }
   },

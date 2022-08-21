@@ -37,7 +37,6 @@
           </svg>
           <div class="table-no-data__title">{{ $t('npm.thereNoEvents') }}</div>
         </div>
-        <!-- <div v-else>&nbsp;</div>-->
       </template>
     </el-table>
   </div>
@@ -47,13 +46,11 @@
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
   name: 'NpmRecentEvents',
-  props: {
-    chart: Object,
-    timeFilter: Object
-  },
+  mixins: [chartMixin],
   data () {
     return {
       tableData: [],
@@ -62,7 +59,7 @@ export default {
         { label: 'network.entity', prop: 'eventKey' },
         { label: 'detections.eventType', prop: 'eventType' }
       ],
-      isNoData: true
+      isNoData: false
     }
   },
   methods: {
@@ -72,10 +69,18 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         limit: 8
       }
+      this.toggleLoading(true)
       get(api.npm.events.recentEvents, params).then(res => {
         if (res.code === 200) {
+          if (!res.data.result || res.data.result.length === 0) {
+            this.isNoData = true
+          }
           this.tableData = res.data.result
+        } else {
+          this.isNoData = true
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     }
   },

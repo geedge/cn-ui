@@ -52,22 +52,17 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { throughputData, tcpData, httpData, sslData, packetsLossData, packetsRetrainsData } from '@/views/charts2/charts/npmLineData'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
   name: 'NpmLine',
-  props: {
-    chart: Object,
-    timeFilter: Object,
-    // side: String,
-    // country: String,
-    // province: String
-  },
   components: {
     ChartNoData
   },
+  mixins: [chartMixin],
   setup () {
     return {
-      myChart: shallowRef()
+      myChart: shallowRef(null)
     }
   },
   data () {
@@ -86,8 +81,8 @@ export default {
       timer: null,
       myChartArray: [],
       side: 'server',
-      country: '北京',
-      province: '北京',
+      country: '',
+      province: '',
       throughputName: '',
       tcpName: '',
       httpName: '',
@@ -105,6 +100,7 @@ export default {
         country: this.country,
         province: this.province
       }
+      this.toggleLoading(true)
       if (this.chartData.id === 11) {
         throughputData.forEach((t, i) => {
           if (t.type === 'totalBytesRate') {
@@ -122,6 +118,8 @@ export default {
           } else {
             this.throughputName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
       } else if (this.chartData.id === 12) {
         get(api.npm.location.tcpConnectionEstablishLatency, params).then(res => {
@@ -130,6 +128,8 @@ export default {
           } else {
             this.tcpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
       } else if (this.chartData.id === 13) {
         get(api.npm.location.httpResponseLatency, params).then(res => {
@@ -138,6 +138,8 @@ export default {
           } else {
             this.httpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
       } else if (this.chartData.id === 14) {
         get(api.npm.location.sslHandshakeLatency, params).then(res => {
@@ -146,6 +148,8 @@ export default {
           } else {
             this.sslName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
       } else if (this.chartData.id === 15) {
         get(api.npm.location.packetsLoss, params).then(res => {
@@ -154,6 +158,8 @@ export default {
           } else {
             this.packetsLossName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
       } else if (this.chartData.id === 16) {
         get(api.npm.location.packetsRetrains, params).then(res => {
@@ -162,6 +168,8 @@ export default {
           } else {
             this.packetsRetrainsName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
       }
     },

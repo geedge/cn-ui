@@ -27,14 +27,13 @@ import { api } from '@/utils/api'
 import { get } from '@/utils/http'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'NetworkOverviewDdosDetection',
-  props: {
-    timeFilter: Object
-  },
   components: {
     ChartNoData
   },
+  mixins: [chartMixin],
   data () {
     return {
       ddosData: {},
@@ -47,15 +46,19 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
+      this.toggleLoading(true)
       get(api.netWorkOverview.ddosEventAnalysis, params).then(res => {
         if (res.code === 200) {
-          // res.data.result.length = 0
           if (res.data.result.length === 0) {
             this.isNoData = true
             return
+          } else {
+            this.isNoData = false
           }
           this.ddosData = res.data.result[0]
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     }
   },

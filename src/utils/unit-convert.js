@@ -149,6 +149,12 @@ export function valueToRangeValue (value, unitType) {
         }
         break
       }
+      case unitTypes.bps: {
+        if (values[0] < 0.01) {
+          return ['<0.01', 'bps']
+        }
+        break
+      }
       default: break
     }
   }

@@ -128,17 +128,14 @@ import { getChainRatio } from '@/utils/tools'
 import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'NetworkOverviewApps',
-  props: {
-    chart: Object,
-    timeFilter: Object
-  },
   components: {
     loading,
     ChartNoData
   },
-
+  mixins: [chartMixin],
   setup () {
     return {
       myChart: shallowRef([])
@@ -211,7 +208,6 @@ export default {
       })
     },
     init () {
-      // this.appDataQuery(this.appData)
       const appCards = []
       const providerCards = []
       this.appData.forEach(d => {
@@ -252,18 +248,8 @@ export default {
     handleData (prevRequest, request, _t) {
       Promise.all([prevRequest, request]).then(res => {
         if (res[0].code === 200 && res[1].code === 200) {
-        // if (true) {
           const prevData = res[0].data.result
           const data = res[1].data.result
-          /* let prevData
-          let data
-          if (_t === 'app') {
-            prevData = appPrevTestData
-            data = appTestData
-          } else if (_t === 'provider') {
-            prevData = providerPrevTestData
-            data = providerTestData
-          } */
           let toCompareType = 'bytes'
           if (this.metricFilter === 'Sessions/s') {
             toCompareType = 'sessions'

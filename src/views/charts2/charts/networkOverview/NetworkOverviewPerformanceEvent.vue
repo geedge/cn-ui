@@ -24,6 +24,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'NetworkOverviewPerformanceEvent',
   setup () {
@@ -32,9 +33,7 @@ export default {
       myChart2: shallowRef(null)
     }
   },
-  props: {
-    timeFilter: Object
-  },
+  mixins: [chartMixin],
   components: {
     ChartNoData
   },
@@ -42,7 +41,9 @@ export default {
     return {
       timer: null,
       isNoData: false,
-      isNoData2: false
+      isNoData2: false,
+      loading1: false,
+      loading2: false
     }
   },
   methods: {
@@ -56,12 +57,14 @@ export default {
       if (dom) {
         this.myChart = echarts.init(dom)
         this.chartOption = pieChartOption1
+        this.loading1 = true
         get(api.netWorkOverview.eventSeverity, params).then(res => {
           if (res.code === 200) {
-            // res.data.result.length = 0
             if (res.data.result.length === 0) {
               this.isNoData = true
               return
+            } else {
+              this.isNoData = false
             }
             res.data.result = res.data.result.map(t => {
               if (t.eventSeverity === 'critical') {
@@ -89,17 +92,21 @@ export default {
             this.chartOption.series[0].data = res.data.result.sort((a, b) => { return a.index - b.index })
             this.myChart.setOption(this.chartOption)
           }
+        }).finally(() => {
+          this.loading1 = false
         })
       }
       if (dom2) {
         this.myChart2 = echarts.init(dom2)
         this.chartOption2 = pieChartOption2
+        this.loading2 = true
         get(api.netWorkOverview.eventType, params).then(res => {
           if (res.code === 200) {
-            // res.data.result.length = 0
             if (res.data.result.length === 0) {
               this.isNoData2 = true
               return
+            } else {
+              this.isNoData2 = false
             }
             res.data.result = res.data.result.map(t => {
               return {
@@ -115,12 +122,24 @@ export default {
             this.chartOption2.series[0].data = res.data.result
             this.myChart2.setOption(this.chartOption2)
           }
+        }).finally(() => {
+          this.loading2 = false
         })
       }
     },
     resize () {
       this.myChart.resize()
       this.myChart2.resize()
+    }
+  },
+  computed: {
+    loading () {
+      return this.loading1 && this.loading2
+    }
+  },
+  watch: {
+    loading (n) {
+      this.toggleLoading(n)
     }
   },
   mounted () {

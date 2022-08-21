@@ -14,14 +14,10 @@
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
-
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'NpmEventsHeader',
-  props: {
-    chart: Object,
-    timeFilter: Object,
-    // type: String
-  },
+  mixins: [chartMixin],
   data () {
     return {
       chartData: [],
@@ -35,6 +31,7 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         type: this.type
       }
+      this.toggleLoading(true)
       get(api.npm.events.list, params).then(res => {
         if (res.code === 200) {
           res.data.result.forEach(t => {
@@ -52,6 +49,8 @@ export default {
           })
           this.chartData = res.data.result.sort((a, b) => { return a.index - b.index })
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     }
   },
