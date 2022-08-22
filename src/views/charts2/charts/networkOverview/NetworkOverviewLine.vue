@@ -171,13 +171,13 @@ export default {
               mpackets[1].analysis = t.inboundBitsRate.analysis
               mpackets[2].analysis = t.outboundBitsRate.analysis
               mpackets[3].analysis = t.internalBitsRate.analysis
-              mpackets[4].analysis = t.externalBitsRate.analysis
+              mpackets[4].analysis = t.throughBitsRate.analysis
               mpackets[5].analysis = t.other.analysis
               mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
               mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
               mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
               mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-              mpackets[4].data = t.externalBitsRate.values ? t.externalBitsRate.values : []
+              mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
               mpackets[5].data = t.other.values ? t.other.values : []
               mpackets.forEach(e => {
                 e.unitType = 'bps'

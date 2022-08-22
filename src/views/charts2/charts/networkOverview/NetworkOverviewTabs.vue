@@ -24,6 +24,7 @@
                   :header-cell-style="tableHeaderCellStyle"
                   class="tab-table"
                   height="100%"
+                  empty-text=" "
           >
             <template v-for="(item,index) in customTableTitles">
               <el-table-column

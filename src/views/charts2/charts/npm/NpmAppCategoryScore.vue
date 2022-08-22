@@ -1,6 +1,5 @@
 <template>
   <div class="npm-app">
-    <chart-no-data v-if="isNoData"></chart-no-data>
     <div class="npm-app-left">
       <div class="npm-app-letter">
         <div v-for="(letter, index) in colorPatchData" :key="index">
@@ -21,6 +20,7 @@
           :data="tableData"
           class="app-table"
           height="100%"
+          empty-text=" "
       >
         <template v-for="(item, index) in customTableTitles" :key="index">
           <el-table-column class="data-column">
@@ -102,7 +102,6 @@ import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { getChainRatio, computeScore } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
-import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NpmAppCategoryScore',
   data () {
@@ -128,9 +127,6 @@ export default {
       ]
     }
   },
-  components: {
-    ChartNoData
-  },
   mixins: [chartMixin],
   methods: {
     init (params) {
@@ -143,12 +139,10 @@ export default {
       // 获取table后三列内容
       const currentTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 0 })
       const lastCycleTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 1 })
-      this.toggleLoading(true)
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
         const prevData = res[1].data.result
         const data = res[0].data.result
         if (data && data.length > 0) {
-          this.isNoData = false
           const tableData = data.map(d => {
             const mapping = npmCategoryInfoMapping.find(mapping => mapping.appSubcategory === d.appSubcategory)
             const result = {
@@ -199,8 +193,6 @@ export default {
             })
             this.tableData = tableData
           })
-        } else {
-          this.isNoData = true
         }
       }).finally(() => {
         this.toggleLoading(false)

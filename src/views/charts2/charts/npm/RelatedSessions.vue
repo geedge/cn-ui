@@ -62,8 +62,8 @@ export default {
       get(api.npm.overview.relatedSessions, params).then(res => {
         if (res.code === 200) {
           this.sessionData = res.data.result
-          this.clientSessions = this.sessionData.clientSessions / (this.sessionData.clientSessions + this.sessionData.serverSessions)
-          this.serverSessions = this.sessionData.serverSessions / (this.sessionData.clientSessions + this.sessionData.serverSessions)
+          this.clientSessions = this.sessionData.clientSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
+          this.serverSessions = this.sessionData.serverSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
           this.sessionData.clientSessions = unitConvert(this.clientSessions, unitTypes.percent).join('')
           this.sessionData.serverSessions = unitConvert(this.serverSessions, unitTypes.percent).join('')
           if (this.clientSessions === 1) {

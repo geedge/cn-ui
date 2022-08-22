@@ -246,6 +246,7 @@ export default {
       }
     },
     handleData (prevRequest, request, _t) {
+      this.toggleLoading(true)
       Promise.all([prevRequest, request]).then(res => {
         if (res[0].code === 200 && res[1].code === 200) {
           const prevData = res[0].data.result
