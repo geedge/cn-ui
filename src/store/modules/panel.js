@@ -40,6 +40,7 @@ const panel = {
      */
     panelName: '', // 网络概况的Panel的名称
     breadcrumbColumnName: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
+    dimensionType: '', // 维度
     breadcrumbColumnValue: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
     breadcrumbColumnValueList: [], // 第四级面包屑的下拉列表
     networkOverviewCurrentTab: null, // 只代表选中的tab，有时会与面包屑中显示的值不同
@@ -105,6 +106,9 @@ const panel = {
     },
     setBreadcrumbColumnName (state, breadcrumbColumnName) {
       state.breadcrumbColumnName = breadcrumbColumnName
+    },
+    setDimensionType (state, dimensionType) {
+      state.dimensionType = dimensionType
     },
     setBreadcrumbColumnValue (state, breadcrumbColumnValue) {
       state.breadcrumbColumnValue = breadcrumbColumnValue
@@ -185,6 +189,9 @@ const panel = {
     },
     getBreadcrumbColumnName (state) {
       return state.breadcrumbColumnName
+    },
+    getDimensionType (state) {
+      return state.dimensionType
     },
     getBreadcrumbColumnValue (state) {
       return state.breadcrumbColumnValue

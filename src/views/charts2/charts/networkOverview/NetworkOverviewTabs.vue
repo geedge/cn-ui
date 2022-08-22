@@ -20,7 +20,6 @@
                   :ref="`dataTable_${index}`"
                   :data="tableData"
                   border
-                  v-loading="loading"
                   :cell-style="tableCellStyle"
                   :header-cell-style="tableHeaderCellStyle"
                   class="tab-table"
@@ -149,6 +148,7 @@ import {operationType, unitTypes,networkTable,tableColumnType } from '@/utils/co
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
 import { getChainRatio } from '@/utils/tools'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -218,6 +218,7 @@ export default {
       }
     }
   },
+  mixins: [chartMixin],
   methods: {
     changeMetric () {
       const beforeType = this.$store.getters.getTabOperationBeforeType
@@ -305,7 +306,7 @@ export default {
           q: condition
         }
       }
-      this.loading = true
+      this.toggleLoading(true)
       this.$emit('getChartData', this.getCurUrl(), queryParams)
     },
     handleCustomizeButton (status) {
@@ -495,15 +496,16 @@ export default {
               through: item.through
             })
           })
-          this.loading = false
+
+          this.toggleLoading(false)
         } else {
           this.tableData = tableDataTmp
-          this.loading = false
+          this.toggleLoading(false)
         }
       }).catch(e => {
-        this.loading = false
+        this.toggleLoading(false)
       }).finally(e => {
-        this.loading = false
+        this.toggleLoading(false)
       })
     },
     tabChange (index) {
@@ -547,7 +549,7 @@ export default {
           q: condition
         }
       }
-      this.loading = true
+      this.toggleLoading(true)
       this.$emit('getChartData', this.getCurUrl(), queryParams)
     },
     handleTabValue (columnName, columnValue) {
@@ -579,6 +581,7 @@ export default {
             menu.columnValue = columnValue
             this.$store.commit('setPanelName', columnValue)
             this.$store.commit('setBreadcrumbColumnName', columnName)
+            this.$store.commit('setDimensionType', tabGroup[0]?tabGroup[0].prop:'')
             this.$store.commit('setBreadcrumbColumnValue', columnValue)
           }
         } else if (!this.$_.isEmpty(menu.children)) {
@@ -588,11 +591,13 @@ export default {
               child.columnValue = columnValue
               this.$store.commit('setPanelName', columnValue)
               this.$store.commit('setBreadcrumbColumnName', columnName)
+              this.$store.commit('setDimensionType', tabGroup[0]?tabGroup[0].prop:'')
               this.$store.commit('setBreadcrumbColumnValue', columnValue)
             }
           })
         }
       })
+      console.log(this.$store.getters.getDimensionType)
       let toPanel = null
       this.list.forEach((item, index) => {
         if (item.label === columnName) {
@@ -699,7 +704,7 @@ export default {
             q: condition
           }
         }
-        this.loading = true
+        this.toggleLoading(true)
         this.$emit('getChartData', this.getCurUrl(), queryParams, queryParams.q)
       }
     },

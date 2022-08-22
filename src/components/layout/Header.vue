@@ -400,6 +400,9 @@ export default {
                 child.columnName = columnName
                 this.$store.commit('setBreadcrumbColumnValue', columnValue)
                 this.$store.commit('setBreadcrumbColumnName', columnName)
+                const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
+                let type = tabObjGroup&&tabObjGroup[0]?tabObjGroup[0].prop:''
+                this.$store.commit('setDimensionType', type)
                 this.$store.commit('setPanelName', columnValue)
               } else if (columnName) { // 点击的为列名
                 child.columnValue = ''
@@ -410,6 +413,7 @@ export default {
                 const tabList = this.$store.getters.getNetworkOverviewTabList
                 const curTab = tabList.filter(item => this.$t(item.label) === columnName)[0]
                 this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+                this.$store.commit('setDimensionType', curTab?curTab.prop:'')
                 this.$store.commit('setQueryCondition', '')
                 this.$store.commit('setNetworkOverviewBeforeTab', null)
               } else {
@@ -417,6 +421,7 @@ export default {
                 child.columnValue = ''
                 this.$store.commit('setBreadcrumbColumnValue', '')
                 this.$store.commit('setBreadcrumbColumnName', '')
+                this.$store.commit('setDimensionType', '')
                 this.$store.commit('setPanelName', '')
                 this.$store.commit('setBreadcrumbColumnValueList', [])
                 this.$store.commit('setNetworkOverviewCurrentTab', null)
@@ -427,7 +432,7 @@ export default {
           })
         }
       })
-
+      //console.log(this.$store.getters.getDimensionType)
       if(opeType===3){
         this.$router.push({
           params:{...this.$route.params,fourthPanel:''}
