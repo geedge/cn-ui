@@ -63,8 +63,6 @@ export default {
             if (res.data.result.length === 0) {
               this.isNoData = true
               return
-            } else {
-              this.isNoData = false
             }
             res.data.result = res.data.result.map(t => {
               if (t.eventSeverity === 'critical') {
@@ -91,6 +89,8 @@ export default {
             }
             this.chartOption.series[0].data = res.data.result.sort((a, b) => { return a.index - b.index })
             this.myChart.setOption(this.chartOption)
+          } else {
+            this.isNoData = true
           }
         }).finally(() => {
           this.loading1 = false

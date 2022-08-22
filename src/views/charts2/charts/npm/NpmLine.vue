@@ -80,9 +80,9 @@ export default {
       ],
       timer: null,
       myChartArray: [],
-      side: 'server',
-      country: '',
-      province: '',
+      side: this.$store.state.panel.npmLocationSide,
+      country: this.$store.state.panel.npmLocationCountry,
+      // province: '',
       throughputName: '',
       tcpName: '',
       httpName: '',
@@ -91,30 +91,46 @@ export default {
       packetsRetrainsName: ''
     }
   },
+  watch: {
+    '$store.state.panel.npmLocationSide': {
+      deep: true,
+      handler (n) {
+        this.side = n
+        this.init()
+      }
+    },
+    '$store.state.panel.npmLocationCountry': {
+      deep: true,
+      handler (n) {
+        this.country = n
+        this.init()
+      }
+    }
+  },
   methods: {
     init () {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         side: this.side,
-        country: this.country,
-        province: this.province
+        country: this.country
+        // province: this.province
       }
       this.toggleLoading(true)
       if (this.chartData.id === 11) {
-        throughputData.forEach((t, i) => {
-          if (t.type === 'totalBytesRate') {
-            this.chartOptionLineData[i].values = t.values
-          } else if (t.type === 'inboundBytesRate') {
-            this.chartOptionLineData[i].values = t.values
-          } else if (t.type === 'outboundBytesRate') {
-            this.chartOptionLineData[i].values = t.values
-          }
-        })
-        const result = this.chartOptionLineData.filter(t => this.chartData.params.color.indexOf(t.color) > -1)
         get(api.npm.location.thoughput, params).then(res => {
           if (res.code === 200) {
-            this.echartsInit(result, this.chartData.name, this.chartData.params.unitType)
+            res.data.result.forEach((t, i) => {
+              if (t.type === 'totalBytesRate') {
+                this.chartOptionLineData[i].values = t.values
+              } else if (t.type === 'inboundBytesRate') {
+                this.chartOptionLineData[i].values = t.values
+              } else if (t.type === 'outboundBytesRate') {
+                this.chartOptionLineData[i].values = t.values
+              }
+            })
+            const result = this.chartOptionLineData.filter(t => this.chartData.params.color.indexOf(t.color) > -1)
+            this.echartsInit(result, this.chartData, this.chartData.params.unitType)
           } else {
             this.throughputName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
@@ -124,7 +140,7 @@ export default {
       } else if (this.chartData.id === 12) {
         get(api.npm.location.tcpConnectionEstablishLatency, params).then(res => {
           if (res.code === 200) {
-            this.echartsInit(tcpData, this.chartData.name, this.chartData.params.unitType)
+            this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.tcpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
@@ -134,7 +150,7 @@ export default {
       } else if (this.chartData.id === 13) {
         get(api.npm.location.httpResponseLatency, params).then(res => {
           if (res.code === 200) {
-            this.echartsInit(httpData, this.chartData.name, this.chartData.params.unitType)
+            this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.httpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
@@ -144,7 +160,7 @@ export default {
       } else if (this.chartData.id === 14) {
         get(api.npm.location.sslHandshakeLatency, params).then(res => {
           if (res.code === 200) {
-            this.echartsInit(sslData, this.chartData.name, this.chartData.params.unitType)
+            this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.sslName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
@@ -154,7 +170,7 @@ export default {
       } else if (this.chartData.id === 15) {
         get(api.npm.location.packetsLoss, params).then(res => {
           if (res.code === 200) {
-            this.echartsInit(packetsLossData, this.chartData.name, this.chartData.params.unitType)
+            this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.packetsLossName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
@@ -164,7 +180,7 @@ export default {
       } else if (this.chartData.id === 16) {
         get(api.npm.location.packetsRetrains, params).then(res => {
           if (res.code === 200) {
-            this.echartsInit(packetsRetrainsData, this.chartData.name, this.chartData.params.unitType)
+            this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.packetsRetrainsName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
           }
@@ -173,8 +189,8 @@ export default {
         })
       }
     },
-    echartsInit (data, name, type) {
-      const dom = document.getElementById(`chart${name}`)
+    echartsInit (data, chartData, type) {
+      const dom = document.getElementById(`chart${chartData.name}`)
       if (dom) {
         this.myChart = echarts.init(dom)
         this.chartOption = npmLineChartOption
@@ -183,7 +199,7 @@ export default {
         this.chartOption.series = data.map((t, i) => {
           return {
             ...seriesTemplate,
-            name: t.legend ? t.legend : t.type,
+            name: t.legend ? t.legend : this.$_.get(chartData, 'i18n') || chartData.name,
             stack: this.chartData.params.isStack ? 'network.total' : '',
             lineStyle: {
               width: 1

@@ -35,30 +35,27 @@ import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
   name: 'RelatedSessions',
-  props: {
-    chart: Object,
-    timeFilter: Object,
-    // ip: String
-  },
+  mixins: [chartMixin],
   data () {
     return {
       sessionData: {},
       unitConvert,
       unitTypes,
       clientSessions: 0,
-      serverSessions: 0,
-      ip: '116.178.236.216'
+      serverSessions: 0
     }
   },
   methods: {
     relatedSessionsData () {
+      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        ip: this.ip
+        ip: condition[1]
       }
       const divGreen = document.getElementById('green')
       const divred = document.getElementById('red')
@@ -77,6 +74,8 @@ export default {
           divGreen.style.width = this.sessionData.clientSessions
           divred.style.width = this.sessionData.serverSessions
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     }
   },

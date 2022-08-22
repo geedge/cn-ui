@@ -110,19 +110,23 @@ import { getChainRatio } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import _ from 'lodash'
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'SingleValue',
   props: {
     npmNetworkCycleData: Array,
-    npmNetworkName: Array,
-    timeFilter: Object
+    npmNetworkName: Array
   },
+  mixins: [chartMixin],
   data () {
     return {
       unitTypes,
       unitConvert,
       npmNetworkData: [],
-      npmNetworkLastCycleData: []
+      npmNetworkLastCycleData: [],
+      side: '',
+      chartData: {}
     }
   },
   watch: {
@@ -152,10 +156,21 @@ export default {
       this.npmNetworkData = cycle
     },
     npmNetworkLastCycleQuery () {
+      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      const type = this.$store.getters.getDimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 1
+      }
+      if (this.chartData.id === 23) {
+        this.side = 'client'
+      } else {
+        this.side = 'server'
+      }
+      if (condition && type) {
+        params.q = `${type}='${condition[1]}' and side='${this.side}'`
+        params.type = type
       }
       const tcp = get(api.npm.overview.tcpSessionDelay, params)
       const http = get(api.npm.overview.httpResponseDelay, params)
@@ -170,6 +185,11 @@ export default {
           }
         })
       })
+    }
+  },
+  mounted () {
+    if (this.chart) {
+      this.chartData = _.cloneDeep(this.chart)
     }
   }
 }

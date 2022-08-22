@@ -26,9 +26,6 @@ export default {
     }
   },
   mixins: [chartMixin],
-  props: {
-    chart: Object
-  },
   watch: {
     currentTab (n) {
       this.$nextTick(() => {

@@ -276,6 +276,8 @@ export default {
             }
           })
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     },
     metricChange (value) {

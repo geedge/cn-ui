@@ -102,7 +102,6 @@ import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { getChainRatio, computeScore } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
-import Loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NpmAppCategoryScore',
@@ -130,7 +129,6 @@ export default {
     }
   },
   components: {
-    Loading,
     ChartNoData
   },
   mixins: [chartMixin],

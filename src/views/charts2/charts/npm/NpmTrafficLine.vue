@@ -22,15 +22,10 @@ import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import _ from 'lodash'
+import chartMixin from '@/views/charts2/chart-mixin'
 export default {
   name: 'NpmTrafficLine',
-  props: {
-    chart: Object,
-    timeFilter: Object,
-    // type: String,
-    // side: String,
-    // ip: String
-  },
+  mixins: [chartMixin],
   components: {
     ChartNoData
   },
@@ -43,10 +38,7 @@ export default {
     return {
       unitConvert,
       unitTypes,
-      isNoData: false,
-      ip: '116.178.236.216',
       side: '',
-      type: 'ip',
       mpackets: [
         { name: 'network.total', show: true, positioning: 0, data: [], unitType: '' },
         { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: '' },
@@ -60,8 +52,8 @@ export default {
   },
   methods: {
     init () {
-      const condition = this.$store.getters.getQueryCondition
-      console.log(condition)
+      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      const type = this.$store.getters.getDimensionType
       if (this.chartData.id === 24) {
         this.side = 'client'
       } else {
@@ -70,16 +62,11 @@ export default {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        q: `ip='${this.ip}' and side='${this.side}'`,
-        type: 'ip'
+        q: `${type}='${condition[1]}' and side='${this.side}'`,
+        type: type
       }
-      // if (condition) {
-      //   params.q = condition
-      //   params.type = this.type
-      // }
       get(api.npm.overview.trafficGraph, params).then((res) => {
         if (res.code === 200) {
-          // res.data.result.length = 0
           if (res.data.result.length === 0) {
             this.isNoData = true
             return
@@ -116,6 +103,8 @@ export default {
         } else {
           this.isNoData = true
         }
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     },
     echartsInit (echartsData) {
@@ -221,4 +210,3 @@ export default {
   }
 }
 </script>
-
