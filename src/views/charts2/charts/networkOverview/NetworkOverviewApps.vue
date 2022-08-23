@@ -73,7 +73,8 @@
           <el-tabs v-model="appTypeTab" @tab-click="appTypeTabChange">
             <el-tab-pane :label="$t('networkOverview.appType.provider')" :name="0">
               <div class="body__apps" :class="{'body__apps-no-grid': providerOptions.length === 0}">
-                <chart-no-data v-if="providerOptions.length === 0"></chart-no-data>
+                <loading :loading="loadingBody"></loading>
+                <chart-no-data v-if="providerOptions.length === 0 && !loadingBody"></chart-no-data>
                 <div class="body__app" v-else :class="{'provide-show': app.provideShow}" v-for="(app, index) in providerOptions" :key="index"  @click="appCheckedChange(app, 0)">
                   <div class="body__app-content">
                     <div class="body__app-left">
@@ -89,7 +90,8 @@
             </el-tab-pane>
             <el-tab-pane :label="$t('networkOverview.appType.app')" :name="1">
               <div class="body__apps" :class="{'body__apps-no-grid': appOptions.length === 0}">
-                <chart-no-data v-if="appOptions.length === 0"></chart-no-data>
+                <loading :loading="loadingBody"></loading>
+                <chart-no-data v-if="appOptions.length === 0 && !loadingBody"></chart-no-data>
                 <div class="body__app" v-else :class="{'app-show': app.appShow}" v-for="(app, index) in appOptions" :key="index" @click="appCheckedChange(app, 1)">
                   <div class="body__app-content">
                     <div class="body__app-left">
@@ -168,11 +170,9 @@ export default {
       providerOptions: [],
       appOptions: [],
       appTypeTab: 0,
-      appShowName: false,
       searcherApp: '',
       // 选中的app，不区分app和provider
       toSaveApp: [],
-      myChartArray: [],
       appShowType: 'bytes',
       pageObj: { // 分页对象
         pageNo: 1,
@@ -184,7 +184,7 @@ export default {
       offset: 0,
       flag: false,
       timerSearc: null,
-      timerHandle: null
+      loadingBody: false
     }
   },
   watch: {
@@ -375,7 +375,9 @@ export default {
                 }
               })
             })
-            if (val && !show) {
+            if (val) {
+              this.providerOptions = res.data.list
+            } else if (!val && !show) {
               this.providerOptions = res.data.list
             } else {
               this.providerOptions.push(...res.data.list)
@@ -383,6 +385,7 @@ export default {
             }
           }
           this.loading = false
+          this.loadingBody = false
         })
       } else if (this.appTypeTab == 1) {
         params.type = 'overviewApp'
@@ -396,7 +399,9 @@ export default {
                 }
               })
             })
-            if (val && !show) {
+            if (val) {
+              this.appOptions = res.data.list
+            } else if (!val && !show) {
               this.appOptions = res.data.list
             } else {
               this.appOptions.push(...res.data.list)
@@ -404,6 +409,7 @@ export default {
             }
           }
           this.loading = false
+          this.loadingBody = false
         })
       }
     },
@@ -424,6 +430,7 @@ export default {
       this.pageObj.pageNo = 1
       this.searcherApp = ''
       this.addApp()
+      this.loadingBody = true
       window.addEventListener('scroll', this.scrollChange, true)
       this.timerScroll = setTimeout(() => {
         window.removeEventListener('scroll', this.scrollChange, true)
