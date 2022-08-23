@@ -198,13 +198,13 @@ export default {
               mpackets[1].analysis = t.inboundPacketsRate.analysis
               mpackets[2].analysis = t.outboundPacketsRate.analysis
               mpackets[3].analysis = t.internalPacketsRate.analysis
-              mpackets[4].analysis = t.externalPacketsRate.analysis
+              mpackets[4].analysis = t.throughPacketsRate.analysis
               mpackets[5].analysis = t.other.analysis
               mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
               mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
               mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
               mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-              mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
+              mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
               mpackets[5].data = t.other.values ? t.other.values : []
               mpackets.forEach(e => {
                 e.unitType = 'packets/s'
@@ -419,9 +419,7 @@ export default {
     },
     referenceSelectChange (val) {
       this.echartsLabelValue = val
-      this.timer = setTimeout(() => {
-        this.init(this.echartsType, val)
-      }, 200)
+      this.echartsInit(this.mpackets, this.showMarkLine)
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []
