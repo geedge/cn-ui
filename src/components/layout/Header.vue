@@ -149,7 +149,7 @@
 <script>
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
-import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl,drillDownPanelTypeMapping } from '@/utils/constants'
+import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl, drillDownPanelTypeMapping } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -401,7 +401,7 @@ export default {
                 this.$store.commit('setBreadcrumbColumnValue', columnValue)
                 this.$store.commit('setBreadcrumbColumnName', columnName)
                 const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
-                let type = tabObjGroup&&tabObjGroup[0]?tabObjGroup[0].prop:''
+                const type = tabObjGroup && tabObjGroup[0] ? tabObjGroup[0].prop : ''
                 this.$store.commit('setDimensionType', type)
                 this.$store.commit('setPanelName', columnValue)
               } else if (columnName) { // 点击的为列名
@@ -413,7 +413,7 @@ export default {
                 const tabList = this.$store.getters.getNetworkOverviewTabList
                 const curTab = tabList.filter(item => this.$t(item.label) === columnName)[0]
                 this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-                this.$store.commit('setDimensionType', curTab?curTab.prop:'')
+                this.$store.commit('setDimensionType', curTab ? curTab.prop : '')
                 this.$store.commit('setQueryCondition', '')
                 this.$store.commit('setNetworkOverviewBeforeTab', null)
               } else {
@@ -432,14 +432,14 @@ export default {
           })
         }
       })
-      //console.log(this.$store.getters.getDimensionType)
-      if(opeType===3){
+      // console.log(this.$store.getters.getDimensionType)
+      if (opeType === 3) {
         this.$router.push({
-          params:{...this.$route.params,fourthPanel:''}
+          params: { ...this.$route.params, fourthPanel: '' }
         })
-      }else if(opeType!=4){
+      } else if (opeType != 4) {
         this.$router.push({
-          params:{...this.$route.params,fourthPanel:'',thirdPanel:''}
+          params: { ...this.$route.params, fourthPanel: '', thirdPanel: '' }
         })
       }
 

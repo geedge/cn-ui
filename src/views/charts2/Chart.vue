@@ -231,10 +231,6 @@ export default {
           get(requestUrl, this.queryParams).then(response => {
             if (response.code === 200) {
               this.chartData = response.data.result
-            } else {
-              if (this.chart.type === 601) {
-                this.$refs['tab' + this.chart.id].loading = false
-              }
             }
           })
         }
