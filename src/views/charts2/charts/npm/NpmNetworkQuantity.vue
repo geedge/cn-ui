@@ -1,10 +1,8 @@
 <template>
   <div class="npm-network-quantity">
     <single-value
-      :npm-network-cycle-data="npmNetworkCycleData"
       :npm-network-name="npmNetworkName"
-      :time-filter="timeFilter"
-      :chartData="chartData"
+      :npm-network-data="npmNetworkData"
     ></single-value>
   </div>
 </template>
@@ -16,6 +14,7 @@ import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
+import { getChainRatio } from '@/utils/tools'
 export default {
   name: 'NpmNetworkQuantity',
   components: { SingleValue },
@@ -30,6 +29,8 @@ export default {
         { name: 'overall.packetRetrans' }
       ],
       npmNetworkCycleData: [],
+      npmNetworkLastCycleData: [],
+      npmNetworkData: [],
       side: '',
       chartData: {}
     }
@@ -67,14 +68,62 @@ export default {
       }).finally(() => {
         this.toggleLoading(false)
       })
+    },
+    npmNetworkLastCycleQuery () {
+      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      const type = this.$store.getters.getDimensionType
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        cycle: 1
+      }
+      if (this.chartData.id === 23) {
+        this.side = 'client'
+      } else {
+        this.side = 'server'
+      }
+      if (condition && type) {
+        params.q = `${type}='${condition[1]}' and side='${this.side}'`
+        params.type = type
+      }
+      const tcp = get(api.npm.overview.tcpSessionDelay, params)
+      const http = get(api.npm.overview.httpResponseDelay, params)
+      const ssl = get(api.npm.overview.sslConDelay, params)
+      const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
+      const packetPercent = get(api.npm.overview.packetRetransPercent, params)
+      this.toggleLoading(true)
+      Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+        res.forEach(t => {
+          if (t.code === 200) {
+            this.npmNetworkLastCycleData.push(t.data.result)
+            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData)
+          }
+        })
+      }).finally(() => {
+        this.toggleLoading(false)
+      })
+    },
+    npmNetworkQuantity (cycle, lastCycle) {
+      cycle.forEach(t => {
+        lastCycle.forEach(e => {
+          Object.keys(t).forEach(r => {
+            Object.keys(e).forEach(d => {
+              if (r === d) {
+                t.value = getChainRatio(t[r], e[d])
+              }
+            })
+          })
+        })
+      })
+      this.npmNetworkData = cycle
     }
-
   },
   mounted () {
     if (this.chart) {
       this.chartData = _.cloneDeep(this.chart)
     }
     this.npmNetworkCycleQuery()
+    this.npmNetworkLastCycleQuery()
   }
 }
 </script>
