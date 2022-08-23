@@ -145,6 +145,12 @@ export default {
       this.$nextTick(() => {
         this.handleActiveBar(n)
       })
+    },
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.init(this.echartsType, this.showMarkLine, 'active')
+      }
     }
   },
   methods: {

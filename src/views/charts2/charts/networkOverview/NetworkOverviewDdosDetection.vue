@@ -40,6 +40,14 @@ export default {
       isNoData: false
     }
   },
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.ddosDetectDataRequests()
+      }
+    }
+  },
   methods: {
     ddosDetectDataRequests () {
       const params = {

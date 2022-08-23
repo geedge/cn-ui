@@ -118,19 +118,20 @@
 
 <script>
 import unitConvert from '@/utils/unit-convert'
-import { storageKey, unitTypes } from '@/utils/constants'
+import {storageKey, unitTypes} from '@/utils/constants'
 import * as echarts from 'echarts'
-import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
-import { shallowRef } from 'vue'
-import { get, put } from '@/utils/http'
-import { api } from '@/utils/api'
+import {appListChartOption} from '@/views/charts2/charts/options/echartOption'
+import {shallowRef} from 'vue'
+import {get, put} from '@/utils/http'
+import {api} from '@/utils/api'
 import _ from 'lodash'
-import { getSecond } from '@/utils/date-util'
-import { getChainRatio } from '@/utils/tools'
+import {getSecond} from '@/utils/date-util'
+import {getChainRatio} from '@/utils/tools'
 import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
-import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
+import {appStackedLineTooltipFormatter} from '@/views/charts/charts/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
+
 export default {
   name: 'NetworkOverviewApps',
   components: {
@@ -197,6 +198,12 @@ export default {
         } else {
           window.removeEventListener('scroll', this.handleScroll, true)
         }
+      }
+    },
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.init()
       }
     }
   },
@@ -320,8 +327,7 @@ export default {
           params.forEach(t => {
             t.seriesName = this.$t(t.seriesName)
           })
-          const str = appStackedLineTooltipFormatter(params)
-          return str
+          return appStackedLineTooltipFormatter(params)
         }
         chart.setOption(chartOption)
         this.myChart.push(chart)

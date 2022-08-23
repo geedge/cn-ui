@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import { mapData, drillDownData } from '@/views/charts2/charts/mapTestData'
 import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
@@ -52,13 +51,12 @@ import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
+import {Rectangle3D} from '@amcharts/amcharts4/.internal/core/elements/3d/Rectangle3D'
 export default {
   name: 'NpmMap',
   data () {
     return {
       locationOptions,
-      mapData,
-      drillDownData,
       myChart: null,
       polygonSeries: null,
       countrySeries: null,
@@ -88,6 +86,20 @@ export default {
       this.worldImageSeries = shallowRef(this.imageSeriesFactory('score', this.polygonSeries))
       // 渲染
       this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+
+      this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
+        this.$store.commit('setNpmLocationCountry', ev.target.dataItem.dataContext.name)
+        this.location = ev.target.dataItem.dataContext.name
+        if (this.countrySeries) {
+          this.countrySeries.dispose()
+        }
+        if (this.countryImageSeries) {
+          this.countryImageSeries.dispose()
+        }
+        const countryId = ev.target.dataItem.dataContext.id
+        ev.target.isHover = false
+        await this.drill(countryId)
+      })
     },
     loadAm4ChartMap (polygonSeries, imageSeries) {
       try {
@@ -157,8 +169,6 @@ export default {
         color: this.scoreColor(r.score),
         border: this.scoreColor(r.score)
       }))
-      console.info(imageSeries)
-      console.info(this.countryImageSeries)
     },
     scoreColor (score) {
       if (score >= 0 && score <= 2) {
@@ -246,49 +256,71 @@ export default {
       })
 
       return imageSeries
+    },
+    async drill (countryId) {
+      if (countryId) {
+        const targetMapObject = this.polygonSeries.getPolygonById(countryId)
+        targetMapObject.series.chart.zoomToMapObject(targetMapObject)
+        const geoData = await getGeoData(countryId)
+        if (geoData) {
+          this.countrySeries = shallowRef(this.polygonSeriesFactory())
+          this.countrySeries.geodata = geoData
+          this.countryImageSeries = shallowRef(this.imageSeriesFactory('score', this.countrySeries))
+          this.polygonSeries.hide()
+          this.worldImageSeries.hide()
+          this.$nextTick(() => {
+            this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
+          })
+        }
+      }
     }
   },
   watch: {
     trafficDirection (n) {
       this.$store.commit('setNpmLocationSide', n.toLowerCase())
-      this.loadAm4ChartMap(this.countrySeries || this.polygonSeries, this.countryImageSeries || this.worldImageSeries)
+      if (this.location) {
+        this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
+      } else {
+        this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+      }
     },
     async location (n) {
       this.$store.commit('setNpmLocationCountry', n)
-      if (this.countrySeries) {
-        this.countrySeries.dispose()
-      }
-      if (this.countryImageSeries) {
-        this.countryImageSeries.dispose()
-      }
+      this.countrySeries.dispose()
+      this.countryImageSeries.dispose()
       if (n) {
         const countryId = countryNameIdMapping[n]
-        if (countryId) {
-          const targetMapObject = this.polygonSeries.getPolygonById(countryId)
-          targetMapObject.series.chart.zoomToMapObject(targetMapObject)
-          const geoData = await getGeoData(countryId)
-          if (geoData) {
-            this.countrySeries = shallowRef(this.polygonSeriesFactory())
-            this.countrySeries.geodata = geoData
-            this.countryImageSeries = shallowRef(this.imageSeriesFactory('score', this.countrySeries))
-            this.polygonSeries.hide()
-            this.worldImageSeries.hide()
-            this.$nextTick(() => {
-              this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
-            })
-          }
-        }
+        await this.drill(countryId)
       } else {
         this.polygonSeries.show()
         this.worldImageSeries.show()
-        this.countrySeries = null
-        this.countryImageSeries = null
         this.myChart.zoomToGeoPoint(this.myChart.homeGeoPoint, this.myChart.homeZoomLevel, true)
+      }
+    },
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        if (this.location) {
+          this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
+        } else {
+          this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+        }
       }
     }
   },
   mounted () {
     this.initMap()
+  },
+  beforeUnmount () {
+    if (this.polygonSeries) {
+      this.polygonSeries.mapPolygons.template.events.off('hit', this.mapBlockHitEvent)
+    }
+    this.polygonSeries = null
+    this.countrySeries = null
+    this.worldImageSeries = null
+    this.countryImageSeries = null
+    this.myChart && this.myChart.dispose()
+    this.myChart = null
   }
 }
 </script>

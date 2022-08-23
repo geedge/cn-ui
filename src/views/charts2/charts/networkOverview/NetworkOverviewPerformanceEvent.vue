@@ -140,6 +140,12 @@ export default {
   watch: {
     loading (n) {
       this.toggleLoading(n)
+    },
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.init()
+      }
     }
   },
   mounted () {

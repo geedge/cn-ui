@@ -24,6 +24,14 @@ export default {
       type: 'severity'
     }
   },
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.recentEventsListData()
+      }
+    }
+  },
   methods: {
     recentEventsListData () {
       const params = {

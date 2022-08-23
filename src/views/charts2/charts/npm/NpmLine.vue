@@ -2,7 +2,7 @@
   <div class="npm-line">
     <template v-if="chartData.id === 11">
       <div class="npm-line-header">
-        <div class="npm-line-header-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+        <div class="npm-line-header-title">{{$t(chartData.i18n) || chartData.name}}</div>
         <div class="npm-line-header-rights" v-if="chartData.params && chartData.params.showLegend && !throughputName">
           <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
             <div class="npm-line-header-icon" :class="'icon' + index"></div>
@@ -14,27 +14,27 @@
       <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 12">
-      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="tcpName"></chart-no-data>
       <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 13">
-      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="httpName"></chart-no-data>
       <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 14">
-      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="sslName"></chart-no-data>
       <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 15">
-      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="packetsLossName"></chart-no-data>
       <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 16">
-      <div class="npm-line-title">{{$_.get(chartData, 'i18n') || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="packetsRetrainsName"></chart-no-data>
       <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
@@ -199,7 +199,7 @@ export default {
         this.chartOption.series = data.map((t, i) => {
           return {
             ...seriesTemplate,
-            name: t.legend ? t.legend : this.$_.get(chartData, 'i18n') || chartData.name,
+            name: t.legend ? t.legend : this.$t(chartData.i18n) || chartData.name,
             stack: this.chartData.params.isStack ? 'network.total' : '',
             lineStyle: {
               width: 1

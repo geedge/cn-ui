@@ -31,7 +31,7 @@
 </template>
 
 <script>
-  import {useRoute, useRouter} from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
@@ -131,11 +131,17 @@ export default {
         })
       }
     },
-    timeRefreshChange (startTime, endTime, dateRangeValue) {
-
+    reload (startTime, endTime, dateRangeValue) {
+      this.timeFilter = { startTime: startTime, endTime: endTime, dateRangeValue: dateRangeValue }
     },
-    reload () {
-
+    timeRefreshChange () {
+      // 不是自选时间
+      if (!this.$refs.dateTimeRange.isCustom) {
+        const value = this.timeFilter.dateRangeValue
+        this.$refs.dateTimeRange.quickChange(value)
+      } else {
+        this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
+      }
     }
   }
 }
