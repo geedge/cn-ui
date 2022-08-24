@@ -40,7 +40,7 @@
 <script>
 import { useRoute, useRouter } from 'vue-router'
 import { ref } from 'vue'
-import { panelTypeAndRouteMapping, bytesColumnNameGroupForNpm, scoreUrl, customTableTitlesForAppPerformance } from '@/utils/constants'
+import { panelTypeAndRouteMapping, bytesColumnNameGroupForNpm, scoreUrl, customTableTitlesForAppPerformance, operationType } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
@@ -66,9 +66,26 @@ export default {
       score: null
     }
   },
+  computed: {
+    npmThirdLevelMenuScore () {
+      return this.$store.getters.getNpmThirdLevelMenuScore
+    }
+  },
+  watch: {
+    npmThirdLevelMenuScore: {
+      deep: true,
+      handler (n) {
+        const curOperationType = this.$store.getters.getTabOperationType
+        if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
+          this.score = n
+        }
+      }
+    }
+  },
   async mounted () {
     this.panelName = this.$store.getters.getPanelName
-    if (this.panelName && this.$route.path === '/panel/networkAppPerformance') {
+    const curOperationType = this.$store.getters.getTabOperationType
+    if (this.panelName && this.$route.path === '/panel/networkAppPerformance' && curOperationType !== operationType.thirdMenu) {
       // let columnName = this.$store.getters.getBreadcrumbColumnName
       const columnValue = this.$store.getters.getBreadcrumbColumnValue
       const queryParams = {
@@ -112,6 +129,8 @@ export default {
         }
         this.score = score || 0
       })
+    } else if (this.$route.path === '/panel/networkAppPerformance' && curOperationType === operationType.thirdMenu) {
+      this.score = this.$store.getters.getNpmThirdLevelMenuScore
     }
 
     await this.init()
