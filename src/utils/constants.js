@@ -687,9 +687,11 @@ export const networkTable = {
     hasMetricSearch: false, // 是否有metric下拉列表
     panelIdOfThirdMenu: drillDownPanelTypeMapping.npmThirdMenu,
     bytesColumnNameGroup: bytesColumnNameGroupForNpm,
-    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp,
     packetsColumnNameGroup: {}, // 无metric下拉列表条件，用不到此属性
-    sessionsColumnNameGroup: {}// 无metric下拉列表条件，用不到此属性
+    sessionsColumnNameGroup: {},// 无metric下拉列表条件，用不到此属性
+    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp,
+    packetsCycleColumnNameGroup: {},
+    sessionsCycleColumnNameGroup: {}
   }
 }
 
