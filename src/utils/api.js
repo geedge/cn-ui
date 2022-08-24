@@ -189,6 +189,7 @@ export const api = {
     events: {
       list: '/interface/overview/event/list',
       recentEvents: '/interface/overview/event/recentEvents',
+      recentEventsD: '/interface/application/performance/overview/drilldown/dimension/recentEvents',
       dimensionEvents: '/interface/overview/event/dimensionEvents'
     }
   }

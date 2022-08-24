@@ -37,7 +37,12 @@ export default {
   },
   methods: {
     npmNetworkCycleQuery () {
-      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      let condition = ''
+      if (this.$store.getters.getQueryCondition.indexOf('OR') > -1) {
+        condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      } else {
+        condition = this.$store.getters.getQueryCondition
+      }
       const type = this.$store.getters.getDimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -46,12 +51,21 @@ export default {
       }
       if (this.chartData.id === 23) {
         this.side = 'client'
-      } else {
+      } else if (this.chartData.id === 24) {
         this.side = 'server'
       }
-      if (condition.length > 1 && type) {
+      if (condition && (typeof condition !== 'object') && type) {
+        params.q = condition
+      } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
-        params.type = type
+      } else if (condition.length > 1 && type && type !== 'ip') {
+        if (type === 'country' || type === 'asn') {
+          params.q = `${type}='${condition[1]}'`
+        } else if (type === 'idcRenter') {
+          params.q = `idc_renter='${condition[1]}'`
+        } else {
+          params.q = `${condition[0]}'${condition[1]}'`
+        }
       }
       const tcp = get(api.npm.overview.tcpSessionDelay, params)
       const http = get(api.npm.overview.httpResponseDelay, params)
@@ -70,7 +84,12 @@ export default {
       })
     },
     npmNetworkLastCycleQuery () {
-      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      let condition = ''
+      if (this.$store.getters.getQueryCondition.indexOf('OR') > -1) {
+        condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      } else {
+        condition = this.$store.getters.getQueryCondition
+      }
       const type = this.$store.getters.getDimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -79,12 +98,21 @@ export default {
       }
       if (this.chartData.id === 23) {
         this.side = 'client'
-      } else {
+      } else if (this.chartData.id === 26) {
         this.side = 'server'
       }
-      if (condition.length > 1 && type) {
+      if (condition && (typeof condition !== 'object') && type) {
+        params.q = condition
+      } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
-        params.type = type
+      } else if (condition.length > 1 && type && type !== 'ip') {
+        if (type === 'country' || type === 'asn') {
+          params.q = `${type}='${condition[1]}'`
+        } else if (type === 'idcRenter') {
+          params.q = `idc_renter='${condition[1]}'`
+        } else {
+          params.q = `${condition[0]}'${condition[1]}'`
+        }
       }
       const tcp = get(api.npm.overview.tcpSessionDelay, params)
       const http = get(api.npm.overview.httpResponseDelay, params)

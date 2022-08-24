@@ -52,18 +52,35 @@ export default {
   },
   methods: {
     init () {
-      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      let condition = ''
+      if (this.$store.getters.getQueryCondition.indexOf('OR') > -1) {
+        condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      } else {
+        condition = this.$store.getters.getQueryCondition
+      }
       const type = this.$store.getters.getDimensionType
       if (this.chartData.id === 24) {
         this.side = 'client'
-      } else {
+      } else if (this.chartData.id === 29) {
         this.side = 'server'
       }
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        q: `${type}='${condition[1]}' and side='${this.side}'`,
         type: type
+      }
+      if (condition && (typeof condition !== 'object') && type) {
+        params.q = condition
+      } else if (condition.length > 1 && type && type === 'ip') {
+        params.q = `${type}='${condition[1]}' and side='${this.side}'`
+      } else if (condition.length > 1 && type && type !== 'ip') {
+        if (type === 'country' || type === 'asn') {
+          params.q = `${type}='${condition[1]}'`
+        } else if (type === 'idcRenter') {
+          params.q = `idc_renter='${condition[1]}'`
+        } else {
+          params.q = `${condition[0]}'${condition[1]}'`
+        }
       }
       get(api.npm.overview.trafficGraph, params).then((res) => {
         if (res.code === 200) {

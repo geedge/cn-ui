@@ -47,6 +47,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
+import _ from 'lodash'
 
 export default {
   name: 'NpmRecentEvents',
@@ -58,29 +59,31 @@ export default {
         { label: 'network.severity', prop: 'eventSeverity' },
         { label: 'network.entity', prop: 'eventKey' },
         { label: 'detections.eventType', prop: 'eventType' }
-      ],
-      isNoData: false
-    }
-  },
-  watch: {
-    timeFilter: {
-      deep: true,
-      handler (n) {
-        this.recentEventsListData()
-      }
+      ]
     }
   },
   methods: {
     recentEventsListData () {
+      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      const type = this.$store.getters.getDimensionType
+      let url = ''
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         limit: 8
       }
+      if (condition.length > 1 && type) {
+        params.param = condition[1]
+        params.type = type
+        params.limit = 10
+        url = api.npm.events.recentEventsD
+      } else {
+        url = api.npm.events.recentEvents
+      }
       this.toggleLoading(true)
-      get(api.npm.events.recentEvents, params).then(res => {
+      get(url, params).then(res => {
         if (res.code === 200) {
-          if (!res.data.result || res.data.result.length === 0) {
+          if (res.data.result.length === 0) {
             this.isNoData = true
           }
           this.tableData = res.data.result

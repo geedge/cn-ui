@@ -17,7 +17,7 @@
        <div class="npm-sessions-as-clients">
          <div class="npm-sessions-as-client">
            <div class="npm-sessions-as-client-red"></div>&nbsp;
-           <div class="npm-sessions-as-client-i18n">{{$t('npm.asClient')}}</div>
+           <div class="npm-sessions-as-client-i18n">{{$t('npm.asServer')}}</div>
          </div>
          <div class="npm-sessions-as-client-percent">{{sessionData.serverSessions}}</div>
        </div>
