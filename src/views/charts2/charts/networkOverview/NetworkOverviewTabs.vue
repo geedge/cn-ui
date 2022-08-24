@@ -481,7 +481,7 @@ export default {
 
       const self = this
       this.customTableTitles.forEach(tableColumn => {
-        if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl) {
+        if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl && tableDataTmp && tableDataTmp.length > 0) {
           get(self.gerCycleUrl(), queryParams).then(response => {
             if (response.code === 200) {
               cycleTotalList = response.data.result
@@ -560,7 +560,7 @@ export default {
                   self.toggleLoading(false)
                 }).finally(e => {
                   // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
-                  if (tableColumn.cycle) {
+                  if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
                     const queryCycleParams = {
                       ...queryParams,
                       cycle: tableColumn.cycle
@@ -867,7 +867,7 @@ export default {
       let queryType = ''
       const name = this.$store.getters.getBreadcrumbColumnName
       let tabList = this.$store.getters.getNetworkOverviewTabList
-      if (tabList.length === 0 || !tabList) {
+      if (!tabList || tabList.length === 0) {
         tabList = this.$_.cloneDeep(this.networkTabList)
       }
 
@@ -928,7 +928,7 @@ export default {
         let curTab = this.$store.getters.getNetworkOverviewCurrentTab
         if (!curTab) {
           let list = this.$store.getters.getNetworkOverviewTabList
-          if (list.length === 0 || !list) {
+          if (!list || list.length === 0) {
             list = this.$_.cloneDeep(this.networkTabList)
           }
           const tabObjGroup = list.filter(item => item.checked)
