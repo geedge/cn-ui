@@ -365,34 +365,3 @@
     }
   }
 }
-.app-dropdown.el-popper.is-pure {
-  .el-scrollbar {
-    .el-scrollbar__wrap {
-      .el-scrollbar__view.el-dropdown__list {
-        padding: 0;
-        margin: 0;
-        .el-dropdown-menu {
-          padding: 0;
-          .el-dropdown-menu__item {
-            padding-left: 5px;
-            max-height: 25px;
-            min-width: 80px;
-            line-height: 25px;
-            font-size: 12px;
-            font-family: Helvetica-Bold;
-            color: #353636;
-            font-weight: 400;
-            i {
-              color: #353636;
-              font-size: 12px;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .el-popper__arrow {
-    display: none;
-  }
-}
