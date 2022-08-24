@@ -3,7 +3,7 @@
     <div class="metric-select" >
       <el-select v-model="metric"
                  class="option__select select-column"
-                 popper-class="option-popper metric-select"
+                 popper-class="option-popper common-select"
                  :popper-append-to-body="false"
                  key="tabMetric"
                  @change="changeMetric"
@@ -24,6 +24,7 @@
             :data="tableData"
             class="npm-app-event-table"
             height="100%"
+            empty-text=" "
     >
       <template v-for="(item, index) in customTableTitles" :key="index">
         <el-table-column class="data-column" :min-width="columnWidth(index)">
@@ -73,8 +74,11 @@
 </template>
 
 <script>
+import chartMixin from '@/views/charts2/chart-mixin'
+
 export default {
   name: 'NpmAppEventTable',
+  mixins: [chartMixin],
   data () {
     return {
       metric: 'Application',
@@ -152,6 +156,9 @@ export default {
     }
   },
   computed: {
+  },
+  mounted () {
+    this.$emit('toggleLoading', false)
   }
 }
 </script>

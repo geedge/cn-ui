@@ -70,7 +70,7 @@
         <span>{{$t('network.metric')}}:</span>
         <el-select v-model="metric"
                    class="option__select select-column"
-                   popper-class="option-popper metric-select"
+                   popper-class="option-popper common-select"
                    :popper-append-to-body="false"
                    key="tabMetric"
                    @change="changeMetric"

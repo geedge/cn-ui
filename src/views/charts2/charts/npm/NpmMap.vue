@@ -6,6 +6,8 @@
           size="mini"
           v-model="trafficDirection"
           class="map-select map-select__direction"
+          popper-class="map-select-down"
+          :popper-append-to-body="false"
       >
         <el-option value="Server">Server</el-option>
         <el-option value="Client">Client</el-option>
@@ -17,6 +19,8 @@
           clearable
           placeholder="All"
           filterable
+          popper-class="map-select-down"
+          :popper-append-to-body="false"
       >
         <template #prefix><i class="cn-icon cn-icon-location" style="color: #575757;"></i></template>
         <el-option v-for="(country, index) in locationOptions" :key="index" :value="country.value">{{country.label}}</el-option>

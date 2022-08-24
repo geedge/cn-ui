@@ -14,7 +14,12 @@
     position: absolute;
     right: 10px;
     top: 10px;
-
+    .el-select__popper.map-select-down {
+      top: 32px !important;
+      .el-popper__arrow {
+        display: none;
+      }
+    }
     .map-select {
       margin-left: 10px;
 

@@ -34,7 +34,8 @@
               <el-select
                   size="mini"
                   v-model="value1"
-                  popper-class="metric"
+                  popper-class="common-select"
+                  :popper-append-to-body="false"
                   @change="metricSelectChange"
               >
                 <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -48,7 +49,8 @@
                   size="mini"
                   v-model="value2"
                   :disabled="!activeShow"
-                  popper-class="reference-line"
+                  popper-class="common-select"
+                  :popper-append-to-body="false"
                   @change="referenceSelectChange"
               >
                 <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>

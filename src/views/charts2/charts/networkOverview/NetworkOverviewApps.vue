@@ -7,7 +7,7 @@
             size="mini"
             v-model="metricFilter"
             placeholder=""
-            popper-class="app-metric"
+            popper-class="common-select"
             :popper-append-to-body="false"
             @change="metricChange"
         >
