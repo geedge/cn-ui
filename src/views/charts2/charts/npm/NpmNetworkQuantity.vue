@@ -49,7 +49,7 @@ export default {
       } else {
         this.side = 'server'
       }
-      if (condition && type) {
+      if (condition.length > 1 && type) {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
         params.type = type
       }
@@ -82,7 +82,7 @@ export default {
       } else {
         this.side = 'server'
       }
-      if (condition && type) {
+      if (condition.length > 1 && type) {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
         params.type = type
       }
@@ -123,7 +123,9 @@ export default {
         if (scoreInfo.score > 6) {
           scoreInfo.score = 6
         }
-        this.$store.commit('setNpmThirdLevelMenuScore', scoreInfo.score)
+        if (!params.q && this.chart.id === 44) {
+          this.$store.commit('setNpmThirdLevelMenuScore', scoreInfo.score)
+        }
       }).finally(() => {
         this.toggleLoading(false)
       })
