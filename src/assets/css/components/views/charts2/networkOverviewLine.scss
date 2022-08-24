@@ -7,14 +7,21 @@
     height: 80%;
     width: 100%;
     .echarts-tooltip.echarts-tooltip-dark {
-      .cn-chart-tooltip {
+      .cn-chart-body {
         display: flex;
-        justify-content: space-between;
-        .cn-chart-tooltip-value.cn-chart-tooltip__color {
-          font-size: 12px;
-          color: #353636;
-          line-height: 21px;
-          font-weight: 600;
+        .cn-chart-tooltip {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          .cn-chart-tooltip-box {
+            margin-right: 10px;
+          }
+          .cn-chart-tooltip-value.cn-chart-tooltip__color {
+            font-size: 12px;
+            color: #353636;
+            line-height: 21px;
+            font-weight: 600;
+          }
         }
       }
     }

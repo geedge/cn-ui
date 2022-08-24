@@ -16,7 +16,7 @@ import { trafficLineChartOption } from '@/views/charts2/charts/options/echartOpt
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes, chartColor3 } from '@/utils/constants.js'
 import { shallowRef } from 'vue'
-import { trafficLineTooltipFormatter } from '@/views/charts/charts/tools'
+import { stackedLineTooltipFormatter, trafficLineTooltipFormatter } from '@/views/charts/charts/tools'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
@@ -74,7 +74,7 @@ export default {
       } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
       } else if (condition.length > 1 && type && type !== 'ip') {
-        if (type === 'country' || type === 'asn') {
+        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
           params.q = `${type}='${condition[1]}'`
         } else if (type === 'idcRenter') {
           params.q = `idc_renter='${condition[1]}'`
@@ -158,7 +158,7 @@ export default {
         params.forEach(t => {
           t.seriesName = this.$t(t.seriesName)
         })
-        const str = trafficLineTooltipFormatter(params)
+        const str = stackedLineTooltipFormatter(params)
         return str
       }
       this.myChart.on('legendselectchanged', this.handleLegendClick)

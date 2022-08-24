@@ -59,7 +59,7 @@ export default {
       } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
       } else if (condition.length > 1 && type && type !== 'ip') {
-        if (type === 'country' || type === 'asn') {
+        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
           params.q = `${type}='${condition[1]}'`
         } else if (type === 'idcRenter') {
           params.q = `idc_renter='${condition[1]}'`
@@ -106,7 +106,7 @@ export default {
       } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
       } else if (condition.length > 1 && type && type !== 'ip') {
-        if (type === 'country' || type === 'asn') {
+        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
           params.q = `${type}='${condition[1]}'`
         } else if (type === 'idcRenter') {
           params.q = `idc_renter='${condition[1]}'`
