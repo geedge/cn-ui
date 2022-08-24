@@ -391,6 +391,7 @@ export default {
       })
     },
     jump (route, columnName, columnValue, opeType) {
+      this.showMenu = false
       if (opeType) {
         this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
         this.$store.commit('setTabOperationType', opeType)
@@ -463,7 +464,6 @@ export default {
           t: +new Date()
         }
       })
-      this.showMenu = false
     },
     dropDownSearch () {
       this.curPageNum = 1
