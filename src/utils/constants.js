@@ -176,11 +176,11 @@ export const networkOverviewTabs = [
   'network.hosts',
   'network.snis',
   'network.protocolPorts'
-]*/
+] */
 
 export const operationType = {
   mainMenu: 0, // 菜单
-  secondMenu: 1, // 二级菜单
+  secondMenu: 2, // 二级菜单
   thirdMenu: 3, // 三级菜单
   fourthMenu: 4, // 四级菜单:点击顶部第四级菜单 OR 点击表格的第一列的值
   changeTab: 5, // 切换tab
@@ -205,38 +205,16 @@ export const networkOverviewTableUrlName = {
   hosts: 'hosts',
   snis: 'snis',
   protocolPorts: 'protocolPorts'
-}*/
+} */
 
-//列的类型：下钻列，环比列，普通列
+// 列的类型：下钻列，环比列，普通列
 export const tableColumnType = {
-  dillDown:'dillDown',
-  chainRatio:'chainRatio',
-  normal:'normal'
+  dillDown: 'dillDown',
+  chainRatio: 'chainRatio',
+  normal: 'normal'
 }
 
-//AppPerformance类型表格的列
-export const customTableTitlesForAppPerformance = [
-  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true,columnType:tableColumnType.dillDown},
-  { label: 'network.score', prop: 'score', checked: true, tabColumn: false,columnType:tableColumnType.normal},
-  { label: 'networkAppPerformance.throughput', prop: 'throughput', checked: true, tabColumn: false,columnType:tableColumnType.chainRatio},
-  { label: 'networkAppPerformance.tcpConnectionEstablishLatency', prop: 'tcpConnectionEstablishLatency', checked: true, tabColumn: false,columnType:tableColumnType.chainRatio},
-  { label: 'networkAppPerformance.packetLoss', prop: 'packetLoss', checked: false, tabColumn: false,columnType:tableColumnType.normal},
-  { label: 'networkAppPerformance.packetRetrans', prop: 'packetRetrans', checked: false, tabColumn: false,columnType:tableColumnType.normal},
-  { label: 'networkAppPerformance.sslResponseLatency', prop: 'sslResponseLatency', checked: false, tabColumn: false,columnType:tableColumnType.normal},
-  { label: 'networkAppPerformance.httpResponseLatency', prop: 'httpResponseLatency', checked: false, tabColumn: false,columnType:tableColumnType.normal}
-]
-
-//NetworkOverview类型表格的列
-export const customTableTitlesForNetworkOverview = [
-  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true,columnType:tableColumnType.dillDown},
-  { label: 'network.total', prop: 'total', checked: true, tabColumn: false,columnType:tableColumnType.chainRatio},
-  { label: 'network.inbound', prop: 'inbound', checked: true, tabColumn: false,columnType:tableColumnType.normal},
-  { label: 'network.outbound', prop: 'outbound', checked: true, tabColumn: false,columnType:tableColumnType.normal},
-  { label: 'network.internal', prop: 'internal', checked: true, tabColumn: false,columnType:tableColumnType.normal},
-  { label: 'network.through', prop: 'through', checked: true, tabColumn: false,columnType:tableColumnType.normal}
-]
-
-//networkOverview:接口url
+// networkOverview:接口url（主URL）
 export const networkOverviewSearchUrl = {
   curUrl: '/interface/overview/dimensionTrafficAnalysis',
   cycleUrl: '/interface/overview/dimensionCycleTrafficAnalysis',
@@ -244,7 +222,7 @@ export const networkOverviewSearchUrl = {
   drilldownCycleUrl: '/interface/overview/drilldown/dimensionCycleTrafficAnalysis',
   drilldownList: '/interface/overview/drilldown/list'
 }
-//npm:接口url
+// npm:接口url（主URL）
 export const npmSearchUrl = {
   curUrl: '/interface/application/performance/overview/dimensionTrafficAnalysis',
   cycleUrl: '/interface/application/performance/overview/dimensionCycleTrafficAnalysis',
@@ -253,6 +231,125 @@ export const npmSearchUrl = {
   drilldownList: '/interface/overview/drilldown/list'
 }
 
+export const cycle = {
+  current: 0,
+  pre: 1
+}
+
+export const scoreUrl = [
+  '/interface/application/performance/overview/drilldown/dimensionTcpSessionDelay',
+  '/interface/application/performance/overview/drilldown/dimensionSslConDelay',
+  '/interface/application/performance/overview/drilldown/dimensionHttpResponseDelay'
+]
+
+// AppPerformance类型表格的列：有属性cycleDataUrl的，代表此数据的来源为对应接口返回的数据，无cycleDataUrl的属性代表数据来源于主url：npmSearchUrl.curUrl、npmSearchUrl.cycleUrl、npmSearchUrl.drilldownCurUrl、npmSearchUrl.drilldownCycleUrl
+export const customTableTitlesForAppPerformance = [
+  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
+  { label: 'network.score', prop: 'score', checked: true, tabColumn: false, columnType: tableColumnType.normal },
+  {
+    label: 'networkAppPerformance.throughput',
+    prop: 'through',
+    checked: true,
+    tabColumn: false,
+    columnType: tableColumnType.chainRatio,
+    cycleDataUrl: npmSearchUrl.cycleUrl,
+    isInMainUrl: true
+  }, // 此字段当前周期的数据是否在主URL中（npmSearchUrl中的URL为主URL）
+  {
+    label: 'networkAppPerformance.tcpConnectionEstablishLatency',
+    prop: 'tcpConEstLatency',
+    dillDownProp: 'establishLatencyMs',
+    dillDownCycleProp: 'establishLatencyMs',
+    checked: true,
+    tabColumn: false,
+    columnType: tableColumnType.chainRatio,
+    cycleDataUrl: '/interface/application/performance/overview/dimensionTcpSessionDelay',
+    dillDownCycleDataUrl: '/interface/application/performance/overview/drilldown/dimensionTcpSessionDelay',
+    cycle: cycle.pre,
+    scoreType: 0,
+    isScoreColumn: true,
+    isInMainUrl: false
+  },
+  {
+    label: 'networkAppPerformance.packetLoss',
+    prop: 'packetLoss',
+    dillDownProp: 'tcpLostlenPercent',
+    dillDownCycleProp: 'tcpLostlenPercent',
+    checked: false,
+    tabColumn: false,
+    columnType: tableColumnType.chainRatio,
+    cycleDataUrl: '/interface/application/performance/overview/dimensionTcpLostlenPercent',
+    dillDownCycleDataUrl: '/interface/application/performance/overview/drilldown/dimensionTcpSessionDelay',
+    cycle: cycle.pre,
+    scoreType: 3,
+    isScoreColumn: true,
+    isInMainUrl: false
+  },
+  {
+    label: 'networkAppPerformance.packetRetrans',
+    prop: 'packetRetrans',
+    dillDownProp: 'pktRetransPercent',
+    dillDownCycleProp: 'pktRetransPercent',
+    checked: false,
+    tabColumn: false,
+    columnType: tableColumnType.chainRatio,
+    cycleDataUrl: '/interface/application/performance/overview/dimensionPacketRetransPercent',
+    dillDownCycleDataUrl: '/interface/application/performance/overview/drilldown/dimensionTcpSessionDelay',
+    cycle: cycle.pre,
+    scoreType: 4,
+    isScoreColumn: true,
+    isInMainUrl: false
+  },
+  {
+    label: 'networkAppPerformance.sslResponseLatency',
+    prop: 'sslResponseLatency',
+    dillDownProp: 'sslConLatency',
+    dillDownCycleProp: 'sslConLatency',
+    checked: false,
+    tabColumn: false,
+    columnType: tableColumnType.chainRatio,
+    cycleDataUrl: '/interface/application/performance/overview/dimensionSslConDelay',
+    dillDownCycleDataUrl: '/interface/application/performance/overview/drilldown/dimensionSslConDelay',
+    cycle: cycle.pre,
+    scoreType: 2,
+    isScoreColumn: true,
+    isInMainUrl: false
+  },
+  {
+    label: 'networkAppPerformance.httpResponseLatency',
+    prop: 'httpResponseLatency',
+    dillDownProp: 'httpResponseLatency',
+    dillDownCycleProp: 'httpResponseLatency',
+    checked: false,
+    tabColumn: false,
+    columnType: tableColumnType.chainRatio,
+    cycleDataUrl: '/interface/application/performance/overview/dimensionHttpResponseDelay',
+    dillDownCycleDataUrl: '/interface/application/performance/overview/drilldown/dimensionHttpResponseDelay',
+    cycle: cycle.pre,
+    scoreType: 1,
+    isScoreColumn: true,
+    isInMainUrl: false
+  }
+]
+
+// NetworkOverview类型表格的列:prop 为接口响应数据中的属性名
+export const customTableTitlesForNetworkOverview = [
+  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
+  {
+    label: 'network.total',
+    prop: 'total',
+    checked: true,
+    tabColumn: false,
+    columnType: tableColumnType.chainRatio,
+    cycleDataUrl: networkOverviewSearchUrl.cycleUrl,
+    isInMainUrl: true
+  },
+  { label: 'network.inbound', prop: 'inbound', checked: true, tabColumn: false, columnType: tableColumnType.normal },
+  { label: 'network.outbound', prop: 'outbound', checked: true, tabColumn: false, columnType: tableColumnType.normal },
+  { label: 'network.internal', prop: 'internal', checked: true, tabColumn: false, columnType: tableColumnType.normal },
+  { label: 'network.through', prop: 'through', checked: true, tabColumn: false, columnType: tableColumnType.normal }
+]
+
 /* panel类别和名称之间的映射 */
 export const drillDownPanelTypeMapping = {
   npmOverviewIp: 8,
@@ -260,7 +357,7 @@ export const drillDownPanelTypeMapping = {
   npmOverviewApp: 10,
   npmOverviewCommon: 11,
   npmThirdMenu: 12,
-  networkOverview: 13,
+  networkOverview: 13
 }
 
 export const networkOverviewTabList = [
@@ -271,7 +368,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['common_client_ip', 'common_server_ip'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.countries',
     prop: 'country',
@@ -279,7 +376,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_country', 'server_country'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.asns',
     prop: 'asn',
@@ -287,7 +384,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_asn', 'server_asn'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.applications',
     prop: 'appLabel',
@@ -295,7 +392,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['common_app_label'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.providers',
     prop: 'appCompany',
@@ -303,7 +400,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['app_company'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.domains',
     prop: 'domain',
@@ -311,7 +408,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['domain'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.protocols',
     prop: 'l7Protocol',
@@ -319,7 +416,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['common_l7_protocol'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.idcTenants',
     prop: 'idcRenter',
@@ -327,7 +424,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_idc_renter', 'server_idc_renter'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.provinces',
     prop: 'province',
@@ -335,7 +432,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_province', 'server_province'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.cities',
     prop: 'city',
@@ -343,7 +440,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_region', 'server_region'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.isps',
     prop: 'isp',
@@ -351,7 +448,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_isp', 'server_isp'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.applicationCategories',
     prop: 'appSubcategory',
@@ -359,7 +456,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['app_subcategory'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.domainCategories',
     prop: 'domainCategoryName',
@@ -367,7 +464,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['domain_category_name'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.hosts',
     prop: 'httpHost',
@@ -375,7 +472,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['http_host'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.snis',
     prop: 'sslSni',
@@ -383,7 +480,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['ssl_sni'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.protocolPorts',
     prop: 'protocolPort',
@@ -391,19 +488,19 @@ export const networkOverviewTabList = [
     dillDownProp: ['common_l7_protocol', 'common_server_port '],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.networkOverview
+    panelId: drillDownPanelTypeMapping.networkOverview
   }
 ]
 
 export const networkAppPerformanceTabList = [
   {
-    label: 'network.ips',//tab名称对应的il8n
-    prop: 'ip',//接口返回数据中，tab第一列对应的属性名
-    queryCycleTotalProp: 'ips',//SQL中查询不同纬度的列名称
-    dillDownProp: ['common_client_ip', 'common_server_ip'],//下钻时，传递的查询条件，即接口的q参数
-    checked: true,//自定义设置中，是否默认选中
-    disabled: false,//自定义设置中，是否可操作（选中或取消选中）
-    panelId:drillDownPanelTypeMapping.npmOverviewIp//下钻后展示的panelId
+    label: 'network.ips', // tab名称对应的il8n
+    prop: 'ip', // 接口返回数据中，tab第一列对应的属性名
+    queryCycleTotalProp: 'ips', // SQL中查询不同纬度的列名称
+    dillDownProp: ['common_client_ip', 'common_server_ip'], // 下钻时，传递的查询条件，即接口的q参数
+    checked: true, // 自定义设置中，是否默认选中
+    disabled: false, // 自定义设置中，是否可操作（选中或取消选中）
+    panelId: drillDownPanelTypeMapping.npmOverviewIp// 下钻后展示的panelId
   }, {
     label: 'network.countries',
     prop: 'country',
@@ -411,7 +508,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['client_country', 'server_country'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.asns',
     prop: 'asn',
@@ -419,7 +516,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['client_asn', 'server_asn'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.applications',
     prop: 'appLabel',
@@ -427,7 +524,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['common_app_label'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewApp
+    panelId: drillDownPanelTypeMapping.npmOverviewApp
   }, {
     label: 'network.providers',
     prop: 'appCompany',
@@ -435,7 +532,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['app_company'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.domains',
     prop: 'domain',
@@ -443,7 +540,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['domain'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewDomain
+    panelId: drillDownPanelTypeMapping.npmOverviewDomain
   }, {
     label: 'network.protocols',
     prop: 'l7Protocol',
@@ -451,7 +548,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['common_l7_protocol'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.idcTenants',
     prop: 'idcRenter',
@@ -459,7 +556,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['client_idc_renter', 'server_idc_renter'],
     checked: true,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.provinces',
     prop: 'province',
@@ -467,7 +564,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['client_province', 'server_province'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.cities',
     prop: 'city',
@@ -475,7 +572,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['client_region', 'server_region'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.isps',
     prop: 'isp',
@@ -483,7 +580,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['client_isp', 'server_isp'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.applicationCategories',
     prop: 'appSubcategory',
@@ -491,7 +588,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['app_subcategory'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.domainCategories',
     prop: 'domainCategoryName',
@@ -499,7 +596,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['domain_category_name'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.hosts',
     prop: 'httpHost',
@@ -507,7 +604,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['http_host'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.snis',
     prop: 'sslSni',
@@ -515,7 +612,7 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['ssl_sni'],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.protocolPorts',
     prop: 'protocolPort',
@@ -523,51 +620,76 @@ export const networkAppPerformanceTabList = [
     dillDownProp: ['common_l7_protocol', 'common_server_port '],
     checked: false,
     disabled: false,
-    panelId:drillDownPanelTypeMapping.npmOverviewCommon
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }
 ]
 
+// 用于组织数据时的名称，对应的属性名称
+export const bytesColumnNameGroupForNpm = {
+  through: 'throughBitsRate',
+  tcpConEstLatency: 'establishLatencyMs',
+  packetLoss: 'tcpLostlenPercent',
+  packetRetrans: 'pktRetransPercent',
+  sslResponseLatency: 'sslConLatency',
+  httpResponseLatency: 'httpResponseLatency'
+}
+// networkOverview 当前周期返回数据对应的属性名称（与上一周期中的属性名称不一致,total）,之所以写在这里是因为有byte，packets，sessions3种，如果只有一种，可以直接写在customTableTitlesForAppPerformance
 export const bytesColumnNameGroup = {
-  total: 'bytesTotal',
+  total: 'bytesTotalRate',
   inbound: 'inboundBitsRate',
   outbound: 'outboundBitsRate',
   internal: 'internalBitsRate',
   through: 'throughBitsRate'
 }
-
 export const packetsColumnNameGroup = {
-  total: 'packetsTotal',
+  total: 'packetsTotalRate',
   inbound: 'inboundPacketsRate',
   outbound: 'outboundPacketsRate',
   internal: 'internalPacketsRate',
   through: 'throughPacketsRate'
 }
-
 export const sessionsColumnNameGroup = {
   total: 'sessionsRate'
 }
 
-//不同表格类型对应的相关数据
+export const bytesCycleColumnNameGroup = {
+  total: 'bytesRate'
+}
+export const bytesCycleColumnNameGroupForNmp = {
+  through: 'throughBitsRate'
+}
+export const packetsCycleColumnNameGroup = {
+  total: 'packetsRate'
+}
+export const sessionsCycleColumnNameGroup = {
+  total: 'sessionsRate'
+}
+
+// 不同表格类型对应的相关数据
 export const networkTable = {
-  networkOverview:{
-    tabList:networkOverviewTabList,//tab列表
-    column:customTableTitlesForNetworkOverview,//列
-    url:networkOverviewSearchUrl,//接口url
-    hasMetricSearch:true,//顶部是否有metric下拉列表
-    panelIdOfThirdMenu:drillDownPanelTypeMapping.networkOverview,
-    bytesColumnNameGroup:bytesColumnNameGroup,
-    packetsColumnNameGroup:packetsColumnNameGroup,
-    sessionsColumnNameGroup:sessionsColumnNameGroup
+  networkOverview: {
+    tabList: networkOverviewTabList, // tab列表
+    column: customTableTitlesForNetworkOverview, // 列
+    url: networkOverviewSearchUrl, // 接口url
+    hasMetricSearch: true, // 顶部是否有metric下拉列表
+    panelIdOfThirdMenu: drillDownPanelTypeMapping.networkOverview,
+    bytesColumnNameGroup: bytesColumnNameGroup,
+    packetsColumnNameGroup: packetsColumnNameGroup,
+    sessionsColumnNameGroup: sessionsColumnNameGroup,
+    bytesCycleColumnNameGroup: bytesCycleColumnNameGroup,
+    packetsCycleColumnNameGroup: packetsCycleColumnNameGroup,
+    sessionsCycleColumnNameGroup: sessionsCycleColumnNameGroup
   },
-  networkAppPerformance:{
-    tabList:networkAppPerformanceTabList,
-    column:customTableTitlesForAppPerformance,
-    url:npmSearchUrl,
-    hasMetricSearch:false,//是否有metric下拉列表
-    panelIdOfThirdMenu:drillDownPanelTypeMapping.npmThirdMenu,
-    bytesColumnNameGroup:{},//无metric下拉列表条件，用不到此3个属性
-    packetsColumnNameGroup:{},//无metric下拉列表条件，用不到此3个属性
-    sessionsColumnNameGroup:{}//无metric下拉列表条件，用不到此3个属性
+  networkAppPerformance: {
+    tabList: networkAppPerformanceTabList,
+    column: customTableTitlesForAppPerformance,
+    url: npmSearchUrl,
+    hasMetricSearch: false, // 是否有metric下拉列表
+    panelIdOfThirdMenu: drillDownPanelTypeMapping.npmThirdMenu,
+    bytesColumnNameGroup: bytesColumnNameGroupForNpm,
+    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp,
+    packetsColumnNameGroup: {}, // 无metric下拉列表条件，用不到此属性
+    sessionsColumnNameGroup: {}// 无metric下拉列表条件，用不到此属性
   }
 }
 
@@ -864,7 +986,7 @@ export const iso36112 = {
   MN: 'mongoliaLow'
 }
 
-export const countryNameIdMapping = {"Afghanistan":"AF","Albania":"AL","Algeria":"DZ","American Samoa":"AS","Andorra":"AD","Angola":"AO","Anguilla":"AI","Antarctica":"AQ","Antigua and Barbuda":"AG","Argentina":"AR","Armenia":"AM","Aruba":"AW","Australia":"AU","Austria":"AT","Azerbaijan":"AZ","Bahamas (the)":"BS","Bahrain":"BH","Bangladesh":"BD","Barbados":"BB","Belarus":"BY","Belgium":"BE","Belize":"BZ","Benin":"BJ","Bermuda":"BM","Åland Islands":"AX","Bhutan":"BT","Bolivia (Plurinational State of)":"BO","Bonaire, Sint Eustatius and Saba":"BQ","Bosnia and Herzegovina":"BA","Botswana":"BW","Bouvet Island":"BV","Brazil":"BR","British Indian Ocean Territory (the)":"IO","Brunei Darussalam":"BN","Bulgaria":"BG","Burkina Faso":"BF","Burundi":"BI","Cabo Verde":"CV","Cambodia":"KH","Cameroon":"CM","Canada":"CA","Cayman Islands (the)":"KY","Central African Republic (the)":"CF","Chad":"TD","Chile":"CL","China":"CN","Christmas Island":"CX","Cocos (Keeling) Islands (the)":"CC","Colombia":"CO","Comoros (the)":"KM","Congo (the Democratic Republic of the)":"CD","Congo (the)":"CG","Cook Islands (the)":"CK","Costa Rica":"CR","Croatia":"HR","Cuba":"CU","Curaçao":"CW","Cyprus":"CY","Czechia":"CZ","Côte d'Ivoire":"CI","Denmark":"DK","Djibouti":"DJ","Dominica":"DM","Dominican Republic (the)":"DO","Ecuador":"EC","Egypt":"EG","El Salvador":"SV","Equatorial Guinea":"GQ","Eritrea":"ER","Estonia":"EE","Eswatini":"SZ","Ethiopia":"ET","Falkland Islands (the) [Malvinas]":"FK","Faroe Islands (the)":"FO","Fiji":"FJ","Finland":"FI","France":"FR","French Guiana":"GF","French Polynesia":"PF","French Southern Territories (the)":"TF","Gabon":"GA","Gambia (the)":"GM","Georgia":"GE","Germany":"DE","Ghana":"GH","Gibraltar":"GI","Greece":"GR","Greenland":"GL","Grenada":"GD","Guadeloupe":"GP","Guam":"GU","Guatemala":"GT","Guernsey":"GG","Guinea":"GN","Guinea-Bissau":"GW","Guyana":"GY","Haiti":"HT","Heard Island and McDonald Islands":"HM","Holy See (the)":"VA","Honduras":"HN","Hong Kong":"HK","Hungary":"HU","Iceland":"IS","India":"IN","Indonesia":"ID","Iran (Islamic Republic of)":"IR","Iraq":"IQ","Ireland":"IE","Isle of Man":"IM","Israel":"IL","Italy":"IT","Jamaica":"JM","Japan":"JP","Jersey":"JE","Jordan":"JO","Kazakhstan":"KZ","Kenya":"KE","Kiribati":"KI","Korea (the Democratic People's Republic of)":"KP","Korea (the Republic of)":"KR","Kuwait":"KW","Kyrgyzstan":"KG","Lao People's Democratic Republic (the)":"LA","Latvia":"LV","Lebanon":"LB","Lesotho":"LS","Liberia":"LR","Libya":"LY","Liechtenstein":"LI","Lithuania":"LT","Luxembourg":"LU","Macao":"MO","Madagascar":"MG","Malawi":"MW","Malaysia":"MY","Maldives":"MV","Mali":"ML","Malta":"MT","Marshall Islands (the)":"MH","Martinique":"MQ","Mauritania":"MR","Mauritius":"MU","Mayotte":"YT","Mexico":"MX","Micronesia (Federated States of)":"FM","Moldova (the Republic of)":"MD","Monaco":"MC","Mongolia":"MN","Montenegro":"ME","Montserrat":"MS","Morocco":"MA","Mozambique":"MZ","Myanmar":"MM","Namibia":"NA","Nauru":"NR","Nepal":"NP","Netherlands (the)":"NL","New Caledonia":"NC","New Zealand":"NZ","Nicaragua":"NI","Niger (the)":"NE","Nigeria":"NG","Niue":"NU","Norfolk Island":"NF","North Macedonia":"MK","Northern Mariana Islands (the)":"MP","Norway":"NO","Oman":"OM","Pakistan":"PK","Palau":"PW","Palestine, State of":"PS","Panama":"PA","Papua New Guinea":"PG","Paraguay":"PY","Peru":"PE","Philippines (the)":"PH","Pitcairn":"PN","Poland":"PL","Portugal":"PT","Puerto Rico":"PR","Qatar":"QA","Romania":"RO","Russian Federation (the)":"RU","Rwanda":"RW","Réunion":"RE","Saint Barthélemy":"BL","Saint Helena, Ascension and Tristan da Cunha":"SH","Saint Kitts and Nevis":"KN","Saint Lucia":"LC","Saint Martin (French part)":"MF","Saint Pierre and Miquelon":"PM","Saint Vincent and the Grenadines":"VC","Samoa":"WS","San Marino":"SM","Sao Tome and Principe":"ST","Saudi Arabia":"SA","Senegal":"SN","Serbia":"RS","Seychelles":"SC","Sierra Leone":"SL","Singapore":"SG","Sint Maarten (Dutch part)":"SX","Slovakia":"SK","Slovenia":"SI","Solomon Islands":"SB","Somalia":"SO","South Africa":"ZA","South Georgia and the South Sandwich Islands":"GS","South Sudan":"SS","Spain":"ES","Sri Lanka":"LK","Sudan (the)":"SD","Suriname":"SR","Svalbard and Jan Mayen":"SJ","Sweden":"SE","Switzerland":"CH","Syrian Arab Republic (the)":"SY","Taiwan (Province of China)":"TW","Tajikistan":"TJ","Tanzania, the United Republic of":"TZ","Thailand":"TH","Timor-Leste":"TL","Togo":"TG","Tokelau":"TK","Tonga":"TO","Trinidad and Tobago":"TT","Tunisia":"TN","Turkey":"TR","Turkmenistan":"TM","Turks and Caicos Islands (the)":"TC","Tuvalu":"TV","Uganda":"UG","Ukraine":"UA","United Arab Emirates (the)":"AE","United Kingdom of Great Britain and Northern Ireland (the)":"GB","United States Minor Outlying Islands (the)":"UM","United States of America (the)":"US","Uruguay":"UY","Uzbekistan":"UZ","Vanuatu":"VU","Venezuela (Bolivarian Republic of)":"VE","Viet Nam":"VN","Virgin Islands (British)":"VG","Virgin Islands (U.S.)":"VI","Wallis and Futuna":"WF","Western Sahara*":"EH","Yemen":"YE","Zambia":"ZM","Zimbabwe":"ZW"}
+export const countryNameIdMapping = { Afghanistan: 'AF', Albania: 'AL', Algeria: 'DZ', 'American Samoa': 'AS', Andorra: 'AD', Angola: 'AO', Anguilla: 'AI', Antarctica: 'AQ', 'Antigua and Barbuda': 'AG', Argentina: 'AR', Armenia: 'AM', Aruba: 'AW', Australia: 'AU', Austria: 'AT', Azerbaijan: 'AZ', 'Bahamas (the)': 'BS', Bahrain: 'BH', Bangladesh: 'BD', Barbados: 'BB', Belarus: 'BY', Belgium: 'BE', Belize: 'BZ', Benin: 'BJ', Bermuda: 'BM', 'Åland Islands': 'AX', Bhutan: 'BT', 'Bolivia (Plurinational State of)': 'BO', 'Bonaire, Sint Eustatius and Saba': 'BQ', 'Bosnia and Herzegovina': 'BA', Botswana: 'BW', 'Bouvet Island': 'BV', Brazil: 'BR', 'British Indian Ocean Territory (the)': 'IO', 'Brunei Darussalam': 'BN', Bulgaria: 'BG', 'Burkina Faso': 'BF', Burundi: 'BI', 'Cabo Verde': 'CV', Cambodia: 'KH', Cameroon: 'CM', Canada: 'CA', 'Cayman Islands (the)': 'KY', 'Central African Republic (the)': 'CF', Chad: 'TD', Chile: 'CL', China: 'CN', 'Christmas Island': 'CX', 'Cocos (Keeling) Islands (the)': 'CC', Colombia: 'CO', 'Comoros (the)': 'KM', 'Congo (the Democratic Republic of the)': 'CD', 'Congo (the)': 'CG', 'Cook Islands (the)': 'CK', 'Costa Rica': 'CR', Croatia: 'HR', Cuba: 'CU', Curaçao: 'CW', Cyprus: 'CY', Czechia: 'CZ', "Côte d'Ivoire": 'CI', Denmark: 'DK', Djibouti: 'DJ', Dominica: 'DM', 'Dominican Republic (the)': 'DO', Ecuador: 'EC', Egypt: 'EG', 'El Salvador': 'SV', 'Equatorial Guinea': 'GQ', Eritrea: 'ER', Estonia: 'EE', Eswatini: 'SZ', Ethiopia: 'ET', 'Falkland Islands (the) [Malvinas]': 'FK', 'Faroe Islands (the)': 'FO', Fiji: 'FJ', Finland: 'FI', France: 'FR', 'French Guiana': 'GF', 'French Polynesia': 'PF', 'French Southern Territories (the)': 'TF', Gabon: 'GA', 'Gambia (the)': 'GM', Georgia: 'GE', Germany: 'DE', Ghana: 'GH', Gibraltar: 'GI', Greece: 'GR', Greenland: 'GL', Grenada: 'GD', Guadeloupe: 'GP', Guam: 'GU', Guatemala: 'GT', Guernsey: 'GG', Guinea: 'GN', 'Guinea-Bissau': 'GW', Guyana: 'GY', Haiti: 'HT', 'Heard Island and McDonald Islands': 'HM', 'Holy See (the)': 'VA', Honduras: 'HN', 'Hong Kong': 'HK', Hungary: 'HU', Iceland: 'IS', India: 'IN', Indonesia: 'ID', 'Iran (Islamic Republic of)': 'IR', Iraq: 'IQ', Ireland: 'IE', 'Isle of Man': 'IM', Israel: 'IL', Italy: 'IT', Jamaica: 'JM', Japan: 'JP', Jersey: 'JE', Jordan: 'JO', Kazakhstan: 'KZ', Kenya: 'KE', Kiribati: 'KI', "Korea (the Democratic People's Republic of)": 'KP', 'Korea (the Republic of)': 'KR', Kuwait: 'KW', Kyrgyzstan: 'KG', "Lao People's Democratic Republic (the)": 'LA', Latvia: 'LV', Lebanon: 'LB', Lesotho: 'LS', Liberia: 'LR', Libya: 'LY', Liechtenstein: 'LI', Lithuania: 'LT', Luxembourg: 'LU', Macao: 'MO', Madagascar: 'MG', Malawi: 'MW', Malaysia: 'MY', Maldives: 'MV', Mali: 'ML', Malta: 'MT', 'Marshall Islands (the)': 'MH', Martinique: 'MQ', Mauritania: 'MR', Mauritius: 'MU', Mayotte: 'YT', Mexico: 'MX', 'Micronesia (Federated States of)': 'FM', 'Moldova (the Republic of)': 'MD', Monaco: 'MC', Mongolia: 'MN', Montenegro: 'ME', Montserrat: 'MS', Morocco: 'MA', Mozambique: 'MZ', Myanmar: 'MM', Namibia: 'NA', Nauru: 'NR', Nepal: 'NP', 'Netherlands (the)': 'NL', 'New Caledonia': 'NC', 'New Zealand': 'NZ', Nicaragua: 'NI', 'Niger (the)': 'NE', Nigeria: 'NG', Niue: 'NU', 'Norfolk Island': 'NF', 'North Macedonia': 'MK', 'Northern Mariana Islands (the)': 'MP', Norway: 'NO', Oman: 'OM', Pakistan: 'PK', Palau: 'PW', 'Palestine, State of': 'PS', Panama: 'PA', 'Papua New Guinea': 'PG', Paraguay: 'PY', Peru: 'PE', 'Philippines (the)': 'PH', Pitcairn: 'PN', Poland: 'PL', Portugal: 'PT', 'Puerto Rico': 'PR', Qatar: 'QA', Romania: 'RO', 'Russian Federation (the)': 'RU', Rwanda: 'RW', Réunion: 'RE', 'Saint Barthélemy': 'BL', 'Saint Helena, Ascension and Tristan da Cunha': 'SH', 'Saint Kitts and Nevis': 'KN', 'Saint Lucia': 'LC', 'Saint Martin (French part)': 'MF', 'Saint Pierre and Miquelon': 'PM', 'Saint Vincent and the Grenadines': 'VC', Samoa: 'WS', 'San Marino': 'SM', 'Sao Tome and Principe': 'ST', 'Saudi Arabia': 'SA', Senegal: 'SN', Serbia: 'RS', Seychelles: 'SC', 'Sierra Leone': 'SL', Singapore: 'SG', 'Sint Maarten (Dutch part)': 'SX', Slovakia: 'SK', Slovenia: 'SI', 'Solomon Islands': 'SB', Somalia: 'SO', 'South Africa': 'ZA', 'South Georgia and the South Sandwich Islands': 'GS', 'South Sudan': 'SS', Spain: 'ES', 'Sri Lanka': 'LK', 'Sudan (the)': 'SD', Suriname: 'SR', 'Svalbard and Jan Mayen': 'SJ', Sweden: 'SE', Switzerland: 'CH', 'Syrian Arab Republic (the)': 'SY', 'Taiwan (Province of China)': 'TW', Tajikistan: 'TJ', 'Tanzania, the United Republic of': 'TZ', Thailand: 'TH', 'Timor-Leste': 'TL', Togo: 'TG', Tokelau: 'TK', Tonga: 'TO', 'Trinidad and Tobago': 'TT', Tunisia: 'TN', Turkey: 'TR', Turkmenistan: 'TM', 'Turks and Caicos Islands (the)': 'TC', Tuvalu: 'TV', Uganda: 'UG', Ukraine: 'UA', 'United Arab Emirates (the)': 'AE', 'United Kingdom of Great Britain and Northern Ireland (the)': 'GB', 'United States Minor Outlying Islands (the)': 'UM', 'United States of America (the)': 'US', Uruguay: 'UY', Uzbekistan: 'UZ', Vanuatu: 'VU', 'Venezuela (Bolivarian Republic of)': 'VE', 'Viet Nam': 'VN', 'Virgin Islands (British)': 'VG', 'Virgin Islands (U.S.)': 'VI', 'Wallis and Futuna': 'WF', 'Western Sahara*': 'EH', Yemen: 'YE', Zambia: 'ZM', Zimbabwe: 'ZW' }
 
 export const reg = {
   // 不严格ipv4

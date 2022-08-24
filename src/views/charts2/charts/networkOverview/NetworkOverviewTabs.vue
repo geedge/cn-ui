@@ -37,17 +37,21 @@
                 <template  #default="scope" :column="item">
                   <template v-if="item.columnType === tableColumnType.chainRatio"  >
                     <div class="data-total" >
-                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
-                      <div v-if="scope.row['trend'] === 'up'" class="data-total-trend data-total-trend-red">
-                        <i class="cn-icon-rise1 cn-icon"></i><span>{{scope.row['trendValue']}}</span>
-                      </div>
-                      <div v-else-if="scope.row['trend'] === 'down'" class="data-total-trend data-total-trend-green">
-                        <i class="cn-icon-decline cn-icon"></i><span>{{scope.row['trendValue']}}</span>
-                      </div>
-                      <div v-else-if="scope.row['trend'] === 'noChange'" class="data-total-trend data-total-trend-black">
-                        <i class="cn-icon-constant cn-icon"></i>
-                      </div>
-
+                      {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
+                      <template v-if="scope.row[item.prop]">
+                        <div v-if="scope.row[item.prop][1] === 'up'" class="data-total-trend data-total-trend-red">
+                          <i class="cn-icon-rise1 cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
+                        </div>
+                        <div v-else-if="scope.row[item.prop][1] === 'down'" class="data-total-trend data-total-trend-green">
+                          <i class="cn-icon-decline cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
+                        </div>
+                        <div v-else-if="scope.row[item.prop][1] === 'noChange'" class="data-total-trend data-total-trend-black">
+                          <i class="cn-icon-constant cn-icon"></i>
+                        </div>
+                      </template>
+                      <template  v-else>
+                        -
+                      </template>
                     </div>
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.dillDown" >
@@ -145,10 +149,11 @@
 </template>
 <script>
 import { ref } from 'vue'
-import {operationType, unitTypes,networkTable,tableColumnType } from '@/utils/constants'
+import { operationType, unitTypes, networkTable, tableColumnType, cycle } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio } from '@/utils/tools'
+import { getChainRatio, computeScore } from '@/utils/tools'
+import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
@@ -177,28 +182,22 @@ export default {
         }
       ],
       customTableTitles: [],
-      list: [],//当前状态列表
-      networkTabList: [],//原始状态列表
+      list: [], // 当前状态列表
+      networkTabList: [], // 原始状态列表
       showBackground: false,
       tableData: [],
       showTabs: true,
-      columnNameGroup: {
-        total: 'bytesTotal',
-        inbound: 'inboundBitsRate',
-        outbound: 'outboundBitsRate',
-        internal: 'internalBitsRate',
-        through: 'throughBitsRate'
-      },
+      columnNameGroup: {},
+      cycleColumnNameGroup: {},
       metricUnit: 'bytes',
       loading: false,
-      drillDown: false,
-      tableColumnType:tableColumnType,
-      curTable:{},//当前的表格类型
-      tableType:'',
-      hasMetricSearch:true,
-      activeTab:'',
-      activeCustomize:'',
-      networkSearchUrl:{}
+      tableColumnType: tableColumnType,
+      curTable: {}, // 当前的表格类型
+      tableType: '',
+      hasMetricSearch: true,
+      activeTab: '',
+      activeCustomize: '',
+      networkSearchUrl: {}
     }
   },
   props: {
@@ -231,15 +230,16 @@ export default {
       const label = curTab.label
       if (this.metric === 'Bits/s') {
         this.columnNameGroup = this.curTable.bytesColumnNameGroup
+        this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
         this.orderBy = 'bytesTotal'
         this.metricUnit = 'bytes'
         const titleGroup = []
         if (this.customTableTitles.length === 2) {
-          this.curTable.column.forEach((item,index) => {
+          this.curTable.column.forEach((item, index) => {
             if (item.tabColumn) {
               item.label = label
             }
-            if(index===1){
+            if (index === 1) {
               item.checked = this.customTableTitles[1].checked
             }
             titleGroup.push(item)
@@ -253,18 +253,18 @@ export default {
           })
         }
         this.customTableTitles = titleGroup
-
       } else if (this.metric === 'Packets/s') {
         this.columnNameGroup = this.curTable.packetsColumnNameGroup
+        this.cycleColumnNameGroup = this.curTable.packetsCycleColumnNameGroup
         this.orderBy = 'packetsTotal'
         this.metricUnit = 'packets'
         const titleGroup = []
         if (this.customTableTitles.length === 2) {
-          this.curTable.column.forEach((item,index) => {
+          this.curTable.column.forEach((item, index) => {
             if (item.tabColumn) {
               item.label = label
             }
-            if(index===1){
+            if (index === 1) {
               item.checked = this.customTableTitles[1].checked
             }
             titleGroup.push(item)
@@ -280,6 +280,7 @@ export default {
         this.customTableTitles = titleGroup
       } else if (this.metric === 'Sessions/s') {
         this.columnNameGroup = this.curTable.sessionsColumnNameGroup
+        this.cycleColumnNameGroup = this.curTable.sessionsCycleColumnNameGroup
         this.orderBy = 'sessions'
         this.metricUnit = 'sessions'
         let totalChecked = true
@@ -288,9 +289,10 @@ export default {
             totalChecked = item.checked
           }
         })
+        const totalColumn = this.customTableTitles.filter(item => item.prop === 'total')
         this.customTableTitles = [
-          { label: label, prop: 'tab', checked: true, tabColumn: true,columnType:this.curTable.column[0].columnType},
-          { label: 'network.total', prop: 'total', checked: totalChecked, tabColumn: false,columnType:this.curTable.column[1].columnType}
+          { label: label, prop: 'tab', checked: true, tabColumn: true, columnType: this.curTable.column[0].columnType },
+          { label: 'network.total', prop: 'total', checked: totalChecked, tabColumn: false, columnType: this.curTable.column[1].columnType, cycleDataUrl: totalColumn ? totalColumn.cycleDataUrl : '', isInMainUrl: true }
         ]
       }
       let queryParams = {
@@ -367,7 +369,8 @@ export default {
           this.$store.commit('setNetworkOverviewCurrentTab', curTab)
         }
         this.showTabs = true
-      } else if (curOperationType === operationType.secondMenu) { // 点击的为第二级菜单、或者点击菜单进入、
+      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击的为第二级菜单、或者点击菜单进入、
+        this.list = this.$_.cloneDeep(this.curTable.tabList)
         if (curTab) { // tab切换
           this.activeTab = curTab.label
           this.customTableTitles[0].label = curTab.label
@@ -428,20 +431,19 @@ export default {
         }
       }
 
-      this.tableData = []
       const tabList = []
       const tableDataTmp = this.chartData.map(item => {
         tabList.push(item[curTab.prop])
-        return {
-          tab: item[curTab.prop],
-          total: item[this.columnNameGroup.total],
-          inbound: item[this.columnNameGroup.inbound],
-          outbound: item[this.columnNameGroup.outbound],
-          internal: item[this.columnNameGroup.internal],
-          through: item[this.columnNameGroup.through]
-        }
+        const otherData = { tab: item[curTab.prop] }
+        Object.keys(this.columnNameGroup).forEach(i => {
+          otherData[i] = item[this.columnNameGroup[i]]
+        })
+        return otherData
       })
-      const queryParams = {}
+      const queryParams = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
+      }
       if (tabList.length > 0) {
         const conditionStr = tabList.filter(item => item != '')
         queryParams.params = conditionStr.toString()
@@ -454,60 +456,143 @@ export default {
       if (condition) {
         queryParams.q = condition
       }
-      get(this.gerCycleUrl(), queryParams).then(response => {
-        if (response.code === 200) {
-          cycleTotalList = response.data.result
-          tableDataTmp.forEach(item => {
-            const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
-            let trend = ''//空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
-            let trendPercent = ''
-            if (cycle) {
-              const totalDiff = item.total - cycle[this.metricUnit]
-              if (cycle[this.metricUnit] && cycle[this.metricUnit]!=0) {
-                let chainRatio = getChainRatio(item.total, cycle[this.metricUnit])
-                if (chainRatio === '-') {
-                  trend = ''
-                  trendPercent = ''
-                }else {
-                  trendPercent = Math.round(Math.abs(chainRatio)* 100)
-                  if (totalDiff > 0) {
-                    trend = 'up'
-                    trendPercent = trendPercent + '%'
-                  } else if (totalDiff < 0) {
-                    trend = 'down'
-                    trendPercent = trendPercent + '%'
-                  } else {
-                    trend = 'noChange'//横向图标
-                  }
-                  if (trendPercent === '0%') {
-                    trend = 'noChange'
-                    trendPercent = ''
+
+      const self = this
+      this.customTableTitles.forEach(tableColumn => {
+        if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl) {
+          get(self.gerCycleUrl(), queryParams).then(response => {
+            if (response.code === 200) {
+              cycleTotalList = response.data.result
+              tableDataTmp.forEach(item => {
+                const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
+                let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
+                let trendPercent = ''
+                if (cycle) {
+                  const curVal = Number(item[tableColumn.prop])
+                  const preVal = Number(cycle[self.cycleColumnNameGroup[tableColumn.prop]])
+                  if (preVal && preVal != 0) {
+                    const totalDiff = curVal - preVal
+                    const chainRatio = getChainRatio(curVal, preVal)
+                    if (chainRatio === '-') {
+                      trend = ''
+                      trendPercent = ''
+                    } else {
+                      trendPercent = Math.round(Math.abs(chainRatio) * 100)
+                      if (totalDiff > 0) {
+                        trend = 'up'
+                        trendPercent = trendPercent + '%'
+                      } else if (totalDiff < 0) {
+                        trend = 'down'
+                        trendPercent = trendPercent + '%'
+                      } else {
+                        trend = 'noChange'// 横向图标
+                      }
+                      if (trendPercent === '0%') {
+                        trend = 'noChange'
+                        trendPercent = ''
+                      }
+                    }
                   }
                 }
-              }
+                item[tableColumn.prop] = [item[tableColumn.prop], trend, trendPercent]
+              })
             }
-            this.tableData.push({
-              tab: item.tab,
-              total: item.total,
-              trend: trend,
-              trendValue: trendPercent,
-              inbound: item.inbound,
-              outbound: item.outbound,
-              internal: item.internal,
-              through: item.through
+          }).catch(e => {
+            console.log(e)
+          }).finally(e => {
+            this.tableData = tableDataTmp
+            // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
+            this.customTableTitles.forEach(tableColumn => {
+              if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
+                get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
+                  if (response.code === 200) {
+                    const columnList = response.data.result
+                    self.tableData.forEach((item, i) => {
+                      const data = columnList.find(i => i[curTab.prop] === item.tab)
+                      if (data) {
+                        item[tableColumn.prop] = data[self.columnNameGroup[tableColumn.prop]]
+                        let score = 0
+                        if (data) {
+                          score = computeScore(data, tableColumn.scoreType)
+                        }
+                        item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, score] : [score]
+                        if (item && item.scoreGroup && item.scoreGroup.length >= 5) {
+                          // self.tableData.forEach(data => {
+                          let score = 0
+                          item.scoreGroup.forEach(i => {
+                            score = Number(score) + Number(i)
+                          })
+                          score = Math.ceil(score * 6)
+                          if (score > 6) {
+                            score = 6
+                          }
+                          item.score = score || 0
+                        }
+                      }
+                    })
+                  }
+                }).catch(e => {
+                  console.log(e)
+                  self.toggleLoading(false)
+                }).finally(e => {
+                  // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
+                  if (tableColumn.cycle) {
+                    const queryCycleParams = {
+                      ...queryParams,
+                      cycle: tableColumn.cycle
+                    }
+                    get(self.gerColumnUrl(tableColumn), queryCycleParams).then(response => {
+                      if (response.code === 200) {
+                        cycleTotalList = response.data.result
+                        self.tableData.forEach(item => {
+                          const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
+                          let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
+                          let trendPercent = ''
+                          if (cycle) {
+                            const curVal = Number(item[tableColumn.prop])
+                            // let preVal = Number(cycle[self.metricUnit])
+                            const preVal = Number(cycle[self.columnNameGroup[tableColumn.prop]])
+                            if (preVal && preVal != 0) {
+                              const totalDiff = curVal - preVal
+                              const chainRatio = getChainRatio(curVal, preVal)
+                              if (chainRatio === '-') {
+                                trend = ''
+                                trendPercent = ''
+                              } else {
+                                trendPercent = Math.round(Math.abs(chainRatio) * 100)
+                                if (totalDiff > 0) {
+                                  trend = 'up'
+                                  trendPercent = trendPercent + '%'
+                                } else if (totalDiff < 0) {
+                                  trend = 'down'
+                                  trendPercent = trendPercent + '%'
+                                } else {
+                                  trend = 'noChange'// 横向图标
+                                }
+                                if (trendPercent === '0%') {
+                                  trend = 'noChange'
+                                  trendPercent = ''
+                                }
+                              }
+                            }
+                          }
+                          item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
+                        })
+                      }
+                    }).catch(e => {
+                      console.log(e)
+                    })
+                  }
+                  self.toggleLoading(false)
+                })
+              }
             })
+            self.toggleLoading(false)
           })
-
-          this.toggleLoading(false)
-        } else {
-          this.tableData = tableDataTmp
-          this.toggleLoading(false)
         }
-      }).catch(e => {
-        this.toggleLoading(false)
-      }).finally(e => {
-        this.toggleLoading(false)
       })
+
+      self.toggleLoading(false)
     },
     tabChange (index) {
       const beforeType = this.$store.getters.getTabOperationBeforeType
@@ -582,7 +667,7 @@ export default {
             menu.columnValue = columnValue
             this.$store.commit('setPanelName', columnValue)
             this.$store.commit('setBreadcrumbColumnName', columnName)
-            this.$store.commit('setDimensionType', tabGroup[0]?tabGroup[0].prop:'')
+            this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
             this.$store.commit('setBreadcrumbColumnValue', columnValue)
           }
         } else if (!this.$_.isEmpty(menu.children)) {
@@ -592,13 +677,12 @@ export default {
               child.columnValue = columnValue
               this.$store.commit('setPanelName', columnValue)
               this.$store.commit('setBreadcrumbColumnName', columnName)
-              this.$store.commit('setDimensionType', tabGroup[0]?tabGroup[0].prop:'')
+              this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
               this.$store.commit('setBreadcrumbColumnValue', columnValue)
             }
           })
         }
       })
-      console.log(this.$store.getters.getDimensionType)
       let toPanel = null
       this.list.forEach((item, index) => {
         if (item.label === columnName) {
@@ -627,14 +711,14 @@ export default {
       })
       this.$store.commit('setBreadcrumbColumnValueList', valueList)
       this.$router.push({
-        name:'panel',
+        name: 'panel',
         path: this.$route.path,
         query: {
           t: +new Date()
         },
-        params:{
-          thirdPanel:this.curTable.panelIdOfThirdMenu,
-          fourthPanel:toPanel
+        params: {
+          thirdPanel: this.curTable.panelIdOfThirdMenu,
+          fourthPanel: toPanel
         }
       })
     },
@@ -717,6 +801,22 @@ export default {
         return this.networkSearchUrl.curUrl
       }
     },
+    gerCycleUrl () {
+      const condition = this.$store.getters.getQueryCondition
+      if (condition) {
+        return this.networkSearchUrl.drilldownCycleUrl
+      } else {
+        return this.networkSearchUrl.cycleUrl
+      }
+    },
+    gerColumnUrl (tableColumn) {
+      const condition = this.$store.getters.getQueryCondition
+      if (condition) {
+        return tableColumn.dillDownCycleDataUrl
+      } else {
+        return tableColumn.cycleDataUrl
+      }
+    },
     handleQueryParams (extraParams) {
       let queryType = ''
       const name = this.$store.getters.getBreadcrumbColumnName
@@ -768,9 +868,10 @@ export default {
           this.customTableTitles[0].label = curTab.label
           this.$store.commit('setNetworkOverviewCurrentTab', curTab)
         }
-      } else if (curOperationType === operationType.secondMenu) { // 点击第二级菜单，点击菜单
-        const list = this.$_.cloneDeep(this.networkTabList)
-        const tabObjGroup = list.filter(item => item.checked)
+      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击第二级菜单，点击菜单
+        this.list = this.$_.cloneDeep(this.curTable.tabList)
+        this.$store.commit('setNetworkOverviewTabList', this.list)
+        const tabObjGroup = this.list.filter(item => item.checked)
         if (tabObjGroup && tabObjGroup.length > 0) {
           const curTab = tabObjGroup[0]
           queryType = curTab.prop
@@ -809,14 +910,6 @@ export default {
       }
       return extraParams
     },
-    gerCycleUrl () {
-      const condition = this.$store.getters.getQueryCondition
-      if (condition) {
-        return this.networkSearchUrl.drilldownCycleUrl
-      } else {
-        return this.networkSearchUrl.cycleUrl
-      }
-    },
     handleCustomizeClick (tab) {
       this.activeCustomize = tab.paneName
     },
@@ -848,19 +941,18 @@ export default {
     }
   },
   mounted () {
-    if (this.chart.params && this.chart.params.drillDown) {
-      this.drillDown = this.chart.params.drillDown
-    }
-    //当前表格相关数据初始化
-    this.tableType = this.chart.params?this.chart.params.name:'networkOverview'
-    this.curTable = networkTable[this.tableType]?networkTable[this.tableType]:networkTable[0]
+    // 当前表格相关数据初始化
+    this.tableType = this.chart.params ? this.chart.params.name : 'networkOverview'
+    this.curTable = networkTable[this.tableType] ? networkTable[this.tableType] : networkTable.networkOverview
     this.hasMetricSearch = this.curTable.hasMetricSearch
-    this.customTableTitles =  this.$_.cloneDeep(this.curTable.column)
+    this.customTableTitles = this.$_.cloneDeep(this.curTable.column)
     this.list = this.$_.cloneDeep(this.curTable.tabList)
     this.networkTabList = this.curTable.tabList
     this.activeTab = this.networkTabList[0].label
     this.activeCustomize = ref('tabs')
     this.networkSearchUrl = this.curTable.url
+    this.columnNameGroup = this.curTable.bytesColumnNameGroup
+    this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
 
     if (this.$store.getters.getNetworkOverviewTabList.length > 0) {
       this.list = this.$store.getters.getNetworkOverviewTabList
@@ -889,8 +981,8 @@ export default {
     }
   },
   setup (props) {},
-  destroyed () {
-    this.$store.commit('setNetworkOverviewTabList', this.list)//保存状态
+  unmounted () {
+    this.$store.commit('setNetworkOverviewTabList', this.list)// 保存状态
   }
 }
 </script>

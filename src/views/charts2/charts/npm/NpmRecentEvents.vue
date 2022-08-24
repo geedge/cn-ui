@@ -31,7 +31,7 @@
         </el-table-column>
       </template>
       <template v-slot:empty>
-        <div class="table-no-data">
+        <div class="table-no-data" v-show="isNoData">
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#cn-icon-a-allclear"></use>
           </svg>

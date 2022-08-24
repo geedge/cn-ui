@@ -162,7 +162,14 @@ export const api = {
       // 各维度下钻会话统计
       relatedSessions: '/interface/application/performance/relatedSessions',
       // 各维度下钻流量曲线图
-      trafficGraph: '/interface/application/performance/overview/drilldown/drilldown/dimension/trafficGraph'
+      trafficGraph: '/interface/application/performance/overview/drilldown/drilldown/dimension/trafficGraph',
+      // 下钻地图
+      map: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/trafficAnalysis',
+      mapTcp: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/tcpSessionDelay',
+      mapHttp: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/httpResponseDelay',
+      mapSsl: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/sslConDelay',
+      mapPacketLoss: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/tcpSessionDelay',
+      mapPacketRetrans: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/tcpSessionDelay'
     },
     location: {
       // 折线图

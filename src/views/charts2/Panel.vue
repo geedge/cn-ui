@@ -1,7 +1,14 @@
 <template>
   <div class="panel-box">
     <div class="panel__header">
-      <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}</div>
+      <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}
+        <div  v-if="score" class="score">
+          <div class="circle-icon"  v-if="score <= 2" :class="{'data-score-red': score <= 2}" ></div>
+          <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
+          <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
+          Score:{{score}}
+        </div>
+      </div>
       <div class="panel__time">
         <date-time-range
             class="date-time-range"
@@ -31,13 +38,15 @@
 </template>
 
 <script>
-  import {useRoute, useRouter} from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ref } from 'vue'
-import { panelTypeAndRouteMapping } from '@/utils/constants'
+import { panelTypeAndRouteMapping, bytesColumnNameGroupForNpm, scoreUrl, customTableTitlesForAppPerformance } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
-import { getNowTime } from '@/utils/date-util'
+import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
+import { computeScore } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
+import { get } from '@/utils/http'
 
 export default {
   name: 'Panel',
@@ -53,11 +62,58 @@ export default {
       chartList: [], // 普通panel的chart
       panelLock: true,
       extraParams: {},
-      panelName: ''
+      panelName: '',
+      score: null
     }
   },
   async mounted () {
     this.panelName = this.$store.getters.getPanelName
+    if (this.panelName && this.$route.path === '/panel/networkAppPerformance') {
+      // let columnName = this.$store.getters.getBreadcrumbColumnName
+      const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      const queryParams = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        type: this.$store.getters.getDimensionType,
+        params: columnValue || ''
+      }
+      const requestGroup = []
+      scoreUrl.forEach(url => {
+        if (url) {
+          const request = get(url, queryParams, true)
+          requestGroup.push(request)
+        }
+      })
+      const scoreGroup = []
+      let score = 0
+      Promise.all(requestGroup).then(res => {
+        res.forEach(t => {
+          if (t.code === 200) {
+            const data = t.data.result ? t.data.result[0] : null
+            if (data) {
+              customTableTitlesForAppPerformance.forEach(item => {
+                if (data[bytesColumnNameGroupForNpm[item.prop]]) {
+                  score = computeScore(data, item.scoreType)
+                  scoreGroup.push(score)
+                } else {
+                  scoreGroup.push(0)
+                }
+              })
+            }
+          }
+        })
+      }).finally(() => {
+        scoreGroup.forEach(i => {
+          score = Number(score) + Number(i)
+        })
+        score = Math.ceil(score * 6)
+        if (score > 6) {
+          score = 6
+        }
+        this.score = score || 0
+      })
+    }
+
     await this.init()
     const vm = this
     this.emitter.on('reloadChartList', async function () {
@@ -74,14 +130,14 @@ export default {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params } = useRoute()
-    let router = useRouter()
-    let thirdPanel = router.currentRoute.value.params.thirdPanel
-    let fourthPanel = router.currentRoute.value.params.fourthPanel
-    if(fourthPanel){
+    const router = useRouter()
+    const thirdPanel = router.currentRoute.value.params.thirdPanel
+    const fourthPanel = router.currentRoute.value.params.fourthPanel
+    if (fourthPanel) {
       panelType = Number(fourthPanel)
-    }else if(thirdPanel){
+    } else if (thirdPanel) {
       panelType = Number(thirdPanel)
-    }else {
+    } else {
       panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
     }
 
@@ -131,11 +187,17 @@ export default {
         })
       }
     },
-    timeRefreshChange (startTime, endTime, dateRangeValue) {
-
+    reload (startTime, endTime, dateRangeValue) {
+      this.timeFilter = { startTime: startTime, endTime: endTime, dateRangeValue: dateRangeValue }
     },
-    reload () {
-
+    timeRefreshChange () {
+      // 不是自选时间
+      if (!this.$refs.dateTimeRange.isCustom) {
+        const value = this.timeFilter.dateRangeValue
+        this.$refs.dateTimeRange.quickChange(value)
+      } else {
+        this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
+      }
     }
   }
 }

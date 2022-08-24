@@ -36,7 +36,7 @@
 import VueGridLayout from 'vue-grid-layout'
 import _ from 'lodash'
 import Chart from '@/views/charts2/Chart'
-import { panelTypeAndRouteMapping, storageKey,drillDownPanelTypeMapping } from '@/utils/constants'
+import { panelTypeAndRouteMapping, storageKey, drillDownPanelTypeMapping } from '@/utils/constants'
 import { typeMapping } from '@/views/charts2/chart-tools'
 export default {
   name: 'ChartList',
@@ -66,7 +66,7 @@ export default {
       if (!_.isEmpty(n)) {
         if (this.panelType === panelTypeAndRouteMapping.networkAppPerformance) {
           this.layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex)
-        }else if(Object.values(drillDownPanelTypeMapping).indexOf(this.panelType)>=-1){
+        } else if (Object.values(drillDownPanelTypeMapping).indexOf(this.panelType) >= -1) {
           this.layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex || !c.params.hasOwnProperty('tabIndex'))
         } else {
           this.layout = [...n]
@@ -86,7 +86,7 @@ export default {
     },
     npmTabIndex (n) {
       if (this.panelType === panelTypeAndRouteMapping.networkAppPerformance ||
-          Object.values(drillDownPanelTypeMapping).indexOf(this.panelType)>=-1) {
+          Object.values(drillDownPanelTypeMapping).indexOf(this.panelType) >= -1) {
         this.layout = this.chartList.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex || !c.params.hasOwnProperty('tabIndex'))
       }
     }

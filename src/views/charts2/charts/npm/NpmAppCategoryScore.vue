@@ -128,13 +128,19 @@ export default {
     }
   },
   mixins: [chartMixin],
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.init()
+      }
+    }
+  },
   methods: {
-    init (params) {
-      if (!params) {
-        params = {
-          startTime: getSecond(this.timeFilter.startTime),
-          endTime: getSecond(this.timeFilter.endTime)
-        }
+    init () {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
       // 获取table后三列内容
       const currentTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 0 })
