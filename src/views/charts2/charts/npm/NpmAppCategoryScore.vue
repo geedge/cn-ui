@@ -145,6 +145,7 @@ export default {
       // 获取table后三列内容
       const currentTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 0 })
       const lastCycleTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 1 })
+      this.toggleLoading(true)
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
         const prevData = res[1].data.result
         const data = res[0].data.result

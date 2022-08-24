@@ -1008,7 +1008,6 @@ export default {
     // 当前表格相关数据初始化
     this.tableType = this.chart.params ? this.chart.params.name : 'networkOverview'
     this.curTable = this.networkTable[this.tableType] ? this.networkTable[this.tableType] : this.networkTable.networkOverview
-    this.hasMetricSearch = this.curTable.hasMetricSearch
     this.customTableTitles = this.$_.cloneDeep(this.curTable.column)
     this.list = this.$_.cloneDeep(this.curTable.tabList)
     this.networkTabList = this.curTable.tabList
@@ -1043,6 +1042,11 @@ export default {
         })
       })
     }
+    this.$nextTick(() => {
+      setTimeout(() => {
+        this.hasMetricSearch = this.curTable.hasMetricSearch
+      }, 250)
+    })
   },
   setup (props) {},
   unmounted () {

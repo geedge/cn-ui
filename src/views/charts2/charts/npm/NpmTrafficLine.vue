@@ -50,6 +50,14 @@ export default {
       chartData: {}
     }
   },
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.init()
+      }
+    }
+  },
   methods: {
     init () {
       let condition = ''
@@ -126,7 +134,9 @@ export default {
     },
     echartsInit (echartsData) {
       const dom = document.getElementById(this.chartData.name)
-      this.myChart = echarts.init(dom)
+      if (!this.myChart) {
+        this.myChart = echarts.init(dom)
+      }
       this.chartOption = trafficLineChartOption
       const chartOption = this.chartOption.series[0]
       this.chartOption.series = echartsData.map((t, i) => {

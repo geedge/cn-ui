@@ -290,8 +290,12 @@ export default {
     },
     async location (n) {
       this.$store.commit('setNpmLocationCountry', n)
-      this.countrySeries.dispose()
-      this.countryImageSeries.dispose()
+      if (this.countrySeries) {
+        this.countrySeries.dispose()
+      }
+      if (this.countryImageSeries) {
+        this.countryImageSeries.dispose()
+      }
       if (n) {
         const countryId = countryNameIdMapping[n]
         await this.drill(countryId)

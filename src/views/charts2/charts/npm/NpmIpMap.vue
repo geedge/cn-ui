@@ -29,6 +29,14 @@ export default {
     }
   },
   mixins: [chartMixin],
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+      }
+    }
+  },
   methods: {
     async initMap () {
       // 初始化插件
@@ -102,6 +110,7 @@ export default {
                 t.score = 6
               }
             })
+            console.info(mapData)
             this.loadMarkerData(imageSeries, mapData)
           })
         }).finally(() => {

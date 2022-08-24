@@ -105,6 +105,12 @@ export default {
         this.country = n
         this.init()
       }
+    },
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.init()
+      }
     }
   },
   methods: {
@@ -192,7 +198,9 @@ export default {
     echartsInit (data, chartData, type) {
       const dom = document.getElementById(`chart${chartData.name}`)
       if (dom) {
-        this.myChart = echarts.init(dom)
+        if (!this.myChart) {
+          this.myChart = echarts.init(dom)
+        }
         this.chartOption = npmLineChartOption
         const seriesTemplate = this.chartOption.series[0]
         this.chartOption.color = this.chartData.params.color

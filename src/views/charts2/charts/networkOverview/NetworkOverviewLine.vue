@@ -255,7 +255,9 @@ export default {
       const _this = this
       echartsData = echartsData.filter(t => t.show === true)
       const dom = document.getElementById('chart')
-      this.myChart = echarts.init(dom)
+      if (!this.myChart) {
+        this.myChart = echarts.init(dom)
+      }
       this.chartOption = stackedLineChartOption
       const chartOption = this.chartOption.series[0]
       this.chartOption.series = echartsData.map((t, i) => {
