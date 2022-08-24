@@ -58,38 +58,65 @@ export default {
       isNoData: false
     }
   },
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.eventsByTypeData()
+      }
+    }
+  },
   methods: {
     init () {
       const _this = this
       const dom = document.getElementById('chart')
-      this.myChart = echarts.init(dom)
-      this.chartOption = pieChartOption3
-      this.chartOption.series[0].data = this.chartData
-      this.chartOption.series[0].label = {
-        show: true,
-        position: 'center',
-        fontFamily: 'NotoSansHans-Medium',
-        fontSize: 20,
-        fontWeight: 500,
-        formatter: function () {
-          let num = 0
-          _this.chartData.forEach(t => {
-            num += t.count
-          })
-          return num
+      if (!this.myChart) {
+        this.myChart = echarts.init(dom)
+        this.chartOption = pieChartOption3
+        this.chartOption.series[0].data = this.chartData
+        this.chartOption.series[0].label = {
+          show: true,
+          position: 'center',
+          fontFamily: 'NotoSansHans-Medium',
+          fontSize: 20,
+          fontWeight: 500,
+          formatter: function () {
+            let num = 0
+            _this.chartData.forEach(t => {
+              num += t.count
+            })
+            return num
+          }
         }
+        this.myChart.on('mouseover', function (params) {
+          _this.chartOption.series[0].label.show = false
+          _this.myChart.setOption(_this.chartOption)
+        })
+        this.myChart.on('mouseout', function (params) {
+          _this.chartOption.series[0].label.show = true
+          _this.myChart.setOption(_this.chartOption)
+        })
+        this.myChart.setOption(this.chartOption)
+      } else {
+        this.chartOption.series[0].data = this.chartData
+        this.chartOption.series[0].label = {
+          show: true,
+          position: 'center',
+          fontFamily: 'NotoSansHans-Medium',
+          fontSize: 20,
+          fontWeight: 500,
+          formatter: function () {
+            let num = 0
+            _this.chartData.forEach(t => {
+              num += t.count
+            })
+            return num
+          }
+        }
+        this.myChart.setOption(this.chartOption)
       }
-      this.myChart.on('mouseover', function (params) {
-        _this.chartOption.series[0].label.show = false
-        _this.myChart.setOption(_this.chartOption)
-      })
-      this.myChart.on('mouseout', function (params) {
-        _this.chartOption.series[0].label.show = true
-        _this.myChart.setOption(_this.chartOption)
-      })
-      this.myChart.setOption(this.chartOption)
     },
-    eventsVyTypeData () {
+    eventsByTypeData () {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -136,7 +163,7 @@ export default {
   },
   mounted () {
     this.timer = setTimeout(() => {
-      this.eventsVyTypeData()
+      this.eventsByTypeData()
     }, 100)
     window.addEventListener('resize', this.resize)
   },
