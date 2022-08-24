@@ -67,12 +67,16 @@ export default {
           typeVal: this.$store.getters.getBreadcrumbColumnValue
         }
         getData(api.npm.overview.map, params).then(res => {
+          const subParams = {
+            ...params,
+            params: res.map(r => r.country).join(',')
+          }
           // 计算分数
-          const tcpRequest = get(api.npm.overview.mapTcp, params)
-          const httpRequest = get(api.npm.overview.mapHttp, params)
-          const sslRequest = get(api.npm.overview.mapSsl, params)
-          const tcpLostRequest = get(api.npm.overview.mapPacketLoss, params)
-          const packetRetransRequest = get(api.npm.overview.mapPacketRetrans, params)
+          const tcpRequest = get(api.npm.overview.mapTcp, subParams)
+          const httpRequest = get(api.npm.overview.mapHttp, subParams)
+          const sslRequest = get(api.npm.overview.mapSsl, subParams)
+          const tcpLostRequest = get(api.npm.overview.mapPacketLoss, subParams)
+          const packetRetransRequest = get(api.npm.overview.mapPacketRetrans, subParams)
           Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
             const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
             const mapData = res
