@@ -70,6 +70,11 @@
           </template>
         </el-table-column>
       </template>
+      <template v-slot:empty>
+        <div class="table-no-data" v-show="isNoData">
+          <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+        </div>
+      </template>
     </el-table>
   </div>
 </template>
@@ -114,7 +119,8 @@ export default {
         { label: 'network.severity', prop: 'eventSeverity' },
         { label: 'network.eventType', prop: 'eventType' },
         { label: 'network.eventCount', prop: 'count' }
-      ]
+      ],
+      isNoData: false,
     }
   },
   mixins: [chartMixin],
@@ -132,6 +138,7 @@ export default {
   methods: {
     init () {
       this.toggleLoading(true)
+      this.isNoData = false
       this.customTableTitles[0].prop = this.typePropMap[this.metric]
       this.customTableTitles[0].label = this.typeLabelMap[this.metric]
       this.tableData = []
@@ -143,8 +150,13 @@ export default {
       }
       get(api.npm.events.dimensionEvents, params).then(res => {
         if (res.code === 200) {
+          if (!res.data.result || res.data.result.length === 0) {
+            this.isNoData = true
+          }
           this.tableData = res.data.result
           console.log(res.data.result)
+        }else {
+          this.isNoData = true
         }
       }).finally(() => {
         this.toggleLoading(false)

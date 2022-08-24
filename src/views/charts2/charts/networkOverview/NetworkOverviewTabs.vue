@@ -57,11 +57,19 @@
                   <template v-else-if="item.columnType === tableColumnType.dillDown" >
                     <div class="data-click" @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
                   </template>
+                  <template v-else-if="item.prop === 'score'" >
+                    {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
+                  </template>
                   <template v-else>
                     {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
                   </template>
                 </template>
               </el-table-column>
+            </template>
+            <template v-slot:empty>
+              <div class="table-no-data" v-show="isNoData">
+                <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+              </div>
             </template>
           </el-table>
 
@@ -149,12 +157,13 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { operationType, unitTypes, networkTable, tableColumnType, cycle } from '@/utils/constants'
+import { operationType, unitTypes, networkTable, tableColumnType } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
 import { getChainRatio, computeScore } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -167,6 +176,8 @@ export default {
       tab: 'ip',
       unitConvert,
       unitTypes,
+      networkTable,
+      isNoData: false,
       options: [
         {
           value: 'Bits/s',
@@ -190,7 +201,7 @@ export default {
       columnNameGroup: {},
       cycleColumnNameGroup: {},
       metricUnit: 'bytes',
-      loading: false,
+      //loading: false,
       tableColumnType: tableColumnType,
       curTable: {}, // 当前的表格类型
       tableType: '',
@@ -206,7 +217,7 @@ export default {
     chart: Object
   },
   components: {
-
+    ChartNoData
   },
   watch: {
     chartData: {
@@ -235,7 +246,6 @@ export default {
             q: condition
           }
         }
-        this.toggleLoading(true)
         this.$emit('getChartData', this.getCurUrl(), queryParams)
       }
     }
@@ -331,7 +341,6 @@ export default {
           q: condition
         }
       }
-      this.toggleLoading(true)
       this.$emit('getChartData', this.getCurUrl(), queryParams)
     },
     handleCustomizeButton (status) {
@@ -462,6 +471,14 @@ export default {
         })
         return otherData
       })
+
+      this.toggleLoading(false)
+      if(!this.chartData || this.chartData.length === 0){
+        this.isNoData = true
+      }else {
+        this.isNoData = false
+      }
+
       const queryParams = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
@@ -526,8 +543,10 @@ export default {
           }).finally(e => {
             this.tableData = tableDataTmp
             // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
+            let scoreNum = 0
             this.customTableTitles.forEach(tableColumn => {
               if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
+                scoreNum++
                 get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
                   if (response.code === 200) {
                     const columnList = response.data.result
@@ -540,24 +559,25 @@ export default {
                           score = computeScore(data, tableColumn.scoreType)
                         }
                         item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, score] : [score]
-                        if (item && item.scoreGroup && item.scoreGroup.length >= 5) {
-                          // self.tableData.forEach(data => {
-                          let score = 0
-                          item.scoreGroup.forEach(i => {
-                            score = Number(score) + Number(i)
-                          })
-                          score = Math.ceil(score * 6)
-                          if (score > 6) {
-                            score = 6
-                          }
-                          item.score = score || 0
+                      }else {
+                        item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, 0] : [0]
+                      }
+                      if (scoreNum >= 5) {
+                        // self.tableData.forEach(data => {
+                        let score = 0
+                        item.scoreGroup.forEach(i => {
+                          score = Number(score) + Number(i)
+                        })
+                        score = Math.ceil(score * 6)
+                        if (score > 6) {
+                          score = 6
                         }
+                        item.score = score || 0
                       }
                     })
                   }
                 }).catch(e => {
                   console.log(e)
-                  self.toggleLoading(false)
                 }).finally(e => {
                   // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
                   if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
@@ -611,18 +631,16 @@ export default {
                       console.log(e)
                     })
                   }
-                  self.toggleLoading(false)
                 })
               }
             })
-            self.toggleLoading(false)
           })
         }
       })
-
-      self.toggleLoading(false)
     },
     tabChange (index) {
+      this.toggleLoading(true)
+      this.isNoData = false
       const beforeType = this.$store.getters.getTabOperationBeforeType
       if (beforeType != operationType.thirdMenu) {
         this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
@@ -663,7 +681,6 @@ export default {
           q: condition
         }
       }
-      this.toggleLoading(true)
       this.$emit('getChartData', this.getCurUrl(), queryParams)
     },
     handleTabValue (columnName, columnValue) {
@@ -864,6 +881,7 @@ export default {
       }
     },
     handleQueryParams (extraParams) {
+      this.toggleLoading(true)
       let queryType = ''
       const name = this.$store.getters.getBreadcrumbColumnName
       let tabList = this.$store.getters.getNetworkOverviewTabList
@@ -989,7 +1007,7 @@ export default {
   mounted () {
     // 当前表格相关数据初始化
     this.tableType = this.chart.params ? this.chart.params.name : 'networkOverview'
-    this.curTable = networkTable[this.tableType] ? networkTable[this.tableType] : networkTable.networkOverview
+    this.curTable = this.networkTable[this.tableType] ? this.networkTable[this.tableType] : this.networkTable.networkOverview
     this.hasMetricSearch = this.curTable.hasMetricSearch
     this.customTableTitles = this.$_.cloneDeep(this.curTable.column)
     this.list = this.$_.cloneDeep(this.curTable.tabList)

@@ -149,7 +149,7 @@
 <script>
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
-import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl, drillDownPanelTypeMapping } from '@/utils/constants'
+import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
 import { getNowTime, getSecond } from '@/utils/date-util'
