@@ -216,6 +216,28 @@ export default {
           this.initData()
         }
       }
+    },
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        const curTab = this.getCurTab()
+        let queryParams = {
+          orderBy: this.orderBy,
+          limit: 10,
+          type: curTab.prop
+        }
+        const condition = this.$store.getters.getQueryCondition
+        if (condition) {
+          queryParams = {
+            orderBy: this.orderBy,
+            limit: 10,
+            type: curTab.prop,
+            q: condition
+          }
+        }
+        this.toggleLoading(true)
+        this.$emit('getChartData', this.getCurUrl(), queryParams)
+      }
     }
   },
   mixins: [chartMixin],
@@ -484,8 +506,10 @@ export default {
                       } else if (totalDiff < 0) {
                         trend = 'down'
                         trendPercent = trendPercent + '%'
-                      } else {
+                      } else if (totalDiff === 0) {
                         trend = 'noChange'// 横向图标
+                      } else {
+                        trend = ''
                       }
                       if (trendPercent === '0%') {
                         trend = 'noChange'
@@ -494,7 +518,7 @@ export default {
                     }
                   }
                 }
-                item[tableColumn.prop] = [item[tableColumn.prop], trend, trendPercent]
+                item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
               })
             }
           }).catch(e => {
@@ -566,8 +590,10 @@ export default {
                                 } else if (totalDiff < 0) {
                                   trend = 'down'
                                   trendPercent = trendPercent + '%'
-                                } else {
+                                } else if (totalDiff === 0) {
                                   trend = 'noChange'// 横向图标
+                                } else {
+                                  trend = ''
                                 }
                                 if (trendPercent === '0%') {
                                   trend = 'noChange'
@@ -576,7 +602,9 @@ export default {
                               }
                             }
                           }
-                          item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
+                          if (!(item[tableColumn.prop] && item[tableColumn.prop].length >= 3)) {
+                            item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
+                          }
                         })
                       }
                     }).catch(e => {
@@ -649,10 +677,19 @@ export default {
 
       const queryCondition = []
       const searchProps = tabGroup[0].dillDownProp
-      searchProps.forEach(item => {
-        queryCondition.push(item + "='" + columnValue + "'")
-      })
-      this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+      if (tabGroup[0].prop === 'protocolPort') {
+        const valueGroup = columnValue.split(':')
+        if (valueGroup) {
+          queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
+          queryCondition.push('common_server_port=' + valueGroup[1])
+        }
+        this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+      } else {
+        searchProps.forEach(item => {
+          queryCondition.push(item + "='" + columnValue + "'")
+        })
+        this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+      }
       /*
         * 点击表格第一列后
             1.顶部面包屑增加两级，分别是列名和值；
@@ -726,10 +763,19 @@ export default {
       const queryCondition = []
       const curTab = this.getCurTab()
       const searchProps = curTab.dillDownProp
-      searchProps.forEach(item => {
-        queryCondition.push(item + "='" + columnValue + "'")
-      })
-      this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+      if (curTab.prop === 'protocolPort') {
+        const valueGroup = columnValue.split(':')
+        if (valueGroup) {
+          queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
+          queryCondition.push('common_server_port=' + valueGroup[1])
+        }
+        this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+      } else {
+        searchProps.forEach(item => {
+          queryCondition.push(item + "='" + columnValue + "'")
+        })
+        this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+      }
     },
     metricChange () {
     },
@@ -790,7 +836,7 @@ export default {
           }
         }
         this.toggleLoading(true)
-        this.$emit('getChartData', this.getCurUrl(), queryParams, queryParams.q)
+        this.$emit('getChartData', this.getCurUrl(), queryParams)
       }
     },
     getCurUrl () {

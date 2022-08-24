@@ -217,7 +217,7 @@ export default {
           ...this.queryTimeRange,
           ...extraParams
         }
-        let requestUrl = url
+        let requestUrl = url || chartParams.url
 
         if (this.chart.type === typeMapping.networkOverview.table) {
           const chartObj = this.$refs['tab' + this.chart.id]

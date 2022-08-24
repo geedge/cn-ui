@@ -33,35 +33,36 @@
           </template>
           <template  #default="scope" :column="item">
             <div class="data-app-event-table">
-              <template v-if="item.prop === 'applications'">
+              <template v-if="item.prop === 'domain' ||item.prop === 'appName' ||item.prop === 'serverIp' ">
                 <span class="data-applications">{{$t(scope.row[item.prop])}}</span>
               </template>
-              <template v-else-if="item.prop === 'severity'">
-                <template v-if="scope.row[item.prop]==='Critical'">
+              <template v-else-if="item.prop === 'eventSeverity'">
+                <template v-if="scope.row[item.prop]==='critical'">
                   <div v-for="item in 5" class="red-dot"></div>
                 </template>
-                <template v-else-if="scope.row[item.prop]==='High'">
+                <template v-else-if="scope.row[item.prop]==='high'">
                   <div v-for="item in 4" class="red-dot"></div>
                   <div class="grey-dot"></div>
                 </template>
-                <template v-else-if="scope.row[item.prop]==='Medium'">
+                <template v-else-if="scope.row[item.prop]==='medium'">
                   <div v-for="item in 3" class="red-dot"></div>
                   <div v-for="item in 2" class="grey-dot"></div>
                 </template>
-                <template v-else-if="scope.row[item.prop]==='Low'">
+                <template v-else-if="scope.row[item.prop]==='low'">
                   <div v-for="item in 2" class="red-dot"></div>
                   <div v-for="item in 3" class="grey-dot"></div>
                 </template>
-                <template v-else-if="scope.row[item.prop]==='Info'">
+                <template v-else-if="scope.row[item.prop]==='info'">
                   <div v-for="item in 1" class="red-dot"></div>
                   <div v-for="item in 4" class="grey-dot"></div>
                 </template>
                 <span class="data-severity" >{{$t(scope.row[item.prop])}}</span>
               </template>
               <template v-else-if="item.prop === 'eventType'">
-                <span class="data-eventType" v-for="type in scope.row[item.prop]">{{type}}</span>
+               <!-- <span class="data-eventType" v-for="type in scope.row[item.prop]">{{type}}</span>-->
+                <span class="data-eventType" >{{$t(scope.row[item.prop])}}</span>
               </template>
-              <template v-else-if="item.prop === 'eventCount'">
+              <template v-else-if="item.prop === 'count'">
                 <span class="data-eventCount">{{scope.row[item.prop]}}</span>
               </template>
               <span v-else>-</span>
@@ -74,77 +75,84 @@
 </template>
 
 <script>
+import { unitTypes, npmCategoryInfoMapping } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
+import { api } from '@/utils/api'
+import { getSecond } from '@/utils/date-util'
+import { get } from '@/utils/http'
+import { getChainRatio, computeScore } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
   name: 'NpmAppEventTable',
-  mixins: [chartMixin],
   data () {
     return {
-      metric: 'Application',
+      metric: 'appLabel',
+      dataProp: 'appLabel',
       options: [
         {
-          value: 'Application',
+          value: 'appLabel',
           label: 'Application'
         },
         {
-          value: 'Provider',
+          value: 'idcRenter',
           label: 'Provider'
         }
       ],
+      typePropMap: {
+        appLabel: 'appName',
+        idcRenter: 'domain'
+      },
+      typeLabelMap: {
+        appLabel: 'network.applications',
+        idcRenter: 'network.idcRenter'
+      },
       dotList: ['grey-dot', 'grey-dot', 'grey-dot', 'grey-dot', 'grey-dot'],
-      tableData: [
-        {
-          applications: 'Critical',
-          severity: 'Critical',
-          eventCount: 8,
-          eventType: ['dns error', 'http error', 'high dns response time']
-        }, {
-          applications: 'High',
-          severity: 'High',
-          eventCount: 8,
-          eventType: ['dns error']
-        }, {
-          applications: 'Critical',
-          severity: 'Critical',
-          eventCount: 8,
-          eventType: ['dns error', 'high dns response time']
-        }, {
-          applications: 'Medium',
-          severity: 'Medium',
-          eventCount: 8,
-          eventType: ['dns error', 'http error', 'high dns response time']
-        }, {
-          applications: 'Low',
-          severity: 'Low',
-          eventCount: 8,
-          eventType: ['http error', 'high dns response time']
-        }, {
-          applications: 'Info',
-          severity: 'Info',
-          eventCount: 8,
-          eventType: ['dns error', 'high dns response time']
-        }, {
-          applications: 'Critical',
-          severity: 'Critical',
-          eventCount: 8,
-          eventType: ['dns error', 'http error']
-        }, {
-          applications: 'Critical',
-          severity: 'Critical',
-          eventCount: 8,
-          eventType: ['dns error', 'http error', 'high dns response time']
-        }
-      ],
+      tableData: [],
       customTableTitles: [
-        { label: 'network.applications', prop: 'applications' },
-        { label: 'network.severity', prop: 'severity' },
+        { label: 'network.applications', prop: 'serverIp' },
+        { label: 'network.severity', prop: 'eventSeverity' },
         { label: 'network.eventType', prop: 'eventType' },
-        { label: 'network.eventCount', prop: 'eventCount' }
+        { label: 'network.eventCount', prop: 'count' }
       ]
     }
   },
+  mixins: [chartMixin],
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.init()
+      }
+    }
+  },
+  mounted () {
+    this.init()
+  },
   methods: {
+    init () {
+      this.toggleLoading(true)
+      this.customTableTitles[0].prop = this.typePropMap[this.metric]
+      this.customTableTitles[0].label = this.typeLabelMap[this.metric]
+      this.tableData = []
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        limit: 10,
+        type: this.metric
+      }
+      get(api.npm.events.dimensionEvents, params).then(res => {
+        if (res.code === 200) {
+          this.tableData = res.data.result
+          console.log(res.data.result)
+        }
+      }).finally(() => {
+        this.toggleLoading(false)
+      })
+    },
+    changeMetric () {
+      this.init()
+    },
     columnWidth (index) {
       if (index === 0 || index === 1) {
         return '20%'
@@ -154,11 +162,9 @@ export default {
         return '15%'
       }
     }
+
   },
   computed: {
-  },
-  mounted () {
-    this.$emit('toggleLoading', false)
   }
 }
 </script>

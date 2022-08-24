@@ -352,10 +352,20 @@ export default {
         if (curTab) {
           const queryCondition = []
           const searchProps = curTab.dillDownProp
-          searchProps.forEach(item => {
-            queryCondition.push(item + "='" + value + "'")
-          })
-          this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+          if (curTab.prop === 'protocolPort') {
+            const valueGroup = value.split(':')
+            if (valueGroup) {
+              queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
+              queryCondition.push('common_server_port=' + valueGroup[1])
+            }
+            console.log(queryCondition.join(' AND '))
+            this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+          } else {
+            searchProps.forEach(item => {
+              queryCondition.push(item + "='" + value + "'")
+            })
+            this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+          }
         }
       }
 
