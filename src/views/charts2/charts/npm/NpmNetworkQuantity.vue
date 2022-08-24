@@ -35,6 +35,16 @@ export default {
       chartData: {}
     }
   },
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.npmNetworkCycleData = []
+        this.npmNetworkLastCycleData = []
+        this.npmNetworkCycleQuery()
+      }
+    }
+  },
   methods: {
     npmNetworkCycleQuery () {
       let condition = ''

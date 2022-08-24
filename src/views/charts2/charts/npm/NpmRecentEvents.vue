@@ -62,6 +62,14 @@ export default {
       ]
     }
   },
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.recentEventsListData()
+      }
+    }
+  },
   methods: {
     recentEventsListData () {
       const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)

@@ -49,6 +49,14 @@ export default {
       serverSessions: 0
     }
   },
+  watch: {
+    timeFilter: {
+      deep: true,
+      handler (n) {
+        this.relatedSessionsData()
+      }
+    }
+  },
   methods: {
     relatedSessionsData () {
       const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
