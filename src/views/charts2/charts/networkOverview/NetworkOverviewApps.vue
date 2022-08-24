@@ -373,6 +373,7 @@ export default {
         params.type = 'overviewProvide'
         get(api.dict, params).then(res => {
           if (res.code === 200) {
+            res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'provider' && pd.name === l.value))
             this.pageObj.pages = res.data.pages
             res.data.list.forEach(t => {
               this.toSaveApp.forEach(e => {
@@ -396,6 +397,7 @@ export default {
       } else if (this.appTypeTab == 1) {
         params.type = 'overviewApp'
         get(api.dict, params).then(res => {
+          res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'app' && pd.name === l.value))
           if (res.code === 200) {
             this.pageObj.pages = res.data.pages
             res.data.list.forEach(t => {
@@ -505,20 +507,29 @@ export default {
         this.appData.splice(index, 1)
       })
     },
+    deleteDuplicate (arr) {
+      const arr1 = []
+      arr.forEach(a => {
+        if (!arr1.find(a1 => a.name === a1.name && a.type === a1.type)) {
+          arr1.push(a)
+        }
+      })
+      return arr1
+    },
     save () {
       if (this.toSaveApp.length > 0) {
         const toSaveParams = this.chart.params.app ? this.chart.params : { app: [] }
         if (toSaveParams.app.some(p => p.user === parseInt(localStorage.getItem(storageKey.userId)))) {
           toSaveParams.app.forEach(p => {
             if (p.user === parseInt(localStorage.getItem(storageKey.userId))) {
-              p.list = [...p.list, ...this.toSaveApp]
+              p.list = this.deleteDuplicate([...p.list, ...this.toSaveApp])
             }
           })
         } else {
           const defaultApp = toSaveParams.app.find(p => p.user === 'default')
           toSaveParams.app.push({
             user: parseInt(localStorage.getItem(storageKey.userId)),
-            list: [...defaultApp.list, ...this.toSaveApp]
+            list: this.deleteDuplicate([...defaultApp.list, ...this.toSaveApp])
           })
         }
         const toSaveChart = {
