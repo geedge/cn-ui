@@ -49,6 +49,7 @@ const panel = {
     networkOverviewTabList: [], // 存储tab列表的一些状态：如是否选中
     tabOperationType: 0, // 操作类型:2-二级菜单；3-三级菜单；4-四级菜单；5-切换tab；6-切换metric；7-操作Customize
     tabOperationBeforeType: 0, // 记录上次的操作类型
+    npmThirdLevelMenuScore: null, // npm overview 第三级菜单的panel分数
     npmLocationCountry: '', // npm location的查询条件--国家
     npmLocationSide: 'server' // npm location的查询条件--方向
   },
@@ -139,6 +140,9 @@ const panel = {
     },
     setNpmLocationSide (state, side) {
       state.npmLocationSide = side
+    },
+    setNpmThirdLevelMenuScore (state, score) {
+      state.npmThirdLevelMenuScore = score
     }
   },
   getters: {
@@ -222,6 +226,9 @@ const panel = {
     },
     getNpmLocationSide (state) {
       return state.npmLocationSide
+    },
+    getNpmThirdLevelMenuScore (state) {
+      return state.npmThirdLevelMenuScore
     }
   },
   actions: {

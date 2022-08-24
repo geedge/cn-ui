@@ -14,7 +14,7 @@ import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
-import { getChainRatio } from '@/utils/tools'
+import { computeScore, getChainRatio } from '@/utils/tools'
 export default {
   name: 'NpmNetworkQuantity',
   components: { SingleValue },
@@ -93,12 +93,37 @@ export default {
       const packetPercent = get(api.npm.overview.packetRetransPercent, params)
       this.toggleLoading(true)
       Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
-        res.forEach(t => {
+        const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+        const scoreInfo = {}
+        res.forEach((t, i) => {
           if (t.code === 200) {
+            if (t.data.result.establishLatencyAvg || t.data.result.establishLatencyAvg === 0) {
+              t.data.result.establishLatencyMs = t.data.result.establishLatencyAvg
+            }
+            if (t.data.result.httpResponseLatencyAvg || t.data.result.httpResponseLatencyAvg === 0) {
+              t.data.result.httpResponseLatency = t.data.result.httpResponseLatencyAvg
+            }
+            if (t.data.result.sequenceGapLossAvg || t.data.result.sequenceGapLossAvg === 0) {
+              t.data.result.tcpLostlenPercent = t.data.result.sequenceGapLossAvg
+            }
+            if (t.data.result.pktRetransAvg || t.data.result.pktRetransAvg === 0) {
+              t.data.result.pktRetransPercent = t.data.result.pktRetransAvg
+            }
+            if (t.data.result.sslConLatencyAvg || t.data.result.sslConLatencyAvg === 0) {
+              t.data.result.sslConLatency = t.data.result.sslConLatencyAvg
+            }
+            scoreInfo[keyPre[i] + 'Score'] = computeScore(t.data.result, i)
             this.npmNetworkLastCycleData.push(t.data.result)
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData)
+          } else {
+            t[keyPre[i] + 'Score'] = 0
           }
         })
+        scoreInfo.score = Math.ceil((scoreInfo.tcpScore + scoreInfo.httpScore + scoreInfo.sslScore + scoreInfo.tcpLostScore + scoreInfo.packetRetransScore) * 6)
+        if (scoreInfo.score > 6) {
+          scoreInfo.score = 6
+        }
+        this.$store.commit('setNpmThirdLevelMenuScore', scoreInfo.score)
       }).finally(() => {
         this.toggleLoading(false)
       })
