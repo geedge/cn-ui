@@ -63,9 +63,9 @@ export default {
       locationOptions,
       myChart: null,
       polygonSeries: null,
-      countrySeries: null,
+      countrySeries: [],
       worldImageSeries: null,
-      countryImageSeries: null,
+      countryImageSeries: [],
       // Server | Client
       trafficDirection: 'Server',
       location: ''
@@ -94,15 +94,18 @@ export default {
       this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
         this.$store.commit('setNpmLocationCountry', ev.target.dataItem.dataContext.name)
         this.location = ev.target.dataItem.dataContext.name
-        if (this.countrySeries) {
-          this.countrySeries.dispose()
-        }
-        if (this.countryImageSeries) {
-          this.countryImageSeries.dispose()
-        }
+        this.cleanCountry()
         const countryId = ev.target.dataItem.dataContext.id
         ev.target.isHover = false
         await this.drill(countryId)
+      })
+    },
+    cleanCountry () {
+      this.countrySeries.forEach(s => {
+        s.value.dispose()
+      })
+      this.countryImageSeries.forEach(s => {
+        s.value.dispose()
       })
     },
     loadAm4ChartMap (polygonSeries, imageSeries) {
@@ -267,13 +270,15 @@ export default {
         targetMapObject.series.chart.zoomToMapObject(targetMapObject)
         const geoData = await getGeoData(countryId)
         if (geoData) {
-          this.countrySeries = shallowRef(this.polygonSeriesFactory())
-          this.countrySeries.geodata = geoData
-          this.countryImageSeries = shallowRef(this.imageSeriesFactory('score', this.countrySeries))
+          const countrySeries = shallowRef(this.polygonSeriesFactory())
+          countrySeries.value.geodata = geoData
+          const countryImageSeries = shallowRef(this.imageSeriesFactory('score', countrySeries.value))
+          this.countrySeries.push(countrySeries)
+          this.countryImageSeries.push(countryImageSeries)
           this.polygonSeries.hide()
           this.worldImageSeries.hide()
           this.$nextTick(() => {
-            this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
+            this.loadAm4ChartMap(countrySeries.value, countryImageSeries.value)
           })
         }
       }
@@ -290,12 +295,7 @@ export default {
     },
     async location (n) {
       this.$store.commit('setNpmLocationCountry', n)
-      if (this.countrySeries) {
-        this.countrySeries.dispose()
-      }
-      if (this.countryImageSeries) {
-        this.countryImageSeries.dispose()
-      }
+      this.cleanCountry()
       if (n) {
         const countryId = countryNameIdMapping[n]
         await this.drill(countryId)
