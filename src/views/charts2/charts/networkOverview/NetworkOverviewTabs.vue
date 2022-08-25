@@ -67,7 +67,7 @@
               </el-table-column>
             </template>
             <template v-slot:empty>
-              <div class="table-no-data" v-show="isNoData">
+              <div class="table-no-data" v-if="isNoData">
                 <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
               </div>
             </template>
@@ -472,9 +472,9 @@ export default {
         return otherData
       })
 
-      this.toggleLoading(false)
       if(!this.chartData || this.chartData.length === 0){
         this.isNoData = true
+        this.toggleLoading(false)
       }else {
         this.isNoData = false
       }
@@ -542,6 +542,7 @@ export default {
             console.log(e)
           }).finally(e => {
             this.tableData = tableDataTmp
+            this.toggleLoading(false)
             // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
             let scoreNum = 0
             this.customTableTitles.forEach(tableColumn => {
@@ -639,6 +640,7 @@ export default {
       })
     },
     tabChange (index) {
+      this.tableData = []
       this.toggleLoading(true)
       this.isNoData = false
       const beforeType = this.$store.getters.getTabOperationBeforeType
@@ -852,6 +854,7 @@ export default {
             q: condition
           }
         }
+        this.tableData = []
         this.toggleLoading(true)
         this.$emit('getChartData', this.getCurUrl(), queryParams)
       }
@@ -881,6 +884,8 @@ export default {
       }
     },
     handleQueryParams (extraParams) {
+      this.isNoData = false
+      this.tableData = []
       this.toggleLoading(true)
       let queryType = ''
       const name = this.$store.getters.getBreadcrumbColumnName
@@ -1048,8 +1053,10 @@ export default {
       }, 250)
     })
   },
-  setup (props) {},
+  setup (props) {
+  },
   unmounted () {
+    this.isNoData = false
     this.$store.commit('setNetworkOverviewTabList', this.list)// 保存状态
   }
 }
