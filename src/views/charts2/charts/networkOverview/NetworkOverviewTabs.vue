@@ -1,8 +1,7 @@
 <template>
-  <div class="tabs">
+  <div class="tabs" :style="showTabs?'':'height: calc(100% - 104px);'">
     <el-tabs v-model="activeTab"
-             class="cn-chart__tabs"
-             :class="showTabs?'':'tab-hide'"
+             :class="showTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
              @tab-click="handleClick"
     >
       <template v-for="(tab,index) in list">
@@ -18,17 +17,21 @@
           <el-table
                   :id="`tabTable_${index}`"
                   :ref="`dataTable_${index}`"
-                  :data="tableData"
+                  :data="tableData.slice(0,showRecordNum)"
                   border
                   :cell-style="tableCellStyle"
                   :header-cell-style="tableHeaderCellStyle"
                   class="tab-table"
                   height="100%"
+                  :default-sort="{ prop: 'date', order: 'descending' }"
                   empty-text=" "
           >
             <template v-for="(item,index) in customTableTitles">
               <el-table-column
                       v-if="item.checked"
+                      sortable
+                      align="center"
+                      :prop="item.prop"
                       class="data-column"
               >
                 <template #header>
@@ -37,21 +40,25 @@
                 <template  #default="scope" :column="item">
                   <template v-if="item.columnType === tableColumnType.chainRatio"  >
                     <div class="data-total" >
-                      {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
-                      <template v-if="scope.row[item.prop]">
-                        <div v-if="scope.row[item.prop][1] === 'up'" class="data-total-trend data-total-trend-red">
-                          <i class="cn-icon-rise1 cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
-                        </div>
-                        <div v-else-if="scope.row[item.prop][1] === 'down'" class="data-total-trend data-total-trend-green">
-                          <i class="cn-icon-decline cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
-                        </div>
-                        <div v-else-if="scope.row[item.prop][1] === 'noChange'" class="data-total-trend data-total-trend-black">
-                          <i class="cn-icon-constant cn-icon"></i>
-                        </div>
-                      </template>
-                      <template  v-else>
-                        -
-                      </template>
+                      <div class="data-value">
+                        {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
+                      </div>
+                      <div class="data-trend">
+                        <template v-if="scope.row[item.prop]">
+                          <div v-if="scope.row[item.prop][1] === 'up'" class="data-total-trend data-total-trend-red">
+                            <i class="cn-icon-rise1 cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
+                          </div>
+                          <div v-else-if="scope.row[item.prop][1] === 'down'" class="data-total-trend data-total-trend-green">
+                            <i class="cn-icon-decline cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
+                          </div>
+                          <div v-else-if="scope.row[item.prop][1] === 'noChange'" class="data-total-trend data-total-trend-black">
+                            <i class="cn-icon-constant cn-icon"></i>
+                          </div>
+                        </template>
+                        <template  v-else>
+                          -
+                        </template>
+                      </div>
                     </div>
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.dillDown" >
@@ -72,10 +79,9 @@
               </div>
             </template>
           </el-table>
-
         </el-tab-pane>
-      </template>
 
+      </template>
     </el-tabs>
     <div class="tab-search" >
       <div class="search-select"  v-if="hasMetricSearch">
@@ -151,13 +157,14 @@
         </el-tabs>
       </el-popover>
     </div>
-
   </div>
-
+  <div class="fixed-row">
+    <div class="fixed-button" :class="showTabs?'':''" @click="showMore" >{{$t('network.showTop50Results')}}</div>
+  </div>
 </template>
 <script>
 import { ref } from 'vue'
-import { operationType, unitTypes, networkTable, tableColumnType } from '@/utils/constants'
+import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
 import { getChainRatio, computeScore } from '@/utils/tools'
@@ -197,11 +204,12 @@ export default {
       networkTabList: [], // 原始状态列表
       showBackground: false,
       tableData: [],
+      showRecordNum: 10,
       showTabs: true,
       columnNameGroup: {},
       cycleColumnNameGroup: {},
       metricUnit: 'bytes',
-      //loading: false,
+      // loading: false,
       tableColumnType: tableColumnType,
       curTable: {}, // 当前的表格类型
       tableType: '',
@@ -234,14 +242,14 @@ export default {
         const curTab = this.getCurTab()
         let queryParams = {
           orderBy: this.orderBy,
-          limit: 10,
+          limit: networkDefaultLimit,
           type: curTab.prop
         }
         const condition = this.$store.getters.getQueryCondition
         if (condition) {
           queryParams = {
             orderBy: this.orderBy,
-            limit: 10,
+            limit: networkDefaultLimit,
             type: curTab.prop,
             q: condition
           }
@@ -252,6 +260,14 @@ export default {
   },
   mixins: [chartMixin],
   methods: {
+    showMore () {
+      this.showRecordNum = 50
+    },
+    rowClass (row, column, rowIndex, columnIndex) {
+      if (rowIndex === 49) {
+        return 'fixed-row'
+      }
+    },
     changeMetric () {
       const beforeType = this.$store.getters.getTabOperationBeforeType
       if (beforeType != operationType.thirdMenu) {
@@ -329,14 +345,14 @@ export default {
       }
       let queryParams = {
         orderBy: this.orderBy,
-        limit: 10,
+        limit: networkDefaultLimit,
         type: curTab.prop
       }
       const condition = this.$store.getters.getQueryCondition
       if (condition) {
         queryParams = {
           orderBy: this.orderBy,
-          limit: 10,
+          limit: networkDefaultLimit,
           type: curTab.prop,
           q: condition
         }
@@ -356,6 +372,22 @@ export default {
       } else {
         return tabObjGroup = this.networkTabList.filter(item => item.checked)[0]
       }
+    },
+    // 隐藏tabs的标题
+    hideTabs (curTab) {
+      // 此处的id为tab-name
+      this.list.forEach(item => {
+        const tabDom = document.getElementById('tab-' + item.label)
+        const paneDom = document.getElementById('pane-' + item.label)
+        if (tabDom) {
+          tabDom.style.display = 'none'
+        }
+        if (paneDom) {
+          if (curTab.label === item.label) {
+            paneDom.style.display = ''
+          }
+        }
+      })
     },
     initData () {
       const curTab = this.getCurTab()
@@ -377,19 +409,7 @@ export default {
         }
         this.showTabs = true
       } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        // 此处的id为tab-name
-        this.list.forEach(item => {
-          const tabDom = document.getElementById('tab-' + item.label)
-          const paneDom = document.getElementById('pane-' + item.label)
-          if (tabDom) {
-            tabDom.style.display = 'none'
-          }
-          if (paneDom) {
-            if (curTab.label === item.label) {
-              paneDom.style.display = ''
-            }
-          }
-        })
+        this.hideTabs(curTab)
         this.customTableTitles[0].label = curTab.label
         this.showTabs = false
       } else if (curOperationType === operationType.fourthMenu) { // 点击的为第四级菜单
@@ -411,36 +431,14 @@ export default {
       } else if (curOperationType === operationType.changeMetric) { // 切换metric
         const beforeOperationType = this.$store.getters.getTabOperationBeforeType
         if (beforeOperationType === operationType.thirdMenu) {
-          this.list.forEach(item => {
-            const tabDom = document.getElementById('tab-' + item.label)
-            const paneDom = document.getElementById('pane-' + item.label)
-            if (tabDom) {
-              tabDom.style.display = 'none'
-            }
-            if (paneDom) {
-              if (curTab.label === item.label) {
-                paneDom.style.display = ''
-              }
-            }
-          })
+          this.hideTabs(curTab)
           this.customTableTitles[0].label = curTab.label
           this.showTabs = false
         }
       } else if (curOperationType === operationType.customize) { // customize
         const beforeOperationType = this.$store.getters.getTabOperationBeforeType
         if (beforeOperationType === operationType.thirdMenu) {
-          this.list.forEach(item => {
-            const tabDom = document.getElementById('tab-' + item.label)
-            const paneDom = document.getElementById('pane-' + item.label)
-            if (tabDom) {
-              tabDom.style.display = 'none'
-            }
-            if (paneDom) {
-              if (curTab.label === item.label) {
-                paneDom.style.display = ''
-              }
-            }
-          })
+          this.hideTabs(curTab)
           this.customTableTitles[0].label = curTab.label
           this.showTabs = false
         } else {
@@ -472,10 +470,10 @@ export default {
         return otherData
       })
 
-      if(!this.chartData || this.chartData.length === 0){
+      if (!this.chartData || this.chartData.length === 0) {
         this.isNoData = true
         this.toggleLoading(false)
-      }else {
+      } else {
         this.isNoData = false
       }
 
@@ -560,7 +558,7 @@ export default {
                           score = computeScore(data, tableColumn.scoreType)
                         }
                         item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, score] : [score]
-                      }else {
+                      } else {
                         item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, 0] : [0]
                       }
                       if (scoreNum >= 5) {
@@ -671,14 +669,14 @@ export default {
 
       let queryParams = {
         orderBy: this.orderBy,
-        limit: 10,
+        limit: networkDefaultLimit,
         type: tabList[0].prop
       }
       const condition = this.$store.getters.getQueryCondition
       if (condition) {
         queryParams = {
           orderBy: this.orderBy,
-          limit: 10,
+          limit: networkDefaultLimit,
           type: tabList[0].prop,
           q: condition
         }
@@ -842,14 +840,14 @@ export default {
 
         let queryParams = {
           orderBy: this.orderBy,
-          limit: 10,
+          limit: networkDefaultLimit,
           type: curTab.prop
         }
         const condition = this.$store.getters.getQueryCondition
         if (condition) {
           queryParams = {
             orderBy: this.orderBy,
-            limit: 10,
+            limit: networkDefaultLimit,
             type: curTab.prop,
             q: condition
           }
@@ -970,7 +968,7 @@ export default {
         extraParams = {
           type: queryType || this.networkTabList[0].prop,
           orderBy: this.orderBy ? this.orderBy : 'bytesTotal',
-          limit: 10
+          limit: networkDefaultLimit
         }
         const condition = this.$store.getters.getQueryCondition
         if (condition) {
@@ -1033,18 +1031,7 @@ export default {
       this.customTableTitles[0].label = curTab.label
       this.showTabs = false
       this.$nextTick(() => {
-        this.list.forEach(item => {
-          const tabDom = document.getElementById('tab-' + item.label)
-          const paneDom = document.getElementById('pane-' + item.label)
-          if (tabDom) {
-            tabDom.style.display = 'none'
-          }
-          if (paneDom) {
-            if (curTab.label === item.label) {
-              paneDom.style.display = ''
-            }
-          }
-        })
+        this.hideTabs(curTab)
       })
     }
     this.$nextTick(() => {
