@@ -95,7 +95,7 @@
         :show-close="false"
     >
       <div class="cn-menu__left">
-        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id">
+        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jump(menu.route)">
           <i :class="menu.icon"></i>
           <span>{{$t(menu.i18n || menu.name)}}</span>
           <i class="cn-icon cn-icon-right"></i>
@@ -453,17 +453,18 @@ export default {
           params: { ...this.$route.params, fourthPanel: '', thirdPanel: '' }
         })
       }
-
       if (route === this.route) {
         this.refresh()
         return
       }
-      this.$router.push({
-        path: route,
-        query: {
-          t: +new Date()
-        }
-      })
+      if (route) {
+        this.$router.push({
+          path: route,
+          query: {
+            t: +new Date()
+          }
+        })
+      }
     },
     dropDownSearch () {
       this.curPageNum = 1
