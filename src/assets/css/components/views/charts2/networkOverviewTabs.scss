@@ -10,11 +10,10 @@
     height:100%;
     .tab-pane {
       height:100%;
-      border: 1px solid #E2E5EC;;
-      padding:1px;
-      border-radius: 4px 4px 0 0;
       .tab-table {
-        border:0px;
+        border: 1px solid #E2E5EC;
+        border-radius: 4px 4px 0 0;
+        padding: 1px;
         .data-click:hover{
           cursor: pointer;
         }
