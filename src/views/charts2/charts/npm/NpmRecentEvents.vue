@@ -45,9 +45,8 @@
 <script>
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
-import { getSecond } from '@/utils/date-util'
+import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
-import _ from 'lodash'
 
 export default {
   name: 'NpmRecentEvents',
@@ -85,6 +84,11 @@ export default {
         params.type = type
         params.limit = 10
         url = api.npm.events.recentEventsD
+        this.customTableTitles = [
+          { label: 'network.severity', prop: 'eventSeverity' },
+          { label: 'detections.eventType', prop: 'eventType' },
+          { label: 'detection.list.startTime', prop: 'startTime' }
+        ]
       } else {
         url = api.npm.events.recentEvents
       }
@@ -94,6 +98,11 @@ export default {
           if (res.data.result.length === 0) {
             this.isNoData = true
           }
+          res.data.result.forEach(e => {
+            if (e.startTime) {
+              e.startTime = dateFormatByAppearance(e.startTime)
+            }
+          })
           this.tableData = res.data.result
         } else {
           this.isNoData = true
