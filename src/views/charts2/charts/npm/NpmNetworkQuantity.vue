@@ -61,7 +61,7 @@ export default {
       }
       if (this.chartData.id === 23) {
         this.side = 'client'
-      } else if (this.chartData.id === 24) {
+      } else if (this.chartData.id === 26) {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
