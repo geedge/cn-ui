@@ -1,7 +1,7 @@
 .tabs {
   $blue: #2C72C6;
   $grey: #353636;
-  height:100%;
+  height:calc(100% - 64px);
   font-size:12px;
   .tab-hide{
     margin-top:40px;
@@ -10,23 +10,32 @@
     height:100%;
     .tab-pane {
       height:100%;
-      border: 1px solid #E2E5EC;;
-      padding:1px;
-      border-radius: 4px;
       .tab-table {
-        border:0px;
+        border: 1px solid #E2E5EC;
+        border-radius: 4px 4px 0 0;
+        padding: 1px;
         .data-click:hover{
           cursor: pointer;
         }
       }
       .data-total{
         display: flex !important;
+        justify-content:center;
+      }
+      .data-value{
+        display: flex !important;
+        justify-content:right;
+        width:50%;
+      }
+      .data-trend{
+        display: flex;
+        width:50%;
       }
       .data-total-trend {
         display: flex;
+        justify-content:left;
         margin-left: 6px;
         align-items: center;
-        justify-content: center;
         margin-top: 2px;
         border-radius: 10px;
         font-weight:500;
@@ -66,7 +75,7 @@
     }
     .el-tabs__nav-wrap::after {
       height: 1px;
-      background-color: white ;
+      background-color: transparent ;
     }
     .el-tabs__nav.is-top {
       .el-tabs__active-bar {
@@ -92,8 +101,13 @@
       height: calc(100% - 40px);
       border:none;
       .el-table__body-wrapper {
-        height: calc(100% - 32px) !important;
+        height: calc(100% - 34px) !important;
       }
+    }
+  }
+  .cn-chart__tabs-hide-tab {
+    .el-tabs__content {
+      height: 100% !important;
     }
   }
   .tab-search {
@@ -269,4 +283,35 @@
   /*top:0px !important;
   right:200px !important;
   transform: translateY(126px) !important;*/
+}
+.fixed-row {
+  display:flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: white;
+  margin-top: 2px;
+  width: 100%;
+  height:40px;
+  border:solid 1px #E2E5EC;
+  padding-left:10px !important;
+  text-align: left;
+  border-top:0px;
+  border-radius:0 0 4px 4px;
+  color:#046eca;
+  .fixed-button {
+    display:flex;
+    justify-content: center;
+    padding:7px 10px;
+    align-items: center;
+    height: 30px;
+  }
+  .fixed-button:hover {
+    cursor:pointer;
+    background: #e6f4ff;
+    box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+    border-radius: 4px;
+  }
+}
+.btn-up{
+  margin-top:40px;
 }

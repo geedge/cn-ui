@@ -688,12 +688,14 @@ export const networkTable = {
     panelIdOfThirdMenu: drillDownPanelTypeMapping.npmThirdMenu,
     bytesColumnNameGroup: bytesColumnNameGroupForNpm,
     packetsColumnNameGroup: {}, // 无metric下拉列表条件，用不到此属性
-    sessionsColumnNameGroup: {},// 无metric下拉列表条件，用不到此属性
+    sessionsColumnNameGroup: {}, // 无metric下拉列表条件，用不到此属性
     bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp,
     packetsCycleColumnNameGroup: {},
     sessionsCycleColumnNameGroup: {}
   }
 }
+
+export const networkDefaultLimit = 50
 
 export const dnsServerRole = {
   RTDNS: 'RTDNS',
