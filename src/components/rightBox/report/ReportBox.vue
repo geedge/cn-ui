@@ -276,7 +276,6 @@ import { api } from '@/utils/api'
 import _ from 'lodash'
 import { get, post, put } from '@/utils/http'
 import { dateFormat, getMillisecond } from '@/utils/date-util'
-
 const paramValidator = (rule, value, callback) => {
   let validate = true
   if (value && value.length > 0) {
@@ -284,6 +283,16 @@ const paramValidator = (rule, value, callback) => {
       return !v.value && v.value !== 0
     })
     validate = !hasEmpty
+  }
+  return validate
+}
+const nameValidator = (rule, value, callback) => {
+  let validate = true
+  const reg = /^[\u4e00-\u9fa5A-Za-z\-\_]*$/
+  if (reg.test(value)) {
+    validate = true
+  } else {
+    validate = false
   }
   return validate
 }
@@ -324,7 +333,8 @@ export default {
 
       rules: { // 表单校验规则
         name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: nameValidator, message: this.$t('validate.wrongFrom'), trigger: 'blur' }
         ],
         categoryId: [
           { required: true, message: this.$t('validate.required'), trigger: 'change' }
@@ -409,7 +419,7 @@ export default {
         if (category && category.config && category.config.queryParam) {
           this.editObject.categoryParams = category.config.queryParam
           if (!this.editObject.id) {
-            this.editObject.categoryParams.forEach(t => {t.value = ''})
+            this.editObject.categoryParams.forEach(t => { t.value = '' })
           }
           this.loadParamOptions()
         } else {
