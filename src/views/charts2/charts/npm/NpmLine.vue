@@ -11,32 +11,32 @@
         </div>
       </div>
       <chart-no-data v-if="throughputName"></chart-no-data>
-      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <div v-show="!throughputName" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 12">
       <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="tcpName"></chart-no-data>
-      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <div v-show="!tcpName" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 13">
       <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="httpName"></chart-no-data>
-      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <div v-show="!httpName" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 14">
       <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="sslName"></chart-no-data>
-      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <div v-show="!sslName" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 15">
       <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="packetsLossName"></chart-no-data>
-      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <div v-show="!packetsLossName" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 16">
       <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
       <chart-no-data v-if="packetsRetrainsName"></chart-no-data>
-      <div v-else class="chart-drawing" :id="`chart${chartData.name}`"></div>
+      <div v-show="!packetsRetrainsName" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
   </div>
 </template>
@@ -126,6 +126,12 @@ export default {
       if (this.chartData.id === 11) {
         get(api.npm.location.thoughput, params).then(res => {
           if (res.code === 200) {
+            if (res.data.result.length === 0) {
+              this.throughputName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+              return
+            } else {
+              this.throughputName = ''
+            }
             res.data.result.forEach((t, i) => {
               if (t.type === 'totalBytesRate') {
                 this.chartOptionLineData[i].values = t.values
@@ -146,6 +152,12 @@ export default {
       } else if (this.chartData.id === 12) {
         get(api.npm.location.tcpConnectionEstablishLatency, params).then(res => {
           if (res.code === 200) {
+            if (res.data.result.length === 0) {
+              this.tcpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+              return
+            } else {
+              this.tcpName = ''
+            }
             this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.tcpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
@@ -156,6 +168,12 @@ export default {
       } else if (this.chartData.id === 13) {
         get(api.npm.location.httpResponseLatency, params).then(res => {
           if (res.code === 200) {
+            if (res.data.result.length === 0) {
+              this.httpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+              return
+            } else {
+              this.httpName = ''
+            }
             this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.httpName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
@@ -166,6 +184,12 @@ export default {
       } else if (this.chartData.id === 14) {
         get(api.npm.location.sslHandshakeLatency, params).then(res => {
           if (res.code === 200) {
+            if (res.data.result.length === 0) {
+              this.sslName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+              return
+            } else {
+              this.sslName = ''
+            }
             this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.sslName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
@@ -176,6 +200,12 @@ export default {
       } else if (this.chartData.id === 15) {
         get(api.npm.location.packetsLoss, params).then(res => {
           if (res.code === 200) {
+            if (res.data.result.length === 0) {
+              this.packetsLossName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+              return
+            } else {
+              this.packetsLossName = ''
+            }
             this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.packetsLossName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
@@ -186,6 +216,12 @@ export default {
       } else if (this.chartData.id === 16) {
         get(api.npm.location.packetsRetrains, params).then(res => {
           if (res.code === 200) {
+            if (res.data.result.length === 0) {
+              this.packetsRetrainsName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
+              return
+            } else {
+              this.packetsRetrainsName = ''
+            }
             this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
           } else {
             this.packetsRetrainsName = this.$_.get(this.chartData, 'i18n') || this.chartData.name
