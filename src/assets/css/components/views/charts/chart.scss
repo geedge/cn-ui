@@ -396,7 +396,7 @@
   background-color: rgba(255, 255, 255, .2);
   z-index: 1;
 
-  img {
+  /*img {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -414,83 +414,107 @@
       height: 20px;
       width: 20px;
     }
-  }
+  }*/
 
   @keyframes cn-loading__inner {
     0% { opacity: 1 }
     100% { opacity: 0 }
   }
-  .cn-loading__inner div {
-    left: 10px;
-    top: 0;
-    position: absolute;
-    animation: cn-loading__inner linear 1s infinite;
-    background: #3c76cc;
-    width: 6px;
-    height: 6px;
-    border-radius: 3px / 3px;
-    transform-origin: 3px 13px;
-  }
-  .cn-loading__inner div:nth-child(1) {
-    transform: rotate(0deg);
-    animation-delay: -0.875s;
-    background: #3c76cc;
-  }
-  .cn-loading__inner div:nth-child(2) {
-    transform: rotate(45deg);
-    animation-delay: -0.75s;
-    background: #3c76cc;
-  }
-  .cn-loading__inner div:nth-child(3) {
-    transform: rotate(90deg);
-    animation-delay: -0.625s;
-    background: #3c76cc;
-  }
-  .cn-loading__inner div:nth-child(4) {
-    transform: rotate(135deg);
-    animation-delay: -0.5s;
-    background: #3c76cc;
-  }
-  .cn-loading__inner div:nth-child(5) {
-    transform: rotate(180deg);
-    animation-delay: -0.375s;
-    background: #3c76cc;
-  }
-  .cn-loading__inner div:nth-child(6) {
-    transform: rotate(225deg);
-    animation-delay: -0.25s;
-    background: #3c76cc;
-  }
-  .cn-loading__inner div:nth-child(7) {
-    transform: rotate(270deg);
-    animation-delay: -0.125s;
-    background: #3c76cc;
-  }
-  .cn-loading__inner div:nth-child(8) {
-    transform: rotate(315deg);
-    animation-delay: 0s;
-    background: #3c76cc;
-  }
+
   .cn-loading {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 27px;
-    height: 27px;
     display: inline-block;
     overflow: hidden;
     background: transparent;
+
+    &.cn-loading--default {
+      width: 27px;
+      height: 27px;
+
+      .cn-loading__inner {
+        div {
+          width: 6px;
+          height: 6px;
+          border-radius: 3px / 3px;
+          transform-origin: 3px 13px;
+        }
+      }
+    }
+
+    &.cn-loading--small {
+      width: 20px;
+      height: 20px;
+
+      .cn-loading__inner {
+        div {
+          width: 5px;
+          height: 5px;
+          border-radius: 3px / 3px;
+          transform-origin: 0 9px;
+        }
+      }
+    }
+    .cn-loading__inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform: translateZ(0) scale(1);
+      backface-visibility: hidden;
+      transform-origin: 0 0;
+
+      div {
+        left: 10px;
+        top: 0;
+        position: absolute;
+        animation: cn-loading__inner linear 1s infinite;
+        background: #3c76cc;
+        box-sizing: content-box;
+      }
+      div:nth-child(1) {
+        transform: rotate(0deg);
+        animation-delay: -0.875s;
+        background: #3c76cc;
+      }
+      div:nth-child(2) {
+        transform: rotate(45deg);
+        animation-delay: -0.75s;
+        background: #3c76cc;
+      }
+      div:nth-child(3) {
+        transform: rotate(90deg);
+        animation-delay: -0.625s;
+        background: #3c76cc;
+      }
+      div:nth-child(4) {
+        transform: rotate(135deg);
+        animation-delay: -0.5s;
+        background: #3c76cc;
+      }
+      div:nth-child(5) {
+        transform: rotate(180deg);
+        animation-delay: -0.375s;
+        background: #3c76cc;
+      }
+      div:nth-child(6) {
+        transform: rotate(225deg);
+        animation-delay: -0.25s;
+        background: #3c76cc;
+      }
+      div:nth-child(7) {
+        transform: rotate(270deg);
+        animation-delay: -0.125s;
+        background: #3c76cc;
+      }
+      div:nth-child(8) {
+        transform: rotate(315deg);
+        animation-delay: 0s;
+        background: #3c76cc;
+      }
+    }
   }
-  .cn-loading__inner {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform: translateZ(0) scale(1);
-    backface-visibility: hidden;
-    transform-origin: 0 0;
-  }
-  .cn-loading__inner div { box-sizing: content-box; }
 }
 
 .map-back {

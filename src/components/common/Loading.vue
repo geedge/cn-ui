@@ -1,7 +1,7 @@
 <template>
-  <div class="chart__loading" v-show="showLoading">
+  <div class="chart__loading" v-show="loading">
 <!--    <img :class="className" :src="path" alt="" :style="innerStyle">-->
-    <div class="cn-loading">
+    <div class="cn-loading" :class="className">
       <div class="cn-loading__inner">
       <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
       </div>
@@ -42,27 +42,25 @@ export default {
       }
     }
   },
-  /*setup (props) {
-    const path = window.location.protocol + '//' + window.location.host + '/images/loading.gif'
+  setup (props) {
     let className = ''
     switch (props.size) {
       case 'large': {
-        className = 'loading-img--large'
+        className = 'cn-loading--large'
         break
       }
       case 'small': {
-        className = 'loading-img--small'
+        className = 'cn-loading--small'
         break
       }
       default: {
-        className = 'loading-img--default'
+        className = 'cn-loading--default'
         break
       }
     }
     return {
-      path,
       className
     }
-  }*/
+  }
 }
 </script>
