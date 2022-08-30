@@ -163,6 +163,8 @@ export const api = {
       relatedSessions: '/interface/application/performance/relatedSessions',
       // 各维度下钻流量曲线图
       trafficGraph: '/interface/application/performance/overview/drilldown/drilldown/dimension/trafficGraph',
+      // 各维度下钻网络性能
+      networkAnalysis: '/interface/application/performance/overview/drilldown/dimension/networkAnalysis',
       // 下钻地图
       map: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/trafficAnalysis',
       mapTcp: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/tcpSessionDelay',

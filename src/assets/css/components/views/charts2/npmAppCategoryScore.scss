@@ -81,14 +81,25 @@
           }
         }
       }
+      .el-table__header-wrapper .el-table__header {
+        tr th:nth-last-child(-n+3) {
+          text-align: center;
+        }
+      }
       .el-table__body-wrapper.is-scrolling-none {
         height: 306px !important;
         tr td {
           padding: 13px 0;
         }
+        tr td:nth-last-child(-n+3) {
+          text-align: center;
+          .data-total {
+            justify-content: center;
+          }
+        }
       }
     }
-    .data-total{
+    .data-total {
       display: flex !important;
       .data-total-category-icon {
         i {
@@ -122,15 +133,25 @@
         background: #749F4D;
       }
     }
+    .data-total-value {
+      display: flex;
+      justify-content: right;
+      width: 50%;
+    }
+    .data-trend{
+      display: flex;
+      width: 50%;
+    }
     .data-total-trend {
       display: flex;
+      justify-content: left;
       margin-left: 6px;
       font-size: 12px;
       align-items: center;
       justify-content: center;
       margin-top: 2px;
       border-radius: 10px;
-      font-weight:500;
+      font-weight: 500;
       font-size: 12px;
       height: 20px;
       padding: 0 5px;
@@ -142,11 +163,11 @@
     }
     .data-total-trend-green {
       background-color: rgba(126,159,84,0.12);
-      color:#7E9F54;
+      color: #7E9F54;
     }
     .data-total-trend-red {
       background-color: rgba(226,97,84,0.12);
-      color:#E26154;
+      color: #E26154;
       .cn-icon-rise1{
         color: #E44D3E;
       }

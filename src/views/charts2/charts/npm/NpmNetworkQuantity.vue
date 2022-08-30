@@ -82,21 +82,59 @@ export default {
           params.type = type
         }
       }
-      const tcp = get(api.npm.overview.tcpSessionDelay, params)
-      const http = get(api.npm.overview.httpResponseDelay, params)
-      const ssl = get(api.npm.overview.sslConDelay, params)
-      const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
-      const packetPercent = get(api.npm.overview.packetRetransPercent, params)
-      this.toggleLoading(true)
-      Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
-        res.forEach(t => {
-          if (t.code === 200) {
-            this.npmNetworkCycleData.push(t.data.result)
+      if (type && condition) {
+        this.toggleLoading(true)
+        get(api.npm.overview.networkAnalysis, params).then(res => {
+          if (res.code === 200) {
+            res.data.result = {
+              establishLatencyMsAvg: 0.16,
+              establishLatencyMsP50: 0.16,
+              establishLatencyMsP90: 0.16,
+              establishLatencyMsP95: 0.16,
+              establishLatencyMsP99: 0.16,
+              httpResponseLatencyAvg: 0.16,
+              httpResponseLatencyP50: 0.16,
+              httpResponseLatencyP90: 0.16,
+              httpResponseLatencyP95: 0.16,
+              httpResponseLatencyP99: 0.16,
+              sslConLatencyAvg: 0.16,
+              sslConLatencyP50: 0.16,
+              sslConLatencyP90: 0.16,
+              sslConLatencyP95: 0.16,
+              sslConLatencyP99: 0.16,
+              tcpLostlenPercentAvg: 0.16,
+              tcpLostlenPercentP50: 0.16,
+              tcpLostlenPercentP90: 0.16,
+              tcpLostlenPercentP95: 0.16,
+              tcpLostlenPercentP99: 0.16,
+              pktRetransPercentAvg: 0.16,
+              pktRetransPercentP50: 0.16,
+              pktRetransPercentP90: 0.16,
+              pktRetransPercentP95: 0.16,
+              pktRetransPercentP99: 0.16
+            }
+            this.npmNetworkCycleData = res.data.result
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
-      }).finally(() => {
-        this.toggleLoading(false)
-      })
+      } else {
+        const tcp = get(api.npm.overview.tcpSessionDelay, params)
+        const http = get(api.npm.overview.httpResponseDelay, params)
+        const ssl = get(api.npm.overview.sslConDelay, params)
+        const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
+        const packetPercent = get(api.npm.overview.packetRetransPercent, params)
+        this.toggleLoading(true)
+        Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+          res.forEach(t => {
+            if (t.code === 200) {
+              this.npmNetworkCycleData.push(t.data.result)
+            }
+          })
+        }).finally(() => {
+          this.toggleLoading(false)
+        })
+      }
     },
     npmNetworkLastCycleQuery () {
       let condition = ''
@@ -134,63 +172,127 @@ export default {
           params.type = type
         }
       }
-      const tcp = get(api.npm.overview.tcpSessionDelay, params)
-      const http = get(api.npm.overview.httpResponseDelay, params)
-      const ssl = get(api.npm.overview.sslConDelay, params)
-      const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
-      const packetPercent = get(api.npm.overview.packetRetransPercent, params)
-      this.toggleLoading(true)
-      Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
-        const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
-        const scoreInfo = {}
-        res.forEach((t, i) => {
-          if (t.code === 200) {
-            if (t.data.result.establishLatencyAvg || t.data.result.establishLatencyAvg === 0) {
-              t.data.result.establishLatencyMs = t.data.result.establishLatencyAvg
+      if (type && condition) {
+        this.toggleLoading(true)
+        get(api.npm.overview.networkAnalysis, params).then(res => {
+          const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+          const scoreInfo = {}
+          let index = 0
+          if (res.code === 200) {
+            res.data.result = {
+              establishLatencyMsAvg: 0.16,
+              httpResponseLatencyAvg: 0.16,
+              sslConLatencyAvg: 0.16,
+              tcpLostlenPercentAvg: 1,
+              pktRetransPercentAvg: 1
             }
-            if (t.data.result.httpResponseLatencyAvg || t.data.result.httpResponseLatencyAvg === 0) {
-              t.data.result.httpResponseLatency = t.data.result.httpResponseLatencyAvg
+            if (res.data.result.establishLatencyMsAvg || res.data.result.establishLatencyMsAvg === 0) {
+              res.data.result.establishLatencyMs = res.data.result.establishLatencyMsAvg
+              index = 0
             }
-            if (t.data.result.sequenceGapLossAvg || t.data.result.sequenceGapLossAvg === 0) {
-              t.data.result.tcpLostlenPercent = t.data.result.sequenceGapLossAvg
+            if (res.data.result.httpResponseLatencyAvg || res.data.result.httpResponseLatencyAvg === 0) {
+              res.data.result.httpResponseLatency = res.data.result.establishLatencyMsAvg
+              index = 1
             }
-            if (t.data.result.pktRetransAvg || t.data.result.pktRetransAvg === 0) {
-              t.data.result.pktRetransPercent = t.data.result.pktRetransAvg
+            if (res.data.result.tcpLostlenPercentAvg || res.data.result.tcpLostlenPercentAvg === 0) {
+              res.data.result.tcpLostlenPercent = res.data.result.establishLatencyMsAvg
+              index = 3
             }
-            if (t.data.result.sslConLatencyAvg || t.data.result.sslConLatencyAvg === 0) {
-              t.data.result.sslConLatency = t.data.result.sslConLatencyAvg
+            if (res.data.result.pktRetransPercentAvg || res.data.result.pktRetransPercentAvg === 0) {
+              res.data.result.pktRetransPercent = res.data.result.establishLatencyMsAvg
+              index = 4
             }
-            scoreInfo[keyPre[i] + 'Score'] = computeScore(t.data.result, i)
-            this.npmNetworkLastCycleData.push(t.data.result)
-            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData)
+            if (res.data.result.sslConLatencyAvg || res.data.result.sslConLatencyAvg === 0) {
+              res.data.result.sslConLatency = res.data.result.establishLatencyMsAvg
+              index = 2
+            }
+            scoreInfo[keyPre[index] + 'Score'] = computeScore(res.data.result, index)
+            this.npmNetworkLastCycleData = res.data.result
+            let timer = null
+            if (timer) {
+              clearTimeout(timer)
+            }
+            timer = setTimeout(() => {
+              this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+            }, 300)
           } else {
-            t[keyPre[i] + 'Score'] = 0
+            res[keyPre[index] + 'Score'] = 0
           }
+          scoreInfo.score = Math.ceil((scoreInfo.tcpScore + scoreInfo.httpScore + scoreInfo.sslScore + scoreInfo.tcpLostScore + scoreInfo.packetRetransScore) * 6)
+          if (scoreInfo.score > 6) {
+            scoreInfo.score = 6
+          }
+          if (!params.q && this.chart.id === 44) {
+            this.$store.commit('setNpmThirdLevelMenuScore', scoreInfo.score)
+          }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
-        scoreInfo.score = Math.ceil((scoreInfo.tcpScore + scoreInfo.httpScore + scoreInfo.sslScore + scoreInfo.tcpLostScore + scoreInfo.packetRetransScore) * 6)
-        if (scoreInfo.score > 6) {
-          scoreInfo.score = 6
-        }
-        if (!params.q && this.chart.id === 44) {
-          this.$store.commit('setNpmThirdLevelMenuScore', scoreInfo.score)
-        }
-      }).finally(() => {
-        this.toggleLoading(false)
-      })
+      } else {
+        const tcp = get(api.npm.overview.tcpSessionDelay, params)
+        const http = get(api.npm.overview.httpResponseDelay, params)
+        const ssl = get(api.npm.overview.sslConDelay, params)
+        const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
+        const packetPercent = get(api.npm.overview.packetRetransPercent, params)
+        this.toggleLoading(true)
+        Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+          res.forEach((t, i) => {
+            if (t.code === 200) {
+              this.npmNetworkLastCycleData.push(t.data.result)
+              this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 1)
+            }
+          })
+        }).finally(() => {
+          this.toggleLoading(false)
+        })
+      }
     },
-    npmNetworkQuantity (cycle, lastCycle) {
-      cycle.forEach(t => {
-        lastCycle.forEach(e => {
-          Object.keys(t).forEach(r => {
-            Object.keys(e).forEach(d => {
-              if (r === d) {
-                t.value = getChainRatio(t[r], e[d])
-              }
+    npmNetworkQuantity (cycle, lastCycle, num) {
+      if (num === 0) {
+        this.npmNetworkData[0] = {
+          establishLatencyMsAvg: cycle.establishLatencyMsAvg,
+          establishLatencyMsP99: cycle.establishLatencyMsP99,
+          establishLatencyMsP95: cycle.establishLatencyMsP95,
+          value: getChainRatio(cycle.establishLatencyMsAvg, lastCycle.establishLatencyMsAvg)
+        }
+        this.npmNetworkData[1] = {
+          httpResponseLatencyAvg: cycle.httpResponseLatencyAvg,
+          httpResponseLatencyP99: cycle.httpResponseLatencyP99,
+          httpResponseLatencyP95: cycle.httpResponseLatencyP95,
+          value: getChainRatio(cycle.httpResponseLatencyAvg, lastCycle.httpResponseLatencyAvg)
+        }
+        this.npmNetworkData[2] = {
+          sslConLatencyAvg: cycle.sslConLatencyAvg,
+          sslConLatencyP99: cycle.sslConLatencyP99,
+          sslConLatencyP95: cycle.sslConLatencyP95,
+          value: getChainRatio(cycle.sslConLatencyAvg, lastCycle.sslConLatencyAvg)
+        }
+        this.npmNetworkData[3] = {
+          tcpLostlenPercentAvg: cycle.tcpLostlenPercentAvg,
+          tcpLostlenPercentP99: cycle.tcpLostlenPercentP99,
+          tcpLostlenPercentP95: cycle.tcpLostlenPercentP95,
+          value: getChainRatio(cycle.tcpLostlenPercentAvg, lastCycle.tcpLostlenPercentAvg)
+        }
+        this.npmNetworkData[4] = {
+          pktRetransPercentAvg: cycle.pktRetransPercentAvg,
+          pktRetransPercentP99: cycle.pktRetransPercentP99,
+          pktRetransPercentP95: cycle.pktRetransPercentP95,
+          value: getChainRatio(cycle.pktRetransPercentAvg, lastCycle.pktRetransPercentAvg)
+        }
+      } else if (num === 1) {
+        cycle.forEach(t => {
+          lastCycle.forEach(e => {
+            Object.keys(t).forEach(r => {
+              Object.keys(e).forEach(d => {
+                if (r === d) {
+                  t.value = getChainRatio(t[r], e[d])
+                }
+              })
             })
           })
         })
-      })
-      this.npmNetworkData = cycle
+        this.npmNetworkData = cycle
+      }
     }
   },
   mounted () {
