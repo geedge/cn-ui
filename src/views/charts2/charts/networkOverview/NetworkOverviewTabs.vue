@@ -1,8 +1,8 @@
 <template>
   <div class="tabs" :style="showTabs ? (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 40px);'
                                                                                       : 'height: calc(100% - 2px)')
-                                     : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 104px);'
-                                                                                      : 'height: calc(100% - 66px);')">
+                                     : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 64px);'
+                                                                                      : 'height: calc(100% - 26px);')">
     <el-tabs v-model="activeTab"
              :class="showTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
              @tab-click="handleClick"
