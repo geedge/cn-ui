@@ -86,7 +86,6 @@ export default {
     this.panelName = this.$store.getters.getPanelName
     const curOperationType = this.$store.getters.getTabOperationType
     if (this.panelName && this.$route.path === '/panel/networkAppPerformance' && curOperationType !== operationType.thirdMenu) {
-      // let columnName = this.$store.getters.getBreadcrumbColumnName
       const columnValue = this.$store.getters.getBreadcrumbColumnValue
       const queryParams = {
         startTime: getSecond(this.timeFilter.startTime),

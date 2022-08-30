@@ -20,7 +20,7 @@
         <div class="app-card-title">
           <div class="app-card-title-name">
             <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'"></i>
-            <span>{{app.name}}</span>
+            <span @click="drillDownData(app.type,app.name)">{{app.name}}</span>
           </div>
           <div class="app-card-title-more" v-ele-click-outside="clickOutSide">
             <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app)"></i></span>
@@ -118,18 +118,18 @@
 
 <script>
 import unitConvert from '@/utils/unit-convert'
-import {storageKey, unitTypes} from '@/utils/constants'
+import { storageKey, unitTypes, networkTable, operationType } from '@/utils/constants'
 import * as echarts from 'echarts'
-import {appListChartOption} from '@/views/charts2/charts/options/echartOption'
-import {shallowRef} from 'vue'
-import {get, put} from '@/utils/http'
-import {api} from '@/utils/api'
+import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
+import { shallowRef } from 'vue'
+import { get, put } from '@/utils/http'
+import { api } from '@/utils/api'
 import _ from 'lodash'
-import {getSecond} from '@/utils/date-util'
-import {getChainRatio} from '@/utils/tools'
+import { getSecond } from '@/utils/date-util'
+import { getChainRatio } from '@/utils/tools'
 import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
-import {appStackedLineTooltipFormatter} from '@/views/charts/charts/tools'
+import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
@@ -297,6 +297,83 @@ export default {
         this.appShowType = 'sessions'
       }
       this.init()
+    },
+    drillDownData (type, value) {
+      let tabType = ''
+      if (type === 'provider') {
+        tabType = 'network.providers'
+      } else if (type === 'app') {
+        tabType = 'network.applications'
+      }
+      if (tabType) {
+        const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+        const curTable = networkTable.networkOverview
+        const list = this.$store.getters.getNetworkOverviewTabList
+        const tabGroup = list.filter(item => item.label === tabType)
+        if (tabGroup && tabGroup.length > 0) {
+          this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
+        }
+        this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        this.$store.commit('setTabOperationType', operationType.fourthMenu)
+
+        const queryCondition = []
+        const searchProps = tabGroup[0].dillDownProp
+        searchProps.forEach(item => {
+          queryCondition.push(item + "='" + value + "'")
+        })
+        this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+
+        this.$store.getters.menuList.forEach(menu => {
+          if (this.$_.isEmpty(menu.children) && menu.route) {
+            if (this.$route.path === menu.route) {
+              menu.columnName = tabType
+              menu.columnValue = value
+              this.$store.commit('setPanelName', value)
+              this.$store.commit('setBreadcrumbColumnName', tabType)
+              this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+              this.$store.commit('setBreadcrumbColumnValue', value)
+            }
+          } else if (!this.$_.isEmpty(menu.children)) {
+            menu.children.forEach(child => {
+              if (this.$route.path === child.route) {
+                child.columnName = tabType
+                child.columnValue = value
+                this.$store.commit('setPanelName', value)
+                this.$store.commit('setBreadcrumbColumnName', tabType)
+                this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+                this.$store.commit('setBreadcrumbColumnValue', value)
+              }
+            })
+          }
+        })
+        let toPanel = null
+        list.forEach((item, index) => {
+          if (item.label === tabType) {
+            item.checked = false
+            toPanel = item.panelId
+          }
+          if (oldCurTab && (item.label === oldCurTab.label)) {
+            item.checked = true
+          }
+        })
+        this.$store.commit('setNetworkOverviewTabList', list)
+        const tabObjGroup = list.filter(item => item.checked)
+        if (tabObjGroup && tabObjGroup.length > 0) {
+          const curTab = tabObjGroup[0]
+          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+        }
+        this.$router.push({
+          name: 'panel',
+          path: this.$route.path,
+          query: {
+            t: +new Date()
+          },
+          params: {
+            thirdPanel: curTable.panelIdOfThirdMenu ? curTable.panelIdOfThirdMenu : '',
+            fourthPanel: toPanel || ''
+          }
+        })
+      }
     },
     initChart (obj) {
       let chart = this.myChart.find(m => m.name === obj.name && m.type === obj.type)

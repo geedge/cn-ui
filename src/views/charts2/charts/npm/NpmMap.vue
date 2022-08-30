@@ -63,9 +63,9 @@ export default {
       locationOptions,
       myChart: null,
       polygonSeries: null,
-      countrySeries: [],
+      countrySeries: null,
       worldImageSeries: null,
-      countryImageSeries: [],
+      countryImageSeries: null,
       // Server | Client
       trafficDirection: 'Server',
       location: ''
@@ -94,24 +94,13 @@ export default {
       this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
         this.$store.commit('setNpmLocationCountry', ev.target.dataItem.dataContext.name)
         this.location = ev.target.dataItem.dataContext.name
-        this.cleanCountry()
         const countryId = ev.target.dataItem.dataContext.id
         ev.target.isHover = false
         await this.drill(countryId)
       })
     },
-    cleanCountry () {
-      this.countrySeries.forEach(s => {
-        s.value.dispose()
-      })
-      this.countryImageSeries.forEach(s => {
-        s.value.dispose()
-      })
-    },
     loadAm4ChartMap (polygonSeries, imageSeries) {
       try {
-        // 清除数据
-        // polygonSeries.data.splice(0)
         this.toggleLoading(true)
         // 清除legend
         this.myChart.children.each((s, i) => {
@@ -127,39 +116,43 @@ export default {
           country: this.location
         }
         getData(api.npm.location.map, params).then(res => {
-          // 计算分数
-          const tcpRequest = get(api.npm.location.mapTcp, params)
-          const httpRequest = get(api.npm.location.mapHttp, params)
-          const sslRequest = get(api.npm.location.mapSsl, params)
-          const tcpLostRequest = get(api.npm.location.mapPacketLoss, params)
-          const packetRetransRequest = get(api.npm.location.mapPacketRetrans, params)
-          Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
-            const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
-            const mapData = res
-            res2.forEach((r, i) => {
-              if (r.code === 200) {
-                mapData.forEach(t => {
-                  let score = 0
-                  const find = r.data.result.find(d => d.country === t.country)
-                  if (find) {
-                    score = computeScore(find, i)
-                  }
-                  t[keyPre[i] + 'Score'] = score
-                })
-              } else {
-                mapData.forEach(t => {
-                  t[keyPre[i] + 'Score'] = 0
-                })
-              }
+          if (res.length > 0) {
+            // 计算分数
+            const tcpRequest = get(api.npm.location.mapTcp, params)
+            const httpRequest = get(api.npm.location.mapHttp, params)
+            const sslRequest = get(api.npm.location.mapSsl, params)
+            const tcpLostRequest = get(api.npm.location.mapPacketLoss, params)
+            const packetRetransRequest = get(api.npm.location.mapPacketRetrans, params)
+            Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
+              const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+              const mapData = res
+              res2.forEach((r, i) => {
+                if (r.code === 200) {
+                  mapData.forEach(t => {
+                    let score = 0
+                    const find = r.data.result.find(d => d.country === t.country)
+                    if (find) {
+                      score = computeScore(find, i)
+                    }
+                    t[keyPre[i] + 'Score'] = score
+                  })
+                } else {
+                  mapData.forEach(t => {
+                    t[keyPre[i] + 'Score'] = 0
+                  })
+                }
+              })
+              mapData.forEach(t => {
+                t.score = Math.ceil((t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6)
+                if (t.score > 6) {
+                  t.score = 6
+                }
+              })
+              this.loadMarkerData(imageSeries, mapData)
             })
-            mapData.forEach(t => {
-              t.score = Math.ceil((t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6)
-              if (t.score > 6) {
-                t.score = 6
-              }
-            })
-            this.loadMarkerData(imageSeries, mapData)
-          })
+          } else {
+            imageSeries.data = [{}]
+          }
         }).finally(() => {
           this.toggleLoading(false)
         })
@@ -270,15 +263,19 @@ export default {
         targetMapObject.series.chart.zoomToMapObject(targetMapObject)
         const geoData = await getGeoData(countryId)
         if (geoData) {
-          const countrySeries = shallowRef(this.polygonSeriesFactory())
-          countrySeries.value.geodata = geoData
-          const countryImageSeries = shallowRef(this.imageSeriesFactory('score', countrySeries.value))
-          this.countrySeries.push(countrySeries)
-          this.countryImageSeries.push(countryImageSeries)
+          if (!this.countrySeries) {
+            this.countrySeries = this.polygonSeriesFactory()
+          }
+          if (!this.countryImageSeries) {
+            this.countryImageSeries = this.imageSeriesFactory('score', this.countrySeries)
+          }
+          this.countrySeries.show()
+          this.countryImageSeries.show()
+          this.countrySeries.geodata = geoData
           this.polygonSeries.hide()
           this.worldImageSeries.hide()
           this.$nextTick(() => {
-            this.loadAm4ChartMap(countrySeries.value, countryImageSeries.value)
+            this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
           })
         }
       }
@@ -295,13 +292,14 @@ export default {
     },
     async location (n) {
       this.$store.commit('setNpmLocationCountry', n)
-      this.cleanCountry()
       if (n) {
         const countryId = countryNameIdMapping[n]
         await this.drill(countryId)
       } else {
         this.polygonSeries.show()
         this.worldImageSeries.show()
+        this.countrySeries.hide()
+        this.countryImageSeries.hide()
         this.myChart.zoomToGeoPoint(this.myChart.homeGeoPoint, this.myChart.homeZoomLevel, true)
       }
     },

@@ -1,8 +1,8 @@
 <template>
   <div class="tabs" :style="showTabs ? (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 40px);'
                                                                                       : 'height: calc(100% - 2px)')
-                                     : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 104px);'
-                                                                                      : 'height: calc(100% - 66px);')">
+                                     : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 64px);'
+                                                                                      : 'height: calc(100% - 26px);')">
     <el-tabs v-model="activeTab"
              :class="showTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
              @tab-click="handleClick"
@@ -382,6 +382,22 @@ export default {
       if (!this.showTabs) {
         this.activeCustomize = 'metrics'
       }
+      const tabList = this.list.filter(item => item.checked === true)
+      const defaultTab = tabList.length > 0 ? tabList[0] : {}
+      const columnName = this.$store.getters.getBreadcrumbColumnName
+      const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      if (tabList.length === 1) {
+        defaultTab.disabled = true
+      } else if (tabList.length > 1) {
+        this.list.forEach(item => {
+          item.disabled = false
+          if (columnValue) {
+            if (item.label === columnName) {
+              item.disabled = true
+            }
+          }
+        })
+      }
     },
     getDefaultTab () {
       let tabObjGroup = this.list.filter(item => item.checked)
@@ -409,7 +425,15 @@ export default {
     },
     initData () {
       const curTab = this.getCurTab()
+      // 针对network overview – app list 点击标题触发下钻，相关内容处理
       const columnName = this.$store.getters.getBreadcrumbColumnName
+      if (columnName) {
+        this.list.forEach(item => {
+          if (item.label === columnName) {
+            item.checked = false
+          }
+        })
+      }
 
       this.list.forEach(item => {
         const tabDom = document.getElementById('tab-' + item.label)
@@ -430,6 +454,7 @@ export default {
         this.hideTabs(curTab)
         this.customTableTitles[0].label = curTab.label
         this.showTabs = false
+        this.showRecordNum = 10
       } else if (curOperationType === operationType.fourthMenu) { // 点击的为第四级菜单
         const curTab = this.getDefaultTab()
         if (curTab) {
@@ -670,11 +695,18 @@ export default {
       const tabList = this.list.filter(item => item.checked === true)
       const defaultTab = tabList.length > 0 ? tabList[0] : {}
       // 当前操作之后，只有1个tab被选中，则这一个不允许取消选中
+      const columnName = this.$store.getters.getBreadcrumbColumnName
+      const columnValue = this.$store.getters.getBreadcrumbColumnValue
       if (tabList.length === 1) {
         defaultTab.disabled = true
       } else if (tabList.length > 1) {
         this.list.forEach(item => {
           item.disabled = false
+          if (columnValue) {
+            if (item.label === columnName) {
+              item.disabled = true
+            }
+          }
         })
       }
 
@@ -772,8 +804,6 @@ export default {
         const curTab = tabObjGroup[0]
         this.$store.commit('setNetworkOverviewCurrentTab', curTab)
       }
-
-      const tab = this.list.filter(item => item.checked)
 
       // 如果面包屑的columnValue有值，则不更新valueList
       const valueList = []
@@ -1043,6 +1073,13 @@ export default {
     } else {
       this.$store.commit('setNetworkOverviewTabList', this.list)
     }
+    const tabList = this.list.filter(item => item.checked === true)
+    const columnName = this.$store.getters.getBreadcrumbColumnName
+    const columnValue = this.$store.getters.getBreadcrumbColumnValue
+    if (tabList.length === 0) { // 没有选中任何tab时，默认选中第一个
+      this.list[0].checked = true
+    }
+
     const curOperationType = this.$store.getters.getTabOperationType
     if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
       const curTab = this.getCurTab()
