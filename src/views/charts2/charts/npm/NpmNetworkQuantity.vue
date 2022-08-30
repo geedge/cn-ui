@@ -66,15 +66,20 @@ export default {
       }
       if (condition && (typeof condition !== 'object') && type) {
         params.q = condition
+        params.type = type
       } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
+        params.type = type
       } else if (condition.length > 1 && type && type !== 'ip') {
         if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
           params.q = `${type}='${condition[1]}'`
+          params.type = type
         } else if (type === 'idcRenter') {
           params.q = `idc_renter='${condition[1]}'`
+          params.type = type
         } else {
           params.q = `${condition[0]}'${condition[1]}'`
+          params.type = type
         }
       }
       const tcp = get(api.npm.overview.tcpSessionDelay, params)
@@ -113,15 +118,20 @@ export default {
       }
       if (condition && (typeof condition !== 'object') && type) {
         params.q = condition
+        params.type = type
       } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
+        params.type = type
       } else if (condition.length > 1 && type && type !== 'ip') {
         if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
           params.q = `${type}='${condition[1]}'`
+          params.type = type
         } else if (type === 'idcRenter') {
           params.q = `idc_renter='${condition[1]}'`
+          params.type = type
         } else {
           params.q = `${condition[0]}'${condition[1]}'`
+          params.type = type
         }
       }
       const tcp = get(api.npm.overview.tcpSessionDelay, params)
