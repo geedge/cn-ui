@@ -1,5 +1,8 @@
 <template>
-  <div class="tabs" :style="showTabs?'':'height: calc(100% - 104px);'">
+  <div class="tabs" :style="showTabs ? (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 40px);'
+                                                                                      : 'height: calc(100% - 2px)')
+                                     : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 104px);'
+                                                                                      : 'height: calc(100% - 66px);')">
     <el-tabs v-model="activeTab"
              :class="showTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
              @tab-click="handleClick"
@@ -21,7 +24,7 @@
                   border
                   :cell-style="tableCellStyle"
                   :header-cell-style="tableHeaderCellStyle"
-                  class="tab-table"
+                  :class="tableClass"
                   height="100%"
                   :default-sort="{ prop: 'date', order: 'descending' }"
                   empty-text=" "
@@ -158,8 +161,8 @@
       </el-popover>
     </div>
   </div>
-  <div class="fixed-row">
-    <div class="fixed-button" :class="showTabs?'':''" @click="showMore" >{{$t('network.showTop50Results')}}</div>
+  <div class="fixed-row" v-if="tableData.length > 10 && showRecordNum===10 ">
+    <div class="fixed-button" @click="showMore" >{{$t('network.showTop50Results')}}</div>
   </div>
 </template>
 <script>
@@ -258,6 +261,20 @@ export default {
       }
     }
   },
+  computed: {
+    tableClass () {
+      let className
+      if (this.showRecordNum >= 10) {
+        className = 'tab-table__average'
+      } else {
+        className = 'tab-table'
+      }
+      if (!(this.tableData.length > 10 && this.showRecordNum === 10)) {
+        className = 'tab-table tab-table__no-bottom'
+      }
+      return className
+    }
+  },
   mixins: [chartMixin],
   methods: {
     showMore () {
@@ -269,6 +286,7 @@ export default {
       }
     },
     changeMetric () {
+      this.showRecordNum = 10
       const beforeType = this.$store.getters.getTabOperationBeforeType
       if (beforeType != operationType.thirdMenu) {
         this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
@@ -638,26 +656,21 @@ export default {
       })
     },
     tabChange (index) {
-      this.tableData = []
-      this.toggleLoading(true)
+      // this.tableData = []
+      // this.toggleLoading(true)
       this.isNoData = false
+      // 操作类型设置
       const beforeType = this.$store.getters.getTabOperationBeforeType
       if (beforeType != operationType.thirdMenu) {
         this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
       }
       this.$store.commit('setTabOperationType', operationType.customize)
+      // 获得操作tab和当前选中的所有tab
       const handleTab = this.list[index]
       const tabList = this.list.filter(item => item.checked === true)
       const defaultTab = tabList.length > 0 ? tabList[0] : {}
-      if (handleTab.label === defaultTab.label && handleTab.checked) {
-        this.activeTab = handleTab.label
-        this.customTableTitles.forEach(item => {
-          if (item.tabColumn) {
-            item.label = handleTab.label
-          }
-        })
-      }
-      if (tabList.length === 1) { // 当前操作之后，只有1个tab被选中，则这一个不允许取消选中
+      // 当前操作之后，只有1个tab被选中，则这一个不允许取消选中
+      if (tabList.length === 1) {
         defaultTab.disabled = true
       } else if (tabList.length > 1) {
         this.list.forEach(item => {
@@ -665,23 +678,27 @@ export default {
         })
       }
 
-      this.$store.commit('setNetworkOverviewCurrentTab', tabList[0])
-
-      let queryParams = {
-        orderBy: this.orderBy,
-        limit: networkDefaultLimit,
-        type: tabList[0].prop
-      }
-      const condition = this.$store.getters.getQueryCondition
-      if (condition) {
-        queryParams = {
+      // 如果取消tab，则如果取消的是当前选中的tab，则当前tab就需要修改为第一个默认的tab，否则不用
+      const curTab = this.getCurTab()
+      if (!handleTab.checked && handleTab.label === curTab.label) {
+        this.showRecordNum = 10
+        this.$store.commit('setNetworkOverviewCurrentTab', tabList[0])
+        let queryParams = {
           orderBy: this.orderBy,
           limit: networkDefaultLimit,
-          type: tabList[0].prop,
-          q: condition
+          type: tabList[0].prop
         }
+        const condition = this.$store.getters.getQueryCondition
+        if (condition) {
+          queryParams = {
+            orderBy: this.orderBy,
+            limit: networkDefaultLimit,
+            type: tabList[0].prop,
+            q: condition
+          }
+        }
+        this.$emit('getChartData', this.getCurUrl(), queryParams)
       }
-      this.$emit('getChartData', this.getCurUrl(), queryParams)
     },
     handleTabValue (columnName, columnValue) {
       const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
@@ -828,6 +845,7 @@ export default {
     },
     handleClick (tab) {
       this.tableData = []
+      this.showRecordNum = 10
       this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
       this.$store.commit('setTabOperationType', operationType.changeTab)
       this.customTableTitles[0].label = tab.paneName

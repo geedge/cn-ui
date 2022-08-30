@@ -120,7 +120,7 @@ export default {
         { label: 'network.eventType', prop: 'eventType' },
         { label: 'network.eventCount', prop: 'count' }
       ],
-      isNoData: false,
+      isNoData: false
     }
   },
   mixins: [chartMixin],
@@ -155,7 +155,7 @@ export default {
           }
           this.tableData = res.data.result
           console.log(res.data.result)
-        }else {
+        } else {
           this.isNoData = true
         }
       }).finally(() => {
