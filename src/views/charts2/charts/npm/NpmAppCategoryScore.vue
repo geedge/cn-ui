@@ -31,7 +31,7 @@
               <div class="data-total">
                 <template v-if="item.prop === 'category'">
                   <span class="data-total-category-icon"><i :class="scope.row.icon"></i></span>
-                  <span class="data-total-category-value">{{$t(scope.row.i18n)}}</span>
+                  <span class="data-total-category-value" @click="drillDownData(scope.row.i18n)">{{$t(scope.row.i18n)}}</span>
                 </template>
                 <template v-else-if="item.prop === 'total'">
                   {{unitConvert(scope.row.totalPacketsRate, unitTypes.bps).join('')}}
@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { unitTypes, npmCategoryInfoMapping } from '@/utils/constants'
+import { unitTypes, npmCategoryInfoMapping, networkTable, operationType, npmCategoryToAppCategoryMap } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
@@ -203,6 +203,77 @@ export default {
         }
       }).finally(() => {
         this.toggleLoading(false)
+      })
+    },
+    drillDownData (key) {
+      const value = npmCategoryToAppCategoryMap[key]
+      const tabType = 'network.applicationCategories'
+      const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+      const curTable = networkTable.networkOverview
+      const list = this.$store.getters.getNetworkOverviewTabList
+      const tabGroup = list.filter(item => item.label === tabType)
+      if (tabGroup && tabGroup.length > 0) {
+        this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
+      }
+      this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+      this.$store.commit('setTabOperationType', operationType.fourthMenu)
+
+      const queryCondition = []
+      const searchProps = tabGroup[0].dillDownProp
+      searchProps.forEach(item => {
+        queryCondition.push(item + "='" + value + "'")
+      })
+      this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+
+      this.$store.getters.menuList.forEach(menu => {
+        if (this.$_.isEmpty(menu.children) && menu.route) {
+          if (this.$route.path === menu.route) {
+            menu.columnName = tabType
+            menu.columnValue = value
+            this.$store.commit('setPanelName', value)
+            this.$store.commit('setBreadcrumbColumnName', tabType)
+            this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+            this.$store.commit('setBreadcrumbColumnValue', value)
+          }
+        } else if (!this.$_.isEmpty(menu.children)) {
+          menu.children.forEach(child => {
+            if (this.$route.path === child.route) {
+              child.columnName = tabType
+              child.columnValue = value
+              this.$store.commit('setPanelName', value)
+              this.$store.commit('setBreadcrumbColumnName', tabType)
+              this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+              this.$store.commit('setBreadcrumbColumnValue', value)
+            }
+          })
+        }
+      })
+      let toPanel = null
+      list.forEach((item, index) => {
+        if (item.label === tabType) {
+          item.checked = false
+          toPanel = item.panelId
+        }
+        if (oldCurTab && (item.label === oldCurTab.label)) {
+          item.checked = true
+        }
+      })
+      this.$store.commit('setNetworkOverviewTabList', list)
+      const tabObjGroup = list.filter(item => item.checked)
+      if (tabObjGroup && tabObjGroup.length > 0) {
+        const curTab = tabObjGroup[0]
+        this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+      }
+      this.$router.push({
+        name: 'panel',
+        path: this.$route.path,
+        query: {
+          t: +new Date()
+        },
+        params: {
+          thirdPanel: curTable.panelIdOfThirdMenu ? curTable.panelIdOfThirdMenu : '',
+          fourthPanel: toPanel || ''
+        }
       })
     }
   },

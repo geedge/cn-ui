@@ -707,6 +707,15 @@ export const dnsServerRole = {
   FWDNS: 'FWDNS'
 }
 
+export const npmCategoryToAppCategoryMap = {
+  'network.video': 'multimedia-streaming',
+  'network.fileSharing': 'social-networking',
+  'network.voip': 'file-sharing',
+  'network.gaming': 'gaming',
+  'network.email': 'email',
+  'network.socialNetwork': 'voip-video'
+}
+
 // npm页-应用评分-类别名称、icon、i18n映射
 export const npmCategoryInfoMapping = [
   {
