@@ -86,33 +86,6 @@ export default {
         this.toggleLoading(true)
         get(api.npm.overview.networkAnalysis, params).then(res => {
           if (res.code === 200) {
-            res.data.result = {
-              establishLatencyMsAvg: 0.16,
-              establishLatencyMsP50: 0.16,
-              establishLatencyMsP90: 0.16,
-              establishLatencyMsP95: 0.16,
-              establishLatencyMsP99: 0.16,
-              httpResponseLatencyAvg: 0.16,
-              httpResponseLatencyP50: 0.16,
-              httpResponseLatencyP90: 0.16,
-              httpResponseLatencyP95: 0.16,
-              httpResponseLatencyP99: 0.16,
-              sslConLatencyAvg: 0.16,
-              sslConLatencyP50: 0.16,
-              sslConLatencyP90: 0.16,
-              sslConLatencyP95: 0.16,
-              sslConLatencyP99: 0.16,
-              tcpLostlenPercentAvg: 0.16,
-              tcpLostlenPercentP50: 0.16,
-              tcpLostlenPercentP90: 0.16,
-              tcpLostlenPercentP95: 0.16,
-              tcpLostlenPercentP99: 0.16,
-              pktRetransPercentAvg: 0.16,
-              pktRetransPercentP50: 0.16,
-              pktRetransPercentP90: 0.16,
-              pktRetransPercentP95: 0.16,
-              pktRetransPercentP99: 0.16
-            }
             this.npmNetworkCycleData = res.data.result
           }
         }).finally(() => {
@@ -179,13 +152,6 @@ export default {
           const scoreInfo = {}
           let index = 0
           if (res.code === 200) {
-            res.data.result = {
-              establishLatencyMsAvg: 0.16,
-              httpResponseLatencyAvg: 0.16,
-              sslConLatencyAvg: 0.16,
-              tcpLostlenPercentAvg: 1,
-              pktRetransPercentAvg: 1
-            }
             if (res.data.result.establishLatencyMsAvg || res.data.result.establishLatencyMsAvg === 0) {
               res.data.result.establishLatencyMs = res.data.result.establishLatencyMsAvg
               index = 0

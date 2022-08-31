@@ -1,6 +1,23 @@
 <template>
   <div class="npm-traffic-line">
-    <div class="npm-traffic-line-title">{{$t('overall.traffic')}}</div>
+    <div class="npm-traffic-line-header">
+      <div class="npm-traffic-line-title">{{$t('overall.traffic')}}</div>
+      <div class="line-select-metric">
+        <span>{{$t('network.metric')}}:</span>
+        <div class="line-select__operation">
+          <el-select
+              size="mini"
+              v-model="metricFilter"
+              placeholder=""
+              popper-class="common-select"
+              :popper-append-to-body="false"
+              @change="metricChange"
+          >
+            <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </div>
+      </div>
+    </div>
     <div class="npm-traffic-line-body">
       <chart-no-data v-if="isNoData"></chart-no-data>
       <template v-else>
@@ -47,7 +64,23 @@ export default {
         { name: 'network.through', show: true, positioning: 4, data: [], unitType: '' },
         { name: 'network.other', show: true, positioning: 5, data: [], unitType: '' }
       ],
-      chartData: {}
+      chartData: {},
+      metricFilter: 'Bits/s',
+      metricOptions: [
+        {
+          value: 'Bits/s',
+          label: 'Bits/s'
+        },
+        {
+          value: 'Packets/s',
+          label: 'Packets/s'
+        },
+        {
+          value: 'Sessions/s',
+          label: 'Sessions/s'
+        }
+      ],
+      npmShowType: 'Bits/s'
     }
   },
   watch: {
@@ -59,7 +92,10 @@ export default {
     }
   },
   methods: {
-    init () {
+    init (val) {
+      if (!val) {
+        val = 'Bits/s'
+      }
       let condition = ''
       if (this.$store.getters.getQueryCondition.indexOf('OR') > -1) {
         condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
@@ -90,14 +126,14 @@ export default {
           params.q = `${condition[0]}'${condition[1]}'`
         }
       }
+      this.toggleLoading(true)
       get(api.npm.overview.trafficGraph, params).then((res) => {
         if (res.code === 200) {
           if (res.data.result.length === 0) {
             this.isNoData = true
-            return
           }
           res.data.result.forEach((t, i) => {
-            if (t.type === 'bytes') {
+            if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
               mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
@@ -107,23 +143,29 @@ export default {
               mpackets[5].data = t.other.values ? t.other.values : []
               this.mpackets = mpackets
               this.echartsInit(this.mpackets)
+            } else if (t.type === 'packets' && val === 'Packets/s') {
+              const mpackets = _.cloneDeep(this.mpackets)
+              mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
+              mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
+              mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
+              mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
+              mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
+              mpackets[5].data = t.other.values ? t.other.values : []
+              this.mpackets = mpackets
+              this.echartsInit(this.mpackets)
+            } else if (t.type === 'sessions' && val === 'Sessions/s') {
+              let mpackets = _.cloneDeep(this.mpackets)
+              mpackets[0].data = t.totalSessionsRate && t.totalSessionsRate.values ? t.totalSessionsRate.values : []
+              mpackets[0].show = false
+              mpackets = mpackets.filter(t => t.show === false)
+              this.mpackets = mpackets
+              this.echartsInit(this.mpackets)
             }
-            // else if (t.type === 'packets') {
-            //   const mpackets = _.cloneDeep(this.mpackets)
-            //   mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
-            //   mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
-            //   mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
-            //   mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-            //   mpackets[4].data = t.externalPacketsRate.values ? t.externalPacketsRate.values : []
-            //   mpackets[5].data = t.other.values ? t.other.values : []
-            //   this.mpackets = mpackets
-            //   this.echartsInit(this.mpackets)
-            // } else if (t.type === 'sessions') {
-            //   const mpackets = _.cloneDeep(this.mpackets)
-            //   mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
-            //   this.mpackets = mpackets
-            //   this.echartsInit(this.mpackets)
-            // }
+            this.mpackets.forEach(t => {
+              if (t.data.length === 0) {
+                this.isNoData = true
+              }
+            })
           })
         } else {
           this.isNoData = true
@@ -147,7 +189,7 @@ export default {
             color: chartColor3[t.positioning],
             width: 1
           },
-          stack: this.$t(echartsData[0].name),
+          stack: t.name !== 'network.total' ? 'network.total' : '',
           areaStyle: {
             opacity: 0.1,
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -172,7 +214,7 @@ export default {
         return str
       }
       this.myChart.on('legendselectchanged', this.handleLegendClick)
-      this.myChart.setOption(this.chartOption)
+      this.myChart.setOption(this.chartOption, true)
     },
     // 点击前，高亮legend个数
     getSelectedNum (params) {
@@ -217,6 +259,9 @@ export default {
           selected: legendItem
         }
       })
+    },
+    metricChange (value) {
+      this.init(value)
     },
     resize () {
       this.myChart.resize()

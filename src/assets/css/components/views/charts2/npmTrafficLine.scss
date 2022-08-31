@@ -1,11 +1,52 @@
 .npm-traffic-line {
   height: 100%;
   width: 100%;
-  .npm-traffic-line-title {
-    font-size: 14px;
-    color: #353636;
-    font-weight: 600;
-    height: 32px;
+  .npm-traffic-line-header {
+    display: flex;
+    justify-content: space-between;
+    .npm-traffic-line-title {
+      font-size: 14px;
+      color: #353636;
+      font-weight: 600;
+      height: 32px;
+    }
+    .line-select-metric {
+      display: flex;
+      align-items: center;
+
+      &>span {
+        font-size: 12px;
+        color: #575757;
+        font-weight: 400;
+        margin-right: 3px;
+      }
+      .line-select__operation {
+        height: 24px;
+        margin-left: 3px;
+        box-shadow: none;
+        border-radius: 2px;
+        .el-input__inner {
+          width: 100px;
+          height: 24px;
+          padding-left: 4px;
+          line-height: 24px;
+          font-size: 12px;
+          color: #2C72C6;
+          font-weight: 400;
+        }
+        .el-input__suffix {
+          display: flex;
+          .el-input__suffix-inner {
+            line-height: 24px;
+            .el-select__caret {
+              line-height: 24px;
+              width: 16px;
+              color: #575757;
+            }
+          }
+        }
+      }
+    }
   }
   .npm-traffic-line-body {
     border: 1px solid #E2E5EC;
