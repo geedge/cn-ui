@@ -807,16 +807,11 @@ export default {
 
       // 如果面包屑的columnValue有值，则不更新valueList
       const valueList = []
-      this.tableData.map(item => {
+      this.tableData.forEach(item => {
         valueList.push(item.tab)
       })
       this.$store.commit('setBreadcrumbColumnValueList', valueList)
       this.$router.push({
-        name: 'panel',
-        path: this.$route.path,
-        query: {
-          t: +new Date()
-        },
         params: {
           thirdPanel: this.curTable.panelIdOfThirdMenu,
           fourthPanel: toPanel

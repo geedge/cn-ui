@@ -363,11 +363,6 @@ export default {
           this.$store.commit('setNetworkOverviewCurrentTab', curTab)
         }
         this.$router.push({
-          name: 'panel',
-          path: this.$route.path,
-          query: {
-            t: +new Date()
-          },
           params: {
             thirdPanel: curTable.panelIdOfThirdMenu ? curTable.panelIdOfThirdMenu : '',
             fourthPanel: toPanel || ''
