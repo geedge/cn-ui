@@ -109,15 +109,15 @@
           {{handleTimeRange(scope.row)}}
         </span>
         <span v-else-if="item.prop === 'categoryId'">
-          <span v-for="item in categoryList">
+          <span v-for="(item, i) in categoryList" :key="i">
             <span v-if="scope.row.categoryId === item.id">{{item.name}}</span>
           </span>
         </span>
         <span v-else-if="item.prop === 'timePlan'">
-          <template v-if="scope.row.config.isScheduler === 0">
+          <template v-if="scope.row.config && scope.row.config.isScheduler === 0">
              {{$t('report.always')}}
           </template>
-          <template v-else-if="scope.row.config.isScheduler === 1">
+          <template v-else-if="scope.row.config && scope.row.config.isScheduler === 1">
             <el-popover
                 placement="right-start"
                 :width="270"
@@ -127,7 +127,7 @@
             >
               <template #reference>
                 <span>
-                  <template v-if="scope.row.config.schedulerConfig">
+                  <template v-if="scope.row.config && scope.row.config.schedulerConfig">
                     <template v-if="scope.row.config.schedulerConfig.type === 'day'">
                      {{$t('report.daily')}}
                     </template>
