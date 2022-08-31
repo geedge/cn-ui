@@ -35,7 +35,6 @@
         <template #default>
           <builtin-report-table
               ref="dataTable"
-              :tools-loading="tools.loading"
               :api="url"
               :custom-table-title="tools.customTableTitle"
               :category-list="builtinReportLeftMenu"
@@ -175,14 +174,14 @@ export default {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      this.tools.loading = true
+      // this.tools.loading = true
       delete this.searchLabel.total
       let listUrl = this.url
       if (this.listUrl) {
         listUrl = this.listUrl
       }
       get(listUrl, this.searchLabel).then(response => {
-        this.tools.loading = false
+        // this.tools.loading = false
         if (response.code === 200) {
           for (let i = 0; i < response.data.list.length; i++) {
             response.data.list[i].status = response.data.list[i].status + ''
