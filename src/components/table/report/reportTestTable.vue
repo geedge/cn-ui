@@ -6,7 +6,6 @@
       :height="height"
       :expand-row-keys="expandedIds"
       row-key="id"
-      v-loading="toolsLoading"
       border
       tooltip-effect="light"
       @header-dragend="dragend"
