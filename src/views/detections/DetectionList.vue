@@ -66,7 +66,11 @@ export default {
     },
     collapse () {
       this.isCollapse = true
-      this.$refs[`detectionRow${this.collapseIndex}`].collapse()
+      if (this.$refs[`detectionRow${this.collapseIndex}`] && this.$refs[`detectionRow${this.collapseIndex}`].collapse) {
+        this.$refs[`detectionRow${this.collapseIndex}`].collapse()
+      } else {
+        this.$refs[`detectionRow${this.collapseIndex}`][0].collapse()
+      }
     },
     handleScroll (e) {
       if (e.target.className === 'cn-detection__shadow') {

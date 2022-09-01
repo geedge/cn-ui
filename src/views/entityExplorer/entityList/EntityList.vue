@@ -95,7 +95,11 @@ export default {
     },
     collapse () {
       this.isCollapse = true
-      this.$refs[`entityRow${this.collapseIndex}`].collapse()
+      if (this.$refs[`entityRow${this.collapseIndex}`] && this.$refs[`entityRow${this.collapseIndex}`].collapse) {
+        this.$refs[`entityRow${this.collapseIndex}`].collapse()
+      } else {
+        this.$refs[`entityRow${this.collapseIndex}`][0].collapse()
+      }
     },
     pageNo (val) {
       this.$emit('pageNo', val)
