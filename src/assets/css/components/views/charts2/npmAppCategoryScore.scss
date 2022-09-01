@@ -138,6 +138,9 @@
       display: flex;
       justify-content: right;
       width: 50%;
+      font-size: 12px;
+      color: #353636;
+      font-weight: 400;
     }
     .data-trend{
       display: flex;
@@ -148,7 +151,6 @@
       justify-content: left;
       margin-left: 6px;
       font-size: 12px;
-      align-items: center;
       justify-content: center;
       margin-top: 2px;
       border-radius: 10px;

@@ -216,19 +216,19 @@ export default {
     npmNetworkQuantity (cycle, lastCycle, num) {
       if (num === 0) {
         this.npmNetworkData[0] = {
-          establishLatencyMsAvg: cycle.establishLatencyMsAvg,
+          establishLatencyMsAvg: Math.floor(cycle.establishLatencyMsAvg),
           establishLatencyMsP99: cycle.establishLatencyMsP99,
           establishLatencyMsP95: cycle.establishLatencyMsP95,
           value: getChainRatio(cycle.establishLatencyMsAvg, lastCycle.establishLatencyMsAvg)
         }
         this.npmNetworkData[1] = {
-          httpResponseLatencyAvg: cycle.httpResponseLatencyAvg,
+          httpResponseLatencyAvg: Math.floor(cycle.httpResponseLatencyAvg),
           httpResponseLatencyP99: cycle.httpResponseLatencyP99,
           httpResponseLatencyP95: cycle.httpResponseLatencyP95,
           value: getChainRatio(cycle.httpResponseLatencyAvg, lastCycle.httpResponseLatencyAvg)
         }
         this.npmNetworkData[2] = {
-          sslConLatencyAvg: cycle.sslConLatencyAvg,
+          sslConLatencyAvg: Math.floor(cycle.sslConLatencyAvg),
           sslConLatencyP99: cycle.sslConLatencyP99,
           sslConLatencyP95: cycle.sslConLatencyP95,
           value: getChainRatio(cycle.sslConLatencyAvg, lastCycle.sslConLatencyAvg)

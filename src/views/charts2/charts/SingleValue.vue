@@ -8,7 +8,7 @@
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -28,7 +28,7 @@
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -48,7 +48,7 @@
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -68,7 +68,7 @@
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -88,7 +88,7 @@
           <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
