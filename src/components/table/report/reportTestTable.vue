@@ -390,8 +390,10 @@ export default {
         this.datePickerChange(row)
       }
     },
-    datePickerChange (row) {
-      this.pageObj.pageNo = 1
+    datePickerChange (row, show) {
+      if (!show) {
+        this.pageObj.pageNo = 1
+      }
       const param = {
         tempId: row.id,
         startTime: dateFormatToUTC(this.timeRange[0]),
@@ -447,7 +449,7 @@ export default {
     pageJump (val) {
       this.pageObj.pageNo = val
       if (this.expandedIds.length > 0) {
-        this.datePickerChange({ id: this.expandedIds[0] })
+        this.datePickerChange({ id: this.expandedIds[0] }, true)
       }
     },
     intervalChange (param) {
