@@ -1,5 +1,5 @@
 <template>
-  <div class="panel-box">
+  <div class="panel-box2">
     <div class="panel__header">
       <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}
         <div  v-if="score" class="score">

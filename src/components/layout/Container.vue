@@ -1,5 +1,5 @@
 <template>
-  <div class="cn-container" :style="entityDetectionStyle" id="cnContainer">
+  <div class="cn-container" :style="entityDetectionStyle" :class="{'cn-container-entity': entityDetectionStyle}" id="cnContainer">
     <router-view :key="routerKey"/>
   </div>
 </template>

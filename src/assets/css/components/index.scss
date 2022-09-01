@@ -25,8 +25,8 @@
 @import './views/detections/detection-list/row';
 @import './views/detections/detection-overview';
 @import './views/charts/chartSingleValue';
-// @import './views/charts/panel';
-/*@import 'views/charts/chartIpOpenPortBar';
+@import './views/charts/panel';
+@import 'views/charts/chartIpOpenPortBar';
 @import './views/charts/chartTable';
 @import './views/charts/chartCryptocurrencyEventList';
 @import './views/charts/chartAppBasicInfo';
@@ -41,7 +41,7 @@
 @import './views/charts/chartAlarmInfo';
 @import './views/chartHeader';
 @import './views/charts/chartMap';
-@import 'views/charts/chartRelationShipList';*/
+@import 'views/charts/chartRelationShipList';
 @import './views/report/builtinReport';
 @import './components/rightBox/report/builtinReportBox';
 

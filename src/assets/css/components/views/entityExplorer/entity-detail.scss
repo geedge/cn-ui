@@ -87,7 +87,8 @@
       flex: 1;
       padding: 10px;
       overflow: auto;
-      background-color: $--content-right-background-color;
+      //background-color: $--content-right-background-color;
+      background-color: rgb(239, 242, 245);
 
       &>.cn-entity-detail .entity-detail__body>.cn-panel2 {
         .panel-chart {
