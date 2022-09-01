@@ -155,11 +155,12 @@ export default {
   mixins: [chartMixin],
   methods: {
     unitConvert,
-    initMap (id) {
+    async initMap (id) {
       try {
         // 初始化插件
+        const geoData = await getGeoData(storageKey.iso36112WorldLow)
         const chart = am4Core.create(id, am4Maps.MapChart)
-        chart.geodata = getGeoData(storageKey.iso36112WorldLow)
+        chart.geodata = geoData
         chart.projection = new am4Maps.projections.Miller()
         this.myChart = shallowRef(chart)
         // 初始化多边形series（即地图series）
@@ -217,7 +218,7 @@ export default {
       if (countryId) {
         ev.target.series.chart.zoomToMapObject(ev.target)
         ev.target.isHover = false
-        const geoData = getGeoData(countryId)
+        const geoData = await getGeoData(countryId)
         if (geoData) {
           this.countrySeries = shallowRef(this.polygonSeriesFactory())
           this.countrySeries.geodata = geoData
@@ -234,9 +235,9 @@ export default {
       polygonSeries.useGeodata = true
       polygonSeries.exclude = ['AQ'] // 排除南极洲
       polygonSeries.tooltip.getFillFromObject = false
-      polygonSeries.tooltip.background.fill = am4Core.color('#41495D')
+      polygonSeries.tooltip.background.fill = am4Core.color('#ffffff')
       polygonSeries.tooltip.background.filters.clear()
-      polygonSeries.tooltip.background.stroke = '#41495D'
+      polygonSeries.tooltip.background.stroke = '#C5C5C5'
       const polygonTemplate = polygonSeries.mapPolygons.template
       polygonTemplate.tooltipHTML = this.generatePolygonTooltipHTML()
       polygonTemplate.nonScalingStroke = true
@@ -276,9 +277,9 @@ export default {
       circle.strokeWidth = 1
       circle.tooltipHTML = this.generatePolygonTooltipHTML()
       imageSeries.tooltip.getFillFromObject = false
-      imageSeries.tooltip.background.fill = am4Core.color('#41495D')
+      imageSeries.tooltip.background.fill = am4Core.color('#FFFFFF')
       imageSeries.tooltip.background.filters.clear()
-      imageSeries.tooltip.background.stroke = '#41495D'
+      imageSeries.tooltip.background.stroke = '#C5C5C5'
 
       imageSeries.heatRules.push({
         target: circle,
