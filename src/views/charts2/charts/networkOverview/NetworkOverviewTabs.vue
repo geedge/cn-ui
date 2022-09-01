@@ -1029,12 +1029,16 @@ export default {
         // style = style + 'border-bottom:0px !important;'
       }
       if (columnIndex === 0) {
-        style = style + 'color:#046ECA;'
+        style = style + 'color:#046ECA;text-align:left;'
       }
       return style
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
-      return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
+      if(columnIndex === 0){
+        return 'text-align:left;border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
+      }else {
+        return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
+      }
     },
     getCurTab () {
       let curTab = this.$store.getters.getNetworkOverviewCurrentTab
