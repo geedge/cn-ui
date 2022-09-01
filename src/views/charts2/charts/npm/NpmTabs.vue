@@ -33,7 +33,7 @@ export default {
       })
       setTimeout(() => {
         this.$emit('tabChange', n)
-      }, 250)
+      }, 400)
     }
   },
   methods: {
