@@ -31,7 +31,9 @@ export default {
       this.$nextTick(() => {
         this.handleActiveBar(n)
       })
-      this.$emit('tabChange', n)
+      setTimeout(() => {
+        this.$emit('tabChange', n)
+      }, 250)
     }
   },
   methods: {
@@ -48,7 +50,7 @@ export default {
     }
     setTimeout(() => {
       this.handleActiveBar(0)
-    }, 200)
+    }, 400)
   }
 }
 </script>
