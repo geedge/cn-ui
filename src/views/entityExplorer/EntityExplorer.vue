@@ -55,7 +55,7 @@
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
               <div class="right-label-loading">
-                <loading :loading="loadingAppNew"></loading>
+                <loading :loading="loadingAppNew" size="small"></loading>
                 <div class="right-value">{{entityAppNew}}</div>
               </div>
             </div>
@@ -63,7 +63,7 @@
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
               <div class="right-label-loading">
-                <loading :loading="loadingAppActive"></loading>
+                <loading :loading="loadingAppActive" size="small"></loading>
                 <div class="right-value">{{entityAppActive}}</div>
               </div>
             </div>
@@ -83,7 +83,7 @@
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
               <div class="right-label-loading">
-                <loading :loading="loadingDomainNew"></loading>
+                <loading :loading="loadingDomainNew" size="small"></loading>
                 <div class="right-value">{{entityDomainNew}}</div>
               </div>
             </div>
@@ -91,7 +91,7 @@
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
               <div class="right-label-loading">
-                <loading :loading="loadingDomainActive"></loading>
+                <loading :loading="loadingDomainActive" size="small"></loading>
                 <div class="right-value">{{entityDomainActive}}</div>
               </div>
             </div>
@@ -111,7 +111,7 @@
               <i class="cn-icon cn-icon-increase"></i>
               <div class="right-label">New</div>
               <div class="right-label-loading">
-                <loading :loading="loadingIpNew"></loading>
+                <loading :loading="loadingIpNew" size="small"></loading>
                 <div class="right-value">{{entityIpNew}}</div>
               </div>
             </div>
@@ -119,7 +119,7 @@
               <i class="cn-icon cn-icon-active"></i>
               <div class="right-label">Active</div>
               <div class="right-label-loading">
-                <loading :loading="loadingIpActive"></loading>
+                <loading :loading="loadingIpActive" size="small"></loading>
                 <div class="right-value">{{entityIpActive}}</div>
               </div>
             </div>

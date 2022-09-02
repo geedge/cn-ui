@@ -51,13 +51,13 @@
                 </div>
                 <div class="expand-icon">
                   <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['download', item])">
-                    <loading :loading="loadingTableId === item.id"></loading>
+                    <loading :loading="loadingTableId === item.id" size="small"></loading>
                     <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
                       <use xlink:href="#cn-icon-download2"></use>
                     </svg>
                   </div>
                   <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['preview', item])">
-                    <loading :loading="loadingPreviewId === item.id"></loading>
+                    <loading :loading="loadingPreviewId === item.id" size="small"></loading>
                     <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
                       <use xlink:href="#cn-icon-preview"></use>
                     </svg>
