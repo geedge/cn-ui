@@ -58,7 +58,8 @@ const defaultProps = {
     default: ''
   },
   format: {
-    type: String
+    type: String,
+    default: ''
   },
   type: {
     type: String,
