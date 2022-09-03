@@ -783,7 +783,7 @@ export const chartColor2 = ['#86B565', '#A37FA7', '#EFAFC7', '#EFC48F', '#B4B1A8
 export const chartColor3 = ['#00A7AB', '#7FA054', '#35ADDA', '#E48F3E', '#9FBC1D', '#98709B']
 
 export const chartColor4 = ['#E5F6F6', '#F2F6EE', '#EBF7FC', '#FCF4EB', '#9FBC1D', '#F5F1F5']
-export const chartColor5 = ['#E26154', '#E48E4D', '#E7B34E', '#DAC74B', '#88AF65']
+export const chartColor5 = ['#E26154', '#E7B34E', '#88AF65']
 
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',

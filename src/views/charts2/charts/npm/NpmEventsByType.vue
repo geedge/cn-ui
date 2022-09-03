@@ -10,15 +10,14 @@
             <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('overall.type') }}</div>
             <template v-for="(legend, index) in chartData" :key="index">
               <div class="npm-event-pie-legend-type">
-                <div class="npm-event-pie-legend-type-icon" :class="legend.eventSeverity"></div>
-                <div class="npm-event-pie-legend-type-severity">{{legend.eventSeverity}}</div>
+                <div class="npm-event-pie-legend-type-severity">{{legend.name}}</div>
               </div>
             </template>
           </div>
           <div class="npm-event-pie-legend">
             <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('network.total') }}</div>
             <template v-for="(legend, index) in chartData" :key="index">
-              <div class="npm-event-pie-legend-total">{{legend.count}}</div>
+              <div class="npm-event-pie-legend-total">{{legend.value}}</div>
             </template>
           </div>
         </div>
@@ -83,7 +82,7 @@ export default {
           formatter: function () {
             let num = 0
             _this.chartData.forEach(t => {
-              num += t.count
+              num += t.value
             })
             return num
           }
@@ -108,7 +107,7 @@ export default {
           formatter: function () {
             let num = 0
             _this.chartData.forEach(t => {
-              num += t.count
+              num += t.value
             })
             return num
           }
@@ -123,32 +122,24 @@ export default {
         type: 'severity'
       }
       this.toggleLoading(true)
-      get(api.npm.events.list, params).then(res => {
+      get(api.npm.events.recentEvents, params).then(res => {
         if (res.code === 200) {
           if (!res.data.result || res.data.result.length === 0) {
             this.isNoData = true
             return
           }
+          const arrData = []
           res.data.result.forEach(t => {
-            if (t.eventSeverity === 'critical') {
-              t.index = 0
-            } else if (t.eventSeverity === 'high') {
-              t.index = 1
-            } else if (t.eventSeverity === 'info') {
-              t.index = 4
-            } else if (t.eventSeverity === 'low') {
-              t.index = 3
-            } else if (t.eventSeverity === 'medium') {
-              t.index = 2
+            const hit = arrData.find(e => e.name === t.eventType)
+            if (hit) {
+              arrData.forEach(d => {
+                d.value++
+              })
+            } else {
+              arrData.push({ name: t.eventType, value: 1 })
             }
           })
-          this.chartData = res.data.result.sort((a, b) => { return a.index - b.index })
-          this.chartData = this.chartData.map(t => {
-            return {
-              ...t,
-              value: t.count
-            }
-          })
+          this.chartData = arrData.sort((a, b) => { return b.value - a.value })
           this.init()
         } else {
           this.isNoData = true

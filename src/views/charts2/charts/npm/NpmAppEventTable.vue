@@ -154,7 +154,6 @@ export default {
             this.isNoData = true
           }
           this.tableData = res.data.result
-          console.log(res.data.result)
         } else {
           this.isNoData = true
         }

@@ -35,10 +35,6 @@
             margin-bottom: 15px;
           }
           .npm-event-pie-legend-type {
-            font-size: 12px;
-            color: #353636;
-            line-height: 12px;
-            font-weight: 500;
             display: flex;
             align-items: center;
             margin-bottom: 11px;
@@ -48,6 +44,10 @@
               margin-right: 5px;
             }
             .npm-event-pie-legend-type-severity {
+              font-size: 12px;
+              line-height: 12px;
+              color: #353636;
+              font-weight: 400;
               text-transform: capitalize;
             }
             .critical {
