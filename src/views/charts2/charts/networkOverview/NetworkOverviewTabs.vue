@@ -28,11 +28,12 @@
                   height="100%"
                   :default-sort="{ prop: 'date', order: 'descending' }"
                   empty-text=" "
+                  @sort-change="sortChange"
           >
             <template v-for="(item,index) in customTableTitles">
               <el-table-column
                       v-if="item.checked"
-                      sortable
+                      sortable="custom"
                       align="center"
                       :prop="item.prop"
                       class="data-column"
@@ -170,7 +171,7 @@ import { ref } from 'vue'
 import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore } from '@/utils/tools'
+import { getChainRatio, computeScore} from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -207,6 +208,7 @@ export default {
       networkTabList: [], // 原始状态列表
       showBackground: false,
       tableData: [],
+      tableDataBackup: [],
       showRecordNum: 10,
       showTabs: true,
       columnNameGroup: {},
@@ -283,6 +285,117 @@ export default {
     rowClass (row, column, rowIndex, columnIndex) {
       if (rowIndex === 49) {
         return 'fixed-row'
+      }
+    },
+    getChartType (char) {
+      // 数字可按照排序的要求进行自定义，我这边产品的要求是
+      // 数字（0->9）->大写字母（A->Z）->小写字母（a->z）->中文拼音（a->z）
+      if (/^[\u4e00-\u9fa5]$/.test(char)) {
+        return ['zh', 300]
+      }
+      if (/^[a-zA-Z]$/.test(char)) {
+        return ['en', 200]
+      }
+      if (/^[0-9]$/.test(char)) {
+        return ['number', 100]
+      }
+      return ['others', 999]
+    },
+    sortChange (column) {
+      const arr = []
+      this.tableData.slice(0, this.showRecordNum).forEach(val => {
+        arr.push(val)
+      })
+      if (column.prop != 'tab') {
+        if (column.order == 'descending') {
+          arr.sort((a, b) => {
+            const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
+            const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
+            return str2 - str1
+          })
+          if (this.tableData.length - 1 > this.showRecordNum) {
+            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
+          } else {
+            this.tableData = arr
+          }
+        } else if (column.order == 'ascending') {
+          arr.sort((a, b) => {
+            const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
+            const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
+            return str1 - str2
+          })
+          if (this.tableData.length - 1 > this.showRecordNum) {
+            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
+          } else {
+            this.tableData = arr
+          }
+        } else if (!column.order) {
+          this.tableData = this.tableDataBackup
+        }
+      } else {
+        if (column.order == 'descending') {
+          arr.sort((a, b) => {
+            const aObj = a[column.prop]
+            const bObj = b[column.prop]
+            let res = 0
+            for (let i = 0; ;i++) {
+              const char1 = aObj[i]
+              const char2 = bObj[i]
+              const char1Type = this.getChartType(char1)
+              const char2Type = this.getChartType(char2)
+              if (char1 === char2) {
+                continue
+              } else {
+                if (char1Type[0] === 'zh') {
+                  res = char2.localeCompare(char1)
+                } else if (char1Type[0] === 'en') {
+                  res = char2.charCodeAt(0) - char1.charCodeAt(0)
+                } else {
+                  res = char2 - char1
+                }
+                break
+              }
+            }
+            return res
+          })
+          if (this.tableData.length - 1 > this.showRecordNum) {
+            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
+          } else {
+            this.tableData = arr
+          }
+        } else if (column.order == 'ascending') {
+          arr.sort((a, b) => {
+            const aObj = a[column.prop]
+            const bObj = b[column.prop]
+            let res = 0
+            for (let i = 0; ;i++) {
+              const char1 = aObj[i]
+              const char2 = bObj[i]
+              const char1Type = this.getChartType(char1)
+              const char2Type = this.getChartType(char2)
+              if (char1 === char2) {
+                continue
+              } else {
+                if (char1Type[0] === 'zh') {
+                  res = char1.localeCompare(char2)
+                } else if (char1Type[0] === 'en') {
+                  res = char1.charCodeAt(0) - char2.charCodeAt(0)
+                } else {
+                  res = char1 - char2
+                }
+                break
+              }
+            }
+            return res
+          })
+          if (this.tableData.length - 1 > this.showRecordNum) {
+            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
+          } else {
+            this.tableData = arr
+          }
+        } else if (!column.order) {
+          this.tableData = this.tableDataBackup
+        }
       }
     },
     changeMetric () {
@@ -583,6 +696,7 @@ export default {
             console.log(e)
           }).finally(e => {
             this.tableData = tableDataTmp
+            this.tableDataBackup = tableDataTmp
             this.toggleLoading(false)
             // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
             let scoreNum = 0
@@ -681,8 +795,6 @@ export default {
       })
     },
     tabChange (index) {
-      // this.tableData = []
-      // this.toggleLoading(true)
       this.isNoData = false
       // 操作类型设置
       const beforeType = this.$store.getters.getTabOperationBeforeType
@@ -870,6 +982,7 @@ export default {
     },
     handleClick (tab) {
       this.tableData = []
+      this.tableDataBackup = []
       this.showRecordNum = 10
       this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
       this.$store.commit('setTabOperationType', operationType.changeTab)
@@ -896,6 +1009,7 @@ export default {
           }
         }
         this.tableData = []
+        this.tableDataBackup = []
         this.toggleLoading(true)
         this.$emit('getChartData', this.getCurUrl(), queryParams)
       }
@@ -927,6 +1041,7 @@ export default {
     handleQueryParams (extraParams) {
       this.isNoData = false
       this.tableData = []
+      this.tableDataBackup = []
       this.toggleLoading(true)
       let queryType = ''
       const name = this.$store.getters.getBreadcrumbColumnName
@@ -1034,9 +1149,9 @@ export default {
       return style
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
-      if(columnIndex === 0){
+      if (columnIndex === 0) {
         return 'text-align:left;border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
-      }else {
+      } else {
         return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
       }
     },
