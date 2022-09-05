@@ -76,7 +76,31 @@
             <span class="route-menu" @click="jump(path,item,'',3)">{{item}}</span>
           </template>
           <template v-else-if="index===1">
-            <span class="route-menu" @click="jump(path,'','',2)">{{item}}</span>
+            <span class="route-menu" @click="jump(path,'','',2)" v-if="route.indexOf('detection') === -1">{{item}}</span>
+            <div class="header__left-breadcrumb-item-select" v-if="route.indexOf('detection') > -1">
+              <el-popover placement="bottom-start"
+                          v-if="route.indexOf('detection') > -1"
+                          ref="breadcrumbPopover"
+                          :show-arrow="false"
+                          :append-to-body="false"
+                          :hide-after="0"
+                          :show-after="0"
+                          popper-class="breadcrumb__popper"
+                          trigger="click">
+                <template #reference>
+                  <div class="breadcrumb-button"  id="breadcrumbButton2" :class="showBackground?'breadcrumb-button__active':''"  v-if="route.indexOf('detection') > -1">
+                    <span id="breadcrumbValue2"> {{item}}</span><i class="cn-icon-xiala cn-icon"></i>
+                  </div>
+                </template>
+                <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
+                  <ul class="select-dropdown" id="breadcrumbSelectDropdown2">
+                    <li v-for="item in detectionMenuList" title='' :key="item.name" :id="item.name" class="select-dropdown__item" @click="jump(item.path)">
+                      <span>{{$t(item.i18n)}}</span>
+                    </li>
+                  </ul>
+                </el-row>
+              </el-popover>
+            </div>
           </template>
           <template v-else>
             <span>{{item}}</span>
@@ -186,6 +210,18 @@ export default {
       showBackground: false,
       selected: false,
       valueMenuId: '',
+      detectionMenuList: [
+        {
+          name: 'securityEvents',
+          i18n: 'entities.securityEvents',
+          path: '/detection/securityEvent'
+        },
+        {
+          name: 'performanceEvents',
+          i18n: 'overall.performanceEvents',
+          path: '/detection/performanceEvent'
+        }
+      ],
       curPageNum: 1
     }
   },
@@ -221,7 +257,6 @@ export default {
         }
       })
       const breadcrumb = breadcrumbMap.find(b => this.path === b.path)
-
       if (breadcrumb.columnValue) {
         return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, this.$t(breadcrumb.columnName), breadcrumb.columnValue] : []
       } else if (breadcrumb.columnName) {
