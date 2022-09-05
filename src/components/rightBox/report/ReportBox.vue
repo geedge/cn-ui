@@ -235,23 +235,25 @@
 <!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input>-->
-            <el-select v-model="editObject.categoryParams[0].value"
+            <el-select v-model="param.value"
+                       v-for="(param, index) in editObject.categoryParams"
+                       :key="index"
                        class="right-box__select right-box__select--param"
                        placeholder=" "
                        filterable
                        :disabled="!!editObject.id"
-                       popper-class="right-box-select-dropdown right-box-select-report"
+                       popper-class="right-box-select-dropdown right-box-select-report "
                        size="small"
-                       @change="paramsChange"
             >
               <template #prefix>
-                  {{$t(editObject.categoryParams[0].i18n)}}
+                {{$t(param.i18n)}}
               </template>
               <template v-for="paramOption in paramsOptions">
-                <template v-if="paramOption.key === editObject.categoryParams[0].key">
-                  <el-option :key="p" :value="p" v-for="p in paramOption.options"></el-option>
+                <template v-if="paramOption.key === param.key">
+                    <el-option :key="p" :value="p" v-for="p in paramOption.options"></el-option>
+                  </template>
                 </template>
-              </template>
+
             </el-select>
           </el-form-item>
         </el-form>
@@ -416,11 +418,14 @@ export default {
       handler (n) {
         const category = this.categoryList.find(c => c.id === n)
         if (category && category.config && category.config.queryParam) {
-          this.editObject.categoryParams = category.config.queryParam
-          if (!this.editObject.id) {
-            this.editObject.categoryParams.forEach(t => { t.value = '' })
-          }
-          this.loadParamOptions()
+          this.editObject.categoryParams = []
+          this.$nextTick(() => {
+            this.editObject.categoryParams = category.config.queryParam
+            if (!this.editObject.id) {
+              this.editObject.categoryParams.forEach(t => { t.value = '' })
+            }
+            this.loadParamOptions()
+          })
         } else {
           this.editObject.categoryParams = []
         }
@@ -504,17 +509,7 @@ export default {
       }
     },
     typeChange (id) {
-      if (id === 3 || id === 7) {
-        const dom = document.querySelector('.right-box__select--param .el-input__inner')
-        if (dom) {
-          dom.style = 'padding-left: 107px'
-        }
-      } else if (id === 1) {
-        const dom = document.querySelector('.right-box__select--param .el-input__inner')
-        if (dom) {
-          dom.style = 'padding-left: 81px'
-        }
-      }
+
     },
     cleanScheduleConfig () {
       this.editObject.config.schedulerConfig.monthDates = []
