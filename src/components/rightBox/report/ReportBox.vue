@@ -165,7 +165,7 @@
                              multiple
                              placeholder=" "
                              :disabled="!!editObject.id"
-                             popper-class="right-box-select-dropdown right-box-select-report "
+                             popper-class="right-box-select-dropdown right-box-select-report"
                              size="small"
                              @change="()=>{ this.$forceUpdate() }">
                     <template v-for="time in weekOptions" :key="time.value">
@@ -222,7 +222,7 @@
                        collapse-tags
                        placeholder=" "
                        :disabled="!!editObject.id"
-                       popper-class="right-box-select-dropdown right-box-select-report "
+                       popper-class="right-box-select-dropdown right-box-select-report"
                        size="small"
                        @change="typeChange">
               <template v-for="category in categoryList" :key="category.id">
@@ -235,21 +235,19 @@
 <!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input>-->
-            <el-select v-model="param.value"
-                       v-for="(param, index) in editObject.categoryParams"
-                       :key="index"
+            <el-select v-model="editObject.categoryParams[0].value"
                        class="right-box__select right-box__select--param"
                        placeholder=" "
                        filterable
                        :disabled="!!editObject.id"
-                       popper-class="right-box-select-dropdown right-box-select-report "
+                       popper-class="right-box-select-dropdown right-box-select-report"
                        size="small"
             >
               <template #prefix>
-                  {{$t(param.i18n)}}
+                  {{$t(editObject.categoryParams[0].i18n)}}
               </template>
               <template v-for="paramOption in paramsOptions">
-                <template v-if="paramOption.key === param.key">
+                <template v-if="paramOption.key === editObject.categoryParams[0].key">
                   <el-option :key="p" :value="p" v-for="p in paramOption.options"></el-option>
                 </template>
               </template>
@@ -415,6 +413,8 @@ export default {
     },
     'editObject.categoryId': {
       handler (n) {
+        const dom = document.getElementsByClassName('el-input__inner')
+        console.log(dom)
         const category = this.categoryList.find(c => c.id === n)
         if (category && category.config && category.config.queryParam) {
           this.editObject.categoryParams = category.config.queryParam
@@ -460,6 +460,16 @@ export default {
           }
         } else if (this.currentCategoryId) {
           this.editObject.categoryId = this.currentCategoryId
+          const category = this.categoryList.find(c => c.id === this.currentCategoryId)
+          if (category && category.config && category.config.queryParam) {
+            this.editObject.categoryParams = category.config.queryParam
+            if (!this.editObject.id) {
+              this.editObject.categoryParams.forEach(t => { t.value = '' })
+            }
+            this.loadParamOptions()
+          } else {
+            this.editObject.categoryParams = []
+          }
         }
       }
     }
