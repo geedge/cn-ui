@@ -242,6 +242,7 @@
                        :disabled="!!editObject.id"
                        popper-class="right-box-select-dropdown right-box-select-report"
                        size="small"
+                       @change="paramsChange"
             >
               <template #prefix>
                   {{$t(editObject.categoryParams[0].i18n)}}
@@ -413,8 +414,6 @@ export default {
     },
     'editObject.categoryId': {
       handler (n) {
-        const dom = document.getElementsByClassName('el-input__inner')
-        console.log(dom)
         const category = this.categoryList.find(c => c.id === n)
         if (category && category.config && category.config.queryParam) {
           this.editObject.categoryParams = category.config.queryParam
@@ -505,7 +504,17 @@ export default {
       }
     },
     typeChange (id) {
-
+      if (id === 3 || id === 7) {
+        const dom = document.querySelector('.right-box__select--param .el-input__inner')
+        if (dom) {
+          dom.style = 'padding-left: 107px'
+        }
+      } else if (id === 1) {
+        const dom = document.querySelector('.right-box__select--param .el-input__inner')
+        if (dom) {
+          dom.style = 'padding-left: 81px'
+        }
+      }
     },
     cleanScheduleConfig () {
       this.editObject.config.schedulerConfig.monthDates = []
