@@ -546,16 +546,16 @@ export default {
     initData () {
       // 取消表格排序高亮的箭头
       if (this.column.prop) {
-        const columns = this.$refs['dataTable_' + this.index]
-          ? ((Array.isArray(this.$refs['dataTable_' + this.index])
-                    ?this.$refs['dataTable_' + this.index][0].$refs.tableHeader
-                    :this.$refs['dataTable_' + this.index].$refs.tableHeader)
-              ? this.$refs['dataTable_' + this.index].$refs.tableHeader.columns
-              : [])
-          : []
-        columns.forEach(item => {
-          item.order = ''
-        })
+        let table = this.$refs['dataTable_' + this.index]
+        let tableHeaer = this.$refs['dataTable_' + this.index]?(Array.isArray(this.$refs['dataTable_' + this.index])
+                                                                          ?this.$refs['dataTable_' + this.index][0].$refs.tableHeader
+                                                                          :this.$refs['dataTable_' + this.index].$refs.tableHeader):[]
+        const columns = tableHeaer.columns
+        if(columns){
+          columns.forEach(item => {
+            item.order = ''
+          })
+        }
         this.column = {}
         this.index = 0
       }
