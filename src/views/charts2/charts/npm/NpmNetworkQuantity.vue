@@ -157,19 +157,19 @@ export default {
               index = 0
             }
             if (res.data.result.httpResponseLatencyAvg || res.data.result.httpResponseLatencyAvg === 0) {
-              res.data.result.httpResponseLatency = res.data.result.establishLatencyMsAvg
+              res.data.result.httpResponseLatency = res.data.result.httpResponseLatencyAvg
               index = 1
             }
             if (res.data.result.tcpLostlenPercentAvg || res.data.result.tcpLostlenPercentAvg === 0) {
-              res.data.result.tcpLostlenPercent = res.data.result.establishLatencyMsAvg
+              res.data.result.tcpLostlenPercent = res.data.result.tcpLostlenPercentAvg
               index = 3
             }
             if (res.data.result.pktRetransPercentAvg || res.data.result.pktRetransPercentAvg === 0) {
-              res.data.result.pktRetransPercent = res.data.result.establishLatencyMsAvg
+              res.data.result.pktRetransPercent = res.data.result.pktRetransPercentAvg
               index = 4
             }
             if (res.data.result.sslConLatencyAvg || res.data.result.sslConLatencyAvg === 0) {
-              res.data.result.sslConLatency = res.data.result.establishLatencyMsAvg
+              res.data.result.sslConLatency = res.data.result.sslConLatencyAvg
               index = 2
             }
             scoreInfo[keyPre[index] + 'Score'] = computeScore(res.data.result, index)

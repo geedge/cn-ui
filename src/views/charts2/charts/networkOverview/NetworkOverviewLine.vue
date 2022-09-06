@@ -59,7 +59,7 @@
           </div>
         </div>
       </div>
-      <div class="chart-drawing" v-show="showMarkLine" id="chart"></div>
+      <div class="chart-drawing" v-show="showMarkLine" id="overviewLineChart"></div>
     </template>
   </div>
 </template>
@@ -199,7 +199,9 @@ export default {
                 }
               })
               this.mpackets = mpackets
-              this.echartsInit(this.mpackets, show)
+              this.$nextTick(() => {
+                this.echartsInit(this.mpackets, show)
+              })
             } else if (t.type === 'packets' && val === 'Packets/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalPacketsRate.analysis
@@ -226,7 +228,9 @@ export default {
                 }
               })
               this.mpackets = mpackets
-              this.echartsInit(this.mpackets, show)
+              this.$nextTick(() => {
+                this.echartsInit(this.mpackets, show)
+              })
             } else if (t.type === 'sessions' && val === 'Sessions/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalSessionsRate.analysis
@@ -241,11 +245,14 @@ export default {
                 }
               })
               this.mpackets = mpackets
-              this.echartsInit(this.mpackets, show)
+              this.$nextTick(() => {
+                this.echartsInit(this.mpackets, show)
+              })
             }
           })
         }
       }).catch(e => {
+        console.error(e)
         this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)
@@ -254,7 +261,7 @@ export default {
     echartsInit (echartsData, show) {
       const _this = this
       echartsData = echartsData.filter(t => t.show === true)
-      const dom = document.getElementById('chart')
+      const dom = document.getElementById('overviewLineChart')
       if (!this.myChart) {
         this.myChart = echarts.init(dom)
       }

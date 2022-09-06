@@ -43,15 +43,14 @@
 
 <script>
 import * as echarts from 'echarts'
-import { npmLineChartOption } from '@/views/charts2/charts/options/echartOption.js'
-import { shallowRef } from 'vue'
+import {npmLineChartOption} from '@/views/charts2/charts/options/echartOption.js'
+import {shallowRef} from 'vue'
 import _ from 'lodash'
-import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
-import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
-import { api } from '@/utils/api'
+import {stackedLineTooltipFormatter} from '@/views/charts/charts/tools'
+import {getSecond} from '@/utils/date-util'
+import {get} from '@/utils/http'
+import {api} from '@/utils/api'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
-import { throughputData, tcpData, httpData, sslData, packetsLossData, packetsRetrainsData } from '@/views/charts2/charts/npmLineData'
 import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
@@ -258,11 +257,13 @@ export default {
           params.forEach(t => {
             t.seriesName = this.$t(t.seriesName)
           })
-          const str = stackedLineTooltipFormatter(params)
-          return str
+          return stackedLineTooltipFormatter(params)
         }
         this.myChartArray.push(this.myChart)
         this.myChart.setOption(this.chartOption)
+        this.$nextTick(() => {
+          this.myChart.resize()
+        })
       }
     },
     dispatchLegendSelectAction (name) {

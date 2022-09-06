@@ -4,12 +4,12 @@
     <div class="performance-event-value">
       <div class="performance-event-pie">
         <chart-no-data v-if="isNoData"></chart-no-data>
-        <div class="chart-drawing" id="chart1" v-else></div>
+        <div class="chart-drawing" id="chart1" v-show="!isNoData"></div>
       </div>
       <div class="performance-event-pie-hr"></div>
       <div class="performance-event-pie">
         <chart-no-data v-if="isNoData2"></chart-no-data>
-        <div class="chart-drawing" id="chart2" v-else></div>
+        <div class="chart-drawing" id="chart2" v-show="!isNoData2"></div>
       </div>
     </div>
     <el-button class="pie-button" size="small">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
@@ -63,6 +63,8 @@ export default {
             if (res.data.result.length === 0) {
               this.isNoData = true
               return
+            } else {
+              this.isNoData = false
             }
             res.data.result = res.data.result.map(t => {
               if (t.eventSeverity === 'critical') {
@@ -82,11 +84,7 @@ export default {
                 index: t.index
               }
             })
-            if (res.data.result.length <= 0) {
-              this.chartOption.legend.show = false
-            } else {
-              this.chartOption.legend.show = true
-            }
+            this.chartOption.legend.show = res.data.result.length > 0
             this.chartOption.series[0].data = res.data.result.sort((a, b) => { return a.index - b.index })
             this.myChart.setOption(this.chartOption)
           } else {
