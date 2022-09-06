@@ -547,7 +547,9 @@ export default {
       // 取消表格排序高亮的箭头
       if (this.column.prop) {
         const columns = this.$refs['dataTable_' + this.index]
-          ? (this.$refs['dataTable_' + this.index].$refs.tableHeader
+          ? ((Array.isArray(this.$refs['dataTable_' + this.index])
+                    ?this.$refs['dataTable_' + this.index][0].$refs.tableHeader
+                    :this.$refs['dataTable_' + this.index].$refs.tableHeader)
               ? this.$refs['dataTable_' + this.index].$refs.tableHeader.columns
               : [])
           : []
