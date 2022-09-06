@@ -216,12 +216,16 @@ export default {
               }
             })
             this.tableData = tableData
+          }).finally(() => {
+            this.toggleLoading(false)
           })
         } else {
           this.tableData = []
           this.isNoData = true
+          this.toggleLoading(false)
         }
-      }).finally(() => {
+      }).catch(e => {
+        console.error(e)
         this.toggleLoading(false)
       })
     },
