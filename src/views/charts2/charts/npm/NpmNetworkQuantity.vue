@@ -87,8 +87,9 @@ export default {
         get(api.npm.overview.networkAnalysis, params).then(res => {
           if (res.code === 200) {
             this.npmNetworkCycleData = res.data.result
+            this.npmNetworkLastCycleQuery()
           }
-        }).finally(() => {
+        }).catch(e => {
           this.toggleLoading(false)
         })
       } else {
