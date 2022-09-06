@@ -95,6 +95,11 @@
             </template>
           </el-table-column>
         </template>
+        <template v-slot:empty>
+          <div class="table-no-data" v-show="isNoData">
+            <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+          </div>
+        </template>
       </el-table>
     </div>
   </div>
@@ -130,7 +135,8 @@ export default {
         { label: 'network.total', prop: 'total' },
         { label: 'network.outbound', prop: 'outbound' },
         { label: 'network.inbound', prop: 'inbound' }
-      ]
+      ],
+      isNoData: false
     }
   },
   mixins: [chartMixin],
@@ -155,6 +161,7 @@ export default {
         const prevData = res[1].data.result
         const data = res[0].data.result
         if (data && data.length > 0) {
+          this.isNoData = false
           const tableData = data.map(d => {
             const mapping = npmCategoryInfoMapping.find(mapping => mapping.appSubcategory === d.appSubcategory)
             const result = {
@@ -207,6 +214,7 @@ export default {
           })
         } else {
           this.tableData = []
+          this.isNoData = true
         }
       }).finally(() => {
         this.toggleLoading(false)
