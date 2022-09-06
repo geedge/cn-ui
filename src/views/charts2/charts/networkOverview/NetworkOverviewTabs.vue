@@ -26,9 +26,9 @@
                   :header-cell-style="tableHeaderCellStyle"
                   :class="tableClass"
                   height="100%"
-                  :default-sort="{ prop: 'date', order: 'descending' }"
                   empty-text=" "
-                  @sort-change="sortChange"
+                  @sort-change="((column) => {sortChange(column,index)})"
+                  :key="index"
           >
             <template v-for="(item,index) in customTableTitles">
               <el-table-column
@@ -37,9 +37,10 @@
                       align="center"
                       :prop="item.prop"
                       class="data-column"
+                      :ref="item.prop"
               >
-                <template #header>
-                  <span class="data-column__span">{{$t(item.label)}}</span>
+                <template #header >
+                  <span class="data-column__span" >{{$t(item.label)}}</span>
                 </template>
                 <template  #default="scope" :column="item">
                   <template v-if="item.columnType === tableColumnType.chainRatio"  >
@@ -171,7 +172,7 @@ import { ref } from 'vue'
 import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore} from '@/utils/tools'
+import { getChainRatio, computeScore } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -221,7 +222,9 @@ export default {
       hasMetricSearch: true,
       activeTab: '',
       activeCustomize: '',
-      networkSearchUrl: {}
+      networkSearchUrl: {},
+      column: {},
+      index: 0
     }
   },
   props: {
@@ -281,6 +284,7 @@ export default {
   methods: {
     showMore () {
       this.showRecordNum = 50
+      this.sortChange(this.column, this.index)// 当前选中的tab？？？？
     },
     rowClass (row, column, rowIndex, columnIndex) {
       if (rowIndex === 49) {
@@ -301,7 +305,10 @@ export default {
       }
       return ['others', 999]
     },
-    sortChange (column) {
+    sortChange (column, index) {
+      this.index = index
+
+      this.column = column
       const arr = []
       this.tableData.slice(0, this.showRecordNum).forEach(val => {
         arr.push(val)
@@ -537,6 +544,21 @@ export default {
       })
     },
     initData () {
+      // 取消表格排序高亮的箭头
+      if (this.column.prop) {
+        const columns = this.$refs['dataTable_' + this.index]
+          ? (this.$refs['dataTable_' + this.index].$refs.tableHeader
+              ? this.$refs['dataTable_' + this.index].$refs.tableHeader.columns
+              : [])
+          : []
+        columns.forEach(item => {
+          item.order = ''
+        })
+        this.column = {}
+        this.index = 0
+      }
+
+      // 清除表格排序高亮的箭头
       const curTab = this.getCurTab()
       // 针对network overview – app list 点击标题触发下钻，相关内容处理
       const columnName = this.$store.getters.getBreadcrumbColumnName
@@ -719,7 +741,6 @@ export default {
                         item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, 0] : [0]
                       }
                       if (scoreNum >= 5) {
-                        // self.tableData.forEach(data => {
                         let score = 0
                         item.scoreGroup.forEach(i => {
                           score = Number(score) + Number(i)
