@@ -2,10 +2,11 @@
   $grey:#353636;
   height: 100%;
   width: 100%;
-  position: relative;
+  display: flex;
   .npm-app-left {
     height: 100%;
     display: flex;
+    flex: 1;
     .npm-app-letter {
       display: flex;
       flex-direction: column-reverse;
@@ -62,10 +63,7 @@
     }
   }
   .npm-app-right {
-    position: absolute;
     width: calc(100% - 500px);
-    right: 0;
-    top: 0;
     height: 100%;
     border: 1px solid #E2E5EC;
     border-radius: 4px;

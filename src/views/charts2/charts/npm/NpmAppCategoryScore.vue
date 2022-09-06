@@ -6,7 +6,8 @@
           {{letter.letter}}
         </div>
       </div>
-      <div class="npm-app-body">
+      <chart-no-data v-if="isNoData"></chart-no-data>
+      <div class="npm-app-body" v-else>
         <div class="npm-app-body-patch" v-for="(data, index) in tableData" :key="index">
           <div class="npm-app-body-icon"><span><i :class="data.icon"></i></span></div>
           <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': data.score >= index + 1}"></div>
@@ -113,6 +114,7 @@ import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { getChainRatio, computeScore } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartNoData from "@/views/charts/charts/ChartNoData";
 export default {
   name: 'NpmAppCategoryScore',
   data () {
@@ -138,6 +140,9 @@ export default {
       ],
       isNoData: false
     }
+  },
+  components: {
+    ChartNoData
   },
   mixins: [chartMixin],
   watch: {
