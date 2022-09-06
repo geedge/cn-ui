@@ -99,12 +99,14 @@ export default {
         const packetPercent = get(api.npm.overview.packetRetransPercent, params)
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+          this.npmNetworkCycleData = []
           res.forEach(t => {
             if (t.code === 200) {
               this.npmNetworkCycleData.push(t.data.result)
             }
           })
-        }).finally(() => {
+          this.npmNetworkLastCycleQuery()
+        }).catch(e => {
           this.toggleLoading(false)
         })
       }
@@ -266,7 +268,6 @@ export default {
       this.chartData = _.cloneDeep(this.chart)
     }
     this.npmNetworkCycleQuery()
-    this.npmNetworkLastCycleQuery()
   }
 }
 </script>

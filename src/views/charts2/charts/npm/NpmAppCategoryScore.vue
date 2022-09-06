@@ -136,7 +136,6 @@ export default {
   mixins: [chartMixin],
   watch: {
     timeFilter: {
-      deep: true,
       handler (n) {
         this.init()
       }
@@ -206,6 +205,8 @@ export default {
             })
             this.tableData = tableData
           })
+        } else {
+          this.tableData = []
         }
       }).finally(() => {
         this.toggleLoading(false)
