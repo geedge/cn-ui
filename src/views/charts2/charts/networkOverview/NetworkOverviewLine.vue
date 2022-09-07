@@ -1,66 +1,66 @@
 <template>
   <div class="line network">
-    <chart-no-data v-if="isNoData"></chart-no-data>
-    <template v-else>
-      <div class="line-header">
-        <div class="line-header-left">
-          <div class="line-value-active" v-if="activeShow"></div>
-          <div class="line-value">
-            <div class="line-value-mpackets"
-                 v-show="item.show"
-                 :class=" {'is-active': activeShow === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
-                 v-for="(item, index) in mpackets"
-                 :key="index"
-                 @mouseenter="mouseenter(item)"
-                 @mouseleave="mouseleave(item)"
-                 @click="activeChange(item, index)">
-              <div class="line-value-mpackets-name">
-                <div :class="item.class"></div>
-                <div class="mpackets-name">{{$t(item.name)}}</div>
-              </div>
-              <div class="line-value-unit">
-                <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
-                <span class="line-value-unit-number2">
-            <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span><span v-if="item.unitType">{{item.unitType}}</span>
-          </span>
-              </div>
+    <div class="line-header">
+      <div class="line-header-left">
+        <div class="line-value-active" v-if="activeTab"></div>
+        <div class="line-value">
+          <div class="line-value-mpackets"
+               v-show="item.show"
+               :class=" {'is-active': activeTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
+               v-for="(item, index) in mpackets"
+               :key="index"
+               @mouseenter="mouseenter(item)"
+               @mouseleave="mouseleave(item)"
+               @click="activeChange(item, index)">
+            <div class="line-value-mpackets-name">
+              <div :class="item.class"></div>
+              <div class="mpackets-name">{{$t(item.name)}}</div>
             </div>
-          </div>
-        </div>
-        <div class="line-select line-header-right">
-          <div class="line-select-metric">
-            <span>{{$t('network.metric')}}:</span>
-            <div class="line-select__operation">
-              <el-select
-                  size="mini"
-                  v-model="value1"
-                  popper-class="common-select"
-                  :popper-append-to-body="false"
-                  @change="metricSelectChange"
-              >
-                <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="line-select-reference-line">
-            <span>{{$t('network.referenceLine')}}:</span>
-            <div class="line-select__operation">
-              <el-select
-                  size="mini"
-                  v-model="value2"
-                  :disabled="!activeShow"
-                  popper-class="common-select"
-                  :popper-append-to-body="false"
-                  @change="referenceSelectChange"
-              >
-                <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+            <div class="line-value-unit">
+              <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
+              <span class="line-value-unit-number2">
+                <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span><span v-if="item.unitType">{{item.unitType}}</span>
+              </span>
             </div>
           </div>
         </div>
       </div>
+      <div class="line-select line-header-right">
+        <div class="line-select-metric">
+          <span>{{$t('network.metric')}}:</span>
+          <div class="line-select__operation">
+            <el-select
+                size="mini"
+                v-model="value1"
+                popper-class="common-select"
+                :popper-append-to-body="false"
+                @change="metricSelectChange"
+            >
+              <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="line-select-reference-line">
+          <span>{{$t('network.referenceLine')}}:</span>
+          <div class="line-select__operation">
+            <el-select
+                size="mini"
+                v-model="value2"
+                :disabled="!activeTab"
+                popper-class="common-select"
+                :popper-append-to-body="false"
+                @change="referenceSelectChange"
+            >
+              <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height: calc(100% - 74px); width: 100%;">
+      <chart-no-data v-if="isNoData"></chart-no-data>
       <div class="chart-drawing" v-show="showMarkLine" id="overviewLineChart"></div>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -132,7 +132,7 @@ export default {
       unitTypes,
       chartDateObject: [],
       timer: null,
-      activeShow: '',
+      activeTab: '',
       mousemoveCursor: '',
       leftOffset: 0,
       sizes: [3, 4, 6, 8, 9, 10],
@@ -143,7 +143,7 @@ export default {
     }
   },
   watch: {
-    activeShow (n) {
+    activeTab (n) {
       this.$nextTick(() => {
         this.handleActiveBar(n)
       })
@@ -365,7 +365,7 @@ export default {
       } else {
         this.echartsLabelValue = this.echartsLabelValue
       }
-      this.activeShow = item.class
+      this.activeTab = item.class
       this.legendSelectChange(item, index, 'active')
       this.showMarkLine = !item.invertTab
       this.init(this.echartsType, this.showMarkLine, 'active')
@@ -391,7 +391,7 @@ export default {
     },
     legendSelectChange (item, index, val) {
       if (index === 'index') {
-        this.activeShow = !item.class
+        this.activeTab = !item.class
         this.dispatchLegendSelectAction(item.name)
       } else if (this.mpackets[index].name === item.name) {
         this.dispatchLegendSelectAction(item.name)
@@ -409,7 +409,7 @@ export default {
             t.invertTab = true
           }
           if (t.invertTab && item.name === t.name) {
-            this.activeShow = !t.class
+            this.activeTab = !t.class
             this.mpackets.forEach((e) => {
               this.dispatchLegendSelectAction(e.name)
             })
@@ -429,7 +429,7 @@ export default {
     },
     metricSelectChange (val) {
       this.echartsType = val
-      this.activeShow = ''
+      this.activeTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
       this.init(val, this.showMarkLine)

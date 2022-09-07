@@ -38,13 +38,13 @@
 </template>
 
 <script>
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { panelTypeAndRouteMapping, bytesColumnNameGroupForNpm, scoreUrl, customTableTitlesForAppPerformance, operationType } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
-import { computeScore } from '@/utils/tools'
+import { computeScore, urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
 import { get } from '@/utils/http'
 
@@ -147,10 +147,9 @@ export default {
   setup (props, ctx) {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
-    const { params } = useRoute()
-    const router = useRouter()
-    const thirdPanel = router.currentRoute.value.params.thirdPanel
-    const fourthPanel = router.currentRoute.value.params.fourthPanel
+    const { params, query } = useRoute()
+    const thirdPanel = params.thirdPanel
+    const fourthPanel = params.fourthPanel
     if (fourthPanel) {
       panelType = Number(fourthPanel)
     } else if (thirdPanel) {
@@ -162,10 +161,21 @@ export default {
     function isEntityDetail (t) {
       return [4, 5, 6].indexOf(t) > -1
     }
-    // date
-    const dateRangeValue = isEntityDetail(panelType) ? 60 * 24 : 60
-    const { startTime, endTime } = getNowTime(dateRangeValue)
-    const timeFilter = ref({ startTime, endTime, dateRangeValue })
+    // 获取url携带的range、startTime、endTime
+    const rangeParam = query.range
+    const startTimeParam = query.startTime
+    const endTimeParam = query.endTime
+    // 若url携带了，使用携带的值，否则使用默认值。
+    const dateRangeValue = rangeParam ? parseInt(query.range) : (isEntityDetail(panelType) ? 60 * 24 : 60)
+    const timeFilter = ref({ dateRangeValue })
+    if (!startTimeParam || !endTimeParam) {
+      const { startTime, endTime } = getNowTime(isEntityDetail(panelType) ? 60 * 24 : 60)
+      timeFilter.value.startTime = startTime
+      timeFilter.value.endTime = endTime
+    } else {
+      timeFilter.value.startTime = parseInt(startTimeParam)
+      timeFilter.value.endTime = parseInt(endTimeParam)
+    }
 
     return {
       panelType,
@@ -206,7 +216,14 @@ export default {
       }
     },
     reload (startTime, endTime, dateRangeValue) {
-      this.timeFilter = { startTime: startTime, endTime: endTime, dateRangeValue: dateRangeValue }
+      this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime,
+        range: dateRangeValue.value
+      })
+      overwriteUrl(newUrl)
     },
     timeRefreshChange () {
       // 不是自选时间

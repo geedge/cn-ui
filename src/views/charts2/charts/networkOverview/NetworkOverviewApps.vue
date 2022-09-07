@@ -121,7 +121,7 @@ import unitConvert from '@/utils/unit-convert'
 import { storageKey, unitTypes, networkTable, operationType } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
-import { shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
@@ -131,6 +131,7 @@ import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'NetworkOverviewApps',
@@ -140,13 +141,15 @@ export default {
   },
   mixins: [chartMixin],
   setup () {
+    const { query } = useRoute()
+    const metricFilter = ref(query.appListMetric || 'Bits/s')
     return {
+      metricFilter,
       myChart: shallowRef([])
     }
   },
   data () {
     return {
-      metricFilter: 'Bits/s',
       metricOptions: [
         {
           value: 'Bits/s',

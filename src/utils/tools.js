@@ -836,3 +836,26 @@ export function computeScore (data, index) {
   }
   return score * k
 }
+
+// cleanOldParams: true|false，是否清除oldParams
+export function urlParamsHandler (url, oldParams, newParams, cleanOldParams) {
+  let newUrl = url.split('?')[0]
+  let params
+  if (cleanOldParams) {
+    params = newParams
+  } else {
+    params = Object.assign(oldParams, newParams)
+  }
+  if (Object.keys(params).length > 0) {
+    newUrl += '?'
+    Object.keys(params).forEach(key => {
+      newUrl += `${key}=${newParams[key]}&`
+    })
+    newUrl = newUrl.substring(0, newUrl.length - 1)
+  }
+  return newUrl
+}
+
+export function overwriteUrl (url) {
+  window.history.pushState('', '', url)
+}

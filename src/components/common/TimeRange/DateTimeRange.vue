@@ -59,11 +59,11 @@
               <li v-for="item in dateRangeArr" @click="quickChange(item.value)"
                   :class="(item.value==dateRangeValue.value || item.value==dateRangeValue)?'active':''"
                   :key="item.value">
-                            <span style="position: relative">
-                                {{ item.name }}
-                                <i v-if="(item.value==dateRangeValue.value || item.value==dateRangeValue)"
-                                   class="cn-icon cn-icon-check"></i>
-                            </span>
+                <span style="position: relative">
+                    {{ item.name }}
+                    <i v-if="(item.value==dateRangeValue.value || item.value==dateRangeValue)"
+                       class="cn-icon cn-icon-check"></i>
+                </span>
               </li>
             </ul>
           </el-col>
@@ -118,7 +118,7 @@ export default {
     const utc = localStorage.getItem(storageKey.timezoneOffset)
     const rangeHistory = ref(localStorage.getItem(storageKey.dataRangeHistory) ? JSON.parse(localStorage.getItem(storageKey.dataRangeHistory)) : [])
     const dateRangeValue = props.dateRange ? ref(props.dateRange) : ref(60)
-    const isCustom = ref(false)
+    const isCustom = ref(dateRangeValue.value === -1)
     const dateRangeArr = [
       {
         value: 5,
