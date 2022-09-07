@@ -75,7 +75,7 @@ export const pieChartOption2 = {
   },
   legend: {
     orient: 'vertical',
-    top: 35,
+    top: '25%',
     left: '50%',
     itemGap: 4,
     itemWidth: 15,
