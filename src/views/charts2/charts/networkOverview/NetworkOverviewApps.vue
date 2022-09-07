@@ -126,7 +126,7 @@ import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
-import { getChainRatio } from '@/utils/tools'
+import {getChainRatio, overwriteUrl, urlParamsHandler} from '@/utils/tools'
 import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
@@ -140,14 +140,6 @@ export default {
     ChartNoData
   },
   mixins: [chartMixin],
-  setup () {
-    const { query } = useRoute()
-    const metricFilter = ref(query.appListMetric || 'Bits/s')
-    return {
-      metricFilter,
-      myChart: shallowRef([])
-    }
-  },
   data () {
     return {
       metricOptions: [
@@ -187,11 +179,26 @@ export default {
       timerScroll: null,
       offset: 0,
       flag: false,
-      timerSearc: null,
+      timerSearch: null,
       loadingBody: false
     }
   },
+  setup () {
+    const { query } = useRoute()
+    const metricFilter = ref(query.appListMetric || 'Bits/s')
+    return {
+      metricFilter,
+      myChart: shallowRef([])
+    }
+  },
   watch: {
+    metricFilter (n) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        appListMetric: n
+      })
+      overwriteUrl(newUrl)
+    },
     showAddApp: {
       deep: true,
       handler (n) {
@@ -523,9 +530,9 @@ export default {
       e.target.scrollTop = 0
     },
     searcherAppChange (val) {
-      clearTimeout(this.timerSearc)
+      clearTimeout(this.timerSearch)
       window.addEventListener('scroll', this.scrollChange, true)
-      this.timerSearc = setTimeout(() => {
+      this.timerSearch = setTimeout(() => {
         if (this.flag) {
           return false
         }
@@ -681,7 +688,7 @@ export default {
   beforeUnmount () {
     window.removeEventListener('resize', this.resize)
     clearTimeout(this.timerScroll)
-    clearTimeout(this.timerSearc)
+    clearTimeout(this.timerSearch)
   }
 }
 </script>

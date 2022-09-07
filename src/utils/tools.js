@@ -849,7 +849,7 @@ export function urlParamsHandler (url, oldParams, newParams, cleanOldParams) {
   if (Object.keys(params).length > 0) {
     newUrl += '?'
     Object.keys(params).forEach(key => {
-      newUrl += `${key}=${newParams[key]}&`
+      newUrl += `${key}=${params[key]}&`
     })
     newUrl = newUrl.substring(0, newUrl.length - 1)
   }
