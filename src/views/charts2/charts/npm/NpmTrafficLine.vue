@@ -13,7 +13,7 @@
               :popper-append-to-body="false"
               @change="metricChange"
           >
-            <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
+            <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </div>
       </div>
@@ -86,23 +86,23 @@ export default {
         },
         {
           value: 'establishLatencyMs',
-          label: 'networkAppPerformance.tcpConnectionEstablishLatency'
+          label: this.$t('networkAppPerformance.tcpConnectionEstablishLatency')
         },
         {
           value: 'httpResponseLatency',
-          label: 'networkAppPerformance.httpResponse'
+          label: this.$t('networkAppPerformance.httpResponse')
         },
         {
           value: 'sslConLatency',
-          label: 'networkAppPerformance.sslResponseLatency'
+          label: this.$t('networkAppPerformance.sslResponseLatency')
         },
         {
           value: 'tcpLostlenPercent',
-          label: 'networkAppPerformance.packetLoss'
+          label: this.$t('networkAppPerformance.packetLoss')
         },
         {
           value: 'pktRetransPercent',
-          label: 'overall.packetRetrans'
+          label: this.$t('overall.packetRetrans')
         }
       ],
       npmShowType: 'Bits/s'
