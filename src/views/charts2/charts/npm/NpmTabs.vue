@@ -20,18 +20,41 @@ import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { drillDownPanelTypeMapping } from '@/utils/constants'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 export default {
   name: 'NpmTabs',
   data () {
     return {
-      currentTab: 0,
-      leftOffset: 27,
-      tabs: []
+      leftOffset: 27
     }
   },
   mixins: [chartMixin],
+  setup (props) {
+    const tabs = ref([])
+    if (props.chart.params && props.chart.params.tabs) {
+      tabs.value = [...props.chart.params.tabs]
+      tabs.value.forEach(item => {
+        item.disable = false
+      })
+    }
+    const { query } = useRoute()
+    const tabIndexParam = query.tabIndex
+    const currentTab = ref(tabIndexParam ? parseInt(tabIndexParam) : 0)
+    return {
+      currentTab,
+      tabs
+    }
+  },
   watch: {
     currentTab (n) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        tabIndex: n
+      })
+      overwriteUrl(newUrl)
+
       this.$nextTick(() => {
         this.handleActiveBar(n)
       })
@@ -43,22 +66,17 @@ export default {
   methods: {
     handleActiveBar (index) {
       const tabDom = document.getElementById('tab-' + index)
-      const offsetLeft = tabDom.offsetLeft
-      const clientWidth = tabDom.clientWidth
-      const clientLeft = tabDom.clientLeft
-      const activeBar = document.querySelector('.npm-tabs .npm-tabs__active-bar')
-      activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
+      if (tabDom) {
+        const offsetLeft = tabDom.offsetLeft
+        const clientWidth = tabDom.clientWidth
+        const clientLeft = tabDom.clientLeft
+        const activeBar = document.querySelector('.npm-tabs .npm-tabs__active-bar')
+        activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
+      }
     }
   },
   mounted () {
     this.toggleLoading(false)
-    if (this.chart.params && this.chart.params.tabs) {
-      this.tabs = this.chart.params.tabs
-      this.tabs.forEach(item => {
-        item.disable = false
-      })
-    }
-
     if (this.chart.panelId === drillDownPanelTypeMapping.npmOverviewIp) {
       // 当client或server的session数为0时，对应tab置灰，不可选，默认高亮另一个不为0的tab
       const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
@@ -96,7 +114,7 @@ export default {
       })
     } else {
       setTimeout(() => {
-        this.handleActiveBar(0)
+        this.handleActiveBar(this.currentTab)
       }, 400)
     }
   }

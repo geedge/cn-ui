@@ -38,6 +38,8 @@ import _ from 'lodash'
 import Chart from '@/views/charts2/Chart'
 import { panelTypeAndRouteMapping, storageKey, drillDownPanelTypeMapping } from '@/utils/constants'
 import { typeMapping } from '@/views/charts2/chart-tools'
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 export default {
   name: 'ChartList',
   props: {
@@ -52,14 +54,21 @@ export default {
     return {
       panelTypeAndRouteMapping,
       typeMapping,
-      layout: [],
-      npmTabIndex: 0
+      layout: []
     }
   },
   components: {
     GridLayout: VueGridLayout.GridLayout,
     GridItem: VueGridLayout.GridItem,
     Chart
+  },
+  setup () {
+    const { query } = useRoute()
+    const tabIndexParam = query.tabIndex
+    const npmTabIndex = ref(tabIndexParam ? parseInt(tabIndexParam) : 0)
+    return {
+      npmTabIndex
+    }
   },
   watch: {
     chartList (n) {
