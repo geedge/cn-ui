@@ -6,6 +6,7 @@
         :ref="`dataTable_${index}`"
         :data="tableData"
         class="npm-recent-table"
+        empty-text=" "
         height="100%"
     >
       <template v-for="(item, index) in customTableTitles" :key="index">

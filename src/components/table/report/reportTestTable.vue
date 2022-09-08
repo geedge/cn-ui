@@ -5,6 +5,7 @@
       :data="tableData"
       :height="height"
       :expand-row-keys="expandedIds"
+      empty-text=" "
       row-key="id"
       border
       tooltip-effect="light"
