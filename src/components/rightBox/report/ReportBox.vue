@@ -289,7 +289,7 @@ const paramValidator = (rule, value, callback) => {
 }
 const nameValidator = (rule, value, callback) => {
   let validate = true
-  const reg = /^[\u4e00-\u9fa5A-Za-z\-\_]*$/
+  const reg = /^[\u4e00-\u9fa5A-Za-z0-9\-\_]*$/
   if (reg.test(value)) {
     validate = true
   } else {

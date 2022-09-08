@@ -1,6 +1,6 @@
 <template>
   <div class="cn-chart" style="height: 100%; width: 100%;">
-    <loading :loading="loading"></loading>
+    <loading :loading="loading && !disableLoading"></loading>
     <network-overview-line
         v-if="chart.type === typeMapping.networkOverview.line"
         :chart="chart"
@@ -169,6 +169,13 @@ export default {
       loading: true,
       chartData: null,
       queryParams: {}
+    }
+  },
+  computed: {
+    // 排除某些不需要loading的图表，例如npm-tabs
+    disableLoading () {
+      const disableChartTypes = [typeMapping.npm.npmTabs]
+      return disableChartTypes.indexOf(this.chart.type) > -1
     }
   },
   mounted () {

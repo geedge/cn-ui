@@ -1,9 +1,9 @@
 <template>
  <div class="ddos-detection">
+   <chart-no-data v-if="isNoData"></chart-no-data>
    <div class="ddos-detection-title"><i class="cn-icon cn-icon-a-DDosDetection"></i>{{$t('network.ddosDetection')}}</div>
-   <div class="ddos-detection-value">
-     <chart-no-data v-if="isNoData"></chart-no-data>
-     <div class="ddos-detection-type" v-else>
+   <div class="ddos-detection-value" v-if="!isNoData">
+     <div class="ddos-detection-type">
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.numberOfAttacks')}}</div>
          <div class="ddos-detection-type-value-number">{{$_.get(ddosData, 'attackerCount') || 0}}</div>
@@ -59,11 +59,10 @@ export default {
         if (res.code === 200) {
           if (res.data.result.length === 0) {
             this.isNoData = true
-            return
           } else {
+            this.ddosData = res.data.result[0]
             this.isNoData = false
           }
-          this.ddosData = res.data.result[0]
         }
       }).finally(() => {
         this.toggleLoading(false)

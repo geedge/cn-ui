@@ -76,7 +76,6 @@ export default {
     }
   },
   mounted () {
-    this.toggleLoading(false)
     if (this.chart.panelId === drillDownPanelTypeMapping.npmOverviewIp) {
       // 当client或server的session数为0时，对应tab置灰，不可选，默认高亮另一个不为0的tab
       const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
