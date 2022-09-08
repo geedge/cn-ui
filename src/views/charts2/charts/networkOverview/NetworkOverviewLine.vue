@@ -2,11 +2,11 @@
   <div class="line network">
     <div class="line-header">
       <div class="line-header-left">
-        <div class="line-value-active" v-if="activeTab"></div>
+        <div class="line-value-active" v-if="lineTab"></div>
         <div class="line-value">
           <div class="line-value-mpackets"
                v-show="item.show"
-               :class=" {'is-active': activeTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
+               :class=" {'is-active': lineTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
                v-for="(item, index) in mpackets"
                :key="index"
                @mouseenter="mouseenter(item)"
@@ -31,7 +31,7 @@
           <div class="line-select__operation">
             <el-select
                 size="mini"
-                v-model="value1"
+                v-model="lineMetric"
                 popper-class="common-select"
                 :popper-append-to-body="false"
                 @change="metricSelectChange"
@@ -45,8 +45,8 @@
           <div class="line-select__operation">
             <el-select
                 size="mini"
-                v-model="value2"
-                :disabled="!activeTab"
+                v-model="lineRefer"
+                :disabled="!lineTab"
                 popper-class="common-select"
                 :popper-append-to-body="false"
                 @change="referenceSelectChange"
@@ -69,7 +69,7 @@ import * as echarts from 'echarts'
 import { stackedLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes, chartColor3, chartColor4 } from '@/utils/constants.js'
-import { shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import _ from 'lodash'
 import { get } from '@/utils/http'
@@ -77,13 +77,22 @@ import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { useRoute } from 'vue-router'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'NetworkOverviewLine',
   components: {
     ChartNoData
   },
   setup () {
+    const { query } = useRoute()
+    const lineMetric = ref(query.lineMetric || 'Bits/s')
+    const lineRefer = ref(query.lineRefer || 'Average')
+    const lineTab = ref(query.lineTab || '')
     return {
+      lineMetric,
+      lineRefer,
+      lineTab,
       myChart: shallowRef(null)
     }
   },
@@ -104,7 +113,6 @@ export default {
           label: 'Sessions/s'
         }
       ],
-      value1: 'Bits/s',
       options2: [
         {
           value: 'Average',
@@ -119,7 +127,6 @@ export default {
           label: 'Maximum'
         }
       ],
-      value2: 'Average',
       mpackets: [
         { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
         { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
@@ -132,33 +139,49 @@ export default {
       unitTypes,
       chartDateObject: [],
       timer: null,
-      activeTab: '',
       mousemoveCursor: '',
       leftOffset: 0,
       sizes: [3, 4, 6, 8, 9, 10],
-      echartsLabelValue: '',
-      echartsType: 'Bits/s',
       dynamicVariable: '',
       showMarkLine: true
     }
   },
   watch: {
-    activeTab (n) {
+    lineTab (n) {
       this.$nextTick(() => {
         this.handleActiveBar(n)
+        const { query } = this.$route
+        const newUrl = urlParamsHandler(window.location.href, query, {
+          lineTab: n
+        })
+        overwriteUrl(newUrl)
       })
+    },
+    lineMetric (n) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        lineMetric: n
+      })
+      overwriteUrl(newUrl)
+    },
+    lineRefer (n) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        lineRefer: n
+      })
+      overwriteUrl(newUrl)
     },
     timeFilter: {
       deep: true,
       handler (n) {
-        this.init(this.echartsType, this.showMarkLine, 'active')
+        this.init(this.lineMetric, this.showMarkLine, 'active')
       }
     }
   },
   methods: {
     init (val, show, active) {
       if (!val) {
-        val = 'Bits/s'
+        val = this.lineMetric
       }
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -193,7 +216,7 @@ export default {
                   e.show = false
                 } else {
                   e.show = true
-                  if (!active && show !== this.echartsLabelValue) {
+                  if (!active && show !== this.lineRefer) {
                     this.legendSelectChange(e, 'index')
                   }
                 }
@@ -222,7 +245,7 @@ export default {
                   e.show = false
                 } else {
                   e.show = true
-                  if (!active && show !== this.echartsLabelValue) {
+                  if (!active && show !== this.lineRefer) {
                     this.legendSelectChange(e, 'index')
                   }
                 }
@@ -240,7 +263,7 @@ export default {
                   e.show = false
                 }
                 e.unitType = 'sessions/s'
-                if (show !== this.echartsLabelValue) {
+                if (show !== this.lineRefer) {
                   this.legendSelectChange(e, 0)
                 }
               })
@@ -259,8 +282,13 @@ export default {
       })
     },
     echartsInit (echartsData, show) {
+      if (this.lineTab) {
+        this.handleActiveBar()
+        echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
+      } else {
+        echartsData = echartsData.filter(t => t.show === true)
+      }
       const _this = this
-      echartsData = echartsData.filter(t => t.show === true)
       const dom = document.getElementById('overviewLineChart')
       if (!this.myChart) {
         this.myChart = echarts.init(dom)
@@ -310,7 +338,7 @@ export default {
             label: {
               formatter (params) {
                 const arr = unitConvert(params.value, unitTypes.number).join('')
-                return _this.echartsLabelValue + '(' + arr + echartsData[0].unitType + ')'
+                return _this.lineRefer + '(' + arr + echartsData[0].unitType + ')'
               },
               position: 'insideStartTop',
               color: '#717171',
@@ -325,7 +353,7 @@ export default {
           t.markLine = []
         })
       }
-      if (this.echartsLabelValue === 'Average' && show) {
+      if (this.lineRefer === 'Average' && show) {
         this.chartOption.series.forEach((t, i) => {
           t.markLine.label.show = true
           t.markLine.data = [
@@ -334,14 +362,14 @@ export default {
             }
           ]
         })
-      } else if (this.echartsLabelValue === '95th Percentile' && show) {
+      } else if (this.lineRefer === '95th Percentile' && show) {
         this.chartOption.series.forEach((t, i) => {
           t.markLine.label.show = true
           t.markLine.data = [
             { yAxis: echartsData[i].analysis.p95 }
           ]
         })
-      } else if (this.echartsLabelValue === 'Maximum' && show) {
+      } else if (this.lineRefer === 'Maximum' && show) {
         this.chartOption.series.forEach((t, i) => {
           t.markLine.label.show = true
           t.markLine.data = [
@@ -360,15 +388,10 @@ export default {
       this.myChart.setOption(this.chartOption)
     },
     activeChange (item, index) {
-      if (!this.echartsLabelValue) {
-        this.echartsLabelValue = 'Average'
-      } else {
-        this.echartsLabelValue = this.echartsLabelValue
-      }
-      this.activeTab = item.class
+      this.lineTab = item.class
       this.legendSelectChange(item, index, 'active')
       this.showMarkLine = !item.invertTab
-      this.init(this.echartsType, this.showMarkLine, 'active')
+      this.init(this.lineMetric, this.showMarkLine, 'active')
     },
     mouseenter (item) {
       this.mousemoveCursor = item.class
@@ -391,9 +414,8 @@ export default {
     },
     legendSelectChange (item, index, val) {
       if (index === 'index') {
-        this.activeTab = !item.class
         this.dispatchLegendSelectAction(item.name)
-      } else if (this.mpackets[index].name === item.name) {
+      } else if (this.mpackets[index] && this.mpackets[index].name === item.name) {
         this.dispatchLegendSelectAction(item.name)
         this.mpackets.forEach((t) => {
           if (t.name !== item.name) {
@@ -409,7 +431,11 @@ export default {
             t.invertTab = true
           }
           if (t.invertTab && item.name === t.name) {
-            this.activeTab = !t.class
+            if (this.lineTab) {
+              this.lineTab = ''
+            } else {
+              this.lineTab = t.class
+            }
             this.mpackets.forEach((e) => {
               this.dispatchLegendSelectAction(e.name)
             })
@@ -428,14 +454,14 @@ export default {
       this.myChart.resize()
     },
     metricSelectChange (val) {
-      this.echartsType = val
-      this.activeTab = ''
+      this.lineMetric = val
+      this.lineTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
       this.init(val, this.showMarkLine)
     },
     referenceSelectChange (val) {
-      this.echartsLabelValue = val
+      this.lineRefer = val
       this.echartsInit(this.mpackets, this.showMarkLine)
     },
     symbolSizeSortChange (index, time) {
@@ -477,7 +503,12 @@ export default {
   },
   mounted () {
     this.timer = setTimeout(() => {
-      this.init()
+      if (this.lineTab) {
+        const data = this.mpackets.find(t => t.class === this.lineTab)
+        this.activeChange(data, data.positioning)
+      } else {
+        this.init()
+      }
     }, 200)
     window.addEventListener('resize', this.resize)
   },
