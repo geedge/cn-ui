@@ -1,12 +1,13 @@
 <template>
-  <div class="chart__loading" v-show="loading">
-<!--    <img :class="className" :src="path" alt="" :style="innerStyle">-->
-    <div class="cn-loading" :class="className">
-      <div class="cn-loading__inner">
-      <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+  <Transition name="fade">
+    <div class="chart__loading" v-show="loading">
+      <div class="cn-loading" :class="className">
+        <div class="cn-loading__inner">
+          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script>
