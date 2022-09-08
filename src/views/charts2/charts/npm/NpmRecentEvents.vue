@@ -96,9 +96,7 @@ export default {
       this.toggleLoading(true)
       get(url, params).then(res => {
         if (res.code === 200) {
-          if (res.data.result.length === 0) {
-            this.isNoData = true
-          }
+          this.isNoData = res.data.result.length === 0
           res.data.result.forEach(e => {
             if (e.startTime) {
               e.startTime = dateFormatByAppearance(e.startTime)

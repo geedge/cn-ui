@@ -1,5 +1,6 @@
 <template>
   <div class="line network">
+    <chart-no-data v-if="isNoData"></chart-no-data>
     <div class="line-header">
       <div class="line-header-left">
         <div class="line-value-active" v-if="activeTab"></div>
@@ -57,10 +58,7 @@
         </div>
       </div>
     </div>
-    <div style="height: calc(100% - 74px); width: 100%;">
-      <chart-no-data v-if="isNoData"></chart-no-data>
-      <div class="chart-drawing" v-show="showMarkLine" id="overviewLineChart"></div>
-    </div>
+    <div class="chart-drawing" v-show="showMarkLine" id="overviewLineChart"></div>
   </div>
 </template>
 
