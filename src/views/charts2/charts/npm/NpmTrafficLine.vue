@@ -30,7 +30,7 @@ import * as echarts from 'echarts'
 import { trafficLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes, chartColor3 } from '@/utils/constants.js'
-import { shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
@@ -38,6 +38,8 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import _ from 'lodash'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { useRoute } from 'vue-router'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'NpmTrafficLine',
   mixins: [chartMixin],
@@ -45,7 +47,10 @@ export default {
     ChartNoData
   },
   setup () {
+    const { query } = useRoute()
+    const metricFilter = ref(query.lineMetric || 'Bits/s')
     return {
+      metricFilter,
       myChart: shallowRef(null)
     }
   },
@@ -60,7 +65,7 @@ export default {
         { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: '' },
         { name: 'network.internal', show: true, positioning: 3, data: [], unitType: '' },
         { name: 'network.through', show: true, positioning: 4, data: [], unitType: '' },
-        { name: 'network.other', show: true, positioning: 5, data: [], unitType: '' },
+        { name: 'network.other', show: true, positioning: 5, data: [], unitType: '' }
       ],
       npmQuantity: [
         { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: '' },
@@ -70,7 +75,6 @@ export default {
         { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: '' }
       ],
       chartData: {},
-      metricFilter: 'Bits/s',
       metricOptions: [
         {
           value: 'Bits/s',
@@ -104,11 +108,17 @@ export default {
           value: 'pktRetransPercent',
           label: this.$t('overall.packetRetrans')
         }
-      ],
-      npmShowType: 'Bits/s'
+      ]
     }
   },
   watch: {
+    metricFilter (n) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        lineMetric: n
+      })
+      overwriteUrl(newUrl)
+    },
     timeFilter: {
       deep: true,
       handler (n) {
