@@ -335,7 +335,7 @@ export default {
       rules: { // 表单校验规则
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: nameValidator, message: this.$t('validate.wrongFrom'), trigger: 'blur' }
+          { validator: nameValidator, message: this.$t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
         ],
         categoryId: [
           { required: true, message: this.$t('validate.required'), trigger: 'change' }
