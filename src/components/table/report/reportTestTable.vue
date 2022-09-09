@@ -6,9 +6,10 @@
       :height="height"
       :expand-row-keys="expandedIds"
       empty-text=" "
-      row-key="id"
       border
       tooltip-effect="light"
+      :row-key="(row) => { return row.id }"
+      :reserve-selection="true"
       @header-dragend="dragend"
       @sort-change="tableDataSort"
       @expand-change="dropExpandChange"
@@ -197,7 +198,7 @@
     </el-table-column>
   </el-table>
   <div class="table-operation-all">
-    <el-checkbox v-model="checkboxAll" @change="selectAll(tableData)"></el-checkbox>
+    <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
     <div class="table-operation-all-span">
       <span>{{ $t('overall.all') }}</span>
       <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
@@ -214,6 +215,7 @@ import Loading from '@/components/common/Loading'
 import { del, get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { storageKey, report } from '@/utils/constants'
+import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { ref } from 'vue'
 import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
@@ -281,6 +283,7 @@ export default {
         }
       ],
       checkboxAll: false,
+      isIndeterminate: false,
       checkboxIds: {},
       batchDow: false,
       builtinId: '',
@@ -314,7 +317,15 @@ export default {
       monthList: report.monthList,
       weekOptions: report.weekOptions,
       configPeriod: '',
-      configCustom: ''
+      configCustom: '',
+      selectIds: [], // 单行选中的id列表
+    }
+  },
+  watch: {
+    'tableData'(newVal, oldVal) {
+        if(newVal) {
+          this.showSelectedRow();
+        }
     }
   },
   computed: {
@@ -355,7 +366,41 @@ export default {
       }
     }
   },
+  mounted() {
+    this.expandTable();    
+  },
   methods: {
+    /**
+     * 进入页面判断是否需要展开表格
+     * 即展开表格后刷新界面，保持展开效果
+     */
+     expandTable() {
+      let expandInfo = sessionStorage.getItem('report_expand_table');
+      expandInfo = JSON.parse(expandInfo);
+      
+      if(expandInfo !== null && expandInfo !== undefined) {
+        let obj = {
+          id: expandInfo[0]
+        }
+        this.dropExpandChange(obj, expandInfo);
+      }      
+    },
+    /**
+     * 显示选中的行，即分页后依旧显示
+     */
+    showSelectedRow() {
+      let selectIds = this.selectIds;
+
+      this.$nextTick(() => {
+        if(selectIds.length>0) {
+          this.tableData.forEach(item =>{
+            if(selectIds.includes(item.id)) {
+              this.$refs.dataTable.toggleRowSelection(item);
+            }
+          })
+        }
+      });      
+    },
     getJobStatus (report) {
       if (report.state === 1 && report.upload === 1) {
         return this.$t('overall.completed')
@@ -368,27 +413,82 @@ export default {
         this.tableOperation(arr)
       }
     },
-    selectionChange (objs) {
+    /**
+     * 单行选中
+     */
+     selectionChange (objs) {
       this.$emit('selectionChange', objs)
-      this.checkboxIds.id = objs.map(item => { return item.id }).join(',')
-      this.checkboxAll = objs.length > 0 || objs.length === this.tableData.length
-      this.batchDow = objs.length > 0
+      this.checkboxIds.id = objs.map(item => { return item.id }).join(',');
+
+      this.batchDow = objs.length > 0;
+
+      this.checkboxAll = objs.length === this.tableData.length;
+      this.isIndeterminate = objs.length > 0 && objs.length < this.tableData.length;
+      
+      // 选中状态回显
+      let selectIds = [];
+      if(objs.length > 0) {
+        objs.forEach(item => {
+          selectIds.push(item.id);
+        })
+        this.selectIds = selectIds;
+      }
     },
+    /**
+     * 全选按钮
+     */
     selectAll (objs) {
+      let selectIds = [];
+      this.isIndeterminate = false;
+
       if (objs) {
         objs.forEach(item => {
-          this.$refs.dataTable.toggleAllSelection(item)
+          this.$refs.dataTable.toggleAllSelection(item);
+          // this.checkboxAll = true;
+          selectIds.push(item.id);
         })
       } else {
         this.$refs.dataTable.clearSelection()
       }
+
+      this.selectIds = selectIds;
     },
+    /**
+     * 向地址栏添加/删除参数
+     */
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route;
+      let newUrl = urlParamsHandler(window.location.href, query, newParam);
+      if(clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean);
+      }
+      overwriteUrl(newUrl)
+    },
+    /**
+     * 表格左侧点击展开收起
+     */
     dropExpandChange (row, expandedRows) {
       this.expandedIds = []
       clearInterval(this.interval)
       if (expandedRows.length > 0 && row) {
         this.expandedIds.push(row.id)
         this.datePickerChange(row)
+        // 存入缓存，随后向地址栏添加参数
+        sessionStorage.setItem('report_expand_table', JSON.stringify(this.expandedIds));
+
+        let newParam = {
+          expandId: row.id
+        }
+        this.reloadUrl(newParam);
+      } else {
+        // 删除地址栏参数，然后删除缓存
+        let newQuery = JSON.parse(JSON.stringify(this.$route.query)) // 深拷贝路由数据
+        delete newQuery.expandId;
+        delete newQuery.expandPaginaTionPage;
+        this.reloadUrl(newQuery, 'cleanOldParams');
+
+        sessionStorage.setItem('report_expand_table', null);
+        sessionStorage.setItem('report_select_expand_pagination', null);
       }
     },
     datePickerChange (row, show) {

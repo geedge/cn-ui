@@ -23,6 +23,7 @@
 <script>
 import { defaultPageSize } from '@/utils/constants'
 import { storageKey } from '@/utils/constants'
+import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 
 export default {
   name: 'pagination',
@@ -58,6 +59,17 @@ export default {
     }
   },
   methods: {
+    /**
+     * 向地址栏添加/删除参数
+     */
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route;
+      let newUrl = urlParamsHandler(window.location.href, query, newParam);
+      if(clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean);
+      }
+      overwriteUrl(newUrl)
+    },
     popperVisible: function (visible) {
       if (visible == true) {
         this.$nextTick(() => {
@@ -96,12 +108,29 @@ export default {
       this.$emit('pageNo', val)
       this.backgroundColor()
       this.scrollbarToTop()
+
+      sessionStorage.setItem('report_pagination_current', JSON.stringify(val));
+      if(val != null) {
+        let newParam = {
+          currentPage: val
+        }
+        this.reloadUrl(newParam);
+      }
     },
+    /**
+     * 更改页码大小
+     */
     size (val) {
       // eslint-disable-next-line vue/no-mutating-props
       this.pageObj.pageNo = 1
       this.$emit('pageSize', val)
       this.backgroundColor()
+
+      sessionStorage.setItem('report_pagination_size', JSON.stringify(val));
+      let newParam = {
+        pageSize: val
+      }
+      this.reloadUrl(newParam);
     },
     scrollbarToTop () {
       this.$nextTick(() => {
@@ -122,10 +151,10 @@ export default {
     },
     // 设置当前页的样式
     backgroundColor () {
-      this.list = this.$refs.page.$el.children[2].children
-      for (let i = 0; i < this.list.length; i++) {
-        // const element = this.list[i]
-      }
+      // this.list = this.$refs.page.$el.children[2].children
+      // for (let i = 0; i < this.list.length; i++) {
+      //   // const element = this.list[i]
+      // }
     }
   },
   mounted () {
@@ -137,6 +166,19 @@ export default {
       if (pageSize != 'undefined' && pageSize != null) {
         this.pageSize = parseInt(pageSize)
       }
+    }
+
+    let pageSize = sessionStorage.getItem('report_pagination_size'); // 缓存的每页个数
+    let currentPage = sessionStorage.getItem('report_pagination_current'); // 当前页码
+
+    if(pageSize !== undefined && pageSize !== null) {
+      pageSize = JSON.parse(pageSize);
+      this.size(pageSize);
+    }
+
+    if(currentPage !== undefined && currentPage !== null) {
+      currentPage = JSON.parse(currentPage);
+      this.current(currentPage);
     }
   },
   watch: {

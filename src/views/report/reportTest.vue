@@ -75,6 +75,7 @@ import builtinReportTable from '@/components/table/report/reportTestTable'
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
+import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import ReportBox from '@/components/rightBox/report/ReportBox'
 import Loading from '@/components/common/Loading'
 
@@ -84,7 +85,7 @@ export default {
     return {
       builtinReportLeftMenu: [], // 左侧列表菜单数据
       builtinColor: false,
-      builtinId: '',
+      builtinId: -1,
       url: api.reportTemp,
       blankObject: {
         id: '',
@@ -154,7 +155,23 @@ export default {
     builtinReportTable,
     ReportBox
   },
+  mounted () {
+    this.$nextTick(() => {
+      this.queryGetTempData();      
+    });    
+  },
   methods: {
+    /**
+     * 向地址栏添加/删除参数
+     */
+     reloadUrl (newParam, clean) {
+      const { query } = this.$route;
+      let newUrl = urlParamsHandler(window.location.href, query, newParam);
+      if(clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean);
+      }
+      overwriteUrl(newUrl)
+    },
     queryGetTempData () {
       this.builtinLeftLoading = true
       get(api.reportCategory).then(res => {
@@ -165,6 +182,15 @@ export default {
               config: c.config ? JSON.parse(c.config) : {}
             }
           })
+          let tabId = sessionStorage.getItem('report_select_tab');
+          if(tabId != null) {
+            tabId = JSON.parse(tabId);
+            this.builtinId = tabId;
+            this.builtinTabs(this.builtinId);            
+          } else {
+            this.builtinId = null;
+            this.getTableData();
+          }
         }
         this.builtinLeftLoading = false
       })
@@ -180,26 +206,51 @@ export default {
       if (this.listUrl) {
         listUrl = this.listUrl
       }
-      get(listUrl, this.searchLabel).then(response => {
-        // this.tools.loading = false
-        if (response.code === 200) {
-          for (let i = 0; i < response.data.list.length; i++) {
-            response.data.list[i].status = response.data.list[i].status + ''
-          }
-          this.tableData = response.data.list.map(item => {
-            return {
-              ...item,
-              config: item.config ? JSON.parse(item.config) : {}
+
+      let urlTabId = this.$route.query.tabId;
+
+      // 该请求不知道为什么会走2次，此处留个记录，后续解决。为避免请求两次，所以加上判断保证请求一次
+      // 前面条件是第一次进来时，左侧菜单栏点击缓存为null的情况；
+      // 后面条件是点击菜单栏后刷新界面的情况
+      if((this.builtinId === null) || (this.builtinId > -1 && urlTabId !== undefined)) {
+        get(listUrl, this.searchLabel).then(response => {
+          // this.tools.loading = false
+          if (response.code === 200) {
+            for (let i = 0; i < response.data.list.length; i++) {
+              response.data.list[i].status = response.data.list[i].status + ''
             }
-          })
-          this.pageObj.total = response.data.total
-          // TODO 回到顶部
-        }
-      })
+            this.tableData = response.data.list.map(item => {
+              return {
+                ...item,
+                config: item.config ? JSON.parse(item.config) : {}
+              }
+            })
+            this.pageObj.total = response.data.total;
+            // TODO 回到顶部
+          }
+        })
+      }
+
     },
+    /**
+     * 点击左侧tab页
+     */
     builtinTabs (id) {
       this.getTableData({ categoryId: id })
       this.builtinId = id
+
+      sessionStorage.setItem('report_select_tab', JSON.stringify(id));
+
+      if(id != null) {
+        let newParam = {
+          tabId: id
+        }
+        this.reloadUrl(newParam);
+      } else {
+        let newQuery = JSON.parse(JSON.stringify(this.$route.query)) // 深拷贝路由数据
+        delete newQuery.tabId;
+        this.reloadUrl(newQuery, 'cleanOldParams');
+      }
     },
     edit (u) {
       this.initConfig(u)
@@ -245,9 +296,6 @@ export default {
         }
       }
     }
-  },
-  mounted () {
-    this.queryGetTempData()
   }
 }
 </script>
