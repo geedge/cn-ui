@@ -12,7 +12,7 @@ const permissionWhiteList = [...loginWhiteList, '/entityDetail'] // 权限白名
 
 router.beforeEach(async (to, from, next) => {
   if (to.path.indexOf('/login') == -1) {
-    sessionStorage.setItem(storageKey.tokenExpireCurrentPath, to.fullPath)
+    sessionStorage.setItem(storageKey.tokenExpireCurrentPath, decodeURIComponent(to.fullPath))
   }
   // 加载iso-3166-2资源
   loadGeoData()
@@ -50,13 +50,13 @@ router.beforeEach(async (to, from, next) => {
         if (hasParam(to.fullPath, 'redirect')) {
           next()
         } else {
-          next({ path: '/login', query: { redirect: tokenExpireCurrentPath } })
+          next({ path: '/login', query: { redirect: decodeURIComponent(tokenExpireCurrentPath) } })
         }
       } else {
         next()
       }
     } else {
-      next({ path: '/login', query: { redirect: to.fullPath } })
+      next({ path: '/login', query: { redirect: decodeURIComponent(to.fullPath) } })
     }
   }
 })
