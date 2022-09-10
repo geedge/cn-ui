@@ -19,5 +19,9 @@ export const typeMapping = {
     npmNetworkQuantity: 703,
     npmRecentEvents: 602,
     appEventTable: 603
+  },
+  linkMonitor: {
+    linkBlock: 707,
+    linkTrafficSankey: 708
   }
 }

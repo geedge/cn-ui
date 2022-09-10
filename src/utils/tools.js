@@ -859,3 +859,30 @@ export function urlParamsHandler (url, oldParams, newParams, cleanOldParams) {
 export function overwriteUrl (url) {
   window.history.pushState('', '', url)
 }
+
+/*
+startColor: 渐变起始颜色，对应最大值
+endColor: 渐变结束颜色，对应最小值
+values: 从大到小排好序的数值
+ */
+export function colorGradientCalculation (startColor, endColor, values) {
+  const colors = []
+  const startRgbArr = colorHexToRgbArr(startColor)
+  const endRgbArr = colorHexToRgbArr(endColor)
+  const rDiff = endRgbArr[0] - startRgbArr[0]
+  const gDiff = endRgbArr[1] - startRgbArr[1]
+  const bDiff = endRgbArr[2] - startRgbArr[2]
+  const valueDiff = values[0] - values[values.length - 1]
+  values.forEach((v, i) => {
+    colors.push(`rgb(${startRgbArr[0] + Math.floor(rDiff * (valueDiff - diff(v)) / valueDiff)},${startRgbArr[1] + Math.floor(gDiff * (valueDiff - diff(v)) / valueDiff)},${startRgbArr[2] + Math.floor(bDiff * (valueDiff - diff(v)) / valueDiff)})`)
+  })
+  function diff (v) {
+    return v - values[values.length - 1]
+  }
+  return colors
+}
+
+// returns an array like [11,22,33]
+export function colorHexToRgbArr (hex) {
+  return [1, 3, 5].map((h) => parseInt(hex.substring(h, h + 2), 16))
+}

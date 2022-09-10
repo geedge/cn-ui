@@ -194,6 +194,9 @@ export const api = {
       recentEventsD: '/interface/application/performance/overview/drilldown/dimension/recentEvents',
       dimensionEvents: '/interface/overview/event/dimensionEvents'
     }
+  },
+  linkMonitor: {
+    links: '/interface/linkMonitor/links'
   }
 }
 

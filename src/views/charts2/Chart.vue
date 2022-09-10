@@ -110,6 +110,18 @@
         :chart="chart"
         @toggleLoading="toggleLoading"
     ></npm-traffic-line>
+    <link-block
+        v-else-if="chart.type === typeMapping.linkMonitor.linkBlock"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></link-block>
+    <link-traffic-sankey
+        v-else-if="chart.type === typeMapping.linkMonitor.linkTrafficSankey"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></link-traffic-sankey>
   </div>
 </template>
 
@@ -133,6 +145,8 @@ import NpmEventsHeader from '@/views/charts2/charts/npm/NpmEventsHeader'
 import RelatedSessions from '@/views/charts2/charts/npm/RelatedSessions'
 import NpmIpMap from '@/views/charts2/charts/npm/NpmIpMap'
 import NpmTrafficLine from '@/views/charts2/charts/npm/NpmTrafficLine'
+import LinkBlock from '@/views/charts2/charts/linkMonitor/LinkBlock'
+import LinkTrafficSankey from '@/views/charts2/charts/linkMonitor/LinkTrafficSankey'
 import { get } from '@/utils/http'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
@@ -156,7 +170,9 @@ export default {
     NpmAppEventTable,
     RelatedSessions,
     NpmIpMap,
-    NpmTrafficLine
+    NpmTrafficLine,
+    LinkBlock,
+    LinkTrafficSankey
   },
   props: {
     chart: Object,
