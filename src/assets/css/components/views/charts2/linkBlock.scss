@@ -51,6 +51,12 @@
       width: 30px;
       border-radius: 2px;
       margin: 0 6px 6px 0;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 0 1px 4px 0 #046eca;
+        border: 1px solid #046eca;
+      }
     }
   }
 }
@@ -60,7 +66,7 @@
 
   .el-popper__arrow::before {
     background-color: #1F2B33 !important;
-    border-color: #F7F7F7 !important;
+    // border-color: #F7F7F7 !important;
   }
 
   .popper-content {
