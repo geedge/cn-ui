@@ -31,7 +31,16 @@
         </template>
       </el-popover>
     </div>
-    <div class="block-heat-legend"></div>
+    <div class="block-heat-legend">
+      <div class="legend__box">
+        <div class="legend__value">
+          <span>0</span>
+          <span>90%</span>
+        </div>
+        <div class="legend__color-piece"></div>
+        <div class="legend__desc">{{$t('linkMonitor.linkBlock.bandwidthUsage')}}</div>
+      </div>
+    </div>
   </div>
 </template>
 
