@@ -24,6 +24,9 @@
 import { defaultPageSize } from '@/utils/constants'
 import { storageKey } from '@/utils/constants'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { parseInt } from 'lodash'
 
 export default {
   name: 'pagination',
@@ -39,9 +42,23 @@ export default {
       default: 'total, prev, pager, next, slot'
     }
   },
+  /**
+   * 添加vue3的setup，目的是添加/获取地址栏的参数
+   */
+  setup () {
+    const { query } = useRoute()
+    const pageSize = ref(defaultPageSize)
+    console.log('初始化路由信息', query);
+    let currentPageNo = ref(query.pageNo || 1)
+
+    return {
+      pageSize,
+      currentPageNo
+    }
+  },
   data () {
     return {
-      pageSize: defaultPageSize,
+      // pageSize: defaultPageSize,
       pageSizes: [
         {
           label: '20' + this.$t('pageSize'),
@@ -108,25 +125,22 @@ export default {
       this.$emit('pageNo', val)
       this.backgroundColor()
       this.scrollbarToTop()
+      // this.currentPageNo = val;
 
-      sessionStorage.setItem('report_pagination_current', JSON.stringify(val));
-      if(val != null) {
-        let newParam = {
-          currentPage: val
-        }
-        this.reloadUrl(newParam);
+      let newParam = {
+        pageNo: val
       }
+      this.reloadUrl(newParam);
     },
     /**
      * 更改页码大小
      */
     size (val) {
       // eslint-disable-next-line vue/no-mutating-props
-      this.pageObj.pageNo = 1
+      // this.pageObj.pageNo = 1
       this.$emit('pageSize', val)
       this.backgroundColor()
 
-      sessionStorage.setItem('report_pagination_size', JSON.stringify(val));
       let newParam = {
         pageSize: val
       }
@@ -167,19 +181,10 @@ export default {
         this.pageSize = parseInt(pageSize)
       }
     }
-
-    let pageSize = sessionStorage.getItem('report_pagination_size'); // 缓存的每页个数
-    let currentPage = sessionStorage.getItem('report_pagination_current'); // 当前页码
-
-    if(pageSize !== undefined && pageSize !== null) {
-      pageSize = JSON.parse(pageSize);
-      this.size(pageSize);
-    }
-
-    if(currentPage !== undefined && currentPage !== null) {
-      currentPage = JSON.parse(currentPage);
-      this.current(currentPage);
-    }
+    
+    this.size(this.pageSize);
+    this.currentPageNo = parseInt(this.currentPageNo);
+    this.current(this.currentPageNo);
   },
   watch: {
     postPageSizes: {

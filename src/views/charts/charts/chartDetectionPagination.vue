@@ -1,39 +1,49 @@
 <template>
-  <el-pagination
-    small
-    ref="pagination"
-    :current-page="pageObj.pageNo"
-    :page-size="pageObj.pageSize"
-    layout="total,prev,jumper,slot,next"
-    class="chart-table-pagination"
-    :total="pageObj.total"
-    @current-change="currentChange"
-  >
-    <span>/&nbsp;{{totalPage}}</span>
-  </el-pagination>
+  <div>
+    <loading :loading="loading"></loading>
+    <el-pagination
+      small
+      ref="pagination"
+      :current-page="pageObj.pageNo"
+      :page-size="pageObj.pageSize"
+      layout="total,prev,jumper,slot,next"
+      class="chart-table-pagination"
+      :total="pageObj.total"
+      @current-change="currentChange"
+    >
+      <span>/&nbsp;{{totalPage}}</span>
+    </el-pagination>
+  </div>  
 </template>
 
 <script>
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import { ref, shallowRef } from 'vue'
+import { parseInt } from 'lodash'
+import Loading from '@/components/common/Loading'
 export default {
   name: 'chartDetectionPagination',
   props: {
     pageObj: Object,
   },
+  components: {
+    Loading
+  },
   data() {
     return {
-      newPageObj: {},
+      initNum: -1,
+      loading: false,
+      timer: null
     }
   },
-  // setup () {
-  //   const { query } = useRoute()
-  //   const pagination = ref(query.expandPaginaTionPage || 1)
-  //   return {
-  //     pagination
-  //   }
-  // },
+  setup () {
+    const { query } = useRoute()
+    const pageNo = ref(query.expandPaginaTionPage || 1)
+    return {
+      pageNo
+    }
+  },
   computed: {
     totalPage() {
       const remainder = this.pageObj.total % this.pageObj.pageSize
@@ -49,10 +59,8 @@ export default {
      * 当前页改变
      */
     currentChange: function(val) {
-      this.$emit('pageJump', val)
       this.pageObj.pageNo = val
-
-      sessionStorage.setItem('report_select_expand_pagination', JSON.stringify(val))
+      this.$emit('pageJump', val)
 
       let newParam = {
         expandPaginaTionPage: val,
@@ -62,22 +70,25 @@ export default {
       overwriteUrl(newUrl)
     },
     initData() {
-      let pageNo = sessionStorage.getItem('report_select_expand_pagination');
-      if (pageNo != null) {
-        pageNo = JSON.parse(pageNo)
-        this.pageObj.pageNo = pageNo
-        this.currentChange(pageNo, 'init')
-      }
+        let pageNo = this.pageNo;
+        this.timer = setTimeout(() => {
+          this.currentChange(parseInt(pageNo));
+        }, 500);
+        
     },
   },
   mounted() {
     this.$el.querySelector('.el-pagination__jump').childNodes[0].nodeValue = ''
 
-    this.$nextTick(() => {
-      setTimeout(() => {
+    this.initNum = this.initNum+1;
+    if(this.initNum === 0) {
+      this.$nextTick(()=>{
         this.initData()
-      }, 100)
-    })
+      })
+    }
   },
+  beforeDestroy(to, from, next) {
+    clearTimeout(this.timer);
+  }
 }
 </script>

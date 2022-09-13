@@ -1,5 +1,6 @@
 <template>
-  <el-table
+  <div>
+    <el-table
       id="reportTable"
       ref="dataTable"
       :data="tableData"
@@ -14,199 +15,200 @@
       @sort-change="tableDataSort"
       @expand-change="dropExpandChange"
       @selection-change="selectionChange"
-  >
-    <el-table-column type="expand" width="30">
-      <template #default="props">
-        <div class="down">
-          <loading :loading="loadingDown"></loading>
-          <div class="block drop-down-time">
-            <el-date-picker
-                v-model="timeRange"
-                size="small"
-                :format="format"
-                :clearable="false"
-                type="datetimerange"
-                range-separator="To"
-                :start-placeholder="$t('detections.startTime')"
-                :end-placeholder="$t('detections.endTime')"
-                @change="datePickerChange(props.row)"
-            />
-          </div>
-          <div class="expand">
-            <chart-no-data v-if="downDataList.length === 0 && !loadingDown"></chart-no-data>
-            <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
-              <div class="expand-right">
-                <div class="demo-progress">
-                  <el-progress :stroke-width="10" type="circle" :percentage="computePercent(item)" :color="computePercent(item) === 'Failed' ? '#D8A6A6' : (computePercent(item) === 100 ? '#21bf9a' : '#50b3ef')">
-                    <template #default="{ percentage }">
-                      <span style="font-size: 0.875rem;" v-if="percentage !== 'Failed'">{{ percentage + '%' }}</span>
-                      <span style="font-size: 0.875rem;color: #C14843" v-else>{{percentage}}</span>
-                    </template>
-                  </el-progress>
-                </div>
-              </div>
-              <div class="expand-left">
-                <div class="expand-name"><i class="cn-icon cn-icon-user"></i>{{ username }}</div>
-                <div class="expand-time">
-                  <div>{{ $t('report.creationTime') }}</div>
-                  <div>{{dateFormatByAppearance(item.ctime)}}</div>
-                </div>
-                <div class="expand-icon">
-                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['download', item])">
-                    <loading :loading="loadingTableId === item.id" size="small"></loading>
-                    <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
-                      <use xlink:href="#cn-icon-download2"></use>
-                    </svg>
+    >
+      <el-table-column type="expand" width="30">
+        <template #default="props">
+          <div class="down">
+            <loading :loading="loadingDown"></loading>
+            <div class="block drop-down-time">
+              <el-date-picker
+                  v-model="timeRange"
+                  size="small"
+                  :format="format"
+                  :clearable="false"
+                  type="datetimerange"
+                  range-separator="To"
+                  :start-placeholder="$t('detections.startTime')"
+                  :end-placeholder="$t('detections.endTime')"
+                  @change="datePickerChange(props.row)"
+              />
+            </div>
+            <div class="expand">
+              <chart-no-data v-if="downDataList.length === 0 && !loadingDown"></chart-no-data>
+              <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
+                <div class="expand-right">
+                  <div class="demo-progress">
+                    <el-progress :stroke-width="10" type="circle" :percentage="computePercent(item)" :color="computePercent(item) === 'Failed' ? '#D8A6A6' : (computePercent(item) === 100 ? '#21bf9a' : '#50b3ef')">
+                      <template #default="{ percentage }">
+                        <span style="font-size: 0.875rem;" v-if="percentage !== 'Failed'">{{ percentage + '%' }}</span>
+                        <span style="font-size: 0.875rem;color: #C14843" v-else>{{percentage}}</span>
+                      </template>
+                    </el-progress>
                   </div>
-                  <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['preview', item])">
-                    <loading :loading="loadingPreviewId === item.id" size="small"></loading>
-                    <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
-                      <use xlink:href="#cn-icon-preview"></use>
-                    </svg>
+                </div>
+                <div class="expand-left">
+                  <div class="expand-name"><i class="cn-icon cn-icon-user"></i>{{ username }}</div>
+                  <div class="expand-time">
+                    <div>{{ $t('report.creationTime') }}</div>
+                    <div>{{dateFormatByAppearance(item.ctime)}}</div>
                   </div>
-                  <div class="table-operation-item--no-border" @click="downDeleteQueryChange(item, props)">
-                    <svg class="icon" aria-hidden="true">
-                      <use xlink:href="#cn-icon-shanchu"></use>
-                    </svg>
+                  <div class="expand-icon">
+                    <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['download', item])">
+                      <loading :loading="loadingTableId === item.id" size="small"></loading>
+                      <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
+                        <use xlink:href="#cn-icon-download2"></use>
+                      </svg>
+                    </div>
+                    <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['preview', item])">
+                      <loading :loading="loadingPreviewId === item.id" size="small"></loading>
+                      <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
+                        <use xlink:href="#cn-icon-preview"></use>
+                      </svg>
+                    </div>
+                    <div class="table-operation-item--no-border" @click="downDeleteQueryChange(item, props)">
+                      <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#cn-icon-shanchu"></use>
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+            <div class="cn-detection__footer">
+              <chart-detection-pagination
+                  ref="pagination"
+                  :page-obj="pageObj"
+                  @pageJump="pageJump"
+              ></chart-detection-pagination>
+            </div>
           </div>
-          <div class="cn-detection__footer">
-            <chart-detection-pagination
-                ref="pagination"
-                :page-obj="pageObj"
-                @pageJump="pageJump"
-            ></chart-detection-pagination>
-          </div>
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column
-        :resizable="false"
-        align="center"
-        type="selection"
-        width="30">
-    </el-table-column>
-    <el-table-column
-        v-for="(item, index) in customTableTitles"
-        :key="`col-${index}`"
-        :fixed="item.fixed"
-        :label="item.label"
-        :min-width="`${item.minWidth}`"
-        :prop="item.prop"
-        :resizable="true"
-        :show-overflow-tooltip="item.prop === 'timePlan'"
-        :sort-orders="['ascending', 'descending']"
-        :sortable="item.sortable"
-        :width="`${item.width}`"
-    >
-      <template #header>
-        <span class="data-column__span">{{item.label}}</span>
-        <div class="col-resize-area"></div>
-      </template>
-      <template #default="scope" :column="item">
-        <span v-if="item.prop === 'timeLimit'">
-          {{handleTimeRange(scope.row)}}
-        </span>
-        <span v-else-if="item.prop === 'categoryId'">
-          <span v-for="(item, i) in categoryList" :key="i">
-            <span v-if="scope.row.categoryId === item.id">{{item.name}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+          :resizable="false"
+          align="center"
+          type="selection"
+          width="30">
+      </el-table-column>
+      <el-table-column
+          v-for="(item, index) in customTableTitles"
+          :key="`col-${index}`"
+          :fixed="item.fixed"
+          :label="item.label"
+          :min-width="`${item.minWidth}`"
+          :prop="item.prop"
+          :resizable="true"
+          :show-overflow-tooltip="item.prop === 'timePlan'"
+          :sort-orders="['ascending', 'descending']"
+          :sortable="item.sortable"
+          :width="`${item.width}`"
+      >
+        <template #header>
+          <span class="data-column__span">{{item.label}}</span>
+          <div class="col-resize-area"></div>
+        </template>
+        <template #default="scope" :column="item">
+          <span v-if="item.prop === 'timeLimit'">
+            {{handleTimeRange(scope.row)}}
           </span>
-        </span>
-        <span v-else-if="item.prop === 'timePlan'">
-          <template v-if="scope.row.config && scope.row.config.isScheduler === 0">
-             {{$t('report.always')}}
-          </template>
-          <template v-else-if="scope.row.config && scope.row.config.isScheduler === 1">
-            <el-popover
-                placement="right-start"
-                :width="270"
-                trigger="hover"
-                class="my-table"
-                @show="handleConfig(scope.row)"
-            >
-              <template #reference>
-                <span>
-                  <template v-if="scope.row.config && scope.row.config.schedulerConfig">
-                    <template v-if="scope.row.config.schedulerConfig.type === 'day'">
-                     {{$t('report.daily')}}
+          <span v-else-if="item.prop === 'categoryId'">
+            <span v-for="(item, i) in categoryList" :key="i">
+              <span v-if="scope.row.categoryId === item.id">{{item.name}}</span>
+            </span>
+          </span>
+          <span v-else-if="item.prop === 'timePlan'">
+            <template v-if="scope.row.config && scope.row.config.isScheduler === 0">
+              {{$t('report.always')}}
+            </template>
+            <template v-else-if="scope.row.config && scope.row.config.isScheduler === 1">
+              <el-popover
+                  placement="right-start"
+                  :width="270"
+                  trigger="hover"
+                  class="my-table"
+                  @show="handleConfig(scope.row)"
+              >
+                <template #reference>
+                  <span>
+                    <template v-if="scope.row.config && scope.row.config.schedulerConfig">
+                      <template v-if="scope.row.config.schedulerConfig.type === 'day'">
+                      {{$t('report.daily')}}
+                      </template>
+                      <template v-else-if="scope.row.config.schedulerConfig.type === 'week'">
+                        {{$t('report.weekly')}}
+                      </template>
+                      <template v-else-if="scope.row.config.schedulerConfig.type === 'month'">
+                        {{$t('report.monthly')}}
+                      </template>
+                      <template v-else-if="scope.row.config.schedulerConfig.type === ''">
+                        {{$t('report.oneTime')}}
+                      </template>
+                      <template v-else>
+                        -
+                      </template>
                     </template>
-                    <template v-else-if="scope.row.config.schedulerConfig.type === 'week'">
-                      {{$t('report.weekly')}}
-                     </template>
-                    <template v-else-if="scope.row.config.schedulerConfig.type === 'month'">
-                      {{$t('report.monthly')}}
-                     </template>
-                    <template v-else-if="scope.row.config.schedulerConfig.type === ''">
-                      {{$t('report.oneTime')}}
-                    </template>
-                    <template v-else>
-                       -
-                    </template>
-                  </template>
-                </span>
-              </template>
-               <el-row class="margin-l-10 margin-t-20">
-                <el-col :span="8" class="tooltip-column-name">{{$t("report.period")}}</el-col>
-                <el-col :span="16">{{configPeriod}}</el-col>
-              </el-row>
-               <el-row class="margin-l-10">
-                <el-col :span="8"  class="tooltip-column-name">{{$t("report.custom")}}</el-col>
-                <el-col :span="16">{{configCustom}}</el-col>
-              </el-row>
-              <el-row class="margin-l-10">
-                <el-col :span="8" class="tooltip-column-name">{{$t("report.startTime")}}</el-col>
-                <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerStart) || '-'}}</el-col>
-              </el-row>
-               <el-row class="margin-l-10">
-                <el-col :span="8" class="tooltip-column-name" >{{$t("report.endTime")}}</el-col>
-                <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerEnd) || '-'}}</el-col>
-              </el-row>
-            </el-popover>
-          </template>
-          <template v-else>
-             -
-          </template>
-        </span>
-        <span v-else-if="item.prop === 'userName'">
-          {{(scope.row.sysUser && scope.row.sysUser.name) || '-'}}
-        </span>
-        <span v-else-if="item.prop === 'lastTime'">
-          {{scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-'}}
-        </span>
-        <span v-else-if="item.prop === 'total'">
-          {{scope.row[item.prop] || 0}}
-        </span>
-        <span v-else>{{scope.row[item.prop] || '-'}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-        :resizable="false"
-        :width="operationWidth"
-        fixed="right">
-      <template #header>
-        <div class="table-operation-title">{{$t('overall.option')}}</div>
-      </template>
-      <template #default="scope">
-        <div class="table-operation-items">
-          <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-bianji"></i></button>
-          <button class="table-operation-item" @click="tableOperation(['delete', scope.row])"><i class="cn-icon cn-icon-shanchu"></i></button>
+                  </span>
+                </template>
+                <el-row class="margin-l-10 margin-t-20">
+                  <el-col :span="8" class="tooltip-column-name">{{$t("report.period")}}</el-col>
+                  <el-col :span="16">{{configPeriod}}</el-col>
+                </el-row>
+                <el-row class="margin-l-10">
+                  <el-col :span="8"  class="tooltip-column-name">{{$t("report.custom")}}</el-col>
+                  <el-col :span="16">{{configCustom}}</el-col>
+                </el-row>
+                <el-row class="margin-l-10">
+                  <el-col :span="8" class="tooltip-column-name">{{$t("report.startTime")}}</el-col>
+                  <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerStart) || '-'}}</el-col>
+                </el-row>
+                <el-row class="margin-l-10">
+                  <el-col :span="8" class="tooltip-column-name" >{{$t("report.endTime")}}</el-col>
+                  <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerEnd) || '-'}}</el-col>
+                </el-row>
+              </el-popover>
+            </template>
+            <template v-else>
+              -
+            </template>
+          </span>
+          <span v-else-if="item.prop === 'userName'">
+            {{(scope.row.sysUser && scope.row.sysUser.name) || '-'}}
+          </span>
+          <span v-else-if="item.prop === 'lastTime'">
+            {{scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-'}}
+          </span>
+          <span v-else-if="item.prop === 'total'">
+            {{scope.row[item.prop] || 0}}
+          </span>
+          <span v-else>{{scope.row[item.prop] || '-'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+          :resizable="false"
+          :width="operationWidth"
+          fixed="right">
+        <template #header>
+          <div class="table-operation-title">{{$t('overall.option')}}</div>
+        </template>
+        <template #default="scope">
+          <div class="table-operation-items">
+            <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-bianji"></i></button>
+            <button class="table-operation-item" @click="tableOperation(['delete', scope.row])"><i class="cn-icon cn-icon-shanchu"></i></button>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="table-operation-all">
+      <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
+      <div class="table-operation-all-span">
+        <span>{{ $t('overall.all') }}</span>
+        <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
+          <loading :loading="loading"></loading>
+          <span>{{$t('report.batchDeletion')}}</span>
         </div>
-      </template>
-    </el-table-column>
-  </el-table>
-  <div class="table-operation-all">
-    <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
-    <div class="table-operation-all-span">
-      <span>{{ $t('overall.all') }}</span>
-      <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
-        <loading :loading="loading"></loading>
-        <span>{{$t('report.batchDeletion')}}</span>
       </div>
     </div>
-  </div>
+  </div>  
 </template>
 
 <script>
@@ -220,6 +222,8 @@ import { ref } from 'vue'
 import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import { useRoute } from 'vue-router'
+
 export default {
   name: 'builtinReportTable',
   mixins: [table],
@@ -299,7 +303,7 @@ export default {
         total: 0,
         resetPageNo: true
       },
-      expandedIds: [],
+      // expandedIds: [],
       interval: null,
       typeMappings: [
         { key: 'day', value: this.$t('report.daily') },
@@ -321,10 +325,43 @@ export default {
       selectIds: [], // 单行选中的id列表
     }
   },
+  /**
+   * 添加vue3的setup，目的是添加/获取地址栏的参数
+   */
+  setup () {
+    const { startTime, endTime } = getNowTime(60 * 24 * 30)
+    const timeRange = ref([startTime, endTime])
+
+    const { query } = useRoute()
+    let expandedId = [];
+    if(query.expandId) {
+      expandedId.push(parseInt(query.expandId))
+    }
+    const expandedIds = ref(expandedId || [])
+
+    return {
+      timeRange,
+      expandedIds
+    }
+  },
   watch: {
     'tableData'(newVal, oldVal) {
         if(newVal) {
           this.showSelectedRow();
+        }
+    },
+    expandedIds(newVal, oldVal) {
+        if(newVal != undefined && newVal.length>0) {
+          let newParam = {
+            expandId: newVal[0]
+          }
+          this.reloadUrl(newParam);
+        } else {
+          // 删除地址栏参数，然后删除缓存
+          let newQuery = this.$route.query // 深拷贝路由数据
+          delete newQuery.expandId;
+          delete newQuery.expandPaginaTionPage;
+          this.reloadUrl(newQuery, 'cleanOldParams');
         }
     }
   },
@@ -375,10 +412,9 @@ export default {
      * 即展开表格后刷新界面，保持展开效果
      */
      expandTable() {
-      let expandInfo = sessionStorage.getItem('report_expand_table');
-      expandInfo = JSON.parse(expandInfo);
+      let expandInfo = this.expandedIds;
       
-      if(expandInfo !== null && expandInfo !== undefined) {
+      if(expandInfo !== undefined && expandInfo.length>0) {
         let obj = {
           id: expandInfo[0]
         }
@@ -473,22 +509,6 @@ export default {
       if (expandedRows.length > 0 && row) {
         this.expandedIds.push(row.id)
         this.datePickerChange(row)
-        // 存入缓存，随后向地址栏添加参数
-        sessionStorage.setItem('report_expand_table', JSON.stringify(this.expandedIds));
-
-        let newParam = {
-          expandId: row.id
-        }
-        this.reloadUrl(newParam);
-      } else {
-        // 删除地址栏参数，然后删除缓存
-        let newQuery = JSON.parse(JSON.stringify(this.$route.query)) // 深拷贝路由数据
-        delete newQuery.expandId;
-        delete newQuery.expandPaginaTionPage;
-        this.reloadUrl(newQuery, 'cleanOldParams');
-
-        sessionStorage.setItem('report_expand_table', null);
-        sessionStorage.setItem('report_select_expand_pagination', null);
       }
     },
     datePickerChange (row, show) {
@@ -644,13 +664,6 @@ export default {
   },
   beforeUnmount () {
     clearInterval(this.interval)
-  },
-  setup () {
-    const { startTime, endTime } = getNowTime(60 * 24 * 30)
-    const timeRange = ref([startTime, endTime])
-    return {
-      timeRange
-    }
   }
 }
 </script>
