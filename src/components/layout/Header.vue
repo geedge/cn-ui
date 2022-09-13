@@ -130,7 +130,7 @@
           <div class="middle-menus__header">{{$t('overall.networkAnalytics')}}</div>
           <div class="middle-menus__body">
             <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
-              <div class="middle-menu" v-if="index < 5" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
+              <div class="middle-menu" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
             </template>
           </div>
         </div>

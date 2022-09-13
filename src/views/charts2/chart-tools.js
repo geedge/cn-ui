@@ -22,6 +22,7 @@ export const typeMapping = {
   },
   linkMonitor: {
     linkBlock: 707,
-    linkTrafficSankey: 708
+    linkTrafficSankey: 708,
+    linkTrafficLine: 710
   }
 }

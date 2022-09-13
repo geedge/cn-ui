@@ -122,6 +122,12 @@
         :chart="chart"
         @toggleLoading="toggleLoading"
     ></link-traffic-sankey>
+    <link-traffic-line
+        v-else-if="chart.type === typeMapping.linkMonitor.linkTrafficLine"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></link-traffic-line>
   </div>
 </template>
 
@@ -147,6 +153,7 @@ import NpmIpMap from '@/views/charts2/charts/npm/NpmIpMap'
 import NpmTrafficLine from '@/views/charts2/charts/npm/NpmTrafficLine'
 import LinkBlock from '@/views/charts2/charts/linkMonitor/LinkBlock'
 import LinkTrafficSankey from '@/views/charts2/charts/linkMonitor/LinkTrafficSankey'
+import LinkTrafficLine from '@/views/charts2/charts/linkMonitor/LinkTrafficLine'
 import { get } from '@/utils/http'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
@@ -172,7 +179,8 @@ export default {
     NpmIpMap,
     NpmTrafficLine,
     LinkBlock,
-    LinkTrafficSankey
+    LinkTrafficSankey,
+    LinkTrafficLine
   },
   props: {
     chart: Object,
