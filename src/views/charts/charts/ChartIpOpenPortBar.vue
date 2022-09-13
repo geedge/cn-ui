@@ -6,7 +6,7 @@
                 :data="tableData"
                 style="width: 70%;"
                 tooltip-effect="light"
-                empty-text=" "
+                empty-text=""
                 border="none"
                 :size="'mini'"
                 :height="'100%'">

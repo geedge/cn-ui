@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import SingleValue from '@/views/charts2/charts/SingleValue'
+import SingleValue from '@/views/charts2/charts/npm/localComponents/SingleValue'
 import { get } from '@/utils/http'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'

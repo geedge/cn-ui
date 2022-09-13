@@ -42,7 +42,7 @@
                   width="100%"
                   @selection-change="handleDetailSelectionChange"
                   :row-class-name="rowClassName"
-                  empty-text=" "
+                  empty-text=""
                   ref="tb">
 
           <el-table-column  type="selection" align="center" label="" width="30px" style="border-left:0px;" />

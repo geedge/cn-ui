@@ -6,7 +6,7 @@
       :data="tableData"
       :height="height"
       :expand-row-keys="expandedIds"
-      empty-text=" "
+      empty-text=""
       border
       tooltip-effect="light"
       :row-key="(row) => { return row.id }"
@@ -208,7 +208,7 @@
         </div>
       </div>
     </div>
-  </div>  
+  </div>
 </template>
 
 <script>
@@ -404,7 +404,7 @@ export default {
     }
   },
   mounted() {
-    this.expandTable();    
+    this.expandTable();
   },
   methods: {
     /**
@@ -413,13 +413,13 @@ export default {
      */
      expandTable() {
       let expandInfo = this.expandedIds;
-      
+
       if(expandInfo !== undefined && expandInfo.length>0) {
         let obj = {
           id: expandInfo[0]
         }
         this.dropExpandChange(obj, expandInfo);
-      }      
+      }
     },
     /**
      * 显示选中的行，即分页后依旧显示
@@ -435,7 +435,7 @@ export default {
             }
           })
         }
-      });      
+      });
     },
     getJobStatus (report) {
       if (report.state === 1 && report.upload === 1) {
@@ -460,7 +460,7 @@ export default {
 
       this.checkboxAll = objs.length === this.tableData.length;
       this.isIndeterminate = objs.length > 0 && objs.length < this.tableData.length;
-      
+
       // 选中状态回显
       let selectIds = [];
       if(objs.length > 0) {

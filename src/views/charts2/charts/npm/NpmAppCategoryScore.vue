@@ -21,7 +21,7 @@
           :data="tableData"
           class="app-table"
           height="100%"
-          empty-text=" "
+          empty-text=""
       >
         <template v-for="(item, index) in customTableTitles" :key="index">
           <el-table-column class="data-column">
