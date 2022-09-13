@@ -71,7 +71,7 @@
           .down {
             margin-left: 32px;
             height: 100%;
-            width: 1256px;
+            width: calc(100% - 32px);
             background: #fff; //盖住fixed产生的阴影
             ::v-deep .is-leaf {
               color: #1b2e3b;
