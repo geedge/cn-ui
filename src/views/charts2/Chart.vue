@@ -128,6 +128,30 @@
         :chart="chart"
         @toggleLoading="toggleLoading"
     ></link-traffic-line>
+    <dns-active-malicious-domain
+        v-else-if="chart.type === typeMapping.dnsInsight.dnsActiveMaliciousDomain"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></dns-active-malicious-domain>
+    <dns-event-chart
+        v-else-if="chart.type === typeMapping.dnsInsight.dnsEventChart"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></dns-event-chart>
+    <dns-recent-events
+        v-else-if="chart.type === typeMapping.dnsInsight.dnsRecentEvents"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></dns-recent-events>
+    <dns-traffic-line
+        v-else-if="chart.type === typeMapping.dnsInsight.dnsTrafficLine"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></dns-traffic-line>
   </div>
 </template>
 
@@ -154,6 +178,11 @@ import NpmTrafficLine from '@/views/charts2/charts/npm/NpmTrafficLine'
 import LinkBlock from '@/views/charts2/charts/linkMonitor/LinkBlock'
 import LinkTrafficSankey from '@/views/charts2/charts/linkMonitor/LinkTrafficSankey'
 import LinkTrafficLine from '@/views/charts2/charts/linkMonitor/LinkTrafficLine'
+import DnsActiveMaliciousDomain from '@/views/charts2/charts/dnsInsight/DnsActiveMaliciousDomain'
+import DnsEventChart from '@/views/charts2/charts/dnsInsight/DnsEventChart'
+import DnsRecentEvents from '@/views/charts2/charts/dnsInsight/DnsRecentEvents'
+import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
+
 import { get } from '@/utils/http'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
@@ -180,7 +209,11 @@ export default {
     NpmTrafficLine,
     LinkBlock,
     LinkTrafficSankey,
-    LinkTrafficLine
+    LinkTrafficLine,
+    DnsActiveMaliciousDomain,
+    DnsEventChart,
+    DnsRecentEvents,
+    DnsTrafficLine
   },
   props: {
     chart: Object,

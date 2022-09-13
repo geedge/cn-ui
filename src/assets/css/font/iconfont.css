@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1659663639076') format('woff2'),
-       url('iconfont.woff?t=1659663639076') format('woff'),
-       url('iconfont.ttf?t=1659663639076') format('truetype');
+  src: url('iconfont.woff2?t=1663070128326') format('woff2'),
+       url('iconfont.woff?t=1663070128326') format('woff'),
+       url('iconfont.ttf?t=1663070128326') format('truetype');
 }
 
 .cn-icon {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-events-type:before {
+  content: "\e7a5";
+}
+
+.cn-icon-events2:before {
+  content: "\e7a6";
+}
+
+.cn-icon-arrow-right2:before {
+  content: "\e7a7";
+}
+
+.cn-icon-traffic-overview:before {
+  content: "\e7a8";
+}
+
+.cn-icon-ingress:before {
+  content: "\e7a9";
+}
+
+.cn-icon-egress:before {
+  content: "\e7aa";
+}
+
+.cn-icon-close:before {
+  content: "\e7ab";
+}
+
+.cn-icon-serach:before {
+  content: "\e7ac";
+}
+
+.cn-icon-setting2:before {
+  content: "\e7a4";
 }
 
 .cn-icon-xiala:before {
