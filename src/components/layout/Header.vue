@@ -129,9 +129,16 @@
         <div class="middle-menus middle-menus--network-analytics">
           <div class="middle-menus__header">{{$t('overall.networkAnalytics')}}</div>
           <div class="middle-menus__body">
-            <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
-              <div class="middle-menu" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
-            </template>
+            <div style="width: 260px;">
+              <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
+                <div class="middle-menu" v-if="index < 5" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
+              </template>
+            </div>
+            <div>
+              <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
+                <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
+              </template>
+            </div>
           </div>
         </div>
       </div>
