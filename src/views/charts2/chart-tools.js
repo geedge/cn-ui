@@ -23,10 +23,10 @@ export const typeMapping = {
   linkMonitor: {
     linkBlock: 707,
     linkTrafficSankey: 708,
-    linkTrafficLine: 710
+    linkTrafficLine: 105
   },
   dnsInsight: {
-    dnsTrafficLine: 704,
+    dnsTrafficLine: 106,
     dnsEventChart: 711,
     dnsRecentEvents: 605,
     dnsActiveMaliciousDomain: 604

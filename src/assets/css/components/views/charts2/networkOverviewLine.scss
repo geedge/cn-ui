@@ -46,6 +46,9 @@
           }
         }
       }
+      .link-traffic-select.line-select-metric {
+        margin-right: 20px;
+      }
       .line-select-metric,.line-select-reference-line {
         display: flex;
         align-items: center;
@@ -126,7 +129,7 @@
               flex: 1;
               padding-left: 19px;
             }
-            .total,.inbound,.outbound,.internal,.through,.other {
+            .total,.inbound,.outbound,.internal,.through,.other,.ingress,.egress {
               width: 14px;
               height: 14px;
               border-radius: 50%;
@@ -137,10 +140,10 @@
             .total {
               background: #00A7AB;
             }
-            .inbound {
+            .inbound,.ingress {
               background: #7FA054;
             }
-            .outbound {
+            .outbound,.egress {
               background: #35ADDA;
             }
             .internal {

@@ -172,7 +172,11 @@ export default {
     timeFilter: {
       deep: true,
       handler (n) {
-        this.init(this.lineMetric, this.showMarkLine, 'active')
+        if (this.lineTab) {
+          this.init(this.lineMetric, this.showMarkLine, 'active')
+        } else {
+          this.init()
+        }
       }
     }
   },
@@ -466,33 +470,45 @@ export default {
       const dataIntegrationArray = []
       if (stackedLineChartOption.series[0]) {
         const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
-        dataIntegrationArray.push(totalData)
-        totalData[2] = 0
+        if (totalData) {
+          dataIntegrationArray.push(totalData)
+          totalData[2] = 0
+        }
       }
       if (stackedLineChartOption.series[1]) {
         const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
-        dataIntegrationArray.push(inboundData)
-        inboundData[2] = 1
+        if (inboundData) {
+          dataIntegrationArray.push(inboundData)
+          inboundData[2] = 1
+        }
       }
       if (stackedLineChartOption.series[2]) {
         const outboundData = stackedLineChartOption.series[2].data.find(t => t[0] === time)
-        dataIntegrationArray.push(outboundData)
-        outboundData[2] = 2
+        if (outboundData) {
+          dataIntegrationArray.push(outboundData)
+          outboundData[2] = 2
+        }
       }
       if (stackedLineChartOption.series[3]) {
         const internalData = stackedLineChartOption.series[3].data.find(t => t[0] === time)
-        dataIntegrationArray.push(internalData)
-        internalData[2] = 3
+        if (internalData) {
+          dataIntegrationArray.push(internalData)
+          internalData[2] = 3
+        }
       }
       if (stackedLineChartOption.series[4]) {
         const throughData = stackedLineChartOption.series[4].data.find(t => t[0] === time)
-        dataIntegrationArray.push(throughData)
-        throughData[2] = 4
+        if (throughData) {
+          dataIntegrationArray.push(throughData)
+          throughData[2] = 4
+        }
       }
       if (stackedLineChartOption.series[5]) {
         const otherData = stackedLineChartOption.series[5].data.find(t => t[0] === time)
-        dataIntegrationArray.push(otherData)
-        otherData[2] = 5
+        if (otherData) {
+          dataIntegrationArray.push(otherData)
+          otherData[2] = 5
+        }
       }
       dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
       const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
