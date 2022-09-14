@@ -292,9 +292,7 @@ export default {
       }
       const _this = this
       const dom = document.getElementById('overviewLineChart')
-      if (!this.myChart) {
-        this.myChart = echarts.init(dom)
-      }
+      !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = stackedLineChartOption
       const chartOption = this.chartOption.series[0]
       this.chartOption.series = echartsData.map((t, i) => {
@@ -460,6 +458,11 @@ export default {
       this.lineTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
+      this.mpackets.forEach((e, i) => {
+        if (!e.invertTab) {
+          e.invertTab = true
+        }
+      })
       this.init(val, this.showMarkLine)
     },
     referenceSelectChange (val) {
