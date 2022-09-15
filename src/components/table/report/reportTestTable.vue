@@ -355,7 +355,7 @@ export default {
       configPeriod: '',
       configCustom: '',
       selectIds: [], // 单行选中的id列表
-      expandFlag: false // 单行展开标志
+      initExpandFlag: false // 初始化时单行展开标志，false是未展开，true展开
     }
   },
   /**
@@ -408,7 +408,9 @@ export default {
             total: 0,
             resetPageNo: true
           }
-          this.dropExpandChange('', [])
+          if (this.initExpandFlag) {
+            this.dropExpandChange('', [])
+          }
         }
         this.showSelectedRow()
       }
@@ -489,7 +491,9 @@ export default {
     }
   },
   mounted () {
-    this.expandTable()
+    this.$nextTick(() => {
+      this.expandTable()
+    })
   },
   methods: {
     /**
@@ -504,6 +508,10 @@ export default {
           id: expandInfo[0]
         }
         this.dropExpandChange(obj, expandInfo, 'init')
+
+        setTimeout(() => {
+          this.initExpandFlag = true
+        }, 1000)
       }
     },
     /**
@@ -657,7 +665,7 @@ export default {
               message: this.$t('tip.deleteSuccess')
             })
             this.dropDownQueryChange({ tempId: props.row.id })
-            // this.$emit('reload')
+            this.$emit('reload')
           } else {
             this.$message.error(response.msg)
           }
@@ -675,10 +683,10 @@ export default {
       this.interval = setInterval(() => {
         // 通过深拷贝，触发watch监听到timeRange，也可使用$set进行触发
         this.timeRange = JSON.parse(JSON.stringify(this.timeRange))
-        this.timeRange[1] = this.timeRange[1] + 10000
+        this.timeRange[1] = this.timeRange[1] + 30000
         param.endTime = dateFormatToUTC(this.timeRange[1])
         this.dataConversionProcessing(param)
-      }, 10000)
+      }, 30000)
     },
     handleConfigArray (array, list) {
       const group = []
