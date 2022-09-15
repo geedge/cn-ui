@@ -40,6 +40,7 @@
               :category-list="builtinReportLeftMenu"
               :height="mainTableHeight"
               :table-data="tableData"
+              :category-id="builtinId"
               @delete="del"
               @edit="edit"
               @download="download"
@@ -156,7 +157,7 @@ export default {
    */
   setup () {
     const { query } = useRoute()
-    const builtinId = ref(parseInt(query.ategoryId) || '')
+    const builtinId = ref(parseInt(query.categoryId) || '')
     const urlPageNo = ref(parseInt(query.pageNo) || 1)
 
     return {
@@ -173,22 +174,34 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.queryGetTempData();      
-    });    
+      this.queryGetTempData()
+    })
   },
   watch: {
     builtinId (n) {
       const { query } = this.$route
       let newUrl = urlParamsHandler(window.location.href, query, {
-        ategoryId: n
+        categoryId: n,
+        pageNo: 1,
+        pageSize: 20
       })
 
       // 点击“全部”或者首次进入界面时，不显示左侧菜单栏参数
-      if(n === null) {
-        let newQuery = JSON.parse(JSON.stringify(query)) // 深拷贝路由数据
-        delete newQuery.ategoryId;
-        newUrl = urlParamsHandler(window.location.href, query, newQuery, 'clean')
+      const newQuery = JSON.parse(JSON.stringify(query)) // 深拷贝路由数据
+
+      if (n === null) {
+        delete newQuery.categoryId
+      } else {
+        delete newQuery.startTime
+        delete newQuery.endTime
+        delete newQuery.expandId
+        delete newQuery.expandPage
+        delete newQuery.pageNo
+        delete newQuery.pageSize
       }
+
+      newUrl = urlParamsHandler(window.location.href, query, newQuery, 'clean')
+
       overwriteUrl(newUrl)
     }
   },
@@ -204,17 +217,17 @@ export default {
             }
           })
 
-          if(this.builtinId !== '') {
-            this.builtinTabs (this.builtinId);
+          if (this.builtinId !== '') {
+            this.builtinTabs(this.builtinId, 'init')
           } else {
-            this.getTableData();
+            this.getTableData()
           }
         }
         this.builtinLeftLoading = false
       })
     },
     getTableData (params) {
-      this.searchLabel = null;
+      this.searchLabel = null
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
@@ -226,28 +239,28 @@ export default {
         listUrl = this.listUrl
       }
 
-      if(this.builtinId !== '') {
-        this.searchLabel.categoryId = this.builtinId;
+      if (this.builtinId !== '') {
+        this.searchLabel.categoryId = this.builtinId
       }
 
       // 该请求不知道为什么会走2次，此处留个记录，后续解决。
-      this.getNum = this.getNum + 1;
-      if(this.getNum >0) {
+      this.getNum = this.getNum + 1
+      if (this.getNum > 0) {
         get(listUrl, this.searchLabel).then(response => {
           // this.tools.loading = false
           if (response.code === 200) {
             for (let i = 0; i < response.data.list.length; i++) {
               response.data.list[i].status = response.data.list[i].status + ''
             }
-            this.$nextTick(()=>{
-              this.tableData = [];
+            this.$nextTick(() => {
+              this.tableData = []
               this.tableData = response.data.list.map(item => {
                 return {
                   ...item,
                   config: item.config ? JSON.parse(item.config) : {}
                 }
               })
-              this.pageObj.total = response.data.total;              
+              this.pageObj.total = response.data.total
             })            
             // TODO 回到顶部
           }
@@ -257,9 +270,13 @@ export default {
     /**
      * 点击左侧tab页
      */
-    builtinTabs (id) {
+    builtinTabs (id, flag) {
       this.builtinId = id
-      this.getTableData({ categoryId: id });
+      if (flag === undefined) {
+        this.pageObj.pageNo = 1
+        this.pageObj.pageSize = 20
+      }
+      this.getTableData({ categoryId: id })
     },
     edit (u) {
       this.initConfig(u)
@@ -305,9 +322,6 @@ export default {
         }
       }
     }
-  },
-  beforeDestroy(to, from, next) {
-    this.getNum = null;
   }
 }
 </script>

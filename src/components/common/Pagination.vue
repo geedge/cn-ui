@@ -1,6 +1,6 @@
 <template>
   <div class="pagination">
-      <el-pagination
+    <el-pagination
         ref="page"
         @size-change="size"
         @prev-click="prev"
@@ -11,12 +11,14 @@
         :page-size="Number(pageObj.pageSize)"
         :layout="layout"
         :total="pageObj.total"
-      >
-        <el-select v-model="pageSize" :placeholder="pageSize+$t('pageSize')" size="mini"  :popper-append-to-body="appendToBody" class="pagination-size-select" @change="size" :popper-class="popClass" @visible-change="popperVisible">
-          <el-option v-for="(item, index) in pageSizes" :key="index" :label="item.label" :value="item.value"></el-option>
-        </el-select>
+    >
+      <el-select v-model="pageSize" :placeholder="pageSize+$t('pageSize')" size="mini"
+                 :popper-append-to-body="appendToBody" class="pagination-size-select" @change="size"
+                 :popper-class="popClass" @visible-change="popperVisible">
+        <el-option v-for="(item, index) in pageSizes" :key="index" :label="item.label" :value="item.value"></el-option>
+      </el-select>
 
-      </el-pagination>
+    </el-pagination>
   </div>
 </template>
 
@@ -48,8 +50,7 @@ export default {
   setup () {
     const { query } = useRoute()
     const pageSize = ref(defaultPageSize)
-    console.log('初始化路由信息', query);
-    let currentPageNo = ref(query.pageNo || 1)
+    const currentPageNo = ref(query.pageNo || 1)
 
     return {
       pageSize,
@@ -80,10 +81,10 @@ export default {
      * 向地址栏添加/删除参数
      */
     reloadUrl (newParam, clean) {
-      const { query } = this.$route;
-      let newUrl = urlParamsHandler(window.location.href, query, newParam);
-      if(clean) {
-        newUrl = urlParamsHandler(window.location.href, query, newParam, clean);
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
       }
       overwriteUrl(newUrl)
     },
@@ -127,10 +128,10 @@ export default {
       this.scrollbarToTop()
       // this.currentPageNo = val;
 
-      let newParam = {
+      const newParam = {
         pageNo: val
       }
-      this.reloadUrl(newParam);
+      this.reloadUrl(newParam)
     },
     /**
      * 更改页码大小
@@ -141,10 +142,10 @@ export default {
       this.$emit('pageSize', val)
       this.backgroundColor()
 
-      let newParam = {
+      const newParam = {
         pageSize: val
       }
-      this.reloadUrl(newParam);
+      this.reloadUrl(newParam)
     },
     scrollbarToTop () {
       this.$nextTick(() => {
@@ -159,7 +160,10 @@ export default {
     resetPageSizes: function () {
       if (this.postPageSizes) {
         this.pageSizes = this.postPageSizes.map((item) => {
-          return { label: item + this.$t('pageSize'), value: item }
+          return {
+            label: item + this.$t('pageSize'),
+            value: item
+          }
         })
       }
     },
@@ -181,10 +185,10 @@ export default {
         this.pageSize = parseInt(pageSize)
       }
     }
-    
-    this.size(this.pageSize);
-    this.currentPageNo = parseInt(this.currentPageNo);
-    this.current(this.currentPageNo);
+
+    this.size(this.pageSize)
+    this.currentPageNo = parseInt(this.currentPageNo)
+    this.current(this.currentPageNo)
   },
   watch: {
     postPageSizes: {
