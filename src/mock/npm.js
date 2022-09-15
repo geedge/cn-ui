@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 
 const openMock = false
 if (openMock) {
-  Mock.mock(RegExp(BASE_CONFIG.baseUrl + 'visual/panel*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'visual/panel.*'), 'get', function (requestObj) {
     return {
       "msg": "success",
       "code": 200,

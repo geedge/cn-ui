@@ -20,6 +20,8 @@ export const api = {
   login: '/sys/login',
   // user
   user: '/sys/user',
+  // 获取配置
+  config: '/sys/config',
   // role
   role: '/sys/role',
   menu: '/sys/role/menu/',
@@ -196,7 +198,8 @@ export const api = {
     }
   },
   linkMonitor: {
-    links: '/interface/linkMonitor/links'
+    links: '/interface/linkMonitor/links',
+    linkTrafficDirection: '/interface/linkMonitor/linkTrafficDirection'
   }
 }
 

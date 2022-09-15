@@ -128,6 +128,12 @@
         :chart="chart"
         @toggleLoading="toggleLoading"
     ></link-traffic-line>
+    <link-direction-grid
+        v-else-if="chart.type === typeMapping.linkMonitor.linkDirectionGrid"
+        :time-filter="timeFilter"
+        :chart="chart"
+        @toggleLoading="toggleLoading"
+    ></link-direction-grid>
     <dns-active-malicious-domain
         v-else-if="chart.type === typeMapping.dnsInsight.dnsActiveMaliciousDomain"
         :time-filter="timeFilter"
@@ -186,9 +192,11 @@ import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
 import { get } from '@/utils/http'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
+import LinkDirectionGrid from '@/views/charts2/charts/linkMonitor/LinkDirectionGrid'
 export default {
   name: 'Chart',
   components: {
+    LinkDirectionGrid,
     NpmEventsHeader,
     NpmRecentEvents,
     NpmEventsByType,
