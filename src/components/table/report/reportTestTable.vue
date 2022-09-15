@@ -1,20 +1,20 @@
 <template>
   <div>
     <el-table
-      id="reportTable"
-      ref="dataTable"
-      :data="tableData"
-      :height="height"
-      :expand-row-keys="expandedIds"
-      empty-text=""
-      border
-      tooltip-effect="light"
-      :row-key="(row) => { return row.id }"
-      :reserve-selection="true"
-      @header-dragend="dragend"
-      @sort-change="tableDataSort"
-      @expand-change="dropExpandChange"
-      @selection-change="selectionChange"
+        id="reportTable"
+        ref="dataTable"
+        :data="tableData"
+        :height="height"
+        :expand-row-keys="expandedIds"
+        empty-text=""
+        border
+        tooltip-effect="light"
+        :row-key="(row) => { return row.id }"
+        :reserve-selection="true"
+        @header-dragend="dragend"
+        @sort-change="tableDataSort"
+        @expand-change="dropExpandChange"
+        @selection-change="selectionChange"
     >
       <el-table-column type="expand" width="30">
         <template #default="props">
@@ -38,10 +38,11 @@
               <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
                 <div class="expand-right">
                   <div class="demo-progress">
-                    <el-progress :stroke-width="10" type="circle" :percentage="computePercent(item)" :color="computePercent(item) === 'Failed' ? '#D8A6A6' : (computePercent(item) === 100 ? '#21bf9a' : '#50b3ef')">
+                    <el-progress :stroke-width="10" type="circle" :percentage="computePercent(item)"
+                                 :color="computePercent(item) === 'Failed' ? '#D8A6A6' : (computePercent(item) === 100 ? '#21bf9a' : '#50b3ef')">
                       <template #default="{ percentage }">
                         <span style="font-size: 0.875rem;" v-if="percentage !== 'Failed'">{{ percentage + '%' }}</span>
-                        <span style="font-size: 0.875rem;color: #C14843" v-else>{{percentage}}</span>
+                        <span style="font-size: 0.875rem;color: #C14843" v-else>{{ percentage }}</span>
                       </template>
                     </el-progress>
                   </div>
@@ -50,16 +51,20 @@
                   <div class="expand-name"><i class="cn-icon cn-icon-user"></i>{{ username }}</div>
                   <div class="expand-time">
                     <div>{{ $t('report.creationTime') }}</div>
-                    <div>{{dateFormatByAppearance(item.ctime)}}</div>
+                    <div>{{ dateFormatByAppearance(item.ctime) }}</div>
                   </div>
                   <div class="expand-icon">
-                    <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['download', item])">
+                    <div class="table-operation-item--no-border"
+                         :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}"
+                         @click="reportOperation(['download', item])">
                       <loading :loading="loadingTableId === item.id" size="small"></loading>
                       <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingTableId}">
                         <use xlink:href="#cn-icon-download2"></use>
                       </svg>
                     </div>
-                    <div class="table-operation-item--no-border" :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}" @click="reportOperation(['preview', item])">
+                    <div class="table-operation-item--no-border"
+                         :class="{'table-operation-item--disabled': computePercent(item) === 'Failed' || computePercent(item) < 100}"
+                         @click="reportOperation(['preview', item])">
                       <loading :loading="loadingPreviewId === item.id" size="small"></loading>
                       <svg class="icon" aria-hidden="true" :class="{'table-operation-all-loading': loadingPreviewId}">
                         <use xlink:href="#cn-icon-preview"></use>
@@ -104,21 +109,21 @@
           :width="`${item.width}`"
       >
         <template #header>
-          <span class="data-column__span">{{item.label}}</span>
+          <span class="data-column__span">{{ item.label }}</span>
           <div class="col-resize-area"></div>
         </template>
         <template #default="scope" :column="item">
           <span v-if="item.prop === 'timeLimit'">
-            {{handleTimeRange(scope.row)}}
+            {{ handleTimeRange(scope.row) }}
           </span>
           <span v-else-if="item.prop === 'categoryId'">
             <span v-for="(item, i) in categoryList" :key="i">
-              <span v-if="scope.row.categoryId === item.id">{{item.name}}</span>
+              <span v-if="scope.row.categoryId === item.id">{{ item.name }}</span>
             </span>
           </span>
           <span v-else-if="item.prop === 'timePlan'">
             <template v-if="scope.row.config && scope.row.config.isScheduler === 0">
-              {{$t('report.always')}}
+              {{ $t('report.always') }}
             </template>
             <template v-else-if="scope.row.config && scope.row.config.isScheduler === 1">
               <el-popover
@@ -132,16 +137,16 @@
                   <span>
                     <template v-if="scope.row.config && scope.row.config.schedulerConfig">
                       <template v-if="scope.row.config.schedulerConfig.type === 'day'">
-                      {{$t('report.daily')}}
+                      {{ $t('report.daily') }}
                       </template>
                       <template v-else-if="scope.row.config.schedulerConfig.type === 'week'">
-                        {{$t('report.weekly')}}
+                        {{ $t('report.weekly') }}
                       </template>
                       <template v-else-if="scope.row.config.schedulerConfig.type === 'month'">
-                        {{$t('report.monthly')}}
+                        {{ $t('report.monthly') }}
                       </template>
                       <template v-else-if="scope.row.config.schedulerConfig.type === ''">
-                        {{$t('report.oneTime')}}
+                        {{ $t('report.oneTime') }}
                       </template>
                       <template v-else>
                         -
@@ -150,20 +155,20 @@
                   </span>
                 </template>
                 <el-row class="margin-l-10 margin-t-20">
-                  <el-col :span="8" class="tooltip-column-name">{{$t("report.period")}}</el-col>
-                  <el-col :span="16">{{configPeriod}}</el-col>
+                  <el-col :span="8" class="tooltip-column-name">{{ $t('report.period') }}</el-col>
+                  <el-col :span="16">{{ configPeriod }}</el-col>
                 </el-row>
                 <el-row class="margin-l-10">
-                  <el-col :span="8"  class="tooltip-column-name">{{$t("report.custom")}}</el-col>
-                  <el-col :span="16">{{configCustom}}</el-col>
+                  <el-col :span="8" class="tooltip-column-name">{{ $t('report.custom') }}</el-col>
+                  <el-col :span="16">{{ configCustom }}</el-col>
                 </el-row>
                 <el-row class="margin-l-10">
-                  <el-col :span="8" class="tooltip-column-name">{{$t("report.startTime")}}</el-col>
-                  <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerStart) || '-'}}</el-col>
+                  <el-col :span="8" class="tooltip-column-name">{{ $t('report.startTime') }}</el-col>
+                  <el-col :span="16">{{ dateFormatByAppearance(scope.row.schedulerStart) || '-' }}</el-col>
                 </el-row>
                 <el-row class="margin-l-10">
-                  <el-col :span="8" class="tooltip-column-name" >{{$t("report.endTime")}}</el-col>
-                  <el-col :span="16">{{dateFormatByAppearance(scope.row.schedulerEnd) || '-'}}</el-col>
+                  <el-col :span="8" class="tooltip-column-name">{{ $t('report.endTime') }}</el-col>
+                  <el-col :span="16">{{ dateFormatByAppearance(scope.row.schedulerEnd) || '-' }}</el-col>
                 </el-row>
               </el-popover>
             </template>
@@ -172,15 +177,15 @@
             </template>
           </span>
           <span v-else-if="item.prop === 'userName'">
-            {{(scope.row.sysUser && scope.row.sysUser.name) || '-'}}
+            {{ (scope.row.sysUser && scope.row.sysUser.name) || '-' }}
           </span>
           <span v-else-if="item.prop === 'lastTime'">
-            {{scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-'}}
+            {{ scope.row.lastTime ? dateFormatByAppearance(scope.row.lastTime) : '-' }}
           </span>
           <span v-else-if="item.prop === 'total'">
-            {{scope.row[item.prop] || 0}}
+            {{ scope.row[item.prop] || 0 }}
           </span>
-          <span v-else>{{scope.row[item.prop] || '-'}}</span>
+          <span v-else>{{ scope.row[item.prop] || '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -188,12 +193,14 @@
           :width="operationWidth"
           fixed="right">
         <template #header>
-          <div class="table-operation-title">{{$t('overall.option')}}</div>
+          <div class="table-operation-title">{{ $t('overall.option') }}</div>
         </template>
         <template #default="scope">
           <div class="table-operation-items">
-            <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-bianji"></i></button>
-            <button class="table-operation-item" @click="tableOperation(['delete', scope.row])"><i class="cn-icon cn-icon-shanchu"></i></button>
+            <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i
+                class="cn-icon cn-icon-bianji"></i></button>
+            <button class="table-operation-item" @click="tableOperation(['delete', scope.row])"><i
+                class="cn-icon cn-icon-shanchu"></i></button>
           </div>
         </template>
       </el-table-column>
@@ -202,9 +209,11 @@
       <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
       <div class="table-operation-all-span">
         <span>{{ $t('overall.all') }}</span>
-        <div class="table-operation-back-down" :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}" @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
+        <div class="table-operation-back-down"
+             :class="{'table-operation-all-checkbox': batchDow, 'table-operation-all-loading': loading}"
+             @click="checkboxIds.id ? tableOperation(['delete', checkboxIds]) : ''">
           <loading :loading="loading"></loading>
-          <span>{{$t('report.batchDeletion')}}</span>
+          <span>{{ $t('report.batchDeletion') }}</span>
         </div>
       </div>
     </div>
@@ -223,6 +232,7 @@ import { dateFormatToUTC, getNowTime } from '@/utils/date-util'
 import chartDetectionPagination from '@/views/charts/charts/chartDetectionPagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { useRoute } from 'vue-router'
+import { parseInt } from 'lodash'
 
 export default {
   name: 'builtinReportTable',
@@ -234,7 +244,8 @@ export default {
   },
   props: {
     categoryList: Array,
-    toolsLoading: Boolean
+    toolsLoading: Boolean,
+    categoryId: Number
   },
   inject: ['reload'],
   data () {
@@ -297,24 +308,45 @@ export default {
       loadingTableId: '',
       loadingPreviewId: '',
       downDataList: [],
-      pageObj: {
-        pageNo: 1,
-        pageSize: 20,
-        total: 0,
-        resetPageNo: true
-      },
+      // pageObj: {
+      //   pageNo: 1,
+      //   pageSize: 20,
+      //   total: 0,
+      //   resetPageNo: true
+      // },
       // expandedIds: [],
       interval: null,
       typeMappings: [
-        { key: 'day', value: this.$t('report.daily') },
-        { key: 'week', value: this.$t('report.weekly') },
-        { key: 'month', value: this.$t('report.monthly') },
-        { key: '', value: this.$t('report.oneTime') }
+        {
+          key: 'day',
+          value: this.$t('report.daily')
+        },
+        {
+          key: 'week',
+          value: this.$t('report.weekly')
+        },
+        {
+          key: 'month',
+          value: this.$t('report.monthly')
+        },
+        {
+          key: '',
+          value: this.$t('report.oneTime')
+        }
       ],
       typeUnitMappings: [
-        { key: 'day', value: this.$t('report.days') },
-        { key: 'week', value: this.$t('report.week') },
-        { key: 'month', value: this.$t('report.months') }
+        {
+          key: 'day',
+          value: this.$t('report.days')
+        },
+        {
+          key: 'week',
+          value: this.$t('report.week')
+        },
+        {
+          key: 'month',
+          value: this.$t('report.months')
+        }
       ],
       scheduleTypeList: report.scheduleTypeList,
       weekdayList: report.weekdayList,
@@ -323,6 +355,7 @@ export default {
       configPeriod: '',
       configCustom: '',
       selectIds: [], // 单行选中的id列表
+      expandFlag: false // 单行展开标志
     }
   },
   /**
@@ -333,36 +366,88 @@ export default {
     const timeRange = ref([startTime, endTime])
 
     const { query } = useRoute()
-    let expandedId = [];
-    if(query.expandId) {
+
+    // 展开行的id列表，只展开一行
+    const expandedId = []
+    if (query.expandId) {
       expandedId.push(parseInt(query.expandId))
     }
     const expandedIds = ref(expandedId || [])
+    // 展开行的分页信息
+    const tempPageObj = {
+      pageNo: 1,
+      pageSize: 20,
+      total: 0,
+      resetPageNo: true
+    }
+
+    let pageNo = query.expandPage
+    if (pageNo !== undefined) {
+      pageNo = parseInt(pageNo)
+      if (pageNo > 1) {
+        tempPageObj.pageNo = pageNo
+      }
+    } else {
+      pageNo = 1
+    }
+    const pageObj = ref(tempPageObj)
 
     return {
       timeRange,
-      expandedIds
+      expandedIds,
+      pageObj
     }
   },
   watch: {
-    'tableData'(newVal, oldVal) {
-        if(newVal) {
-          this.showSelectedRow();
-        }
-    },
-    expandedIds(newVal, oldVal) {
-        if(newVal != undefined && newVal.length>0) {
-          let newParam = {
-            expandId: newVal[0]
+    tableData (newVal, oldVal) {
+      if (newVal) {
+        if (this.categoryId !== '') {
+          this.pageObj = {
+            pageNo: 1,
+            pageSize: 20,
+            total: 0,
+            resetPageNo: true
           }
-          this.reloadUrl(newParam);
-        } else {
-          // 删除地址栏参数，然后删除缓存
-          let newQuery = this.$route.query // 深拷贝路由数据
-          delete newQuery.expandId;
-          delete newQuery.expandPaginaTionPage;
-          this.reloadUrl(newQuery, 'cleanOldParams');
+          this.dropExpandChange('', [])
         }
+        this.showSelectedRow()
+      }
+    },
+    expandedIds (newVal, oldVal) {
+      if (newVal !== undefined && newVal.length > 0) {
+        const expandIdParam = {
+          expandId: newVal[0]
+        }
+        this.reloadUrl(expandIdParam)
+
+        const expandPage = {
+          expandPage: 1
+        }
+        this.reloadUrl(expandPage)
+
+        const dateParam = {
+          startTime: dateFormatToUTC(this.timeRange[0]),
+          endTime: dateFormatToUTC(this.timeRange[1])
+        }
+        this.reloadUrl(dateParam)
+      } else {
+        // 删除地址栏参数，然后删除缓存
+        const newQuery = this.$route.query // 深拷贝路由数据
+        delete newQuery.expandId
+        delete newQuery.expandPage
+        delete newQuery.startTime
+        delete newQuery.endTime
+        this.reloadUrl(newQuery, 'cleanOldParams')
+      }
+    },
+    timeRange (newVal, oldVal) {
+      if (newVal) {
+        const dateParam = {
+          startTime: dateFormatToUTC(newVal[0]),
+          endTime: dateFormatToUTC(newVal[1])
+        }
+        this.reloadUrl(dateParam)
+      }
     }
   },
   computed: {
@@ -403,39 +488,39 @@ export default {
       }
     }
   },
-  mounted() {
-    this.expandTable();
+  mounted () {
+    this.expandTable()
   },
   methods: {
     /**
      * 进入页面判断是否需要展开表格
      * 即展开表格后刷新界面，保持展开效果
      */
-     expandTable() {
-      let expandInfo = this.expandedIds;
+    expandTable () {
+      const expandInfo = this.expandedIds
 
-      if(expandInfo !== undefined && expandInfo.length>0) {
-        let obj = {
+      if (expandInfo !== undefined && expandInfo.length > 0) {
+        const obj = {
           id: expandInfo[0]
         }
-        this.dropExpandChange(obj, expandInfo);
+        this.dropExpandChange(obj, expandInfo, 'init')
       }
     },
     /**
      * 显示选中的行，即分页后依旧显示
      */
-    showSelectedRow() {
-      let selectIds = this.selectIds;
+    showSelectedRow () {
+      const selectIds = this.selectIds
 
       this.$nextTick(() => {
-        if(selectIds.length>0) {
-          this.tableData.forEach(item =>{
-            if(selectIds.includes(item.id)) {
-              this.$refs.dataTable.toggleRowSelection(item);
+        if (selectIds.length > 0) {
+          this.tableData.forEach(item => {
+            if (selectIds.includes(item.id)) {
+              this.$refs.dataTable.toggleRowSelection(item)
             }
           })
         }
-      });
+      })
     },
     getJobStatus (report) {
       if (report.state === 1 && report.upload === 1) {
@@ -452,68 +537,76 @@ export default {
     /**
      * 单行选中
      */
-     selectionChange (objs) {
+    selectionChange (objs) {
       this.$emit('selectionChange', objs)
-      this.checkboxIds.id = objs.map(item => { return item.id }).join(',');
+      this.checkboxIds.id = objs.map(item => {
+        return item.id
+      }).join(',')
 
-      this.batchDow = objs.length > 0;
+      this.batchDow = objs.length > 0
 
-      this.checkboxAll = objs.length === this.tableData.length;
-      this.isIndeterminate = objs.length > 0 && objs.length < this.tableData.length;
+      this.checkboxAll = objs.length === this.tableData.length
+      this.isIndeterminate = objs.length > 0 && objs.length < this.tableData.length
 
       // 选中状态回显
-      let selectIds = [];
-      if(objs.length > 0) {
+      const selectIds = []
+      if (objs.length > 0) {
         objs.forEach(item => {
-          selectIds.push(item.id);
+          selectIds.push(item.id)
         })
-        this.selectIds = selectIds;
+        // this.selectIds = selectIds
       }
     },
     /**
      * 全选按钮
      */
     selectAll (objs) {
-      let selectIds = [];
-      this.isIndeterminate = false;
+      const selectIds = []
+      this.isIndeterminate = false
 
       if (objs) {
         objs.forEach(item => {
-          this.$refs.dataTable.toggleAllSelection(item);
+          this.$refs.dataTable.toggleAllSelection(item)
           // this.checkboxAll = true;
-          selectIds.push(item.id);
+          selectIds.push(item.id)
         })
       } else {
         this.$refs.dataTable.clearSelection()
       }
 
-      this.selectIds = selectIds;
+      // this.selectIds = selectIds
     },
     /**
      * 向地址栏添加/删除参数
      */
     reloadUrl (newParam, clean) {
-      const { query } = this.$route;
-      let newUrl = urlParamsHandler(window.location.href, query, newParam);
-      if(clean) {
-        newUrl = urlParamsHandler(window.location.href, query, newParam, clean);
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
       }
       overwriteUrl(newUrl)
     },
     /**
      * 表格左侧点击展开收起
      */
-    dropExpandChange (row, expandedRows) {
+    dropExpandChange (row, expandedRows, flag) {
       this.expandedIds = []
       clearInterval(this.interval)
       if (expandedRows.length > 0 && row) {
         this.expandedIds.push(row.id)
+        if (flag === undefined) {
+          this.pageObj.pageNo = 1
+        }
+
         this.datePickerChange(row)
       }
     },
     datePickerChange (row, show) {
       if (!show) {
-        this.pageObj.pageNo = 1
+        if (this.pageObj.pageNo <= 1) {
+          this.pageObj.pageNo = 1
+        }
       }
       const param = {
         tempId: row.id,
@@ -558,9 +651,13 @@ export default {
         del(api.reportJob + '?ids=' + row.id).then(response => {
           if (response.code === 200) {
             this.delFlag = true
-            this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
+            this.$message({
+              duration: 2000,
+              type: 'success',
+              message: this.$t('tip.deleteSuccess')
+            })
             this.dropDownQueryChange({ tempId: props.row.id })
-            this.$emit('reload')
+            // this.$emit('reload')
           } else {
             this.$message.error(response.msg)
           }
@@ -576,6 +673,10 @@ export default {
     intervalChange (param) {
       clearInterval(this.interval)
       this.interval = setInterval(() => {
+        // 通过深拷贝，触发watch监听到timeRange，也可使用$set进行触发
+        this.timeRange = JSON.parse(JSON.stringify(this.timeRange))
+        this.timeRange[1] = this.timeRange[1] + 10000
+        param.endTime = dateFormatToUTC(this.timeRange[1])
         this.dataConversionProcessing(param)
       }, 10000)
     },

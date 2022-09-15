@@ -1,6 +1,5 @@
 <template>
   <div>
-    <loading :loading="loading"></loading>
     <el-pagination
       small
       ref="pagination"
@@ -19,76 +18,60 @@
 <script>
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { useRoute } from 'vue-router'
-import { ref, shallowRef } from 'vue'
+import { ref } from 'vue'
 import { parseInt } from 'lodash'
-import Loading from '@/components/common/Loading'
 export default {
   name: 'chartDetectionPagination',
   props: {
-    pageObj: Object,
+    pageObj: Object
   },
-  components: {
-    Loading
-  },
-  data() {
+  data () {
     return {
-      initNum: -1,
-      loading: false,
+      initFlag: false,
       timer: null
     }
   },
   setup () {
     const { query } = useRoute()
-    const pageNo = ref(query.expandPaginaTionPage || 1)
+    const pageNo = ref(query.expandPage || 1)
     return {
       pageNo
     }
   },
   computed: {
-    totalPage() {
+    totalPage () {
       const remainder = this.pageObj.total % this.pageObj.pageSize
       if (remainder) {
         return parseInt(this.pageObj.total / this.pageObj.pageSize) + 1
       } else {
         return parseInt(this.pageObj.total / this.pageObj.pageSize)
       }
-    },
+    }
   },
   methods: {
     /**
      * 当前页改变
      */
-    currentChange: function(val) {
-      this.pageObj.pageNo = val
-      this.$emit('pageJump', val)
-
-      let newParam = {
-        expandPaginaTionPage: val,
+    currentChange: function (val) {
+      if (this.pageObj.pageNo === 1) {
+        this.initFlag = true
       }
-      const { query } = this.$route
-      let newUrl = urlParamsHandler(window.location.href, query, newParam)
-      overwriteUrl(newUrl)
-    },
-    initData() {
-        let pageNo = this.pageNo;
-        this.timer = setTimeout(() => {
-          this.currentChange(parseInt(pageNo));
-        }, 500);
-        
-    },
-  },
-  mounted() {
-    this.$el.querySelector('.el-pagination__jump').childNodes[0].nodeValue = ''
+      if (this.initFlag) {
+        this.pageObj.pageNo = val
+        this.$emit('pageJump', val)
 
-    this.initNum = this.initNum+1;
-    if(this.initNum === 0) {
-      this.$nextTick(()=>{
-        this.initData()
-      })
+        const newParam = {
+          expandPage: val
+        }
+        const { query } = this.$route
+        const newUrl = urlParamsHandler(window.location.href, query, newParam)
+        overwriteUrl(newUrl)
+      }
+      this.initFlag = true
     }
   },
-  beforeDestroy(to, from, next) {
-    clearTimeout(this.timer);
+  mounted () {
+    this.$el.querySelector('.el-pagination__jump').childNodes[0].nodeValue = ''
   }
 }
 </script>
