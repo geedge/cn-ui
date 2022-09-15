@@ -200,6 +200,10 @@ export const api = {
   linkMonitor: {
     links: '/interface/linkMonitor/links',
     linkTrafficDirection: '/interface/linkMonitor/linkTrafficDirection'
+  },
+  dnsInsight: {
+    recentEvents: '/interface/dnsInsight/recentEvents',
+    activeMaliciousDomain: '/interface/dnsInsight/activeMaliciousDomain'
   }
 }
 
