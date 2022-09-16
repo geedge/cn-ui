@@ -1,0 +1,65 @@
+.dns-mailcious-domain {
+  $blue: #046ECA;
+  $fontFamily: NotoSansHans-Medium;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .dns-mailcious-domain-title {
+    font-family: NotoSansHans-Medium;
+    font-size: 14px;
+    color: #353636;
+    margin-bottom: 12px;
+  }
+
+  .dns-mailcious-domain-table {
+    height: 100% !important;
+    border: 1px solid #E2E5EC;
+    border-radius: 4px;
+    padding: 1px;
+
+    .el-table__header-wrapper {
+      tr th {
+        padding: 4px 0;
+
+        .dns-column__span {
+          font-family: $fontFamily;
+          font-size: 12px;
+          color: #353636;
+        }
+      }
+    }
+  }
+
+  .data-mailcious-domain-table {
+    display: flex !important;
+    height: auto;
+    line-height: 16.9px;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .data-column-domain, .data-column-ips {
+      font-family: NotoSansSChineseRegular;
+      width: 210px;
+      font-size: 12px;
+      color: $blue;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      .data-column-ips-hover-block {
+        height: 24px;
+        line-height: 24px;
+        color: #046ECA;
+      }
+    }
+  }
+
+  //.el-table--group::after, .el-table--border::after, .el-table::before {
+  //  height: 0px;
+  //}
+
+}
