@@ -1,6 +1,6 @@
 <template>
   <div class="link-blocks">
-    <el-tabs v-model="tab">
+<!--<el-tabs v-model="tab">
       <el-tab-pane :label="$t('linkMonitor.links')" :name="0"></el-tab-pane>
       <el-tab-pane :label="$t('linkMonitor.nextHopInternet')" :name="1"></el-tab-pane>
     </el-tabs>
@@ -39,6 +39,74 @@
         </div>
         <div class="legend__color-piece"></div>
         <div class="legend__desc">{{$t('linkMonitor.linkBlock.bandwidthUsage')}}</div>
+      </div>
+    </div> -->
+    <div class="block-list">
+      <div class="block-list__title">{{$t('linkMonitor.links')}}</div>
+      <div class="block-list__list">
+        <el-popover
+            placement="bottom"
+            trigger="hover"
+            popper-class="link-block__popper"
+            v-for="(item, index) in linkData"
+            :width="220"
+            :key="index"
+        >
+          <template #reference>
+            <div class="block-list__block" :key="index">
+              <span class="block-hex">
+                <span class="block-hex-in" :style="`background-color: ${item.color}`"></span>
+              </span>
+            </div>
+          </template>
+          <template #default>
+            <div class="popper-content">
+              <div class="popper-content__link-id">Link ID: {{item.linkId}}</div>
+              <div class="popper-content__link-info">
+                <div class="info__label">{{$t('linkMonitor.linkBlock.total')}}</div>
+                <div class="info__value">{{unitConvert(item.totalBitsRate, unitTypes.bps).join('')}}</div>
+              </div>
+              <div class="popper-content__link-info">
+                <div class="info__label">{{$t('linkMonitor.linkBlock.bandwidthUsage')}}</div>
+                <div class="info__value">50%</div>
+              </div>
+            </div>
+          </template>
+        </el-popover>
+      </div>
+    </div>
+    <div class="block-list">
+      <div class="block-list__title">{{$t('linkMonitor.nextHopInternet')}}</div>
+      <div class="block-list__list">
+        <el-popover
+            placement="bottom"
+            trigger="hover"
+            popper-class="link-block__popper"
+            v-for="(item, index) in linkData"
+            :width="220"
+            :key="index"
+        >
+          <template #reference>
+            <div class="block-list__block" :key="index">
+              <span class="block-hex">
+                <span class="block-hex-in" :style="`background-color: ${item.color}`"></span>
+              </span>
+            </div>
+          </template>
+          <template #default>
+            <div class="popper-content">
+              <div class="popper-content__link-id">Link ID: {{item.linkId}}</div>
+              <div class="popper-content__link-info">
+                <div class="info__label">{{$t('linkMonitor.linkBlock.total')}}</div>
+                <div class="info__value">{{unitConvert(item.totalBitsRate, unitTypes.bps).join('')}}</div>
+              </div>
+              <div class="popper-content__link-info">
+                <div class="info__label">{{$t('linkMonitor.linkBlock.bandwidthUsage')}}</div>
+                <div class="info__value">50%</div>
+              </div>
+            </div>
+          </template>
+        </el-popover>
       </div>
     </div>
   </div>
