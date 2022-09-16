@@ -29,7 +29,7 @@
       margin: auto;
 
       .block-list__block {
-        margin: 0 3px 0 2px;
+        margin: 0 2px;
         height: 51px;
 
         .block-hex {
@@ -48,7 +48,7 @@
           cursor: pointer;
         }
         &:nth-child(9n + 1) {
-          margin-left: 27px;
+          margin-left: 26px;
         }
         &:nth-child(n + 5) {
           margin-top: -9px;
