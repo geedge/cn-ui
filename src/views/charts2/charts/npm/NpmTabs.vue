@@ -77,6 +77,7 @@ export default {
   },
   mounted () {
     if (this.chart.panelId === drillDownPanelTypeMapping.npmOverviewIp) {
+      const self = this
       // 当client或server的session数为0时，对应tab置灰，不可选，默认高亮另一个不为0的tab
       const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
       const params = {
@@ -86,28 +87,35 @@ export default {
       }
       get(api.npm.overview.relatedSessions, params).then(res => {
         if (res.code === 200) {
-          this.sessionData = res.data.result
-          this.clientSessions = this.sessionData.clientSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
-          this.serverSessions = this.sessionData.serverSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
+          self.sessionData = res.data.result
+          self.clientSessions = self.sessionData.clientSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
+          self.serverSessions = self.sessionData.serverSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
         }
       }).finally(() => {
-        if (this.clientSessions === 0) {
-          this.currentTab = 1
-          this.tabs[0].disable = true
-          this.tabs[1].disable = false
+        if (self.clientSessions === 0) {
+          self.currentTab = 1
+          self.tabs[0].disable = true
+          self.tabs[1].disable = false
           const tabEle = document.getElementById('tab-0')
           tabEle.style.cssText = 'cursor: not-allowed;'
-        } else if (this.serverSessions === 0) {
-          this.tabs[0].disable = false
-          this.tabs[1].disable = true
+          setTimeout(() => {
+            self.handleActiveBar(1)
+          }, 400)
+        } else if (self.serverSessions === 0) {
+          self.currentTab = 0
+          self.tabs[0].disable = false
+          self.tabs[1].disable = true
           setTimeout(() => {
             const tabEle = document.getElementById('tab-1')
             tabEle.style.cssText = 'cursor: not-allowed;'
-            this.handleActiveBar(0)
+            self.handleActiveBar(0)
           }, 400)
         } else {
+          self.currentTab = 0
+          self.tabs[0].disable = false
+          self.tabs[1].disable = false
           setTimeout(() => {
-            this.handleActiveBar(0)
+            self.handleActiveBar(0)
           }, 400)
         }
       })

@@ -180,9 +180,10 @@
 <script>
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
-import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl } from '@/utils/constants'
+import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl, curTabState } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
+import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 
 export default {
@@ -229,7 +230,8 @@ export default {
           path: '/detection/performanceEvent'
         }
       ],
-      curPageNum: 1
+      curPageNum: 1,
+      curTabState: curTabState
     }
   },
   computed: {
@@ -432,6 +434,13 @@ export default {
         }
       })
     },
+    changeTabState (param, value) {
+      const { query } = this.$route
+      const newQuery = {}
+      newQuery[param] = value
+      const newUrl = urlParamsHandler(window.location.href, query, newQuery)
+      overwriteUrl(newUrl)
+    },
     jump (route, columnName, columnValue, opeType) {
       this.showMenu = false
       if (opeType) {
@@ -465,7 +474,7 @@ export default {
                 this.$store.commit('setPanelName', columnName)
                 const tabList = this.$store.getters.getNetworkOverviewTabList
                 const curTab = tabList.filter(item => this.$t(item.label) === columnName)[0]
-                this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+                this.changeTabState(this.curTabState.curTab, curTab)
                 this.$store.commit('setDimensionType', curTab ? curTab.prop : '')
                 this.$store.commit('setQueryCondition', '')
                 this.$store.commit('setNetworkOverviewBeforeTab', null)
@@ -476,8 +485,8 @@ export default {
                 this.$store.commit('setBreadcrumbColumnName', '')
                 this.$store.commit('setDimensionType', '')
                 this.$store.commit('setPanelName', '')
-                this.$store.commit('setBreadcrumbColumnValueList', [])
-                this.$store.commit('setNetworkOverviewCurrentTab', null)
+                // this.$store.commit('setBreadcrumbColumnValueList', [])
+                this.changeTabState(this.curTabState.curTab, null)
                 this.$store.commit('setQueryCondition', '')
                 this.$store.commit('setNetworkOverviewBeforeTab', null)
               }
@@ -488,11 +497,11 @@ export default {
       // console.log(this.$store.getters.getDimensionType)
       if (opeType === 3) {
         this.$router.push({
-          params: { ...this.$route.params, fourthPanel: '' }
+          query: { ...this.$route.query, fourthPanel: '' }
         })
       } else if (opeType != 4) {
         this.$router.push({
-          params: { ...this.$route.params, fourthPanel: '', thirdPanel: '' }
+          query: { ...this.$route.query, fourthPanel: '', thirdPanel: '' }
         })
       }
       if (route === this.route) {

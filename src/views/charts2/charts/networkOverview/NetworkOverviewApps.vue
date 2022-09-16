@@ -118,7 +118,7 @@
 
 <script>
 import unitConvert from '@/utils/unit-convert'
-import { storageKey, unitTypes, networkTable, operationType } from '@/utils/constants'
+import { storageKey, unitTypes, networkTable, operationType, curTabState } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { ref, shallowRef } from 'vue'
@@ -126,7 +126,7 @@ import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
-import {getChainRatio, overwriteUrl, urlParamsHandler} from '@/utils/tools'
+import { getChainRatio, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
@@ -180,7 +180,8 @@ export default {
       offset: 0,
       flag: false,
       timerSearch: null,
-      loadingBody: false
+      loadingBody: false,
+      curTabState: curTabState
     }
   },
   setup () {
@@ -370,15 +371,25 @@ export default {
         const tabObjGroup = list.filter(item => item.checked)
         if (tabObjGroup && tabObjGroup.length > 0) {
           const curTab = tabObjGroup[0]
-          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+          this.changeTabState(this.curTabState.curTab, curTab)
         }
         this.$router.push({
-          params: {
+          query: {
+            ...this.$route.query,
             thirdPanel: curTable.panelIdOfThirdMenu ? curTable.panelIdOfThirdMenu : '',
             fourthPanel: toPanel || ''
           }
         })
       }
+    },
+    changeTabState (param, value) {
+      const query = {
+        ...this.$route.query
+      }
+      query[param] = value
+      this.$router.push({
+        query: query
+      })
     },
     initChart (obj) {
       let chart = this.myChart.find(m => m.name === obj.name && m.type === obj.type)

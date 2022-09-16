@@ -837,6 +837,15 @@ export function computeScore (data, index) {
   return score * k
 }
 
+// 改变tab状态(url中)：当前tab，
+export function changeTabState (param, value) {
+  const query = router.query
+  query[param] = JSON.stringify(value)
+  router.push({
+    query: query
+  })
+}
+
 // cleanOldParams: true|false，是否清除oldParams
 export function urlParamsHandler (url, oldParams, newParams, cleanOldParams) {
   let newUrl = url.split('?')[0]

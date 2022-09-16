@@ -148,8 +148,8 @@ export default {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params, query } = useRoute()
-    const thirdPanel = params.thirdPanel
-    const fourthPanel = params.fourthPanel
+    const thirdPanel = query.thirdPanel
+    const fourthPanel = query.fourthPanel
     if (fourthPanel) {
       panelType = Number(fourthPanel)
     } else if (thirdPanel) {

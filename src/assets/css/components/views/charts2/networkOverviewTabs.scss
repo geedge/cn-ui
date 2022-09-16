@@ -124,6 +124,9 @@
     .el-tabs__content {
       height: 100% !important;
     }
+    .el-tabs__header {
+      display:none;
+    }
   }
   .tab-search {
     position:absolute;

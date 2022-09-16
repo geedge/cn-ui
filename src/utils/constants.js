@@ -238,6 +238,15 @@ export const cycle = {
   pre: 1
 }
 
+export const curTabState = {
+  curTab: 'curTab',
+  tableMetric: 'tableMetric',
+  tableShowMore: 'tableShowMore',
+  tableSortColumn: 'tableSortColumn',
+  tableSortType: 'tableSortType',
+  tableSortTab: 'tableSortTab'
+}
+
 export const scoreUrl = [
   '/interface/application/performance/overview/drilldown/dimensionTcpSessionDelay',
   '/interface/application/performance/overview/drilldown/dimensionSslConDelay',

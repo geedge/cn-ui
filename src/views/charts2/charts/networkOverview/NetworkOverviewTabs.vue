@@ -1,25 +1,25 @@
 <template>
-  <div class="tabs" :style="showTabs ? (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 40px);'
+  <div class="tabs" :style="showCustomizeTabs ? (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 40px);'
                                                                                       : 'height: calc(100% - 2px)')
                                      : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 64px);'
                                                                                       : 'height: calc(100% - 26px);')">
     <el-tabs v-model="activeTab"
-             :class="showTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
+             :class="showCustomizeTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
              @tab-click="handleClick"
     >
       <template v-for="(tab,index) in list">
         <el-tab-pane  v-if="tab.checked"
                       :name="tab.label"
-                      :key="index"
+                      :key="tab.label"
                       :ref="`chart-tab-${index}`"
                       class="tab-pane"
-        >
+        ><!-- key原来设置的值为index，导致自定义拖拽时，选中tab下方的蓝色线不随着拖拽移动，key修改为label后，此问题消失 -->
           <template #label>
             {{$t(tab.label)}}
           </template>
           <el-table
                   :id="`tabTable_${index}`"
-                  :ref="`dataTable_${index}`"
+                  :ref="`dataTable_${tab.prop}`"
                   :data="tableData.slice(0,showRecordNum)"
                   border
                   :cell-style="tableCellStyle"
@@ -27,7 +27,7 @@
                   :class="tableClass"
                   height="100%"
                   empty-text=" "
-                  @sort-change="((column) => {sortChange(column,index)})"
+                  @sort-change="((column) => {sortChange(column,tab.prop)})"
                   :key="index"
           >
             <template v-for="(item,index) in customTableTitles">
@@ -125,7 +125,7 @@
                  @tab-click="handleCustomizeClick"
                  type="card"
         >
-          <el-tab-pane :label="$t('network.tabs')" name="tabs" width="50%"  v-if="showTabs" >
+          <el-tab-pane :label="$t('network.tabs')" name="tabs" width="50%"  v-if="showCustomizeTabs" >
             <transition-group name="dragTabs" class="list" tag="ul" ref="tabs">
               <li v-for="(item, index) in list"
                   :key="item.label"
@@ -169,13 +169,14 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit } from '@/utils/constants'
+import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -211,12 +212,13 @@ export default {
       tableData: [],
       tableDataBackup: [],
       showRecordNum: 10,
-      showTabs: true,
+      showCustomizeTabs: true,
       columnNameGroup: {},
       cycleColumnNameGroup: {},
       metricUnit: 'bytes',
       // loading: false,
       tableColumnType: tableColumnType,
+      curTabState: curTabState,
       curTable: {}, // 当前的表格类型
       tableType: '',
       hasMetricSearch: true,
@@ -224,11 +226,14 @@ export default {
       activeCustomize: '',
       networkSearchUrl: {},
       column: {},
-      index: 0
+      index: 0,
+      chartData: [],
+      tableSortColumn: '',
+      tableSortType: '',
+      tableSortTab: ''
     }
   },
   props: {
-    chartData: Array,
     timeFilter: Object,
     chart: Object
   },
@@ -236,14 +241,14 @@ export default {
     ChartNoData
   },
   watch: {
-    chartData: {
+    /* chartData: {
       deep: true,
       handler (n) {
         if (this.chartData) {
           this.initData()
         }
       }
-    },
+    }, */
     timeFilter: {
       deep: true,
       handler (n) {
@@ -262,7 +267,7 @@ export default {
             q: condition
           }
         }
-        this.$emit('getChartData', this.getCurUrl(), queryParams)
+        this.getChartData(queryParams)
       }
     }
   },
@@ -282,9 +287,362 @@ export default {
   },
   mixins: [chartMixin],
   methods: {
+    /* 参数 extraParams 额外请求参数 */
+    getChartData (extraParams = {}) {
+      try {
+        this.initState()
+        // const chartParams = this.chart.params
+        this.queryParams = {
+          ...this.handleQueryParams(extraParams),
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime)
+        }
+        const requestUrl = this.getCurUrl()
+        get(requestUrl, this.queryParams).then(response => {
+          if (response.code === 200) {
+            this.chartData = response.data.result
+            this.initData()
+          }
+        })
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    cancleSortArrow () {
+      // 取消表格排序高亮的箭头
+      if (this.column.prop) {
+        const table = this.$refs['dataTable_' + this.index]
+        const tableHeaer = this.$refs['dataTable_' + this.index]
+          ? (Array.isArray(this.$refs['dataTable_' + this.index])
+              ? this.$refs['dataTable_' + this.index][0].$refs.tableHeader
+              : this.$refs['dataTable_' + this.index].$refs.tableHeader)
+          : []
+        const columns = tableHeaer.columns
+        if (columns) {
+          columns.forEach(item => {
+            item.order = ''
+          })
+        }
+        this.column = {}
+        this.index = 0
+      }
+    },
+    initState () {
+      // 没有选中任何tab时，默认选中第一个
+      const tabList = this.list.filter(item => item.checked === true)
+      if (tabList.length === 0) {
+        this.list[0].checked = true
+        this.showTab(this.list[0])
+      } else {
+        this.showTab(tabList[0])
+      }
+      this.isNoData = false
+      this.tableData = []
+      this.tableDataBackup = []
+      this.toggleLoading(true)
+      this.$nextTick(() => {
+        // 取消表格排序高亮的箭头
+        this.cancleSortArrow()
+        // 设置默认排序
+        if (this.tableSortColumn) {
+          const refName = 'dataTable_' + this.tableSortTab
+          const table = this.$refs[refName]
+          const tableHeaer = table
+            ? (Array.isArray(table)
+                ? table[0].$refs.tableHeader
+                : table.$refs.tableHeader)
+            : []
+          const columns = tableHeaer.columns
+          if (columns) {
+            columns.forEach(item => {
+              if (item.property === this.tableSortColumn) {
+                item.order = this.tableSortType
+              }
+            })
+          }
+          this.sortChange({ prop: this.tableSortColumn, order: this.tableSortType }, this.tableSortTab)
+        }
+      })
+
+      // 针对network overview – app list 点击标题触发下钻，相关内容处理
+      const columnName = this.$store.getters.getBreadcrumbColumnName
+      if (columnName) {
+        this.list.forEach(item => {
+          if (item.label === columnName) {
+            item.checked = false
+          }
+        })
+        this.$store.commit('setNetworkOverviewTabList', this.list)
+      }
+      this.list.forEach(item => {
+        const tabDom = document.getElementById('tab-' + item.label)
+        if (tabDom) {
+          tabDom.style.display = ''
+        }
+      })
+
+      let curTab = this.getCurTab()
+      const curOperationType = this.$store.getters.getTabOperationType
+      const beforeOperationType = this.$store.getters.getTabOperationBeforeType
+      if (curOperationType === operationType.changeTab) { // 切换tab
+        if (curTab) { // tab切换
+          this.showTab(curTab)
+        }
+        this.showCustomizeTabs = true
+        this.setShowNum(10)
+      } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
+        const name = this.$store.getters.getBreadcrumbColumnName
+        const networkTabList = []
+        this.list.forEach(item => {
+          if (this.$t(item.label) === name) {
+            item.checked = true
+          }
+          networkTabList.push(item)
+        })
+        this.$store.commit('setNetworkOverviewTabList', networkTabList)
+        const breadcrumbColumnTab = this.list.find(item => this.$t(item.label) === name)
+        this.changeUrlTabState(this.curTabState.curTab, breadcrumbColumnTab.prop)
+
+        this.hideTabs(breadcrumbColumnTab)
+        this.customTableTitles[0].label = breadcrumbColumnTab.label
+        this.showCustomizeTabs = false
+        // this.showRecordNum = 10
+        this.setShowNum(10)
+      } else if (curOperationType === operationType.fourthMenu) { // 点击的为第四级菜单
+        curTab = this.getDefaultTab()
+        if (curTab) {
+          this.showTab(curTab)
+          this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
+        }
+        this.showCustomizeTabs = true
+        this.setShowNum(10)
+      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击的为第二级菜单、或者点击菜单进入、
+        this.list = this.$_.cloneDeep(this.curTable.tabList)
+        this.$store.commit('setNetworkOverviewTabList', this.list)
+        if (curTab) {
+          this.showTab(curTab)
+          this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
+        }
+        this.showCustomizeTabs = true
+      } else if (curOperationType === operationType.changeMetric) { // 切换metric
+        if (beforeOperationType === operationType.thirdMenu) {
+          this.hideTabs(curTab)
+          this.customTableTitles[0].label = curTab.label
+          this.showCustomizeTabs = false
+        }
+      } else if (curOperationType === operationType.customize) { // customize
+        if (beforeOperationType === operationType.thirdMenu) {
+          this.hideTabs(curTab)
+          this.customTableTitles[0].label = curTab.label
+          this.showCustomizeTabs = false
+        } else {
+          this.$nextTick(() => {
+            this.list.forEach(item => {
+              const tabDom = document.getElementById('tab-' + item.label)
+              const paneDom = document.getElementById('pane-' + item.label)
+              if (tabDom) {
+                tabDom.style.display = ''
+              }
+              if (paneDom) {
+                if (curTab.label === item.label) {
+                  paneDom.style.display = ''
+                }
+              }
+            })
+            this.showTab(curTab)
+            this.showCustomizeTabs = true
+          })
+        }
+      }
+    },
+    initData () {
+      const tabList = []
+      const curTab = this.getCurTab()
+      const tableDataTmp = this.chartData.map(item => {
+        tabList.push(item[curTab.prop])
+        const otherData = { tab: item[curTab.prop] }
+        Object.keys(this.columnNameGroup).forEach(i => {
+          otherData[i] = item[this.columnNameGroup[i]]
+        })
+        return otherData
+      })
+
+      if (!this.chartData || this.chartData.length === 0) {
+        this.isNoData = true
+        this.toggleLoading(false)
+      } else {
+        this.isNoData = false
+      }
+
+      const queryParams = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
+      }
+      if (tabList.length > 0) {
+        const conditionStr = tabList.filter(item => item != '')
+        queryParams.params = conditionStr.toString()
+        queryParams.type = curTab.prop
+      }
+
+      let cycleTotalList = []
+      const condition = this.$store.getters.getQueryCondition
+      if (condition) {
+        queryParams.q = condition
+      }
+
+      const self = this
+      this.customTableTitles.forEach(tableColumn => {
+        if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl && tableDataTmp && tableDataTmp.length > 0) {
+          get(self.gerCycleUrl(), queryParams).then(response => {
+            if (response.code === 200) {
+              cycleTotalList = response.data.result
+              tableDataTmp.forEach(item => {
+                const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
+                let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
+                let trendPercent = ''
+                if (cycle) {
+                  const curVal = Number(item[tableColumn.prop])
+                  const preVal = Number(cycle[self.cycleColumnNameGroup[tableColumn.prop]])
+                  if (preVal && preVal != 0) {
+                    const totalDiff = curVal - preVal
+                    const chainRatio = getChainRatio(curVal, preVal)
+                    if (chainRatio === '-') {
+                      trend = ''
+                      trendPercent = ''
+                    } else {
+                      trendPercent = Math.round(Math.abs(chainRatio) * 100)
+                      if (totalDiff > 0) {
+                        trend = 'up'
+                        trendPercent = trendPercent + '%'
+                      } else if (totalDiff < 0) {
+                        trend = 'down'
+                        trendPercent = trendPercent + '%'
+                      } else if (totalDiff === 0) {
+                        trend = 'noChange'// 横向图标
+                      } else {
+                        trend = ''
+                      }
+                      if (trendPercent === '0%') {
+                        trend = 'noChange'
+                        trendPercent = ''
+                      }
+                    }
+                  }
+                }
+                item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
+              })
+            }
+          }).catch(e => {
+            console.log(e)
+          }).finally(e => {
+            this.tableData = tableDataTmp
+            this.tableDataBackup = tableDataTmp
+            if (this.tableSortColumn) { // 执行url中指定的排序
+              this.sortChange({ prop: this.tableSortColumn, order: this.tableSortType }, this.tableSortTab)
+            }
+            this.toggleLoading(false)
+            // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
+            let scoreNum = 0
+            this.customTableTitles.forEach(tableColumn => {
+              if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
+                scoreNum++
+                get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
+                  if (response.code === 200) {
+                    const columnList = response.data.result
+                    self.tableData.forEach((item, i) => {
+                      const data = columnList.find(i => i[curTab.prop] === item.tab)
+                      if (data) {
+                        item[tableColumn.prop] = data[self.columnNameGroup[tableColumn.prop]]
+                        let score = 0
+                        if (data) {
+                          score = computeScore(data, tableColumn.scoreType)
+                        }
+                        item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, score] : [score]
+                      } else {
+                        item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, 0] : [0]
+                      }
+                      if (scoreNum >= 5) {
+                        let score = 0
+                        item.scoreGroup.forEach(i => {
+                          score = Number(score) + Number(i)
+                        })
+                        score = Math.ceil(score * 6)
+                        if (score > 6) {
+                          score = 6
+                        }
+                        item.score = score || 0
+                      }
+                    })
+                  }
+                }).catch(e => {
+                  console.log(e)
+                }).finally(e => {
+                  // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
+                  if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
+                    const queryCycleParams = {
+                      ...queryParams,
+                      cycle: tableColumn.cycle
+                    }
+                    get(self.gerColumnUrl(tableColumn), queryCycleParams).then(response => {
+                      if (response.code === 200) {
+                        cycleTotalList = response.data.result
+                        self.tableData.forEach(item => {
+                          const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
+                          let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
+                          let trendPercent = ''
+                          if (cycle) {
+                            const curVal = Number(item[tableColumn.prop])
+                            // let preVal = Number(cycle[self.metricUnit])
+                            const preVal = Number(cycle[self.columnNameGroup[tableColumn.prop]])
+                            if (preVal && preVal != 0) {
+                              const totalDiff = curVal - preVal
+                              const chainRatio = getChainRatio(curVal, preVal)
+                              if (chainRatio === '-') {
+                                trend = ''
+                                trendPercent = ''
+                              } else {
+                                trendPercent = Math.round(Math.abs(chainRatio) * 100)
+                                if (totalDiff > 0) {
+                                  trend = 'up'
+                                  trendPercent = trendPercent + '%'
+                                } else if (totalDiff < 0) {
+                                  trend = 'down'
+                                  trendPercent = trendPercent + '%'
+                                } else if (totalDiff === 0) {
+                                  trend = 'noChange'// 横向图标
+                                } else {
+                                  trend = ''
+                                }
+                                if (trendPercent === '0%') {
+                                  trend = 'noChange'
+                                  trendPercent = ''
+                                }
+                              }
+                            }
+                          }
+                          if (!(item[tableColumn.prop] && item[tableColumn.prop].length >= 3)) {
+                            item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
+                          }
+                        })
+                      }
+                    }).catch(e => {
+                      console.log(e)
+                    })
+                  }
+                })
+              }
+            })
+          })
+        }
+      })
+    },
     showMore () {
-      this.showRecordNum = 50
+      this.setShowNum(50)
       this.sortChange(this.column, this.index)// 当前选中的tab？？？？
+    },
+    setShowNum (num) {
+      this.showRecordNum = num
+      this.changeUrlTabState(curTabState.tableShowMore, this.showRecordNum)
     },
     rowClass (row, column, rowIndex, columnIndex) {
       if (rowIndex === 49) {
@@ -306,8 +664,10 @@ export default {
       return ['others', 999]
     },
     sortChange (column, index) {
+      this.changeUrlTabState(this.curTabState.tableSortColumn, column.prop)
+      this.changeUrlTabState(this.curTabState.tableSortType, column.order)
+      this.changeUrlTabState(this.curTabState.tableSortTab, index)
       this.index = index
-
       this.column = column
       const arr = []
       this.tableData.slice(0, this.showRecordNum).forEach(val => {
@@ -406,7 +766,10 @@ export default {
       }
     },
     changeMetric () {
-      this.showRecordNum = 10
+      this.tableData = []
+      this.tableDataBackup = []
+      // this.showRecordNum = 10
+      this.setShowNum(10)
       const beforeType = this.$store.getters.getTabOperationBeforeType
       if (beforeType != operationType.thirdMenu) {
         this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
@@ -414,6 +777,7 @@ export default {
       this.$store.commit('setTabOperationType', operationType.changeMetric)
       const curTab = this.getCurTab()
       const label = curTab.label
+      this.changeUrlTabState(this.curTabState.tableMetric, this.metric)
       if (this.metric === 'Bits/s') {
         this.columnNameGroup = this.curTable.bytesColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
@@ -495,11 +859,11 @@ export default {
           q: condition
         }
       }
-      this.$emit('getChartData', this.getCurUrl(), queryParams)
+      this.getChartData(queryParams)
     },
     handleCustomizeButton (status) {
       this.showBackground = status
-      if (!this.showTabs) {
+      if (!this.showCustomizeTabs) {
         this.activeCustomize = 'metrics'
       }
       const tabList = this.list.filter(item => item.checked === true)
@@ -517,6 +881,7 @@ export default {
             }
           }
         })
+        this.$store.commit('setNetworkOverviewTabList', this.list)
       }
     },
     getDefaultTab () {
@@ -543,279 +908,18 @@ export default {
         }
       })
     },
-    initData () {
-      // 取消表格排序高亮的箭头
-      if (this.column.prop) {
-        let table = this.$refs['dataTable_' + this.index]
-        let tableHeaer = this.$refs['dataTable_' + this.index]?(Array.isArray(this.$refs['dataTable_' + this.index])
-                                                                          ?this.$refs['dataTable_' + this.index][0].$refs.tableHeader
-                                                                          :this.$refs['dataTable_' + this.index].$refs.tableHeader):[]
-        const columns = tableHeaer.columns
-        if(columns){
-          columns.forEach(item => {
-            item.order = ''
-          })
-        }
-        this.column = {}
-        this.index = 0
-      }
-
-      // 清除表格排序高亮的箭头
-      const curTab = this.getCurTab()
-      // 针对network overview – app list 点击标题触发下钻，相关内容处理
-      const columnName = this.$store.getters.getBreadcrumbColumnName
-      if (columnName) {
-        this.list.forEach(item => {
-          if (item.label === columnName) {
-            item.checked = false
-          }
-        })
-      }
-
-      this.list.forEach(item => {
-        const tabDom = document.getElementById('tab-' + item.label)
-        if (tabDom) {
-          tabDom.style.display = ''
-        }
-      })
-
-      const curOperationType = this.$store.getters.getTabOperationType
-      if (curOperationType === operationType.changeTab) { // 切换tab
-        if (curTab) { // tab切换
-          this.activeTab = curTab.label
-          this.customTableTitles[0].label = curTab.label
-          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-        }
-        this.showTabs = true
-      } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        this.hideTabs(curTab)
-        this.customTableTitles[0].label = curTab.label
-        this.showTabs = false
-        this.showRecordNum = 10
-      } else if (curOperationType === operationType.fourthMenu) { // 点击的为第四级菜单
-        const curTab = this.getDefaultTab()
-        if (curTab) {
-          this.activeTab = curTab.label
-          this.customTableTitles[0].label = curTab.label
-          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-        }
-        this.showTabs = true
-      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击的为第二级菜单、或者点击菜单进入、
-        this.list = this.$_.cloneDeep(this.curTable.tabList)
-        if (curTab) { // tab切换
-          this.activeTab = curTab.label
-          this.customTableTitles[0].label = curTab.label
-          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-        }
-        this.showTabs = true
-      } else if (curOperationType === operationType.changeMetric) { // 切换metric
-        const beforeOperationType = this.$store.getters.getTabOperationBeforeType
-        if (beforeOperationType === operationType.thirdMenu) {
-          this.hideTabs(curTab)
-          this.customTableTitles[0].label = curTab.label
-          this.showTabs = false
-        }
-      } else if (curOperationType === operationType.customize) { // customize
-        const beforeOperationType = this.$store.getters.getTabOperationBeforeType
-        if (beforeOperationType === operationType.thirdMenu) {
-          this.hideTabs(curTab)
-          this.customTableTitles[0].label = curTab.label
-          this.showTabs = false
-        } else {
-          this.list.forEach(item => {
-            const tabDom = document.getElementById('tab-' + item.label)
-            const paneDom = document.getElementById('pane-' + item.label)
-            if (tabDom) {
-              tabDom.style.display = ''
-            }
-            if (paneDom) {
-              if (curTab.label === item.label) {
-                paneDom.style.display = ''
-              }
-            }
-          })
-          this.activeTab = curTab.label
-          this.customTableTitles[0].label = curTab.label
-          this.showTabs = true
-        }
-      }
-
-      const tabList = []
-      const tableDataTmp = this.chartData.map(item => {
-        tabList.push(item[curTab.prop])
-        const otherData = { tab: item[curTab.prop] }
-        Object.keys(this.columnNameGroup).forEach(i => {
-          otherData[i] = item[this.columnNameGroup[i]]
-        })
-        return otherData
-      })
-
-      if (!this.chartData || this.chartData.length === 0) {
-        this.isNoData = true
-        this.toggleLoading(false)
-      } else {
-        this.isNoData = false
-      }
-
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
-      }
-      if (tabList.length > 0) {
-        const conditionStr = tabList.filter(item => item != '')
-        queryParams.params = conditionStr.toString()
-        queryParams.type = curTab.prop
-      }
-
-      // 获取上一周期的总流量
-      let cycleTotalList = []
-      const condition = this.$store.getters.getQueryCondition
-      if (condition) {
-        queryParams.q = condition
-      }
-
-      const self = this
-      this.customTableTitles.forEach(tableColumn => {
-        if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl && tableDataTmp && tableDataTmp.length > 0) {
-          get(self.gerCycleUrl(), queryParams).then(response => {
-            if (response.code === 200) {
-              cycleTotalList = response.data.result
-              tableDataTmp.forEach(item => {
-                const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
-                let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
-                let trendPercent = ''
-                if (cycle) {
-                  const curVal = Number(item[tableColumn.prop])
-                  const preVal = Number(cycle[self.cycleColumnNameGroup[tableColumn.prop]])
-                  if (preVal && preVal != 0) {
-                    const totalDiff = curVal - preVal
-                    const chainRatio = getChainRatio(curVal, preVal)
-                    if (chainRatio === '-') {
-                      trend = ''
-                      trendPercent = ''
-                    } else {
-                      trendPercent = Math.round(Math.abs(chainRatio) * 100)
-                      if (totalDiff > 0) {
-                        trend = 'up'
-                        trendPercent = trendPercent + '%'
-                      } else if (totalDiff < 0) {
-                        trend = 'down'
-                        trendPercent = trendPercent + '%'
-                      } else if (totalDiff === 0) {
-                        trend = 'noChange'// 横向图标
-                      } else {
-                        trend = ''
-                      }
-                      if (trendPercent === '0%') {
-                        trend = 'noChange'
-                        trendPercent = ''
-                      }
-                    }
-                  }
-                }
-                item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
-              })
-            }
-          }).catch(e => {
-            console.log(e)
-          }).finally(e => {
-            this.tableData = tableDataTmp
-            this.tableDataBackup = tableDataTmp
-            this.toggleLoading(false)
-            // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
-            let scoreNum = 0
-            this.customTableTitles.forEach(tableColumn => {
-              if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
-                scoreNum++
-                get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
-                  if (response.code === 200) {
-                    const columnList = response.data.result
-                    self.tableData.forEach((item, i) => {
-                      const data = columnList.find(i => i[curTab.prop] === item.tab)
-                      if (data) {
-                        item[tableColumn.prop] = data[self.columnNameGroup[tableColumn.prop]]
-                        let score = 0
-                        if (data) {
-                          score = computeScore(data, tableColumn.scoreType)
-                        }
-                        item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, score] : [score]
-                      } else {
-                        item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, 0] : [0]
-                      }
-                      if (scoreNum >= 5) {
-                        let score = 0
-                        item.scoreGroup.forEach(i => {
-                          score = Number(score) + Number(i)
-                        })
-                        score = Math.ceil(score * 6)
-                        if (score > 6) {
-                          score = 6
-                        }
-                        item.score = score || 0
-                      }
-                    })
-                  }
-                }).catch(e => {
-                  console.log(e)
-                }).finally(e => {
-                  // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
-                  if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
-                    const queryCycleParams = {
-                      ...queryParams,
-                      cycle: tableColumn.cycle
-                    }
-                    get(self.gerColumnUrl(tableColumn), queryCycleParams).then(response => {
-                      if (response.code === 200) {
-                        cycleTotalList = response.data.result
-                        self.tableData.forEach(item => {
-                          const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
-                          let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
-                          let trendPercent = ''
-                          if (cycle) {
-                            const curVal = Number(item[tableColumn.prop])
-                            // let preVal = Number(cycle[self.metricUnit])
-                            const preVal = Number(cycle[self.columnNameGroup[tableColumn.prop]])
-                            if (preVal && preVal != 0) {
-                              const totalDiff = curVal - preVal
-                              const chainRatio = getChainRatio(curVal, preVal)
-                              if (chainRatio === '-') {
-                                trend = ''
-                                trendPercent = ''
-                              } else {
-                                trendPercent = Math.round(Math.abs(chainRatio) * 100)
-                                if (totalDiff > 0) {
-                                  trend = 'up'
-                                  trendPercent = trendPercent + '%'
-                                } else if (totalDiff < 0) {
-                                  trend = 'down'
-                                  trendPercent = trendPercent + '%'
-                                } else if (totalDiff === 0) {
-                                  trend = 'noChange'// 横向图标
-                                } else {
-                                  trend = ''
-                                }
-                                if (trendPercent === '0%') {
-                                  trend = 'noChange'
-                                  trendPercent = ''
-                                }
-                              }
-                            }
-                          }
-                          if (!(item[tableColumn.prop] && item[tableColumn.prop].length >= 3)) {
-                            item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
-                          }
-                        })
-                      }
-                    }).catch(e => {
-                      console.log(e)
-                    })
-                  }
-                })
-              }
-            })
-          })
-        }
-      })
+    // tab改变
+    changeUrlTabState (param, value) {
+      const { query } = this.$route
+      const newQuery = {}
+      newQuery[param] = value
+      const newUrl = urlParamsHandler(window.location.href, query, newQuery)
+      overwriteUrl(newUrl)
+    },
+    // 激活tab修改的内容：第一列的列名，list中此tab为checked=true
+    showTab (curTab) {
+      this.activeTab = ref(curTab.label)
+      this.customTableTitles[0].label = curTab.label
     },
     tabChange (index) {
       this.isNoData = false
@@ -843,13 +947,15 @@ export default {
             }
           }
         })
+        this.$store.commit('setNetworkOverviewTabList', this.list)
       }
 
       // 如果取消tab，则如果取消的是当前选中的tab，则当前tab就需要修改为第一个默认的tab，否则不用
       const curTab = this.getCurTab()
       if (!handleTab.checked && handleTab.label === curTab.label) {
-        this.showRecordNum = 10
-        this.$store.commit('setNetworkOverviewCurrentTab', tabList[0])
+        // this.showRecordNum = 10
+        this.setShowNum(10)
+        this.changeUrlTabState(this.curTabState.curTab, tabList[0].prop)
         let queryParams = {
           orderBy: this.orderBy,
           limit: networkDefaultLimit,
@@ -864,22 +970,29 @@ export default {
             q: condition
           }
         }
-        this.$emit('getChartData', this.getCurUrl(), queryParams)
+        this.getChartData(queryParams)
       }
     },
-    handleTabValue (columnName, columnValue) {
-      const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
-      const tabGroup = this.list.filter(item => item.label === columnName)
-      if (tabGroup && tabGroup.length > 0) {
-        this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
-      }
+    setOperationType (operationType) {
       this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-      this.$store.commit('setTabOperationType', operationType.fourthMenu)
-
+      this.$store.commit('setTabOperationType', operationType)
+    },
+    getTabByLabel (label) {
+      let tab = null
+      const tabGroup = this.list.filter(item => item.label === label)
+      if (tabGroup && tabGroup.length > 0) {
+        tab = tabGroup[0]
+      }
+      return tab
+    },
+    setBeforeTab (tab) {
+      this.$store.commit('setNetworkOverviewBeforeTab', tab)
+    },
+    setQueryCondition (tab, value) {
       const queryCondition = []
-      const searchProps = tabGroup[0].dillDownProp
-      if (tabGroup[0].prop === 'protocolPort') {
-        const valueGroup = columnValue.split(':')
+      const searchProps = tab.dillDownProp
+      if (tab.prop === 'protocolPort') {
+        const valueGroup = value.split(':')
         if (valueGroup) {
           queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
           queryCondition.push('common_server_port=' + valueGroup[1])
@@ -887,17 +1000,34 @@ export default {
         this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
       } else {
         searchProps.forEach(item => {
-          queryCondition.push(item + "='" + columnValue + "'")
+          queryCondition.push(item + "='" + value + "'")
         })
         this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
       }
-      /*
-        * 点击表格第一列后
-            1.顶部面包屑增加两级，分别是列名和值；
-            2.panel标题变更为值；
-            3.当前panel只保留折线图和表格；
-            4.面包屑上的值可点击下拉，切换内容；
-        * */
+    },
+    getFirstCheckedTab () {
+      let tab = null
+      const tabObjGroup = this.list.filter(item => item.checked)
+      if (tabObjGroup && tabObjGroup.length > 0) {
+        tab = tabObjGroup[0]
+      }
+      return tab
+    },
+    /*
+  * 点击表格第一列数据后
+      1.设置beforeTab
+      2.设置OperationType
+      3.设置QueryCondition
+      4.设置菜单：第三级，第四级名称，并保存到store中
+      5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
+  * */
+    handleTabValue (columnName, columnValue) {
+      const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+      const clickTab = this.getTabByLabel(columnName)
+      this.setBeforeTab(clickTab)
+      this.setOperationType(operationType.fourthMenu)
+      this.setQueryCondition(clickTab, columnValue)
+
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -905,7 +1035,7 @@ export default {
             menu.columnValue = columnValue
             this.$store.commit('setPanelName', columnValue)
             this.$store.commit('setBreadcrumbColumnName', columnName)
-            this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+            this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
             this.$store.commit('setBreadcrumbColumnValue', columnValue)
           }
         } else if (!this.$_.isEmpty(menu.children)) {
@@ -915,41 +1045,34 @@ export default {
               child.columnValue = columnValue
               this.$store.commit('setPanelName', columnValue)
               this.$store.commit('setBreadcrumbColumnName', columnName)
-              this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+              this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
               this.$store.commit('setBreadcrumbColumnValue', columnValue)
             }
           })
         }
       })
-      let toPanel = null
+      const toPanel = clickTab.panelId
       this.list.forEach((item, index) => {
         if (item.label === columnName) {
           item.checked = false
-          toPanel = item.panelId
+          // toPanel = item.panelId
         }
         if (oldCurTab && (item.label === oldCurTab.label)) {
           item.checked = true
         }
       })
       this.$store.commit('setNetworkOverviewTabList', this.list)
-      this.handleSearchParams(columnValue)
+      // this.handleSearchParams(columnValue)
 
-      const tabObjGroup = this.list.filter(item => item.checked)
-      if (tabObjGroup && tabObjGroup.length > 0) {
-        const curTab = tabObjGroup[0]
-        this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-      }
+      const curTab = this.getFirstCheckedTab()
+      this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
 
-      // 如果面包屑的columnValue有值，则不更新valueList
-      const valueList = []
-      this.tableData.forEach(item => {
-        valueList.push(item.tab)
-      })
-      this.$store.commit('setBreadcrumbColumnValueList', valueList)
       this.$router.push({
-        params: {
+        query: {
+          ...this.$route.query,
           thirdPanel: this.curTable.panelIdOfThirdMenu,
-          fourthPanel: toPanel
+          fourthPanel: toPanel,
+          time: +new Date()
         }
       })
     },
@@ -984,6 +1107,7 @@ export default {
         this.list.splice(index, 0, moving)
         this.dragIndex = index
       }
+      // 拖拽完毕需要把数据存入userId里？？
     },
     dragover (e, index) {
       e.preventDefault()
@@ -1003,10 +1127,34 @@ export default {
     dragMetricOver (e, index) {
       e.preventDefault()
     },
+    clearSort () {
+      const table = this.$refs['dataTable_' + this.tableSortTab]
+      const tableHeaer = table
+        ? (Array.isArray(table)
+            ? table[0].$refs.tableHeader
+            : table.$refs.tableHeader)
+        : []
+      const columns = tableHeaer.columns
+      if (columns) {
+        columns.forEach(item => {
+          item.order = ''
+        })
+      }
+      this.column = {}
+      this.index = 0
+      this.tableSortColumn = ''
+      this.tableSortType = ''
+      this.tableSortTab = ''
+      this.changeUrlTabState(this.curTabState.tableSortColumn, '')
+      this.changeUrlTabState(this.curTabState.tableSortType, '')
+      this.changeUrlTabState(this.curTabState.tableSortTab, '')
+      this.cancleSortArrow()
+    },
     handleClick (tab) {
       this.tableData = []
       this.tableDataBackup = []
-      this.showRecordNum = 10
+      this.setShowNum(10)
+      this.clearSort()
       this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
       this.$store.commit('setTabOperationType', operationType.changeTab)
       this.customTableTitles[0].label = tab.paneName
@@ -1014,7 +1162,7 @@ export default {
       const tabObjGroup = this.list.filter(item => item.label == tab.paneName)
       if (tabObjGroup && tabObjGroup.length > 0) {
         const curTab = tabObjGroup[0]
-        this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+        this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
         this.tab = curTab.prop
 
         let queryParams = {
@@ -1034,7 +1182,7 @@ export default {
         this.tableData = []
         this.tableDataBackup = []
         this.toggleLoading(true)
-        this.$emit('getChartData', this.getCurUrl(), queryParams)
+        this.getChartData(queryParams)
       }
     },
     getCurUrl () {
@@ -1061,88 +1209,35 @@ export default {
         return tableColumn.cycleDataUrl
       }
     },
-    handleQueryParams (extraParams) {
-      this.isNoData = false
-      this.tableData = []
-      this.tableDataBackup = []
-      this.toggleLoading(true)
-      let queryType = ''
-      const name = this.$store.getters.getBreadcrumbColumnName
+    /*
+    getTabList(){
       let tabList = this.$store.getters.getNetworkOverviewTabList
       if (!tabList || tabList.length === 0) {
         tabList = this.$_.cloneDeep(this.networkTabList)
       }
-
+      return tabList
+    }, */
+    handleQueryParams (extraParams) {
+      let queryType = ''
+      const name = this.$store.getters.getBreadcrumbColumnName
       const curOperationType = this.$store.getters.getTabOperationType
       if (curOperationType === operationType.fourthMenu) { // 点击的为第四级菜单
-        const tabCheckedGroup = []
-        tabList.forEach(item => {
-          if (item.checked) {
-            tabCheckedGroup.push(item)
-          }
-        })
-        if (tabCheckedGroup && tabCheckedGroup.length > 0) {
-          queryType = tabCheckedGroup[0].prop
-          this.$store.commit('setNetworkOverviewCurrentTab', tabCheckedGroup[0])
-          this.customTableTitles[0].label = tabCheckedGroup[0].label
-        }
+        const checkedTab = this.list.find(item => item.checked)
+        queryType = checkedTab ? checkedTab.prop : ''
       } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        const networkTabList = []
-        tabList.forEach(item => {
-          if (this.$t(item.label) === name) {
-            item.checked = true
-          }
-          networkTabList.push(item)
-        })
-        this.$store.commit('setNetworkOverviewTabList', networkTabList)
-
-        const breadcrumbColumnNameUrl = tabList.filter(item => this.$t(item.label) === name)
-        if (breadcrumbColumnNameUrl && breadcrumbColumnNameUrl.length > 0) {
-          queryType = breadcrumbColumnNameUrl[0].prop
-          this.$store.commit('setNetworkOverviewCurrentTab', breadcrumbColumnNameUrl[0])
-          this.customTableTitles[0].label = breadcrumbColumnNameUrl[0].label
-        }
+        const breadcrumbTab = this.list.find(item => this.$t(item.label) === name)
+        queryType = breadcrumbTab ? breadcrumbTab.prop : ''
       } else if (curOperationType === operationType.changeTab) { // 切换tab
-        let curTab = this.$store.getters.getNetworkOverviewCurrentTab
-        if (!curTab) {
-          const list = this.$store.getters.getNetworkOverviewTabList
-          const tabObjGroup = list.filter(item => item.checked)
-          if (tabObjGroup && tabObjGroup.length > 0) {
-            curTab = tabObjGroup[0]
-          }
-        }
-        if (curTab) {
-          queryType = curTab.prop
-          this.customTableTitles[0].label = curTab.label
-          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-        }
+        const curTab = this.getCurTab()
+        queryType = curTab.prop
       } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击第二级菜单，点击菜单
         this.list = this.$_.cloneDeep(this.curTable.tabList)
         this.$store.commit('setNetworkOverviewTabList', this.list)
-        const tabObjGroup = this.list.filter(item => item.checked)
-        if (tabObjGroup && tabObjGroup.length > 0) {
-          const curTab = tabObjGroup[0]
-          queryType = curTab.prop
-          this.customTableTitles[0].label = curTab.label
-          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-        }
+        const curTab = this.getCurTab()
+        queryType = curTab.prop
       } else {
-        let curTab = this.$store.getters.getNetworkOverviewCurrentTab
-        if (!curTab) {
-          let list = this.$store.getters.getNetworkOverviewTabList
-          if (!list || list.length === 0) {
-            list = this.$_.cloneDeep(this.networkTabList)
-          }
-          const tabObjGroup = list.filter(item => item.checked)
-          if (tabObjGroup && tabObjGroup.length > 0) {
-            curTab = tabObjGroup[0]
-          }
-        }
-        if (curTab) {
-          queryType = curTab.prop
-          this.customTableTitles[0].label = curTab.label
-          this.$store.commit('setNetworkOverviewCurrentTab', curTab)
-        }
+        const curTab = this.getCurTab()
+        queryType = curTab.prop
       }
 
       if (JSON.stringify(extraParams) === '{}') {
@@ -1178,8 +1273,16 @@ export default {
         return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
       }
     },
+    /*
+    getUrlCurTab () {
+      let curTab = this.$route.query.curTab?JSON.parse(this.$route.query.curTab):null
+      return curTab
+    }, */
+    // 获取当前tab
     getCurTab () {
-      let curTab = this.$store.getters.getNetworkOverviewCurrentTab
+      const curTabProp = this.$route.query.curTab ? this.$route.query.curTab : null
+      let curTab = curTabProp ? this.list.find(item => item.prop === curTabProp) : null
+      // let curTab = this.$store.getters.getNetworkOverviewCurrentTab
       if (!curTab) {
         const tabObjGroup = this.list.filter(item => item.checked)
         if (tabObjGroup && tabObjGroup.length > 0) {
@@ -1187,45 +1290,45 @@ export default {
         } else {
           curTab = this.networkTabList[0]
         }
-        this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+        this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
+      } else {
+        this.list.forEach(item => {
+          if (item.label === curTab.label) {
+            // item.checked = true
+            // this.showTab(curTab)
+          }
+        })
+        this.$store.commit('setNetworkOverviewTabList', this.list)
       }
       return curTab
     }
   },
   mounted () {
-    // 当前表格相关数据初始化
-    this.tableType = this.chart.params ? this.chart.params.name : 'networkOverview'
+    // 表格结构初始化
+    this.tableType = this.chart.params ? this.chart.params.name : 'networkOverview'// 可以改成根据path得到类型，并获取对应的配置
     this.curTable = this.networkTable[this.tableType] ? this.networkTable[this.tableType] : this.networkTable.networkOverview
     this.customTableTitles = this.$_.cloneDeep(this.curTable.column)
     this.list = this.$_.cloneDeep(this.curTable.tabList)
     this.networkTabList = this.curTable.tabList
-    this.activeTab = this.networkTabList[0].label
+    this.activeTab = ref(this.networkTabList[0].label)
     this.activeCustomize = ref('tabs')
     this.networkSearchUrl = this.curTable.url
     this.columnNameGroup = this.curTable.bytesColumnNameGroup
     this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
+    // 表格状态初始化
+    this.metric = this.$route.query[curTabState.tableMetric] ? this.$route.query[curTabState.tableMetric] : 'Bits/s'
+    this.showRecordNum = this.$route.query[curTabState.tableShowMore] ? Number(this.$route.query[curTabState.tableShowMore]) : 10
+    this.tableSortColumn = this.$route.query[curTabState.tableSortColumn] ? this.$route.query[curTabState.tableSortColumn] : ''
+    this.tableSortType = this.$route.query[curTabState.tableSortType] ? this.$route.query[curTabState.tableSortType] : ''
+    this.tableSortTab = this.$route.query[curTabState.tableSortTab] ? this.$route.query[curTabState.tableSortTab] : ''
 
     if (this.$store.getters.getNetworkOverviewTabList.length > 0) {
       this.list = this.$store.getters.getNetworkOverviewTabList
     } else {
       this.$store.commit('setNetworkOverviewTabList', this.list)
     }
-    const tabList = this.list.filter(item => item.checked === true)
-    const columnName = this.$store.getters.getBreadcrumbColumnName
-    const columnValue = this.$store.getters.getBreadcrumbColumnValue
-    if (tabList.length === 0) { // 没有选中任何tab时，默认选中第一个
-      this.list[0].checked = true
-    }
-
-    const curOperationType = this.$store.getters.getTabOperationType
-    if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-      const curTab = this.getCurTab()
-      this.customTableTitles[0].label = curTab.label
-      this.showTabs = false
-      this.$nextTick(() => {
-        this.hideTabs(curTab)
-      })
-    }
+    // this.initState()
+    this.getChartData()
     this.$nextTick(() => {
       setTimeout(() => {
         this.hasMetricSearch = this.curTable.hasMetricSearch

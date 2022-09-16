@@ -25,7 +25,6 @@ const panel = {
             panelName、
             breadcrumbColumnName、
             breadcrumbColumnValue、
-            breadcrumbColumnValueList、
             networkOverviewCurrentTab、
             queryCondition
     点击顶部第二级菜单：与点击菜单相同
@@ -42,8 +41,7 @@ const panel = {
     breadcrumbColumnName: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
     dimensionType: '', // 维度
     breadcrumbColumnValue: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
-    breadcrumbColumnValueList: [], // 第四级面包屑的下拉列表
-    networkOverviewCurrentTab: null, // 只代表选中的tab，有时会与面包屑中显示的值不同
+    // networkOverviewCurrentTab: null, // 只代表选中的tab，有时会与面包屑中显示的值不同
     networkOverviewBeforeTab: null, // 点击表格的值时使用，记录点击当前tab表格的值之前点击的表格值所属的tab
     queryCondition: '', // 数据查询的条件
     networkOverviewTabList: [], // 存储tab列表的一些状态：如是否选中
@@ -114,12 +112,9 @@ const panel = {
     setBreadcrumbColumnValue (state, breadcrumbColumnValue) {
       state.breadcrumbColumnValue = breadcrumbColumnValue
     },
-    setBreadcrumbColumnValueList (state, breadcrumbColumnValueList) {
-      state.breadcrumbColumnValueList = breadcrumbColumnValueList
-    },
-    setNetworkOverviewCurrentTab (state, networkOverviewCurrentTab) {
-      state.networkOverviewCurrentTab = networkOverviewCurrentTab
-    },
+    // setNetworkOverviewCurrentTab (state, networkOverviewCurrentTab) {
+    // state.networkOverviewCurrentTab = networkOverviewCurrentTab
+    // },
     setQueryCondition (state, queryCondition) {
       state.queryCondition = queryCondition
     },
@@ -200,12 +195,9 @@ const panel = {
     getBreadcrumbColumnValue (state) {
       return state.breadcrumbColumnValue
     },
-    getBreadcrumbColumnValueList (state) {
-      return state.breadcrumbColumnValueList
-    },
-    getNetworkOverviewCurrentTab (state) {
-      return state.networkOverviewCurrentTab
-    },
+    // getNetworkOverviewCurrentTab (state) {
+    // return state.networkOverviewCurrentTab
+    // },
     getQueryCondition (state) {
       return state.queryCondition
     },

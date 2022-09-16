@@ -20,11 +20,10 @@
         :time-filter="timeFilter"
         @toggleLoading="toggleLoading"
     ></network-overview-performance-event>
-    <network-overview-tabs @getChartData="getChartData"
+    <network-overview-tabs
          v-else-if="chart.type === typeMapping.networkOverview.table"
          :time-filter="timeFilter"
          :chart="chart"
-         :chartData="chartData"
          :ref="`tab${chart.id}`"
          @toggleLoading="toggleLoading"
     ></network-overview-tabs>

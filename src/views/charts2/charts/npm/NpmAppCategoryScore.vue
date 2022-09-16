@@ -21,7 +21,7 @@
           :data="tableData"
           class="app-table"
           height="100%"
-          empty-text=""
+          empty-text=" "
       >
         <template v-for="(item, index) in customTableTitles" :key="index">
           <el-table-column class="data-column">
@@ -107,14 +107,14 @@
 </template>
 
 <script>
-import { unitTypes, npmCategoryInfoMapping, networkTable, operationType, npmCategoryToAppCategoryMap } from '@/utils/constants'
+import { unitTypes, npmCategoryInfoMapping, networkTable, operationType, npmCategoryToAppCategoryMap, curTabState } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
-import { getChainRatio, computeScore } from '@/utils/tools'
+import { getChainRatio, computeScore, changeCurTab } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
-import ChartNoData from "@/views/charts/charts/ChartNoData";
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'NpmAppCategoryScore',
   data () {
@@ -138,7 +138,8 @@ export default {
         { label: 'network.outbound', prop: 'outbound' },
         { label: 'network.inbound', prop: 'inbound' }
       ],
-      isNoData: false
+      isNoData: false,
+      curTabState: curTabState
     }
   },
   components: {
@@ -233,7 +234,8 @@ export default {
       const value = npmCategoryToAppCategoryMap[key]
       const tabType = 'network.applicationCategories'
       const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
-      const curTable = networkTable.networkOverview
+      // const curTable = networkTable.networkOverview
+      const curTable = networkTable.networkAppPerformance
       const list = this.$store.getters.getNetworkOverviewTabList
       const tabGroup = list.filter(item => item.label === tabType)
       if (tabGroup && tabGroup.length > 0) {
@@ -286,13 +288,23 @@ export default {
       const tabObjGroup = list.filter(item => item.checked)
       if (tabObjGroup && tabObjGroup.length > 0) {
         const curTab = tabObjGroup[0]
-        this.$store.commit('setNetworkOverviewCurrentTab', curTab)
+        this.changeTabState(this.curTabState.curTab, curTab)
       }
       this.$router.push({
-        params: {
+        query: {
+          ...this.$route.query,
           thirdPanel: curTable.panelIdOfThirdMenu ? curTable.panelIdOfThirdMenu : '',
           fourthPanel: toPanel || ''
         }
+      })
+    },
+    changeTabState (param, value) {
+      const query = {
+        ...this.$route.query
+      }
+      query[param] = value
+      this.$router.push({
+        query: query
       })
     }
   },
