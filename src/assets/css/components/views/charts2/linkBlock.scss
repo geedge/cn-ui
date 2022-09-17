@@ -29,9 +29,16 @@
       margin: auto;
 
       .block-list__block {
-        margin: 0 2px;
+        padding: 0 2px;
         height: 51px;
+        cursor: pointer;
+        overflow: hidden;
 
+        &:hover {
+          .block-hex-in {
+            box-shadow: 0 1px 3px 0 #046ECA, 0 1px 3px 0 rgba(0,0,0,0.50);
+          }
+        }
         .block-hex {
           overflow: hidden;
           display: block;
@@ -45,16 +52,11 @@
           height: 51px;
           text-align: center;
           transform: skewY(-30deg) rotate(60deg);
-          cursor: pointer;
           box-shadow: none;
           transition: all linear .2s;
-
-          &:hover {
-            box-shadow: 0 1px 3px 0 #046ECA, 0 1px 3px 0 rgba(0,0,0,0.50);
-          }
         }
         &:nth-child(9n + 1) {
-          margin-left: 26px;
+          margin-left: 24px;
         }
         &:nth-child(n + 5) {
           margin-top: -9px;
