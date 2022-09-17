@@ -7,6 +7,13 @@
     font-weight: 600;
     margin-bottom: 10px;
   }
+  .npm-recent-table-ten.npm-recent-table {
+    .el-table__body-wrapper.is-scrolling-none {
+      tr td {
+        padding: 6.3px 0;
+      }
+    }
+  }
   .npm-recent-table {
     height: calc(100% - 30px) !important;
     border: 1px solid #E2E5EC;
@@ -24,7 +31,7 @@
     }
     .el-table__body-wrapper.is-scrolling-none {
       tr td {
-        padding: 7.5px 0;
+        padding: 6.75px 0;
       }
       .el-table__empty-block .el-table__empty-text {
         line-height: 25px;

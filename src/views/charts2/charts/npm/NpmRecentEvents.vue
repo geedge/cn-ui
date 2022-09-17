@@ -6,6 +6,7 @@
         :ref="`dataTable_${index}`"
         :data="tableData"
         class="npm-recent-table"
+        :class="{'npm-recent-table-ten': tableData.length === 10}"
         empty-text=""
         height="100%"
     >

@@ -5,10 +5,18 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.establishLatencyMsAvg, unitTypes.time).join(' ')}}</div>
         <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -25,10 +33,18 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.httpResponseLatencyAvg, unitTypes.time).join(' ')}}</div>
         <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -45,10 +61,18 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.sslConLatencyAvg, unitTypes.time).join(' ')}}</div>
         <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -65,10 +89,18 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.tcpLostlenPercentAvg, unitTypes.percent).join(' ')}}</div>
         <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
@@ -85,10 +117,18 @@
       <div class="single-value__content">
         <div class="single-value__content-number">{{unitConvert(npm.pktRetransPercentAvg, unitTypes.percent).join(' ')}}</div>
         <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red">
-          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('')}}
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-          <i class="cn-icon-decline cn-icon"></i>&nbsp;{{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
+          </span>
+          <span v-else>>500.00%</span>
         </div>
         <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon"></i>
