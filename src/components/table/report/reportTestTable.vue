@@ -401,17 +401,6 @@ export default {
   watch: {
     tableData (newVal, oldVal) {
       if (newVal) {
-        if (this.categoryId !== '') {
-          this.pageObj = {
-            pageNo: 1,
-            pageSize: 20,
-            total: 0,
-            resetPageNo: true
-          }
-          if (this.initExpandFlag) {
-            this.dropExpandChange('', [])
-          }
-        }
         this.showSelectedRow()
       }
     },
@@ -422,10 +411,12 @@ export default {
         }
         this.reloadUrl(expandIdParam)
 
-        const expandPage = {
-          expandPage: 1
+        if (this.initExpandFlag) {
+          const expandPage = {
+            expandPage: 1
+          }
+          this.reloadUrl(expandPage)
         }
-        this.reloadUrl(expandPage)
 
         const dateParam = {
           startTime: dateFormatToUTC(this.timeRange[0]),
@@ -507,11 +498,12 @@ export default {
         const obj = {
           id: expandInfo[0]
         }
+
         this.dropExpandChange(obj, expandInfo, 'init')
 
         setTimeout(() => {
           this.initExpandFlag = true
-        }, 1000)
+        }, 1500)
       }
     },
     /**
