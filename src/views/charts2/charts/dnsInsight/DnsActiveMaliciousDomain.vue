@@ -60,7 +60,7 @@
 
 <script>
 import { api } from '@/utils/api'
-import { dateFormatByAppearance } from '@/utils/date-util'
+import { dateFormatByAppearance, getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
 
@@ -68,7 +68,8 @@ export default {
   name: 'DnsActiveMaliciousDomain',
   data () {
     return {
-      tableData: [],
+      tableData: [], // 表格数据
+      // 表头数据
       customTableTitles: [
         {
           label: 'dns.domain',
@@ -95,7 +96,7 @@ export default {
           prop: 'lastSeenTime'
         }
       ],
-      isNoData: false
+      isNoData: false // 无数据标识，true为无数据，false有数据
     }
   },
   mixins: [chartMixin],
@@ -112,7 +113,20 @@ export default {
   },
   methods: {
     initData () {
-      get(api.dnsInsight.activeMaliciousDomain).then(res => {
+      this.toggleLoading(true)
+
+      this.tableData = []
+
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        limit: 8,
+        type: this.tableType,
+        severity: this.tableSeverity
+      }
+      console.log('DnsActiveMaliciousDomain.vue--initData--请求入参', this.timeFilter)
+
+      get(api.dnsInsight.activeMaliciousDomain, params).then(res => {
         console.log('DnsActiveMaliciousDomain.vue--initData--初始化数据', res.data)
         if (res.code === 200) {
           const data = res.data.result
