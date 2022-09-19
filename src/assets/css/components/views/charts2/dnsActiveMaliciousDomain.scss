@@ -25,7 +25,6 @@
         padding: 4px 0;
 
         .dns-column__span {
-          font-family: $fontFamily;
           font-size: 12px;
           color: #353636;
         }
@@ -58,8 +57,8 @@
     }
   }
 
-  //.el-table--group::after, .el-table--border::after, .el-table::before {
-  //  height: 0px;
-  //}
+  .el-table--group::after, .el-table--border::after, .el-table::before {
+    height: 0px;
+  }
 
 }
