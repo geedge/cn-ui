@@ -513,10 +513,18 @@ export default {
                       trendPercent = Math.round(Math.abs(chainRatio) * 100)
                       if (totalDiff > 0) {
                         trend = 'up'
-                        trendPercent = trendPercent + '%'
+                        if (trendPercent <= 500) {
+                          trendPercent = trendPercent + '%'
+                        } else {
+                          trendPercent = '>500%'
+                        }
                       } else if (totalDiff < 0) {
                         trend = 'down'
-                        trendPercent = trendPercent + '%'
+                        if (trendPercent <= 500) {
+                          trendPercent = trendPercent + '%'
+                        } else {
+                          trendPercent = '>500%'
+                        }
                       } else if (totalDiff === 0) {
                         trend = 'noChange'// 横向图标
                       } else {
@@ -604,10 +612,18 @@ export default {
                                 trendPercent = Math.round(Math.abs(chainRatio) * 100)
                                 if (totalDiff > 0) {
                                   trend = 'up'
-                                  trendPercent = trendPercent + '%'
+                                  if (trendPercent <= 500) {
+                                    trendPercent = trendPercent + '%'
+                                  } else {
+                                    trendPercent = '>500%'
+                                  }
                                 } else if (totalDiff < 0) {
                                   trend = 'down'
-                                  trendPercent = trendPercent + '%'
+                                  if (trendPercent <= 500) {
+                                    trendPercent = trendPercent + '%'
+                                  } else {
+                                    trendPercent = '>500%'
+                                  }
                                 } else if (totalDiff === 0) {
                                   trend = 'noChange'// 横向图标
                                 } else {

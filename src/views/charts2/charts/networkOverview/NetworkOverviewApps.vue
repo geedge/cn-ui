@@ -33,10 +33,16 @@
               <div class="app-card__body-content-value">
                 <div class="app-card__body-content-number">{{unitConvert(app.rate, unitTypes.number).join(' ')}}</div>
                 <div class="app-card__body-content-percent red" v-if="app.value > 0">
-                  +{{unitConvert(app.value, unitTypes.percent).join('')}}
+                  <span v-if="app.value <= 5">
+                    +{{unitConvert(app.value, unitTypes.percent).join('')}}
+                  </span>
+                  <span v-else>>500.00%</span>
                 </div>
                 <div class="app-card__body-content-percent green" v-else-if="app.value < 0">
-                  -{{unitConvert(app.value, unitTypes.percent).join('').replaceAll('-', '')}}
+                  <span v-if="app.value >= -5">
+                    -{{unitConvert(app.value, unitTypes.percent).join('').replaceAll('-', '')}}
+                  </span>
+                  <span v-else>>500.00%</span>
                 </div>
                 <div v-else-if="app.value === '-' || app.value === 0" class="app-card__body-content-percent">0</div>
               </div>

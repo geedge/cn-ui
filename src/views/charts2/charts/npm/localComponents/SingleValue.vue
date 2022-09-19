@@ -13,7 +13,7 @@
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-decline cn-icon"></i>&nbsp;
-          <span v-if="npm.value <= 5">
+          <span v-if="npm.value >= -5">
             {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
           </span>
           <span v-else>>500.00%</span>
@@ -41,7 +41,7 @@
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-decline cn-icon"></i>&nbsp;
-          <span v-if="npm.value <= 5">
+          <span v-if="npm.value >= -5">
             {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
           </span>
           <span v-else>>500.00%</span>
@@ -69,7 +69,7 @@
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-decline cn-icon"></i>&nbsp;
-          <span v-if="npm.value <= 5">
+          <span v-if="npm.value >= -5">
             {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
           </span>
           <span v-else>>500.00%</span>
@@ -97,7 +97,7 @@
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-decline cn-icon"></i>&nbsp;
-          <span v-if="npm.value <= 5">
+          <span v-if="npm.value >= -5">
             {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
           </span>
           <span v-else>>500.00%</span>
@@ -125,7 +125,7 @@
         </div>
         <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
           <i class="cn-icon-decline cn-icon"></i>&nbsp;
-          <span v-if="npm.value <= 5">
+          <span v-if="npm.value >= -5">
             {{unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '')}}
           </span>
           <span v-else>>500.00%</span>

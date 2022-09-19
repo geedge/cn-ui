@@ -46,7 +46,7 @@
                     </div>
                     <div v-else-if="scope.row.bytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
                       <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.bytesRateChainRatio <= 5">
+                      <span v-if="scope.row.bytesRateChainRatio >= -5">
                         {{unitConvert(scope.row.bytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                       </span>
                       <span v-else>>500.00%</span>
@@ -69,7 +69,7 @@
                     </div>
                     <div v-else-if="scope.row.outboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
                       <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.outboundBytesRateChainRatio <= 5">
+                      <span v-if="scope.row.outboundBytesRateChainRatio >= -5">
                         {{unitConvert(scope.row.outboundBytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                       </span>
                       <span v-else>>500.00%</span>
@@ -92,7 +92,7 @@
                     </div>
                     <div v-else-if="scope.row.inboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
                       <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.inboundBytesRateChainRatio <= 5">
+                      <span v-if="scope.row.inboundBytesRateChainRatio >= -5">
                         {{unitConvert(scope.row.inboundBytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                       </span>
                       <span v-else>>500.00%</span>
