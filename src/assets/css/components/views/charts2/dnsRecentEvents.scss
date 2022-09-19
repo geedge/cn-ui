@@ -1,0 +1,50 @@
+.dns-recent-event.npm-app-event {
+  .npm-app-event-table.dns-recent-event-table {
+    .el-table__body-wrapper.is-scrolling-none {
+      tr td {
+        padding: 6.49px 0;
+      }
+    }
+  }
+  .data-applications {
+    font-size: 12px;
+    color: #353636;
+    .cn-icon-events-type {
+      font-size: 12px;
+    }
+    .cn-icon-events-type.performance {
+      color: #D9C74B;
+    }
+    .cn-icon-events-type.security {
+      color: #E99F67;
+    }
+  }
+  .dns-recent-event-header {
+    display: flex;
+    justify-content: space-between;
+    .dns-recent-event-title {
+      font-size: 14px;
+      color: #353636;
+      margin-bottom: 13px;
+    }
+    .dns-recent-event-select {
+      display: flex;
+      .metric-select:nth-of-type(2) {
+        margin-left: 20px;
+      }
+      .metric-select:nth-of-type(1) {
+        .option__select.select-column {
+          .el-input__inner {
+            width: 155px;
+          }
+        }
+      }
+    }
+  }
+  .data-eventType {
+    background: none;
+    padding: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+}
