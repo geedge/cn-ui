@@ -15,10 +15,21 @@ import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
 import { computeScore, getChainRatio } from '@/utils/tools'
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 export default {
   name: 'NpmNetworkQuantity',
   components: { SingleValue },
   mixins: [chartMixin],
+  setup () {
+    const { query } = useRoute()
+    const queryCondition = ref(query.queryCondition || '')
+    const dimensionType = ref(query.dimensionType || '')
+    return {
+      queryCondition,
+      dimensionType
+    }
+  },
   data () {
     return {
       npmNetworkName: [
@@ -47,15 +58,16 @@ export default {
   },
   methods: {
     npmNetworkCycleQuery () {
-      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      if (conditionStr.indexOf('OR') > -1) {
-        condition = conditionStr.split(/["|'](.*?)["|']/)
+      if (this.queryCondition.indexOf('OR') > -1) {
+        condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
-        condition = conditionStr
+        condition = this.queryCondition
       }
       // const type = this.$store.getters.getDimensionType
-      const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
+      // const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
+      const type = this.dimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),

@@ -49,8 +49,12 @@ export default {
   setup () {
     const { query } = useRoute()
     const metricFilter = ref(query.lineMetric || 'Bits/s')
+    const queryCondition = ref(query.queryCondition || '')
+    const dimensionType = ref(query.dimensionType || '')
     return {
       metricFilter,
+      queryCondition,
+      dimensionType,
       myChart: shallowRef(null)
     }
   },
@@ -131,15 +135,15 @@ export default {
       if (!val) {
         val = this.metricFilter
       }
-      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      if (conditionStr.indexOf('OR') > -1) {
-        condition = conditionStr.split(/["|'](.*?)["|']/)
+      if (this.queryCondition.indexOf('OR') > -1) {
+        condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
-        condition = conditionStr
+        condition = this.queryCondition
       }
       // const type = this.$store.getters.getDimensionType
-      const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
+      const type = this.dimensionType
       if (this.chartData.id === 24) {
         this.side = 'client'
       } else if (this.chartData.id === 29) {

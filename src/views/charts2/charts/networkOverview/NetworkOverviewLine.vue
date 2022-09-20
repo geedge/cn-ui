@@ -171,13 +171,6 @@ export default {
       })
       overwriteUrl(newUrl)
     },
-    queryCondition (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        queryCondition: n
-      })
-      overwriteUrl(newUrl)
-    },
     timeFilter: {
       deep: true,
       handler (n) {
@@ -198,13 +191,10 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
+      // const condition = this.$store.getters.getQueryCondition
+      // const condition = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       if (this.queryCondition) {
         params.q = this.queryCondition
-      }
-      // const condition = this.$store.getters.getQueryCondition
-      const condition = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
-      if (condition) {
-        params.q = condition
       }
       this.toggleLoading(true)
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
