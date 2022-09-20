@@ -1,4 +1,4 @@
-import { post } from '@/utils/http'
+import { get, post } from '@/utils/http'
 import router from '@/router'
 import { sortByOrderNum, getWelcomeMenu } from '@/permission'
 import { ElMessage } from 'element-plus' // dependent on utc plugin
@@ -75,6 +75,11 @@ const user = {
           } else {
             ElMessage.error('No menu')
           }
+        }
+      })
+      get(api.config, { ckey: 'drill_down_table_config' }).then(res => {
+        if (res.code === 200 && res.page.list && res.page.list.length > 0) {
+          localStorage.setItem(storageKey.drillDownTableConfig, res.page.list[0].cvalue)
         }
       })
     },

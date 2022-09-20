@@ -29,7 +29,8 @@ export const storageKey = {
   entitySearchHistory: 'cn-entity-search-history',
   echartLegendFontSize: 'echartLegendFontSize',
   echartLabelFontSize: 'echartLabelFontSize',
-  tokenExpireCurrentPath: 'token-expire-current-path'
+  tokenExpireCurrentPath: 'token-expire-current-path',
+  drillDownTableConfig: 'cn-drill-down-table-config'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
