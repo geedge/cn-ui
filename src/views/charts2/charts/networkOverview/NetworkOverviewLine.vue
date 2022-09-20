@@ -225,6 +225,12 @@ export default {
                     this.legendSelectChange(e, 'index')
                   }
                 }
+                if (this.lineTab === e.class) {
+                  if (e.analysis.avg < 1) {
+                    this.lineTab = ''
+                    this.init()
+                  }
+                }
               })
               this.mpackets = mpackets
               this.$nextTick(() => {
@@ -252,6 +258,12 @@ export default {
                   e.show = true
                   if (!active && show !== this.lineRefer) {
                     this.legendSelectChange(e, 'index')
+                  }
+                }
+                if (this.lineTab === e.class) {
+                  if (e.analysis.avg < 1) {
+                    this.lineTab = ''
+                    this.init()
                   }
                 }
               })
