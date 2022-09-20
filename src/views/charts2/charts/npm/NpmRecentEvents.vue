@@ -73,8 +73,11 @@ export default {
   },
   methods: {
     recentEventsListData () {
-      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
-      const type = this.$store.getters.getDimensionType
+      // const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      const condition = conditionStr.split(/["|'](.*?)["|']/)
+      // const type = this.$store.getters.getDimensionType
+      const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
       let url = ''
       const params = {
         startTime: getSecond(this.timeFilter.startTime),

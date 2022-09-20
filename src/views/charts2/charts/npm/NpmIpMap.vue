@@ -9,7 +9,7 @@ import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { computeScore, getGeoData } from '@/utils/tools'
-import { storageKey, unitTypes, countryNameIdMapping } from '@/utils/constants'
+import { storageKey, unitTypes, countryNameIdMapping, curTabState } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
@@ -25,7 +25,8 @@ export default {
       worldImageSeries: null,
       countryImageSeries: null,
       // Server | Client
-      trafficDirection: 'Server'
+      trafficDirection: 'Server',
+      curTabState: curTabState
     }
   },
   mixins: [chartMixin],
@@ -56,6 +57,9 @@ export default {
       // 渲染
       this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
     },
+    getUrlParam (param, defaultValue) {
+      return this.$route.query[param] ? this.$route.query[param] : defaultValue
+    },
     loadAm4ChartMap (polygonSeries, imageSeries) {
       try {
         // 清除数据
@@ -71,8 +75,10 @@ export default {
         const params = {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
-          type: this.$store.getters.getDimensionType,
-          typeVal: this.$store.getters.getBreadcrumbColumnValue
+          // type: this.$store.getters.getDimensionType,
+          type: this.$route.query.dimensionType ? this.$route.query.dimensionType : '',
+          // typeVal: this.$store.getters.getBreadcrumbColumnValue
+          typeVal: this.getUrlParam(this.curTabState.fourthMenu, '')
         }
         getData(api.npm.overview.map, params).then(res => {
           const subParams = {

@@ -201,6 +201,11 @@ export default {
       if (this.queryCondition) {
         params.q = this.queryCondition
       }
+      // const condition = this.$store.getters.getQueryCondition
+      const condition = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      if (condition) {
+        params.q = condition
+      }
       this.toggleLoading(true)
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {

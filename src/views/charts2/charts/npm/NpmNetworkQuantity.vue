@@ -47,13 +47,15 @@ export default {
   },
   methods: {
     npmNetworkCycleQuery () {
+      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      if (this.$store.getters.getQueryCondition.indexOf('OR') > -1) {
-        condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      if (conditionStr.indexOf('OR') > -1) {
+        condition = conditionStr.split(/["|'](.*?)["|']/)
       } else {
-        condition = this.$store.getters.getQueryCondition
+        condition = conditionStr
       }
-      const type = this.$store.getters.getDimensionType
+      // const type = this.$store.getters.getDimensionType
+      const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -113,13 +115,15 @@ export default {
       }
     },
     npmNetworkLastCycleQuery () {
+      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      if (this.$store.getters.getQueryCondition.indexOf('OR') > -1) {
-        condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      if (conditionStr.indexOf('OR') > -1) {
+        condition = conditionStr.split(/["|'](.*?)["|']/)
       } else {
-        condition = this.$store.getters.getQueryCondition
+        condition = conditionStr
       }
-      const type = this.$store.getters.getDimensionType
+      // const type = this.$store.getters.getDimensionType
+      const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),

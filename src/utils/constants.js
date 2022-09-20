@@ -244,7 +244,13 @@ export const curTabState = {
   tableShowMore: 'tableShowMore',
   tableSortColumn: 'tableSortColumn',
   tableSortType: 'tableSortType',
-  tableSortTab: 'tableSortTab'
+  tableSortTab: 'tableSortTab',
+  queryCondition: 'queryCondition',
+  dimensionType: 'dimensionType', // 纬度
+  panelName: 'panelName',
+  thirdMenu: 'thirdMenu',
+  fourthMenu: 'fourthMenu',
+  networkOverviewBeforeTab: 'networkOverviewBeforeTab'
 }
 
 export const scoreUrl = [

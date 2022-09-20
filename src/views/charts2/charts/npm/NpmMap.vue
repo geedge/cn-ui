@@ -55,7 +55,7 @@ import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
-import {Rectangle3D} from '@amcharts/amcharts4/.internal/core/elements/3d/Rectangle3D'
+import { Rectangle3D } from '@amcharts/amcharts4/.internal/core/elements/3d/Rectangle3D'
 export default {
   name: 'NpmMap',
   data () {

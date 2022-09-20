@@ -59,7 +59,8 @@ export default {
   },
   methods: {
     relatedSessionsData () {
-      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      const condition = conditionStr.split(/["|'](.*?)["|']/)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),

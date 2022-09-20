@@ -365,19 +365,30 @@ export default {
       })
 
       // 针对network overview – app list 点击标题触发下钻，相关内容处理
-      const columnName = this.$store.getters.getBreadcrumbColumnName
-      if (columnName) {
+      // const columnName = this.$store.getters.getBreadcrumbColumnName
+      const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+      const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
+      if (thirdMenu && fourthMenu) {
         this.list.forEach(item => {
-          if (item.label === columnName) {
+          if (item.label === thirdMenu) {
             item.checked = false
+          }
+        })
+        this.$store.commit('setNetworkOverviewTabList', this.list)
+      } else if (thirdMenu && !fourthMenu) {
+        this.list.forEach(item => {
+          if (item.label === thirdMenu) {
+            item.checked = true
           }
         })
         this.$store.commit('setNetworkOverviewTabList', this.list)
       }
       this.list.forEach(item => {
-        const tabDom = document.getElementById('tab-' + item.label)
-        if (tabDom) {
-          tabDom.style.display = ''
+        if (item.checked) {
+          const tabDom = document.getElementById('tab-' + item.label)
+          if (tabDom) {
+            tabDom.style.display = ''
+          }
         }
       })
 
@@ -391,16 +402,17 @@ export default {
         this.showCustomizeTabs = true
         this.setShowNum(10)
       } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        const name = this.$store.getters.getBreadcrumbColumnName
+        // const name = this.$store.getters.getBreadcrumbColumnName
+        const name = this.getUrlParam(this.curTabState.thirdMenu, '')
         const networkTabList = []
         this.list.forEach(item => {
-          if (this.$t(item.label) === name) {
+          if (item.label === name) {
             item.checked = true
           }
           networkTabList.push(item)
         })
         this.$store.commit('setNetworkOverviewTabList', networkTabList)
-        const breadcrumbColumnTab = this.list.find(item => this.$t(item.label) === name)
+        const breadcrumbColumnTab = this.list.find(item => item.label === name)
         this.changeUrlTabState(this.curTabState.curTab, breadcrumbColumnTab.prop)
 
         this.hideTabs(breadcrumbColumnTab)
@@ -423,6 +435,28 @@ export default {
           this.showTab(curTab)
           this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
         }
+        if (thirdMenu && fourthMenu) {
+          this.$nextTick(() => {
+            this.list.forEach(item => {
+              if (item.label === thirdMenu) {
+                item.checked = false
+              }
+            })
+          })
+        } else if (thirdMenu && !fourthMenu) {
+          this.list.forEach(item => {
+            if (item.label === thirdMenu) {
+              item.checked = true
+              this.$nextTick(() => {
+                this.hideTabs(item)
+              })
+              this.customTableTitles[0].label = item.label
+            }
+          })
+          this.activeTab = ''
+        }
+        this.list = Object.assign({}, this.list)
+        this.$store.commit('setNetworkOverviewTabList', this.list)
         this.showCustomizeTabs = true
       } else if (curOperationType === operationType.changeMetric) { // 切换metric
         if (beforeOperationType === operationType.thirdMenu) {
@@ -485,7 +519,7 @@ export default {
       }
 
       let cycleTotalList = []
-      const condition = this.$store.getters.getQueryCondition
+      const condition = this.getQueryCondition()
       if (condition) {
         queryParams.q = condition
       }
@@ -866,7 +900,8 @@ export default {
         limit: networkDefaultLimit,
         type: curTab.prop
       }
-      const condition = this.$store.getters.getQueryCondition
+      // const condition = this.$store.getters.getQueryCondition
+      const condition = this.getQueryCondition()
       if (condition) {
         queryParams = {
           orderBy: this.orderBy,
@@ -884,8 +919,10 @@ export default {
       }
       const tabList = this.list.filter(item => item.checked === true)
       const defaultTab = tabList.length > 0 ? tabList[0] : {}
-      const columnName = this.$store.getters.getBreadcrumbColumnName
-      const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      // const columnName = this.$store.getters.getBreadcrumbColumnName
+      const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
+      // const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      const columnValue = this.getUrlParam(this.curTabState.fourthMenu, '')
       if (tabList.length === 1) {
         defaultTab.disabled = true
       } else if (tabList.length > 1) {
@@ -926,11 +963,13 @@ export default {
     },
     // tab改变
     changeUrlTabState (param, value) {
-      const { query } = this.$route
-      const newQuery = {}
-      newQuery[param] = value
-      const newUrl = urlParamsHandler(window.location.href, query, newQuery)
-      overwriteUrl(newUrl)
+      if (value != null && value != undefined) {
+        const { query } = this.$route
+        const newQuery = {}
+        newQuery[param] = value
+        const newUrl = urlParamsHandler(window.location.href, query, newQuery)
+        overwriteUrl(newUrl)
+      }
     },
     // 激活tab修改的内容：第一列的列名，list中此tab为checked=true
     showTab (curTab) {
@@ -950,8 +989,10 @@ export default {
       const tabList = this.list.filter(item => item.checked === true)
       const defaultTab = tabList.length > 0 ? tabList[0] : {}
       // 当前操作之后，只有1个tab被选中，则这一个不允许取消选中
-      const columnName = this.$store.getters.getBreadcrumbColumnName
-      const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      // const columnName = this.$store.getters.getBreadcrumbColumnName
+      const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
+      // const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      const columnValue = this.getUrlParam(this.curTabState.fourthMenu, '')
       if (tabList.length === 1) {
         defaultTab.disabled = true
       } else if (tabList.length > 1) {
@@ -977,7 +1018,8 @@ export default {
           limit: networkDefaultLimit,
           type: tabList[0].prop
         }
-        const condition = this.$store.getters.getQueryCondition
+        // const condition = this.$store.getters.getQueryCondition
+        const condition = this.getQueryCondition()
         if (condition) {
           queryParams = {
             orderBy: this.orderBy,
@@ -1013,12 +1055,14 @@ export default {
           queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
           queryCondition.push('common_server_port=' + valueGroup[1])
         }
-        this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+        // this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+        this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' AND '))
       } else {
         searchProps.forEach(item => {
           queryCondition.push(item + "='" + value + "'")
         })
-        this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+        // this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+        this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' OR '))
       }
     },
     getFirstCheckedTab () {
@@ -1049,20 +1093,28 @@ export default {
           if (this.$route.path === menu.route) {
             menu.columnName = columnName
             menu.columnValue = columnValue
-            this.$store.commit('setPanelName', columnValue)
-            this.$store.commit('setBreadcrumbColumnName', columnName)
-            this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
-            this.$store.commit('setBreadcrumbColumnValue', columnValue)
+            // this.$store.commit('setPanelName', columnValue)
+            this.changeUrlTabState(this.curTabState.panelName, columnValue)
+            // this.$store.commit('setBreadcrumbColumnName', columnName)
+            this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
+            // this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
+            this.changeUrlTabState(this.curTabState.dimensionType, clickTab ? clickTab.prop : '')
+            // this.$store.commit('setBreadcrumbColumnValue', columnValue)
+            this.changeUrlTabState(this.curTabState.fourthMenu, columnValue)
           }
         } else if (!this.$_.isEmpty(menu.children)) {
           menu.children.forEach(child => {
             if (this.$route.path === child.route) {
               child.columnName = columnName
               child.columnValue = columnValue
-              this.$store.commit('setPanelName', columnValue)
-              this.$store.commit('setBreadcrumbColumnName', columnName)
-              this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
-              this.$store.commit('setBreadcrumbColumnValue', columnValue)
+              // this.$store.commit('setPanelName', columnValue)
+              this.changeUrlTabState(this.curTabState.panelName, columnValue)
+              // this.$store.commit('setBreadcrumbColumnName', columnName)
+              this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
+              // this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
+              this.changeUrlTabState(this.curTabState.dimensionType, clickTab ? clickTab.prop : '')
+              // this.$store.commit('setBreadcrumbColumnValue', columnValue)
+              this.changeUrlTabState(this.curTabState.fourthMenu, columnValue)
             }
           })
         }
@@ -1102,12 +1154,14 @@ export default {
           queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
           queryCondition.push('common_server_port=' + valueGroup[1])
         }
-        this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+        // this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+        this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' AND '))
       } else {
         searchProps.forEach(item => {
           queryCondition.push(item + "='" + columnValue + "'")
         })
-        this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+        // this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+        this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' OR '))
       }
     },
     metricChange () {
@@ -1186,7 +1240,8 @@ export default {
           limit: networkDefaultLimit,
           type: curTab.prop
         }
-        const condition = this.$store.getters.getQueryCondition
+        // const condition = this.$store.getters.getQueryCondition
+        const condition = this.getQueryCondition()
         if (condition) {
           queryParams = {
             orderBy: this.orderBy,
@@ -1202,7 +1257,8 @@ export default {
       }
     },
     getCurUrl () {
-      const condition = this.$store.getters.getQueryCondition
+      // const condition = this.$store.getters.getQueryCondition
+      const condition = this.getQueryCondition()
       if (condition) {
         return this.networkSearchUrl.drilldownCurUrl
       } else {
@@ -1210,7 +1266,8 @@ export default {
       }
     },
     gerCycleUrl () {
-      const condition = this.$store.getters.getQueryCondition
+      // const condition = this.$store.getters.getQueryCondition
+      const condition = this.getQueryCondition()
       if (condition) {
         return this.networkSearchUrl.drilldownCycleUrl
       } else {
@@ -1218,7 +1275,8 @@ export default {
       }
     },
     gerColumnUrl (tableColumn) {
-      const condition = this.$store.getters.getQueryCondition
+      // const condition = this.$store.getters.getQueryCondition
+      const condition = this.getQueryCondition()
       if (condition) {
         return tableColumn.dillDownCycleDataUrl
       } else {
@@ -1235,13 +1293,14 @@ export default {
     }, */
     handleQueryParams (extraParams) {
       let queryType = ''
-      const name = this.$store.getters.getBreadcrumbColumnName
+      // const name = this.$store.getters.getBreadcrumbColumnName
+      const name = this.getUrlParam(this.curTabState.thirdMenu, '')
       const curOperationType = this.$store.getters.getTabOperationType
       if (curOperationType === operationType.fourthMenu) { // 点击的为第四级菜单
         const checkedTab = this.list.find(item => item.checked)
         queryType = checkedTab ? checkedTab.prop : ''
       } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        const breadcrumbTab = this.list.find(item => this.$t(item.label) === name)
+        const breadcrumbTab = this.list.find(item => item.label === name)
         queryType = breadcrumbTab ? breadcrumbTab.prop : ''
       } else if (curOperationType === operationType.changeTab) { // 切换tab
         const curTab = this.getCurTab()
@@ -1262,7 +1321,8 @@ export default {
           orderBy: this.orderBy ? this.orderBy : 'bytesTotal',
           limit: networkDefaultLimit
         }
-        const condition = this.$store.getters.getQueryCondition
+        // const condition = this.$store.getters.getQueryCondition
+        const condition = this.getQueryCondition()
         if (condition) {
           extraParams.q = condition
         }
@@ -1294,6 +1354,12 @@ export default {
       let curTab = this.$route.query.curTab?JSON.parse(this.$route.query.curTab):null
       return curTab
     }, */
+    getQueryCondition () {
+      return this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+    },
+    getUrlParam (param, defaultValue) {
+      return this.$route.query[param] ? this.$route.query[param] : defaultValue
+    },
     // 获取当前tab
     getCurTab () {
       const curTabProp = this.$route.query.curTab ? this.$route.query.curTab : null

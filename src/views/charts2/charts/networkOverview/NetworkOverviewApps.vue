@@ -338,27 +338,36 @@ export default {
         searchProps.forEach(item => {
           queryCondition.push(item + "='" + value + "'")
         })
-        this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+        // this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+        this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' OR '))
 
         this.$store.getters.menuList.forEach(menu => {
           if (this.$_.isEmpty(menu.children) && menu.route) {
             if (this.$route.path === menu.route) {
               menu.columnName = tabType
               menu.columnValue = value
-              this.$store.commit('setPanelName', value)
-              this.$store.commit('setBreadcrumbColumnName', tabType)
-              this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
-              this.$store.commit('setBreadcrumbColumnValue', value)
+              // this.$store.commit('setPanelName', value)
+              this.changeUrlTabState(this.curTabState.panelName, value)
+              // this.$store.commit('setBreadcrumbColumnName', tabType)
+              this.changeUrlTabState(this.curTabState.thirdMenu, tabType)
+              // this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+              this.changeUrlTabState(this.curTabState.dimensionType, tabGroup[0] ? tabGroup[0].prop : '')
+              // this.$store.commit('setBreadcrumbColumnValue', value)
+              this.changeUrlTabState(this.curTabState.fourthMenu, value)
             }
           } else if (!this.$_.isEmpty(menu.children)) {
             menu.children.forEach(child => {
               if (this.$route.path === child.route) {
                 child.columnName = tabType
                 child.columnValue = value
-                this.$store.commit('setPanelName', value)
-                this.$store.commit('setBreadcrumbColumnName', tabType)
-                this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
-                this.$store.commit('setBreadcrumbColumnValue', value)
+                // this.$store.commit('setPanelName', value)
+                this.changeUrlTabState(this.curTabState.panelName, value)
+                // this.$store.commit('setBreadcrumbColumnName', tabType)
+                this.changeUrlTabState(this.curTabState.thirdMenu, tabType)
+                // this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
+                this.changeUrlTabState(this.curTabState.dimensionType, tabGroup[0] ? tabGroup[0].prop : '')
+                // this.$store.commit('setBreadcrumbColumnValue', value)
+                this.changeUrlTabState(this.curTabState.fourthMenu, value)
               }
             })
           }
@@ -377,7 +386,7 @@ export default {
         const tabObjGroup = list.filter(item => item.checked)
         if (tabObjGroup && tabObjGroup.length > 0) {
           const curTab = tabObjGroup[0]
-          this.changeTabState(this.curTabState.curTab, curTab)
+          this.changeUrlTabState(this.curTabState.curTab, curTab)
         }
         this.$router.push({
           query: {
@@ -388,14 +397,13 @@ export default {
         })
       }
     },
-    changeTabState (param, value) {
-      const query = {
-        ...this.$route.query
-      }
-      query[param] = value
-      this.$router.push({
-        query: query
-      })
+    // tab改变
+    changeUrlTabState (param, value) {
+      const { query } = this.$route
+      const newQuery = {}
+      newQuery[param] = value
+      const newUrl = urlParamsHandler(window.location.href, query, newQuery)
+      overwriteUrl(newUrl)
     },
     initChart (obj) {
       let chart = this.myChart.find(m => m.name === obj.name && m.type === obj.type)

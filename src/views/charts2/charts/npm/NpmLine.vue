@@ -38,13 +38,13 @@
 
 <script>
 import * as echarts from 'echarts'
-import {npmLineChartOption} from '@/views/charts2/charts/options/echartOption.js'
-import {shallowRef} from 'vue'
+import { npmLineChartOption } from '@/views/charts2/charts/options/echartOption.js'
+import { shallowRef } from 'vue'
 import _ from 'lodash'
-import {stackedLineTooltipFormatter} from '@/views/charts/charts/tools'
-import {getSecond} from '@/utils/date-util'
-import {get} from '@/utils/http'
-import {api} from '@/utils/api'
+import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
+import { getSecond } from '@/utils/date-util'
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 
