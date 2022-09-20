@@ -27,7 +27,7 @@ export const typeMapping = {
     linkDirectionGrid: 709
   },
   dnsInsight: {
-    dnsTrafficLine: 704,
+    dnsTrafficLine: 106,
     dnsEventChart: 711,
     dnsRecentEvents: 605,
     dnsActiveMaliciousDomain: 604
