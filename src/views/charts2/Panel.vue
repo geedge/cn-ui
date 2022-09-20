@@ -40,7 +40,7 @@
 <script>
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
-import { panelTypeAndRouteMapping, bytesColumnNameGroupForNpm, scoreUrl, customTableTitlesForAppPerformance, operationType } from '@/utils/constants'
+import { panelTypeAndRouteMapping, bytesColumnNameGroupForNpm, scoreUrl, customTableTitlesForAppPerformance, operationType, curTabState } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
@@ -63,7 +63,8 @@ export default {
       panelLock: true,
       extraParams: {},
       panelName: '',
-      score: null
+      score: null,
+      curTabState: curTabState
     }
   },
   computed: {
@@ -83,14 +84,17 @@ export default {
     }
   },
   async mounted () {
-    this.panelName = this.$store.getters.getPanelName
+    // this.panelName = this.$store.getters.getPanelName
+    this.panelName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
     const curOperationType = this.$store.getters.getTabOperationType
     if (this.panelName && this.$route.path === '/panel/networkAppPerformance' && curOperationType !== operationType.thirdMenu) {
-      const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      // const columnValue = this.$store.getters.getBreadcrumbColumnValue
+      const columnValue = this.getUrlParam(this.curTabState.fourthMenu, '')
       const queryParams = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        type: this.$store.getters.getDimensionType,
+        // type: this.$store.getters.getDimensionType,
+        type: this.$route.query.dimensionType ? this.$route.query.dimensionType : '',
         params: columnValue || ''
       }
       const requestGroup = []
@@ -233,6 +237,9 @@ export default {
       } else {
         this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
       }
+    },
+    getUrlParam (param, defaultValue) {
+      return this.$route.query[param] ? this.$route.query[param] : defaultValue
     }
   }
 }

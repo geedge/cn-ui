@@ -189,7 +189,8 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      const condition = this.$store.getters.getQueryCondition
+      // const condition = this.$store.getters.getQueryCondition
+      const condition = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       if (condition) {
         params.q = condition
       }

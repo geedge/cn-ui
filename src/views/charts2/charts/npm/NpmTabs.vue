@@ -79,7 +79,8 @@ export default {
     if (this.chart.panelId === drillDownPanelTypeMapping.npmOverviewIp) {
       const self = this
       // 当client或server的session数为0时，对应tab置灰，不可选，默认高亮另一个不为0的tab
-      const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
+      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      const condition = conditionStr.split(/["|'](.*?)["|']/)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),

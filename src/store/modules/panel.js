@@ -37,13 +37,13 @@ const panel = {
             breadcrumbColumnValue、
             queryCondition
      */
-    panelName: '', // 网络概况的Panel的名称
-    breadcrumbColumnName: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
-    dimensionType: '', // 维度
-    breadcrumbColumnValue: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
+    // panelName: '', // 网络概况的Panel的名称
+    // breadcrumbColumnName: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
+    // dimensionType: '', // 维度
+    // breadcrumbColumnValue: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
     // networkOverviewCurrentTab: null, // 只代表选中的tab，有时会与面包屑中显示的值不同
     networkOverviewBeforeTab: null, // 点击表格的值时使用，记录点击当前tab表格的值之前点击的表格值所属的tab
-    queryCondition: '', // 数据查询的条件
+    // queryCondition: '', // 数据查询的条件
     networkOverviewTabList: [], // 存储tab列表的一些状态：如是否选中
     tabOperationType: 0, // 操作类型:2-二级菜单；3-三级菜单；4-四级菜单；5-切换tab；6-切换metric；7-操作Customize
     tabOperationBeforeType: 0, // 记录上次的操作类型
@@ -100,24 +100,24 @@ const panel = {
     setCurrentMap (state, currentMap) {
       state.currentMap = currentMap
     },
-    setPanelName (state, panelName) {
-      state.panelName = panelName
-    },
-    setBreadcrumbColumnName (state, breadcrumbColumnName) {
-      state.breadcrumbColumnName = breadcrumbColumnName
-    },
-    setDimensionType (state, dimensionType) {
-      state.dimensionType = dimensionType
-    },
-    setBreadcrumbColumnValue (state, breadcrumbColumnValue) {
-      state.breadcrumbColumnValue = breadcrumbColumnValue
-    },
+    // setPanelName (state, panelName) {
+    // state.panelName = panelName
+    // },
+    // setBreadcrumbColumnName (state, breadcrumbColumnName) {
+    // state.breadcrumbColumnName = breadcrumbColumnName
+    // },
+    // setDimensionType (state, dimensionType) {
+    // state.dimensionType = dimensionType
+    // },
+    // setBreadcrumbColumnValue (state, breadcrumbColumnValue) {
+    // state.breadcrumbColumnValue = breadcrumbColumnValue
+    // },
     // setNetworkOverviewCurrentTab (state, networkOverviewCurrentTab) {
     // state.networkOverviewCurrentTab = networkOverviewCurrentTab
     // },
-    setQueryCondition (state, queryCondition) {
-      state.queryCondition = queryCondition
-    },
+    // setQueryCondition (state, queryCondition) {
+    // state.queryCondition = queryCondition
+    // },
     setNetworkOverviewTabList (state, networkOverviewTabList) {
       state.networkOverviewTabList = networkOverviewTabList
     },
@@ -183,24 +183,24 @@ const panel = {
     getCurrentMap (state) {
       return state.currentMap
     },
-    getPanelName (state) {
-      return state.panelName
-    },
-    getBreadcrumbColumnName (state) {
-      return state.breadcrumbColumnName
-    },
-    getDimensionType (state) {
-      return state.dimensionType
-    },
-    getBreadcrumbColumnValue (state) {
-      return state.breadcrumbColumnValue
-    },
+    // getPanelName (state) {
+    // return state.panelName
+    // },
+    // getBreadcrumbColumnName (state) {
+    // return state.breadcrumbColumnName
+    // },
+    // getDimensionType (state) {
+    // return state.dimensionType
+    // },
+    // getBreadcrumbColumnValue (state) {
+    // return state.breadcrumbColumnValue
+    // },
     // getNetworkOverviewCurrentTab (state) {
     // return state.networkOverviewCurrentTab
     // },
-    getQueryCondition (state) {
-      return state.queryCondition
-    },
+    // getQueryCondition (state) {
+    // return state.queryCondition
+    // },
     getNetworkOverviewTabList (state) {
       return state.networkOverviewTabList
     },

@@ -73,7 +73,7 @@
             </div>
           </template>
           <template v-else-if="index===2">
-            <span class="route-menu" @click="jump(path,item,'',3)">{{item}}</span>
+            <span class="route-menu" @click="jump(path,item,'',3)">{{$t(item)}}</span>
           </template>
           <template v-else-if="index===1">
             <span class="route-menu" @click="jump(path,'','',2)" v-if="route.indexOf('detection') === -1">{{item}}</span>
@@ -266,10 +266,16 @@ export default {
         }
       })
       const breadcrumb = breadcrumbMap.find(b => this.path === b.path)
+      const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+      const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
       if (breadcrumb.columnValue) {
-        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, this.$t(breadcrumb.columnName), breadcrumb.columnValue] : []
+        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, breadcrumb.columnName, breadcrumb.columnValue] : []
       } else if (breadcrumb.columnName) {
-        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, this.$t(breadcrumb.columnName)] : []
+        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, breadcrumb.columnName] : []
+      } else if (fourthMenu) {
+        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu, fourthMenu] : []
+      } else if (thirdMenu) {
+        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu] : []
       } else {
         return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
       }
@@ -338,7 +344,8 @@ export default {
     },
     initDropdownList () {
       const currentValue = document.getElementById('breadcrumbValue') ? document.getElementById('breadcrumbValue').innerText : ''
-      const columnName = this.$store.getters.getBreadcrumbColumnName
+      // const columnName = this.$store.getters.getBreadcrumbColumnName
+      const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
       let type = 'ip'
       const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
       if (tabObjGroup && tabObjGroup.length > 0) {
@@ -383,13 +390,17 @@ export default {
     hideBreadcrumbPopover () {
       this.showBackground = false
     },
+    getUrlParam (param, defaultValue) {
+      return this.$route.query[param] ? this.$route.query[param] : defaultValue
+    },
     changeValue (value) {
       // 设置面包屑显示的内容及hover时的title
       document.getElementById('breadcrumbValue').innerText = value
       document.getElementById('breadcrumbButton').setAttribute('title', value)
       document.getElementById(this.valueMenuId).setAttribute('title', value)
       document.getElementById('breadcrumbButton').click()
-      const columnName = this.$store.getters.getBreadcrumbColumnName
+      // const columnName = this.$store.getters.getBreadcrumbColumnName
+      const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
       const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
       if (tabObjGroup && tabObjGroup.length > 0) {
         const curTab = tabObjGroup[0]
@@ -403,12 +414,14 @@ export default {
               queryCondition.push('common_server_port=' + valueGroup[1])
             }
             console.log(queryCondition.join(' AND '))
-            this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+            // this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
+            this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' AND '))
           } else {
             searchProps.forEach(item => {
               queryCondition.push(item + "='" + value + "'")
             })
-            this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+            // this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
+            this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' OR '))
           }
         }
       }
@@ -434,7 +447,7 @@ export default {
         }
       })
     },
-    changeTabState (param, value) {
+    changeUrlTabState (param, value) {
       const { query } = this.$route
       const newQuery = {}
       newQuery[param] = value
@@ -460,34 +473,48 @@ export default {
               if (columnValue) { // 点击的为值
                 child.columnValue = columnValue
                 child.columnName = columnName
-                this.$store.commit('setBreadcrumbColumnValue', columnValue)
-                this.$store.commit('setBreadcrumbColumnName', columnName)
+                // this.$store.commit('setBreadcrumbColumnValue', columnValue)
+                // this.$store.commit('setBreadcrumbColumnName', columnName)
+                this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
+                this.changeUrlTabState(this.curTabState.fourthMenu, columnValue)
                 const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
                 const type = tabObjGroup && tabObjGroup[0] ? tabObjGroup[0].prop : ''
-                this.$store.commit('setDimensionType', type)
-                this.$store.commit('setPanelName', columnValue)
+                // this.$store.commit('setDimensionType', type)
+                this.changeUrlTabState(this.curTabState.dimensionType, type)
+                // this.$store.commit('setPanelName', columnValue)
+                this.changeUrlTabState(this.curTabState.panelName, columnValue)
               } else if (columnName) { // 点击的为列名
                 child.columnValue = ''
                 child.columnName = columnName
-                this.$store.commit('setBreadcrumbColumnValue', '')
-                this.$store.commit('setBreadcrumbColumnName', columnName)
-                this.$store.commit('setPanelName', columnName)
+                // this.$store.commit('setBreadcrumbColumnValue', '')
+                // this.$store.commit('setBreadcrumbColumnName', columnName)
+                this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
+                this.changeUrlTabState(this.curTabState.fourthMenu, '')
+                // this.$store.commit('setPanelName', columnName)
+                this.changeUrlTabState(this.curTabState.panelName, columnName)
                 const tabList = this.$store.getters.getNetworkOverviewTabList
-                const curTab = tabList.filter(item => this.$t(item.label) === columnName)[0]
-                this.changeTabState(this.curTabState.curTab, curTab)
-                this.$store.commit('setDimensionType', curTab ? curTab.prop : '')
-                this.$store.commit('setQueryCondition', '')
+                const curTab = tabList.filter(item => item.label === columnName)[0]
+                this.changeUrlTabState(this.curTabState.curTab, curTab)
+                // this.$store.commit('setDimensionType', curTab ? curTab.prop : '')
+                this.changeUrlTabState(this.curTabState.dimensionType, curTab ? curTab.prop : '')
+                // this.$store.commit('setQueryCondition', '')
+                this.changeUrlTabState(this.curTabState.queryCondition, '')
                 this.$store.commit('setNetworkOverviewBeforeTab', null)
               } else {
                 child.columnName = ''
                 child.columnValue = ''
-                this.$store.commit('setBreadcrumbColumnValue', '')
-                this.$store.commit('setBreadcrumbColumnName', '')
-                this.$store.commit('setDimensionType', '')
-                this.$store.commit('setPanelName', '')
+                // this.$store.commit('setBreadcrumbColumnValue', '')
+                // this.$store.commit('setBreadcrumbColumnName', '')
+                this.changeUrlTabState(this.curTabState.thirdMenu, '')
+                this.changeUrlTabState(this.curTabState.fourthMenu, '')
+                // this.$store.commit('setDimensionType', '')
+                this.changeUrlTabState(this.curTabState.dimensionType, '')
+                // this.$store.commit('setPanelName', '')
+                this.changeUrlTabState(this.curTabState.panelName, '')
                 // this.$store.commit('setBreadcrumbColumnValueList', [])
-                this.changeTabState(this.curTabState.curTab, null)
-                this.$store.commit('setQueryCondition', '')
+                this.changeUrlTabState(this.curTabState.curTab, null)
+                // this.$store.commit('setQueryCondition', '')
+                this.changeUrlTabState(this.curTabState.queryCondition, '')
                 this.$store.commit('setNetworkOverviewBeforeTab', null)
               }
             }
