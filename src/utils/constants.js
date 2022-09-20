@@ -250,7 +250,9 @@ export const curTabState = {
   panelName: 'panelName',
   thirdMenu: 'thirdMenu',
   fourthMenu: 'fourthMenu',
-  networkOverviewBeforeTab: 'networkOverviewBeforeTab'
+  networkOverviewBeforeTab: 'networkOverviewBeforeTab',
+  tabOperationType:'tabOperationType',
+  tabOperationBeforeType:'tabOperationBeforeType'
 }
 
 export const scoreUrl = [

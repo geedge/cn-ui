@@ -315,8 +315,12 @@ export default {
       }
       this.init()
     },
-    getUrlParam (param, defaultValue) {
-      return this.$route.query[param] ? this.$route.query[param] : defaultValue
+    getUrlParam (param, defaultValue,isNumber) {
+      if(isNumber){
+        return this.$route.query[param] ? Number(this.$route.query[param]) : defaultValue
+      }else {
+        return this.$route.query[param] ? this.$route.query[param] : defaultValue
+      }
     },
     drillDownData (type, value) {
       let tabType = ''
@@ -335,8 +339,10 @@ export default {
           //this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
           this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, tabGroup[0].prop)
         }
-        this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-        this.$store.commit('setTabOperationType', operationType.fourthMenu)
+        //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        //this.$store.commit('setTabOperationType', operationType.fourthMenu)
+        this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
+        this.changeUrlTabState(this.curTabState.tabOperationType, operationType.fourthMenu)
 
         const queryCondition = []
         const searchProps = tabGroup[0].dillDownProp

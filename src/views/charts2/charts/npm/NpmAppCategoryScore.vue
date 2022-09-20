@@ -267,8 +267,10 @@ export default {
         //this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
         this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, tabGroup[0].prop)
       }
-      this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-      this.$store.commit('setTabOperationType', operationType.fourthMenu)
+      //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+      //this.$store.commit('setTabOperationType', operationType.fourthMenu)
+      this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
+      this.changeUrlTabState(this.curTabState.tabOperationType, operationType.fourthMenu)
 
       const queryCondition = []
       const searchProps = tabGroup[0].dillDownProp

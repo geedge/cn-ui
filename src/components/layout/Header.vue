@@ -390,8 +390,12 @@ export default {
     hideBreadcrumbPopover () {
       this.showBackground = false
     },
-    getUrlParam (param, defaultValue) {
-      return this.$route.query[param] ? this.$route.query[param] : defaultValue
+    getUrlParam (param, defaultValue,isNumber) {
+      if(isNumber){
+        return this.$route.query[param] ? Number(this.$route.query[param]) : defaultValue
+      }else {
+        return this.$route.query[param] ? this.$route.query[param] : defaultValue
+      }
     },
     changeValue (value) {
       // 设置面包屑显示的内容及hover时的title
@@ -457,10 +461,13 @@ export default {
     jump (route, columnName, columnValue, opeType) {
       this.showMenu = false
       if (opeType) {
-        this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-        this.$store.commit('setTabOperationType', opeType)
+        //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        //this.$store.commit('setTabOperationType', opeType)
+        this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
+        this.changeUrlTabState(this.curTabState.tabOperationType, opeType)
       } else {
-        this.$store.commit('setTabOperationType', operationType.mainMenu)
+        //this.$store.commit('setTabOperationType', operationType.mainMenu)
+        this.changeUrlTabState(this.curTabState.tabOperationType, operationType.mainMenu)
       }
       if (!columnName) { // 点击第二级菜单
         this.$store.commit('setNetworkOverviewTabList', [])

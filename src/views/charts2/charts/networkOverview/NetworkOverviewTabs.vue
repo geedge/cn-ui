@@ -328,6 +328,7 @@ export default {
       }
     },
     initState () {
+      let curTab = this.getCurTab()
       // 没有选中任何tab时，默认选中第一个
       const tabList = this.list.filter(item => item.checked === true)
       if (tabList.length === 0) {
@@ -335,6 +336,13 @@ export default {
         this.showTab(this.list[0])
       } else {
         //this.showTab(tabList[0])
+        if (curTab) { // 显示当前tab
+          let realTab = this.list.find(item => item.label===curTab.label)
+          if(realTab){
+            realTab.checked = true
+          }
+          this.showTab(curTab)
+        }
       }
       this.isNoData = false
       this.tableData = []
@@ -392,7 +400,6 @@ export default {
         }
       })
 
-      let curTab = this.getCurTab()
       if (this.metric === 'Sessions/s') {
         this.columnNameGroup = this.curTable.sessionsColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.sessionsCycleColumnNameGroup
@@ -411,8 +418,10 @@ export default {
         ]
       }
 
-      const curOperationType = this.$store.getters.getTabOperationType
-      const beforeOperationType = this.$store.getters.getTabOperationBeforeType
+      //const curOperationType = this.$store.getters.getTabOperationType
+      //const beforeOperationType = this.$store.getters.getTabOperationBeforeType
+      const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '',true)
+      const beforeOperationType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '',true)
       if (curOperationType === operationType.changeTab) { // 切换tab
         if (curTab) { // tab切换
           this.showTab(curTab)
@@ -838,11 +847,14 @@ export default {
       this.tableDataBackup = []
       // this.showRecordNum = 10
       this.setShowNum(10)
-      const beforeType = this.$store.getters.getTabOperationBeforeType
+      //const beforeType = this.$store.getters.getTabOperationBeforeType
+      const beforeType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '',true)
       if (beforeType != operationType.thirdMenu) {
-        this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
       }
-      this.$store.commit('setTabOperationType', operationType.changeMetric)
+      //this.$store.commit('setTabOperationType', operationType.changeMetric)
+      this.changeUrlTabState(this.curTabState.tabOperationType, operationType.changeMetric)
       const curTab = this.getCurTab()
       const label = curTab.label
       this.changeUrlTabState(this.curTabState.tableMetric, this.metric)
@@ -956,11 +968,16 @@ export default {
       }
     },
     getDefaultTab () {
-      let tabObjGroup = this.list.filter(item => item.checked)
-      if (tabObjGroup && tabObjGroup.length > 0) {
-        return tabObjGroup[0]
+      let curTab = this.getCurTab()
+      if(curTab){
+        return curTab
       } else {
-        return tabObjGroup = this.networkTabList.filter(item => item.checked)[0]
+        let tabObjGroup = this.list.filter(item => item.checked)
+        if (tabObjGroup && tabObjGroup.length > 0) {
+          return tabObjGroup[0]
+        } else {
+          return tabObjGroup = this.networkTabList.filter(item => item.checked)[0]
+        }
       }
     },
     // 隐藏tabs的标题
@@ -999,9 +1016,11 @@ export default {
       // 操作类型设置
       const beforeType = this.$store.getters.getTabOperationBeforeType
       if (beforeType != operationType.thirdMenu) {
-        this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
       }
-      this.$store.commit('setTabOperationType', operationType.customize)
+      //this.$store.commit('setTabOperationType', operationType.customize)
+      this.changeUrlTabState(this.curTabState.tabOperationType, operationType.customize)
       // 获得操作tab和当前选中的所有tab
       const handleTab = this.list[index]
       const tabList = this.list.filter(item => item.checked === true)
@@ -1050,8 +1069,10 @@ export default {
       }
     },
     setOperationType (operationType) {
-      this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-      this.$store.commit('setTabOperationType', operationType)
+      //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+      //this.$store.commit('setTabOperationType', operationType)
+      this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
+      this.changeUrlTabState(this.curTabState.tabOperationType, operationType)
     },
     getTabByLabel (label) {
       let tab = null
@@ -1245,8 +1266,10 @@ export default {
       this.tableDataBackup = []
       this.setShowNum(10)
       this.clearSort()
-      this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-      this.$store.commit('setTabOperationType', operationType.changeTab)
+      //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+      //this.$store.commit('setTabOperationType', operationType.changeTab)
+      this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
+      this.changeUrlTabState(this.curTabState.tabOperationType, operationType.changeTab)
       this.customTableTitles[0].label = tab.paneName
 
       const tabObjGroup = this.list.filter(item => item.label == tab.paneName)
@@ -1315,10 +1338,16 @@ export default {
       let queryType = ''
       // const name = this.$store.getters.getBreadcrumbColumnName
       const name = this.getUrlParam(this.curTabState.thirdMenu, '')
-      const curOperationType = this.$store.getters.getTabOperationType
+      //const curOperationType = this.$store.getters.getTabOperationType
+      const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '',true)
       if (curOperationType === operationType.fourthMenu) { // 点击的为第四级菜单
-        const checkedTab = this.list.find(item => item.checked)
-        queryType = checkedTab ? checkedTab.prop : ''
+        const curTab = this.getCurTab()
+        if(curTab){
+          queryType = curTab.prop
+        } else {
+          const checkedTab = this.list.find(item => item.checked)
+          queryType = checkedTab ? checkedTab.prop : ''
+        }
       } else if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
         const breadcrumbTab = this.list.find(item => item.label === name)
         queryType = breadcrumbTab ? breadcrumbTab.prop : ''
@@ -1377,8 +1406,12 @@ export default {
     getQueryCondition () {
       return this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
     },
-    getUrlParam (param, defaultValue) {
-      return this.$route.query[param] ? this.$route.query[param] : defaultValue
+    getUrlParam (param, defaultValue,isNumber) {
+      if(isNumber){
+        return this.$route.query[param] ? Number(this.$route.query[param]) : defaultValue
+      }else {
+        return this.$route.query[param] ? this.$route.query[param] : defaultValue
+      }
     },
     // 获取当前tab
     getCurTab () {
