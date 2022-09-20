@@ -334,7 +334,7 @@ export default {
         this.list[0].checked = true
         this.showTab(this.list[0])
       } else {
-        this.showTab(tabList[0])
+        //this.showTab(tabList[0])
       }
       this.isNoData = false
       this.tableData = []
@@ -393,6 +393,24 @@ export default {
       })
 
       let curTab = this.getCurTab()
+      if (this.metric === 'Sessions/s') {
+        this.columnNameGroup = this.curTable.sessionsColumnNameGroup
+        this.cycleColumnNameGroup = this.curTable.sessionsCycleColumnNameGroup
+        this.orderBy = 'sessions'
+        this.metricUnit = 'sessions'
+        let totalChecked = true
+        this.customTableTitles.forEach(item => {
+          if (item.prop === 'total') {
+            totalChecked = item.checked
+          }
+        })
+        const totalColumn = this.customTableTitles.filter(item => item.prop === 'total')
+        this.customTableTitles = [
+          { label:curTab.label, prop: 'tab', checked: true, tabColumn: true, columnType: this.curTable.column[0].columnType },
+          { label: 'network.total', prop: 'total', checked: totalChecked, tabColumn: false, columnType: this.curTable.column[1].columnType, cycleDataUrl: totalColumn ? totalColumn.cycleDataUrl : '', isInMainUrl: true }
+        ]
+      }
+
       const curOperationType = this.$store.getters.getTabOperationType
       const beforeOperationType = this.$store.getters.getTabOperationBeforeType
       if (curOperationType === operationType.changeTab) { // 切换tab
@@ -1044,7 +1062,8 @@ export default {
       return tab
     },
     setBeforeTab (tab) {
-      this.$store.commit('setNetworkOverviewBeforeTab', tab)
+      //this.$store.commit('setNetworkOverviewBeforeTab', tab)
+      this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, tab.prop)
     },
     setQueryCondition (tab, value) {
       const queryCondition = []
@@ -1082,7 +1101,8 @@ export default {
       5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
   * */
     handleTabValue (columnName, columnValue) {
-      const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+      //const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+      const oldCurTab = this.getUrlParam(this.curTabState.networkOverviewBeforeTab, '')
       const clickTab = this.getTabByLabel(columnName)
       this.setBeforeTab(clickTab)
       this.setOperationType(operationType.fourthMenu)
@@ -1125,7 +1145,7 @@ export default {
           item.checked = false
           // toPanel = item.panelId
         }
-        if (oldCurTab && (item.label === oldCurTab.label)) {
+        if (oldCurTab && (item.prop === oldCurTab)) {
           item.checked = true
         }
       })
