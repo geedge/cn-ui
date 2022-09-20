@@ -42,7 +42,7 @@ const panel = {
     // dimensionType: '', // 维度
     // breadcrumbColumnValue: '', // 点击tab里的value，都会修改此值,为面包屑的菜单
     // networkOverviewCurrentTab: null, // 只代表选中的tab，有时会与面包屑中显示的值不同
-    networkOverviewBeforeTab: null, // 点击表格的值时使用，记录点击当前tab表格的值之前点击的表格值所属的tab
+    //networkOverviewBeforeTab: null, // 点击表格的值时使用，记录点击当前tab表格的值之前点击的表格值所属的tab
     // queryCondition: '', // 数据查询的条件
     networkOverviewTabList: [], // 存储tab列表的一些状态：如是否选中
     tabOperationType: 0, // 操作类型:2-二级菜单；3-三级菜单；4-四级菜单；5-切换tab；6-切换metric；7-操作Customize
@@ -124,9 +124,9 @@ const panel = {
     setTabOperationType (state, tabOperationType) {
       state.tabOperationType = tabOperationType
     },
-    setNetworkOverviewBeforeTab (state, networkOverviewBeforeTab) {
-      state.networkOverviewBeforeTab = networkOverviewBeforeTab
-    },
+    //setNetworkOverviewBeforeTab (state, networkOverviewBeforeTab) {
+      //state.networkOverviewBeforeTab = networkOverviewBeforeTab
+    //},
     setTabOperationBeforeType (state, tabOperationBeforeType) {
       state.tabOperationBeforeType = tabOperationBeforeType
     },
@@ -207,9 +207,9 @@ const panel = {
     getTabOperationType (state) {
       return state.tabOperationType
     },
-    getNetworkOverviewBeforeTab (state) {
-      return state.networkOverviewBeforeTab
-    },
+    //getNetworkOverviewBeforeTab (state) {
+      //return state.networkOverviewBeforeTab
+    //},
     getTabOperationBeforeType (state) {
       return state.tabOperationBeforeType
     },

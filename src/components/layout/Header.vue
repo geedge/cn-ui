@@ -499,7 +499,8 @@ export default {
                 this.changeUrlTabState(this.curTabState.dimensionType, curTab ? curTab.prop : '')
                 // this.$store.commit('setQueryCondition', '')
                 this.changeUrlTabState(this.curTabState.queryCondition, '')
-                this.$store.commit('setNetworkOverviewBeforeTab', null)
+                //this.$store.commit('setNetworkOverviewBeforeTab', null)
+                this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, '')
               } else {
                 child.columnName = ''
                 child.columnValue = ''
@@ -515,7 +516,8 @@ export default {
                 this.changeUrlTabState(this.curTabState.curTab, null)
                 // this.$store.commit('setQueryCondition', '')
                 this.changeUrlTabState(this.curTabState.queryCondition, '')
-                this.$store.commit('setNetworkOverviewBeforeTab', null)
+                //this.$store.commit('setNetworkOverviewBeforeTab', null)
+                this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, '')
               }
             }
           })

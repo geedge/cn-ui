@@ -315,6 +315,9 @@ export default {
       }
       this.init()
     },
+    getUrlParam (param, defaultValue) {
+      return this.$route.query[param] ? this.$route.query[param] : defaultValue
+    },
     drillDownData (type, value) {
       let tabType = ''
       if (type === 'provider') {
@@ -323,12 +326,14 @@ export default {
         tabType = 'network.applications'
       }
       if (tabType) {
-        const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+        //const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+        const oldCurTab = this.getUrlParam(this.curTabState.networkOverviewBeforeTab, '')
         const curTable = networkTable.networkOverview
         const list = this.$store.getters.getNetworkOverviewTabList
         const tabGroup = list.filter(item => item.label === tabType)
         if (tabGroup && tabGroup.length > 0) {
-          this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
+          //this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
+          this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, tabGroup[0].prop)
         }
         this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
         this.$store.commit('setTabOperationType', operationType.fourthMenu)
@@ -378,7 +383,7 @@ export default {
             item.checked = false
             toPanel = item.panelId
           }
-          if (oldCurTab && (item.label === oldCurTab.label)) {
+          if (oldCurTab && (item.prop === oldCurTab)) {
             item.checked = true
           }
         })
