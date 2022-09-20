@@ -87,10 +87,12 @@ export default {
     const lineMetric = ref(query.lineMetric || 'Bits/s')
     const lineRefer = ref(query.lineRefer || 'Average')
     const lineTab = ref(query.lineTab || '')
+    const queryCondition = ref(query.queryCondition || '')
     return {
       lineMetric,
       lineRefer,
       lineTab,
+      queryCondition,
       myChart: shallowRef(null)
     }
   },
@@ -169,6 +171,13 @@ export default {
       })
       overwriteUrl(newUrl)
     },
+    queryCondition (n) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        queryCondition: n
+      })
+      overwriteUrl(newUrl)
+    },
     timeFilter: {
       deep: true,
       handler (n) {
@@ -189,9 +198,8 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      const condition = this.$store.getters.getQueryCondition
-      if (condition) {
-        params.q = condition
+      if (this.queryCondition) {
+        params.q = this.queryCondition
       }
       this.toggleLoading(true)
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {

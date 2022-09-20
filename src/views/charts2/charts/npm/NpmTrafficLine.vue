@@ -129,7 +129,7 @@ export default {
   methods: {
     init (val) {
       if (!val) {
-        val = 'Bits/s'
+        val = this.metricFilter
       }
       let condition = ''
       if (this.$store.getters.getQueryCondition.indexOf('OR') > -1) {

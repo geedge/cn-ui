@@ -35,7 +35,7 @@
       <template v-slot:empty>
         <div class="table-no-data" v-show="isNoData">
           <svg class="icon" aria-hidden="true">
-            <use xlink:href="#cn-icon-a-allclear"></use>
+            <use xlink:href="#cn-icon-good"></use>
           </svg>
           <div class="table-no-data__title">{{ $t('npm.thereNoEvents') }}</div>
         </div>
