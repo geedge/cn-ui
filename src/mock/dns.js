@@ -36,4 +36,40 @@ if (openMock) {
       }
     }
   })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/dnsInsight/eventChart.*'), 'get', function (requestObj) {
+    const data = []
+    for (let i = 0; i < 2; i++) {
+      data.push({
+        type: '',
+        analysis: {
+          sum: 0
+        },
+        values: []
+      })
+    }
+    data[0].type = 'performanceEvent'
+    data[1].type = 'securityEvent'
+
+    let num = 1435781430781
+    for (let i = 0; i < 16; i++) {
+      num += 5 * 60 * 1000
+      data[0].values.push([
+        num, Math.floor(Math.random() * 50) + 10
+      ])
+      data[1].values.push([
+        num, Math.floor(Math.random() * 10) + 2
+      ])
+    }
+
+    data[0].analysis.sum = Math.floor(Math.random() * 800) + 160
+    data[1].analysis.sum = Math.floor(Math.random() * 160) + 32
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: data
+      }
+    }
+  })
 }

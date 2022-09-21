@@ -4,6 +4,7 @@ import {
   chartColor2,
   chartColor3,
   chartColor5,
+  chartColor6,
   unitTypes
 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
@@ -373,6 +374,71 @@ export const trafficLineChartOption = {
         focus: 'series'
       },
       data: []
+    }
+  ]
+}
+
+export const stackedBarChartOption = {
+  color: chartColor6,
+  legend: {
+    show: false
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      barWidth: 26,
+      type: 'shadow' // 'shadow' as default; can also be 'line' or 'shadow'
+    }
+  },
+  grid: {
+    top: '12%',
+    left: '2%',
+    right: '2%',
+    bottom: 24,
+    containLabel: true
+  },
+  xAxis: {
+    type: 'time',
+    boundaryGap: ['1%', '3%'],
+    splitNumber: 12,
+    axisLine: {
+      show: false
+    },
+    axisTick: {
+      show: false
+    },
+    axisLabel: {
+      margin: 12,
+      formatter: function (value) {
+        const data = new Date(value)
+        const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+        const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+        return h + ':' + m
+      }
+    }
+  },
+  yAxis: {
+    type: 'value',
+    splitLine: {
+      show: true,
+      lineStyle: {
+        color: '#ECECEC'
+      }
+    },
+    axisLabel: {
+      margin: 20
+    }
+  },
+  series: [
+    {
+      data: [],
+      stack: 'total',
+      type: 'bar',
+      name: '',
+      emphasis: {
+        focus: 'series'
+      },
+      barWidth: 26
     }
   ]
 }
