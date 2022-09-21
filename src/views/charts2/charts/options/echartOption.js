@@ -214,6 +214,63 @@ export const stackedLineChartOption = {
   ]
 }
 
+export const linkTrafficLineChartOption = {
+  color: chartColor3,
+  tooltip: {
+    trigger: 'axis',
+    className: 'echarts-tooltip echarts-tooltip-dark'
+  },
+  legend: {
+    show: false
+  },
+  grid: {
+    top: '12%',
+    left: '2%',
+    right: '1.5%',
+    bottom: 15,
+    containLabel: true
+  },
+  xAxis: [
+    {
+      type: 'time',
+      splitNumber: 12,
+      axisLabel: {
+        formatter: function (value) {
+          const data = new Date(value)
+          const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+          const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+          return h + ':' + m
+        }
+      }
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      splitLine: {
+        show: false
+      },
+      axisLabel: {
+        formatter: function (value) {
+          return unitConvert(value, unitTypes.number).join('')
+        }
+      }
+    }
+  ],
+  series: [
+    {
+      type: 'line',
+      symbol: 'circle',
+      smooth: true,
+      showSymbol: false,
+      emphasis: {
+        focus: 'series'
+      },
+      data: []
+    }
+  ]
+}
+
 export const appListChartOption = {
   tooltip: {
     appendToBody: true,
@@ -373,6 +430,54 @@ export const trafficLineChartOption = {
         focus: 'series'
       },
       data: []
+    }
+  ]
+}
+
+export const linksTrafficSankeyOption = {
+  tooltip: {
+    trigger: 'item',
+    triggerOn: 'mousemove',
+    border: '#C5C5C5',
+    borderWidth: 1,
+    boxShadow: '-1px 1px 10px -1px rgba(122,116,116,0.85)',
+    borderRadius: '2px 2px 2px 2px'
+  },
+  series: [
+    {
+      type: 'sankey',
+      data: [],
+      links: [],
+      right: '5%',
+      top: 50,
+      bottom: 100,
+      levels: [
+        {
+          depth: 0,
+          itemStyle: {
+            color: '#47D49C'
+          },
+          lineStyle: {
+            color: '#999'
+          }
+        }, {
+          depth: 1,
+          itemStyle: {
+            color: '#A69BF5'
+          },
+          lineStyle: {
+            color: '#999'
+          }
+        }, {
+          depth: 2,
+          itemStyle: {
+            color: '#73A0FA'
+          },
+          lineStyle: {
+            color: '#999'
+          }
+        }
+      ]
     }
   ]
 }
