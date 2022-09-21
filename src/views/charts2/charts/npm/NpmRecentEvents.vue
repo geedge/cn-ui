@@ -49,10 +49,21 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 
 export default {
   name: 'NpmRecentEvents',
   mixins: [chartMixin],
+  setup () {
+    const { query } = useRoute()
+    const queryCondition = ref(query.queryCondition || '')
+    const dimensionType = ref(query.dimensionType || '')
+    return {
+      queryCondition,
+      dimensionType
+    }
+  },
   data () {
     return {
       tableData: [],
@@ -74,19 +85,19 @@ export default {
   methods: {
     recentEventsListData () {
       // const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
-      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
-      const condition = conditionStr.split(/["|'](.*?)["|']/)
+      // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      const condition = this.queryCondition.split(/["|'](.*?)["|']/)
       // const type = this.$store.getters.getDimensionType
-      const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
+      // const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
       let url = ''
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         limit: 8
       }
-      if (condition.length > 1 && type) {
+      if (condition.length > 1 && this.dimensionType) {
         params.param = condition[1]
-        params.type = type
+        params.type = this.dimensionType
         params.limit = 10
         url = api.npm.events.recentEventsD
         this.customTableTitles = [
