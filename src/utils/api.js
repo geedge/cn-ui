@@ -204,7 +204,8 @@ export const api = {
   dnsInsight: {
     recentEvents: '/interface/dnsInsight/recentEvents',
     activeMaliciousDomain: '/interface/dnsInsight/activeMaliciousDomain',
-    totalTrafficAnalysis: '/interface/dns/overview/totalTrafficAnalysis'
+    totalTrafficAnalysis: '/interface/dns/overview/totalTrafficAnalysis',
+    eventChart: '/interface/dnsInsight/eventChart'
   }
 }
 

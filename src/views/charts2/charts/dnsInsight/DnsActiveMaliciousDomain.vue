@@ -124,10 +124,8 @@ export default {
         type: this.tableType,
         severity: this.tableSeverity
       }
-      console.log('DnsActiveMaliciousDomain.vue--initData--请求入参', this.timeFilter)
 
       get(api.dnsInsight.activeMaliciousDomain, params).then(res => {
-        console.log('DnsActiveMaliciousDomain.vue--initData--初始化数据', res.data)
         if (res.code === 200) {
           const data = res.data.result
           if (!data || data.length === 0) {
