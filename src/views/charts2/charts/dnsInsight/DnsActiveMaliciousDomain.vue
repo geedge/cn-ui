@@ -119,10 +119,7 @@ export default {
 
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        limit: 8,
-        type: this.tableType,
-        severity: this.tableSeverity
+        endTime: getSecond(this.timeFilter.endTime)
       }
 
       get(api.dnsInsight.activeMaliciousDomain, params).then(res => {

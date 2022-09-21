@@ -16,6 +16,7 @@ import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import dnsEventChartByPie from './DnsEventChartByPie'
 import dnsEventChartByBar from './DnsEventChartByBar'
+import { getSecond } from '@/utils/date-util'
 
 export default {
   name: 'DnsEventChart',
@@ -52,7 +53,11 @@ export default {
   },
   methods: {
     initData () {
-      get(api.dnsInsight.eventChart).then(res => {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
+      }
+      get(api.dnsInsight.eventChart, params).then(res => {
         const data = res.data.result
         this.pieData = []
 
