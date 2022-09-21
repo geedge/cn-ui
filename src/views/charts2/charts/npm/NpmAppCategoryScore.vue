@@ -14,119 +14,117 @@
         </div>
       </div>
     </div>
-    <div class="npm-app-right">
-      <el-table
-          :id="`tabTable_${index}`"
-          :ref="`dataTable_${index}`"
-          :data="tableData"
-          class="app-table"
-          height="100%"
-          empty-text=" "
-      >
-        <template v-for="(item, index) in customTableTitles" :key="index">
-          <el-table-column class="data-column">
-            <template #header>
-              <span class="data-column__span">{{$t(item.label)}}</span>
-            </template>
-            <template  #default="scope" :column="item">
-              <div class="data-total">
-                <template v-if="item.prop === 'category'">
-                  <span class="data-total-category-icon"><i :class="scope.row.icon"></i></span>
-                  <span class="data-total-category-value" @click="drillDownData(scope.row.i18n)">{{$t(scope.row.i18n)}}</span>
-                </template>
-                <template v-else-if="item.prop === 'total'">
-                  <div class="data-total-value">{{unitConvert(scope.row.totalPacketsRate, unitTypes.bps).join('')}}</div>
-                  <div class="data-trend">
-                    <div v-if="scope.row.bytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
-                      <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.bytesRateChainRatio <= 5">
+    <el-table
+        :id="`tabTable_${index}`"
+        :ref="`dataTable_${index}`"
+        :data="tableData"
+        class="app-table"
+        height="100%"
+        empty-text=" "
+    >
+      <template v-for="(item, index) in customTableTitles" :key="index">
+        <el-table-column class="data-column">
+          <template #header>
+            <span class="data-column__span">{{$t(item.label)}}</span>
+          </template>
+          <template  #default="scope" :column="item">
+            <div class="data-total">
+              <template v-if="item.prop === 'category'">
+                <span class="data-total-category-icon"><i :class="scope.row.icon"></i></span>
+                <span class="data-total-category-value" @click="drillDownData(scope.row.i18n)">{{$t(scope.row.i18n)}}</span>
+              </template>
+              <template v-else-if="item.prop === 'total'">
+                <div class="data-total-value">{{unitConvert(scope.row.totalPacketsRate, unitTypes.bps).join('')}}</div>
+                <div class="data-trend">
+                  <div v-if="scope.row.bytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+                    <span v-if="scope.row.bytesRateChainRatio <= 5">
                         {{unitConvert(scope.row.bytesRateChainRatio, unitTypes.percent).join('')}}
                       </span>
-                      <span v-else>>500.00%</span>
-                    </div>
-                    <div v-else-if="scope.row.bytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
-                      <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.bytesRateChainRatio >= -5">
+                    <span v-else>>500.00%</span>
+                  </div>
+                  <div v-else-if="scope.row.bytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;
+                    <span v-if="scope.row.bytesRateChainRatio >= -5">
                         {{unitConvert(scope.row.bytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                       </span>
-                      <span v-else>>500.00%</span>
-                    </div>
-                    <div v-else-if="scope.row.bytesRateChainRatio === 0" class="data-total-trend data-total-trend-black">
-                      <i class="cn-icon-constant cn-icon"></i>
-                    </div>
-                    <div v-else></div>
+                    <span v-else>>500.00%</span>
                   </div>
-                </template>
-                <template v-else-if="item.prop === 'outbound'">
-                  <div class="data-total-value">{{unitConvert(scope.row.outboundPacketsRate, unitTypes.bps).join('')}}</div>
-                  <div class="data-trend">
-                    <div v-if="scope.row.outboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
-                      <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.outboundBytesRateChainRatio <= 5">
+                  <div v-else-if="scope.row.bytesRateChainRatio === 0" class="data-total-trend data-total-trend-black">
+                    <i class="cn-icon-constant cn-icon"></i>
+                  </div>
+                  <div v-else></div>
+                </div>
+              </template>
+              <template v-else-if="item.prop === 'outbound'">
+                <div class="data-total-value">{{unitConvert(scope.row.outboundPacketsRate, unitTypes.bps).join('')}}</div>
+                <div class="data-trend">
+                  <div v-if="scope.row.outboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+                    <span v-if="scope.row.outboundBytesRateChainRatio <= 5">
                         {{unitConvert(scope.row.outboundBytesRateChainRatio, unitTypes.percent).join('')}}
                       </span>
-                      <span v-else>>500.00%</span>
-                    </div>
-                    <div v-else-if="scope.row.outboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
-                      <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.outboundBytesRateChainRatio >= -5">
+                    <span v-else>>500.00%</span>
+                  </div>
+                  <div v-else-if="scope.row.outboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;
+                    <span v-if="scope.row.outboundBytesRateChainRatio >= -5">
                         {{unitConvert(scope.row.outboundBytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                       </span>
-                      <span v-else>>500.00%</span>
-                    </div>
-                    <div v-else-if="scope.row.outboundBytesRateChainRatio === 0" class="data-total-trend data-total-trend-black">
-                      <i class="cn-icon-constant cn-icon"></i>
-                    </div>
-                    <div v-else></div>
+                    <span v-else>>500.00%</span>
                   </div>
-                </template>
-                <template v-else-if="item.prop === 'inbound'">
-                  <div class="data-total-value">{{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join('')}}</div>
-                  <div class="data-trend">
-                    <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
-                      <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.inboundBytesRateChainRatio <= 5">
+                  <div v-else-if="scope.row.outboundBytesRateChainRatio === 0" class="data-total-trend data-total-trend-black">
+                    <i class="cn-icon-constant cn-icon"></i>
+                  </div>
+                  <div v-else></div>
+                </div>
+              </template>
+              <template v-else-if="item.prop === 'inbound'">
+                <div class="data-total-value">{{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join('')}}</div>
+                <div class="data-trend">
+                  <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
+                    <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+                    <span v-if="scope.row.inboundBytesRateChainRatio <= 5">
                         {{unitConvert(scope.row.inboundBytesRateChainRatio, unitTypes.percent).join('')}}
                       </span>
-                      <span v-else>>500.00%</span>
-                    </div>
-                    <div v-else-if="scope.row.inboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
-                      <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                      <span v-if="scope.row.inboundBytesRateChainRatio >= -5">
+                    <span v-else>>500.00%</span>
+                  </div>
+                  <div v-else-if="scope.row.inboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
+                    <i class="cn-icon-decline cn-icon"></i>&nbsp;
+                    <span v-if="scope.row.inboundBytesRateChainRatio >= -5">
                         {{unitConvert(scope.row.inboundBytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                       </span>
-                      <span v-else>>500.00%</span>
-                    </div>
-                    <div v-else-if="scope.row.inboundBytesRateChainRatio === 0" class="data-total-trend data-total-trend-black">
-                      <i class="cn-icon-constant cn-icon"></i>
-                    </div>
-                    <div v-else></div>
+                    <span v-else>>500.00%</span>
                   </div>
-                </template>
-                <template v-else-if="item.prop === 'score'">
-                  <div v-if="scope.row.score <= 2" :class="{'data-score-red': scope.row.score <= 2}" class="data-score">
-                    {{scope.row.score}}
+                  <div v-else-if="scope.row.inboundBytesRateChainRatio === 0" class="data-total-trend data-total-trend-black">
+                    <i class="cn-icon-constant cn-icon"></i>
                   </div>
-                  <div v-else-if="scope.row.score <= 4" :class="{'data-score-yellow': scope.row.score <= 4}" class="data-score">
-                    {{scope.row.score}}
-                  </div>
-                  <div v-else-if="scope.row.score <= 6" :class="{'data-score-green': scope.row.score <= 6}" class="data-score">
-                    {{scope.row.score}}
-                  </div>
-                </template>
-                <span v-else-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
-                <span v-else>-</span>
-              </div>
-            </template>
-          </el-table-column>
-        </template>
-        <template v-slot:empty>
-          <div class="table-no-data" v-show="isNoData">
-            <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
-          </div>
-        </template>
-      </el-table>
-    </div>
+                  <div v-else></div>
+                </div>
+              </template>
+              <template v-else-if="item.prop === 'score'">
+                <div v-if="scope.row.score <= 2" :class="{'data-score-red': scope.row.score <= 2}" class="data-score">
+                  {{scope.row.score}}
+                </div>
+                <div v-else-if="scope.row.score <= 4" :class="{'data-score-yellow': scope.row.score <= 4}" class="data-score">
+                  {{scope.row.score}}
+                </div>
+                <div v-else-if="scope.row.score <= 6" :class="{'data-score-green': scope.row.score <= 6}" class="data-score">
+                  {{scope.row.score}}
+                </div>
+              </template>
+              <span v-else-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+              <span v-else>-</span>
+            </div>
+          </template>
+        </el-table-column>
+      </template>
+      <template v-slot:empty>
+        <div class="table-no-data" v-show="isNoData">
+          <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+        </div>
+      </template>
+    </el-table>
   </div>
 </template>
 
