@@ -22,7 +22,7 @@
     height: calc(100% - 81px);
     .performance-event-pie-hr {
       height: 1px;
-      width: 310px;
+      width: calc(100% - 40px);
       margin: auto;
       background: #E2E5EC;
     }
