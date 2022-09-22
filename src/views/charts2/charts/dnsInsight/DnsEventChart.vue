@@ -1,11 +1,14 @@
 <template>
   <div class="dns-event-chart">
-    <div class="dns-event-chart-pie">
-      <dns-event-chart-by-pie :timeFilter="timeFilter" :pieData="pieData"/>
-    </div>
-    <div class="dns-event-chart-bar">
-      <dns-event-chart-by-bar :timeFilter="timeFilter" :series="series"/>
-    </div>
+    <chart-no-data v-if="isNoData"></chart-no-data>
+    <template v-else>
+      <div class="dns-event-chart-pie">
+        <dns-event-chart-by-pie :timeFilter="timeFilter" :pieData="pieData"/>
+      </div>
+      <div class="dns-event-chart-bar">
+        <dns-event-chart-by-bar :timeFilter="timeFilter" :series="series"/>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -17,6 +20,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import dnsEventChartByPie from './DnsEventChartByPie'
 import dnsEventChartByBar from './DnsEventChartByBar'
 import { getSecond } from '@/utils/date-util'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 
 export default {
   name: 'DnsEventChart',
@@ -24,6 +28,7 @@ export default {
     type: String
   },
   components: {
+    ChartNoData,
     dnsEventChartByPie,
     dnsEventChartByBar
   },
@@ -62,6 +67,7 @@ export default {
         this.pieData = []
 
         if (data !== undefined && data.length > 0) {
+          this.isNoData = false
           const series = []
           data.forEach((item, index) => {
             this.pieData.push({
@@ -83,7 +89,12 @@ export default {
             })
           })
           this.series = series
+        } else {
+          this.isNoData = true
         }
+      }).catch(e => {
+        console.error(e)
+        this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)
       })
