@@ -1,6 +1,6 @@
 <template>
   <div class="link-direction-grid">
-    <div class="link-statistical-dimension">
+    <div class="link-statistical-dimension" style="width: 900px;">
       <div class="dimension-title">{{$t('linkMonitor.egressLink')}}&nbsp;&&nbsp;{{$t('linkMonitor.ingressLink')}}</div>
       <div class="data-grid">
         <div class="egress-row">
@@ -13,6 +13,27 @@
             <div class="data-item__point"></div>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="link-statistical-dimension">
+      <div class="dimension-title">{{$t('linkMonitor.egressLink')}}&nbsp;&&nbsp;{{$t('linkMonitor.ingressLink')}}</div>
+      <div class="data-grid">
+        <div class="egress-row">
+          <template v-for="(item, index) in gridData">
+            <div class="egress-id" v-if="index <= 2" :key="index">{{item.linkId}}</div>
+          </template>
+        </div>
+        <template v-for="(row, index) in gridData">
+          <div class="data-row" v-if="index <= 2" :key="index">
+            <div class="ingress-id">{{row.linkId}}</div>
+            <template v-for="(row, index2) in row.egress">
+              <div class="data-item" v-if="index2 <= 2" :key="index2">
+                <div class="data-item__point"></div>
+                <div class="data-item__point"></div>
+              </div>
+            </template>
+          </div>
+        </template>
       </div>
     </div>
   </div>
