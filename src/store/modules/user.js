@@ -82,6 +82,11 @@ const user = {
           localStorage.setItem(storageKey.drillDownTableConfig, res.page.list[0].cvalue)
         }
       })
+      get(api.config, { ckey: 'link_info' }).then(res => {
+        if (res.code === 200 && res.page.list && res.page.list.length > 0) {
+          localStorage.setItem(storageKey.linkInfo, res.page.list[0].cvalue)
+        }
+      })
     },
     logoutSuccess (store, res) {
       localStorage.removeItem(storageKey.username)
