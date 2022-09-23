@@ -1,7 +1,7 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName } from '@/utils/constants'
+import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable } from '@/utils/constants'
 import { getIso36112JsonData } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
@@ -844,6 +844,74 @@ export function changeTabState (param, value) {
   router.push({
     query: query
   })
+}
+
+export function combineTabList (tableType, list, commonTabList) {
+  const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
+  const listInCode = curTableInCode ? curTableInCode.tabList : []
+  list.forEach(tab => {
+    // 配置的内容
+    const commonTab = commonTabList.find(item => item.name === tab.name)
+    tab.label = commonTab ? commonTab.i18n : ''
+    tab.prop = commonTab ? commonTab.prop : ''
+    if (!tab.hasOwnProperty('checked')) {
+      tab.checked = tab ? tab.show : true
+    }
+    if (!tab.hasOwnProperty('disabled')) {
+      tab.disabled = tab ? !tab.enable : false
+    }
+    if (!tab.hasOwnProperty('panelId')) {
+      tab.panelId = tab ? tab.panelIdOfFourthMenu : null
+    }
+    // 代码里写死的
+    const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
+    tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
+    tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+  })
+}
+
+export function setUserConfig () {
+  const userTableConfig = this.getUserLocalConfig()
+  if (userTableConfig) {
+    const newTabConfigs = []
+    userTableConfig.tabConfig.forEach(tab => {
+      const tabConfig = this.list.find(item => item.name === tab.name)
+      if (tabConfig) {
+        tabConfig.checked = tab ? tab.checked : true
+      } else {
+        tabConfig.checked = true
+      }
+      newTabConfigs.push(tabConfig)
+    })
+    this.list = newTabConfigs
+  }
+}
+
+export function getUserDrilldownTableConfig (tableType, curMetric) {
+  let list = []
+  const defaultDrillDownTableConfigs = JSON.parse(localStorage.getItem(storageKey.drillDownTableConfig))// 所有表格的配置
+  const currentTableConfig = defaultDrillDownTableConfigs.find(config => config.route === tableType)
+  const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
+  const tables = currentTableConfig ? currentTableConfig.tables : []
+  if (tables && tables.length > 0) {
+    const curTableOldConfig = tables.find(table => table.id === tableType)
+    const curTable = curTableOldConfig || null
+    if (curTable) {
+      if (curTable.hasMetricSearch) { // 有metric
+        const metricsList = curTable ? curTable.metrics : []
+        if (metricsList && metricsList.length > 0) {
+          const metricTab = metricsList.find(metric => metric.name === curMetric)
+          list = metricTab ? metricTab.tabs : []
+        }
+      } else { // 无metric
+        list = curTable ? curTable.tabs : []
+      }
+      combineTabList(tableType, list, commonTabList)
+      // this.combineColumnList(this.customTableTitles)
+      // this.setUserConfig(list)
+    }
+  }
+  return list
 }
 
 // cleanOldParams: true|false，是否清除oldParams

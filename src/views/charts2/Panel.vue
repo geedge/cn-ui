@@ -76,8 +76,8 @@ export default {
     npmThirdLevelMenuScore: {
       deep: true,
       handler (n) {
-        //const curOperationType = this.$store.getters.getTabOperationType
-        const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '',true)
+        // const curOperationType = this.$store.getters.getTabOperationType
+        const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
         if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
           this.score = n
         }
@@ -87,8 +87,8 @@ export default {
   async mounted () {
     // this.panelName = this.$store.getters.getPanelName
     this.panelName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
-    //const curOperationType = this.$store.getters.getTabOperationType
-    const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '',true)
+    // const curOperationType = this.$store.getters.getTabOperationType
+    const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
     if (this.panelName && this.$route.path === '/panel/networkAppPerformance' && curOperationType !== operationType.thirdMenu) {
       // const columnValue = this.$store.getters.getBreadcrumbColumnValue
       const columnValue = this.getUrlParam(this.curTabState.fourthMenu, '')
@@ -240,13 +240,13 @@ export default {
         this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
       }
     },
-    getUrlParam (param, defaultValue,isNumber) {
-      if(isNumber){
+    getUrlParam (param, defaultValue, isNumber) {
+      if (isNumber) {
         return this.$route.query[param] ? Number(this.$route.query[param]) : defaultValue
-      }else {
+      } else {
         return this.$route.query[param] ? this.$route.query[param] : defaultValue
       }
-    },
+    }
   }
 }
 </script>

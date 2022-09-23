@@ -134,7 +134,7 @@ import unitConvert from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
-import { getChainRatio, computeScore, changeCurTab, urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { getChainRatio, computeScore, changeCurTab, urlParamsHandler, overwriteUrl, getUserDrilldownTableConfig } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
@@ -252,22 +252,32 @@ export default {
         this.toggleLoading(false)
       })
     },
+    getUrlParam (param, defaultValue, isNumber) {
+      if (isNumber) {
+        return this.$route.query[param] ? Number(this.$route.query[param]) : defaultValue
+      } else {
+        return this.$route.query[param] ? this.$route.query[param] : defaultValue
+      }
+    },
     drillDownData (key) {
       const value = npmCategoryToAppCategoryMap[key]
       const tabType = 'network.applicationCategories'
-      //const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
+      // const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
       const oldCurTab = this.getUrlParam(this.curTabState.networkOverviewBeforeTab, '')
       // const curTable = networkTable.networkOverview
       const curTable = networkTable.networkAppPerformance
-      const list = this.$store.getters.getNetworkOverviewTabList
+      // const list = this.$store.getters.getNetworkOverviewTabList
+      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
+      const list = getUserDrilldownTableConfig(tableType, metric)
       const tabGroup = list.filter(item => item.label === tabType)
       if (tabGroup && tabGroup.length > 0) {
-        //this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
+        // this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
         this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, tabGroup[0].prop)
       }
-      //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-      //this.$store.commit('setTabOperationType', operationType.fourthMenu)
-      this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
+      // this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+      // this.$store.commit('setTabOperationType', operationType.fourthMenu)
+      this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
       this.changeUrlTabState(this.curTabState.tabOperationType, operationType.fourthMenu)
 
       const queryCondition = []

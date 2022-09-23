@@ -31,6 +31,7 @@ export const storageKey = {
   echartLabelFontSize: 'echartLabelFontSize',
   tokenExpireCurrentPath: 'token-expire-current-path',
   drillDownTableConfig: 'cn-drill-down-table-config',
+  userCustomizationConfig: 'userCustomizationConfig'
   linkInfo: 'cn-link-info'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
@@ -252,9 +253,11 @@ export const curTabState = {
   panelName: 'panelName',
   thirdMenu: 'thirdMenu',
   fourthMenu: 'fourthMenu',
+  thirdPanel: 'thirdPanel',
+  fourthPanel: 'fourthPanel',
   networkOverviewBeforeTab: 'networkOverviewBeforeTab',
-  tabOperationType:'tabOperationType',
-  tabOperationBeforeType:'tabOperationBeforeType'
+  tabOperationType: 'tabOperationType',
+  tabOperationBeforeType: 'tabOperationBeforeType'
 }
 
 export const scoreUrl = [
@@ -676,14 +679,15 @@ export const sessionsColumnNameGroup = {
 export const bytesCycleColumnNameGroup = {
   total: 'bytesRate'
 }
-export const bytesCycleColumnNameGroupForNmp = {
-  through: 'throughBitsRate'
-}
 export const packetsCycleColumnNameGroup = {
   total: 'packetsRate'
 }
 export const sessionsCycleColumnNameGroup = {
   total: 'sessionsRate'
+}
+
+export const bytesCycleColumnNameGroupForNmp = {
+  through: 'throughBitsRate'
 }
 
 // 不同表格类型对应的相关数据

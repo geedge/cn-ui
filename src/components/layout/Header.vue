@@ -183,7 +183,7 @@ import { get, put } from '@/utils/http'
 import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl, curTabState } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
-import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, getUserDrilldownTableConfig } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 
 export default {
@@ -390,10 +390,10 @@ export default {
     hideBreadcrumbPopover () {
       this.showBackground = false
     },
-    getUrlParam (param, defaultValue,isNumber) {
-      if(isNumber){
+    getUrlParam (param, defaultValue, isNumber) {
+      if (isNumber) {
         return this.$route.query[param] ? Number(this.$route.query[param]) : defaultValue
-      }else {
+      } else {
         return this.$route.query[param] ? this.$route.query[param] : defaultValue
       }
     },
@@ -461,12 +461,12 @@ export default {
     jump (route, columnName, columnValue, opeType) {
       this.showMenu = false
       if (opeType) {
-        //this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-        //this.$store.commit('setTabOperationType', opeType)
-        this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '',true))
+        // this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
+        // this.$store.commit('setTabOperationType', opeType)
+        this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
         this.changeUrlTabState(this.curTabState.tabOperationType, opeType)
       } else {
-        //this.$store.commit('setTabOperationType', operationType.mainMenu)
+        // this.$store.commit('setTabOperationType', operationType.mainMenu)
         this.changeUrlTabState(this.curTabState.tabOperationType, operationType.mainMenu)
       }
       if (!columnName) { // 点击第二级菜单
@@ -499,20 +499,25 @@ export default {
                 this.changeUrlTabState(this.curTabState.fourthMenu, '')
                 // this.$store.commit('setPanelName', columnName)
                 this.changeUrlTabState(this.curTabState.panelName, columnName)
-                const tabList = this.$store.getters.getNetworkOverviewTabList
+                const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+                const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
+                // const tabList = this.$store.getters.getNetworkOverviewTabList
+                const tabList = getUserDrilldownTableConfig(tableType, metric)
                 const curTab = tabList.filter(item => item.label === columnName)[0]
                 this.changeUrlTabState(this.curTabState.curTab, curTab)
                 // this.$store.commit('setDimensionType', curTab ? curTab.prop : '')
                 this.changeUrlTabState(this.curTabState.dimensionType, curTab ? curTab.prop : '')
                 // this.$store.commit('setQueryCondition', '')
                 this.changeUrlTabState(this.curTabState.queryCondition, '')
-                //this.$store.commit('setNetworkOverviewBeforeTab', null)
+                // this.$store.commit('setNetworkOverviewBeforeTab', null)
                 this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, '')
               } else {
                 child.columnName = ''
                 child.columnValue = ''
                 // this.$store.commit('setBreadcrumbColumnValue', '')
                 // this.$store.commit('setBreadcrumbColumnName', '')
+                this.changeUrlTabState(this.curTabState.thirdPanel, '')
+                this.changeUrlTabState(this.curTabState.fourthPanel, '')
                 this.changeUrlTabState(this.curTabState.thirdMenu, '')
                 this.changeUrlTabState(this.curTabState.fourthMenu, '')
                 // this.$store.commit('setDimensionType', '')
@@ -523,7 +528,7 @@ export default {
                 this.changeUrlTabState(this.curTabState.curTab, null)
                 // this.$store.commit('setQueryCondition', '')
                 this.changeUrlTabState(this.curTabState.queryCondition, '')
-                //this.$store.commit('setNetworkOverviewBeforeTab', null)
+                // this.$store.commit('setNetworkOverviewBeforeTab', null)
                 this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, '')
               }
             }
