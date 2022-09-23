@@ -78,10 +78,10 @@ export default {
                 if (data) {
                   const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
                   if (!existedEgressLink) {
-                    data.egress.push({ linkId: egressLink.linkId, totalBitsRate: d.totalBitsRate })
+                    data.egress.push({ linkId: egressLink.linkId, totalBytes: d.totalBytes })
                   }
                 } else {
-                  gridData.push({ linkId: ingressLink.linkId, egress: [{ linkId: egressLink.linkId, totalBitsRate: d.totalBitsRate }] })
+                  gridData.push({ linkId: ingressLink.linkId, egress: [{ linkId: egressLink.linkId, totalBytes: d.totalBytes }] })
                 }
               }
             })
