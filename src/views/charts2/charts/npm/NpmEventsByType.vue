@@ -124,10 +124,7 @@ export default {
       this.toggleLoading(true)
       get(api.npm.events.recentEvents, params).then(res => {
         if (res.code === 200) {
-          if (!res.data.result || res.data.result.length === 0) {
-            this.isNoData = true
-            return
-          }
+          this.isNoData = res.data.result.length === 0
           const arrData = []
           res.data.result.forEach(t => {
             const hit = arrData.find(e => e.name === t.eventType)
