@@ -199,7 +199,9 @@ export const api = {
   },
   linkMonitor: {
     links: '/interface/linkMonitor/links',
-    linkTrafficDirection: '/interface/linkMonitor/linkTrafficDirection'
+    linkTrafficDirection: '/interface/linkMonitor/linkTrafficDirection',
+    quadrupleIngressAnalysis: '/interface/link/overview/quadrupleIngressAnalysis', // 入口
+    quadrupleEgressAnalysis: '/interface/link/overview/quadrupleEgressAnalysis' // 出口
   },
   dnsInsight: {
     recentEvents: '/interface/dnsInsight/recentEvents',

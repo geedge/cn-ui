@@ -21,9 +21,87 @@ if (openMock) {
     const egressLinkIds = ['257', '513', '769', '1025', '1281', '1537', '1793', '2049', '2305', '2817']
     ingressLinkIds.forEach(ingress => {
       egressLinkIds.forEach(egress => {
-        data.push({ egressLinkId: egress, ingressLinkId: ingress, egressBytes: 128000, ingressBytes: 12800, totalBytes: 130800, establishLatencyMs: 50, httpResponseLatency: 50, sslConLatency: 50, tcpLostlenPercent: 0.2, pktRetransPercent: 0.1 })
+        data.push({ egressLinkId: egress, ingressLinkId: ingress, egressUsage: 128000, ingressUsage: 12800, totalBitsRate: 985412, score: 6, tcpConnectionEstablishLatency: 50, httpResponseLatency: 50, sslResponseLatency: 50, packetsLoss: 0.2, packetRetrans: 0.1 })
       })
     })
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: data
+      }
+    }
+  })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/link/overview/quadrupleIngressAnalysis.*'), 'get', function (requestObj) {
+    const data = [
+      {
+        clientCity: 'beijing',
+        commonEgressLinkId: 257,
+        ingressLinkDirection: 'xian',
+        serverCity: 'taiyuan',
+        ingressBytes: 10000000000
+      },
+      {
+        clientCity: 'xingjiang',
+        commonEgressLinkId: 513,
+        ingressLinkDirection: 'xian',
+        serverCity: 'liaoning',
+        ingressBytes: 20000000000
+      },
+      {
+        clientCity: 'shanghai',
+        commonEgressLinkId: 769,
+        ingressLinkDirection: 'xian',
+        serverCity: 'anhui',
+        ingressBytes: 30000000000
+      },
+      {
+        clientCity: 'tianjing',
+        commonEgressLinkId: 1025,
+        ingressLinkDirection: 'xian',
+        serverCity: 'taiyuan',
+        ingressBytes: 30000000000
+      }
+    ]
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: data
+      }
+    }
+  })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/link/overview/quadrupleEgressAnalysis.*'), 'get', function (requestObj) {
+    const data = [
+      {
+        clientCity: 'beijing',
+        commonEgressLinkId: 256,
+        egressLinkDirection: 'xian',
+        serverCity: 'taiyuan',
+        egressBytes: 10000000000
+      },
+      {
+        clientCity: 'xingjiang',
+        commonEgressLinkId: 512,
+        egressLinkDirection: 'xian',
+        serverCity: 'liaoning',
+        egressBytes: 20000000000
+      },
+      {
+        clientCity: 'shanghai',
+        commonEgressLinkId: 768,
+        egressLinkDirection: 'xian',
+        serverCity: 'anhui',
+        egressBytes: 30000000000
+      },
+      {
+        clientCity: 'tianjing',
+        commonEgressLinkId: 1024,
+        egressLinkDirection: 'xian',
+        serverCity: 'taiyuan',
+        egressBytes: 30000000000
+      }
+    ]
     return {
       msg: 'success',
       code: 200,

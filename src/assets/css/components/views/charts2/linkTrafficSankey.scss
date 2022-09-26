@@ -6,9 +6,17 @@
   height: 100%;
   width: 100%;
   border-radius: 4px;
+  position: relative;
 
+  .sankey__label {
+    position: absolute;
+    color: #333;
+    bottom: 50px;
+    font-weight: bold;
+    transform: translateX(-50%);
+  }
   .el-tabs {
-    margin-left: 20px;
+    height: 100%;
 
     .el-tabs__nav-wrap {
       padding-top: 5px;
@@ -20,6 +28,7 @@
     }
     .el-tabs__nav.is-top {
       height: 33px;
+      margin-left: 20px;
 
       .el-tabs__active-bar {
         background-color: $blue;
@@ -35,6 +44,50 @@
         }
         &:nth-child(2) {
           padding-left: 0;
+        }
+      }
+    }
+    .el-tabs__content {
+      height: calc(100% - 52px);
+      width: 100%;
+      .el-tab-pane {
+        height: 100%;
+        width: 100%;
+        .chart-drawing {
+          height: 100%;
+          width: 100%;
+          .traffic-sankey {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            .traffic-sankey-row-header {
+              .traffic-sankey__row-value {
+                font-size: 12px;
+                color: $blue;
+                font-weight: 500;
+              }
+            }
+            .traffic-sankey-row-body {
+              display: flex;
+              .traffic-sankey__tooltip-right {
+                .traffic-sankey__row-value {
+                  font-size: 12px;
+                  color: #353636;
+                  font-weight: 600;
+                }
+              }
+              .traffic-sankey__tooltip-left {
+                .traffic-sankey__row-label {
+                  margin-right: 5px;
+                  font-size: 12px;
+                  color: #575757;
+                  font-weight: 400;
+                }
+              }
+            }
+          }
         }
       }
     }
