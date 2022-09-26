@@ -102,7 +102,7 @@
           <template v-if="shipSeverity.length > 0">
             <span v-for="ship in shipSeverity" class="ship-severity">
               <span class="ship-body-list-security-alert" :class="iconClass(ship)">{{ ship.eventSeverity }}</span>
-              <span class="ship-body-list-security-length">{{ ship.length }}</span>
+              <span class="ship-body-list-security-length">{{ ship.totalNumberOfEvents }}</span>
             </span>
           </template>
           <span v-else-if="!loadingAlert && shipSeverity.length <= 0" class="no-recent-alerts"><i style="font-size: 14px;" class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>

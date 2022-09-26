@@ -171,20 +171,30 @@ export default {
       const performance = get(urlObj.performanceUrl, queryParams)
       const security = get(urlObj.securityUrl, queryParams)
       Promise.all([performance, security]).then(res => {
-        const alertEventSeverity = ['critical', 'high', 'medium', 'info', 'low']
+        // const alertEventSeverity = ['critical', 'high', 'medium', 'info', 'low']
         const alertAll = [...res[0].data.result, ...res[1].data.result]
-        alertEventSeverity.forEach(d => {
-          const eventArray = alertAll.filter(p => d === p.eventSeverity)
-          const eventArrayMap = eventArray.map(t => { return { eventSeverity: t.eventSeverity } })
-          if (eventArrayMap) {
-            const eventObject = eventArrayMap.find(e => e.eventSeverity === d)
-            const eventObjectMap = object.keys(eventObject).map(m => {
-              return {
-                eventSeverity: eventObject[m],
-                length: eventArray.length
-              }
+        // alertEventSeverity.forEach(d => {
+        //   const eventArray = alertAll.filter(p => d === p.eventSeverity)
+        //   const eventArrayMap = eventArray.map(t => { return { eventSeverity: t.eventSeverity } })
+        //   if (eventArrayMap) {
+        //     const eventObject = eventArrayMap.find(e => e.eventSeverity === d)
+        //     const eventObjectMap = object.keys(eventObject).map(m => {
+        //       return {
+        //         eventSeverity: eventObject[m],
+        //         length: eventArray.length
+        //       }
+        //     })
+        //     this.shipSeverity.push(...eventObjectMap)
+        //   }
+        // })
+        alertAll.forEach(t => {
+          const hit = this.shipSeverity.find(e => e.eventSeverity === t.eventSeverity)
+          if (hit) {
+            this.shipSeverity.forEach(d => {
+              d.totalNumberOfEvents++
             })
-            this.shipSeverity.push(...eventObjectMap)
+          } else {
+            this.shipSeverity.push({ eventSeverity: t.eventSeverity, totalNumberOfEvents: 1 })
           }
         })
         this.loadingAlert = false
