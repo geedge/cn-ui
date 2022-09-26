@@ -31,7 +31,7 @@ export const storageKey = {
   echartLabelFontSize: 'echartLabelFontSize',
   tokenExpireCurrentPath: 'token-expire-current-path',
   drillDownTableConfig: 'cn-drill-down-table-config',
-  userCustomizationConfig: 'userCustomizationConfig'
+  userCustomizationConfig: 'userCustomizationConfig',
   linkInfo: 'cn-link-info'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
