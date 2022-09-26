@@ -27,7 +27,7 @@
          :ref="`tab${chart.id}`"
          @toggleLoading="toggleLoading"
     ></network-overview-tabs>
-    <npm-app-event-table @getChartData="getChartData"
+    <npm-app-event-table
          v-else-if="chart.type === typeMapping.npm.appEventTable"
          :time-filter="timeFilter"
          :chart="chart"
@@ -242,9 +242,6 @@ export default {
       return disableChartTypes.indexOf(this.chart.type) > -1
     }
   },
-  mounted () {
-    this.getChartData()
-  },
   setup (props) {
     const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
@@ -258,56 +255,6 @@ export default {
   methods: {
     npmTabChange (index) {
       this.$emit('npmTabChange', index)
-    },
-    reload () {
-      this.getChartData()
-    },
-    /* 参数 extraParams 额外请求参数 */
-    getChartData (url, extraParams = {}, chartTimeFilter) {
-      try {
-        if (chartTimeFilter) {
-          // 图表自带timeFilter刷新时
-          this.queryTimeRange = {
-            startTime: getSecond(chartTimeFilter.startTime),
-            endTime: getSecond(chartTimeFilter.endTime)
-          }
-        } else if (this.timeFilter) {
-          this.queryTimeRange = {
-            startTime: getSecond(this.timeFilter.startTime),
-            endTime: getSecond(this.timeFilter.endTime)
-          }
-        } else {
-          this.queryTimeRange = {
-            startTime: getSecond(this.chartTimeFilter.startTime),
-            endTime: getSecond(this.chartTimeFilter.endTime)
-          }
-        }
-        const chartParams = this.chart.params
-        // 接口查询参数
-        this.queryParams = {
-          ...this.queryTimeRange,
-          ...extraParams
-        }
-        let requestUrl = url || chartParams.url
-
-        if (this.chart.type === typeMapping.networkOverview.table) {
-          const chartObj = this.$refs['tab' + this.chart.id]
-          requestUrl = url || chartObj.getCurUrl()
-          this.queryParams = {
-            ...chartObj.handleQueryParams(extraParams),
-            ...this.queryTimeRange
-          }
-        }
-        if (requestUrl) {
-          get(requestUrl, this.queryParams).then(response => {
-            if (response.code === 200) {
-              this.chartData = response.data.result
-            }
-          })
-        }
-      } catch (e) {
-        console.error(e)
-      }
     },
     resizeLine () {
       this.$nextTick(function () {
