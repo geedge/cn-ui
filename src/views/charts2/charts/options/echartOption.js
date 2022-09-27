@@ -452,7 +452,11 @@ export const linksTrafficSankeyOption = {
       right: '7%',
       left: '3%',
       top: '0%',
-      bottom: '23%'
+      bottom: '23%',
+      label: {
+        color: 'rgba(0,0,0,0.7)',
+        fontSize: 12
+      }
       // emphasis: {
       //   focus: 'adjacency'
       // }

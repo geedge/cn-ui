@@ -48,8 +48,10 @@ export default {
   setup () {
     const { query } = useRoute()
     const tab = ref(query.tabIndex || 0)
+    const queryCondition = ref(query.queryCondition || '')
     return {
       tab,
+      queryCondition,
       myChart: shallowRef(null),
       myChart2: shallowRef(null)
     }
@@ -87,6 +89,9 @@ export default {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
+      }
+      if (this.queryCondition) {
+        params.q = this.queryCondition
       }
       let url = ''
       if (n == 0) {
@@ -268,30 +273,6 @@ export default {
             </div>
           `
       }
-      this.chartOption.series[0].levels = [
-        {
-          depth: 0,
-          lineStyle: {
-            color: '#999'
-          }
-        }, {
-          depth: 1,
-          itemStyle: {
-            color: tab == 0 ? '#47D49C' : ''
-          },
-          lineStyle: {
-            color: '#999'
-          }
-        }, {
-          depth: 2,
-          itemStyle: {
-            color: tab == 0 ? '' : '#47D49C'
-          },
-          lineStyle: {
-            color: '#999'
-          }
-        }
-      ]
       this.chartOption.series[0].data = data
       this.chartOption.series[0].links = links
       if (tab == 0) {

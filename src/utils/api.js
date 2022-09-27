@@ -199,6 +199,8 @@ export const api = {
   },
   linkMonitor: {
     links: '/interface/linkMonitor/links',
+    totalTrafficAnalysis: '/interface/link/overview/drilldown/totalTrafficAnalysis',
+    networkAnalysis: '/interface/link/overview/drilldown/networkAnalysis',
     linkTrafficDirection: '/interface/linkMonitor/linkTrafficDirection',
     quadrupleIngressAnalysis: '/interface/link/overview/quadrupleIngressAnalysis', // 入口
     quadrupleEgressAnalysis: '/interface/link/overview/quadrupleEgressAnalysis' // 出口
