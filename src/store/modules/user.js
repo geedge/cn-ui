@@ -2,8 +2,9 @@ import { get, post } from '@/utils/http'
 import router from '@/router'
 import { sortByOrderNum, getWelcomeMenu } from '@/permission'
 import { ElMessage } from 'element-plus' // dependent on utc plugin
-import { storageKey } from '@/utils/constants'
+import { storageKey, dbDrilldownTableConfig } from '@/utils/constants'
 import { api } from '@/utils/api'
+import { db } from '@/indexedDB'
 
 const user = {
   state () {
@@ -77,9 +78,15 @@ const user = {
           }
         }
       })
-      get(api.config, { ckey: 'drill_down_table_config' }).then(res => {
+      get(api.config, { ckey: 'drill_down_table_config' }).then(async res => {
         if (res.code === 200 && res.page.list && res.page.list.length > 0) {
-          localStorage.setItem(storageKey.drillDownTableConfig, res.page.list[0].cvalue)
+          await db[dbDrilldownTableConfig].put({
+            id: 'default',
+            config: res.page.list[0].cvalue
+          })
+          // const a = await db[dbDrilldownTableConfig].get({ id: 'default' })
+          // console.info(a)
+          // localStorage.setItem(storageKey.drillDownTableConfig, res.page.list[0].cvalue)
         }
       })
       get(api.config, { ckey: 'link_info' }).then(res => {

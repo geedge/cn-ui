@@ -2,6 +2,7 @@ export const defaultPageSize = 20
 
 export const dbName = 'cn-db'
 export const dbGeoDataTableName = 'geodata'
+export const dbDrilldownTableConfig = 'cn-drilldown-table-config'
 export const storageKey = {
   iso36112Capital: 'cn-iso3611-2-capital',
   iso36112WorldLow: 'cn-iso3611-2-world-low',
