@@ -48,6 +48,7 @@ export default {
   setup () {
     const { query } = useRoute()
     const tab = ref(query.tabIndex || 0)
+    // const d = `egress_link_direction='${256}' AND ingress_link_direction='${256}' `
     const queryCondition = ref(query.queryCondition || '')
     return {
       tab,

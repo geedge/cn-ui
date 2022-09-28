@@ -73,12 +73,12 @@ export default {
     const { query } = useRoute()
     const lineMetric = ref(query.lineMetric || 'Bits/s')
     const lineTab = ref(query.lineTab || '')
-    const d = `common_egress_link_id='${246}' AND common_ingress_link_id='${246}'`
-    const linkId = ref(query.linkId || d)
+    // const d = `common_egress_link_id='${246}' AND common_ingress_link_id='${246}'`
+    const queryCondition = ref(query.queryCondition || '')
     return {
       lineMetric,
       lineTab,
-      linkId,
+      queryCondition,
       myChart: shallowRef(null)
     }
   },
@@ -154,9 +154,9 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       // const condition = this.$store.getters.getQueryCondition
-      // if (this.linkId) {
-      //   params.q = this.linkId
-      // }
+      if (this.queryCondition) {
+        params.q = this.queryCondition
+      }
       this.toggleLoading(true)
       get(api.linkMonitor.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {

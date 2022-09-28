@@ -46,16 +46,17 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getSecond } from '@/utils/date-util'
 import { computeScore } from '@/utils/tools'
+import Login from '@/Login'
 
 export default {
   name: 'linkTrafficList',
   mixins: [chartMixin],
   setup () {
     const { query } = useRoute()
-    const d = `common_egress_link_id='${246}' AND common_ingress_link_id='${246}'`
-    const linkId = ref(query.linkId || '256')
+    // const d = `common_egress_link_id='${256}' AND common_ingress_link_id='${256}'`
+    const queryCondition = ref(query.queryCondition || '')
     return {
-      linkId
+      queryCondition
     }
   },
   data () {
@@ -74,9 +75,9 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      // if (this.linkId) {
-      //   params.q = this.linkId
-      // }
+      if (this.queryCondition) {
+        params.q = this.queryCondition
+      }
       this.toggleLoading(true)
       get(api.linkMonitor.networkAnalysis, params).then(res => {
         if (res.code === 200) {
@@ -92,8 +93,14 @@ export default {
           if (this.linkTrafficListData.npmScore > 6) {
             this.linkTrafficListData.npmScore = 6
           }
+          let condition = ''
+          if (this.queryCondition.indexOf('AND') > -1) {
+            condition = this.queryCondition.split(/["|'](.*?)["|']/)
+          } else {
+            condition = this.queryCondition
+          }
           this.cnLinkInfo.forEach(e => {
-            if (this.linkId === e.originalLinkId) {
+            if (condition.length > 1 && condition[1] === e.originalLinkId) {
               this.bandWidth = e.bandwidth
             }
           })
