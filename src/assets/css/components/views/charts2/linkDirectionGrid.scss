@@ -55,7 +55,7 @@
           border: 1px solid #DEDEDE;
           border-radius: 4px;
 
-          .data-item__point {
+          .data-item__point, .data-item__point-red {
             height: 8px;
             width: 8px;
             border-radius: 50%;
@@ -64,6 +64,9 @@
             &:first-of-type {
               margin-right: 6px;
             }
+          }
+          .data-item__point-red {
+            background-color: #E26154;
           }
         }
 

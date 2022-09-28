@@ -77,8 +77,18 @@ export default {
               const egressUsage = this.computeUsage(d.egressBytes, egressLink.bandwidth)
               // 下行使用情况计算
               const ingressUsage = this.computeUsage(d.ingressBytes, egressLink.bandwidth)
+              // 宽带使用超过90%，赋红点
+              d.usageMore90 = false
+              if (egressUsage >= 90 || ingressUsage >= 90) {
+                d.usageMore90 = true
+              }
               // 计算npm分数
+              // 分数低于3分，赋红点
               d.score = this.localComputeScore(d)
+              d.scoreLow3 = false
+              if (d.score < 3) {
+                d.scoreLow3 = true
+              }
 
               if (data) {
                 const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
@@ -105,6 +115,8 @@ export default {
               }
             }
           })
+          console.log('左侧出入链路数据', gridData)
+          this.gridData = gridData
 
           nextLinkData.forEach(d => {
             const ingressLink = linkInfo.find(l => l.nextHop === d.ingressLinkDirection && l.direction === 'ingress')
@@ -128,8 +140,18 @@ export default {
               const egressUsage = this.computeUsage(d.egressBytes, egressBanwidth)
               // 下行使用情况计算
               const ingressUsage = this.computeUsage(d.ingressBytes, ingressBanwidth)
+              // 宽带使用超过90%，赋红点
+              d.usageMore90 = false
+              if (egressUsage >= 90 || ingressUsage >= 90) {
+                d.usageMore90 = true
+              }
               // 计算npm分数
+              // 分数低于3分，赋红点
               d.score = this.localComputeScore(d)
+              d.scoreLow3 = false
+              if (d.score < 3) {
+                d.scoreLow3 = true
+              }
 
               if (data) {
                 const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
@@ -159,9 +181,7 @@ export default {
               }
             }
           })
-          console.log('左侧出入链路数据', gridData)
           console.log('右侧下一跳数据', gridData2)
-          this.gridData = gridData
           this.gridData2 = gridData2
         }
       })
@@ -170,7 +190,7 @@ export default {
      * 计算上下行使用占比
      */
     computeUsage (e, bandwidth) {
-      return Math.ceil((e / bandwidth) * 100) + '%'
+      return Math.ceil((e / bandwidth) * 100)
     },
     /**
      * 本地计算npm分数

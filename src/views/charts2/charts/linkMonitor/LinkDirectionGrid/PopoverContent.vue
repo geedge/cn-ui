@@ -12,6 +12,7 @@
       </div>
       <div class="data-row" v-for="(row, index2) in gridData" :key="index2">
         <div class="ingress-id">
+          <!--兼容下一跳情况-->
           <span v-if="row.nextHop">{{ row.nextHop }}</span>
           <span v-else>{{ row.linkId }}</span>
         </div>
@@ -20,14 +21,15 @@
           <el-popover :width="370" placement="right" trigger="hover">
             <template #reference>
               <div class="data-item data-item__hover">
-                <div class="data-item__point"></div>
-                <div class="data-item__point"></div>
+                <div :class="row.egress[index2].scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
+                <div :class="row.egress[index2].usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
               </div>
             </template>
 
             <!--鼠标移动的弹窗模块-->
             <template #default>
               <div class="item-popover-header">
+                <!--兼容下一跳情况-->
                 <span v-if="row.nextHop">{{ row.nextHop }}</span>
                 <span v-else>{{ row.linkId }}</span>
                 <svg class="icon item-popover-header-icon" aria-hidden="true">
@@ -42,7 +44,7 @@
 
                 <div style="display: flex">
                   <div class="row-dot">
-                    <div class="green-dot"></div>
+                    <div :class="row.egress[index2].scoreLow3 ? 'red-dot':'green-dot'"></div>
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
@@ -53,13 +55,13 @@
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
                           </svg>
-                          {{ row.egress[index2].egressUsage }}
+                          {{ row.egress[index2].egressUsage }}%
                         </div>
                         <div>
                           <svg class="icon item-popover-down" aria-hidden="true">
                             <use xlink:href="#cn-icon-ingress"></use>
                           </svg>
-                          {{ row.egress[index2].ingressUsage }}
+                          {{ row.egress[index2].ingressUsage }}%
                         </div>
                       </div>
                     </div>
@@ -80,7 +82,7 @@
 
                 <div style="display: flex">
                   <div class="row-dot">
-                    <div class="green-dot"></div>
+                    <div :class="row.egress[index2].usageMore90 ? 'red-dot':'green-dot'"></div>
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
