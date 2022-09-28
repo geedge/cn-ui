@@ -51,7 +51,7 @@
                       <div class="block-content-item-name">{{ $t('linkMonitor.bandwidthUsage') }}</div>
 
                       <div class="block-content-item-value">
-                        <div>
+                        <div style="margin-left: -10px">
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
                           </svg>
