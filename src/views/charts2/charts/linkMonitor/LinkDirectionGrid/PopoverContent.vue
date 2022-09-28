@@ -40,7 +40,7 @@
               </div>
 
               <div class="item-popover-block">
-                <div class="item-popover-block-title">Traffic</div>
+                <div class="item-popover-block-title">{{ $t('linkMonitor.traffic') }}</div>
 
                 <div style="display: flex">
                   <div class="row-dot">
@@ -48,7 +48,7 @@
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
-                      <div class="block-content-item-name">Bandwidth Usage</div>
+                      <div class="block-content-item-name">{{ $t('linkMonitor.bandwidthUsage') }}</div>
 
                       <div class="block-content-item-value">
                         <div>
@@ -67,7 +67,7 @@
                     </div>
 
                     <div class="block-content-item">
-                      <div class="block-content-item-name">Total</div>
+                      <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
                       <div class="block-content-item-value">
                         {{ row.egress[index2].totalBytes / 1000 }}Mbps
@@ -78,7 +78,7 @@
               </div>
 
               <div class="item-popover-block">
-                <div class="item-popover-block-title">Performance</div>
+                <div class="item-popover-block-title">{{ $t('linkMonitor.performance') }}</div>
 
                 <div style="display: flex">
                   <div class="row-dot">
@@ -86,42 +86,42 @@
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
-                      <div class="block-content-item-name">Score</div>
+                      <div class="block-content-item-name">{{ $t('linkMonitor.npmScore1') }}</div>
                       <div class="block-content-item-value">
                         {{ row.egress[index2].score }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
-                      <div class="block-content-item-name">TCP connection establish latency</div>
+                      <div class="block-content-item-name">{{ $t(npmNetworkName[0].name) }}</div>
                       <div class="block-content-item-value">
                         {{ row.egress[index2].establishLatencyMs }}ms
                       </div>
                     </div>
 
                     <div class="block-content-item">
-                      <div class="block-content-item-name">HTTP response latency</div>
+                      <div class="block-content-item-name">{{ $t(npmNetworkName[1].name) }}</div>
                       <div class="block-content-item-value">
                         {{ row.egress[index2].httpResponseLatency }}ms
                       </div>
                     </div>
 
                     <div class="block-content-item">
-                      <div class="block-content-item-name">SSL response latency</div>
+                      <div class="block-content-item-name">{{ $t(npmNetworkName[2].name) }}</div>
                       <div class="block-content-item-value">
                         {{ row.egress[index2].sslConLatency }}ms
                       </div>
                     </div>
 
                     <div class="block-content-item">
-                      <div class="block-content-item-name">Packet loss</div>
+                      <div class="block-content-item-name">{{ $t(npmNetworkName[3].name) }}</div>
                       <div class="block-content-item-value">
                         {{ row.egress[index2].tcpLostlenPercent * 100 }}%
                       </div>
                     </div>
 
                     <div class="block-content-item">
-                      <div class="block-content-item-name">Packet retrains</div>
+                      <div class="block-content-item-name">{{ $t(npmNetworkName[4].name) }}</div>
                       <div class="block-content-item-value">
                         {{ row.egress[index2].pktRetransPercent * 100 }}%
                       </div>
@@ -145,7 +145,16 @@ export default {
   props: {
     gridData: Array
   },
-  created () {
+  data () {
+    return {
+      npmNetworkName: [
+        { name: 'networkAppPerformance.tcpConnectionEstablishLatency' },
+        { name: 'networkAppPerformance.httpResponse' },
+        { name: 'networkAppPerformance.sslResponseLatency' },
+        { name: 'networkAppPerformance.packetLoss' },
+        { name: 'overall.packetRetrans' }
+      ]
+    }
   }
 }
 </script>
