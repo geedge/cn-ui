@@ -21,7 +21,7 @@ if (openMock) {
     const egressLinkIds = ['257', '513', '769', '1025', '1281', '1537', '1793', '2049', '2305', '2817']
     ingressLinkIds.forEach(ingress => {
       egressLinkIds.forEach(egress => {
-        data.push({ egressLinkId: egress, ingressLinkId: ingress, egressUsage: 128000, ingressUsage: 12800, totalBitsRate: 985412, score: 6, tcpConnectionEstablishLatency: 50, httpResponseLatency: 50, sslResponseLatency: 50, packetsLoss: 0.2, packetRetrans: 0.1 })
+        data.push({ egressLinkId: egress, ingressLinkId: ingress, egressBytes: 12800000000, ingressBytes: 52800000000, totalBytes: 98541200, score: 6, tcpConnectionEstablishLatency: 50, httpResponseLatency: 50, sslResponseLatency: 50, packetsLoss: 0.2, packetRetrans: 0.1 })
       })
     })
     return {
@@ -102,6 +102,42 @@ if (openMock) {
         egressBytes: 30000000000
       }
     ]
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: data
+      }
+    }
+  })
+
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/bigramAnalysis1.*'), 'get', function (requestObj) {
+    const data = []
+    const ingressLinkIds = ['256', '512', '768', '1024', '1280', '1536', '1792', '2048', '2304', '2816']
+    const egressLinkIds = ['257', '513', '769', '1025', '1281', '1537', '1793', '2049', '2305', '2817']
+    ingressLinkIds.forEach(ingress => {
+      egressLinkIds.forEach(egress => {
+        data.push({ egressLinkId: egress, ingressLinkId: ingress, egressBytes: 12800000000, ingressBytes: 52800000000, totalBytes: 98541200, establishLatencyMs: 50, httpResponseLatency: 50, sslConLatency: 50, tcpLostlenPercent: 0.2, pktRetransPercent: 0.1 })
+      })
+    })
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: data
+      }
+    }
+  })
+
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/bigramNextHopAnalysis1.*'), 'get', function (requestObj) {
+    const data = []
+    const ingressLinkIds = ['西安', '太原', '西宁']
+    const egressLinkIds = ['西安', '太原', '西宁']
+    ingressLinkIds.forEach(ingress => {
+      egressLinkIds.forEach(egress => {
+        data.push({ egressLinkDirection: egress, ingressLinkDirection: ingress, egressBytes: 12800000000, ingressBytes: 52800000000, totalBytes: 985412000, establishLatencyMs: 50, httpResponseLatency: 50, sslConLatency: 50, tcpLostlenPercent: 0.2, pktRetransPercent: 0.1 })
+      })
+    })
     return {
       msg: 'success',
       code: 200,

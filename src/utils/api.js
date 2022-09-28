@@ -203,7 +203,11 @@ export const api = {
     networkAnalysis: '/interface/link/overview/drilldown/networkAnalysis',
     linkTrafficDirection: '/interface/linkMonitor/linkTrafficDirection',
     quadrupleIngressAnalysis: '/interface/link/overview/quadrupleIngressAnalysis', // 入口
-    quadrupleEgressAnalysis: '/interface/link/overview/quadrupleEgressAnalysis' // 出口
+    quadrupleEgressAnalysis: '/interface/link/overview/quadrupleEgressAnalysis', // 出口
+    bigramAnalysis: '/interface/link/overview/bigramAnalysis',
+    bigramNextHopAnalysis: '/interface/link/overview/bigramNextHopAnalysis',
+    bigramAnalysis1: 'interface/linkMonitor/bigramAnalysis1',
+    bigramNextHopAnalysis1: '/interface/linkMonitor/bigramNextHopAnalysis1'
   },
   dnsInsight: {
     recentEvents: '/interface/dnsInsight/recentEvents',
