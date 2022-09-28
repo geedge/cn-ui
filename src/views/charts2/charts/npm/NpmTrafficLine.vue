@@ -170,9 +170,7 @@ export default {
       this.toggleLoading(true)
       get(api.npm.overview.trafficGraph, params).then((res) => {
         if (res.code === 200) {
-          if (res.data.result.length === 0) {
-            this.isNoData = true
-          }
+          this.isNoData = res.data.result.length === 0
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
@@ -276,6 +274,9 @@ export default {
         } else {
           this.isNoData = true
         }
+      }).catch(e => {
+        console.error(e)
+        this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)
       })
@@ -283,9 +284,7 @@ export default {
     echartsInit (echartsData) {
       echartsData = echartsData.filter(t => t.show === true)
       const dom = document.getElementById('chart')
-      if (!this.myChart) {
-        this.myChart = echarts.init(dom)
-      }
+      !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = trafficLineChartOption
       const chartOption = this.chartOption.series[0]
       this.chartOption.series = echartsData.map((t, i) => {

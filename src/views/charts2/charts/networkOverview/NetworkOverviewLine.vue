@@ -1,66 +1,64 @@
 <template>
   <div class="line network">
     <chart-no-data v-if="isNoData"></chart-no-data>
-    <template v-else>
-      <div class="line-header">
-        <div class="line-header-left">
-          <div class="line-value-active" v-if="lineTab"></div>
-          <div class="line-value">
-            <div class="line-value-mpackets"
-                 v-show="item.show"
-                 :class=" {'is-active': lineTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
-                 v-for="(item, index) in mpackets"
-                 :key="index"
-                 @mouseenter="mouseenter(item)"
-                 @mouseleave="mouseleave(item)"
-                 @click="activeChange(item, index)">
-              <div class="line-value-mpackets-name">
-                <div :class="item.class"></div>
-                <div class="mpackets-name">{{$t(item.name)}}</div>
-              </div>
-              <div class="line-value-unit">
-                <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
-                <span class="line-value-unit-number2">
+    <div class="line-header" v-else>
+      <div class="line-header-left">
+        <div class="line-value-active" v-if="lineTab"></div>
+        <div class="line-value">
+          <div class="line-value-mpackets"
+               v-show="item.show"
+               :class=" {'is-active': lineTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
+               v-for="(item, index) in mpackets"
+               :key="index"
+               @mouseenter="mouseenter(item)"
+               @mouseleave="mouseleave(item)"
+               @click="activeChange(item, index)">
+            <div class="line-value-mpackets-name">
+              <div :class="item.class"></div>
+              <div class="mpackets-name">{{$t(item.name)}}</div>
+            </div>
+            <div class="line-value-unit">
+              <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
+              <span class="line-value-unit-number2">
                 <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span><span v-if="item.unitType">{{item.unitType}}</span>
               </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="line-select line-header-right">
-          <div class="line-select-metric">
-            <span>{{$t('network.metric')}}:</span>
-            <div class="line-select__operation">
-              <el-select
-                  size="mini"
-                  v-model="lineMetric"
-                  popper-class="common-select"
-                  :popper-append-to-body="false"
-                  @change="metricSelectChange"
-              >
-                <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </div>
-          </div>
-          <div class="line-select-reference-line">
-            <span>{{$t('network.referenceLine')}}:</span>
-            <div class="line-select__operation">
-              <el-select
-                  size="mini"
-                  v-model="lineRefer"
-                  :disabled="!lineTab"
-                  popper-class="common-select"
-                  :popper-append-to-body="false"
-                  @change="referenceSelectChange"
-              >
-                <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
             </div>
           </div>
         </div>
       </div>
-      <div class="chart-drawing" v-show="showMarkLine" id="overviewLineChart"></div>
-    </template>
+      <div class="line-select line-header-right">
+        <div class="line-select-metric">
+          <span>{{$t('network.metric')}}:</span>
+          <div class="line-select__operation">
+            <el-select
+                size="mini"
+                v-model="lineMetric"
+                popper-class="common-select"
+                :popper-append-to-body="false"
+                @change="metricSelectChange"
+            >
+              <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="line-select-reference-line">
+          <span>{{$t('network.referenceLine')}}:</span>
+          <div class="line-select__operation">
+            <el-select
+                size="mini"
+                v-model="lineRefer"
+                :disabled="!lineTab"
+                popper-class="common-select"
+                :popper-append-to-body="false"
+                @change="referenceSelectChange"
+            >
+              <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-drawing" v-show="showMarkLine && !isNoData" id="overviewLineChart"></div>
   </div>
 </template>
 
