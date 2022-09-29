@@ -94,7 +94,7 @@
                 </template>
                 <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
                   <ul class="select-dropdown" id="breadcrumbSelectDropdown2">
-                    <li v-for="item in detectionMenuList" title='' :key="item.name" :id="item.name" class="select-dropdown__item" @click="jump(item.path)">
+                    <li v-for="item in detectionMenuList" title='' :key="item.name" :id="item.name" class="select-dropdown__item" @click="jump(item.path,'','',2)">
                       <span>{{$t(item.i18n)}}</span>
                     </li>
                   </ul>
@@ -119,7 +119,7 @@
         :show-close="false"
     >
       <div class="cn-menu__left">
-        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jump(menu.route)">
+        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jump(menu.route,'','',0)">
           <i :class="menu.icon"></i>
           <span>{{$t(menu.i18n || menu.name)}}</span>
           <i class="cn-icon cn-icon-right"></i>
@@ -131,12 +131,12 @@
           <div class="middle-menus__body">
             <div style="width: 260px;">
               <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
-                <div class="middle-menu" v-if="index < 5" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
+                <div class="middle-menu" v-if="index < 5" @click="jump(menu.route,'','',2)">{{$t(menu.i18n || menu.name)}}</div>
               </template>
             </div>
             <div>
               <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
-                <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route)">{{$t(menu.i18n || menu.name)}}</div>
+                <div class="middle-menu" v-if="index >= 5 && index < 10" @click="jump(menu.route,'','',2)">{{$t(menu.i18n || menu.name)}}</div>
               </template>
             </div>
           </div>
@@ -180,11 +180,12 @@
 <script>
 import { useRoute } from 'vue-router'
 import { get, put } from '@/utils/http'
-import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl, curTabState } from '@/utils/constants'
+import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl, curTabState, dbDrilldownTableConfig } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
-import { urlParamsHandler, overwriteUrl, getUserDrilldownTableConfig } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, combineTabList, getTabList, getDefaultCurTab } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
+import { db } from '@/indexedDB'
 
 export default {
   name: 'Header',
@@ -458,20 +459,64 @@ export default {
       const newUrl = urlParamsHandler(window.location.href, query, newQuery)
       overwriteUrl(newUrl)
     },
-    jump (route, columnName, columnValue, opeType) {
+    async handleCurDrilldownTableConfig (thirdMenu, fourthMenu) {
+      console.log('handleCurDrilldownTableConfig--------------')
+      const userId = localStorage.getItem(storageKey.userId)
+      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+
+      // 先从localStorage中获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
+      const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
+      let drillDownTableConfigs = []
+      if (userLocalCongfig) {
+        drillDownTableConfigs = userLocalCongfig.config
+      }
+      if (!drillDownTableConfigs || drillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
+        console.log('default..............')
+        const defaultCongfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
+        if (defaultCongfig) {
+          drillDownTableConfigs = defaultCongfig.config
+        }
+      }
+      console.log(drillDownTableConfigs)
+      const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
+      const tables = currentTableConfig ? currentTableConfig.tables : []
+      const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
+      if (tables && tables.length > 0) {
+        const curTableOldConfig = tables.find(table => table.id === tableType)
+        const curTable = curTableOldConfig
+        if (curTable) {
+          const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
+          const tabList = getTabList(curTable, metric)// 未下钻的tab列表
+          if (tabList && tabList.length > 0) {
+            combineTabList(tableType, tabList, commonTabList)
+            tabList.forEach(item => {
+              if (item.label === thirdMenu) {
+                item.checked = true
+              }
+            })
+          }
+        }
+      }
+      await db[dbDrilldownTableConfig].put({
+        id: userId,
+        config: this.$_.cloneDeep(drillDownTableConfigs)
+      })
+      console.log('当前测试。。。。。。。。。。。')
+      console.log(this.$_.cloneDeep(drillDownTableConfigs))
+    },
+    async jump (route, columnName, columnValue, opeType) {
       this.showMenu = false
+      const menus = this.breadcrumb
       if (opeType) {
-        // this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-        // this.$store.commit('setTabOperationType', opeType)
         this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
         this.changeUrlTabState(this.curTabState.tabOperationType, opeType)
       } else {
-        // this.$store.commit('setTabOperationType', operationType.mainMenu)
         this.changeUrlTabState(this.curTabState.tabOperationType, operationType.mainMenu)
       }
       if (!columnName) { // 点击第二级菜单
         this.$store.commit('setNetworkOverviewTabList', [])
       }
+
       // 清空网络概况的特殊面包屑
       this.$store.getters.menuList.forEach(menu => {
         if (!this.$_.isEmpty(menu.children)) {
@@ -501,10 +546,8 @@ export default {
                 this.changeUrlTabState(this.curTabState.panelName, columnName)
                 const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
                 const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
-                // const tabList = this.$store.getters.getNetworkOverviewTabList
-                const tabList = getUserDrilldownTableConfig(tableType, metric)
-                const curTab = tabList.filter(item => item.label === columnName)[0]
-                this.changeUrlTabState(this.curTabState.curTab, curTab)
+                const curTab = getDefaultCurTab(tableType, metric, columnName)
+                this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
                 // this.$store.commit('setDimensionType', curTab ? curTab.prop : '')
                 this.changeUrlTabState(this.curTabState.dimensionType, curTab ? curTab.prop : '')
                 // this.$store.commit('setQueryCondition', '')
@@ -536,7 +579,21 @@ export default {
         }
       })
       // console.log(this.$store.getters.getDimensionType)
-      if (opeType === 3) {
+      if (opeType === 2 || opeType === 0) { // 二级菜单 或主菜单
+        // 如果有四级菜单，则将四级菜单对应tab的checked设置为true:根据columnName和columnValue 或 url判断不准确
+        if (menus[3]) {
+          await this.handleCurDrilldownTableConfig(this.breadcrumb[2], this.breadcrumb[3])
+        }
+        console.log('后面   handleCurDrilldownTableConfig')
+        // let path = this.$route.path; //先获取路由路径
+        // this.$router.push(path); //再跳转路由路径，query参数没带过去，所以被清除了
+        this.$router.push({
+          path: route,
+          query: {
+            t: +new Date()
+          }
+        })
+      } else if (opeType === 3) {
         this.$router.push({
           query: { ...this.$route.query, fourthPanel: '' }
         })

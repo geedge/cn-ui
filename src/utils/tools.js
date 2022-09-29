@@ -1,7 +1,7 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable } from '@/utils/constants'
+import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig } from '@/utils/constants'
 import { getIso36112JsonData } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
@@ -528,6 +528,11 @@ export function getCapitalGeo (countryId) {
   return data[countryId]
 }
 
+export function getUserDrilldownTableGeo (userId) {
+  const data = getGeoData(storageKey.userCustomizationConfig)
+  return data[userId]
+}
+
 function JSONParse (data) {
   const firstParse = JSON.parse(data)
   if (typeof firstParse === 'string') {
@@ -845,28 +850,48 @@ export function changeTabState (param, value) {
     query: query
   })
 }
-
+export function getTabList (curTable, curMetric) {
+  console.log('getTabList--------------')
+  let tabs = []
+  if (curTable.hasMetricSearch) { // 有metric
+    const metricsList = curTable ? curTable.metrics : []
+    if (metricsList && metricsList.length > 0) {
+      const metricTab = metricsList.find(metric => metric.name === curMetric)
+      tabs = metricTab.tabs
+    }
+  } else { // 无metric
+    if (curTable.tabs) {
+      tabs = curTable.tabs
+    }
+  }
+  return tabs
+}
 export function combineTabList (tableType, list, commonTabList) {
   const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
   const listInCode = curTableInCode ? curTableInCode.tabList : []
   list.forEach(tab => {
     // 配置的内容
-    const commonTab = commonTabList.find(item => item.name === tab.name)
-    tab.label = commonTab ? commonTab.i18n : ''
-    tab.prop = commonTab ? commonTab.prop : ''
     if (!tab.hasOwnProperty('checked')) {
-      tab.checked = tab ? tab.show : true
+      const tabName = tab ? (tab.name ? tab.name : tab) : ''
+      // 配置的内容
+      tab = {}
+      const commonTab = commonTabList.find(item => item.name === tabName)
+      tab.label = commonTab ? commonTab.i18n : ''
+      tab.prop = commonTab ? commonTab.prop : ''
+      if (!tab.hasOwnProperty('checked')) {
+        tab.checked = tab ? tab.show : true
+      }
+      if (!tab.hasOwnProperty('disabled')) {
+        tab.disabled = tab ? !tab.enable : false
+      }
+      if (!tab.hasOwnProperty('panelId')) {
+        tab.panelId = tab ? tab.panelIdOfFourthMenu : null
+      }
+      // 代码里写死的
+      const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
+      tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
+      tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
     }
-    if (!tab.hasOwnProperty('disabled')) {
-      tab.disabled = tab ? !tab.enable : false
-    }
-    if (!tab.hasOwnProperty('panelId')) {
-      tab.panelId = tab ? tab.panelIdOfFourthMenu : null
-    }
-    // 代码里写死的
-    const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
-    tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
-    tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
   })
 }
 
@@ -887,9 +912,28 @@ export function setUserConfig () {
   }
 }
 
-export function getUserDrilldownTableConfig (tableType, curMetric) {
+export async function getDefaultCurTab (tableType, metric, columnName) {
+  const tabList = await getUserDrilldownTableConfig(tableType, metric)
+  const curTab = tabList.filter(item => item.label === columnName)[0]
+  return curTab
+}
+
+export async function getUserDrilldownTableConfig (tableType, curMetric) {
   let list = []
-  const defaultDrillDownTableConfigs = JSON.parse(localStorage.getItem(storageKey.drillDownTableConfig))// 所有表格的配置
+  // 先从localStorage中获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
+  const userId = localStorage.getItem(storageKey.userId)
+  const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
+  let defaultDrillDownTableConfigs = []
+  if (userLocalCongfig) {
+    defaultDrillDownTableConfigs = userLocalCongfig.config
+  }
+  if (!defaultDrillDownTableConfigs || defaultDrillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
+    console.log('default..............')
+    const defaultCongfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
+    if (defaultCongfig) {
+      defaultDrillDownTableConfigs = defaultCongfig.config
+    }
+  }
   const currentTableConfig = defaultDrillDownTableConfigs.find(config => config.route === tableType)
   const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
   const tables = currentTableConfig ? currentTableConfig.tables : []
@@ -907,8 +951,6 @@ export function getUserDrilldownTableConfig (tableType, curMetric) {
         list = curTable ? curTable.tabs : []
       }
       combineTabList(tableType, list, commonTabList)
-      // this.combineColumnList(this.customTableTitles)
-      // this.setUserConfig(list)
     }
   }
   return list

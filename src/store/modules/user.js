@@ -82,7 +82,7 @@ const user = {
         if (res.code === 200 && res.page.list && res.page.list.length > 0) {
           await db[dbDrilldownTableConfig].put({
             id: 'default',
-            config: res.page.list[0].cvalue
+            config: JSON.parse(res.page.list[0].cvalue)
           })
           // const a = await db[dbDrilldownTableConfig].get({ id: 'default' })
           // console.info(a)

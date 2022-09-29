@@ -168,14 +168,14 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey } from '@/utils/constants'
+import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
-import { useRoute } from 'vue-router'
+import { db } from '@/indexedDB'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -226,6 +226,8 @@ export default {
       curTable: {}, // 当前的表格类型
       curTableInCode: {}, // 代码中的配置
       tableType: '',
+      userId: null,
+      drillDownTableConfigs: [],
       hasMetricSearch: true,
       activeTab: '',
       activeCustomize: '',
@@ -246,33 +248,6 @@ export default {
     ChartNoData
   },
   watch: {
-    /* chartData: {
-      deep: true,
-      handler (n) {
-        if (this.chartData) {
-          this.initData()
-        }
-      }
-    }, */
-    list: {
-      deep: true,
-      handler (n) {
-        if (this.hasMetricSearch) {
-          if (this.metricsList && this.metricsList.length > 0) {
-            this.metricsList.forEach(metric => {
-              if (metric.name != this.metric) {
-                // metric.tabs = this.list
-                metric.tabs.forEach(metricTabItem => {
-                  const newConfig = this.list.find(item => item.name === metricTabItem.name)
-                  // metricTabItem.show = newConfig?newConfig.checked:true
-                  // metricTabItem.checked = newConfig?newConfig.checked:true
-                })
-              }
-            })
-          }
-        }
-      }
-    },
     timeFilter: {
       deep: true,
       handler (n) {
@@ -283,7 +258,6 @@ export default {
           limit: networkDefaultLimit,
           type: curTab.prop
         }
-        // const condition = this.$store.getters.getQueryCondition
         const condition = this.getQueryCondition()
         if (condition) {
           queryParams = {
@@ -299,7 +273,6 @@ export default {
   },
   computed: {
     tableClass () {
-      console.log('computed')
       let className
       if (this.showRecordNum >= 10) {
         className = 'tab-table__average'
@@ -341,7 +314,7 @@ export default {
     cancleSortArrow () {
       // 取消表格排序高亮的箭头
       if (this.column.prop) {
-        const table = this.$refs['dataTable_' + this.index]
+        // const table = this.$refs['dataTable_' + this.index]
         const tableHeaer = this.$refs['dataTable_' + this.index]
           ? (Array.isArray(this.$refs['dataTable_' + this.index])
               ? this.$refs['dataTable_' + this.index][0].$refs.tableHeader
@@ -376,17 +349,6 @@ export default {
         }
         this.showTab(curTab)
       }
-      /*
-      else {// 没有选中任何tab时，默认选中第一个
-        const tabList = this.list.filter(item => item.checked === true)
-        if (tabList.length > 0) {
-          tabList[0].checked = true
-          this.showTab(tabList[0])
-        }else {
-          this.list[0].checked = true
-          this.showTab(this.list[0])
-        }
-      } */
 
       this.isNoData = false
       this.tableData = []
@@ -425,14 +387,12 @@ export default {
             item.checked = false
           }
         })
-        // this.$store.commit('setNetworkOverviewTabList', this.list)
       } else if (thirdMenu && !fourthMenu) {
         this.list.forEach(item => {
           if (item.label === thirdMenu) {
             item.checked = true
           }
         })
-        // this.$store.commit('setNetworkOverviewTabList', this.list)
       }
       // 选中的都进行展示
       this.list.forEach(item => {
@@ -449,22 +409,8 @@ export default {
         this.cycleColumnNameGroup = this.curTable.sessionsCycleColumnNameGroup
         this.orderBy = 'sessions'
         this.metricUnit = 'sessions'
-        /*
-        let totalChecked = true
-        this.customTableTitles.forEach(item => {
-          if (item.prop === 'total') {
-            totalChecked = item.checked
-          }
-        })
-        const totalColumn = this.customTableTitles.filter(item => item.prop === 'total')
-        this.customTableTitles = [
-          { label:curTab.label, prop: 'tab', checked: true, tabColumn: true, columnType: this.curTable.column[0].columnType },
-          { label: 'network.total', prop: 'total', checked: totalChecked, tabColumn: false, columnType: this.curTable.column[1].columnType, cycleDataUrl: totalColumn ? totalColumn.cycleDataUrl : '', isInMainUrl: true }
-        ] */
       }
 
-      // this.showCustomizeTabs = true
-      // this.setShowNum(10)
       const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
       const beforeOperationType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '', true)
       if (this.isFourthMenu()) { // 点击的为第四级菜单
@@ -490,9 +436,7 @@ export default {
         this.changeUrlTabState(this.curTabState.curTab, breadcrumbColumnTab.prop)
 
         this.hideTabs(breadcrumbColumnTab)
-        // this.customTableTitles[0].label = breadcrumbColumnTab.label
-        this.combineColumnList(breadcrumbColumnTab.columns)
-        this.setUserConfig()
+        this.combineColumnList(breadcrumbColumnTab.label)
         this.showCustomizeTabs = false
         // this.setShowNum(10)
       } else if (curOperationType === operationType.changeTab) { // 切换tab
@@ -502,10 +446,7 @@ export default {
         this.showCustomizeTabs = true
         // this.setShowNum(10)
       } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击的为第二级菜单、或者点击菜单进入、
-        // this.list = this.$_.cloneDeep(this.curTable.tabList)
         this.list = this.$_.cloneDeep(this.allList)
-        this.setUserConfig()
-        // this.$store.commit('setNetworkOverviewTabList', this.list)
         if (curTab) {
           this.showTab(curTab)
           this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
@@ -525,9 +466,7 @@ export default {
               this.$nextTick(() => {
                 this.hideTabs(item)
               })
-              // this.customTableTitles[0].label = item.label
-              this.combineColumnList(item.columns)
-              this.setUserConfig()
+              this.combineColumnList(item.label)
             }
           })
           this.activeTab = ''
@@ -539,18 +478,14 @@ export default {
         // if (beforeOperationType === operationType.thirdMenu) {
         if (this.isThirdMenu()) {
           this.hideTabs(curTab)
-          // this.customTableTitles[0].label = curTab.label
-          this.combineColumnList(curTab.columns)
-          this.setUserConfig()
+          this.combineColumnList(curTab.label)
           this.showCustomizeTabs = false
         }
       } else if (curOperationType === operationType.customize) { // customize
         // if (beforeOperationType === operationType.thirdMenu) {
         if (this.isThirdMenu()) {
           this.hideTabs(curTab)
-          // this.customTableTitles[0].label = curTab.label
-          this.combineColumnList(curTab.columns)
-          this.setUserConfig()
+          this.combineColumnList(curTab.label)
           this.showCustomizeTabs = false
         } else {
           this.$nextTick(() => {
@@ -608,7 +543,7 @@ export default {
       }
 
       const self = this
-      if (this.customTableTitles) {
+      if (this.customTableTitles && this.customTableTitles.length > 0) {
         this.customTableTitles.forEach(tableColumn => {
           if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl && tableDataTmp && tableDataTmp.length > 0) {
             get(self.gerCycleUrl(), queryParams).then(response => {
@@ -769,6 +704,8 @@ export default {
             })
           }
         })
+      } else {
+        this.toggleLoading(false)
       }
     },
     showMore () {
@@ -840,7 +777,7 @@ export default {
             const aObj = a[column.prop]
             const bObj = b[column.prop]
             let res = 0
-            for (let i = 0; ;i++) {
+            for (let i = 0; ; i++) {
               const char1 = aObj[i]
               const char2 = bObj[i]
               const char1Type = this.getChartType(char1)
@@ -870,7 +807,7 @@ export default {
             const aObj = a[column.prop]
             const bObj = b[column.prop]
             let res = 0
-            for (let i = 0; ;i++) {
+            for (let i = 0; ; i++) {
               const char1 = aObj[i]
               const char2 = bObj[i]
               const char1Type = this.getChartType(char1)
@@ -900,12 +837,12 @@ export default {
         }
       }
     },
+    // 切换metric：bit、packet、session
     changeMetric () {
       this.tableData = []
       this.tableDataBackup = []
       this.setShowNum(10)
       const beforeType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '', true)
-      // if (beforeType != operationType.thirdMenu) {
       if (beforeType != operationType.thirdMenu) {
         this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
       }
@@ -915,16 +852,14 @@ export default {
       this.changeUrlTabState(this.curTabState.tableMetric, this.metric)
 
       // 1:先根据metric获得tabs，再根据当前tab，获得columns，再进行数据组装？？？
-
       if (this.metricsList && this.metricsList.length > 0) {
         const metricTab = this.metricsList.find(metric => metric.name === this.metric)
         this.list = metricTab ? metricTab.tabs : []
         this.networkTabList = metricTab ? metricTab.tabs : []
-        this.combineTabList()
+        this.combineTabList(this.list)
         // this.allList = this.$_.cloneDeep(this.list)//备份所有配置，下钻及返回时使用
-        this.customTableTitles = this.list ? this.list[0].columns : []// 需要获得当前tab的列:默认第一个tab的列
-        this.combineColumnList(this.customTableTitles)
-        this.setUserConfig()
+        const curTabData = this.list.find(item => item.label === label)
+        this.combineColumnList(curTabData.label)
       }
 
       if (this.metric === 'Bits/s') {
@@ -932,73 +867,16 @@ export default {
         this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
         this.orderBy = 'bytesTotal'
         this.metricUnit = 'bytes'
-        /*
-        const titleGroup = []
-        if (this.customTableTitles.length === 2) {
-          //this.curTable.column.forEach((item, index) => {
-          this.curTable.columns.forEach((item, index) => {
-            if (item.tabColumn) {
-              //item.label = label
-            }
-            if (index === 1) {
-              item.checked = this.customTableTitles[1].checked
-            }
-            titleGroup.push(item)
-          })
-        } else {
-          this.customTableTitles.forEach(item => {
-            if (item.tabColumn) {
-              //item.label = label
-            }
-            titleGroup.push(item)
-          })
-        }
-        this.customTableTitles = titleGroup */
       } else if (this.metric === 'Packets/s') {
         this.columnNameGroup = this.curTable.packetsColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.packetsCycleColumnNameGroup
         this.orderBy = 'packetsTotal'
         this.metricUnit = 'packets'
-        /*
-        const titleGroup = []
-        if (this.customTableTitles.length === 2) {
-          this.curTable.columns.forEach((item, index) => {
-            if (item.tabColumn) {
-              item.label = label
-            }
-            if (index === 1) {
-              item.checked = this.customTableTitles[1].checked
-            }
-            titleGroup.push(item)
-          })
-        } else {
-          this.customTableTitles.forEach(item => {
-            if (item.tabColumn) {
-              item.label = label
-            }
-            titleGroup.push(item)
-          })
-        }
-        this.customTableTitles = titleGroup
-        */
       } else if (this.metric === 'Sessions/s') {
         this.columnNameGroup = this.curTable.sessionsColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.sessionsCycleColumnNameGroup
         this.orderBy = 'sessions'
         this.metricUnit = 'sessions'
-        /*
-        let totalChecked = true
-        this.customTableTitles.forEach(item => {
-          if (item.prop === 'total') {
-            totalChecked = item.checked
-          }
-        })
-        const totalColumn = this.customTableTitles.filter(item => item.prop === 'total')
-        this.customTableTitles = [
-          { label: label, prop: 'tab', checked: true, tabColumn: true, columnType: this.curTable.column[0].columnType },
-          { label: 'network.total', prop: 'total', checked: totalChecked, tabColumn: false, columnType: this.curTable.column[1].columnType, cycleDataUrl: totalColumn ? totalColumn.cycleDataUrl : '', isInMainUrl: true }
-        ]
-        */
       }
       let queryParams = {
         orderBy: this.orderBy,
@@ -1072,30 +950,29 @@ export default {
     showTab (curTab) {
       if (curTab) {
         this.activeTab = ref(curTab.label)
-        // this.customTableTitles[0].label = curTab.label
-        this.combineColumnList(curTab.columns)
-        this.setUserConfig()
+        this.combineColumnList(curTab.label)
       }
     },
-    tabChange (index) {
+    // 配置tab：显示隐藏与顺序
+    async tabChange (index) {
+      console.log('NetworkOverview类------tabChange：隐藏或显示tab-开始')
+      console.log(this.list)
+      console.log(this.curTable)
+      console.log(this.drillDownTableConfigs)
+      console.log('NetworkOverview类------tabChange：隐藏或显示tab-开始')
       this.isNoData = false
       // 操作类型设置
-      // const beforeType = this.$store.getters.getTabOperationBeforeType
       const beforeType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '', true)
       if (beforeType != operationType.thirdMenu) {
-        // this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
         this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
       }
-      // this.$store.commit('setTabOperationType', operationType.customize)
       this.changeUrlTabState(this.curTabState.tabOperationType, operationType.customize)
       // 获得操作tab和当前选中的所有tab
       const handleTab = this.list[index]
       const tabList = this.list.filter(item => item.checked === true)
       const defaultTab = tabList.length > 0 ? tabList[0] : {}
       // 当前操作之后，只有1个tab被选中，则这一个不允许取消选中
-      // const columnName = this.$store.getters.getBreadcrumbColumnName
       const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
-      // const columnValue = this.$store.getters.getBreadcrumbColumnValue
       const columnValue = this.getUrlParam(this.curTabState.fourthMenu, '')
       if (tabList.length === 1) {
         defaultTab.disabled = true
@@ -1108,14 +985,12 @@ export default {
             }
           }
         })
-        // this.$store.commit('setNetworkOverviewTabList', this.list)
       }
       // 如果有metric切换，则需要更新其它metric的tabs
       if (this.hasMetricSearch) {
         if (this.metricsList && this.metricsList.length > 0) {
           this.metricsList.forEach(metric => {
             if (metric.name != this.metric) {
-              // metric.tabs = this.list
               metric.tabs.forEach(metricTabItem => {
                 const newConfig = this.list.find(item => item.name === metricTabItem.name)
                 metricTabItem.show = newConfig ? newConfig.checked : true
@@ -1126,7 +1001,7 @@ export default {
         }
       }
 
-      this.saveUserLocalConfig()
+      await this.saveUserLocalConfig()
       // 如果取消tab，则如果取消的是当前选中的tab，则当前tab就需要修改为第一个默认的tab，否则不用
       const curTab = this.getCurTab()
       if (!handleTab.checked && handleTab.label === curTab.label) {
@@ -1150,6 +1025,11 @@ export default {
         }
         this.getChartData(queryParams)
       }
+      console.log('NetworkOverview类------tabChange：隐藏或显示tab-结束')
+      console.log(this.list)
+      console.log(this.curTable)
+      console.log(this.drillDownTableConfigs)
+      console.log('NetworkOverview类------tabChange：隐藏或显示tab-结束')
     },
     setOperationType (operationType) {
       // this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
@@ -1204,26 +1084,51 @@ export default {
       4.设置菜单：第三级，第四级名称，并保存到store中
       5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
   * */
-    handleTabValue (columnName, columnValue) {
-      // const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
-      const oldCurTab = this.getUrlParam(this.curTabState.networkOverviewBeforeTab, '')
-      const clickTab = this.getTabByLabel(columnName)
+    async handleTabValue (columnName, columnValue) {
+      console.log('NetworkOverview类------handleTabValue：下钻')
+      const clickTab = this.getTabByLabel(columnName)// 下钻后，显示的下钻tab对应的drilldownTabs
       this.setBeforeTab(clickTab)
       this.setOperationType(operationType.fourthMenu)
       this.setQueryCondition(clickTab, columnValue)
-
+      const toPanel = clickTab.panelId
+      this.changeUrlTabState(this.curTabState.curTab, '')
+      const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+      const tabList = this.getAllTabList()
+      if (this.isDrilldown()) { // 点击之前就已经是下钻状态了
+        this.list.forEach(tab => {
+          if (tab.label === thirdMenu) {
+            tab.checked = true
+          }
+        })
+        this.list = this.getDrilldownTabList(columnName)
+        this.combineTabList(this.list)
+        const curTab = this.getCurTab(clickTab)
+        tabList.forEach(tab => {
+          if (tab.label === curTab.label && tab.columns) {
+            this.combineColumnList(tab.label)
+          }
+        })
+      } else {
+        const changeTab = tabList.find(item => item.label == columnName)// 下钻的tab
+        this.list = changeTab.drilldownTabs
+        this.combineTabList(this.list)
+        const curTab = this.getCurTab(clickTab)
+        tabList.forEach(tab => {
+          if (tab.label === curTab.label && tab.columns) {
+            this.combineColumnList(tab.label)
+          }
+        })
+      }
+      await this.saveUserLocalConfig()
+      console.log(this.drillDownTableConfigs)
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
             menu.columnName = columnName
             menu.columnValue = columnValue
-            // this.$store.commit('setPanelName', columnValue)
             this.changeUrlTabState(this.curTabState.panelName, columnValue)
-            // this.$store.commit('setBreadcrumbColumnName', columnName)
             this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
-            // this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
             this.changeUrlTabState(this.curTabState.dimensionType, clickTab ? clickTab.prop : '')
-            // this.$store.commit('setBreadcrumbColumnValue', columnValue)
             this.changeUrlTabState(this.curTabState.fourthMenu, columnValue)
           }
         } else if (!this.$_.isEmpty(menu.children)) {
@@ -1231,33 +1136,14 @@ export default {
             if (this.$route.path === child.route) {
               child.columnName = columnName
               child.columnValue = columnValue
-              // this.$store.commit('setPanelName', columnValue)
               this.changeUrlTabState(this.curTabState.panelName, columnValue)
-              // this.$store.commit('setBreadcrumbColumnName', columnName)
               this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
-              // this.$store.commit('setDimensionType', clickTab ? clickTab.prop : '')
               this.changeUrlTabState(this.curTabState.dimensionType, clickTab ? clickTab.prop : '')
-              // this.$store.commit('setBreadcrumbColumnValue', columnValue)
               this.changeUrlTabState(this.curTabState.fourthMenu, columnValue)
             }
           })
         }
       })
-      const toPanel = clickTab.panelId
-      this.list.forEach((item, index) => {
-        if (item.label === columnName) {
-          item.checked = false
-          // toPanel = item.panelId
-        }
-        if (oldCurTab && (item.prop === oldCurTab)) {
-          item.checked = true
-        }
-      })
-      // this.$store.commit('setNetworkOverviewTabList', this.list)
-      // this.handleSearchParams(columnValue)
-
-      const curTab = this.getFirstCheckedTab()
-      this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
 
       this.$router.push({
         query: {
@@ -1288,8 +1174,9 @@ export default {
         this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' OR '))
       }
     },
-    metricChange () {
-      this.saveUserLocalConfig()
+    async metricChange () {
+      // 需要将列设置到当前tab的"hiddenColumns": [],"disabledColumns": [],
+      await this.saveUserLocalConfig()
     },
     dragstart (index) {
       this.dragIndex = index
@@ -1345,35 +1232,29 @@ export default {
       this.changeUrlTabState(this.curTabState.tableSortTab, '')
       this.cancleSortArrow()
     },
-    handleClick (tab) {
+    // 切换tab的时候，只需要修改列即可,但是列需要从indexDB中获取
+    async handleClick (tab) {
       this.tableData = []
       this.tableDataBackup = []
       this.setShowNum(10)
       this.clearSort()
-      // this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-      // this.$store.commit('setTabOperationType', operationType.changeTab)
       this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
       this.changeUrlTabState(this.curTabState.tabOperationType, operationType.changeTab)
-      // this.customTableTitles[0].label = tab.paneName
-      const clickTab = this.list.filter(item => item.label == tab.paneName)
-      if (clickTab.columns) {
-        this.combineColumnList(clickTab.columns)
-        this.setUserConfig()
-      }
-
-      this.saveUserLocalConfig()
+      // 下钻的tab觉得显示哪些tab，这些tab显示什么列，取决于tab本身
       const tabObjGroup = this.list.filter(item => item.label == tab.paneName)
       if (tabObjGroup && tabObjGroup.length > 0) {
         const curTab = tabObjGroup[0]
         this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
+        if (curTab.columns) {
+          this.combineColumnList(curTab.label)
+        }
+        await this.saveUserLocalConfig()
         this.tab = curTab.prop
-
         let queryParams = {
           orderBy: this.orderBy,
           limit: networkDefaultLimit,
           type: curTab.prop
         }
-        // const condition = this.$store.getters.getQueryCondition
         const condition = this.getQueryCondition()
         if (condition) {
           queryParams = {
@@ -1443,7 +1324,6 @@ export default {
         }
       } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击第二级菜单，点击菜单
         this.list = this.$_.cloneDeep(this.allList)
-        this.setUserConfig()
         const curTab = this.getCurTab()
         if (curTab) {
           queryType = curTab.prop
@@ -1489,11 +1369,6 @@ export default {
         return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
       }
     },
-    /*
-    getUrlCurTab () {
-      let curTab = this.$route.query.curTab?JSON.parse(this.$route.query.curTab):null
-      return curTab
-    }, */
     getQueryCondition () {
       return this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
     },
@@ -1505,12 +1380,16 @@ export default {
       }
     },
     // 获取当前tab:url中的curTab，如果url中curTab为空，则从list中取第一个checked为true的tab，如果list里没有checked为true的，就选第一个tab，并更新url
-    getCurTab () {
+    getCurTab (excludeTab) {
       const curTabProp = this.$route.query.curTab ? this.$route.query.curTab : null
       let curTab = curTabProp ? this.list.find(item => item.prop === curTabProp) : null
-      // let curTab = this.$store.getters.getNetworkOverviewCurrentTab
       if (!curTab) {
-        const tabObjGroup = this.list.filter(item => item.checked)
+        let tabObjGroup = []
+        if (excludeTab) {
+          tabObjGroup = this.list.filter(item => item.checked && (item.prop !== excludeTab.prop))
+        } else {
+          tabObjGroup = this.list.filter(item => item.checked)
+        }
         if (tabObjGroup && tabObjGroup.length > 0) {
           tabObjGroup[0].checked = true
           curTab = tabObjGroup[0]
@@ -1529,25 +1408,23 @@ export default {
             // this.showTab(curTab)
           }
         })
-        // this.$store.commit('setNetworkOverviewTabList', this.list)
       }
       return curTab
     },
-    combineTabList () {
+    combineTabList (tabList) {
       const listInCode = this.curTableInCode ? this.curTableInCode.tabList : []
-      // let userTableConfig = this.getUserLocalConfig()
-      this.list.forEach(tab => {
-        // 配置的内容
-        const commonTab = this.commonTabList.find(item => item.name === tab.name)
+      tabList.forEach(tab => {
+        const tabName = tab ? (tab.name ? tab.name : tab) : ''
+        const commonTab = this.commonTabList.find(item => item.name === tabName)
         tab.label = commonTab ? commonTab.i18n : ''
         tab.prop = commonTab ? commonTab.prop : ''
-        if (!tab.hasOwnProperty('checked')) {
+        if (!tab.hasOwnProperty('checked') || tab.checked === undefined || tab.checked === null) {
           tab.checked = tab ? tab.show : true
         }
-        if (!tab.hasOwnProperty('disabled')) {
+        if (!tab.hasOwnProperty('disabled') || tab.disabled === undefined || tab.disabled === null) {
           tab.disabled = tab ? !tab.enable : false
         }
-        if (!tab.hasOwnProperty('panelId')) {
+        if (!tab.hasOwnProperty('panelId') || tab.panelId === undefined || tab.panelId === null) {
           tab.panelId = tab ? tab.panelIdOfFourthMenu : null
         }
         // 代码里写死的
@@ -1555,202 +1432,161 @@ export default {
         tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
         tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
       })
-      // 设置drilldownTabs
-      const oldList = this.$_.cloneDeep(this.list)
-      this.list.forEach(tab => {
-        const drilldownTabFull = []
-        tab.drilldownTabs.forEach(drilldownTab => {
-          const drilldownTabName = drilldownTab ? (drilldownTab.name ? drilldownTab.name : drilldownTab) : ''
-          const fullTab = oldList.find(item => item.name === drilldownTabName)
-          const commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
-          fullTab.label = commonTab ? commonTab.i18n : ''
-          fullTab.prop = commonTab ? commonTab.prop : ''
-          if (!tab.hasOwnProperty('panelId')) {
-            fullTab.panelId = tab ? tab.panelIdOfFourthMenu : ''
-          }
-          fullTab.show = !(tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0)
-          fullTab.checked = !(tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0)
-          fullTab.enable = !(tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
-          fullTab.disabled = tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0
-
-          // 代码里写死的
-          const tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
-          fullTab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
-          fullTab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
-          drilldownTabFull.push(fullTab)
-        })
-        tab.drilldownTabs = drilldownTabFull
-      })
-      console.log(this.list)
-    },
-
-    setUserConfig () {
-      const userTableConfig = this.getUserLocalConfig()
-      if (userTableConfig) {
-        const newTabConfigs = []
-        userTableConfig.tabConfig.forEach(tab => {
-          const tabConfig = this.list.find(item => item.name === tab.name)
-          if (tabConfig) {
-            tabConfig.checked = tab ? tab.checked : true
-          } else {
-            tabConfig.checked = true
-          }
-          newTabConfigs.push(tabConfig)
-        })
-        this.list = newTabConfigs
-
-        const newColumnConfigs = []
-        userTableConfig.columnConfig.forEach((column, index) => {
-          if (index === 0) {
-            newColumnConfigs.push(this.customTableTitles[0])
-          } else {
-            const customColumnConfig = this.customTableTitles.find(item => item.name === column.name)
-            if (customColumnConfig) {
-              customColumnConfig.checked = column ? column.checked : true
-              newColumnConfigs.push(customColumnConfig)
-            }
-          }
-        })
-        this.customTableTitles = newColumnConfigs
-        /*        let cfg = userTableConfig.columnConfig
-        this.customTableTitles.forEach(item => {
-          let customColumnConfig = cfg.find(column => item.name===column.name)
-          if(customColumnConfig){
-            item.checked = customColumnConfig?customColumnConfig.checked:true
-            //newColumnConfigs.push(customColumnConfig)
-          }
-        }) */
-      }
-    },
-    combineColumnList (list) {
-      const hiddenColumnList = this.list ? this.list[0].hiddenColumns : []
-      const disabledColumns = this.list ? this.list[0].disabledColumns : []
-      const newColumnList = []
-      if (list && list.length > 0) {
-        list.forEach(column => {
-          // let columnName = column
-          const columnName = column ? (column.name ? column.name : column) : ''
-          // 配置的内容
-          const commonColumn = this.commonColumnList.find(item => item.name === columnName)
-          column = {}
-          column.name = commonColumn ? commonColumn.name : ''
-          column.label = commonColumn ? commonColumn.i18n : ''
-          column.prop = commonColumn ? commonColumn.prop : ''
-          column.checked = !(hiddenColumnList.indexOf(columnName) >= 0)
-          column.disabled = disabledColumns.indexOf(columnName) >= 0
-          column.columnType = commonColumn ? commonColumn.columnType : ''
-          // 代码里写死的
-          const listInCode = this.curTableInCode ? this.curTableInCode.column : []
-          const columnInCode = listInCode ? listInCode.find(item => item.label === column.label) : {}
-          column.cycleDataUrl = columnInCode ? columnInCode.cycleDataUrl : ''
-          column.isInMainUrl = columnInCode ? columnInCode.isInMainUrl : false
-          column.dillDownCycleDataUrl = columnInCode ? columnInCode.dillDownCycleDataUrl : ''
-          column.cycle = columnInCode ? columnInCode.cycle : 0
-          column.scoreType = columnInCode ? columnInCode.scoreType : 0
-          column.isScoreColumn = columnInCode ? columnInCode.isScoreColumn : true
-          newColumnList.push(column)
-        })
-        this.customTableTitles = newColumnList
-      }
-      console.log(this.customTableTitles)
-    },
-    initConfig () {
-
-    },
-    getUserLocalConfig () {
-      let config = null
-      const userCustomizationConfigs = localStorage.getItem(storageKey.userCustomizationConfig)// 所有用户的[{id:1,tabsConfig:{},columnsConfig:{}},{id:2,tabsConfig:{},columnsConfig:{}}]
-      const userId = localStorage.getItem(storageKey.userId)
-      if (userCustomizationConfigs) { // 用户自定义配置
-        const userConfigGroup = JSON.parse(userCustomizationConfigs)
-        const currentUserConfig = userConfigGroup ? userConfigGroup.find(userConfig => userConfig.userId === userId) : null
-        const allConfig = currentUserConfig ? currentUserConfig.config : null
-        if (allConfig) {
-          config = allConfig.find(config => config.route === this.tableType)
-        }
-      }
-      return config
-    },
-    saveUserLocalConfig () {
-      const columnConfig = []
-      this.customTableTitles.forEach(item => {
-        const config = {
-          name: item.name,
-          checked: item.checked
-        }
-        columnConfig.push(config)
-      })
-      const tabConfig = []
-      this.list.forEach(item => {
-        const config = {
-          name: item.name,
-          checked: item.checked,
-          columns: columnConfig
-        }
-        tabConfig.push(config)
-      })
-
-      const userCustomizationConfigs = localStorage.getItem(storageKey.userCustomizationConfig)
-      const userConfigGroup = userCustomizationConfigs ? JSON.parse(userCustomizationConfigs) : []
-      const userId = localStorage.getItem(storageKey.userId)
-      if (this.getUserLocalConfig()) {
-        userConfigGroup.forEach(item => {
-          if (item.userId === userId) {
-            if (item.config) {
-              item.config.forEach(config => {
-                if (config.route === this.tableType) {
-                  config.tabConfig = tabConfig
-                  config.columnConfig = columnConfig
-                }
-              })
-            }
-          }
-        })
-      } else {
-        if (userConfigGroup && userConfigGroup.length > 0) {
-          userConfigGroup.forEach(userConfig => {
-            if (userConfig.userId === userId) {
-              if (userConfig.config) {
-                userConfig.config.push({
-                  route: this.tableType,
-                  tabConfig: tabConfig,
-                  columnConfig: columnConfig
-                })
-              } else {
-                userConfig.config = [
-                  {
-                    route: this.tableType,
-                    tabConfig: tabConfig,
-                    columnConfig: columnConfig
-                  }
-                ]
+      // 设置drilldownTabs：未下钻状态设置，已下钻状态无需设置
+      const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+      if (!thirdMenu) {
+        const oldList = this.$_.cloneDeep(tabList)
+        tabList.forEach(tab => {
+          const drilldownTabFull = []
+          tab.drilldownTabs.forEach(drilldownTab => {
+            const drilldownTabName = drilldownTab ? (drilldownTab.name ? drilldownTab.name : drilldownTab) : ''
+            const fullTab = oldList.find(item => item.name === drilldownTabName)
+            if (fullTab) {
+              const commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
+              fullTab.label = commonTab ? commonTab.i18n : ''
+              fullTab.prop = commonTab ? commonTab.prop : ''
+              if (!fullTab.hasOwnProperty('panelId') || fullTab.panelId === undefined || tab.panelId === null) {
+                fullTab.panelId = tab ? tab.panelIdOfFourthMenu : ''
               }
+              if (!fullTab.hasOwnProperty('checked') || fullTab.checked === undefined || tab.checked === null) {
+                fullTab.checked = !((tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0))
+              }
+              if (!fullTab.hasOwnProperty('disabled') || fullTab.disabled === undefined || tab.disabled === null) {
+                fullTab.disabled = (tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
+              }
+              // 代码里写死的
+              const tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
+              fullTab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
+              fullTab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+              drilldownTabFull.push(fullTab)
             }
           })
-        }
-        const currentUserConfig = userConfigGroup ? userConfigGroup.find(userConfig => userConfig.userId === userId) : null
-        if (!currentUserConfig) {
-          const newConfig = {
-            userId: userId,
-            config: [
-              {
-                route: this.tableType,
-                tabConfig: tabConfig,
-                columnConfig: columnConfig
-              }
-            ]
+          tab.drilldownTabs = drilldownTabFull
+        })
+      }
+    },
+    combineColumnList (tabLabel) {
+      const allTabs = this.getAllTabList()
+      const curTab = allTabs.find(item => item.label === tabLabel)
+      const customTableTitles = curTab ? curTab.columns : []
+      const hiddenColumnList = curTab ? curTab.hiddenColumns : []
+      const disabledColumnList = curTab ? curTab.disabledColumns : []
+      // let list = customTableTitles, curTabColumns.hiddenColumns, curTabColumns.disabledColumns
+      const newColumnList = []
+      if (customTableTitles && customTableTitles.length > 0) {
+        customTableTitles.forEach(column => {
+          if (!column.hasOwnProperty('checked') || column.checked === undefined || column.checked === null) {
+            const columnName = column ? (column.name ? column.name : column) : ''
+            // 配置的内容
+            const commonColumn = this.commonColumnList.find(item => item.name === columnName)
+            column = {}
+            column.name = commonColumn ? commonColumn.name : ''
+            column.label = commonColumn ? commonColumn.i18n : ''
+            column.prop = commonColumn ? commonColumn.prop : ''
+            column.checked = !((hiddenColumnList.indexOf(columnName) >= 0))
+            column.disabled = (disabledColumnList.indexOf(columnName) >= 0)
+            column.columnType = commonColumn ? commonColumn.columnType : ''
+            // 代码里写死的
+            const listInCode = this.curTableInCode ? this.curTableInCode.column : []
+            const columnInCode = listInCode ? listInCode.find(item => item.label === column.label) : {}
+            column.cycleDataUrl = columnInCode ? columnInCode.cycleDataUrl : ''
+            column.isInMainUrl = columnInCode ? columnInCode.isInMainUrl : false
+            column.dillDownCycleDataUrl = columnInCode ? columnInCode.dillDownCycleDataUrl : ''
+            column.cycle = columnInCode ? columnInCode.cycle : 0
+            column.scoreType = columnInCode ? columnInCode.scoreType : 0
+            column.isScoreColumn = columnInCode ? columnInCode.isScoreColumn : true
+            newColumnList.push(column)
           }
-          userConfigGroup.push(newConfig)
+        })
+        if (newColumnList && newColumnList.length > 0) {
+          curTab.columns = newColumnList
+          this.customTableTitles = newColumnList
+        } else {
+          this.customTableTitles = customTableTitles
         }
       }
-
-      console.log(userConfigGroup)
-      // localStorage.removeItem(storageKey.userCustomizationConfig)
-      localStorage.setItem(storageKey.userCustomizationConfig, JSON.stringify(userConfigGroup))
+    },
+    async getUserLocalConfig () {
+      const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: this.userId })
+      if (userLocalCongfig) {
+        console.info(userLocalCongfig.config)
+        return userLocalCongfig.config
+      } else {
+        return null
+      }
+    },
+    isDrilldown () {
+      if (this.getUrlParam(this.curTabState.fourthMenu)) {
+        return true
+      } else {
+        return false
+      }
+    },
+    async saveUserLocalConfig () {
+      console.log('NetworkOverview类------saveUserLocalConfig方法：保存用户设置')
+      /*
+      let curTab = this.getCurTab()
+      console.log(this.customTableTitles)
+      this.getAllTabList().forEach(tab => {
+        if(tab.name ===curTab.name){
+         tab.columns =  this.customTableTitles
+        }
+      }) */
+      console.log(this.drillDownTableConfigs)
+      await db[dbDrilldownTableConfig].put({
+        id: this.userId,
+        config: this.$_.cloneDeep(this.drillDownTableConfigs)
+      })
+      console.log('NetworkOverview类------saveUserLocalConfig方法：保存用户设置-end')
+    },
+    getAllTabList () {
+      let tabs = []
+      if (this.curTable.hasMetricSearch) { // 有metric
+        this.metricsList = this.curTable ? this.curTable.metrics : []
+        if (this.metricsList && this.metricsList.length > 0) {
+          const metricTab = this.metricsList.find(metric => metric.name === this.metric)
+          tabs = metricTab.tabs
+        }
+      } else { // 无metric
+        if (this.curTable.tabs) {
+          tabs = this.curTable.tabs
+        }
+      }
+      return tabs
+    },
+    getDrilldownTabList (columnName) {
+      let tabs = []
+      if (this.curTable.hasMetricSearch) { // 有metric
+        this.metricsList = this.curTable ? this.curTable.metrics : []
+        if (this.metricsList && this.metricsList.length > 0) {
+          const metricTab = this.metricsList.find(metric => metric.name === this.metric)
+          const firstTabs = metricTab.tabs
+          if (firstTabs) {
+            firstTabs.forEach(tab => {
+              if (tab.label === columnName) {
+                tabs = tab.drilldownTabs
+              }
+            })
+          }
+        }
+      } else { // 无metric
+        if (this.curTable.tabs) {
+          const firstTabs = this.curTable.tabs
+          if (firstTabs) {
+            firstTabs.forEach(tab => {
+              if (tab.label === columnName) {
+                tabs = tab.drilldownTabs
+              }
+            })
+          }
+        }
+      }
+      return tabs
     }
   },
-  mounted () {
-    console.log('mounted')
+  async mounted () {
+    console.log('NetworkOverview类------mounted：保存用户设置')
+    this.userId = localStorage.getItem(storageKey.userId)
     this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
     this.curTableInCode = this.networkTable[this.tableType] ? this.networkTable[this.tableType] : this.networkTable.networkOverview
     // 表格状态初始化(url)
@@ -1759,36 +1595,57 @@ export default {
     this.tableSortColumn = this.getUrlParam(this.curTabState.tableSortColumn, '')
     this.tableSortType = this.getUrlParam(this.curTabState.tableSortType, '')
     this.tableSortTab = this.getUrlParam(this.curTabState.tableSortTab, '')
+
     // 先从localStorage中获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
-    // let userTableConfig = this.getUserLocalConfig()
-    // if (!currentTableConfig) {//未找到当前用户的配置，使用默认配置
-    const defaultDrillDownTableConfigs = JSON.parse(localStorage.getItem(storageKey.drillDownTableConfig))// 所有表格的配置
-    const currentTableConfig = defaultDrillDownTableConfigs.find(config => config.route === this.tableType)
-    // }
+    const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: this.userId })
+    if (userLocalCongfig) {
+      console.log('user..............')
+      this.drillDownTableConfigs = userLocalCongfig.config
+      console.log(this.drillDownTableConfigs)
+    }
+    if (!this.drillDownTableConfigs || this.drillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
+      console.log('default..............')
+      const defaultCongfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
+      if (defaultCongfig) {
+        this.drillDownTableConfigs = defaultCongfig.config
+        console.log(this.drillDownTableConfigs)
+      }
+    }
+    console.log('vvvvvvvv')
+    console.log(this.drillDownTableConfigs)
+    const currentTableConfig = this.drillDownTableConfigs.find(config => config.route === this.tableType)
+    // 开始设置当前table，当前tab，当前tab对应的列等信息
     this.commonTabList = currentTableConfig ? currentTableConfig.tabs : []
     this.commonColumnList = currentTableConfig ? currentTableConfig.columns : []
     const tables = currentTableConfig ? currentTableConfig.tables : []
-    const tableId = this.tableType
     if (tables && tables.length > 0) {
-      const curTableOldConfig = tables.find(table => table.id === tableId)
-      this.curTable = curTableOldConfig || null
+      const curTableOldConfig = tables.find(table => table.id === this.tableType)
+      this.curTable = curTableOldConfig
       if (this.curTable) {
-        if (this.curTable.hasMetricSearch) { // 有metric
-          this.metricsList = this.curTable ? this.curTable.metrics : []
-          if (this.metricsList && this.metricsList.length > 0) {
-            const metricTab = this.metricsList.find(metric => metric.name === this.metric)
-            this.list = metricTab ? metricTab.tabs : []
-            this.networkTabList = metricTab ? metricTab.tabs : []
+        if (this.isDrilldown()) { // 下钻状态
+          const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+          const tabList = this.getAllTabList()
+          if (tabList && tabList.length > 0) {
+            this.combineTabList(tabList)
+            const drilldownTab = tabList.find(item => item.label === thirdMenu)
+            this.list = drilldownTab ? drilldownTab.drilldownTabs : []
+            this.allList = this.$_.cloneDeep(tabList)// 备份所有配置，下钻及返回时使用
+            const curTab = this.getCurTab()// 初始化完list，才能正确执行
+            const curTabColumns = tabList.find(item => item.prop === curTab.prop)
+            this.combineColumnList(curTabColumns.label)
+            this.activeTab = ref(curTab.label)
           }
-        } else { // 无metric
-          this.list = this.curTable ? this.curTable.tabs : []
-          this.networkTabList = this.curTable ? this.curTable.tabs : []
+        } else { // 非下钻状态
+          this.list = this.getAllTabList()
+          this.combineTabList(this.list)
+          this.allList = this.$_.cloneDeep(this.list)// 备份所有配置，下钻及返回时使用
+          console.log(this.list)
+          if (this.list && this.list.length > 0) {
+            const curTab = this.getCurTab()// 初始化完list，才能正确执行
+            this.combineColumnList(curTab.label)
+            this.activeTab = ref(curTab.label)
+          }
         }
-        this.combineTabList()
-        this.allList = this.$_.cloneDeep(this.list)// 备份所有配置，下钻及返回时使用
-        this.customTableTitles = this.list ? this.list[0].columns : []// 需要获得当前tab的列:默认第一个tab的列
-        this.combineColumnList(this.customTableTitles)
-        this.activeTab = ref(this.list[0].label)
         this.activeCustomize = ref('tabs')
         this.networkSearchUrl = this.curTable.url
         this.curTable.bytesColumnNameGroup = this.curTableInCode ? this.curTableInCode.bytesColumnNameGroup : []
@@ -1799,12 +1656,11 @@ export default {
         this.curTable.sessionsCycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsCycleColumnNameGroup : []
         this.columnNameGroup = this.curTable.bytesColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
-
-        this.setUserConfig()
       }
     }
     console.log('第一次存储默认配置到localstorage')
-    this.saveUserLocalConfig()
+    console.log(this.drillDownTableConfigs)
+    await this.saveUserLocalConfig()
     this.getChartData()
     this.$nextTick(() => {
       setTimeout(() => {
@@ -1813,15 +1669,13 @@ export default {
     })
   },
   setup (props) {
-    console.log('setup')
   },
-  unmounted () {
+  async unmounted () {
+    console.log('NetworkOverview类------unmounted方法：退出界面时，将修改的配置存储到localstorage')
     this.isNoData = false
+    console.log(this.customTableTitles)
     // 存储用户的设置
-    // this.setUserConfig()
-    this.saveUserLocalConfig()
-    console.log('退出界面时，将修改的配置存储到localstorage')
-    console.log('unmounted')
+    await this.saveUserLocalConfig()
   }
 }
 </script>
