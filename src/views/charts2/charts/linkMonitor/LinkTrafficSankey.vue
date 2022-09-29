@@ -14,10 +14,10 @@
       <div class="sankey__label" style="left: 5%;">External Locations</div>
       <div class="sankey__label" style="left: 35%;">Next-Hop Internets</div>
       <div class="sankey__label" style="left: 63%;">Links</div>
-      <div class="sankey__label" style="right: 9%; transform: translateX(50%)">Internets Locations</div>
+      <div class="sankey__label" style="right: 9%; transform: translateX(50%)">Internal Locations</div>
     </template>
     <template v-else-if="tab == 1 && !egress">
-      <div class="sankey__label" style="left: 5%;">Internets Locations</div>
+      <div class="sankey__label" style="left: 5%;">Internal Locations</div>
       <div class="sankey__label" style="left: 33.2%;">Links</div>
       <div class="sankey__label" style="left: 64.5%;">Next-Hop Internets</div>
       <div class="sankey__label" style="right: 9%; transform: translateX(50%)">External Locations</div>
