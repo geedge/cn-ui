@@ -18,11 +18,11 @@
         </div>
         <div v-for="(item, index2) in row.egress" :key="index2">
 
-          <el-popover :width="400" placement="right" trigger="hover">
+          <el-popover :width="415" placement="right" trigger="hover">
             <template #reference>
               <div class="data-item data-item__hover">
-                <div :class="row.egress[index2].scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
                 <div :class="row.egress[index2].usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
+                <div :class="row.egress[index2].scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
               </div>
             </template>
 
@@ -44,7 +44,7 @@
 
                 <div style="display: flex">
                   <div class="row-dot">
-                    <div :class="row.egress[index2].scoreLow3 ? 'red-dot':'green-dot'"></div>
+                    <div :class="row.egress[index2].usageMore90 ? 'red-dot':'green-dot'"></div>
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
@@ -85,7 +85,7 @@
 
                 <div style="display: flex">
                   <div class="row-dot">
-                    <div :class="row.egress[index2].usageMore90 ? 'red-dot':'green-dot'"></div>
+                    <div :class="row.egress[index2].scoreLow3 ? 'red-dot':'green-dot'"></div>
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">

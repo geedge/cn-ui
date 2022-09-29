@@ -62,6 +62,7 @@ export default {
           const linkData = res[0].data.result
           // 链路下一跳信息
           const nextLinkData = res[1].data.result
+          console.log('接口的下一跳数据', nextLinkData)
 
           // 链路流量数据
           const gridData = []
@@ -79,7 +80,7 @@ export default {
               const ingressUsage = this.computeUsage(d.ingressBytes, egressLink.bandwidth)
               // 宽带使用超过90%，赋红点
               d.usageMore90 = false
-              if (egressUsage >= 90 || ingressUsage >= 90) {
+              if (egressUsage >= 0.9 || ingressUsage >= 0.9) {
                 d.usageMore90 = true
               }
               // 计算npm分数
@@ -142,7 +143,7 @@ export default {
               const ingressUsage = this.computeUsage(d.ingressBytes, ingressBanwidth)
               // 宽带使用超过90%，赋红点
               d.usageMore90 = false
-              if (egressUsage >= 90 || ingressUsage >= 90) {
+              if (egressUsage >= 0.9 || ingressUsage >= 0.9) {
                 d.usageMore90 = true
               }
               // 计算npm分数
@@ -190,7 +191,11 @@ export default {
      * 计算上下行使用占比
      */
     computeUsage (e, bandwidth) {
-      return (e / bandwidth)
+      let usage = e / bandwidth
+      if (usage >= 1) {
+        usage = 1
+      }
+      return usage
     },
     /**
      * 本地计算npm分数
