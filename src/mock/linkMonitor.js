@@ -135,7 +135,7 @@ if (openMock) {
     const egressLinkIds = ['西安', '太原', '西宁']
     ingressLinkIds.forEach(ingress => {
       egressLinkIds.forEach(egress => {
-        data.push({ egressLinkDirection: egress, ingressLinkDirection: ingress, egressBytes: 12800000000, ingressBytes: 52800000000, totalBytes: 985412000, establishLatencyMs: 50, httpResponseLatency: 50, sslConLatency: 50, tcpLostlenPercent: 0.2, pktRetransPercent: 0.1 })
+        data.push({ egressLinkDirection: egress, ingressLinkDirection: ingress, egressBytes: 12800000000, ingressBytes: 52800000000, totalBytes: 98541200, establishLatencyMs: 50, httpResponseLatency: 50, sslConLatency: 50, tcpLostlenPercent: 0.2, pktRetransPercent: 0.1 })
       })
     })
     return {

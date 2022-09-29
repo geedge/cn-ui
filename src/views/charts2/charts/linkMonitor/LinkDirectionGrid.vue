@@ -190,7 +190,7 @@ export default {
      * 计算上下行使用占比
      */
     computeUsage (e, bandwidth) {
-      return Math.ceil((e / bandwidth) * 100)
+      return (e / bandwidth)
     },
     /**
      * 本地计算npm分数

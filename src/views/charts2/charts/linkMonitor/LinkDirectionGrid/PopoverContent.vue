@@ -18,7 +18,7 @@
         </div>
         <div v-for="(item, index2) in row.egress" :key="index2">
 
-          <el-popover :width="370" placement="right" trigger="hover">
+          <el-popover :width="400" placement="right" trigger="hover">
             <template #reference>
               <div class="data-item data-item__hover">
                 <div :class="row.egress[index2].scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
@@ -35,8 +35,8 @@
                 <svg class="icon item-popover-header-icon" aria-hidden="true">
                   <use xlink:href="#cn-icon-arrow-right2"></use>
                 </svg>
-                <span v-if="row.nextHop">{{ row.egress[index2].nextHop }}</span>
-                <span v-else>{{ row.linkId }}</span>
+                <span v-if="row.nextHop">{{ row.egress[index2].egressLinkDirection }}</span>
+                <span v-else>{{ row.egress[index2].linkId }}</span>
               </div>
 
               <div class="item-popover-block">
@@ -55,13 +55,15 @@
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
                           </svg>
-                          {{ row.egress[index2].egressUsage }}%
+<!--                          {{ row.egress[index2].egressUsage }}%-->
+                          {{ unitConvert(row.egress[index2].egressUsage, unitTypes.percent).join('') }}
                         </div>
                         <div>
                           <svg class="icon item-popover-down" aria-hidden="true">
                             <use xlink:href="#cn-icon-ingress"></use>
                           </svg>
-                          {{ row.egress[index2].ingressUsage }}%
+<!--                          {{ row.egress[index2].ingressUsage }}%-->
+                          {{ unitConvert(row.egress[index2].ingressUsage, unitTypes.percent).join('') }}
                         </div>
                       </div>
                     </div>
@@ -70,7 +72,8 @@
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
                       <div class="block-content-item-value">
-                        {{ row.egress[index2].totalBytes / 1000 }}Mbps
+<!--                        {{row.egress[index2].totalBytes}}-->
+                        {{unitConvert(row.egress[index2].totalBytes, unitTypes.bps).join('')}}
                       </div>
                     </div>
                   </div>
@@ -95,35 +98,38 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[0].name) }}</div>
                       <div class="block-content-item-value">
-                        {{ row.egress[index2].establishLatencyMs }}ms
+<!--                        {{ row.egress[index2].establishLatencyMs }}ms-->
+                        {{ unitConvert(row.egress[index2].establishLatencyMs, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[1].name) }}</div>
                       <div class="block-content-item-value">
-                        {{ row.egress[index2].httpResponseLatency }}ms
+<!--                        {{ row.egress[index2].httpResponseLatency }}ms-->
+                        {{ unitConvert(row.egress[index2].httpResponseLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[2].name) }}</div>
                       <div class="block-content-item-value">
-                        {{ row.egress[index2].sslConLatency }}ms
+<!--                        {{ row.egress[index2].sslConLatency }}ms-->
+                        {{ unitConvert(row.egress[index2].sslConLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[3].name) }}</div>
                       <div class="block-content-item-value">
-                        {{ row.egress[index2].tcpLostlenPercent * 100 }}%
+                        {{ unitConvert(row.egress[index2].tcpLostlenPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[4].name) }}</div>
                       <div class="block-content-item-value">
-                        {{ row.egress[index2].pktRetransPercent * 100 }}%
+                        {{ unitConvert(row.egress[index2].pktRetransPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
                   </div>
@@ -140,6 +146,8 @@
 </template>
 
 <script>
+import unitConvert from '@/utils/unit-convert'
+import { unitTypes } from '@/utils/constants'
 export default {
   name: 'PopoverContent',
   props: {
@@ -147,6 +155,8 @@ export default {
   },
   data () {
     return {
+      unitConvert,
+      unitTypes,
       npmNetworkName: [
         { name: 'networkAppPerformance.tcpConnectionEstablishLatency' },
         { name: 'networkAppPerformance.httpResponse' },
