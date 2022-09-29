@@ -20,7 +20,7 @@
         <div class="app-card-title">
           <div class="app-card-title-name">
             <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'"></i>
-            <span @click="drillDownData(app.type,app.name)">{{app.name}}</span>
+            <span @click="drillDownData(app.type, app.name)">{{app.name}}</span>
           </div>
           <div class="app-card-title-more" v-ele-click-outside="clickOutSide">
             <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app)"></i></span>
@@ -52,7 +52,7 @@
               <div>{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
             </div>
           </div>
-          <div class="chart__drawing" :id="`chart-${app.name}-${app.type}`"></div>
+          <div class="chart__drawing" v-show="!isNoData" :id="`chart-${app.name}-${app.type}`"></div>
         </div>
       </div>
       <div class="app-card app-card--create">
@@ -272,6 +272,7 @@ export default {
     handleData (prevRequest, request, _t) {
       this.toggleLoading(true)
       Promise.all([prevRequest, request]).then(res => {
+        this.isNoData = (res[0].data.result.length && res[1].data.result.length) === 0
         if (res[0].code === 200 && res[1].code === 200) {
           const prevData = res[0].data.result
           const data = res[1].data.result
@@ -301,6 +302,9 @@ export default {
             }
           })
         }
+      }).catch(e => {
+        console.error(e)
+        this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)
       })
