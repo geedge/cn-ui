@@ -144,13 +144,13 @@ export default {
         const bytes = tab == 0 ? t.ingressBytes : t.egressBytes
         if (tab == 0) {
           clientCity.push({
-            source: t.serverCity,
+            source: t.clientCity,
             target: LinkDirectionShow,
             commonEgressLinkId: t.commonEgressLinkId,
-            clientCity: t.clientCity,
+            serverCity: t.serverCity,
             value: bytes,
             bandWidth: t.bandWidth,
-            depth: 2
+            depth: 0
           })
           linkDirection.push({
             clientCity: t.clientCity,
@@ -162,13 +162,13 @@ export default {
             depth: 1
           })
           commonEgressLinkId.push({
-            serverCity: t.serverCity,
+            clientCity: t.clientCity,
             LinkDirectionShow: LinkDirectionShow,
             source: t.commonEgressLinkId,
-            target: t.clientCity,
+            target: t.serverCity,
             value: bytes,
             bandWidth: t.bandWidth,
-            depth: 0
+            depth: 2
           })
         } else {
           clientCity.push({
@@ -236,23 +236,23 @@ export default {
         let value = 0
         if (param.data.depth === 0) {
           if (tab == 0) {
-            data = ` ${param.data.target} > ${param.data.source} > ${param.data.LinkDirectionShow} > ${param.data.serverCity}`
+            data = ` ${param.data.source} > ${param.data.target} > ${param.data.commonEgressLinkId} > ${param.data.serverCity}`
           } else {
             data = `${param.data.source} > ${param.data.target} > ${param.data.LinkDirectionShow} > ${param.data.serverCity}`
           }
           value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
         } else if (param.data.depth === 1) {
           if (tab == 0) {
-            data = `${param.data.clientCity} > ${param.data.target} > ${param.data.source} > ${param.data.serverCity}`
+            data = `${param.data.clientCity} > ${param.data.source} > ${param.data.target} > ${param.data.serverCity}`
           } else {
             data = `${param.data.clientCity} > ${param.data.source} > ${param.data.target} > ${param.data.serverCity}`
           }
           value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
         } else if (param.data.depth === 2) {
           if (tab == 0) {
-            data = `${param.data.clientCity} > ${param.data.commonEgressLinkId} > ${param.data.target} > ${param.data.source}`
+            data = `${param.data.clientCity} > ${param.data.LinkDirectionShow} > ${param.data.source} > ${param.data.target}`
           } else {
-            data = ` ${param.data.clientCity} > ${param.data.commonEgressLinkId}>${param.data.source} > ${param.data.target}`
+            data = ` ${param.data.clientCity} > ${param.data.commonEgressLinkId} > ${param.data.source} > ${param.data.target}`
           }
           value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
         }
