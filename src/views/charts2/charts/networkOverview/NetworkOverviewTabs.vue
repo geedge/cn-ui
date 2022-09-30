@@ -857,7 +857,6 @@ export default {
         this.list = metricTab ? metricTab.tabs : []
         this.networkTabList = metricTab ? metricTab.tabs : []
         this.combineTabList(this.list)
-        // this.allList = this.$_.cloneDeep(this.list)//备份所有配置，下钻及返回时使用
         const curTabData = this.list.find(item => item.label === label)
         this.combineColumnList(curTabData.label)
       }
@@ -1439,29 +1438,33 @@ export default {
         tabList.forEach(tab => {
           const drilldownTabFull = []
           tab.drilldownTabs.forEach(drilldownTab => {
-            const drilldownTabName = drilldownTab ? (drilldownTab.name ? drilldownTab.name : drilldownTab) : ''
-            const fullTab = oldList.find(item => item.name === drilldownTabName)
-            if (fullTab) {
-              const commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
-              fullTab.label = commonTab ? commonTab.i18n : ''
-              fullTab.prop = commonTab ? commonTab.prop : ''
-              if (!fullTab.hasOwnProperty('panelId') || fullTab.panelId === undefined || tab.panelId === null) {
-                fullTab.panelId = tab ? tab.panelIdOfFourthMenu : ''
+            if (!drilldownTab.hasOwnProperty('name') || drilldownTab.name === undefined || drilldownTab.name === null) {
+              const drilldownTabName = drilldownTab || ''
+              const fullTab = oldList.find(item => item.name === drilldownTabName)
+              if (fullTab) {
+                const commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
+                fullTab.label = commonTab ? commonTab.i18n : ''
+                fullTab.prop = commonTab ? commonTab.prop : ''
+                if (!fullTab.hasOwnProperty('panelId') || fullTab.panelId === undefined || tab.panelId === null) {
+                  fullTab.panelId = tab ? tab.panelIdOfFourthMenu : ''
+                }
+                if (!fullTab.hasOwnProperty('checked') || fullTab.checked === undefined || tab.checked === null) {
+                  fullTab.checked = !((tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0))
+                }
+                if (!fullTab.hasOwnProperty('disabled') || fullTab.disabled === undefined || tab.disabled === null) {
+                  fullTab.disabled = (tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
+                }
+                // 代码里写死的
+                const tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
+                fullTab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
+                fullTab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+                drilldownTabFull.push(fullTab)
               }
-              if (!fullTab.hasOwnProperty('checked') || fullTab.checked === undefined || tab.checked === null) {
-                fullTab.checked = !((tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0))
-              }
-              if (!fullTab.hasOwnProperty('disabled') || fullTab.disabled === undefined || tab.disabled === null) {
-                fullTab.disabled = (tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
-              }
-              // 代码里写死的
-              const tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
-              fullTab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
-              fullTab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
-              drilldownTabFull.push(fullTab)
             }
           })
-          tab.drilldownTabs = drilldownTabFull
+          if (drilldownTabFull.length > 0) {
+            tab.drilldownTabs = drilldownTabFull
+          }
         })
       }
     },
