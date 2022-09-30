@@ -135,15 +135,16 @@ export default {
       if (!val) {
         val = this.metricFilter
       }
+      debugger
       // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      if (this.queryCondition.indexOf('OR') > -1) {
+      const type = this.dimensionType
+      if (this.queryCondition.indexOf('OR') > -1 && type !== 'protocolPort') {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
         condition = this.queryCondition
       }
       // const type = this.$store.getters.getDimensionType
-      const type = this.dimensionType
       if (this.chartData.id === 24) {
         this.side = 'client'
       } else if (this.chartData.id === 29) {
