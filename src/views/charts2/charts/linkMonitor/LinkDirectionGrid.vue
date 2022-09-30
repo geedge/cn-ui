@@ -62,7 +62,6 @@ export default {
           const linkData = res[0].data.result
           // 链路下一跳信息
           const nextLinkData = res[1].data.result
-          console.log('接口的下一跳数据', nextLinkData)
 
           // 链路流量数据
           const gridData = []
@@ -77,7 +76,7 @@ export default {
               // 上行使用情况计算
               const egressUsage = this.computeUsage(d.egressBytes, egressLink.bandwidth)
               // 下行使用情况计算
-              const ingressUsage = this.computeUsage(d.ingressBytes, egressLink.bandwidth)
+              const ingressUsage = this.computeUsage(d.ingressBytes, ingressLink.bandwidth)
               // 宽带使用超过90%，赋红点
               d.usageMore90 = false
               if (egressUsage >= 0.9 || ingressUsage >= 0.9) {
@@ -116,7 +115,7 @@ export default {
               }
             }
           })
-          console.log('左侧出入链路数据', gridData)
+
           this.gridData = gridData
 
           nextLinkData.forEach(d => {
@@ -182,7 +181,6 @@ export default {
               }
             }
           })
-          console.log('右侧下一跳数据', gridData2)
           this.gridData2 = gridData2
         }
       })

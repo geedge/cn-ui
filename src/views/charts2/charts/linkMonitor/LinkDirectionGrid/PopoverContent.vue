@@ -55,14 +55,12 @@
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
                           </svg>
-<!--                          {{ row.egress[index2].egressUsage }}%-->
                           {{ unitConvert(row.egress[index2].egressUsage, unitTypes.percent).join('') }}
                         </div>
                         <div>
                           <svg class="icon item-popover-down" aria-hidden="true">
                             <use xlink:href="#cn-icon-ingress"></use>
                           </svg>
-<!--                          {{ row.egress[index2].ingressUsage }}%-->
                           {{ unitConvert(row.egress[index2].ingressUsage, unitTypes.percent).join('') }}
                         </div>
                       </div>

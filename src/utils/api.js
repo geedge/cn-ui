@@ -206,8 +206,13 @@ export const api = {
     quadrupleEgressAnalysis: '/interface/link/overview/quadrupleEgressAnalysis', // 出口
     bigramAnalysis: '/interface/link/overview/bigramAnalysis',
     bigramNextHopAnalysis: '/interface/link/overview/bigramNextHopAnalysis',
+    analysis: '/interface/link/overview/analysis',
+    nextHopAnalysis: '/interface/link/overview/nextHopAnalysis',
+    // todo 以下几个接口因接口返回数据为空，故造模拟接口平替
     bigramAnalysis1: 'interface/linkMonitor/bigramAnalysis1',
-    bigramNextHopAnalysis1: '/interface/linkMonitor/bigramNextHopAnalysis1'
+    bigramNextHopAnalysis1: '/interface/linkMonitor/bigramNextHopAnalysis1',
+    analysis1: '/interface/linkMonitor/analysis1',
+    nextHopAnalysis1: '/interface/linkMonitor/nextHopAnalysis1'
   },
   dnsInsight: {
     recentEvents: '/interface/dnsInsight/recentEvents',

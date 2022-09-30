@@ -146,4 +146,34 @@ if (openMock) {
       }
     }
   })
+
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/analysis1.*'), 'get', function (requestObj) {
+    const linkData = []
+    for (let i = 0; i < 10; i++) {
+      linkData.push({ linkId: 'Hundredgige' + (i + 1), egressBytes: Math.floor(Math.pow(1.3, i) * 1000000000), ingressBytes: Math.floor(Math.pow(1.5, i) * 1000000000) })
+    }
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: linkData
+      }
+    }
+  })
+
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/nextHopAnalysis1.*'), 'get', function (requestObj) {
+    const linkData = [
+      { linkDirection: '西安', egressBytes: 1024000000000, ingressBytes: 1224000000000 },
+      { linkDirection: '太原', egressBytes: 102400000000, ingressBytes: 142400000000 },
+      { linkDirection: '西宁', egressBytes: 1024000000, ingressBytes: 1024000000 }
+    ]
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: linkData
+      }
+    }
+  })
 }
