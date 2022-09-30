@@ -135,7 +135,6 @@ export default {
       if (!val) {
         val = this.metricFilter
       }
-      debugger
       // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
       const type = this.dimensionType
