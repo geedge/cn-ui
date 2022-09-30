@@ -138,7 +138,7 @@ export default {
       // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
       const type = this.dimensionType
-      if (this.queryCondition.indexOf('OR') > -1 && type !== 'protocolPort') {
+      if (this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
         condition = this.queryCondition

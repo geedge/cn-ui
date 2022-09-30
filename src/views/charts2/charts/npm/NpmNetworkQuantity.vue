@@ -60,7 +60,7 @@ export default {
     npmNetworkCycleQuery () {
       // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      if (this.queryCondition.indexOf('OR') > -1) {
+      if (this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
         condition = this.queryCondition
@@ -127,15 +127,14 @@ export default {
       }
     },
     npmNetworkLastCycleQuery () {
-      const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      if (conditionStr.indexOf('OR') > -1) {
-        condition = conditionStr.split(/["|'](.*?)["|']/)
+      if (this.queryCondition.indexOf(' OR ') > -1) {
+        condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
-        condition = conditionStr
+        condition = this.queryCondition
       }
       // const type = this.$store.getters.getDimensionType
-      const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
+      const type = this.dimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
