@@ -161,7 +161,8 @@ export default {
         { label: 'network.inbound', prop: 'inbound' }
       ],
       isNoData: false,
-      curTabState: curTabState
+      curTabState: curTabState,
+      urlChangeParams: {}
     }
   },
   components: {
@@ -259,62 +260,47 @@ export default {
         return this.$route.query[param] ? this.$route.query[param] : defaultValue
       }
     },
-    drillDownData (key) {
+    async drillDownData (key) {
       const value = npmCategoryToAppCategoryMap[key]
       const tabType = 'network.applicationCategories'
-      // const oldCurTab = this.$store.getters.getNetworkOverviewBeforeTab
       const oldCurTab = this.getUrlParam(this.curTabState.networkOverviewBeforeTab, '')
-      // const curTable = networkTable.networkOverview
       const curTable = networkTable.networkAppPerformance
-      // const list = this.$store.getters.getNetworkOverviewTabList
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
       const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
-      const list = getUserDrilldownTableConfig(tableType, metric)
+      const list = await getUserDrilldownTableConfig(tableType, metric)
       const tabGroup = list.filter(item => item.label === tabType)
       if (tabGroup && tabGroup.length > 0) {
-        // this.$store.commit('setNetworkOverviewBeforeTab', tabGroup[0])
-        this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, tabGroup[0].prop)
+        this.urlChangeParams[this.curTabState.networkOverviewBeforeTab] = tabGroup[0].prop
       }
-      // this.$store.commit('setTabOperationBeforeType', this.$store.getters.getTabOperationType)
-      // this.$store.commit('setTabOperationType', operationType.fourthMenu)
-      this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
-      this.changeUrlTabState(this.curTabState.tabOperationType, operationType.fourthMenu)
+      this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
+      this.urlChangeParams[this.curTabState.tabOperationType] = operationType.fourthMenu
 
       const queryCondition = []
       const searchProps = tabGroup[0].dillDownProp
       searchProps.forEach(item => {
         queryCondition.push(item + "='" + value + "'")
       })
-      // this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
-      this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' OR '))
+      this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
 
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
             menu.columnName = tabType
             menu.columnValue = value
-            // this.$store.commit('setPanelName', value)
-            this.changeUrlTabState(this.curTabState.panelName, value)
-            // this.$store.commit('setBreadcrumbColumnName', tabType)
-            this.changeUrlTabState(this.curTabState.thirdMenu, tabType)
-            // this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
-            this.changeUrlTabState(this.curTabState.dimensionType, tabGroup[0] ? tabGroup[0].prop : '')
-            // this.$store.commit('setBreadcrumbColumnValue', value)
-            this.changeUrlTabState(this.curTabState.fourthMenu, value)
+            this.urlChangeParams[this.curTabState.panelName] = value
+            this.urlChangeParams[this.curTabState.thirdMenu] = tabType
+            this.urlChangeParams[this.curTabState.dimensionType] = tabGroup[0] ? tabGroup[0].prop : ''
+            this.urlChangeParams[this.curTabState.fourthMenu] = value
           }
         } else if (!this.$_.isEmpty(menu.children)) {
           menu.children.forEach(child => {
             if (this.$route.path === child.route) {
               child.columnName = tabType
               child.columnValue = value
-              // this.$store.commit('setPanelName', value)
-              this.changeUrlTabState(this.curTabState.panelName, value)
-              // this.$store.commit('setBreadcrumbColumnName', tabType)
-              this.changeUrlTabState(this.curTabState.thirdMenu, tabType)
-              // this.$store.commit('setDimensionType', tabGroup[0] ? tabGroup[0].prop : '')
-              this.changeUrlTabState(this.curTabState.dimensionType, tabGroup[0] ? tabGroup[0].prop : '')
-              // this.$store.commit('setBreadcrumbColumnValue', value)
-              this.changeUrlTabState(this.curTabState.fourthMenu, value)
+              this.urlChangeParams[this.curTabState.panelName] = value
+              this.urlChangeParams[this.curTabState.thirdMenu] = tabType
+              this.urlChangeParams[this.curTabState.dimensionType] = tabGroup[0] ? tabGroup[0].prop : ''
+              this.urlChangeParams[this.curTabState.fourthMenu] = value
             }
           })
         }
@@ -333,8 +319,9 @@ export default {
       const tabObjGroup = list.filter(item => item.checked)
       if (tabObjGroup && tabObjGroup.length > 0) {
         const curTab = tabObjGroup[0]
-        this.changeUrlTabState(this.curTabState.curTab, curTab)
+        this.urlChangeParams[this.curTabState.curTab] = curTab
       }
+      this.changeUrlTabState()
       this.$router.push({
         query: {
           ...this.$route.query,
@@ -343,13 +330,13 @@ export default {
         }
       })
     },
-    // tab改变
-    changeUrlTabState (param, value) {
-      const { query } = this.$route
-      const newQuery = {}
-      newQuery[param] = value
-      const newUrl = urlParamsHandler(window.location.href, query, newQuery)
-      overwriteUrl(newUrl)
+    changeUrlTabState () {
+      if (this.urlChangeParams && JSON.stringify(this.urlChangeParams) !== '{}') {
+        const { query } = this.$route
+        const newUrl = urlParamsHandler(window.location.href, query, this.urlChangeParams)
+        overwriteUrl(newUrl)
+      }
+      this.urlChangeParams = {}
     }
   },
   mounted () {

@@ -232,7 +232,8 @@ export default {
         }
       ],
       curPageNum: 1,
-      curTabState: curTabState
+      curTabState: curTabState,
+      urlChangeParams: {}
     }
   },
   computed: {
@@ -419,18 +420,16 @@ export default {
               queryCondition.push('common_server_port=' + valueGroup[1])
             }
             console.log(queryCondition.join(' AND '))
-            // this.$store.commit('setQueryCondition', queryCondition.join(' AND '))
-            this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' AND '))
+            this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
           } else {
             searchProps.forEach(item => {
               queryCondition.push(item + "='" + value + "'")
             })
-            // this.$store.commit('setQueryCondition', queryCondition.join(' OR '))
-            this.changeUrlTabState(this.curTabState.queryCondition, queryCondition.join(' OR '))
+            this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
           }
         }
       }
-
+      this.changeUrlTabState()
       this.jump(this.path, columnName, value, operationType.fourthMenu)
     },
     shrink () {
@@ -452,12 +451,13 @@ export default {
         }
       })
     },
-    changeUrlTabState (param, value) {
-      const { query } = this.$route
-      const newQuery = {}
-      newQuery[param] = value
-      const newUrl = urlParamsHandler(window.location.href, query, newQuery)
-      overwriteUrl(newUrl)
+    changeUrlTabState () {
+      if (this.urlChangeParams && JSON.stringify(this.urlChangeParams) !== '{}') {
+        const { query } = this.$route
+        const newUrl = urlParamsHandler(window.location.href, query, this.urlChangeParams)
+        overwriteUrl(newUrl)
+      }
+      this.urlChangeParams = {}
     },
     async handleCurDrilldownTableConfig (thirdMenu, fourthMenu) {
       console.log('handleCurDrilldownTableConfig--------------')
@@ -504,14 +504,14 @@ export default {
       console.log('当前测试。。。。。。。。。。。')
       console.log(this.$_.cloneDeep(drillDownTableConfigs))
     },
-    async jump (route, columnName, columnValue, opeType) {
+    jump (route, columnName, columnValue, opeType) {
       this.showMenu = false
       const menus = this.breadcrumb
       if (opeType) {
-        this.changeUrlTabState(this.curTabState.tabOperationBeforeType, this.getUrlParam(this.curTabState.tabOperationType, '', true))
-        this.changeUrlTabState(this.curTabState.tabOperationType, opeType)
+        this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
+        this.urlChangeParams[this.curTabState.tabOperationType] = opeType
       } else {
-        this.changeUrlTabState(this.curTabState.tabOperationType, operationType.mainMenu)
+        this.urlChangeParams[this.curTabState.tabOperationType] = operationType.mainMenu
       }
       if (!columnName) { // 点击第二级菜单
         this.$store.commit('setNetworkOverviewTabList', [])
@@ -525,68 +525,39 @@ export default {
               if (columnValue) { // 点击的为值
                 child.columnValue = columnValue
                 child.columnName = columnName
-                // this.$store.commit('setBreadcrumbColumnValue', columnValue)
-                // this.$store.commit('setBreadcrumbColumnName', columnName)
-                this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
-                this.changeUrlTabState(this.curTabState.fourthMenu, columnValue)
+                this.urlChangeParams[this.curTabState.thirdMenu] = columnName
+                this.urlChangeParams[this.curTabState.fourthMenu] = columnValue
                 const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
                 const type = tabObjGroup && tabObjGroup[0] ? tabObjGroup[0].prop : ''
-                // this.$store.commit('setDimensionType', type)
-                this.changeUrlTabState(this.curTabState.dimensionType, type)
-                // this.$store.commit('setPanelName', columnValue)
-                this.changeUrlTabState(this.curTabState.panelName, columnValue)
+                this.urlChangeParams[this.curTabState.dimensionType] = type
+                this.urlChangeParams[this.curTabState.panelName] = columnValue
               } else if (columnName) { // 点击的为列名
                 child.columnValue = ''
                 child.columnName = columnName
-                // this.$store.commit('setBreadcrumbColumnValue', '')
-                // this.$store.commit('setBreadcrumbColumnName', columnName)
-                this.changeUrlTabState(this.curTabState.thirdMenu, columnName)
-                this.changeUrlTabState(this.curTabState.fourthMenu, '')
-                // this.$store.commit('setPanelName', columnName)
-                this.changeUrlTabState(this.curTabState.panelName, columnName)
+                this.urlChangeParams[this.curTabState.thirdMenu] = columnName
+                this.urlChangeParams[this.curTabState.fourthMenu] = ''
+                this.urlChangeParams[this.curTabState.panelName] = columnName
                 const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
                 const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
                 const curTab = getDefaultCurTab(tableType, metric, columnName)
-                this.changeUrlTabState(this.curTabState.curTab, curTab.prop)
-                // this.$store.commit('setDimensionType', curTab ? curTab.prop : '')
-                this.changeUrlTabState(this.curTabState.dimensionType, curTab ? curTab.prop : '')
-                // this.$store.commit('setQueryCondition', '')
-                this.changeUrlTabState(this.curTabState.queryCondition, '')
-                // this.$store.commit('setNetworkOverviewBeforeTab', null)
-                this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, '')
+                this.urlChangeParams[this.curTabState.curTab] = curTab.prop
+                this.urlChangeParams[this.curTabState.dimensionType] = curTab ? curTab.prop : ''
+                this.$_.omit(this.urlChangeParams, [this.curTabState.queryCondition, this.curTabState.networkOverviewBeforeTab])
               } else {
                 child.columnName = ''
                 child.columnValue = ''
-                // this.$store.commit('setBreadcrumbColumnValue', '')
-                // this.$store.commit('setBreadcrumbColumnName', '')
-                this.changeUrlTabState(this.curTabState.thirdPanel, '')
-                this.changeUrlTabState(this.curTabState.fourthPanel, '')
-                this.changeUrlTabState(this.curTabState.thirdMenu, '')
-                this.changeUrlTabState(this.curTabState.fourthMenu, '')
-                // this.$store.commit('setDimensionType', '')
-                this.changeUrlTabState(this.curTabState.dimensionType, '')
-                // this.$store.commit('setPanelName', '')
-                this.changeUrlTabState(this.curTabState.panelName, '')
-                // this.$store.commit('setBreadcrumbColumnValueList', [])
-                this.changeUrlTabState(this.curTabState.curTab, null)
-                // this.$store.commit('setQueryCondition', '')
-                this.changeUrlTabState(this.curTabState.queryCondition, '')
-                // this.$store.commit('setNetworkOverviewBeforeTab', null)
-                this.changeUrlTabState(this.curTabState.networkOverviewBeforeTab, '')
+                this.$_.omit(this.urlChangeParams, [this.curTabState.thirdPanel, this.curTabState.fourthPanel, this.curTabState.thirdMenu, this.curTabState.fourthMenu, this.curTabState.dimensionType, this.curTabState.panelName, this.curTabState.curTab, this.curTabState.queryCondition, this.curTabState.networkOverviewBeforeTab])
               }
             }
           })
         }
       })
-      // console.log(this.$store.getters.getDimensionType)
+      this.changeUrlTabState()
       if (opeType === 2 || opeType === 0) { // 二级菜单 或主菜单
         // 如果有四级菜单，则将四级菜单对应tab的checked设置为true:根据columnName和columnValue 或 url判断不准确
         if (menus[3]) {
-          await this.handleCurDrilldownTableConfig(this.breadcrumb[2], this.breadcrumb[3])
+          this.handleCurDrilldownTableConfig(this.breadcrumb[2], this.breadcrumb[3])
         }
-        console.log('后面   handleCurDrilldownTableConfig')
-        // let path = this.$route.path; //先获取路由路径
-        // this.$router.push(path); //再跳转路由路径，query参数没带过去，所以被清除了
         this.$router.push({
           path: route,
           query: {
