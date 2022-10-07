@@ -1005,3 +1005,15 @@ export function colorGradientCalculation (startColor, endColor, values) {
 export function colorHexToRgbArr (hex) {
   return [1, 3, 5].map((h) => parseInt(hex.substring(h, h + 2), 16))
 }
+
+export function setHistory (to) {
+  const historyJson = sessionStorage.getItem(storageKey.history)
+  const query = { ...to.query, t: new Date().getTime() }
+  if (historyJson) {
+    const history = JSON.parse(historyJson)
+    history.history.push({ path: to.path, query: query })
+    sessionStorage.setItem(storageKey.history, JSON.stringify(history))
+  } else {
+    sessionStorage.setItem(storageKey.history, JSON.stringify({ index: 0, history: [query] }))
+  }
+}

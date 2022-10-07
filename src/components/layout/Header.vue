@@ -73,10 +73,10 @@
             </div>
           </template>
           <template v-else-if="index===2">
-            <span class="route-menu" @click="jump(path,item,'',3)">{{$t(item)}}</span>
+            <span class="route-menu" @click="jump(route,item,'',3)">{{$t(item)}}</span>
           </template>
           <template v-else-if="index===1">
-            <span class="route-menu" @click="jump(path,'','',2)" v-if="route.indexOf('detection') === -1">{{item}}</span>
+            <span class="route-menu" @click="jump(route,'','',2)" v-if="route.indexOf('detection') === -1">{{item}}</span>
             <div class="header__left-breadcrumb-item-select" v-if="route.indexOf('detection') > -1">
               <el-popover placement="bottom-start"
                           v-if="route.indexOf('detection') > -1"
@@ -178,14 +178,22 @@
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
-import { get, put } from '@/utils/http'
-import { entityType, storageKey, networkOverviewTabList, operationType, networkOverviewSearchUrl, curTabState, dbDrilldownTableConfig } from '@/utils/constants'
-import { api } from '@/utils/api'
-import { ref } from 'vue'
-import { urlParamsHandler, overwriteUrl, combineTabList, getTabList, getDefaultCurTab } from '@/utils/tools'
-import { getNowTime, getSecond } from '@/utils/date-util'
-import { db } from '@/indexedDB'
+import {useRoute} from 'vue-router'
+import {get, put} from '@/utils/http'
+import {
+  curTabState,
+  dbDrilldownTableConfig,
+  entityType,
+  networkOverviewSearchUrl,
+  networkOverviewTabList,
+  operationType,
+  storageKey
+} from '@/utils/constants'
+import {api} from '@/utils/api'
+import {ref} from 'vue'
+import {combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler} from '@/utils/tools'
+import {getNowTime, getSecond} from '@/utils/date-util'
+import {db} from '@/indexedDB'
 
 export default {
   name: 'Header',
@@ -267,7 +275,7 @@ export default {
           })
         }
       })
-      const breadcrumb = breadcrumbMap.find(b => this.path === b.path)
+      const breadcrumb = breadcrumbMap.find(b => this.route === b.path)
       const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
       const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
       if (breadcrumb.columnValue) {
@@ -281,10 +289,6 @@ export default {
       } else {
         return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
       }
-    },
-    path () {
-      const { path } = useRoute()
-      return path
     },
     showEntityTypeSelector () {
       return this.$store.getters.getShowEntityTypeSelector
@@ -430,7 +434,7 @@ export default {
         }
       }
       this.changeUrlTabState()
-      this.jump(this.path, columnName, value, operationType.fourthMenu)
+      this.jump(this.route, columnName, value, operationType.fourthMenu)
     },
     shrink () {
       this.showMenu = !this.showMenu
@@ -465,16 +469,16 @@ export default {
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
 
       // 先从localStorage中获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
-      const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
+      const userLocalConfig = await db[dbDrilldownTableConfig].get({ id: userId })
       let drillDownTableConfigs = []
-      if (userLocalCongfig) {
-        drillDownTableConfigs = userLocalCongfig.config
+      if (userLocalConfig) {
+        drillDownTableConfigs = userLocalConfig.config
       }
       if (!drillDownTableConfigs || drillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
         console.log('default..............')
-        const defaultCongfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
-        if (defaultCongfig) {
-          drillDownTableConfigs = defaultCongfig.config
+        const defaultConfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
+        if (defaultConfig) {
+          drillDownTableConfigs = defaultConfig.config
         }
       }
       console.log(drillDownTableConfigs)
@@ -482,8 +486,7 @@ export default {
       const tables = currentTableConfig ? currentTableConfig.tables : []
       const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
       if (tables && tables.length > 0) {
-        const curTableOldConfig = tables.find(table => table.id === tableType)
-        const curTable = curTableOldConfig
+        const curTable = tables.find(table => table.id === tableType)
         if (curTable) {
           const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
           const tabList = getTabList(curTable, metric)// 未下钻的tab列表
@@ -558,32 +561,36 @@ export default {
         if (menus[3]) {
           this.handleCurDrilldownTableConfig(this.breadcrumb[2], this.breadcrumb[3])
         }
-        this.$router.push({
+        /*this.$router.push({
           path: route,
           query: {
             t: +new Date()
           }
-        })
+        })*/
+        this.jumpAndCache(route, {})
       } else if (opeType === 3) {
-        this.$router.push({
+        /*this.$router.push({
           query: { ...this.$route.query, fourthPanel: '' }
-        })
+        })*/
+        this.jumpAndCache(route, { ...this.$route.query, fourthPanel: '' })
       } else if (opeType != 4) {
-        this.$router.push({
+        this.jumpAndCache(route, { ...this.$route.query, fourthPanel: '', thirdPanel: '' })
+        /*this.$router.push({
           query: { ...this.$route.query, fourthPanel: '', thirdPanel: '' }
-        })
+        })*/
       }
       if (route === this.route) {
         this.refresh()
         return
       }
       if (route) {
-        this.$router.push({
+        /*this.$router.push({
           path: route,
           query: {
             t: +new Date()
           }
-        })
+        })*/
+        this.jumpAndCache(route, {})
       }
     },
     dropDownSearch () {

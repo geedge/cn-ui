@@ -1,5 +1,6 @@
 import { hasButton } from '@/permission'
 import { dateFormatByAppearance } from '@/utils/date-util'
+import {storageKey} from '@/utils/constants'
 export default {
   data () {
     return {
@@ -41,6 +42,19 @@ export default {
     },
     dateFormatByAppearance (date) {
       return dateFormatByAppearance(date)
+    },
+    jumpAndCache (path, query) {
+      query.t = new Date().getTime()
+      const historyJSON = sessionStorage.getItem(storageKey.history)
+      if (history) {
+        const history = JSON.parse(historyJSON)
+        history.index = -1
+        sessionStorage.setItem(storageKey.history, JSON.stringify(history))
+        this.$router.push({
+          path: path,
+          query: query
+        })
+      }
     }
   }
 }

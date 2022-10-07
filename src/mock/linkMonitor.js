@@ -2,10 +2,13 @@ import Mock from 'mockjs'
 
 const openMock = true
 if (openMock) {
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/links.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/link/overview/analysis.*'), 'get', function (requestObj) {
     const linkData = []
+    const ingressLinkIds = ['256', '512', '768', '1024', '1280', '1536', '1792', '2048', '2304', '2816']
+    const egressLinkIds = ['257', '513', '769', '1025', '1281', '1537', '1793', '2049', '2305', '2817']
     for (let i = 0; i < 10; i++) {
-      linkData.push({ linkId: 20 * (i + 300), totalBitsRate: Math.floor(Math.pow(1.3, i) * 10000) })
+      linkData.push({ linkId: ingressLinkIds[i], egressBytes: Math.floor(Math.pow(1.11, i) * 10000000000), ingressBytes: Math.floor(Math.pow(1.1, i) * 10000000000) })
+      linkData.push({ linkId: egressLinkIds[i], egressBytes: Math.floor(Math.pow(1.2, i) * 10000000000), ingressBytes: Math.floor(Math.pow(1.15, i) * 10000000000) })
     }
     return {
       msg: 'success',

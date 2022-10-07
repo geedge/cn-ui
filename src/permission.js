@@ -2,7 +2,7 @@ import router from './router'
 import store from './store'
 import { ElMessage } from 'element-plus'
 import { getPermission } from '@/utils/api'
-import { loadGeoData } from '@/utils/tools'
+import { loadGeoData, setHistory } from '@/utils/tools'
 import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 import { loadI18n } from '@/i18n'
@@ -27,6 +27,7 @@ router.beforeEach(async (to, from, next) => {
     }
     // 加载权限
     if (permissionWhiteList.indexOf(to.path) !== -1) {
+      setHistory(to)
       next()
     } else {
       if (store.getters.menuList.length === 0) {
@@ -37,6 +38,7 @@ router.beforeEach(async (to, from, next) => {
       }
       if (to.path) {
         if (hasMenu(store.getters.menuList, to.path)) {
+          setHistory(to)
           next()
         } else {
           ElMessage.error('No access') // TODO 国际化

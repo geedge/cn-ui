@@ -30,14 +30,15 @@
                   @sort-change="((column) => {sortChange(column,tab.prop)})"
                   :key="index"
           >
-            <template v-for="(item,index) in customTableTitles">
+            <template v-for="(item, index) in customTableTitles">
               <el-table-column
                       v-if="item.checked"
-                      sortable="custom"
+                      :sortable="sortable(item)"
                       align="center"
                       :prop="item.prop"
                       class="data-column"
                       :ref="item.prop"
+                      :key="index"
               >
                 <template #header >
                   <span class="data-column__span" >{{$t(item.label)}}</span>
@@ -314,6 +315,10 @@ export default {
       } finally {
         this.changeUrlTabState()
       }
+    },
+    sortable (title) {
+      const excludeName = ['queriesFromIE']
+      return excludeName.indexOf(title.name) > -1 ? false : 'custom'
     },
     cancleSortArrow () {
       // 取消表格排序高亮的箭头
@@ -1144,13 +1149,10 @@ export default {
         }
       })
       this.changeUrlTabState()
-      this.$router.push({
-        query: {
-          ...this.$route.query,
-          thirdPanel: this.curTable.panelIdOfThirdMenu,
-          fourthPanel: toPanel,
-          time: +new Date()
-        }
+      this.jumpAndCache(this.$route.path, {
+        ...this.$route.query,
+        thirdPanel: this.curTable.panelIdOfThirdMenu,
+        fourthPanel: toPanel
       })
     },
     handleSearchParams (columnValue) {

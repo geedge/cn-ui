@@ -33,7 +33,8 @@ export const storageKey = {
   tokenExpireCurrentPath: 'token-expire-current-path',
   drillDownTableConfig: 'cn-drill-down-table-config',
   userCustomizationConfig: 'userCustomizationConfig',
-  linkInfo: 'cn-link-info'
+  linkInfo: 'cn-link-info',
+  history: 'cn-history'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
@@ -60,7 +61,7 @@ export const panelTypeAndRouteMapping = {
   cryptocurrency: 7,
   ipDrillDownTest: 8,
   linkMonitor: 14,
-  linkMonitorTest: 15
+  linkMonitorDrillDown: 15
 }
 
 /* operationLog state 执行状态属性 值与名称之间的映射 */
@@ -236,6 +237,14 @@ export const npmSearchUrl = {
   drilldownCycleUrl: '/interface/application/performance/overview/drilldown/dimensionCycleTrafficAnalysis',
   drilldownList: '/interface/overview/drilldown/list'
 }
+// dns:接口url（主URL）
+export const dnsSearchUrl = {
+  curUrl: '/interface/dns/overview/dimensionAnalysis',
+  cycleUrl: '/interface/dns/overview/dimensionCycleAnalysis',
+  drilldownCurUrl: '/interface/dns/overview/drilldown/dimensionAnalysis',
+  drilldownCycleUrl: '/interface/dns/overview/drilldown/dimensionCycleAnalysis',
+  drilldownList: '/interface/dns/overview/drilldown/list'
+}
 
 export const cycle = {
   current: 0,
@@ -356,7 +365,13 @@ export const customTableTitlesForAppPerformance = [
     isInMainUrl: false
   }
 ]
-
+export const customTableTitlesForDns = [
+  { label: 'dns.dnsServer', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
+  { label: 'dns.queries', prop: 'queryRate', checked: true, tabColumn: true, columnType: tableColumnType.chainRatio },
+  { label: 'dns.queriesFromIE', prop: 'totalInternalQueryNum,totalExternalQueryNum', checked: true, tabColumn: true, columnType: tableColumnType.normal },
+  { label: 'dns.dnsResponseTime', prop: 'dnsResponseLatencyAvg', checked: true, tabColumn: true, columnType: tableColumnType.normal },
+  { label: 'overall.throughput', prop: 'totalBytes', checked: true, tabColumn: true, columnType: tableColumnType.normal }
+]
 // NetworkOverview类型表格的列:prop 为接口响应数据中的属性名
 export const customTableTitlesForNetworkOverview = [
   { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
@@ -382,7 +397,10 @@ export const drillDownPanelTypeMapping = {
   npmOverviewApp: 10,
   npmOverviewCommon: 11,
   npmThirdMenu: 12,
-  networkOverview: 13
+  networkOverview: 13,
+  linkMonitor: 15,
+  dnsFourthMenu: 16,
+  dnsThirdMenu: 17
 }
 
 export const networkOverviewTabList = [
@@ -648,6 +666,134 @@ export const networkAppPerformanceTabList = [
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }
 ]
+export const dnsServiceInsightsTabList = [
+  {
+    label: 'dns.dnsServer', // tab名称对应的il8n
+    prop: 'dnsServer', // 接口返回数据中，tab第一列对应的属性名
+    queryCycleTotalProp: 'dnsServer', // SQL中查询不同纬度的列名称
+    dillDownProp: ['server_ip'], // 下钻时，传递的查询条件，即接口的q参数
+    checked: true, // 自定义设置中，是否默认选中
+    disabled: false, // 自定义设置中，是否可操作（选中或取消选中）
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu// 下钻后展示的panelId
+  },
+  {
+    label: 'network.countries',
+    prop: 'country',
+    queryCycleTotalProp: 'countries',
+    dillDownProp: ['server_country'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'network.cities',
+    prop: 'city',
+    queryCycleTotalProp: 'cities',
+    dillDownProp: ['server_city'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'dns.dnsServerIsps',
+    prop: 'dnsServerIsp',
+    queryCycleTotalProp: 'isps',
+    dillDownProp: ['server_isp'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'dns.dnsServerOrganizations',
+    prop: 'dnsServerOrganization',
+    queryCycleTotalProp: 'orgs',
+    dillDownProp: ['server_org'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'dns.dnsServerRoles',
+    prop: 'dnsServerRole',
+    queryCycleTotalProp: 'roles',
+    dillDownProp: ['server_role'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'QNames',
+    prop: 'dnsServerRole',
+    queryCycleTotalProp: 'qnames',
+    dillDownProp: ['qname'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'SLDs',
+    prop: 'sld',
+    queryCycleTotalProp: 'slds',
+    dillDownProp: ['qname_sld'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'TLDs',
+    prop: 'tld',
+    queryCycleTotalProp: 'tlds',
+    dillDownProp: ['qname_tld'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'QTypes',
+    prop: 'qtype',
+    queryCycleTotalProp: 'qtypes',
+    dillDownProp: ['qtype'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'RCodes',
+    prop: 'rcode',
+    queryCycleTotalProp: 'rcodes',
+    dillDownProp: ['rcode'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'A',
+    prop: 'a',
+    queryCycleTotalProp: 'a',
+    dillDownProp: ['rr_a'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'AAAA',
+    prop: 'aaaa',
+    queryCycleTotalProp: 'aaaa',
+    dillDownProp: ['rr_aaaa'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'CNames',
+    prop: 'cname',
+    queryCycleTotalProp: 'cnames',
+    dillDownProp: ['rr_cname'],
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  }
+]
 
 // 用于组织数据时的名称，对应的属性名称
 export const bytesColumnNameGroupForNpm = {
@@ -718,6 +864,15 @@ export const networkTable = {
     bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp,
     packetsCycleColumnNameGroup: {},
     sessionsCycleColumnNameGroup: {}
+  },
+  dnsServiceInsights: {
+    tabList: dnsServiceInsightsTabList,
+    column: customTableTitlesForDns,
+    url: dnsSearchUrl,
+    hasMetricSearch: false, // 是否有metric下拉列表
+    panelIdOfThirdMenu: drillDownPanelTypeMapping.npmThirdMenu,
+    bytesColumnNameGroup: bytesColumnNameGroupForNpm,
+    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp
   }
 }
 
