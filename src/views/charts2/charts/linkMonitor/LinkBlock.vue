@@ -53,7 +53,7 @@
             :key="index"
         >
           <template #reference>
-            <div class="block-list__block" :key="index">
+            <div class="block-list__block" :key="index" @click="drillLinkId(item)">
               <span class="block-hex">
                 <span class="block-hex-in" :style="`background-color: ${item.color}`"></span>
               </span>
@@ -104,7 +104,7 @@
             :key="index"
         >
           <template #reference>
-            <div class="block-list__block" :key="index">
+            <div class="block-list__block" :key="index" @click="drillNextHop(item)">
               <span class="block-hex">
                 <span class="block-hex-in" :style="`background-color: ${item.color}`"></span>
               </span>
@@ -153,7 +153,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { colorGradientCalculation } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
-import { storageKey, unitTypes } from '@/utils/constants'
+import {drillDownPanelTypeMapping, storageKey, unitTypes} from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
 
 export default {
@@ -201,18 +201,49 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
 
-      const dataRequest = get(api.linkMonitor.analysis1, params)
+      const dataRequest = get(api.linkMonitor.analysis, params)
       const nextHopRequest = get(api.linkMonitor.nextHopAnalysis1, params)
 
       Promise.all([dataRequest, nextHopRequest]).then(res => {
         if (res[0].code === 200 && res[1].code === 200) {
-          const data = res[0].data.result
+          const linkData = res[0].data.result
           const nextHopData = res[1].data.result
-          this.isNoData = data.length === 0
+          this.isNoData = linkData.length === 0 && nextHopData.length === 0
           if (this.isNoData) {
             return
           }
-
+          const data = []
+          linkData.forEach(d => {
+            const info = linkInfo.find(i => i.originalLinkId == d.linkId)
+            if (info) {
+              const hit = data.find(d => d.linkId === info.linkId)
+              if (hit) {
+                hit.egressBytes += d.egressBytes
+                hit.ingressBytes += d.ingressBytes
+                if (info.direction === 'egress') {
+                  hit.egressBandwidth = info.bandwidth
+                  hit.egressLinkId = d.linkId
+                } else if (info.direction === 'ingress') {
+                  hit.ingressBandwidth = info.bandwidth
+                  hit.ingressLinkId = d.linkId
+                }
+              } else {
+                const hit = {
+                  linkId: info.linkId,
+                  egressBytes: d.egressBytes,
+                  ingressBytes: d.ingressBytes
+                }
+                if (info.direction === 'egress') {
+                  hit.egressBandwidth = info.bandwidth
+                  hit.egressLinkId = d.linkId
+                } else if (info.direction === 'ingress') {
+                  hit.ingressBandwidth = info.bandwidth
+                  hit.ingressLinkId = d.linkId
+                }
+                data.push(hit)
+              }
+            }
+          })
           data.forEach((item) => {
             item.totalBitsRate = item.egressBytes + item.ingressBytes
           })
@@ -225,8 +256,9 @@ export default {
           const colors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
           sorted.forEach((s, i) => {
             s.color = colors[i]
-
-            const ingressLink = linkInfo.find(l => l.linkId === s.linkId && l.direction === 'ingress')
+            s.egressUsage = this.computeUsage(s.egressBytes, s.egressBandwidth)
+            s.ingressUsage = this.computeUsage(s.ingressBytes, s.ingressBandwidth)
+            /*const ingressLink = linkInfo.find(l => l.linkId === s.linkId && l.direction === 'ingress')
             const egressLink = linkInfo.find(l => l.linkId === s.linkId && l.direction === 'egress')
             if (ingressLink && egressLink) {
               // 上行使用情况计算
@@ -235,7 +267,7 @@ export default {
               const ingressUsage = this.computeUsage(s.ingressBytes, ingressLink.bandwidth)
               s.egressUsage = egressUsage
               s.ingressUsage = ingressUsage
-            }
+            }*/
           })
           this.linkData = sorted
 
@@ -279,6 +311,26 @@ export default {
         usage = 1
       }
       return usage
+    },
+    drillLinkId (item) {
+      const queryCondition = `common_egress_link_id = ${item.egressLinkId} AND common_ingress_link_id = ${item.ingressLinkId}`
+      this.jumpAndCache(this.$route.path, {
+        ...this.$route.query,
+        thirdPanel: drillDownPanelTypeMapping.linkMonitor,
+        thirdMenu: `Link ID: ${item.linkId}`,
+        panelName: `Link ID: ${item.linkId}`,
+        queryCondition
+      })
+    },
+    drillNextHop (item) {
+      const queryCondition = `egress_link_direction = '${item.linkDirection}' AND ingress_link_direction = '${item.linkDirection}'`
+      this.jumpAndCache(this.$route.path, {
+        ...this.$route.query,
+        thirdPanel: drillDownPanelTypeMapping.linkMonitor,
+        thirdMenu: `Link ID: ${item.linkDirection}`,
+        panelName: `Link ID: ${item.linkDirection}`,
+        queryCondition
+      })
     }
   }
 }
