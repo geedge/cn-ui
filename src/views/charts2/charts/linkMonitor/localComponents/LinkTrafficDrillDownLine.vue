@@ -1,7 +1,6 @@
 <template>
   <div class="line network link-traffic">
-    <chart-no-data v-if="isNoData"></chart-no-data>
-    <div class="line-header" v-else>
+    <div class="line-header">
       <div class="line-header-left">
         <div class="line-value-active" v-if="lineTab"></div>
         <div class="line-value">
@@ -43,7 +42,10 @@
         </div>
       </div>
     </div>
-    <div class="chart-drawing" v-show="showMarkLine && !isNoData" id="linkTrafficLineChart"></div>
+    <div style="height: calc(100% - 74px); position: relative">
+      <chart-no-data v-if="isNoData"></chart-no-data>
+      <div class="chart-drawing" v-show="showMarkLine && !isNoData" id="linkTrafficLineChart"></div>
+    </div>
   </div>
 </template>
 
