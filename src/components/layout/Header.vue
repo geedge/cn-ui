@@ -178,22 +178,23 @@
 </template>
 
 <script>
-import {useRoute} from 'vue-router'
-import {get, put} from '@/utils/http'
+import { useRoute } from 'vue-router'
+import { get, put } from '@/utils/http'
 import {
   curTabState,
   dbDrilldownTableConfig,
   entityType,
   networkOverviewSearchUrl,
   networkOverviewTabList,
+  networkTable,
   operationType,
   storageKey
 } from '@/utils/constants'
-import {api} from '@/utils/api'
-import {ref} from 'vue'
-import {combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler} from '@/utils/tools'
-import {getNowTime, getSecond} from '@/utils/date-util'
-import {db} from '@/indexedDB'
+import { api } from '@/utils/api'
+import { ref } from 'vue'
+import { combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getNowTime, getSecond } from '@/utils/date-util'
+import { db } from '@/indexedDB'
 
 export default {
   name: 'Header',
@@ -350,12 +351,12 @@ export default {
     },
     initDropdownList () {
       const currentValue = document.getElementById('breadcrumbValue') ? document.getElementById('breadcrumbValue').innerText : ''
-      // const columnName = this.$store.getters.getBreadcrumbColumnName
       const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
       let type = 'ip'
-      const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
-      if (tabObjGroup && tabObjGroup.length > 0) {
-        const curTab = tabObjGroup[0]
+      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
+      if (curTableInCode && curTableInCode.tabList) {
+        const curTab = curTableInCode.tabList.find(item => item.label == columnName)
         if (curTab) {
           type = curTab.prop
         }
@@ -367,7 +368,7 @@ export default {
         type: type,
         name: this.dropDownValue ? this.dropDownValue : ''
       }
-      get(networkOverviewSearchUrl.drilldownList, params).then(response => {
+      get(curTableInCode.url.drilldownList, params).then(response => {
         if (response.code === 200) {
           this.breadcrumbColumnValueListShow = response.data.result
           this.$nextTick(() => {
@@ -464,7 +465,6 @@ export default {
       this.urlChangeParams = {}
     },
     async handleCurDrilldownTableConfig (thirdMenu, fourthMenu) {
-      console.log('handleCurDrilldownTableConfig--------------')
       const userId = localStorage.getItem(storageKey.userId)
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
 
@@ -475,13 +475,11 @@ export default {
         drillDownTableConfigs = userLocalConfig.config
       }
       if (!drillDownTableConfigs || drillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
-        console.log('default..............')
         const defaultConfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
         if (defaultConfig) {
           drillDownTableConfigs = defaultConfig.config
         }
       }
-      console.log(drillDownTableConfigs)
       const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
       const tables = currentTableConfig ? currentTableConfig.tables : []
       const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
@@ -504,8 +502,6 @@ export default {
         id: userId,
         config: this.$_.cloneDeep(drillDownTableConfigs)
       })
-      console.log('当前测试。。。。。。。。。。。')
-      console.log(this.$_.cloneDeep(drillDownTableConfigs))
     },
     jump (route, columnName, columnValue, opeType) {
       this.showMenu = false
@@ -561,35 +557,35 @@ export default {
         if (menus[3]) {
           this.handleCurDrilldownTableConfig(this.breadcrumb[2], this.breadcrumb[3])
         }
-        /*this.$router.push({
+        /* this.$router.push({
           path: route,
           query: {
             t: +new Date()
           }
-        })*/
+        }) */
         this.jumpAndCache(route, {})
       } else if (opeType === 3) {
-        /*this.$router.push({
+        /* this.$router.push({
           query: { ...this.$route.query, fourthPanel: '' }
-        })*/
+        }) */
         this.jumpAndCache(route, { ...this.$route.query, fourthPanel: '' })
       } else if (opeType != 4) {
         this.jumpAndCache(route, { ...this.$route.query, fourthPanel: '', thirdPanel: '' })
-        /*this.$router.push({
+        /* this.$router.push({
           query: { ...this.$route.query, fourthPanel: '', thirdPanel: '' }
-        })*/
+        }) */
       }
       if (route === this.route) {
         this.refresh()
         return
       }
       if (route) {
-        /*this.$router.push({
+        /* this.$router.push({
           path: route,
           query: {
             t: +new Date()
           }
-        })*/
+        }) */
         this.jumpAndCache(route, {})
       }
     },

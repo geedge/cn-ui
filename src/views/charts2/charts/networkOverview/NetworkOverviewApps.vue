@@ -354,7 +354,6 @@ export default {
         })
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
 
-
         this.$store.getters.menuList.forEach(menu => {
           if (this.$_.isEmpty(menu.children) && menu.route) {
             if (this.$route.path === menu.route) {
@@ -364,7 +363,6 @@ export default {
               this.urlChangeParams[this.curTabState.thirdMenu] = tabType
               this.urlChangeParams[this.curTabState.dimensionType] = tabGroup[0] ? tabGroup[0].prop : ''
               this.urlChangeParams[this.curTabState.fourthMenu] = value
-
             }
           } else if (!this.$_.isEmpty(menu.children)) {
             menu.children.forEach(child => {
@@ -375,7 +373,6 @@ export default {
                 this.urlChangeParams[this.curTabState.thirdMenu] = tabType
                 this.urlChangeParams[this.curTabState.dimensionType] = tabGroup[0] ? tabGroup[0].prop : ''
                 this.urlChangeParams[this.curTabState.fourthMenu] = value
-
               }
             })
           }

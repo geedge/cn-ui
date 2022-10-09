@@ -70,6 +70,15 @@
                   <template v-else-if="item.columnType === tableColumnType.dillDown" >
                     <div class="data-click" @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
                   </template>
+                  <template v-else-if="item.columnType === tableColumnType.percent" >
+                    <div class="dns-in-ex">
+                      <div class="dns-percent-pic" >
+                        <div v-if="scope.row[item.prop][0] !== false && scope.row[item.prop][0]>0" class="div-green" id="green" :style="`width:${scope.row[item.prop][0]}`"></div>
+                        <div v-if="scope.row[item.prop][0] !== false && scope.row[item.prop][1]>0" class="div-yellow" id="div-yellow" :style="`width:${scope.row[item.prop][1]}`"></div>
+                      </div>
+                      <div class="dns-percent" >{{scope.row[item.prop][2]}}</div>
+                    </div>
+                  </template>
                   <template v-else-if="item.prop === 'score'" >
                     {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                   </template>
@@ -314,6 +323,7 @@ export default {
         console.error(e)
       } finally {
         this.changeUrlTabState()
+        this.toggleLoading(false)
       }
     },
     sortable (title) {
@@ -516,7 +526,31 @@ export default {
         tabList.push(item[curTab.prop])
         const otherData = { tab: item[curTab.prop] }
         Object.keys(this.columnNameGroup).forEach(i => {
-          otherData[i] = item[this.columnNameGroup[i]]
+          const propName = this.columnNameGroup[i]
+          const column = this.customTableTitles.find(tableColumn => { return tableColumn.prop === i })
+          if (column && column.columnType === tableColumnType.percent) {
+            let sum = 0
+            const propGroup = propName.split(',')
+            propGroup.forEach(prop => {
+              sum = sum + Number(item[prop])
+            })
+            const resultGroup = []
+            propGroup.forEach(prop => {
+              resultGroup.push(unitConvert(Number(item[prop]) / sum, unitTypes.percent, null, null, 0).join(''))
+            })
+            otherData[i] = []
+            if (resultGroup[0] === '-') {
+              otherData[i][0] = false
+              otherData[i][1] = resultGroup[1]
+              otherData[i][2] = resultGroup.join(' / ')
+            } else {
+              otherData[i][0] = resultGroup[0]
+              otherData[i][1] = resultGroup[1]
+              otherData[i][2] = resultGroup.join(' / ')
+            }
+          } else {
+            otherData[i] = item[propName]
+          }
         })
         return otherData
       })
@@ -1669,6 +1703,9 @@ export default {
         this.curTable.sessionsCycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsCycleColumnNameGroup : []
         this.columnNameGroup = this.curTable.bytesColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
+        if (this.curTableInCode.defaultOrderBy) {
+          this.orderBy = this.curTableInCode.defaultOrderBy
+        }
       }
     }
     this.saveUserLocalConfig()

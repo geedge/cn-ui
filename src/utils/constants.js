@@ -218,6 +218,7 @@ export const networkOverviewTableUrlName = {
 export const tableColumnType = {
   dillDown: 'dillDown',
   chainRatio: 'chainRatio',
+  percent: 'percent', // percent类型的列需要2个属性，计算百分比
   normal: 'normal'
 }
 
@@ -367,8 +368,16 @@ export const customTableTitlesForAppPerformance = [
 ]
 export const customTableTitlesForDns = [
   { label: 'dns.dnsServer', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
-  { label: 'dns.queries', prop: 'queryRate', checked: true, tabColumn: true, columnType: tableColumnType.chainRatio },
-  { label: 'dns.queriesFromIE', prop: 'totalInternalQueryNum,totalExternalQueryNum', checked: true, tabColumn: true, columnType: tableColumnType.normal },
+  {
+    label: 'dns.queries',
+    prop: 'queryRate',
+    checked: true,
+    tabColumn: true,
+    columnType: tableColumnType.chainRatio,
+    isInMainUrl: true,
+    cycleDataUrl: dnsSearchUrl.cycleUrl
+  },
+  { label: 'dns.queriesFromIE', prop: 'totalInExNum', checked: true, tabColumn: true, columnType: tableColumnType.percent },
   { label: 'dns.dnsResponseTime', prop: 'dnsResponseLatencyAvg', checked: true, tabColumn: true, columnType: tableColumnType.normal },
   { label: 'overall.throughput', prop: 'totalBytes', checked: true, tabColumn: true, columnType: tableColumnType.normal }
 ]
@@ -671,7 +680,7 @@ export const dnsServiceInsightsTabList = [
     label: 'dns.dnsServer', // tab名称对应的il8n
     prop: 'dnsServer', // 接口返回数据中，tab第一列对应的属性名
     queryCycleTotalProp: 'dnsServer', // SQL中查询不同纬度的列名称
-    dillDownProp: ['server_ip'], // 下钻时，传递的查询条件，即接口的q参数
+    dillDownProp: ['common_server_ip'], // 下钻时，传递的查询条件，即接口的q参数
     checked: true, // 自定义设置中，是否默认选中
     disabled: false, // 自定义设置中，是否可操作（选中或取消选中）
     panelId: drillDownPanelTypeMapping.dnsFourthMenu// 下钻后展示的panelId
@@ -689,7 +698,7 @@ export const dnsServiceInsightsTabList = [
     label: 'network.cities',
     prop: 'city',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['server_city'],
+    dillDownProp: ['server_region'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -707,7 +716,7 @@ export const dnsServiceInsightsTabList = [
     label: 'dns.dnsServerOrganizations',
     prop: 'dnsServerOrganization',
     queryCycleTotalProp: 'orgs',
-    dillDownProp: ['server_org'],
+    dillDownProp: ['dns_server_org'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -716,7 +725,7 @@ export const dnsServiceInsightsTabList = [
     label: 'dns.dnsServerRoles',
     prop: 'dnsServerRole',
     queryCycleTotalProp: 'roles',
-    dillDownProp: ['server_role'],
+    dillDownProp: ['dns_server_role'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -725,7 +734,7 @@ export const dnsServiceInsightsTabList = [
     label: 'QNames',
     prop: 'dnsServerRole',
     queryCycleTotalProp: 'qnames',
-    dillDownProp: ['qname'],
+    dillDownProp: ['dns_qname'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -734,7 +743,7 @@ export const dnsServiceInsightsTabList = [
     label: 'SLDs',
     prop: 'sld',
     queryCycleTotalProp: 'slds',
-    dillDownProp: ['qname_sld'],
+    dillDownProp: ['dns_qname'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -743,7 +752,7 @@ export const dnsServiceInsightsTabList = [
     label: 'TLDs',
     prop: 'tld',
     queryCycleTotalProp: 'tlds',
-    dillDownProp: ['qname_tld'],
+    dillDownProp: ['dns_qname'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -752,7 +761,7 @@ export const dnsServiceInsightsTabList = [
     label: 'QTypes',
     prop: 'qtype',
     queryCycleTotalProp: 'qtypes',
-    dillDownProp: ['qtype'],
+    dillDownProp: ['dns_qtype'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -761,7 +770,7 @@ export const dnsServiceInsightsTabList = [
     label: 'RCodes',
     prop: 'rcode',
     queryCycleTotalProp: 'rcodes',
-    dillDownProp: ['rcode'],
+    dillDownProp: ['dns_rcode'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -804,6 +813,23 @@ export const bytesColumnNameGroupForNpm = {
   sslResponseLatency: 'sslConLatency',
   httpResponseLatency: 'httpResponseLatency'
 }
+
+export const bytesCycleColumnNameGroupForNmp = {
+  through: 'throughBitsRate'
+}
+
+// 用于组织数据时的名称，对应的属性名称
+export const bytesColumnNameGroupForDns = {
+  queryRate: 'queryRate',
+  totalInExNum: 'totalInternalQueryNum,totalExternalQueryNum',
+  dnsResponseLatencyAvg: 'dnsResponseLatencyAvg',
+  totalBytes: 'totalBytes'
+}
+
+export const bytesCycleColumnNameGroupForDns = {
+  queryRate: 'queryRate'
+}
+
 // networkOverview 当前周期返回数据对应的属性名称（与上一周期中的属性名称不一致,total）,之所以写在这里是因为有byte，packets，sessions3种，如果只有一种，可以直接写在customTableTitlesForAppPerformance
 export const bytesColumnNameGroup = {
   total: 'bytesTotalRate',
@@ -831,10 +857,6 @@ export const packetsCycleColumnNameGroup = {
 }
 export const sessionsCycleColumnNameGroup = {
   total: 'sessionsRate'
-}
-
-export const bytesCycleColumnNameGroupForNmp = {
-  through: 'throughBitsRate'
 }
 
 // 不同表格类型对应的相关数据
@@ -870,9 +892,10 @@ export const networkTable = {
     column: customTableTitlesForDns,
     url: dnsSearchUrl,
     hasMetricSearch: false, // 是否有metric下拉列表
-    panelIdOfThirdMenu: drillDownPanelTypeMapping.npmThirdMenu,
-    bytesColumnNameGroup: bytesColumnNameGroupForNpm,
-    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp
+    panelIdOfThirdMenu: drillDownPanelTypeMapping.dnsThirdMenu,
+    bytesColumnNameGroup: bytesColumnNameGroupForDns,
+    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForDns,
+    defaultOrderBy: 'totalBytes'
   }
 }
 

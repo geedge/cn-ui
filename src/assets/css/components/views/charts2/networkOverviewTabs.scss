@@ -18,6 +18,38 @@
           cursor: pointer;
         }
       }
+      .dns-in-ex {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        .dns-percent-pic {
+          display: flex !important;
+          width: 100px;
+          height: 26px;
+          justify-content: center;
+          align-items: center;
+          .div-yellow {
+            height: 12px;
+            background: #e5a219;
+            border: 1px solid #e5a219;
+            border-left: none;
+          }
+          .div-green {
+            height: 12px;
+            background: #749f4d;
+            border: 1px solid #749f4d;
+            border-right: none;
+          }
+        }
+        .dns-percent{
+          display:flex;
+          align-items:center;
+          height:100%;
+          min-width:90px;
+          padding-left:10px;
+          justify-content: left;
+        }
+      }
       .tab-table__average {
         border: 1px solid #E2E5EC;
         border-radius: 4px 4px 0 0;
