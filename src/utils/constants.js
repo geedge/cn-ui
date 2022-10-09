@@ -913,11 +913,11 @@ export const dnsServerRole = {
 
 export const npmCategoryToAppCategoryMap = {
   'network.video': 'multimedia-streaming',
-  'network.fileSharing': 'social-networking',
-  'network.voip': 'file-sharing',
+  'network.fileSharing': 'file-sharing',
+  'network.voip': 'voip-video',
   'network.gaming': 'gaming',
   'network.email': 'email',
-  'network.socialNetwork': 'voip-video'
+  'network.socialNetwork': 'social-networking'
 }
 
 // npm页-应用评分-类别名称、icon、i18n映射

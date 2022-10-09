@@ -2,7 +2,7 @@
   <div class="panel-box2">
     <div class="panel__header">
       <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}
-        <div  v-if="score" class="score">
+        <div v-if="showScore" class="score">
           <div class="circle-icon"  v-if="score <= 2" :class="{'data-score-red': score <= 2}" ></div>
           <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
           <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
@@ -40,7 +40,15 @@
 <script>
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
-import { panelTypeAndRouteMapping, bytesColumnNameGroupForNpm, scoreUrl, customTableTitlesForAppPerformance, operationType, curTabState } from '@/utils/constants'
+import {
+  panelTypeAndRouteMapping,
+  bytesColumnNameGroupForNpm,
+  scoreUrl,
+  customTableTitlesForAppPerformance,
+  operationType,
+  curTabState,
+  drillDownPanelTypeMapping
+} from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
@@ -75,12 +83,15 @@ export default {
   watch: {
     npmThirdLevelMenuScore: {
       deep: true,
+      immediate: true,
       handler (n) {
+        console.info(n)
+        this.score = n
         // const curOperationType = this.$store.getters.getTabOperationType
-        const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
-        if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-          this.score = n
-        }
+        // const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
+        // if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
+        // this.score = n
+        // }
       }
     }
   },
@@ -88,7 +99,7 @@ export default {
     // this.panelName = this.$store.getters.getPanelName
     this.panelName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
     // const curOperationType = this.$store.getters.getTabOperationType
-    const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
+    /*const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
     if (this.panelName && this.$route.path === '/panel/networkAppPerformance' && curOperationType !== operationType.thirdMenu) {
       // const columnValue = this.$store.getters.getBreadcrumbColumnValue
       const columnValue = this.getUrlParam(this.curTabState.fourthMenu, '')
@@ -136,7 +147,7 @@ export default {
       })
     } else if (this.$route.path === '/panel/networkAppPerformance' && curOperationType === operationType.thirdMenu) {
       this.score = this.$store.getters.getNpmThirdLevelMenuScore
-    }
+    }*/
 
     await this.init()
     const vm = this
@@ -183,10 +194,14 @@ export default {
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
 
+    // npm是否展示分数
+    const showScorePanel = [drillDownPanelTypeMapping.npmOverviewIp, drillDownPanelTypeMapping.npmOverviewDomain, drillDownPanelTypeMapping.npmOverviewApp, drillDownPanelTypeMapping.npmOverviewCommon, drillDownPanelTypeMapping.npmThirdMenu]
+    const showScore = showScorePanel.indexOf(panelType) > -1
     return {
       panelType,
       panel,
-      timeFilter
+      timeFilter,
+      showScore
     }
   },
   methods: {
