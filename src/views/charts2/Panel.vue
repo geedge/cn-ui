@@ -93,7 +93,7 @@ export default {
     // this.panelName = this.$store.getters.getPanelName
     this.panelName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
     // const curOperationType = this.$store.getters.getTabOperationType
-    /*const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
+    /* const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
     if (this.panelName && this.$route.path === '/panel/networkAppPerformance' && curOperationType !== operationType.thirdMenu) {
       // const columnValue = this.$store.getters.getBreadcrumbColumnValue
       const columnValue = this.getUrlParam(this.curTabState.fourthMenu, '')
@@ -141,7 +141,7 @@ export default {
       })
     } else if (this.$route.path === '/panel/networkAppPerformance' && curOperationType === operationType.thirdMenu) {
       this.score = this.$store.getters.getNpmThirdLevelMenuScore
-    }*/
+    } */
 
     await this.init()
     const vm = this

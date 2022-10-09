@@ -68,7 +68,8 @@
                     </div>
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.dillDown" >
-                    <div class="data-click" @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
+                    <div v-if="isOnlyRead" >{{scope.row['tab']}}</div>
+                    <div v-else class="data-click" @click="handleTabValue(item.label,scope.row['tab'])">{{scope.row['tab']}}</div>
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.percent" >
                     <div class="dns-in-ex">
@@ -234,6 +235,7 @@ export default {
       metricsList: [],
       curTabState: curTabState,
       curTable: {}, // 当前的表格类型
+      isOnlyRead: false,
       curTableInCode: {}, // 代码中的配置
       tableType: '',
       userId: null,
@@ -350,14 +352,22 @@ export default {
       }
     },
     isThirdMenu () { // 当前是否为3级
-      const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
-      const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
-      return thirdMenu && !fourthMenu
+      if(this.isOnlyRead){
+        return false
+      }else {
+        const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+        const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
+        return thirdMenu && !fourthMenu
+      }
     },
     isFourthMenu () { // 当前是否为4级
-      const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
-      const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
-      return thirdMenu && fourthMenu
+      if(this.isOnlyRead){
+        return false
+      }else {
+        const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+        const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
+        return thirdMenu && fourthMenu
+      }
     },
     initState () {
       console.log('InitState：开始')
@@ -400,14 +410,14 @@ export default {
 
       // 针对network overview – app list 点击标题触发下钻，相关内容处理
       const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
-      const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
-      if (thirdMenu && fourthMenu) {
+      //const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
+      if (this.isFourthMenu()) {
         this.list.forEach(item => {
           if (item.label === thirdMenu) {
-            item.checked = false
+            //item.checked = false
           }
         })
-      } else if (thirdMenu && !fourthMenu) {
+      } else if (this.isThirdMenu()) {
         this.list.forEach(item => {
           if (item.label === thirdMenu) {
             item.checked = true
@@ -432,7 +442,6 @@ export default {
       }
 
       const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
-      const beforeOperationType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '', true)
       if (this.isFourthMenu()) { // 点击的为第四级菜单
         curTab = this.getCurTab()
         if (curTab) {
@@ -440,7 +449,6 @@ export default {
           this.urlChangeParams[this.curTabState.curTab] = curTab.prop
         }
         this.showCustomizeTabs = true
-        // this.setShowNum(10)
       } else if (this.isThirdMenu()) { // 点击的为第三级菜单
         const name = this.getUrlParam(this.curTabState.thirdMenu, '')
         // const networkTabList = []
@@ -448,7 +456,6 @@ export default {
           if (item.label === name) {
             item.checked = true
           }
-          // networkTabList.push(item)
         })
         const breadcrumbColumnTab = this.list.find(item => item.label === name)
         this.urlChangeParams[this.curTabState.curTab] = breadcrumbColumnTab.prop
@@ -458,13 +465,12 @@ export default {
         this.showCustomizeTabs = false
       } else if (curOperationType === operationType.changeTab) { // 切换tab
         this.showCustomizeTabs = true
-      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击的为第二级菜单、或者点击菜单进入、
-        // this.list = this.$_.cloneDeep(this.allList)
+      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu ) { // 点击的为第二级菜单、或者点击菜单进入、
         if (curTab) {
           this.showTab(curTab)
           this.urlChangeParams[this.curTabState.curTab] = curTab.prop
         }
-        if (thirdMenu && fourthMenu) {
+        if (this.isFourthMenu()) {
           this.$nextTick(() => {
             this.list.forEach(item => {
               if (item.label === thirdMenu) {
@@ -472,7 +478,7 @@ export default {
               }
             })
           })
-        } else if (thirdMenu && !fourthMenu) {
+        } else if (this.isThirdMenu()) {
           this.list.forEach(item => {
             if (item.label === thirdMenu) {
               item.checked = true
@@ -515,6 +521,8 @@ export default {
             this.showCustomizeTabs = true
           })
         }
+      }else {
+        this.showCustomizeTabs = true
       }
       this.changeUrlTabState()
       console.log('InitState: 结束')
@@ -955,7 +963,7 @@ export default {
           item.disabled = false
           if (columnValue) {
             if (item.label === columnName) {
-              item.disabled = true
+              //item.disabled = true
             }
           }
         })
@@ -995,11 +1003,6 @@ export default {
     },
     // 配置tab：显示隐藏与顺序
     tabChange (index) {
-      console.log('NetworkOverview类------tabChange：隐藏或显示tab-开始')
-      console.log(this.list)
-      console.log(this.curTable)
-      console.log(this.drillDownTableConfigs)
-      console.log('NetworkOverview类------tabChange：隐藏或显示tab-开始')
       this.isNoData = false
       // 操作类型设置
       const beforeType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '', true)
@@ -1021,7 +1024,7 @@ export default {
           item.disabled = false
           if (columnValue) {
             if (item.label === columnName) {
-              item.disabled = true
+              //item.disabled = true
             }
           }
         })
@@ -1067,11 +1070,6 @@ export default {
       } else {
         this.changeUrlTabState()
       }
-      console.log('NetworkOverview类------tabChange：隐藏或显示tab-结束')
-      console.log(this.list)
-      console.log(this.curTable)
-      console.log(this.drillDownTableConfigs)
-      console.log('NetworkOverview类------tabChange：隐藏或显示tab-结束')
     },
     setOperationType (operationType) {
       this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
@@ -1089,6 +1087,7 @@ export default {
       this.urlChangeParams[this.curTabState.networkOverviewBeforeTab] = tab.prop
     },
     setQueryCondition (tab, value) {
+      value = value.replaceAll("'","\\\\'")
       const queryCondition = []
       const searchProps = tab.dillDownProp
       if (tab.prop === 'protocolPort') {
@@ -1139,7 +1138,6 @@ export default {
           }
         })
         this.list = this.getDrilldownTabList(columnName)
-        // this.combineTabList(this.list)
         const curTab = this.getCurTab(clickTab)
         tabList.forEach(tab => {
           if (tab.label === curTab.label && tab.columns) {
@@ -1149,7 +1147,6 @@ export default {
       } else {
         const changeTab = tabList.find(item => item.label == columnName)// 下钻的tab
         this.list = changeTab.drilldownTabs
-        // this.combineTabList(this.list)
         const curTab = this.getCurTab(clickTab)
         tabList.forEach(tab => {
           if (tab.label === curTab.label && tab.columns) {
@@ -1158,6 +1155,7 @@ export default {
         })
       }
       this.saveUserLocalConfig()
+      console.log(this.drillDownTableConfigs)
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -1182,17 +1180,14 @@ export default {
         }
       })
       this.changeUrlTabState()
-      this.$router.push({
-        path: this.$route.path,
-        query: {
-          ...this.$route.query,
-          thirdPanel: this.curTable.panelIdOfThirdMenu,
-          fourthPanel: toPanel,
-          t: +new Date()
-        }
+      this.jumpAndCache(this.$route.path, {
+        ...this.$route.query,
+        thirdPanel: this.curTable.panelIdOfThirdMenu,
+        fourthPanel: toPanel
       })
     },
     handleSearchParams (columnValue) {
+      columnValue = columnValue.replaceAll("'","\\\\'")
       const queryCondition = []
       const curTab = this.getCurTab()
       const searchProps = curTab.dillDownProp
@@ -1266,7 +1261,7 @@ export default {
       this.urlChangeParams = this.$_.omit(this.urlChangeParams, [this.curTabState.tableSortColumn, this.curTabState.tableSortType, this.curTabState.tableSortTab])
       this.cancleSortArrow()
     },
-    // 切换tab的时候，只需要修改列即可,但是列需要从indexDB中获取
+    // 切换tab
     handleClick (tab) {
       this.tableData = []
       this.tableDataBackup = []
@@ -1447,10 +1442,10 @@ export default {
     },
     combineTabList (tabList) {
       console.log('CombineTabList：开始')
-      const listInCode = this.curTableInCode ? this.curTableInCode.tabList : []
+      let listInCode = this.curTableInCode ? this.curTableInCode.tabList : []
       tabList.forEach(tab => {
-        const tabName = tab ? (tab.name ? tab.name : tab) : ''
-        const commonTab = this.commonTabList.find(item => item.name === tabName)
+        let tabName = tab ? (tab.name ? tab.name : tab) : ''
+        let commonTab = this.commonTabList.find(item => item.name === tabName)
         tab.label = commonTab ? commonTab.i18n : ''
         tab.prop = commonTab ? commonTab.prop : ''
         if (!tab.hasOwnProperty('checked') || tab.checked === undefined || tab.checked === null) {
@@ -1463,37 +1458,34 @@ export default {
           tab.panelId = tab ? tab.panelIdOfFourthMenu : null
         }
         // 代码里写死的
-        const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
+        let tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
         tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
         tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
       })
       // 设置drilldownTabs：未下钻状态设置，已下钻状态无需设置
-      const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
-      if (!thirdMenu) {
-        const oldList = this.$_.cloneDeep(tabList)
+      let thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
+      //if (!thirdMenu) {
+        let oldList = this.$_.cloneDeep(tabList)
         tabList.forEach(tab => {
-          const drilldownTabFull = []
-          const drilldownTabList = tab.drilldownTabs
+          let drilldownTabFull = []
+          let drilldownTabList = tab.drilldownTabs
           drilldownTabList.forEach(drilldownTab => {
             if (!drilldownTab.hasOwnProperty('name') || drilldownTab.name === undefined || drilldownTab.name === null) {
-              const drilldownTabName = drilldownTab || ''
-              const fullTab = oldList.find(item => item.name === drilldownTabName)
-              const drilldownTabWithAllInfo = this.$_.cloneDeep(fullTab)
+              let drilldownTabName = drilldownTab || ''
+              let fullTab = oldList.find(item => item.name === drilldownTabName)
+              let drilldownTabWithAllInfo = this.$_.cloneDeep(fullTab)
               if (drilldownTabWithAllInfo) {
-                const commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
+                let commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
                 drilldownTabWithAllInfo.label = commonTab ? commonTab.i18n : ''
                 drilldownTabWithAllInfo.prop = commonTab ? commonTab.prop : ''
-                /* if (!drilldownTabWithAllInfo.hasOwnProperty('panelId') || drilldownTabWithAllInfo.panelId === undefined || drilldownTabWithAllInfo.panelId === null) {
-                    drilldownTabWithAllInfo.panelId = tab ? tab.panelIdOfFourthMenu : ''
-                  } */
-                if (!drilldownTabWithAllInfo.hasOwnProperty('checked') || drilldownTabWithAllInfo.checked === undefined || drilldownTabWithAllInfo.checked === null) {
+                //if (!drilldownTabWithAllInfo.hasOwnProperty('checked') || drilldownTabWithAllInfo.checked === undefined || drilldownTabWithAllInfo.checked === null) {
                   drilldownTabWithAllInfo.checked = !((tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0))
-                }
-                if (!drilldownTabWithAllInfo.hasOwnProperty('disabled') || drilldownTabWithAllInfo.disabled === undefined || drilldownTabWithAllInfo.disabled === null) {
+                //}
+                //if (!drilldownTabWithAllInfo.hasOwnProperty('disabled') || drilldownTabWithAllInfo.disabled === undefined || drilldownTabWithAllInfo.disabled === null) {
                   drilldownTabWithAllInfo.disabled = (tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
-                }
+                //}
                 // 代码里写死的
-                const tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
+                let tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
                 drilldownTabWithAllInfo.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
                 drilldownTabWithAllInfo.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
                 drilldownTabFull.push(drilldownTabWithAllInfo)
@@ -1504,7 +1496,7 @@ export default {
             tab.drilldownTabs = drilldownTabFull
           }
         })
-      }
+      //}
       console.log('CombineTabList：结束')
     },
     combineColumnList (tabLabel) {
@@ -1553,6 +1545,7 @@ export default {
     async getUserLocalConfig () {
       const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: this.userId })
       if (userLocalCongfig) {
+        console.info(userLocalCongfig.config)
         return userLocalCongfig.config
       } else {
         return null
@@ -1683,7 +1676,7 @@ export default {
           }
         } else { // 非下钻状态
           this.list = this.getAllTabList()
-          if (!this.isSetDrilldownTabInfo(this.list)) { // 设否设置了下钻的详细信息
+          if (!this.isSetDrilldownTabInfo(this.list)) { // 是否设置了下钻的详细信息
             this.combineTabList(this.list)
           }
           this.allList = this.$_.cloneDeep(this.list)// 备份所有配置，下钻及返回时使用
@@ -1705,6 +1698,7 @@ export default {
         this.curTable.sessionsCycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsCycleColumnNameGroup : []
         this.columnNameGroup = this.curTable.bytesColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
+        this.isOnlyRead = this.curTable.isOnlyRead ? this.curTable.isOnlyRead : false
         if (this.curTableInCode.defaultOrderBy) {
           this.orderBy = this.curTableInCode.defaultOrderBy
         }
