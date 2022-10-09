@@ -116,7 +116,6 @@ export default {
                 t.score = 6
               }
             })
-            console.info(mapData)
             this.loadMarkerData(imageSeries, mapData)
           })
         }).finally(() => {

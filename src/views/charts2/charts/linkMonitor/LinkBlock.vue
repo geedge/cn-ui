@@ -327,22 +327,28 @@ export default {
     },
     drillLinkId (item) {
       const queryCondition = `common_egress_link_id = ${item.egressLinkId} AND common_ingress_link_id = ${item.ingressLinkId}`
-      this.jumpAndCache(this.$route.path, {
-        ...this.$route.query,
-        thirdPanel: drillDownPanelTypeMapping.linkMonitor,
-        thirdMenu: `Link ID: ${item.linkId}`,
-        panelName: `Link ID: ${item.linkId}`,
-        queryCondition
+      this.$router.push({
+        query: {
+          ...this.$route.query,
+          thirdPanel: drillDownPanelTypeMapping.linkMonitor,
+          thirdMenu: `Link ID: ${item.linkId}`,
+          panelName: `Link ID: ${item.linkId}`,
+          queryCondition,
+          t: +new Date()
+        }
       })
     },
     drillNextHop (item) {
       const queryCondition = `egress_link_direction = '${item.linkDirection}' AND ingress_link_direction = '${item.linkDirection}'`
-      this.jumpAndCache(this.$route.path, {
-        ...this.$route.query,
-        thirdPanel: drillDownPanelTypeMapping.linkMonitor,
-        thirdMenu: `Link ID: ${item.linkDirection}`,
-        panelName: `Link ID: ${item.linkDirection}`,
-        queryCondition
+      this.$router.push({
+        query: {
+          ...this.$route.query,
+          thirdPanel: drillDownPanelTypeMapping.linkMonitor,
+          thirdMenu: `Link ID: ${item.linkDirection}`,
+          panelName: `Link ID: ${item.linkDirection}`,
+          queryCondition,
+          t: +new Date()
+        }
       })
     }
   }

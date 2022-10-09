@@ -1158,7 +1158,6 @@ export default {
         })
       }
       this.saveUserLocalConfig()
-      console.log(this.drillDownTableConfigs)
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -1183,10 +1182,14 @@ export default {
         }
       })
       this.changeUrlTabState()
-      this.jumpAndCache(this.$route.path, {
-        ...this.$route.query,
-        thirdPanel: this.curTable.panelIdOfThirdMenu,
-        fourthPanel: toPanel
+      this.$router.push({
+        path: this.$route.path,
+        query: {
+          ...this.$route.query,
+          thirdPanel: this.curTable.panelIdOfThirdMenu,
+          fourthPanel: toPanel,
+          t: +new Date()
+        }
       })
     },
     handleSearchParams (columnValue) {
@@ -1550,7 +1553,6 @@ export default {
     async getUserLocalConfig () {
       const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: this.userId })
       if (userLocalCongfig) {
-        console.info(userLocalCongfig.config)
         return userLocalCongfig.config
       } else {
         return null

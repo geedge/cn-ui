@@ -287,7 +287,6 @@ export default {
       } else {
         result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
       }
-      console.info(thirdMenu, fourthMenu, result)
       return result
     },
     showEntityTypeSelector () {
@@ -556,36 +555,32 @@ export default {
         if (menus[3]) {
           this.handleCurDrilldownTableConfig(this.breadcrumb[2], this.breadcrumb[3])
         }
-        /* this.$router.push({
+        this.$router.push({
           path: route,
           query: {
             t: +new Date()
           }
-        }) */
-        this.jumpAndCache(route, {})
+        })
       } else if (opeType === 3) {
-        /* this.$router.push({
-          query: { ...this.$route.query, fourthPanel: '' }
-        }) */
-        this.jumpAndCache(route, { ...this.$route.query, fourthPanel: '' })
+        this.$router.push({
+          query: { ...this.$route.query, fourthPanel: '', t: +new Date() }
+        })
       } else if (opeType != 4) {
-        this.jumpAndCache(route, { ...this.$route.query, fourthPanel: '', thirdPanel: '' })
-        /* this.$router.push({
-          query: { ...this.$route.query, fourthPanel: '', thirdPanel: '' }
-        }) */
+        this.$router.push({
+          query: { ...this.$route.query, fourthPanel: '', thirdPanel: '', t: +new Date() }
+        })
       }
       if (route === this.route) {
         this.refresh()
         return
       }
       if (route) {
-        /* this.$router.push({
+        this.$router.push({
           path: route,
           query: {
             t: +new Date()
           }
-        }) */
-        this.jumpAndCache(route, {})
+        })
       }
     },
     dropDownSearch () {

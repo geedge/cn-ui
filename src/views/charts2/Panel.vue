@@ -85,13 +85,7 @@ export default {
       deep: true,
       immediate: true,
       handler (n) {
-        console.info(n)
         this.score = n
-        // const curOperationType = this.$store.getters.getTabOperationType
-        // const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
-        // if (curOperationType === operationType.thirdMenu) { // 点击的为第三级菜单
-        // this.score = n
-        // }
       }
     }
   },

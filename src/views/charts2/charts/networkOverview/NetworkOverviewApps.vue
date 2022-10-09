@@ -398,7 +398,8 @@ export default {
           query: {
             ...this.$route.query,
             thirdPanel: curTable.panelIdOfThirdMenu ? curTable.panelIdOfThirdMenu : '',
-            fourthPanel: toPanel || ''
+            fourthPanel: toPanel || '',
+            t: +new Date()
           }
         })
       }
