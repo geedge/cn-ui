@@ -70,7 +70,6 @@
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
                       <div class="block-content-item-value">
-<!--                        {{row.egress[index2].totalBytes}}-->
                         {{unitConvert(row.egress[index2].totalBytes, unitTypes.bps).join('')}}
                       </div>
                     </div>
@@ -96,7 +95,6 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[0].name) }}</div>
                       <div class="block-content-item-value">
-<!--                        {{ row.egress[index2].establishLatencyMs }}ms-->
                         {{ unitConvert(row.egress[index2].establishLatencyMs, unitTypes.time).join('') }}
                       </div>
                     </div>
@@ -104,7 +102,6 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[1].name) }}</div>
                       <div class="block-content-item-value">
-<!--                        {{ row.egress[index2].httpResponseLatency }}ms-->
                         {{ unitConvert(row.egress[index2].httpResponseLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
@@ -112,7 +109,6 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[2].name) }}</div>
                       <div class="block-content-item-value">
-<!--                        {{ row.egress[index2].sslConLatency }}ms-->
                         {{ unitConvert(row.egress[index2].sslConLatency, unitTypes.time).join('') }}
                       </div>
                     </div>

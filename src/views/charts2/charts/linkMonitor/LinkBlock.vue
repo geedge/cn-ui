@@ -49,7 +49,7 @@
             trigger="hover"
             popper-class="link-block__popper"
             v-for="(item, index) in linkData"
-            :width="item.popverWidth"
+            :width="item.popoverWidth"
             :key="index"
         >
           <template #reference>
@@ -100,7 +100,7 @@
             trigger="hover"
             popper-class="link-block__popper"
             v-for="(item, index) in nextHopData"
-            :width="item.popverWidth"
+            :width="item.popoverWidth"
             :key="index"
         >
           <template #reference>
@@ -258,7 +258,7 @@ export default {
             s.color = colors[i]
             s.egressUsage = this.computeUsage(s.egressBytes, s.egressBandwidth)
             s.ingressUsage = this.computeUsage(s.ingressBytes, s.ingressBandwidth)
-            s.popverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
+            s.popoverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
           })
           this.linkData = sorted
 
@@ -282,7 +282,7 @@ export default {
             const ingressUsage = this.computeUsage(s.ingressBytes, sum)
             s.egressUsage = egressUsage
             s.ingressUsage = ingressUsage
-            s.popverWidth = this.computePopoverWidth(egressUsage, ingressUsage)
+            s.popoverWidth = this.computePopoverWidth(egressUsage, ingressUsage)
           })
 
           this.nextHopData = nextHopSorted
