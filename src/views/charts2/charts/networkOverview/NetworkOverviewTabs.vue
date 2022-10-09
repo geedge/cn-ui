@@ -74,8 +74,8 @@
                   <template v-else-if="item.columnType === tableColumnType.percent" >
                     <div class="dns-in-ex">
                       <div class="dns-percent-pic" >
-                        <div v-if="scope.row[item.prop][0] !== false && scope.row[item.prop][0]>0" class="div-green" id="green" :style="`width:${scope.row[item.prop][0]}`"></div>
-                        <div v-if="scope.row[item.prop][0] !== false && scope.row[item.prop][1]>0" class="div-yellow" id="div-yellow" :style="`width:${scope.row[item.prop][1]}`"></div>
+                        <div v-if="scope.row[item.prop][0] !== false" class="div-green" id="green" :style="`width:${scope.row[item.prop][0]}`"></div>
+                        <div v-if="scope.row[item.prop][0] !== false" class="div-yellow" id="yellow" :style="`width:${scope.row[item.prop][1]}`"></div>
                       </div>
                       <div class="dns-percent" >{{scope.row[item.prop][2]}}</div>
                     </div>
