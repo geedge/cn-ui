@@ -49,7 +49,7 @@
             trigger="hover"
             popper-class="link-block__popper"
             v-for="(item, index) in linkData"
-            :width="285"
+            :width="item.popverWidth"
             :key="index"
         >
           <template #reference>
@@ -100,7 +100,7 @@
             trigger="hover"
             popper-class="link-block__popper"
             v-for="(item, index) in nextHopData"
-            :width="285"
+            :width="item.popverWidth"
             :key="index"
         >
           <template #reference>
@@ -153,7 +153,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { colorGradientCalculation } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
-import {drillDownPanelTypeMapping, storageKey, unitTypes} from '@/utils/constants'
+import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
 
 export default {
@@ -258,19 +258,11 @@ export default {
             s.color = colors[i]
             s.egressUsage = this.computeUsage(s.egressBytes, s.egressBandwidth)
             s.ingressUsage = this.computeUsage(s.ingressBytes, s.ingressBandwidth)
-            /*const ingressLink = linkInfo.find(l => l.linkId === s.linkId && l.direction === 'ingress')
-            const egressLink = linkInfo.find(l => l.linkId === s.linkId && l.direction === 'egress')
-            if (ingressLink && egressLink) {
-              // 上行使用情况计算
-              const egressUsage = this.computeUsage(s.egressBytes, egressLink.bandwidth)
-              // 下行使用情况计算
-              const ingressUsage = this.computeUsage(s.ingressBytes, ingressLink.bandwidth)
-              s.egressUsage = egressUsage
-              s.ingressUsage = ingressUsage
-            }*/
+            s.popverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
           })
           this.linkData = sorted
 
+          // 下一跳数据处理
           const nextHopSorted = nextHopData.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
 
           nextHopSorted.forEach((s, i) => {
@@ -278,6 +270,7 @@ export default {
 
             let sum = 0
             linkInfo.forEach((item) => {
+              // todo 此处需注意，不明确接口返回的方向字段名是拼音还是汉字，后期可能会变动缓存中的nextHop
               if (s.linkDirection === item.nextHop) {
                 sum += item.bandwidth
               }
@@ -289,6 +282,7 @@ export default {
             const ingressUsage = this.computeUsage(s.ingressBytes, sum)
             s.egressUsage = egressUsage
             s.ingressUsage = ingressUsage
+            s.popverWidth = this.computePopoverWidth(egressUsage, ingressUsage)
           })
 
           this.nextHopData = nextHopSorted
@@ -311,6 +305,25 @@ export default {
         usage = 1
       }
       return usage
+    },
+    /**
+     * 计算popover弹窗的宽度
+     * 最小宽度为252px，百分比每大一位，popover弹窗宽度增加7px
+     */
+    computePopoverWidth (egress, ingress) {
+      let width = 252
+      let length = 0
+
+      // 将上下行乘100保留2位转换，即10.00为5位，100.00为6位，popover弹窗宽度就增加7px
+      // 最小宽度为252px，最少位数为上下行相加为8位
+      const egressUsage = (egress * 100).toFixed(2)
+      const ingressUsage = (ingress * 100).toFixed(2)
+      length = egressUsage.length + ingressUsage.length
+
+      if (length > 8) {
+        width = 252 + (length - 8) * 7
+      }
+      return width
     },
     drillLinkId (item) {
       const queryCondition = `common_egress_link_id = ${item.egressLinkId} AND common_ingress_link_id = ${item.ingressLinkId}`
