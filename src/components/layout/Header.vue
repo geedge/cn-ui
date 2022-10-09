@@ -279,17 +279,16 @@ export default {
       const breadcrumb = breadcrumbMap.find(b => this.route === b.path)
       const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
       const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
-      if (breadcrumb.columnValue) {
-        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, breadcrumb.columnName, breadcrumb.columnValue] : []
-      } else if (breadcrumb.columnName) {
-        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, breadcrumb.columnName] : []
-      } else if (fourthMenu) {
-        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu, fourthMenu] : []
+      let result = []
+      if (fourthMenu) {
+        result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu, fourthMenu] : []
       } else if (thirdMenu) {
-        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu] : []
+        result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu] : []
       } else {
-        return breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
+        result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
       }
+      console.info(thirdMenu, fourthMenu, result)
+      return result
     },
     showEntityTypeSelector () {
       return this.$store.getters.getShowEntityTypeSelector
