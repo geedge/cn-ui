@@ -1180,10 +1180,14 @@ export default {
         }
       })
       this.changeUrlTabState()
-      this.jumpAndCache(this.$route.path, {
-        ...this.$route.query,
-        thirdPanel: this.curTable.panelIdOfThirdMenu,
-        fourthPanel: toPanel
+      this.$router.push({
+        path: this.$route.path,
+        query: {
+          ...this.$route.query,
+          thirdPanel: this.curTable.panelIdOfThirdMenu,
+          fourthPanel: toPanel,
+          t: +new Date()
+        }
       })
     },
     handleSearchParams (columnValue) {
