@@ -56,8 +56,10 @@ const user = {
           if (tempArr[1]) {
             tempArr = tempArr[1].split('&')
             tempArr.forEach(t => {
-              const kv = t.split('=')
-              query[kv[0]] = kv[1]
+              let firstEqualIndex = t.indexOf('=')
+              let key = t.substring(0,firstEqualIndex)
+              let value = t.substring(firstEqualIndex+1)
+              query[key] = value
             })
           }
           router.push({
