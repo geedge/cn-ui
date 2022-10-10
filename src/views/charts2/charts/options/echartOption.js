@@ -456,10 +456,8 @@ export const linksTrafficSankeyOption = {
       label: {
         color: 'rgba(0,0,0,0.7)',
         fontSize: 12
-      }
-      // emphasis: {
-      //   focus: 'adjacency'
-      // }
+      },
+      draggable: false
     }
   ]
 }

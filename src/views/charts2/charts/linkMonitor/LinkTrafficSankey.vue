@@ -91,8 +91,24 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      if (this.queryCondition) {
-        params.q = this.queryCondition
+      let condition = ''
+      if (this.queryCondition.indexOf(' AND ') > -1) {
+        condition = this.queryCondition.split(/["'= ](.*?)["'= ]/)
+      } else {
+        condition = this.queryCondition
+      }
+      if (condition.length > 1 && condition[0] === 'common_egress_link_id') {
+        if (n == 0) {
+          params.q = `${condition[0]}=${condition[3]}`
+        } else {
+          params.q = `${condition[5]}=${condition[8]}`
+        }
+      } else {
+        if (n == 0) {
+          params.q = `${condition[0]}=${condition[4]}`
+        } else {
+          params.q = `${condition[7]}=${condition[11]}`
+        }
       }
       let url = ''
       if (n == 0) {

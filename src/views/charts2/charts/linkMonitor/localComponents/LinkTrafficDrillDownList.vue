@@ -46,14 +46,12 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getSecond } from '@/utils/date-util'
 import { computeScore } from '@/utils/tools'
-import Login from '@/Login'
 
 export default {
   name: 'linkTrafficList',
   mixins: [chartMixin],
   setup () {
     const { query } = useRoute()
-    // const d = `common_egress_link_id='${256}' AND common_ingress_link_id='${256}'`
     const queryCondition = ref(query.queryCondition || '')
     return {
       queryCondition
@@ -94,16 +92,20 @@ export default {
             this.linkTrafficListData.npmScore = 6
           }
           let condition = ''
-          if (this.queryCondition.indexOf('AND') > -1) {
-            condition = this.queryCondition.split(/["|'](.*?)["|']/)
+          if (this.queryCondition.indexOf(' AND ') > -1) {
+            condition = this.queryCondition.split(/["'= ](.*?)["'= ]/)
           } else {
             condition = this.queryCondition
           }
+          let bandwidthAll = 0
           this.cnLinkInfo.forEach(e => {
-            if (condition.length > 1 && condition[1] === e.originalLinkId) {
-              this.bandWidth = e.bandwidth
+            if (condition.length > 1 && (condition[3] == e.originalLinkId || condition[8] == e.originalLinkId)) {
+              bandwidthAll += e.bandwidth
+            } else if (condition.length > 1 && condition[4] == e.nextHop) {
+              bandwidthAll += e.bandwidth
             }
           })
+          this.bandWidth = bandwidthAll
         }
       }).catch(e => {
         console.error(e)
