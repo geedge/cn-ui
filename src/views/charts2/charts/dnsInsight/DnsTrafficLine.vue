@@ -89,7 +89,9 @@ export default {
     const lineMetric = ref(query.lineMetric || 'Queries/s')
     const lineRefer = ref(query.lineRefer || 'Average')
     const lineTab = ref(query.lineTab || '')
+    const queryCondition = ref(query.queryCondition || '')
     return {
+      queryCondition,
       lineMetric,
       lineRefer,
       lineTab,
@@ -184,9 +186,8 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      const condition = this.$store.getters.getQueryCondition
-      if (condition) {
-        params.q = condition
+      if (this.queryCondition) {
+        params.q = this.queryCondition
       }
       this.toggleLoading(true)
       get(api.dnsInsight.totalTrafficAnalysis, params).then((res) => {
