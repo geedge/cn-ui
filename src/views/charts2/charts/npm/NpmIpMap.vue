@@ -1,11 +1,12 @@
 <template>
-  <div class="cn-chart__map">
+  <div class="cn-chart__map-title" v-if="tabIndex == 1">{{$t('npm.clientLocation')}}</div>
+  <div class="cn-chart__map" :class="{'cn-chart__map-drilldown': tabIndex == 1}">
     <div class="map-canvas" id="npmDrillDownMap"></div>
   </div>
 </template>
 
 <script>
-import { shallowRef } from 'vue'
+import { ref, shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { computeScore, getGeoData } from '@/utils/tools'
@@ -15,8 +16,16 @@ import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { useRoute } from 'vue-router'
 export default {
   name: 'NpmIpMap',
+  setup () {
+    const { query } = useRoute()
+    const tabIndex = ref(query.tabIndex || '')
+    return {
+      tabIndex
+    }
+  },
   data () {
     return {
       myChart: null,

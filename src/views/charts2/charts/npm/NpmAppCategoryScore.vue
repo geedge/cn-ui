@@ -1,7 +1,7 @@
 <template>
   <div class="npm-app">
     <div class="npm-app-left">
-      <div class="npm-app-letter">
+      <div class="npm-app-letter" :class="{'npm-app-letter-no-data': isNoData}">
         <div v-for="(letter, index) in colorPatchData" :key="index">
           {{letter.letter}}
         </div>

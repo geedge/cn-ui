@@ -8,6 +8,9 @@
     height: 100%;
     display: flex;
     flex: 1;
+    .npm-app-letter-no-data.npm-app-letter {
+      min-width: 500px;
+    }
     .npm-app-letter {
       display: flex;
       flex-direction: column-reverse;
