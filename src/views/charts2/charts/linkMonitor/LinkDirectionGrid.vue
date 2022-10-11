@@ -53,8 +53,8 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
 
-      const dataRequest = get(api.linkMonitor.bigramAnalysis1, params)
-      const nextHopRequest = get(api.linkMonitor.bigramNextHopAnalysis1, params)
+      const dataRequest = get(api.linkMonitor.bigramAnalysis, params)
+      const nextHopRequest = get(api.linkMonitor.bigramNextHopAnalysis, params)
 
       Promise.all([dataRequest, nextHopRequest]).then(res => {
         if (res[0].code === 200 && res[1].code === 200) {

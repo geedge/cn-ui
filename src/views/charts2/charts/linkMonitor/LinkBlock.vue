@@ -1,46 +1,5 @@
 <template>
   <div class="link-blocks">
-    <!--<el-tabs v-model="tab">
-          <el-tab-pane :label="$t('linkMonitor.links')" :name="0"></el-tab-pane>
-          <el-tab-pane :label="$t('linkMonitor.nextHopInternet')" :name="1"></el-tab-pane>
-        </el-tabs>
-        <div class="block-list">
-          <el-popover
-              placement="bottom"
-              trigger="hover"
-              popper-class="link-block__popper"
-              v-for="(item, index) in linkData"
-              :width="220"
-              :key="index"
-          >
-            <template #reference>
-              <div class="link-block" :style="`background-color: ${item.color}`"></div>
-            </template>
-            <template #default>
-              <div class="popper-content">
-                <div class="popper-content__link-id">Link ID: {{item.linkId}}</div>
-                <div class="popper-content__link-info">
-                  <div class="info__label">{{$t('linkMonitor.linkBlock.total')}}</div>
-                  <div class="info__value">{{unitConvert(item.totalBitsRate, unitTypes.bps).join('')}}</div>
-                </div>
-                <div class="popper-content__link-info">
-                  <div class="info__label">{{$t('linkMonitor.linkBlock.bandwidthUsage')}}</div>
-                  <div class="info__value">50%</div>
-                </div>
-              </div>
-            </template>
-          </el-popover>
-        </div>
-        <div class="block-heat-legend">
-          <div class="legend__box">
-            <div class="legend__value">
-              <span>0</span>
-              <span>90%</span>
-            </div>
-            <div class="legend__color-piece"></div>
-            <div class="legend__desc">{{$t('linkMonitor.linkBlock.bandwidthUsage')}}</div>
-          </div>
-        </div> -->
     <div class="block-list">
       <div class="block-list__title">{{ $t('linkMonitor.links') }}</div>
       <div class="block-list__list">
@@ -65,7 +24,7 @@
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.total') }}</div>
                 <div class="info__value" style="margin-left: 8px">
-                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join('') }}
+                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}bps
                 </div>
               </div>
               <div class="popper-content__link-info">
@@ -112,11 +71,11 @@
           </template>
           <template #default>
             <div class="popper-content">
-              <div class="popper-content__link-id">Link ID: {{ item.linkDirection }}</div>
+              <div class="popper-content__link-id">Next-Hop Internet: {{ item.linkDirection }}</div>
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.total') }}</div>
                 <div class="info__value" style="margin-left: 8px">
-                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join('') }}
+                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}bps
                 </div>
               </div>
               <div class="popper-content__link-info">
@@ -167,8 +126,7 @@ export default {
       unitTypes,
       linkData: [],
       nextHopData: [],
-      gradientColor: ['#FF005C', '#40537E'], // [start, end]
-      gradientColor1: ['#793973', '#654277', '#40537E'] // [start, end]
+      gradientColor: ['#FF005C', '#40537E'] // [start, end]
     }
   },
   setup () {
@@ -202,7 +160,7 @@ export default {
       }
 
       const dataRequest = get(api.linkMonitor.analysis, params)
-      const nextHopRequest = get(api.linkMonitor.nextHopAnalysis1, params)
+      const nextHopRequest = get(api.linkMonitor.nextHopAnalysis, params)
 
       Promise.all([dataRequest, nextHopRequest]).then(res => {
         if (res[0].code === 200 && res[1].code === 200) {
@@ -253,9 +211,9 @@ export default {
           })
 
           const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
-          const colors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
+          const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
           sorted.forEach((s, i) => {
-            s.color = colors[i]
+            s.color = linkColors[i]
             s.egressUsage = this.computeUsage(s.egressBytes, s.egressBandwidth)
             s.ingressUsage = this.computeUsage(s.ingressBytes, s.ingressBandwidth)
             s.popoverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
@@ -264,9 +222,9 @@ export default {
 
           // 下一跳数据处理
           const nextHopSorted = nextHopData.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
-
+          const nextHopColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], nextHopSorted.map(s => s.totalBitsRate))
           nextHopSorted.forEach((s, i) => {
-            s.color = this.gradientColor1[i]
+            s.color = nextHopColors[i]
 
             let sum = 0
             linkInfo.forEach((item) => {
@@ -344,8 +302,8 @@ export default {
         query: {
           ...this.$route.query,
           thirdPanel: drillDownPanelTypeMapping.linkMonitor,
-          thirdMenu: `Link ID: ${item.linkDirection}`,
-          panelName: `Link ID: ${item.linkDirection}`,
+          thirdMenu: `Next-Hop Internet: ${item.linkDirection}`,
+          panelName: `Next-Hop Internet: ${item.linkDirection}`,
           queryCondition,
           t: +new Date()
         }

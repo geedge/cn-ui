@@ -1,6 +1,6 @@
 import Mock from 'mockjs'
 
-const openMock = true
+const openMock = false
 if (openMock) {
   Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/link/overview/analysis.*'), 'get', function (requestObj) {
     const linkData = []
