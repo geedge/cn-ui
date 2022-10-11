@@ -303,30 +303,28 @@ export default {
   methods: {
     /* 参数 extraParams 额外请求参数 */
     getChartData (extraParams = {}) {
-      try {
-        this.initState()
-        // const chartParams = this.chart.params
-        const queryParams = {
-          ...this.handleQueryParams(extraParams),
-          startTime: getSecond(this.timeFilter.startTime),
-          endTime: getSecond(this.timeFilter.endTime)
+      this.initState()
+      // const chartParams = this.chart.params
+      const queryParams = {
+        ...this.handleQueryParams(extraParams),
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
+      }
+      const requestUrl = this.getCurUrl()
+      get(requestUrl, queryParams).then(response => {
+        if (response.code === 200) {
+          this.chartData = response.data.result
+          this.initData()
+        } else {
+          this.isNoData = true
+          this.toggleLoading(false)
         }
-        const requestUrl = this.getCurUrl()
-        get(requestUrl, queryParams).then(response => {
-          if (response.code === 200) {
-            this.chartData = response.data.result
-            this.initData()
-          } else {
-            this.isNoData = true
-            this.toggleLoading(false)
-          }
-        })
-      } catch (e) {
+      }).catch(e => {
         console.error(e)
-      } finally {
+      }).finally(() => {
         this.changeUrlTabState()
         this.toggleLoading(false)
-      }
+      })
     },
     sortable (title) {
       const excludeName = ['queriesFromIE']
