@@ -61,7 +61,7 @@ export function timeUnitFormatter (time, sourceUnit = 'ms', targetUnit, dot = 2)
       multi = timeUnit[sourceIndex].step
       result /= multi
     }
-    return [multi === 1 ? result : result.toFixed(dot), timeUnit[sourceIndex].unit]
+    return [multi === 1 ? result.toFixed(0) : result.toFixed(dot), timeUnit[sourceIndex].unit]
   } else {
     timeUnit.forEach((s, i) => {
       if (i <= targetIndex) {
