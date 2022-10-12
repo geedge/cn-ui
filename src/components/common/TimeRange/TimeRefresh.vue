@@ -22,6 +22,10 @@
 
 <script>
 // import { ref } from 'vue'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { dateFormatToUTC } from '@/utils/date-util'
+import { useRoute } from 'vue-router'
+
 export default {
   name: 'TimeRefresh',
   props: {
@@ -37,19 +41,42 @@ export default {
       interval: -1,
       unit: 2,
       dropdownShow: false,
-      interLabel: '',
-      refreshArr: [
-        { value: -1, label: 'off' },
-        { value: 30, label: '30s' },
-        { value: 60, label: '1m' },
-        { value: 300, label: '5m' },
-        { value: 900, label: '15m' },
-        { value: 1800, label: '30m' }
-      ]
+      interLabel: ''
+      // refreshArr: [
+      //   { value: -1, label: 'off' },
+      //   { value: 30, label: '30s' },
+      //   { value: 60, label: '1m' },
+      //   { value: 300, label: '5m' },
+      //   { value: 900, label: '15m' },
+      //   { value: 1800, label: '30m' }
+      // ]
     }
   },
   setup (props, ctx) {
+    const { query } = useRoute()
+    const refreshArr = [
+      { value: -1, label: 'off' },
+      { value: 30, label: '30s' },
+      { value: 60, label: '1m' },
+      { value: 300, label: '5m' },
+      { value: 900, label: '15m' },
+      { value: 1800, label: '30m' }
+    ]
+    let refreshObj = {}
 
+    if (query.refreshTime !== undefined) {
+      refreshObj = refreshArr.find(item => item.value === Number(query.refreshTime))
+    }
+
+    return {
+      refreshArr,
+      refreshObj
+    }
+  },
+  mounted () {
+    if (Object.keys(this.refreshObj).length > 0) {
+      this.setRefresh(this.refreshObj)
+    }
   },
   methods: {
     setRefresh (val) {
@@ -58,6 +85,12 @@ export default {
       this.dropdownShow = false
       const now = window.$dayJs.tz().valueOf()
       if (val && val.value != -1) {
+        // 向地址栏添加自动刷新频率
+        const dateParam = {
+          refreshTime: val.value
+        }
+        this.reloadUrl(dateParam)
+
         // 设置定时器
         this.intervalTimer = setInterval(() => {
           this.$emit('change')
@@ -71,6 +104,11 @@ export default {
       if (val && val.value == -1) {
         // 清除定时器
         clearInterval(this.intervalTimer)
+
+        // 地址栏中清除自动刷新频率refreshTime
+        const routeQuery = this.$route.query
+        delete routeQuery.refreshTime
+        this.reloadUrl(routeQuery, 'cleanOldParams')
       }
     },
     showRefreshList () {
@@ -78,6 +116,17 @@ export default {
     },
     dropdownShowFalse () {
       this.dropdownShow = false
+    },
+    /**
+     * 向地址栏添加/删除参数
+     */
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
+      }
+      overwriteUrl(newUrl)
     }
   }
 }
