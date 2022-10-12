@@ -59,7 +59,6 @@ export default {
   },
   watch: {
     timeFilter: {
-      deep: true,
       handler (n) {
         this.eventsByTypeData()
       }

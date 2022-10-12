@@ -140,7 +140,6 @@ export default {
       this.toggleLoading(n)
     },
     timeFilter: {
-      deep: true,
       handler (n) {
         this.init()
       }

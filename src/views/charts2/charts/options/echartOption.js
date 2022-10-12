@@ -455,7 +455,10 @@ export const linksTrafficSankeyOption = {
       bottom: '23%',
       label: {
         color: 'rgba(0,0,0,0.7)',
-        fontSize: 12
+        fontSize: 12,
+        formatter (params) {
+          return params.data.originalName || params.data.name
+        }
       },
       draggable: false
     }

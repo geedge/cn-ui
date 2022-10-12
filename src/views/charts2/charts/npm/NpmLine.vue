@@ -95,7 +95,6 @@ export default {
       }
     },
     timeFilter: {
-      deep: true,
       handler (n) {
         this.init()
       }

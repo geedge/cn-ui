@@ -41,7 +41,6 @@ export default {
   mixins: [chartMixin],
   watch: {
     timeFilter: {
-      deep: true,
       handler (n) {
         this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
       }

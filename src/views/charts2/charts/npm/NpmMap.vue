@@ -304,7 +304,6 @@ export default {
       }
     },
     timeFilter: {
-      deep: true,
       handler (n) {
         if (this.location) {
           this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)

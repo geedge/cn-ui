@@ -35,7 +35,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { useRoute } from 'vue-router'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { overwriteUrl, urlParamsHandler, ingress, egress } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
 import { storageKey, unitTypes } from '@/utils/constants'
 
@@ -79,7 +79,6 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      deep: true,
       handler (n) {
         this.linkTrafficSankeyDataRequest(this.tab)
       }
@@ -92,22 +91,24 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       let condition = ''
-      if (this.queryCondition.indexOf(' AND ') > -1) {
-        condition = this.queryCondition.split(/["'= ](.*?)["'= ]/)
-      } else {
-        condition = this.queryCondition
-      }
-      if (condition.length > 1 && condition[0] === 'common_egress_link_id') {
-        if (n == 0) {
-          params.q = `${condition[0]}=${condition[3]}`
+      if (this.queryCondition) {
+        if (this.queryCondition.indexOf(' AND ') > -1) {
+          condition = this.queryCondition.split(/["'= ](.*?)["'= ]/)
         } else {
-          params.q = `${condition[5]}=${condition[8]}`
+          condition = this.queryCondition
         }
-      } else {
-        if (n == 0) {
-          params.q = `${condition[0]}=${condition[4]}`
+        if (condition.length > 1 && condition[0] === 'common_egress_link_id') {
+          if (n == 0) {
+            params.q = `${condition[0]}=${condition[3]}`
+          } else {
+            params.q = `${condition[5]}=${condition[8]}`
+          }
         } else {
-          params.q = `${condition[7]}=${condition[11]}`
+          if (n == 0) {
+            params.q = `${condition[0]}=${condition[4]}`
+          } else {
+            params.q = `${condition[7]}=${condition[11]}`
+          }
         }
       }
       let url = ''
@@ -133,7 +134,76 @@ export default {
       })
     },
     dataProcessing (result, tab) {
-      let data = []
+      result = ingress.data.result
+      const datas = []
+      const links = []
+      if (tab == 0) {
+        result.forEach(t => {
+          this.cnLinkInfo.forEach(e => {
+            if (t.commonIngressLinkId == e.originalLinkId) {
+              t.linkId = e.linkId
+              t.linkDirection = e.nextHop
+              t.bandWidth = e.bandwidth
+              t.value = parseInt(t.ingressBytes)
+              t.client = `c_${t.clientProvince}`
+              t.server = `s_${t.serverProvince}`
+            }
+          })
+        })
+      } else {
+        result.forEach(t => {
+          this.cnLinkInfo.forEach(e => {
+            if (t.commonEgressLinkId == e.originalLinkId) {
+              t.linkId = e.linkId
+              t.linkDirection = e.nextHop
+              t.bandWidth = e.bandwidth
+              t.value = parseInt(t.egressBytes)
+              t.client = `c_${t.clientProvince}`
+              t.server = `s_${t.serverProvince}`
+            }
+          })
+        })
+      }
+      result = result.sort((a, b) => b.value - a.value).filter(r => r.clientProvince && r.serverProvince)
+
+      if (tab == 0) {
+        result.forEach(r => {
+          if (!datas.some(d => d.name === r.client)) {
+            datas.push({ name: r.client, originalName: r.clientProvince, depth: 0 })
+          }
+          const existLink0 = links.find(l => l.source === r.client && l.target === r.linkId)
+          if (existLink0) {
+            existLink0.value += r.value
+          } else {
+            links.push({ source: r.client, target: r.linkId, value: r.value, depth: 0 })
+          }
+          if (!datas.some(d => d.name === r.linkId)) {
+            datas.push({ name: r.linkId, depth: 1 })
+          }
+          const existLink1 = links.find(l => l.source === r.linkId && l.target === r.linkDirection)
+          if (existLink1) {
+            existLink1.value += r.value
+          } else {
+            links.push({ source: r.linkId, target: r.linkDirection, value: r.value, depth: 1 })
+          }
+          if (!datas.some(d => d.name === r.linkDirection)) {
+            datas.push({ name: r.linkDirection, depth: 2 })
+          }
+          const existLink2 = links.find(l => l.source === r.linkDirection && l.target === r.server)
+          if (existLink2) {
+            existLink2.value += r.value
+          } else {
+            links.push({ source: r.linkDirection, target: r.server, value: r.value, depth: 2 })
+          }
+          if (!datas.some(d => d.name === r.server)) {
+            datas.push({ name: r.server, originalName: r.serverProvince, depth: 3 })
+          }
+        })
+      } else {
+
+      }
+      this.echartsInit(tab, datas, links)
+      /*let data = []
       let links = []
       result.forEach(t => {
         this.cnLinkInfo.forEach(e => {
@@ -145,13 +215,13 @@ export default {
           }
         })
         data.push(
-          { name: t.serverCity },
+          { name: t.serverProvince },
           { name: t.commonEgressLinkId },
           { name: tab == 0 ? t.ingressLinkDirection : t.egressLinkDirection },
-          { name: t.clientCity }
+          { name: t.clientProvince }
         )
       })
-      const clientCity = []
+      const clientProvince = []
       const linkDirection = []
       const commonEgressLinkId = []
       let link = []
@@ -159,64 +229,64 @@ export default {
         const LinkDirectionShow = tab == 0 ? t.ingressLinkDirection : t.egressLinkDirection
         const bytes = tab == 0 ? t.ingressBytes : t.egressBytes
         if (tab == 0) {
-          clientCity.push({
-            source: t.clientCity,
+          clientProvince.push({
+            source: t.clientProvince,
             target: LinkDirectionShow,
             commonEgressLinkId: t.commonEgressLinkId,
-            serverCity: t.serverCity,
+            serverProvince: t.serverProvince,
             value: bytes,
             bandWidth: t.bandWidth,
             depth: 0
           })
           linkDirection.push({
-            clientCity: t.clientCity,
+            clientProvince: t.clientProvince,
             source: LinkDirectionShow,
             target: t.commonEgressLinkId,
-            serverCity: t.serverCity,
+            serverProvince: t.serverProvince,
             value: bytes,
             bandWidth: t.bandWidth,
             depth: 1
           })
           commonEgressLinkId.push({
-            clientCity: t.clientCity,
+            clientProvince: t.clientProvince,
             LinkDirectionShow: LinkDirectionShow,
             source: t.commonEgressLinkId,
-            target: t.serverCity,
+            target: t.serverProvince,
             value: bytes,
             bandWidth: t.bandWidth,
             depth: 2
           })
         } else {
-          clientCity.push({
-            source: t.clientCity,
+          clientProvince.push({
+            source: t.clientProvince,
             target: t.commonEgressLinkId,
             LinkDirectionShow: LinkDirectionShow,
-            serverCity: t.serverCity,
+            serverProvince: t.serverProvince,
             value: bytes,
             bandWidth: t.bandWidth,
             depth: 0
           })
           linkDirection.push({
-            clientCity: t.clientCity,
+            clientProvince: t.clientProvince,
             source: t.commonEgressLinkId,
             target: LinkDirectionShow,
-            serverCity: t.serverCity,
+            serverProvince: t.serverProvince,
             value: bytes,
             bandWidth: t.bandWidth,
             depth: 1
           })
           commonEgressLinkId.push({
-            clientCity: t.clientCity,
+            clientProvince: t.clientProvince,
             commonEgressLinkId: t.commonEgressLinkId,
             source: LinkDirectionShow,
-            target: t.serverCity,
+            target: t.serverProvince,
             value: bytes,
             bandWidth: t.bandWidth,
             depth: 2
           })
         }
       })
-      link = [...clientCity, ...linkDirection, ...commonEgressLinkId]
+      link = [...clientProvince, ...linkDirection, ...commonEgressLinkId]
       for (let i = 0; i < link.length; i++) {
         for (let j = i + 1; j < link.length; j++) {
           if (link[i].source === link[j].source && link[i].target === link[j].target) {
@@ -233,7 +303,7 @@ export default {
       }
       data = [...map.values()]
       links = link
-      this.echartsInit(tab, data, links)
+      this.echartsInit(tab, data, links)*/
     },
     echartsInit (tab, data, links) {
       const _this = this
@@ -252,23 +322,23 @@ export default {
         let value = 0
         if (param.data.depth === 0) {
           if (tab == 0) {
-            data = ` ${param.data.source} > ${param.data.target} > ${param.data.commonEgressLinkId} > ${param.data.serverCity}`
+            data = ` ${param.data.source} > ${param.data.target} > ${param.data.commonEgressLinkId} > ${param.data.serverProvince}`
           } else {
-            data = `${param.data.source} > ${param.data.target} > ${param.data.LinkDirectionShow} > ${param.data.serverCity}`
+            data = `${param.data.source} > ${param.data.target} > ${param.data.LinkDirectionShow} > ${param.data.serverProvince}`
           }
           value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
         } else if (param.data.depth === 1) {
           if (tab == 0) {
-            data = `${param.data.clientCity} > ${param.data.source} > ${param.data.target} > ${param.data.serverCity}`
+            data = `${param.data.clientProvince} > ${param.data.source} > ${param.data.target} > ${param.data.serverProvince}`
           } else {
-            data = `${param.data.clientCity} > ${param.data.source} > ${param.data.target} > ${param.data.serverCity}`
+            data = `${param.data.clientProvince} > ${param.data.source} > ${param.data.target} > ${param.data.serverProvince}`
           }
           value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
         } else if (param.data.depth === 2) {
           if (tab == 0) {
-            data = `${param.data.clientCity} > ${param.data.LinkDirectionShow} > ${param.data.source} > ${param.data.target}`
+            data = `${param.data.clientProvince} > ${param.data.LinkDirectionShow} > ${param.data.source} > ${param.data.target}`
           } else {
-            data = ` ${param.data.clientCity} > ${param.data.commonEgressLinkId} > ${param.data.source} > ${param.data.target}`
+            data = ` ${param.data.clientProvince} > ${param.data.commonEgressLinkId} > ${param.data.source} > ${param.data.target}`
           }
           value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
         }

@@ -174,7 +174,6 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      deep: true,
       handler (n) {
         if (this.lineTab) {
           this.init(this.lineMetric, this.showMarkLine, 'active')

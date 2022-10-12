@@ -126,7 +126,6 @@ export default {
   mixins: [chartMixin],
   watch: {
     timeFilter: {
-      deep: true,
       handler (n) {
         this.init()
       }

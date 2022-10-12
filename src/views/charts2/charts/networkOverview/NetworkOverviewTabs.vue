@@ -273,7 +273,6 @@ export default {
   },
   watch: {
     timeFilter: {
-      deep: true,
       handler (n) {
         console.log('watch')
         const curTab = this.getCurTab()

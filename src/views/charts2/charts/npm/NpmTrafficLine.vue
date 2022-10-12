@@ -124,7 +124,6 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      deep: true,
       handler (n) {
         this.init()
       }
