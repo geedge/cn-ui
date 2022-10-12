@@ -23,8 +23,8 @@
 <script>
 // import { ref } from 'vue'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
-import { dateFormatToUTC } from '@/utils/date-util'
 import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'TimeRefresh',
@@ -54,6 +54,7 @@ export default {
   },
   setup (props, ctx) {
     const { query } = useRoute()
+    const store = useStore()
     const refreshArr = [
       { value: -1, label: 'off' },
       { value: 30, label: '30s' },
@@ -64,8 +65,25 @@ export default {
     ]
     let refreshObj = {}
 
-    if (query.refreshTime !== undefined) {
-      refreshObj = refreshArr.find(item => item.value === Number(query.refreshTime))
+    // 是否关闭refreshTime标志，
+    // 即时间选择30s后再off，下钻再返回时，地址栏会带着refreshTime，
+    // 此时通过refreshFlag判断已经off，再清除地址栏地址栏会带着refreshTime
+    const refreshFlag = store.state.panel.refreshFlag
+    const refreshTime = store.state.panel.refreshTime
+
+    if (refreshFlag) {
+      if (query.refreshTime !== undefined) {
+        refreshObj = refreshArr.find(item => item.value === Number(query.refreshTime))
+      } else if (refreshTime !== null) {
+        // 此处是避免下钻后浏览器返回，获取不到url的refreshTime情况
+        refreshObj = refreshArr.find(item => item.value === refreshTime)
+      }
+    } else {
+      // 浏览器回退时，清除掉地址栏的refreshTime
+      const newQuery = JSON.parse(JSON.stringify(query))
+      delete newQuery.refreshTime
+      const newUrl = urlParamsHandler(window.location.href, query, newQuery, 'clean')
+      overwriteUrl(newUrl)
     }
 
     return {
@@ -90,6 +108,7 @@ export default {
           refreshTime: val.value
         }
         this.reloadUrl(dateParam)
+        this.$store.commit('setRefreshTime', val.value)
 
         // 设置定时器
         this.intervalTimer = setInterval(() => {
@@ -109,7 +128,11 @@ export default {
         const routeQuery = this.$route.query
         delete routeQuery.refreshTime
         this.reloadUrl(routeQuery, 'cleanOldParams')
+        this.$store.commit('setRefreshTime', null)
+        this.$store.commit('setRefreshFlag', false)
       }
+
+      console.log('查看此时的值=============================')
     },
     showRefreshList () {
       this.dropdownShow = !this.dropdownShow

@@ -49,7 +49,9 @@ const panel = {
     // tabOperationBeforeType: 0, // 记录上次的操作类型
     npmThirdLevelMenuScore: null, // npm overview 第三级菜单的panel分数
     npmLocationCountry: '', // npm location的查询条件--国家
-    npmLocationSide: 'server' // npm location的查询条件--方向
+    npmLocationSide: 'server', // npm location的查询条件--方向
+    refreshTime: null, // 自动刷新时间的秒数
+    refreshFlag: true // 关闭自动刷新标志，true为off，false即开启自动刷新
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -138,6 +140,12 @@ const panel = {
     },
     setNpmThirdLevelMenuScore (state, score) {
       state.npmThirdLevelMenuScore = score
+    },
+    setRefreshTime (state, time) {
+      state.refreshTime = time
+    },
+    setRefreshFlag (state, flag) {
+      state.refreshFlag = flag
     }
   },
   getters: {
