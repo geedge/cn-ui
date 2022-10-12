@@ -57,8 +57,8 @@ const user = {
             tempArr = tempArr[1].split('&')
             tempArr.forEach(t => {
               let firstEqualIndex = t.indexOf('=')
-              let key = t.substring(0,firstEqualIndex)
-              let value = t.substring(firstEqualIndex+1)
+              let key = t.substring(0, firstEqualIndex)
+              let value = t.substring(firstEqualIndex + 1)
               query[key] = value
             })
           }

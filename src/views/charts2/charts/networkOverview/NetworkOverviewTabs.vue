@@ -47,7 +47,12 @@
                   <template v-if="item.columnType === tableColumnType.chainRatio"  >
                     <div class="data-total" >
                       <div class="data-value">
-                        {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
+                        <template v-if="showUnit && item.unit">
+                          {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], item.unit).join(' ') : '-'):'' }}
+                        </template>
+                        <template v-else>
+                          {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
+                        </template>
                       </div>
                       <div class="data-trend">
                         <template v-if="scope.row[item.prop]">
@@ -73,18 +78,23 @@
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.percent" >
                     <div class="dns-in-ex">
-                      <div class="dns-percent-pic" >
+                      <div class="dns-percent-pic">
                         <div v-if="scope.row[item.prop][0] !== false" class="div-green" id="green" :style="`width:${scope.row[item.prop][0]}`"></div>
                         <div v-if="scope.row[item.prop][0] !== false" class="div-yellow" id="yellow" :style="`width:${scope.row[item.prop][1]}`"></div>
                       </div>
-                      <div class="dns-percent" >{{scope.row[item.prop][2]}}</div>
+                      <div class="dns-percent">{{scope.row[item.prop][2]}}</div>
                     </div>
                   </template>
                   <template v-else-if="item.prop === 'score'" >
                     {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                   </template>
                   <template v-else>
-                    {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
+                    <template v-if="showUnit && item.unit">
+                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], item.unit).join(' ') : '-'}}
+                    </template>
+                    <template v-else>
+                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
+                    </template>
                   </template>
                 </template>
               </el-table-column>
@@ -250,7 +260,8 @@ export default {
       tableSortColumn: '',
       tableSortType: '',
       tableSortTab: '',
-      urlChangeParams: {}
+      urlChangeParams: {},
+      showUnit: false
     }
   },
   props: {
@@ -350,18 +361,18 @@ export default {
       }
     },
     isThirdMenu () { // 当前是否为3级
-      if(this.isOnlyRead){
+      if (this.isOnlyRead) {
         return false
-      }else {
+      } else {
         const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
         const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
         return thirdMenu && !fourthMenu
       }
     },
     isFourthMenu () { // 当前是否为4级
-      if(this.isOnlyRead){
+      if (this.isOnlyRead) {
         return false
-      }else {
+      } else {
         const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
         const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
         return thirdMenu && fourthMenu
@@ -408,11 +419,11 @@ export default {
 
       // 针对network overview – app list 点击标题触发下钻，相关内容处理
       const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
-      //const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
+      // const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
       if (this.isFourthMenu()) {
         this.list.forEach(item => {
           if (item.label === thirdMenu) {
-            //item.checked = false
+            // item.checked = false
           }
         })
       } else if (this.isThirdMenu()) {
@@ -463,7 +474,7 @@ export default {
         this.showCustomizeTabs = false
       } else if (curOperationType === operationType.changeTab) { // 切换tab
         this.showCustomizeTabs = true
-      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu ) { // 点击的为第二级菜单、或者点击菜单进入、
+      } else if (curOperationType === operationType.secondMenu || curOperationType === operationType.mainMenu) { // 点击的为第二级菜单、或者点击菜单进入、
         if (curTab) {
           this.showTab(curTab)
           this.urlChangeParams[this.curTabState.curTab] = curTab.prop
@@ -519,7 +530,7 @@ export default {
             this.showCustomizeTabs = true
           })
         }
-      }else {
+      } else {
         this.showCustomizeTabs = true
       }
       this.changeUrlTabState()
@@ -961,7 +972,7 @@ export default {
           item.disabled = false
           if (columnValue) {
             if (item.label === columnName) {
-              //item.disabled = true
+              // item.disabled = true
             }
           }
         })
@@ -1022,7 +1033,7 @@ export default {
           item.disabled = false
           if (columnValue) {
             if (item.label === columnName) {
-              //item.disabled = true
+              // item.disabled = true
             }
           }
         })
@@ -1085,7 +1096,7 @@ export default {
       this.urlChangeParams[this.curTabState.networkOverviewBeforeTab] = tab.prop
     },
     setQueryCondition (tab, value) {
-      value = value.replaceAll("'","\\\\'")
+      value = value.replaceAll("'", "\\\\'")
       const queryCondition = []
       const searchProps = tab.dillDownProp
       if (tab.prop === 'protocolPort') {
@@ -1189,7 +1200,7 @@ export default {
       })
     },
     handleSearchParams (columnValue) {
-      columnValue = columnValue.replaceAll("'","\\\\'")
+      columnValue = columnValue.replaceAll("'", "\\\\'")
       const queryCondition = []
       const curTab = this.getCurTab()
       const searchProps = curTab.dillDownProp
@@ -1519,6 +1530,7 @@ export default {
             column.name = commonColumn ? commonColumn.name : ''
             column.label = commonColumn ? commonColumn.i18n : ''
             column.prop = commonColumn ? commonColumn.prop : ''
+            column.unit = commonColumn ? commonColumn.unit : null
             column.checked = !((hiddenColumnList.indexOf(columnName) >= 0))
             column.disabled = (disabledColumnList.indexOf(columnName) >= 0)
             column.columnType = commonColumn ? commonColumn.columnType : ''
@@ -1701,6 +1713,7 @@ export default {
         this.columnNameGroup = this.curTable.bytesColumnNameGroup
         this.cycleColumnNameGroup = this.curTable.bytesCycleColumnNameGroup
         this.isOnlyRead = this.curTable.isOnlyRead ? this.curTable.isOnlyRead : false
+        this.showUnit = this.curTable.showUnit ? this.curTable.showUnit : false
         if (this.curTableInCode.defaultOrderBy) {
           this.orderBy = this.curTableInCode.defaultOrderBy
         }

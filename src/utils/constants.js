@@ -97,7 +97,8 @@ export const unitTypes = {
   byte: 'byte',
   bps: 'bps',
   string: 'string',
-  percent: 'percent'
+  percent: 'percent',
+  qps: 'qps'
 }
 export const chartTableDefaultPageSize = 10 // table类型图表默认每页数据量
 export const chartTableTopOptions = [10, 100] // table类型图表的TOP-N选项
@@ -958,7 +959,7 @@ export const dnsServiceInsightsTabList = [
   },
   {
     label: 'QNames',
-    prop: 'dnsServerRole',
+    prop: 'qname',
     queryCycleTotalProp: 'qnames',
     dillDownProp: ['dns_qname'],
     checked: true,
@@ -1123,7 +1124,7 @@ export const networkTable = {
     bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForDns,
     defaultOrderBy: 'totalBytes'
   },
-  linkMonitor:{
+  linkMonitor: {
     tabList: linkMonitorTabList,
     column: customTableTitlesForLinkMonitor,
     url: linkMonitorUrl,

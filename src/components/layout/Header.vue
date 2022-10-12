@@ -73,7 +73,8 @@
             </div>
           </template>
           <template v-else-if="index===2">
-            <span class="route-menu" @click="jump(route,item,'',3)">{{$t(item)}}</span>
+            <span v-if="route===wholeScreenRouterMapping.dns" >{{$t(item)}}</span>
+            <span v-else class="route-menu" @click="jump(route,item,'',3)">{{$t(item)}}</span>
           </template>
           <template v-else-if="index===1">
             <span class="route-menu" @click="jump(route,'','',2)" v-if="route.indexOf('detection') === -1">{{item}}</span>
@@ -188,7 +189,8 @@ import {
   networkOverviewTabList,
   networkTable,
   operationType,
-  storageKey
+  storageKey,
+  wholeScreenRouterMapping
 } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
@@ -242,7 +244,8 @@ export default {
       ],
       curPageNum: 1,
       curTabState: curTabState,
-      urlChangeParams: {}
+      urlChangeParams: {},
+      wholeScreenRouterMapping
     }
   },
   computed: {

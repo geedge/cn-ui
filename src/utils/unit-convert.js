@@ -4,6 +4,7 @@ import _ from 'lodash'
 const numberUnit = ['', 'K', 'M', 'G', 'T', 'P', 'E']
 const byteUnit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
 const bpsUnit = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps', 'Ebps']
+const qpsUnit = ['qps', 'Kqps', 'Mqps', 'Gqps', 'Tqps', 'Pqps', 'Eqps']
 const timeUnit = [ // 时间单位步进倍数，以ms为基数
   { unit: 'ms', step: 1 },
   { unit: 's', step: 1000 },
@@ -34,6 +35,9 @@ export function numberUnitConvert (value, sourceUnit, targetUnit, dot = 2) {
 }
 export function bpsUnitConvert (value, sourceUnit, targetUnit, dot = 2) {
   return asciiCompute(value, 1000, bpsUnit, dot)
+}
+export function qpsUnitConvert (value, sourceUnit, targetUnit, dot = 2) {
+  return asciiCompute(value, 1000, qpsUnit, dot)
 }
 export function byteUnitConvert (value, unitType, sourceUnit = 'B', targetUnit, dot = 2) {
   return asciiCompute(value, 1024, byteUnit, dot)
@@ -108,6 +112,9 @@ export default function unitConvert (value, unitType, sourceUnit, targetUnit, do
       }
       case unitTypes.byte: {
         return byteUnitConvert(value, unitType, sourceUnit, targetUnit, dot)
+      }
+      case unitTypes.qps: {
+        return qpsUnitConvert(value, sourceUnit, targetUnit, dot)
       }
     }
   }
