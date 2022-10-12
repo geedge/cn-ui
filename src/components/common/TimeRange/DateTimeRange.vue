@@ -3,9 +3,9 @@
     <div @click="showDropdown" class="date-range-text">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
-        <div class="calendar-popover-text">{{ dateFormatByAppearance(startTime) }}</div>
+        <div class="calendar-popover-text">{{ dateFormatByAppearance(getMillisecond(startTime)) }}</div>
         <div class="calendar-popover-text"> -</div>
-        <div class="calendar-popover-text">{{ dateFormatByAppearance(endTime) }}</div>
+        <div class="calendar-popover-text">{{ dateFormatByAppearance(getMillisecond(endTime)) }}</div>
       </div>
       <div class="calendar-popover-text" v-else>
         {{ showDetail }}
@@ -33,11 +33,11 @@
             />
             <div class="content-title">From</div>
             <div @click="myDatePickerShow" tabindex="1" class="content-input">
-              {{ dateFormatByAppearance(myStartTime) }}
+              {{ dateFormatByAppearance(getMillisecond(myStartTime)) }}
             </div>
             <div class="content-title">To</div>
             <div @click="myDatePickerShow" tabindex="2" class="content-input">
-              {{ dateFormatByAppearance(myEndTime) }}
+              {{ dateFormatByAppearance(getMillisecond(myEndTime)) }}
             </div>
             <div>
               <el-button @click="timeRange" type="primary" size="mini">Apply time range</el-button>
@@ -81,6 +81,7 @@
 import { ref, computed } from 'vue'
 import MyDatePicker from '../MyDatePicker'
 import { storageKey } from '@/utils/constants'
+import { getMillisecond } from '@/utils/date-util'
 
 export default {
   name: 'DateTimeRange',
@@ -193,7 +194,7 @@ export default {
       if (dropdownFlag.value) {
         myStartTime.value = props.startTime
         myEndTime.value = props.endTime
-        timeArr.value = [myStartTime.value, myEndTime.value]
+        timeArr.value = [getMillisecond(myStartTime.value), getMillisecond(myEndTime.value)]
       }
     }
     const changeDropdown = () => {
@@ -209,8 +210,8 @@ export default {
       myDatePicker.value.pickerVisible = true
     }
     const timeArrChange = (val) => {
-      myStartTime.value = val[0]
-      myEndTime.value = val[1]
+      myStartTime.value = getMillisecond(val[0])
+      myEndTime.value = getMillisecond(val[1])
     }
     const timeRange = () => {
       isCustom.value = true
@@ -243,6 +244,7 @@ export default {
     return {
       myStartTime,
       myEndTime,
+      getMillisecond,
       dropdownFlag,
       utcStr,
       address,
