@@ -117,7 +117,9 @@ export default {
             }
           })
           this.chartData = arrData.sort((a, b) => { return b.value - a.value })
-          this.init()
+          this.$nextTick(() => {
+            this.init()
+          })
         } else {
           this.isNoData = true
         }
