@@ -28,7 +28,7 @@
     }
     .performance-event-pie {
       position: relative;
-      height: 50%;
+      height: calc(50% - 1px);
       width: 100%;
       .chart-drawing {
         height: 100%;
