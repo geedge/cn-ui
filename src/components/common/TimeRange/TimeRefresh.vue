@@ -72,11 +72,12 @@ export default {
     const refreshTime = store.state.panel.refreshTime
 
     if (refreshFlag) {
-      if (query.refreshTime !== undefined) {
-        refreshObj = refreshArr.find(item => item.value === Number(query.refreshTime))
-      } else if (refreshTime !== null) {
+      if (refreshTime !== null) {
         // 此处是避免下钻后浏览器返回，获取不到url的refreshTime情况
+        // 以及重新加载后改变时间但url回退仍保留上次数据的情况
         refreshObj = refreshArr.find(item => item.value === refreshTime)
+      } else if (query.refreshTime !== undefined) {
+        refreshObj = refreshArr.find(item => item.value === Number(query.refreshTime))
       }
     } else {
       // 浏览器回退时，清除掉地址栏的refreshTime
