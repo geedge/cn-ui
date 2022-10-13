@@ -96,21 +96,36 @@ export default {
           if (this.linkTrafficListData.npmScore > 6) {
             this.linkTrafficListData.npmScore = 6
           }
-          let condition = ''
-          if (this.queryCondition.indexOf(' AND ') > -1) {
-            condition = this.queryCondition.split(/["'= ](.*?)["'= ]/)
-          } else {
-            condition = this.queryCondition
-          }
-          let bandwidthAll = 0
-          this.cnLinkInfo.forEach(e => {
-            if (condition.length > 1 && (condition[3] == e.originalLinkId || condition[8] == e.originalLinkId)) {
-              bandwidthAll += e.bandwidth
-            } else if (condition.length > 1 && condition[4] == e.nextHop) {
-              bandwidthAll += e.bandwidth
+          const condition = this.queryCondition.toLowerCase().split(' or ')
+          if (condition.length > 1) {
+            let bandwidthAll = 0
+            const condition0 = condition[0].split('=')
+            const condition1 = condition[1].split('=')
+            let ingressLinkId = null
+            let egressLinkId = null
+            if (condition0[0] && condition0[0].trim() === 'common_egress_link_id') {
+              egressLinkId = condition0[1].trim()
             }
-          })
-          this.bandWidth = bandwidthAll
+            if (condition0[0] && condition0[0].trim() === 'common_ingress_link_id') {
+              ingressLinkId = condition0[1].trim()
+            }
+            if (condition1[0] && condition1[0].trim() === 'common_egress_link_id') {
+              egressLinkId = condition1[1].trim()
+            }
+            if (condition1[0] && condition1[0].trim() === 'common_ingress_link_id') {
+              ingressLinkId = condition1[1].trim()
+            }
+            console.info(condition0, condition1, ingressLinkId, egressLinkId)
+            this.cnLinkInfo.forEach(e => {
+              if (ingressLinkId === e.originalLinkId) {
+                bandwidthAll += e.bandwidth
+              }
+              if (egressLinkId === e.originalLinkId) {
+                bandwidthAll += e.bandwidth
+              }
+            })
+            this.bandWidth = bandwidthAll
+          }
         }
       }).catch(e => {
         console.error(e)

@@ -28,7 +28,7 @@
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.total') }}</div>
                 <div class="info__value" style="margin-left: 8px">
-                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}bps
+                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}
                 </div>
               </div>
               <div class="popper-content__link-info">
@@ -81,7 +81,7 @@
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.total') }}</div>
                 <div class="info__value" style="margin-left: 8px">
-                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}bps
+                  {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}
                 </div>
               </div>
               <div class="popper-content__link-info">
@@ -291,7 +291,7 @@ export default {
       return width
     },
     drillLinkId (item) {
-      const queryCondition = `common_egress_link_id = ${item.egressLinkId} AND common_ingress_link_id = ${item.ingressLinkId}`
+      const queryCondition = `common_egress_link_id = ${item.egressLinkId} or common_ingress_link_id = ${item.ingressLinkId}`
       this.$router.push({
         query: {
           ...this.$route.query,
@@ -304,7 +304,7 @@ export default {
       })
     },
     drillNextHop (item) {
-      const queryCondition = `egress_link_direction = '${item.linkDirection}' AND ingress_link_direction = '${item.linkDirection}'`
+      const queryCondition = `egress_link_direction = '${item.linkDirection}' or ingress_link_direction = '${item.linkDirection}'`
       this.$router.push({
         query: {
           ...this.$route.query,

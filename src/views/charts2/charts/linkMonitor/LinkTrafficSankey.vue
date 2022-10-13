@@ -91,7 +91,7 @@ export default {
       }
       let url = ''
       if (this.queryCondition) {
-        const condition = this.queryCondition.toLowerCase().split(' and ')
+        const condition = this.queryCondition.toLowerCase().split(' or ')
         if (condition.length > 1) {
           if (n == 0) {
             params.q = condition.find(c => c.indexOf('common_ingress_link_id') > -1)
@@ -135,7 +135,7 @@ export default {
             if (t.commonIngressLinkId == e.originalLinkId) {
               t.linkId = e.linkId
               t.linkDirection = e.nextHop
-              t.bandWidth = e.bandwidth
+              t.bandwidth = e.bandwidth
               t.value = parseInt(t.ingressBitsRate)
               t.client = `c_${t.clientProvince}`
               t.server = `s_${t.serverProvince}`
@@ -147,8 +147,8 @@ export default {
           this.cnLinkInfo.forEach(e => {
             if (t.commonEgressLinkId == e.originalLinkId) {
               t.linkId = e.linkId
+              t.bandwidth = e.bandwidth
               t.linkDirection = e.nextHop
-              t.bandWidth = e.bandwidth
               t.value = parseInt(t.egressBitsRate)
               t.client = `c_${t.clientProvince}`
               t.server = `s_${t.serverProvince}`
@@ -179,7 +179,7 @@ export default {
           if (existLink0) {
             existLink0.value += r.value
           } else {
-            links0.push({ source: r.client, target: r.linkId, name0: r.clientProvince, name1: r.linkId, name2: r.linkDirection, name3: r.serverProvince, value: r.value, depth: 0 })
+            links0.push({ source: r.client, target: r.linkId, tooltip0: r.clientProvince, tooltip1: r.linkId, value: r.value, depth: 0, bandwidth: r.bandwidth })
           }
           const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.client)
           if (existLinkAnalyze0) {
@@ -195,7 +195,7 @@ export default {
           if (existLink1) {
             existLink1.value += r.value
           } else {
-            links1.push({ source: r.linkId, target: r.linkDirection, name0: r.clientProvince, name1: r.linkId, name2: r.linkDirection, name3: r.serverProvince, value: r.value, depth: 1 })
+            links1.push({ source: r.linkId, target: r.linkDirection, tooltip0: r.linkId, tooltip1: r.linkDirection, value: r.value, depth: 1, bandwidth: r.bandwidth })
           }
           // 第三列
           if (!data2.some(d => d.name === r.linkDirection)) {
@@ -205,7 +205,7 @@ export default {
           if (existLink2) {
             existLink2.value += r.value
           } else {
-            links2.push({ source: r.linkDirection, target: r.server, name0: r.clientProvince, name1: r.linkId, name2: r.linkDirection, name3: r.serverProvince, value: r.value, depth: 2 })
+            links2.push({ source: r.linkDirection, target: r.server, tooltip0: r.linkDirection, tooltip1: r.serverProvince, value: r.value, depth: 2 })
           }
           const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.server)
           if (existLinkAnalyze2) {
@@ -228,7 +228,7 @@ export default {
           if (existLink0) {
             existLink0.value += r.value
           } else {
-            links0.push({ source: r.client, target: r.linkDirection, name0: r.clientProvince, name1: r.linkDirection, name2: r.linkId, name3: r.serverProvince, value: r.value, depth: 0 })
+            links0.push({ source: r.client, target: r.linkDirection, tooltip0: r.clientProvince, tooltip1: r.linkDirection, value: r.value, depth: 0 })
           }
           const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.client)
           if (existLinkAnalyze0) {
@@ -244,7 +244,7 @@ export default {
           if (existLink1) {
             existLink1.value += r.value
           } else {
-            links1.push({ source: r.linkDirection, target: r.linkId, name0: r.clientProvince, name1: r.linkDirection, name2: r.linkId, name3: r.serverProvince, value: r.value, depth: 1 })
+            links1.push({ source: r.linkDirection, target: r.linkId, tooltip0: r.linkDirection, tooltip1: r.linkId, value: r.value, depth: 1, bandwidth: r.bandwidth })
           }
           // 第三列
           if (!data2.some(d => d.name === r.linkId)) {
@@ -254,7 +254,7 @@ export default {
           if (existLink2) {
             existLink2.value += r.value
           } else {
-            links2.push({ source: r.linkId, target: r.server, name0: r.clientProvince, name1: r.linkDirection, name2: r.linkId, name3: r.serverProvince, value: r.value, depth: 2 })
+            links2.push({ source: r.linkId, target: r.server, tooltip0: r.linkId, tooltip1: r.serverProvince, value: r.value, depth: 2, bandwidth: r.bandwidth })
           }
           const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.server)
           if (existLinkAnalyze2) {
@@ -294,7 +294,7 @@ export default {
             if (existOtherSLink0) {
               existOtherSLink0.value += l0.value
             } else {
-              othersLinks0.push({ ...l0, source: 'c_others' })
+              othersLinks0.push({ ...l0, source: 'c_others', tooltip0: 'others' })
             }
           }
         })
@@ -323,7 +323,7 @@ export default {
             if (existOtherLinkAnalyze2) {
               existOtherLinkAnalyze2.value += sl.value
             } else {
-              otherLinksAnalyze2.push({ ...sl, name: 'c_others' })
+              otherLinksAnalyze2.push({ ...sl, name: 's_others' })
             }
           }
         })
@@ -337,7 +337,7 @@ export default {
             if (existOtherSLink2) {
               existOtherSLink2.value += l2.value
             } else {
-              othersLinks2.push({ ...l2, target: 's_others' })
+              othersLinks2.push({ ...l2, target: 's_others', tooltip1: 'others' })
             }
           }
         })
@@ -372,25 +372,30 @@ export default {
       this.chartOption = this.$_.cloneDeep(linksTrafficSankeyOption)
       this.chartOption.tooltip.formatter = function (param) {
         if (param.data.name) return ''
-        const data = `${param.data.name0} > ${param.data.name1} > ${param.data.name2} > ${param.data.name3}`
-        const value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
-        return `
+        const data = `${param.data.tooltip0} > ${param.data.tooltip1}`
+        const value = param.data.bandwidth ? unitConvert((param.data.value / param.data.bandwidth), unitTypes.percent).join(' ') : 0
+        let html = `
             <div class="traffic-sankey">
               <div class="traffic-sankey-row-header">
                 <div class="traffic-sankey__row-value">${data}</div>
               </div>
               <div class="traffic-sankey-row-body">
                 <div class="traffic-sankey__tooltip-left">
-                  <div class="traffic-sankey__row-label">${_this.$t('overall.traffic')}</div>
-                  <div class="traffic-sankey__row-label">${_this.$t('linkMonitor.bandwidthUsage')}</div>
-                </div>
+                  <div class="traffic-sankey__row-label">${_this.$t('overall.traffic')}</div>`
+        if (value) {
+          html += `<div class="traffic-sankey__row-label">${_this.$t('linkMonitor.bandwidthUsage')}</div>`
+        }
+        html += `</div>
                 <div class="traffic-sankey__tooltip-right">
-                  <div class="traffic-sankey__row-value">${unitConvert(param.value, unitTypes.bps).join(' ')}</div>
-                  <div class="traffic-sankey__row-value">${value}</div>
-                </div>
+                  <div class="traffic-sankey__row-value">${unitConvert(param.value, unitTypes.bps).join(' ')}</div>`
+        if (value) {
+          html += `<div class="traffic-sankey__row-value">${value}</div>`
+        }
+        html += `</div>
               </div>
             </div>
           `
+        return html
       }
       this.chartOption.series[0].data = data
       this.chartOption.series[0].links = links
