@@ -211,6 +211,8 @@ export const api = {
     // todo 以下几个接口因接口返回数据为空，故造模拟接口平替
     bigramAnalysis1: 'interface/linkMonitor/bigramAnalysis1',
     bigramNextHopAnalysis1: '/interface/linkMonitor/bigramNextHopAnalysis1',
+    drilldownQuadrupleIngressAnalysis: '/interface/link/overview/drilldown/quadrupleIngressAnalysis',
+    drilldownQquadrupleEgressAnalysis: '/interface/link/overview/drilldown/quadrupleEgressAnalysis',
     analysis1: '/interface/linkMonitor/analysis1',
     nextHopAnalysis1: '/interface/linkMonitor/nextHopAnalysis1'
   },

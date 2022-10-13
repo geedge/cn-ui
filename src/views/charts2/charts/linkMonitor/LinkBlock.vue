@@ -175,8 +175,8 @@ export default {
             if (info) {
               const hit = data.find(d => d.linkId === info.linkId)
               if (hit) {
-                hit.egressBytes += d.egressBytes
-                hit.ingressBytes += d.ingressBytes
+                hit.egressBitsRate += d.egressBitsRate
+                hit.ingressBitsRate += d.ingressBitsRate
                 if (info.direction === 'egress') {
                   hit.egressBandwidth = info.bandwidth
                   hit.egressLinkId = d.linkId
@@ -187,8 +187,8 @@ export default {
               } else {
                 const hit = {
                   linkId: info.linkId,
-                  egressBytes: d.egressBytes,
-                  ingressBytes: d.ingressBytes
+                  egressBitsRate: d.egressBitsRate,
+                  ingressBitsRate: d.ingressBitsRate
                 }
                 if (info.direction === 'egress') {
                   hit.egressBandwidth = info.bandwidth
@@ -202,19 +202,19 @@ export default {
             }
           })
           data.forEach((item) => {
-            item.totalBitsRate = item.egressBytes + item.ingressBytes
+            item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
           })
 
           nextHopData.forEach((item) => {
-            item.totalBitsRate = item.egressBytes + item.ingressBytes
+            item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
           })
 
           const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
           const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
           sorted.forEach((s, i) => {
             s.color = linkColors[i]
-            s.egressUsage = this.computeUsage(s.egressBytes, s.egressBandwidth)
-            s.ingressUsage = this.computeUsage(s.ingressBytes, s.ingressBandwidth)
+            s.egressUsage = this.computeUsage(s.egressBitsRate, s.egressBandwidth)
+            s.ingressUsage = this.computeUsage(s.ingressBitsRate, s.ingressBandwidth)
             s.popoverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
           })
           this.linkData = sorted
@@ -234,9 +234,9 @@ export default {
             })
 
             // 上行使用情况计算
-            const egressUsage = this.computeUsage(s.egressBytes, sum)
+            const egressUsage = this.computeUsage(s.egressBitsRate, sum)
             // 下行使用情况计算
-            const ingressUsage = this.computeUsage(s.ingressBytes, sum)
+            const ingressUsage = this.computeUsage(s.ingressBitsRate, sum)
             s.egressUsage = egressUsage
             s.ingressUsage = ingressUsage
             s.popoverWidth = this.computePopoverWidth(egressUsage, ingressUsage)

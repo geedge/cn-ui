@@ -3,11 +3,11 @@
     <el-tabs v-model="tab">
       <el-tab-pane :label="$t('linkMonitor.ingress')" name="0">
         <chart-no-data v-if="ingress"></chart-no-data>
-        <div class="chart-drawing" id="link-traffic-sankey-0"></div>
+        <div v-if="tab == 0" class="chart-drawing" id="link-traffic-sankey-0"></div>
       </el-tab-pane>
       <el-tab-pane :label="$t('linkMonitor.egress')" name="1">
         <chart-no-data v-if="egress"></chart-no-data>
-        <div class="chart-drawing" id="link-traffic-sankey-1"></div>
+        <div v-if="tab == 1" class="chart-drawing" id="link-traffic-sankey-1"></div>
       </el-tab-pane>
     </el-tabs>
     <template v-if="tab == 0 && !ingress">
@@ -89,33 +89,29 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      let condition = ''
-      if (this.queryCondition) {
-        if (this.queryCondition.indexOf(' AND ') > -1) {
-          condition = this.queryCondition.split(/["'= ](.*?)["'= ]/)
-        } else {
-          condition = this.queryCondition
-        }
-        if (condition.length > 1 && condition[0] === 'common_egress_link_id') {
-          if (n == 0) {
-            params.q = `${condition[0]}=${condition[3]}`
-          } else {
-            params.q = `${condition[5]}=${condition[8]}`
-          }
-        } else {
-          if (n == 0) {
-            params.q = `${condition[0]}=${condition[4]}`
-          } else {
-            params.q = `${condition[7]}=${condition[11]}`
-          }
-        }
-      }
       let url = ''
-      if (n == 0) {
-        url = api.linkMonitor.quadrupleIngressAnalysis // 入口
+      if (this.queryCondition) {
+        const condition = this.queryCondition.toLowerCase().split(' and ')
+        if (condition.length > 1) {
+          if (n == 0) {
+            params.q = condition.find(c => c.indexOf('common_ingress_link_id') > -1)
+          } else {
+            params.q = condition.find(c => c.indexOf('common_egress_link_id') > -1)
+          }
+        }
+        if (n == 0) {
+          url = api.linkMonitor.drilldownQuadrupleIngressAnalysis // 入口
+        } else {
+          url = api.linkMonitor.drilldownQquadrupleEgressAnalysis // 出口
+        }
       } else {
-        url = api.linkMonitor.quadrupleEgressAnalysis // 出口
+        if (n == 0) {
+          url = api.linkMonitor.quadrupleIngressAnalysis // 入口
+        } else {
+          url = api.linkMonitor.quadrupleEgressAnalysis // 出口
+        }
       }
+
       get(url, params).then(res => {
         if (res.code === 200) {
           if (n == 0) {
@@ -133,9 +129,6 @@ export default {
       })
     },
     dataProcessing (result, tab) {
-      result = ingress.data.result
-      const datas = []
-      const links = []
       if (tab == 0) {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
@@ -143,7 +136,7 @@ export default {
               t.linkId = e.linkId
               t.linkDirection = e.nextHop
               t.bandWidth = e.bandwidth
-              t.value = parseInt(t.ingressBytes)
+              t.value = parseInt(t.ingressBitsRate)
               t.client = `c_${t.clientProvince}`
               t.server = `s_${t.serverProvince}`
             }
@@ -156,191 +149,231 @@ export default {
               t.linkId = e.linkId
               t.linkDirection = e.nextHop
               t.bandWidth = e.bandwidth
-              t.value = parseInt(t.egressBytes)
+              t.value = parseInt(t.egressBitsRate)
               t.client = `c_${t.clientProvince}`
               t.server = `s_${t.serverProvince}`
             }
           })
         })
       }
-      result = result.sort((a, b) => b.value - a.value).filter(r => r.clientProvince && r.serverProvince)
+      result = result.filter(r => r.clientProvince && r.serverProvince)
 
-      if (tab == 0) {
+      const data = []
+      const links = []
+      const data0 = []
+      const data1 = []
+      const data2 = []
+      const data3 = []
+      const links0 = []
+      const linksAnalyze0 = []
+      const links1 = []
+      const links2 = []
+      const linksAnalyze2 = []
+      if (tab == 1) {
         result.forEach(r => {
-          if (!datas.some(d => d.name === r.client)) {
-            datas.push({ name: r.client, originalName: r.clientProvince, depth: 0 })
+          // 第一列
+          if (!data0.some(d => d.name === r.client)) {
+            data0.push({ name: r.client, originalName: r.clientProvince, depth: 0 })
           }
-          const existLink0 = links.find(l => l.source === r.client && l.target === r.linkId)
+          const existLink0 = links0.find(l => l.source === r.client && l.target === r.linkId)
           if (existLink0) {
             existLink0.value += r.value
           } else {
-            links.push({ source: r.client, target: r.linkId, value: r.value, depth: 0 })
+            links0.push({ source: r.client, target: r.linkId, name0: r.clientProvince, name1: r.linkId, name2: r.linkDirection, name3: r.serverProvince, value: r.value, depth: 0 })
           }
-          if (!datas.some(d => d.name === r.linkId)) {
-            datas.push({ name: r.linkId, depth: 1 })
+          const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.client)
+          if (existLinkAnalyze0) {
+            existLinkAnalyze0.value += r.value
+          } else {
+            linksAnalyze0.push({ name: r.client, value: r.value })
           }
-          const existLink1 = links.find(l => l.source === r.linkId && l.target === r.linkDirection)
+          // 第二列
+          if (!data1.some(d => d.name === r.linkId)) {
+            data1.push({ name: r.linkId, depth: 1 })
+          }
+          const existLink1 = links1.find(l => l.source === r.linkId && l.target === r.linkDirection)
           if (existLink1) {
             existLink1.value += r.value
           } else {
-            links.push({ source: r.linkId, target: r.linkDirection, value: r.value, depth: 1 })
+            links1.push({ source: r.linkId, target: r.linkDirection, name0: r.clientProvince, name1: r.linkId, name2: r.linkDirection, name3: r.serverProvince, value: r.value, depth: 1 })
           }
-          if (!datas.some(d => d.name === r.linkDirection)) {
-            datas.push({ name: r.linkDirection, depth: 2 })
+          // 第三列
+          if (!data2.some(d => d.name === r.linkDirection)) {
+            data2.push({ name: r.linkDirection, depth: 2 })
           }
-          const existLink2 = links.find(l => l.source === r.linkDirection && l.target === r.server)
+          const existLink2 = links2.find(l => l.source === r.linkDirection && l.target === r.server)
           if (existLink2) {
             existLink2.value += r.value
           } else {
-            links.push({ source: r.linkDirection, target: r.server, value: r.value, depth: 2 })
+            links2.push({ source: r.linkDirection, target: r.server, name0: r.clientProvince, name1: r.linkId, name2: r.linkDirection, name3: r.serverProvince, value: r.value, depth: 2 })
           }
-          if (!datas.some(d => d.name === r.server)) {
-            datas.push({ name: r.server, originalName: r.serverProvince, depth: 3 })
+          const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.server)
+          if (existLinkAnalyze2) {
+            existLinkAnalyze2.value += r.value
+          } else {
+            linksAnalyze2.push({ name: r.server, value: r.value })
+          }
+          // 第四列
+          if (!data3.some(d => d.name === r.server)) {
+            data3.push({ name: r.server, originalName: r.serverProvince, depth: 3 })
           }
         })
       } else {
-
-      }
-      this.echartsInit(tab, datas, links)
-      /*let data = []
-      let links = []
-      result.forEach(t => {
-        this.cnLinkInfo.forEach(e => {
-          if (t.commonEgressLinkId == e.originalLinkId) {
-            t.commonEgressLinkId = e.linkId
-            t.ingressLinkDirection = e.nextHop
-            t.egressLinkDirection = e.nextHop
-            t.bandWidth = e.bandwidth
+        result.forEach(r => {
+          // 第一列
+          if (!data0.some(d => d.name === r.client)) {
+            data0.push({ name: r.client, originalName: r.clientProvince, depth: 0 })
+          }
+          const existLink0 = links0.find(l => l.source === r.client && l.target === r.linkDirection)
+          if (existLink0) {
+            existLink0.value += r.value
+          } else {
+            links0.push({ source: r.client, target: r.linkDirection, name0: r.clientProvince, name1: r.linkDirection, name2: r.linkId, name3: r.serverProvince, value: r.value, depth: 0 })
+          }
+          const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.client)
+          if (existLinkAnalyze0) {
+            existLinkAnalyze0.value += r.value
+          } else {
+            linksAnalyze0.push({ name: r.client, value: r.value })
+          }
+          // 第二列
+          if (!data1.some(d => d.name === r.linkDirection)) {
+            data1.push({ name: r.linkDirection, depth: 1 })
+          }
+          const existLink1 = links1.find(l => l.source === r.linkDirection && l.target === r.linkId)
+          if (existLink1) {
+            existLink1.value += r.value
+          } else {
+            links1.push({ source: r.linkDirection, target: r.linkId, name0: r.clientProvince, name1: r.linkDirection, name2: r.linkId, name3: r.serverProvince, value: r.value, depth: 1 })
+          }
+          // 第三列
+          if (!data2.some(d => d.name === r.linkId)) {
+            data2.push({ name: r.linkId, depth: 2 })
+          }
+          const existLink2 = links2.find(l => l.source === r.linkId && l.target === r.server)
+          if (existLink2) {
+            existLink2.value += r.value
+          } else {
+            links2.push({ source: r.linkId, target: r.server, name0: r.clientProvince, name1: r.linkDirection, name2: r.linkId, name3: r.serverProvince, value: r.value, depth: 2 })
+          }
+          const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.server)
+          if (existLinkAnalyze2) {
+            existLinkAnalyze2.value += r.value
+          } else {
+            linksAnalyze2.push({ name: r.server, value: r.value })
+          }
+          // 第四列
+          if (!data3.some(d => d.name === r.server)) {
+            data3.push({ name: r.server, originalName: r.serverProvince, depth: 3 })
           }
         })
-        data.push(
-          { name: t.serverProvince },
-          { name: t.commonEgressLinkId },
-          { name: tab == 0 ? t.ingressLinkDirection : t.egressLinkDirection },
-          { name: t.clientProvince }
-        )
-      })
-      const clientProvince = []
-      const linkDirection = []
-      const commonEgressLinkId = []
-      let link = []
-      result.forEach(t => {
-        const LinkDirectionShow = tab == 0 ? t.ingressLinkDirection : t.egressLinkDirection
-        const bytes = tab == 0 ? t.ingressBytes : t.egressBytes
-        if (tab == 0) {
-          clientProvince.push({
-            source: t.clientProvince,
-            target: LinkDirectionShow,
-            commonEgressLinkId: t.commonEgressLinkId,
-            serverProvince: t.serverProvince,
-            value: bytes,
-            bandWidth: t.bandWidth,
-            depth: 0
-          })
-          linkDirection.push({
-            clientProvince: t.clientProvince,
-            source: LinkDirectionShow,
-            target: t.commonEgressLinkId,
-            serverProvince: t.serverProvince,
-            value: bytes,
-            bandWidth: t.bandWidth,
-            depth: 1
-          })
-          commonEgressLinkId.push({
-            clientProvince: t.clientProvince,
-            LinkDirectionShow: LinkDirectionShow,
-            source: t.commonEgressLinkId,
-            target: t.serverProvince,
-            value: bytes,
-            bandWidth: t.bandWidth,
-            depth: 2
-          })
-        } else {
-          clientProvince.push({
-            source: t.clientProvince,
-            target: t.commonEgressLinkId,
-            LinkDirectionShow: LinkDirectionShow,
-            serverProvince: t.serverProvince,
-            value: bytes,
-            bandWidth: t.bandWidth,
-            depth: 0
-          })
-          linkDirection.push({
-            clientProvince: t.clientProvince,
-            source: t.commonEgressLinkId,
-            target: LinkDirectionShow,
-            serverProvince: t.serverProvince,
-            value: bytes,
-            bandWidth: t.bandWidth,
-            depth: 1
-          })
-          commonEgressLinkId.push({
-            clientProvince: t.clientProvince,
-            commonEgressLinkId: t.commonEgressLinkId,
-            source: LinkDirectionShow,
-            target: t.serverProvince,
-            value: bytes,
-            bandWidth: t.bandWidth,
-            depth: 2
-          })
-        }
-      })
-      link = [...clientProvince, ...linkDirection, ...commonEgressLinkId]
-      for (let i = 0; i < link.length; i++) {
-        for (let j = i + 1; j < link.length; j++) {
-          if (link[i].source === link[j].source && link[i].target === link[j].target) {
-            link[i].value = link[i].value * 1 + link[j].value * 1
-            link.splice(j, 1)
+      }
+      if (linksAnalyze0.length > 10) {
+        const sortedLinksAnalyze0 = linksAnalyze0.sort((a, b) => b.value - a.value)
+        const top10LinksAnalyze0 = []
+        const otherLinksAnalyze0 = []
+        sortedLinksAnalyze0.forEach((sl, i) => {
+          if (i < 10) {
+            top10LinksAnalyze0.push(sl)
+          } else {
+            const existOtherLinkAnalyze0 = otherLinksAnalyze0.find(ol => ol.target === sl.target)
+            if (existOtherLinkAnalyze0) {
+              existOtherLinkAnalyze0.value += sl.value
+            } else {
+              otherLinksAnalyze0.push({ ...sl, name: 'c_others' })
+            }
           }
-        }
+        })
+        const top10Links0 = []
+        const othersLinks0 = []
+        links0.forEach(l0 => {
+          if (top10LinksAnalyze0.some(t => t.name === l0.source)) {
+            top10Links0.push(l0)
+          } else {
+            const existOtherSLink0 = othersLinks0.find(ol0 => ol0.target === l0.target)
+            if (existOtherSLink0) {
+              existOtherSLink0.value += l0.value
+            } else {
+              othersLinks0.push({ ...l0, source: 'c_others' })
+            }
+          }
+        })
+        links.push(...top10Links0)
+        links.push(...othersLinks0)
+        data.push(...data0.filter(d0 => top10LinksAnalyze0.some(l0 => l0.name === d0.name)))
+        data.push({ name: 'c_others', originalName: 'others', depth: 0 })
+      } else {
+        data.push(...data0)
+        links.push(...links0)
       }
-      const map = new Map()
-      for (const item of data) {
-        if (!map.has(item.name)) {
-          map.set(item.name, item)
-        }
+
+      data.push(...data1)
+      data.push(...data2)
+      links.push(...links1)
+
+      if (linksAnalyze2.length > 10) {
+        const sortedLinksAnalyze2 = linksAnalyze2.sort((a, b) => b.value - a.value)
+        const top10LinksAnalyze2 = []
+        const otherLinksAnalyze2 = []
+        sortedLinksAnalyze2.forEach((sl, i) => {
+          if (i < 10) {
+            top10LinksAnalyze2.push(sl)
+          } else {
+            const existOtherLinkAnalyze2 = otherLinksAnalyze2.find(ol => ol.source === sl.source)
+            if (existOtherLinkAnalyze2) {
+              existOtherLinkAnalyze2.value += sl.value
+            } else {
+              otherLinksAnalyze2.push({ ...sl, name: 'c_others' })
+            }
+          }
+        })
+        const top10Links2 = []
+        const othersLinks2 = []
+        links2.forEach(l2 => {
+          if (top10LinksAnalyze2.some(t => t.name === l2.target)) {
+            top10Links2.push(l2)
+          } else {
+            const existOtherSLink2 = othersLinks2.find(ol2 => ol2.source === l2.source)
+            if (existOtherSLink2) {
+              existOtherSLink2.value += l2.value
+            } else {
+              othersLinks2.push({ ...l2, target: 's_others' })
+            }
+          }
+        })
+        links.push(...top10Links2)
+        links.push(...othersLinks2)
+        data.push(...data3.filter(d2 => top10LinksAnalyze2.some(l2 => l2.name === d2.name)))
+        data.push({ name: 's_others', originalName: 'others', depth: 3 })
+      } else {
+        data.push(...data3)
+        links.push(...links2)
       }
-      data = [...map.values()]
-      links = link
-      this.echartsInit(tab, data, links)*/
+      this.$nextTick(() => {
+        this.echartsInit(tab, data, links)
+      })
     },
     echartsInit (tab, data, links) {
       const _this = this
       let dom = ''
       if (tab == 0) {
         dom = document.getElementById('link-traffic-sankey-0')
-        !this.myChart && (this.myChart = echarts.init(dom))
+        if (this.myChart) {
+          this.myChart.dispose()
+        }
+        this.myChart = echarts.init(dom)
       } else {
         dom = document.getElementById('link-traffic-sankey-1')
-        !this.myChart2 && (this.myChart2 = echarts.init(dom))
+        if (this.myChart2) {
+          this.myChart2.dispose()
+        }
+        this.myChart2 = echarts.init(dom)
       }
       this.chartOption = this.$_.cloneDeep(linksTrafficSankeyOption)
       this.chartOption.tooltip.formatter = function (param) {
         if (param.data.name) return ''
-        let data = ''
-        let value = 0
-        if (param.data.depth === 0) {
-          if (tab == 0) {
-            data = ` ${param.data.source} > ${param.data.target} > ${param.data.commonEgressLinkId} > ${param.data.serverProvince}`
-          } else {
-            data = `${param.data.source} > ${param.data.target} > ${param.data.LinkDirectionShow} > ${param.data.serverProvince}`
-          }
-          value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
-        } else if (param.data.depth === 1) {
-          if (tab == 0) {
-            data = `${param.data.clientProvince} > ${param.data.source} > ${param.data.target} > ${param.data.serverProvince}`
-          } else {
-            data = `${param.data.clientProvince} > ${param.data.source} > ${param.data.target} > ${param.data.serverProvince}`
-          }
-          value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
-        } else if (param.data.depth === 2) {
-          if (tab == 0) {
-            data = `${param.data.clientProvince} > ${param.data.LinkDirectionShow} > ${param.data.source} > ${param.data.target}`
-          } else {
-            data = ` ${param.data.clientProvince} > ${param.data.commonEgressLinkId} > ${param.data.source} > ${param.data.target}`
-          }
-          value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
-        }
+        const data = `${param.data.name0} > ${param.data.name1} > ${param.data.name2} > ${param.data.name3}`
+        const value = unitConvert((param.data.value / param.data.bandWidth), unitTypes.percent).join(' ')
         return `
             <div class="traffic-sankey">
               <div class="traffic-sankey-row-header">
