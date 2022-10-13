@@ -111,7 +111,7 @@ export default {
           url = api.linkMonitor.quadrupleEgressAnalysis // 出口
         }
       }
-
+      this.toggleLoading(true)
       get(url, params).then(res => {
         if (res.code === 200) {
           if (n == 0) {
