@@ -1,8 +1,12 @@
 <template>
   <div class="link-blocks">
-    <div class="block-list">
+    <div class="block-list" style="position: relative">
       <div class="block-list__title">{{ $t('linkMonitor.links') }}</div>
-      <div class="block-list__list">
+
+      <!--无数据noData-->
+      <chart-no-data v-if="isNoData"></chart-no-data>
+
+      <div class="block-list__list" v-show="!isNoData">
         <el-popover
             placement="bottom"
             trigger="hover"
@@ -50,10 +54,12 @@
       </div>
     </div>
 
-    <div class="block-list">
-      <!--todo  此处应将linkid改成nextHop显示-->
+    <div class="block-list" style="position: relative">
       <div class="block-list__title">{{ $t('linkMonitor.nextHopInternet') }}</div>
-      <div class="block-list__list">
+
+      <chart-no-data v-if="isNoData"></chart-no-data>
+
+      <div class="block-list__list" v-show="!isNoData">
         <el-popover
             placement="bottom"
             trigger="hover"
@@ -123,6 +129,7 @@ export default {
   },
   data () {
     return {
+      isNoData: false,
       unitTypes,
       linkData: [],
       nextHopData: [],
@@ -165,6 +172,7 @@ export default {
         if (res[0].code === 200 && res[1].code === 200) {
           const linkData = res[0].data.result
           const nextHopData = res[1].data.result
+
           this.isNoData = linkData.length === 0 && nextHopData.length === 0
           if (this.isNoData) {
             return
