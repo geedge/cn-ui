@@ -73,7 +73,6 @@ export default {
     const { query } = useRoute()
     const lineMetric = ref(query.lineMetric || 'Bits/s')
     const lineTab = ref(query.lineTab || '')
-    // const d = `common_egress_link_id='${246}' AND common_ingress_link_id='${246}'`
     const queryCondition = ref(query.queryCondition || '')
     return {
       lineMetric,
@@ -152,7 +151,6 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      // const condition = this.$store.getters.getQueryCondition
       if (this.queryCondition) {
         params.q = this.queryCondition
       }

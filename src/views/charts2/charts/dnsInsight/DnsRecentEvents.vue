@@ -2,46 +2,46 @@
   <div class="dns-recent-event npm-app-event">
     <div class="dns-recent-event-header">
       <div class="dns-recent-event-title">{{ $t('network.recentEvents') }}</div>
-<!--      <div class="dns-recent-event-select">-->
-<!--        <div class="metric-select">-->
-<!--          <el-select v-model="tableType"-->
-<!--                     class="option__select select-column"-->
-<!--                     popper-class="option-popper common-select"-->
-<!--                     :popper-append-to-body="false"-->
-<!--                     key="tabMetric"-->
-<!--                     :placeholder="$t('overall.select')"-->
-<!--                     @change="changeMetric"-->
-<!--                     size="mini"-->
-<!--                     width="100">-->
-<!--            <el-option-->
-<!--                v-for="item in options"-->
-<!--                :key="item.label"-->
-<!--                :label="item.label"-->
-<!--                :value="item.value"-->
-<!--            />-->
-<!--          </el-select>-->
-<!--          <span>{{$t('overall.type')}}：</span>-->
-<!--        </div>-->
-<!--        <div class="metric-select">-->
-<!--          <el-select v-model="tableSeverity"-->
-<!--                     class="option__select select-column"-->
-<!--                     popper-class="option-popper common-select"-->
-<!--                     :popper-append-to-body="false"-->
-<!--                     key="tabMetric"-->
-<!--                     :placeholder="$t('overall.select')"-->
-<!--                     @change="changeMetric"-->
-<!--                     size="mini"-->
-<!--                     width="100">-->
-<!--            <el-option-->
-<!--                v-for="item in severityOption"-->
-<!--                :key="item.label"-->
-<!--                :label="item.label"-->
-<!--                :value="item.value"-->
-<!--            />-->
-<!--          </el-select>-->
-<!--          <span>{{$t('network.severity')}}：</span>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="dns-recent-event-select">
+        <div class="metric-select">
+          <el-select v-model="tableType"
+                     class="option__select select-column"
+                     popper-class="option-popper common-select"
+                     :popper-append-to-body="false"
+                     key="tabMetric"
+                     :placeholder="$t('overall.select')"
+                     @change="changeMetric"
+                     size="mini"
+                     width="100">
+            <el-option
+                v-for="item in options"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+          <span>{{$t('overall.type')}}：</span>
+        </div>
+        <div class="metric-select">
+          <el-select v-model="tableSeverity"
+                     class="option__select select-column"
+                     popper-class="option-popper common-select"
+                     :popper-append-to-body="false"
+                     key="tabMetric"
+                     :placeholder="$t('overall.select')"
+                     @change="changeMetric"
+                     size="mini"
+                     width="100">
+            <el-option
+                v-for="item in severityOption"
+                :key="item.label"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+          <span>{{$t('network.severity')}}：</span>
+        </div>
+      </div>
     </div>
     <el-table
         :id="`tabTable_${index}`"
@@ -69,7 +69,7 @@
                 </span>
               </template>
               <template v-else-if="item.prop === 'event'">
-                <span class="data-eventType" >{{scope.row[item.prop]}}</span>
+                <span class="data-eventType">{{scope.row[item.prop]}}</span>
               </template>
               <template v-else-if="item.prop === 'severity'">
                 <template v-if="scope.row[item.prop]==='critical'">
@@ -131,12 +131,12 @@ export default {
     return {
       options: [
         {
-          label: this.$t('overall.securityEvents'),
-          value: 'Security events'
+          label: this.$t('dnsInsight.securityEvent'),
+          value: 'securityEvent'
         },
         {
           label: this.$t('dnsInsight.PerEvent'),
-          value: 'Performance Event'
+          value: 'performanceEvent'
         }
       ],
       severityOption: [
