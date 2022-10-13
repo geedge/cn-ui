@@ -103,19 +103,18 @@ export default {
             const condition1 = condition[1].split('=')
             let ingressLinkId = null
             let egressLinkId = null
-            if (condition0[0] && condition0[0].trim() === 'common_egress_link_id') {
+            if (condition0[0] && (condition0[0].trim() === 'common_egress_link_id' || condition0[0].trim() === 'egress_link_direction')) {
               egressLinkId = condition0[1].trim()
             }
-            if (condition0[0] && condition0[0].trim() === 'common_ingress_link_id') {
+            if (condition0[0] && (condition0[0].trim() === 'common_ingress_link_id' || condition0[0].trim() === 'ingress_link_direction')) {
               ingressLinkId = condition0[1].trim()
             }
-            if (condition1[0] && condition1[0].trim() === 'common_egress_link_id') {
+            if (condition1[0] && (condition1[0].trim() === 'common_egress_link_id' || condition1[0].trim() === 'egress_link_direction')) {
               egressLinkId = condition1[1].trim()
             }
-            if (condition1[0] && condition1[0].trim() === 'common_ingress_link_id') {
+            if (condition1[0] && (condition1[0].trim() === 'common_ingress_link_id' || condition1[0].trim() === 'ingress_link_direction')) {
               ingressLinkId = condition1[1].trim()
             }
-            console.info(condition0, condition1, ingressLinkId, egressLinkId)
             this.cnLinkInfo.forEach(e => {
               if (ingressLinkId === e.originalLinkId) {
                 bandwidthAll += e.bandwidth

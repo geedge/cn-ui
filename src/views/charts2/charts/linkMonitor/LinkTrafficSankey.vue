@@ -94,9 +94,9 @@ export default {
         const condition = this.queryCondition.toLowerCase().split(' or ')
         if (condition.length > 1) {
           if (n == 0) {
-            params.q = condition.find(c => c.indexOf('common_ingress_link_id') > -1)
+            params.q = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
           } else {
-            params.q = condition.find(c => c.indexOf('common_egress_link_id') > -1)
+            params.q = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
           }
         }
         if (n == 0) {
