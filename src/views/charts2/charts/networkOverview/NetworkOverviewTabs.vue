@@ -274,7 +274,7 @@ export default {
   watch: {
     timeFilter: {
       handler (n) {
-        console.log('watch')
+        // console.log('watch')
         const curTab = this.getCurTab()
         let queryParams = {
           orderBy: this.orderBy,
@@ -378,7 +378,7 @@ export default {
       }
     },
     initState () {
-      console.log('InitState：开始')
+      // console.log('InitState：开始')
       let curTab = this.getCurTab()
       if (curTab) { // 显示当前tab
         const realTab = this.list.find(item => item.label === curTab.label)
@@ -533,7 +533,7 @@ export default {
         this.showCustomizeTabs = true
       }
       this.changeUrlTabState()
-      console.log('InitState: 结束')
+      // console.log('InitState: 结束')
     },
     initData () {
       const tabList = []
@@ -1129,7 +1129,7 @@ export default {
         5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
     * */
     handleTabValue (columnName, columnValue) {
-      console.log('NetworkOverview类------handleTabValue：下钻')
+      // console.log('NetworkOverview类------handleTabValue：下钻')
       const clickTab = this.getTabByLabel(columnName)// 下钻后，显示的下钻tab对应的drilldownTabs
       this.setBeforeTab(clickTab)
       this.setOperationType(operationType.fourthMenu)
@@ -1163,7 +1163,7 @@ export default {
         })
       }
       this.saveUserLocalConfig()
-      console.log(this.drillDownTableConfigs)
+      // console.log(this.drillDownTableConfigs)
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -1453,7 +1453,7 @@ export default {
       return curTab
     },
     combineTabList (tabList) {
-      console.log('CombineTabList：开始')
+      // console.log('CombineTabList：开始')
       let listInCode = this.curTableInCode ? this.curTableInCode.tabList : []
       tabList.forEach(tab => {
         let tabName = tab ? (tab.name ? tab.name : tab) : ''
@@ -1509,10 +1509,10 @@ export default {
           }
         })
       //}
-      console.log('CombineTabList：结束')
+      // console.log('CombineTabList：结束')
     },
     combineColumnList (tabLabel) {
-      console.log('CombineColumnList：开始')
+      // console.log('CombineColumnList：开始')
       const allTabs = this.getAllTabList()
       const curTab = allTabs.find(item => item.label === tabLabel)
       const customTableTitles = curTab ? curTab.columns : []
@@ -1553,12 +1553,11 @@ export default {
         }
       }
 
-      console.log('CombineColumnList：结束')
+      // console.log('CombineColumnList：结束')
     },
     async getUserLocalConfig () {
       const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: this.userId })
       if (userLocalCongfig) {
-        console.info(userLocalCongfig.config)
         return userLocalCongfig.config
       } else {
         return null
@@ -1582,13 +1581,13 @@ export default {
       return isSetDrilldownTabInfo
     },
     async saveUserLocalConfig () {
-      console.log('SaveUserLocalConfig方法：开始')
-      console.log(this.drillDownTableConfigs)
+      // console.log('SaveUserLocalConfig方法：开始')
+      // console.log(this.drillDownTableConfigs)
       await db[dbDrilldownTableConfig].put({
         id: this.userId,
         config: this.$_.cloneDeep(this.drillDownTableConfigs)
       })
-      console.log('SaveUserLocalConfig方法：结束')
+      // console.log('SaveUserLocalConfig方法：结束')
     },
     getAllTabList () {
       let tabs = []
@@ -1636,7 +1635,7 @@ export default {
     }
   },
   async mounted () {
-    console.log('Mounted：开始')
+    // console.log('Mounted：开始')
     this.userId = localStorage.getItem(storageKey.userId)
     this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
     this.curTableInCode = this.networkTable[this.tableType] ? this.networkTable[this.tableType] : this.networkTable.networkOverview
@@ -1651,16 +1650,16 @@ export default {
     const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: this.userId })
     if (userLocalCongfig) {
       this.drillDownTableConfigs = userLocalCongfig.config
-      console.log(this.drillDownTableConfigs)
+      // console.log(this.drillDownTableConfigs)
     }
     if (!this.drillDownTableConfigs || this.drillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
       const defaultCongfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
       if (defaultCongfig) {
         this.drillDownTableConfigs = defaultCongfig.config
-        console.log(this.drillDownTableConfigs)
+        // console.log(this.drillDownTableConfigs)
       }
     }
-    console.log(this.drillDownTableConfigs)
+    // console.log(this.drillDownTableConfigs)
     const currentTableConfig = this.drillDownTableConfigs.find(config => config.route === this.tableType)
     // 开始设置当前table，当前tab，当前tab对应的列等信息
     this.commonTabList = currentTableConfig ? currentTableConfig.tabs : []
@@ -1679,8 +1678,8 @@ export default {
             }
             const drilldownTab = tabList.find(item => item.label === thirdMenu)
             this.list = drilldownTab ? drilldownTab.drilldownTabs : []
-            console.log('下钻：list')
-            console.log(this.list)
+            // console.log('下钻：list')
+            // console.log(this.list)
             this.allList = this.$_.cloneDeep(tabList)// 备份所有配置，下钻及返回时使用
             const curTab = this.getCurTab()// 初始化完list，才能正确执行
             const curTabColumns = tabList.find(item => item.prop === curTab.prop)
@@ -1693,8 +1692,8 @@ export default {
             this.combineTabList(this.list)
           }
           this.allList = this.$_.cloneDeep(this.list)// 备份所有配置，下钻及返回时使用
-          console.log('未下钻：list')
-          console.log(this.list)
+          // console.log('未下钻：list')
+          // console.log(this.list)
           if (this.list && this.list.length > 0) {
             const curTab = this.getCurTab()// 初始化完list，才能正确执行
             this.combineColumnList(curTab.label)
@@ -1725,16 +1724,16 @@ export default {
         this.hasMetricSearch = this.curTable.hasMetricSearch
       }, 250)
     })
-    console.log('Mounted：结束')
+    // console.log('Mounted：结束')
   },
   setup (props) {
   },
   unmounted () {
-    console.log('Unmounted方法：开始')
+    // console.log('Unmounted方法：开始')
     this.isNoData = false
     // 存储用户的设置
     this.saveUserLocalConfig()
-    console.log('Unmounted方法：结束')
+    // console.log('Unmounted方法：结束')
   }
 }
 </script>

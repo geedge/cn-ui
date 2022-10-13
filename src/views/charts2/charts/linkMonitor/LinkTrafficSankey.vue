@@ -35,7 +35,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { useRoute } from 'vue-router'
-import { overwriteUrl, urlParamsHandler, ingress, egress } from '@/utils/tools'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
 import { storageKey, unitTypes } from '@/utils/constants'
 

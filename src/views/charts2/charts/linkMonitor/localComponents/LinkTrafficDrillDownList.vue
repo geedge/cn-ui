@@ -2,11 +2,11 @@
   <div class="link-traffic-list">
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.bytesTotal, unitTypes.bps).join('')}}</div>
+      <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.totalBitsRate, unitTypes.bps).join('')}}</div>
     </div>
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
-      <div class="link-traffic-list-center-value" v-if="bandWidth">{{unitConvert(linkTrafficListData.bytesTotal / bandWidth, unitTypes.percent).join('')}}</div>
+      <div class="link-traffic-list-center-value" v-if="bandWidth">{{unitConvert(linkTrafficListData.totalBitsRate / bandWidth, unitTypes.percent).join('')}}</div>
       <div class="link-traffic-list-center-value" v-else>-</div>
     </div>
     <div class="link-traffic-list-center">
