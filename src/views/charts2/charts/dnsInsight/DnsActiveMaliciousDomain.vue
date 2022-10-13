@@ -120,7 +120,7 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-
+      this.toggleLoading(true)
       get(api.dnsInsight.activeMaliciousDomain, params).then(res => {
         if (res.code === 200) {
           const data = res.data.result

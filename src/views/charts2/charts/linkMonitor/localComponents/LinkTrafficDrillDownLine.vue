@@ -1,5 +1,6 @@
 <template>
   <div class="line network link-traffic">
+    <loading :loading="loading"></loading>
     <div class="line-header">
       <div class="line-header-left">
         <div class="line-value-active" v-if="lineTab"></div>
@@ -64,10 +65,12 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import Loading from '@/components/common/Loading'
 export default {
   name: 'linkTrafficDrillDownLine',
   components: {
-    ChartNoData
+    ChartNoData,
+    Loading
   },
   setup () {
     const { query } = useRoute()
@@ -111,7 +114,8 @@ export default {
       leftOffset: 0,
       sizes: [3, 4, 6, 8, 9, 10],
       dynamicVariable: '',
-      showMarkLine: true
+      showMarkLine: true,
+      loading: false
     }
   },
   watch: {
@@ -154,7 +158,7 @@ export default {
       if (this.queryCondition) {
         params.q = this.queryCondition
       }
-      this.toggleLoading(true)
+      this.loading = true
       get(api.linkMonitor.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
@@ -224,7 +228,7 @@ export default {
         console.error(e)
         this.isNoData = true
       }).finally(() => {
-        this.toggleLoading(false)
+        this.loading = false
       })
     },
     echartsInit (echartsData) {

@@ -238,7 +238,7 @@ export default {
   computed: {
     // 排除某些不需要loading的图表，例如npm-tabs
     disableLoading () {
-      const disableChartTypes = [typeMapping.npm.npmTabs]
+      const disableChartTypes = [typeMapping.npm.npmTabs, typeMapping.linkMonitor.linkTrafficLine]
       return disableChartTypes.indexOf(this.chart.type) > -1
     }
   },

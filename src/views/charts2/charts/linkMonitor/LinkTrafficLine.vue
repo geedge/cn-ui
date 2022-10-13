@@ -27,12 +27,6 @@ export default {
   data () {
     return {
     }
-  },
-  methods: {
-
-  },
-  mounted () {
-    this.toggleLoading(false)
   }
 }
 </script>

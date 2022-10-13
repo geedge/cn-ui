@@ -128,9 +128,11 @@ export default {
       }
     },
     eventsByTypeData () {
+      this.toggleLoading(false)
       if (this.pieData.length > 0) {
         this.chartData = this.pieData
         this.init()
+        this.toggleLoading(true)
       }
     },
     resize () {

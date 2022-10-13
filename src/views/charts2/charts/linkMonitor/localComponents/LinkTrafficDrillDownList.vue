@@ -1,5 +1,6 @@
 <template>
   <div class="link-traffic-list">
+    <loading :loading="loading"></loading>
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
       <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.totalBitsRate, unitTypes.bps).join('')}}</div>
@@ -46,7 +47,7 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getSecond } from '@/utils/date-util'
 import { computeScore } from '@/utils/tools'
-
+import Loading from '@/components/common/Loading'
 export default {
   name: 'linkTrafficList',
   mixins: [chartMixin],
@@ -57,6 +58,9 @@ export default {
       queryCondition
     }
   },
+  components: {
+    Loading
+  },
   data () {
     return {
       unitTypes,
@@ -64,7 +68,8 @@ export default {
       timer: null,
       linkTrafficListData: {},
       cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo)),
-      bandWidth: 0
+      bandWidth: 0,
+      loading: false
     }
   },
   methods: {
@@ -76,7 +81,7 @@ export default {
       if (this.queryCondition) {
         params.q = this.queryCondition
       }
-      this.toggleLoading(true)
+      this.loading = true
       get(api.linkMonitor.networkAnalysis, params).then(res => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
@@ -111,7 +116,7 @@ export default {
         console.error(e)
         this.isNoData = true
       }).finally(() => {
-        this.toggleLoading(false)
+        this.loading = false
       })
     }
   },

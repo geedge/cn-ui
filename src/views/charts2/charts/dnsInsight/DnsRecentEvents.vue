@@ -205,6 +205,7 @@ export default {
         type: this.tableType,
         severity: this.tableSeverity
       }
+      this.toggleLoading(true)
       get(api.dnsInsight.recentEvents, params).then(res => {
         if (res.code === 200) {
           if (!res.data.result || res.data.result.length === 0) {

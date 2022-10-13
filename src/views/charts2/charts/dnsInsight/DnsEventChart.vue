@@ -61,6 +61,7 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
+      this.toggleLoading(true)
       get(api.dnsInsight.eventChart, params).then(res => {
         const data = res.data.result
         this.pieData = []

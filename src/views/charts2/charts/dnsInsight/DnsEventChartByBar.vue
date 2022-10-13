@@ -83,8 +83,10 @@ export default {
       }
     },
     eventsByTypeData () {
+      this.toggleLoading(false)
       if (this.series.length > 0) {
         this.init()
+        this.toggleLoading(true)
       }
     },
     resize () {
