@@ -132,8 +132,6 @@ export default {
         this.$store.commit('setRefreshTime', null)
         this.$store.commit('setRefreshFlag', false)
       }
-
-      console.log('查看此时的值=============================')
     },
     showRefreshList () {
       this.dropdownShow = !this.dropdownShow

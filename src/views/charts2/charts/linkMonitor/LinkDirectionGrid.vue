@@ -1,10 +1,10 @@
 <template>
   <div class="link-direction-grid">
     <!--左侧链路出入口-->
-    <popover-content :gridData="gridData" style="width: 900px"/>
+    <popover-content :isNoData="isNoData" :gridData="gridData" style="width: 900px;"/>
 
     <!--右侧链路下一跳-->
-    <popover-content :gridData="gridData2"/>
+    <popover-content :isNoData="isNoData" :gridData="gridData2" />
   </div>
 </template>
 
@@ -23,7 +23,8 @@ export default {
   data () {
     return {
       gridData: [],
-      gridData2: []
+      gridData2: [],
+      isNoData: false
     }
   },
   components: {
@@ -37,7 +38,6 @@ export default {
     }
   },
   mounted () {
-    this.toggleLoading(false)
     this.init()
   },
   methods: {
@@ -54,6 +54,7 @@ export default {
 
       const dataRequest = get(api.linkMonitor.bigramAnalysis, params)
       const nextHopRequest = get(api.linkMonitor.bigramNextHopAnalysis, params)
+      this.toggleLoading(true)
 
       Promise.all([dataRequest, nextHopRequest]).then(res => {
         if (res[0].code === 200 && res[1].code === 200) {
@@ -61,6 +62,11 @@ export default {
           const linkData = res[0].data.result
           // 链路下一跳信息
           const nextLinkData = res[1].data.result
+
+          this.isNoData = linkData.length === 0 && nextLinkData.length === 0
+          if (this.isNoData) {
+            return
+          }
 
           // 链路流量数据
           const gridData = []
@@ -181,7 +187,14 @@ export default {
             }
           })
           this.gridData2 = gridData2
+        } else {
+          this.isNoData = true
         }
+      }).catch(e => {
+        console.error('====', e)
+        this.isNoData = true
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     },
     /**

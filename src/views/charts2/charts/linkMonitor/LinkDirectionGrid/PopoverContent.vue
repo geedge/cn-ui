@@ -1,8 +1,11 @@
 <template>
-  <div class="link-statistical-dimension">
+  <div class="link-statistical-dimension" style="position: relative">
     <div class="dimension-title">{{ $t('linkMonitor.egressLink') }}&nbsp;&&nbsp;{{ $t('linkMonitor.ingressLink') }}
     </div>
-    <div class="data-grid">
+
+    <chart-no-data v-if="isNoData"></chart-no-data>
+
+    <div class="data-grid" v-show="!isNoData">
       <div class="egress-row">
         <div class="egress-id" v-for="(item, index) in gridData" :key="index">
           <!--兼容下一跳情况-->
@@ -142,10 +145,15 @@
 <script>
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
   name: 'PopoverContent',
   props: {
-    gridData: Array
+    gridData: Array,
+    isNoData: Boolean
+  },
+  components: {
+    ChartNoData
   },
   data () {
     return {
