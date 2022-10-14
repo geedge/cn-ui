@@ -70,7 +70,7 @@ export default {
           res.data.result.forEach(t => {
             this.chartData.forEach(d => {
               if (d.eventSeverity === t.eventSeverity) {
-                d.count = t.count
+                d.count = t.count.toLocaleString()
               }
             })
           })
