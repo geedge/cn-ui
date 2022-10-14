@@ -79,7 +79,11 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       if (this.queryCondition) {
-        params.q = this.queryCondition
+        const condition = this.queryCondition.toLowerCase().split(' or ')
+        if (condition.length > 1) {
+          params.egressParam = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
+          params.ingressParam = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
+        }
       }
       this.loading = true
       get(api.linkMonitor.networkAnalysis, params).then(res => {
