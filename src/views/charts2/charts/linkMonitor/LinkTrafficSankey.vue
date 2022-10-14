@@ -123,7 +123,8 @@ export default {
         }
       }).catch(e => {
         console.error(e)
-        this.isNoData = true
+        this.egress = true
+        this.ingress = true
       }).finally(() => {
         this.toggleLoading(false)
       })
