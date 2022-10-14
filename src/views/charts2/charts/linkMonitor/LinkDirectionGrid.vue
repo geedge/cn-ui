@@ -4,7 +4,7 @@
     <popover-content :isNoData="isNoData" :gridData="gridData" style="width: 900px;"/>
 
     <!--右侧链路下一跳-->
-    <popover-content :isNoData="isNoData" :gridData="gridData2" />
+    <popover-content :isNoData="isNoData" :gridData="gridData2"/>
   </div>
 </template>
 
@@ -45,7 +45,7 @@ export default {
       // 链路基本信息
       let linkInfo = localStorage.getItem(storageKey.linkInfo)
       linkInfo = JSON.parse(linkInfo)
-      console.log('LinkDirectionGrid.vue---init--获取链路基本信息缓存', linkInfo)
+      // console.log('LinkDirectionGrid.vue---init--获取链路基本信息缓存', linkInfo)
 
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -60,8 +60,24 @@ export default {
         if (res[0].code === 200 && res[1].code === 200) {
           // 链路流量数据
           const linkData = res[0].data.result
+          // 接口数据乱序，根据入链路id（ingressLinkId）大小排序之后，
+          // 再根据同ingressLinkId下的egressLinkId进行排序
+          linkData.sort((a, b) => {
+            if (a.ingressLinkId != b.ingressLinkId) {
+              return a.ingressLinkId - b.ingressLinkId
+            }
+            return a.egressLinkId - b.egressLinkId
+          })
+
           // 链路下一跳信息
           const nextLinkData = res[1].data.result
+          // 接口数据乱序，根据出方向排序，再根据同个出方向下的入进行排序
+          nextLinkData.sort((a, b) => {
+            if (a.ingressLinkDirection != b.ingressLinkDirection) {
+              return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection)
+            }
+            return a.egressLinkDirection.localeCompare(b.egressLinkDirection)
+          })
 
           this.isNoData = linkData.length === 0 && nextLinkData.length === 0
           if (this.isNoData) {
@@ -186,12 +202,13 @@ export default {
               }
             }
           })
+
           this.gridData2 = gridData2
         } else {
           this.isNoData = true
         }
       }).catch(e => {
-        console.error('====', e)
+        console.error(e)
         this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)
