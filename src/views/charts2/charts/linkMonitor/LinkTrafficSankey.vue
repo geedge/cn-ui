@@ -374,7 +374,7 @@ export default {
       this.chartOption.tooltip.formatter = function (param) {
         if (param.data.name) return ''
         const data = `${param.data.tooltip0} > ${param.data.tooltip1}`
-        const value = param.data.bandwidth ? unitConvert((param.data.value / param.data.bandwidth), unitTypes.percent).join(' ') : 0
+        const value = param.data.bandwidth ? unitConvert((param.data.value / param.data.bandwidth), unitTypes.percent)[0] : ''
         let html = `
             <div class="traffic-sankey">
               <div class="traffic-sankey-row-header">
@@ -383,14 +383,14 @@ export default {
               <div class="traffic-sankey-row-body">
                 <div class="traffic-sankey__tooltip-left">
                   <div class="traffic-sankey__row-label">${_this.$t('overall.traffic')}</div>`
-        if (value) {
+        if (value || value === 0) {
           html += `<div class="traffic-sankey__row-label">${_this.$t('linkMonitor.bandwidthUsage')}</div>`
         }
         html += `</div>
                 <div class="traffic-sankey__tooltip-right">
                   <div class="traffic-sankey__row-value">${unitConvert(param.value, unitTypes.bps).join(' ')}</div>`
-        if (value) {
-          html += `<div class="traffic-sankey__row-value">${value}</div>`
+        if (value || value === 0) {
+          html += `<div class="traffic-sankey__row-value">${value < 0.01 ? '< 0.01 %' : value + ' %'}</div>`
         }
         html += `</div>
               </div>
