@@ -177,15 +177,15 @@ export const stackedLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 12,
-      axisLabel: {
-        formatter: function (value) {
-          const data = new Date(value)
-          const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
-          const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
-          return h + ':' + m
-        }
-      }
+      splitNumber: 12
+      // axisLabel: {
+      //   formatter: function (value) {
+      //     const data = new Date(value)
+      //     const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+      //     const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+      //     return h + ':' + m
+      //   }
+      // }
     }
   ],
   yAxis: [
@@ -234,15 +234,15 @@ export const linkTrafficLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 12,
-      axisLabel: {
-        formatter: function (value) {
-          const data = new Date(value)
-          const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
-          const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
-          return h + ':' + m
-        }
-      }
+      splitNumber: 12
+      // axisLabel: {
+      //   formatter: function (value) {
+      //     const data = new Date(value)
+      //     const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+      //     const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+      //     return h + ':' + m
+      //   }
+      // }
     }
   ],
   yAxis: [
@@ -326,15 +326,16 @@ export const npmLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 8,
-      axisLabel: {
-        formatter: function (value) {
-          const data = new Date(value)
-          const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
-          const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
-          return h + ':' + m
-        }
-      }
+      splitNumber: 8
+      // axisLabel: {
+      //   formatter: function (value) {
+      //     const data = new Date(value)
+      //     const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+      //     const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+      //     console.log(h + ':' + m)
+      //     return h + ':' + m
+      //   }
+      // }
     }
   ],
   yAxis: [
@@ -397,15 +398,15 @@ export const trafficLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 12,
-      axisLabel: {
-        formatter: function (value) {
-          const data = new Date(value)
-          const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
-          const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
-          return h + ':' + m
-        }
-      }
+      splitNumber: 12
+      // axisLabel: {
+      //   formatter: function (value) {
+      //     const data = new Date(value)
+      //     const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+      //     const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+      //     return h + ':' + m
+      //   }
+      // }
     }
   ],
   yAxis: [
@@ -493,16 +494,16 @@ export const stackedBarChartOption = {
     },
     axisTick: {
       show: false
-    },
-    axisLabel: {
-      margin: 12,
-      formatter: function (value) {
-        const data = new Date(value)
-        const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
-        const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
-        return h + ':' + m
-      }
     }
+    // axisLabel: {
+    //   margin: 12,
+    //   formatter: function (value) {
+    //     const data = new Date(value)
+    //     const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
+    //     const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
+    //     return h + ':' + m
+    //   }
+    // }
   },
   yAxis: {
     type: 'value',
