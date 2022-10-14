@@ -95,9 +95,9 @@ export default {
               const data = gridData.find(g => g.linkId === ingressLink.linkId)
 
               // 上行使用情况计算
-              const egressUsage = this.computeUsage(d.egressBytes, egressLink.bandwidth)
+              const egressUsage = this.computeUsage(d.egressBitsRate, egressLink.bandwidth)
               // 下行使用情况计算
-              const ingressUsage = this.computeUsage(d.ingressBytes, ingressLink.bandwidth)
+              const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressLink.bandwidth)
               // 宽带使用超过90%，赋红点
               d.usageMore90 = false
               if (egressUsage >= 0.9 || ingressUsage >= 0.9) {
@@ -118,7 +118,7 @@ export default {
                     linkId: egressLink.linkId,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
-                    totalBytes: d.totalBytes,
+                    totalBitsRate: d.totalBitsRate,
                     ...d
                   })
                 }
@@ -129,7 +129,7 @@ export default {
                     linkId: egressLink.linkId,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
-                    totalBytes: d.totalBytes,
+                    totalBitsRate: d.totalBitsRate,
                     ...d
                   }]
                 })
@@ -158,9 +158,9 @@ export default {
               })
 
               // 上行使用情况计算
-              const egressUsage = this.computeUsage(d.egressBytes, egressBanwidth)
+              const egressUsage = this.computeUsage(d.egressBitsRate, egressBanwidth)
               // 下行使用情况计算
-              const ingressUsage = this.computeUsage(d.ingressBytes, ingressBanwidth)
+              const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressBanwidth)
               // 宽带使用超过90%，赋红点
               d.usageMore90 = false
               if (egressUsage >= 0.9 || ingressUsage >= 0.9) {
@@ -182,7 +182,7 @@ export default {
                     nextHop: egressLink.nextHop,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
-                    totalBytes: d.totalBytes,
+                    totalBitsRate: d.totalBitsRate,
                     ...d
                   })
                 }
@@ -195,7 +195,7 @@ export default {
                     nextHop: ingressLink.nextHop,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
-                    totalBytes: d.totalBytes,
+                    totalBitsRate: d.totalBitsRate,
                     ...d
                   }]
                 })
@@ -204,6 +204,7 @@ export default {
           })
 
           this.gridData2 = gridData2
+          console.log('打印下一跳数据', gridData2)
         } else {
           this.isNoData = true
         }

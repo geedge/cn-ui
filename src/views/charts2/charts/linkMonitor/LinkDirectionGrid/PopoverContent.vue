@@ -73,7 +73,7 @@
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
                       <div class="block-content-item-value">
-                        {{unitConvert(row.egress[index2].totalBytes, unitTypes.bps).join('')}}
+                        {{unitConvert(row.egress[index2].totalBitsRate, unitTypes.bps).join('')}}
                       </div>
                     </div>
                   </div>
