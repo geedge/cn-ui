@@ -118,6 +118,8 @@ export default {
                     linkId: egressLink.linkId,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
+                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
                     totalBitsRate: d.totalBitsRate,
                     ...d
                   })
@@ -129,6 +131,8 @@ export default {
                     linkId: egressLink.linkId,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
+                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
                     totalBitsRate: d.totalBitsRate,
                     ...d
                   }]
@@ -182,6 +186,8 @@ export default {
                     nextHop: egressLink.nextHop,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
+                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
                     totalBitsRate: d.totalBitsRate,
                     ...d
                   })
@@ -195,6 +201,8 @@ export default {
                     nextHop: ingressLink.nextHop,
                     egressUsage: egressUsage,
                     ingressUsage: ingressUsage,
+                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
                     totalBitsRate: d.totalBitsRate,
                     ...d
                   }]
@@ -204,7 +212,6 @@ export default {
           })
 
           this.gridData2 = gridData2
-          console.log('打印下一跳数据', gridData2)
         } else {
           this.isNoData = true
         }
@@ -240,6 +247,26 @@ export default {
         npmScore = 6
       }
       return npmScore
+    },
+    /**
+     * 计算popover弹窗和右侧数据模块的宽度
+     * 弹窗最小宽度为360px，右侧数据最小宽度为75px，右侧数据每大一位，popover弹窗宽度增加7px
+     */
+    computeWidth (egress, ingress, flag) {
+      let width = 0
+      let length = 0
+
+      const egressUsage = JSON.stringify(parseFloat((egress * 100).toFixed(2)))
+      const ingressUsage = JSON.stringify(parseFloat((ingress * 100).toFixed(2)))
+      length = egressUsage.length + ingressUsage.length - 1
+
+      if (flag === 'popover') {
+        width = 360 + length * 7
+      } else {
+        width = 75 + length * 7
+      }
+
+      return width
     }
   }
 }

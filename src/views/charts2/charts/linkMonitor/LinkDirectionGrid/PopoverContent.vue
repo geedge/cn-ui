@@ -21,7 +21,7 @@
         </div>
         <div v-for="(item, index2) in row.egress" :key="index2">
 
-          <el-popover :width="415" placement="right" trigger="hover">
+          <el-popover :width="item.popoverWidth" placement="right" trigger="click">
             <template #reference>
               <div class="data-item data-item__hover">
                 <div :class="row.egress[index2].usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
@@ -53,7 +53,7 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.bandwidthUsage') }}</div>
 
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
                         <div style="margin-left: -10px">
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
@@ -72,7 +72,7 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
                         {{unitConvert(row.egress[index2].totalBitsRate, unitTypes.bps).join('')}}
                       </div>
                     </div>
@@ -90,42 +90,42 @@
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.npmScore1') }}</div>
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
                         {{ row.egress[index2].score }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[0].name) }}</div>
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
                         {{ unitConvert(row.egress[index2].establishLatencyMs, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[1].name) }}</div>
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{'width': row.egress[index2].valueWidth + 'px'}">
                         {{ unitConvert(row.egress[index2].httpResponseLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[2].name) }}</div>
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
                         {{ unitConvert(row.egress[index2].sslConLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[3].name) }}</div>
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
                         {{ unitConvert(row.egress[index2].tcpLostlenPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[4].name) }}</div>
-                      <div class="block-content-item-value">
+                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
                         {{ unitConvert(row.egress[index2].pktRetransPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>

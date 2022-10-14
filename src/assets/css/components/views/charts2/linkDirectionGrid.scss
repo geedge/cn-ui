@@ -113,7 +113,7 @@ $blue: #046ECA;
 
     .block-content-item-value {
       display: flex;
-      width: 145px;
+      min-width: 75px;
       font-weight: 600;
     }
   }
