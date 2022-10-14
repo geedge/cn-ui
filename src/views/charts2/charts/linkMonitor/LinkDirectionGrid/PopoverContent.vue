@@ -21,7 +21,7 @@
         </div>
         <div v-for="(item, index2) in row.egress" :key="index2">
 
-          <el-popover :width="item.popoverWidth" placement="right" trigger="click">
+          <el-popover :width="item.popoverWidth" placement="right" trigger="hover">
             <template #reference>
               <div class="data-item data-item__hover">
                 <div :class="row.egress[index2].usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
