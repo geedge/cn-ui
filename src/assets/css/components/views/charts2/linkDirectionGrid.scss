@@ -144,7 +144,7 @@ $blue: #046ECA;
 }
 
 .data-item__hover:hover {
-  transition: all 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
   background: #F4F9FD;
   border: 2px $blue solid !important;
   box-shadow: 1px 1px 5px #a1a1a1 !important;
