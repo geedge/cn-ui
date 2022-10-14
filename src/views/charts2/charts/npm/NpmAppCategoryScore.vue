@@ -34,7 +34,7 @@
                 <span class="data-total-category-value" @click="drillDownData(scope.row.i18n)">{{$t(scope.row.i18n)}}</span>
               </template>
               <template v-else-if="item.prop === 'total'">
-                <div class="data-total-value">{{unitConvert(scope.row.totalPacketsRate, unitTypes.bps).join('')}}</div>
+                <div class="data-total-value">{{unitConvert(scope.row.totalPacketsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.bytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
@@ -57,7 +57,7 @@
                 </div>
               </template>
               <template v-else-if="item.prop === 'outbound'">
-                <div class="data-total-value">{{unitConvert(scope.row.outboundPacketsRate, unitTypes.bps).join('')}}</div>
+                <div class="data-total-value">{{unitConvert(scope.row.outboundPacketsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.outboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
@@ -80,7 +80,7 @@
                 </div>
               </template>
               <template v-else-if="item.prop === 'inbound'">
-                <div class="data-total-value">{{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join('')}}</div>
+                <div class="data-total-value">{{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
