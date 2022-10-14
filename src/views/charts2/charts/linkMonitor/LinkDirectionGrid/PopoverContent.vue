@@ -58,13 +58,13 @@
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
                           </svg>
-                          {{ unitConvert(row.egress[index2].egressUsage, unitTypes.percent).join('') }}
+                          {{ convertValue(row.egress[index2].egressUsage) }}
                         </div>
                         <div>
                           <svg class="icon item-popover-down" aria-hidden="true">
                             <use xlink:href="#cn-icon-ingress"></use>
                           </svg>
-                          {{ unitConvert(row.egress[index2].ingressUsage, unitTypes.percent).join('') }}
+                          {{ convertValue(row.egress[index2].ingressUsage) }}
                         </div>
                       </div>
                     </div>
@@ -166,6 +166,23 @@ export default {
         { name: 'networkAppPerformance.packetLoss' },
         { name: 'overall.packetRetrans' }
       ]
+    }
+  },
+  methods: {
+    /**
+     * 对单位进行转换，值小于0.0001的显示为<0.01%，除此之外正常转换显示
+     * @param value
+     * @returns {string}
+     */
+    convertValue (value) {
+      let newValue = null
+      if (value < 0.0001 && value !== 0) {
+        newValue = '<0.01%'
+      } else {
+        newValue = unitConvert(value, unitTypes.percent).join('')
+      }
+
+      return newValue
     }
   }
 }

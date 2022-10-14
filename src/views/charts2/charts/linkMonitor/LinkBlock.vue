@@ -38,13 +38,13 @@
                     <svg class="icon item-popover-up" aria-hidden="true">
                       <use xlink:href="#cn-icon-egress"></use>
                     </svg>
-                    {{ unitConvert(item.egressUsage, unitTypes.percent).join('') }}
+                    {{ convertValue(item.egressUsage) }}
                   </div>
                   <div>
                     <svg class="icon item-popover-down" aria-hidden="true">
                       <use xlink:href="#cn-icon-ingress"></use>
                     </svg>
-                    {{ unitConvert(item.ingressUsage, unitTypes.percent).join('') }}
+                    {{ convertValue(item.ingressUsage) }}
                   </div>
                 </div>
               </div>
@@ -91,13 +91,13 @@
                     <svg class="icon item-popover-up" aria-hidden="true">
                       <use xlink:href="#cn-icon-egress"></use>
                     </svg>
-                    {{ unitConvert(item.egressUsage, unitTypes.percent).join('') }}
+                    {{ convertValue(item.egressUsage) }}
                   </div>
                   <div>
                     <svg class="icon item-popover-down" aria-hidden="true">
                       <use xlink:href="#cn-icon-ingress"></use>
                     </svg>
-                    {{ unitConvert(item.ingressUsage, unitTypes.percent).join('') }}
+                    {{ convertValue(item.ingressUsage) }}
                   </div>
                 </div>
               </div>
@@ -281,8 +281,20 @@ export default {
 
       // 将上下行乘100保留2位转换，即10.00为5位，100.00为6位，popover弹窗宽度就增加7px
       // 最小宽度为252px，最少位数为上下行相加为8位
-      const egressUsage = (egress * 100).toFixed(2)
-      const ingressUsage = (ingress * 100).toFixed(2)
+      let egressUsage = ''
+      let ingressUsage = ''
+
+      if (egress < 0.0001 && egress !== 0) {
+        egressUsage = '<0.01%'
+      } else {
+        egressUsage = JSON.stringify(parseFloat((egress * 100).toFixed(2)))
+      }
+      if (ingress < 0.0001 && ingress !== 0) {
+        ingressUsage = '<0.01%'
+      } else {
+        ingressUsage = JSON.stringify(parseFloat((ingress * 100).toFixed(2)))
+      }
+
       length = egressUsage.length + ingressUsage.length
 
       if (length > 8) {
@@ -315,6 +327,21 @@ export default {
           t: +new Date()
         }
       })
+    },
+    /**
+     * 对单位进行转换，值小于0.0001的显示为<0.01%，除此之外正常转换显示
+     * @param value
+     * @returns {string}
+     */
+    convertValue (value) {
+      let newValue = null
+      if (value < 0.0001 && value !== 0) {
+        newValue = '<0.01%'
+      } else {
+        newValue = unitConvert(value, unitTypes.percent).join('')
+      }
+
+      return newValue
     }
   }
 }

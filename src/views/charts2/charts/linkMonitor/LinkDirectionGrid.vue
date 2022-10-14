@@ -63,7 +63,7 @@ export default {
           // 接口数据乱序，根据入链路id（ingressLinkId）大小排序之后，
           // 再根据同ingressLinkId下的egressLinkId进行排序
           linkData.sort((a, b) => {
-            if (a.ingressLinkId != b.ingressLinkId) {
+            if (a.ingressLinkId !== b.ingressLinkId) {
               return a.ingressLinkId - b.ingressLinkId
             }
             return a.egressLinkId - b.egressLinkId
@@ -73,7 +73,7 @@ export default {
           const nextLinkData = res[1].data.result
           // 接口数据乱序，根据出方向排序，再根据同个出方向下的入进行排序
           nextLinkData.sort((a, b) => {
-            if (a.ingressLinkDirection != b.ingressLinkDirection) {
+            if (a.ingressLinkDirection !== b.ingressLinkDirection) {
               return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection)
             }
             return a.egressLinkDirection.localeCompare(b.egressLinkDirection)
@@ -256,8 +256,20 @@ export default {
       let width = 0
       let length = 0
 
-      const egressUsage = JSON.stringify(parseFloat((egress * 100).toFixed(2)))
-      const ingressUsage = JSON.stringify(parseFloat((ingress * 100).toFixed(2)))
+      let egressUsage = ''
+      let ingressUsage = ''
+
+      if (egress < 0.0001 && egress !== 0) {
+        egressUsage = '<0.01%'
+      } else {
+        egressUsage = JSON.stringify(parseFloat((egress * 100).toFixed(2)))
+      }
+      if (ingress < 0.0001 && ingress !== 0) {
+        ingressUsage = '<0.01%'
+      } else {
+        ingressUsage = JSON.stringify(parseFloat((ingress * 100).toFixed(2)))
+      }
+
       length = egressUsage.length + ingressUsage.length - 1
 
       if (flag === 'popover') {
