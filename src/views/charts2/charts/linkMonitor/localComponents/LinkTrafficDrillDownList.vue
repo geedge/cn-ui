@@ -7,7 +7,7 @@
     </div>
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
-      <div class="link-traffic-list-center-value" v-if="bandWidth">{{unitConvert(linkTrafficListData.totalBitsRate / bandWidth, unitTypes.percent).join('')}}</div>
+      <div class="link-traffic-list-center-value" v-if="bandWidth">{{unitConvert(lineData[0].analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
       <div class="link-traffic-list-center-value" v-else>-</div>
     </div>
     <div class="link-traffic-list-center">
@@ -93,6 +93,37 @@ export default {
         if (condition.length > 1) {
           params.egressParam = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
           params.ingressParam = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
+          let bandwidthAll = 0
+          let ingressLinkId = null
+          let egressLinkId = null
+          let linkDirection = null
+          const egressParamSplit = params.egressParam.split('=')
+          const ingressParamSplit = params.ingressParam.split('=')
+          if (egressParamSplit[0] && (egressParamSplit[0].trim() === 'common_egress_link_id')) {
+            egressLinkId = egressParamSplit[1].trim()
+          } else if (egressParamSplit[0].trim() === 'egress_link_direction') {
+            linkDirection = egressParamSplit[1].trim()
+          }
+          if (ingressParamSplit[0] && (ingressParamSplit[0].trim() === 'common_ingress_link_id')) {
+            ingressLinkId = ingressParamSplit[1].trim()
+          }
+          if (egressLinkId && ingressLinkId) {
+            this.cnLinkInfo.forEach(e => {
+              if (ingressLinkId == e.originalLinkId) {
+                bandwidthAll += e.bandwidth
+              }
+              if (egressLinkId == e.originalLinkId) {
+                bandwidthAll += e.bandwidth
+              }
+            })
+          } else if (linkDirection) {
+            this.cnLinkInfo.forEach(e => {
+              if (linkDirection === `'${e.nextHop}'`) {
+                bandwidthAll += e.bandwidth
+              }
+            })
+          }
+          this.bandWidth = bandwidthAll
         }
       }
       this.loading = true
@@ -109,35 +140,6 @@ export default {
           this.linkTrafficListData.npmScore = Math.ceil(scoreAll * 6)
           if (this.linkTrafficListData.npmScore > 6) {
             this.linkTrafficListData.npmScore = 6
-          }
-          const condition = this.queryCondition.toLowerCase().split(' or ')
-          if (condition.length > 1) {
-            let bandwidthAll = 0
-            const condition0 = condition[0].split('=')
-            const condition1 = condition[1].split('=')
-            let ingressLinkId = null
-            let egressLinkId = null
-            if (condition0[0] && (condition0[0].trim() === 'common_egress_link_id' || condition0[0].trim() === 'egress_link_direction')) {
-              egressLinkId = condition0[1].trim()
-            }
-            if (condition0[0] && (condition0[0].trim() === 'common_ingress_link_id' || condition0[0].trim() === 'ingress_link_direction')) {
-              ingressLinkId = condition0[1].trim()
-            }
-            if (condition1[0] && (condition1[0].trim() === 'common_egress_link_id' || condition1[0].trim() === 'egress_link_direction')) {
-              egressLinkId = condition1[1].trim()
-            }
-            if (condition1[0] && (condition1[0].trim() === 'common_ingress_link_id' || condition1[0].trim() === 'ingress_link_direction')) {
-              ingressLinkId = condition1[1].trim()
-            }
-            this.cnLinkInfo.forEach(e => {
-              if (ingressLinkId === e.originalLinkId) {
-                bandwidthAll += e.bandwidth
-              }
-              if (egressLinkId === e.originalLinkId) {
-                bandwidthAll += e.bandwidth
-              }
-            })
-            this.bandWidth = bandwidthAll
           }
         }
       }).catch(e => {

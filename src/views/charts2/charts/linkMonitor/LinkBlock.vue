@@ -238,10 +238,13 @@ export default {
           directionArr.forEach((item1) => {
             const newObj = { egressBitsRate: 0, ingressBitsRate: 0, totalBitsRate: 0, linkDirection: item1 }
             nextHopData.forEach((item2) => {
-              if (item1 === item2.egressLinkDirection || item1 === item2.ingressLinkDirection) {
+              if (item1 === item2.egressLinkDirection) {
                 newObj.egressBitsRate += item2.egressBitsRate
+                newObj.totalBitsRate += item2.egressBitsRate
+              }
+              if (item1 === item2.ingressLinkDirection) {
                 newObj.ingressBitsRate += item2.ingressBitsRate
-                newObj.totalBitsRate += (newObj.egressBitsRate + newObj.ingressBitsRate)
+                newObj.totalBitsRate += item2.ingressBitsRate
               }
             })
             newNextHopData.push(newObj)
