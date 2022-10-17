@@ -179,7 +179,7 @@ export default {
           }
           const data = []
           linkData.forEach(d => {
-            const info = linkInfo.find(i => i.originalLinkId == d.linkId)
+            const info = linkInfo.find(i => i.originalLinkId === d.linkId)
             if (info) {
               const hit = data.find(d => d.linkId === info.linkId)
               if (hit) {
@@ -213,10 +213,6 @@ export default {
             item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
           })
 
-          nextHopData.forEach((item) => {
-            item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
-          })
-
           const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
           const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
           sorted.forEach((s, i) => {
@@ -227,8 +223,32 @@ export default {
           })
           this.linkData = sorted
 
+          // todo 此处去重不优美，后续再处理
+          let directionArr = []
+          nextHopData.forEach((item) => {
+            if (item.egressLinkDirection !== '' && item.ingressLinkDirection !== '') {
+              directionArr.push(item.egressLinkDirection)
+              directionArr.push(item.ingressLinkDirection)
+            }
+          })
+          directionArr = [...new Set(directionArr)]
+
+          const newNextHopData = []
+
+          directionArr.forEach((item1) => {
+            const newObj = { egressBitsRate: 0, ingressBitsRate: 0, totalBitsRate: 0, linkDirection: item1 }
+            nextHopData.forEach((item2) => {
+              if (item1 === item2.egressLinkDirection || item1 === item2.ingressLinkDirection) {
+                newObj.egressBitsRate += item2.egressBitsRate
+                newObj.ingressBitsRate += item2.ingressBitsRate
+                newObj.totalBitsRate += (newObj.egressBitsRate + newObj.ingressBitsRate)
+              }
+            })
+            newNextHopData.push(newObj)
+          })
+
           // 下一跳数据处理
-          const nextHopSorted = nextHopData.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
+          const nextHopSorted = newNextHopData.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
           const nextHopColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], nextHopSorted.map(s => s.totalBitsRate))
           nextHopSorted.forEach((s, i) => {
             s.color = nextHopColors[i]
