@@ -3,7 +3,7 @@
     <loading :loading="loading"></loading>
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.totalBitsRate, unitTypes.bps).join('')}}</div>
+      <div class="link-traffic-list-center-value">{{unitConvert(lineData[0].analysis.avg, unitTypes.bps).join('')}}</div>
     </div>
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
@@ -51,6 +51,9 @@ import Loading from '@/components/common/Loading'
 export default {
   name: 'linkTrafficList',
   mixins: [chartMixin],
+  props: {
+    lineData: Array
+  },
   setup () {
     const { query } = useRoute()
     const queryCondition = ref(query.queryCondition || '')
@@ -70,6 +73,13 @@ export default {
       cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo)),
       bandWidth: 0,
       loading: false
+    }
+  },
+  watch: {
+    timeFilter: {
+      handler (n) {
+        this.linkTrafficData()
+      }
     }
   },
   methods: {
