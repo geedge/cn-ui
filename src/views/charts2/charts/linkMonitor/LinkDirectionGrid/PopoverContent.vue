@@ -177,7 +177,7 @@ export default {
     convertValue (value) {
       let newValue = null
       if (value < 0.0001 && value !== 0) {
-        newValue = '<0.01%'
+        newValue = '< 0.01%'
       } else {
         newValue = unitConvert(value, unitTypes.percent).join('')
       }

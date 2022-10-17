@@ -285,12 +285,12 @@ export default {
       let ingressUsage = ''
 
       if (egress < 0.0001 && egress !== 0) {
-        egressUsage = '<0.01%'
+        egressUsage = '< 0.01%'
       } else {
         egressUsage = JSON.stringify(parseFloat((egress * 100).toFixed(2)))
       }
       if (ingress < 0.0001 && ingress !== 0) {
-        ingressUsage = '<0.01%'
+        ingressUsage = '< 0.01%'
       } else {
         ingressUsage = JSON.stringify(parseFloat((ingress * 100).toFixed(2)))
       }
@@ -336,7 +336,7 @@ export default {
     convertValue (value) {
       let newValue = null
       if (value < 0.0001 && value !== 0) {
-        newValue = '<0.01%'
+        newValue = '< 0.01%'
       } else {
         newValue = unitConvert(value, unitTypes.percent).join('')
       }
