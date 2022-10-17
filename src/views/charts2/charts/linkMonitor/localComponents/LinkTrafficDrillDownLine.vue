@@ -186,7 +186,7 @@ export default {
                   }
                 }
                 if (this.lineTab === e.class) {
-                  if (e.analysis.avg < 1) {
+                  if (e.analysis.avg < 0) {
                     this.lineTab = ''
                     this.init()
                   }
@@ -215,7 +215,7 @@ export default {
                   }
                 }
                 if (this.lineTab === e.class) {
-                  if (e.analysis.avg < 1) {
+                  if (e.analysis.avg < 0) {
                     this.lineTab = ''
                     this.init()
                   }
