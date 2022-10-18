@@ -189,7 +189,11 @@ export default {
         params.q = this.queryCondition
       }
       this.toggleLoading(true)
-      get(api.dnsInsight.totalTrafficAnalysis, params).then((res) => {
+      let url = api.dnsInsight.totalTrafficAnalysis
+      if (this.queryCondition) {
+        url = api.dnsInsight.drilldownTrafficAnalysis
+      }
+      get(url, params).then((res) => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
           res.data.result.forEach((t, i) => {
