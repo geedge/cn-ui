@@ -431,6 +431,36 @@ export default {
         }
       }
     },
+    'editObject.config.startTime': {
+      handler (n) {
+        const nowDate = new Date().getTime()
+        const starDate = new Date(this.editObject.config.startTime)
+        const endData = new Date(this.editObject.config.endTime)
+        if (this.editObject.config.endTime !== null && this.editObject.config.startTime !== null) {
+          if (starDate.getTime() > endData.getTime()) {
+            this.editObject.config.startTime = ''
+          }
+        }
+        if (this.editObject.config.startTime !== null && starDate.getTime() > nowDate) {
+          this.editObject.config.startTime = ''
+        }
+      }
+    },
+    'editObject.config.endTime': {
+      handler (n) {
+        const nowDate = new Date().getTime()
+        const starDate = new Date(this.editObject.config.startTime)
+        const endData = new Date(this.editObject.config.endTime)
+        if (this.editObject.config.endTime !== null && this.editObject.config.startTime !== null) {
+          if (starDate.getTime() > endData.getTime()) {
+            this.editObject.config.endTime = ''
+          }
+        }
+        if (this.editObject.config.startTime !== null && endData.getTime() > nowDate) {
+          this.editObject.config.endTime = ''
+        }
+      }
+    },
     object: {
       deep: true,
       immediate: true,
