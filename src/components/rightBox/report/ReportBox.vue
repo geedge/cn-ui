@@ -75,6 +75,7 @@
                     :format="dateFormat"
                     :disabled="!!editObject.id"
                     :disabled-date="disabledDate"
+                    @change="startTimeChang"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -93,7 +94,7 @@
                     :format="dateFormat"
                     :disabled="!!editObject.id"
                     :disabled-date="disabledDate"
-                    @change="timeChange"
+                    @change="endTimeChange"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -310,21 +311,29 @@ export default {
     currentCategoryId: Number
   },
   setup () {
-    const picker = ref('')
-    function timeChange (val) {
-      picker.value = val
+    const startTime = ref('')
+    const endTime = ref('')
+    function endTimeChange (val) {
+      endTime.value = val
+    }
+    function startTimeChang (val) {
+      startTime.value = val
     }
     const disabledDate = (time) => {
       if (time.getTime() > new Date()) {
         return true
       }
-      if (picker.value != '' && picker.value < time) {
+      if (startTime.value != '' && startTime.value > time) {
+        return true
+      }
+      if (endTime.value != '' && endTime.value < time) {
         return true
       }
     }
     return {
       disabledDate,
-      timeChange
+      startTimeChang,
+      endTimeChange
     }
   },
   data () {
