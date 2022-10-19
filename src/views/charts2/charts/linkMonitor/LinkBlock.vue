@@ -223,7 +223,6 @@ export default {
           })
           this.linkData = sorted
 
-          // todo 此处去重不优美，后续再处理
           let directionArr = []
           nextHopData.forEach((item) => {
             if (item.egressLinkDirection !== '' && item.ingressLinkDirection !== '') {

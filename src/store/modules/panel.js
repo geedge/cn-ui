@@ -51,7 +51,8 @@ const panel = {
     npmLocationCountry: '', // npm location的查询条件--国家
     npmLocationSide: 'server', // npm location的查询条件--方向
     refreshTime: null, // 自动刷新时间的秒数
-    refreshFlag: true // 关闭自动刷新标志，true为off，false即开启自动刷新
+    refreshFlag: true, // 关闭自动刷新标志，true为off，false即开启自动刷新
+    httpCancel: null // 终止http请求
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -146,6 +147,9 @@ const panel = {
     },
     setRefreshFlag (state, flag) {
       state.refreshFlag = flag
+    },
+    setHttpCancel (state, cancel) {
+      state.httpCancel = cancel
     }
   },
   getters: {

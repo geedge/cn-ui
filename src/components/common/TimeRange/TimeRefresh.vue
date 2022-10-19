@@ -12,8 +12,8 @@
         <transition name="el-zoom-in-top">
             <div v-if="dropdownShow" class="refresh-list">
                 <div v-for="(item, index) in refreshArr" :key="index" @click="setRefresh(item)" class="refresh-list-item" :class="item.value==interval ? 'active' : ''">
-                  {{item.label}}
-                  <i v-if="item.value==interval" class="cn-icon cn-icon-check"></i>
+                  {{ item.label }}
+                  <i v-if="item.value===interval" class="cn-icon cn-icon-check"></i>
                 </div>
             </div>
         </transition>
@@ -103,7 +103,16 @@ export default {
       this.interLabel = val.value == -1 ? '' : val.label
       this.dropdownShow = false
       const now = window.$dayJs.tz().valueOf()
-      if (val && val.value != -1) {
+      if (val && val.value !== -1) {
+        // 切换轮询请求时间频率时，发现有未结束的请求，终止请求
+        const cancelList = this.$store.state.panel.httpCancel
+        // console.log('timeRefresh.vue------setRefresh------查看终止数量', cancelList, cancelList.length)
+        if (cancelList.length > 0) {
+          cancelList.forEach((cancel, index) => {
+            cancel()
+            delete cancelList[index]
+          })
+        }
         // 向地址栏添加自动刷新频率
         const dateParam = {
           refreshTime: val.value
@@ -121,7 +130,7 @@ export default {
         }
         return
       }
-      if (val && val.value == -1) {
+      if (val && val.value === -1) {
         // 清除定时器
         clearInterval(this.intervalTimer)
 

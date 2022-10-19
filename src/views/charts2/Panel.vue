@@ -55,6 +55,7 @@ import { getTypeCategory } from '@/views/charts/charts/tools'
 import { computeScore, urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
 import { get } from '@/utils/http'
+import { useStore } from 'vuex'
 
 export default {
   name: 'Panel',
@@ -156,6 +157,19 @@ export default {
     })
   },
   setup (props, ctx) {
+    // todo 目前在panel页面测试，后续会挪到router里
+    const store = useStore()
+    const cancelList = store.state.panel.httpCancel
+
+    // 进入页面时，发现有未结束的请求，终止请求
+    // console.log('panel.vue------setup------查看http终止情况', cancelList, cancelList.length)
+    if (cancelList.length > 0) {
+      cancelList.forEach((cancel, index) => {
+        cancel()
+        delete cancelList[index]
+      })
+    }
+
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params, query } = useRoute()

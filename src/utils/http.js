@@ -1,8 +1,20 @@
 import axios from 'axios'
 import { storageKey } from '@/utils/constants'
+import store from '@/store'
+
+const CancelToken = axios.CancelToken
 
 axios.interceptors.request.use(config => {
   const token = localStorage.getItem(storageKey.token)
+
+  // 添加http请求终止方法
+  const arr = []
+  const cancelToken = new CancelToken(function executor (c) {
+    arr.push(c)
+    store.commit('setHttpCancel', arr)
+  })
+
+  config.cancelToken = cancelToken
   if (token) {
     config.headers['Cn-Authorization'] = token // 请求头token
   }

@@ -10,8 +10,9 @@
       <div class="calendar-popover-text" v-else>
         {{ showDetail }}
       </div>
-      <div class="calendar-popover-text calendar-popover__small"><i class="cn-icon cn-icon-dropdown"
-                                            :class="dropdownFlag ? 'cn-icon-up' : ''"></i></div>
+      <div class="calendar-popover-text calendar-popover__small">
+        <i class="cn-icon cn-icon-dropdown" :class="dropdownFlag ? 'cn-icon-up' : ''"></i>
+      </div>
     </div>
     <transition name="el-zoom-in-top">
       <div v-if="dropdownFlag" class="date-range-panel">
@@ -82,6 +83,7 @@ import { ref, computed } from 'vue'
 import MyDatePicker from '../MyDatePicker'
 import { storageKey } from '@/utils/constants'
 import { getMillisecond } from '@/utils/date-util'
+import { useStore } from 'vuex'
 
 export default {
   name: 'DateTimeRange',
@@ -112,6 +114,7 @@ export default {
   },
   setup (props, ctx) {
     // data
+    const store = useStore()
     const myStartTime = ref(props.startTime)
     const myEndTime = ref(props.endTime)
     const timeArr = ref([myStartTime.value, myEndTime.value])
@@ -233,6 +236,7 @@ export default {
       returnValue()
     }
     const returnValue = () => {
+      cancelHttp()
       rangeHistory.value.unshift({
         start: myStartTime.value,
         end: myEndTime.value
@@ -240,6 +244,16 @@ export default {
       localStorage.setItem(storageKey.dataRangeHistory, JSON.stringify(rangeHistory.value))
       ctx.emit('change', myStartTime.value, myEndTime.value, dateRangeValue)
       dropdownFlag.value = false
+    }
+    const cancelHttp = () => {
+      const cancelList = store.state.panel.httpCancel
+      // console.log('DateTimeRange.vue------cancelHttp------查看终止数量', cancelList, cancelList.length)
+      if (cancelList.length > 0) {
+        cancelList.forEach((cancel, index) => {
+          cancel()
+          delete cancelList[index]
+        })
+      }
     }
     return {
       myStartTime,
