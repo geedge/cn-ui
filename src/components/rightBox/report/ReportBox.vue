@@ -74,8 +74,9 @@
                     size="small"
                     :format="dateFormat"
                     :disabled="!!editObject.id"
-                    :disabled-date="disabledDate"
+                    :disabled-date="startDisabledDate"
                     @change="startTimeChang"
+                    @focus="startFocus"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -93,8 +94,9 @@
                     size="small"
                     :format="dateFormat"
                     :disabled="!!editObject.id"
-                    :disabled-date="disabledDate"
+                    :disabled-date="endDisabledDate"
                     @change="endTimeChange"
+                    @focus="endFocus"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -313,17 +315,40 @@ export default {
   setup () {
     const startTime = ref('')
     const endTime = ref('')
+    const focus = ref('')
+    const focusDate = ref('')
     function endTimeChange (val) {
       endTime.value = val
     }
     function startTimeChang (val) {
       startTime.value = val
     }
-    const disabledDate = (time) => {
+    function startFocus (val) {
+      focus.value = val.target.value
+    }
+    function endFocus (val) {
+      focusDate.value = val.target.value
+    }
+    const endDisabledDate = (time) => {
       if (time.getTime() > new Date()) {
         return true
       }
       if (startTime.value != '' && startTime.value > time) {
+        return true
+      }
+      if (focusDate.value != '' && endTime.value > time) {
+        return false
+      } else if (endTime.value != '' && endTime.value < time) {
+        return true
+      }
+    }
+    const startDisabledDate = (time) => {
+      if (time.getTime() > new Date()) {
+        return true
+      }
+      if (focus.value != '' && startTime.value > time) {
+        return false
+      } else if (startTime.value != '' && startTime.value > time) {
         return true
       }
       if (endTime.value != '' && endTime.value < time) {
@@ -331,9 +356,12 @@ export default {
       }
     }
     return {
-      disabledDate,
+      endDisabledDate,
+      startDisabledDate,
       startTimeChang,
-      endTimeChange
+      endTimeChange,
+      startFocus,
+      endFocus
     }
   },
   data () {
