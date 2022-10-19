@@ -789,10 +789,10 @@ export function computeScore (data, index) {
       score = 0
     } else if (data.establishLatencyMs <= 50) {
       score = 1
-    } else if (data.establishLatencyMs > 500) {
+    } else if (data.establishLatencyMs > 200) {
       score = 0
     } else {
-      score = (data.establishLatencyMs - 500) / (50 - 500)
+      score = (data.establishLatencyMs - 200) / (50 - 200)
     }
   } else if (index === 1) {
     k = 0.05
@@ -800,10 +800,10 @@ export function computeScore (data, index) {
       score = 1
     } else if (data.httpResponseLatency <= 50) {
       score = 1
-    } else if (data.httpResponseLatency > 500) {
+    } else if (data.httpResponseLatency > 200) {
       score = 0
     } else {
-      score = (data.httpResponseLatency - 500) / (50 - 500)
+      score = (data.httpResponseLatency - 200) / (50 - 200)
     }
   } else if (index === 2) {
     k = 0.05
@@ -811,10 +811,10 @@ export function computeScore (data, index) {
       score = 1
     } else if (data.sslConLatency <= 50) {
       score = 1
-    } else if (data.sslConLatency > 500) {
+    } else if (data.sslConLatency > 200) {
       score = 0
     } else {
-      score = (data.sslConLatency - 500) / (50 - 500)
+      score = (data.sslConLatency - 200) / (50 - 200)
     }
   } else if (index === 3) {
     k = 0.3
@@ -822,10 +822,10 @@ export function computeScore (data, index) {
       score = 0
     } else if (data.tcpLostlenPercent <= 0.01) {
       score = 1
-    } else if (data.tcpLostlenPercent > 0.5) {
+    } else if (data.tcpLostlenPercent > 0.05) {
       score = 0
     } else {
-      score = (data.tcpLostlenPercent - 0.5) / (0.01 - 0.5)
+      score = (data.tcpLostlenPercent - 0.05) / (0.01 - 0.05)
     }
   } else if (index === 4) {
     k = 0.3
@@ -833,10 +833,10 @@ export function computeScore (data, index) {
       score = 0
     } else if (data.pktRetransPercent <= 0.01) {
       score = 1
-    } else if (data.pktRetransPercent > 0.5) {
+    } else if (data.pktRetransPercent > 0.05) {
       score = 0
     } else {
-      score = (data.pktRetransPercent - 0.5) / (0.01 - 0.5)
+      score = (data.pktRetransPercent - 0.05) / (0.01 - 0.05)
     }
   }
   return score * k
