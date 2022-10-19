@@ -953,6 +953,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'dnsServerRole',
     queryCycleTotalProp: 'roles',
     dillDownProp: ['dns_server_role'],
+    queryCondition:['has(dns_server_role,\'$param\')'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -971,6 +972,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'sld',
     queryCycleTotalProp: 'slds',
     dillDownProp: ['dns_qname'],
+    queryCondition: ['cutToFirstSignificantSubdomain(dns_qname) = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -980,6 +982,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'tld',
     queryCycleTotalProp: 'tlds',
     dillDownProp: ['dns_qname'],
+    queryCondition: [' topLevelDomain(dns_qname) = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -989,6 +992,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'qtype',
     queryCycleTotalProp: 'qtypes',
     dillDownProp: ['dns_qtype'],
+    queryCondition: ['dns_qtype = $param'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -998,6 +1002,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'rcode',
     queryCycleTotalProp: 'rcodes',
     dillDownProp: ['dns_rcode'],
+    queryCondition: ['dns_rcode = $param'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1007,6 +1012,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'a',
     queryCycleTotalProp: 'a',
     dillDownProp: ['rr_a'],
+    queryCondition: ['notEmpty(dns_rr) AND has(JSONExtractArrayRaw(JSON_QUERY(\'$.rr[*].type\', dns_rr) ), \'1\') AND arrayJoin(tupleElement(tupleElement(JSONExtract(dns_rr,\'Tuple(rr Nested(name String, type UInt32, a String))\'), \'rr\'), \'a\')) = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1016,6 +1022,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'aaaa',
     queryCycleTotalProp: 'aaaa',
     dillDownProp: ['rr_aaaa'],
+    queryCondition: ['notEmpty(dns_rr) and has(JSONExtractArrayRaw(JSON_QUERY(\'$.rr[*].type\', dns_rr) ), \'28\') AND arrayJoin(tupleElement(tupleElement(JSONExtract(dns_rr,\'Tuple(rr Nested(name String, type UInt32, aaaa String))\'), \'rr\'), \'aaaa\')) = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1025,6 +1032,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'cname',
     queryCycleTotalProp: 'cnames',
     dillDownProp: ['rr_cname'],
+    queryCondition: ['notEmpty(dns_rr) and has(JSONExtractArrayRaw(JSON_QUERY(\'$.rr[*].type\', dns_rr) ), \'5\') AND arrayJoin(tupleElement(tupleElement(JSONExtract(dns_rr,\'Tuple(rr Nested(name String, type UInt32, cname String))\'), \'rr\'), \'cname\')) = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu

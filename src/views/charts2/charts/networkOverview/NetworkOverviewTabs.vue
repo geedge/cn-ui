@@ -1096,8 +1096,7 @@ export default {
     },
     setQueryCondition (tab, value) {
       value = value.replaceAll("'", "\\\\'")
-      const queryCondition = []
-      const searchProps = tab.dillDownProp
+      let queryCondition = []
       if (tab.prop === 'protocolPort') {
         const valueGroup = value.split(':')
         if (valueGroup) {
@@ -1106,9 +1105,17 @@ export default {
         }
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
       } else {
-        searchProps.forEach(item => {
-          queryCondition.push(item + "='" + value + "'")
-        })
+        if(tab.queryCondition){
+          tab.queryCondition.forEach(item => {
+            queryCondition.push(item.replace('$param',value))
+          })
+        }else {
+          if(tab.dillDownProp){
+            tab.dillDownProp.forEach(item => {
+              queryCondition.push(item + "='" + value + "'")
+            })
+          }
+        }
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
       }
     },
@@ -1202,7 +1209,6 @@ export default {
       columnValue = columnValue.replaceAll("'", "\\\\'")
       const queryCondition = []
       const curTab = this.getCurTab()
-      const searchProps = curTab.dillDownProp
       if (curTab.prop === 'protocolPort') {
         const valueGroup = columnValue.split(':')
         if (valueGroup) {
@@ -1211,9 +1217,20 @@ export default {
         }
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
       } else {
-        searchProps.forEach(item => {
-          queryCondition.push(item + "='" + columnValue + "'")
-        })
+        if(curTab.queryCondition){
+          curTab.queryCondition.forEach(item => {
+            queryCondition.push(item.replace('$param',columnValue))
+          })
+        }else {
+          if(curTab.dillDownProp){
+            curTab.dillDownProp.forEach(item => {
+              queryCondition.push(item + "='" + columnValue + "'")
+            })
+          }
+        }
+
+
+
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
       }
     },
@@ -1473,6 +1490,7 @@ export default {
         let tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
         tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
         tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+        tab.queryCondition = tabInCode ? tabInCode.queryCondition : []
       })
       // 设置drilldownTabs：未下钻状态设置，已下钻状态无需设置
       let thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
@@ -1500,6 +1518,7 @@ export default {
                 let tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
                 drilldownTabWithAllInfo.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
                 drilldownTabWithAllInfo.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+                drilldownTabWithAllInfo.queryCondition = tabInCode ? tabInCode.queryCondition : []
                 drilldownTabFull.push(drilldownTabWithAllInfo)
               }
             }
