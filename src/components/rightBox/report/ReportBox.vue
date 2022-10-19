@@ -74,6 +74,7 @@
                     size="small"
                     :format="dateFormat"
                     :disabled="!!editObject.id"
+                    :disabled-date="disabledDate"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -91,6 +92,8 @@
                     size="small"
                     :format="dateFormat"
                     :disabled="!!editObject.id"
+                    :disabled-date="disabledDate"
+                    @change="timeChange"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -277,6 +280,7 @@ import { api } from '@/utils/api'
 import _ from 'lodash'
 import { get, post, put } from '@/utils/http'
 import { dateFormat, getMillisecond } from '@/utils/date-util'
+import { ref } from 'vue'
 const paramValidator = (rule, value, callback) => {
   let validate = true
   if (value && value.length > 0) {
@@ -304,6 +308,24 @@ export default {
   props: {
     categoryList: Array,
     currentCategoryId: Number
+  },
+  setup () {
+    const picker = ref('')
+    function timeChange (val) {
+      picker.value = val
+    }
+    const disabledDate = (time) => {
+      if (time.getTime() > new Date()) {
+        return true
+      }
+      if (picker.value != '' && picker.value < time) {
+        return true
+      }
+    }
+    return {
+      disabledDate,
+      timeChange
+    }
   },
   data () {
     return {
@@ -428,36 +450,6 @@ export default {
           })
         } else {
           this.editObject.categoryParams = []
-        }
-      }
-    },
-    'editObject.config.startTime': {
-      handler (n) {
-        const nowDate = new Date().getTime()
-        const starDate = new Date(this.editObject.config.startTime)
-        const endData = new Date(this.editObject.config.endTime)
-        if (this.editObject.config.endTime !== null && this.editObject.config.startTime !== null) {
-          if (starDate.getTime() > endData.getTime()) {
-            this.editObject.config.startTime = ''
-          }
-        }
-        if (this.editObject.config.startTime !== null && starDate.getTime() > nowDate) {
-          this.editObject.config.startTime = ''
-        }
-      }
-    },
-    'editObject.config.endTime': {
-      handler (n) {
-        const nowDate = new Date().getTime()
-        const starDate = new Date(this.editObject.config.startTime)
-        const endData = new Date(this.editObject.config.endTime)
-        if (this.editObject.config.endTime !== null && this.editObject.config.startTime !== null) {
-          if (starDate.getTime() > endData.getTime()) {
-            this.editObject.config.endTime = ''
-          }
-        }
-        if (this.editObject.config.startTime !== null && endData.getTime() > nowDate) {
-          this.editObject.config.endTime = ''
         }
       }
     },
