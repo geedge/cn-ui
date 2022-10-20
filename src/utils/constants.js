@@ -287,7 +287,7 @@ export const scoreUrl = [
 
 // AppPerformance类型表格的列：有属性cycleDataUrl的，代表此数据的来源为对应接口返回的数据，无cycleDataUrl的属性代表数据来源于主url：npmSearchUrl.curUrl、npmSearchUrl.cycleUrl、npmSearchUrl.drilldownCurUrl、npmSearchUrl.drilldownCycleUrl
 export const customTableTitlesForAppPerformance = [
-  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
+  { label: 'IP', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
   { label: 'network.score', prop: 'score', checked: true, tabColumn: false, columnType: tableColumnType.normal },
   {
     label: 'networkAppPerformance.throughput',
@@ -375,7 +375,7 @@ export const customTableTitlesForAppPerformance = [
   }
 ]
 export const customTableTitlesForLinkMonitor = [
-  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
+  { label: 'IP', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
   { label: 'network.score', prop: 'score', checked: true, tabColumn: false, columnType: tableColumnType.normal },
   {
     label: 'networkAppPerformance.throughput',
@@ -479,7 +479,7 @@ export const customTableTitlesForDns = [
 ]
 // NetworkOverview类型表格的列:prop 为接口响应数据中的属性名
 export const customTableTitlesForNetworkOverview = [
-  { label: 'network.ips', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
+  { label: 'IP', prop: 'tab', checked: true, tabColumn: true, columnType: tableColumnType.dillDown },
   {
     label: 'network.total',
     prop: 'total',
