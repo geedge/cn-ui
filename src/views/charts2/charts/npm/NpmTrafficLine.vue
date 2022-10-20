@@ -64,19 +64,19 @@ export default {
       unitTypes,
       side: '',
       mpackets: [
-        { name: 'network.total', show: true, positioning: 0, data: [], unitType: '' },
-        { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: '' },
-        { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: '' },
-        { name: 'network.internal', show: true, positioning: 3, data: [], unitType: '' },
-        { name: 'network.through', show: true, positioning: 4, data: [], unitType: '' },
-        { name: 'network.other', show: true, positioning: 5, data: [], unitType: '' }
+        { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
+        { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
+        { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
+        { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
+        { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
+        { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
       ],
       npmQuantity: [
-        { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: '' },
-        { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: '' },
-        { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: '' },
-        { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: '' },
-        { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: '' }
+        { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+        { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
       ],
       chartData: {},
       metricOptions: [
@@ -307,7 +307,7 @@ export default {
               }
             ])
           },
-          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number'])
+          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), t.unitType])
         }
       })
       this.chartOption.tooltip.formatter = (params) => {
