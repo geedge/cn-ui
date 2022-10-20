@@ -198,15 +198,15 @@ export default {
               this.mpackets = mpackets
               this.echartsInit(this.mpackets)
             } else if (t.type === 'sessions' && val === 'Sessions/s') {
-              const npmQuantity = _.cloneDeep(this.npmQuantity)
-              npmQuantity[0].data = t.sessionsRate.values ? t.sessionsRate.values : []
-              npmQuantity.forEach((e, i) => {
+              const mpackets = _.cloneDeep(this.mpackets)
+              mpackets[0].data = t.sessionsRate.values ? t.sessionsRate.values : []
+              mpackets.forEach((e, i) => {
                 if (i !== 0) {
                   e.show = false
                 }
               })
-              this.npmQuantity = npmQuantity
-              this.echartsInit(this.npmQuantity)
+              this.mpackets = mpackets
+              this.echartsInit(this.mpackets)
             } else if (t.type === 'establishLatencyMs' && val === 'establishLatencyMs') {
               const npmQuantity = _.cloneDeep(this.npmQuantity)
               npmQuantity[0].data = t.establishLatencyMsAvg.values ? t.establishLatencyMsAvg.values : []
@@ -223,7 +223,6 @@ export default {
               const npmQuantity = _.cloneDeep(this.npmQuantity)
               npmQuantity[1].data = t.httpResponseLatencyAvg.values ? t.httpResponseLatencyAvg.values : []
               npmQuantity.forEach((e, i) => {
-                console.log(e)
                 if (i !== 1) {
                   e.show = false
                 } else {
