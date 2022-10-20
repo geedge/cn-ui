@@ -47,6 +47,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { chartColor3 } from '@/utils/constants'
 
 export default {
   name: 'NpmLine',
@@ -180,6 +181,14 @@ export default {
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
             t.seriesName = this.$t(t.seriesName)
+            this.chartOptionLineData.forEach(e => {
+              if (this.$t(e.legend) === t.seriesName) {
+                t.borderColor = e.color
+              }
+              if (this.$t(chartData.i18n) === t.seriesName) {
+                t.borderColor = t.color
+              }
+            })
           })
           return stackedLineTooltipFormatter(params)
         }
