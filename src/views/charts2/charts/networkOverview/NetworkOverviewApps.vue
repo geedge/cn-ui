@@ -1,20 +1,24 @@
 <template>
   <div class="network-overview-apps">
-    <div class="line-select-metric">
-      <span>{{$t('network.metric')}}:</span>
-      <div class="line-select__operation">
-        <el-select
-            size="mini"
-            v-model="metricFilter"
-            placeholder=""
-            popper-class="common-select"
-            :popper-append-to-body="false"
-            @change="metricChange"
-        >
-          <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-        </el-select>
+    <div class="network-overview-apps-header">
+      <div class="network-overview-apps-title">{{$t('networkOverview.appType.providerAndApp')}}</div>
+      <div class="line-select-metric">
+        <span>{{$t('network.metric')}}:</span>
+        <div class="line-select__operation">
+          <el-select
+              size="mini"
+              v-model="metricFilter"
+              placeholder=""
+              popper-class="common-select"
+              :popper-append-to-body="false"
+              @change="metricChange"
+          >
+            <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </div>
       </div>
     </div>
+
     <div class="app-cards">
       <div class="app-card" v-for="(app, index) in appData" :key="index">
         <div class="app-card-title">
@@ -219,7 +223,7 @@ export default {
       }
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         this.init()
       }
     }
@@ -463,7 +467,6 @@ export default {
     },
     addApp (pageNo, val, show) {
       this.showAddApp = true
-      const letter = 'abcdefghijklmnopqrstuvwxyz'
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -482,7 +485,7 @@ export default {
       } else {
         params.pageNo = 1
       }
-      if (this.appTypeTab == 0) {
+      if (this.appTypeTab === 0) {
         params.type = 'overviewProvide'
         get(api.dict, params).then(res => {
           if (res.code === 200) {
@@ -507,7 +510,7 @@ export default {
           this.loading = false
           this.loadingBody = false
         })
-      } else if (this.appTypeTab == 1) {
+      } else if (this.appTypeTab === 1) {
         params.type = 'overviewApp'
         get(api.dict, params).then(res => {
           res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'app' && pd.name === l.value))
@@ -547,7 +550,7 @@ export default {
     cancelApp () {
       this.showAddApp = false
     },
-    appTypeTabChange (val) {
+    appTypeTabChange () {
       this.pageObj.pageNo = 1
       this.searcherApp = ''
       this.addApp()
