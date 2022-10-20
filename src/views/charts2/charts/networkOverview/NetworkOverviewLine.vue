@@ -396,6 +396,11 @@ export default {
       this.chartOption.tooltip.formatter = (params) => {
         params.forEach(t => {
           t.seriesName = this.$t(t.seriesName)
+          this.mpackets.forEach(e => {
+            if (this.$t(e.name) === t.seriesName) {
+              t.borderColor = chartColor3[e.positioning]
+            }
+          })
         })
         const str = stackedLineTooltipFormatter(params)
         return str
