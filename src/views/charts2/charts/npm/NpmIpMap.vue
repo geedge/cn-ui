@@ -1,6 +1,6 @@
 <template>
-  <div class="cn-chart__map-title" v-if="tabIndex == 1">{{$t('npm.clientLocation')}}</div>
-  <div class="cn-chart__map" :class="{'cn-chart__map-drilldown': tabIndex == 1}">
+  <div class="cn-chart__map-title" v-if="queryCondition">{{$t('npm.clientLocation')}}</div>
+  <div class="cn-chart__map" :class="{'cn-chart__map-drilldown': queryCondition}">
     <div class="map-canvas" id="npmDrillDownMap"></div>
   </div>
 </template>
@@ -22,8 +22,10 @@ export default {
   setup () {
     const { query } = useRoute()
     const tabIndex = ref(query.tabIndex || '')
+    const queryCondition = ref(query.queryCondition || '')
     return {
-      tabIndex
+      tabIndex,
+      queryCondition
     }
   },
   data () {
