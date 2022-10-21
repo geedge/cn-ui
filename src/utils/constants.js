@@ -953,7 +953,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'dnsServerRole',
     queryCycleTotalProp: 'roles',
     dillDownProp: ['dns_server_role'],
-    queryCondition:['has(dns_server_role,\'$param\')'],
+    queryCondition: ['has(dns_server_role,\'$param\')'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu

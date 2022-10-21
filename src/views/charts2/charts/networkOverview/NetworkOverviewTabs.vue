@@ -90,10 +90,10 @@
                   </template>
                   <template v-else>
                     <template v-if="showUnit && item.unit">
-                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], item.unit).join(' ') : '-'}}
+                      {{(scope.row[item.prop]  || scope.row[item.prop]===0) ? unitConvert(scope.row[item.prop], item.unit).join(' ') : '-'}}
                     </template>
                     <template v-else>
-                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
+                      {{(scope.row[item.prop] || scope.row[item.prop]===0)? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
                     </template>
                   </template>
                 </template>
@@ -541,6 +541,7 @@ export default {
       const tableDataTmp = this.chartData.map(item => {
         tabList.push(item[curTab.prop])
         const otherData = { tab: item[curTab.prop] }
+        otherData[curTab.prop] = item[curTab.prop]
         Object.keys(this.columnNameGroup).forEach(i => {
           const propName = this.columnNameGroup[i]
           const column = this.customTableTitles.find(tableColumn => { return tableColumn.prop === i })
@@ -615,7 +616,7 @@ export default {
                         trend = ''
                         trendPercent = ''
                       } else {
-                        trendPercent = Math.round(Math.abs(chainRatio) * 100)
+                        trendPercent = parseFloat(Math.abs(chainRatio) * 100).toFixed(2)
                         if (totalDiff > 0) {
                           trend = 'up'
                           if (trendPercent <= 500) {
@@ -642,7 +643,7 @@ export default {
                       }
                     }
                   }
-                  item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
+                  item[tableColumn.prop] = [(item[tableColumn.prop] || item[tableColumn.prop] === 0) ? item[tableColumn.prop] : '', trend, trendPercent]
                 })
               }
             }).catch(e => {
@@ -714,7 +715,7 @@ export default {
                                   trend = ''
                                   trendPercent = ''
                                 } else {
-                                  trendPercent = Math.round(Math.abs(chainRatio) * 100)
+                                  trendPercent = parseFloat(Math.abs(chainRatio) * 100).toFixed(2)
                                   if (totalDiff > 0) {
                                     trend = 'up'
                                     if (trendPercent <= 500) {
@@ -742,7 +743,7 @@ export default {
                               }
                             }
                             if (!(item[tableColumn.prop] && item[tableColumn.prop].length >= 3)) {
-                              item[tableColumn.prop] = [item[tableColumn.prop] ? item[tableColumn.prop] : '', trend, trendPercent]
+                              item[tableColumn.prop] = [(item[tableColumn.prop] || item[tableColumn.prop] === 0) ? item[tableColumn.prop] : '', trend, trendPercent]
                             }
                           })
                         }
@@ -757,6 +758,8 @@ export default {
           }
         })
       } else {
+        this.tableData = tableDataTmp
+        this.tableDataBackup = tableDataTmp
         this.toggleLoading(false)
       }
       this.changeUrlTabState()
@@ -806,96 +809,96 @@ export default {
       this.tableData.slice(0, this.showRecordNum).forEach(val => {
         arr.push(val)
       })
-      if (column.prop != 'tab') {
-        if (column.order == 'descending') {
-          arr.sort((a, b) => {
-            const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
-            const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
+      if (column.order == 'descending') {
+        arr.sort((a, b) => {
+          const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
+          const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
+          if ((_.isNumber(str1)) || str1 === '') {
             return str2 - str1
-          })
-          if (this.tableData.length - 1 > this.showRecordNum) {
-            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
           } else {
-            this.tableData = arr
+            let aObj = a[column.prop] ? a[column.prop] : a[index]
+            let bObj = b[column.prop] ? b[column.prop] : b[index]
+            if (!aObj) {
+              const curTab = this.getCurTab()
+              aObj = a[curTab.prop]
+              bObj = b[curTab.prop]
+            }
+            let res = 0
+            if (aObj && bObj) {
+              const len = aObj.length < bObj.length ? aObj.length : bObj.length
+              for (let i = 0; i < len; i++) {
+                const char1 = aObj[i]
+                const char2 = bObj[i]
+                const char1Type = this.getChartType(char1)
+                const char2Type = this.getChartType(char2)
+                if (char1 === char2) {
+                  continue
+                } else {
+                  if (char1Type[0] === 'zh') {
+                    res = char2.localeCompare(char1)
+                  } else if (char1Type[0] === 'en') {
+                    res = char2.charCodeAt(0) - char1.charCodeAt(0)
+                  } else {
+                    res = char2 - char1
+                  }
+                  break
+                }
+              }
+            }
+            return res
           }
-        } else if (column.order == 'ascending') {
-          arr.sort((a, b) => {
-            const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
-            const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
+        })
+        if (this.tableData.length - 1 > this.showRecordNum) {
+          this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
+        } else {
+          this.tableData = arr
+        }
+      } else if (column.order == 'ascending') {
+        arr.sort((a, b) => {
+          const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
+          const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
+          if ((_.isNumber(str1)) || str1 === '') {
             return str1 - str2
-          })
-          if (this.tableData.length - 1 > this.showRecordNum) {
-            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
           } else {
-            this.tableData = arr
-          }
-        } else if (!column.order) {
-          this.tableData = this.tableDataBackup
-        }
-      } else {
-        if (column.order == 'descending') {
-          arr.sort((a, b) => {
-            const aObj = a[column.prop]
-            const bObj = b[column.prop]
+            let aObj = a[column.prop] ? a[column.prop] : a[index]
+            let bObj = b[column.prop] ? b[column.prop] : b[index]
+            if (!aObj) {
+              const curTab = this.getCurTab()
+              aObj = a[curTab.prop]
+              bObj = b[curTab.prop]
+            }
             let res = 0
-            for (let i = 0; ; i++) {
-              const char1 = aObj[i]
-              const char2 = bObj[i]
-              const char1Type = this.getChartType(char1)
-              const char2Type = this.getChartType(char2)
-              if (char1 === char2) {
-                continue
-              } else {
-                if (char1Type[0] === 'zh') {
-                  res = char2.localeCompare(char1)
-                } else if (char1Type[0] === 'en') {
-                  res = char2.charCodeAt(0) - char1.charCodeAt(0)
+            if (aObj && bObj) {
+              const len = aObj.length < bObj.length ? aObj.length : bObj.length
+              for (let i = 0; i < len; i++) {
+                const char1 = aObj[i]
+                const char2 = bObj[i]
+                const char1Type = this.getChartType(char1)
+                const char2Type = this.getChartType(char2)
+                if (char1 === char2) {
+                  continue
                 } else {
-                  res = char2 - char1
+                  if (char1Type[0] === 'zh') {
+                    res = char1.localeCompare(char2)
+                  } else if (char1Type[0] === 'en') {
+                    res = char1.charCodeAt(0) - char2.charCodeAt(0)
+                  } else {
+                    res = char1 - char2
+                  }
+                  break
                 }
-                break
               }
             }
             return res
-          })
-          if (this.tableData.length - 1 > this.showRecordNum) {
-            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
-          } else {
-            this.tableData = arr
           }
-        } else if (column.order == 'ascending') {
-          arr.sort((a, b) => {
-            const aObj = a[column.prop]
-            const bObj = b[column.prop]
-            let res = 0
-            for (let i = 0; ; i++) {
-              const char1 = aObj[i]
-              const char2 = bObj[i]
-              const char1Type = this.getChartType(char1)
-              const char2Type = this.getChartType(char2)
-              if (char1 === char2) {
-                continue
-              } else {
-                if (char1Type[0] === 'zh') {
-                  res = char1.localeCompare(char2)
-                } else if (char1Type[0] === 'en') {
-                  res = char1.charCodeAt(0) - char2.charCodeAt(0)
-                } else {
-                  res = char1 - char2
-                }
-                break
-              }
-            }
-            return res
-          })
-          if (this.tableData.length - 1 > this.showRecordNum) {
-            this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
-          } else {
-            this.tableData = arr
-          }
-        } else if (!column.order) {
-          this.tableData = this.tableDataBackup
+        })
+        if (this.tableData.length - 1 > this.showRecordNum) {
+          this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
+        } else {
+          this.tableData = arr
         }
+      } else if (!column.order) {
+        this.tableData = this.tableDataBackup
       }
     },
     // 切换metric：bit、packet、session
@@ -1105,12 +1108,12 @@ export default {
         }
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
       } else {
-        if(tab.queryCondition){
+        if (tab.queryCondition) {
           tab.queryCondition.forEach(item => {
-            queryCondition.push(item.replace('$param',value))
+            queryCondition.push(item.replace('$param', value))
           })
-        }else {
-          if(tab.dillDownProp){
+        } else {
+          if (tab.dillDownProp) {
             tab.dillDownProp.forEach(item => {
               queryCondition.push(item + "='" + value + "'")
             })
@@ -1217,19 +1220,17 @@ export default {
         }
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
       } else {
-        if(curTab.queryCondition){
+        if (curTab.queryCondition) {
           curTab.queryCondition.forEach(item => {
-            queryCondition.push(item.replace('$param',columnValue))
+            queryCondition.push(item.replace('$param', columnValue))
           })
-        }else {
-          if(curTab.dillDownProp){
+        } else {
+          if (curTab.dillDownProp) {
             curTab.dillDownProp.forEach(item => {
               queryCondition.push(item + "='" + columnValue + "'")
             })
           }
         }
-
-
 
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
       }
@@ -1494,40 +1495,40 @@ export default {
       })
       // 设置drilldownTabs：未下钻状态设置，已下钻状态无需设置
       let thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
-      //if (!thirdMenu) {
-        let oldList = this.$_.cloneDeep(tabList)
-        tabList.forEach(tab => {
-          let drilldownTabFull = []
-          let drilldownTabList = tab.drilldownTabs
-          drilldownTabList.forEach(drilldownTab => {
-            if (!drilldownTab.hasOwnProperty('name') || drilldownTab.name === undefined || drilldownTab.name === null) {
-              let drilldownTabName = drilldownTab || ''
-              let fullTab = oldList.find(item => item.name === drilldownTabName)
-              let drilldownTabWithAllInfo = this.$_.cloneDeep(fullTab)
-              if (drilldownTabWithAllInfo) {
-                let commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
-                drilldownTabWithAllInfo.label = commonTab ? commonTab.i18n : ''
-                drilldownTabWithAllInfo.prop = commonTab ? commonTab.prop : ''
-                //if (!drilldownTabWithAllInfo.hasOwnProperty('checked') || drilldownTabWithAllInfo.checked === undefined || drilldownTabWithAllInfo.checked === null) {
-                  drilldownTabWithAllInfo.checked = !((tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0))
-                //}
-                //if (!drilldownTabWithAllInfo.hasOwnProperty('disabled') || drilldownTabWithAllInfo.disabled === undefined || drilldownTabWithAllInfo.disabled === null) {
-                  drilldownTabWithAllInfo.disabled = (tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
-                //}
-                // 代码里写死的
-                let tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
-                drilldownTabWithAllInfo.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
-                drilldownTabWithAllInfo.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
-                drilldownTabWithAllInfo.queryCondition = tabInCode ? tabInCode.queryCondition : []
-                drilldownTabFull.push(drilldownTabWithAllInfo)
-              }
+      // if (!thirdMenu) {
+      let oldList = this.$_.cloneDeep(tabList)
+      tabList.forEach(tab => {
+        let drilldownTabFull = []
+        let drilldownTabList = tab.drilldownTabs
+        drilldownTabList.forEach(drilldownTab => {
+          if (!drilldownTab.hasOwnProperty('name') || drilldownTab.name === undefined || drilldownTab.name === null) {
+            let drilldownTabName = drilldownTab || ''
+            let fullTab = oldList.find(item => item.name === drilldownTabName)
+            let drilldownTabWithAllInfo = this.$_.cloneDeep(fullTab)
+            if (drilldownTabWithAllInfo) {
+              let commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
+              drilldownTabWithAllInfo.label = commonTab ? commonTab.i18n : ''
+              drilldownTabWithAllInfo.prop = commonTab ? commonTab.prop : ''
+              // if (!drilldownTabWithAllInfo.hasOwnProperty('checked') || drilldownTabWithAllInfo.checked === undefined || drilldownTabWithAllInfo.checked === null) {
+              drilldownTabWithAllInfo.checked = !((tab.hiddenDrilldownTabs.indexOf(drilldownTabName) >= 0))
+              // }
+              // if (!drilldownTabWithAllInfo.hasOwnProperty('disabled') || drilldownTabWithAllInfo.disabled === undefined || drilldownTabWithAllInfo.disabled === null) {
+              drilldownTabWithAllInfo.disabled = (tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
+              // }
+              // 代码里写死的
+              let tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
+              drilldownTabWithAllInfo.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
+              drilldownTabWithAllInfo.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+              drilldownTabWithAllInfo.queryCondition = tabInCode ? tabInCode.queryCondition : []
+              drilldownTabFull.push(drilldownTabWithAllInfo)
             }
-          })
-          if (drilldownTabFull.length > 0) {
-            tab.drilldownTabs = drilldownTabFull
           }
         })
-      //}
+        if (drilldownTabFull.length > 0) {
+          tab.drilldownTabs = drilldownTabFull
+        }
+      })
+      // }
       // console.log('CombineTabList：结束')
     },
     combineColumnList (tabLabel) {
