@@ -314,7 +314,6 @@ export default {
     /* 参数 extraParams 额外请求参数 */
     getChartData (extraParams = {}) {
       this.initState()
-      // const chartParams = this.chart.params
       const queryParams = {
         ...this.handleQueryParams(extraParams),
         startTime: getSecond(this.timeFilter.startTime),
@@ -585,7 +584,7 @@ export default {
       }
       if (tabList.length > 0) {
         const conditionStr = tabList.filter(item => item != '')
-        queryParams.params = conditionStr.toString()
+        queryParams.params = conditionStr.toString().replaceAll("'", "\\\\'")
         queryParams.type = curTab.prop
       }
 

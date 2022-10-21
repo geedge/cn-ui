@@ -429,7 +429,7 @@ export default {
             this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
           } else {
             searchProps.forEach(item => {
-              queryCondition.push(item + "='" + value + "'")
+              queryCondition.push(item + "='" + value.replaceAll("'", "\\\\'") + "'")
             })
             this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
           }
