@@ -345,9 +345,9 @@ export const npmLineChartOption = {
         show: false
       },
       axisLabel: {
-        formatter: function (value) {
-          return unitConvert(value, unitTypes.number).join('')
-        }
+        // formatter: function (value) {
+        //   return unitConvert(value, unitTypes.number).join('')
+        // }
       }
     }
   ],
@@ -416,9 +416,9 @@ export const trafficLineChartOption = {
         show: false
       },
       axisLabel: {
-        formatter: function (value) {
-          return unitConvert(value, unitTypes.number).join('')
-        }
+        // formatter: function (value) {
+        //   return unitConvert(value, unitTypes.number).join('')
+        // }
       }
     }
   ],

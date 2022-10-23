@@ -47,7 +47,7 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
-import { chartColor3 } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 
 export default {
   name: 'NpmLine',
@@ -178,6 +178,14 @@ export default {
             data: t.values.map((v) => [Number(v[0]) * 1000, Number(v[1]), type])
           }
         })
+        this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
+          if (type === 'percent') {
+            console.log(type)
+            return unitConvert(value, type)[0]
+          } else {
+            return unitConvert(value, 'number').join('')
+          }
+        }
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
             t.seriesName = this.$t(t.seriesName)

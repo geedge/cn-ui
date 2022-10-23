@@ -286,6 +286,15 @@ export default {
       this.chartOption = trafficLineChartOption
       const chartOption = this.chartOption.series[0]
       this.chartOption.series = echartsData.map((t, i) => {
+        this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
+          if (t.unitType === 'percent') {
+            return unitConvert(value, t.unitType)[0]
+          } else if (t.unitType === 'time') {
+            return unitConvert(value, 'number').join('')
+          } else {
+            return unitConvert(value, t.unitType).join('')
+          }
+        }
         return {
           ...chartOption,
           name: this.$t(t.name),

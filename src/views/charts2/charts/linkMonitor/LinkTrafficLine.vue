@@ -291,7 +291,7 @@ export default {
               }
             ])
           },
-          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
+          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number'])
         }
       })
       this.chartOption.tooltip.formatter = (params) => {
