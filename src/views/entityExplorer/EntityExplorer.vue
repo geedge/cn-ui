@@ -143,7 +143,6 @@ import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
-import Pagination from '@/components/common/Pagination'
 import Loading from '@/components/common/Loading'
 
 export default {
@@ -154,8 +153,7 @@ export default {
     DateTimeRange,
     TimeRefresh,
     EntityFilter,
-    EntityList,
-    Pagination
+    EntityList
   },
   data () {
     return {
@@ -345,7 +343,9 @@ export default {
       loadingIpActive: false,
 
       // 实体详情列表页面 左侧筛选条件
-      loadingLeft: false
+      loadingLeft: false,
+      initFlag: false, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
+      timer: null // 初始化标志的延时器，需要销毁
     }
   },
   methods: {
@@ -463,16 +463,36 @@ export default {
         this.queryFilter({ entityType: 'dns', ...this.timeFilter })
         this.queryList({ ...this.pageObj, ...this.timeFilter })
         this.queryListTotal({ ...this.timeFilter })
+
+        // todo 当前页面选择其他值，重刷界面仍会被重置，后续记得添加上
+        // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
+        if (!this.initFlag) {
+          this.timer = setTimeout(() => {
+            this.initFlag = true
+          }, 1000)
+        }
       }
     },
     pageSize (val) {
       this.pageObj.pageSize = val
-      this.search({ metaList: this.metaList, q: this.q })
+      if (this.initFlag) {
+        this.search({ metaList: this.metaList, q: this.q })
+      } else {
+        if (val !== 20) {
+          this.search({ metaList: this.metaList, q: this.q })
+        }
+      }
     },
     pageNo (val) {
       this.pageObj.pageNo = val
       this.pageObj.resetPageNo = false
-      this.search({ metaList: this.metaList, q: this.q })
+      if (this.initFlag) {
+        this.search({ metaList: this.metaList, q: this.q })
+      } else {
+        if (val !== 1) {
+          this.search({ metaList: this.metaList, q: this.q })
+        }
+      }
     },
     // 点击上一页箭头
     prev () {
@@ -703,6 +723,9 @@ export default {
     return {
       timeFilter
     }
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
   }
 }
 </script>
