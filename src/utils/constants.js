@@ -291,7 +291,7 @@ export const customTableTitlesForAppPerformance = [
   { label: 'network.score', prop: 'score', checked: true, tabColumn: false, columnType: tableColumnType.normal },
   {
     label: 'networkAppPerformance.throughput',
-    prop: 'through',
+    prop: 'totalBitsRate',
     checked: true,
     tabColumn: false,
     columnType: tableColumnType.chainRatio,
@@ -379,7 +379,7 @@ export const customTableTitlesForLinkMonitor = [
   { label: 'network.score', prop: 'score', checked: true, tabColumn: false, columnType: tableColumnType.normal },
   {
     label: 'networkAppPerformance.throughput',
-    prop: 'through',
+    prop: 'totalBitsRate',
     checked: true,
     tabColumn: false,
     columnType: tableColumnType.chainRatio,
@@ -475,7 +475,7 @@ export const customTableTitlesForDns = [
   },
   { label: 'dns.queriesFromIE', prop: 'totalInExNum', checked: true, tabColumn: true, columnType: tableColumnType.percent },
   { label: 'dns.dnsResponseTime', prop: 'dnsResponseLatencyAvg', checked: true, tabColumn: true, columnType: tableColumnType.normal },
-  { label: 'overall.throughput', prop: 'totalBytes', checked: true, tabColumn: true, columnType: tableColumnType.normal }
+  { label: 'overall.throughput', prop: 'totalBitsRate', checked: true, tabColumn: true, columnType: tableColumnType.normal }
 ]
 // NetworkOverview类型表格的列:prop 为接口响应数据中的属性名
 export const customTableTitlesForNetworkOverview = [
@@ -1041,7 +1041,7 @@ export const dnsServiceInsightsTabList = [
 
 // 用于组织数据时的名称，对应的属性名称
 export const bytesColumnNameGroupForNpm = {
-  through: 'throughBitsRate',
+  totalBitsRate: 'totalBitsRate',
   tcpConEstLatency: 'establishLatencyMs',
   packetLoss: 'tcpLostlenPercent',
   packetRetrans: 'pktRetransPercent',
@@ -1049,8 +1049,8 @@ export const bytesColumnNameGroupForNpm = {
   httpResponseLatency: 'httpResponseLatency'
 }
 
-export const bytesCycleColumnNameGroupForNmp = {
-  through: 'throughBitsRate'
+export const bytesCycleColumnNameGroupForNpm = {
+  totalBitsRate: 'totalBitsRate'
 }
 
 // 用于组织数据时的名称，对应的属性名称
@@ -1058,7 +1058,7 @@ export const bytesColumnNameGroupForDns = {
   queryRate: 'queryRate',
   totalInExNum: 'totalInternalQueryNum,totalExternalQueryNum',
   dnsResponseLatencyAvg: 'dnsResponseLatencyAvg',
-  totalBytes: 'totalBytes'
+  totalBitsRate: 'totalBitsRate'
 }
 
 export const bytesCycleColumnNameGroupForDns = {
@@ -1118,7 +1118,7 @@ export const networkTable = {
     bytesColumnNameGroup: bytesColumnNameGroupForNpm,
     packetsColumnNameGroup: {}, // 无metric下拉列表条件，用不到此属性
     sessionsColumnNameGroup: {}, // 无metric下拉列表条件，用不到此属性
-    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp,
+    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNpm,
     packetsCycleColumnNameGroup: {},
     sessionsCycleColumnNameGroup: {}
   },
@@ -1139,7 +1139,7 @@ export const networkTable = {
     hasMetricSearch: false, // 是否有metric下拉列表
     panelIdOfThirdMenu: drillDownPanelTypeMapping.linkMonitor,
     bytesColumnNameGroup: bytesColumnNameGroupForNpm,
-    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNmp
+    bytesCycleColumnNameGroup: bytesCycleColumnNameGroupForNpm
   }
 }
 
