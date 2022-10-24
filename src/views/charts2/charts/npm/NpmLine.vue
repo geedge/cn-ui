@@ -180,7 +180,6 @@ export default {
         })
         this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
           if (type === 'percent') {
-            console.log(type)
             return unitConvert(value, type)[0]
           } else {
             return unitConvert(value, 'number').join('')
