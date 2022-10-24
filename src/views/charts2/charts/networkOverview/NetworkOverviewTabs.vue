@@ -86,7 +86,7 @@
                     </div>
                   </template>
                   <template v-else-if="item.prop === 'score'" >
-                    {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
+                    {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
                   </template>
                   <template v-else>
                     <template v-if="showUnit && item.unit">
@@ -655,10 +655,8 @@ export default {
               }
               this.toggleLoading(false)
               // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
-              let scoreNum = 0
               this.customTableTitles.forEach(tableColumn => {
                 if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
-                  scoreNum++
                   get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
                     if (response.code === 200) {
                       const columnList = response.data.result
@@ -674,7 +672,7 @@ export default {
                         } else {
                           item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, 0] : [0]
                         }
-                        if (scoreNum >= 5) {
+                        if (item.scoreGroup.length >= 5) {
                           let score = 0
                           item.scoreGroup.forEach(i => {
                             score = Number(score) + Number(i)
