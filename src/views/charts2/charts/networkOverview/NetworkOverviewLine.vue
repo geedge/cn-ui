@@ -281,13 +281,13 @@ export default {
                   e.show = false
                 }
                 e.unitType = 'sessions/s'
-                if (show !== this.lineRefer) {
-                  this.legendSelectChange(e, 0)
-                }
+                e.invertTab = false
+                this.lineTab = 'total'
+                this.legendSelectChange(e, 0)
               })
               this.mpackets = mpackets
               this.$nextTick(() => {
-                this.echartsInit(this.mpackets, show)
+                this.echartsInit(this.mpackets, true)
               })
             }
           })

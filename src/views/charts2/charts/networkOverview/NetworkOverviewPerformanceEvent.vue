@@ -12,7 +12,7 @@
         <div class="chart-drawing" id="chart2" v-show="!isNoData2"></div>
       </div>
     </div>
-    <el-button class="pie-button" size="small">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
+    <el-button class="pie-button" size="small" @click="routerJump">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
   </div>
 </template>
 
@@ -124,6 +124,15 @@ export default {
           this.loading2 = false
         })
       }
+    },
+    routerJump () {
+      this.$router.push({
+        path: '/panel/networkAppPerformance',
+        query: {
+          tabIndex: 2,
+          t: +new Date()
+        }
+      })
     },
     resize () {
       this.myChart.resize()

@@ -53,7 +53,8 @@
             </div>
             <div class="app-card__body-previous">
               <div>Total</div>
-              <div>{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
+              <div v-if="metricFilter === 'Bits/s'">{{unitConvert(app.total, unitTypes.byte).join(' ')}}</div>
+              <div v-else>{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
             </div>
           </div>
           <div class="chart__drawing" v-show="!isNoData" :id="`chart-${app.name}-${app.type}`"></div>
