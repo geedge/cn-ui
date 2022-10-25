@@ -162,6 +162,12 @@ export function valueToRangeValue (value, unitType) {
         }
         break
       }
+      case unitTypes.qps: {
+        if (values[0] < 0.01) {
+          return ['<0.01', 'qps']
+        }
+        break
+      }
       default: break
     }
   }

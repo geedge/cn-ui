@@ -42,19 +42,14 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import {
   panelTypeAndRouteMapping,
-  bytesColumnNameGroupForNpm,
-  scoreUrl,
-  customTableTitlesForAppPerformance,
-  operationType,
   curTabState,
   drillDownPanelTypeMapping
 } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
-import { computeScore, urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
-import { get } from '@/utils/http'
 import { useStore } from 'vuex'
 
 export default {

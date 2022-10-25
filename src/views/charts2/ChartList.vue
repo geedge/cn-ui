@@ -7,8 +7,8 @@
         :col-num="24"
         :is-draggable="!panelLock"
         :is-resizable="!panelLock"
-        :margin="[20, 20]"
-        :row-height="40"
+        :margin="[rowMargin, colMargin]"
+        :row-height="rowHeight"
         :vertical-compact="true"
         :use-css-transforms="false"
     >
@@ -36,7 +36,7 @@
 import VueGridLayout from 'vue-grid-layout'
 import _ from 'lodash'
 import Chart from '@/views/charts2/Chart'
-import { panelTypeAndRouteMapping, storageKey, drillDownPanelTypeMapping } from '@/utils/constants'
+import { panelTypeAndRouteMapping, drillDownPanelTypeMapping } from '@/utils/constants'
 import { typeMapping } from '@/views/charts2/chart-tools'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
@@ -54,7 +54,11 @@ export default {
     return {
       panelTypeAndRouteMapping,
       typeMapping,
-      layout: []
+      layout: [],
+      rowHeight: 40,
+      rowMargin: 20,
+      colMargin: 20,
+      debounceFunc: null
     }
   },
   components: {
@@ -73,14 +77,16 @@ export default {
   watch: {
     chartList (n) {
       if (!_.isEmpty(n)) {
+        let layout = []
         if (this.panelType === panelTypeAndRouteMapping.networkAppPerformance) {
-          this.layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex)
+          layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex)
         } else if (Object.values(drillDownPanelTypeMapping).indexOf(this.panelType) >= -1) {
-          this.layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex || !c.params.hasOwnProperty('tabIndex'))
+          layout = n.filter(c => c.type === typeMapping.npm.npmTabs || c.params.tabIndex === this.npmTabIndex || !c.params.hasOwnProperty('tabIndex'))
         } else {
-          this.layout = [...n]
+          layout = [...n]
         }
-        const overviewAppChart = n.find(c => c.type === typeMapping.networkOverview.appList)
+
+        /*const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
         let actuallyLength = 0
         if (overviewAppChart) {
           const params = overviewAppChart.params.app ? overviewAppChart.params : { app: [] }
@@ -90,6 +96,13 @@ export default {
             actuallyLength = params.app.find(p => p.user === 'default').list.length + 1
           }
           overviewAppChart.h = actuallyLength % 3 > 0 ? (Math.floor(actuallyLength / 3) + 1) * 2 + 2 : Math.floor(actuallyLength / 3) * 2 + 2
+        }*/
+        this.layout = layout
+        const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
+        if (overviewAppChart) {
+          this.$nextTick(() => {
+            this.resizeAppChart()
+          })
         }
       }
     },
@@ -106,11 +119,27 @@ export default {
     },
     resizeLine () {
       this.$refs.chartGrid.resizeLine()
+    },
+    resizeAppChart () {
+      const appCardsDom = document.querySelector('.app-cards')
+      const layout = _.cloneDeep(this.layout)
+      const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
+      if (appCardsDom) {
+        const cardsHeight = appCardsDom.offsetHeight
+        if (cardsHeight) {
+          const headerHeight = 24
+          overviewAppChart.h = (cardsHeight + headerHeight + this.rowMargin) / (this.rowHeight + this.rowMargin)
+          this.layout = layout
+        }
+      }
     }
+  },
+  mounted () {
+    this.debounceFunc = _.debounce(this.resizeAppChart, 400)
+    window.addEventListener('resize', this.debounceFunc)
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.debounceFunc)
   }
 }
 </script>
-
-<style scoped>
-
-</style>
