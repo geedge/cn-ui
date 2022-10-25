@@ -19,7 +19,6 @@
       <el-table-column type="expand" width="30">
         <template #default="props">
           <div class="down">
-            <loading :loading="loadingDown"></loading>
             <div class="block drop-down-time">
               <el-date-picker
                   v-model="timeRange"
@@ -34,6 +33,7 @@
               />
             </div>
             <div class="expand">
+              <loading :loading="loadingDown"></loading>
               <chart-no-data v-if="downDataList.length === 0 && !loadingDown"></chart-no-data>
               <div class="expand-cell" v-for="(item, index) in downDataList" :key="index">
                 <div class="expand-right">
