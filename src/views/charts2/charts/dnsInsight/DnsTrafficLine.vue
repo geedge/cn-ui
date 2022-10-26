@@ -205,10 +205,12 @@ export default {
               mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
               mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
               mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
+              let num = 0
               mpackets.forEach(e => {
                 e.unitType = 'bps'
                 if (e.name !== 'network.total' && e.analysis.avg == 0) {
                   e.show = false
+                  num += 1
                 } else {
                   e.show = true
                   if (!active && show !== this.lineRefer) {
@@ -223,9 +225,18 @@ export default {
                 }
               })
               this.mpackets = mpackets
-              this.$nextTick(() => {
-                this.echartsInit(this.mpackets, show)
-              })
+              if (num === 3) {
+                mpackets[0].invertTab = false
+                this.lineTab = 'total'
+                this.legendSelectChange(mpackets[0], 0)
+                this.$nextTick(() => {
+                  this.echartsInit(this.mpackets)
+                })
+              } else {
+                this.$nextTick(() => {
+                  this.echartsInit(this.mpackets)
+                })
+              }
             } else if (t.type === 'queries' && val === 'Queries/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalQueryRate.analysis

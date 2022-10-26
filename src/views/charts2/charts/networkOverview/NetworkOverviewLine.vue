@@ -216,10 +216,12 @@ export default {
               mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
               mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
               mpackets[5].data = t.other.values ? t.other.values : []
+              let num = 0
               mpackets.forEach(e => {
                 e.unitType = 'bps'
                 if (e.name !== 'network.total' && e.analysis.avg == 0) {
                   e.show = false
+                  num += 1
                 } else {
                   e.show = true
                   if (!active && show !== this.lineRefer) {
@@ -234,9 +236,18 @@ export default {
                 }
               })
               this.mpackets = mpackets
-              this.$nextTick(() => {
-                this.echartsInit(this.mpackets, show)
-              })
+              if (num === 5) {
+                mpackets[0].invertTab = false
+                this.lineTab = 'total'
+                this.legendSelectChange(mpackets[0], 0)
+                this.$nextTick(() => {
+                  this.echartsInit(this.mpackets, true)
+                })
+              } else {
+                this.$nextTick(() => {
+                  this.echartsInit(this.mpackets, show)
+                })
+              }
             } else if (t.type === 'packets' && val === 'Packets/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalPacketsRate.analysis
@@ -251,10 +262,12 @@ export default {
               mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
               mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
               mpackets[5].data = t.other.values ? t.other.values : []
+              let num = 0
               mpackets.forEach(e => {
                 e.unitType = 'packets/s'
                 if (e.name !== 'network.total' && e.analysis.avg == 0) {
                   e.show = false
+                  num += 1
                 } else {
                   e.show = true
                   if (!active && show !== this.lineRefer) {
@@ -269,9 +282,18 @@ export default {
                 }
               })
               this.mpackets = mpackets
-              this.$nextTick(() => {
-                this.echartsInit(this.mpackets, show)
-              })
+              if (num === 5) {
+                mpackets[0].invertTab = false
+                this.lineTab = 'total'
+                this.legendSelectChange(mpackets[0], 0)
+                this.$nextTick(() => {
+                  this.echartsInit(this.mpackets, true)
+                })
+              } else {
+                this.$nextTick(() => {
+                  this.echartsInit(this.mpackets, show)
+                })
+              }
             } else if (t.type === 'sessions' && val === 'Sessions/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalSessionsRate.analysis
