@@ -69,3 +69,26 @@ export function dateFormatToUTC (date, format = 'YYYY-MM-DD HH:mm:ss') {
   d = window.$dayJs(d).tz().format(format)
   return d
 }
+
+/**
+ * 时间戳转年月日时分秒，置于数组中，配合el-date-picker使用
+ * @param time
+ * @returns {number[]}
+ */
+export function timestampToList (time) {
+  // 根据地址获取当前时区
+  const newTimezone = window.$dayJs.tz().utcOffset() / 60
+  // 缓存的本地时区
+  const localTimezone = parseInt(localStorage.getItem(storageKey.timezoneLocalOffset))
+  const date = new Date(getMillisecond(time + (newTimezone - localTimezone) * 3600))
+
+  const Y = date.getFullYear()
+  const M = date.getMonth()
+  const D = date.getDate()
+  const H = date.getHours()
+  const m = date.getMinutes()
+  const s = date.getSeconds()
+
+  const arr = [Y, M, D, H, m, s]
+  return arr
+}
