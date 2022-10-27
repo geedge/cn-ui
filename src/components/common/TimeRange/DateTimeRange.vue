@@ -77,7 +77,6 @@
 
 <script>
 import { ref, computed } from 'vue'
-import MyDatePicker from '../MyDatePicker'
 import { storageKey } from '@/utils/constants'
 import { getMillisecond, timestampToList } from '@/utils/date-util'
 import { useStore } from 'vuex'
@@ -98,9 +97,6 @@ export default {
     }
   },
   emits: ['change'],
-  components: {
-    MyDatePicker
-  },
   setup (props, ctx) {
     // data
     const store = useStore()
@@ -253,7 +249,6 @@ export default {
     return {
       myStartTime,
       myEndTime,
-      getMillisecond,
       dropdownFlag,
       utcStr,
       address,
@@ -265,6 +260,7 @@ export default {
       showDetail,
       rangeHistory,
       rangeHistoryArr,
+      getMillisecond,
       myDatePickerShow,
       showDropdown,
       changeDropdown,

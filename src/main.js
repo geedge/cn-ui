@@ -26,12 +26,6 @@ const emitter = new bus()
 
 const _ = require('lodash') // lodash工具
 
-/* dayjs.extend(utc)
-dayjs.extend(timezone)
-dayjs.extend(advancedFormat)
-dayjs.extend(weekday)
-window.$dayJs = dayjs */
-
 const app = createApp(App)
 
 app.use(router)

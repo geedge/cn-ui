@@ -5,6 +5,17 @@
 </template>
 <script>
 import { storageKey } from '@/utils/constants'
+const dayjs = require('dayjs')
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
+const advancedFormat = require('dayjs/plugin/advancedFormat')
+const weekday = require('dayjs/plugin/weekday')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
+dayjs.extend(weekday)
+window.$dayJs = dayjs
+
 export default {
   name: 'App',
   setup () {
