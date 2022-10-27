@@ -52,6 +52,9 @@ const panel = {
     npmLocationSide: 'server', // npm location的查询条件--方向
     refreshTime: null, // 自动刷新时间的秒数
     refreshFlag: true, // 关闭自动刷新标志，true为off，false即开启自动刷新
+    timeRangeArray: [], // 时间范围列表：开始/结束时间
+    timeRangeFlag: 60, // 时间范围标志，默认60即一小时，-1为手动选择的时间范围
+    routerPath: '', // 当前路由路径
     httpCancel: null // 终止http请求
   },
   mutations: {
@@ -148,6 +151,15 @@ const panel = {
     setRefreshFlag (state, flag) {
       state.refreshFlag = flag
     },
+    setTimeRangeArray (state, array) {
+      state.timeRangeArray = array
+    },
+    setTimeRangeFlag (state, flag) {
+      state.timeRangeFlag = flag
+    },
+    setRouterPath (state, path) {
+      state.routerPath = path
+    },
     setHttpCancel (state, cancel) {
       state.httpCancel = cancel
     }
@@ -233,6 +245,15 @@ const panel = {
     },
     getNpmThirdLevelMenuScore (state) {
       return state.npmThirdLevelMenuScore
+    },
+    getTimeRangeArray (state) {
+      return state.timeRangeArray
+    },
+    getTimeRangeFlag (state) {
+      return state.timeRangeFlag
+    },
+    getRouterPath (state) {
+      return state.routerPath
     }
   },
   actions: {

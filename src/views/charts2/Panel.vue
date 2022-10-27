@@ -167,7 +167,21 @@ export default {
 
     const panel = ref({})
     let panelType = 1 // 取得panel的type
-    const { params, query } = useRoute()
+    const { params, query, path } = useRoute()
+    if (path === store.getters.getRouterPath) {
+      if (query.startTime === undefined && store.getters.getTimeRangeFlag !== null) {
+        // 为了避免下钻后将timeRange由范围改为为小时制
+        const newUrl = urlParamsHandler(window.location.href, query, {
+          startTime: store.getters.getTimeRangeArray[0],
+          endTime: store.getters.getTimeRangeArray[1],
+          range: store.getters.getTimeRangeFlag
+        })
+        overwriteUrl(newUrl)
+      }
+    } else {
+      store.commit('setTimeRangeArray', [])
+      store.commit('setTimeRangeFlag', null)
+    }
     const thirdPanel = query.thirdPanel
     const fourthPanel = query.fourthPanel
     if (fourthPanel) {
@@ -196,6 +210,7 @@ export default {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
+    store.commit('setRouterPath', path)
 
     // npm是否展示分数
     const showScorePanel = [drillDownPanelTypeMapping.npmOverviewIp, drillDownPanelTypeMapping.npmOverviewDomain, drillDownPanelTypeMapping.npmOverviewApp, drillDownPanelTypeMapping.npmOverviewCommon, drillDownPanelTypeMapping.npmThirdMenu]
@@ -242,6 +257,9 @@ export default {
     reload (startTime, endTime, dateRangeValue) {
       this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
       const { query } = this.$route
+      this.$store.commit('setTimeRangeArray', [this.timeFilter.startTime, this.timeFilter.endTime])
+      this.$store.commit('setTimeRangeFlag', dateRangeValue.value)
+
       const newUrl = urlParamsHandler(window.location.href, query, {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime,
