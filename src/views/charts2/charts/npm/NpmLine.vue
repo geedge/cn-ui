@@ -132,11 +132,11 @@ export default {
               this.isNoData = res.data.result.length === 0
               if (this.chart.params.index === 0) {
                 res.data.result.forEach((t, i) => {
-                  if (t.type === 'totalBytesRate') {
+                  if (t.type === 'totalBitsRate') {
                     this.chartOptionLineData[i].values = t.values
-                  } else if (t.type === 'inboundBytesRate') {
+                  } else if (t.type === 'inboundBitsRate') {
                     this.chartOptionLineData[i].values = t.values
-                  } else if (t.type === 'outboundBytesRate') {
+                  } else if (t.type === 'outboundBitsRate') {
                     this.chartOptionLineData[i].values = t.values
                   }
                 })
