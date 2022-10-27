@@ -53,7 +53,7 @@ const panel = {
     refreshTime: null, // 自动刷新时间的秒数
     refreshFlag: true, // 关闭自动刷新标志，true为off，false即开启自动刷新
     timeRangeArray: [], // 时间范围列表：开始/结束时间
-    timeRangeFlag: 60, // 时间范围标志，默认60即一小时，-1为手动选择的时间范围
+    timeRangeFlag: null, // 时间范围标志，默认60即一小时，-1为手动选择的时间范围
     routerPath: '', // 当前路由路径
     httpCancel: null // 终止http请求
   },
