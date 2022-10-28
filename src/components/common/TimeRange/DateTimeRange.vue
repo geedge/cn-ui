@@ -55,11 +55,11 @@
             <ul class="date-range-item">
               <li v-for="item in dateRangeArr"
                   @click="quickChange(item.value)"
-                  :class="(item.value==dateRangeValue.value || item.value==dateRangeValue)?'active':''"
+                  :class="(item.value===dateRangeValue.value || item.value===dateRangeValue)?'active':''"
                   :key="item.value">
                 <span style="position: relative">
                     {{ item.name }}
-                    <i v-if="(item.value==dateRangeValue.value || item.value==dateRangeValue)"
+                    <i v-if="(item.value===dateRangeValue.value || item.value===dateRangeValue)"
                        class="cn-icon cn-icon-check"></i>
                 </span>
               </li>
@@ -188,6 +188,11 @@ export default {
         new Date(...timestampToList(myEndTime.value))
       ]
       newDatePicker.value.focus()
+
+      // todo 此处为弹窗打开的方向标识，控制css的position修改其left与top属性未生效，只好隐藏，后续有更好的处理办法再修改
+      const dom = document.getElementsByClassName('el-picker__popper el-popper is-light is-pure')
+      const dom1 = dom[0].getElementsByClassName('el-popper__arrow')
+      dom1[0].style.display = 'none'
     }
     /**
      * 时间选择器，选择时间，点击OK后的回调
@@ -276,11 +281,5 @@ export default {
 <style scoped>
 /deep/.el-input__inner {
   visibility: hidden !important;
-}
-/deep/.el-popper__arrow {
-  border: 1px red solid !important;
-}
-.date_style /deep/.el-popper__arrow::before {
-  border: 1px red solid !important;
 }
 </style>
