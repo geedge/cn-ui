@@ -168,18 +168,14 @@ export default {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
     const { params, query, path } = useRoute()
-    // 下钻和返回都是在同一路由下进行，根据store存储的timeRange可避免下钻后返回被重置的情况，
-    // 切换其他界面时重置timeRange，避免影响其他界面使用timeRange
-    if (path === store.getters.getRouterPath) {
-      if (query.startTime === undefined && store.getters.getTimeRangeFlag !== null) {
-        // 为了避免下钻后返回timeRange被重置，以及timeRange被修改，返回时url没有更新
-        const newUrl = urlParamsHandler(window.location.href, query, {
-          startTime: store.getters.getTimeRangeArray[0],
-          endTime: store.getters.getTimeRangeArray[1],
-          range: store.getters.getTimeRangeFlag
-        })
-        overwriteUrl(newUrl)
-      }
+    // 只要当前路由和vuex里的路由一致，且vuex存储的range有值，即代表已经下钻后返回，此时直接使用vuex里存储的时间范围
+    if (path === store.getters.getRouterPath && store.getters.getTimeRangeFlag !== null) {
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        startTime: store.getters.getTimeRangeArray[0],
+        endTime: store.getters.getTimeRangeArray[1],
+        range: store.getters.getTimeRangeFlag
+      })
+      overwriteUrl(newUrl)
     } else {
       store.commit('setTimeRangeArray', [])
       store.commit('setTimeRangeFlag', null)
