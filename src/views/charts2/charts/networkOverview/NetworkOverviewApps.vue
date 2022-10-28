@@ -20,14 +20,14 @@
     </div>
 
     <div class="app-cards">
-      <div class="app-card" v-for="(app, index) in appData" :key="index">
+      <div class="app-card" @mouseenter="mouseenter(app)" @mouseleave="mouseleave(app)" v-for="(app, index) in appData" :key="index">
         <div class="app-card-title">
           <div class="app-card-title-name">
             <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'"></i>
             <span @click="drillDownData(app.type, app.name)">{{app.name}}</span>
           </div>
-          <div class="app-card-title-more" v-ele-click-outside="clickOutSide">
-            <span><i class="cn-icon cn-icon-more-dark" @click="moreChange(app)"></i></span>
+          <div class="app-card-title-more">
+            <span><i class="cn-icon cn-icon-more-dark"></i></span>
             <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
           </div>
         </div>
@@ -694,16 +694,30 @@ export default {
         })
       }
     },
-    moreChange (app) {
+    // moreChange (app) {
+    //   this.appData.forEach(t => {
+    //     if (t.name === app.name && t.type === app.type) {
+    //       t.moreOptions = !t.moreOptions
+    //     }
+    //   })
+    // },
+    resize () {
+      this.myChart.forEach(t => {
+        t.resize()
+      })
+    },
+    mouseenter (app) {
       this.appData.forEach(t => {
         if (t.name === app.name && t.type === app.type) {
           t.moreOptions = !t.moreOptions
         }
       })
     },
-    resize () {
-      this.myChart.forEach(t => {
-        t.resize()
+    mouseleave (app) {
+      this.appData.forEach(t => {
+        if (t.name === app.name && t.type === app.type) {
+          t.moreOptions = false
+        }
       })
     }
   },
