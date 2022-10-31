@@ -82,7 +82,7 @@
         </div>
         <div class="add-app__body">
           <el-tabs v-model="appTypeTab" @tab-click="appTypeTabChange">
-            <el-tab-pane :label="$t('networkOverview.appType.provider')" :name="0">
+            <el-tab-pane :label="$t('network.providers')" :name="0">
               <div class="body__apps" :class="{'body__apps-no-grid': providerOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
                 <chart-no-data v-if="providerOptions.length === 0 && !loadingBody"></chart-no-data>
