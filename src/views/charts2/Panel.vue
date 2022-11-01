@@ -14,6 +14,7 @@
             size="mini"
             v-model="metric"
             placeholder=""
+            v-if="panelType === 1"
             :popper-append-to-body="false"
             @change="metricChange"
         >
