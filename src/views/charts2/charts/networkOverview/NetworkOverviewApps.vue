@@ -27,8 +27,8 @@
             <span @click="drillDownData(app.type, app.name)">{{app.name}}</span>
           </div>
           <div class="app-card-title-more">
-            <span><i class="cn-icon cn-icon-more-dark"></i></span>
-            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+            <span v-show="app.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(app)"></i></span>
+            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions" @mouseleave="mouseleaveMore(app)"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
           </div>
         </div>
         <div class="app-card__bodys">
@@ -706,16 +706,31 @@ export default {
         t.resize()
       })
     },
+    mouseenterMore (app) {
+      this.appData.forEach(t => {
+        if (t.name === app.name && t.type === app.type) {
+          t.moreOptions = true
+        }
+      })
+    },
+    mouseleaveMore (app) {
+      this.appData.forEach(t => {
+        if (t.name === app.name && t.type === app.type) {
+          t.moreOptions = false
+        }
+      })
+    },
     mouseenter (app) {
       this.appData.forEach(t => {
         if (t.name === app.name && t.type === app.type) {
-          t.moreOptions = !t.moreOptions
+          t.showMore = true
         }
       })
     },
     mouseleave (app) {
       this.appData.forEach(t => {
         if (t.name === app.name && t.type === app.type) {
+          t.showMore = false
           t.moreOptions = false
         }
       })
