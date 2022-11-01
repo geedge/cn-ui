@@ -33,7 +33,7 @@
                   </span>
                   <span v-else>>500.00%</span>
                 </div>
-                <div v-else-if="app.value === '-' || app.value === 0" class="app-card__body-content-percent">0</div>
+                <div v-else-if="app.value === '-' || app.value === 0" class="app-card__body-content-percent">+0.00%</div>
               </div>
             </div>
             <div class="app-card__body-previous">

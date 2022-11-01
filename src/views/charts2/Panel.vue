@@ -14,7 +14,7 @@
             size="mini"
             v-model="metric"
             placeholder=""
-            v-if="panelType === 1"
+            v-if="panelType === panelTypeAndRouteMapping.networkOverview"
             :popper-append-to-body="false"
             @change="metricChange"
         >
@@ -80,6 +80,7 @@ export default {
   },
   data () {
     return {
+      panelTypeAndRouteMapping,
       metricOptions,
       chartList: [], // 普通panel的chart
       panelLock: true,
