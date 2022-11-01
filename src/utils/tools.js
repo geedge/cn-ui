@@ -793,7 +793,7 @@ export function computeScore (data) {
     }
     if (t === 'establishLatencyMs' || t === 'httpResponseLatency' || t === 'sslConLatency') {
       if (!data[t] && data[t] !== 0) {
-        score = 0
+        score = 1
       } else if (data[t] <= 50) {
         score = 1
       } else if (data[t] > 200) {
@@ -803,7 +803,7 @@ export function computeScore (data) {
       }
     } else if (t === 'tcpLostlenPercent' || t === 'pktRetransPercent') {
       if (!data[t] && data[t] !== 0) {
-        score = 0
+        score = 1
       } else if (data[t] <= 0.01) {
         score = 1
       } else if (data[t] > 0.05) {
