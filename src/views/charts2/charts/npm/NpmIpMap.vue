@@ -107,24 +107,20 @@ export default {
             res2.forEach((r, i) => {
               if (r.code === 200) {
                 mapData.forEach(t => {
-                  let score = 0
                   const find = r.data.result.find(d => d.country === t.country)
-                  if (find) {
-                    score = computeScore(find, i)
-                  }
-                  t[keyPre[i] + 'Score'] = score
-                })
-              } else {
-                mapData.forEach(t => {
-                  t[keyPre[i] + 'Score'] = 0
+                  t[keyPre[i] + 'Score'] = find
                 })
               }
             })
             mapData.forEach(t => {
-              t.score = Math.ceil((t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6)
-              if (t.score > 6) {
-                t.score = 6
+              const data = {
+                establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
+                httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
+                sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
+                tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
+                pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
               }
+              t.score = computeScore(data)
             })
             this.loadMarkerData(imageSeries, mapData)
           })

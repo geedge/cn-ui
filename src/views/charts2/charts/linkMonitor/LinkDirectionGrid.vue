@@ -236,17 +236,16 @@ export default {
      * 本地计算npm分数
      */
     localComputeScore (data, bandwidth) {
-      const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
       let score = 0
-      keyPre.forEach((item, index) => {
-        score = computeScore(data, index)
-        data[keyPre[index] + 'Score'] = score
-      })
-      let npmScore = Math.ceil((data.tcpScore + data.httpScore + data.sslScore + data.tcpLostScore + data.packetRetransScore) * 6)
-      if (npmScore > 6) {
-        npmScore = 6
+      const dataScore = {
+        establishLatencyMs: data.establishLatencyMs || null,
+        httpResponseLatency: data.httpResponseLatency || null,
+        sslConLatency: data.sslConLatency || null,
+        tcpLostlenPercent: data.tcpLostlenPercent || null,
+        pktRetransPercent: data.pktRetransPercent || null
       }
-      return npmScore
+      score = computeScore(dataScore)
+      return score
     },
     /**
      * 计算popover弹窗和右侧数据模块的宽度

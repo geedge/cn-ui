@@ -98,43 +98,19 @@ export default {
       if (type && condition) {
         this.toggleLoading(true)
         get(api.npm.overview.networkAnalysis, params).then(res => {
-          const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
-          const scoreInfo = {}
-          let index = 0
+          let score = 0
           if (res.code === 200) {
-            if (res.data.result.establishLatencyMsAvg || res.data.result.establishLatencyMsAvg === 0) {
-              res.data.result.establishLatencyMs = res.data.result.establishLatencyMsAvg
-              index = 0
-              scoreInfo[keyPre[index] + 'Score'] = computeScore(res.data.result, index)
+            const data = {
+              establishLatencyMs: res.data.result.establishLatencyMsAvg || null,
+              httpResponseLatency: res.data.result.httpResponseLatencyAvg || null,
+              sslConLatency: res.data.result.sslConLatencyAvg || null,
+              tcpLostlenPercent: res.data.result.tcpLostlenPercentAvg || null,
+              pktRetransPercent: res.data.result.pktRetransPercentAvg || null
             }
-            if (res.data.result.httpResponseLatencyAvg || res.data.result.httpResponseLatencyAvg === 0) {
-              res.data.result.httpResponseLatency = res.data.result.httpResponseLatencyAvg
-              index = 1
-              scoreInfo[keyPre[index] + 'Score'] = computeScore(res.data.result, index)
-            }
-            if (res.data.result.tcpLostlenPercentAvg || res.data.result.tcpLostlenPercentAvg === 0) {
-              res.data.result.tcpLostlenPercent = res.data.result.tcpLostlenPercentAvg
-              index = 3
-              scoreInfo[keyPre[index] + 'Score'] = computeScore(res.data.result, index)
-            }
-            if (res.data.result.pktRetransPercentAvg || res.data.result.pktRetransPercentAvg === 0) {
-              res.data.result.pktRetransPercent = res.data.result.pktRetransPercentAvg
-              index = 4
-              scoreInfo[keyPre[index] + 'Score'] = computeScore(res.data.result, index)
-            }
-            if (res.data.result.sslConLatencyAvg || res.data.result.sslConLatencyAvg === 0) {
-              res.data.result.sslConLatency = res.data.result.sslConLatencyAvg
-              index = 2
-              scoreInfo[keyPre[index] + 'Score'] = computeScore(res.data.result, index)
-            }
-            this.npmNetworkCycleData = res.data.result
+            score = computeScore(data)
             this.npmNetworkLastCycleQuery()
           }
-          scoreInfo.score = Math.ceil((scoreInfo.tcpScore + scoreInfo.httpScore + scoreInfo.sslScore + scoreInfo.tcpLostScore + scoreInfo.packetRetransScore) * 6)
-          if (scoreInfo.score > 6) {
-            scoreInfo.score = 6
-          }
-          this.$store.commit('setNpmThirdLevelMenuScore', scoreInfo.score)
+          this.$store.commit('setNpmThirdLevelMenuScore', score)
         }).catch(e => {
           this.toggleLoading(false)
         })
@@ -147,40 +123,21 @@ export default {
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
           this.npmNetworkCycleData = []
-          const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
-          const scoreInfo = {}
-          let index = 0
+          let score = 0
           res.forEach(t => {
             if (t.code === 200) {
-              if (t.data.result.establishLatencyMsAvg || t.data.result.establishLatencyMsAvg === 0) {
-                t.data.result.establishLatencyMs = t.data.result.establishLatencyMsAvg
-                index = 0
-              }
-              if (t.data.result.httpResponseLatencyAvg || t.data.result.httpResponseLatencyAvg === 0) {
-                t.data.result.httpResponseLatency = t.data.result.httpResponseLatencyAvg
-                index = 1
-              }
-              if (t.data.result.tcpLostlenPercentAvg || t.data.result.tcpLostlenPercentAvg === 0) {
-                t.data.result.tcpLostlenPercent = t.data.result.tcpLostlenPercentAvg
-                index = 3
-              }
-              if (t.data.result.pktRetransPercentAvg || t.data.result.pktRetransPercentAvg === 0) {
-                t.data.result.pktRetransPercent = t.data.result.pktRetransPercentAvg
-                index = 4
-              }
-              if (t.data.result.sslConLatencyAvg || t.data.result.sslConLatencyAvg === 0) {
-                t.data.result.sslConLatency = t.data.result.sslConLatencyAvg
-                index = 2
-              }
-              scoreInfo[keyPre[index] + 'Score'] = computeScore(t.data.result, index)
               this.npmNetworkCycleData.push(t.data.result)
+              const data = {
+                establishLatencyMs: t.data.result.establishLatencyMsAvg,
+                httpResponseLatency: t.data.result.httpResponseLatencyAvg,
+                sslConLatency: t.data.result.sslConLatencyAvg,
+                tcpLostlenPercent: t.data.result.tcpLostlenPercentAvg,
+                pktRetransPercent: t.data.result.pktRetransPercentAvg
+              }
+              score = computeScore(data)
             }
           })
-          scoreInfo.score = Math.ceil((scoreInfo.tcpScore + scoreInfo.httpScore + scoreInfo.sslScore + scoreInfo.tcpLostScore + scoreInfo.packetRetransScore) * 6)
-          if (scoreInfo.score > 6) {
-            scoreInfo.score = 6
-          }
-          this.$store.commit('setNpmThirdLevelMenuScore', scoreInfo.score)
+          this.$store.commit('setNpmThirdLevelMenuScore', score)
           this.npmNetworkLastCycleQuery()
         }).catch(e => {
           this.toggleLoading(false)

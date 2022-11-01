@@ -134,7 +134,14 @@ import unitConvert from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
-import { getChainRatio, computeScore, changeCurTab, urlParamsHandler, overwriteUrl, getUserDrilldownTableConfig } from '@/utils/tools'
+import {
+  getChainRatio,
+  computeScore,
+  changeCurTab,
+  urlParamsHandler,
+  overwriteUrl,
+  getUserDrilldownTableConfig
+} from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 export default {
@@ -220,24 +227,20 @@ export default {
             res.forEach((r, i) => {
               if (r.code === 200) {
                 tableData.forEach(t => {
-                  let score = 0
                   const find = r.data.result.find(d => d.appSubcategory === t.appSubcategory)
-                  if (find) {
-                    score = computeScore(find, i)
-                  }
-                  t[keyPre[i] + 'Score'] = score
-                })
-              } else {
-                tableData.forEach(t => {
-                  t[keyPre[i] + 'Score'] = 0
+                  t[keyPre[i] + 'Score'] = find
                 })
               }
             })
             tableData.forEach(t => {
-              t.score = Math.ceil((t.tcpScore + t.httpScore + t.sslScore + t.tcpLostScore + t.packetRetransScore) * 6)
-              if (t.score > 6) {
-                t.score = 6
+              const data = {
+                establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
+                httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
+                sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
+                tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
+                pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
               }
+              t.score = computeScore(data)
             })
             this.tableData = tableData
           }).finally(() => {

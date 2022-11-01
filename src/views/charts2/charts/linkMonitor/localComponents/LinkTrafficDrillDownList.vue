@@ -130,17 +130,15 @@ export default {
       get(api.linkMonitor.networkAnalysis, params).then(res => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
-          const dataArr = [0, 1, 2, 3, 4]
-          let scoreAll = 0
-          dataArr.forEach(e => {
-            const score = computeScore(res.data.result[0], e)
-            scoreAll += score
-          })
-          this.linkTrafficListData = res.data.result[0]
-          this.linkTrafficListData.npmScore = Math.ceil(scoreAll * 6)
-          if (this.linkTrafficListData.npmScore > 6) {
-            this.linkTrafficListData.npmScore = 6
+          const data = {
+            establishLatencyMs: res.data.result[0].establishLatencyMs || null,
+            httpResponseLatency: res.data.result[0].httpResponseLatency || null,
+            sslConLatency: res.data.result[0].sslConLatency || null,
+            tcpLostlenPercent: res.data.result[0].tcpLostlenPercent || null,
+            pktRetransPercent: res.data.result[0].pktRetransPercent || null
           }
+          this.linkTrafficListData = res.data.result[0]
+          this.linkTrafficListData.npmScore = computeScore(data)
         }
       }).catch(e => {
         console.error(e)

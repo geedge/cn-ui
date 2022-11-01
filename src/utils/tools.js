@@ -780,66 +780,48 @@ export function getChainRatio (current, prev) {
   }
 }
 
-export function computeScore (data, index) {
+export function computeScore (data) {
   let score = 0
   let k = 0
-  if (index === 0) {
-    k = 0.3
-    if (!data.establishLatencyMs && data.establishLatencyMs !== 0) {
-      score = 0
-    } else if (data.establishLatencyMs <= 50) {
-      score = 1
-    } else if (data.establishLatencyMs > 200) {
-      score = 0
-    } else {
-      score = (data.establishLatencyMs - 200) / (50 - 200)
+  let totalScore = 0
+  const scoreArr = []
+  Object.keys(data).forEach(t => {
+    if (t === 'establishLatencyMs' || t === 'tcpLostlenPercent' || t === 'pktRetransPercent') {
+      k = 0.3
+    } else if (t === 'httpResponseLatency' || t === 'sslConLatency') {
+      k = 0.05
     }
-  } else if (index === 1) {
-    k = 0.05
-    if (!data.httpResponseLatency && data.httpResponseLatency !== 0) {
-      score = 1
-    } else if (data.httpResponseLatency <= 50) {
-      score = 1
-    } else if (data.httpResponseLatency > 200) {
-      score = 0
-    } else {
-      score = (data.httpResponseLatency - 200) / (50 - 200)
+    if (t === 'establishLatencyMs' || t === 'httpResponseLatency' || t === 'sslConLatency') {
+      if (!data[t] && data[t] !== 0) {
+        score = 0
+      } else if (data[t] <= 50) {
+        score = 1
+      } else if (data[t] > 200) {
+        score = 0
+      } else {
+        score = (data[t] - 200) / (50 - 200)
+      }
+    } else if (t === 'tcpLostlenPercent' || t === 'pktRetransPercent') {
+      if (!data[t] && data[t] !== 0) {
+        score = 0
+      } else if (data[t] <= 0.01) {
+        score = 1
+      } else if (data[t] > 0.05) {
+        score = 0
+      } else {
+        score = (data[t] - 0.05) / (0.01 - 0.05)
+      }
     }
-  } else if (index === 2) {
-    k = 0.05
-    if (!data.sslConLatency && data.sslConLatency !== 0) {
-      score = 1
-    } else if (data.sslConLatency <= 50) {
-      score = 1
-    } else if (data.sslConLatency > 200) {
-      score = 0
-    } else {
-      score = (data.sslConLatency - 200) / (50 - 200)
-    }
-  } else if (index === 3) {
-    k = 0.3
-    if (!data.tcpLostlenPercent && data.tcpLostlenPercent !== 0) {
-      score = 0
-    } else if (data.tcpLostlenPercent <= 0.01) {
-      score = 1
-    } else if (data.tcpLostlenPercent > 0.05) {
-      score = 0
-    } else {
-      score = (data.tcpLostlenPercent - 0.05) / (0.01 - 0.05)
-    }
-  } else if (index === 4) {
-    k = 0.3
-    if (!data.pktRetransPercent && data.pktRetransPercent !== 0) {
-      score = 0
-    } else if (data.pktRetransPercent <= 0.01) {
-      score = 1
-    } else if (data.pktRetransPercent > 0.05) {
-      score = 0
-    } else {
-      score = (data.pktRetransPercent - 0.05) / (0.01 - 0.05)
-    }
+    scoreArr.push(score * k)
+  })
+  scoreArr.forEach(t => {
+    totalScore += t
+  })
+  totalScore = Math.ceil(totalScore * 6)
+  if (totalScore > 6) {
+    totalScore = 6
   }
-  return score * k
+  return totalScore
 }
 
 // 改变tab状态(url中)：当前tab，
