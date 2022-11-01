@@ -21,6 +21,7 @@
                  :key="item.i">
         <chart
             :time-filter="timeFilter"
+            :metric="metric"
             :extra-params="extraParams"
             :id="item.id"
             ref="chartGrid"
@@ -44,6 +45,7 @@ export default {
   name: 'ChartList',
   props: {
     timeFilter: Object,
+    metric: String,
     panelType: Number,
     chartList: Array,
     panelLock: Boolean,

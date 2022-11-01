@@ -4,6 +4,7 @@
     <network-overview-line
         v-if="chart.type === typeMapping.networkOverview.line"
         :chart="chart"
+        :metric="metric"
         :time-filter="timeFilter"
         ref="networkLine"
         @toggleLoading="toggleLoading"
@@ -23,6 +24,7 @@
     <network-overview-tabs
          v-else-if="chart.type === typeMapping.networkOverview.table"
          :time-filter="timeFilter"
+         :metric="metric"
          :chart="chart"
          :ref="`tab${chart.id}`"
          @toggleLoading="toggleLoading"
@@ -38,6 +40,7 @@
     <network-overview-apps
         v-else-if="chart.type === typeMapping.networkOverview.appList"
         :chart="chart"
+        :metric="metric"
         :time-filter="timeFilter"
         @toggleLoading="toggleLoading"
     >
@@ -188,8 +191,7 @@ import DnsEventChart from '@/views/charts2/charts/dnsInsight/DnsEventChart'
 import DnsRecentEvents from '@/views/charts2/charts/dnsInsight/DnsRecentEvents'
 import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
 
-import { get } from '@/utils/http'
-import { getNowTime, getSecond } from '@/utils/date-util'
+import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
 import LinkDirectionGrid from '@/views/charts2/charts/linkMonitor/LinkDirectionGrid'
 export default {
@@ -224,6 +226,7 @@ export default {
   },
   props: {
     chart: Object,
+    metric: String,
     timeFilter: Object,
     extraParams: Object
   },

@@ -2,21 +2,6 @@
   <div class="network-overview-apps">
     <div class="network-overview-apps-header">
       <div class="network-overview-apps-title">{{$t('networkOverview.appType.providerAndApp')}}</div>
-      <div class="line-select-metric">
-        <span>{{$t('network.metric')}}:</span>
-        <div class="line-select__operation">
-          <el-select
-              size="mini"
-              v-model="metricFilter"
-              placeholder=""
-              popper-class="common-select"
-              :popper-append-to-body="false"
-              @change="metricChange"
-          >
-            <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </div>
-      </div>
     </div>
 
     <div class="app-cards">
@@ -53,7 +38,7 @@
             </div>
             <div class="app-card__body-previous">
               <div>Total</div>
-              <div v-if="metricFilter === 'Bits/s'">{{unitConvert(app.total, unitTypes.byte).join(' ')}}</div>
+              <div v-if="metric === 'Bits/s'">{{unitConvert(app.total, unitTypes.byte).join(' ')}}</div>
               <div v-else>{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
             </div>
           </div>
@@ -132,7 +117,7 @@ import unitConvert from '@/utils/unit-convert'
 import { storageKey, unitTypes, networkTable, operationType, curTabState } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
-import { ref, shallowRef } from 'vue'
+import { shallowRef } from 'vue'
 import { get, put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
@@ -142,7 +127,6 @@ import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
-import { useRoute } from 'vue-router'
 
 export default {
   name: 'NetworkOverviewApps',
@@ -153,20 +137,6 @@ export default {
   mixins: [chartMixin],
   data () {
     return {
-      metricOptions: [
-        {
-          value: 'Bits/s',
-          label: 'Bits/s'
-        },
-        {
-          value: 'Packets/s',
-          label: 'Packets/s'
-        },
-        {
-          value: 'Sessions/s',
-          label: 'Sessions/s'
-        }
-      ],
       appData: [],
       // 假数据
       appTempData: [],
@@ -196,22 +166,18 @@ export default {
       urlChangeParams: {}
     }
   },
+  props: {
+    metric: {
+      type: String,
+      default: 'Bits/s'
+    }
+  },
   setup () {
-    const { query } = useRoute()
-    const metricFilter = ref(query.appListMetric || 'Bits/s')
     return {
-      metricFilter,
       myChart: shallowRef([])
     }
   },
   watch: {
-    metricFilter (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        appListMetric: n
-      })
-      overwriteUrl(newUrl)
-    },
     showAddApp: {
       deep: true,
       handler (n) {
@@ -223,10 +189,11 @@ export default {
         }
       }
     },
-    timeFilter: {
-      handler () {
-        this.init()
-      }
+    timeFilter (n) {
+      this.init()
+    },
+    metric (n) {
+      this.init()
     }
   },
   methods: {
@@ -282,9 +249,9 @@ export default {
           const prevData = res[0].data.result
           const data = res[1].data.result
           let toCompareType = 'bytes'
-          if (this.metricFilter === 'Sessions/s') {
+          if (this.metric === 'Sessions/s') {
             toCompareType = 'sessions'
-          } else if (this.metricFilter === 'Packets/s') {
+          } else if (this.metric === 'Packets/s') {
             toCompareType = 'packets'
           }
           data.forEach(d => {

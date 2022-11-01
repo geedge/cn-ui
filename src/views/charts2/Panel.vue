@@ -9,25 +9,40 @@
           Score:{{score}}
         </div>
       </div>
-      <div class="panel__time">
-        <date-time-range
-            class="date-time-range"
-            :start-time="timeFilter.startTime"
-            :end-time="timeFilter.endTime"
-            :date-range="timeFilter.dateRangeValue"
-            ref="dateTimeRange"
-            @change="reload"
-        />
-        <time-refresh
-            class="date-time-range"
-            @change="timeRefreshChange"
-            :end-time="timeFilter.endTime"
-        />
+      <div class="panel__tools">
+        <el-select
+            size="mini"
+            v-model="metric"
+            placeholder=""
+            :popper-append-to-body="false"
+            @change="metricChange"
+        >
+          <template #prefix>
+            <span class="select-prefix">Metric:</span>
+          </template>
+          <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
+        <div class="panel__time">
+          <date-time-range
+              class="date-time-range"
+              :start-time="timeFilter.startTime"
+              :end-time="timeFilter.endTime"
+              :date-range="timeFilter.dateRangeValue"
+              ref="dateTimeRange"
+              @change="reload"
+          />
+          <time-refresh
+              class="date-time-range"
+              @change="timeRefreshChange"
+              :end-time="timeFilter.endTime"
+          />
+        </div>
       </div>
     </div>
     <chart-list
         ref="chartList"
         :time-filter="timeFilter"
+        :metric="metric"
         :chart-list="chartList"
         :panel-type="panelType"
         :panel-lock="panelLock"
@@ -43,7 +58,8 @@ import { ref } from 'vue'
 import {
   panelTypeAndRouteMapping,
   curTabState,
-  drillDownPanelTypeMapping
+  drillDownPanelTypeMapping,
+  metricOptions
 } from '@/utils/constants'
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -63,6 +79,7 @@ export default {
   },
   data () {
     return {
+      metricOptions,
       chartList: [], // 普通panel的chart
       panelLock: true,
       extraParams: {},
@@ -213,11 +230,14 @@ export default {
     // npm是否展示分数
     const showScorePanel = [drillDownPanelTypeMapping.npmOverviewIp, drillDownPanelTypeMapping.npmOverviewDomain, drillDownPanelTypeMapping.npmOverviewApp, drillDownPanelTypeMapping.npmOverviewCommon, drillDownPanelTypeMapping.npmThirdMenu]
     const showScore = showScorePanel.indexOf(panelType) > -1
+
+    const metric = ref(query.metric || 'Bits/s')
     return {
       panelType,
       panel,
       timeFilter,
-      showScore
+      showScore,
+      metric
     }
   },
   methods: {
@@ -280,6 +300,13 @@ export default {
       } else {
         return this.$route.query[param] ? this.$route.query[param] : defaultValue
       }
+    },
+    metricChange (value) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        metric: value
+      })
+      overwriteUrl(newUrl)
     }
   }
 }

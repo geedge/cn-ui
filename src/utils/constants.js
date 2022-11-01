@@ -186,6 +186,21 @@ export const networkOverviewTabs = [
   'network.protocolPorts'
 ] */
 
+export const metricOptions = [
+  {
+    value: 'Bits/s',
+    label: 'Bits/s'
+  },
+  {
+    value: 'Packets/s',
+    label: 'Packets/s'
+  },
+  {
+    value: 'Sessions/s',
+    label: 'Sessions/s'
+  }
+]
+
 export const operationType = {
   mainMenu: 0, // 菜单
   secondMenu: 2, // 二级菜单
