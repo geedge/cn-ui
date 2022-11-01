@@ -26,20 +26,6 @@
         </div>
       </div>
       <div class="line-select line-header-right">
-        <div class="line-select-metric">
-          <span>{{$t('network.metric')}}:</span>
-          <div class="line-select__operation">
-            <el-select
-                size="mini"
-                v-model="lineMetric"
-                popper-class="common-select"
-                :popper-append-to-body="false"
-                @change="metricSelectChange"
-            >
-              <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
-          </div>
-        </div>
         <div class="line-select-reference-line">
           <span>{{$t('network.referenceLine')}}:</span>
           <div class="line-select__operation">
@@ -84,14 +70,18 @@ export default {
   components: {
     ChartNoData
   },
+  props: {
+    metric: {
+      type: String,
+      default: 'Bits/s'
+    }
+  },
   setup () {
     const { query } = useRoute()
-    const lineMetric = ref(query.lineMetric || 'Bits/s')
     const lineRefer = ref(query.lineRefer || 'Average')
     const lineTab = ref(query.lineTab || '')
     const queryCondition = ref(query.queryCondition || '')
     return {
-      lineMetric,
       lineRefer,
       lineTab,
       queryCondition,
@@ -101,20 +91,6 @@ export default {
   mixins: [chartMixin],
   data () {
     return {
-      options1: [
-        {
-          value: 'Bits/s',
-          label: 'Bits/s'
-        },
-        {
-          value: 'Packets/s',
-          label: 'Packets/s'
-        },
-        {
-          value: 'Sessions/s',
-          label: 'Sessions/s'
-        }
-      ],
       options2: [
         {
           value: 'Average',
@@ -129,14 +105,7 @@ export default {
           label: 'Maximum'
         }
       ],
-      mpackets: [
-        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' },
-        { analysis: {}, name: 'network.internal', class: 'internal', show: true, invertTab: true, positioning: 3, data: [], unitType: '' },
-        { analysis: {}, name: 'network.through', class: 'through', show: true, invertTab: true, positioning: 4, data: [], unitType: '' },
-        { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [], unitType: '' }
-      ],
+      mpackets: [],
       unitConvert,
       unitTypes,
       chartDateObject: [],
@@ -159,13 +128,6 @@ export default {
         overwriteUrl(newUrl)
       })
     },
-    lineMetric (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        lineMetric: n
-      })
-      overwriteUrl(newUrl)
-    },
     lineRefer (n) {
       const { query } = this.$route
       const newUrl = urlParamsHandler(window.location.href, query, {
@@ -176,17 +138,28 @@ export default {
     timeFilter: {
       handler (n) {
         if (this.lineTab) {
-          this.init(this.lineMetric, this.showMarkLine, 'active')
+          this.init(this.metric, this.showMarkLine, 'active')
         } else {
           this.init()
         }
       }
+    },
+    metric (n) {
+      this.lineTab = ''
+      this.handleActiveBar()
+      this.showMarkLine = !this.showMarkLine
+      this.mpackets.forEach((e, i) => {
+        if (!e.invertTab) {
+          e.invertTab = true
+        }
+      })
+      this.init(n, this.showMarkLine)
     }
   },
   methods: {
     init (val, show, active) {
       if (!val) {
-        val = this.lineMetric
+        val = this.metric
       }
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -201,6 +174,14 @@ export default {
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
+          this.mpackets = [
+            { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+            { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+            { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' },
+            { analysis: {}, name: 'network.internal', class: 'internal', show: true, invertTab: true, positioning: 3, data: [], unitType: '' },
+            { analysis: {}, name: 'network.through', class: 'through', show: true, invertTab: true, positioning: 4, data: [], unitType: '' },
+            { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [], unitType: '' }
+          ]
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
@@ -434,7 +415,7 @@ export default {
       this.lineTab = item.class
       this.legendSelectChange(item, index, 'active')
       this.showMarkLine = !item.invertTab
-      this.init(this.lineMetric, this.showMarkLine, 'active')
+      this.init(this.metric, this.showMarkLine, 'active')
     },
     mouseenter (item) {
       this.mousemoveCursor = item.class
@@ -495,18 +476,6 @@ export default {
     },
     resize () {
       this.myChart.resize()
-    },
-    metricSelectChange (val) {
-      this.lineMetric = val
-      this.lineTab = ''
-      this.handleActiveBar()
-      this.showMarkLine = !this.showMarkLine
-      this.mpackets.forEach((e, i) => {
-        if (!e.invertTab) {
-          e.invertTab = true
-        }
-      })
-      this.init(val, this.showMarkLine)
     },
     referenceSelectChange (val) {
       this.lineRefer = val

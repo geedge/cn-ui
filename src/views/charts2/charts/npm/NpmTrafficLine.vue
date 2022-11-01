@@ -63,21 +63,8 @@ export default {
       unitConvert,
       unitTypes,
       side: '',
-      mpackets: [
-        { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
-        { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
-        { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
-        { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
-        { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
-        { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
-      ],
-      npmQuantity: [
-        { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-        { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-        { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-        { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
-        { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
-      ],
+      mpackets: [],
+      npmQuantity: [],
       chartData: {},
       metricOptions: [
         {
@@ -170,6 +157,21 @@ export default {
       get(api.npm.overview.trafficGraph, params).then((res) => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
+          this.mpackets = [
+            { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
+            { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
+            { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
+            { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
+            { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
+            { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+          ]
+          this.npmQuantity = [
+            { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+            { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+            { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+            { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+            { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+          ]
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
