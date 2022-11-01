@@ -31,7 +31,7 @@ export const storageKey = {
   echartLegendFontSize: 'echartLegendFontSize',
   echartLabelFontSize: 'echartLabelFontSize',
   tokenExpireCurrentPath: 'token-expire-current-path',
-  drillDownTableConfig: 'cn-drill-down-table-config',
+  drillDownTableConfig: 'drilldownTableConfig',
   userCustomizationConfig: 'userCustomizationConfig',
   linkInfo: 'cn-link-info',
   history: 'cn-history'
@@ -1067,14 +1067,14 @@ export const bytesCycleColumnNameGroupForDns = {
 
 // networkOverview 当前周期返回数据对应的属性名称（与上一周期中的属性名称不一致,total）,之所以写在这里是因为有byte，packets，sessions3种，如果只有一种，可以直接写在customTableTitlesForAppPerformance
 export const bytesColumnNameGroup = {
-  total: 'bytesTotalRate',
+  total: 'totalBitsRate',
   inbound: 'inboundBitsRate',
   outbound: 'outboundBitsRate',
   internal: 'internalBitsRate',
   through: 'throughBitsRate'
 }
 export const packetsColumnNameGroup = {
-  total: 'packetsTotalRate',
+  total: 'totalPacketsRate',
   inbound: 'inboundPacketsRate',
   outbound: 'outboundPacketsRate',
   internal: 'internalPacketsRate',
@@ -1085,7 +1085,7 @@ export const sessionsColumnNameGroup = {
 }
 
 export const bytesCycleColumnNameGroup = {
-  total: 'bytesRate'
+  total: 'bitsRate'
 }
 export const packetsCycleColumnNameGroup = {
   total: 'packetsRate'
