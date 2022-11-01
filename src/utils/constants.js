@@ -31,7 +31,7 @@ export const storageKey = {
   echartLegendFontSize: 'echartLegendFontSize',
   echartLabelFontSize: 'echartLabelFontSize',
   tokenExpireCurrentPath: 'token-expire-current-path',
-  drillDownTableConfig: 'cn-drill-down-table-config',
+  drillDownTableConfig: 'drilldownTableConfig',
   userCustomizationConfig: 'userCustomizationConfig',
   linkInfo: 'cn-link-info',
   history: 'cn-history'
@@ -291,7 +291,7 @@ export const customTableTitlesForAppPerformance = [
   { label: 'network.score', prop: 'score', checked: true, tabColumn: false, columnType: tableColumnType.normal },
   {
     label: 'networkAppPerformance.throughput',
-    prop: 'totalBitsRate',
+    prop: 'totalBytes',
     checked: true,
     tabColumn: false,
     columnType: tableColumnType.chainRatio,
@@ -379,7 +379,7 @@ export const customTableTitlesForLinkMonitor = [
   { label: 'network.score', prop: 'score', checked: true, tabColumn: false, columnType: tableColumnType.normal },
   {
     label: 'networkAppPerformance.throughput',
-    prop: 'totalBitsRate',
+    prop: 'totalBytes',
     checked: true,
     tabColumn: false,
     columnType: tableColumnType.chainRatio,
@@ -475,7 +475,7 @@ export const customTableTitlesForDns = [
   },
   { label: 'dns.queriesFromIE', prop: 'totalInExNum', checked: true, tabColumn: true, columnType: tableColumnType.percent },
   { label: 'dns.dnsResponseTime', prop: 'dnsResponseLatencyAvg', checked: true, tabColumn: true, columnType: tableColumnType.normal },
-  { label: 'overall.throughput', prop: 'totalBitsRate', checked: true, tabColumn: true, columnType: tableColumnType.normal }
+  { label: 'overall.throughput', prop: 'totalBytes', checked: true, tabColumn: true, columnType: tableColumnType.normal }
 ]
 // NetworkOverview类型表格的列:prop 为接口响应数据中的属性名
 export const customTableTitlesForNetworkOverview = [
@@ -1041,7 +1041,7 @@ export const dnsServiceInsightsTabList = [
 
 // 用于组织数据时的名称，对应的属性名称
 export const bytesColumnNameGroupForNpm = {
-  totalBitsRate: 'totalBitsRate',
+  totalBytes: 'totalBytes',
   tcpConEstLatency: 'establishLatencyMs',
   packetLoss: 'tcpLostlenPercent',
   packetRetrans: 'pktRetransPercent',
@@ -1050,7 +1050,7 @@ export const bytesColumnNameGroupForNpm = {
 }
 
 export const bytesCycleColumnNameGroupForNpm = {
-  totalBitsRate: 'totalBitsRate'
+  totalBytes: 'totalBytes'
 }
 
 // 用于组织数据时的名称，对应的属性名称
@@ -1058,7 +1058,7 @@ export const bytesColumnNameGroupForDns = {
   queryRate: 'queryRate',
   totalInExNum: 'totalInternalQueryNum,totalExternalQueryNum',
   dnsResponseLatencyAvg: 'dnsResponseLatencyAvg',
-  totalBitsRate: 'totalBitsRate'
+  totalBytes: 'totalBytes'
 }
 
 export const bytesCycleColumnNameGroupForDns = {
@@ -1067,14 +1067,14 @@ export const bytesCycleColumnNameGroupForDns = {
 
 // networkOverview 当前周期返回数据对应的属性名称（与上一周期中的属性名称不一致,total）,之所以写在这里是因为有byte，packets，sessions3种，如果只有一种，可以直接写在customTableTitlesForAppPerformance
 export const bytesColumnNameGroup = {
-  total: 'bytesTotalRate',
+  total: 'totalBitsRate',
   inbound: 'inboundBitsRate',
   outbound: 'outboundBitsRate',
   internal: 'internalBitsRate',
   through: 'throughBitsRate'
 }
 export const packetsColumnNameGroup = {
-  total: 'packetsTotalRate',
+  total: 'totalPacketsRate',
   inbound: 'inboundPacketsRate',
   outbound: 'outboundPacketsRate',
   internal: 'internalPacketsRate',
@@ -1085,7 +1085,7 @@ export const sessionsColumnNameGroup = {
 }
 
 export const bytesCycleColumnNameGroup = {
-  total: 'bytesRate'
+  total: 'bitsRate'
 }
 export const packetsCycleColumnNameGroup = {
   total: 'packetsRate'

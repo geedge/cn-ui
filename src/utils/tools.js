@@ -853,30 +853,27 @@ export function combineTabList (tableType, list, commonTabList) {
   const listInCode = curTableInCode ? curTableInCode.tabList : []
   list.forEach(tab => {
     // 配置的内容
+    const tabName = tab ? (tab.name ? tab.name : tab) : ''
+    // 配置的内容
+    const commonTab = commonTabList.find(item => item.name === tabName)
+    tab.label = commonTab ? commonTab.i18n : ''
+    tab.prop = commonTab ? commonTab.prop : ''
     if (!tab.hasOwnProperty('checked')) {
-      const tabName = tab ? (tab.name ? tab.name : tab) : ''
-      // 配置的内容
-      tab = {}
-      const commonTab = commonTabList.find(item => item.name === tabName)
-      tab.label = commonTab ? commonTab.i18n : ''
-      tab.prop = commonTab ? commonTab.prop : ''
-      if (!tab.hasOwnProperty('checked')) {
-        tab.checked = tab ? tab.show : true
-      }
-      if (!tab.hasOwnProperty('disabled')) {
-        tab.disabled = tab ? !tab.enable : false
-      }
-      if (!tab.hasOwnProperty('panelId')) {
-        tab.panelId = tab ? tab.panelIdOfFourthMenu : null
-      }
-      // 代码里写死的
-      const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
-      tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
-      tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+      tab.checked = tab ? tab.show : true
     }
+    if (!tab.hasOwnProperty('disabled')) {
+      tab.disabled = tab ? !tab.enable : false
+    }
+    if (!tab.hasOwnProperty('panelId')) {
+      tab.panelId = tab ? tab.panelIdOfFourthMenu : null
+    }
+    // 代码里写死的
+    const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
+    tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
+    tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
   })
 }
-
+/*
 export function setUserConfig () {
   const userTableConfig = this.getUserLocalConfig()
   if (userTableConfig) {
@@ -893,45 +890,92 @@ export function setUserConfig () {
     this.list = newTabConfigs
   }
 }
-
+*/
 export async function getDefaultCurTab (tableType, metric, columnName) {
   const tabList = await getUserDrilldownTableConfig(tableType, metric)
   const curTab = tabList.filter(item => item.label === columnName)[0]
   return curTab
 }
 
-export async function getUserDrilldownTableConfig (tableType, curMetric) {
-  let list = []
-  // 先从localStorage中获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
+export async function readDrilldownTableConfigByUser (tableType, curMetric) {
+  // 获取用户定制的自定义配置
   const userId = localStorage.getItem(storageKey.userId)
   const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
   let defaultDrillDownTableConfigs = []
   if (userLocalCongfig) {
     defaultDrillDownTableConfigs = userLocalCongfig.config
   }
-  if (!defaultDrillDownTableConfigs || defaultDrillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
-    console.log('default..............')
-    const defaultCongfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
-    if (defaultCongfig) {
-      defaultDrillDownTableConfigs = defaultCongfig.config
+  return defaultDrillDownTableConfigs
+}
+
+export async function combinDrilldownTableWithUserConfig () {
+  const defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
+  const defaultConfigs = defaultCongfigInDb ? defaultCongfigInDb.config : []
+  const curUserConfig = await readDrilldownTableConfigByUser()
+  if (defaultConfigs && curUserConfig && curUserConfig.length > 0) {
+    defaultConfigs.forEach(defaultConfig => {
+      const currentTableConfig = curUserConfig.find(config => config.route === defaultConfig.route)
+      if (currentTableConfig) {
+        const tableConfig = defaultConfig.tables.find(table => table.id === defaultConfig.route)
+        const newTableConfig = currentTableConfig.tables.find(table => table.id === defaultConfig.route)
+        tableConfig.hiddenColumns = newTableConfig.hiddenColumns
+        tableConfig.tabs.forEach(tab => {
+          const newTab = newTableConfig.tabs.find(newTab => newTab.name === tab.name)
+          tab.hiddenDrilldownTabs = newTab.hiddenDrilldownTabs
+          tab.checked = newTab.checked
+        })
+      }
+    })
+  }
+  return defaultConfigs
+}
+
+/*
+export async function readDrilldownTableConfigByUser2 (tableType, curMetric) {
+  let list = []
+  // 获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
+  const userId = localStorage.getItem(storageKey.userId)
+  const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
+  let defaultDrillDownTableConfigs = []
+  if (userLocalCongfig) {
+    defaultDrillDownTableConfigs = userLocalCongfig.config
+    if(defaultDrillDownTableConfigs && defaultDrillDownTableConfigs.length > 0){
+      const currentTableConfig = defaultDrillDownTableConfigs.find(config => config.route === tableType)
+      const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
+      const tables = currentTableConfig ? currentTableConfig.tables : []
+      if (tables && tables.length > 0) {
+        const curTableOldConfig = tables.find(table => table.id === tableType)
+        const curTable = curTableOldConfig || null
+        if (curTable) {
+          if (curTable.hasMetricSearch) { // 有metric
+            const metricsList = curTable ? curTable.metrics : []
+            if (metricsList && metricsList.length > 0) {
+              const metricTab = metricsList.find(metric => metric.name === curMetric)
+              list = metricTab ? metricTab.tabs : []
+            }
+          } else { // 无metric
+            list = curTable ? curTable.tabs : []
+          }
+          //combineTabList(tableType, list, commonTabList)
+        }
+      }
     }
   }
-  const currentTableConfig = defaultDrillDownTableConfigs.find(config => config.route === tableType)
+  return list
+}
+*/
+export async function getUserDrilldownTableConfig (tableType, curMetric) {
+  let list = []
+  // 获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
+  const drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
+  const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
   const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
   const tables = currentTableConfig ? currentTableConfig.tables : []
   if (tables && tables.length > 0) {
     const curTableOldConfig = tables.find(table => table.id === tableType)
     const curTable = curTableOldConfig || null
     if (curTable) {
-      if (curTable.hasMetricSearch) { // 有metric
-        const metricsList = curTable ? curTable.metrics : []
-        if (metricsList && metricsList.length > 0) {
-          const metricTab = metricsList.find(metric => metric.name === curMetric)
-          list = metricTab ? metricTab.tabs : []
-        }
-      } else { // 无metric
-        list = curTable ? curTable.tabs : []
-      }
+      list = curTable ? curTable.tabs : []
       combineTabList(tableType, list, commonTabList)
     }
   }

@@ -115,6 +115,15 @@
       .el-table thead {
         color: $grey;
       }
+      .data-score-red {
+        color: #E26154;
+      }
+      .data-score-yellow {
+        color: #E5A219;
+      }
+      .data-score-green {
+        color: #749F4D;
+      }
     }
     .el-tabs__header {
       margin-bottom: 10px;

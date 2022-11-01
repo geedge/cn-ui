@@ -194,7 +194,7 @@ import {
 } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
-import { combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler, combinDrilldownTableWithUserConfig } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { db } from '@/indexedDB'
 
@@ -468,19 +468,7 @@ export default {
     async handleCurDrilldownTableConfig (thirdMenu, fourthMenu) {
       const userId = localStorage.getItem(storageKey.userId)
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
-
-      // 先从localStorage中获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
-      const userLocalConfig = await db[dbDrilldownTableConfig].get({ id: userId })
-      let drillDownTableConfigs = []
-      if (userLocalConfig) {
-        drillDownTableConfigs = userLocalConfig.config
-      }
-      if (!drillDownTableConfigs || drillDownTableConfigs.length === 0) { // 未找到当前用户的配置，使用默认配置
-        const defaultConfig = await db[dbDrilldownTableConfig].get({ id: 'default' })
-        if (defaultConfig) {
-          drillDownTableConfigs = defaultConfig.config
-        }
-      }
+      const drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
       const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
       const tables = currentTableConfig ? currentTableConfig.tables : []
       const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
@@ -499,10 +487,6 @@ export default {
           }
         }
       }
-      await db[dbDrilldownTableConfig].put({
-        id: userId,
-        config: this.$_.cloneDeep(drillDownTableConfigs)
-      })
     },
     jump (route, columnName, columnValue, opeType) {
       this.showMenu = false

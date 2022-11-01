@@ -3,6 +3,7 @@ import router from '@/router'
 import { sortByOrderNum, getWelcomeMenu } from '@/permission'
 import { ElMessage } from 'element-plus' // dependent on utc plugin
 import { storageKey, dbDrilldownTableConfig } from '@/utils/constants'
+import { readDrilldownTableConfigByUser } from '@/utils/tools'
 import { api } from '@/utils/api'
 import { db } from '@/indexedDB'
 
@@ -11,7 +12,8 @@ const user = {
     return {
       menuList: [],
       buttonList: [],
-      roleList: []
+      roleList: [],
+      drilldownTableConfigList: []
     }
   },
   mutations: {
@@ -23,6 +25,9 @@ const user = {
     },
     setRoleList (state, roleList) {
       state.roleList = [...roleList]
+    },
+    setDrilldownTableList (state, drilldownTableConfigList) {
+      state.drilldownTableConfigList = [...drilldownTableConfigList]
     },
     clean (state) {
       state.menuList = []
@@ -39,6 +44,9 @@ const user = {
     },
     roleList (state) {
       return state.roleList
+    },
+    drilldownTableConfigList (state) {
+      return state.drilldownTableConfigList
     }
   },
   actions: {
@@ -82,13 +90,12 @@ const user = {
       })
       get(api.config, { ckey: 'drill_down_table_config' }).then(async res => {
         if (res.code === 200 && res.page.list && res.page.list.length > 0) {
+          // 从接口返回整体配置，再读取用户缓存，将对应条目覆盖，作为使用的配置
+          const defaultConfigs = JSON.parse(res.page.list[0].cvalue)
           await db[dbDrilldownTableConfig].put({
             id: 'default',
-            config: JSON.parse(res.page.list[0].cvalue)
+            config: defaultConfigs
           })
-          // const a = await db[dbDrilldownTableConfig].get({ id: 'default' })
-          // console.info(a)
-          // localStorage.setItem(storageKey.drillDownTableConfig, res.page.list[0].cvalue)
         }
       })
       get(api.config, { ckey: 'link_info' }).then(res => {
