@@ -86,7 +86,15 @@
                     </div>
                   </template>
                   <template v-else-if="item.prop === 'score'" >
-                    {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
+                    <div v-if="scope.row.score <= 2" class="data-score-red" >
+                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
+                    </div>
+                    <div v-else-if="scope.row.score <= 4" class="data-score-yellow" >
+                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
+                    </div>
+                    <div v-else-if="scope.row.score <= 6" class="data-score-green" >
+                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
+                    </div>
                   </template>
                   <template v-else>
                     <template v-if="showUnit && item.unit">
