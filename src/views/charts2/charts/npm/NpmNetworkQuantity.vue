@@ -108,6 +108,7 @@ export default {
               pktRetransPercent: res.data.result.pktRetransPercentAvg || null
             }
             score = computeScore(data)
+            this.npmNetworkCycleData = res.data.result
             this.npmNetworkLastCycleQuery()
           }
           this.$store.commit('setNpmThirdLevelMenuScore', score)
