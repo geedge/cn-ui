@@ -137,8 +137,10 @@ export default {
       }
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        type: type
+        endTime: getSecond(this.timeFilter.endTime)
+      }
+      if (type) {
+        params.type = type
       }
       if (condition && (typeof condition !== 'object') && type) {
         params.q = condition
@@ -154,132 +156,306 @@ export default {
         }
       }
       this.toggleLoading(true)
-      get(api.npm.overview.trafficGraph, params).then((res) => {
-        if (res.code === 200) {
-          this.isNoData = res.data.result.length === 0
-          this.mpackets = [
-            { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
-            { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
-            { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
-            { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
-            { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
-            { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
-          ]
-          this.npmQuantity = [
-            { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-            { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-            { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-            { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
-            { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
-          ]
-          res.data.result.forEach((t, i) => {
-            if (t.type === 'bytes' && val === 'Bits/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-              mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-              mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-              mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-              mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
-              mpackets[5].data = t.other.values ? t.other.values : []
-              mpackets.forEach((e, i) => {
-                e.show = true
-              })
-              this.mpackets = mpackets
-              this.echartsInit(this.mpackets)
-            } else if (t.type === 'packets' && val === 'Packets/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
-              mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
-              mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
-              mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-              mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
-              mpackets[5].data = t.other.values ? t.other.values : []
-              mpackets.forEach((e, i) => {
-                e.show = true
-              })
-              this.mpackets = mpackets
-              this.echartsInit(this.mpackets)
-            } else if (t.type === 'sessions' && val === 'Sessions/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].data = t.sessionsRate.values ? t.sessionsRate.values : []
-              mpackets.forEach((e, i) => {
-                if (i !== 0) {
-                  e.show = false
-                }
-              })
-              this.mpackets = mpackets
-              this.echartsInit(this.mpackets)
-            } else if (t.type === 'establishLatencyMs' && val === 'establishLatencyMs') {
-              const npmQuantity = _.cloneDeep(this.npmQuantity)
-              npmQuantity[0].data = t.establishLatencyMsAvg.values ? t.establishLatencyMsAvg.values : []
-              npmQuantity.forEach((e, i) => {
-                if (i !== 0) {
-                  e.show = false
-                } else {
+      if (params.type && params.q) {
+        get(api.npm.overview.trafficGraph, params).then((res) => {
+          if (res.code === 200) {
+            this.isNoData = res.data.result.length === 0
+            this.mpackets = [
+              { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
+              { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
+              { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
+              { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
+              { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
+              { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+            ]
+            this.npmQuantity = [
+              { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+              { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+              { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+              { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+              { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+            ]
+            res.data.result.forEach((t, i) => {
+              if (t.type === 'bytes' && val === 'Bits/s') {
+                const mpackets = _.cloneDeep(this.mpackets)
+                mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
+                mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
+                mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
+                mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
+                mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
+                mpackets[5].data = t.other.values ? t.other.values : []
+                mpackets.forEach((e, i) => {
                   e.show = true
-                }
-              })
-              this.npmQuantity = npmQuantity
-              this.echartsInit(this.npmQuantity)
-            } else if (t.type === 'httpResponseLatency' && val === 'httpResponseLatency') {
-              const npmQuantity = _.cloneDeep(this.npmQuantity)
-              npmQuantity[1].data = t.httpResponseLatencyAvg.values ? t.httpResponseLatencyAvg.values : []
-              npmQuantity.forEach((e, i) => {
-                if (i !== 1) {
-                  e.show = false
-                } else {
+                })
+                this.mpackets = mpackets
+                this.echartsInit(this.mpackets)
+              } else if (t.type === 'packets' && val === 'Packets/s') {
+                const mpackets = _.cloneDeep(this.mpackets)
+                mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
+                mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
+                mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
+                mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
+                mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
+                mpackets[5].data = t.other.values ? t.other.values : []
+                mpackets.forEach((e, i) => {
                   e.show = true
-                }
-              })
-              this.npmQuantity = npmQuantity
-              this.echartsInit(this.npmQuantity)
-            } else if (t.type === 'sslConLatency' && val === 'sslConLatency') {
-              const npmQuantity = _.cloneDeep(this.npmQuantity)
-              npmQuantity[2].data = t.sslConLatencyAvg.values ? t.sslConLatencyAvg.values : []
-              npmQuantity.forEach((e, i) => {
-                if (i !== 2) {
-                  e.show = false
-                } else {
-                  e.show = true
-                }
-              })
-              this.npmQuantity = npmQuantity
-              this.echartsInit(this.npmQuantity)
-            } else if (t.type === 'tcpLostlenPercent' && val === 'tcpLostlenPercent') {
-              const npmQuantity = _.cloneDeep(this.npmQuantity)
-              npmQuantity[3].data = t.tcpLostlenPercentAvg.values ? t.tcpLostlenPercentAvg.values : []
-              npmQuantity.forEach((e, i) => {
-                if (i !== 3) {
-                  e.show = false
-                } else {
-                  e.show = true
-                }
-              })
-              this.npmQuantity = npmQuantity
-              this.echartsInit(this.npmQuantity)
-            } else if (t.type === 'pktRetransPercent' && val === 'pktRetransPercent') {
-              const npmQuantity = _.cloneDeep(this.npmQuantity)
-              npmQuantity[4].data = t.pktRetransPercentAvg.values ? t.pktRetransPercentAvg.values : []
-              npmQuantity.forEach((e, i) => {
-                if (i !== 4) {
-                  e.show = false
-                } else {
-                  e.show = true
-                }
-              })
-              this.npmQuantity = npmQuantity
-              this.echartsInit(this.npmQuantity)
-            }
-          })
-        } else {
+                })
+                this.mpackets = mpackets
+                this.echartsInit(this.mpackets)
+              } else if (t.type === 'sessions' && val === 'Sessions/s') {
+                const mpackets = _.cloneDeep(this.mpackets)
+                mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
+                mpackets.forEach((e, i) => {
+                  if (i !== 0) {
+                    e.show = false
+                  }
+                })
+                this.mpackets = mpackets
+                this.echartsInit(this.mpackets)
+              } else if (t.type === 'establishLatencyMs' && val === 'establishLatencyMs') {
+                const npmQuantity = _.cloneDeep(this.npmQuantity)
+                npmQuantity[0].data = t.establishLatencyMsAvg.values ? t.establishLatencyMsAvg.values : []
+                npmQuantity.forEach((e, i) => {
+                  if (i !== 0) {
+                    e.show = false
+                  } else {
+                    e.show = true
+                  }
+                })
+                this.npmQuantity = npmQuantity
+                this.echartsInit(this.npmQuantity)
+              } else if (t.type === 'httpResponseLatency' && val === 'httpResponseLatency') {
+                const npmQuantity = _.cloneDeep(this.npmQuantity)
+                npmQuantity[1].data = t.httpResponseLatencyAvg.values ? t.httpResponseLatencyAvg.values : []
+                npmQuantity.forEach((e, i) => {
+                  if (i !== 1) {
+                    e.show = false
+                  } else {
+                    e.show = true
+                  }
+                })
+                this.npmQuantity = npmQuantity
+                this.echartsInit(this.npmQuantity)
+              } else if (t.type === 'sslConLatency' && val === 'sslConLatency') {
+                const npmQuantity = _.cloneDeep(this.npmQuantity)
+                npmQuantity[2].data = t.sslConLatencyAvg.values ? t.sslConLatencyAvg.values : []
+                npmQuantity.forEach((e, i) => {
+                  if (i !== 2) {
+                    e.show = false
+                  } else {
+                    e.show = true
+                  }
+                })
+                this.npmQuantity = npmQuantity
+                this.echartsInit(this.npmQuantity)
+              } else if (t.type === 'tcpLostlenPercent' && val === 'tcpLostlenPercent') {
+                const npmQuantity = _.cloneDeep(this.npmQuantity)
+                npmQuantity[3].data = t.tcpLostlenPercentAvg.values ? t.tcpLostlenPercentAvg.values : []
+                npmQuantity.forEach((e, i) => {
+                  if (i !== 3) {
+                    e.show = false
+                  } else {
+                    e.show = true
+                  }
+                })
+                this.npmQuantity = npmQuantity
+                this.echartsInit(this.npmQuantity)
+              } else if (t.type === 'pktRetransPercent' && val === 'pktRetransPercent') {
+                const npmQuantity = _.cloneDeep(this.npmQuantity)
+                npmQuantity[4].data = t.pktRetransPercentAvg.values ? t.pktRetransPercentAvg.values : []
+                npmQuantity.forEach((e, i) => {
+                  if (i !== 4) {
+                    e.show = false
+                  } else {
+                    e.show = true
+                  }
+                })
+                this.npmQuantity = npmQuantity
+                this.echartsInit(this.npmQuantity)
+              }
+            })
+          } else {
+            this.isNoData = true
+          }
+        }).catch(e => {
           this.isNoData = true
+        }).finally(() => {
+          this.toggleLoading(false)
+        })
+      } else {
+        if (val === 'Bits/s' || val === 'Packets/s' || val === 'Sessions/s') {
+          this.toggleLoading(true)
+          get(api.npm.overview.totalTrafficAnalysis, params).then(res => {
+            if (res.code === 200) {
+              this.isNoData = res.data.result.length === 0
+              this.mpackets = [
+                { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
+                { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
+                { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
+                { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
+                { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
+                { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+              ]
+              res.data.result.forEach((t, i) => {
+                if (t.type === 'bytes' && val === 'Bits/s') {
+                  const mpackets = _.cloneDeep(this.mpackets)
+                  mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
+                  mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
+                  mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
+                  mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
+                  mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
+                  mpackets[5].data = t.other.values ? t.other.values : []
+                  mpackets.forEach((e, i) => {
+                    e.show = true
+                  })
+                  this.mpackets = mpackets
+                  this.echartsInit(this.mpackets)
+                } else if (t.type === 'packets' && val === 'Packets/s') {
+                  const mpackets = _.cloneDeep(this.mpackets)
+                  mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
+                  mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
+                  mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
+                  mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
+                  mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
+                  mpackets[5].data = t.other.values ? t.other.values : []
+                  mpackets.forEach((e, i) => {
+                    e.show = true
+                  })
+                  this.mpackets = mpackets
+                  this.echartsInit(this.mpackets)
+                } else if (t.type === 'sessions' && val === 'Sessions/s') {
+                  const mpackets = _.cloneDeep(this.mpackets)
+                  mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
+                  mpackets.forEach((e, i) => {
+                    if (i !== 0) {
+                      e.show = false
+                    }
+                  })
+                  this.mpackets = mpackets
+                  this.echartsInit(this.mpackets)
+                }
+              })
+            }
+          }).catch(e => {
+            this.isNoData = true
+          }).finally(() => {
+            this.toggleLoading(false)
+          })
+        } else if (val === 'establishLatencyMs' || val === 'tcpLostlenPercent' || val === 'pktRetransPercent') {
+          this.toggleLoading(true)
+          get(api.npm.overview.totalNetworkAnalysis, params).then(res => {
+            if (res.code === 200) {
+              this.isNoData = res.data.result.length === 0
+              this.npmQuantity = [
+                { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+                { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+              ]
+              res.data.result.forEach((t, i) => {
+                if (t.type === 'establishLatencyMs' && val === 'establishLatencyMs') {
+                  const npmQuantity = _.cloneDeep(this.npmQuantity)
+                  npmQuantity[0].data = t.establishLatencyMs.values ? t.establishLatencyMs.values : []
+                  npmQuantity.forEach((e, i) => {
+                    if (i !== 0) {
+                      e.show = false
+                    } else {
+                      e.show = true
+                    }
+                  })
+                  this.npmQuantity = npmQuantity
+                  this.echartsInit(this.npmQuantity)
+                } else if (t.type === 'tcpLostlenPercent' && val === 'tcpLostlenPercent') {
+                  const npmQuantity = _.cloneDeep(this.npmQuantity)
+                  npmQuantity[1].data = t.tcpLostlenPercent.values ? t.tcpLostlenPercent.values : []
+                  npmQuantity.forEach((e, i) => {
+                    if (i !== 1) {
+                      e.show = false
+                    } else {
+                      e.show = true
+                    }
+                  })
+                  this.npmQuantity = npmQuantity
+                  this.echartsInit(this.npmQuantity)
+                } else if (t.type === 'pktRetransPercent' && val === 'pktRetransPercent') {
+                  const npmQuantity = _.cloneDeep(this.npmQuantity)
+                  npmQuantity[2].data = t.pktRetransPercent.values ? t.pktRetransPercent.values : []
+                  npmQuantity.forEach((e, i) => {
+                    if (i !== 2) {
+                      e.show = false
+                    } else {
+                      e.show = true
+                    }
+                  })
+                  this.npmQuantity = npmQuantity
+                  this.echartsInit(this.npmQuantity)
+                }
+              })
+            }
+          }).catch(e => {
+            this.isNoData = true
+          }).finally(() => {
+            this.toggleLoading(false)
+          })
+        } else if (val === 'httpResponseLatency') {
+          this.toggleLoading(true)
+          get(api.npm.overview.totalHttpResponseDelay, params).then(res => {
+            if (res.code === 200) {
+              this.isNoData = res.data.length === 0
+              this.npmQuantity = [
+                { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time }
+              ]
+              res.data.result.forEach(t => {
+                if (t.type === 'httpResponseLatency' && val === 'httpResponseLatency') {
+                  const npmQuantity = _.cloneDeep(this.npmQuantity)
+                  npmQuantity[0].data = t.httpResponseLatency.values ? t.httpResponseLatency.values : []
+                  npmQuantity.forEach((e, i) => {
+                    if (i !== 0) {
+                      e.show = false
+                    } else {
+                      e.show = true
+                    }
+                  })
+                  this.npmQuantity = npmQuantity
+                  this.echartsInit(this.npmQuantity)
+                }
+              })
+            }
+          }).catch(e => {
+            this.isNoData = true
+          }).finally(() => {
+            this.toggleLoading(false)
+          })
+        } else if (val === 'sslConLatency') {
+          this.toggleLoading(true)
+          get(api.npm.overview.totalSslConDelay, params).then(res => {
+            if (res.code === 200) {
+              this.isNoData = res.data.length === 0
+              this.npmQuantity = [
+                { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time }
+              ]
+              res.data.result.forEach(t => {
+                if (t.type === 'sslConLatency' && val === 'sslConLatency') {
+                  const npmQuantity = _.cloneDeep(this.npmQuantity)
+                  npmQuantity[0].data = t.sslConLatency.values ? t.sslConLatency.values : []
+                  npmQuantity.forEach((e, i) => {
+                    if (i !== 0) {
+                      e.show = false
+                    } else {
+                      e.show = true
+                    }
+                  })
+                  this.npmQuantity = npmQuantity
+                  this.echartsInit(this.npmQuantity)
+                }
+              })
+            }
+          }).catch(e => {
+            this.isNoData = true
+          }).finally(() => {
+            this.toggleLoading(false)
+          })
         }
-      }).catch(e => {
-        console.error(e)
-        this.isNoData = true
-      }).finally(() => {
-        this.toggleLoading(false)
-      })
+      }
     },
     echartsInit (echartsData) {
       echartsData = echartsData.filter(t => t.show === true)

@@ -161,6 +161,11 @@ export const api = {
       appSslConDelay: '/interface/application/performance/overview/appSslConDelay',
       appTcpLostlenPercent: '/interface/application/performance/overview/appTcpLostlenPercent',
       appPacketRetransPercent: '/interface/application/performance/overview/appPacketRetransPercent',
+      // 整体流量折线图
+      totalTrafficAnalysis: '/interface/application/performance/overview/totalTrafficAnalysis',
+      totalNetworkAnalysis: '/interface/application/performance/overview/totalNetworkAnalysis',
+      totalHttpResponseDelay: '/interface/application/performance/overview/totalHttpResponseDelay',
+      totalSslConDelay: '/interface/application/performance/overview/totalSslConDelay',
       // 各维度下钻会话统计
       relatedSessions: '/interface/application/performance/relatedSessions',
       // 各维度下钻流量曲线图
