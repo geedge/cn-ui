@@ -14,6 +14,7 @@
             size="mini"
             v-model="metric"
             placeholder=""
+            popper-class="common-select"
             v-if="panelType === panelTypeAndRouteMapping.networkOverview"
             :popper-append-to-body="false"
             @change="metricChange"
