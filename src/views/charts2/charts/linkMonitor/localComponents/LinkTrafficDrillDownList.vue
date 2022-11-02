@@ -3,11 +3,11 @@
     <loading :loading="loading"></loading>
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(lineData[0].analysis.avg, unitTypes.bps).join('')}}</div>
+      <div class="link-traffic-list-center-value" v-if="lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg, unitTypes.bps).join('')}}</div>
     </div>
     <div class="link-traffic-list-center">
       <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
-      <div class="link-traffic-list-center-value" v-if="bandWidth">{{unitConvert(lineData[0].analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
+      <div class="link-traffic-list-center-value" v-if="bandWidth && lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
       <div class="link-traffic-list-center-value" v-else>-</div>
     </div>
     <div class="link-traffic-list-center">
