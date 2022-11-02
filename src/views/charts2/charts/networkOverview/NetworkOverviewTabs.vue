@@ -86,14 +86,16 @@
                     </div>
                   </template>
                   <template v-else-if="item.prop === 'score'" >
-                    <div v-if="scope.row.score <= 2" class="data-score-red" >
-                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
-                    </div>
-                    <div v-else-if="scope.row.score <= 4" class="data-score-yellow" >
-                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
-                    </div>
-                    <div v-else-if="scope.row.score <= 6" class="data-score-green" >
-                      {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : ''}}
+                    <div class="score-cell">
+                      <div v-if="scope.row.score <= 2" class="data-score data-score-red" >
+                        {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
+                      </div>
+                      <div v-else-if="scope.row.score <= 4" class="data-score data-score-yellow" >
+                        {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
+                      </div>
+                      <div v-else-if="scope.row.score <= 6" class="data-score data-score-green" >
+                        {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
+                      </div>
                     </div>
                   </template>
                   <template v-else>
@@ -274,6 +276,9 @@ export default {
         this.changeUrlTabState()
         this.getChartData(queryParams)
       }
+    },
+    metric (n) {
+      this.changeMetric()
     }
   },
   computed: {
@@ -319,6 +324,39 @@ export default {
     sortable (title) {
       const excludeName = ['queriesFromIE']
       return excludeName.indexOf(title.name) > -1 ? false : 'custom'
+    },
+    // 切换metric：bit、packet、session
+    changeMetric () {
+      this.tableData = []
+      this.tableDataBackup = []
+      this.setShowNum(10)
+      const beforeType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '', true)
+      if (beforeType && beforeType != operationType.thirdMenu) {
+        this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
+      }
+      this.urlChangeParams[this.curTabState.tabOperationType] = operationType.changeMetric
+      this.urlChangeParams[this.curTabState.tableMetric] = this.metric
+
+      const curTab = this.getCurTab()
+      this.initMetric()
+      this.combineColumnList(curTab.label)
+
+      let queryParams = {
+        orderBy: this.orderBy,
+        limit: networkDefaultLimit,
+        type: curTab.prop
+      }
+      const condition = this.getQueryCondition()
+      if (condition) {
+        queryParams = {
+          orderBy: this.orderBy,
+          limit: networkDefaultLimit,
+          type: curTab.prop,
+          q: condition
+        }
+      }
+      this.changeUrlTabState()
+      this.getChartData(queryParams)
     },
     cancleSortArrow () {
       // 取消表格排序高亮的箭头
@@ -635,26 +673,17 @@ export default {
                       const columnList = response.data.result
                       self.tableData.forEach((item, i) => {
                         const data = columnList.find(i => i[curTab.prop] === item.tab)
+                        if (!item.scoreGroup) {
+                          item.scoreGroup = {}
+                        }
                         if (data) {
                           item[tableColumn.prop] = data[self.columnNameGroup[tableColumn.prop]]
-                          let score = 0
-                          if (data) {
-                            score = computeScore(data, tableColumn.scoreType)
-                          }
-                          item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, score] : [score]
+                          item.scoreGroup[self.columnNameGroup[tableColumn.prop]] = data[self.columnNameGroup[tableColumn.prop]]
                         } else {
-                          item.scoreGroup = item.scoreGroup ? [...item.scoreGroup, 0] : [0]
+                          item.scoreGroup[self.columnNameGroup[tableColumn.prop]] = 0
                         }
-                        if (item.scoreGroup.length >= 5) {
-                          let score = 0
-                          item.scoreGroup.forEach(i => {
-                            score = Number(score) + Number(i)
-                          })
-                          score = Math.ceil(score * 6)
-                          if (score > 6) {
-                            score = 6
-                          }
-                          item.score = score || 0
+                        if (Object.keys(item.scoreGroup).length >= 5) {
+                          item.score = computeScore(item.scoreGroup)
                         }
                       })
                     }
@@ -1028,7 +1057,7 @@ export default {
     },
     setQueryCondition (tab, value) {
       value = value.replaceAll("'", "\\\\'")
-      let queryCondition = []
+      const queryCondition = []
       if (tab.prop === 'protocolPort') {
         const valueGroup = value.split(':')
         if (valueGroup) {
@@ -1406,10 +1435,10 @@ export default {
       return curTab
     },
     combineTabList (tabList, isDrillDown) {
-      let listInCode = this.curTableInCode ? this.curTableInCode.tabList : []
+      const listInCode = this.curTableInCode ? this.curTableInCode.tabList : []
       tabList.forEach(tab => {
-        let tabName = tab ? (tab.name ? tab.name : tab) : ''
-        let commonTab = this.commonTabList.find(item => item.name === tabName)
+        const tabName = tab ? (tab.name ? tab.name : tab) : ''
+        const commonTab = this.commonTabList.find(item => item.name === tabName)
         tab.label = commonTab ? commonTab.i18n : ''
         tab.prop = commonTab ? commonTab.prop : ''
         if (!tab.hasOwnProperty('checked') || tab.checked === undefined || tab.checked === null) {
@@ -1422,7 +1451,7 @@ export default {
           tab.panelId = tab ? tab.panelIdOfFourthMenu : null
         }
         // 代码里写死的
-        let tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
+        const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
         tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
         tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
         tab.queryCondition = tabInCode ? tabInCode.queryCondition : []
@@ -1430,17 +1459,17 @@ export default {
       // 设置drilldownTabs：未下钻状态设置，已下钻状态无需设置
       // let thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
       // if (!thirdMenu) {
-      let oldList = this.$_.cloneDeep(tabList)
+      const oldList = this.$_.cloneDeep(tabList)
       tabList.forEach(tab => {
-        let drilldownTabFull = []
-        let drilldownTabList = tab.drilldownTabs
+        const drilldownTabFull = []
+        const drilldownTabList = tab.drilldownTabs
         drilldownTabList.forEach(drilldownTab => {
           if (!drilldownTab.hasOwnProperty('name') || drilldownTab.name === undefined || drilldownTab.name === null) {
-            let drilldownTabName = drilldownTab ? (drilldownTab.name ? drilldownTab.name : drilldownTab) : ''
-            let fullTab = oldList.find(item => item.name === drilldownTabName)
-            let drilldownTabWithAllInfo = this.$_.cloneDeep(fullTab)
+            const drilldownTabName = drilldownTab ? (drilldownTab.name ? drilldownTab.name : drilldownTab) : ''
+            const fullTab = oldList.find(item => item.name === drilldownTabName)
+            const drilldownTabWithAllInfo = this.$_.cloneDeep(fullTab)
             if (drilldownTabWithAllInfo) {
-              let commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
+              const commonTab = this.commonTabList.find(item => item.name === drilldownTabName)
               drilldownTabWithAllInfo.name = drilldownTabName
               drilldownTabWithAllInfo.label = commonTab ? commonTab.i18n : ''
               drilldownTabWithAllInfo.prop = commonTab ? commonTab.prop : ''
@@ -1451,7 +1480,7 @@ export default {
               drilldownTabWithAllInfo.disabled = (tab.disabledDrilldownTabs.indexOf(drilldownTabName) >= 0)
               // }
               // 代码里写死的
-              let tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
+              const tabInCode = listInCode ? listInCode.find(item => item.label === fullTab.label) : {}
               drilldownTabWithAllInfo.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
               drilldownTabWithAllInfo.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
               drilldownTabWithAllInfo.queryCondition = tabInCode ? tabInCode.queryCondition : []
@@ -1573,8 +1602,6 @@ export default {
         curUserConfigs = []
         curUserConfigs.push(this.handleInitDrilldownTableConfig())
       }
-      console.log('保存用户配置')
-      console.log(curUserConfigs)
       // 更新缓存中的配置
       await db[dbDrilldownTableConfig].put({
         id: this.userId,
@@ -1613,15 +1640,16 @@ export default {
       return config
     },
     getHiddenColumnNameGroup () {
-      let hiddenColumns = []
+      const hiddenColumns = []
       this.customTableTitles.forEach(column => {
         if (column.checked === false) {
           hiddenColumns.push(column.name)
         }
       })
+      /*
       if (hiddenColumns.length === 0) {
         hiddenColumns = this.curTable.hiddenColumns
-      }
+      } */
       return hiddenColumns
     },
     getHiddenDrilldownTabNameGroup (newTab) {
@@ -1658,6 +1686,24 @@ export default {
         }
       }
       return tabs
+    },
+    initMetric () {
+      if (this.metric === 'Bits/s') {
+        this.columnNameGroup = this.curTableInCode ? this.curTableInCode.bytesColumnNameGroup : []
+        this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.bytesCycleColumnNameGroup : []
+        this.orderBy = 'totalBytes'
+        this.metricUnit = 'bytes'
+      } else if (this.metric === 'Packets/s') {
+        this.columnNameGroup = this.curTableInCode ? this.curTableInCode.packetsColumnNameGroup : []
+        this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.packetsCycleColumnNameGroup : []
+        this.orderBy = 'totalPackets'
+        this.metricUnit = 'packets'
+      } else if (this.metric === 'Sessions/s') {
+        this.columnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsColumnNameGroup : []
+        this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsCycleColumnNameGroup : []
+        this.orderBy = 'sessions'
+        this.metricUnit = 'sessions'
+      }
     }
   },
   async mounted () {
@@ -1710,22 +1756,7 @@ export default {
         this.activeCustomize = ref('tabs')
         this.networkSearchUrl = this.curTable.url
         // let metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
-        if (this.metric === 'Bits/s') {
-          this.columnNameGroup = this.curTableInCode ? this.curTableInCode.bytesColumnNameGroup : []
-          this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.bytesCycleColumnNameGroup : []
-          this.orderBy = 'totalBytes'
-          this.metricUnit = 'bytes'
-        } else if (this.metric === 'Packets/s') {
-          this.columnNameGroup = this.curTableInCode ? this.curTableInCode.packetsColumnNameGroup : []
-          this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.packetsCycleColumnNameGroup : []
-          this.orderBy = 'totalPackets'
-          this.metricUnit = 'packets'
-        } else if (this.metric === 'Sessions/s') {
-          this.columnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsColumnNameGroup : []
-          this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsCycleColumnNameGroup : []
-          this.orderBy = 'sessions'
-          this.metricUnit = 'sessions'
-        }
+        this.initMetric()
         this.isOnlyRead = this.curTable.isOnlyRead ? this.curTable.isOnlyRead : false
         this.showUnit = this.curTable.showUnit ? this.curTable.showUnit : false
         if (this.curTableInCode.defaultOrderBy) {

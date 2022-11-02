@@ -115,14 +115,28 @@
       .el-table thead {
         color: $grey;
       }
-      .data-score-red {
-        color: #E26154;
-      }
-      .data-score-yellow {
-        color: #E5A219;
-      }
-      .data-score-green {
-        color: #749F4D;
+      .score-cell {
+        display: flex !important;
+        justify-content: center;
+        .data-score {
+          border-radius: 10px;
+          font-size: 12px;
+          color: #FFFFFF;
+          font-weight: 500;
+          height: 20px;
+          width: 34px;
+          line-height: 20px;
+          text-align: center;
+        }
+        .data-score-red {
+          background: #E26154;
+        }
+        .data-score-yellow {
+          background: #E5A219;
+        }
+        .data-score-green {
+          background: #749F4D;
+        }
       }
     }
     .el-tabs__header {
