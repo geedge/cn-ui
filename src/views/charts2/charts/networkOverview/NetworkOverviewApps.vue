@@ -245,6 +245,14 @@ export default {
       this.toggleLoading(true)
       Promise.all([prevRequest, request]).then(res => {
         this.isNoData = (res[0].data.result.length && res[1].data.result.length) === 0
+        if (this.isNoData) {
+          this.appData = this.appData.map(t => {
+            return {
+              name: t.name,
+              type: t.type
+            }
+          })
+        }
         if (res[0].code === 200 && res[1].code === 200) {
           const prevData = res[0].data.result
           const data = res[1].data.result
