@@ -152,7 +152,6 @@ export default {
       }
     },
     metric (n) {
-      this.lineTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
       this.mpackets.forEach((e, i) => {
@@ -160,11 +159,11 @@ export default {
           e.invertTab = true
         }
       })
-      this.init(n, this.showMarkLine)
+      this.init(n, this.showMarkLine, '', n)
     }
   },
   methods: {
-    init (val, show, active) {
+    init (val, show, active, n) {
       if (!val) {
         val = this.metric
       }
@@ -234,6 +233,7 @@ export default {
                   this.echartsInit(this.mpackets, true)
                 })
               } else {
+                if (n) this.lineTab = ''
                 this.$nextTick(() => {
                   this.echartsInit(this.mpackets, show)
                 })
@@ -280,6 +280,7 @@ export default {
                   this.echartsInit(this.mpackets, true)
                 })
               } else {
+                if (n) this.lineTab = ''
                 this.$nextTick(() => {
                   this.echartsInit(this.mpackets, show)
                 })
