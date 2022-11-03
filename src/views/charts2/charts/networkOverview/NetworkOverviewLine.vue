@@ -534,7 +534,9 @@ export default {
     this.timer = setTimeout(() => {
       if (this.lineTab) {
         const data = this.mpackets.find(t => t.class === this.lineTab)
-        this.activeChange(data, data.positioning)
+        if (data && data.positioning) {
+          this.activeChange(data, data.positioning)
+        }
       } else {
         this.init()
       }

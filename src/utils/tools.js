@@ -785,7 +785,11 @@ export function computeScore (data) {
   let k = 0
   let totalScore = 0
   const scoreArr = []
+  let num = 0
   Object.keys(data).forEach(t => {
+    if (!data[t]) {
+      num += 1
+    }
     if (t === 'establishLatencyMs' || t === 'tcpLostlenPercent' || t === 'pktRetransPercent') {
       k = 0.3
     } else if (t === 'httpResponseLatency' || t === 'sslConLatency') {
@@ -820,6 +824,9 @@ export function computeScore (data) {
   totalScore = Math.ceil(totalScore * 6)
   if (totalScore > 6) {
     totalScore = 6
+  }
+  if (num === 5) {
+    return '-'
   }
   return totalScore
 }
