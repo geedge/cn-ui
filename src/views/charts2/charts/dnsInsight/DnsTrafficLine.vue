@@ -125,7 +125,11 @@ export default {
           label: 'Maximum'
         }
       ],
-      mpackets: [],
+      mpackets: [
+        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
+      ],
       unitConvert,
       unitTypes,
       chartDateObject: [],
@@ -192,11 +196,13 @@ export default {
       get(url, params).then((res) => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
-          this.mpackets = [
-            { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-            { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-            { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
-          ]
+          if (this.isNoData) {
+            this.mpackets = [
+              { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+              { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+              { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
+            ]
+          }
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)

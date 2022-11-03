@@ -63,8 +63,21 @@ export default {
       unitConvert,
       unitTypes,
       side: '',
-      mpackets: [],
-      npmQuantity: [],
+      mpackets: [
+        { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
+        { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
+        { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
+        { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
+        { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
+        { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+      ],
+      npmQuantity: [
+        { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+        { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+      ],
       chartData: {},
       metricOptions: [
         {
@@ -160,21 +173,23 @@ export default {
         get(api.npm.overview.trafficGraph, params).then((res) => {
           if (res.code === 200) {
             this.isNoData = res.data.result.length === 0
-            this.mpackets = [
-              { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
-              { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
-              { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
-              { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
-              { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
-              { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
-            ]
-            this.npmQuantity = [
-              { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-              { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-              { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-              { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
-              { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
-            ]
+            if (this.isNoData) {
+              this.mpackets = [
+                { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
+                { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
+                { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
+                { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
+                { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
+                { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+              ]
+              this.npmQuantity = [
+                { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+                { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+              ]
+            }
             res.data.result.forEach((t, i) => {
               if (t.type === 'bytes' && val === 'Bits/s') {
                 const mpackets = _.cloneDeep(this.mpackets)
@@ -288,14 +303,16 @@ export default {
           get(api.npm.overview.totalTrafficAnalysis, params).then(res => {
             if (res.code === 200) {
               this.isNoData = res.data.result.length === 0
-              this.mpackets = [
-                { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
-                { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
-                { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
-                { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
-                { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
-                { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
-              ]
+              if (this.isNoData) {
+                this.mpackets = [
+                  { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
+                  { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
+                  { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
+                  { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
+                  { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
+                  { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+                ]
+              }
               res.data.result.forEach((t, i) => {
                 if (t.type === 'bytes' && val === 'Bits/s') {
                   const mpackets = _.cloneDeep(this.mpackets)
@@ -346,11 +363,13 @@ export default {
           get(api.npm.overview.totalNetworkAnalysis, params).then(res => {
             if (res.code === 200) {
               this.isNoData = res.data.result.length === 0
-              this.npmQuantity = [
-                { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-                { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
-                { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
-              ]
+              if (this.isNoData) {
+                this.npmQuantity = [
+                  { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+                  { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+                ]
+              }
               res.data.result.forEach((t, i) => {
                 if (t.type === 'establishLatencyMs' && val === 'establishLatencyMs') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
@@ -401,9 +420,11 @@ export default {
           get(api.npm.overview.totalHttpResponseDelay, params).then(res => {
             if (res.code === 200) {
               this.isNoData = res.data.length === 0
-              this.npmQuantity = [
-                { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time }
-              ]
+              if (this.isNoData) {
+                this.npmQuantity = [
+                  { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time }
+                ]
+              }
               res.data.result.forEach(t => {
                 if (t.type === 'httpResponseLatency' && val === 'httpResponseLatency') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
@@ -430,9 +451,11 @@ export default {
           get(api.npm.overview.totalSslConDelay, params).then(res => {
             if (res.code === 200) {
               this.isNoData = res.data.length === 0
-              this.npmQuantity = [
-                { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time }
-              ]
+              if (this.isNoData) {
+                this.npmQuantity = [
+                  { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time }
+                ]
+              }
               res.data.result.forEach(t => {
                 if (t.type === 'sslConLatency' && val === 'sslConLatency') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
