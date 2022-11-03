@@ -2,7 +2,7 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
 import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig } from '@/utils/constants'
-import { getIso36112JsonData } from '@/utils/api'
+import { getIso36112JsonData,getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
 import { db } from '@/indexedDB'
@@ -854,6 +854,47 @@ export function getTabList (curTable, curMetric) {
     }
   }
   return tabs
+}
+export async function mapDnsData(list,type,prop){
+  let valueGroup = []
+  const dnsData = await getDictList({ type:type,pageSize: -1 })
+  if(list && list.length > 0){
+    list.forEach(data => {
+      if(typeof data === 'string'){
+        let code = Number(data)
+        let dictData = dnsData.find(mapData => {return Number(mapData.code) === code})
+        if(dictData){
+          data = dictData.value
+        }else {
+          dnsData.forEach(mapData => {
+            let range = mapData.code.split('-')
+            if(range && range.length >= 2){
+              let start = range[0].trim()
+              let eEnd = range[1].trim()
+              data = (start <= code && code <= eEnd) ? mapData.value : code
+            }
+          })
+        }
+      }else {
+        let code = Number(data[prop])
+        let dictData = dnsData.find(mapData => {return Number(mapData.code) === code})
+        if(dictData){
+          data[prop] = dictData.value
+        }else {
+          dnsData.forEach(mapData => {
+            let range = mapData.code.split('-')
+            if(range && range.length >= 2){
+              let start = range[0].trim()
+              let eEnd = range[1].trim()
+              data[prop] = (start <= code && code <= eEnd) ? mapData.value : code
+            }
+          })
+        }
+      }
+      valueGroup.push(data)
+    })
+  }
+  return valueGroup
 }
 export function combineTabList (tableType, list, commonTabList) {
   const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview

@@ -194,7 +194,7 @@ import {
 } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
-import { combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler, combinDrilldownTableWithUserConfig } from '@/utils/tools'
+import { combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler, combinDrilldownTableWithUserConfig,mapDnsData } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { db } from '@/indexedDB'
 
@@ -350,14 +350,14 @@ export default {
         window.location.reload()
       })
     },
-    initDropdownList () {
-      const currentValue = document.getElementById('breadcrumbValue') ? document.getElementById('breadcrumbValue').innerText : ''
-      const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
+    async initDropdownList () {
+      let currentValue = document.getElementById('breadcrumbValue') ? document.getElementById('breadcrumbValue').innerText : ''
+      let columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
       let type = 'ip'
-      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
-      const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
+      let tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      let curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
       if (curTableInCode && curTableInCode.tabList) {
-        const curTab = curTableInCode.tabList.find(item => item.label == columnName)
+        let curTab = curTableInCode.tabList.find(item => item.label == columnName)
         if (curTab) {
           type = curTab.prop
         }
@@ -369,9 +369,15 @@ export default {
         type: type,
         name: this.dropDownValue ? this.dropDownValue : ''
       }
-      get(curTableInCode.url.drilldownList, params).then(response => {
+      get(curTableInCode.url.drilldownList, params).then(async response => {
         if (response.code === 200) {
-          this.breadcrumbColumnValueListShow = response.data.result
+          let dataList = response.data.result
+          if('qtype' === type){
+            dataList = await mapDnsData(dataList,'dnsQtype','qtype')
+          }else if('rcode' === type){
+            dataList = await mapDnsData(dataList,'dnsRcode','rcode')
+          }
+          this.breadcrumbColumnValueListShow = dataList
           this.$nextTick(() => {
             this.breadcrumbColumnValueListShow.forEach(item => {
               const selectedDom = document.getElementById(item)

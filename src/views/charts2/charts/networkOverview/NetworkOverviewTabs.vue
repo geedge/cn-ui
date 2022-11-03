@@ -155,7 +155,7 @@
               </li>
             </transition-group>
           </el-tab-pane>
-          <el-tab-pane :label="$t('network.metric')" name="metrics" width="50%" >
+          <el-tab-pane :label="$t('network.direction')" name="metrics" width="50%" >
             <transition-group name="dragMetric" class="list" tag="ul" ref="metric">
               <template v-for="(item, index) in customTableTitles"  :key="item.label">
                 <li v-if="index>0"
@@ -182,15 +182,15 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig } from '@/utils/constants'
+import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig,fromRoute } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig,mapDnsData } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { db } from '@/indexedDB'
-import { api } from '@/utils/api'
+import { api,getDictList } from '@/utils/api'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -545,9 +545,17 @@ export default {
       this.changeUrlTabState()
       // console.log('InitState: 结束')
     },
-    initData () {
+    async initData () {
       const tabList = []
       const curTab = this.getCurTab()
+      if(this.tableType === fromRoute.dnsServiceInsights){
+        let curTabProp = this.$route.query.curTab ? this.$route.query.curTab : null
+        if('qtype' === curTabProp){
+          this.chartData = await mapDnsData( this.chartData,'dnsQtype','qtype')
+        }else if('rcode' === curTabProp){
+          this.chartData = await mapDnsData( this.chartData,'dnsRcode','rcode')
+        }
+      }
       const tableDataTmp = this.chartData.map(item => {
         tabList.push(item[curTab.prop])
         const otherData = { tab: item[curTab.prop] }
