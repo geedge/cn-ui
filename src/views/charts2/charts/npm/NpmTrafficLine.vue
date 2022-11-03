@@ -1,7 +1,7 @@
 <template>
   <div class="npm-traffic-line">
     <div class="npm-traffic-line-header">
-      <div class="npm-traffic-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
+      <div class="npm-traffic-line-title">{{chartData.i18n ? $t(chartData.i18n) : chartData.name}}</div>
       <div class="line-select-metric">
         <span>{{$t('network.metric')}}:</span>
         <div class="line-select__operation">
