@@ -366,6 +366,8 @@ export default {
               if (this.isNoData) {
                 this.npmQuantity = [
                   { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
                   { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
                   { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
                 ]
@@ -385,9 +387,9 @@ export default {
                   this.echartsInit(this.npmQuantity)
                 } else if (t.type === 'tcpLostlenPercent' && val === 'tcpLostlenPercent') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
-                  npmQuantity[1].data = t.tcpLostlenPercent.values ? t.tcpLostlenPercent.values : []
+                  npmQuantity[3].data = t.tcpLostlenPercent.values ? t.tcpLostlenPercent.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 1) {
+                    if (i !== 3) {
                       e.show = false
                     } else {
                       e.show = true
@@ -397,9 +399,9 @@ export default {
                   this.echartsInit(this.npmQuantity)
                 } else if (t.type === 'pktRetransPercent' && val === 'pktRetransPercent') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
-                  npmQuantity[2].data = t.pktRetransPercent.values ? t.pktRetransPercent.values : []
+                  npmQuantity[4].data = t.pktRetransPercent.values ? t.pktRetransPercent.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 2) {
+                    if (i !== 4) {
                       e.show = false
                     } else {
                       e.show = true
@@ -419,18 +421,22 @@ export default {
           this.toggleLoading(true)
           get(api.npm.overview.totalHttpResponseDelay, params).then(res => {
             if (res.code === 200) {
-              this.isNoData = res.data.length === 0
+              this.isNoData = res.data.result.length === 0
               if (this.isNoData) {
                 this.npmQuantity = [
-                  { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time }
+                  { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+                  { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
                 ]
               }
               res.data.result.forEach(t => {
                 if (t.type === 'httpResponseLatency' && val === 'httpResponseLatency') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
-                  npmQuantity[0].data = t.httpResponseLatency.values ? t.httpResponseLatency.values : []
+                  npmQuantity[1].data = t.httpResponseLatency.values ? t.httpResponseLatency.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 0) {
+                    if (i !== 1) {
                       e.show = false
                     } else {
                       e.show = true
@@ -450,18 +456,22 @@ export default {
           this.toggleLoading(true)
           get(api.npm.overview.totalSslConDelay, params).then(res => {
             if (res.code === 200) {
-              this.isNoData = res.data.length === 0
+              this.isNoData = res.data.result.length === 0
               if (this.isNoData) {
                 this.npmQuantity = [
-                  { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time }
+                  { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                  { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+                  { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
                 ]
               }
               res.data.result.forEach(t => {
                 if (t.type === 'sslConLatency' && val === 'sslConLatency') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
-                  npmQuantity[0].data = t.sslConLatency.values ? t.sslConLatency.values : []
+                  npmQuantity[2].data = t.sslConLatency.values ? t.sslConLatency.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 0) {
+                    if (i !== 2) {
                       e.show = false
                     } else {
                       e.show = true
