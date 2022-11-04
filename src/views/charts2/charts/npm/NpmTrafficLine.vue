@@ -238,7 +238,7 @@ export default {
                   }
                 })
                 this.npmQuantity = npmQuantity
-                this.echartsInit(this.npmQuantity)
+                this.echartsInit(this.npmQuantity, '(ms)')
               } else if (t.type === 'httpResponseLatency' && val === 'httpResponseLatency') {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[1].data = t.httpResponseLatencyAvg.values ? t.httpResponseLatencyAvg.values : []
@@ -250,7 +250,7 @@ export default {
                   }
                 })
                 this.npmQuantity = npmQuantity
-                this.echartsInit(this.npmQuantity)
+                this.echartsInit(this.npmQuantity, '(ms)')
               } else if (t.type === 'sslConLatency' && val === 'sslConLatency') {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[2].data = t.sslConLatencyAvg.values ? t.sslConLatencyAvg.values : []
@@ -262,7 +262,7 @@ export default {
                   }
                 })
                 this.npmQuantity = npmQuantity
-                this.echartsInit(this.npmQuantity)
+                this.echartsInit(this.npmQuantity, '(ms)')
               } else if (t.type === 'tcpLostlenPercent' && val === 'tcpLostlenPercent') {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[3].data = t.tcpLostlenPercentAvg.values ? t.tcpLostlenPercentAvg.values : []
@@ -274,7 +274,7 @@ export default {
                   }
                 })
                 this.npmQuantity = npmQuantity
-                this.echartsInit(this.npmQuantity)
+                this.echartsInit(this.npmQuantity, '(%)')
               } else if (t.type === 'pktRetransPercent' && val === 'pktRetransPercent') {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[4].data = t.pktRetransPercentAvg.values ? t.pktRetransPercentAvg.values : []
@@ -286,7 +286,7 @@ export default {
                   }
                 })
                 this.npmQuantity = npmQuantity
-                this.echartsInit(this.npmQuantity)
+                this.echartsInit(this.npmQuantity, '(%)')
               }
             })
           } else {
@@ -384,7 +384,7 @@ export default {
                     }
                   })
                   this.npmQuantity = npmQuantity
-                  this.echartsInit(this.npmQuantity)
+                  this.echartsInit(this.npmQuantity, '(ms)')
                 } else if (t.type === 'tcpLostlenPercent' && val === 'tcpLostlenPercent') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
                   npmQuantity[3].data = t.tcpLostlenPercent.values ? t.tcpLostlenPercent.values : []
@@ -396,7 +396,7 @@ export default {
                     }
                   })
                   this.npmQuantity = npmQuantity
-                  this.echartsInit(this.npmQuantity)
+                  this.echartsInit(this.npmQuantity, '(%)')
                 } else if (t.type === 'pktRetransPercent' && val === 'pktRetransPercent') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
                   npmQuantity[4].data = t.pktRetransPercent.values ? t.pktRetransPercent.values : []
@@ -408,7 +408,7 @@ export default {
                     }
                   })
                   this.npmQuantity = npmQuantity
-                  this.echartsInit(this.npmQuantity)
+                  this.echartsInit(this.npmQuantity, '(%)')
                 }
               })
             }
@@ -443,7 +443,7 @@ export default {
                     }
                   })
                   this.npmQuantity = npmQuantity
-                  this.echartsInit(this.npmQuantity)
+                  this.echartsInit(this.npmQuantity, '(ms)')
                 }
               })
             }
@@ -478,7 +478,7 @@ export default {
                     }
                   })
                   this.npmQuantity = npmQuantity
-                  this.echartsInit(this.npmQuantity)
+                  this.echartsInit(this.npmQuantity, '(ms)')
                 }
               })
             }
@@ -490,7 +490,7 @@ export default {
         }
       }
     },
-    echartsInit (echartsData) {
+    echartsInit (echartsData, legendUnit) {
       echartsData = echartsData.filter(t => t.show === true)
       const dom = document.getElementById('chart')
       !this.myChart && (this.myChart = echarts.init(dom))
@@ -508,7 +508,7 @@ export default {
         }
         return {
           ...chartOption,
-          name: this.$t(t.name),
+          name: this.$t(t.name) + (legendUnit || ''),
           lineStyle: {
             color: chartColor3[t.positioning],
             width: 1

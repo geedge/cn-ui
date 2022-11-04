@@ -14,23 +14,23 @@
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 12">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(ms)</div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 13">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(ms)</div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 14">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(ms)</div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 15">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(%)</div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 16">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}</div>
+      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(%)</div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
   </div>

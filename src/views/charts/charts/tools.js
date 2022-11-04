@@ -475,7 +475,7 @@ export function stackedLineTooltipFormatter (params) {
   params.forEach((item, i) => {
     str += '<span class="cn-chart-tooltip-box">'
     str += `<span style="display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:${item.borderColor};"></span>`
-    str += `<span class="cn-chart-tooltip-content">${item.seriesName}</span>`
+    str += `<span class="cn-chart-tooltip-content">${item.seriesName.split('(')[0]}</span>`
     str += '</span>'
   })
   str += '</div>'

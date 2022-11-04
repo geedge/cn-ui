@@ -384,7 +384,6 @@ export const trafficLineChartOption = {
       padding: [0, 0, 0, 2],
       fontSize: 12,
       color: '#717171',
-      fontWeight: 400,
       fontFamily: 'NotoSansSChineseRegular'
     }
   },
