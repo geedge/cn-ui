@@ -143,6 +143,9 @@ export default {
                   pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
                 }
                 t.score = computeScore(data)
+                if (t.score === '-') {
+                  t.score = ''
+                }
               })
               this.loadMarkerData(imageSeries, mapData)
             })
