@@ -73,8 +73,22 @@
                     </div>
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.dillDown" >
-                    <div v-if="isOnlyRead" >{{scope.row['tab']}}</div>
-                    <div v-else class="data-click" @click="handleTabValue(item.name,scope.row['tab'])">{{scope.row['tab']}}</div>
+                    <div v-if="isOnlyRead" >
+                      <template v-if="tableType === fromRoute.dnsServiceInsights && isDnsMapType">
+                        {{dnsMapData.get(scope.row['tab'])}}
+                      </template>
+                      <template v-else>
+                        {{scope.row['tab']}}
+                      </template>
+                    </div>
+                    <div v-else class="data-click" @click="handleTabValue(item.name,scope.row['tab'])">
+                      <template v-if="isDnsMapType">
+                        {{dnsMapData.get(scope.row['tab'])}}
+                      </template>
+                      <template v-else>
+                        {{scope.row['tab']}}
+                      </template>
+                    </div>
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.percent" >
                     <div class="dns-in-ex">
@@ -185,7 +199,7 @@ import { ref } from 'vue'
 import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig,fromRoute } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig,mapDnsData } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig,getDnsMapData } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -236,11 +250,16 @@ export default {
       column: {},
       index: 0,
       chartData: [],
+      dnsMapData:[],
+      dnsQtypeMapData:[],
+      dnsRcodeMapData:[],
+      isDnsMapType:false,
       tableSortColumn: '',
       tableSortType: '',
       tableSortTab: '',
       urlChangeParams: {},
-      showUnit: false
+      showUnit: false,
+      fromRoute: fromRoute,
     }
   },
   props: {
@@ -548,14 +567,6 @@ export default {
     async initData () {
       const tabList = []
       const curTab = this.getCurTab()
-      if(this.tableType === fromRoute.dnsServiceInsights){
-        let curTabProp = this.$route.query.curTab ? this.$route.query.curTab : null
-        if('qtype' === curTabProp){
-          this.chartData = await mapDnsData( this.chartData,'dnsQtype','qtype')
-        }else if('rcode' === curTabProp){
-          this.chartData = await mapDnsData( this.chartData,'dnsRcode','rcode')
-        }
-      }
       const tableDataTmp = this.chartData.map(item => {
         tabList.push(item[curTab.prop])
         const otherData = { tab: item[curTab.prop] }
@@ -1146,6 +1157,14 @@ export default {
 
       this.saveUserLocalConfig()
       // console.log(this.drillDownTableConfigs)
+      let forthMenuName = ''
+      if(clickTab.prop === 'qtype'){
+        forthMenuName = this.dnsQtypeMapData.get(columnValue)
+      }else if(clickTab.prop === 'rcode'){
+        forthMenuName = this.dnsRcodeMapData.get(columnValue)
+      }else {
+        forthMenuName = columnValue
+      }
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -1284,6 +1303,14 @@ export default {
         this.combineColumnList(curTab.name)
         this.saveUserLocalConfig()
         this.tab = curTab.prop
+        this.isDnsMapType = false
+        if(this.tab === 'qtype'){
+          this.dnsMapData =this.dnsQtypeMapData
+          this.isDnsMapType = true
+        }else if(this.tab === 'rcode'){
+          this.dnsMapData =this.dnsRcodeMapData
+          this.isDnsMapType = true
+        }
         let queryParams = {
           orderBy: this.orderBy,
           limit: networkDefaultLimit,
@@ -1724,7 +1751,6 @@ export default {
     this.tableSortColumn = this.getUrlParam(this.curTabState.tableSortColumn, '')
     this.tableSortType = this.getUrlParam(this.curTabState.tableSortType, '')
     this.tableSortTab = this.getUrlParam(this.curTabState.tableSortTab, '')
-
     const currentTableConfig = this.drillDownTableConfigs.find(config => config.route === this.tableType)
     // 开始设置当前table，当前tab，当前tab对应的列等信息
     this.commonTabList = currentTableConfig ? currentTableConfig.tabs : []
@@ -1772,6 +1798,10 @@ export default {
         }
       }
     }
+    //是否需要dns的qtype和rcode的数据字典
+    this.isDnsMapType = false
+    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
     this.saveUserLocalConfig()
     this.getChartData()
   },

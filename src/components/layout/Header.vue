@@ -53,7 +53,17 @@
                           trigger="click">
                 <template #reference>
                   <div class="breadcrumb-button"  id="breadcrumbButton" :class="showBackground?'breadcrumb-button__active':''"  >
-                     <span  id="breadcrumbValue"> {{item}}</span><i class="cn-icon-xiala cn-icon"></i>
+                    <span  id="breadcrumbValue">
+                      <template v-if="curTabProp === 'qtype'">
+                        <span>{{dnsQtypeMapData.get(item) ? dnsQtypeMapData.get(item):item}}</span>
+                      </template>
+                      <template v-else-if="curTabProp === 'rcode'">
+                        <span>{{dnsRcodeMapData.get(item) ? dnsRcodeMapData.get(item):item}}</span>
+                      </template>
+                      <template v-else>
+                        <span>{{item}}</span>
+                      </template>
+                    </span><i class="cn-icon-xiala cn-icon"></i>
                   </div>
                 </template>
                 <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
@@ -65,7 +75,15 @@
                   </div>
                   <ul class="select-dropdown" id="breadcrumbSelectDropdown"  @scroll="scrollList()">
                     <li v-for="item in breadcrumbColumnValueListShow" title='' :key="item" :id="item" class="select-dropdown__item" @click="changeValue(item)" :class="selected?'':''">
-                      <span>{{item}}</span>
+                      <template v-if="curTabProp === 'qtype'">
+                        <span>{{dnsQtypeMapData.get(item) ? dnsQtypeMapData.get(item):item}}</span>
+                      </template>
+                      <template v-else-if="curTabProp === 'rcode'">
+                        <span>{{dnsRcodeMapData.get(item) ? dnsRcodeMapData.get(item):item}}</span>
+                      </template>
+                      <template v-else>
+                        <span>{{item}}</span>
+                      </template>
                     </li>
                   </ul>
                 </el-row>
@@ -190,11 +208,12 @@ import {
   networkTable,
   operationType,
   storageKey,
-  wholeScreenRouterMapping
+  wholeScreenRouterMapping,
+  fromRoute
 } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
-import { combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler, combinDrilldownTableWithUserConfig,mapDnsData } from '@/utils/tools'
+import { combineTabList, getDefaultCurTab, getTabList, overwriteUrl, urlParamsHandler, combinDrilldownTableWithUserConfig,getDnsMapData } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { db } from '@/indexedDB'
 
@@ -226,10 +245,15 @@ export default {
       showMenu: false,
       dropDownValue: '',
       breadcrumbColumnValueListShow: [],
+      curTabProp:'',
+      dnsRcodeMapData:[],
+      dnsQtypeMapData:[],
+      isDnsMapType:false,
       valueMeta: [],
       showBackground: false,
       selected: false,
       valueMenuId: '',
+      fromRoute: fromRoute,
       detectionMenuList: [
         {
           name: 'securityEvents',
@@ -270,6 +294,7 @@ export default {
     },
     breadcrumb () {
       const breadcrumbMap = []
+      this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           breadcrumbMap.push({ name: this.$t(menu.i18n), path: menu.route, columnName: menu.columnName, columnValue: menu.columnValue })
@@ -312,8 +337,10 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     this.from = Object.keys(this.entityType)[0]
+    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
     this.initDropdownList()
   },
   setup () {
@@ -350,7 +377,18 @@ export default {
         window.location.reload()
       })
     },
+    getCurTabByLabel(label){
+      let curTab = null
+      let tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      let curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
+      if (curTableInCode && curTableInCode.tabList) {
+        curTab = curTableInCode.tabList.find(item => item.label == label)
+      }
+      return curTab
+    },
     async initDropdownList () {
+      //是否需要dns的qtype和rcode的数据字典
+      this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
       let currentValue = document.getElementById('breadcrumbValue') ? document.getElementById('breadcrumbValue').innerText : ''
       let columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
       let type = 'ip'
@@ -371,18 +409,20 @@ export default {
       }
       get(curTableInCode.url.drilldownList, params).then(async response => {
         if (response.code === 200) {
-          let dataList = response.data.result
-          if('qtype' === type){
-            dataList = await mapDnsData(dataList,'dnsQtype','qtype')
-          }else if('rcode' === type){
-            dataList = await mapDnsData(dataList,'dnsRcode','rcode')
-          }
-          this.breadcrumbColumnValueListShow = dataList
+          this.breadcrumbColumnValueListShow = response.data.result
+          this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+          this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
           this.$nextTick(() => {
             this.breadcrumbColumnValueListShow.forEach(item => {
               const selectedDom = document.getElementById(item)
               if (selectedDom) {
-                if (item === currentValue) {
+                let itemName = item
+                if(this.curTabProp === 'qtype'){
+                  itemName = this.dnsQtypeMapData.get(item)
+                }else if(this.curTabProp === 'rcode'){
+                  itemName = this.dnsRcodeMapData.get(item)
+                }
+                if (itemName === currentValue) {
                   selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
                 } else {
                   selectedDom.style.cssText = ''
@@ -413,32 +453,37 @@ export default {
     },
     changeValue (value) {
       // 设置面包屑显示的内容及hover时的title
+      let valName = value
+      if(this.tab === 'qtype'){
+        valName =this.dnsQtypeMapData.get(value)
+      }else if(this.tab === 'rcode'){
+        valName =this.dnsRcodeMapData.get(value)
+      }
+      this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
       document.getElementById('breadcrumbValue').innerText = value
-      document.getElementById('breadcrumbButton').setAttribute('title', value)
-      document.getElementById(this.valueMenuId).setAttribute('title', value)
+      //document.getElementById('breadcrumbButton').setAttribute('title', valName)
+      document.getElementById(this.valueMenuId).setAttribute('title', valName)
       document.getElementById('breadcrumbButton').click()
       // const columnName = this.$store.getters.getBreadcrumbColumnName
       const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
-      const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
-      if (tabObjGroup && tabObjGroup.length > 0) {
-        const curTab = tabObjGroup[0]
-        if (curTab) {
-          const queryCondition = []
-          const searchProps = curTab.dillDownProp
-          if (curTab.prop === 'protocolPort') {
-            const valueGroup = value.split(':')
-            if (valueGroup) {
-              queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
-              queryCondition.push('common_server_port=' + valueGroup[1])
-            }
-            console.log(queryCondition.join(' AND '))
-            this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
-          } else {
-            searchProps.forEach(item => {
-              queryCondition.push(item + "='" + value.replaceAll("'", "\\\\'") + "'")
-            })
-            this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
+      //const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
+      let curTab = this.getCurTabByLabel()
+      if (curTab) {
+        const queryCondition = []
+        const searchProps = curTab.dillDownProp
+        if (curTab.prop === 'protocolPort') {
+          const valueGroup = value.split(':')
+          if (valueGroup) {
+            queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
+            queryCondition.push('common_server_port=' + valueGroup[1])
           }
+          console.log(queryCondition.join(' AND '))
+          this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
+        } else {
+          searchProps.forEach(item => {
+            queryCondition.push(item + "='" + value.replaceAll("'", "\\\\'") + "'")
+          })
+          this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
         }
       }
       this.changeUrlTabState()
@@ -509,7 +554,6 @@ export default {
       if (!columnName) { // 点击第二级菜单
         this.$store.commit('setNetworkOverviewTabList', [])
       }
-
       // 清空网络概况的特殊面包屑
       this.$store.getters.menuList.forEach(menu => {
         if (!this.$_.isEmpty(menu.children)) {
@@ -520,16 +564,18 @@ export default {
                 child.columnName = columnName
                 this.urlChangeParams[this.curTabState.thirdMenu] = columnName
                 this.urlChangeParams[this.curTabState.fourthMenu] = columnValue
-                const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
-                const type = tabObjGroup && tabObjGroup[0] ? tabObjGroup[0].prop : ''
-                this.urlChangeParams[this.curTabState.dimensionType] = type
+                //const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
+                //let curTab = this.getCurTabByLabel()
+                //const type = curTab ? curTab.prop : ''
+                //this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
+                //this.urlChangeParams[this.curTabState.dimensionType] = type
                 this.urlChangeParams[this.curTabState.panelName] = columnValue
               } else if (columnName) { // 点击的为列名
                 child.columnValue = ''
                 child.columnName = columnName
                 this.urlChangeParams[this.curTabState.thirdMenu] = columnName
                 this.urlChangeParams[this.curTabState.fourthMenu] = ''
-                this.urlChangeParams[this.curTabState.panelName] = columnName
+                this.urlChangeParams[this.curTabState.panelName] = columnValue
                 const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
                 const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
                 const curTab = getDefaultCurTab(tableType, metric, columnName)

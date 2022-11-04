@@ -855,46 +855,28 @@ export function getTabList (curTable, curMetric) {
   }
   return tabs
 }
-export async function mapDnsData(list,type,prop){
-  let valueGroup = []
+export async function getDnsMapData(type){
+  let codeValueMap = new Map()
   const dnsData = await getDictList({ type:type,pageSize: -1 })
-  if(list && list.length > 0){
-    list.forEach(data => {
-      if(typeof data === 'string'){
-        let code = Number(data)
-        let dictData = dnsData.find(mapData => {return Number(mapData.code) === code})
-        if(dictData){
-          data = dictData.value
-        }else {
-          dnsData.forEach(mapData => {
-            let range = mapData.code.split('-')
-            if(range && range.length >= 2){
-              let start = range[0].trim()
-              let eEnd = range[1].trim()
-              data = (start <= code && code <= eEnd) ? mapData.value : code
-            }
-          })
+  if(dnsData && dnsData.length>0) {
+    dnsData.forEach(mapData => {
+      let code = mapData.code
+      if(code.indexOf('-')>-1){
+        let range = mapData.code.split('-')
+        if(range && range.length >= 2){
+          let start = range[0].trim()
+          let eEnd = range[1].trim()
+          mapData.value = (start <= code && code <= eEnd) ? mapData.value : code
+          for (let i = start; i <= eEnd; i++) {
+            codeValueMap.set(i,mapData.value)
+          }
         }
       }else {
-        let code = Number(data[prop])
-        let dictData = dnsData.find(mapData => {return Number(mapData.code) === code})
-        if(dictData){
-          data[prop] = dictData.value
-        }else {
-          dnsData.forEach(mapData => {
-            let range = mapData.code.split('-')
-            if(range && range.length >= 2){
-              let start = range[0].trim()
-              let eEnd = range[1].trim()
-              data[prop] = (start <= code && code <= eEnd) ? mapData.value : code
-            }
-          })
-        }
+        codeValueMap.set(code,mapData.value)
       }
-      valueGroup.push(data)
     })
   }
-  return valueGroup
+  return codeValueMap
 }
 export function combineTabList (tableType, list, commonTabList) {
   const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview

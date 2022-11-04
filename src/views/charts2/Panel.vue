@@ -66,7 +66,7 @@ import {
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
-import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl,getDnsMapData } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
 import { useStore } from 'vuex'
 
@@ -87,6 +87,8 @@ export default {
       panelLock: true,
       extraParams: {},
       panelName: '',
+      dnsRcodeMapData: [],
+      dnsQtypeMapData: [],
       score: null,
       curTabState: curTabState
     }
@@ -107,7 +109,18 @@ export default {
   },
   async mounted () {
     // this.panelName = this.$store.getters.getPanelName
-    this.panelName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
+    let pName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
+    let curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
+    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+    if(curTabProp === 'qtype'){
+      this.panelName = this.dnsQtypeMapData.get(pName)
+    }else if(curTabProp === 'rcode'){
+      this.panelName = this.dnsRcodeMapData.get(pName)
+    }else {
+      this.panelName = pName
+    }
+
     // const curOperationType = this.$store.getters.getTabOperationType
     /* const curOperationType = this.getUrlParam(this.curTabState.tabOperationType, '', true)
     if (this.panelName && this.$route.path === '/panel/networkAppPerformance' && curOperationType !== operationType.thirdMenu) {
