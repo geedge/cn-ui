@@ -112,7 +112,11 @@ export default {
           label: 'Packets/s'
         }
       ],
-      mpackets: [],
+      mpackets: [
+        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+        { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+        { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
+      ],
       unitConvert,
       unitTypes,
       chartDateObject: [],
@@ -173,11 +177,13 @@ export default {
       get(api.linkMonitor.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
-          this.mpackets = [
-            { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-            { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-            { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
-          ]
+          if (this.isNoData) {
+            this.mpackets = [
+              { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+              { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+              { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
+            ]
+          }
           res.data.result.forEach((t, i) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
@@ -202,6 +208,7 @@ export default {
                 if (this.lineTab === e.class) {
                   if (e.analysis.avg <= 0) {
                     this.lineTab = ''
+                    this.lineRefer = ''
                     this.init()
                   }
                 }
@@ -242,6 +249,7 @@ export default {
                 if (this.lineTab === e.class) {
                   if (e.analysis.avg <= 0) {
                     this.lineTab = ''
+                    this.lineRefer = ''
                     this.init()
                   }
                 }
