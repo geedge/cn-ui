@@ -1117,6 +1117,8 @@ export default {
     * */
     handleTabValue (columnName, columnValue) {
       // console.log('NetworkOverview类------handleTabValue：下钻')
+      // 下钻前保存当前路由状态
+      this.beforeRouterPush()
       const clickTab = this.getTabByName(columnName)// 下钻后，显示的下钻tab对应的drilldownTabs
       const tabLable = clickTab.label
       const tabName = clickTab.name
@@ -1198,6 +1200,34 @@ export default {
           t: +new Date()
         }
       })
+    },
+    /**
+     * 在路由跳转前，即下钻前将路由数据保存起来，确保回退和前进保留当时状态
+     */
+    beforeRouterPush () {
+      const currentRouter = this.$_.cloneDeep(this.$route.query)
+
+      const tempObj = {
+        t: currentRouter.t,
+        query: currentRouter,
+        path: this.$_.cloneDeep(this.$route.path),
+        params: this.$_.cloneDeep(this.$route.params)
+      }
+      if (window.localRouterHistoryList.length > 0) {
+        let flag = true
+        window.localRouterHistoryList.forEach((item, index) => {
+          if (item.t === currentRouter.t) {
+            window.localRouterHistoryList[index] = tempObj
+            flag = false
+          }
+          if (!flag) {
+            return true
+          }
+        })
+        if (flag) window.localRouterHistoryList.push(tempObj)
+      } else {
+        window.localRouterHistoryList.push(tempObj)
+      }
     },
     handleSearchParams (columnValue) {
       columnValue = columnValue.replaceAll("'", "\\\\'")

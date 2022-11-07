@@ -190,7 +190,6 @@ export default {
     const cancelList = store.state.panel.httpCancel
 
     // 进入页面时，发现有未结束的请求，终止请求
-    // console.log('panel.vue------setup------查看http终止情况', cancelList, cancelList.length)
     if (cancelList.length > 0) {
       cancelList.forEach((cancel, index) => {
         cancel()
@@ -200,19 +199,20 @@ export default {
 
     const panel = ref({})
     let panelType = 1 // 取得panel的type
-    const { params, query, path } = useRoute()
-    // 只要当前路由和vuex里的路由一致，且vuex存储的range有值，即代表已经下钻后返回，此时直接使用vuex里存储的时间范围
-    if (path === store.getters.getRouterPath && store.getters.getTimeRangeFlag !== null) {
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        startTime: store.getters.getTimeRangeArray[0],
-        endTime: store.getters.getTimeRangeArray[1],
-        range: store.getters.getTimeRangeFlag
-      })
+    let { params, query, path } = useRoute()
+
+    // 获取路由跳转过的历史状态，赋值给当前界面，起到保留状态的作用，如浏览器的回退前进等
+    const routerObj = window.localRouterHistoryList.find(item => item.t === query.t)
+    if (routerObj) {
+      params = routerObj.params
+      query = routerObj.query
+      path = routerObj.path
+
+      // 如果当前界面之前载入过，获取状态后更新地址栏，以便后续的赋值操作
+      const newUrl = urlParamsHandler(window.location.href, useRoute().query, query)
       overwriteUrl(newUrl)
-    } else {
-      store.commit('setTimeRangeArray', [])
-      store.commit('setTimeRangeFlag', null)
     }
+
     const thirdPanel = query.thirdPanel
     const fourthPanel = query.fourthPanel
     if (fourthPanel) {
@@ -231,6 +231,7 @@ export default {
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
     // 若url携带了，使用携带的值，否则使用默认值。
+
     const dateRangeValue = rangeParam ? parseInt(query.range) : (isEntityDetail(panelType) ? 60 * 24 : 60)
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
@@ -241,19 +242,20 @@ export default {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
-    store.commit('setRouterPath', path)
 
     // npm是否展示分数
     const showScorePanel = [drillDownPanelTypeMapping.npmOverviewIp, drillDownPanelTypeMapping.npmOverviewDomain, drillDownPanelTypeMapping.npmOverviewApp, drillDownPanelTypeMapping.npmOverviewCommon, drillDownPanelTypeMapping.npmThirdMenu]
     const showScore = showScorePanel.indexOf(panelType) > -1
 
     const metric = ref(query.metric || 'Bits/s')
+
     return {
       panelType,
       panel,
       timeFilter,
       showScore,
-      metric
+      metric,
+      path
     }
   },
   methods: {
@@ -323,6 +325,19 @@ export default {
         metric: value
       })
       overwriteUrl(newUrl)
+    }
+  },
+  /**
+   * 页面销毁前，更新历史中已保存的状态
+   * 之所以会在下钻时、销毁前保存状态，是因为panel第一次下钻时，beforeUnmount获取不到下钻前参数
+   */
+  beforeUnmount () {
+    const query = this.$_.cloneDeep(this.$route.query)
+    const routerObj = window.localRouterHistoryList.find(item => item.t === query.t)
+    if (routerObj !== undefined) {
+      if (Object.getOwnPropertyNames(query).length >= Object.getOwnPropertyNames(routerObj.query).length) {
+        routerObj.query = query
+      }
     }
   }
 }
