@@ -20,7 +20,8 @@ export default {
     entityDetectionStyle () {
       const route = this.$route.name !== undefined ? this.$route.name : this.$route
       if (listScrollPath.indexOf(route.path) > -1) {
-        return 'overflow:auto;background-color: #EFF2F5;'
+        const style = route.path === listScrollPath[0] ? 'overflow:auto;background-color: #EFF2F5;' : 'overflow:auto;'
+        return style
       } else {
         return ''
       }

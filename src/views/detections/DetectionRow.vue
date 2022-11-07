@@ -2,12 +2,19 @@
   <div class="cn-detection--list" :style="{zIndex: !isCollapse ? 1 : 'unset'}">
     <!-- 左侧下拉按钮 -->
     <div class="cn-detection__collapse">
-      <span @click="switchCollapse" :class="{'reg-down': !isCollapse}"><i class="cn-icon cn-icon-arrow-right"></i></span>
+      <span @click="switchCollapse" :class="{'reg-down': !isCollapse}">
+        <i class="cn-icon cn-icon-arrow-right"></i>
+      </span>
     </div>
     <div class="cn-detection__case">
       <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[detection.eventSecurity]}`"></div>
       <div class="cn-detection__row">
         <div class="cn-detection__header" v-if="pageType === detectionPageType.securityEvent">
+          <span
+              class="detection-event-severity-color-block"
+              :style="`background-color: ${eventSeverityColor[detection.eventSeverity]}`">
+          </span>
+          <span class="detection-event-severity-block">{{ detection.securityType || '-' }}</span>
           <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp || '-'}}
           <div v-if="detection.domain" class="domain">{{detection.domain}}</div>
           <span class="line">-------</span>
@@ -30,11 +37,6 @@
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detections.eventSeverity')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventSeverity || '-'}}</span>
-              </div>
-              <div class="basic-info__item" v-if="detection.securityType">
-                <i class="cn-icon cn-icon-event-type"></i>
-                <span>{{$t('detection.list.securityType')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.securityType || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.eventType">
                 <i class="cn-icon cn-icon-event-type"></i>
@@ -176,3 +178,25 @@ export default {
   }
 }
 </script>
+
+<style>
+  .detection-event-severity-color-block {
+    width: 5px;
+    height: 20px;
+    border-radius: 2.5px;
+    margin-left: -16px;
+    margin-right: 12px;
+  }
+  .detection-event-severity-block {
+    font-family: NotoSansHans-Medium;
+    font-size: 12px;
+    color: #046EC9;
+    font-weight: 500;
+    padding: 2px 10px;
+    background: rgba(56,172,210,0.10);
+    border: 1px solid #ADC7DB;
+    box-shadow: 0 2px 0.28571rem 0 rgb(51 51 51 / 2%);
+    border-radius: 3px;
+    margin-right: 10px;
+  }
+</style>

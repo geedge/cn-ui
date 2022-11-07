@@ -1,37 +1,57 @@
 <template>
-  <div
-      class="entity-explorer entity-explorer--show-list"
-  >
+  <div class="entity-explorer entity-explorer--show-list">
     <!-- 顶部工具栏，在列表页显示 -->
     <div class="explorer-top-tools">
-      <DateTimeRange class="date-time-range" :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
-      <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
+      <div class="explorer-top-tools-title">{{$t('overall.detections')}}</div>
+      <div style="display: flex">
+        <div class="explorer-top-tools-block">
+          <i class="cn-icon cn-icon-setting detection-icon-setting"></i>
+          <span>Configure Policies</span>
+        </div>
+        <DateTimeRange
+            class="date-time-range"
+            :start-time="timeFilter.startTime"
+            :end-time="timeFilter.endTime"
+            :date-range="timeFilter.dateRangeValue"
+            ref="dateTimeRange"
+            @change="reload"/>
+        <TimeRefresh
+            class="date-time-range"
+            @change="timeRefreshChange"
+            :end-time="timeFilter.endTime"/>
+      </div>
     </div>
+    <div style="width: 100%;padding-bottom: 26px;">
+      <detection-tabs :time-filter="timeFilter" :chart="tabsData" />
+    </div>
+
     <!-- 搜索组件 -->
     <detection-search
+        class="detection-border"
         ref="search"
         :page-type="pageType"
         @search="search"
     ></detection-search>
     <!-- 内容区 -->
-    <div class="explorer-container" style="height: calc(100% - 20px); flex-direction: column">
+    <div class="explorer-container" style="height: calc(100% - 20px);flex-direction: column">
       <loading :loading="loading"></loading>
       <template v-if="isEventSeverityNoData">
          <div class="no-data detection__event-severity-bar" >No data</div>
       </template>
       <template v-if="!isEventSeverityNoData">
-        <div class="detection__event-severity-bar"  :id="`eventSeverityTrendBar${pageType}`">
+        <div class="detection__event-severity-bar detection-border"  :id="`eventSeverityTrendBar${pageType}`">
         </div>
       </template>
       <div style="display: flex; flex-grow: 1; height: 100%;">
         <detection-filter
+            class="detection-border"
             :filter-data="filterData[pageType]"
             :q="q"
             :time-filter="timeFilter"
         ></detection-filter>
 
         <div class="detection__list">
-          <div class="detection__list-statistics">
+          <div class="detection__list-statistics detection-border">
             <div class="statistics__severity">
               <div class="chart-header">
                 <div class="chart-header__title">{{$t('detection.severity')}}</div>
@@ -81,15 +101,14 @@
           ></detection-list>
           <div class="entity__pagination" >
             <Pagination
-                    ref="pagination"
-                    :page-obj="pageObj"
-                    @pageNo='pageNo'
-                    @pageSize='pageSize'
-                    @size-change="pageSize"
-                    @prev-click="prev"
-                    @next-click="next"
-            >
-            </Pagination>
+                ref="pagination"
+                :page-obj="pageObj"
+                @pageNo='pageNo'
+                @pageSize='pageSize'
+                @size-change="pageSize"
+                @prev-click="prev"
+                @next-click="next"
+            ></Pagination>
           </div>
         </div>
       </div>
@@ -108,12 +127,13 @@ import { defaultPageSize, detectionPageType } from '@/utils/constants'
 import { getNowTime, getSecond, rTime } from '@/utils/date-util'
 import { ref, shallowRef } from 'vue'
 import * as echarts from 'echarts'
-import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor, getSeriesIndex } from '@/views/detections/options/detectionOptions'
+import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
-import { reverseSortBy, sortBy, extensionEchartY } from '@/utils/tools'
+import { reverseSortBy, extensionEchartY } from '@/utils/tools'
 import { useRoute } from 'vue-router'
-import DetectionNoData from '@/views/detections/DetectionNoData'
+// import DetectionNoData from '@/views/detections/DetectionNoData'
 import Loading from '@/components/common/Loading'
+import DetectionTabs from '@/views/detections/DetectionTabs'
 
 export default {
   name: 'Index',
@@ -125,10 +145,32 @@ export default {
     DetectionFilter,
     DetectionList,
     Pagination,
-    DetectionNoData
+    // DetectionNoData,
+    DetectionTabs
   },
   data () {
     return {
+      tabsData: [
+        // todo icon名称可能不一致，后续改
+        {
+          name: 'SecurityEvents',
+          i18n: 'entities.securityEvents',
+          path: '/detection/securityEvent',
+          icon: 'cn-icon cn-icon-SecurityEvent'
+        },
+        {
+          name: 'Regulatory Risk Event',
+          i18n: 'entities.regulatoryRiskEvents',
+          path: '/detection/securityEvent',
+          icon: 'cn-icon cn-icon-RegulatoryRiskEvent'
+        },
+        {
+          name: 'PerformanceEvents',
+          i18n: 'overall.performanceEvents',
+          path: '/detection/performanceEvent',
+          icon: 'cn-icon cn-icon-PerformanceEvent'
+        }
+      ],
       chartInit: [],
       pageObj: {
         pageNo: 1,
@@ -231,7 +273,6 @@ export default {
       isStatisticsCategoryNoData: false,
       isStatisticsActiveAttackNoData: false,
       loading: false,
-
       oldActiveEntitySearchValue: ''
     }
   },
@@ -270,8 +311,10 @@ export default {
             const seriesData = []
             xData.forEach(item => {
               if (dataMap.has(serie.name)) {
+                // todo 下面这行注释可解决eslint报红线的问题，暂不知道原因，后续解决
+                // eslint-disable-next-line array-callback-return
                 const hasX = dataMap.get(serie.name).some(function (v) {
-                  if (item == v[0]) {
+                  if (item === v[0]) {
                     seriesData.push(Number(v[1]))
                     return true
                   }
@@ -296,7 +339,7 @@ export default {
           // this.isEventSeverityNoData = true
         }
       }).catch(error => {
-
+        console.log(error)
       }).finally(() => {
         this.$nextTick(() => {
           this.loading = false
@@ -329,7 +372,7 @@ export default {
           })
         }
       }).catch(error => {
-
+        console.log(error)
       })
     },
     initEventTypeData (params) {
@@ -357,7 +400,7 @@ export default {
           })
         }
       }).catch(error => {
-
+        console.log(error)
       })
     },
     initSecurityTypeData (params) {
@@ -385,7 +428,7 @@ export default {
           })
         }
       }).catch(error => {
-
+        console.log(error)
       })
     },
     initOffenderIpData (params) {
@@ -419,7 +462,7 @@ export default {
           })
         }
       }).catch(error => {
-
+        console.log(error)
       })
     },
 
@@ -430,7 +473,7 @@ export default {
         this.filterData[this.pageType][2].showMore = showMore
         this.filterData[this.pageType][2].showIndex = showIndex
       }).catch(error => {
-
+        console.log(error)
       })
     },
     initVictimLocationData (params) {
@@ -440,7 +483,7 @@ export default {
         this.filterData[this.pageType][3].showMore = showMore
         this.filterData[this.pageType][3].showIndex = showIndex
       }).catch(error => {
-
+        console.log(error)
       })
     },
     initOffenderLocationData (params) {
@@ -450,7 +493,7 @@ export default {
         this.filterData[this.pageType][5].showMore = showMore
         this.filterData[this.pageType][5].showIndex = showIndex
       }).catch(error => {
-
+        console.log(error)
       })
     },
     initActiveEntity (params) {
@@ -510,6 +553,7 @@ export default {
           })
         }
       }).catch(error => {
+        console.log(error)
       })
     },
     triggerFilterDataValue (array, value) {
@@ -539,12 +583,12 @@ export default {
       getData(api.detection[this.pageType].listBasic, params).then(data => {
         this.listData = data
       }).catch(error => {
-
+        console.log(error)
       })
       getData(api.detection[this.pageType].listCount, params).then(data => {
         this.pageObj.total = data
       }).catch(error => {
-
+        console.log(error)
       })
     },
     timeRefreshChange () {
@@ -789,3 +833,33 @@ export default {
   }
 }
 </script>
+
+<style>
+  .explorer-top-tools-title {
+    font-size: 24px;
+    line-height: 24px;
+    font-weight: 900;
+    color: #353636;
+  }
+  .explorer-top-tools-block {
+    font-family: NotoSansHans-Medium;
+    height: 28px;
+    line-height: 28px;
+    font-size: 14px;
+    color: #353636;
+    font-weight: 500;
+    padding: 0 10px;
+    margin-right: 10px;
+    border: 1px solid #E0E0E0;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .detection-icon-setting {
+    margin-right: 10px;
+    font-size: 14px;
+  }
+  .detection-border {
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+  }
+</style>

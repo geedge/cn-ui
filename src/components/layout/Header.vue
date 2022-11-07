@@ -37,7 +37,7 @@
     </div>
     <div class="cn-header__nav">
       <i class="cn-icon cn-icon-a-NetworkAnalytics"></i>
-      <el-breadcrumb class="header__left-breadcrumb" separator=">">
+      <el-breadcrumb class="header__left-breadcrumb" :separator="route.indexOf('detection') === -1 ? '>' : ''">
         <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item}`" :title="item" v-for="(item,index) in breadcrumb" :key="item">
           <template v-if="index===3">
             <div class="header__left-breadcrumb-item-select">
@@ -96,30 +96,30 @@
           </template>
           <template v-else-if="index===1">
             <span class="route-menu" @click="jump(route,'','',2)" v-if="route.indexOf('detection') === -1">{{item}}</span>
-            <div class="header__left-breadcrumb-item-select" v-if="route.indexOf('detection') > -1">
-              <el-popover placement="bottom-start"
-                          v-if="route.indexOf('detection') > -1"
-                          ref="breadcrumbPopover"
-                          :show-arrow="false"
-                          :append-to-body="false"
-                          :hide-after="0"
-                          :show-after="0"
-                          popper-class="breadcrumb__popper"
-                          trigger="click">
-                <template #reference>
-                  <div class="breadcrumb-button"  id="breadcrumbButton2" :class="showBackground?'breadcrumb-button__active':''"  v-if="route.indexOf('detection') > -1">
-                    <span id="breadcrumbValue2"> {{item}}</span><i class="cn-icon-xiala cn-icon"></i>
-                  </div>
-                </template>
-                <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
-                  <ul class="select-dropdown" id="breadcrumbSelectDropdown2">
-                    <li v-for="item in detectionMenuList" title='' :key="item.name" :id="item.name" class="select-dropdown__item" @click="jump(item.path,'','',2)">
-                      <span>{{$t(item.i18n)}}</span>
-                    </li>
-                  </ul>
-                </el-row>
-              </el-popover>
-            </div>
+<!--            <div class="header__left-breadcrumb-item-select" v-if="route.indexOf('detection') > -1">-->
+<!--              <el-popover placement="bottom-start"-->
+<!--                          v-if="route.indexOf('detection') > -1"-->
+<!--                          ref="breadcrumbPopover"-->
+<!--                          :show-arrow="false"-->
+<!--                          :append-to-body="false"-->
+<!--                          :hide-after="0"-->
+<!--                          :show-after="0"-->
+<!--                          popper-class="breadcrumb__popper"-->
+<!--                          trigger="click">-->
+<!--                <template #reference>-->
+<!--                  <div class="breadcrumb-button"  id="breadcrumbButton2" :class="showBackground?'breadcrumb-button__active':''"  v-if="route.indexOf('detection') > -1">-->
+<!--                    <span id="breadcrumbValue2"> {{item}}</span><i class="cn-icon-xiala cn-icon"></i>-->
+<!--                  </div>-->
+<!--                </template>-->
+<!--                <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">-->
+<!--                  <ul class="select-dropdown" id="breadcrumbSelectDropdown2">-->
+<!--                    <li v-for="item in detectionMenuList" title='' :key="item.name" :id="item.name" class="select-dropdown__item" @click="jump(item.path,'','',2)">-->
+<!--                      <span>{{$t(item.i18n)}}</span>-->
+<!--                    </li>-->
+<!--                  </ul>-->
+<!--                </el-row>-->
+<!--              </el-popover>-->
+<!--            </div>-->
           </template>
           <template v-else>
             <span>{{item}}</span>

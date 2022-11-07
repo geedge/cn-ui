@@ -6,6 +6,8 @@
         <div class="no-data" v-if="noData">No data</div>
         <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow"></div>
         <detection-row
+            style="margin-bottom: 10px"
+            class="detection-border"
             v-for="(data, index) in listData"
             :detection="data"
             :page-type="pageType"
