@@ -242,7 +242,7 @@ export default {
                 })
               } else {
                 this.$nextTick(() => {
-                  this.echartsInit(this.mpackets)
+                  this.echartsInit(this.mpackets, show)
                 })
               }
             } else if (t.type === 'queries' && val === 'Queries/s') {

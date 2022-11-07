@@ -539,7 +539,11 @@ export default {
             }
           })
           this.npmQuantity.forEach(d => {
-            if (this.$t(d.name) === t.seriesName) {
+            const nameMs = this.$t(d.name) + '(ms)'
+            const namePrent = this.$t(d.name) + '(%)'
+            if (nameMs === t.seriesName) {
+              t.borderColor = chartColor3[d.positioning]
+            } else if (namePrent === t.seriesName) {
               t.borderColor = chartColor3[d.positioning]
             }
           })
