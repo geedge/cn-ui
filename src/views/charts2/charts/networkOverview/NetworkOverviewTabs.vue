@@ -1,7 +1,7 @@
 <template>
-  <div class="tabs" :style="showCustomizeTabs ? (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 40px);'
+  <div class="tabs" :style="showCustomizeTabs ? (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 36px);'
                                                                                       : 'height: calc(100% - 2px)')
-                                     : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 64px);'
+                                     : (tableData.length > 10 && showRecordNum === 10 ? 'height: calc(100% - 77px);'
                                                                                       : 'height: calc(100% - 26px);')">
     <el-tabs v-model="activeTab"
              :class="showCustomizeTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
@@ -82,7 +82,7 @@
                       </template>
                     </div>
                     <div v-else class="data-click" @click="handleTabValue(item.name,scope.row['tab'])">
-                      <template v-if="isDnsMapType">
+                      <template v-if="tableType === fromRoute.dnsServiceInsights && isDnsMapType">
                         {{dnsMapData.get(scope.row['tab'])}}
                       </template>
                       <template v-else>
@@ -196,15 +196,15 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig,fromRoute } from '@/utils/constants'
+import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig, fromRoute } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig,getDnsMapData } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { db } from '@/indexedDB'
-import { api,getDictList } from '@/utils/api'
+import { api, getDictList } from '@/utils/api'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -250,16 +250,16 @@ export default {
       column: {},
       index: 0,
       chartData: [],
-      dnsMapData:[],
-      dnsQtypeMapData:[],
-      dnsRcodeMapData:[],
-      isDnsMapType:false,
+      dnsMapData: new Map(),
+      dnsQtypeMapData: new Map(),
+      dnsRcodeMapData: new Map(),
+      isDnsMapType: false,
       tableSortColumn: '',
       tableSortType: '',
       tableSortTab: '',
       urlChangeParams: {},
       showUnit: false,
-      fromRoute: fromRoute,
+      fromRoute: fromRoute
     }
   },
   props: {
@@ -824,7 +824,7 @@ export default {
       this.index = index
       this.column = column
       const arr = []
-      this.tableData.slice(0, this.showRecordNum).forEach(val => {
+      this.tableData.forEach(val => {
         arr.push(val)
       })
       if (column.order == 'descending') {
@@ -866,11 +866,7 @@ export default {
             return res
           }
         })
-        if (this.tableData.length - 1 > this.showRecordNum) {
-          this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
-        } else {
-          this.tableData = arr
-        }
+        this.tableData = arr
       } else if (column.order == 'ascending') {
         arr.sort((a, b) => {
           const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
@@ -910,11 +906,7 @@ export default {
             return res
           }
         })
-        if (this.tableData.length - 1 > this.showRecordNum) {
-          this.tableData = arr.concat(this.tableDataBackup.slice(this.showRecordNum))
-        } else {
-          this.tableData = arr
-        }
+        this.tableData = arr
       } else if (!column.order) {
         this.tableData = this.tableDataBackup
       }
@@ -1160,11 +1152,11 @@ export default {
       this.saveUserLocalConfig()
       // console.log(this.drillDownTableConfigs)
       let forthMenuName = ''
-      if(clickTab.prop === 'qtype'){
+      if (clickTab.prop === 'qtype') {
         forthMenuName = this.dnsQtypeMapData.get(columnValue)
-      }else if(clickTab.prop === 'rcode'){
+      } else if (clickTab.prop === 'rcode') {
         forthMenuName = this.dnsRcodeMapData.get(columnValue)
-      }else {
+      } else {
         forthMenuName = columnValue
       }
       this.$store.getters.menuList.forEach(menu => {
@@ -1306,13 +1298,13 @@ export default {
           item.order = ''
         })
       }
+      this.cancleSortArrow()
       this.column = {}
       this.index = 0
       this.tableSortColumn = ''
       this.tableSortType = ''
       this.tableSortTab = ''
       this.urlChangeParams = this.$_.omit(this.urlChangeParams, [this.curTabState.tableSortColumn, this.curTabState.tableSortType, this.curTabState.tableSortTab])
-      this.cancleSortArrow()
     },
     // 切换tab
     handleClick (tab) {
@@ -1334,11 +1326,11 @@ export default {
         this.saveUserLocalConfig()
         this.tab = curTab.prop
         this.isDnsMapType = false
-        if(this.tab === 'qtype'){
-          this.dnsMapData =this.dnsQtypeMapData
+        if (this.tab === 'qtype') {
+          this.dnsMapData = this.dnsQtypeMapData
           this.isDnsMapType = true
-        }else if(this.tab === 'rcode'){
-          this.dnsMapData =this.dnsRcodeMapData
+        } else if (this.tab === 'rcode') {
+          this.dnsMapData = this.dnsRcodeMapData
           this.isDnsMapType = true
         }
         let queryParams = {
@@ -1439,7 +1431,7 @@ export default {
       this.activeCustomize = tab.paneName
     },
     tableCellStyle ({ row, column, rowIndex, columnIndex }) {
-      let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;'
+      let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;height:41px !important;'
       if (rowIndex === this.tableData.length - 1) {
         // style = style + 'border-bottom:0px !important;'
       }
@@ -1772,6 +1764,10 @@ export default {
     }
   },
   async mounted () {
+    console.log('mounted start...')
+    // 是否需要dns的qtype和rcode的数据字典
+    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
     this.userId = localStorage.getItem(storageKey.userId)
     this.drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
     this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
@@ -1790,6 +1786,7 @@ export default {
       const curTableOldConfig = this.tables.find(table => table.id === this.tableType)
       this.curTable = curTableOldConfig
       if (this.curTable) {
+        let curTab = null
         if (this.isDrilldown()) { // 下钻状态
           const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
           const tabList = this.getAllTabList()
@@ -1800,7 +1797,7 @@ export default {
             const drilldownTab = tabList.find(item => item.label === thirdMenu)
             this.list = drilldownTab ? drilldownTab.drilldownTabs : []
             this.allList = this.$_.cloneDeep(tabList)// 备份所有配置，下钻及返回时使用
-            const curTab = this.getCurTab()// 初始化完list，才能正确执行
+            curTab = this.getCurTab()// 初始化完list，才能正确执行
             const curTabColumns = tabList.find(item => item.prop === curTab.prop)
             this.combineColumnList(curTabColumns.name)
             this.activeTab = ref(curTab.label)
@@ -1812,9 +1809,20 @@ export default {
           }
           this.allList = this.$_.cloneDeep(this.list)// 备份所有配置，下钻及返回时使用
           if (this.list && this.list.length > 0) {
-            const curTab = this.getCurTab()// 初始化完list，才能正确执行
+            curTab = this.getCurTab()// 初始化完list，才能正确执行
             this.combineColumnList(curTab.name)
             this.activeTab = ref(curTab.label)
+          }
+        }
+        if (curTab && curTab.prop) {
+          const tabName = curTab.prop
+          this.isDnsMapType = false
+          if (tabName === 'qtype') {
+            this.dnsMapData = this.dnsQtypeMapData
+            this.isDnsMapType = true
+          } else if (tabName === 'rcode') {
+            this.dnsMapData = this.dnsRcodeMapData
+            this.isDnsMapType = true
           }
         }
         this.activeCustomize = ref('tabs')
@@ -1828,10 +1836,6 @@ export default {
         }
       }
     }
-    //是否需要dns的qtype和rcode的数据字典
-    this.isDnsMapType = false
-    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
-    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
     this.saveUserLocalConfig()
     this.getChartData()
   },

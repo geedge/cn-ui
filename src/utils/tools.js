@@ -2,7 +2,7 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
 import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig } from '@/utils/constants'
-import { getIso36112JsonData,getDictList } from '@/utils/api'
+import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
 import { db } from '@/indexedDB'
@@ -855,24 +855,24 @@ export function getTabList (curTable, curMetric) {
   }
   return tabs
 }
-export async function getDnsMapData(type){
-  let codeValueMap = new Map()
-  const dnsData = await getDictList({ type:type,pageSize: -1 })
-  if(dnsData && dnsData.length>0) {
+export async function getDnsMapData (type) {
+  const codeValueMap = new Map()
+  const dnsData = await getDictList({ type: type, pageSize: -1 })
+  if (dnsData && dnsData.length > 0) {
     dnsData.forEach(mapData => {
-      let code = mapData.code
-      if(code.indexOf('-')>-1){
-        let range = mapData.code.split('-')
-        if(range && range.length >= 2){
-          let start = range[0].trim()
-          let eEnd = range[1].trim()
+      const code = mapData.code
+      if (code.indexOf('-') > -1) {
+        const range = mapData.code.split('-')
+        if (range && range.length >= 2) {
+          const start = range[0].trim()
+          const eEnd = range[1].trim()
           mapData.value = (start <= code && code <= eEnd) ? mapData.value : code
           for (let i = start; i <= eEnd; i++) {
-            codeValueMap.set(i,mapData.value)
+            codeValueMap.set(i, mapData.value)
           }
         }
-      }else {
-        codeValueMap.set(code,mapData.value)
+      } else {
+        codeValueMap.set(code, mapData.value)
       }
     })
   }

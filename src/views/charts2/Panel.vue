@@ -66,7 +66,7 @@ import {
 import { getPanelList, getChartList } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
-import { urlParamsHandler, overwriteUrl,getDnsMapData } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, getDnsMapData } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
 import { useStore } from 'vuex'
 
@@ -109,15 +109,15 @@ export default {
   },
   async mounted () {
     // this.panelName = this.$store.getters.getPanelName
-    let pName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
-    let curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
+    const pName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
+    const curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
     this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
     this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
-    if(curTabProp === 'qtype'){
+    if (curTabProp === 'qtype') {
       this.panelName = this.dnsQtypeMapData.get(pName)
-    }else if(curTabProp === 'rcode'){
+    } else if (curTabProp === 'rcode') {
       this.panelName = this.dnsRcodeMapData.get(pName)
-    }else {
+    } else {
       this.panelName = pName
     }
 
