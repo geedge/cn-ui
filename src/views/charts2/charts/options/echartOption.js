@@ -294,7 +294,7 @@ export const appListChartOption = {
     bottom: 0
   },
   animation: false,
-  color: chartColor,
+  color: chartColor3[2],
   axisLabel: {},
   series: [
     {

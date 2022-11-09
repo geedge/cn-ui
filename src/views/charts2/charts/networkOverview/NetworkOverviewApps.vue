@@ -400,18 +400,18 @@ export default {
           ...chartOption.series[0],
           data: obj.lineData.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
           lineStyle: {
-            color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
+            color: '#35ADDA'
           },
           areaStyle: {
             opacity: 0.1,
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               {
                 offset: 0,
-                color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
+                color: '#35ADDA'
               },
               {
                 offset: 1,
-                color: obj.trend === 'up' ? '#7FA054' : '#35ADDA'
+                color: '#35ADDA'
               }
             ])
           }
