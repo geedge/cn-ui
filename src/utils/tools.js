@@ -840,7 +840,6 @@ export function changeTabState (param, value) {
   })
 }
 export function getTabList (curTable, curMetric) {
-  console.log('getTabList--------------')
   let tabs = []
   if (curTable.hasMetricSearch) { // 有metric
     const metricsList = curTable ? curTable.metrics : []

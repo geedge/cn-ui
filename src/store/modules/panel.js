@@ -55,7 +55,8 @@ const panel = {
     timeRangeArray: [], // 时间范围列表：开始/结束时间
     timeRangeFlag: null, // 时间范围标志，默认60即一小时，-1为手动选择的时间范围
     routerPath: '', // 当前路由路径
-    httpCancel: null // 终止http请求
+    httpCancel: null, // 终止http请求
+    rangeEchartsData: {} // 框选echarts图表
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -162,6 +163,9 @@ const panel = {
     },
     setHttpCancel (state, cancel) {
       state.httpCancel = cancel
+    },
+    setRangeEchartsData (state, data) {
+      state.rangeEchartsData = data
     }
   },
   getters: {

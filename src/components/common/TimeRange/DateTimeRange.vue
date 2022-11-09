@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import { storageKey } from '@/utils/constants'
 import { getMillisecond, timestampToList } from '@/utils/date-util'
 import { useStore } from 'vuex'
@@ -156,6 +156,21 @@ export default {
 
     // refs
     const newDatePicker = ref(null)
+
+    // echarts框选时间范围
+    const rangeEchartsData = reactive({
+      value: computed(() => store.state.panel.rangeEchartsData)
+    })
+
+    watch(() => rangeEchartsData.value, (newVal, oldVal) => {
+      if (newVal) {
+        myStartTime.value = getMillisecond(newVal.startTime)
+        myEndTime.value = getMillisecond(newVal.endTime)
+        isCustom.value = true
+        dateRangeValue.value = -1
+        returnValue()
+      }
+    })
 
     // methods
     /**
@@ -256,6 +271,7 @@ export default {
       myEndTime,
       dropdownFlag,
       utcStr,
+      rangeEchartsData,
       address,
       dateRangeArr,
       dateRangeValue,

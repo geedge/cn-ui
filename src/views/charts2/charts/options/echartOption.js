@@ -44,7 +44,7 @@ export const pieChartOption1 = {
       const data = pieChartOption1.series[0].data
       let value
       data.forEach(t => {
-        if (t.name == name) {
+        if (t.name === name) {
           value = t.value
         }
       })
@@ -103,7 +103,7 @@ export const pieChartOption2 = {
       const data = pieChartOption2.series[0].data
       let value
       data.forEach(t => {
-        if (t.name == name) {
+        if (t.name === name) {
           value = t.value
         }
       })
@@ -163,6 +163,15 @@ export const stackedLineChartOption = {
   tooltip: {
     trigger: 'axis',
     className: 'echarts-tooltip echarts-tooltip-dark'
+  },
+  toolbox: {
+    show: false
+  },
+  brush: {
+    toolbox: ['lineX'],
+    xAxisIndex: 'all',
+    throttleType: 'debounce',
+    transformable: false
   },
   legend: {
     show: false
