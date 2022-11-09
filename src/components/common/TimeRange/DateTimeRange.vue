@@ -1,5 +1,5 @@
 <template>
-  <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 99" class="date-range-box">
+  <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 2" class="date-range-box">
     <div @click="showDropdown" class="date-range-text">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">

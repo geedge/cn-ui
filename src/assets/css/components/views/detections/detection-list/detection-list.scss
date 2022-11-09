@@ -40,7 +40,7 @@
       height: 100%;
       overflow: auto;
 
-      .cn-detection__shadow {
+      .cn-detection__shadow, .new-cn-detection__shadow {
         position: fixed;
         height: 100vh;
         width:100vw;
@@ -48,6 +48,10 @@
         top: 0;
         z-index: 1;
         background-color: rgba(0, 0, 0, .2);
+      }
+
+      .new-cn-detection__shadow {
+        z-index: 4;
       }
     }
   }

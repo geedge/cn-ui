@@ -1,7 +1,7 @@
 <template>
   <div class="entity-explorer entity-explorer--show-list">
     <!-- 顶部工具栏，在列表页显示 -->
-    <div class="explorer-top-tools">
+    <div class="explorer-top-tools explorer-detection-top-tools">
       <div class="explorer-top-tools-title">{{$t('overall.detections')}}</div>
       <div style="display: flex">
         <div class="explorer-top-tools-block">
@@ -833,33 +833,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .explorer-top-tools-title {
-    font-size: 24px;
-    line-height: 24px;
-    font-weight: 900;
-    color: #353636;
-  }
-  .explorer-top-tools-block {
-    font-family: NotoSansHans-Medium;
-    height: 28px;
-    line-height: 28px;
-    font-size: 14px;
-    color: #353636;
-    font-weight: 500;
-    padding: 0 10px;
-    margin-right: 10px;
-    border: 1px solid #E0E0E0;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-  .detection-icon-setting {
-    margin-right: 10px;
-    font-size: 14px;
-  }
-  .detection-border {
-    border: 1px solid #E0E0E0;
-    border-radius: 4px;
-  }
-</style>

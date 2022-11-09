@@ -4,7 +4,7 @@
     <div class="detection-list__content">
       <div class="detection-list--list">
         <div class="no-data" v-if="noData">No data</div>
-        <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow"></div>
+        <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow new-cn-detection__shadow"></div>
         <detection-row
             style="margin-bottom: 10px"
             class="detection-border"

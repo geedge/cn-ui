@@ -26,9 +26,9 @@
     justify-content: flex-start;
   }
 
-  .explorer-top-tools {
+  .explorer-top-tools, .explorer-detection-top-tools {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding-bottom: 18px;
 
@@ -45,6 +45,37 @@
         font-size: 14px;
       }
     }
+  }
+  .explorer-detection-top-tools {
+    display: flex;
+    justify-content: space-between;
+  }
+  .explorer-top-tools-title {
+    font-size: 24px;
+    line-height: 24px;
+    font-weight: 900;
+    color: #353636;
+  }
+  .explorer-top-tools-block {
+    font-family: NotoSansHans-Medium;
+    height: 28px;
+    line-height: 28px;
+    font-size: 14px;
+    color: #353636;
+    font-weight: 500;
+    padding: 0 10px;
+    margin-right: 10px;
+    border: 1px solid #E0E0E0;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .detection-icon-setting {
+    margin-right: 10px;
+    font-size: 14px;
+  }
+  .detection-border {
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
   }
   .explorer-container {
     display: flex;
