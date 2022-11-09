@@ -46,6 +46,10 @@
     <div style="height: calc(100% - 74px); position: relative">
       <chart-no-data v-if="isNoData"></chart-no-data>
       <div class="chart-drawing" v-show="showMarkLine && !isNoData" id="overviewLineChart"></div>
+<!--      todo 后续改动，此处为框选返回-->
+<!--      <div id="brushBtn" style="position: absolute;left: 0;top: 0;" v-show="mouseDownFlag">-->
+<!--        <el-button @click.stop="backBrushHistory">返回</el-button>-->
+<!--      </div>-->
     </div>
   </div>
 </template>
@@ -121,7 +125,9 @@ export default {
       leftOffset: 0,
       sizes: [3, 4, 6, 8, 9, 10],
       dynamicVariable: '',
-      showMarkLine: true
+      showMarkLine: true,
+      mouseDownFlag: false,
+      brushHistory: []
     }
   },
   watch: {
@@ -314,6 +320,28 @@ export default {
         this.toggleLoading(false)
       })
     },
+    /**
+     * 初始化echartsdom，用于右键点击返回框选
+     */
+    domInit () {
+      const self = this
+      // 去掉默认的contextmenu事件，否则会和右键事件同时出现。
+      document.oncontextmenu = function (e) {
+        e.preventDefault()
+      }
+      document.getElementById('overviewLineChart').onmousedown = function (e) {
+        // e.button: 0左键，1滚轮，2右键
+        if (e.button === 2) {
+          self.myChart.dispatchAction({
+            type: 'brush',
+            areas: [] // 删除选框
+          })
+          self.mouseDownFlag = true
+          document.getElementById('brushBtn').style.left = e.layerX + 'px'
+          document.getElementById('brushBtn').style.top = e.layerY + 74 + 'px'
+        }
+      }
+    },
     echartsInit (echartsData, show) {
       if (this.lineTab) {
         this.handleActiveBar()
@@ -322,8 +350,12 @@ export default {
         echartsData = echartsData.filter(t => t.show === true)
       }
       const _this = this
-      const dom = document.getElementById('overviewLineChart')
-      !this.myChart && (this.myChart = echarts.init(dom))
+      // !this.myChart && (this.myChart = echarts.init(dom))
+      // 此处为验证是否因dom未销毁，导致图表出错，后续可能会改
+      let dom = null
+      dom = document.getElementById('overviewLineChart')
+      this.myChart = null
+      this.myChart = echarts.init(dom)
       this.chartOption = stackedLineChartOption
       const chartOption = this.chartOption.series[0]
       this.chartOption.series = echartsData.map((t, i) => {
@@ -422,6 +454,53 @@ export default {
       }
       this.showMarkLine = true
       this.myChart.setOption(this.chartOption)
+
+      // 设置参见官网：https://echarts.apache.org/zh/api.html#action.brush.brush
+      this.myChart.dispatchAction({
+        // 刷选模式的开关。使用此 action 可将当前鼠标变为可刷选状态。事实上，点击 toolbox 中的 brush 按钮时，就是通过这个 action，将当前普通鼠标变为刷选器的。
+        type: 'takeGlobalCursor',
+        // 如果想变为“可刷选状态”，必须设置。不设置则会关闭“可刷选状态”。
+        key: 'brush',
+        brushOption: {
+          // 参见 brush 组件的 brushType。如果设置为 false 则关闭“可刷选状态”。
+          brushType: 'lineX',
+          xAxisIndex: 0,
+          // 单击清除选框
+          brushMode: 'single',
+          // 选择完毕再返回所选数据
+          throttleType: 'debounce'
+        }
+      })
+
+      const self = this
+
+      this.myChart.on('brushEnd', function (params) {
+        self.myChart.dispatchAction({
+          type: 'brush',
+          areas: [] // 删除选框
+        })
+        if (!self.mouseDownFlag) {
+          // 避免点击空白区域报错
+          if (params.areas !== undefined && params.areas.length > 0) {
+            // 因为人工选择不可能出现框选范围和x轴重合的情况
+            self.brushHistory.unshift({
+              startTime: _.cloneDeep(self.timeFilter.startTime) * 1000,
+              endTime: _.cloneDeep(self.timeFilter.endTime) * 1000
+            })
+
+            const rangeObj = {
+              startTime: Math.ceil(params.areas[0].coordRange[0]),
+              endTime: Math.ceil(params.areas[0].coordRange[1])
+            }
+
+            // todo 目前暂定框选最小范围为5分钟，后续可能会变动
+            if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
+              rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
+            }
+            _this.$store.commit('setRangeEchartsData', rangeObj)
+          }
+        }
+      })
     },
     activeChange (item, index) {
       this.lineTab = item.class
@@ -540,9 +619,25 @@ export default {
       dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
       const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
       return this.sizes[sortIndex]
+    },
+    /**
+     * 鼠标右键返回框选的时间范围
+     */
+    backBrushHistory () {
+      this.myChart.dispatchAction({
+        type: 'brush',
+        areas: [] // 删除选框
+      })
+      if (this.brushHistory.length > 0) {
+        this.$store.commit('setRangeEchartsData', _.cloneDeep(this.brushHistory[0]))
+        this.brushHistory.shift()
+      }
+      this.mouseDownFlag = false
     }
   },
   mounted () {
+    // todo 初始化鼠标事件，开启右键返回
+    // this.domInit()
     this.timer = setTimeout(() => {
       if (this.lineTab) {
         const data = this.mpackets.find(t => t.class === this.lineTab)

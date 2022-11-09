@@ -164,6 +164,12 @@ export const stackedLineChartOption = {
     trigger: 'axis',
     className: 'echarts-tooltip echarts-tooltip-dark'
   },
+  brush: {
+    toolbox: ['lineX'],
+    xAxisIndex: 0,
+    throttleType: 'debounce',
+    transformable: false
+  },
   legend: {
     show: false
   },
