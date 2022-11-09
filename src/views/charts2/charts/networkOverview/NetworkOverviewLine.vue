@@ -149,7 +149,7 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         if (this.lineTab) {
           this.init(this.metric, this.showMarkLine, 'active')
         } else {
@@ -160,7 +160,7 @@ export default {
     metric (n) {
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
-      this.mpackets.forEach((e, i) => {
+      this.mpackets.forEach((e) => {
         if (!e.invertTab) {
           e.invertTab = true
         }
@@ -196,7 +196,7 @@ export default {
               { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [], unitType: '' }
             ]
           }
-          res.data.result.forEach((t, i) => {
+          res.data.result.forEach((t) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalBitsRate.analysis
@@ -214,7 +214,7 @@ export default {
               let num = 0
               mpackets.forEach(e => {
                 e.unitType = 'bps'
-                if (e.name !== 'network.total' && e.analysis.avg == 0) {
+                if (e.name !== 'network.total' && e.analysis.avg === 0) {
                   e.show = false
                   num += 1
                 } else {
@@ -262,7 +262,7 @@ export default {
               let num = 0
               mpackets.forEach(e => {
                 e.unitType = 'packets/s'
-                if (e.name !== 'network.total' && e.analysis.avg == 0) {
+                if (e.name !== 'network.total' && e.analysis.avg === 0) {
                   e.show = false
                   num += 1
                 } else {
@@ -367,7 +367,7 @@ export default {
             width: 1
           },
           stack: t.name !== 'network.total' ? 'network.total' : '',
-          symbolSize: function (value, params) {
+          symbolSize: function (value) {
             return _this.symbolSizeSortChange(i, value[0])
           },
           itemStyle: {
@@ -411,7 +411,7 @@ export default {
         }
       })
       if (!show) {
-        this.chartOption.series.forEach((t, i) => {
+        this.chartOption.series.forEach((t) => {
           t.markLine.label.show = false
           t.markLine = []
         })
@@ -464,7 +464,7 @@ export default {
         brushOption: {
           // 参见 brush 组件的 brushType。如果设置为 false 则关闭“可刷选状态”。
           brushType: 'lineX',
-          xAxisIndex: 0,
+          xAxisIndex: 'all',
           // 单击清除选框
           brushMode: 'single',
           // 选择完毕再返回所选数据
@@ -482,7 +482,6 @@ export default {
         if (!self.mouseDownFlag) {
           // 避免点击空白区域报错
           if (params.areas !== undefined && params.areas.length > 0) {
-            // 因为人工选择不可能出现框选范围和x轴重合的情况
             self.brushHistory.unshift({
               startTime: _.cloneDeep(self.timeFilter.startTime) * 1000,
               endTime: _.cloneDeep(self.timeFilter.endTime) * 1000
@@ -558,7 +557,7 @@ export default {
         })
       }
     },
-    handleActiveBar (value) {
+    handleActiveBar () {
       if (document.querySelector('.network .line-value-mpackets.is-active')) {
         const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-mpackets.is-active')
         const activeBar = document.querySelector('.network .line-value-active')
