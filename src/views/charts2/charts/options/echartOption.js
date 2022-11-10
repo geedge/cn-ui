@@ -186,7 +186,7 @@ export const stackedLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 12
+      splitNumber: 8
       // axisLabel: {
       //   formatter: function (value) {
       //     const data = new Date(value)
@@ -243,7 +243,7 @@ export const linkTrafficLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 12
+      splitNumber: 8
       // axisLabel: {
       //   formatter: function (value) {
       //     const data = new Date(value)
@@ -406,7 +406,7 @@ export const trafficLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 12
+      splitNumber: 8
       // axisLabel: {
       //   formatter: function (value) {
       //     const data = new Date(value)
@@ -496,7 +496,7 @@ export const stackedBarChartOption = {
   xAxis: {
     type: 'time',
     boundaryGap: ['1%', '3%'],
-    splitNumber: 12,
+    splitNumber: 8,
     axisLine: {
       show: false
     },

@@ -950,8 +950,10 @@ export async function combinDrilldownTableWithUserConfig () {
         tableConfig.hiddenColumns = newTableConfig.hiddenColumns
         tableConfig.tabs.forEach(tab => {
           const newTab = newTableConfig.tabs.find(newTab => newTab.name === tab.name)
-          tab.hiddenDrilldownTabs = newTab.hiddenDrilldownTabs
-          tab.checked = newTab.checked
+          if (newTab) {
+            tab.hiddenDrilldownTabs = newTab.hiddenDrilldownTabs
+            tab.checked = newTab.checked
+          }
         })
       }
     })
