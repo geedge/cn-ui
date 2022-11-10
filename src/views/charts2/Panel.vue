@@ -63,12 +63,13 @@ import {
   drillDownPanelTypeMapping,
   metricOptions
 } from '@/utils/constants'
-import { getPanelList, getChartList } from '@/utils/api'
+import { getPanelList, getChartList, api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { getTypeCategory } from '@/views/charts/charts/tools'
-import { urlParamsHandler, overwriteUrl, getDnsMapData } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, getDnsMapData, computeScore } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
 import { useStore } from 'vuex'
+import { get } from '@/utils/http'
 
 export default {
   name: 'Panel',
@@ -183,6 +184,7 @@ export default {
         return chart
       })
     })
+    this.scoreCalculation()
   },
   setup (props, ctx) {
     // todo 目前在panel页面测试，后续会挪到router里
@@ -249,13 +251,18 @@ export default {
 
     const metric = ref(query.metric || 'Bits/s')
 
+    const queryCondition = ref(query.queryCondition || '')
+    const dimensionType = ref(query.dimensionType || '')
+
     return {
       panelType,
       panel,
       timeFilter,
       showScore,
       metric,
-      path
+      path,
+      queryCondition,
+      dimensionType
     }
   },
   methods: {
@@ -325,6 +332,52 @@ export default {
         metric: value
       })
       overwriteUrl(newUrl)
+    },
+    scoreCalculation () {
+      let condition = ''
+      if (this.queryCondition.indexOf(' OR ') > -1) {
+        condition = this.queryCondition.split(/["|'](.*?)["|']/)
+      } else {
+        condition = this.queryCondition
+      }
+      const type = this.dimensionType
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        cycle: 0
+      }
+      if (condition && (typeof condition !== 'object') && type) {
+        params.q = condition
+        params.type = type
+      } else if (condition.length > 1 && type && type === 'ip') {
+        params.q = `${type}='${condition[1]}'`
+        params.type = type
+      } else if (condition.length > 1 && type && type !== 'ip') {
+        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
+          params.q = `${type}='${condition[1]}'`
+          params.type = type
+        } else if (type === 'idcRenter') {
+          params.q = `idc_renter='${condition[1]}'`
+          params.type = type
+        } else {
+          params.q = `${condition[0]}'${condition[1]}'`
+          params.type = type
+        }
+      }
+      if (type && condition) {
+        get(api.npm.overview.networkAnalysis, params).then(res => {
+          if (res.code === 200) {
+            const data = {
+              establishLatencyMs: res.data.result.establishLatencyMsAvg || null,
+              httpResponseLatency: res.data.result.httpResponseLatencyAvg || null,
+              sslConLatency: res.data.result.sslConLatencyAvg || null,
+              tcpLostlenPercent: res.data.result.tcpLostlenPercentAvg || null,
+              pktRetransPercent: res.data.result.pktRetransPercentAvg || null
+            }
+            this.score = computeScore(data)
+          }
+        })
+      }
     }
   },
   /**

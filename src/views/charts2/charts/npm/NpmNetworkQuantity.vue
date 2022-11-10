@@ -57,24 +57,21 @@ export default {
   },
   methods: {
     npmNetworkCycleQuery () {
-      // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
       if (this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
         condition = this.queryCondition
       }
-      // const type = this.$store.getters.getDimensionType
-      // const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
       const type = this.dimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 0
       }
-      if (this.chartData.id === 23) {
+      if (this.chartData.name === 'npm-ip下钻-client-多单值') {
         this.side = 'client'
-      } else if (this.chartData.id === 26) {
+      } else if (this.chartData.name === 'npm-ip下钻-server-多单值') {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
@@ -98,20 +95,10 @@ export default {
       if (type && condition) {
         this.toggleLoading(true)
         get(api.npm.overview.networkAnalysis, params).then(res => {
-          let score = 0
           if (res.code === 200) {
-            const data = {
-              establishLatencyMs: res.data.result.establishLatencyMsAvg || null,
-              httpResponseLatency: res.data.result.httpResponseLatencyAvg || null,
-              sslConLatency: res.data.result.sslConLatencyAvg || null,
-              tcpLostlenPercent: res.data.result.tcpLostlenPercentAvg || null,
-              pktRetransPercent: res.data.result.pktRetransPercentAvg || null
-            }
-            score = computeScore(data)
             this.npmNetworkCycleData = res.data.result
-            this.npmNetworkLastCycleQuery()
           }
-          this.$store.commit('setNpmThirdLevelMenuScore', score)
+          this.npmNetworkLastCycleQuery()
         }).catch(e => {
           this.toggleLoading(false)
         })
@@ -124,21 +111,11 @@ export default {
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
           this.npmNetworkCycleData = []
-          let score = 0
           res.forEach(t => {
             if (t.code === 200) {
               this.npmNetworkCycleData.push(t.data.result)
-              const data = {
-                establishLatencyMs: t.data.result.establishLatencyMsAvg,
-                httpResponseLatency: t.data.result.httpResponseLatencyAvg,
-                sslConLatency: t.data.result.sslConLatencyAvg,
-                tcpLostlenPercent: t.data.result.tcpLostlenPercentAvg,
-                pktRetransPercent: t.data.result.pktRetransPercentAvg
-              }
-              score = computeScore(data)
             }
           })
-          this.$store.commit('setNpmThirdLevelMenuScore', score)
           this.npmNetworkLastCycleQuery()
         }).catch(e => {
           this.toggleLoading(false)
@@ -152,16 +129,15 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      // const type = this.$store.getters.getDimensionType
       const type = this.dimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 1
       }
-      if (this.chartData.id === 23) {
+      if (this.chartData.name === 'npm-ip下钻-client-多单值') {
         this.side = 'client'
-      } else if (this.chartData.id === 26) {
+      } else if (this.chartData.name === 'npm-ip下钻-server-多单值') {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
