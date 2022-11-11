@@ -72,6 +72,4 @@ const router = createRouter({
   routes: routes
 })
 
-window.localRouterHistoryList = []
-
 export default router

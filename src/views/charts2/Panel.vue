@@ -204,7 +204,7 @@ export default {
     let { params, query, path } = useRoute()
 
     // 获取路由跳转过的历史状态，赋值给当前界面，起到保留状态的作用，如浏览器的回退前进等
-    const routerObj = window.localRouterHistoryList.find(item => item.t === query.t)
+    const routerObj = store.getters.getRouterHistoryList.find(item => item.t === query.t)
     if (routerObj) {
       params = routerObj.params
       query = routerObj.query
@@ -386,7 +386,8 @@ export default {
    */
   beforeUnmount () {
     const query = this.$_.cloneDeep(this.$route.query)
-    const routerObj = window.localRouterHistoryList.find(item => item.t === query.t)
+    const routerObj = this.$store.getters.getRouterHistoryList.find(item => item.t === query.t)
+    // const routerObj = window.localRouterHistoryList.find(item => item.t === query.t)
     if (routerObj !== undefined) {
       if (Object.getOwnPropertyNames(query).length >= Object.getOwnPropertyNames(routerObj.query).length) {
         routerObj.query = query

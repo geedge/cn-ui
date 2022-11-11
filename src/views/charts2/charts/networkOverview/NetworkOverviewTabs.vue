@@ -1198,6 +1198,7 @@ export default {
      */
     beforeRouterPush () {
       const currentRouter = this.$_.cloneDeep(this.$route.query)
+      const historyList = this.$_.cloneDeep(this.$store.getters.getRouterHistoryList)
 
       const tempObj = {
         t: currentRouter.t,
@@ -1205,21 +1206,22 @@ export default {
         path: this.$_.cloneDeep(this.$route.path),
         params: this.$_.cloneDeep(this.$route.params)
       }
-      if (window.localRouterHistoryList.length > 0) {
+      if (historyList.length > 0) {
         let flag = true
-        window.localRouterHistoryList.forEach((item, index) => {
+        historyList.forEach((item, index) => {
           if (item.t === currentRouter.t) {
-            window.localRouterHistoryList[index] = tempObj
+            historyList[index] = tempObj
             flag = false
           }
           if (!flag) {
             return true
           }
         })
-        if (flag) window.localRouterHistoryList.push(tempObj)
+        if (flag) historyList.push(tempObj)
       } else {
-        window.localRouterHistoryList.push(tempObj)
+        historyList.push(tempObj)
       }
+      this.$store.commit('setRouterHistoryList', historyList)
     },
     handleSearchParams (columnValue) {
       columnValue = columnValue.replaceAll("'", "\\\\'")

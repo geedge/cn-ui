@@ -56,7 +56,8 @@ const panel = {
     timeRangeFlag: null, // 时间范围标志，默认60即一小时，-1为手动选择的时间范围
     routerPath: '', // 当前路由路径
     httpCancel: null, // 终止http请求
-    rangeEchartsData: {} // 框选echarts图表
+    rangeEchartsData: {}, // 框选echarts图表
+    routerHistoryList: [] // 路由跳转记录列表
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -166,6 +167,9 @@ const panel = {
     },
     setRangeEchartsData (state, data) {
       state.rangeEchartsData = data
+    },
+    setRouterHistoryList (state, list) {
+      state.routerHistoryList = list
     }
   },
   getters: {
@@ -258,6 +262,9 @@ const panel = {
     },
     getRouterPath (state) {
       return state.routerPath
+    },
+    getRouterHistoryList (state) {
+      return state.routerHistoryList
     }
   },
   actions: {
