@@ -196,7 +196,7 @@ export default {
               let num = 0
               mpackets.forEach(e => {
                 e.unitType = 'bps'
-                if (e.name !== 'network.total' && e.analysis.avg == 0) {
+                if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
                   e.show = false
                   num += 1
                 } else {
@@ -206,7 +206,7 @@ export default {
                   }
                 }
                 if (this.lineTab === e.class) {
-                  if (e.analysis.avg <= 0) {
+                  if (parseFloat(e.analysis.avg) <= 0) {
                     this.lineTab = ''
                     this.lineRefer = ''
                     this.init()
@@ -237,7 +237,7 @@ export default {
               let num = 0
               mpackets.forEach(e => {
                 e.unitType = 'packets/s'
-                if (e.name !== 'network.total' && e.analysis.avg == 0) {
+                if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
                   e.show = false
                   num += 1
                 } else {
@@ -247,7 +247,7 @@ export default {
                   }
                 }
                 if (this.lineTab === e.class) {
-                  if (e.analysis.avg <= 0) {
+                  if (parseFloat(e.analysis.avg) <= 0) {
                     this.lineTab = ''
                     this.lineRefer = ''
                     this.init()

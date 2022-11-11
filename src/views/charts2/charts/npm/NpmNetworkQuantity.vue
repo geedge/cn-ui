@@ -14,7 +14,7 @@ import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
-import { computeScore, getChainRatio } from '@/utils/tools'
+import { getChainRatio } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 export default {
