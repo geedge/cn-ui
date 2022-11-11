@@ -51,10 +51,12 @@ export default {
     const metricFilter = ref(query.lineMetric || 'Bits/s')
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
+    const tabIndex = ref(query.tabIndex)
     return {
       metricFilter,
       queryCondition,
       dimensionType,
+      tabIndex,
       myChart: shallowRef(null)
     }
   },
@@ -142,10 +144,9 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      // const type = this.$store.getters.getDimensionType
-      if (this.chartData.id === 24) {
+      if (this.tabIndex == 0) {
         this.side = 'client'
-      } else if (this.chartData.id === 29) {
+      } else if (this.tabIndex == 1) {
         this.side = 'server'
       }
       const params = {

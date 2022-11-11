@@ -25,9 +25,11 @@ export default {
     const { query } = useRoute()
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
+    const tabIndex = ref(query.tabIndex)
     return {
       queryCondition,
-      dimensionType
+      dimensionType,
+      tabIndex
     }
   },
   data () {
@@ -69,9 +71,9 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 0
       }
-      if (this.chartData.name === 'npm-ip下钻-client-多单值') {
+      if (this.tabIndex == 0) {
         this.side = 'client'
-      } else if (this.chartData.name === 'npm-ip下钻-server-多单值') {
+      } else if (this.tabIndex == 1) {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
@@ -135,9 +137,9 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 1
       }
-      if (this.chartData.name === 'npm-ip下钻-client-多单值') {
+      if (this.tabIndex == 0) {
         this.side = 'client'
-      } else if (this.chartData.name === 'npm-ip下钻-server-多单值') {
+      } else if (this.tabIndex == 1) {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
