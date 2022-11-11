@@ -184,7 +184,9 @@ export default {
         return chart
       })
     })
-    this.scoreCalculation()
+    if (this.$route.path === '/panel/networkAppPerformance' && this.queryCondition) {
+      this.scoreCalculation()
+    }
   },
   setup (props, ctx) {
     // todo 目前在panel页面测试，后续会挪到router里
