@@ -169,7 +169,7 @@
               </li>
             </transition-group>
           </el-tab-pane>
-          <el-tab-pane :label="$t('network.direction')" name="metrics" width="50%" >
+          <el-tab-pane :label="tableType==='networkOverview'?$t('network.direction'):$t('network.metrics')" name="metrics" width="50%" >
             <transition-group name="dragMetric" class="list" tag="ul" ref="metric">
               <template v-for="(item, index) in customTableTitles"  :key="item.label">
                 <li v-if="index>0"
