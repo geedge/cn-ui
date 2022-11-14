@@ -5,7 +5,7 @@
     </div>
 
     <div class="app-cards">
-      <div class="app-card" @mouseenter="mouseenter(app)" @mouseleave="mouseleave(app)" v-for="(app, index) in appData" :key="index">
+      <div class="app-card" @mouseenter="mouseenter(app)" @mouseleave="mouseleave(app)" v-for="(app, index) in appData" :key="app.type + app.name">
         <div class="app-card-title">
           <div class="app-card-title-name">
             <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'"></i>
@@ -461,7 +461,7 @@ export default {
       } else {
         params.pageNo = 1
       }
-      if (this.appTypeTab === 0) {
+      if (parseFloat(this.appTypeTab) === 0) {
         params.type = 'overviewProvide'
         get(api.dict, params).then(res => {
           if (res.code === 200) {
@@ -486,7 +486,7 @@ export default {
           this.loading = false
           this.loadingBody = false
         })
-      } else if (this.appTypeTab === 1) {
+      } else if (parseFloat(this.appTypeTab) === 1) {
         params.type = 'overviewApp'
         get(api.dict, params).then(res => {
           res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'app' && pd.name === l.value))
