@@ -157,7 +157,13 @@ export default {
         params.type = type
       }
       if (condition && (typeof condition !== 'object') && type) {
-        params.q = condition
+        if (type === 'clientIp') {
+          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='client'`
+        } else if (type === 'serverIp') {
+          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
+        } else {
+          params.q = condition
+        }
       } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
       } else if (condition.length > 1 && type && type !== 'ip') {
