@@ -60,12 +60,13 @@
     font-family: NotoSansHans-Medium;
     height: 28px;
     line-height: 28px;
+    background: #F5F8FA;
     font-size: 14px;
     color: #353636;
     font-weight: 500;
     padding: 0 10px;
     margin-right: 10px;
-    border: 1px solid #E0E0E0;
+    border: 1px solid #E2E5EC;
     border-radius: 2px;
     cursor: pointer;
   }
@@ -74,7 +75,7 @@
     font-size: 14px;
   }
   .detection-border {
-    border: 1px solid #E0E0E0;
+    border: 1px solid #E2E5EC;
     border-radius: 4px;
   }
   .explorer-container {

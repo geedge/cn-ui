@@ -49,7 +49,7 @@
       <div class="overview__title">{{$t('detections.goToEntity')}}</div>
       <div class="overview__row">
         <div class="row__content">
-          <span>{{ $t('detections.viewDetailOf') }}</span> &nbsp;
+          <span class="row__content--span">{{ $t('detections.viewDetailOf') }}</span> &nbsp;
           <span
                   class="row__content--link"
                   @click="goDetail('domain', computeSecondaryDomain(detection.domain))">{{detection.domain}}</span>

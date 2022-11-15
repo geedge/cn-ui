@@ -164,7 +164,7 @@
       <div class="overview__title">{{ $t('detections.goToVictim') }}</div>
       <div class="overview__row">
         <div class="row__content">
-          <span>{{ $t('detections.viewDetailOf') }}</span> &nbsp;
+          <span class="row__content--span">{{ $t('detections.viewDetailOf') }}</span> &nbsp;
           <span
             class="row__content--link"
             @click="goDetail('ip', basicInfo.victimIp)">{{ basicInfo.victimIp }}</span>
@@ -173,7 +173,7 @@
       <div class="overview__title">{{ $t('detections.goToOffender') }}</div>
       <div class="overview__row">
         <div class="row__content">
-          <span>{{ $t('detections.viewDetailOf') }}</span> &nbsp;
+          <span class="row__content--span">{{ $t('detections.viewDetailOf') }}</span> &nbsp;
           <span
             class="row__content--link"
             @click="goDetail('ip', basicInfo.offenderIp)"
