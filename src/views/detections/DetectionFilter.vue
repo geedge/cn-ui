@@ -1,11 +1,13 @@
 <template>
   <div class="detection-filter-case">
     <div class="no-data" v-if="isNoData">No data</div>
+
+    <div class="new-detection-filter-title">Filters</div>
     <template v-for="(filter, index) in filterData" :key="index">
       <div class="detection-filter" v-show="filter.data.length > 0">
         <div class="filter__header" @click="filter.collapse = !filter.collapse">
-          <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': !filter.collapse }"></i>
-          <span>{{filter.title}}</span>
+          <span class="new-detection-filter-header-title">{{filter.title}}</span>
+          <i class="el-icon-arrow-right new-detection-filter-icon" :class="{ 'arrow-rotate': !filter.collapse }"></i>
         </div>
         <el-collapse-transition>
           <div class="filter__body" v-show="!filter.collapse">

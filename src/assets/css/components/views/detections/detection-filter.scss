@@ -18,7 +18,7 @@
       align-items: center;
       padding-left: 10px;
       color: #666;
-      background-color: #F3F7FA;
+      //background-color: #F3F7FA;
       cursor: pointer;
 
       span {
@@ -33,7 +33,18 @@
       i.arrow-rotate {
         transform: rotate(90deg) translate(2px, 3px);
       }
+      .new-detection-filter-header-title {
+        font-size: 14px;
+        color: #353636;
+        font-weight: 600;
+      }
+      .new-detection-filter-icon {
+        margin-left: 8px;
+        margin-bottom: 2px;
+        font-weight: bold !important;
+      }
     }
+
     .filter__body {
       padding: 5px 0 0 15px;
 
@@ -68,5 +79,18 @@
         }
       }
     }
+  }
+  .new-detection-filter-title {
+    display: flex;
+    flex: 0 0 32px;
+    align-items: center;
+    padding-left: 27px;
+    background-color: #EFF2F5;
+    cursor: pointer;
+    font-size: 14px;
+    color: #353636;
+    font-weight: 600;
+    margin: -10px;
+    margin-bottom: 10px;
   }
 }
