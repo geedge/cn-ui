@@ -93,32 +93,31 @@ export default {
           self.serverSessions = self.sessionData.serverSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
         }
       }).finally(() => {
-        if (self.clientSessions === 0) {
-          self.currentTab = 1
+        let thirdMenu = this.$route.query['thirdMenu']
+        let currentTab = 0
+        self.tabs[0].disable = false
+        self.tabs[1].disable = false
+        if(thirdMenu === 'network.clientIps'){
+          currentTab = 0
+        }else if(thirdMenu === 'network.serverIps'){
+          currentTab = 1
+        }else if (self.clientSessions === 0) {
+          currentTab = 1
           self.tabs[0].disable = true
           self.tabs[1].disable = false
           const tabEle = document.getElementById('tab-0')
           tabEle.style.cssText = 'cursor: not-allowed;'
-          setTimeout(() => {
-            self.handleActiveBar(1)
-          }, 400)
         } else if (self.serverSessions === 0) {
-          self.currentTab = 0
+          currentTab = 0
           self.tabs[0].disable = false
           self.tabs[1].disable = true
-          setTimeout(() => {
-            const tabEle = document.getElementById('tab-1')
-            tabEle.style.cssText = 'cursor: not-allowed;'
-            self.handleActiveBar(0)
-          }, 400)
-        } else {
-          self.currentTab = 0
-          self.tabs[0].disable = false
-          self.tabs[1].disable = false
-          setTimeout(() => {
-            self.handleActiveBar(0)
-          }, 400)
+          const tabEle = document.getElementById('tab-1')
+          tabEle.style.cssText = 'cursor: not-allowed;'
         }
+        self.currentTab = currentTab
+        setTimeout(() => {
+          self.handleActiveBar(currentTab)
+        }, 400)
       })
     } else {
       setTimeout(() => {
