@@ -1,10 +1,12 @@
 <template>
   <div class="cn-detection--list" :style="{zIndex: !isCollapse ? 5 : 'unset'}">
     <!-- 左侧下拉按钮 -->
-    <div class="cn-detection__collapse" id="detectionTab" :style="{'padding-top': paddingTop}">
-      <span @click="switchCollapse" :class="{'reg-down': !isCollapse}">
+    <div class="cn-detection__collapse">
+      <div class="cn-detection__collapse-block" @click="switchCollapse">
+        <span :class="{'reg-down': !isCollapse}">
         <i class="cn-icon cn-icon-arrow-right"></i>
       </span>
+      </div>
     </div>
     <div class="cn-detection__case">
       <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[detection.eventSecurity]}`"></div>
@@ -127,8 +129,7 @@ export default {
       entityType,
       detectionPageType,
       isCollapse: true, // 是否是折叠状态
-      eventSeverityColor,
-      paddingTop: '21px'
+      eventSeverityColor
     }
   },
   computed: {
@@ -163,15 +164,6 @@ export default {
         return { backgroundColor: color }
       }
     }
-  },
-  mounted () {
-    // 不放在computed是因为第一个dom为null，造成较小屏幕下第一个tab的位置不居中
-    const dom = document.getElementById('detectionTab')
-    let top = 21
-    if (dom) {
-      top = dom.clientHeight / 2 - 12
-    }
-    this.paddingTop = top + 'px'
   },
   methods: {
     unitConvert,

@@ -7,8 +7,17 @@
     justify-content: center;
     align-items: flex-start;
     margin-bottom: 1px;
-    padding-top: 18px;
+    //padding-top: 18px;
     background-color: #EFF2F5;
+
+    .cn-detection__collapse-block {
+      min-height: 66px;
+      height: 100%;
+      max-height: 88px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
 
     span {
       transform: rotate(0);
