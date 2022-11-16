@@ -93,7 +93,7 @@ export default {
         getData(api.npm.overview.map, params).then(res => {
           const subParams = {
             ...params,
-            params: res.map(r => r.country).join(',')
+            params: res.map(r => `'${r.country}'`).join(',')
           }
           // 计算分数
           const tcpRequest = get(api.npm.overview.mapTcp, subParams)

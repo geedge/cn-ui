@@ -221,7 +221,7 @@ export default {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
           appLabels: appCards.map(item => {
-            return item.name
+            return `'${item.name}'`
           }).join(',')
         }
         prevRequest = get(api.netWorkOverview.applicationCycleTrafficTotal, params)
@@ -233,7 +233,7 @@ export default {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
           appCompanies: providerCards.map(item => {
-            return item.name
+            return `'${item.name}'`
           }).join(',')
         }
         prevRequest = get(api.netWorkOverview.appCompanyCycleTrafficTotal, params)

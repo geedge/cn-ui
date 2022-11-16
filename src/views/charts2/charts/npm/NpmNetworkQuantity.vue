@@ -107,7 +107,6 @@ export default {
       if (type && condition) {
         this.toggleLoading(true)
         get(api.npm.overview.networkAnalysis, params).then(res => {
-          console.log(res)
           if (res.code === 200) {
             this.npmNetworkCycleData = res.data.result
           }
