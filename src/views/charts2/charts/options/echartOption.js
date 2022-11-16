@@ -360,18 +360,7 @@ export const npmLineChartOption = {
       }
     }
   ],
-  series: [
-    {
-      type: 'line',
-      symbol: 'circle',
-      smooth: true,
-      showSymbol: false,
-      emphasis: {
-        focus: 'series'
-      },
-      data: []
-    }
-  ]
+  series: []
 }
 
 export const trafficLineChartOption = {
@@ -430,7 +419,18 @@ export const trafficLineChartOption = {
       }
     }
   ],
-  series: []
+  series: [
+    {
+      type: 'line',
+      symbol: 'circle',
+      smooth: true,
+      showSymbol: false,
+      emphasis: {
+        focus: 'series'
+      },
+      data: []
+    }
+  ]
 }
 
 export const linksTrafficSankeyOption = {
