@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1663570533591') format('woff2'),
-       url('iconfont.woff?t=1663570533591') format('woff'),
-       url('iconfont.ttf?t=1663570533591') format('truetype');
+  src: url('iconfont.woff2?t=1668593055875') format('woff2'),
+       url('iconfont.woff?t=1668593055875') format('woff'),
+       url('iconfont.ttf?t=1668593055875') format('truetype');
 }
 
 .cn-icon {
@@ -11,6 +11,46 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-baocuo:before {
+  content: "\e7b7";
+}
+
+.cn-icon-a-SecurityEvent:before {
+  content: "\e7ae";
+}
+
+.cn-icon-bianji1:before {
+  content: "\e7af";
+}
+
+.cn-icon-a-PerformanceEvent:before {
+  content: "\e7b0";
+}
+
+.cn-icon-xinjian:before {
+  content: "\e7b1";
+}
+
+.cn-icon-a-RegulatoryRiskEvent:before {
+  content: "\e7b2";
+}
+
+.cn-icon-Delete1:before {
+  content: "\e7b3";
+}
+
+.cn-icon-a-EvaluatedTarget:before {
+  content: "\e7b4";
+}
+
+.cn-icon-a-GeneralSettings:before {
+  content: "\e7b5";
+}
+
+.cn-icon-Thresholds:before {
+  content: "\e7b6";
 }
 
 .cn-icon-good:before {
