@@ -92,7 +92,7 @@ export default {
       deep: true,
       handler (n) {
         this.country = n
-        this.init()
+        this.init(n)
       }
     },
     timeFilter: {
@@ -102,13 +102,18 @@ export default {
     }
   },
   methods: {
-    init () {
+    init (n) {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        side: this.side,
-        country: this.country
+        side: this.side
+        // country: this.country
         // province: this.province
+      }
+      if (n) {
+        params.country = n
+      } else {
+        params.country = ''
       }
       this.toggleLoading(true)
       let url
@@ -162,11 +167,16 @@ export default {
           this.myChart = echarts.init(dom)
         }
         this.chartOption = npmLineChartOption
-        const seriesTemplate = this.chartOption.series[0]
         this.chartOption.color = this.chartData.params.color
         this.chartOption.series = data.map((t, i) => {
           return {
-            ...seriesTemplate,
+            type: 'line',
+            symbol: 'circle',
+            smooth: true,
+            showSymbol: false,
+            emphasis: {
+              focus: 'series'
+            },
             name: t.legend ? t.legend : this.$t(chartData.i18n) || chartData.name,
             stack: this.chartData.params.isStack ? 'network.total' : '',
             lineStyle: {

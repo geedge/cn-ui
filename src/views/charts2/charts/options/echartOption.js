@@ -430,18 +430,7 @@ export const trafficLineChartOption = {
       }
     }
   ],
-  series: [
-    {
-      type: 'line',
-      symbol: 'circle',
-      smooth: true,
-      showSymbol: false,
-      emphasis: {
-        focus: 'series'
-      },
-      data: []
-    }
-  ]
+  series: []
 }
 
 export const linksTrafficSankeyOption = {
