@@ -748,6 +748,22 @@ export const networkOverviewTabList = [
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
+  }, {
+    label: 'network.clientAsns',
+    prop: 'clientAsn',
+    queryCycleTotalProp: 'clientAsns',
+    dillDownProp: ['client_asn'],
+    checked: false,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.networkOverview
+  }, {
+    label: 'network.serverAsns',
+    prop: 'serverAsn',
+    queryCycleTotalProp: 'serverAsns',
+    dillDownProp: ['server_asn'],
+    checked: false,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.networkOverview
   }
 ]
 
@@ -976,6 +992,22 @@ export const networkAppPerformanceTabList = [
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.clientAsns',
+    prop: 'clientAsn',
+    queryCycleTotalProp: 'clientAsns',
+    dillDownProp: ['client_asn'],
+    checked: false,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
+  }, {
+    label: 'network.serverAsns',
+    prop: 'serverAsn',
+    queryCycleTotalProp: 'serverAsns',
+    dillDownProp: ['server_asn'],
+    checked: false,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }
 ]
 export const linkMonitorTabList = [
@@ -1200,6 +1232,22 @@ export const linkMonitorTabList = [
     prop: 'serverIdcRenter',
     queryCycleTotalProp: 'serverIdcRenters',
     dillDownProp: ['server_idc_renter'],
+    checked: false,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.linkMonitor
+  }, {
+    label: 'network.clientAsns',
+    prop: 'clientAsn',
+    queryCycleTotalProp: 'clientAsns',
+    dillDownProp: ['client_asn'],
+    checked: false,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.linkMonitor
+  }, {
+    label: 'network.serverAsns',
+    prop: 'serverAsn',
+    queryCycleTotalProp: 'serverAsns',
+    dillDownProp: ['server_asn'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor

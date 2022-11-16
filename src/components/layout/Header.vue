@@ -510,13 +510,10 @@ export default {
       }
       this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
       document.getElementById('breadcrumbValue').innerText = value
-      // document.getElementById('breadcrumbButton').setAttribute('title', valName)
       document.getElementById(this.valueMenuId).setAttribute('title', valName)
       document.getElementById('breadcrumbButton').click()
-      // const columnName = this.$store.getters.getBreadcrumbColumnName
       const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
-      // const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
-      const curTab = this.getCurTabByLabel()
+      const curTab = this.getCurTabByLabel(columnName)
       if (curTab) {
         const queryCondition = []
         const searchProps = curTab.dillDownProp

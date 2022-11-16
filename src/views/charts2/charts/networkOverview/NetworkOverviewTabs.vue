@@ -613,8 +613,14 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       if (tabList.length > 0) {
-        const conditionStr = tabList.filter(item => item != '')
-        queryParams.params = conditionStr.toString().replaceAll("'", "\\\\'")
+        let conditionGroup = tabList.filter(item => item != '')
+        let conditionHandleRlt = []
+        conditionGroup.forEach(condition => {
+          condition = condition.replaceAll("'", "\\\\'")
+          condition = "'"+condition+ "'"
+          conditionHandleRlt.push(condition)
+        })
+        queryParams.params = conditionHandleRlt.join(",")
         queryParams.type = curTab.prop
       }
 
@@ -1079,7 +1085,7 @@ export default {
       } else {
         if (tab.queryCondition) {
           tab.queryCondition.forEach(item => {
-            queryCondition.push(item.replace('$param', value))
+            queryCondition.push(item.replaceAll('$param', value))
           })
         } else {
           if (tab.dillDownProp) {
@@ -1237,7 +1243,7 @@ export default {
       } else {
         if (curTab.queryCondition) {
           curTab.queryCondition.forEach(item => {
-            queryCondition.push(item.replace('$param', columnValue))
+            queryCondition.push(item.replaceAll('$param', columnValue))
           })
         } else {
           if (curTab.dillDownProp) {
