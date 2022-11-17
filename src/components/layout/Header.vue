@@ -229,7 +229,8 @@ import {
   overwriteUrl,
   urlParamsHandler,
   combinDrilldownTableWithUserConfig,
-  getDnsMapData
+  getDnsMapData,
+  handleSpecialValue
 } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 
@@ -527,7 +528,7 @@ export default {
           this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
         } else {
           searchProps.forEach(item => {
-            queryCondition.push(item + '=\'' + value.replaceAll('\'', '\\\\\'') + '\'')
+            queryCondition.push(item + '=\'' + handleSpecialValue(value) + '\'')
           })
           this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
         }
@@ -624,7 +625,7 @@ export default {
                 child.columnName = columnName
                 this.urlChangeParams[this.curTabState.thirdMenu] = columnName
                 this.urlChangeParams[this.curTabState.fourthMenu] = ''
-                this.urlChangeParams[this.curTabState.panelName] = columnValue
+                this.urlChangeParams[this.curTabState.panelName] = columnName
                 const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
                 const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
                 const curTab = getDefaultCurTab(tableType, metric, columnName)

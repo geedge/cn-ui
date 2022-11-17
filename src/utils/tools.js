@@ -877,6 +877,12 @@ export async function getDnsMapData (type) {
   }
   return codeValueMap
 }
+export function handleSpecialValue(value){
+  value = value.replaceAll("'", "\\\\'")
+               .replaceAll('"','\\"')
+               .replaceAll('&','%26')
+  return value
+}
 export function combineTabList (tableType, list, commonTabList) {
   const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
   const listInCode = curTableInCode ? curTableInCode.tabList : []

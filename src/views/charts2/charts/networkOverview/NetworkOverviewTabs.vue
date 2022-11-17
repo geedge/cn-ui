@@ -199,7 +199,7 @@ import { ref } from 'vue'
 import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig, fromRoute } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData,handleSpecialValue } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -616,7 +616,7 @@ export default {
         let conditionGroup = tabList.filter(item => item != '')
         let conditionHandleRlt = []
         conditionGroup.forEach(condition => {
-          condition = condition.replaceAll("'", "\\\\'")
+          condition = handleSpecialValue(condition)//condition.replaceAll("'", "\\\\'")
           condition = "'"+condition+ "'"
           conditionHandleRlt.push(condition)
         })
@@ -1073,7 +1073,7 @@ export default {
       this.urlChangeParams[this.curTabState.networkOverviewBeforeTab] = tab.prop
     },
     setQueryCondition (tab, value) {
-      value = value.replaceAll("'", "\\\\'")
+      value = handleSpecialValue(value)//value.replaceAll("'", "\\\\'")
       const queryCondition = []
       if (tab.prop === 'protocolPort') {
         const valueGroup = value.split(':')
@@ -1230,7 +1230,7 @@ export default {
       this.$store.commit('setRouterHistoryList', historyList)
     },
     handleSearchParams (columnValue) {
-      columnValue = columnValue.replaceAll("'", "\\\\'")
+      columnValue = handleSpecialValue(columnValue)//columnValue.replaceAll("'", "\\\\'")
       const queryCondition = []
       const curTab = this.getCurTab()
       if (curTab.prop === 'protocolPort') {
