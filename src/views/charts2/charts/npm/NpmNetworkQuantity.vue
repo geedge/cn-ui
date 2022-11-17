@@ -26,10 +26,12 @@ export default {
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
     const tabIndex = ref(query.tabIndex)
+    const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab || '')
     return {
       queryCondition,
       dimensionType,
-      tabIndex
+      tabIndex,
+      networkOverviewBeforeTab
     }
   },
   data () {
@@ -65,7 +67,7 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      const type = this.dimensionType
+      const type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -82,9 +84,9 @@ export default {
         } else if (type === 'serverIp') {
           params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
         } else if (type === 'clientCity') {
-          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}' and side='client'`
+          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'serverCity') {
-          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}' and side='server'`
+          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'`
         } else {
           params.q = condition
         }
@@ -104,7 +106,8 @@ export default {
           params.type = type
         }
       }
-      if (type && condition) {
+      if ((type && condition) || type) {
+        params.type = params.type || type
         this.toggleLoading(true)
         get(api.npm.overview.networkAnalysis, params).then(res => {
           if (res.code === 200) {
@@ -141,7 +144,7 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      const type = this.dimensionType
+      const type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -158,9 +161,9 @@ export default {
         } else if (type === 'serverIp') {
           params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
         } else if (type === 'clientCity') {
-          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}' and side='client'`
+          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'serverCity') {
-          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}' and side='server'`
+          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'`
         } else {
           params.q = condition
         }
@@ -180,8 +183,26 @@ export default {
           params.type = type
         }
       }
-      if (type && condition) {
+      if ((type && condition) || type) {
+        params.type = params.type || type
         this.toggleLoading(true)
+        get(api.npm.overview.networkAnalysis, params).then(res => {
+          if (res.code === 200) {
+            this.npmNetworkLastCycleData = res.data.result
+            let timer = null
+            if (timer) {
+              clearTimeout(timer)
+            }
+            timer = setTimeout(() => {
+              this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+            }, 300)
+          }
+        }).finally(() => {
+          this.toggleLoading(false)
+        })
+      } else if (!type && !condition && this.networkOverviewBeforeTab) {
+        this.toggleLoading(true)
+        params.type = this.networkOverviewBeforeTab
         get(api.npm.overview.networkAnalysis, params).then(res => {
           if (res.code === 200) {
             this.npmNetworkLastCycleData = res.data.result

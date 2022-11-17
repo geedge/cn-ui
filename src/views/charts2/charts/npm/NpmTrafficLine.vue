@@ -162,9 +162,9 @@ export default {
         } else if (type === 'serverIp') {
           params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
         } else if (type === 'clientCity') {
-          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}' and side='client'`
+          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'serverCity') {
-          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}' and side='server'`
+          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'`
         } else {
           params.q = condition
         }

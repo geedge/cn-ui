@@ -3,7 +3,7 @@
     <div class="panel__header">
       <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}
         <div v-if="showScore" class="score">
-          <div class="circle-icon"  v-if="score <= 2" :class="{'data-score-red': score <= 2}" ></div>
+          <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
           <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
           <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
           Score:{{score}}
@@ -184,7 +184,7 @@ export default {
         return chart
       })
     })
-    if (this.$route.path === '/panel/networkAppPerformance' && this.queryCondition) {
+    if (this.$route.path === '/panel/networkAppPerformance' && (this.queryCondition || this.networkOverviewBeforeTab)) {
       this.scoreCalculation()
     }
   },
@@ -255,7 +255,7 @@ export default {
 
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
-
+    const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab || '')
     return {
       panelType,
       panel,
@@ -264,7 +264,8 @@ export default {
       metric,
       path,
       queryCondition,
-      dimensionType
+      dimensionType,
+      networkOverviewBeforeTab
     }
   },
   methods: {
@@ -342,7 +343,7 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      const type = this.dimensionType
+      const type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -354,9 +355,9 @@ export default {
         } else if (type === 'serverIp') {
           params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
         } else if (type === 'clientCity') {
-          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}' and side='client'`
+          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'serverCity') {
-          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}' and side='server'`
+          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'`
         } else {
           params.q = condition
         }
@@ -376,7 +377,8 @@ export default {
           params.type = type
         }
       }
-      if (type && condition) {
+      if ((type && condition) || type) {
+        params.type = params.type || type
         get(api.npm.overview.networkAnalysis, params).then(res => {
           if (res.code === 200) {
             const data = {
