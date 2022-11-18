@@ -108,17 +108,17 @@ export default {
             divRed.style.width = this.sessionData.serverSessions
           } else {
             this.isNoData = true
-            this.changeErrorOrNodata()
+            this.changeByErrorOrNodata()
           }
         } else {
           this.showError = true
           this.errorMsg = res.message
-          this.changeErrorOrNodata()
+          this.changeByErrorOrNodata()
         }
       }).catch(error => {
         this.showError = true
         this.errorMsg = error.message
-        this.changeErrorOrNodata()
+        this.changeByErrorOrNodata()
       }).finally(() => {
         this.toggleLoading(false)
       })
@@ -126,7 +126,7 @@ export default {
     /**
      * 当无数据或者报错时改变界面样式，出现灰条
      */
-    changeErrorOrNodata () {
+    changeByErrorOrNodata () {
       const divGray = document.getElementById('gray')
       divGray.style.borderRadius = 4 + 'px'
       divGray.style.width = '100%'
