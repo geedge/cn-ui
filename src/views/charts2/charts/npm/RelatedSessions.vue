@@ -61,7 +61,7 @@ export default {
   },
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.relatedSessionsData()
       }
     }
@@ -108,35 +108,32 @@ export default {
             divRed.style.width = this.sessionData.serverSessions
           } else {
             this.isNoData = true
-            divGray.style.borderRadius = 4 + 'px'
-            divGray.style.width = '100%'
-            this.sessionData.clientSessions = '—'
-            this.sessionData.serverSessions = '—'
-            this.clientSessions = 0
-            this.serverSessions = 0
+            this.changeErrorOrNodata()
           }
         } else {
           this.showError = true
           this.errorMsg = res.message
-          divGray.style.borderRadius = 4 + 'px'
-          divGray.style.width = '100%'
-          this.sessionData.clientSessions = '—'
-          this.sessionData.serverSessions = '—'
-          this.clientSessions = 0
-          this.serverSessions = 0
+          this.changeErrorOrNodata()
         }
       }).catch(error => {
         this.showError = true
         this.errorMsg = error.message
-        divGray.style.borderRadius = 4 + 'px'
-        divGray.style.width = '100%'
-        this.sessionData.clientSessions = '—'
-        this.sessionData.serverSessions = '—'
-        this.clientSessions = 0
-        this.serverSessions = 0
+        this.changeErrorOrNodata()
       }).finally(() => {
         this.toggleLoading(false)
       })
+    },
+    /**
+     * 当无数据或者报错时改变界面样式，出现灰条
+     */
+    changeErrorOrNodata () {
+      const divGray = document.getElementById('gray')
+      divGray.style.borderRadius = 4 + 'px'
+      divGray.style.width = '100%'
+      this.sessionData.clientSessions = '—'
+      this.sessionData.serverSessions = '—'
+      this.clientSessions = 0
+      this.serverSessions = 0
     }
   },
   mounted () {
