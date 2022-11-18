@@ -84,23 +84,37 @@ export default {
           this.isNoData = false
 
           this.sessionData = res.data.result
-          // * 1 是将其转为number，避免相加变成字符串拼接
-          this.clientSessions = this.sessionData.clientSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
-          this.serverSessions = this.sessionData.serverSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
-          this.sessionData.clientSessions = unitConvert(this.clientSessions, unitTypes.percent).join('')
-          this.sessionData.serverSessions = unitConvert(this.serverSessions, unitTypes.percent).join('')
-          if (this.clientSessions === 1) {
-            divGreen.style.borderRadius = 4 + 'px'
-          } else if (this.serverSessions === 1) {
-            divRed.style.borderRadius = 4 + 'px'
-          } else if (this.clientSessions === 0 && this.serverSessions === 0) {
+          const client = this.sessionData.clientSessions
+          const server = this.sessionData.serverSessions
+
+          // 如果返回数据为-，则不必计算比例
+          if (!isNaN(client) && !isNaN(server)) {
+            this.clientSessions = client / (client + server)
+            this.serverSessions = server / (client + server)
+            this.sessionData.clientSessions = unitConvert(this.clientSessions, unitTypes.percent).join('')
+            this.sessionData.serverSessions = unitConvert(this.serverSessions, unitTypes.percent).join('')
+
+            if (this.clientSessions === 1) {
+              divGreen.style.borderRadius = 4 + 'px'
+            } else if (this.serverSessions === 1) {
+              divRed.style.borderRadius = 4 + 'px'
+            } else if (this.clientSessions === 0 && this.serverSessions === 0) {
+              this.isNoData = true
+              divGray.style.borderRadius = 4 + 'px'
+              divGray.style.width = '100%'
+            }
+
+            divGreen.style.width = this.sessionData.clientSessions
+            divRed.style.width = this.sessionData.serverSessions
+          } else {
             this.isNoData = true
             divGray.style.borderRadius = 4 + 'px'
             divGray.style.width = '100%'
+            this.sessionData.clientSessions = '—'
+            this.sessionData.serverSessions = '—'
+            this.clientSessions = 0
+            this.serverSessions = 0
           }
-
-          divGreen.style.width = this.sessionData.clientSessions
-          divRed.style.width = this.sessionData.serverSessions
         } else {
           this.showError = true
           this.errorMsg = res.message
@@ -108,6 +122,8 @@ export default {
           divGray.style.width = '100%'
           this.sessionData.clientSessions = '—'
           this.sessionData.serverSessions = '—'
+          this.clientSessions = 0
+          this.serverSessions = 0
         }
       }).catch(error => {
         this.showError = true
@@ -116,6 +132,8 @@ export default {
         divGray.style.width = '100%'
         this.sessionData.clientSessions = '—'
         this.sessionData.serverSessions = '—'
+        this.clientSessions = 0
+        this.serverSessions = 0
       }).finally(() => {
         this.toggleLoading(false)
       })
