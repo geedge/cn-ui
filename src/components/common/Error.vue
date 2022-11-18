@@ -6,16 +6,15 @@
           placement="top-start"
           trigger="hover"
           :visible-arrow="false"
-          class="error-popover"
-          popper-class="error-hover"
-          style="background: #1b2e3b !important;"
+          popper-class="error-popover"
           :content="content">
         <template #reference>
           <span>
             <svg class="icon error-icon" aria-hidden="true">
               <use xlink:href="#cn-icon-baocuo"></use>
             </svg>
-<!--            <i v-if="icon" :class="`one-icon-${icon}`"></i>-->
+<!--            为后续自定义icon插槽做预备-->
+<!--            <i v-if="icon" :class="`icon cn-icon-${icon}`"></i>-->
           </span>
         </template>
       </el-popover>
@@ -41,27 +40,47 @@
   </div>
 </template>
 
+<!--  start----------------调用方式----------------start  -->
+<!--
+   组件在全局注册了，调用时: <chart-error :content="content"></chart-error>
+-->
+<!--
+   在标题之后显示：<chart-error small :content="content" />
+ -->
+<!--
+  自定义弹窗宽度：<chart-error small width="300" :content="content" />
+-->
+<!--
+  自定义icon图标：<chart-error small icon="baocuo" :content="content" />，此时icon全称为'cn-icon-baocuo'
+-->
+<!--  end----------------调用方式----------------end  -->
 <script>
 export default {
   name: 'Error',
   props: {
+    // 模块标识，small即标题之后出现icon图标，鼠标移入显示报错信息，非small即在div内显示报错信息
     small: {
       type: String
     },
+    // 报错信息内容，如果不传，默认为"Error"
     content: {
       type: String,
       default: 'Error！'
     },
+    // 报错信息模块宽度，如果选择small，则为弹窗宽度
     width: {
       type: String
     },
+    // 报错信息模块最大宽度
     maxWidth: {
       type: String,
       default: '350'
     },
+    // 自定义icon图标
     icon: {
       type: String
     },
+    // 自定义svg图标
     svg: {
       type: String
     }
@@ -87,10 +106,12 @@ export default {
       }
 
       if (this.width) {
+        // 避免宽度出现负数的情况
         this.localWidth = Math.abs(parseFloat(this.width)) + 'px'
       }
 
       if (this.maxWidth) {
+        // 避免宽度出现负数的情况
         this.localMaxWidth = Math.abs(parseFloat(this.maxWidth)) + 'px'
       }
     },
