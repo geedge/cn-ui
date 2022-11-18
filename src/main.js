@@ -20,6 +20,7 @@ import bus from 'tiny-emitter'
 import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import PanelChartList from '@/views/charts/PanelChartList'
+import Error from '@/components/common/Error'
 import 'lib-flexible'
 
 const emitter = new bus()
@@ -46,6 +47,7 @@ app.mixin(commonMixin)
 app.component('date-time-range', DateTimeRange)
 app.component('time-refresh', TimeRefresh)
 app.component('panel-chart-list', PanelChartList)
+app.component('chart-error', Error)
 
 app.mount('#app')
 

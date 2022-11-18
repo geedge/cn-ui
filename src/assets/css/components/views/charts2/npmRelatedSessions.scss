@@ -2,6 +2,7 @@
   height: 100%;
   width: 100%;
   .npm-sessions-title {
+    display: flex;
     font-size: 14px;
     color: #353636;
     font-weight: 500;
@@ -23,6 +24,14 @@
       height: 100%;
       background: #7E9F54;
       border: 1px solid #7E9F54;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      border-right: none;
+    }
+    .npm-sessions-div-gray {
+      height: 100%;
+      background: rgba(113,113,113,0.30);
+      border: 1px solid rgba(113,113,113,0.30);
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
       border-right: none;
