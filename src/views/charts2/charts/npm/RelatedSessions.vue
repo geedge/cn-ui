@@ -1,9 +1,13 @@
 <template>
  <div class="npm-sessions">
-   <div class="npm-sessions-title">{{$t('npm.relatedSessions')}}</div>
+   <div class="npm-sessions-title">
+     {{$t('npm.relatedSessions')}}
+     <chart-error v-if="showError" small :content="errorMsg" />
+   </div>
    <div class="npm-sessions-div">
      <div class="npm-sessions-div-green" id="green" v-show="clientSessions > 0"></div>
      <div class="npm-sessions-div-red" id="red" v-show="serverSessions > 0"></div>
+     <div class="npm-sessions-div-gray" id="gray" v-show="showError || isNoData"></div>
    </div>
    <div class="npm-sessions-body">
      <div class="npm-sessions-body-left">
@@ -36,9 +40,11 @@ import { getSecond } from '@/utils/date-util'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartError from '@/components/common/Error'
 
 export default {
   name: 'RelatedSessions',
+  components: { ChartError },
   mixins: [chartMixin],
   data () {
     return {
@@ -46,7 +52,11 @@ export default {
       unitConvert,
       unitTypes,
       clientSessions: 0,
-      serverSessions: 0
+      serverSessions: 0,
+      showError: false,
+      errorMsg: '',
+      noData: false,
+      isNoData: false
     }
   },
   watch: {
@@ -66,10 +76,15 @@ export default {
         ip: condition[1]
       }
       const divGreen = document.getElementById('green')
-      const divred = document.getElementById('red')
+      const divRed = document.getElementById('red')
+      const divGray = document.getElementById('gray')
       get(api.npm.overview.relatedSessions, params).then(res => {
         if (res.code === 200) {
+          this.showError = false
+          this.isNoData = false
+
           this.sessionData = res.data.result
+          // * 1 是将其转为number，避免相加变成字符串拼接
           this.clientSessions = this.sessionData.clientSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
           this.serverSessions = this.sessionData.serverSessions / (this.sessionData.clientSessions * 1 + this.sessionData.serverSessions * 1)
           this.sessionData.clientSessions = unitConvert(this.clientSessions, unitTypes.percent).join('')
@@ -77,11 +92,30 @@ export default {
           if (this.clientSessions === 1) {
             divGreen.style.borderRadius = 4 + 'px'
           } else if (this.serverSessions === 1) {
-            divred.style.borderRadius = 4 + 'px'
+            divRed.style.borderRadius = 4 + 'px'
+          } else if (this.clientSessions === 0 && this.serverSessions === 0) {
+            this.isNoData = true
+            divGray.style.borderRadius = 4 + 'px'
+            divGray.style.width = '100%'
           }
+
           divGreen.style.width = this.sessionData.clientSessions
-          divred.style.width = this.sessionData.serverSessions
+          divRed.style.width = this.sessionData.serverSessions
+        } else {
+          this.showError = true
+          this.errorMsg = res.message
+          divGray.style.borderRadius = 4 + 'px'
+          divGray.style.width = '100%'
+          this.sessionData.clientSessions = '—'
+          this.sessionData.serverSessions = '—'
         }
+      }).catch(error => {
+        this.showError = true
+        this.errorMsg = error.message
+        divGray.style.borderRadius = 4 + 'px'
+        divGray.style.width = '100%'
+        this.sessionData.clientSessions = '—'
+        this.sessionData.serverSessions = '—'
       }).finally(() => {
         this.toggleLoading(false)
       })

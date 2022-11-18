@@ -43,3 +43,19 @@ body {
 .el-form-item__error {
   padding-top: 0 !important;
 }
+
+/* 请求报错样式关于popover的修改 */
+.error-hover {
+  //min-width: 30px !important;
+  display: inline-block;
+  background: #FFE7E6 !important;
+  border: 1px solid rgba(226,97,84,0.42) !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  color: #F53A19 !important;
+  font-weight: 400 !important;
+  .el-popper__arrow {
+    display: none !important;
+  }
+}
