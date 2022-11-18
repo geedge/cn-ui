@@ -932,7 +932,7 @@ export async function getDefaultCurTab (tableType, metric, columnName) {
   return curTab
 }
 
-export async function readDrilldownTableConfigByUser (tableType, curMetric) {
+export async function readDrilldownTableConfigByUser () {
   // 获取用户定制的自定义配置
   const userId = localStorage.getItem(storageKey.userId)
   const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
@@ -941,6 +941,17 @@ export async function readDrilldownTableConfigByUser (tableType, curMetric) {
     defaultDrillDownTableConfigs = userLocalCongfig.config
   }
   return defaultDrillDownTableConfigs
+}
+
+export async function getConfigVersion (id) {
+  let defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: id })
+  let version
+  if(defaultCongfigInDb) {
+    version = defaultCongfigInDb ? defaultCongfigInDb.version : ''
+  }else {
+    defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
+  }
+  return version
 }
 
 export async function combinDrilldownTableWithUserConfig () {
@@ -967,40 +978,6 @@ export async function combinDrilldownTableWithUserConfig () {
   return defaultConfigs
 }
 
-/*
-export async function readDrilldownTableConfigByUser2 (tableType, curMetric) {
-  let list = []
-  // 获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
-  const userId = localStorage.getItem(storageKey.userId)
-  const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
-  let defaultDrillDownTableConfigs = []
-  if (userLocalCongfig) {
-    defaultDrillDownTableConfigs = userLocalCongfig.config
-    if(defaultDrillDownTableConfigs && defaultDrillDownTableConfigs.length > 0){
-      const currentTableConfig = defaultDrillDownTableConfigs.find(config => config.route === tableType)
-      const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
-      const tables = currentTableConfig ? currentTableConfig.tables : []
-      if (tables && tables.length > 0) {
-        const curTableOldConfig = tables.find(table => table.id === tableType)
-        const curTable = curTableOldConfig || null
-        if (curTable) {
-          if (curTable.hasMetricSearch) { // 有metric
-            const metricsList = curTable ? curTable.metrics : []
-            if (metricsList && metricsList.length > 0) {
-              const metricTab = metricsList.find(metric => metric.name === curMetric)
-              list = metricTab ? metricTab.tabs : []
-            }
-          } else { // 无metric
-            list = curTable ? curTable.tabs : []
-          }
-          //combineTabList(tableType, list, commonTabList)
-        }
-      }
-    }
-  }
-  return list
-}
-*/
 export async function getUserDrilldownTableConfig (tableType, curMetric) {
   let list = []
   // 获取用户定制的自定义配置，如果没有，则使用默认的自定义配置

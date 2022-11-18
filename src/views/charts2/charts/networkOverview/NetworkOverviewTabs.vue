@@ -199,7 +199,7 @@ import { ref } from 'vue'
 import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig, fromRoute } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData,handleSpecialValue } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData,handleSpecialValue,getConfigVersion } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -1618,15 +1618,6 @@ export default {
         }
       }
     },
-    /*
-    async getUserLocalConfig () {
-      const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: this.userId })
-      if (userLocalCongfig) {
-        return userLocalCongfig.config
-      } else {
-        return null
-      }
-    }, */
     isDrilldown () {
       if (this.getUrlParam(this.curTabState.fourthMenu)) {
         return true
@@ -1648,6 +1639,7 @@ export default {
       let curUserConfigs = await readDrilldownTableConfigByUser()
       const hiddenColumns = this.getHiddenColumnNameGroup()
       this.curTable.hiddenColumns = hiddenColumns
+      let version = ''
       if (curUserConfigs && curUserConfigs.length > 0) { // 当前用户存在缓存配置
         const currentRouteConfig = curUserConfigs.find(config => config.route === this.tableType)
         if (currentRouteConfig) { // 用户的缓存中存在当前路径对应的下钻表格对应的配置
@@ -1663,13 +1655,16 @@ export default {
         } else { // 用户的缓存中不存在当前路径对应的下钻表格对应的配置
           curUserConfigs.push(this.handleInitDrilldownTableConfig())
         }
+        version = await getConfigVersion(this.userId)
       } else { // 当前用户不存在缓存配置
         curUserConfigs = []
         curUserConfigs.push(this.handleInitDrilldownTableConfig())
+        version = await getConfigVersion('default')
       }
       // 更新缓存中的配置
       await db[dbDrilldownTableConfig].put({
         id: this.userId,
+        version: version,
         config: this.$_.cloneDeep(curUserConfigs)
       })
       // 更新使用的配置

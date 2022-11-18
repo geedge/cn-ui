@@ -3,7 +3,7 @@ import router from '@/router'
 import { sortByOrderNum, getWelcomeMenu } from '@/permission'
 import { ElMessage } from 'element-plus' // dependent on utc plugin
 import { storageKey, dbDrilldownTableConfig } from '@/utils/constants'
-import { readDrilldownTableConfigByUser } from '@/utils/tools'
+import { getConfigVersion } from '@/utils/tools'
 import { api } from '@/utils/api'
 import { db } from '@/indexedDB'
 
@@ -94,8 +94,14 @@ const user = {
           const defaultConfigs = JSON.parse(res.page.list[0].cvalue)
           await db[dbDrilldownTableConfig].put({
             id: 'default',
-            config: defaultConfigs
+            version: defaultConfigs.version,
+            config: defaultConfigs.config
           })
+          let userId = localStorage.getItem(storageKey.userId)
+          let oldVersion = await getConfigVersion(userId)
+          if(oldVersion !== defaultConfigs.version ){
+            db[dbDrilldownTableConfig].delete(userId)
+          }
         }
       })
       get(api.config, { ckey: 'link_info' }).then(res => {
