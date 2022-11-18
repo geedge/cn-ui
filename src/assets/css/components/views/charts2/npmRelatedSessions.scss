@@ -54,14 +54,9 @@
           display: flex;
           align-items: center;
           .npm-sessions-as-client-i18n {
-            ont-size: 12px;
+            font-size: 12px;
             color: #717171;
             font-weight: 400;
-          }
-          .npm-sessions-as-client-percent {
-            font-size: 18px;
-            color: #353636;
-            font-weight: 700;
           }
           .npm-sessions-as-client-green,.npm-sessions-as-client-red {
             width: 8px;
@@ -74,6 +69,11 @@
           .npm-sessions-as-client-red {
             background: red;
           }
+        }
+        .npm-sessions-as-client-percent {
+          font-size: 18px;
+          color: #353636;
+          font-weight: 700;
         }
       }
     }
