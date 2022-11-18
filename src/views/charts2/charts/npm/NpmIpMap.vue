@@ -90,6 +90,7 @@ export default {
           // typeVal: this.$store.getters.getBreadcrumbColumnValue
           typeVal: this.getUrlParam(this.curTabState.fourthMenu, '')
         }
+        if (params.type === 'serverIp' || params.type === 'clientIp') params.type = 'ip'
         getData(api.npm.overview.map, params).then(res => {
           const subParams = {
             ...params,
@@ -121,6 +122,9 @@ export default {
                 pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
               }
               t.score = computeScore(data)
+              if (t.score === '-') {
+                t.score = ''
+              }
             })
             this.loadMarkerData(imageSeries, mapData)
           })
@@ -133,7 +137,7 @@ export default {
     },
     loadMarkerData (imageSeries, data) {
       imageSeries.data = data.map(r => ({
-        score: r.score,
+        score: r.score || '&ndash;',
         name: r.province || r.country,
         throughput: valueToRangeValue(r.throughBitsRate, unitTypes.bps).join(' '),
         id: r.serverId,

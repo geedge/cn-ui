@@ -135,20 +135,22 @@ export default {
           get(url, params).then(res => {
             if (res.code === 200) {
               this.isNoData = res.data.result.length === 0
-              if (this.chart.params.index === 0) {
-                res.data.result.forEach((t, i) => {
-                  if (t.type === 'totalBitsRate') {
-                    this.chartOptionLineData[i].values = t.values
-                  } else if (t.type === 'inboundBitsRate') {
-                    this.chartOptionLineData[i].values = t.values
-                  } else if (t.type === 'outboundBitsRate') {
-                    this.chartOptionLineData[i].values = t.values
-                  }
-                })
-                const result = this.chartOptionLineData.filter(t => this.chartData.params.color.indexOf(t.color) > -1)
-                this.echartsInit(result, this.chartData, this.chartData.params.unitType)
-              } else {
-                this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
+              if (!this.isNoData) {
+                if (this.chart.params.index === 0) {
+                  res.data.result.forEach((t, i) => {
+                    if (t.type === 'totalBitsRate') {
+                      this.chartOptionLineData[i].values = t.values
+                    } else if (t.type === 'inboundBitsRate') {
+                      this.chartOptionLineData[i].values = t.values
+                    } else if (t.type === 'outboundBitsRate') {
+                      this.chartOptionLineData[i].values = t.values
+                    }
+                  })
+                  const result = this.chartOptionLineData.filter(t => this.chartData.params.color.indexOf(t.color) > -1)
+                  this.echartsInit(result, this.chartData, this.chartData.params.unitType)
+                } else {
+                  this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
+                }
               }
             }
           }).finally(() => {

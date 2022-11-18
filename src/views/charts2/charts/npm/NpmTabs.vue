@@ -93,15 +93,10 @@ export default {
           self.serverSessions = self.sessionData.serverSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
         }
       }).finally(() => {
-        let thirdMenu = this.$route.query['thirdMenu']
         let currentTab = 0
         self.tabs[0].disable = false
         self.tabs[1].disable = false
-        if(thirdMenu === 'network.clientIps'){
-          currentTab = 0
-        }else if(thirdMenu === 'network.serverIps'){
-          currentTab = 1
-        }else if (self.clientSessions === 0) {
+        if (self.clientSessions === 0) {
           currentTab = 1
           self.tabs[0].disable = true
           self.tabs[1].disable = false

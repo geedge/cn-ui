@@ -83,11 +83,7 @@ export default {
   },
   methods: {
     recentEventsListData () {
-      // const condition = this.$store.getters.getQueryCondition.split(/["|'](.*?)["|']/)
-      // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       const condition = this.queryCondition.split(/["|'](.*?)["|']/)
-      // const type = this.$store.getters.getDimensionType
-      // const type = this.$route.query.dimensionType ? this.$route.query.dimensionType : ''
       let url = ''
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -97,6 +93,7 @@ export default {
       if (condition.length > 1 && this.dimensionType) {
         params.param = condition[1]
         params.type = this.dimensionType
+        if (params.type === 'serverIp' || params.type === 'clientIp') params.type = 'ip'
         params.limit = 10
         url = api.npm.events.recentEventsD
         this.customTableTitles = [
