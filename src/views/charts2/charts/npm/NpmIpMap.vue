@@ -1,5 +1,8 @@
 <template>
-  <div class="cn-chart__map-title" v-if="queryCondition">{{$t('npm.clientLocation')}}</div>
+  <div class="cn-chart__map-title" v-if="queryCondition">
+    {{$t('npm.clientLocation')}}
+    <chart-error v-if="showError" tooltip :content="errorMsg" />
+  </div>
   <div class="cn-chart__map" :class="{'cn-chart__map-drilldown': queryCondition}">
     <div class="map-canvas" id="npmDrillDownMap"></div>
   </div>
@@ -17,8 +20,10 @@ import { api, getData } from '@/utils/api'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NpmIpMap',
+  components: { ChartError },
   setup () {
     const { query } = useRoute()
     const tabIndex = ref(query.tabIndex || '')
@@ -37,7 +42,9 @@ export default {
       countryImageSeries: null,
       // Server | Client
       trafficDirection: 'Server',
-      curTabState: curTabState
+      curTabState: curTabState,
+      showError: false,
+      errorMsg: ''
     }
   },
   mixins: [chartMixin],
@@ -107,10 +114,16 @@ export default {
             const mapData = res
             res2.forEach((r, i) => {
               if (r.code === 200) {
+                // todo 没有nodata处理
+                this.showError = false
                 mapData.forEach(t => {
                   const find = r.data.result.find(d => d.country === t.country)
                   t[keyPre[i] + 'Score'] = find
                 })
+              } else {
+                this.showError = true
+                // todo 此处需要看最后返回的数据
+                this.errorMsg = res2.message
               }
             })
             mapData.forEach(t => {
@@ -128,11 +141,18 @@ export default {
             })
             this.loadMarkerData(imageSeries, mapData)
           })
+        }).catch(error => {
+          this.showError = true
+          // todo 此处需要看最后返回的数据
+          this.errorMsg = error.message
         }).finally(() => {
           this.toggleLoading(false)
         })
       } catch (e) {
         console.error(e)
+        this.showError = true
+        // todo 此处需要看最后返回的数据
+        this.errorMsg = e.message
       }
     },
     loadMarkerData (imageSeries, data) {

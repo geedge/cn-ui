@@ -19,8 +19,9 @@
       </div>
     </div>
     <div class="npm-traffic-line-body">
-      <chart-no-data v-if="isNoData"></chart-no-data>
-      <div v-show="!isNoData" class="chart-drawing" id="chart"></div>
+      <chart-error v-if="showError" :content="errorMsg" />
+      <chart-no-data v-if="isNoData && !showError"></chart-no-data>
+      <div v-show="!isNoData && !showError" class="chart-drawing" id="chart"></div>
     </div>
   </div>
 </template>
@@ -40,10 +41,12 @@ import _ from 'lodash'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NpmTrafficLine',
   mixins: [chartMixin],
   components: {
+    ChartError,
     ChartNoData
   },
   setup () {
@@ -114,7 +117,9 @@ export default {
           value: 'pktRetransPercent',
           label: this.$t('overall.packetRetrans')
         }
-      ]
+      ],
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -363,6 +368,9 @@ export default {
                   this.echartsInit(this.mpackets)
                 }
               })
+            } else {
+              this.showError = true
+              this.errorMsg = res.message
             }
           }).catch(e => {
             this.isNoData = true

@@ -1,38 +1,42 @@
 <template>
   <div class="link-traffic-list">
     <loading :loading="loading"></loading>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
-      <div class="link-traffic-list-center-value" v-if="lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg, unitTypes.bps).join('')}}</div>
-    </div>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
-      <div class="link-traffic-list-center-value" v-if="bandWidth && lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
-      <div class="link-traffic-list-center-value" v-else>-</div>
-    </div>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('linkMonitor.npmScore')}}</div>
-      <div class="link-traffic-list-center-value">{{linkTrafficListData.npmScore || '-'}}</div>
-    </div>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.tcpConnectionEstablishLatency')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
-    </div>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.httpResponse')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
-    </div>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.sslResponseLatency')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
-    </div>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.packetLoss')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.tcpLostlenPercent, unitTypes.percent).join('')}}</div>
-    </div>
-    <div class="link-traffic-list-center">
-      <div class="link-traffic-list-center-label">{{$t('overall.packetRetrans')}}</div>
-      <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.pktRetransPercent, unitTypes.percent).join('')}}</div>
+
+    <chart-error v-if="showError" :content="errorMsg" />
+    <div v-else>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
+        <div class="link-traffic-list-center-value" v-if="lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg, unitTypes.bps).join('')}}</div>
+      </div>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
+        <div class="link-traffic-list-center-value" v-if="bandWidth && lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
+        <div class="link-traffic-list-center-value" v-else>-</div>
+      </div>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('linkMonitor.npmScore')}}</div>
+        <div class="link-traffic-list-center-value">{{linkTrafficListData.npmScore || '-'}}</div>
+      </div>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.tcpConnectionEstablishLatency')}}</div>
+        <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
+      </div>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.httpResponse')}}</div>
+        <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
+      </div>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.sslResponseLatency')}}</div>
+        <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
+      </div>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.packetLoss')}}</div>
+        <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.tcpLostlenPercent, unitTypes.percent).join('')}}</div>
+      </div>
+      <div class="link-traffic-list-center">
+        <div class="link-traffic-list-center-label">{{$t('overall.packetRetrans')}}</div>
+        <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.pktRetransPercent, unitTypes.percent).join('')}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +52,7 @@ import { useRoute } from 'vue-router'
 import { getSecond } from '@/utils/date-util'
 import { computeScore } from '@/utils/tools'
 import Loading from '@/components/common/Loading'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'linkTrafficList',
   mixins: [chartMixin],
@@ -62,6 +67,7 @@ export default {
     }
   },
   components: {
+    ChartError,
     Loading
   },
   data () {
@@ -72,7 +78,9 @@ export default {
       linkTrafficListData: {},
       cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo)),
       bandWidth: 0,
-      loading: false
+      loading: false,
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -91,6 +99,7 @@ export default {
       if (this.queryCondition) {
         const condition = this.queryCondition.toLowerCase().split(' or ')
         if (condition.length > 1) {
+          // params.egressParam = true
           params.egressParam = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
           params.ingressParam = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
           let bandwidthAll = 0
@@ -109,10 +118,10 @@ export default {
           }
           if (egressLinkId && ingressLinkId) {
             this.cnLinkInfo.forEach(e => {
-              if (ingressLinkId == e.originalLinkId) {
+              if (ingressLinkId === e.originalLinkId) {
                 bandwidthAll += e.bandwidth
               }
-              if (egressLinkId == e.originalLinkId) {
+              if (egressLinkId === e.originalLinkId) {
                 bandwidthAll += e.bandwidth
               }
             })
@@ -129,6 +138,7 @@ export default {
       this.loading = true
       get(api.linkMonitor.networkAnalysis, params).then(res => {
         if (res.code === 200) {
+          this.showError = false
           this.isNoData = res.data.result.length === 0
           const data = {
             establishLatencyMs: res.data.result[0].establishLatencyMs || null,
@@ -139,10 +149,17 @@ export default {
           }
           this.linkTrafficListData = res.data.result[0]
           this.linkTrafficListData.npmScore = computeScore(data)
+        } else {
+          this.showError = true
+          // todo 此时返回的是msg，后期记得改
+          this.errorMsg = res.msg
+          // this.errorMsg = res.message
         }
       }).catch(e => {
         console.error(e)
-        this.isNoData = true
+        this.showError = true
+        this.errorMsg = e.message
+        // this.isNoData = true
       }).finally(() => {
         this.loading = false
       })

@@ -1,6 +1,7 @@
 <template>
   <div class="line network">
-    <div class="line-header">
+    <chart-error v-if="showError" :content="errorMsg" />
+    <div class="line-header" v-if="!showError">
       <div class="line-header-left">
         <div class="line-value-active" v-if="lineTab"></div>
         <div class="line-value">
@@ -44,8 +45,8 @@
       </div>
     </div>
     <div style="height: calc(100% - 74px); position: relative">
-      <chart-no-data v-if="isNoData"></chart-no-data>
-      <div class="chart-drawing" v-show="showMarkLine && !isNoData" id="overviewLineChart"></div>
+      <chart-no-data v-if="isNoData && !showError"></chart-no-data>
+      <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" id="overviewLineChart"></div>
 <!--      todo 后续改动，此处为框选返回-->
 <!--      <div id="brushBtn" style="position: absolute;left: 0;top: 0;" v-show="mouseDownFlag">-->
 <!--        <el-button @click.stop="backBrushHistory">返回</el-button>-->
@@ -69,9 +70,11 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NetworkOverviewLine',
   components: {
+    ChartError,
     ChartNoData
   },
   props: {
@@ -127,7 +130,9 @@ export default {
       dynamicVariable: '',
       showMarkLine: true,
       mouseDownFlag: false,
-      brushHistory: []
+      brushHistory: [],
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -183,9 +188,14 @@ export default {
         params.q = this.queryCondition
       }
       this.toggleLoading(true)
+
       get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
+        this.errorMsg = res.message
+
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
+          this.showError = false
+
           if (this.isNoData) {
             this.mpackets = [
               { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
@@ -312,9 +322,14 @@ export default {
               })
             }
           })
+        } else {
+          this.showError = true
+          this.errorMsg = res.message
         }
       }).catch(e => {
         console.error(e)
+        this.showError = true
+        this.errorMsg = e.message
         this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)

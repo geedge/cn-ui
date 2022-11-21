@@ -5,7 +5,9 @@
 
     <chart-no-data v-if="isNoData"></chart-no-data>
 
-    <div class="data-grid" v-show="!isNoData">
+    <chart-error class="link-block-error" v-if="showError" :content="content"/>
+
+    <div class="data-grid" v-show="!isNoData && !showError">
       <div class="egress-row">
         <div class="egress-id" v-for="(item, index) in gridData" :key="index">
           <!--兼容下一跳情况-->
@@ -73,7 +75,7 @@
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
                       <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        {{unitConvert(row.egress[index2].totalBitsRate, unitTypes.bps).join('')}}
+                        {{ unitConvert(row.egress[index2].totalBitsRate, unitTypes.bps).join('') }}
                       </div>
                     </div>
                   </div>
@@ -146,13 +148,18 @@
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import ChartError from '@/components/common/Error'
+
 export default {
   name: 'PopoverContent',
   props: {
     gridData: Array,
-    isNoData: Boolean
+    isNoData: Boolean,
+    showError: Boolean,
+    content: String
   },
   components: {
+    ChartError,
     ChartNoData
   },
   data () {

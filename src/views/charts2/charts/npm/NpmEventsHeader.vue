@@ -5,7 +5,8 @@
       <div class="npm-header-body-severity-icon" :class="item.eventSeverity"></div>
       <div class="npm-header-body-severity-value">{{item.eventSeverity}}</div>
     </div>
-    <div class="npm-header-body-total">{{item.count}}</div>
+    <chart-error v-if="showError" tooltip :content="errorMsg" />
+    <div v-else class="npm-header-body-total">{{item.count}}</div>
   </div>
  </div>
 </template>
@@ -15,8 +16,10 @@ import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NpmEventsHeader',
+  components: { ChartError },
   mixins: [chartMixin],
   data () {
     return {
@@ -47,7 +50,9 @@ export default {
           index: 4
         }
       ],
-      type: 'severity'
+      type: 'severity',
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -67,6 +72,7 @@ export default {
       this.toggleLoading(true)
       get(api.npm.events.list, params).then(res => {
         if (res.code === 200) {
+          this.showError = false
           res.data.result.forEach(t => {
             this.chartData.forEach(d => {
               if (d.eventSeverity === t.eventSeverity) {
@@ -74,7 +80,13 @@ export default {
               }
             })
           })
+        } else {
+          this.showError = true
+          this.errorMsg = res.message
         }
+      }).catch(error => {
+        this.showError = true
+        this.errorMsg = error.message
       }).finally(() => {
         this.toggleLoading(false)
       })

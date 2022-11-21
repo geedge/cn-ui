@@ -1,13 +1,15 @@
 <template>
   <div class="link-blocks">
     <div class="block-list" style="position: relative">
-      <div class="block-list__title">{{ $t('linkMonitor.links') }}</div>
+      <div class="block-list__title" v-if="!showError">{{ $t('linkMonitor.links') }}</div>
 
       <!--无数据noData-->
       <chart-no-data v-if="isNoData"></chart-no-data>
 
       <div class="block-list__list" v-show="!isNoData">
+        <chart-error v-if="showError" :content="errorMsg1" />
         <el-popover
+            v-else
             placement="bottom"
             trigger="hover"
             popper-class="link-block__popper"
@@ -54,13 +56,15 @@
       </div>
     </div>
 
-    <div class="block-list" style="position: relative">
-      <div class="block-list__title">{{ $t('linkMonitor.nextHopInternet') }}</div>
+    <div class="block-list" >
+      <div class="block-list__title" v-if="!showError">{{ $t('linkMonitor.nextHopInternet') }}</div>
 
       <chart-no-data v-if="isNoData"></chart-no-data>
 
       <div class="block-list__list" v-show="!isNoData">
+        <chart-error v-if="showError" :content="errorMsg2" />
         <el-popover
+            v-else
             placement="bottom"
             trigger="hover"
             popper-class="link-block__popper"
@@ -120,11 +124,13 @@ import { colorGradientCalculation } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
 import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
+import ChartError from '@/components/common/Error'
 
 export default {
   name: 'LinkBlock',
   mixins: [chartMixin],
   components: {
+    ChartError,
     ChartNoData
   },
   data () {
@@ -133,7 +139,10 @@ export default {
       unitTypes,
       linkData: [],
       nextHopData: [],
-      gradientColor: ['#FF005C', '#40537E'] // [start, end]
+      gradientColor: ['#FF005C', '#40537E'], // [start, end]
+      showError: false,
+      errorMsg1: '',
+      errorMsg2: ''
     }
   },
   setup () {
@@ -170,6 +179,8 @@ export default {
 
       Promise.all([dataRequest, nextHopRequest]).then(res => {
         if (res[0].code === 200 && res[1].code === 200) {
+          this.showError = false
+
           const linkData = res[0].data.result
           const nextHopData = res[1].data.result
 
@@ -274,11 +285,18 @@ export default {
 
           this.nextHopData = nextHopSorted
         } else {
-          this.isNoData = true
+          this.isNoData = false
+          this.showError = true
+          this.errorMsg1 = res[0].message
+          this.errorMsg2 = res[1].message
         }
       }).catch(e => {
         console.error(e)
-        this.isNoData = true
+        this.isNoData = false
+        this.showError = true
+        // todo 此处数据还待验证
+        this.errorMsg1 = e.message
+        this.errorMsg2 = e.message
       }).finally(() => {
         this.toggleLoading(false)
       })

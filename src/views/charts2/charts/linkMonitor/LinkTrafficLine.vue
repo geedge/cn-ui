@@ -7,7 +7,8 @@
    </link-traffic-drill-down-list>
    <div class="line network link-traffic">
      <loading :loading="loading"></loading>
-     <div class="line-header">
+     <chart-error v-if="showError" :content="errorMsg" />
+     <div class="line-header" v-if="!showError">
        <div class="line-header-left">
          <div class="line-value-active" v-if="lineTab"></div>
          <div class="line-value">
@@ -59,22 +60,21 @@
 
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
-import linkTrafficDrillDownLine from '@/views/charts2/charts/linkMonitor/localComponents/LinkTrafficDrillDownLine'
 import LinkTrafficDrillDownList from '@/views/charts2/charts/linkMonitor/localComponents/LinkTrafficDrillDownList'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import Loading from '@/components/common/Loading'
-import {useRoute} from 'vue-router'
-import {ref, shallowRef} from 'vue'
+import { useRoute } from 'vue-router'
+import { ref, shallowRef } from 'vue'
 import unitConvert from '@/utils/unit-convert'
-import {chartColor3, chartColor4, unitTypes} from '@/utils/constants'
-import {overwriteUrl, urlParamsHandler} from '@/utils/tools'
-import {getSecond} from '@/utils/date-util'
-import {get} from '@/utils/http'
-import {api} from '@/utils/api'
+import { chartColor3, chartColor4, unitTypes } from '@/utils/constants'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getSecond } from '@/utils/date-util'
+import { get } from '@/utils/http'
+import { api } from '@/utils/api'
 import _ from 'lodash'
 import * as echarts from 'echarts'
-import {linkTrafficLineChartOption} from '@/views/charts2/charts/options/echartOption'
-import {stackedLineTooltipFormatter} from '@/views/charts/charts/tools'
+import { linkTrafficLineChartOption } from '@/views/charts2/charts/options/echartOption'
+import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 
 export default {
   name: 'LinkTrafficLine',
@@ -126,7 +126,9 @@ export default {
       sizes: [3, 4, 6, 8, 9, 10],
       dynamicVariable: '',
       showMarkLine: true,
-      loading: false
+      loading: false,
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -148,7 +150,7 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         if (this.lineTab) {
           this.init(this.lineMetric, this.showMarkLine, 'active')
         } else {
@@ -176,6 +178,7 @@ export default {
       this.loading = true
       get(api.linkMonitor.totalTrafficAnalysis, params).then((res) => {
         if (res.code === 200) {
+          this.showError = false
           this.isNoData = res.data.result.length === 0
           if (this.isNoData) {
             this.mpackets = [
@@ -184,7 +187,7 @@ export default {
               { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
             ]
           }
-          res.data.result.forEach((t, i) => {
+          res.data.result.forEach((t) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalBitsRate.analysis
@@ -269,10 +272,17 @@ export default {
               }
             }
           })
+        } else {
+          this.showError = true
+          // todo 此时返回的是msg，后期记得改
+          this.errorMsg = res.msg
+          // this.errorMsg = res.message
         }
       }).catch(e => {
         console.error(e)
-        this.isNoData = true
+        this.showError = true
+        this.errorMsg = e.message
+        // this.isNoData = true
       }).finally(() => {
         this.loading = false
       })
@@ -298,7 +308,7 @@ export default {
             width: 1
           },
           stack: t.name !== 'network.total' ? 'network.total' : '',
-          symbolSize: function (value, params) {
+          symbolSize: function (value) {
             return _this.symbolSizeSortChange(i, value[0])
           },
           itemStyle: {
@@ -334,8 +344,8 @@ export default {
             }
           })
         })
-        const str = stackedLineTooltipFormatter(params)
-        return str
+        // const str = stackedLineTooltipFormatter(params)
+        return stackedLineTooltipFormatter(params)
       }
       this.showMarkLine = true
       this.myChart.setOption(this.chartOption)
@@ -396,7 +406,7 @@ export default {
         })
       }
     },
-    handleActiveBar (value) {
+    handleActiveBar () {
       if (document.querySelector('.network .line-value-mpackets.is-active')) {
         const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-mpackets.is-active')
         const activeBar = document.querySelector('.network .line-value-active')
@@ -411,7 +421,7 @@ export default {
       this.lineTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
-      this.mpackets.forEach((e, i) => {
+      this.mpackets.forEach((e) => {
         if (!e.invertTab) {
           e.invertTab = true
         }

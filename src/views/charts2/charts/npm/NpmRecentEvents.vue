@@ -1,6 +1,9 @@
 <template>
   <div class="npm-recent">
-    <div class="npm-recent-title">{{ $t('network.recentEvents') }}</div>
+    <div class="npm-recent-title">
+      {{ $t('network.recentEvents') }}
+      <chart-error v-if="showError" tooltip :content="errorMsg" />
+    </div>
     <el-table
         :id="`tabTable_${index}`"
         :ref="`dataTable_${index}`"
@@ -51,9 +54,11 @@ import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
+import ChartError from '@/components/common/Error'
 
 export default {
   name: 'NpmRecentEvents',
+  components: { ChartError },
   mixins: [chartMixin],
   setup () {
     const { query } = useRoute()
@@ -71,7 +76,9 @@ export default {
         { label: 'network.severity', prop: 'eventSeverity' },
         { label: 'network.entity', prop: 'eventKey' },
         { label: 'detections.eventType', prop: 'eventType' }
-      ]
+      ],
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -107,6 +114,7 @@ export default {
       this.toggleLoading(true)
       get(url, params).then(res => {
         if (res.code === 200) {
+          this.showError = false
           this.isNoData = res.data.result.length === 0
           res.data.result.forEach(e => {
             if (e.startTime) {
@@ -115,8 +123,13 @@ export default {
           })
           this.tableData = res.data.result
         } else {
-          this.isNoData = true
+          // this.isNoData = true
+          this.showError = true
+          this.errorMsg = res.message
         }
+      }).catch(error => {
+        this.showError = true
+        this.errorMsg = error.message
       }).finally(() => {
         this.toggleLoading(false)
       })

@@ -1,18 +1,24 @@
 <template>
   <div class="performance-event">
-    <div class="performance-event-title"><i class="cn-icon cn-icon-a-NetworkPerformanceEvent"></i>{{$t('network.networkPerEvent')}}</div>
+    <div class="performance-event-title">
+      <i class="cn-icon cn-icon-a-NetworkPerformanceEvent"></i>{{$t('network.networkPerEvent')}}
+    </div>
     <div class="performance-event-value">
       <div class="performance-event-pie">
         <chart-no-data v-if="isNoData"></chart-no-data>
+        <chart-error v-if="showError1" info :content="errorMsg1" />
         <div class="chart-drawing" id="chart1" v-show="!isNoData"></div>
       </div>
       <div class="performance-event-pie-hr"></div>
       <div class="performance-event-pie">
         <chart-no-data v-if="isNoData2"></chart-no-data>
+        <chart-error v-if="showError1" info :content="errorMsg1" />
         <div class="chart-drawing" id="chart2" v-show="!isNoData2"></div>
       </div>
     </div>
-    <el-button class="pie-button" size="small" @click="routerJump">{{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
+    <el-button class="pie-button" size="small" @click="routerJump">
+      {{$t('network.dashboards')}}<i class="cn-icon cn-icon-arrow-right"></i>
+    </el-button>
   </div>
 </template>
 
@@ -25,6 +31,7 @@ import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NetworkOverviewPerformanceEvent',
   setup () {
@@ -35,6 +42,7 @@ export default {
   },
   mixins: [chartMixin],
   components: {
+    ChartError,
     ChartNoData
   },
   data () {
@@ -43,12 +51,17 @@ export default {
       isNoData: false,
       isNoData2: false,
       loading1: false,
-      loading2: false
+      loading2: false,
+      showError1: false,
+      showError2: false,
+      errorMsg1: '',
+      errorMsg2: ''
     }
   },
   methods: {
     init () {
       const params = {
+        // startTime: true,
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
@@ -60,6 +73,7 @@ export default {
         this.loading1 = true
         get(api.netWorkOverview.eventSeverity, params).then(res => {
           if (res.code === 200) {
+            this.showError1 = false
             if (res.data.result.length === 0) {
               this.isNoData = true
               return
@@ -88,8 +102,14 @@ export default {
             this.chartOption.series[0].data = res.data.result.sort((a, b) => { return a.index - b.index })
             this.myChart.setOption(this.chartOption)
           } else {
-            this.isNoData = true
+            this.isNoData = false
+            this.showError1 = true
+            this.errorMsg1 = res.message
           }
+        }).catch((e) => {
+          this.isNoData = false
+          this.showError1 = true
+          this.errorMsg1 = e.message
         }).finally(() => {
           this.loading1 = false
         })
@@ -100,6 +120,8 @@ export default {
         this.loading2 = true
         get(api.netWorkOverview.eventType, params).then(res => {
           if (res.code === 200) {
+            this.showError2 = false
+
             if (res.data.result.length === 0) {
               this.isNoData2 = true
               return
@@ -119,7 +141,15 @@ export default {
             }
             this.chartOption2.series[0].data = res.data.result
             this.myChart2.setOption(this.chartOption2)
+          } else {
+            this.isNoData2 = false
+            this.showError2 = true
+            this.errorMsg2 = res.message
           }
+        }).catch((e) => {
+          this.isNoData2 = false
+          this.showError2 = true
+          this.errorMsg2 = e.message
         }).finally(() => {
           this.loading2 = false
         })

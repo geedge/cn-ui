@@ -13,6 +13,13 @@
       font-size: 14px;
       color: #046ECA;
     }
+    .link-block-error {
+      position: absolute;
+      width: calc(100% - 20px);
+      height: calc(100% - 60px);
+      margin-left: -12px;
+      margin-top: 10px;
+    }
     .data-grid {
       height: 100px;
       .egress-row {

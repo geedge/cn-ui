@@ -2,7 +2,7 @@
  <div class="npm-sessions">
    <div class="npm-sessions-title">
      {{$t('npm.relatedSessions')}}
-     <chart-error v-if="showError" small :content="errorMsg" />
+     <chart-error v-if="showError" tooltip :content="errorMsg" />
    </div>
    <div class="npm-sessions-div">
      <div class="npm-sessions-div-green" id="green" v-show="clientSessions > 0"></div>

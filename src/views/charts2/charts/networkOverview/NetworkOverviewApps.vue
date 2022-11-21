@@ -2,6 +2,7 @@
   <div class="network-overview-apps">
     <div class="network-overview-apps-header">
       <div class="network-overview-apps-title">{{$t('networkOverview.appType.providerAndApp')}}</div>
+      <chart-error v-if="showError" tooltip :content="errorMsg" max-width="350" width="280" />
     </div>
 
     <div class="app-cards">
@@ -137,6 +138,7 @@ export default {
   mixins: [chartMixin],
   data () {
     return {
+      testData: '测试值',
       appData: [],
       // 假数据
       appTempData: [],
@@ -163,7 +165,9 @@ export default {
       timerSearch: null,
       loadingBody: false,
       curTabState: curTabState,
-      urlChangeParams: {}
+      urlChangeParams: {},
+      showError: false,
+      errorMsg: ''
     }
   },
   props: {
@@ -254,6 +258,7 @@ export default {
           })
         }
         if (res[0].code === 200 && res[1].code === 200) {
+          this.showError = false
           const prevData = res[0].data.result
           const data = res[1].data.result
           let toCompareType = 'bytes'
@@ -281,9 +286,13 @@ export default {
               })
             }
           })
+        } else {
+          this.showError = true
+          this.errorMsg = res[0].message
         }
       }).catch(e => {
-        console.error(e)
+        this.showError = true
+        this.errorMsg = e.message
         this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)

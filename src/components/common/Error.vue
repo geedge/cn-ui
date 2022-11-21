@@ -1,6 +1,15 @@
 <template>
-  <div>
-    <div v-if="showSmall">
+  <div v-if="showDefault" class="error-component">
+    <div class="error-block" :style="{'max-width': localMaxWidth, 'width': localWidth}">
+      <svg class="icon item-popover-up error-icon1" aria-hidden="true">
+        <use xlink:href="#cn-icon-baocuo"></use>
+      </svg>
+      {{ content }}
+    </div>
+  </div>
+
+  <div id="error-com">
+    <div v-if="tooltip !== undefined">
       <el-popover
           :width="localPopoverWidth"
           placement="top-start"
@@ -29,8 +38,8 @@
 <!--      </span>-->
     </div>
 
-    <div v-else class="error-block">
-      <div class="error-block-tooltip" :style="{'max-width': localMaxWidth, 'width': localWidth}">
+    <div class="error-block-info" v-if="info !== undefined">
+      <div>
         <svg class="icon item-popover-up error-icon1" aria-hidden="true">
           <use xlink:href="#cn-icon-baocuo"></use>
         </svg>
@@ -45,21 +54,29 @@
    组件在全局注册了，调用时: <chart-error :content="content"></chart-error>
 -->
 <!--
-   在标题之后显示：<chart-error small :content="content" />
+   目前有三种形式，分别是default、tooltip、info
+   默认，即红框展示：<chart-error :content="content" />
+   在标题之后显示，需要鼠标移动到图标上显示弹窗：<chart-error tooltip :content="content" />
+   文字提示：<chart-error tooltip :content="content" />
  -->
 <!--
-  自定义弹窗宽度：<chart-error small width="300" :content="content" />
+  自定义弹窗宽度：<chart-error tooltip width="300" :content="content" />
+  注意：info模式不支持宽度设置
 -->
 <!--
-  自定义icon图标：<chart-error small icon="baocuo" :content="content" />，此时icon全称为'cn-icon-baocuo'
+  自定义icon图标：<chart-error tooltip icon="baocuo" :content="content" />，此时icon全称为'cn-icon-baocuo'
 -->
 <!--  end----------------调用方式----------------end  -->
 <script>
 export default {
   name: 'Error',
   props: {
-    // 模块标识，small即标题之后出现icon图标，鼠标移入显示报错信息，非small即在div内显示报错信息
-    small: {
+    // 工具栏提示类型
+    tooltip: {
+      type: String
+    },
+    // 文字提示类型
+    info: {
       type: String
     },
     // 报错信息内容，如果不传，默认为"Error"
@@ -67,14 +84,14 @@ export default {
       type: String,
       default: 'Error！'
     },
-    // 报错信息模块宽度，如果选择small，则为弹窗宽度
+    // 报错信息模块宽度，如果类型选择tooltip，则为弹窗宽度，info模式没有宽度设置
     width: {
       type: String
     },
     // 报错信息模块最大宽度
     maxWidth: {
-      type: String,
-      default: '350'
+      type: String
+      // default: '350'
     },
     // 自定义icon图标
     icon: {
@@ -87,10 +104,11 @@ export default {
   },
   data () {
     return {
+      showDefault: false, // 是否显示default，分别是default、tooltip、info
       showSmall: false, // 显示错误的类型，true为图表模块内显示报错，false为标题后显示报错
       localWidth: '',
       localMaxWidth: '',
-      localPopoverWidth: '350'
+      localPopoverWidth: ''
     }
   },
   mounted () {
@@ -98,11 +116,15 @@ export default {
   },
   methods: {
     initData () {
-      if (this.small !== undefined) {
-        this.showSmall = true
+      if (this.tooltip !== undefined) {
+        this.showDefault = false
         this.localPopoverWidth = this.width !== undefined
+      }
+
+      if (this.tooltip === undefined && this.info === undefined) {
+        this.showDefault = true
       } else {
-        this.showSmall = false
+        this.showDefault = false
       }
 
       if (this.width) {
