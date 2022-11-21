@@ -57,9 +57,10 @@
    目前有三种形式，分别是default、tooltip、info
    默认，即红框展示：<chart-error :content="content" />
    在标题之后显示，需要鼠标移动到图标上显示弹窗：<chart-error tooltip :content="content" />
-   文字提示：<chart-error tooltip :content="content" />
+   文字提示：<chart-error info :content="content" />
  -->
 <!--
+  自定义宽度：<chart-error width="300" :content="content" />
   自定义弹窗宽度：<chart-error tooltip width="300" :content="content" />
   注意：info模式不支持宽度设置
 -->
@@ -121,11 +122,8 @@ export default {
         this.localPopoverWidth = this.width !== undefined
       }
 
-      if (this.tooltip === undefined && this.info === undefined) {
-        this.showDefault = true
-      } else {
-        this.showDefault = false
-      }
+      // 默认default模式
+      this.showDefault = this.tooltip === undefined && this.info === undefined
 
       if (this.width) {
         // 避免宽度出现负数的情况
@@ -149,7 +147,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
