@@ -1156,7 +1156,6 @@ export default {
       }
 
       this.saveUserLocalConfig()
-      // console.log(this.drillDownTableConfigs)
       let forthMenuName = ''
       if (clickTab.prop === 'qtype') {
         forthMenuName = this.dnsQtypeMapData.get(columnValue)
@@ -1768,12 +1767,20 @@ export default {
   },
   async mounted () {
     console.log('mounted start...')
-    // 是否需要dns的qtype和rcode的数据字典
-    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
-    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
     this.userId = localStorage.getItem(storageKey.userId)
     this.drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
     this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+    // 是否需要dns的qtype和rcode的数据字典
+    if(this.tableType === fromRoute.dnsServiceInsights) {
+      this.dnsQtypeMapData = this.$store.getters.getDnsQtypeMapData
+      this.dnsRcodeMapData = this.$store.getters.getDnsRcodeMapData
+      if(!this.dnsQtypeMapData || this.dnsQtypeMapData.size === 0){
+        this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+        this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+        this.$store.commit('setDnsQtypeMapData', this.dnsQtypeMapData)
+        this.$store.commit('setDnsRcodeMapData', this.dnsRcodeMapData)
+      }
+    }
     this.curTableInCode = this.networkTable[this.tableType] ? this.networkTable[this.tableType] : this.networkTable.networkOverview
     // 表格状态初始化(url)
     this.showRecordNum = Number(this.getUrlParam(this.curTabState.tableShowMore, 10))

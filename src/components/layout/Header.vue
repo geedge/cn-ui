@@ -62,10 +62,10 @@
                        :class="showBackground?'breadcrumb-button__active':''">
                     <span id="breadcrumbValue">
                       <template v-if="curTabProp === 'qtype'">
-                        <span>{{ dnsQtypeMapData.get(item) ? dnsQtypeMapData.get(item) : item }}</span>
+                        <span>{{ dnsQtypeMapData.get(item)}}</span>
                       </template>
                       <template v-else-if="curTabProp === 'rcode'">
-                        <span>{{ dnsRcodeMapData.get(item) ? dnsRcodeMapData.get(item) : item }}</span>
+                        <span>{{ dnsRcodeMapData.get(item)}}</span>
                       </template>
                       <template v-else>
                         <span>{{ item }}</span>
@@ -84,10 +84,10 @@
                     <li v-for="item in breadcrumbColumnValueListShow" title='' :key="item" :id="item"
                         class="select-dropdown__item" @click="changeValue(item)" :class="selected?'':''">
                       <template v-if="curTabProp === 'qtype'">
-                        <span>{{ dnsQtypeMapData.get(item) ? dnsQtypeMapData.get(item) : item }}</span>
+                        <span>{{ dnsQtypeMapData.get(item) }}</span>
                       </template>
                       <template v-else-if="curTabProp === 'rcode'">
-                        <span>{{ dnsRcodeMapData.get(item) ? dnsRcodeMapData.get(item) : item }}</span>
+                        <span>{{ dnsRcodeMapData.get(item) }}</span>
                       </template>
                       <template v-else>
                         <span>{{ item }}</span>
@@ -382,8 +382,11 @@ export default {
   },
   async mounted () {
     this.from = Object.keys(this.entityType)[0]
-    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
-    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+    // 是否需要dns的qtype和rcode的数据字典
+    if(this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+      this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+      this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+    }
     this.initDropdownList()
   },
   setup () {
@@ -460,8 +463,10 @@ export default {
       get(curTableInCode.url.drilldownList, params).then(async response => {
         if (response.code === 200) {
           this.breadcrumbColumnValueListShow = response.data.result
-          this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
-          this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+          if(this.from === fromRoute.dnsServiceInsights) {
+            this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+            this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+          }
           this.$nextTick(() => {
             this.breadcrumbColumnValueListShow.forEach(item => {
               const selectedDom = document.getElementById(item)

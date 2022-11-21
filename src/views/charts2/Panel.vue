@@ -61,7 +61,8 @@ import {
   panelTypeAndRouteMapping,
   curTabState,
   drillDownPanelTypeMapping,
-  metricOptions
+  metricOptions,
+  fromRoute
 } from '@/utils/constants'
 import { getPanelList, getChartList, api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -112,8 +113,12 @@ export default {
     // this.panelName = this.$store.getters.getPanelName
     const pName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
     const curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
-    this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
-    this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+    if(this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+      this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+      this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+      this.$store.commit('setDnsQtypeMapData', this.dnsQtypeMapData)
+      this.$store.commit('setDnsRcodeMapData', this.dnsRcodeMapData)
+    }
     if (curTabProp === 'qtype') {
       this.panelName = this.dnsQtypeMapData.get(pName)
     } else if (curTabProp === 'rcode') {

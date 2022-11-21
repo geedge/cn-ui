@@ -57,7 +57,9 @@ const panel = {
     routerPath: '', // 当前路由路径
     httpCancel: null, // 终止http请求
     rangeEchartsData: {}, // 框选echarts图表
-    routerHistoryList: [] // 路由跳转记录列表
+    routerHistoryList: [], // 路由跳转记录列表
+    dnsQtypeMapData:[],
+    dnsRcodeMapData:[]
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -108,36 +110,15 @@ const panel = {
     setCurrentMap (state, currentMap) {
       state.currentMap = currentMap
     },
-    // setPanelName (state, panelName) {
-    // state.panelName = panelName
-    // },
-    // setBreadcrumbColumnName (state, breadcrumbColumnName) {
-    // state.breadcrumbColumnName = breadcrumbColumnName
-    // },
-    // setDimensionType (state, dimensionType) {
-    // state.dimensionType = dimensionType
-    // },
-    // setBreadcrumbColumnValue (state, breadcrumbColumnValue) {
-    // state.breadcrumbColumnValue = breadcrumbColumnValue
-    // },
-    // setNetworkOverviewCurrentTab (state, networkOverviewCurrentTab) {
-    // state.networkOverviewCurrentTab = networkOverviewCurrentTab
-    // },
-    // setQueryCondition (state, queryCondition) {
-    // state.queryCondition = queryCondition
-    // },
+    setDnsQtypeMapData (state, dnsQtypeMapData) {
+      state.dnsQtypeMapData = dnsQtypeMapData
+    },
+    setDnsRcodeMapData (state, dnsRcodeMapData) {
+      state.dnsRcodeMapData = dnsRcodeMapData
+    },
     setNetworkOverviewTabList (state, networkOverviewTabList) {
       state.networkOverviewTabList = networkOverviewTabList
     },
-    // setTabOperationType (state, tabOperationType) {
-    // state.tabOperationType = tabOperationType
-    // },
-    // setNetworkOverviewBeforeTab (state, networkOverviewBeforeTab) {
-    // state.networkOverviewBeforeTab = networkOverviewBeforeTab
-    // },
-    // setTabOperationBeforeType (state, tabOperationBeforeType) {
-    // state.tabOperationBeforeType = tabOperationBeforeType
-    // },
     setNpmLocationCountry (state, country) {
       state.npmLocationCountry = country
     },
@@ -215,36 +196,15 @@ const panel = {
     getCurrentMap (state) {
       return state.currentMap
     },
-    // getPanelName (state) {
-    // return state.panelName
-    // },
-    // getBreadcrumbColumnName (state) {
-    // return state.breadcrumbColumnName
-    // },
-    // getDimensionType (state) {
-    // return state.dimensionType
-    // },
-    // getBreadcrumbColumnValue (state) {
-    // return state.breadcrumbColumnValue
-    // },
-    // getNetworkOverviewCurrentTab (state) {
-    // return state.networkOverviewCurrentTab
-    // },
-    // getQueryCondition (state) {
-    // return state.queryCondition
-    // },
+    getDnsQtypeMapData (state) {
+      return state.dnsQtypeMapData
+    },
+    getDnsRcodeMapData (state) {
+      return state.dnsRcodeMapData
+    },
     getNetworkOverviewTabList (state) {
       return state.networkOverviewTabList
     },
-    // getTabOperationType (state) {
-    // return state.tabOperationType
-    // },
-    // getNetworkOverviewBeforeTab (state) {
-    // return state.networkOverviewBeforeTab
-    // },
-    // getTabOperationBeforeType (state) {
-    // return state.tabOperationBeforeType
-    // },
     getNpmLocationCountry (state) {
       return state.npmLocationCountry
     },
