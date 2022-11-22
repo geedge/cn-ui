@@ -253,6 +253,7 @@ export default {
                 if (n) this.lineTab = ''
                 this.$nextTick(() => {
                   this.echartsInit(this.mpackets, show)
+                  if (!this.lineRefer) this.lineRefer = 'Average'
                 })
               }
             } else if (t.type === 'packets' && val === 'Packets/s') {
@@ -301,6 +302,7 @@ export default {
                 if (n) this.lineTab = ''
                 this.$nextTick(() => {
                   this.echartsInit(this.mpackets, show)
+                  if (!this.lineRefer) this.lineRefer = 'Average'
                 })
               }
             } else if (t.type === 'sessions' && val === 'Sessions/s') {

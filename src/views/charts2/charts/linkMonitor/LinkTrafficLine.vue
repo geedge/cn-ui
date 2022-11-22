@@ -227,6 +227,7 @@ export default {
               } else {
                 this.$nextTick(() => {
                   this.echartsInit(this.mpackets)
+                  if (!this.lineRefer) this.lineRefer = 'Average'
                 })
               }
             } else if (t.type === 'packets' && val === 'Packets/s') {
@@ -268,6 +269,7 @@ export default {
               } else {
                 this.$nextTick(() => {
                   this.echartsInit(this.mpackets)
+                  if (!this.lineRefer) this.lineRefer = 'Average'
                 })
               }
             }

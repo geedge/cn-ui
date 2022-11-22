@@ -243,6 +243,7 @@ export default {
               } else {
                 this.$nextTick(() => {
                   this.echartsInit(this.mpackets, show)
+                  if (!this.lineRefer) this.lineRefer = 'Average'
                 })
               }
             } else if (t.type === 'queries' && val === 'Queries/s') {
