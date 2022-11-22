@@ -1,7 +1,7 @@
 <template>
   <div v-if="showDefault" class="error-component">
     <div class="error-block" :style="{'max-width': localMaxWidth, 'width': localWidth}">
-      <svg class="icon item-popover-up error-icon1" aria-hidden="true">
+      <svg class="icon error-icon-default" aria-hidden="true">
         <use xlink:href="#cn-icon-baocuo"></use>
       </svg>
       {{ content }}
@@ -19,7 +19,7 @@
           :content="content">
         <template #reference>
           <span>
-            <svg class="icon error-icon" aria-hidden="true">
+            <svg class="icon error-icon-tooltip" aria-hidden="true">
               <use xlink:href="#cn-icon-baocuo"></use>
             </svg>
 <!--            为后续自定义icon插槽做预备-->
@@ -40,7 +40,7 @@
 
     <div class="error-block-info" v-if="info !== undefined">
       <div>
-        <svg class="icon item-popover-up error-icon1" aria-hidden="true">
+        <svg class="icon error-icon-default" aria-hidden="true">
           <use xlink:href="#cn-icon-baocuo"></use>
         </svg>
         {{ content }}
