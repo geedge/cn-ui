@@ -151,24 +151,23 @@ export default {
   data () {
     return {
       tabsData: [
-        // todo icon名称可能不一致，后续改
         {
           name: 'SecurityEvents',
           i18n: 'entities.securityEvents',
           path: '/detection/securityEvent',
-          icon: 'cn-icon cn-icon-SecurityEvent'
+          icon: 'cn-icon cn-icon-a-SecurityEvent'
         },
         {
           name: 'Regulatory Risk Event',
           i18n: 'entities.regulatoryRiskEvents',
           path: '/detection/securityEvent',
-          icon: 'cn-icon cn-icon-RegulatoryRiskEvent'
+          icon: 'cn-icon cn-icon-a-RegulatoryRiskEvent'
         },
         {
           name: 'PerformanceEvents',
           i18n: 'overall.performanceEvents',
           path: '/detection/performanceEvent',
-          icon: 'cn-icon cn-icon-PerformanceEvent'
+          icon: 'cn-icon cn-icon-a-PerformanceEvent'
         }
       ],
       chartInit: [],
@@ -299,7 +298,7 @@ export default {
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
 
           const xData = []
-          dataMap.forEach(function (value, key) {
+          dataMap.forEach(function (value) {
             // eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
             value.forEach(item => {
               if (xData.indexOf(item[0]) < 0) {
@@ -764,7 +763,7 @@ export default {
         }
       }
     },
-    timeFilter (n) {
+    timeFilter () {
       this.search(this.metaList, this.q)
     },
     'filterData.securityEvent.0.value': {
