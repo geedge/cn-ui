@@ -197,6 +197,7 @@ export default {
           this.showError = false
 
           if (this.isNoData) {
+            this.lineTab = ''
             this.mpackets = [
               { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
               { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
@@ -519,12 +520,14 @@ export default {
       })
     },
     activeChange (item, index) {
+      if (this.isNoData) return
       this.lineTab = item.class
       this.legendSelectChange(item, index, 'active')
       this.showMarkLine = !item.invertTab
       this.init(this.metric, this.showMarkLine, 'active')
     },
     mouseenter (item) {
+      if (this.isNoData) return
       this.mousemoveCursor = item.class
       this.handleActiveBar(item.class)
     },
