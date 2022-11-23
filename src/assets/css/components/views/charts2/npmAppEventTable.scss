@@ -110,4 +110,10 @@
   .el-table--group::after,.el-table--border::after,.el-table::before {
     height: 0px;
   }
+  .table-error {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 68px;
+  }
 }

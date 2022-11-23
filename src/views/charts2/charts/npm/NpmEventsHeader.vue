@@ -57,7 +57,7 @@ export default {
   },
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.recentEventsListData()
       }
     }

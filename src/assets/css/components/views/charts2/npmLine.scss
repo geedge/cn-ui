@@ -4,6 +4,7 @@
   width: 100%;
   border: 1px solid #f0f0f0;
   .npm-line-title {
+    display: flex;
     font-size: 14px;
     color: #353636;
     font-weight: 500;
@@ -14,6 +15,7 @@
     margin: 20px 20px 0 20px;
     justify-content: space-between;
     .npm-line-header-title {
+      display: flex;
       font-size: 14px;
       color: #353636;
       font-weight: 500;

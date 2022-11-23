@@ -1,6 +1,8 @@
 <template>
-  <div class="npm-app">
-    <div class="npm-app-left">
+  <div class="npm-app" :class="showError?'npm-app-border':''">
+    <chart-error v-if="showError" :content="errorMsg" />
+
+    <div class="npm-app-left" v-if="!showError">
       <div class="npm-app-letter" :class="{'npm-app-letter-no-data': isNoData}">
         <div v-for="(letter, index) in colorPatchData" :key="index">
           {{letter.letter}}
@@ -21,7 +23,7 @@
         class="app-table"
         height="100%"
         empty-text=" "
-    >
+        v-if="!showError">
       <template v-for="(item, index) in customTableTitles" :key="index">
         <el-table-column class="data-column">
           <template #header>
@@ -137,13 +139,13 @@ import { get } from '@/utils/http'
 import {
   getChainRatio,
   computeScore,
-  changeCurTab,
   urlParamsHandler,
   overwriteUrl,
   getUserDrilldownTableConfig
 } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NpmAppCategoryScore',
   data () {
@@ -169,16 +171,19 @@ export default {
       ],
       isNoData: false,
       curTabState: curTabState,
-      urlChangeParams: {}
+      urlChangeParams: {},
+      showError: false,
+      errorMsg: ''
     }
   },
   components: {
+    ChartError,
     ChartNoData
   },
   mixins: [chartMixin],
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.init()
       }
     }
@@ -194,66 +199,98 @@ export default {
       const lastCycleTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 1 })
       this.toggleLoading(true)
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
-        const prevData = res[1].data.result
-        const data = res[0].data.result
-        if (data && data.length > 0) {
-          this.isNoData = false
-          const tableData = data.map(d => {
-            const mapping = npmCategoryInfoMapping.find(mapping => mapping.appSubcategory === d.appSubcategory)
-            const result = {
-              ...mapping,
-              ...d,
-              bytesRateChainRatio: '-',
-              inboundBytesRateChainRatio: '-',
-              outboundBytesRateChainRatio: '-'
-            }
+        if (res[0].code === 200 && res[1].code === 200) {
+          this.showError = false
+          this.errorMsg = ''
+          const prevData = res[1].data.result
+          const data = res[0].data.result
+          if (data && data.length > 0) {
+            this.isNoData = false
+            const tableData = data.map(d => {
+              const mapping = npmCategoryInfoMapping.find(mapping => mapping.appSubcategory === d.appSubcategory)
+              const result = {
+                ...mapping,
+                ...d,
+                bytesRateChainRatio: '-',
+                inboundBytesRateChainRatio: '-',
+                outboundBytesRateChainRatio: '-'
+              }
 
-            const prev = prevData.find(p => p.appSubcategory === d.appSubcategory)
-            if (prev) {
-              result.bytesRateChainRatio = getChainRatio(d.totalBitsRate, prev.totalBitsRate)
-              result.inboundBytesRateChainRatio = getChainRatio(d.inboundBitsRate, prev.inboundBitsRate)
-              result.outboundBytesRateChainRatio = getChainRatio(d.outboundBitsRate, prev.outboundBitsRate)
-            }
-            return result
-          })
-          // 计算分数
-          const tcpRequest = get(api.npm.overview.appTcpSessionDelay, params)
-          const httpRequest = get(api.npm.overview.appHttpResponseDelay, params)
-          const sslRequest = get(api.npm.overview.appSslConDelay, params)
-          const tcpLostRequest = get(api.npm.overview.appTcpLostlenPercent, params)
-          const packetRetransRequest = get(api.npm.overview.appPacketRetransPercent, params)
-          Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res => {
-            const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
-            res.forEach((r, i) => {
-              if (r.code === 200) {
-                tableData.forEach(t => {
-                  const find = r.data.result.find(d => d.appSubcategory === t.appSubcategory)
-                  t[keyPre[i] + 'Score'] = find
-                })
+              const prev = prevData.find(p => p.appSubcategory === d.appSubcategory)
+              if (prev) {
+                result.bytesRateChainRatio = getChainRatio(d.totalBitsRate, prev.totalBitsRate)
+                result.inboundBytesRateChainRatio = getChainRatio(d.inboundBitsRate, prev.inboundBitsRate)
+                result.outboundBytesRateChainRatio = getChainRatio(d.outboundBitsRate, prev.outboundBitsRate)
               }
+              return result
             })
-            tableData.forEach(t => {
-              const data = {
-                establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
-                httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
-                sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
-                tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
-                pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
-              }
-              t.score = computeScore(data)
+            // 计算分数
+            const tcpRequest = get(api.npm.overview.appTcpSessionDelay, params)
+            const httpRequest = get(api.npm.overview.appHttpResponseDelay, params)
+            const sslRequest = get(api.npm.overview.appSslConDelay, params)
+            const tcpLostRequest = get(api.npm.overview.appTcpLostlenPercent, params)
+            const packetRetransRequest = get(api.npm.overview.appPacketRetransPercent, params)
+            Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res => {
+              const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+              let msg = ''
+
+              res.forEach((r, i) => {
+                if (r.code === 200) {
+                  tableData.forEach(t => {
+                    const find = r.data.result.find(d => d.appSubcategory === t.appSubcategory)
+                    t[keyPre[i] + 'Score'] = find
+                  })
+                } else {
+                  this.showError = true
+                  // todo 此处目前返回字段为msg，后续字段会修改为message
+                  msg = msg + ',' + r.message
+                  if (msg.indexOf(',') === 0) {
+                    msg = msg.substring(1, msg.length)
+                  }
+                  if (msg.lastIndexOf(',') === msg.length - 1) {
+                    msg = msg.substring(0, msg.length - 1)
+                  }
+                  this.errorMsg = msg
+                }
+              })
+              tableData.forEach(t => {
+                const data = {
+                  establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
+                  httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
+                  sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
+                  tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
+                  pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
+                }
+                t.score = computeScore(data)
+              })
+              this.tableData = tableData
+            }).finally(() => {
+              this.toggleLoading(false)
             })
-            this.tableData = tableData
-          }).finally(() => {
+          } else {
+            this.tableData = []
+            this.isNoData = true
             this.toggleLoading(false)
-          })
+          }
         } else {
-          this.tableData = []
-          this.isNoData = true
           this.toggleLoading(false)
+          this.showError = true
+          this.errorMsg = ''
+          let msg = res[0].message + ', ' + res[1].message
+          if (msg.indexOf(',') === 0) {
+            msg = msg.substring(1, msg.length)
+          }
+          if (msg.lastIndexOf(',') === msg.length - 1) {
+            msg = msg.substring(0, msg.length - 1)
+          }
+          this.errorMsg = msg
         }
       }).catch(e => {
         console.error(e)
         this.toggleLoading(false)
+        this.showError = true
+        this.errorMsg = ''
+        this.errorMsg = e.message
       })
     },
     getUrlParam (param, defaultValue, isNumber) {

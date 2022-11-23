@@ -188,6 +188,7 @@ export default {
       if (params.type && params.q) {
         get(api.npm.overview.trafficGraph, params).then((res) => {
           if (res.code === 200) {
+            this.showError = false
             this.isNoData = res.data.result.length === 0
             if (this.isNoData) {
               this.mpackets = [
@@ -306,10 +307,14 @@ export default {
               }
             })
           } else {
-            this.isNoData = true
+            this.isNoData = false
+            this.showError = true
+            this.errorMsg = res.message
           }
         }).catch(e => {
-          this.isNoData = true
+          this.isNoData = false
+          this.showError = true
+          this.errorMsg = e.message
         }).finally(() => {
           this.toggleLoading(false)
         })
@@ -318,6 +323,7 @@ export default {
           this.toggleLoading(true)
           get(api.npm.overview.totalTrafficAnalysis, params).then(res => {
             if (res.code === 200) {
+              this.showError = false
               this.isNoData = res.data.result.length === 0
               if (this.isNoData) {
                 this.mpackets = [
@@ -369,11 +375,14 @@ export default {
                 }
               })
             } else {
+              this.isNoData = false
               this.showError = true
               this.errorMsg = res.message
             }
           }).catch(e => {
-            this.isNoData = true
+            this.isNoData = false
+            this.showError = true
+            this.errorMsg = e.message
           }).finally(() => {
             this.toggleLoading(false)
           })
@@ -381,6 +390,7 @@ export default {
           this.toggleLoading(true)
           get(api.npm.overview.totalNetworkAnalysis, params).then(res => {
             if (res.code === 200) {
+              this.showError = false
               this.isNoData = res.data.result.length === 0
               if (this.isNoData) {
                 this.npmQuantity = [
@@ -430,9 +440,15 @@ export default {
                   this.echartsInit(this.npmQuantity, '(%)')
                 }
               })
+            } else {
+              this.isNoData = false
+              this.showError = true
+              this.errorMsg = res.message
             }
           }).catch(e => {
-            this.isNoData = true
+            this.isNoData = false
+            this.showError = true
+            this.errorMsg = e.message
           }).finally(() => {
             this.toggleLoading(false)
           })
@@ -440,6 +456,7 @@ export default {
           this.toggleLoading(true)
           get(api.npm.overview.totalHttpResponseDelay, params).then(res => {
             if (res.code === 200) {
+              this.showError = false
               this.isNoData = res.data.result.length === 0
               if (this.isNoData) {
                 this.npmQuantity = [
@@ -465,9 +482,15 @@ export default {
                   this.echartsInit(this.npmQuantity, '(ms)')
                 }
               })
+            } else {
+              this.isNoData = false
+              this.showError = true
+              this.errorMsg = res.message
             }
           }).catch(e => {
-            this.isNoData = true
+            this.isNoData = false
+            this.showError = true
+            this.errorMsg = e.message
           }).finally(() => {
             this.toggleLoading(false)
           })
@@ -475,6 +498,7 @@ export default {
           this.toggleLoading(true)
           get(api.npm.overview.totalSslConDelay, params).then(res => {
             if (res.code === 200) {
+              this.showError = false
               this.isNoData = res.data.result.length === 0
               if (this.isNoData) {
                 this.npmQuantity = [
@@ -500,9 +524,15 @@ export default {
                   this.echartsInit(this.npmQuantity, '(ms)')
                 }
               })
+            } else {
+              this.isNoData = false
+              this.showError = true
+              this.errorMsg = res.message
             }
           }).catch(e => {
-            this.isNoData = true
+            this.isNoData = false
+            this.showError = true
+            this.errorMsg = e.message
           }).finally(() => {
             this.toggleLoading(false)
           })

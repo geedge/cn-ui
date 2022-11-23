@@ -1,6 +1,9 @@
 <template>
   <div class="npm-event">
-    <div class="npm-event-title">{{$t('network.eventByType')}}</div>
+    <div class="npm-event-title">
+      {{$t('network.eventByType')}}
+      <chart-error tooltip v-if="showError" :content="errorMsg"></chart-error>
+    </div>
     <div class="npm-event-pie">
       <chart-no-data v-if="isNoData"></chart-no-data>
       <div class="npm-event-pies" v-else>
@@ -35,6 +38,7 @@ import { pieChartOption3 } from '@/views/charts2/charts/options/echartOption'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartError from '@/components/common/Error'
 
 export default {
   name: 'NpmEventsByType',
@@ -42,6 +46,7 @@ export default {
     type: String
   },
   components: {
+    ChartError,
     ChartNoData
   },
   mixins: [chartMixin],
@@ -54,7 +59,9 @@ export default {
     return {
       chartData: [],
       timer: null,
-      isNoData: false
+      isNoData: false,
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -104,6 +111,7 @@ export default {
       this.toggleLoading(true)
       get(api.npm.events.recentEvents, params).then(res => {
         if (res.code === 200) {
+          this.showError = false
           this.isNoData = res.data.result.length === 0
           const arrData = []
           res.data.result.forEach(t => {
@@ -121,8 +129,14 @@ export default {
             this.init()
           })
         } else {
-          this.isNoData = true
+          this.isNoData = false
+          this.showError = true
+          this.errorMsg = res.message
         }
+      }).catch((e) => {
+        this.isNoData = false
+        this.showError = true
+        this.errorMsg = e.message
       }).finally(() => {
         this.toggleLoading(false)
       })

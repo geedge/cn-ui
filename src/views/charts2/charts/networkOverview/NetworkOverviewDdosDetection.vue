@@ -1,8 +1,13 @@
 <template>
  <div class="ddos-detection">
    <chart-no-data v-if="isNoData"></chart-no-data>
-   <div class="ddos-detection-title"><i class="cn-icon cn-icon-a-DDosDetection"></i>{{$t('network.ddosDetection')}}</div>
-   <div class="ddos-detection-value" v-if="!isNoData">
+   <chart-error info v-if="showError" :content="errorMsg" />
+
+   <div class="ddos-detection-title">
+     <i class="cn-icon cn-icon-a-DDosDetection"></i>
+     {{$t('network.ddosDetection')}}
+   </div>
+   <div class="ddos-detection-value" v-if="!isNoData && !showError">
      <div class="ddos-detection-type">
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.numberOfAttacks')}}</div>
@@ -28,21 +33,25 @@ import { get } from '@/utils/http'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NetworkOverviewDdosDetection',
   components: {
+    ChartError,
     ChartNoData
   },
   mixins: [chartMixin],
   data () {
     return {
       ddosData: {},
-      isNoData: false
+      isNoData: false,
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.ddosDetectDataRequests()
       }
     }
@@ -56,13 +65,22 @@ export default {
       this.toggleLoading(true)
       get(api.netWorkOverview.ddosEventAnalysis, params).then(res => {
         if (res.code === 200) {
+          this.showError = false
           if (res.data.result.length === 0) {
             this.isNoData = true
           } else {
             this.ddosData = res.data.result[0]
             this.isNoData = false
           }
+        } else {
+          this.isNoData = false
+          this.showError = true
+          this.errorMsg = res.message
         }
+      }).catch((e) => {
+        this.isNoData = false
+        this.showError = true
+        this.errorMsg = e.message
       }).finally(() => {
         this.toggleLoading(false)
       })

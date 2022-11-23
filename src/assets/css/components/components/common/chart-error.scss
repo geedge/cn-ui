@@ -1,15 +1,15 @@
 .error-component {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  //width: 100%;
+  //height: 100%;
   left: 0;
   top: 0;
 }
 .error-block {
   display: inline-block;
-  width: auto;
-  max-width: calc(100% - 24px);
-  max-height: calc(100% - 24px);
+  //width: 100%;
+  //max-width: calc(100% - 24px);
+  //max-height: calc(100% - 24px);
   //line-height: 24px;
   background: #FFE7E6;
   font-size: 14px;

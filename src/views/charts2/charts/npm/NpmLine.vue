@@ -3,7 +3,10 @@
     <chart-no-data v-if="isNoData"></chart-no-data>
     <template v-if="chartData.id === 11">
       <div class="npm-line-header">
-        <div class="npm-line-header-title">{{$t(chartData.i18n) || chartData.name}}</div>
+        <div class="npm-line-header-title">
+          {{$t(chartData.i18n) || chartData.name}}
+          <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
+        </div>
         <div class="npm-line-header-rights" v-if="chartData.params && chartData.params.showLegend && !isNoData">
           <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
             <div class="npm-line-header-icon" :class="'icon' + index"></div>
@@ -14,23 +17,38 @@
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 12">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(ms)</div>
+      <div class="npm-line-title">
+        {{$t(chartData.i18n) || chartData.name}}(ms)
+        <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
+      </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 13">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(ms)</div>
+      <div class="npm-line-title">
+        {{$t(chartData.i18n) || chartData.name}}(ms)
+        <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
+      </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 14">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(ms)</div>
+      <div class="npm-line-title">
+        {{$t(chartData.i18n) || chartData.name}}(ms)
+        <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
+      </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 15">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(%)</div>
+      <div class="npm-line-title">
+        {{$t(chartData.i18n) || chartData.name}}(%)
+        <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
+      </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.id === 16">
-      <div class="npm-line-title">{{$t(chartData.i18n) || chartData.name}}(%)</div>
+      <div class="npm-line-title">
+        {{$t(chartData.i18n) || chartData.name}}(%)
+        <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
+      </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
   </div>
@@ -48,10 +66,12 @@ import { api } from '@/utils/api'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import unitConvert from '@/utils/unit-convert'
+import ChartError from '@/components/common/Error'
 
 export default {
   name: 'NpmLine',
   components: {
+    ChartError,
     ChartNoData
   },
   mixins: [chartMixin],
@@ -76,8 +96,10 @@ export default {
       timer: null,
       myChartArray: [],
       side: this.$store.state.panel.npmLocationSide,
-      country: this.$store.state.panel.npmLocationCountry
+      country: this.$store.state.panel.npmLocationCountry,
       // province: '',
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -96,7 +118,7 @@ export default {
       }
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         this.init()
       }
     }
@@ -134,6 +156,7 @@ export default {
         if (url) {
           get(url, params).then(res => {
             if (res.code === 200) {
+              this.showError = false
               this.isNoData = res.data.result.length === 0
               if (!this.isNoData) {
                 if (this.chart.params.index === 0) {
@@ -152,7 +175,15 @@ export default {
                   this.echartsInit(res.data.result, this.chartData, this.chartData.params.unitType)
                 }
               }
+            } else {
+              this.isNoData = false
+              this.showError = true
+              this.errorMsg = res.message
             }
+          }).catch((e) => {
+            this.isNoData = false
+            this.showError = true
+            this.errorMsg = e.message
           }).finally(() => {
             this.toggleLoading(false)
           })

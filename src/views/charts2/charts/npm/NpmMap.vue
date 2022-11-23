@@ -1,6 +1,8 @@
 <template>
   <div class="cn-chart__map">
     <div class="map-canvas" id="npmMap"></div>
+    <chart-error v-if="showError" max-width="900" :content="errorMsg"></chart-error>
+
     <div class="map-filter">
       <el-select
           size="mini"
@@ -55,9 +57,11 @@ import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
-import { Rectangle3D } from '@amcharts/amcharts4/.internal/core/elements/3d/Rectangle3D'
+// import { Rectangle3D } from '@amcharts/amcharts4/.internal/core/elements/3d/Rectangle3D'
+import ChartError from '@/components/common/Error'
 export default {
   name: 'NpmMap',
+  components: { ChartError },
   data () {
     return {
       locationOptions,
@@ -68,7 +72,9 @@ export default {
       countryImageSeries: null,
       // Server | Client
       trafficDirection: 'Server',
-      location: ''
+      location: '',
+      showError: false,
+      errorMsg: ''
     }
   },
   mixins: [chartMixin],
@@ -127,12 +133,24 @@ export default {
             Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
               const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
               const mapData = res
+              let msg = ''
               res2.forEach((r, i) => {
                 if (r.code === 200) {
                   mapData.forEach(t => {
                     const find = r.data.result.find(d => d.country === t.country)
                     t[keyPre[i] + 'Score'] = find
                   })
+                } else {
+                  this.showError = true
+                  // todo 此处目前返回字段为msg，后续字段会修改为message
+                  msg = msg + ',' + r.message
+                  if (msg.indexOf(',') === 0) {
+                    msg = msg.substring(1, msg.length)
+                  }
+                  if (msg.lastIndexOf(',') === msg.length - 1) {
+                    msg = msg.substring(0, msg.length - 1)
+                  }
+                  this.errorMsg = msg
                 }
               })
               mapData.forEach(t => {
@@ -149,14 +167,23 @@ export default {
                 }
               })
               this.loadMarkerData(imageSeries, mapData)
+            }).catch((e) => {
+              this.showError = true
+              this.errorMsg = e.message
             })
           } else {
             imageSeries.data = [{}]
           }
+        }).catch((e) => {
+          this.showError = true
+          this.errorMsg = e.message
         }).finally(() => {
           this.toggleLoading(false)
         })
       } catch (e) {
+        this.showError = true
+        // todo 此处错误信息有待考证，后续可能会改动
+        this.errorMsg = e
         console.error(e)
       }
     },
@@ -304,7 +331,7 @@ export default {
       }
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         if (this.location) {
           this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
         } else {

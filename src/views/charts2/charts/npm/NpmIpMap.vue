@@ -1,7 +1,7 @@
 <template>
   <div class="cn-chart__map-title" v-if="queryCondition">
     {{$t('npm.clientLocation')}}
-    <chart-error v-if="showError" tooltip :content="errorMsg" />
+    <chart-error v-if="showError" width="300" tooltip :content="errorMsg" />
   </div>
   <div class="cn-chart__map" :class="{'cn-chart__map-drilldown': queryCondition}">
     <div class="map-canvas" id="npmDrillDownMap"></div>
@@ -13,7 +13,7 @@ import { ref, shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { computeScore, getGeoData } from '@/utils/tools'
-import { storageKey, unitTypes, countryNameIdMapping, curTabState } from '@/utils/constants'
+import { storageKey, unitTypes, curTabState } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
@@ -103,6 +103,9 @@ export default {
             ...params,
             params: res.map(r => `'${r.country}'`).join(',')
           }
+
+          this.showError = false
+
           // 计算分数
           const tcpRequest = get(api.npm.overview.mapTcp, subParams)
           const httpRequest = get(api.npm.overview.mapHttp, subParams)
@@ -114,16 +117,14 @@ export default {
             const mapData = res
             res2.forEach((r, i) => {
               if (r.code === 200) {
-                // todo 没有nodata处理
-                this.showError = false
                 mapData.forEach(t => {
                   const find = r.data.result.find(d => d.country === t.country)
                   t[keyPre[i] + 'Score'] = find
                 })
               } else {
                 this.showError = true
-                // todo 此处需要看最后返回的数据
-                this.errorMsg = res2.message
+                // todo 目前返回的字段为msg，以后将改为message
+                this.errorMsg = r.message
               }
             })
             mapData.forEach(t => {
@@ -141,17 +142,15 @@ export default {
             })
             this.loadMarkerData(imageSeries, mapData)
           })
-        }).catch(error => {
+        }).catch(e => {
           this.showError = true
-          // todo 此处需要看最后返回的数据
-          this.errorMsg = error.message
+          this.errorMsg = e.message
         }).finally(() => {
           this.toggleLoading(false)
         })
       } catch (e) {
         console.error(e)
         this.showError = true
-        // todo 此处需要看最后返回的数据
         this.errorMsg = e.message
       }
     },
