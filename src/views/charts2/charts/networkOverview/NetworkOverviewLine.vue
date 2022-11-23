@@ -88,10 +88,14 @@ export default {
     const lineRefer = ref(query.lineRefer || 'Average')
     const lineTab = ref(query.lineTab || '')
     const queryCondition = ref(query.queryCondition || '')
+    const tabOperationType = ref(query.tabOperationType)
+    const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab)
     return {
       lineRefer,
       lineTab,
       queryCondition,
+      tabOperationType,
+      networkOverviewBeforeTab,
       myChart: shallowRef(null)
     }
   },
@@ -182,10 +186,22 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      // const condition = this.$store.getters.getQueryCondition
-      // const condition = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
-      if (this.queryCondition) {
+      let condition = ''
+      if (this.queryCondition && this.tabOperationType !== '3') {
         params.q = this.queryCondition
+      } else if (this.tabOperationType == '3' && this.queryCondition) {
+        if (this.queryCondition.indexOf(' OR ') > -1) {
+          if (this.networkOverviewBeforeTab === 'isp') {
+            condition = this.queryCondition.split(/["|'= ](.*?)["|'= ]/)
+            params.q = `notEmpty(${condition[0]}) OR notEmpty(${condition[9]})`
+          } else {
+            condition = this.queryCondition.split(/["|'= ](.*?)["|'= ]/)
+            params.q = `notEmpty(${condition[0]}) OR notEmpty(${condition[5]})`
+          }
+        } else {
+          condition = this.queryCondition.split(/['=](.*?)['=]/)
+          params.q = `notEmpty(${condition[0]})`
+        }
       }
       this.toggleLoading(true)
 

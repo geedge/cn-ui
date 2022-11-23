@@ -601,7 +601,9 @@ export default {
         this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
         this.urlChangeParams[this.curTabState.tabOperationType] = opeType
         if (opeType === 3) {
-          this.urlChangeParams.queryCondition = ''
+          if (route !== '/panel/networkOverview') {
+            this.urlChangeParams.queryCondition = ''
+          }
         }
       } else {
         this.urlChangeParams[this.curTabState.tabOperationType] = operationType.mainMenu
