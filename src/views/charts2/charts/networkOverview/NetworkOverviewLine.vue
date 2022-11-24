@@ -349,7 +349,7 @@ export default {
         console.error(e)
         this.showError = true
         this.errorMsg = e.message
-        this.isNoData = true
+        this.isNoData = false
       }).finally(() => {
         this.toggleLoading(false)
       })

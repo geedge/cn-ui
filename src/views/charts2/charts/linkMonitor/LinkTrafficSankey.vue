@@ -2,21 +2,23 @@
   <div class="link-traffic-sankey">
     <el-tabs v-model="tab">
       <el-tab-pane :label="$t('linkMonitor.ingress')" name="0">
+        <chart-error v-if="showError" :content="errorMsg"></chart-error>
         <chart-no-data v-if="ingress"></chart-no-data>
-        <div v-if="tab == 0" class="chart-drawing" id="link-traffic-sankey-0"></div>
+        <div v-if="parseInt(tab) === 0 && !showError" class="chart-drawing" id="link-traffic-sankey-0"></div>
       </el-tab-pane>
       <el-tab-pane :label="$t('linkMonitor.egress')" name="1">
+        <chart-error v-if="showError" :content="errorMsg"></chart-error>
         <chart-no-data v-if="egress"></chart-no-data>
-        <div v-if="tab == 1" class="chart-drawing" id="link-traffic-sankey-1"></div>
+        <div v-if="parseInt(tab) === 1 && !showError" class="chart-drawing" id="link-traffic-sankey-1"></div>
       </el-tab-pane>
     </el-tabs>
-    <template v-if="tab == 0 && !ingress">
+    <template v-if="parseInt(tab) === 0 && !ingress">
       <div class="sankey__label" style="left: 5%;">External Locations</div>
       <div class="sankey__label" style="left: 35%;">Next-Hop Internets</div>
       <div class="sankey__label" style="left: 63%;">Links</div>
       <div class="sankey__label" style="right: 9%; transform: translateX(50%)">Internal Locations</div>
     </template>
-    <template v-else-if="tab == 1 && !egress">
+    <template v-else-if="parseInt(tab) === 1 && !egress">
       <div class="sankey__label" style="left: 5%;">Internal Locations</div>
       <div class="sankey__label" style="left: 33.2%;">Links</div>
       <div class="sankey__label" style="left: 64.5%;">Next-Hop Internets</div>
@@ -38,11 +40,13 @@ import { useRoute } from 'vue-router'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
 import { storageKey, unitTypes } from '@/utils/constants'
+import ChartError from '@/components/common/Error'
 
 export default {
   name: 'LinksTrafficSankey',
   mixins: [chartMixin],
   components: {
+    ChartError,
     ChartNoData
   },
   setup () {
@@ -63,7 +67,9 @@ export default {
       egress: false,
       unitConvert,
       unitTypes,
-      cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo))
+      cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo)),
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -78,13 +84,14 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         this.linkTrafficSankeyDataRequest(this.tab)
       }
     }
   },
   methods: {
     linkTrafficSankeyDataRequest (n) {
+      n = parseInt(n)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
@@ -93,19 +100,19 @@ export default {
       if (this.queryCondition) {
         const condition = this.queryCondition.toLowerCase().split(' or ')
         if (condition.length > 1) {
-          if (n == 0) {
+          if (n === 0) {
             params.q = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
           } else {
             params.q = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
           }
         }
-        if (n == 0) {
+        if (n === 0) {
           url = api.linkMonitor.drilldownQuadrupleIngressAnalysis // 入口
         } else {
           url = api.linkMonitor.drilldownQquadrupleEgressAnalysis // 出口
         }
       } else {
-        if (n == 0) {
+        if (n === 0) {
           url = api.linkMonitor.quadrupleIngressAnalysis // 入口
         } else {
           url = api.linkMonitor.quadrupleEgressAnalysis // 出口
@@ -114,26 +121,32 @@ export default {
       this.toggleLoading(true)
       get(url, params).then(res => {
         if (res.code === 200) {
-          if (n == 0) {
+          this.showError = false
+          if (n === 0) {
             this.ingress = res.data.result.length === 0
           } else {
             this.egress = res.data.result.length === 0
           }
-          this.dataProcessing(res.data.result, n)
+          this.dataProcessing(res.data.result, parseInt(n))
+        } else {
+          this.showError = true
+          this.errorMsg = res.message
         }
       }).catch(e => {
         console.error(e)
         this.egress = true
         this.ingress = true
+        this.showError = true
+        this.errorMsg = e.message
       }).finally(() => {
         this.toggleLoading(false)
       })
     },
     dataProcessing (result, tab) {
-      if (tab == 0) {
+      if (tab === 0) {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (t.commonIngressLinkId == e.originalLinkId) {
+            if (t.commonIngressLinkId === e.originalLinkId) {
               t.linkId = e.linkId
               t.linkDirection = e.nextHop
               t.bandwidth = e.bandwidth
@@ -146,7 +159,7 @@ export default {
       } else {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (t.commonEgressLinkId == e.originalLinkId) {
+            if (t.commonEgressLinkId === e.originalLinkId) {
               t.linkId = e.linkId
               t.bandwidth = e.bandwidth
               t.linkDirection = e.nextHop
@@ -170,7 +183,7 @@ export default {
       const links1 = []
       const links2 = []
       const linksAnalyze2 = []
-      if (tab == 1) {
+      if (tab === 1) {
         result.forEach(r => {
           // 第一列
           if (!data0.some(d => d.name === r.client)) {
@@ -357,7 +370,7 @@ export default {
     echartsInit (tab, data, links) {
       const _this = this
       let dom = ''
-      if (tab == 0) {
+      if (tab === 0) {
         dom = document.getElementById('link-traffic-sankey-0')
         if (this.myChart) {
           this.myChart.dispose()
@@ -400,14 +413,14 @@ export default {
       }
       this.chartOption.series[0].data = data
       this.chartOption.series[0].links = links
-      if (tab == 0) {
+      if (tab === 0) {
         this.myChart.setOption(this.chartOption)
       } else {
         this.myChart2.setOption(this.chartOption)
       }
     },
     resize () {
-      if (this.tab == 0) {
+      if (this.tab === 0) {
         this.myChart.resize()
       } else {
         this.myChart2.resize()

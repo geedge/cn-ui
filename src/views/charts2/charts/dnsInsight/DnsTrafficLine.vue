@@ -1,6 +1,7 @@
 <template>
   <div class="line network dns-traffic-line">
-    <div class="line-header">
+    <chart-error v-if="showError" :content="errorMsg" />
+    <div class="line-header" v-if="!showError">
       <div class="line-header-left">
         <div class="line-value-active" v-if="lineTab"></div>
         <div class="line-value">
@@ -138,7 +139,9 @@ export default {
       leftOffset: 0,
       sizes: [3, 4, 6, 8, 9, 10],
       dynamicVariable: '',
-      showMarkLine: true
+      showMarkLine: true,
+      showError: false,
+      errorMsg: ''
     }
   },
   watch: {
@@ -167,7 +170,7 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         if (this.lineTab) {
           this.init(this.lineMetric, this.showMarkLine, 'active')
         } else {
@@ -195,6 +198,7 @@ export default {
       }
       get(url, params).then((res) => {
         if (res.code === 200) {
+          this.showError = false
           this.isNoData = res.data.result.length === 0
           if (this.isNoData) {
             this.lineTab = ''
@@ -204,7 +208,7 @@ export default {
               { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
             ]
           }
-          res.data.result.forEach((t, i) => {
+          res.data.result.forEach((t) => {
             if (t.type === 'bytes' && val === 'Bits/s') {
               const mpackets = _.cloneDeep(this.mpackets)
               mpackets[0].analysis = t.totalBitsRate.analysis
@@ -266,10 +270,16 @@ export default {
               })
             }
           })
+        } else {
+          this.isNoData = false
+          this.showError = true
+          this.errorMsg = res.message
         }
       }).catch(e => {
         console.error(e)
-        this.isNoData = true
+        this.isNoData = false
+        this.showError = true
+        this.errorMsg = e.message
       }).finally(() => {
         this.toggleLoading(false)
       })
@@ -295,7 +305,7 @@ export default {
             width: 1
           },
           stack: t.name !== 'network.total' ? 'network.total' : '',
-          symbolSize: function (value, params) {
+          symbolSize: function (value) {
             return _this.symbolSizeSortChange(i, value[0])
           },
           itemStyle: {
@@ -339,7 +349,7 @@ export default {
         }
       })
       if (!show) {
-        this.chartOption.series.forEach((t, i) => {
+        this.chartOption.series.forEach((t) => {
           t.markLine.label.show = false
           t.markLine = []
         })
@@ -377,8 +387,7 @@ export default {
             }
           })
         })
-        const str = stackedLineTooltipFormatter(params)
-        return str
+        return stackedLineTooltipFormatter(params)
       }
       this.showMarkLine = true
       this.myChart.setOption(this.chartOption)
@@ -441,7 +450,7 @@ export default {
         })
       }
     },
-    handleActiveBar (value) {
+    handleActiveBar () {
       if (document.querySelector('.network .line-value-mpackets.is-active')) {
         const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-mpackets.is-active')
         const activeBar = document.querySelector('.network .line-value-active')
@@ -456,7 +465,7 @@ export default {
       this.lineTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
-      this.mpackets.forEach((e, i) => {
+      this.mpackets.forEach((e) => {
         if (!e.invertTab) {
           e.invertTab = true
         }
