@@ -126,13 +126,8 @@ export default {
         const packetPercent = get(api.npm.overview.packetRetransPercent, params)
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
-          // todo 模拟数据，记得删
-          res[0] = {
-            code: 50001,
-            msg: 'jhgfdfghjklkjhg'
-          }
           this.npmNetworkCycleData = []
-          res.forEach((t, index) => {
+          res.forEach(t => {
             if (t.code === 200) {
               this.npmNetworkCycleData.push(t.data.result)
             } else {
@@ -145,7 +140,7 @@ export default {
           // 此时e为数组
           if (e instanceof Array) {
             this.npmNetworkCycleData = []
-            e.forEach((t) => {
+            e.forEach(t => {
               this.npmNetworkCycleData.push(t)
             })
             this.npmNetworkLastCycleQuery()
