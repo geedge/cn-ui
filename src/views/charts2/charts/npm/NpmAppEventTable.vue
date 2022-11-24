@@ -79,7 +79,7 @@
     </el-table>
 
     <div class="table-error">
-      <chart-error></chart-error>
+      <chart-error v-if="showError" :content="errorMsg"></chart-error>
     </div>
   </div>
 </template>
@@ -160,8 +160,7 @@ export default {
       this.customTableTitles[0].label = this.typeLabelMap[this.metric]
       this.tableData = []
       const params = {
-        startTime: true,
-        // startTime: getSecond(this.timeFilter.startTime),
+        startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         limit: 10,
         type: this.metric
