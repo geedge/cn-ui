@@ -1,6 +1,7 @@
 <template>
   <div class="npm-network-quantity">
     <single-value
+        v-if="npmNetworkData.length>0"
       :npm-network-name="npmNetworkName"
       :npm-network-data="npmNetworkData"
     ></single-value>
@@ -125,15 +126,30 @@ export default {
         const packetPercent = get(api.npm.overview.packetRetransPercent, params)
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+          // todo 模拟数据，记得删
+          res[0] = {
+            code: 50001,
+            msg: 'jhgfdfghjklkjhg'
+          }
           this.npmNetworkCycleData = []
-          res.forEach(t => {
+          res.forEach((t, index) => {
             if (t.code === 200) {
               this.npmNetworkCycleData.push(t.data.result)
+            } else {
+              this.npmNetworkCycleData.push(t)
             }
           })
           this.npmNetworkLastCycleQuery()
         }).catch(e => {
           this.toggleLoading(false)
+          // 此时e为数组
+          if (e instanceof Array) {
+            this.npmNetworkCycleData = []
+            e.forEach((t) => {
+              this.npmNetworkCycleData.push(t)
+            })
+            this.npmNetworkLastCycleQuery()
+          }
         })
       }
     },
@@ -187,16 +203,37 @@ export default {
         params.type = params.type || type
         this.toggleLoading(true)
         get(api.npm.overview.networkAnalysis, params).then(res => {
+          // if (res.code === 200) {
+          //   this.npmNetworkLastCycleData = res.data.result
+          //   let timer = null
+          //   if (timer) {
+          //     clearTimeout(timer)
+          //   }
+          //   timer = setTimeout(() => {
+          //     this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+          //   }, 300)
+          // }
           if (res.code === 200) {
             this.npmNetworkLastCycleData = res.data.result
-            let timer = null
-            if (timer) {
-              clearTimeout(timer)
-            }
-            timer = setTimeout(() => {
-              this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
-            }, 300)
+          } else {
+            this.npmNetworkLastCycleData = [res]
           }
+          let timer = null
+          if (timer) {
+            clearTimeout(timer)
+          }
+          timer = setTimeout(() => {
+            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+          }, 300)
+        }).catch((e) => {
+          let timer = null
+          if (timer) {
+            clearTimeout(timer)
+          }
+          this.npmNetworkLastCycleData = [e]
+          timer = setTimeout(() => {
+            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+          }, 300)
         }).finally(() => {
           this.toggleLoading(false)
         })
@@ -204,16 +241,37 @@ export default {
         this.toggleLoading(true)
         params.type = this.networkOverviewBeforeTab
         get(api.npm.overview.networkAnalysis, params).then(res => {
+          // if (res.code === 200) {
+          //   this.npmNetworkLastCycleData = res.data.result
+          //   let timer = null
+          //   if (timer) {
+          //     clearTimeout(timer)
+          //   }
+          //   timer = setTimeout(() => {
+          //     this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+          //   }, 300)
+          // }
           if (res.code === 200) {
             this.npmNetworkLastCycleData = res.data.result
-            let timer = null
-            if (timer) {
-              clearTimeout(timer)
-            }
-            timer = setTimeout(() => {
-              this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
-            }, 300)
+          } else {
+            this.npmNetworkLastCycleData = [res]
           }
+          let timer = null
+          if (timer) {
+            clearTimeout(timer)
+          }
+          timer = setTimeout(() => {
+            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+          }, 300)
+        }).catch((e) => {
+          let timer = null
+          if (timer) {
+            clearTimeout(timer)
+          }
+          this.npmNetworkLastCycleData = [e]
+          timer = setTimeout(() => {
+            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
+          }, 300)
         }).finally(() => {
           this.toggleLoading(false)
         })
@@ -228,9 +286,19 @@ export default {
           res.forEach((t, i) => {
             if (t.code === 200) {
               this.npmNetworkLastCycleData.push(t.data.result)
-              this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 1)
+            } else {
+              this.npmNetworkLastCycleData.push(t)
             }
+            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 1)
           })
+        }).catch((e) => {
+          // todo 此处的e可能为数组
+          if (e instanceof Array) {
+            e.forEach((t, i) => {
+              this.npmNetworkLastCycleData.push(t)
+              this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 1)
+            })
+          }
         }).finally(() => {
           this.toggleLoading(false)
         })

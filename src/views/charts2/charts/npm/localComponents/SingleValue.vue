@@ -2,7 +2,7 @@
   <div class="single-value" v-for="(npm, index) in newNpmNetworkData" :key="index">
     <div class="single-value__title" style="display: flex">
       {{ $t(npmNetworkName[index].name) }}
-      <chart-error v-if="!npm.value" tooltip :content="npm.msg"></chart-error>
+      <chart-error v-if="npm.message" tooltip :content="npm.message"></chart-error>
     </div>
 
     <div class="single-value__content">
@@ -88,21 +88,25 @@ export default {
         npmNetworkData.forEach((item) => {
           const tempObj = {}
           for (const i in item) {
-            // 将含有avg、p90等关键字使用avg、p90来代替，形成统一属性
-            if (i.indexOf('Avg') > -1) {
-              tempObj.Avg = item[i]
-            } else if (i.indexOf('P50') > -1) {
-              tempObj.P50 = item[i]
-            } else if (i.indexOf('P90') > -1) {
-              tempObj.P90 = item[i]
-            } else if (i.indexOf('P95') > -1) {
-              tempObj.P95 = item[i]
-            } else if (i.indexOf('P99') > -1) {
-              tempObj.P99 = item[i]
+            if (item.msg || item.message) {
+              // 为了兼容字段为msg的情况
+              tempObj.message = item.msg ? item.msg : item.message
+            } else {
+              // 将含有avg、p90等关键字使用avg、p90来代替，形成统一属性
+              if (i.indexOf('Avg') > -1) {
+                tempObj.Avg = item[i]
+              } else if (i.indexOf('P50') > -1) {
+                tempObj.P50 = item[i]
+              } else if (i.indexOf('P90') > -1) {
+                tempObj.P90 = item[i]
+              } else if (i.indexOf('P95') > -1) {
+                tempObj.P95 = item[i]
+              } else if (i.indexOf('P99') > -1) {
+                tempObj.P99 = item[i]
+              }
+              tempObj.value = item.value
             }
           }
-          tempObj.value = item.value
-          tempObj.msg = item.msg
           dealList.push(tempObj)
         })
         this.newNpmNetworkData = dealList
