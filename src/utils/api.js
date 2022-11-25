@@ -172,6 +172,8 @@ export const api = {
       trafficGraph: '/interface/application/performance/overview/drilldown/drilldown/dimension/trafficGraph',
       // 各维度下钻网络性能
       networkAnalysis: '/interface/application/performance/overview/drilldown/dimension/networkAnalysis',
+      // 各维度下钻网络性能 三级菜单
+      allNetworkAnalysis: '/interface/application/performance/overview/drilldown/dimension/allNetworkAnalysis',
       // 下钻地图
       map: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/trafficAnalysis',
       mapTcp: '/interface/application/performance/overview/drilldown/dimension/clientLocations/world/tcpSessionDelay',

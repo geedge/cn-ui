@@ -260,6 +260,8 @@ export default {
 
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
+    // 三级菜单判断
+    const tabOperationType = ref(query.tabOperationType)
     const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab || '')
     return {
       panelType,
@@ -270,6 +272,7 @@ export default {
       path,
       queryCondition,
       dimensionType,
+      tabOperationType,
       networkOverviewBeforeTab
     }
   },
@@ -343,12 +346,13 @@ export default {
     },
     scoreCalculation () {
       let condition = ''
+      let url = ''
       if (this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
         condition = this.queryCondition
       }
-      const type = this.dimensionType || this.networkOverviewBeforeTab
+      let type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -382,9 +386,14 @@ export default {
           params.type = type
         }
       }
+      if (parseFloat(this.tabOperationType) === 3) {
+        url = api.npm.overview.allNetworkAnalysis
+      } else {
+        url = api.npm.overview.networkAnalysis
+      }
       if ((type && condition) || type) {
         params.type = params.type || type
-        get(api.npm.overview.networkAnalysis, params).then(res => {
+        get(url, params).then(res => {
           if (res.code === 200) {
             const data = {
               establishLatencyMs: res.data.result.establishLatencyMsAvg || null,

@@ -27,11 +27,13 @@ export default {
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
     const tabIndex = ref(query.tabIndex)
+    const tabOperationType = ref(query.tabOperationType)
     const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab || '')
     return {
       queryCondition,
       dimensionType,
       tabIndex,
+      tabOperationType,
       networkOverviewBeforeTab
     }
   },
@@ -63,6 +65,7 @@ export default {
   methods: {
     npmNetworkCycleQuery () {
       let condition = ''
+      let url = ''
       if (this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
@@ -107,14 +110,19 @@ export default {
           params.type = type
         }
       }
+      if (parseFloat(this.tabOperationType) === 3) {
+        url = api.npm.overview.allNetworkAnalysis
+      } else {
+        url = api.npm.overview.networkAnalysis
+      }
       if ((type && condition) || type) {
         params.type = params.type || type
         this.toggleLoading(true)
-        get(api.npm.overview.networkAnalysis, params).then(res => {
+        get(url, params).then(res => {
           if (res.code === 200) {
             this.npmNetworkCycleData = res.data.result
           }
-          this.npmNetworkLastCycleQuery()
+          this.npmNetworkLastCycleQuery(url, params)
         }).catch(e => {
           this.toggleLoading(false)
         })
@@ -148,104 +156,20 @@ export default {
         })
       }
     },
-    npmNetworkLastCycleQuery () {
-      let condition = ''
-      if (this.queryCondition.indexOf(' OR ') > -1) {
-        condition = this.queryCondition.split(/["|'](.*?)["|']/)
-      } else {
-        condition = this.queryCondition
-      }
-      const type = this.dimensionType || this.networkOverviewBeforeTab
+    npmNetworkLastCycleQuery (url, param) {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 1
       }
-      if (this.tabIndex == 0) {
-        this.side = 'client'
-      } else if (this.tabIndex == 1) {
-        this.side = 'server'
+      if (param && param.type && param.q) {
+        params.type = param.type
+        params.q = param.q
       }
-      if (condition && (typeof condition !== 'object') && type) {
-        if (type === 'clientIp') {
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='client'`
-        } else if (type === 'serverIp') {
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
-        } else if (type === 'clientCity') {
-          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
-        } else if (type === 'serverCity') {
-          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'`
-        } else {
-          params.q = condition
-        }
-        params.type = type
-      } else if (condition.length > 1 && type && type === 'ip') {
-        params.q = `${type}='${condition[1]}' and side='${this.side}'`
-        params.type = type
-      } else if (condition.length > 1 && type && type !== 'ip') {
-        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
-          params.q = `${type}='${condition[1]}'`
-          params.type = type
-        } else if (type === 'idcRenter') {
-          params.q = `idc_renter='${condition[1]}'`
-          params.type = type
-        } else {
-          params.q = `${condition[0]}'${condition[1]}'`
-          params.type = type
-        }
-      }
-      if ((type && condition) || type) {
-        params.type = params.type || type
+      if ((params.type && params.q) || (param && param.type)) {
+        params.type = params.type || param.type
         this.toggleLoading(true)
-        get(api.npm.overview.networkAnalysis, params).then(res => {
-          // if (res.code === 200) {
-          //   this.npmNetworkLastCycleData = res.data.result
-          //   let timer = null
-          //   if (timer) {
-          //     clearTimeout(timer)
-          //   }
-          //   timer = setTimeout(() => {
-          //     this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
-          //   }, 300)
-          // }
-          if (res.code === 200) {
-            this.npmNetworkLastCycleData = res.data.result
-          } else {
-            this.npmNetworkLastCycleData = [res]
-          }
-          let timer = null
-          if (timer) {
-            clearTimeout(timer)
-          }
-          timer = setTimeout(() => {
-            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
-          }, 300)
-        }).catch((e) => {
-          let timer = null
-          if (timer) {
-            clearTimeout(timer)
-          }
-          this.npmNetworkLastCycleData = [e]
-          timer = setTimeout(() => {
-            this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
-          }, 300)
-        }).finally(() => {
-          this.toggleLoading(false)
-        })
-      } else if (!type && !condition && this.networkOverviewBeforeTab) {
-        this.toggleLoading(true)
-        params.type = this.networkOverviewBeforeTab
-        get(api.npm.overview.networkAnalysis, params).then(res => {
-          // if (res.code === 200) {
-          //   this.npmNetworkLastCycleData = res.data.result
-          //   let timer = null
-          //   if (timer) {
-          //     clearTimeout(timer)
-          //   }
-          //   timer = setTimeout(() => {
-          //     this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
-          //   }, 300)
-          // }
+        get(url, params).then(res => {
           if (res.code === 200) {
             this.npmNetworkLastCycleData = res.data.result
           } else {
