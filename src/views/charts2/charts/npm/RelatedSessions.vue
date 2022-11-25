@@ -89,8 +89,8 @@ export default {
 
           // 如果返回数据为-，则不必计算比例
           if (!isNaN(client) && !isNaN(server)) {
-            this.clientSessions = client / (client + server)
-            this.serverSessions = server / (client + server)
+            this.clientSessions = client / (client * 1 + server * 1)
+            this.serverSessions = server / (client * 1 + server * 1)
             this.sessionData.clientSessions = unitConvert(this.clientSessions, unitTypes.percent).join('')
             this.sessionData.serverSessions = unitConvert(this.serverSessions, unitTypes.percent).join('')
 
@@ -103,7 +103,6 @@ export default {
               divGray.style.borderRadius = 4 + 'px'
               divGray.style.width = '100%'
             }
-
             divGreen.style.width = this.sessionData.clientSessions
             divRed.style.width = this.sessionData.serverSessions
           } else {
