@@ -96,18 +96,18 @@ export default {
     }
   },
   computed: {
-    npmThirdLevelMenuScore () {
-      return this.$store.getters.getNpmThirdLevelMenuScore
-    }
+    // npmThirdLevelMenuScore () {
+    //   return this.$store.getters.getNpmThirdLevelMenuScore
+    // }
   },
   watch: {
-    npmThirdLevelMenuScore: {
-      deep: true,
-      immediate: true,
-      handler (n) {
-        this.score = n
-      }
-    }
+    // npmThirdLevelMenuScore: {
+    //   deep: true,
+    //   immediate: true,
+    //   handler (n) {
+    //     this.score = n
+    //   }
+    // }
   },
   async mounted () {
     // this.panelName = this.$store.getters.getPanelName

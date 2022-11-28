@@ -71,6 +71,14 @@ export default {
       newNpmNetworkData: [] // 整合处理传过来的数据列表
     }
   },
+  watch: {
+    npmNetworkData: {
+      deep: true,
+      handler () {
+        this.initData()
+      }
+    }
+  },
   mounted () {
     this.initData()
   },
