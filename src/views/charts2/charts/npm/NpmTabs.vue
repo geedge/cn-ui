@@ -1,7 +1,8 @@
 <template>
   <div class="npm-tabs">
     <div class="npm-tabs__active-bar"></div>
-    <el-tabs v-model="currentTab" ref="elTabs" type="border-card">
+    <el-tabs v-model="currentTab" ref="elTabs" type="border-card" v-show="isCurTabReady"
+             @tab-click="handleClick">
       <el-tab-pane v-for="(tab,index) in tabs" :key="tab.i18n"  :name="index" :disabled="tab.disable" >
         <template #label>
           <div class="npm-tab__label">
@@ -27,7 +28,9 @@ export default {
   name: 'NpmTabs',
   data () {
     return {
-      leftOffset: 27
+      leftOffset: 27,
+      currentTab: ref(0),
+      isCurTabReady:false
     }
   },
   mixins: [chartMixin],
@@ -39,11 +42,7 @@ export default {
         item.disable = false
       })
     }
-    const { query } = useRoute()
-    const tabIndexParam = query.tabIndex
-    const currentTab = ref(tabIndexParam ? parseInt(tabIndexParam) : 0)
     return {
-      currentTab,
       tabs
     }
   },
@@ -64,6 +63,13 @@ export default {
     }
   },
   methods: {
+    handleClick(tab){
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        tabIndex: tab.index
+      })
+      overwriteUrl(newUrl)
+    },
     handleActiveBar (index) {
       const tabDom = document.getElementById('tab-' + index)
       if (tabDom) {
@@ -73,9 +79,17 @@ export default {
         const activeBar = document.querySelector('.npm-tabs .npm-tabs__active-bar')
         activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
       }
+    },
+    disableTab(n){
+      this.tabs[n].disable = true
+      const tabEle = document.getElementById('tab-'+n)
+      tabEle.style.cssText = 'cursor: not-allowed;'
     }
   },
   mounted () {
+    const { query } = useRoute()
+    const tabIndexParam = query.tabIndex
+    let curTabIndexInUrl = tabIndexParam ? parseInt(tabIndexParam) : null
     if (this.chart.panelId === drillDownPanelTypeMapping.npmOverviewIp) {
       const self = this
       // 当client或server的session数为0时，对应tab置灰，不可选，默认高亮另一个不为0的tab
@@ -93,28 +107,47 @@ export default {
           self.serverSessions = self.sessionData.serverSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
         }
       }).finally(() => {
-        let currentTab = 0
+        let thirdMenu = this.$route.query['thirdMenu']
         self.tabs[0].disable = false
         self.tabs[1].disable = false
-        if (self.clientSessions === 0) {
-          currentTab = 1
-          self.tabs[0].disable = true
-          self.tabs[1].disable = false
-          const tabEle = document.getElementById('tab-0')
-          tabEle.style.cssText = 'cursor: not-allowed;'
+        let curTabIndex = 0
+        if(thirdMenu === 'network.clientIps'){
+          curTabIndex = 0
+          if (self.serverSessions === 0) {
+            self.disableTab(1)
+          }
+        }else if(thirdMenu === 'network.serverIps'){
+          curTabIndex = 1
+          if (self.clientSessions === 0) {
+            self.disableTab(0)
+          }
+        }else if (self.clientSessions === 0) {
+          curTabIndex = 1
+          self.disableTab(0)
         } else if (self.serverSessions === 0) {
-          currentTab = 0
-          self.tabs[0].disable = false
-          self.tabs[1].disable = true
-          const tabEle = document.getElementById('tab-1')
-          tabEle.style.cssText = 'cursor: not-allowed;'
+          curTabIndex = 0
+          self.disableTab(1)
         }
-        self.currentTab = currentTab
-        setTimeout(() => {
-          self.handleActiveBar(currentTab)
-        }, 400)
+        this.$nextTick(() => {
+          if(curTabIndexInUrl !== null){
+            self.currentTab = curTabIndexInUrl
+            self.isCurTabReady = true
+            setTimeout(() => {
+              this.$emit('tabChange', curTabIndexInUrl)
+            }, 400)
+          }else {
+            self.currentTab = curTabIndex
+            self.isCurTabReady = true
+          }
+          setTimeout(() => {
+            self.handleActiveBar(self.currentTab)
+
+          }, 400)
+        })
       })
     } else {
+      this.currentTab = curTabIndexInUrl ? curTabIndexInUrl : 0
+      this.isCurTabReady = true
       setTimeout(() => {
         this.handleActiveBar(this.currentTab)
       }, 400)
