@@ -277,9 +277,7 @@ export default {
           })
         } else {
           this.showError = true
-          // todo 此时返回的是msg，后期记得改
-          this.errorMsg = res.msg
-          // this.errorMsg = res.message
+          this.errorMsg = res.message
         }
       }).catch(e => {
         console.error(e)
@@ -475,6 +473,9 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
+    this.myChart = null
+    this.chartOption = null
+    this.unitConvert = null
   }
 }
 </script>

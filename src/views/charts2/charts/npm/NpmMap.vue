@@ -142,7 +142,6 @@ export default {
                   })
                 } else {
                   this.showError = true
-                  // todo 此处目前返回字段为msg，后续字段会修改为message
                   msg = msg + ',' + r.message
                   if (msg.indexOf(',') === 0) {
                     msg = msg.substring(1, msg.length)

@@ -151,9 +151,7 @@ export default {
           this.linkTrafficListData.npmScore = computeScore(data)
         } else {
           this.showError = true
-          // todo 此时返回的是msg，后期记得改
-          this.errorMsg = res.msg
-          // this.errorMsg = res.message
+          this.errorMsg = res.message
         }
       }).catch(e => {
         console.error(e)

@@ -123,7 +123,6 @@ export default {
                 })
               } else {
                 this.showError = true
-                // todo 目前返回的字段为msg，以后将改为message
                 this.errorMsg = r.message
               }
             })

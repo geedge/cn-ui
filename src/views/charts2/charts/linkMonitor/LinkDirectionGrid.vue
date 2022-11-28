@@ -225,18 +225,16 @@ export default {
         } else {
           this.isLinkNoData = false
           this.isNextShowError = true
-          // todo 此时返回的是msg，后期记得改为message
-          this.nextErrorMsg = res[1].msg
+          this.nextErrorMsg = res[1].message
         }
       }).catch(e => {
         console.error(e)
 
         this.isLinkShowError = true
-        // todo 此时返回的是msg，后期记得改为message
-        this.linkErrorMsg = e[0].msg
+        this.linkErrorMsg = e[0].message
 
         this.isNextShowError = true
-        this.nextErrorMsg = e[1].msg
+        this.nextErrorMsg = e[1].message
       }).finally(() => {
         this.toggleLoading(false)
       })
