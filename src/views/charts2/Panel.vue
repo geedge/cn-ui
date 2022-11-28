@@ -108,6 +108,13 @@ export default {
     //     this.score = n
     //   }
     // }
+    timeFilter: {
+      handler (n) {
+        if (this.$route.path === '/panel/networkAppPerformance' && (this.queryCondition || this.networkOverviewBeforeTab)) {
+          this.scoreCalculation()
+        }
+      }
+    }
   },
   async mounted () {
     // this.panelName = this.$store.getters.getPanelName
