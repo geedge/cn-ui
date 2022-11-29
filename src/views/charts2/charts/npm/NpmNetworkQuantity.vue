@@ -50,7 +50,9 @@ export default {
       npmNetworkLastCycleData: [],
       npmNetworkData: [],
       side: '',
-      chartData: {}
+      chartData: {},
+      timer1: null,
+      timer2: null
     }
   },
   watch: {
@@ -179,7 +181,7 @@ export default {
           if (timer) {
             clearTimeout(timer)
           }
-          timer = setTimeout(() => {
+          this.timer1 = setTimeout(() => {
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
           }, 300)
         }).catch((e) => {
@@ -188,7 +190,7 @@ export default {
             clearTimeout(timer)
           }
           this.npmNetworkLastCycleData = [e]
-          timer = setTimeout(() => {
+          this.timer2 = setTimeout(() => {
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
           }, 300)
         }).finally(() => {
@@ -276,6 +278,10 @@ export default {
       this.chartData = _.cloneDeep(this.chart)
     }
     this.npmNetworkCycleQuery()
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer1)
+    clearTimeout(this.timer2)
   }
 }
 </script>

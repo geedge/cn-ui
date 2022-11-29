@@ -388,7 +388,11 @@ export default {
       // 此处为验证是否因dom未销毁，导致图表出错，后续可能会改
       let dom = null
       dom = document.getElementById('overviewLineChart')
-      this.myChart = null
+      // this.myChart = null
+      if (this.myChart) {
+        this.myChart.dispose()
+        this.myChart = null
+      }
       this.myChart = echarts.init(dom)
       this.chartOption = stackedLineChartOption
       const chartOption = this.chartOption.series[0]
@@ -673,6 +677,8 @@ export default {
   mounted () {
     // todo 初始化鼠标事件，开启右键返回
     // this.domInit()
+    this.myChart = null
+    this.chartOption = null
     this.timer = setTimeout(() => {
       if (this.lineTab) {
         const data = this.mpackets.find(t => t.class === this.lineTab)
@@ -688,6 +694,15 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
+
+    let myChart = echarts.getInstanceByDom(document.getElementById('overviewLineChart'))
+    if (myChart) {
+      echarts.dispose(myChart)
+    }
+    this.myChart = null
+    // 检测时发现该方法占用较大内存，且未被释放
+    this.unitConvert = null
+    myChart = null
   }
 }
 </script>

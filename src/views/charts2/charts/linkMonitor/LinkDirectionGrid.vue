@@ -220,7 +220,7 @@ export default {
             this.nextGridData = nextGridData
           }
         } else {
-          this.isNextNoData = true
+          this.isNextNoData = false
           this.isNextShowError = true
           this.nextErrorMsg = res[1].message
         }

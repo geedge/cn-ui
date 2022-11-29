@@ -428,6 +428,9 @@ export default {
     }
   },
   mounted () {
+    this.myChart = null
+    this.myChart2 = null
+    this.chartOption = null
     this.timer = setTimeout(() => {
       this.linkTrafficSankeyDataRequest(this.tab)
     }, 100)
@@ -436,6 +439,19 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
+    if (this.myChart) {
+      this.myChart.dispose()
+      // 避免不能生效
+      this.myChart = null
+    }
+    if (this.myChart2) {
+      this.myChart2.dispose()
+      this.myChart2 = null
+    }
+    this.chartOption = null
+
+    this.cnLinkInfo = null
+    this.unitConvert = null
   }
 }
 </script>

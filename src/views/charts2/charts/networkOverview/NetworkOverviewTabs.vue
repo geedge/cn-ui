@@ -1770,6 +1770,13 @@ export default {
   },
   async mounted () {
     console.log('mounted start...')
+    this.list = null
+    this.tabList = null
+    this.allList = null
+    this.drillDownTableConfigs = null
+    this.curTable = null
+    this.commonColumnList = null
+
     this.userId = localStorage.getItem(storageKey.userId)
     this.drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
     this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
@@ -1853,6 +1860,18 @@ export default {
     this.getChartData()
   },
   setup (props) {
+  },
+  beforeUnmount () {
+    // 以下元素，检测到内存并未释放
+    this.list = null
+    this.tabList = null
+    this.allList = null
+    this.drillDownTableConfigs = null
+    this.curTable = null
+    this.commonColumnList = null
+    this.networkTable = null
+    this.tableData = null
+    this.tableDataBackup = null
   },
   unmounted () {
     this.isNoData = false

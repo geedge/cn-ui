@@ -737,6 +737,8 @@ export default {
     window.removeEventListener('resize', this.resize)
     clearTimeout(this.timerScroll)
     clearTimeout(this.timerSearch)
+    this.myChart = null
+    this.unitConvert = null
   }
 }
 </script>
