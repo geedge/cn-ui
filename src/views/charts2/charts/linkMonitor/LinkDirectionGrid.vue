@@ -73,63 +73,62 @@ export default {
             }
             return a.egressLinkId - b.egressLinkId
           })
+
           this.isLinkNoData = linkData.length === 0
-          if (this.isLinkNoData) {
-            return
-          }
+          if (!this.isLinkNoData) {
+            // 链路流量数据
+            const linkGridData = []
+            linkData.forEach(d => {
+              const ingressLink = linkInfo.find(l => l.originalLinkId === d.ingressLinkId)
+              const egressLink = linkInfo.find(l => l.originalLinkId === d.egressLinkId)
+              if (ingressLink && egressLink) {
+                const data = linkGridData.find(g => g.linkId === ingressLink.linkId)
 
-          // 链路流量数据
-          const linkGridData = []
-          linkData.forEach(d => {
-            const ingressLink = linkInfo.find(l => l.originalLinkId === d.ingressLinkId)
-            const egressLink = linkInfo.find(l => l.originalLinkId === d.egressLinkId)
-            if (ingressLink && egressLink) {
-              const data = linkGridData.find(g => g.linkId === ingressLink.linkId)
+                // 上行使用情况计算
+                const egressUsage = this.computeUsage(d.egressBitsRate, egressLink.bandwidth)
+                // 下行使用情况计算
+                const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressLink.bandwidth)
+                // 宽带使用超过90%，赋红点
 
-              // 上行使用情况计算
-              const egressUsage = this.computeUsage(d.egressBitsRate, egressLink.bandwidth)
-              // 下行使用情况计算
-              const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressLink.bandwidth)
-              // 宽带使用超过90%，赋红点
+                d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
+                // 计算npm分数
+                // 分数低于3分，赋红点
+                d.score = this.localComputeScore(d)
 
-              d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
-              // 计算npm分数
-              // 分数低于3分，赋红点
-              d.score = this.localComputeScore(d)
+                d.scoreLow3 = d.score < 3
 
-              d.scoreLow3 = d.score < 3
-
-              if (data) {
-                const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
-                if (!existedEgressLink) {
-                  data.egress.push({
-                    linkId: egressLink.linkId,
-                    egressUsage: egressUsage,
-                    ingressUsage: ingressUsage,
-                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                    totalBitsRate: d.totalBitsRate,
-                    ...d
+                if (data) {
+                  const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
+                  if (!existedEgressLink) {
+                    data.egress.push({
+                      linkId: egressLink.linkId,
+                      egressUsage: egressUsage,
+                      ingressUsage: ingressUsage,
+                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      totalBitsRate: d.totalBitsRate,
+                      ...d
+                    })
+                  }
+                } else {
+                  linkGridData.push({
+                    linkId: ingressLink.linkId,
+                    egress: [{
+                      linkId: egressLink.linkId,
+                      egressUsage: egressUsage,
+                      ingressUsage: ingressUsage,
+                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      totalBitsRate: d.totalBitsRate,
+                      ...d
+                    }]
                   })
                 }
-              } else {
-                linkGridData.push({
-                  linkId: ingressLink.linkId,
-                  egress: [{
-                    linkId: egressLink.linkId,
-                    egressUsage: egressUsage,
-                    ingressUsage: ingressUsage,
-                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                    totalBitsRate: d.totalBitsRate,
-                    ...d
-                  }]
-                })
               }
-            }
-          })
+            })
 
-          this.linkGridData = linkGridData
+            this.linkGridData = linkGridData
+          }
         } else {
           this.isLinkNoData = false
           this.isLinkShowError = true
@@ -150,80 +149,78 @@ export default {
           })
 
           this.isNextNoData = nextLinkData.length === 0
-          if (this.isNextNoData) {
-            return
-          }
+          if (!this.isNextNoData) {
+            // 链路下一跳数据
+            const nextGridData = []
 
-          // 链路下一跳数据
-          const nextGridData = []
+            nextLinkData.forEach(d => {
+              const ingressLink = linkInfo.find(l => l.nextHop === d.ingressLinkDirection && l.direction === 'ingress')
+              const egressLink = linkInfo.find(l => l.nextHop === d.egressLinkDirection && l.direction === 'egress')
 
-          nextLinkData.forEach(d => {
-            const ingressLink = linkInfo.find(l => l.nextHop === d.ingressLinkDirection && l.direction === 'ingress')
-            const egressLink = linkInfo.find(l => l.nextHop === d.egressLinkDirection && l.direction === 'egress')
+              if (ingressLink && egressLink) {
+                const data = nextGridData.find(g => g.linkId === ingressLink.linkId)
 
-            if (ingressLink && egressLink) {
-              const data = nextGridData.find(g => g.linkId === ingressLink.linkId)
+                let egressBanwidth = 0
+                let ingressBanwidth = 0
+                linkInfo.forEach((item) => {
+                  if (item.nextHop === d.egressLinkDirection && item.direction === 'egress') {
+                    egressBanwidth += item.bandwidth
+                  }
+                  if (item.nextHop === d.ingressLinkDirection && item.direction === 'ingress') {
+                    ingressBanwidth += item.bandwidth
+                  }
+                })
 
-              let egressBanwidth = 0
-              let ingressBanwidth = 0
-              linkInfo.forEach((item) => {
-                if (item.nextHop === d.egressLinkDirection && item.direction === 'egress') {
-                  egressBanwidth += item.bandwidth
-                }
-                if (item.nextHop === d.ingressLinkDirection && item.direction === 'ingress') {
-                  ingressBanwidth += item.bandwidth
-                }
-              })
+                // 上行使用情况计算
+                const egressUsage = this.computeUsage(d.egressBitsRate, egressBanwidth)
+                // 下行使用情况计算
+                const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressBanwidth)
+                // 宽带使用超过90%，赋红点
 
-              // 上行使用情况计算
-              const egressUsage = this.computeUsage(d.egressBitsRate, egressBanwidth)
-              // 下行使用情况计算
-              const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressBanwidth)
-              // 宽带使用超过90%，赋红点
+                d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
+                // 计算npm分数
+                // 分数低于3分，赋红点
+                d.score = this.localComputeScore(d)
 
-              d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
-              // 计算npm分数
-              // 分数低于3分，赋红点
-              d.score = this.localComputeScore(d)
+                d.scoreLow3 = d.score < 3
 
-              d.scoreLow3 = d.score < 3
-
-              if (data) {
-                const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
-                if (!existedEgressLink) {
-                  data.egress.push({
-                    linkId: egressLink.linkId,
-                    nextHop: egressLink.nextHop,
-                    egressUsage: egressUsage,
-                    ingressUsage: ingressUsage,
-                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                    totalBitsRate: d.totalBitsRate,
-                    ...d
+                if (data) {
+                  const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
+                  if (!existedEgressLink) {
+                    data.egress.push({
+                      linkId: egressLink.linkId,
+                      nextHop: egressLink.nextHop,
+                      egressUsage: egressUsage,
+                      ingressUsage: ingressUsage,
+                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      totalBitsRate: d.totalBitsRate,
+                      ...d
+                    })
+                  }
+                } else {
+                  nextGridData.push({
+                    linkId: ingressLink.linkId,
+                    nextHop: ingressLink.nextHop,
+                    egress: [{
+                      linkId: egressLink.linkId,
+                      nextHop: ingressLink.nextHop,
+                      egressUsage: egressUsage,
+                      ingressUsage: ingressUsage,
+                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      totalBitsRate: d.totalBitsRate,
+                      ...d
+                    }]
                   })
                 }
-              } else {
-                nextGridData.push({
-                  linkId: ingressLink.linkId,
-                  nextHop: ingressLink.nextHop,
-                  egress: [{
-                    linkId: egressLink.linkId,
-                    nextHop: ingressLink.nextHop,
-                    egressUsage: egressUsage,
-                    ingressUsage: ingressUsage,
-                    popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                    valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                    totalBitsRate: d.totalBitsRate,
-                    ...d
-                  }]
-                })
               }
-            }
-          })
+            })
 
-          this.nextGridData = nextGridData
+            this.nextGridData = nextGridData
+          }
         } else {
-          this.isLinkNoData = false
+          this.isNextNoData = true
           this.isNextShowError = true
           // todo 此时返回的是msg，后期记得改为message
           this.nextErrorMsg = res[1].msg
