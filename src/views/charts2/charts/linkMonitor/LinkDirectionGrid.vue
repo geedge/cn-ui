@@ -220,7 +220,7 @@ export default {
             this.nextGridData = nextGridData
           }
         } else {
-          this.isNextNoData = true
+          this.isNextNoData = false
           this.isNextShowError = true
           // todo 此时返回的是msg，后期记得改为message
           this.nextErrorMsg = res[1].msg
