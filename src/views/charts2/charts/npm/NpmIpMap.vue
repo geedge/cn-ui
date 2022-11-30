@@ -154,8 +154,9 @@ export default {
       }
     },
     loadMarkerData (imageSeries, data) {
+      data = data.filter(d => d.score || d.score === 0)
       imageSeries.data = data.map(r => ({
-        score: r.score || '&ndash;',
+        score: r.score,
         name: r.province || r.country,
         throughput: valueToRangeValue(r.throughBitsRate, unitTypes.bps).join(' '),
         id: r.serverId,
