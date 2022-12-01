@@ -26,7 +26,7 @@ export default {
     const { query } = useRoute()
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
-    const tabIndex = ref(query.tabIndex)
+    const tabIndex = ref(query.tabIndex || 0)
     const tabOperationType = ref(query.tabOperationType)
     const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab || '')
     return {
