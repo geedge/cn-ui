@@ -54,7 +54,7 @@ export default {
     const metricFilter = ref(query.lineMetric || 'Bits/s')
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
-    const tabIndex = ref(query.tabIndex)
+    const tabIndex = ref(query.tabIndex || 0)
     return {
       metricFilter,
       queryCondition,
