@@ -99,49 +99,48 @@ export default {
         }
         if (params.type === 'serverIp' || params.type === 'clientIp') params.type = 'ip'
         getData(api.npm.overview.map, params).then(res => {
-          const subParams = {
-            ...params,
-            params: res.map(r => `'${r.country}'`).join(',')
-          }
-
           this.showError = false
-
-          // 计算分数
-          const tcpRequest = get(api.npm.overview.mapTcp, subParams)
-          const httpRequest = get(api.npm.overview.mapHttp, subParams)
-          const sslRequest = get(api.npm.overview.mapSsl, subParams)
-          const tcpLostRequest = get(api.npm.overview.mapPacketLoss, subParams)
-          const packetRetransRequest = get(api.npm.overview.mapPacketRetrans, subParams)
-          Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
-            const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
-            const mapData = res
-            res2.forEach((r, i) => {
-              if (r.code === 200) {
-                mapData.forEach(t => {
-                  const find = r.data.result.find(d => d.country === t.country)
-                  t[keyPre[i] + 'Score'] = find
-                })
-              } else {
-                this.showError = true
-                // todo 目前返回的字段为msg，以后将改为message
-                this.errorMsg = r.message
-              }
+          if (res && res.length > 0) {
+            const subParams = {
+              ...params,
+              params: res.map(r => `'${r.country}'`).join(',')
+            }
+            // 计算分数
+            const tcpRequest = get(api.npm.overview.mapTcp, subParams)
+            const httpRequest = get(api.npm.overview.mapHttp, subParams)
+            const sslRequest = get(api.npm.overview.mapSsl, subParams)
+            const tcpLostRequest = get(api.npm.overview.mapPacketLoss, subParams)
+            const packetRetransRequest = get(api.npm.overview.mapPacketRetrans, subParams)
+            Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
+              const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+              const mapData = res
+              res2.forEach((r, i) => {
+                if (r.code === 200) {
+                  mapData.forEach(t => {
+                    const find = r.data.result.find(d => d.country === t.country)
+                    t[keyPre[i] + 'Score'] = find
+                  })
+                } else {
+                  this.showError = true
+                  this.errorMsg = r.message
+                }
+              })
+              mapData.forEach(t => {
+                const data = {
+                  establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
+                  httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
+                  sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
+                  tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
+                  pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
+                }
+                t.score = computeScore(data)
+                if (t.score === '-') {
+                  t.score = ''
+                }
+              })
+              this.loadMarkerData(imageSeries, mapData)
             })
-            mapData.forEach(t => {
-              const data = {
-                establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
-                httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
-                sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
-                tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
-                pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
-              }
-              t.score = computeScore(data)
-              if (t.score === '-') {
-                t.score = ''
-              }
-            })
-            this.loadMarkerData(imageSeries, mapData)
-          })
+          }
         }).catch(e => {
           this.showError = true
           this.errorMsg = e.message
@@ -155,8 +154,9 @@ export default {
       }
     },
     loadMarkerData (imageSeries, data) {
+      data = data.filter(d => d.score || d.score === 0)
       imageSeries.data = data.map(r => ({
-        score: r.score || '&ndash;',
+        score: r.score,
         name: r.province || r.country,
         throughput: valueToRangeValue(r.throughBitsRate, unitTypes.bps).join(' '),
         id: r.serverId,
