@@ -306,7 +306,6 @@
         display: flex;
         align-items: center;
         margin: 16px 0 27px 0;
-        font-family: PingFangSC-Medium;
         font-size: 16px;
         color: #333333;
         line-height: 22px;
@@ -324,7 +323,6 @@
 
         .content__data__doh {
           .content__data__doh__count {
-            font-family: Roboto-Medium;
             font-size: 30px;
             color: #333333;
             font-weight: 500;
@@ -332,13 +330,11 @@
 
           .content__data__doh__percent {
             margin-top: 10px;
-            font-family: Roboto-Black;
             font-size: 14px;
             color: #666666;
             font-weight: 400;
 
             span {
-              font-family: Roboto-Medium;
               font-size: 14px;
               color: #FC8157;
               font-weight: 500;
