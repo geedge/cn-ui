@@ -113,6 +113,15 @@
       .el-table thead {
         color: $grey;
       }
+      .el-table__empty-text{
+        line-height:20px !important;
+      }
+      .el-table__header th .cell {
+        display:flex;
+        flex-direction:row;
+        justify-content: center;
+        align-items: center;
+      }
       .score-cell {
         display: flex !important;
         justify-content: center;

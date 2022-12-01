@@ -33,7 +33,7 @@
             <template v-for="(item, index) in customTableTitles">
               <el-table-column
                       v-if="item.checked"
-                      :sortable="sortable(item)"
+                      :sortable="item.showError ? false : sortable(item)"
                       align="center"
                       :prop="item.prop"
                       class="data-column"
@@ -42,6 +42,7 @@
               >
                 <template #header >
                   <span class="data-column__span" >{{$t(item.label)}}</span>
+                  <chart-error v-if="item.showError" tooltip :content="item.errorMsg" width="300"  />
                 </template>
                 <template  #default="scope" :column="item">
                   <template v-if="item.columnType === tableColumnType.chainRatio"  >
@@ -123,8 +124,9 @@
                 </template>
               </el-table-column>
             </template>
-            <template v-slot:empty>
-              <div class="table-no-data" v-if="isNoData">
+            <template v-slot:empty >
+              <chart-error v-if="showError" :content="errorMsg"  />
+              <div class="table-no-data" v-else-if="isNoData">
                 <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
               </div>
             </template>
@@ -259,7 +261,9 @@ export default {
       tableSortTab: '',
       urlChangeParams: {},
       showUnit: false,
-      fromRoute: fromRoute
+      fromRoute: fromRoute,
+      showError: false,
+      errorMsg: ''
     }
   },
   props: {
@@ -327,14 +331,20 @@ export default {
       const requestUrl = this.getCurUrl()
       get(requestUrl, queryParams).then(response => {
         if (response.code === 200) {
+          this.showError = false
+          this.errorMsg = ''
           this.chartData = response.data.result
           this.initData()
         } else {
+          this.showError = true
+          this.errorMsg = response.message
           this.isNoData = true
           this.toggleLoading(false)
         }
       }).catch(e => {
         console.error(e)
+        this.showError = true
+        this.errorMsg = e.message
       }).finally(() => {
         this.changeUrlTabState()
         this.toggleLoading(false)
@@ -636,6 +646,8 @@ export default {
           if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl && tableDataTmp && tableDataTmp.length > 0) {
             get(self.gerCycleUrl(), queryParams).then(response => {
               if (response.code === 200) {
+                tableColumn.showError = false
+                tableColumn.errorMsg = ''
                 cycleTotalList = response.data.result
                 tableDataTmp.forEach(item => {
                   const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
@@ -680,9 +692,14 @@ export default {
                   }
                   item[tableColumn.prop] = [(item[tableColumn.prop] || item[tableColumn.prop] === 0) ? item[tableColumn.prop] : '', trend, trendPercent]
                 })
+              }else {
+                tableColumn.showError = true
+                tableColumn.errorMsg = response.message
               }
             }).catch(e => {
               console.log(e)
+              tableColumn.showError = true
+              tableColumn.errorMsg = e.message
             }).finally(e => {
               this.tableData = tableDataTmp
               this.tableDataBackup = tableDataTmp
@@ -695,6 +712,8 @@ export default {
                 if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
                   get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
                     if (response.code === 200) {
+                      tableColumn.showError = false
+                      tableColumn.errorMsg = ''
                       const columnList = response.data.result
                       self.tableData.forEach((item, i) => {
                         const data = columnList.find(i => i[curTab.prop] === item.tab)
@@ -714,9 +733,14 @@ export default {
                           }
                         }
                       })
+                    }else {
+                      tableColumn.showError = true
+                      tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + response.message) : response.message
                     }
                   }).catch(e => {
                     console.log(e)
+                    tableColumn.showError = true
+                    tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + e.message) : e.message
                   }).finally(e => {
                     // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
                     if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
@@ -726,6 +750,8 @@ export default {
                       }
                       get(self.gerColumnUrl(tableColumn), queryCycleParams).then(response => {
                         if (response.code === 200) {
+                          tableColumn.showError = false
+                          tableColumn.errorMsg = ''
                           cycleTotalList = response.data.result
                           self.tableData.forEach(item => {
                             const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
@@ -773,9 +799,14 @@ export default {
                               item[tableColumn.prop] = [(item[tableColumn.prop] || item[tableColumn.prop] === 0) ? item[tableColumn.prop] : '', trend, trendPercent]
                             }
                           })
+                        }else {
+                          tableColumn.showError = true
+                          tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + response.message) : response.message
                         }
                       }).catch(e => {
                         console.log(e)
+                        tableColumn.showError = true
+                        tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + e.message) : e.message
                       })
                     }
                   })
@@ -1116,7 +1147,7 @@ export default {
         4.设置菜单：第三级，第四级名称，并保存到store中
         5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
     * */
-    handleTabValue (columnName, columnValue) {
+    async handleTabValue (columnName, columnValue) {
       // console.log('NetworkOverview类------handleTabValue：下钻')
       // 下钻前保存当前路由状态
       this.beforeRouterPush()
@@ -1158,7 +1189,7 @@ export default {
         })
       }
 
-      this.saveUserLocalConfig()
+      await this.saveUserLocalConfig()
       let forthMenuName = ''
       if (clickTab.prop === 'qtype') {
         forthMenuName = this.dnsQtypeMapData.get(columnValue)
@@ -1856,7 +1887,7 @@ export default {
         }
       }
     }
-    this.saveUserLocalConfig()
+    await this.saveUserLocalConfig()
     this.getChartData()
   },
   setup (props) {
