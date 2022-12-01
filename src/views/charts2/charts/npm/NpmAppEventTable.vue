@@ -39,23 +39,23 @@
               </template>
               <template v-else-if="item.prop === 'eventSeverity'">
                 <template v-if="scope.row[item.prop]==='critical'">
-                  <div v-for="item in 5" class="red-dot"></div>
+                  <div v-for="item in 5" class="red-dot" :key="item"></div>
                 </template>
                 <template v-else-if="scope.row[item.prop]==='high'">
-                  <div v-for="item in 4" class="red-dot"></div>
+                  <div v-for="item in 4" class="red-dot" :key="item"></div>
                   <div class="grey-dot"></div>
                 </template>
                 <template v-else-if="scope.row[item.prop]==='medium'">
-                  <div v-for="item in 3" class="red-dot"></div>
-                  <div v-for="item in 2" class="grey-dot"></div>
+                  <div v-for="item in 3" class="red-dot" :key="item"></div>
+                  <div v-for="item in 2" class="grey-dot" :key="item"></div>
                 </template>
                 <template v-else-if="scope.row[item.prop]==='low'">
-                  <div v-for="item in 2" class="red-dot"></div>
-                  <div v-for="item in 3" class="grey-dot"></div>
+                  <div v-for="item in 2" class="red-dot" :key="item"></div>
+                  <div v-for="item in 3" class="grey-dot" :key="item"></div>
                 </template>
                 <template v-else-if="scope.row[item.prop]==='info'">
-                  <div v-for="item in 1" class="red-dot"></div>
-                  <div v-for="item in 4" class="grey-dot"></div>
+                  <div v-for="item in 1" class="red-dot" :key="item"></div>
+                  <div v-for="item in 4" class="grey-dot" :key="item"></div>
                 </template>
                 <span class="data-severity">{{ $t(scope.row[item.prop]) }}</span>
               </template>
