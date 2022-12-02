@@ -115,11 +115,15 @@ export default {
           curTabIndex = 0
           if (self.serverSessions === 0) {
             self.disableTab(1)
+          }else if(curTabIndexInUrl !== null){
+            curTabIndex = curTabIndexInUrl
           }
         }else if(thirdMenu === 'network.serverIps'){
           curTabIndex = 1
           if (self.clientSessions === 0) {
             self.disableTab(0)
+          }else if(curTabIndexInUrl !== null){
+            curTabIndex = curTabIndexInUrl
           }
         }else if (self.clientSessions === 0) {
           curTabIndex = 1
@@ -127,21 +131,23 @@ export default {
         } else if (self.serverSessions === 0) {
           curTabIndex = 0
           self.disableTab(1)
+        } else if(curTabIndexInUrl !== null){
+          curTabIndex = curTabIndexInUrl
         }
         this.$nextTick(() => {
-          if(curTabIndexInUrl !== null){
-            self.currentTab = curTabIndexInUrl
-            self.isCurTabReady = true
-            setTimeout(() => {
-              this.$emit('tabChange', curTabIndexInUrl)
-            }, 400)
-          }else {
-            self.currentTab = curTabIndex
-            self.isCurTabReady = true
-          }
+          self.currentTab = curTabIndex
+          self.isCurTabReady = true
+          //URL中tabIndex的设置，client初始化时查询条件需要：side条件
+          const { query } = this.$route
+          const newUrl = urlParamsHandler(window.location.href, query, {
+            tabIndex: self.currentTab
+          })
+          overwriteUrl(newUrl)
           setTimeout(() => {
             self.handleActiveBar(self.currentTab)
-
+          }, 400)
+          setTimeout(() => {
+            this.$emit('tabChange', self.currentTab)
           }, 400)
         })
       })
