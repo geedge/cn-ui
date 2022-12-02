@@ -373,13 +373,13 @@ export default {
       if (tab === 0) {
         dom = document.getElementById('link-traffic-sankey-0')
         if (this.myChart) {
-          this.myChart.dispose()
+          this.myChart = null
         }
         this.myChart = echarts.init(dom)
       } else {
         dom = document.getElementById('link-traffic-sankey-1')
         if (this.myChart2) {
-          this.myChart2.dispose()
+          this.myChart2 = null
         }
         this.myChart2 = echarts.init(dom)
       }

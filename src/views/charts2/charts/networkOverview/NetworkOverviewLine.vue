@@ -390,7 +390,6 @@ export default {
       dom = document.getElementById('overviewLineChart')
       // this.myChart = null
       if (this.myChart) {
-        this.myChart.dispose()
         this.myChart = null
       }
       this.myChart = echarts.init(dom)
