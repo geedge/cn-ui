@@ -20,24 +20,8 @@ const routes = [
         component: () => import('@/views/charts2/Panel')
       },
       {
-        path: '/user',
-        component: () => import('@/views/settings/User')
-      },
-      {
-        path: '/role',
-        component: () => import('@/views/settings/Roles')
-      },
-      {
-        path: '/i18n',
-        component: () => import('@/views/settings/I18n')
-      },
-      {
         path: '/report/builtIn',
         component: () => import('@/views/report/reportTest')
-      },
-      {
-        path: '/operationLog',
-        component: () => import('@/views/settings/OperationLog')
       },
       {
         path: '/entityExplorer',
@@ -48,20 +32,50 @@ const routes = [
         component: () => import('@/views/detections/Index')
       },
       {
-        path: '/galaxyProxy',
-        component: () => import('@/views/settings/GalaxyProxy')
-      },
-      {
-        path: '/chart',
-        component: () => import('@/views/settings/Chart')
-      },
-      {
         path: '/temp',
         component: () => import('@/views/Temp')
       },
       {
         path: '/businessLog/viewer',
         component: () => import('@/views/businessLog/Viewer')
+      },
+      {
+        name: 'Administration',
+        path: '/administration',
+        redirect: '/administration/user',
+        component: () => import('@/views/administration/Index'),
+        children: [
+          {
+            name: 'User',
+            path: '/administration/user',
+            component: () => import('@/views/administration/User')
+          },
+          {
+            name: 'Role',
+            path: '/administration/role',
+            component: () => import('@/views/administration/Roles')
+          },
+          {
+            name: 'I18n',
+            path: '/administration/i18n',
+            component: () => import('@/views/administration/I18n')
+          },
+          {
+            name: 'OperationLog',
+            path: '/administration/operationLog',
+            component: () => import('@/views/administration/OperationLog')
+          },
+          {
+            name: 'GalaxyProxy',
+            path: '/administration/galaxyProxy',
+            component: () => import('@/views/administration/GalaxyProxy')
+          },
+          {
+            name: 'Chart',
+            path: '/administration/chart',
+            component: () => import('@/views/administration/Chart')
+          }
+        ]
       }
     ]
   }

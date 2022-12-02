@@ -1,0 +1,144 @@
+<template>
+  <div style="height: 100%;">
+    <cn-data-list
+        ref="dataList"
+        :tableId="tableId"
+        v-model:custom-table-title="tools.customTableTitle"
+        :api="url"
+        :from="fromRoute.galaxyProxy"
+        :layout="['columnCustomize','elementSet','search']"
+        @search="search"
+    >
+      <template v-slot:top-tool-right>
+        <button id="galaxy-proxy-clear-cache" class="top-tool-btn margin-r-10" :title="$t('overall.clearCache')"
+                type="button" @click="clearCache">
+          <i class="cn-icon cn-icon-clear-cache"></i>
+        </button>
+        <button id="galaxy-proxy-add" class="top-tool-btn margin-r-10"
+                type="button" @click="add">
+          <i class="cn-icon-add cn-icon"></i>
+        </button>
+        <button id="galaxy-proxy-debug" class="top-tool-btn margin-r-10"  :title="$t('overall.debug')"
+                type="button" @click="debug(true,{})">
+          <i class="cn-icon-category cn-icon"></i>
+        </button>
+        <top-tool-more-options
+                ref="export"
+                id="model"
+                :params="searchLabel"
+                class="top-tool-export margin-l-10 margin-r-10"
+                export-file-name="galaxyProxy"
+                export-url="/galaxy/setting/export"
+                import-url="/galaxy/setting/import"
+                @afterImport="getTableData"
+        >
+          <template v-slot:before>
+          </template>
+        </top-tool-more-options>
+      </template>
+      <template v-slot:default>
+        <galaxy-proxy-table
+            ref="dataTable"
+            v-loading="tools.loading"
+            :api="url"
+            :custom-table-title="tools.customTableTitle"
+            :height="mainTableHeight"
+            :table-data="tableData"
+            @delete="del"
+            @edit="edit"
+            @orderBy="tableDataSort"
+            @reload="getTableData"
+            @selectionChange="selectionChange"
+            @copy="copy"
+            @debug="debugRow"
+        ></galaxy-proxy-table>
+      </template>
+      <!-- 分页组件 -->
+      <template #pagination>
+        <pagination ref="pagination" :page-obj="pageObj" :table-id="tableId" @pageNo='pageNo' @pageSize='pageSize'></pagination>
+      </template>
+    </cn-data-list>
+    <el-drawer
+        v-model="rightBox.show"
+        direction="rtl"
+        :with-header="false"
+        destroy-on-close>
+      <galaxy-proxy-box :object="object" @close="closeRightBox"></galaxy-proxy-box>
+    </el-drawer>
+  </div>
+  <galaxy-proxy-debug
+          v-model:show-debug="showDebug"
+          top="5vh"
+          :show-close="false"
+          :curGalaxyProxy="curGalaxyProxy"></galaxy-proxy-debug>
+</template>
+
+<script>
+import cnDataList from '@/components/table/CnDataList'
+import galaxyProxyBox from '@/components/rightBox/settings/GalaxyProxyBox'
+import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
+import dataListMixin from '@/mixins/data-list'
+import { api } from '@/utils/api'
+import { get, put } from '@/utils/http'
+import TopToolMoreOptions from '@/components/common/popBox/TopToolMoreOptions'
+import galaxyProxyDebug from '@/components/setting/GalaxyProxyDebug'
+
+export default {
+  name: 'GalaxyProxy',
+  components: {
+    cnDataList,
+    galaxyProxyBox,
+    galaxyProxyTable,
+    TopToolMoreOptions,
+    galaxyProxyDebug
+  },
+  mixins: [dataListMixin],
+  data () {
+    return {
+      url: api.galaxyProxy,
+      tableId: 'galaxySettingTable', // 需要分页的table的id，用于记录每页数量
+      blankObject: { // 空白对象
+        name: ''
+      },
+      showDebug: false,
+      curGalaxyProxy: {}
+    }
+  },
+  methods: {
+    edit (u) {
+      get(`${this.url}/${u.id}`).then(response => {
+        if (response.code === 200) {
+          const editObject = response.data
+          editObject.targetHeader || (editObject.targetHeader = '')
+          editObject.preHandle || (editObject.preHandle = '')
+          editObject.postHandle || (editObject.postHandle = '')
+          editObject.targetParam || (editObject.targetParam = '')
+          this.object = editObject
+          this.rightBox.show = true
+        }
+      })
+    },
+    debug (isTopDebug, u) {
+      if (!isTopDebug && u) {
+        this.curGalaxyProxy = JSON.parse(JSON.stringify(u))
+      }
+      this.showDebug = true
+    },
+    debugRow (u) {
+      this.debug(false, u)
+    },
+    clearCache () {
+      put(`${this.url}/clearCache`).then(response => {
+        if (response.code === 200) {
+          this.$message({ duration: 2000, type: 'success', message: this.$t('tip.success') })
+        } else {
+          this.$message.error(response.msg || response.message)
+        }
+      }).catch(() => {
+        this.$message.error(this.$t('tip.unknownError'))
+      })
+    }
+
+  }
+}
+</script>

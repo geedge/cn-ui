@@ -1,0 +1,17 @@
+.administration {
+  .npm-tabs {
+    height: 18px;
+  }
+  .administration-container {
+    height: calc(100% - 26px);
+    flex-direction: column;
+    .list-page {
+      .main-container {
+        padding: 0px;
+        .cn-pagination {
+          height: 34px;
+        }
+      }
+    }
+  }
+}

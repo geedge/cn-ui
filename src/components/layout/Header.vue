@@ -42,7 +42,7 @@
     </div>
     <div class="cn-header__nav">
       <i class="cn-icon cn-icon-a-NetworkAnalytics"></i>
-      <el-breadcrumb class="header__left-breadcrumb" :separator="route.indexOf('detection') === -1 ? '>' : ''">
+      <el-breadcrumb class="header__left-breadcrumb" :separator="route.indexOf('detection') === -1 && route.indexOf('administration') === -1 ? '>' : ''">
         <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item}`" :title="item"
                             v-for="(item,index) in breadcrumb" :key="item">
           <template v-if="index===3">
@@ -104,7 +104,7 @@
           </template>
           <template v-else-if="index===1">
             <span class="route-menu" @click="jump(route,'','',2)"
-                  v-if="route.indexOf('detection') === -1">{{ item }}</span>
+                  v-if="route.indexOf('detection') === -1 && route.indexOf('administration') === -1">{{ item }}</span>
             <!--            <div class="header__left-breadcrumb-item-select" v-if="route.indexOf('detection') > -1">-->
             <!--              <el-popover placement="bottom-start"-->
             <!--                          v-if="route.indexOf('detection') > -1"-->
@@ -421,6 +421,7 @@ export default {
     logout () {
       sessionStorage.removeItem(storageKey.tokenExpireCurrentPath)
       localStorage.removeItem(storageKey.token)
+      localStorage.removeItem(storageKey.currentTab)
       get(api.logout)
     },
     refreshLang () {
@@ -648,6 +649,10 @@ export default {
           })
         }
       })
+      // 清除administration的tab列表保存状态currentTab
+      if (route !== '/administration') {
+        localStorage.removeItem(storageKey.currentTab)
+      }
       this.changeUrlTabState()
       if (opeType === 2 || opeType === 0) { // 二级菜单 或主菜单
         // 如果有四级菜单，则将四级菜单对应tab的checked设置为true:根据columnName和columnValue 或 url判断不准确
