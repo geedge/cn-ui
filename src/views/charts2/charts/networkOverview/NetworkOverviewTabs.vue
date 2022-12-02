@@ -337,14 +337,14 @@ export default {
           this.initData()
         } else {
           this.showError = true
-          this.errorMsg = response.message
+          this.errorMsg = response.msg || response.message || 'Unknown'
           this.isNoData = true
           this.toggleLoading(false)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
-        this.errorMsg = e.message
+        this.errorMsg = e.msg || e.message || 'Unknown'
       }).finally(() => {
         this.changeUrlTabState()
         this.toggleLoading(false)
@@ -694,12 +694,12 @@ export default {
                 })
               }else {
                 tableColumn.showError = true
-                tableColumn.errorMsg = response.message
+                tableColumn.errorMsg = response.msg || response.message || 'Unknown'
               }
             }).catch(e => {
               console.log(e)
               tableColumn.showError = true
-              tableColumn.errorMsg = e.message
+              tableColumn.errorMsg = e.msg || e.message || 'Unknown'
             }).finally(e => {
               this.tableData = tableDataTmp
               this.tableDataBackup = tableDataTmp
@@ -712,8 +712,10 @@ export default {
                 if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
                   get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
                     if (response.code === 200) {
-                      tableColumn.showError = false
-                      tableColumn.errorMsg = ''
+                      if(!tableColumn.showError){
+                        tableColumn.showError = false
+                        tableColumn.errorMsg = ''
+                      }
                       const columnList = response.data.result
                       self.tableData.forEach((item, i) => {
                         const data = columnList.find(i => i[curTab.prop] === item.tab)
@@ -735,12 +737,12 @@ export default {
                       })
                     }else {
                       tableColumn.showError = true
-                      tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + response.message) : response.message
+                      tableColumn.errorMsg = response.msg || response.message || 'Unknown'
                     }
                   }).catch(e => {
                     console.log(e)
                     tableColumn.showError = true
-                    tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + e.message) : e.message
+                    tableColumn.errorMsg = e.msg || e.message || 'Unknown'
                   }).finally(e => {
                     // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
                     if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
@@ -750,8 +752,10 @@ export default {
                       }
                       get(self.gerColumnUrl(tableColumn), queryCycleParams).then(response => {
                         if (response.code === 200) {
-                          tableColumn.showError = false
-                          tableColumn.errorMsg = ''
+                          if(!tableColumn.showError){
+                            tableColumn.showError = false
+                            tableColumn.errorMsg = ''
+                          }
                           cycleTotalList = response.data.result
                           self.tableData.forEach(item => {
                             const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
@@ -801,12 +805,12 @@ export default {
                           })
                         }else {
                           tableColumn.showError = true
-                          tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + response.message) : response.message
+                          tableColumn.errorMsg = response.msg || response.message || 'Unknown'
                         }
                       }).catch(e => {
                         console.log(e)
                         tableColumn.showError = true
-                        tableColumn.errorMsg = tableColumn.errorMsg ? (tableColumn.errorMsg + ',' + e.message) : e.message
+                        tableColumn.errorMsg = e.msg || e.message || 'Unknown'
                       })
                     }
                   })
