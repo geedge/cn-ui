@@ -291,7 +291,8 @@ export const curTabState = {
   fourthPanel: 'fourthPanel',
   networkOverviewBeforeTab: 'networkOverviewBeforeTab',
   tabOperationType: 'tabOperationType',
-  tabOperationBeforeType: 'tabOperationBeforeType'
+  tabOperationBeforeType: 'tabOperationBeforeType',
+  tabIndex: 'tabIndex'
 }
 
 export const scoreUrl = [
