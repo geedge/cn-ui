@@ -1221,6 +1221,14 @@ export default {
           })
         }
       })
+      if (!this.getUrlParam(this.curTabState.tabIndex)) {
+        let thirdMenu = this.urlChangeParams[this.curTabState.thirdMenu]
+        if(thirdMenu === 'network.serverIps'){
+          this.urlChangeParams[this.curTabState.tabIndex] = 1
+        }else  if(thirdMenu === 'network.clientIps' || thirdMenu === 'network.ips'){
+          this.urlChangeParams[this.curTabState.tabIndex] = 0
+        }
+      }
       this.changeUrlTabState()
       this.$router.push({
         path: this.$route.path,
@@ -1894,15 +1902,7 @@ export default {
   },
   beforeUnmount () {
     // 以下元素，检测到内存并未释放
-    this.list = null
-    this.tabList = null
-    this.allList = null
-    this.drillDownTableConfigs = null
-    this.curTable = null
-    this.commonColumnList = null
-    this.networkTable = null
-    this.tableData = null
-    this.tableDataBackup = null
+
   },
   unmounted () {
     this.isNoData = false
