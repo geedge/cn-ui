@@ -154,7 +154,7 @@ export default {
   },
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.init()
       }
     }
@@ -167,7 +167,8 @@ export default {
     init () {
       this.toggleLoading(true)
       // 链路基本信息
-      let linkInfo = localStorage.getItem(storageKey.linkInfo)
+      let linkInfo = null
+      linkInfo = localStorage.getItem(storageKey.linkInfo)
       linkInfo = JSON.parse(linkInfo)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
@@ -383,6 +384,9 @@ export default {
 
       return newValue
     }
+  },
+  beforeUnmount () {
+    this.unitConvert = null
   }
 }
 </script>

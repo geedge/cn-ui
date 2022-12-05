@@ -109,7 +109,7 @@ export default {
     //   }
     // }
     timeFilter: {
-      handler (n) {
+      handler () {
         if (this.$route.path === '/panel/networkAppPerformance' && (this.queryCondition || this.networkOverviewBeforeTab)) {
           this.scoreCalculation()
         }
@@ -120,7 +120,7 @@ export default {
     // this.panelName = this.$store.getters.getPanelName
     const pName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
     const curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
-    if(this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+    if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
       this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
       this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
       this.$store.commit('setDnsQtypeMapData', this.dnsQtypeMapData)
@@ -200,7 +200,7 @@ export default {
       this.scoreCalculation()
     }
   },
-  setup (props, ctx) {
+  setup (props) {
     // todo 目前在panel页面测试，后续会挪到router里
     const store = useStore()
     const cancelList = store.state.panel.httpCancel
@@ -359,7 +359,7 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      let type = this.dimensionType || this.networkOverviewBeforeTab
+      const type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -428,6 +428,10 @@ export default {
         routerObj.query = query
       }
     }
+
+    this.emitter.off('reloadChartList')
+    this.$store = null
+    this.emitter = null
   }
 }
 </script>
