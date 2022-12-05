@@ -122,6 +122,9 @@
         justify-content: center;
         align-items: center;
       }
+      .el-table__header tr th:nth-of-type(1) .cell {
+        justify-content: start;
+      }
       .score-cell {
         display: flex !important;
         justify-content: center;
