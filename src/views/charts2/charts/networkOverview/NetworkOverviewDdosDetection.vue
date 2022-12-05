@@ -19,7 +19,7 @@
        </div>
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.number0fDetectedAttackEvents')}}</div>
-         <div class="ddos-detection-type-value-number">{{$_.get(ddosData, 'attackEventCount') || 0}}</div>
+         <div class="ddos-detection-type-value-number ddos-event">{{$_.get(ddosData, 'attackEventCount') || 0}}</div>
        </div>
      </div>
      <el-button size="small">{{$t('network.ddosDetection')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
