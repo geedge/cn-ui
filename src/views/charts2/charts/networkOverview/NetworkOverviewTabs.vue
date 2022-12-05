@@ -337,14 +337,14 @@ export default {
           this.initData()
         } else {
           this.showError = true
-          this.errorMsg = response.msg || response.message || 'Unknown'
+          this.errorMsg = response.message || 'Unknown'
           this.isNoData = true
           this.toggleLoading(false)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
-        this.errorMsg = e.msg || e.message || 'Unknown'
+        this.errorMsg = e.message || 'Unknown'
       }).finally(() => {
         this.changeUrlTabState()
         this.toggleLoading(false)
@@ -694,12 +694,12 @@ export default {
                 })
               }else {
                 tableColumn.showError = true
-                tableColumn.errorMsg = response.msg || response.message || 'Unknown'
+                tableColumn.errorMsg = response.message || 'Unknown'
               }
             }).catch(e => {
               console.log(e)
               tableColumn.showError = true
-              tableColumn.errorMsg = e.msg || e.message || 'Unknown'
+              tableColumn.errorMsg = e.message || 'Unknown'
             }).finally(e => {
               this.tableData = tableDataTmp
               this.tableDataBackup = tableDataTmp
@@ -712,7 +712,7 @@ export default {
                 if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
                   get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
                     if (response.code === 200) {
-                      if(!tableColumn.showError){
+                      if (!tableColumn.showError) {
                         tableColumn.showError = false
                         tableColumn.errorMsg = ''
                       }
@@ -737,12 +737,12 @@ export default {
                       })
                     }else {
                       tableColumn.showError = true
-                      tableColumn.errorMsg = response.msg || response.message || 'Unknown'
+                      tableColumn.errorMsg = response.message || 'Unknown'
                     }
                   }).catch(e => {
                     console.log(e)
                     tableColumn.showError = true
-                    tableColumn.errorMsg = e.msg || e.message || 'Unknown'
+                    tableColumn.errorMsg = e.message || 'Unknown'
                   }).finally(e => {
                     // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
                     if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
@@ -805,12 +805,12 @@ export default {
                           })
                         }else {
                           tableColumn.showError = true
-                          tableColumn.errorMsg = response.msg || response.message || 'Unknown'
+                          tableColumn.errorMsg = response.message || 'Unknown'
                         }
                       }).catch(e => {
                         console.log(e)
                         tableColumn.showError = true
-                        tableColumn.errorMsg = e.msg || e.message || 'Unknown'
+                        tableColumn.errorMsg = e.message || 'Unknown'
                       })
                     }
                   })
