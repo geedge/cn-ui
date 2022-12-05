@@ -242,11 +242,7 @@ export default {
               directionArr.push(item.ingressLinkDirection)
             }
           })
-          directionArr = [...new Set(directionArr)]
-          // todo 去重后会被嵌套一层？set方法不修改原数组，也不会再次嵌套，不知原因。记录，以后修改
-          if (directionArr[0]) {
-            directionArr = directionArr[0]
-          }
+          directionArr = Array.from(new Set(directionArr))
 
           const newNextHopData = []
 
