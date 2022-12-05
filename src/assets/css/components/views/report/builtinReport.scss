@@ -139,6 +139,12 @@
                   color: #666666;
                   font-weight: 400;
                   margin-bottom: 4px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  i {
+                    padding: 2px 3px 0 0;
+                  }
                 }
                 .expand-time {
                   font-size: 12px;
