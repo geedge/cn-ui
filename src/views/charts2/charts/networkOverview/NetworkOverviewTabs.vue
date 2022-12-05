@@ -709,6 +709,9 @@ export default {
                         }
                         if (Object.keys(item.scoreGroup).length >= 5) {
                           item.score = computeScore(item.scoreGroup)
+                          if(!_.isNumber(item.score)){
+                            item.score = 0
+                          }
                         }
                       })
                     }
