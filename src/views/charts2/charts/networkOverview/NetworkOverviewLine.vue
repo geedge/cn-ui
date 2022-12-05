@@ -388,12 +388,9 @@ export default {
       // 此处为验证是否因dom未销毁，导致图表出错，后续可能会改
       let dom = null
       dom = document.getElementById('overviewLineChart')
-      // this.myChart = null
       if (this.myChart) {
         this.myChart.dispose()
-        this.myChart = null
       }
-      this.myChart = echarts.init(dom)
       this.chartOption = stackedLineChartOption
       const chartOption = this.chartOption.series[0]
       this.chartOption.series = echartsData.map((t, i) => {
@@ -491,52 +488,54 @@ export default {
         return str
       }
       this.showMarkLine = true
-      this.myChart.setOption(this.chartOption)
-
-      // 设置参见官网：https://echarts.apache.org/zh/api.html#action.brush.brush
-      this.myChart.dispatchAction({
-        // 刷选模式的开关。使用此 action 可将当前鼠标变为可刷选状态。事实上，点击 toolbox 中的 brush 按钮时，就是通过这个 action，将当前普通鼠标变为刷选器的。
-        type: 'takeGlobalCursor',
-        // 如果想变为“可刷选状态”，必须设置。不设置则会关闭“可刷选状态”。
-        key: 'brush',
-        brushOption: {
-          // 参见 brush 组件的 brushType。如果设置为 false 则关闭“可刷选状态”。
-          brushType: 'lineX',
-          xAxisIndex: 'all',
-          // 单击清除选框
-          brushMode: 'single',
-          // 选择完毕再返回所选数据
-          throttleType: 'debounce'
-        }
-      })
-
-      const self = this
-
-      this.myChart.on('brushEnd', function (params) {
-        self.myChart.dispatchAction({
-          type: 'brush',
-          areas: [] // 删除选框
-        })
-        if (!self.mouseDownFlag) {
-          // 避免点击空白区域报错
-          if (params.areas !== undefined && params.areas.length > 0) {
-            self.brushHistory.unshift({
-              startTime: _.cloneDeep(self.timeFilter.startTime) * 1000,
-              endTime: _.cloneDeep(self.timeFilter.endTime) * 1000
-            })
-
-            const rangeObj = {
-              startTime: Math.ceil(params.areas[0].coordRange[0]),
-              endTime: Math.ceil(params.areas[0].coordRange[1])
-            }
-
-            // todo 目前暂定框选最小范围为5分钟，后续可能会变动
-            if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
-              rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
-            }
-            _this.$store.commit('setRangeEchartsData', rangeObj)
+      this.$nextTick(() => {
+        this.myChart = echarts.init(dom)
+        this.myChart.setOption(this.chartOption)
+        // 设置参见官网：https://echarts.apache.org/zh/api.html#action.brush.brush
+        this.myChart.dispatchAction({
+          // 刷选模式的开关。使用此 action 可将当前鼠标变为可刷选状态。事实上，点击 toolbox 中的 brush 按钮时，就是通过这个 action，将当前普通鼠标变为刷选器的。
+          type: 'takeGlobalCursor',
+          // 如果想变为“可刷选状态”，必须设置。不设置则会关闭“可刷选状态”。
+          key: 'brush',
+          brushOption: {
+            // 参见 brush 组件的 brushType。如果设置为 false 则关闭“可刷选状态”。
+            brushType: 'lineX',
+            xAxisIndex: 'all',
+            // 单击清除选框
+            brushMode: 'single',
+            // 选择完毕再返回所选数据
+            throttleType: 'debounce'
           }
-        }
+        })
+
+        const self = this
+
+        this.myChart.on('brushEnd', function (params) {
+          self.myChart.dispatchAction({
+            type: 'brush',
+            areas: [] // 删除选框
+          })
+          if (!self.mouseDownFlag) {
+            // 避免点击空白区域报错
+            if (params.areas !== undefined && params.areas.length > 0) {
+              self.brushHistory.unshift({
+                startTime: _.cloneDeep(self.timeFilter.startTime) * 1000,
+                endTime: _.cloneDeep(self.timeFilter.endTime) * 1000
+              })
+
+              const rangeObj = {
+                startTime: Math.ceil(params.areas[0].coordRange[0]),
+                endTime: Math.ceil(params.areas[0].coordRange[1])
+              }
+
+              // todo 目前暂定框选最小范围为5分钟，后续可能会变动
+              if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
+                rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
+              }
+              _this.$store.commit('setRangeEchartsData', rangeObj)
+            }
+          }
+        })
       })
     },
     activeChange (item, index) {
