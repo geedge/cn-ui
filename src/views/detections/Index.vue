@@ -21,8 +21,9 @@
             :end-time="timeFilter.endTime"/>
       </div>
     </div>
-    <div style="width: 100%;padding-bottom: 26px;">
-      <detection-tabs :time-filter="timeFilter" :chart="tabsData" />
+    <div style="width: 100%;padding-bottom: 47px;">
+      <!--<detection-tabs :time-filter="timeFilter" :chart="tabsData" />-->
+      <chart-tabs :data="tabsData" router></chart-tabs>
     </div>
 
     <!-- 搜索组件 -->
@@ -133,7 +134,8 @@ import { reverseSortBy, extensionEchartY } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 // import DetectionNoData from '@/views/detections/DetectionNoData'
 import Loading from '@/components/common/Loading'
-import DetectionTabs from '@/views/detections/DetectionTabs'
+// import DetectionTabs from '@/views/detections/DetectionTabs'
+import ChartTabs from '@/components/common/ChartTabs'
 
 export default {
   name: 'Index',
@@ -146,25 +148,24 @@ export default {
     DetectionList,
     Pagination,
     // DetectionNoData,
-    DetectionTabs
+    // DetectionTabs,
+    ChartTabs
   },
   data () {
     return {
       tabsData: [
         {
-          name: 'SecurityEvents',
           i18n: 'entities.securityEvents',
           path: '/detection/securityEvent',
           icon: 'cn-icon cn-icon-a-SecurityEvent'
         },
         {
-          name: 'Regulatory Risk Event',
           i18n: 'entities.regulatoryRiskEvents',
           path: '/detection/securityEvent',
-          icon: 'cn-icon cn-icon-a-RegulatoryRiskEvent'
+          icon: 'cn-icon cn-icon-a-RegulatoryRiskEvent',
+          disable: true
         },
         {
-          name: 'PerformanceEvents',
           i18n: 'overall.performanceEvents',
           path: '/detection/performanceEvent',
           icon: 'cn-icon cn-icon-a-PerformanceEvent'

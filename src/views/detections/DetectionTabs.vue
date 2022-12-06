@@ -1,6 +1,5 @@
 <template>
   <div class="npm-tabs">
-    12345678
     <div class="npm-tabs__active-bar"></div>
     <el-tabs v-model="currentTab" ref="elTabs" type="border-card" @tab-click="jumpPage">
       <el-tab-pane
