@@ -6,7 +6,7 @@
         :data="tableData"
         :height="height"
         :expand-row-keys="expandedIds"
-        empty-text=""
+        :empty-text="$t('npm.noData')"
         border
         tooltip-effect="light"
         :row-key="(row) => { return row.id }"
