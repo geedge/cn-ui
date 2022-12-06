@@ -32,10 +32,6 @@ const routes = [
         component: () => import('@/views/detections/Index')
       },
       {
-        path: '/temp',
-        component: () => import('@/views/Temp')
-      },
-      {
         path: '/businessLog/viewer',
         component: () => import('@/views/businessLog/Viewer')
       },
