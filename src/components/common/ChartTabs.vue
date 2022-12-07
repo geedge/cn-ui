@@ -91,12 +91,30 @@ export default {
         const tabIndexParam = query.tabIndex
         currentTab = ref(tabIndexParam ? parseInt(tabIndexParam) : 0)
       } else if (!tabList) {
+        // 此处为刷新界面时，根据当前路由获取index
         currentTab = tabsData.value.findIndex(item => {
           return item.path === routerPath
         })
-        window.currentChartTabList = [currentTab]
+        window.currentChartTabList = [{ path: routerPath, index: currentTab }]
       } else {
-        currentTab = tabList[1] ? parseFloat(tabList[1]) : parseFloat(tabList[0])
+        // 此处为切换界面，如果window里保存的路径和tabsData里的路径一致，选择window数据并使用
+        // 两个不一致的话，则默认选择tabsData里的第一条
+        let obj0 = null
+        let obj1 = null
+        obj0 = tabsData.value.find(item => { return item.path === tabList[0].path })
+
+        if (tabList[1]) {
+          obj1 = tabsData.value.find(item => { return item.path === tabList[1].path })
+        }
+
+        if (obj0 && obj1) {
+          currentTab = parseFloat(tabList[1].index)
+        } else if (obj0) {
+          currentTab = parseFloat(tabList[0].index)
+        } else {
+          window.currentChartTabList = [{ path: tabsData.value[0].path, index: 0 }]
+          currentTab = 0
+        }
       }
     }
 
@@ -140,7 +158,7 @@ export default {
       if (window.currentChartTabList) {
         window.currentChartTabList.forEach((item) => {
           this.$nextTick(() => {
-            this.handleActiveBar(parseFloat(item))
+            this.handleActiveBar(parseFloat(item.index))
           })
         })
       } else {
@@ -170,13 +188,13 @@ export default {
       }
     },
     handleClick (item) {
-      if (window.currentChartTabList) {
-        window.currentChartTabList.push(item.index)
-        if (window.currentChartTabList.length > 2) {
-          window.currentChartTabList.splice(0, 1)
-        }
-      } else {
-        window.currentChartTabList = [item.index]
+      window.currentChartTabList.push({
+        path: this.tabsData[item.index].path,
+        index: item.index
+      })
+
+      if (window.currentChartTabList.length > 2) {
+        window.currentChartTabList.splice(0, 1)
       }
 
       this.$emit('click', item)
