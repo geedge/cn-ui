@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-tabs">
+  <div class="chart-tabs administration-tabs">
     <div class="chart-tabs__active-bar" :style="{'background-color': color}"></div>
     <el-tabs v-model="currentTab" ref="elTabs" type="border-card" @tab-click="handleClick">
       <el-tab-pane
