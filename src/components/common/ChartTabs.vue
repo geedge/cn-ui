@@ -65,7 +65,8 @@ export default {
       leftOffset: 27,
       // currentTab: '',
       // tabsData: '',
-      routerList: []
+      routerList: [],
+      timer: null
     }
   },
   setup (props) {
@@ -105,7 +106,29 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => {
+    this.timer = setTimeout(() => {
+      this.$nextTick(() => {
+        this.init()
+      })
+    }, 50)
+  },
+  watch: {
+    currentTab (n) {
+      if (this.router === 'noRouter') {
+        const { query } = this.$route
+        const newUrl = urlParamsHandler(window.location.href, query, {
+          tabIndex: n
+        })
+        overwriteUrl(newUrl)
+      }
+
+      this.$nextTick(() => {
+        this.handleActiveBar(n)
+      })
+    }
+  },
+  methods: {
+    init () {
       // 添加禁用小手
       this.tabsData.forEach((item, index) => {
         if (item.disable) {
@@ -127,24 +150,7 @@ export default {
           this.handleActiveBar(this.currentTab)
         })
       }
-    })
-  },
-  watch: {
-    currentTab (n) {
-      if (this.router === 'noRouter') {
-        const { query } = this.$route
-        const newUrl = urlParamsHandler(window.location.href, query, {
-          tabIndex: n
-        })
-        overwriteUrl(newUrl)
-      }
-
-      this.$nextTick(() => {
-        this.handleActiveBar(n)
-      })
-    }
-  },
-  methods: {
+    },
     handleActiveBar (index) {
       const tabDom = document.getElementById('tab-' + index)
       if (tabDom) {
@@ -177,6 +183,9 @@ export default {
         query: query
       })
     }
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
   }
 }
 </script>
