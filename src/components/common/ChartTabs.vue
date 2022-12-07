@@ -65,8 +65,7 @@ export default {
       leftOffset: 27,
       // currentTab: '',
       // tabsData: '',
-      routerList: [],
-      timer: null
+      routerList: []
     }
   },
   setup (props) {
@@ -95,6 +94,7 @@ export default {
         currentTab = tabsData.value.findIndex(item => {
           return item.path === routerPath
         })
+        window.currentChartTabList = [currentTab]
       } else {
         currentTab = tabList[1] ? parseFloat(tabList[1]) : parseFloat(tabList[0])
       }
@@ -106,11 +106,9 @@ export default {
     }
   },
   mounted () {
-    this.timer = setTimeout(() => {
-      this.$nextTick(() => {
-        this.init()
-      })
-    }, 50)
+    this.$nextTick(() => {
+      this.init()
+    })
   },
   watch: {
     currentTab (n) {
@@ -152,13 +150,23 @@ export default {
       }
     },
     handleActiveBar (index) {
+      const activeDom = document.getElementsByClassName('el-tabs__item is-top is-active')
       const tabDom = document.getElementById('tab-' + index)
-      if (tabDom) {
-        const offsetLeft = tabDom.offsetLeft
-        const clientWidth = tabDom.clientWidth
-        const clientLeft = tabDom.clientLeft
-        const activeBar = document.querySelector('.chart-tabs .chart-tabs__active-bar')
-        activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
+
+      if (tabDom && activeDom) {
+        this.$nextTick(() => {
+          // 数组长度为1，即代表刚刷新界面，获取active的dom添加样式，避免原模式错位问题
+          // 可添加css样式，也可添加class类名，两个操作选一即可
+          if (window.currentChartTabList.length === 1) {
+            activeDom[0].style.cssText += 'border-top: 4px #046EC9 solid;border-radius: 5px 5px 0 0;transition: all linear .2s;'
+          } else {
+            const offsetLeft = tabDom.offsetLeft
+            const clientWidth = tabDom.clientWidth
+            const clientLeft = tabDom.clientLeft
+            const activeBar = document.querySelector('.chart-tabs .chart-tabs__active-bar')
+            activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
+          }
+        })
       }
     },
     handleClick (item) {
@@ -183,9 +191,6 @@ export default {
         query: query
       })
     }
-  },
-  beforeUnmount () {
-    clearTimeout(this.timer)
   }
 }
 </script>
