@@ -178,7 +178,7 @@ export default {
           if (window.currentChartTabList.length === 1) {
             // 此处操作是因为初始化时给active加border，导致tab下移，故需要将整体往上移动对应高度
             const topDom = document.getElementsByClassName('el-tabs__header is-top')
-            topDom[0].style.cssText += 'top: -4px'
+            topDom[0].style.cssText += 'top: -3px'
             activeDom[0].style.cssText += 'height: calc(100% - 1px);border-top: 4px #046EC9 solid;border-radius: 5px 5px 0 0;transition: all linear .2s;'
           } else {
             const offsetLeft = tabDom.offsetLeft
