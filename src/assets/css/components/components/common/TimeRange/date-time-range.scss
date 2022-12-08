@@ -199,4 +199,8 @@
       text-align: right;
     }
   }
+
+  .el-input__inner {
+    visibility: hidden !important;
+  }
 }

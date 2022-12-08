@@ -293,9 +293,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/deep/.el-input__inner {
-  visibility: hidden !important;
-}
-</style>
