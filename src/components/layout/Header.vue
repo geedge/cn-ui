@@ -421,7 +421,6 @@ export default {
     logout () {
       sessionStorage.removeItem(storageKey.tokenExpireCurrentPath)
       localStorage.removeItem(storageKey.token)
-      localStorage.removeItem(storageKey.currentTab)
       get(api.logout)
     },
     refreshLang () {
@@ -649,10 +648,6 @@ export default {
           })
         }
       })
-      // 清除administration的tab列表保存状态currentTab
-      if (route !== '/administration') {
-        localStorage.removeItem(storageKey.currentTab)
-      }
       this.changeUrlTabState()
       if (opeType === 2 || opeType === 0) { // 二级菜单 或主菜单
         // 如果有四级菜单，则将四级菜单对应tab的checked设置为true:根据columnName和columnValue 或 url判断不准确

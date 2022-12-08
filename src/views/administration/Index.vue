@@ -5,7 +5,6 @@
       <div class="explorer-top-tools-title">{{$t('overall.administration')}}</div>
     </div>
     <div style="width: 100%;padding-bottom: 26px;">
-      <!--<administration-tabs :tabs-data="tabsData" />-->
       <chart-tabs :data="tabsData" router></chart-tabs>
     </div>
     <!-- 内容区 -->
@@ -16,13 +15,11 @@
 </template>
 
 <script>
-// import AdministrationTabs from '@/views/administration/AdministrationTabs'
 import ChartTabs from '@/components/common/ChartTabs'
 export default {
   name: 'index',
   components: {
     ChartTabs
-    // AdministrationTabs
   },
   data () {
     return {

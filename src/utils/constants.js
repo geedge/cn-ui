@@ -34,8 +34,7 @@ export const storageKey = {
   drillDownTableConfig: 'drilldownTableConfig',
   userCustomizationConfig: 'userCustomizationConfig',
   linkInfo: 'cn-link-info',
-  history: 'cn-history',
-  currentTab: 'cn-current-tab'
+  history: 'cn-history'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 
