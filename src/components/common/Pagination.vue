@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import { defaultPageSize } from '@/utils/constants'
-import { storageKey } from '@/utils/constants'
+import { defaultPageSize, storageKey } from '@/utils/constants'
+
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'

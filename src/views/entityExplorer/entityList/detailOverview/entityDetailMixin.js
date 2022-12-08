@@ -2,14 +2,13 @@ import _ from 'lodash'
 import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
-import { riskLevelMapping, unitTypes, storageKey } from '@/utils/constants'
+import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { shallowRef, markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
 import { sortBy, reverseSortBy } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
-import axios from 'axios'
 
 export default {
   props: {

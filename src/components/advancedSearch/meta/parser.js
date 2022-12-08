@@ -233,6 +233,7 @@ export default class Parser {
           break
         }
       } else if (s === ' ') {
+        // 预留
       } else if (s === '(') {
         token = new Token(types.leftBracket, s)
         token.setStart(i)

@@ -12,8 +12,9 @@ module.exports = {
   ],
   plugins: [
     '@vue/babel-plugin-jsx',
-    ['@babel/proposal-class-properties', { loose: true }],
+    ['@babel/plugin-proposal-class-properties', { loose: true }],
     ['@babel/plugin-proposal-private-methods', { loose: true }],
+    ['@babel/plugin-proposal-private-property-in-object', { loose: true }],
     '@babel/transform-runtime',
     'lodash'
   ],

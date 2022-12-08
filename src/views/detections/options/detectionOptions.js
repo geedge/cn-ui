@@ -1,7 +1,5 @@
 import {
-  chartColor,
-  tooLongFormatter,
-  axisFormatter
+  tooLongFormatter
 } from '@/views/charts/charts/tools'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
@@ -94,7 +92,7 @@ export const multipleBarOption = {
     splitLine: {
       show: false
     },
-    minInterval:1
+    minInterval: 1
   },
   grid: {
     top: 40,

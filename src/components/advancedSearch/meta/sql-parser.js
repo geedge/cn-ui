@@ -4,7 +4,7 @@ import { riskLevelMapping } from '@/utils/constants'
 import _ from 'lodash'
 // 补全语句，用于解析
 const sqlPrev = 'select a from b where '
-export default class SqlParser/* extends SqlParserVisitor*/ {
+export default class SqlParser/* extends SqlParserVisitor */ {
   constructor (init, columnList) {
     // super()
     this.tempMeta = null

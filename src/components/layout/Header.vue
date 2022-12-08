@@ -383,7 +383,7 @@ export default {
   async mounted () {
     this.from = Object.keys(this.entityType)[0]
     // 是否需要dns的qtype和rcode的数据字典
-    if(this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+    if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
       this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
       this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
     }
@@ -463,7 +463,7 @@ export default {
       get(curTableInCode.url.drilldownList, params).then(async response => {
         if (response.code === 200) {
           this.breadcrumbColumnValueListShow = response.data.result
-          if(this.from === fromRoute.dnsServiceInsights) {
+          if (this.from === fromRoute.dnsServiceInsights) {
             this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
             this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
           }

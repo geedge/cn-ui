@@ -201,12 +201,11 @@ import { ref } from 'vue'
 import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig, fromRoute } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, getUserDrilldownTableGeo, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData,handleSpecialValue,getConfigVersion } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
-import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { db } from '@/indexedDB'
-import { api, getDictList } from '@/utils/api'
+import _ from 'lodash'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -273,9 +272,6 @@ export default {
       type: String,
       default: 'Bits/s'
     }
-  },
-  components: {
-    ChartNoData
   },
   watch: {
     timeFilter: {
@@ -623,14 +619,14 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       if (tabList.length > 0) {
-        let conditionGroup = tabList.filter(item => item != '')
-        let conditionHandleRlt = []
+        const conditionGroup = tabList.filter(item => item != '')
+        const conditionHandleRlt = []
         conditionGroup.forEach(condition => {
-          condition = handleSpecialValue(condition)//condition.replaceAll("'", "\\\\'")
-          condition = "'"+condition+ "'"
+          condition = handleSpecialValue(condition)// condition.replaceAll("'", "\\\\'")
+          condition = "'" + condition + "'"
           conditionHandleRlt.push(condition)
         })
-        queryParams.params = conditionHandleRlt.join(",")
+        queryParams.params = conditionHandleRlt.join(',')
         queryParams.type = curTab.prop
       }
 
@@ -692,7 +688,7 @@ export default {
                   }
                   item[tableColumn.prop] = [(item[tableColumn.prop] || item[tableColumn.prop] === 0) ? item[tableColumn.prop] : '', trend, trendPercent]
                 })
-              }else {
+              } else {
                 tableColumn.showError = true
                 tableColumn.errorMsg = response.message || 'Unknown'
               }
@@ -730,12 +726,12 @@ export default {
                         }
                         if (Object.keys(item.scoreGroup).length >= 5) {
                           item.score = computeScore(item.scoreGroup)
-                          if(!_.isNumber(item.score)){
+                          if (!_.isNumber(item.score)) {
                             item.score = 0
                           }
                         }
                       })
-                    }else {
+                    } else {
                       tableColumn.showError = true
                       tableColumn.errorMsg = response.message || 'Unknown'
                     }
@@ -752,7 +748,7 @@ export default {
                       }
                       get(self.gerColumnUrl(tableColumn), queryCycleParams).then(response => {
                         if (response.code === 200) {
-                          if(!tableColumn.showError){
+                          if (!tableColumn.showError) {
                             tableColumn.showError = false
                             tableColumn.errorMsg = ''
                           }
@@ -803,7 +799,7 @@ export default {
                               item[tableColumn.prop] = [(item[tableColumn.prop] || item[tableColumn.prop] === 0) ? item[tableColumn.prop] : '', trend, trendPercent]
                             }
                           })
-                        }else {
+                        } else {
                           tableColumn.showError = true
                           tableColumn.errorMsg = response.message || 'Unknown'
                         }
@@ -871,7 +867,7 @@ export default {
       this.tableData.forEach(val => {
         arr.push(val)
       })
-      if (column.order == 'descending') {
+      if (column.order === 'descending') {
         arr.sort((a, b) => {
           const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
           const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
@@ -892,7 +888,7 @@ export default {
                 const char1 = aObj[i]
                 const char2 = bObj[i]
                 const char1Type = this.getChartType(char1)
-                const char2Type = this.getChartType(char2)
+                // const char2Type = this.getChartType(char2)
                 if (char1 === char2) {
                   continue
                 } else {
@@ -911,7 +907,7 @@ export default {
           }
         })
         this.tableData = arr
-      } else if (column.order == 'ascending') {
+      } else if (column.order === 'ascending') {
         arr.sort((a, b) => {
           const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
           const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
@@ -932,7 +928,7 @@ export default {
                 const char1 = aObj[i]
                 const char2 = bObj[i]
                 const char1Type = this.getChartType(char1)
-                const char2Type = this.getChartType(char2)
+                // const char2Type = this.getChartType(char2)
                 if (char1 === char2) {
                   continue
                 } else {
@@ -966,7 +962,6 @@ export default {
       }
       this.urlChangeParams[this.curTabState.tabOperationType] = operationType.changeMetric
       const curTab = this.getCurTab()
-      const label = curTab.label
       this.urlChangeParams[this.curTabState.tableMetric] = this.metric
 
       let queryParams = {
@@ -1111,7 +1106,7 @@ export default {
       this.urlChangeParams[this.curTabState.networkOverviewBeforeTab] = tab.prop
     },
     setQueryCondition (tab, value) {
-      value = handleSpecialValue(value)//value.replaceAll("'", "\\\\'")
+      value = handleSpecialValue(value)// value.replaceAll("'", "\\\\'")
       const queryCondition = []
       if (tab.prop === 'protocolPort') {
         const valueGroup = value.split(':')
@@ -1180,11 +1175,11 @@ export default {
           }
         })
       } else {
-        const changeTab = tabList.find(item => item.name == tabName)// 下钻的tab
+        const changeTab = tabList.find(item => item.name === tabName)// 下钻的tab
         this.list = changeTab.drilldownTabs
-        this.list.forEach(tab => {
+        /* this.list.forEach(tab => {
           const hiddenTab = tabList.find(item => item.name == tab.name)
-        })
+        }) */
         const curTab = this.getCurTab(clickTab)
         tabList.forEach(tab => {
           if (tab.name === curTab.name) {
@@ -1194,14 +1189,14 @@ export default {
       }
 
       await this.saveUserLocalConfig()
-      let forthMenuName = ''
+      /* let forthMenuName = ''
       if (clickTab.prop === 'qtype') {
         forthMenuName = this.dnsQtypeMapData.get(columnValue)
       } else if (clickTab.prop === 'rcode') {
         forthMenuName = this.dnsRcodeMapData.get(columnValue)
       } else {
         forthMenuName = columnValue
-      }
+      } */
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -1226,10 +1221,10 @@ export default {
         }
       })
       if (!this.getUrlParam(this.curTabState.tabIndex)) {
-        let thirdMenu = this.urlChangeParams[this.curTabState.thirdMenu]
-        if(thirdMenu === 'network.serverIps'){
+        const thirdMenu = this.urlChangeParams[this.curTabState.thirdMenu]
+        if (thirdMenu === 'network.serverIps') {
           this.urlChangeParams[this.curTabState.tabIndex] = 1
-        }else  if(thirdMenu === 'network.clientIps' || thirdMenu === 'network.ips'){
+        } else if (thirdMenu === 'network.clientIps' || thirdMenu === 'network.ips') {
           this.urlChangeParams[this.curTabState.tabIndex] = 0
         }
       }
@@ -1275,7 +1270,7 @@ export default {
       this.$store.commit('setRouterHistoryList', historyList)
     },
     handleSearchParams (columnValue) {
-      columnValue = handleSpecialValue(columnValue)//columnValue.replaceAll("'", "\\\\'")
+      columnValue = handleSpecialValue(columnValue)// columnValue.replaceAll("'", "\\\\'")
       const queryCondition = []
       const curTab = this.getCurTab()
       if (curTab.prop === 'protocolPort') {
@@ -1618,8 +1613,6 @@ export default {
       if (tab && tab.hasMetricSearch === true) {
         const columnsForMetric = tab.metrics.find(metric => metric.name === this.metric)
         columnsForMetric.columns = columns
-      } else {
-        tab.columns = tab.columns
       }
     },
     combineColumnList (tabName) {
@@ -1824,10 +1817,10 @@ export default {
     this.drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
     this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
     // 是否需要dns的qtype和rcode的数据字典
-    if(this.tableType === fromRoute.dnsServiceInsights) {
+    if (this.tableType === fromRoute.dnsServiceInsights) {
       this.dnsQtypeMapData = this.$store.getters.getDnsQtypeMapData
       this.dnsRcodeMapData = this.$store.getters.getDnsRcodeMapData
-      if(!this.dnsQtypeMapData || this.dnsQtypeMapData.size === 0){
+      if (!this.dnsQtypeMapData || this.dnsQtypeMapData.size === 0) {
         this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
         this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
         this.$store.commit('setDnsQtypeMapData', this.dnsQtypeMapData)

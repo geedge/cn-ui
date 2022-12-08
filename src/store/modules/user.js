@@ -64,9 +64,9 @@ const user = {
           if (tempArr[1]) {
             tempArr = tempArr[1].split('&')
             tempArr.forEach(t => {
-              let firstEqualIndex = t.indexOf('=')
-              let key = t.substring(0, firstEqualIndex)
-              let value = t.substring(firstEqualIndex + 1)
+              const firstEqualIndex = t.indexOf('=')
+              const key = t.substring(0, firstEqualIndex)
+              const value = t.substring(firstEqualIndex + 1)
               query[key] = value
             })
           }
@@ -97,9 +97,9 @@ const user = {
             version: defaultConfigs.version,
             config: defaultConfigs.config
           })
-          let userId = localStorage.getItem(storageKey.userId)
-          let oldVersion = await getConfigVersion(userId)
-          if(oldVersion !== defaultConfigs.version ){
+          const userId = localStorage.getItem(storageKey.userId)
+          const oldVersion = await getConfigVersion(userId)
+          if (oldVersion !== defaultConfigs.version) {
             db[dbDrilldownTableConfig].delete(userId)
           }
         }

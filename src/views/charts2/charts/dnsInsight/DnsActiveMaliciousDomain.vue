@@ -60,7 +60,7 @@
 
 <script>
 import { api } from '@/utils/api'
-import { dateFormatByAppearance, getSecond } from '@/utils/date-util'
+import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
 

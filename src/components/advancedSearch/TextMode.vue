@@ -23,7 +23,7 @@ import CodeMirror from 'codemirror'
 import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
-import {handleErrorTip} from "@/components/advancedSearch/meta/error";
+import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 
 export default {
   name: 'TextMode',

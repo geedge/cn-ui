@@ -1,5 +1,4 @@
 import {
-  chartColor,
   chartColor1,
   chartColor2,
   chartColor3,

@@ -30,7 +30,7 @@ export default {
     return {
       leftOffset: 27,
       currentTab: ref(0),
-      isCurTabReady:false
+      isCurTabReady: false
     }
   },
   mixins: [chartMixin],
@@ -63,7 +63,7 @@ export default {
     }
   },
   methods: {
-    handleClick(tab){
+    handleClick (tab) {
       const { query } = this.$route
       const newUrl = urlParamsHandler(window.location.href, query, {
         tabIndex: tab.index
@@ -80,16 +80,16 @@ export default {
         activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
       }
     },
-    disableTab(n){
+    disableTab (n) {
       this.tabs[n].disable = true
-      const tabEle = document.getElementById('tab-'+n)
+      const tabEle = document.getElementById('tab-' + n)
       tabEle.style.cssText = 'cursor: not-allowed;'
     }
   },
   mounted () {
     const { query } = useRoute()
     const tabIndexParam = query.tabIndex
-    let curTabIndexInUrl = tabIndexParam ? parseInt(tabIndexParam) : null
+    const curTabIndexInUrl = tabIndexParam ? parseInt(tabIndexParam) : null
     if (this.chart.panelId === drillDownPanelTypeMapping.npmOverviewIp) {
       const self = this
       // 当client或server的session数为0时，对应tab置灰，不可选，默认高亮另一个不为0的tab
@@ -107,37 +107,37 @@ export default {
           self.serverSessions = self.sessionData.serverSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
         }
       }).finally(() => {
-        let thirdMenu = this.$route.query['thirdMenu']
+        const thirdMenu = this.$route.query.thirdMenu
         self.tabs[0].disable = false
         self.tabs[1].disable = false
         let curTabIndex = 0
-        if(thirdMenu === 'network.clientIps'){
+        if (thirdMenu === 'network.clientIps') {
           curTabIndex = 0
           if (self.serverSessions === 0) {
             self.disableTab(1)
-          }else if(curTabIndexInUrl !== null){
+          } else if (curTabIndexInUrl !== null) {
             curTabIndex = curTabIndexInUrl
           }
-        }else if(thirdMenu === 'network.serverIps'){
+        } else if (thirdMenu === 'network.serverIps') {
           curTabIndex = 1
           if (self.clientSessions === 0) {
             self.disableTab(0)
-          }else if(curTabIndexInUrl !== null){
+          } else if (curTabIndexInUrl !== null) {
             curTabIndex = curTabIndexInUrl
           }
-        }else if (self.clientSessions === 0) {
+        } else if (self.clientSessions === 0) {
           curTabIndex = 1
           self.disableTab(0)
         } else if (self.serverSessions === 0) {
           curTabIndex = 0
           self.disableTab(1)
-        } else if(curTabIndexInUrl !== null){
+        } else if (curTabIndexInUrl !== null) {
           curTabIndex = curTabIndexInUrl
         }
         this.$nextTick(() => {
           self.currentTab = curTabIndex
           self.isCurTabReady = true
-          //URL中tabIndex的设置，client初始化时查询条件需要：side条件
+          // URL中tabIndex的设置，client初始化时查询条件需要：side条件
           const { query } = this.$route
           const newUrl = urlParamsHandler(window.location.href, query, {
             tabIndex: self.currentTab
@@ -152,7 +152,7 @@ export default {
         })
       })
     } else {
-      this.currentTab = curTabIndexInUrl ? curTabIndexInUrl : 0
+      this.currentTab = curTabIndexInUrl || 0
       this.isCurTabReady = true
       setTimeout(() => {
         this.handleActiveBar(this.currentTab)

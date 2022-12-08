@@ -177,7 +177,7 @@ export default {
           } else {
             this.npmNetworkLastCycleData = [res]
           }
-          let timer = null
+          const timer = null
           if (timer) {
             clearTimeout(timer)
           }
@@ -185,7 +185,7 @@ export default {
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
           }, 300)
         }).catch((e) => {
-          let timer = null
+          const timer = null
           if (timer) {
             clearTimeout(timer)
           }

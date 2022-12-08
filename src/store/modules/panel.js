@@ -58,8 +58,8 @@ const panel = {
     httpCancel: null, // 终止http请求
     rangeEchartsData: {}, // 框选echarts图表
     routerHistoryList: [], // 路由跳转记录列表
-    dnsQtypeMapData:[],
-    dnsRcodeMapData:[]
+    dnsQtypeMapData: [],
+    dnsRcodeMapData: []
   },
   mutations: {
     setShowRightBox (state, flag) {

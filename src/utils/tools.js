@@ -877,10 +877,10 @@ export async function getDnsMapData (type) {
   }
   return codeValueMap
 }
-export function handleSpecialValue(value){
+export function handleSpecialValue (value) {
   value = value.replaceAll("'", "\\\\'")
-               .replaceAll('"','\\"')
-               .replaceAll('&','%26')
+    .replaceAll('"', '\\"')
+    .replaceAll('&', '%26')
   return value
 }
 export function combineTabList (tableType, list, commonTabList) {
@@ -946,9 +946,9 @@ export async function readDrilldownTableConfigByUser () {
 export async function getConfigVersion (id) {
   let defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: id })
   let version
-  if(defaultCongfigInDb) {
+  if (defaultCongfigInDb) {
     version = defaultCongfigInDb ? defaultCongfigInDb.version : ''
-  }else {
+  } else {
     defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
   }
   return version

@@ -107,7 +107,7 @@ export default {
     }
   },
   methods: {
-    /*search (metaList, formatSql) {
+    /* search (metaList, formatSql) {
       let sql = formatSql
       // 全文搜索处理
       if (metaList && this.$_.isArray(metaList)) {
@@ -120,7 +120,7 @@ export default {
         }
       }
       this.$emit('search', metaList, sql)
-    },*/
+    }, */
     search ({ q, metaList }) {
       this.$emit('search', { q, metaList })
     },

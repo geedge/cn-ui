@@ -100,7 +100,7 @@
         <div class="ship-body-list-title">{{$t('relationShip.alert')}}</div>
         <div class="ship-body-list-value security">
           <template v-if="shipSeverity.length > 0">
-            <span v-for="ship in shipSeverity" class="ship-severity">
+            <span v-for="ship in shipSeverity" class="ship-severity" :key="ship">
               <span class="ship-body-list-security-alert" :class="iconClass(ship)">{{ ship.eventSeverity }}</span>
               <span class="ship-body-list-security-length">{{ ship.totalNumberOfEvents }}</span>
             </span>

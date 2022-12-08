@@ -88,7 +88,7 @@ export default {
           layout = [...n]
         }
 
-        /*const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
+        /* const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
         let actuallyLength = 0
         if (overviewAppChart) {
           const params = overviewAppChart.params.app ? overviewAppChart.params : { app: [] }
@@ -98,7 +98,7 @@ export default {
             actuallyLength = params.app.find(p => p.user === 'default').list.length + 1
           }
           overviewAppChart.h = actuallyLength % 3 > 0 ? (Math.floor(actuallyLength / 3) + 1) * 2 + 2 : Math.floor(actuallyLength / 3) * 2 + 2
-        }*/
+        } */
         this.layout = layout
         const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
         if (overviewAppChart) {
