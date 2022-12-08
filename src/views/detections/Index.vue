@@ -22,7 +22,6 @@
       </div>
     </div>
     <div style="width: 100%;padding-bottom: 47px;">
-      <!--<detection-tabs :time-filter="timeFilter" :chart="tabsData" />-->
       <chart-tabs :data="tabsData" router></chart-tabs>
     </div>
 
@@ -37,7 +36,7 @@
     <div class="explorer-container" style="height: calc(100% - 20px);flex-direction: column">
       <loading :loading="loading"></loading>
       <template v-if="isEventSeverityNoData">
-         <div class="no-data detection__event-severity-bar" >No data</div>
+         <div class="no-data detection__event-severity-bar" >{{ $t('npm.noData') }}</div>
       </template>
       <template v-if="!isEventSeverityNoData">
         <div class="detection__event-severity-bar detection-border"  :id="`eventSeverityTrendBar${pageType}`">
@@ -132,9 +131,7 @@ import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, get
 import { api, getData } from '@/utils/api'
 import { reverseSortBy, extensionEchartY } from '@/utils/tools'
 import { useRoute } from 'vue-router'
-// import DetectionNoData from '@/views/detections/DetectionNoData'
 import Loading from '@/components/common/Loading'
-// import DetectionTabs from '@/views/detections/DetectionTabs'
 import ChartTabs from '@/components/common/ChartTabs'
 
 export default {
@@ -147,8 +144,6 @@ export default {
     DetectionFilter,
     DetectionList,
     Pagination,
-    // DetectionNoData,
-    // DetectionTabs,
     ChartTabs
   },
   data () {
