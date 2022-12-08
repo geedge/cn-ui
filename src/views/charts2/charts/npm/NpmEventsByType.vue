@@ -6,7 +6,7 @@
     </div>
     <div class="npm-event-pie">
       <chart-no-data v-if="isNoData"></chart-no-data>
-      <div class="npm-event-pies" v-else>
+      <div class="npm-event-pies" v-show="!isNoData">
         <div class="chart-drawing" id="chart"></div>
         <div class="npm-event-pie-legends">
           <div class="npm-event-pie-legend">
@@ -58,7 +58,6 @@ export default {
   data () {
     return {
       chartData: [],
-      timer: null,
       isNoData: false,
       showError: false,
       errorMsg: ''
@@ -146,13 +145,10 @@ export default {
     }
   },
   mounted () {
-    this.timer = setTimeout(() => {
-      this.eventsByTypeData()
-    }, 100)
+    this.eventsByTypeData()
     window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {
-    clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
     this.myChart = null
     this.chartOption = null
