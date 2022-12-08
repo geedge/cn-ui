@@ -176,6 +176,9 @@ export default {
           // 数组长度为1，即代表刚刷新界面，获取active的dom添加样式，避免原模式错位问题
           // 可添加css样式，也可添加class类名，两个操作选一即可
           if (window.currentChartTabList.length === 1) {
+            // 此处操作是因为初始化时给active加border，导致tab下移，故需要将整体往上移动对应高度
+            const topDom = document.getElementsByClassName('el-tabs__header is-top')
+            topDom[0].style.cssText += 'top: -4px'
             activeDom[0].style.cssText += 'height: calc(100% - 1px);border-top: 4px #046EC9 solid;border-radius: 5px 5px 0 0;transition: all linear .2s;'
           } else {
             const offsetLeft = tabDom.offsetLeft
@@ -183,6 +186,7 @@ export default {
             const clientLeft = tabDom.clientLeft
             const activeBar = document.querySelector('.chart-tabs .chart-tabs__active-bar')
             activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
+            activeDom[0].style.cssText += 'height:calc(100% + 1px)'
           }
         })
       }
