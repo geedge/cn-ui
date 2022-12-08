@@ -877,10 +877,12 @@ export async function getDnsMapData (type) {
   }
   return codeValueMap
 }
-export function handleSpecialValue (value) {
-  value = value.replaceAll("'", "\\\\'")
-    .replaceAll('"', '\\"')
-    .replaceAll('&', '%26')
+export function handleSpecialValue(value){
+  if(value){
+    value = value.replaceAll("'", "\\\\'")
+        .replaceAll('"','\\"')
+        .replaceAll('&','%26')
+  }
   return value
 }
 export function combineTabList (tableType, list, commonTabList) {

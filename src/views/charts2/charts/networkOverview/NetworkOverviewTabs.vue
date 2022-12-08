@@ -951,36 +951,6 @@ export default {
         this.tableData = this.tableDataBackup
       }
     },
-    // 切换metric：bit、packet、session
-    changeMetric () {
-      this.tableData = []
-      this.tableDataBackup = []
-      this.setShowNum(10)
-      const beforeType = this.getUrlParam(this.curTabState.tabOperationBeforeType, '', true)
-      if (beforeType && beforeType != operationType.thirdMenu) {
-        this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
-      }
-      this.urlChangeParams[this.curTabState.tabOperationType] = operationType.changeMetric
-      const curTab = this.getCurTab()
-      this.urlChangeParams[this.curTabState.tableMetric] = this.metric
-
-      let queryParams = {
-        orderBy: this.orderBy,
-        limit: networkDefaultLimit,
-        type: curTab.prop
-      }
-      const condition = this.getQueryCondition()
-      if (condition) {
-        queryParams = {
-          orderBy: this.orderBy,
-          limit: networkDefaultLimit,
-          type: curTab.prop,
-          q: condition
-        }
-      }
-      this.changeUrlTabState()
-      this.getChartData(queryParams)
-    },
     handleCustomizeButton (status) {
       this.showBackground = status
       if (!this.showCustomizeTabs) {
