@@ -32,6 +32,8 @@ export default {
       object: {},
       searchLabel: ref({}),
 
+      isFirstQuery: true,
+
       tableData: [],
       scrollbarWrap: null,
       delFlag: false,
@@ -118,7 +120,14 @@ export default {
     },
     pageNo (val) {
       this.pageObj.pageNo = val
-      this.getTableData()
+      if (this.isFirstQuery) {
+        this.isFirstQuery = false
+        setTimeout(() => {
+          this.getTableData()
+        }, 300)
+      } else {
+        this.getTableData()
+      }
     },
     pageSize (val) {
       this.pageObj.pageSize = val
