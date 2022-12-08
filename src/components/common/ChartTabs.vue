@@ -176,7 +176,7 @@ export default {
           // 数组长度为1，即代表刚刷新界面，获取active的dom添加样式，避免原模式错位问题
           // 可添加css样式，也可添加class类名，两个操作选一即可
           if (window.currentChartTabList.length === 1) {
-            activeDom[0].style.cssText += 'border-top: 4px #046EC9 solid;border-radius: 5px 5px 0 0;transition: all linear .2s;'
+            activeDom[0].style.cssText += 'height: calc(100% - 1px);border-top: 4px #046EC9 solid;border-radius: 5px 5px 0 0;transition: all linear .2s;'
           } else {
             const offsetLeft = tabDom.offsetLeft
             const clientWidth = tabDom.clientWidth
