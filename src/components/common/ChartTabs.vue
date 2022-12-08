@@ -63,9 +63,7 @@ export default {
   data () {
     return {
       leftOffset: 27,
-      // currentTab: '',
-      // tabsData: '',
-      routerList: []
+      timer: null
     }
   },
   setup (props) {
@@ -124,9 +122,12 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.init()
-    })
+    const time = this.router === 'noRouter' ? 900 : 0
+    this.timer = setTimeout(() => {
+      this.$nextTick(() => {
+        this.init()
+      })
+    }, time)
   },
   watch: {
     currentTab (n) {
@@ -155,7 +156,7 @@ export default {
         }
       })
 
-      if (window.currentChartTabList) {
+      if (window.currentChartTabList && this.router !== 'noRouter') {
         window.currentChartTabList.forEach((item) => {
           this.$nextTick(() => {
             this.handleActiveBar(parseFloat(item.index))
@@ -165,6 +166,7 @@ export default {
         this.$nextTick(() => {
           this.handleActiveBar(this.currentTab)
         })
+        window.currentChartTabList = null
       }
     },
     handleActiveBar (index) {
@@ -173,46 +175,60 @@ export default {
 
       if (tabDom && activeDom) {
         this.$nextTick(() => {
-          // 数组长度为1，即代表刚刷新界面，获取active的dom添加样式，避免原模式错位问题
-          // 可添加css样式，也可添加class类名，两个操作选一即可
-          if (window.currentChartTabList.length === 1) {
-            // 此处操作是因为初始化时给active加border，导致tab下移，故需要将整体往上移动对应高度
-            const topDom = document.getElementsByClassName('el-tabs__header is-top')
-            topDom[0].style.cssText += 'top: -3px'
-            activeDom[0].style.cssText += 'height: calc(100% - 1px);border-top: 4px #046EC9 solid;border-radius: 5px 5px 0 0;transition: all linear .2s;'
-          } else {
-            const offsetLeft = tabDom.offsetLeft
-            const clientWidth = tabDom.clientWidth
-            const clientLeft = tabDom.clientLeft
-            const activeBar = document.querySelector('.chart-tabs .chart-tabs__active-bar')
+          const offsetLeft = tabDom.offsetLeft
+          const clientWidth = tabDom.clientWidth
+          const clientLeft = tabDom.clientLeft
+          const activeBar = document.querySelector('.chart-tabs .chart-tabs__active-bar')
+
+          if (this.router === 'noRouter') {
             activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
-            activeDom[0].style.cssText += 'height:calc(100% + 1px)'
+          } else {
+            // 数组长度为1，即代表刚刷新界面，获取active的dom添加样式，避免原模式错位问题
+            // 可添加css样式，也可添加class类名，两个操作选一即可
+            if (window.currentChartTabList.length === 1) {
+              // 此处操作是因为初始化时给active加border，导致tab下移，故需要将整体往上移动对应高度
+              const topDom = document.getElementsByClassName('el-tabs__header is-top')
+              topDom[0].style.cssText += 'top: -3px'
+              activeDom[0].style.cssText += 'height: calc(100% - 1px);border-top: 4px #046EC9 solid;border-radius: 5px 5px 0 0;transition: all linear .2s;'
+            } else {
+              activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + this.leftOffset + clientLeft - 1}px;`
+              activeDom[0].style.cssText += 'height:calc(100% + 1px)'
+            }
           }
         })
       }
     },
     handleClick (item) {
-      window.currentChartTabList.push({
-        path: this.tabsData[item.index].path,
-        index: item.index
-      })
-
-      if (window.currentChartTabList.length > 2) {
-        window.currentChartTabList.splice(0, 1)
-      }
-
       this.$emit('click', item)
 
-      const query = { t: +new Date() }
       if (this.router === 'noRouter') {
-        query.tabIndex = this.currentTab
-      }
+        const { query } = this.$route
+        const newUrl = urlParamsHandler(window.location.href, query, {
+          t: +new Date(),
+          tabIndex: item.index
+        })
+        overwriteUrl(newUrl)
+      } else {
+        window.currentChartTabList.push({
+          path: this.tabsData[item.index].path,
+          index: item.index
+        })
 
-      this.$router.push({
-        path: this.tabsData[item.index].path,
-        query: query
-      })
+        if (window.currentChartTabList.length > 2) {
+          window.currentChartTabList.splice(0, 1)
+        }
+
+        this.$router.push({
+          path: this.tabsData[item.index].path,
+          query: {
+            t: +new Date()
+          }
+        })
+      }
     }
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
   }
 }
 </script>
