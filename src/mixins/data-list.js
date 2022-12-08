@@ -293,6 +293,6 @@ export default {
       const arr = localStorageTableTitle.splice(this.$refs.dataTable.tableTitle.length, localStorageTableTitle.length)
       this.tools.customTableTitle = this.tools.customTableTitle.concat(arr)
     }
-    this.getTableData()
+    // this.getTableData()
   }
 }

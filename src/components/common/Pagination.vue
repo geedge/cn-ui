@@ -186,7 +186,6 @@ export default {
       }
     }
 
-    this.size(this.pageSize)
     this.currentPageNo = parseInt(this.currentPageNo)
     this.current(this.currentPageNo)
   },
