@@ -81,7 +81,7 @@
             @change="tableLimitChange"
           >
             <template
-              v-for="(item, index) in table.tableColumns.order"
+              v-for="item in table.tableColumns.order"
               :key="item.prop"
             >
               <el-option
@@ -123,7 +123,7 @@
         <div class="header__operation header__operation--table">
           <el-select
             size="mini"
-            v-model="orderPieTable"
+            v-model="copyOrderPieTable"
             class="option__select select-column"
             placeholder=""
             popper-class="option-popper"
@@ -342,7 +342,7 @@ export default {
       this.$emit('tableChange')
     },
     orderPieTableChange () {
-      this.$emit('orderPieTableChange', this.orderPieTable)
+      this.$emit('orderPieTableChange', this.copyOrderPieTable)
     },
     tabHandleClick (item) {
       this.isFocus = item
@@ -379,12 +379,15 @@ export default {
     const { startTime, endTime } = getNowTime(dateRangeValue)
     // entity详情内的chart时间工具不是公共的，需要单独定义
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
+    // 复制一份prop中需要被组件v-model的内容，避免报错
+    const copyOrderPieTable = props.orderPieTable
     return {
       chartTimeFilter,
       chartTableTopOptions,
       chartActiveIpTableOrderOptions,
       chartPieTableTopOptions,
       eventSeverity,
+      copyOrderPieTable,
       isTitle: isTitle(props.chartInfo.type),
       isBlock: isBlock(props.chartInfo.type),
       isTabs: isTabs(props.chartInfo.type),
