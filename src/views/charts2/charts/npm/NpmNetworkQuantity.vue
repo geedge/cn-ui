@@ -57,7 +57,7 @@ export default {
   },
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.npmNetworkCycleData = []
         this.npmNetworkLastCycleData = []
         this.npmNetworkCycleQuery()
@@ -79,9 +79,9 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 0
       }
-      if (this.tabIndex == 0) {
+      if (this.tabIndex === 0) {
         this.side = 'client'
-      } else if (this.tabIndex == 1) {
+      } else if (this.tabIndex === 1) {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
@@ -126,6 +126,7 @@ export default {
           }
           this.npmNetworkLastCycleQuery(url, params)
         }).catch(e => {
+          console.error(e)
           this.toggleLoading(false)
         })
       } else {
@@ -136,6 +137,8 @@ export default {
         const packetPercent = get(api.npm.overview.packetRetransPercent, params)
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+          // 状态为200的，赋值接口数据，不为200的传入报错提示message，
+          // 传给子组件SingleValue，再进行error处理，注：error处理不在此处处理
           this.npmNetworkCycleData = []
           res.forEach(t => {
             if (t.code === 200) {
@@ -177,18 +180,10 @@ export default {
           } else {
             this.npmNetworkLastCycleData = [res]
           }
-          const timer = null
-          if (timer) {
-            clearTimeout(timer)
-          }
           this.timer1 = setTimeout(() => {
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
           }, 300)
         }).catch((e) => {
-          const timer = null
-          if (timer) {
-            clearTimeout(timer)
-          }
           this.npmNetworkLastCycleData = [e]
           this.timer2 = setTimeout(() => {
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 0)
@@ -204,7 +199,9 @@ export default {
         const packetPercent = get(api.npm.overview.packetRetransPercent, params)
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
-          res.forEach((t, i) => {
+          // 状态为200的，赋值接口数据，不为200的保留报错提示message，
+          // 传给子组件SingleValue，再进行error处理，注：error处理不在此处处理
+          res.forEach(t => {
             if (t.code === 200) {
               this.npmNetworkLastCycleData.push(t.data.result)
             } else {
@@ -215,7 +212,7 @@ export default {
         }).catch((e) => {
           // todo 此处的e可能为数组
           if (e instanceof Array) {
-            e.forEach((t, i) => {
+            e.forEach(t => {
               this.npmNetworkLastCycleData.push(t)
               this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 1)
             })
