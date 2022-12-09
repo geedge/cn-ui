@@ -1,4 +1,4 @@
-import { createI18n } from 'vue-i18n'
+import { createI18n } from 'vue-i18n/index'
 import { storageKey } from '@/utils/constants'
 import { getI18n } from '@/utils/api'
 import store from '@/store'

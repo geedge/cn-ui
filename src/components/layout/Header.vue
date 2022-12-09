@@ -301,7 +301,8 @@ export default {
       curPageNum: 1,
       curTabState: curTabState,
       urlChangeParams: {},
-      wholeScreenRouterMapping
+      wholeScreenRouterMapping,
+      logo: '' // 此处logo的url未被初始化，可能后续会改动
     }
   },
   computed: {
@@ -435,7 +436,7 @@ export default {
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
       const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
       if (curTableInCode && curTableInCode.tabList) {
-        curTab = curTableInCode.tabList.find(item => item.label == label)
+        curTab = curTableInCode.tabList.find(item => item.label === label)
       }
       return curTab
     },
@@ -448,7 +449,7 @@ export default {
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
       const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
       if (curTableInCode && curTableInCode.tabList) {
-        const curTab = curTableInCode.tabList.find(item => item.label == columnName)
+        const curTab = curTableInCode.tabList.find(item => item.label === columnName)
         if (curTab) {
           type = curTab.prop
         }
@@ -571,7 +572,7 @@ export default {
       }
       this.urlChangeParams = {}
     },
-    async handleCurDrilldownTableConfig (thirdMenu, fourthMenu) {
+    async handleCurDrilldownTableConfig (thirdMenu) {
       // const userId = localStorage.getItem(storageKey.userId)
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
       const drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
@@ -668,7 +669,7 @@ export default {
             t: +new Date()
           }
         })
-      } else if (opeType != 4) {
+      } else if (opeType !== 4) {
         this.$router.push({
           query: {
             ...this.$route.query,
