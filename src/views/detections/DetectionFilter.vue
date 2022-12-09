@@ -1,6 +1,6 @@
 <template>
   <div class="detection-filter-case">
-    <div class="no-data" v-if="isNoData">No data</div>
+    <div class="no-data" v-if="isNoData">{{ $t('npm.noData') }}</div>
 
     <div class="new-detection-filter-title">{{$t('detections.filters')}}</div>
     <template v-for="(filter, index) in filterData" :key="index">

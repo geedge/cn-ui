@@ -3,7 +3,7 @@
     <loading :loading="loading"></loading>
     <div class="detection-list__content">
       <div class="detection-list--list">
-        <div class="no-data" v-if="noData">No data</div>
+        <div class="no-data" v-if="noData">{{ $t('npm.noData') }}</div>
         <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow new-cn-detection__shadow"></div>
         <detection-row
             style="margin-bottom: 10px"

@@ -73,6 +73,9 @@ export default {
       get(api.npm.events.list, params).then(res => {
         if (res.code === 200) {
           this.showError = false
+          if (res.data.result.length === 0) {
+            this.chartData.forEach(d => { d.count = '-' })
+          }
           res.data.result.forEach(t => {
             this.chartData.forEach(d => {
               if (d.eventSeverity === t.eventSeverity) {

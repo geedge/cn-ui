@@ -57,7 +57,7 @@
                 <div class="chart-header__title">{{$t('detection.severity')}}</div>
               </div>
               <template v-if="isStatisticsSeverityNoData">
-                <div class="no-data chart-content" >No data</div>
+                <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
               </template>
               <template v-else>
                 <div class="chart-content" :id="`eventSeverityPie${pageType}`">
@@ -70,7 +70,7 @@
                 <div class="chart-header__title">{{$t('detection.categoryProportion')}}</div>
               </div>
               <template v-if="isStatisticsCategoryNoData">
-                <div class="no-data chart-content" >No data</div>
+                <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
               </template>
               <template v-else>
                 <div class="chart-content" :id="`detectionCategoryPer${pageType}`">
@@ -82,7 +82,7 @@
                 <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeAttacker') : $t('detections.activeEntity')}}</div>
               </div>
               <template v-if="isStatisticsActiveAttackNoData">
-                <div class="no-data chart-content" >No data</div>
+                <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
               </template>
               <template v-else>
                 <div class="chart-content" style="padding-left: 5px;" :id="`detectionActiveAttacker${pageType}`">
