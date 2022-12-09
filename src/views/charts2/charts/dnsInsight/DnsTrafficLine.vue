@@ -242,14 +242,10 @@ export default {
                 mpackets[0].invertTab = false
                 this.lineTab = 'total'
                 this.legendSelectChange(mpackets[0], 0)
-                this.$nextTick(() => {
-                  this.echartsInit(this.mpackets)
-                })
+                this.echartsInit(this.mpackets)
               } else {
-                this.$nextTick(() => {
-                  this.echartsInit(this.mpackets, show)
-                  if (!this.lineRefer) this.lineRefer = 'Average'
-                })
+                this.echartsInit(this.mpackets, show)
+                if (!this.lineRefer) this.lineRefer = 'Average'
               }
             } else if (t.type === 'queries' && val === 'Queries/s') {
               const mpackets = _.cloneDeep(this.mpackets)
@@ -265,9 +261,7 @@ export default {
                 this.legendSelectChange(e, 0)
               })
               this.mpackets = mpackets
-              this.$nextTick(() => {
-                this.echartsInit(this.mpackets, true)
-              })
+              this.echartsInit(this.mpackets, true)
             }
           })
         } else {
@@ -292,105 +286,109 @@ export default {
         echartsData = echartsData.filter(t => t.show === true)
       }
       const _this = this
-      const dom = document.getElementById('dnsLineChart')
-      !this.myChart && (this.myChart = echarts.init(dom))
-      this.chartOption = stackedLineChartOption
-      const chartOption = this.chartOption.series[0]
-      this.chartOption.series = echartsData.map((t, i) => {
-        return {
-          ...chartOption,
-          name: t.name,
-          lineStyle: {
-            color: chartColor3[t.positioning],
-            width: 1
-          },
-          stack: t.name !== 'network.total' ? 'network.total' : '',
-          symbolSize: function (value) {
-            return _this.symbolSizeSortChange(i, value[0])
-          },
-          itemStyle: {
-            emphasis: {
-              borderColor: chartColor4[t.positioning],
-              borderWidth: 2,
-              shadowColor: chartColor4[t.positioning],
-              shadowBlur: this.sizes[t.positioning] + 2
-            }
-          },
-          areaStyle: {
-            opacity: 0.1,
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
-                offset: 0,
-                color: chartColor3[t.positioning]
+      this.$nextTick(() => {
+        if (echartsData.length > 0) {
+          const dom = document.getElementById('dnsLineChart')
+          !this.myChart && (this.myChart = echarts.init(dom))
+          this.chartOption = stackedLineChartOption
+          const chartOption = this.chartOption.series[0]
+          this.chartOption.series = echartsData.map((t, i) => {
+            return {
+              ...chartOption,
+              name: t.name,
+              lineStyle: {
+                color: chartColor3[t.positioning],
+                width: 1
               },
-              {
-                offset: 1,
-                color: chartColor3[t.positioning]
+              stack: t.name !== 'network.total' ? 'network.total' : '',
+              symbolSize: function (value) {
+                return _this.symbolSizeSortChange(i, value[0])
+              },
+              itemStyle: {
+                emphasis: {
+                  borderColor: chartColor4[t.positioning],
+                  borderWidth: 2,
+                  shadowColor: chartColor4[t.positioning],
+                  shadowBlur: this.sizes[t.positioning] + 2
+                }
+              },
+              areaStyle: {
+                opacity: 0.1,
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: chartColor3[t.positioning]
+                  },
+                  {
+                    offset: 1,
+                    color: chartColor3[t.positioning]
+                  }
+                ])
+              },
+              data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
+              markLine: {
+                silent: true,
+                lineStyle: {
+                  color: '#B4B1A8'
+                },
+                symbol: 'none',
+                label: {
+                  formatter (params) {
+                    const arr = unitConvert(params.value, unitTypes.number).join('')
+                    return _this.lineRefer + '(' + arr + echartsData[0].unitType + ')'
+                  },
+                  position: 'insideStartTop',
+                  color: '#717171',
+                  fontFamily: 'NotoSansSChineseRegular'
+                }
               }
-            ])
-          },
-          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
-          markLine: {
-            silent: true,
-            lineStyle: {
-              color: '#B4B1A8'
-            },
-            symbol: 'none',
-            label: {
-              formatter (params) {
-                const arr = unitConvert(params.value, unitTypes.number).join('')
-                return _this.lineRefer + '(' + arr + echartsData[0].unitType + ')'
-              },
-              position: 'insideStartTop',
-              color: '#717171',
-              fontFamily: 'NotoSansSChineseRegular'
-            }
-          }
-        }
-      })
-      if (!show) {
-        this.chartOption.series.forEach((t) => {
-          t.markLine.label.show = false
-          t.markLine = []
-        })
-      }
-      if (this.lineRefer === 'Average' && show) {
-        this.chartOption.series.forEach((t, i) => {
-          t.markLine.label.show = true
-          t.markLine.data = [
-            {
-              yAxis: echartsData[i].analysis.avg
-            }
-          ]
-        })
-      } else if (this.lineRefer === '95th Percentile' && show) {
-        this.chartOption.series.forEach((t, i) => {
-          t.markLine.label.show = true
-          t.markLine.data = [
-            { yAxis: echartsData[i].analysis.p95 }
-          ]
-        })
-      } else if (this.lineRefer === 'Maximum' && show) {
-        this.chartOption.series.forEach((t, i) => {
-          t.markLine.label.show = true
-          t.markLine.data = [
-            { yAxis: echartsData[i].analysis.max }
-          ]
-        })
-      }
-      this.chartOption.tooltip.formatter = (params) => {
-        params.forEach(t => {
-          t.seriesName = this.$t(t.seriesName)
-          this.mpackets.forEach(e => {
-            if (this.$t(e.name) === t.seriesName) {
-              t.borderColor = chartColor3[e.positioning]
             }
           })
-        })
-        return stackedLineTooltipFormatter(params)
-      }
-      this.showMarkLine = true
-      this.myChart.setOption(this.chartOption)
+          if (!show) {
+            this.chartOption.series.forEach((t) => {
+              t.markLine.label.show = false
+              t.markLine = []
+            })
+          }
+          if (this.lineRefer === 'Average' && show) {
+            this.chartOption.series.forEach((t, i) => {
+              t.markLine.label.show = true
+              t.markLine.data = [
+                {
+                  yAxis: echartsData[i].analysis.avg
+                }
+              ]
+            })
+          } else if (this.lineRefer === '95th Percentile' && show) {
+            this.chartOption.series.forEach((t, i) => {
+              t.markLine.label.show = true
+              t.markLine.data = [
+                { yAxis: echartsData[i].analysis.p95 }
+              ]
+            })
+          } else if (this.lineRefer === 'Maximum' && show) {
+            this.chartOption.series.forEach((t, i) => {
+              t.markLine.label.show = true
+              t.markLine.data = [
+                { yAxis: echartsData[i].analysis.max }
+              ]
+            })
+          }
+          this.chartOption.tooltip.formatter = (params) => {
+            params.forEach(t => {
+              t.seriesName = this.$t(t.seriesName)
+              this.mpackets.forEach(e => {
+                if (this.$t(e.name) === t.seriesName) {
+                  t.borderColor = chartColor3[e.positioning]
+                }
+              })
+            })
+            return stackedLineTooltipFormatter(params)
+          }
+          this.showMarkLine = true
+          this.myChart.setOption(this.chartOption)
+        }
+      })
     },
     activeChange (item, index) {
       if (this.isNoData) return

@@ -541,67 +541,71 @@ export default {
     },
     echartsInit (echartsData, legendUnit) {
       echartsData = echartsData.filter(t => t.show === true)
-      const dom = document.getElementById('chart')
-      !this.myChart && (this.myChart = echarts.init(dom))
-      this.chartOption = trafficLineChartOption
-      const chartOption = this.chartOption.series[0]
-      this.chartOption.series = echartsData.map((t, i) => {
-        this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
-          if (t.unitType === 'percent') {
-            return unitConvert(value, t.unitType)[0]
-          } else if (t.unitType === 'time') {
-            return unitConvert(value, 'number').join('')
-          } else {
-            return unitConvert(value, t.unitType).join('')
-          }
-        }
-        return {
-          ...chartOption,
-          name: this.$t(t.name) + (legendUnit || ''),
-          lineStyle: {
-            color: chartColor3[t.positioning],
-            width: 1
-          },
-          stack: t.name !== 'network.total' ? 'network.total' : '',
-          areaStyle: {
-            opacity: 0.1,
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
-                offset: 0,
-                color: chartColor3[t.positioning]
-              },
-              {
-                offset: 1,
-                color: chartColor3[t.positioning]
+      this.$nextTick(() => {
+        if (echartsData.length > 0) {
+          const dom = document.getElementById('chart')
+          !this.myChart && (this.myChart = echarts.init(dom))
+          this.chartOption = trafficLineChartOption
+          const chartOption = this.chartOption.series[0]
+          this.chartOption.series = echartsData.map((t, i) => {
+            this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
+              if (t.unitType === 'percent') {
+                return unitConvert(value, t.unitType)[0]
+              } else if (t.unitType === 'time') {
+                return unitConvert(value, 'number').join('')
+              } else {
+                return unitConvert(value, t.unitType).join('')
               }
-            ])
-          },
-          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), t.unitType])
+            }
+            return {
+              ...chartOption,
+              name: this.$t(t.name) + (legendUnit || ''),
+              lineStyle: {
+                color: chartColor3[t.positioning],
+                width: 1
+              },
+              stack: t.name !== 'network.total' ? 'network.total' : '',
+              areaStyle: {
+                opacity: 0.1,
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: chartColor3[t.positioning]
+                  },
+                  {
+                    offset: 1,
+                    color: chartColor3[t.positioning]
+                  }
+                ])
+              },
+              data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), t.unitType])
+            }
+          })
+          this.chartOption.tooltip.formatter = (params) => {
+            params.forEach(t => {
+              t.seriesName = this.$t(t.seriesName)
+              this.mpackets.forEach(e => {
+                if (this.$t(e.name) === t.seriesName) {
+                  t.borderColor = chartColor3[e.positioning]
+                }
+              })
+              this.npmQuantity.forEach(d => {
+                const nameMs = this.$t(d.name) + '(ms)'
+                const namePrent = this.$t(d.name) + '(%)'
+                if (nameMs === t.seriesName) {
+                  t.borderColor = chartColor3[d.positioning]
+                } else if (namePrent === t.seriesName) {
+                  t.borderColor = chartColor3[d.positioning]
+                }
+              })
+            })
+            const str = stackedLineTooltipFormatter(params)
+            return str
+          }
+          this.myChart.on('legendselectchanged', this.handleLegendClick)
+          this.myChart.setOption(this.chartOption, true)
         }
       })
-      this.chartOption.tooltip.formatter = (params) => {
-        params.forEach(t => {
-          t.seriesName = this.$t(t.seriesName)
-          this.mpackets.forEach(e => {
-            if (this.$t(e.name) === t.seriesName) {
-              t.borderColor = chartColor3[e.positioning]
-            }
-          })
-          this.npmQuantity.forEach(d => {
-            const nameMs = this.$t(d.name) + '(ms)'
-            const namePrent = this.$t(d.name) + '(%)'
-            if (nameMs === t.seriesName) {
-              t.borderColor = chartColor3[d.positioning]
-            } else if (namePrent === t.seriesName) {
-              t.borderColor = chartColor3[d.positioning]
-            }
-          })
-        })
-        const str = stackedLineTooltipFormatter(params)
-        return str
-      }
-      this.myChart.on('legendselectchanged', this.handleLegendClick)
-      this.myChart.setOption(this.chartOption, true)
     },
     // 点击前，高亮legend个数
     getSelectedNum (params) {
