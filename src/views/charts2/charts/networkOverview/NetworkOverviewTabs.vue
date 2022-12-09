@@ -364,7 +364,7 @@ export default {
 
       const curTab = this.getCurTab()
       this.initMetric()
-      this.combineColumnList(curTab.label)
+      this.combineColumnList(curTab.name)
 
       let queryParams = {
         orderBy: this.orderBy,
