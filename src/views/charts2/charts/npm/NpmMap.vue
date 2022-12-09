@@ -124,6 +124,7 @@ export default {
         getData(api.npm.location.map, params).then(res => {
           if (res.length > 0) {
             // 计算分数
+            this.showError = false
             params.country = params.country ? `'${params.country}'` : ''
             const tcpRequest = get(api.npm.location.mapTcp, params)
             const httpRequest = get(api.npm.location.mapHttp, params)
