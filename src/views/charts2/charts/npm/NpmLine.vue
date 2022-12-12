@@ -84,9 +84,9 @@ export default {
     return {
       chartData: {},
       chartOptionLineData: [
-        { legend: 'network.total', index: 0, invertTab: true, color: '#749F4D' },
-        { legend: 'network.inbound', index: 1, invertTab: true, color: '#98709B' },
-        { legend: 'network.outbound', index: 2, invertTab: true, color: '#E5A219' }
+        { legend: 'network.total', index: 0, invertTab: true, show: false, color: '#749F4D' },
+        { legend: 'network.inbound', index: 1, invertTab: true, show: false, color: '#98709B' },
+        { legend: 'network.outbound', index: 2, invertTab: true, show: false, color: '#E5A219' }
       ],
       npmLineColor: [
         { legend: '', color: '#749F4D' },
@@ -262,20 +262,25 @@ export default {
       })
     },
     highlightEvent (item) {
-      this.chartOptionLineData.forEach(t => {
+      const chartOptionLineData = _.cloneDeep(this.chartOptionLineData)
+      chartOptionLineData.forEach(t => {
         if (t.legend === item.legend) {
           t.invertTab = !t.invertTab
         } else {
           t.show = t.invertTab
         }
       })
-      const legend = this.chartOptionLineData.filter(t => t.invertTab)
-      const legends = this.chartOptionLineData.filter(t => !t.invertTab)
-      this.chartOptionLineData.forEach(t => {
+      const legend = chartOptionLineData.filter(t => t.invertTab)
+      const legends = chartOptionLineData.filter(t => !t.invertTab)
+      chartOptionLineData.forEach(t => {
         if ((t.legend === item.legend) && t.invertTab) {
-          legend.forEach(r => {
-            r.show = false
-          })
+          if (legend.length === 2) {
+            t.show = true
+          } else {
+            legend.forEach(r => {
+              r.show = false
+            })
+          }
         } else if ((t.legend !== item.legend) && !t.invertTab) {
           legends.forEach(r => {
             if (r.legend === item.legend) {
@@ -285,10 +290,11 @@ export default {
         }
       })
       if (legend.length === 0) {
-        this.chartOptionLineData.forEach((t, i) => {
+        chartOptionLineData.forEach((t, i) => {
           t.invertTab = true
         })
       }
+      this.chartOptionLineData = chartOptionLineData
       this.legendSelectChange(legends, legend)
     },
     legendSelectChange (legends, legend) {
