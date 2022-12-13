@@ -8,6 +8,7 @@ export default {
       isNoData: false
     }
   },
+  emits: ['toggleLoading'],
   methods: {
     toggleLoading (loading) {
       this.$emit('toggleLoading', loading)
