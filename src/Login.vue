@@ -2,12 +2,12 @@
   <div class="logins">
     <div class="inside">
       <div class="title">
-        <img src="../public/images/cion.png" />
+        <img src="../public/images/logo-title.svg" />
       </div>
       <el-form class="login__box">
         <el-form-item>
           <el-input
-              prefix-icon="el-icon-user"
+              prefix-icon="cn-icon cn-icon-user2"
               class="login--input login__input"
             v-model="username"
           ></el-input>
@@ -136,58 +136,99 @@ export default {
 }
 </script>
 
-<style>
- .logins{
+<style scoped>
+.logins {
   background-color: #000C18;
   background-size: auto;
   background-repeat: round;
   background-image: url('../public/images/bg.png');
   display: flex;
-   height: 100%;
+  height: 100%;
   justify-content: center;
   align-items: center;
-   margin: auto;
 }
 
+>>>.el-input__inner {
+  background-color: #0B325C !important;
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px solid #295688;
+  font-size: 14px;
+  line-height: 14px;
+}
+>>>.el-input__inner:hover {
+  border-color: #295688;
+}
+>>>.el-input__inner:focus {
+  border-color: #295688;
+}
+.el-button--primary:hover, .el-button--primary:focus, .el-button--primary:active {
+  background: #21B4ED;
+  border-color: #21B4ED;
+  color: #FFFFFF;
+}
+>>>.el-loading-mask {
+  background-color: transparent;
+}
+>>>input {
+  -webkit-text-fill-color: rgba(231,234,237, .8) !important;
+  transition: background-color 500000000000000000s ease-in-out 0s !important;
+  caret-color: #fff ;
+}
 .inside {
-  opacity: 0.78;
-  background: #051a37;
-  border-radius: 6px;
-  width: 368px;
-  height: 400px;
-  /* margin-top:340px; */
+  width: 414px;
+  height: 524px;
+  background: #0B325C;
+  border: 1px solid rgba(103,179,245,0.65);
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.38);
+  border-radius: 4px;
+}
+.inside {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .inside > div {
   display: block;
 }
 
 .title {
-  margin-top: 70px;
+  margin-top: 65px;
   text-align: center;
-
 }
 .title > img {
-  height: 43px;
-  width: 248px;
+  height: 135px;
 }
-.login--input{
-  width: 300px;
-  height: 40px;
+.login__box {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
- .login__input:first-of-type{
-   margin-top: 45.57px;
- }
- .login__box{
-   width: 300px;
-   height: 250px;
-   margin: auto;
- }
+>>>.el-form-item {
+  width: 334px;
+  margin-bottom: 25px;
+}
+>>>.el-input__prefix {
+  color: #6DBBFF;
+}
+>>>.el-input__prefix i {
+  width: 17px;
+  font-size: 17px;
+}
+.login__box .el-form-item:nth-of-type(3) {
+  margin-top: 25px;
+  margin-bottom: 65px;
+}
 .login--button {
-  background: #0091ff;
-  color: #fff;
+  background: #21B4ED;
   border-radius: 4px;
   border: 0;
   font-weight: 400;
-  text-align: center;
+  font-size: 16px;
+  color: #FFFFFF;
+  line-height: 22px;
+  width: 334px;
+  height: 52px;
 }
 </style>
