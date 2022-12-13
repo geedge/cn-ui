@@ -207,8 +207,8 @@ export const pieForSeverity = {
           return `${param.name}: ${param.value}`
         }
       },
-      emphasis: {
-        itemStyle: {
+      itemStyle: {
+        emphasis: {
           shadowBlur: 10,
           shadowOffsetX: 0,
           shadowColor: 'rgba(0, 0, 0, 0.5)'

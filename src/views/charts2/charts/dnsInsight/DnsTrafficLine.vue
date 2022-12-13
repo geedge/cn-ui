@@ -304,8 +304,8 @@ export default {
               symbolSize: function (value) {
                 return _this.symbolSizeSortChange(i, value[0])
               },
-              itemStyle: {
-                emphasis: {
+              emphasis: {
+                itemStyle: {
                   borderColor: chartColor4[t.positioning],
                   borderWidth: 2,
                   shadowColor: chartColor4[t.positioning],
