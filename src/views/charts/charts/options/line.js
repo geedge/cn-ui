@@ -219,11 +219,9 @@ export const singleValueLine = {
       type: 'line',
       legendHoverLink: false,
       itemStyle: {
-        normal: {
-          color: '#81C9FF',
-          lineStyle: {
-            width: 2
-          }
+        color: '#81C9FF',
+        lineStyle: {
+          width: 2
         }
       },
       data: [],
@@ -272,10 +270,8 @@ export const entityListLine = {
       type: 'line',
       legendHoverLink: false,
       itemStyle: {
-        normal: {
-          lineStyle: {
-            width: 2
-          }
+        lineStyle: {
+          width: 2
         }
       },
       data: [],

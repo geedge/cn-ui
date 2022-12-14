@@ -108,10 +108,8 @@ export default {
                     type: 'line',
                     legendHoverLink: false,
                     itemStyle: {
-                      normal: {
-                        lineStyle: {
-                          width: 1
-                        }
+                      lineStyle: {
+                        width: 1
                       }
                     },
                     color: '#69b072',
@@ -130,10 +128,8 @@ export default {
                     type: 'line',
                     legendHoverLink: false,
                     itemStyle: {
-                      normal: {
-                        lineStyle: {
-                          width: 1
-                        }
+                      lineStyle: {
+                        width: 1
                       }
                     },
                     color: '#7899c6',

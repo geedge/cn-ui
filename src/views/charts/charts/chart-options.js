@@ -38,10 +38,8 @@ export const entityListLineOption = {
       type: 'line',
       legendHoverLink: false,
       itemStyle: {
-        normal: {
-          lineStyle: {
-            width: 2
-          }
+        lineStyle: {
+          width: 2
         }
       },
       data: [],

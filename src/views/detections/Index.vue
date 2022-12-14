@@ -326,7 +326,11 @@ export default {
 
           // eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
           eventSeverityTrendOption.xAxis.data = xData
-          const detectionChart = echarts.init(chartDom)
+          let detectionChart = echarts.getInstanceByDom(chartDom)
+          if (detectionChart) {
+            echarts.dispose(detectionChart)
+          }
+          detectionChart = echarts.init(chartDom)
           this.chartInit.push(shallowRef(detectionChart))
           detectionChart.setOption(eventSeverityTrendOption)
           // this.isEventSeverityNoData = false
@@ -353,7 +357,11 @@ export default {
             return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
           })
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
-          const detectionChart = echarts.init(chartDom)
+          let detectionChart = echarts.getInstanceByDom(chartDom)
+          if (detectionChart) {
+            echarts.dispose(detectionChart)
+          }
+          detectionChart = echarts.init(chartDom)
           this.chartInit.push(shallowRef(detectionChart))
           detectionChart.setOption(eventSeverityOption)
           const vm = this
@@ -380,7 +388,11 @@ export default {
             count: r.count
           }))
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
-          const detectionChart = echarts.init(chartDom)
+          let detectionChart = echarts.getInstanceByDom(chartDom)
+          if (detectionChart) {
+            echarts.dispose(detectionChart)
+          }
+          detectionChart = echarts.init(chartDom)
           this.chartInit.push(shallowRef(detectionChart))
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
@@ -408,7 +420,11 @@ export default {
             count: r.count
           }))
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
-          const detectionChart = echarts.init(chartDom)
+          let detectionChart = echarts.getInstanceByDom(chartDom)
+          if (detectionChart) {
+            echarts.dispose(detectionChart)
+          }
+          detectionChart = echarts.init(chartDom)
           this.chartInit.push(shallowRef(detectionChart))
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
@@ -440,7 +456,11 @@ export default {
           this.filterData[this.pageType][4].showIndex = showIndex
 
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
-          const detectionChart = echarts.init(chartDom)
+          let detectionChart = echarts.getInstanceByDom(chartDom)
+          if (detectionChart) {
+            echarts.dispose(detectionChart)
+          }
+          detectionChart = echarts.init(chartDom)
           this.chartInit.push(shallowRef(detectionChart))
           const offenderIpOption = this.$_.cloneDeep(activeAttackBar)
           data.sort(reverseSortBy('count'))
@@ -496,7 +516,11 @@ export default {
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
-          const detectionChart = echarts.init(chartDom)
+          let detectionChart = echarts.getInstanceByDom(chartDom)
+          if (detectionChart) {
+            echarts.dispose(detectionChart)
+          }
+          detectionChart = echarts.init(chartDom)
           this.chartInit.push(shallowRef(detectionChart))
           const option = this.$_.cloneDeep(activeAttackBar)
           data.sort(reverseSortBy('count'))

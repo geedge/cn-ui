@@ -207,8 +207,8 @@ export const pieForSeverity = {
           return `${param.name}: ${param.value}`
         }
       },
-      itemStyle: {
-        emphasis: {
+      emphasis: {
+        itemStyle: {
           shadowBlur: 10,
           shadowOffsetX: 0,
           shadowColor: 'rgba(0, 0, 0, 0.5)'
@@ -267,11 +267,9 @@ export const activeAttackBar = {
     barWidth: 5,
     barMaxHeight: 20,
     itemStyle: {
-      normal: {
-        color: function (params) {
-          const colorList = ['#d1bd50', '#c9d150', '#fddd52', '#ffb65a', '#fe845d']
-          return colorList[params.dataIndex]
-        }
+      color: function (params) {
+        const colorList = ['#d1bd50', '#c9d150', '#fddd52', '#ffb65a', '#fe845d']
+        return colorList[params.dataIndex]
       }
     },
     data: [],
