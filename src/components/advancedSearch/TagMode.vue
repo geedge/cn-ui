@@ -104,6 +104,7 @@ export default {
       metaList: []
     }
   },
+  emits: ['changeMode', 'search'],
   methods: {
     // 新增条件
     addCondition (meta) {

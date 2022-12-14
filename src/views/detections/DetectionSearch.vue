@@ -106,6 +106,7 @@ export default {
       ]
     }
   },
+  emits: ['search'],
   methods: {
     /* search (metaList, formatSql) {
       let sql = formatSql

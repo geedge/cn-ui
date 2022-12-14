@@ -60,6 +60,7 @@ export default {
     // 连接符列表
     connectionList: Array
   },
+  emits: ['search'],
   methods: {
     search (parseData) {
       this.$emit('search', parseData)

@@ -152,7 +152,7 @@ export default {
         })
       })
     } else {
-      this.currentTab = JSON.stringify(curTabIndexInUrl) || '0'
+      this.currentTab = curTabIndexInUrl ? JSON.stringify(curTabIndexInUrl) : '0'
       this.isCurTabReady = true
       setTimeout(() => {
         this.handleActiveBar(this.currentTab)

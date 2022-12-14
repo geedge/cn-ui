@@ -36,6 +36,7 @@ export default {
       codeMirror: null
     }
   },
+  emits: ['changeMode', 'search'],
   methods: {
     initCodeMirror () {
       this.codeMirror = CodeMirror.fromTextArea(this.$refs.textSearch, {
