@@ -51,7 +51,7 @@ export default {
   },
   setup () {
     const { query } = useRoute()
-    const tab = ref(query.tabIndex || 0)
+    const tab = ref(query.tabIndex || '0')
     const queryCondition = ref(query.queryCondition || '')
     return {
       tab,
@@ -422,7 +422,7 @@ export default {
       })
     },
     resize () {
-      if (this.tab === 0) {
+      if (this.tab === '0') {
         this.myChart.resize()
       } else {
         this.myChart2.resize()

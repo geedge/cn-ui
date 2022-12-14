@@ -20,8 +20,8 @@
       <span>{{ $t('network.metric') }}：</span>
     </div>
     <el-table
-        :id="`tabTable_${index}`"
-        :ref="`dataTable_${index}`"
+        id="tabTable"
+        ref="dataTable"
         :data="tableData"
         class="npm-app-event-table"
         height="100%"

@@ -5,8 +5,8 @@
       <chart-error v-if="showError" tooltip :content="errorMsg" />
     </div>
     <el-table
-        :id="`tabTable_${index}`"
-        :ref="`dataTable_${index}`"
+        id="tabTable"
+        ref="dataTable"
         :data="tableData"
         class="npm-recent-table"
         :class="{'npm-recent-table-ten': tableData.length === 10}"

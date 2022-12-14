@@ -17,8 +17,8 @@
       </div>
     </div>
     <el-table
-        :id="`tabTable_${index}`"
-        :ref="`dataTable_${index}`"
+        id="tabTable"
+        ref="dataTable"
         :data="tableData"
         class="app-table"
         height="100%"

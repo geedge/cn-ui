@@ -46,6 +46,7 @@ export default {
       tabs
     }
   },
+  emits: ['tabChange'],
   watch: {
     currentTab (n) {
       const { query } = this.$route

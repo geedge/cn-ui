@@ -44,8 +44,8 @@
       </div>
     </div>
     <el-table
-        :id="`tabTable_${index}`"
-        :ref="`dataTable_${index}`"
+        id="tabTable"
+        ref="dataTable"
         :data="tableData"
         class="npm-app-event-table dns-recent-event-table"
         height="100%"
