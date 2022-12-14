@@ -3,7 +3,7 @@
     <div class="npm-tabs__active-bar"></div>
     <el-tabs v-model="currentTab" ref="elTabs" type="border-card" v-show="isCurTabReady"
              @tab-click="handleClick">
-      <el-tab-pane v-for="(tab,index) in tabs" :key="tab.i18n" :name="index" :disabled="tab.disable" >
+      <el-tab-pane v-for="(tab,index) in tabs" :key="tab.i18n" :name="JSON.stringify(index)" :disabled="tab.disable" >
         <template #label>
           <div class="npm-tab__label">
             <i :class="tab.icon"></i>
@@ -29,7 +29,7 @@ export default {
   data () {
     return {
       leftOffset: 27,
-      currentTab: ref(0),
+      currentTab: ref('0'),
       isCurTabReady: false
     }
   },
@@ -152,7 +152,7 @@ export default {
         })
       })
     } else {
-      this.currentTab = curTabIndexInUrl || 0
+      this.currentTab = curTabIndexInUrl || '0'
       this.isCurTabReady = true
       setTimeout(() => {
         this.handleActiveBar(this.currentTab)

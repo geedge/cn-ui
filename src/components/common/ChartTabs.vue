@@ -5,7 +5,7 @@
       <el-tab-pane
           v-for="(tab,index) in tabsData"
           :key="tab.i18n"
-          :name="index"
+          :name="JSON.stringify(index)"
           :disabled="tab.disable">
         <template #label>
           <div class="chart-tabs__label">
@@ -71,7 +71,7 @@ export default {
     const router = useRouter()
     const routerPath = router.currentRoute.value.path
     const tabList = window.currentChartTabList
-    let currentTab = 0
+    let currentTab = '0'
 
     if (props.data) {
       tabsData.value = [...props.data]
@@ -87,12 +87,13 @@ export default {
       if (props.router === 'noRouter') {
         const { query } = useRoute()
         const tabIndexParam = query.tabIndex
-        currentTab = ref(tabIndexParam ? parseInt(tabIndexParam) : 0)
+        currentTab = ref(tabIndexParam ? JSON.stringify(tabIndexParam) : '0')
       } else if (!tabList) {
         // 此处为刷新界面时，根据当前路由获取index
         currentTab = tabsData.value.findIndex(item => {
           return item.path === routerPath
         })
+        currentTab = JSON.stringify(currentTab)
         window.currentChartTabList = [{ path: routerPath, index: currentTab }]
       } else {
         // 此处为切换界面，如果window里保存的路径和tabsData里的路径一致，选择window数据并使用
@@ -106,12 +107,12 @@ export default {
         }
 
         if (obj0 && obj1) {
-          currentTab = parseFloat(tabList[1].index)
+          currentTab = tabList[1].index
         } else if (obj0) {
-          currentTab = parseFloat(tabList[0].index)
+          currentTab = tabList[0].index
         } else {
-          window.currentChartTabList = [{ path: tabsData.value[0].path, index: 0 }]
-          currentTab = 0
+          window.currentChartTabList = [{ path: tabsData.value[0].path, index: '0' }]
+          currentTab = '0'
         }
       }
     }
