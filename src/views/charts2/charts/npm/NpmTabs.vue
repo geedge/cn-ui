@@ -135,7 +135,7 @@ export default {
           curTabIndex = curTabIndexInUrl
         }
         this.$nextTick(() => {
-          self.currentTab = curTabIndex
+          self.currentTab = JSON.stringify(curTabIndex)
           self.isCurTabReady = true
           // URL中tabIndex的设置，client初始化时查询条件需要：side条件
           const { query } = this.$route
@@ -152,7 +152,7 @@ export default {
         })
       })
     } else {
-      this.currentTab = curTabIndexInUrl || '0'
+      this.currentTab = JSON.stringify(curTabIndexInUrl) || '0'
       this.isCurTabReady = true
       setTimeout(() => {
         this.handleActiveBar(this.currentTab)
