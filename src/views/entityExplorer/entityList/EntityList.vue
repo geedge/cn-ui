@@ -5,7 +5,7 @@
       <!-- 列表式 -->
       <template v-if="listMode === 'list'">
         <div class="entity-list--list">
-          <div class="no-data" v-if="noData">No data</div>
+          <div class="no-data" v-if="noData">{{ $t('npm.noData') }}</div>
           <div v-if="!isCollapse" @click="collapse" class="cn-entity__shadow"></div>
           <entity-row
               v-for="(data, index) in listData"
@@ -22,7 +22,7 @@
       <!-- 卡片式 -->
       <template v-else-if="listMode === 'block'">
         <div class="entity-list--block">
-          <div class="no-data" v-if="noData">No data</div>
+          <div class="no-data" v-if="noData">{{ $t('npm.noData') }}</div>
           <entity-card
               v-for="(data, index) in listData"
               :entity="data"

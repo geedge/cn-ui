@@ -17,7 +17,7 @@
             :row-style="rowStyle"
             :cell-style="{'text-align':'left','padding': '1px 0','border':'0px'}"
             class="customer-no-border-table"
-            empty-text=""
+            :empty-text="$t('npm.noData')"
             style="width: 100%; height: 300px;"
             @row-click="filter"
         >
