@@ -149,9 +149,9 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      if (this.tabIndex == 0) {
+      if (parseFloat(this.tabIndex) === 0) {
         this.side = 'client'
-      } else if (this.tabIndex == 1) {
+      } else if (parseFloat(this.tabIndex) === 1) {
         this.side = 'server'
       }
       const params = {
