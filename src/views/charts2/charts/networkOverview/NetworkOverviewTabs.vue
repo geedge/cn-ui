@@ -276,7 +276,6 @@ export default {
   watch: {
     timeFilter: {
       handler (n) {
-        // console.log('watch')
         const curTab = this.getCurTab()
         let queryParams = {
           orderBy: this.orderBy,
@@ -421,7 +420,6 @@ export default {
       }
     },
     initState () {
-      // console.log('InitState：开始')
       let curTab = this.getCurTab()
       if (curTab) { // 显示当前tab
         const realTab = this.list.find(item => item.name === curTab.name)
@@ -568,7 +566,6 @@ export default {
         this.showCustomizeTabs = true
       }
       this.changeUrlTabState()
-      // console.log('InitState: 结束')
     },
     async initData () {
       const tabList = []
@@ -1109,15 +1106,14 @@ export default {
       return tab
     },
     /*
-    * 点击表格第一列数据后
-        1.设置beforeTab
-        2.设置OperationType
-        3.设置QueryCondition
-        4.设置菜单：第三级，第四级名称，并保存到store中
-        5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
-    * */
+      * 点击表格第一列数据后
+          1.设置beforeTab
+          2.设置OperationType
+          3.设置QueryCondition
+          4.设置菜单：第三级，第四级名称，并保存到store中
+          5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
+      * */
     async handleTabValue (columnName, columnValue) {
-      // console.log('NetworkOverview类------handleTabValue：下钻')
       // 下钻前保存当前路由状态
       this.beforeRouterPush()
       const clickTab = this.getTabByName(columnName)// 下钻后，显示的下钻tab对应的drilldownTabs
@@ -1148,8 +1144,8 @@ export default {
         const changeTab = tabList.find(item => item.name === tabName)// 下钻的tab
         this.list = changeTab.drilldownTabs
         /* this.list.forEach(tab => {
-          const hiddenTab = tabList.find(item => item.name == tab.name)
-        }) */
+            const hiddenTab = tabList.find(item => item.name == tab.name)
+          }) */
         const curTab = this.getCurTab(clickTab)
         tabList.forEach(tab => {
           if (tab.name === curTab.name) {
@@ -1160,13 +1156,13 @@ export default {
 
       await this.saveUserLocalConfig()
       /* let forthMenuName = ''
-      if (clickTab.prop === 'qtype') {
-        forthMenuName = this.dnsQtypeMapData.get(columnValue)
-      } else if (clickTab.prop === 'rcode') {
-        forthMenuName = this.dnsRcodeMapData.get(columnValue)
-      } else {
-        forthMenuName = columnValue
-      } */
+        if (clickTab.prop === 'qtype') {
+          forthMenuName = this.dnsQtypeMapData.get(columnValue)
+        } else if (clickTab.prop === 'rcode') {
+          forthMenuName = this.dnsRcodeMapData.get(columnValue)
+        } else {
+          forthMenuName = columnValue
+        } */
       this.$store.getters.menuList.forEach(menu => {
         if (this.$_.isEmpty(menu.children) && menu.route) {
           if (this.$route.path === menu.route) {
@@ -1210,8 +1206,8 @@ export default {
       })
     },
     /**
-     * 在路由跳转前，即下钻前将路由数据保存起来，确保回退和前进保留当时状态
-     */
+       * 在路由跳转前，即下钻前将路由数据保存起来，确保回退和前进保留当时状态
+       */
     beforeRouterPush () {
       const currentRouter = this.$_.cloneDeep(this.$route.query)
       const historyList = this.$_.cloneDeep(this.$store.getters.getRouterHistoryList)
@@ -1644,45 +1640,122 @@ export default {
       return isSetDrilldownTabInfo
     },
     async saveUserLocalConfig () {
-      let curUserConfigs = await readDrilldownTableConfigByUser()
-      const hiddenColumns = this.getHiddenColumnNameGroup()
-      this.curTable.hiddenColumns = hiddenColumns
+      let curUserConfigGroup = await readDrilldownTableConfigByUser()
       let version = ''
-      if (curUserConfigs && curUserConfigs.length > 0) { // 当前用户存在缓存配置
-        const currentRouteConfig = curUserConfigs.find(config => config.route === this.tableType)
-        if (currentRouteConfig) { // 用户的缓存中存在当前路径对应的下钻表格对应的配置
-          const currentTableConfig = currentRouteConfig.tables.find(table => table.id === this.tableType)
-          if (currentTableConfig) {
-            currentTableConfig.hiddenColumns = hiddenColumns
-            currentTableConfig.tabs.forEach(tab => {
-              const newTab = this.curTable.tabs.find(newTab => newTab.name === tab.name)
-              tab.hiddenDrilldownTabs = this.getHiddenDrilldownTabNameGroup(newTab)
-              tab.checked = newTab.checked
+      if (curUserConfigGroup && curUserConfigGroup.length > 0) { // 当前用户存在缓存配置
+        const curUserRouteConfig = curUserConfigGroup.find(config => config.route === this.tableType)
+        if (curUserRouteConfig) { // 用户的缓存中存在当前路径对应的下钻表格对应的配置
+          const curUserTableConfig = curUserRouteConfig.tables.find(table => table.id === this.tableType)
+          if (curUserTableConfig) {
+            this.customTableTitles.forEach(col => {
+              const colName = col.name ? col.name : col
+              const colIndex = curUserTableConfig.hiddenColumns.indexOf(colName)
+              if (col.checked === false) {
+                if (colIndex === -1) {
+                  curUserTableConfig.hiddenColumns = curUserTableConfig.hiddenColumns.concat(colName)
+                }
+              } else if (col.checked === true) {
+                if (colIndex > -1) {
+                  curUserTableConfig.hiddenColumns.splice(colIndex, 1)
+                }
+              }
             })
+            this.curTable.hiddenColumns = curUserTableConfig.hiddenColumns
+            const oldSortColumns = curUserTableConfig.columns
+            const newSortColumns = this.getSortColumnName()
+            if (newSortColumns.length > 0) {
+              if (!curUserTableConfig.columns) {
+                curUserTableConfig.columns = []
+              }
+              if (oldSortColumns && newSortColumns.length < oldSortColumns.length) {
+                const sameColumnIndexGroup = []
+                oldSortColumns.forEach((oldColumn, oldIndex) => {
+                  if (newSortColumns.indexOf(oldColumn) > -1) {
+                    sameColumnIndexGroup.push(oldIndex)
+                  }
+                })
+                sameColumnIndexGroup.forEach((oldIndex, index) => {
+                  curUserTableConfig.columns[oldIndex] = newSortColumns[index]
+                })
+              } else {
+                curUserTableConfig.columns = newSortColumns
+              }
+            }
+            const sortTabs = []
+            this.curTable.tabs.forEach(tab => {
+              const newTab = {
+                name: tab.name,
+                hiddenDrilldownTabs: this.getHiddenDrilldownTabNameGroup(tab),
+                checked: tab.checked
+              }
+              sortTabs.push(newTab)
+            })
+            curUserTableConfig.tabs = sortTabs
           }
         } else { // 用户的缓存中不存在当前路径对应的下钻表格对应的配置
-          curUserConfigs.push(this.handleInitDrilldownTableConfig())
+          curUserConfigGroup.push(this.handleInitDrilldownTableConfig())
         }
         version = await getConfigVersion(this.userId)
       } else { // 当前用户不存在缓存配置
-        curUserConfigs = []
-        curUserConfigs.push(this.handleInitDrilldownTableConfig())
+        curUserConfigGroup = []
+        curUserConfigGroup.push(this.handleInitDrilldownTableConfig())
         version = await getConfigVersion('default')
       }
       // 更新缓存中的配置
       await db[dbDrilldownTableConfig].put({
         id: this.userId,
         version: version,
-        config: this.$_.cloneDeep(curUserConfigs)
+        config: this.$_.cloneDeep(curUserConfigGroup)
       })
       // 更新使用的配置
       const curCfg = this.drillDownTableConfigs.find(cfg => cfg.route === this.tableType)
       if (curCfg) {
         const curTable = curCfg.tables.find(table => table.id === this.tableType)
-        curTable.hiddenColumns = hiddenColumns
+        // curTable.hiddenColumns = curUserTableConfig.hiddenColumns
         curTable.tabs.forEach(tab => {
-          const newTab = this.curTable.tabs.find(newTab => newTab.name === tab.name)
-          tab.hiddenDrilldownTabs = this.getHiddenDrilldownTabNameGroup(newTab)
+          const tabItem = this.curTable.tabs.find(tabItem => tabItem.name === tab.name)
+          tab.hiddenDrilldownTabs = this.getHiddenDrilldownTabNameGroup(tabItem)
+          if (tab && tab.hasMetricSearch === true) {
+            const columnsForMetric = tab.metrics.find(metric => metric.name === this.metric)
+            tab.metrics.forEach(metric => {
+              const oldSortColumns = metric.columns
+              const newSortColumns = this.customTableTitles.slice(1)
+              if (oldSortColumns && newSortColumns.length < oldSortColumns.length) {
+                const sameColumnIndexGroup = []
+                oldSortColumns.forEach((oldColumn, oldIndex) => {
+                  const oldColName = oldColumn.name ? oldColumn.name : oldColumn
+                  newSortColumns.forEach(newCol => {
+                    const newColName = newCol.name ? newCol.name : newCol
+                    if (newColName === oldColName) {
+                      sameColumnIndexGroup.push(oldIndex)
+                    }
+                  })
+                })
+                sameColumnIndexGroup.forEach((oldIndex, index) => {
+                  metric.columns[oldIndex] = newSortColumns[index]
+                })
+              } else {
+                const columnGroup = []
+                columnGroup.push(JSON.parse(JSON.stringify(oldSortColumns[0])))
+                newSortColumns.forEach(newColumn => {
+                  const newColName = newColumn.name ? newColumn.name : newColumn
+                  const sameColumn = metric.columns.find(metricColumn => {
+                    const metricColumnName = metricColumn.name ? metricColumn.name : metricColumn
+                    return metricColumnName === newColName
+                  })
+                  if (sameColumn) {
+                    columnGroup.push(JSON.parse(JSON.stringify(newColumn)))
+                  }
+                })
+                metric.columns = columnGroup
+              }
+            })
+          } else {
+            let columnGroup = []
+            columnGroup.push(JSON.parse(JSON.stringify(tab.columns[0])))
+            columnGroup = columnGroup.concat(JSON.parse(JSON.stringify(this.customTableTitles.slice(1))))
+            tab.columns = columnGroup
+          }
         })
       }
     },
@@ -1694,6 +1767,7 @@ export default {
         tables: [{
           id: this.tableType,
           hiddenColumns: hiddenColumns,
+          columns: this.getSortColumnName(),
           tabs: []
         }]
       }
@@ -1715,10 +1789,19 @@ export default {
         }
       })
       /*
-      if (hiddenColumns.length === 0) {
-        hiddenColumns = this.curTable.hiddenColumns
-      } */
+        if (hiddenColumns.length === 0) {
+          hiddenColumns = this.curTable.hiddenColumns
+        } */
       return hiddenColumns
+    },
+    getSortColumnName () {
+      const sortColumns = []
+      this.customTableTitles.forEach((column, index) => {
+        if (index != 0) {
+          sortColumns.push(column.name)
+        }
+      })
+      return sortColumns
     },
     getHiddenDrilldownTabNameGroup (newTab) {
       let hiddenDrilldownTabs = []
@@ -1775,7 +1858,6 @@ export default {
     }
   },
   async mounted () {
-    console.log('mounted start...')
     this.list = null
     this.tabList = null
     this.allList = null

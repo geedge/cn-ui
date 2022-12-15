@@ -379,14 +379,28 @@ export default {
       if (this.from !== n) {
         this.from = n
       }
+    },
+    async breadcrumb (n) {
+      if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+        if (this.dnsQtypeMapData.size === 0) {
+          this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+        }
+        if (this.dnsRcodeMapData.size === 0) {
+          this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+        }
+      }
     }
   },
   async mounted () {
     this.from = Object.keys(this.entityType)[0]
     // 是否需要dns的qtype和rcode的数据字典
     if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
-      this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
-      this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+      if (this.dnsQtypeMapData.size === 0) {
+        this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+      }
+      if (this.dnsRcodeMapData.size === 0) {
+        this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+      }
     }
     this.initDropdownList()
   },
@@ -464,9 +478,13 @@ export default {
       get(curTableInCode.url.drilldownList, params).then(async response => {
         if (response.code === 200) {
           this.breadcrumbColumnValueListShow = response.data.result
-          if (this.from === fromRoute.dnsServiceInsights) {
-            this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
-            this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+          if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+            if (this.dnsQtypeMapData.size === 0) {
+              this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+            }
+            if (this.dnsRcodeMapData.size === 0) {
+              this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+            }
           }
           this.$nextTick(() => {
             this.breadcrumbColumnValueListShow.forEach(item => {
@@ -575,6 +593,7 @@ export default {
     async handleCurDrilldownTableConfig (thirdMenu) {
       // const userId = localStorage.getItem(storageKey.userId)
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
       const drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
       const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
       const tables = currentTableConfig ? currentTableConfig.tables : []
@@ -582,7 +601,6 @@ export default {
       if (tables && tables.length > 0) {
         const curTable = tables.find(table => table.id === tableType)
         if (curTable) {
-          const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
           const tabList = getTabList(curTable, metric)// 未下钻的tab列表
           if (tabList && tabList.length > 0) {
             combineTabList(tableType, tabList, commonTabList)

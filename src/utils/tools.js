@@ -6,6 +6,7 @@ import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
 import { db } from '@/indexedDB'
+import { useRoute } from 'vue-router'
 
 export const tableSort = {
   // 是否需要排序
@@ -863,10 +864,10 @@ export async function getDnsMapData (type) {
       if (code.indexOf('-') > -1) {
         const range = mapData.code.split('-')
         if (range && range.length >= 2) {
-          const start = range[0].trim()
-          const eEnd = range[1].trim()
-          mapData.value = (start <= code && code <= eEnd) ? mapData.value : code
+          const start = Number(range[0].trim())
+          const eEnd = Number(range[1].trim())
           for (let i = start; i <= eEnd; i++) {
+            mapData.value = (start <= i && i <= eEnd) ? mapData.value : i
             codeValueMap.set(i, mapData.value)
           }
         }
@@ -877,11 +878,11 @@ export async function getDnsMapData (type) {
   }
   return codeValueMap
 }
-export function handleSpecialValue(value){
-  if(value){
+export function handleSpecialValue (value) {
+  if (value) {
     value = value.replaceAll("'", "\\\\'")
-        .replaceAll('"','\\"')
-        .replaceAll('&','%26')
+      .replaceAll('"', '\\"')
+      .replaceAll('&', '%26')
   }
   return value
 }
@@ -958,26 +959,64 @@ export async function getConfigVersion (id) {
 
 export async function combinDrilldownTableWithUserConfig () {
   const defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
-  const defaultConfigs = defaultCongfigInDb ? defaultCongfigInDb.config : []
-  const curUserConfig = await readDrilldownTableConfigByUser()
-  if (defaultConfigs && curUserConfig && curUserConfig.length > 0) {
-    defaultConfigs.forEach(defaultConfig => {
-      const currentTableConfig = curUserConfig.find(config => config.route === defaultConfig.route)
-      if (currentTableConfig) {
-        const tableConfig = defaultConfig.tables.find(table => table.id === defaultConfig.route)
-        const newTableConfig = currentTableConfig.tables.find(table => table.id === defaultConfig.route)
-        tableConfig.hiddenColumns = newTableConfig.hiddenColumns
-        tableConfig.tabs.forEach(tab => {
-          const newTab = newTableConfig.tabs.find(newTab => newTab.name === tab.name)
-          if (newTab) {
-            tab.hiddenDrilldownTabs = newTab.hiddenDrilldownTabs
-            tab.checked = newTab.checked
+  const defaultConfigGroup = defaultCongfigInDb ? defaultCongfigInDb.config : []
+  const currentUserConfigGroup = await readDrilldownTableConfigByUser()
+  if (defaultConfigGroup && currentUserConfigGroup && currentUserConfigGroup.length > 0) {
+    defaultConfigGroup.forEach(defaultConfig => {
+      const currentUserConfig = currentUserConfigGroup.find(config => config.route === defaultConfig.route)
+      if (currentUserConfig) {
+        const defaultTableConfig = defaultConfig.tables.find(table => table.id === defaultConfig.route)
+        const currentUserTableConfig = currentUserConfig.tables.find(table => table.id === defaultConfig.route)
+        defaultTableConfig.hiddenColumns = currentUserTableConfig.hiddenColumns
+        const sortTabs = []
+        currentUserTableConfig.tabs.forEach(currentUserTab => {
+          const defaultTab = defaultTableConfig.tabs.find(tab => tab.name === currentUserTab.name)
+          if (defaultTab) {
+            defaultTab.hiddenDrilldownTabs = currentUserTab.hiddenDrilldownTabs
+            defaultTab.checked = currentUserTab.checked
+            if (defaultTab && defaultTab.hasMetricSearch === true) {
+              defaultTab.metrics.forEach(metric => {
+                const sortColumns = []
+                sortColumns.push(metric.columns[0])
+                currentUserTableConfig.columns.forEach((column, index) => {
+                  const sortColumn = metric.columns.find(metricColumn => {
+                    if (metricColumn.name) {
+                      return metricColumn.name === column
+                    } else {
+                      return metricColumn === column
+                    }
+                  })
+                  if (sortColumn) {
+                    sortColumns.push(sortColumn)
+                  }
+                })
+                metric.columns = sortColumns
+              })
+            } else {
+              const sortColumns = []
+              sortColumns.push(defaultTab.columns[0])
+              currentUserTableConfig.columns.forEach((column, index) => {
+                const sortColumn = defaultTab.columns.find(metricColumn => {
+                  if (metricColumn.name) {
+                    return metricColumn.name === column
+                  } else {
+                    return metricColumn === column
+                  }
+                })
+                if (sortColumn) {
+                  sortColumns.push(sortColumn)
+                }
+              })
+              defaultTab.columns = sortColumns
+            }
+            sortTabs.push(defaultTab)
           }
         })
+        defaultTableConfig.tabs = sortTabs
       }
     })
   }
-  return defaultConfigs
+  return defaultConfigGroup
 }
 
 export async function getUserDrilldownTableConfig (tableType, curMetric) {
