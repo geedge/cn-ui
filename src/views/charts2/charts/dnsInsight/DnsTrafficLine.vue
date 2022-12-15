@@ -279,14 +279,14 @@ export default {
       })
     },
     echartsInit (echartsData, show) {
-      if (this.lineTab) {
-        this.handleActiveBar()
-        echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
-      } else {
-        echartsData = echartsData.filter(t => t.show === true)
-      }
-      const _this = this
       this.$nextTick(() => {
+        if (this.lineTab) {
+          this.handleActiveBar()
+          echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
+        } else {
+          echartsData = echartsData.filter(t => t.show === true)
+        }
+        const _this = this
         if (echartsData.length > 0) {
           const dom = document.getElementById('dnsLineChart')
           !this.myChart && (this.myChart = echarts.init(dom))
