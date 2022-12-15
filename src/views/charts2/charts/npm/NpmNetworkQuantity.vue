@@ -79,9 +79,9 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 0
       }
-      if (this.tabIndex === 0) {
+      if (parseFloat(this.tabIndex) === 0) {
         this.side = 'client'
-      } else if (this.tabIndex === 1) {
+      } else if (parseFloat(this.tabIndex) === 1) {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
