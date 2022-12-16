@@ -338,6 +338,7 @@ export default {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
     this.myChart = null
+    this.chartOption = null
   }
 }
 </script>
