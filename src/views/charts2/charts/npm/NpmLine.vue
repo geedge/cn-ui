@@ -1,7 +1,7 @@
 <template>
   <div class="npm-line">
     <chart-no-data v-if="isNoData"></chart-no-data>
-    <template v-if="chartData.id === 11">
+    <template v-if="chartData.i18n === 'overall.throughput'">
       <div class="npm-line-header">
         <div class="npm-line-header-title">
           {{$t(chartData.i18n) || chartData.name}}
@@ -16,35 +16,35 @@
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-else-if="chartData.id === 12">
+    <template v-else-if="chartData.i18n === 'networkAppPerformance.tripTime'">
       <div class="npm-line-title">
         {{$t(chartData.i18n) || chartData.name}}(ms)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-else-if="chartData.id === 13">
+    <template v-else-if="chartData.i18n === 'networkAppPerformance.httpResponse'">
       <div class="npm-line-title">
         {{$t(chartData.i18n) || chartData.name}}(ms)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-else-if="chartData.id === 14">
+    <template v-else-if="chartData.i18n === 'networkAppPerformance.sslResponseLatency'">
       <div class="npm-line-title">
         {{$t(chartData.i18n) || chartData.name}}(ms)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-else-if="chartData.id === 15">
+    <template v-else-if="chartData.i18n === 'networkAppPerformance.packetLoss'">
       <div class="npm-line-title">
         {{$t(chartData.i18n) || chartData.name}}(%)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
-    <template v-else-if="chartData.id === 16">
+    <template v-else-if="chartData.i18n === 'networkAppPerformance.packetRetrans'">
       <div class="npm-line-title">
         {{$t(chartData.i18n) || chartData.name}}(%)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
