@@ -1057,7 +1057,7 @@ export function urlParamsHandler (url, oldParams, newParams, cleanOldParams) {
 }
 
 export function overwriteUrl (url) {
-  window.history.replaceState('', '', url)
+  window.history.replaceState({}, '', url)
 }
 
 /*
