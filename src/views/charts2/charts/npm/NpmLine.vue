@@ -84,9 +84,9 @@ export default {
     return {
       chartData: {},
       chartOptionLineData: [
-        { legend: 'network.total', index: 0, invertTab: true, show: false, color: '#749F4D' },
-        { legend: 'network.inbound', index: 1, invertTab: true, show: false, color: '#98709B' },
-        { legend: 'network.outbound', index: 2, invertTab: true, show: false, color: '#E5A219' }
+        { legend: this.$t('network.total'), index: 0, invertTab: true, show: false, color: '#749F4D' },
+        { legend: this.$t('network.inbound'), index: 1, invertTab: true, show: false, color: '#98709B' },
+        { legend: this.$t('network.outbound'), index: 2, invertTab: true, show: false, color: '#E5A219' }
       ],
       npmLineColor: [
         { legend: '', color: '#749F4D' },
@@ -230,9 +230,8 @@ export default {
         }
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
-            t.seriesName = this.$t(t.seriesName)
             this.chartOptionLineData.forEach(e => {
-              if (this.$t(e.legend) === t.seriesName) {
+              if (e.legend === t.seriesName) {
                 t.borderColor = e.color
               }
               if (this.$t(chartData.i18n) === t.seriesName) {

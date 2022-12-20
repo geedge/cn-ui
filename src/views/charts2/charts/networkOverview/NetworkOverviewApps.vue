@@ -426,9 +426,6 @@ export default {
           }
         }]
         chartOption.tooltip.formatter = (params) => {
-          params.forEach(t => {
-            t.seriesName = this.$t(t.seriesName)
-          })
           return appStackedLineTooltipFormatter(params)
         }
         chart.setOption(chartOption)

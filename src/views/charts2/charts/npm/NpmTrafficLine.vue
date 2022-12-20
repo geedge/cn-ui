@@ -69,19 +69,19 @@ export default {
       unitTypes,
       side: '',
       mpackets: [
-        { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
-        { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
-        { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
-        { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
-        { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
-        { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+        { name: this.$t('network.total'), show: true, positioning: 0, data: [], unitType: 'number' },
+        { name: this.$t('network.inbound'), show: true, positioning: 1, data: [], unitType: 'number' },
+        { name: this.$t('network.outbound'), show: true, positioning: 2, data: [], unitType: 'number' },
+        { name: this.$t('network.internal'), show: true, positioning: 3, data: [], unitType: 'number' },
+        { name: this.$t('network.through'), show: true, positioning: 4, data: [], unitType: 'number' },
+        { name: this.$t('network.other'), show: true, positioning: 5, data: [], unitType: 'number' }
       ],
       npmQuantity: [
-        { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-        { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-        { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-        { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
-        { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+        { name: this.$t('networkAppPerformance.tcpConnectionEstablishLatency'), show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: this.$t('networkAppPerformance.httpResponse'), show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: this.$t('networkAppPerformance.sslResponseLatency'), show: true, positioning: 0, data: [], unitType: unitTypes.time },
+        { name: this.$t('networkAppPerformance.packetLoss'), show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+        { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent }
       ],
       chartData: {},
       metricOptions: [
@@ -192,19 +192,19 @@ export default {
             this.isNoData = res.data.result.length === 0
             if (this.isNoData) {
               this.mpackets = [
-                { name: 'network.total', show: true, positioning: 0, data: [], unitType: 'number' },
-                { name: 'network.inbound', show: true, positioning: 1, data: [], unitType: 'number' },
-                { name: 'network.outbound', show: true, positioning: 2, data: [], unitType: 'number' },
-                { name: 'network.internal', show: true, positioning: 3, data: [], unitType: 'number' },
-                { name: 'network.through', show: true, positioning: 4, data: [], unitType: 'number' },
-                { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
+                { name: this.$t('network.total'), show: true, positioning: 0, data: [], unitType: 'number' },
+                { name: this.$t('network.inbound'), show: true, positioning: 1, data: [], unitType: 'number' },
+                { name: this.$t('network.outbound'), show: true, positioning: 2, data: [], unitType: 'number' },
+                { name: this.$t('network.internal'), show: true, positioning: 3, data: [], unitType: 'number' },
+                { name: this.$t('network.through'), show: true, positioning: 4, data: [], unitType: 'number' },
+                { name: this.$t('network.other'), show: true, positioning: 5, data: [], unitType: 'number' }
               ]
               this.npmQuantity = [
-                { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-                { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-                { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time },
-                { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent },
-                { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
+                { name: this.$t('networkAppPerformance.tcpConnectionEstablishLatency'), show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                { name: this.$t('networkAppPerformance.httpResponse'), show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                { name: this.$t('networkAppPerformance.sslResponseLatency'), show: true, positioning: 0, data: [], unitType: unitTypes.time },
+                { name: this.$t('networkAppPerformance.packetLoss'), show: true, positioning: 0, data: [], unitType: unitTypes.percent },
+                { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent }
               ]
             }
             res.data.result.forEach((t, i) => {
@@ -559,7 +559,7 @@ export default {
             }
             return {
               ...chartOption,
-              name: this.$t(t.name) + (legendUnit || ''),
+              name: t.name + (legendUnit || ''),
               lineStyle: {
                 color: chartColor3[t.positioning],
                 width: 1
@@ -583,15 +583,14 @@ export default {
           })
           this.chartOption.tooltip.formatter = (params) => {
             params.forEach(t => {
-              t.seriesName = this.$t(t.seriesName)
               this.mpackets.forEach(e => {
-                if (this.$t(e.name) === t.seriesName) {
+                if (e.name === t.seriesName) {
                   t.borderColor = chartColor3[e.positioning]
                 }
               })
               this.npmQuantity.forEach(d => {
-                const nameMs = this.$t(d.name) + '(ms)'
-                const namePrent = this.$t(d.name) + '(%)'
+                const nameMs = d.name + '(ms)'
+                const namePrent = d.name + '(%)'
                 if (nameMs === t.seriesName) {
                   t.borderColor = chartColor3[d.positioning]
                 } else if (namePrent === t.seriesName) {
