@@ -976,10 +976,30 @@ export async function combinDrilldownTableWithUserConfig () {
             defaultTab.checked = currentUserTab.checked
             if (defaultTab && defaultTab.hasMetricSearch === true) {
               defaultTab.metrics.forEach(metric => {
+                if(currentUserTableConfig.columns) {
+                  const sortColumns = []
+                  sortColumns.push(metric.columns[0])
+                  currentUserTableConfig.columns.forEach((column, index) => {
+                    const sortColumn = metric.columns.find(metricColumn => {
+                      if (metricColumn.name) {
+                        return metricColumn.name === column
+                      } else {
+                        return metricColumn === column
+                      }
+                    })
+                    if (sortColumn) {
+                      sortColumns.push(sortColumn)
+                    }
+                  })
+                  metric.columns = sortColumns
+                }
+              })
+            } else {
+              if(currentUserTableConfig.columns) {
                 const sortColumns = []
-                sortColumns.push(metric.columns[0])
+                sortColumns.push(defaultTab.columns[0])
                 currentUserTableConfig.columns.forEach((column, index) => {
-                  const sortColumn = metric.columns.find(metricColumn => {
+                  const sortColumn = defaultTab.columns.find(metricColumn => {
                     if (metricColumn.name) {
                       return metricColumn.name === column
                     } else {
@@ -990,24 +1010,8 @@ export async function combinDrilldownTableWithUserConfig () {
                     sortColumns.push(sortColumn)
                   }
                 })
-                metric.columns = sortColumns
-              })
-            } else {
-              const sortColumns = []
-              sortColumns.push(defaultTab.columns[0])
-              currentUserTableConfig.columns.forEach((column, index) => {
-                const sortColumn = defaultTab.columns.find(metricColumn => {
-                  if (metricColumn.name) {
-                    return metricColumn.name === column
-                  } else {
-                    return metricColumn === column
-                  }
-                })
-                if (sortColumn) {
-                  sortColumns.push(sortColumn)
-                }
-              })
-              defaultTab.columns = sortColumns
+                defaultTab.columns = sortColumns
+              }
             }
             sortTabs.push(defaultTab)
           }
