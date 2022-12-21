@@ -415,7 +415,6 @@ export function extensionEchartY (chart) {
   // 该div用来盛放文本显示内容的，方便对其悬浮位置进行处理
   const id = document.getElementById('extension')
   if (!id) {
-    const div = "<div id = 'extension' style=\"display:block\"></div>"
     const contentDiv = document.createElement('div')
     contentDiv.setAttribute('id', 'extension')
     contentDiv.setAttribute('style', 'display:block')
@@ -938,28 +937,25 @@ export async function getDefaultCurTab (tableType, metric, columnName) {
 export async function readDrilldownTableConfigByUser () {
   // 获取用户定制的自定义配置
   const userId = localStorage.getItem(storageKey.userId)
-  const userLocalCongfig = await db[dbDrilldownTableConfig].get({ id: userId })
+  const userLocalConfig = await db[dbDrilldownTableConfig].get({ id: userId })
   let defaultDrillDownTableConfigs = []
-  if (userLocalCongfig) {
-    defaultDrillDownTableConfigs = userLocalCongfig.config
+  if (userLocalConfig) {
+    defaultDrillDownTableConfigs = userLocalConfig.config
   }
   return defaultDrillDownTableConfigs
 }
 
 export async function getConfigVersion (id) {
-  let defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: id })
-  let version
-  if (defaultCongfigInDb) {
-    version = defaultCongfigInDb ? defaultCongfigInDb.version : ''
-  } else {
-    defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
+  let defaultConfigInDb = await db[dbDrilldownTableConfig].get({ id: id })
+  if (!defaultConfigInDb) {
+    defaultConfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
   }
-  return version
+  return defaultConfigInDb.version || ''
 }
 
-export async function combinDrilldownTableWithUserConfig () {
-  const defaultCongfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
-  const defaultConfigGroup = defaultCongfigInDb ? defaultCongfigInDb.config : []
+export async function combineDrilldownTableWithUserConfig () {
+  const defaultConfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
+  const defaultConfigGroup = defaultConfigInDb ? defaultConfigInDb.config : []
   const currentUserConfigGroup = await readDrilldownTableConfigByUser()
   if (defaultConfigGroup && currentUserConfigGroup && currentUserConfigGroup.length > 0) {
     defaultConfigGroup.forEach(defaultConfig => {
@@ -976,7 +972,7 @@ export async function combinDrilldownTableWithUserConfig () {
             defaultTab.checked = currentUserTab.checked
             if (defaultTab && defaultTab.hasMetricSearch === true) {
               defaultTab.metrics.forEach(metric => {
-                if(currentUserTableConfig.columns) {
+                if (currentUserTableConfig.columns) {
                   const sortColumns = []
                   sortColumns.push(metric.columns[0])
                   currentUserTableConfig.columns.forEach((column, index) => {
@@ -995,7 +991,7 @@ export async function combinDrilldownTableWithUserConfig () {
                 }
               })
             } else {
-              if(currentUserTableConfig.columns) {
+              if (currentUserTableConfig.columns) {
                 const sortColumns = []
                 sortColumns.push(defaultTab.columns[0])
                 currentUserTableConfig.columns.forEach((column, index) => {
@@ -1026,7 +1022,7 @@ export async function combinDrilldownTableWithUserConfig () {
 export async function getUserDrilldownTableConfig (tableType, curMetric) {
   let list = []
   // 获取用户定制的自定义配置，如果没有，则使用默认的自定义配置
-  const drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
+  const drillDownTableConfigs = await combineDrilldownTableWithUserConfig()
   const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
   const commonTabList = currentTableConfig ? currentTableConfig.tabs : []
   const tables = currentTableConfig ? currentTableConfig.tables : []

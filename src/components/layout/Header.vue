@@ -228,7 +228,7 @@ import {
   getTabList,
   overwriteUrl,
   urlParamsHandler,
-  combinDrilldownTableWithUserConfig,
+  combineDrilldownTableWithUserConfig,
   getDnsMapData,
   handleSpecialValue
 } from '@/utils/tools'
@@ -594,7 +594,7 @@ export default {
       // const userId = localStorage.getItem(storageKey.userId)
       const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
       const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
-      const drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
+      const drillDownTableConfigs = await combineDrilldownTableWithUserConfig()
       const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
       const tables = currentTableConfig ? currentTableConfig.tables : []
       const commonTabList = currentTableConfig ? currentTableConfig.tabs : []

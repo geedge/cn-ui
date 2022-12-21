@@ -201,7 +201,7 @@ import { ref } from 'vue'
 import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig, fromRoute } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combinDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combineDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { db } from '@/indexedDB'
@@ -1866,7 +1866,7 @@ export default {
     this.commonColumnList = null
 
     this.userId = localStorage.getItem(storageKey.userId)
-    this.drillDownTableConfigs = await combinDrilldownTableWithUserConfig()
+    this.drillDownTableConfigs = await combineDrilldownTableWithUserConfig()
     this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
     // 是否需要dns的qtype和rcode的数据字典
     if (this.tableType === fromRoute.dnsServiceInsights) {
