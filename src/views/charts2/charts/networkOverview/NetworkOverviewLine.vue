@@ -388,9 +388,6 @@ export default {
       // 此处为验证是否因dom未销毁，导致图表出错，后续可能会改
       let dom = null
       dom = document.getElementById('overviewLineChart')
-      if (this.myChart) {
-        this.myChart.dispose()
-      }
 
       this.chartOption = stackedLineChartOption
       const chartOption = this.chartOption.series[0]
