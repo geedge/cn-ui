@@ -10,7 +10,7 @@
         <div class="npm-line-header-rights" v-if="chartData.params && chartData.params.showLegend && !isNoData">
           <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
             <div class="npm-line-header-icon" :class="'icon' + index"></div>
-            <div class="npm-line-header-value">{{$t(item.legend)}}</div>
+            <div class="npm-line-header-value">{{item.legend}}</div>
           </div>
         </div>
       </div>

@@ -35,7 +35,7 @@
           <template #default="scope" :column="item">
             <div class="data-app-event-table">
               <template v-if="item.prop === 'domain' ||item.prop === 'appName' ||item.prop === 'serverIp' ">
-                <span class="data-applications">{{ $t(scope.row[item.prop]) }}</span>
+                <span class="data-applications">{{ scope.row[item.prop] }}</span>
               </template>
               <template v-else-if="item.prop === 'eventSeverity'">
                 <template v-if="scope.row[item.prop]==='critical'">
@@ -57,11 +57,11 @@
                   <div v-for="item in 1" class="red-dot" :key="item"></div>
                   <div v-for="item in 4" class="grey-dot" :key="item"></div>
                 </template>
-                <span class="data-severity">{{ $t(scope.row[item.prop]) }}</span>
+                <span class="data-severity">{{ scope.row[item.prop] }}</span>
               </template>
               <template v-else-if="item.prop === 'eventType'">
                 <!-- <span class="data-eventType" v-for="type in scope.row[item.prop]">{{type}}</span>-->
-                <span class="data-eventType">{{ $t(scope.row[item.prop]) }}</span>
+                <span class="data-eventType">{{ scope.row[item.prop] }}</span>
               </template>
               <template v-else-if="item.prop === 'count'">
                 <span class="data-eventCount">{{ scope.row[item.prop] }}</span>

@@ -21,13 +21,13 @@
           <template  #default="scope" :column="item">
             <div class="data-recent-table">
               <template v-if="item.prop === 'eventSeverity'">
-                <span class="data-recent-table-severity" :class="scope.row[item.prop]">{{$t(scope.row[item.prop])}}</span>
+                <span class="data-recent-table-severity" :class="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
               </template>
               <template v-else-if="item.prop === 'eventKey'">
-                <span class="data-recent-table-entity">{{$t(scope.row[item.prop])}}</span>
+                <span class="data-recent-table-entity">{{scope.row[item.prop]}}</span>
               </template>
               <template v-else-if="item.prop === 'eventType'">
-                <span class="data-recent-table-eventType">{{$t(scope.row[item.prop])}}</span>
+                <span class="data-recent-table-eventType">{{scope.row[item.prop]}}</span>
               </template>
               <span v-else-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
               <span v-else>-</span>
