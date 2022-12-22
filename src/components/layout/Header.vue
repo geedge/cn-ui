@@ -614,6 +614,9 @@ export default {
       }
     },
     jump (route, columnName, columnValue, opeType) {
+      if (route === '/panel/linkMonitor' && opeType === 3) {
+        return true
+      }
       this.showMenu = false
       const menus = this.breadcrumb
       if (opeType) {
