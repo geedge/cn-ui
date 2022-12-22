@@ -605,7 +605,33 @@ export default {
     },
     referenceSelectChange (val) {
       this.lineRefer = val
-      this.echartsInit(this.mpackets, this.showMarkLine)
+      let echartsData
+      const chartOption = this.myChart.getOption()
+      if (this.lineTab) {
+        echartsData = this.mpackets.filter(t => t.show === true && t.invertTab === false)
+      } else {
+        echartsData = this.mpackets.filter(t => t.show === true)
+      }
+      if (this.lineRefer === 'Average' && this.showMarkLine) {
+        chartOption.series.forEach((t, i) => {
+          if (t.name === echartsData[0].name) {
+            t.markLine.data = [{ yAxis: echartsData[0].analysis.avg }]
+          }
+        })
+      } else if (this.lineRefer === '95th Percentile' && this.showMarkLine) {
+        chartOption.series.forEach((t, i) => {
+          if (t.name === echartsData[0].name) {
+            t.markLine.data = [{ yAxis: echartsData[0].analysis.p95 }]
+          }
+        })
+      } else if (this.lineRefer === 'Maximum' && this.showMarkLine) {
+        chartOption.series.forEach((t, i) => {
+          if (t.name === echartsData[0].name) {
+            t.markLine.data = [{ yAxis: echartsData[0].analysis.max }]
+          }
+        })
+      }
+      this.myChart.setOption(chartOption)
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []
