@@ -21,7 +21,7 @@
     <div class="npm-traffic-line-body">
       <chart-error v-if="showError" :content="errorMsg" />
       <chart-no-data v-if="isNoData && !showError"></chart-no-data>
-      <div v-show="!isNoData && !showError" class="chart-drawing" id="chart"></div>
+      <div v-show="!isNoData && !showError" class="chart-drawing" id="chart-line"></div>
     </div>
   </div>
 </template>
@@ -543,7 +543,7 @@ export default {
       echartsData = echartsData.filter(t => t.show === true)
       this.$nextTick(() => {
         if (echartsData.length > 0) {
-          const dom = document.getElementById('chart')
+          const dom = document.getElementById('chart-line')
           !this.myChart && (this.myChart = echarts.init(dom))
           this.chartOption = trafficLineChartOption
           const chartOption = this.chartOption.series[0]
