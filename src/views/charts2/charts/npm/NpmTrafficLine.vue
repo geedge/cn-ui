@@ -19,7 +19,9 @@
       </div>
     </div>
     <div class="npm-traffic-line-body">
-      <chart-error v-if="showError" :content="errorMsg" />
+      <div style="position: absolute;">
+        <chart-error v-if="showError" :content="errorMsg" />
+      </div>
       <chart-no-data v-if="isNoData && !showError"></chart-no-data>
       <div v-show="!isNoData && !showError" class="chart-drawing" id="chart-line"></div>
     </div>
