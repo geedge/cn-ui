@@ -50,7 +50,7 @@ export default {
   mixins: [chartMixin],
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
       }
     }
@@ -100,6 +100,7 @@ export default {
         if (params.type === 'serverIp' || params.type === 'clientIp') params.type = 'ip'
         getData(api.npm.overview.map, params).then(res => {
           this.showError = false
+          console.log('打印数据', res)
           if (res && res.length > 0) {
             const subParams = {
               ...params,
@@ -140,6 +141,9 @@ export default {
               })
               this.loadMarkerData(imageSeries, mapData)
             })
+          } else {
+            // 没数据，清空图表
+            imageSeries.data = [{}]
           }
         }).catch(e => {
           this.showError = true
