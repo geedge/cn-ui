@@ -31,6 +31,9 @@
       display: none;
     }
   }
+  .el-tabs__nav {
+    z-index: 1;
+  }
 
   .el-tabs__item.is-top {
     height: 35px;
