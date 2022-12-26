@@ -33,6 +33,7 @@
           </button>
         </template>
         <template #default>
+          <loading :loading="builtinRightLoading"></loading>
           <builtin-report-table
               ref="dataTable"
               :api="url"
@@ -149,6 +150,7 @@ export default {
       ],
       tableId: 'builtinReportTable',
       builtinLeftLoading: false,
+      builtinRightLoading: false,
       getNum: -1
     }
   },
@@ -233,6 +235,7 @@ export default {
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       // this.tools.loading = true
+      this.builtinRightLoading = true
       delete this.searchLabel.total
       let listUrl = this.url
       if (this.listUrl) {
@@ -248,6 +251,7 @@ export default {
       if (this.getNum > 0) {
         get(listUrl, this.searchLabel).then(response => {
           // this.tools.loading = false
+          this.builtinRightLoading = false
           if (response.code === 200) {
             for (let i = 0; i < response.data.list.length; i++) {
               response.data.list[i].status = response.data.list[i].status + ''
