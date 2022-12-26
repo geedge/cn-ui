@@ -100,7 +100,6 @@ export default {
         if (params.type === 'serverIp' || params.type === 'clientIp') params.type = 'ip'
         getData(api.npm.overview.map, params).then(res => {
           this.showError = false
-          console.log('打印数据', res)
           if (res && res.length > 0) {
             const subParams = {
               ...params,
