@@ -154,12 +154,12 @@ export default {
       unitTypes,
       colorPatchData: [
         { letter: '' },
-        { letter: 'A' },
-        { letter: 'B' },
-        { letter: 'C' },
-        { letter: 'D' },
+        { letter: 'F' },
         { letter: 'E' },
-        { letter: 'F' }
+        { letter: 'D' },
+        { letter: 'C' },
+        { letter: 'B' },
+        { letter: 'A' }
       ],
       tableData: [],
       customTableTitles: [
