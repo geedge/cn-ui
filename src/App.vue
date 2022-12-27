@@ -30,11 +30,6 @@ export default {
       window.$dayJs.tz.setDefault()
     }
   },
-  data () {
-    return {
-      showPage: true
-    }
-  },
   mounted () {
     this.loginAlready()
   },
