@@ -1,5 +1,5 @@
 <template>
-  <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 2" class="date-range-box">
+  <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 1" class="date-range-box">
     <div @click="showDropdown" class="date-range-text">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
@@ -86,7 +86,7 @@ export default {
   props: {
     startTime: {
       type: Number,
-      default: window.$dayJs.tz().valueOf() - 1 * 60 * 60 * 1000
+      default: window.$dayJs.tz().valueOf() - 60 * 60 * 1000
     },
     endTime: {
       type: Number,
