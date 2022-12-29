@@ -42,17 +42,9 @@ export default {
       unit: 2,
       dropdownShow: false,
       interLabel: ''
-      // refreshArr: [
-      //   { value: -1, label: 'off' },
-      //   { value: 30, label: '30s' },
-      //   { value: 60, label: '1m' },
-      //   { value: 300, label: '5m' },
-      //   { value: 900, label: '15m' },
-      //   { value: 1800, label: '30m' }
-      // ]
     }
   },
-  setup (props, ctx) {
+  setup () {
     const { query } = useRoute()
     const store = useStore()
     const refreshArr = [
@@ -100,7 +92,7 @@ export default {
   methods: {
     setRefresh (val) {
       this.interval = val.value
-      this.interLabel = val.value == -1 ? '' : val.label
+      this.interLabel = val.value === -1 ? '' : val.label
       this.dropdownShow = false
       const now = window.$dayJs.tz().valueOf()
       if (val && val.value !== -1) {
@@ -119,6 +111,7 @@ export default {
         }
         this.reloadUrl(dateParam)
         this.$store.commit('setRefreshTime', val.value)
+        this.$store.commit('setRefreshFlag', true)
 
         // 设置定时器
         this.intervalTimer = setInterval(() => {
