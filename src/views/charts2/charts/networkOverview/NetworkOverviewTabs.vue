@@ -198,7 +198,18 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { operationType, unitTypes, networkTable, tableColumnType, networkDefaultLimit, curTabState, storageKey, dbDrilldownTableConfig, fromRoute } from '@/utils/constants'
+import {
+  operationType,
+  unitTypes,
+  networkTable,
+  tableColumnType,
+  networkDefaultLimit,
+  curTabState,
+  storageKey,
+  dbDrilldownTableConfig,
+  fromRoute,
+  drillDownPanelTypeMapping
+} from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
 import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combineDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
@@ -1462,7 +1473,23 @@ export default {
       }
     },
     getQueryCondition () {
-      return this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
+      const queryCondition = this.getUrlParam('queryCondition')
+      const fourthPanel = this.getUrlParam('fourthPanel', -1, true)
+      const dimensionType = this.getUrlParam('dimensionType', '')
+      const fourthMenu = this.getUrlParam('fourthMenu', '')
+      const tabIndex = this.getUrlParam('tabIndex', 0, true)
+
+      if (fourthPanel === drillDownPanelTypeMapping.npmOverviewIp) {
+        if (dimensionType === 'clientIp' || dimensionType === 'serverIp' || dimensionType === 'ip') {
+          if (tabIndex === 0) {
+            return `common_client_ip='${fourthMenu}'`
+          } else if (tabIndex === 1) {
+            return `common_server_ip='${fourthMenu}'`
+          }
+        }
+      }
+
+      return queryCondition
     },
     getUrlParam (param, defaultValue, isNumber) {
       if (isNumber) {

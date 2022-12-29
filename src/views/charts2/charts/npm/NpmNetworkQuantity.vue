@@ -73,7 +73,7 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      const type = this.dimensionType || this.networkOverviewBeforeTab
+      let type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -85,10 +85,13 @@ export default {
         this.side = 'server'
       }
       if (condition && (typeof condition !== 'object') && type) {
-        if (type === 'clientIp') {
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='client'`
-        } else if (type === 'serverIp') {
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
+        if (type === 'clientIp' || type === 'serverIp') {
+          if (parseFloat(this.tabIndex) === 0) {
+            type = 'clientIp'
+          } else if (parseFloat(this.tabIndex) === 1) {
+            type = 'serverIp'
+          }
+          params.q = `ip='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'clientCity') {
           params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'serverCity') {

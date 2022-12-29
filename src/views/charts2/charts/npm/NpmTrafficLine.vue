@@ -145,7 +145,7 @@ export default {
       }
       // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
-      const type = this.dimensionType
+      let type = this.dimensionType
       if (this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
@@ -161,13 +161,19 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       if (type) {
+        if (type === 'clientIp' || type === 'serverIp') {
+          if (parseFloat(this.tabIndex) === 0) {
+            type = 'clientIp'
+          } else if (parseFloat(this.tabIndex) === 1) {
+            type = 'serverIp'
+          }
+          params.q = `ip='${condition.split(/'(.*?)'/)[1]}'`
+        }
         params.type = type
       }
       if (condition && (typeof condition !== 'object') && type) {
-        if (type === 'clientIp') {
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='client'`
-        } else if (type === 'serverIp') {
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}' and side='server'`
+        if (type === 'clientIp' || type === 'serverIp') {
+          params.q = `ip='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'clientCity') {
           params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
         } else if (type === 'serverCity') {
