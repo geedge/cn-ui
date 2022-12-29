@@ -330,9 +330,11 @@ export default {
     },
     timeRefreshChange () {
       // 不是自选时间
-      if (!this.$refs.dateTimeRange.isCustom) {
-        const value = this.timeFilter.dateRangeValue
-        this.$refs.dateTimeRange.quickChange(value)
+      if (this.$refs.dateTimeRange) {
+        if (!this.$refs.dateTimeRange.isCustom) {
+          const value = this.timeFilter.dateRangeValue
+          this.$refs.dateTimeRange.quickChange(value)
+        }
       } else {
         this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
       }
