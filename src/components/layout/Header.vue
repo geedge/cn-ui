@@ -4,7 +4,7 @@
       <div class="banner__left">
         <span @click="shrink" class="shrink-button" :class="{'shrink-button--collapse': showMenu}"><i
             class="cn-icon cn-icon-navigation"></i></span>
-        <img alt="loading..." height="26" :src="logo?logo:require('../../assets/img/logo-header.svg')"/>
+        <img alt="loading..." height="26" :src="logo?logo:require('../../assets/img/logo-header.svg')" @click="jump('/panel/networkOverview', '', '', 0)" style="cursor: pointer"/>
       </div>
       <!--个人操作-->
       <div class="personal">
