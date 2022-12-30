@@ -387,7 +387,6 @@ export default {
         data.push(...data3)
         links.push(...links2)
       }
-      console.info(data, links)
       this.$nextTick(() => {
         this.echartsInit(tab, data, links)
       })
