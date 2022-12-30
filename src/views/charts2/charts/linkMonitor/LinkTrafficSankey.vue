@@ -151,8 +151,8 @@ export default {
               t.linkDirection = e.nextHop
               t.bandwidth = e.bandwidth
               t.value = parseInt(t.ingressBitsRate)
-              t.client = `c_${t.clientProvince}`
-              t.server = `s_${t.serverProvince}`
+              t.external = `e_${t.externalLocation}`
+              t.internal = `i_${t.internalLocation}`
             }
           })
         })
@@ -164,13 +164,13 @@ export default {
               t.bandwidth = e.bandwidth
               t.linkDirection = e.nextHop
               t.value = parseInt(t.egressBitsRate)
-              t.client = `c_${t.clientProvince}`
-              t.server = `s_${t.serverProvince}`
+              t.external = `e_${t.externalLocation}`
+              t.internal = `i_${t.internalLocation}`
             }
           })
         })
       }
-      result = result.filter(r => r.clientProvince && r.serverProvince)
+      result = result.filter(r => r.externalLocation && r.internalLocation)
 
       const data = []
       const links = []
@@ -186,20 +186,20 @@ export default {
       if (tab === 1) {
         result.forEach(r => {
           // 第一列
-          if (!data0.some(d => d.name === r.client)) {
-            data0.push({ name: r.client, originalName: r.clientProvince, depth: 0 })
+          if (!data0.some(d => d.name === r.internal)) {
+            data0.push({ name: r.internal, originalName: r.internalLocation, depth: 0 })
           }
-          const existLink0 = links0.find(l => l.source === r.client && l.target === r.linkId)
+          const existLink0 = links0.find(l => l.source === r.internal && l.target === r.linkId)
           if (existLink0) {
             existLink0.value += r.value
           } else {
-            links0.push({ source: r.client, target: r.linkId, tooltip0: r.clientProvince, tooltip1: r.linkId, value: r.value, depth: 0, bandwidth: r.bandwidth })
+            links0.push({ source: r.internal, target: r.linkId, tooltip0: r.internalLocation, tooltip1: r.linkId, value: r.value, depth: 0, bandwidth: r.bandwidth })
           }
-          const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.client)
+          const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.internal)
           if (existLinkAnalyze0) {
             existLinkAnalyze0.value += r.value
           } else {
-            linksAnalyze0.push({ name: r.client, value: r.value })
+            linksAnalyze0.push({ name: r.internal, value: r.value })
           }
           // 第二列
           if (!data1.some(d => d.name === r.linkId)) {
@@ -215,40 +215,40 @@ export default {
           if (!data2.some(d => d.name === r.linkDirection)) {
             data2.push({ name: r.linkDirection, depth: 2 })
           }
-          const existLink2 = links2.find(l => l.source === r.linkDirection && l.target === r.server)
+          const existLink2 = links2.find(l => l.source === r.linkDirection && l.target === r.external)
           if (existLink2) {
             existLink2.value += r.value
           } else {
-            links2.push({ source: r.linkDirection, target: r.server, tooltip0: r.linkDirection, tooltip1: r.serverProvince, value: r.value, depth: 2 })
+            links2.push({ source: r.linkDirection, target: r.external, tooltip0: r.linkDirection, tooltip1: r.externalLocation, value: r.value, depth: 2 })
           }
-          const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.server)
+          const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.external)
           if (existLinkAnalyze2) {
             existLinkAnalyze2.value += r.value
           } else {
-            linksAnalyze2.push({ name: r.server, value: r.value })
+            linksAnalyze2.push({ name: r.external, value: r.value })
           }
           // 第四列
-          if (!data3.some(d => d.name === r.server)) {
-            data3.push({ name: r.server, originalName: r.serverProvince, depth: 3 })
+          if (!data3.some(d => d.name === r.external)) {
+            data3.push({ name: r.external, originalName: r.externalLocation, depth: 3 })
           }
         })
       } else {
         result.forEach(r => {
           // 第一列
-          if (!data0.some(d => d.name === r.client)) {
-            data0.push({ name: r.client, originalName: r.clientProvince, depth: 0 })
+          if (!data0.some(d => d.name === r.external)) {
+            data0.push({ name: r.external, originalName: r.externalLocation, depth: 0 })
           }
-          const existLink0 = links0.find(l => l.source === r.client && l.target === r.linkDirection)
+          const existLink0 = links0.find(l => l.source === r.external && l.target === r.linkDirection)
           if (existLink0) {
             existLink0.value += r.value
           } else {
-            links0.push({ source: r.client, target: r.linkDirection, tooltip0: r.clientProvince, tooltip1: r.linkDirection, value: r.value, depth: 0 })
+            links0.push({ source: r.external, target: r.linkDirection, tooltip0: r.externalLocation, tooltip1: r.linkDirection, value: r.value, depth: 0 })
           }
-          const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.client)
+          const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.external)
           if (existLinkAnalyze0) {
             existLinkAnalyze0.value += r.value
           } else {
-            linksAnalyze0.push({ name: r.client, value: r.value })
+            linksAnalyze0.push({ name: r.external, value: r.value })
           }
           // 第二列
           if (!data1.some(d => d.name === r.linkDirection)) {
@@ -264,21 +264,21 @@ export default {
           if (!data2.some(d => d.name === r.linkId)) {
             data2.push({ name: r.linkId, depth: 2 })
           }
-          const existLink2 = links2.find(l => l.source === r.linkId && l.target === r.server)
+          const existLink2 = links2.find(l => l.source === r.linkId && l.target === r.internal)
           if (existLink2) {
             existLink2.value += r.value
           } else {
-            links2.push({ source: r.linkId, target: r.server, tooltip0: r.linkId, tooltip1: r.serverProvince, value: r.value, depth: 2, bandwidth: r.bandwidth })
+            links2.push({ source: r.linkId, target: r.internal, tooltip0: r.linkId, tooltip1: r.internalLocation, value: r.value, depth: 2, bandwidth: r.bandwidth })
           }
-          const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.server)
+          const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.internal)
           if (existLinkAnalyze2) {
             existLinkAnalyze2.value += r.value
           } else {
-            linksAnalyze2.push({ name: r.server, value: r.value })
+            linksAnalyze2.push({ name: r.internal, value: r.value })
           }
           // 第四列
-          if (!data3.some(d => d.name === r.server)) {
-            data3.push({ name: r.server, originalName: r.serverProvince, depth: 3 })
+          if (!data3.some(d => d.name === r.internal)) {
+            data3.push({ name: r.internal, originalName: r.internalLocation, depth: 3 })
           }
         })
       }
@@ -294,7 +294,11 @@ export default {
             if (existOtherLinkAnalyze0) {
               existOtherLinkAnalyze0.value += sl.value
             } else {
-              otherLinksAnalyze0.push({ ...sl, name: 'c_others' })
+              if (tab === 0) {
+                otherLinksAnalyze0.push({ ...sl, name: 'e_others' })
+              } else if (tab === 1) {
+                otherLinksAnalyze0.push({ ...sl, name: 'i_others' })
+              }
             }
           }
         })
@@ -308,14 +312,22 @@ export default {
             if (existOtherSLink0) {
               existOtherSLink0.value += l0.value
             } else {
-              othersLinks0.push({ ...l0, source: 'c_others', tooltip0: 'others' })
+              if (tab === 0) {
+                othersLinks0.push({ ...l0, source: 'e_others', tooltip0: 'others' })
+              } else if (tab === 1) {
+                othersLinks0.push({ ...l0, source: 'i_others', tooltip0: 'others' })
+              }
             }
           }
         })
         links.push(...top10Links0)
         links.push(...othersLinks0)
         data.push(...data0.filter(d0 => top10LinksAnalyze0.some(l0 => l0.name === d0.name)))
-        data.push({ name: 'c_others', originalName: 'others', depth: 0 })
+        if (tab === 0) {
+          data.push({ name: 'e_others', originalName: 'others', depth: 0 })
+        } else if (tab === 1) {
+          data.push({ name: 'i_others', originalName: 'others', depth: 0 })
+        }
       } else {
         data.push(...data0)
         links.push(...links0)
@@ -337,7 +349,11 @@ export default {
             if (existOtherLinkAnalyze2) {
               existOtherLinkAnalyze2.value += sl.value
             } else {
-              otherLinksAnalyze2.push({ ...sl, name: 's_others' })
+              if (tab === 0) {
+                otherLinksAnalyze2.push({ ...sl, name: 'i_others' })
+              } else if (tab === 1) {
+                otherLinksAnalyze2.push({ ...sl, name: 'e_others' })
+              }
             }
           }
         })
@@ -351,18 +367,27 @@ export default {
             if (existOtherSLink2) {
               existOtherSLink2.value += l2.value
             } else {
-              othersLinks2.push({ ...l2, target: 's_others', tooltip1: 'others' })
+              if (tab === 0) {
+                othersLinks2.push({ ...l2, target: 'i_others', tooltip1: 'others' })
+              } else if (tab === 1) {
+                othersLinks2.push({ ...l2, target: 'e_others', tooltip1: 'others' })
+              }
             }
           }
         })
         links.push(...top10Links2)
         links.push(...othersLinks2)
         data.push(...data3.filter(d2 => top10LinksAnalyze2.some(l2 => l2.name === d2.name)))
-        data.push({ name: 's_others', originalName: 'others', depth: 3 })
+        if (tab === 0) {
+          data.push({ name: 'i_others', originalName: 'others', depth: 3 })
+        } else if (tab === 1) {
+          data.push({ name: 'e_others', originalName: 'others', depth: 3 })
+        }
       } else {
         data.push(...data3)
         links.push(...links2)
       }
+      console.info(data, links)
       this.$nextTick(() => {
         this.echartsInit(tab, data, links)
       })
