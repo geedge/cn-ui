@@ -130,6 +130,10 @@
     .data-score.data-score-green {
       background: #749F4D;
     }
+    .data-score-no-data {
+      width: 34px;
+      text-align: center;
+    }
   }
   .data-total-value {
     display: flex;

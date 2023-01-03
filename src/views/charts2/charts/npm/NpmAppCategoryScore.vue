@@ -114,6 +114,9 @@
                 <div v-else-if="scope.row.score <= 6" :class="{'data-score-green': scope.row.score <= 6}" class="data-score">
                   {{scope.row.score}}
                 </div>
+                <div v-else-if="scope.row.score === '-'" class="data-score-no-data">
+                  -
+                </div>
               </template>
               <span v-else-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
               <span v-else>-</span>
