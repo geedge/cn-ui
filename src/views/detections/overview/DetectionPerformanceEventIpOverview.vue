@@ -250,9 +250,13 @@ export default {
         case 'dns error': {
           return 'dns error ratio'
         }
-        case 'high dns response time':
-        default: {
+        case 'high dns response time': {
           return 'dns response time'
+        }
+        // 目前ui并未找到此类型，添加以防不测
+        case 'high http resopnse time':
+        default: {
+          return 'http response time'
         }
       }
     }

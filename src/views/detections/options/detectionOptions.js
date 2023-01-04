@@ -302,7 +302,8 @@ export const metricOption = {
       str += `<span class="cn-chart-tooltip-content"> 
       ${item.seriesName}
       </span>`
-      if (item.seriesName === 'dns response time') {
+      if (item.seriesName === 'dns response time' || item.seriesName === 'http response time') {
+        // http response time这种情况在ui上未找到，保险起见，添加以防不测
         str += `<span class="cn-chart-tooltip-value">
           ${unitConvert(item.data[1], unitTypes.time).join(' ')}
       </span>`
