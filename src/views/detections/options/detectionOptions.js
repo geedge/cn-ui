@@ -4,6 +4,7 @@ import {
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
 import { dateFormatByAppearance } from '@/utils/date-util'
+import { unitTypes } from '@/utils/constants'
 
 const severitySeriesIndexMappings = [
   { value: 'critical', index: '0' },
@@ -301,9 +302,16 @@ export const metricOption = {
       str += `<span class="cn-chart-tooltip-content"> 
       ${item.seriesName}
       </span>`
-      str += `<span class="cn-chart-tooltip-value">
-          ${unitConvert(item.data[1], item.data[2]).join(' ')}
+      if (item.seriesName === 'dns response time') {
+        str += `<span class="cn-chart-tooltip-value">
+          ${unitConvert(item.data[1], unitTypes.time).join(' ')}
       </span>`
+      } else {
+        str += `<span class="cn-chart-tooltip-value">
+          ${unitConvert(item.data[1], unitTypes.percent, '', '', 0).join(' ')}
+      </span>`
+      }
+
       str += '</div>'
       return str
     },
@@ -335,7 +343,7 @@ export const metricOption = {
   },
   series: [
     {
-      name: 'metric',
+      name: 'http error ratio',
       type: 'line',
       legendHoverLink: false,
       lineStyle: {
@@ -347,7 +355,7 @@ export const metricOption = {
       showSymbol: false
     },
     {
-      name: 'metric',
+      name: 'http error ratio',
       type: 'line',
       legendHoverLink: false,
       lineStyle: {
@@ -362,7 +370,7 @@ export const metricOption = {
       showSymbol: false
     },
     {
-      name: 'metric',
+      name: 'http error ratio',
       type: 'line',
       legendHoverLink: false,
       lineStyle: {

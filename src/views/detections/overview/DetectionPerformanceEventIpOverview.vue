@@ -54,7 +54,7 @@
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.metric')}}</div>
           <div class="overview__row">
-            <div class="row__content--metric ">{{detection.eventType  || '-'}}</div>
+            <div class="row__content--metric ">{{getNameByType(detection.eventType)  || '-'}}</div>
           </div>
         </div>
         <div class="metric__column">
@@ -155,7 +155,6 @@ export default {
         }, 250)
       })
     },
-
     initChart () {
       this.metricChart = markRaw(echarts.init(document.getElementById(`detectionMetricChartIp${this.detection.serverIp}`)))
       this.chartOptionMetric = _.cloneDeep(this.chartOption)
@@ -174,10 +173,11 @@ export default {
         this.chartOptionMetric.series[1].data = this.metricList.slice(startIndex - 1, endIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
         this.chartOptionMetric.series[2].data = this.metricList.slice(endIndex - 1, this.metricList.length).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
       }
-
+      this.chartOptionMetric.series.forEach(item => {
+        item.name = this.getNameByType(this.detection.eventType)
+      })
       this.chartOptionMetric && this.metricChart.setOption(this.chartOptionMetric)
     },
-
     queryMetric () {
       return new Promise((resolve, reject) => {
         try {
@@ -214,7 +214,6 @@ export default {
         }
       })
     },
-
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
@@ -237,6 +236,25 @@ export default {
         }
       })
       window.open(href, '_blank')
+    },
+    /**
+     * 通过事件类型转换对应名称
+     * @param type
+     * @returns {string}
+     */
+    getNameByType (type) {
+      switch (type) {
+        case 'http error': {
+          return 'http error ratio'
+        }
+        case 'dns error': {
+          return 'dns error ratio'
+        }
+        case 'high dns response time':
+        default: {
+          return 'dns response time'
+        }
+      }
     }
   },
   mounted () {
