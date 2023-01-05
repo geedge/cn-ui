@@ -475,6 +475,10 @@ export default {
         type: type,
         name: this.dropDownValue ? this.dropDownValue : ''
       }
+      // 有的界面刷新时没有drilldownList接口地址，会报404
+      if (!curTableInCode.url.drilldownList) {
+        return true
+      }
       get(curTableInCode.url.drilldownList, params).then(async response => {
         if (response.code === 200) {
           this.breadcrumbColumnValueListShow = response.data.result
