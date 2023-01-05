@@ -161,6 +161,9 @@ export default {
       if (this.$refs.dataTable.loadingTableId === u.id) { // 列表单个下载
         return
       }
+      if (u.state !== 1 || u.upload !== 1) {
+        return
+      }
       let fileName = ''
       let url = ''
       let params = {}
@@ -218,6 +221,9 @@ export default {
     },
     preview (u) {
       if (this.$refs.dataTable.loadingPreviewId === u.id) { // 列表单个下载
+        return
+      }
+      if (u.state !== 1 || u.upload !== 1) {
         return
       }
       const params = {
