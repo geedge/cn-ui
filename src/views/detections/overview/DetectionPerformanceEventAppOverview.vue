@@ -38,7 +38,7 @@
       <div class="overview__row">
         <div class="row__label">{{$t('entities.riskLevel')}}</div>
         <div class="row__content">
-          <div class="row__tag" :style="`background-color:${eventSeverityColor[basicInfo.appRisk]}`">{{basicInfo.appRisk || '-'}}</div>
+          <div class="row__tag" :style="`background-color:${eventSeverityColor[basicInfo.appRisk]}`">{{basicInfo.appRisk ? getRiskLevel(basicInfo.appRisk) : '-'}}</div>
         </div>
       </div>
     </div>
@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { eventSeverityColor, unitTypes } from '@/utils/constants'
+import { eventSeverityColor, unitTypes, riskLevelMapping } from '@/utils/constants'
 import { api, getData } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
@@ -104,12 +104,22 @@ export default {
   },
   data () {
     return {
+      riskLevelMapping,
       eventSeverityColor,
       basicInfo: {},
       metricList: []
     }
   },
   computed: {
+    getRiskLevel () {
+      return function (appRisk) {
+        if (this.riskLevelMapping[appRisk]) {
+          return this.riskLevelMapping[appRisk].name
+        } else {
+          return appRisk
+        }
+      }
+    },
     computeLocation () {
       return function (basicInfo) {
         let result = ''
