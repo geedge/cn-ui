@@ -154,12 +154,13 @@ export default {
           path: '/detection/securityEvent',
           icon: 'cn-icon cn-icon-a-SecurityEvent'
         },
-        {
-          i18n: 'entities.regulatoryRiskEvents',
-          path: '/detection/securityEvent',
-          icon: 'cn-icon cn-icon-a-RegulatoryRiskEvent',
-          disable: true
-        },
+        // todo 暂时隐藏该tab，此为ui上新功能
+        // {
+        //   i18n: 'entities.regulatoryRiskEvents',
+        //   path: '/detection/securityEvent',
+        //   icon: 'cn-icon cn-icon-a-RegulatoryRiskEvent',
+        //   disable: true
+        // },
         {
           i18n: 'overall.performanceEvents',
           path: '/detection/performanceEvent',
