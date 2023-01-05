@@ -141,13 +141,13 @@
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detections.malwareTechniques') }}</div>
-        <div class="row__content row__content--link">
+        <div class="row__content">
           {{ basicInfo.malwareTechniques || '-' }}
         </div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detections.malwareGroups') }}</div>
-        <div class="row__content row__content--link">
+        <div class="row__content">
           {{ basicInfo.malwareGroups || '-' }}
         </div>
       </div>
@@ -324,6 +324,8 @@ export default {
     getMillisecond,
     query () {
       Promise.all([this.queryBasic(), this.queryEvent()]).then((responses) => {
+        responses[0].malwareTechniques = responses[0].malwareTechniques.split(',', 5).join(', ') + ']'
+        responses[0].malwareGroups = responses[0].malwareGroups.split(',', 5).join(', ') + ']'
         responses[0] && (this.basicInfo = responses[0])
         responses[1] &&
           (this.events = responses[1].sort(
