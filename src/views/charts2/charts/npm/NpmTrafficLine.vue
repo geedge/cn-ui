@@ -32,7 +32,7 @@
 import * as echarts from 'echarts'
 import { trafficLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert from '@/utils/unit-convert'
-import { unitTypes, chartColor3 } from '@/utils/constants.js'
+import { chartColor3, unitTypes } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import { get } from '@/utils/http'
@@ -44,6 +44,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
+
 export default {
   name: 'NpmTrafficLine',
   mixins: [chartMixin],
@@ -133,7 +134,7 @@ export default {
       overwriteUrl(newUrl)
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         this.init()
       }
     }
@@ -215,7 +216,7 @@ export default {
                 { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent }
               ]
             }
-            res.data.result.forEach((t, i) => {
+            res.data.result.forEach((t) => {
               if (t.type === 'bytes' && val === 'Bits/s') {
                 const mpackets = _.cloneDeep(this.mpackets)
                 mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
@@ -224,7 +225,7 @@ export default {
                 mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
                 mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
                 mpackets[5].data = t.other.values ? t.other.values : []
-                mpackets.forEach((e, i) => {
+                mpackets.forEach((e) => {
                   e.show = true
                 })
                 this.mpackets = mpackets
@@ -237,7 +238,7 @@ export default {
                 mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
                 mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
                 mpackets[5].data = t.other.values ? t.other.values : []
-                mpackets.forEach((e, i) => {
+                mpackets.forEach((e) => {
                   e.show = true
                 })
                 this.mpackets = mpackets
@@ -256,11 +257,7 @@ export default {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[0].data = t.establishLatencyMsAvg.values ? t.establishLatencyMsAvg.values : []
                 npmQuantity.forEach((e, i) => {
-                  if (i !== 0) {
-                    e.show = false
-                  } else {
-                    e.show = true
-                  }
+                  e.show = i === 0
                 })
                 this.npmQuantity = npmQuantity
                 this.echartsInit(this.npmQuantity, '(ms)')
@@ -268,11 +265,7 @@ export default {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[1].data = t.httpResponseLatencyAvg.values ? t.httpResponseLatencyAvg.values : []
                 npmQuantity.forEach((e, i) => {
-                  if (i !== 1) {
-                    e.show = false
-                  } else {
-                    e.show = true
-                  }
+                  e.show = i === 1
                 })
                 this.npmQuantity = npmQuantity
                 this.echartsInit(this.npmQuantity, '(ms)')
@@ -280,11 +273,7 @@ export default {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[2].data = t.sslConLatencyAvg.values ? t.sslConLatencyAvg.values : []
                 npmQuantity.forEach((e, i) => {
-                  if (i !== 2) {
-                    e.show = false
-                  } else {
-                    e.show = true
-                  }
+                  e.show = i === 2
                 })
                 this.npmQuantity = npmQuantity
                 this.echartsInit(this.npmQuantity, '(ms)')
@@ -292,11 +281,7 @@ export default {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[3].data = t.tcpLostlenPercentAvg.values ? t.tcpLostlenPercentAvg.values : []
                 npmQuantity.forEach((e, i) => {
-                  if (i !== 3) {
-                    e.show = false
-                  } else {
-                    e.show = true
-                  }
+                  e.show = i === 3
                 })
                 this.npmQuantity = npmQuantity
                 this.echartsInit(this.npmQuantity, '(%)')
@@ -304,11 +289,7 @@ export default {
                 const npmQuantity = _.cloneDeep(this.npmQuantity)
                 npmQuantity[4].data = t.pktRetransPercentAvg.values ? t.pktRetransPercentAvg.values : []
                 npmQuantity.forEach((e, i) => {
-                  if (i !== 4) {
-                    e.show = false
-                  } else {
-                    e.show = true
-                  }
+                  e.show = i === 4
                 })
                 this.npmQuantity = npmQuantity
                 this.echartsInit(this.npmQuantity, '(%)')
@@ -343,7 +324,7 @@ export default {
                   { name: 'network.other', show: true, positioning: 5, data: [], unitType: 'number' }
                 ]
               }
-              res.data.result.forEach((t, i) => {
+              res.data.result.forEach((t) => {
                 if (t.type === 'bytes' && val === 'Bits/s') {
                   const mpackets = _.cloneDeep(this.mpackets)
                   mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
@@ -352,7 +333,7 @@ export default {
                   mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
                   mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
                   mpackets[5].data = t.other.values ? t.other.values : []
-                  mpackets.forEach((e, i) => {
+                  mpackets.forEach((e) => {
                     e.show = true
                   })
                   this.mpackets = mpackets
@@ -365,7 +346,7 @@ export default {
                   mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
                   mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
                   mpackets[5].data = t.other.values ? t.other.values : []
-                  mpackets.forEach((e, i) => {
+                  mpackets.forEach((e) => {
                     e.show = true
                   })
                   this.mpackets = mpackets
@@ -409,16 +390,12 @@ export default {
                   { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent }
                 ]
               }
-              res.data.result.forEach((t, i) => {
+              res.data.result.forEach((t) => {
                 if (t.type === 'establishLatencyMs' && val === 'establishLatencyMs') {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
                   npmQuantity[0].data = t.establishLatencyMs.values ? t.establishLatencyMs.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 0) {
-                      e.show = false
-                    } else {
-                      e.show = true
-                    }
+                    e.show = i === 0
                   })
                   this.npmQuantity = npmQuantity
                   this.echartsInit(this.npmQuantity, '(ms)')
@@ -426,11 +403,7 @@ export default {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
                   npmQuantity[3].data = t.tcpLostlenPercent.values ? t.tcpLostlenPercent.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 3) {
-                      e.show = false
-                    } else {
-                      e.show = true
-                    }
+                    e.show = i === 3
                   })
                   this.npmQuantity = npmQuantity
                   this.echartsInit(this.npmQuantity, '(%)')
@@ -438,11 +411,7 @@ export default {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
                   npmQuantity[4].data = t.pktRetransPercent.values ? t.pktRetransPercent.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 4) {
-                      e.show = false
-                    } else {
-                      e.show = true
-                    }
+                    e.show = i === 4
                   })
                   this.npmQuantity = npmQuantity
                   this.echartsInit(this.npmQuantity, '(%)')
@@ -480,11 +449,7 @@ export default {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
                   npmQuantity[1].data = t.httpResponseLatency.values ? t.httpResponseLatency.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 1) {
-                      e.show = false
-                    } else {
-                      e.show = true
-                    }
+                    e.show = i === 1
                   })
                   this.npmQuantity = npmQuantity
                   this.echartsInit(this.npmQuantity, '(ms)')
@@ -522,11 +487,7 @@ export default {
                   const npmQuantity = _.cloneDeep(this.npmQuantity)
                   npmQuantity[2].data = t.sslConLatency.values ? t.sslConLatency.values : []
                   npmQuantity.forEach((e, i) => {
-                    if (i !== 2) {
-                      e.show = false
-                    } else {
-                      e.show = true
-                    }
+                    e.show = i === 2
                   })
                   this.npmQuantity = npmQuantity
                   this.echartsInit(this.npmQuantity, '(ms)')
@@ -555,7 +516,7 @@ export default {
           !this.myChart && (this.myChart = echarts.init(dom))
           this.chartOption = trafficLineChartOption
           const chartOption = this.chartOption.series[0]
-          this.chartOption.series = echartsData.map((t, i) => {
+          this.chartOption.series = echartsData.map((t) => {
             this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
               if (t.unitType === 'percent') {
                 return unitConvert(value, t.unitType)[0]
@@ -606,8 +567,7 @@ export default {
                 }
               })
             })
-            const str = stackedLineTooltipFormatter(params)
-            return str
+            return stackedLineTooltipFormatter(params)
           }
           this.myChart.on('legendselectchanged', this.handleLegendClick)
           this.myChart.setOption(this.chartOption, true)
@@ -641,11 +601,7 @@ export default {
       const legendItem = params.selected
       if (selectedNum === legendNum) { // 点击前：全部曲线高亮
         for (const name in legendItem) {
-          if (name === params.name) {
-            legendItem[name] = true
-          } else {
-            legendItem[name] = false
-          }
+          legendItem[name] = name === params.name
         }
       } else if (selectedNum === 1 && !params.selected[params.name]) { // 点击前：多条曲线，且只有一条曲线高亮时
         for (const name in legendItem) {
