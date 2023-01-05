@@ -1,6 +1,6 @@
 <template>
   <div class="npm-app-event">
-    <div class="metric-select">
+<!--    <div class="metric-select">
       <el-select
           v-model="metric"
           class="option__select select-column"
@@ -18,7 +18,7 @@
         />
       </el-select>
       <span>{{ $t('network.metric') }}：</span>
-    </div>
+    </div>-->
     <el-table
         id="tabTable"
         ref="dataTable"
