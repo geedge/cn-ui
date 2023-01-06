@@ -111,15 +111,6 @@ export default {
     }
   },
   computed: {
-    getRiskLevel () {
-      return function (appRisk) {
-        if (this.riskLevelMapping[appRisk]) {
-          return this.riskLevelMapping[appRisk].name
-        } else {
-          return appRisk
-        }
-      }
-    },
     computeLocation () {
       return function (basicInfo) {
         let result = ''
