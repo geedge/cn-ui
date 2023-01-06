@@ -110,6 +110,7 @@ import DetectionSecurityEventOverview from '@/views/detections/overview/Detectio
 import DetectionPerformanceEventIpOverview from '@/views/detections/overview/DetectionPerformanceEventIpOverview'
 import DetectionPerformanceEventAppOverview from '@/views/detections/overview/DetectionPerformanceEventAppOverview'
 import DetectionPerformanceEventDomainOverview from '@/views/detections/overview/DetectionPerformanceEventDomainOverview'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'DetectionRow',
   components: {
@@ -128,8 +129,19 @@ export default {
     return {
       entityType,
       detectionPageType,
-      isCollapse: true, // 是否是折叠状态
+      isCollapse: true, // 是否是折叠状态, true为折叠，false为展开
       eventSeverityColor
+    }
+  },
+  mounted () {
+    if (this.$route.query.eventId) {
+      if (parseFloat(this.$route.query.eventId) === this.detection.eventId) {
+        const container = document.getElementById('cnContainer')
+        container.scrollTop = 555 + this.index * 97
+
+        this.isCollapse = false
+        this.$emit('switchCollapse', this.isCollapse, this.index)
+      }
     }
   },
   computed: {
@@ -172,10 +184,29 @@ export default {
     switchCollapse () {
       this.isCollapse = !this.isCollapse
       this.$emit('switchCollapse', this.isCollapse, this.index)
+
+      if (this.isCollapse) {
+        const newQuery = this.$route.query // 深拷贝路由数据
+        delete newQuery.eventId
+        this.reloadUrl(newQuery, 'cleanOldParams')
+      } else {
+        this.reloadUrl({ eventId: this.detection.eventId })
+      }
     },
     /* 设为折叠状态 */
     collapse () {
       this.isCollapse = true
+    },
+    /**
+     * 向地址栏添加/删除参数
+     */
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
+      }
+      overwriteUrl(newUrl)
     }
   }
 }

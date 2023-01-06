@@ -24,7 +24,7 @@
                 <span class="data-recent-table-severity" :class="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
               </template>
               <template v-else-if="item.prop === 'eventKey'">
-                <span class="data-recent-table-entity">{{scope.row[item.prop]}}</span>
+                <span class="data-recent-table-entity" @click="jumpPage(scope.row)">{{splitEventKey(scope.row[item.prop])}}</span>
               </template>
               <template v-else-if="item.prop === 'eventType'">
                 <span class="data-recent-table-eventType">{{scope.row[item.prop]}}</span>
@@ -84,7 +84,9 @@ export default {
   watch: {
     timeFilter: {
       handler (n) {
-        this.recentEventsListData()
+        if (n) {
+          this.recentEventsListData()
+        }
       }
     }
   },
@@ -132,6 +134,29 @@ export default {
         this.errorMsg = error.message
       }).finally(() => {
         this.toggleLoading(false)
+      })
+    },
+    /**
+     * 只要实体名称
+     * @param key
+     * @returns {*}
+     */
+    splitEventKey (key) {
+      let name = ''
+      if (key) {
+        name = key.split(' ')[0]
+      } else {
+        name = '-'
+      }
+      return name
+    },
+    jumpPage (item) {
+      this.$router.push({
+        path: '/detection/performanceEvent',
+        query: {
+          t: +new Date(),
+          eventId: item.eventId
+        }
       })
     }
   },
