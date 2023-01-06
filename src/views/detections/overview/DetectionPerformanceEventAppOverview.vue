@@ -38,7 +38,7 @@
       <div class="overview__row">
         <div class="row__label">{{$t('entities.riskLevel')}}</div>
         <div class="row__content">
-          <div class="row__tag" :style="`background-color:${eventSeverityColor[basicInfo.appRisk]}`">{{basicInfo.appRisk ? getRiskLevel(basicInfo.appRisk) : '-'}}</div>
+          <div class="row__tag" :style="`background-color:${eventSeverityColor[basicInfo.appRisk]}`">{{basicInfo.appRisk ? (riskLevelMapping[basicInfo.appRisk] ? riskLevelMapping[basicInfo.appRisk].name : basicInfo.appRisk) : '-'}}</div>
         </div>
       </div>
     </div>
