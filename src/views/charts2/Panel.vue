@@ -334,6 +334,8 @@ export default {
         if (!this.$refs.dateTimeRange.isCustom) {
           const value = this.timeFilter.dateRangeValue
           this.$refs.dateTimeRange.quickChange(value)
+        } else {
+          this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
         }
       } else {
         this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
