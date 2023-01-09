@@ -63,7 +63,7 @@
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.metric')}}</div>
           <div class="overview__row">
-            <div class="row__content--metric ">{{detection.eventType  || '-'}}</div>
+            <div class="row__content--metric ">{{getNameByEventType(detection.eventType)  || '-'}}</div>
           </div>
         </div>
         <div class="metric__column">
@@ -98,7 +98,7 @@ import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
-import { sortBy, reverseSortBy } from '@/utils/tools'
+import { sortBy, reverseSortBy, getNameByEventType } from '@/utils/tools'
 import _ from 'lodash'
 export default {
   name: 'DetectionPerformanceEventDomainOverview',
@@ -165,6 +165,7 @@ export default {
     }
   },
   methods: {
+    getNameByEventType,
     query () {
       this.queryBasic().then(responses => {
         responses && (this.basicInfo = responses)
@@ -211,6 +212,10 @@ export default {
         this.chartOptionMetric.series[1].data = this.metricList.slice(startIndex - 1, endIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
         this.chartOptionMetric.series[2].data = this.metricList.slice(endIndex - 1, this.metricList.length).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
       }
+
+      this.chartOptionMetric.series.forEach(item => {
+        item.name = this.getNameByEventType(this.detection.eventType)
+      })
 
       this.chartOptionMetric && this.metricChart.setOption(this.chartOptionMetric)
     },

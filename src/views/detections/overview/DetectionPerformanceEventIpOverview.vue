@@ -54,7 +54,7 @@
         <div class="metric__column">
           <div class="overview__title">{{$t('detections.metric')}}</div>
           <div class="overview__row">
-            <div class="row__content--metric ">{{getNameByType(detection.eventType)  || '-'}}</div>
+            <div class="row__content--metric ">{{getNameByEventType(detection.eventType)  || '-'}}</div>
           </div>
         </div>
         <div class="metric__column">
@@ -88,7 +88,7 @@ import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
-import { sortBy, reverseSortBy } from '@/utils/tools'
+import { sortBy, reverseSortBy, getNameByEventType } from '@/utils/tools'
 import _ from 'lodash'
 
 export default {
@@ -129,6 +129,7 @@ export default {
     }
   },
   methods: {
+    getNameByEventType,
     query () {
       this.queryBasic().then(responses => {
         responses && (this.basicInfo = responses)
@@ -173,9 +174,11 @@ export default {
         this.chartOptionMetric.series[1].data = this.metricList.slice(startIndex - 1, endIndex).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
         this.chartOptionMetric.series[2].data = this.metricList.slice(endIndex - 1, this.metricList.length).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.number])
       }
+
       this.chartOptionMetric.series.forEach(item => {
-        item.name = this.getNameByType(this.detection.eventType)
+        item.name = this.getNameByEventType(this.detection.eventType)
       })
+
       this.chartOptionMetric && this.metricChart.setOption(this.chartOptionMetric)
     },
     queryMetric () {
@@ -236,29 +239,6 @@ export default {
         }
       })
       window.open(href, '_blank')
-    },
-    /**
-     * 通过事件类型转换对应名称
-     * @param type
-     * @returns {string}
-     */
-    getNameByType (type) {
-      switch (type) {
-        case 'http error': {
-          return 'http error ratio'
-        }
-        case 'dns error': {
-          return 'dns error ratio'
-        }
-        case 'high dns response time': {
-          return 'dns response time'
-        }
-        // 目前ui并未找到此类型，添加以防不测
-        case 'high http resopnse time':
-        default: {
-          return 'http response time'
-        }
-      }
     }
   },
   mounted () {
