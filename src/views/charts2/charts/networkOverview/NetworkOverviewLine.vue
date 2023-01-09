@@ -703,9 +703,13 @@ export default {
     this.chartOption = null
     this.timer = setTimeout(() => {
       if (this.lineTab) {
-        const data = this.mpackets.find(t => t.class === this.lineTab)
-        if (data && data.positioning) {
-          this.activeChange(data, data.positioning)
+        if (this.lineTab === 'total' && this.metric === 'Sessions/s') {
+          this.init()
+        } else {
+          const data = this.mpackets.find(t => t.class === this.lineTab)
+          if (data && data.positioning) {
+            this.activeChange(data, data.positioning)
+          }
         }
       } else {
         this.init()
