@@ -24,7 +24,7 @@
                 <span class="data-recent-table-severity" :class="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
               </template>
               <template v-else-if="item.prop === 'eventKey'">
-                <span class="data-recent-table-entity" @click="jumpPage(scope.row)">{{splitEventKey(scope.row[item.prop])}}</span>
+                <span class="data-recent-table-entity click-active" @click="jumpPage(scope.row)">{{splitEventKey(scope.row[item.prop])}}</span>
               </template>
               <template v-else-if="item.prop === 'eventType'">
                 <span class="data-recent-table-eventType">{{scope.row[item.prop]}}</span>
