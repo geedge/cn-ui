@@ -4,13 +4,13 @@ stages:
   - build_project
   - build_image
 
-cache:
-  key:
-    files:
-      - package.json
-  paths:
-    - node_modules
-    - dist/
+#cache:
+#  key:
+#    files:
+#      - package.json
+#  paths:
+#    - node_modules
+#    - dist/
 
 before_script:
   - export CNUI_TAG=$(date +%Y%m%d%H%M%S)
