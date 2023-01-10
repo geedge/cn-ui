@@ -1,6 +1,5 @@
 import { hasButton } from '@/permission'
 import { dateFormatByAppearance } from '@/utils/date-util'
-import { storageKey } from '@/utils/constants'
 export default {
   data () {
     return {
@@ -21,7 +20,9 @@ export default {
         query: false
       },
       timeout: null,
-      debounceFunc: null
+      debounceFunc: null,
+      // 是否正在单元测试
+      isUnitTesting: false
     }
   },
   methods: {
