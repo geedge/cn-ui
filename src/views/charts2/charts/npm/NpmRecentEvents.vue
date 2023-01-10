@@ -151,6 +151,7 @@ export default {
       return name
     },
     jumpPage (item) {
+      this.beforeRouterPush()
       this.$router.push({
         path: '/detection/performanceEvent',
         query: {
@@ -158,6 +159,36 @@ export default {
           eventId: item.eventId
         }
       })
+    },
+    /**
+     * 在路由跳转前，即下钻前将路由数据保存起来，确保回退和前进保留当时状态
+     */
+    beforeRouterPush () {
+      const currentRouter = this.$_.cloneDeep(this.$route.query)
+      const historyList = this.$_.cloneDeep(this.$store.getters.getRouterHistoryList)
+
+      const tempObj = {
+        t: currentRouter.t,
+        query: currentRouter,
+        path: this.$_.cloneDeep(this.$route.path),
+        params: this.$_.cloneDeep(this.$route.params)
+      }
+      if (historyList.length > 0) {
+        let flag = true
+        historyList.forEach((item, index) => {
+          if (item.t === currentRouter.t) {
+            historyList[index] = tempObj
+            flag = false
+          }
+          if (!flag) {
+            return true
+          }
+        })
+        if (flag) historyList.push(tempObj)
+      } else {
+        historyList.push(tempObj)
+      }
+      this.$store.commit('setRouterHistoryList', historyList)
     }
   },
   mounted () {
