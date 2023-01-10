@@ -223,124 +223,7 @@ export default {
               { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [], unitType: '' }
             ]
           }
-          res.data.result.forEach((t) => {
-            if (t.type === 'bytes' && val === 'Bits/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalBitsRate.analysis
-              mpackets[1].analysis = t.inboundBitsRate.analysis
-              mpackets[2].analysis = t.outboundBitsRate.analysis
-              mpackets[3].analysis = t.internalBitsRate.analysis
-              mpackets[4].analysis = t.throughBitsRate.analysis
-              mpackets[5].analysis = t.other.analysis
-              mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-              mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-              mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-              mpackets[3].data = t.internalBitsRate.values ? t.internalBitsRate.values : []
-              mpackets[4].data = t.throughBitsRate.values ? t.throughBitsRate.values : []
-              mpackets[5].data = t.other.values ? t.other.values : []
-              let num = 0
-              mpackets.forEach(e => {
-                e.unitType = 'bps'
-                if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
-                  e.show = false
-                  num += 1
-                } else {
-                  e.show = true
-                  if (!active && show !== this.lineRefer) {
-                    this.legendSelectChange(e, 'index')
-                  }
-                }
-                if (this.lineTab === e.class) {
-                  if (parseFloat(e.analysis.avg) <= 0) {
-                    this.lineTab = ''
-                    this.lineRefer = ''
-                    this.init()
-                  }
-                }
-              })
-              this.mpackets = mpackets
-              if (num === 5) {
-                mpackets[0].invertTab = false
-                this.lineTab = 'total'
-                this.legendSelectChange(mpackets[0], 0)
-                this.$nextTick(() => {
-                  this.echartsInit(this.mpackets, true)
-                })
-              } else {
-                if (n) this.lineTab = ''
-                this.$nextTick(() => {
-                  this.echartsInit(this.mpackets, show)
-                  if (!this.lineRefer) this.lineRefer = 'Average'
-                })
-              }
-            } else if (t.type === 'packets' && val === 'Packets/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalPacketsRate.analysis
-              mpackets[1].analysis = t.inboundPacketsRate.analysis
-              mpackets[2].analysis = t.outboundPacketsRate.analysis
-              mpackets[3].analysis = t.internalPacketsRate.analysis
-              mpackets[4].analysis = t.throughPacketsRate.analysis
-              mpackets[5].analysis = t.other.analysis
-              mpackets[0].data = t.totalPacketsRate.values ? t.totalPacketsRate.values : []
-              mpackets[1].data = t.inboundPacketsRate.values ? t.inboundPacketsRate.values : []
-              mpackets[2].data = t.outboundPacketsRate.values ? t.outboundPacketsRate.values : []
-              mpackets[3].data = t.internalPacketsRate.values ? t.internalPacketsRate.values : []
-              mpackets[4].data = t.throughPacketsRate.values ? t.throughPacketsRate.values : []
-              mpackets[5].data = t.other.values ? t.other.values : []
-              let num = 0
-              mpackets.forEach(e => {
-                e.unitType = 'packets/s'
-                if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
-                  e.show = false
-                  num += 1
-                } else {
-                  e.show = true
-                  if (!active && show !== this.lineRefer) {
-                    this.legendSelectChange(e, 'index')
-                  }
-                }
-                if (this.lineTab === e.class) {
-                  if (parseFloat(e.analysis.avg) <= 0) {
-                    this.lineTab = ''
-                    this.lineRefer = ''
-                    this.init()
-                  }
-                }
-              })
-              this.mpackets = mpackets
-              if (num === 5) {
-                mpackets[0].invertTab = false
-                this.lineTab = 'total'
-                this.legendSelectChange(mpackets[0], 0)
-                this.$nextTick(() => {
-                  this.echartsInit(this.mpackets, true)
-                })
-              } else {
-                if (n) this.lineTab = ''
-                this.$nextTick(() => {
-                  this.echartsInit(this.mpackets, show)
-                  if (!this.lineRefer) this.lineRefer = 'Average'
-                })
-              }
-            } else if (t.type === 'sessions' && val === 'Sessions/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalSessionsRate.analysis
-              mpackets[0].data = t.totalSessionsRate.values ? t.totalSessionsRate.values : []
-              mpackets.forEach((e, i) => {
-                if (i !== 0) {
-                  e.show = false
-                }
-                e.unitType = 'sessions/s'
-                e.invertTab = false
-                this.lineTab = 'total'
-                this.legendSelectChange(e, 0)
-              })
-              this.mpackets = mpackets
-              this.$nextTick(() => {
-                this.echartsInit(this.mpackets, true)
-              })
-            }
-          })
+          this.initData(res.data.result, val, active, show, n)
         } else {
           this.showError = true
           this.errorMsg = res.message
@@ -681,6 +564,103 @@ export default {
       const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
       return this.sizes[sortIndex]
     },
+    initData (data, val, active, show, n) {
+      let bytes = []
+      let packets = []
+      let sessions = []
+      if (data !== undefined && data.length > 0) {
+        data.forEach((item) => {
+          if (item.type.indexOf('bytes') > -1) {
+            bytes = Object.keys(item).map(t => {
+              return {
+                ...item[t]
+              }
+            })
+          } else if (item.type.indexOf('packets') > -1) {
+            packets = Object.keys(item).map(t => {
+              return {
+                ...item[t]
+              }
+            })
+          } else if (item.type.indexOf('sessions') > -1) {
+            sessions = Object.keys(item).map(t => {
+              return {
+                ...item[t]
+              }
+            })
+          }
+        })
+      }
+      bytes.splice(0, 1)
+      packets.splice(0, 1)
+      sessions.splice(0, 1)
+      if (val === 'Bits/s') {
+        this.legendInit(bytes, active, show, 'bps', n)
+      } else if (val === 'Packets/s') {
+        this.legendInit(packets, active, show, 'packets/s', n)
+      } else if (val === 'Sessions/s') {
+        const mpackets = _.cloneDeep(this.mpackets)
+        sessions.forEach((d, i) => {
+          mpackets[i].data = d.values
+          mpackets[i].analysis = d.analysis
+        })
+        mpackets.forEach((e, i) => {
+          if (i !== 0) {
+            e.show = false
+          }
+          e.unitType = 'sessions/s'
+          e.invertTab = false
+          this.lineTab = 'total'
+          this.legendSelectChange(e, 0)
+        })
+        this.mpackets = mpackets
+        this.$nextTick(() => {
+          this.echartsInit(this.mpackets, true)
+        })
+      }
+    },
+    legendInit (data, active, show, type, n) {
+      const mpackets = _.cloneDeep(this.mpackets)
+      data.forEach((d, i) => {
+        mpackets[i].data = d.values
+        mpackets[i].analysis = d.analysis
+      })
+      let num = 0
+      mpackets.forEach(e => {
+        e.unitType = type
+        if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
+          e.show = false
+          num += 1
+        } else {
+          e.show = true
+          if (!active && show !== this.lineRefer) {
+            this.legendSelectChange(e, 'index')
+          }
+        }
+        if (this.lineTab === e.class) {
+          if (parseFloat(e.analysis.avg) <= 0) {
+            this.lineTab = ''
+            this.lineRefer = ''
+            this.init()
+          }
+        }
+      })
+      this.mpackets = mpackets
+      if (num === 5) {
+        mpackets[0].invertTab = false
+        this.lineTab = 'total'
+        this.legendSelectChange(mpackets[0], 0)
+        this.$nextTick(() => {
+          this.echartsInit(this.mpackets, true)
+        })
+      } else {
+        if (n) this.lineTab = ''
+        this.$nextTick(() => {
+          this.echartsInit(this.mpackets, show)
+          if (!this.lineRefer) this.lineRefer = 'Average'
+        })
+      }
+    },
     /**
      * 鼠标右键返回框选的时间范围
      */
@@ -704,9 +684,7 @@ export default {
     this.timer = setTimeout(() => {
       if (this.lineTab && this.metric !== 'Sessions/s') {
         const data = this.mpackets.find(t => t.class === this.lineTab)
-        if (data && data.positioning) {
-          this.activeChange(data, data.positioning)
-        }
+        this.activeChange(data, data.positioning)
       } else {
         this.init()
       }

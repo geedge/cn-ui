@@ -208,62 +208,7 @@ export default {
               { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
             ]
           }
-          res.data.result.forEach((t) => {
-            if (t.type === 'bytes' && val === 'Bits/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalBitsRate.analysis
-              mpackets[1].analysis = t.inboundBitsRate.analysis
-              mpackets[2].analysis = t.outboundBitsRate.analysis
-              mpackets[0].data = t.totalBitsRate.values ? t.totalBitsRate.values : []
-              mpackets[1].data = t.inboundBitsRate.values ? t.inboundBitsRate.values : []
-              mpackets[2].data = t.outboundBitsRate.values ? t.outboundBitsRate.values : []
-              let num = 0
-              mpackets.forEach(e => {
-                e.unitType = 'bps'
-                if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
-                  e.show = false
-                  num += 1
-                } else {
-                  e.show = true
-                  if (!active && show !== this.lineRefer) {
-                    this.legendSelectChange(e, 'index')
-                  }
-                }
-                if (this.lineTab === e.class) {
-                  if (parseFloat(e.analysis.avg) <= 0) {
-                    this.lineTab = ''
-                    this.lineRefer = ''
-                    this.init()
-                  }
-                }
-              })
-              this.mpackets = mpackets
-              if (num === 3) {
-                mpackets[0].invertTab = false
-                this.lineTab = 'total'
-                this.legendSelectChange(mpackets[0], 0)
-                this.echartsInit(this.mpackets)
-              } else {
-                this.echartsInit(this.mpackets, show)
-                if (!this.lineRefer) this.lineRefer = 'Average'
-              }
-            } else if (t.type === 'queries' && val === 'Queries/s') {
-              const mpackets = _.cloneDeep(this.mpackets)
-              mpackets[0].analysis = t.totalQueryRate.analysis
-              mpackets[0].data = t.totalQueryRate.values ? t.totalQueryRate.values : []
-              mpackets.forEach((e, i) => {
-                if (i !== 0) {
-                  e.show = false
-                }
-                e.unitType = 'queries/s'
-                e.invertTab = false
-                this.lineTab = 'total'
-                this.legendSelectChange(e, 0)
-              })
-              this.mpackets = mpackets
-              this.echartsInit(this.mpackets, true)
-            }
-          })
+          this.initData(res.data.result, val, active, show)
         } else {
           this.isNoData = false
           this.showError = true
@@ -526,6 +471,86 @@ export default {
       dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
       const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
       return this.sizes[sortIndex]
+    },
+    initData (data, val, active, show) {
+      let bytes = []
+      let queries = []
+      if (data !== undefined && data.length > 0) {
+        data.forEach((item) => {
+          if (item.type.indexOf('bytes') > -1) {
+            bytes = Object.keys(item).map(t => {
+              return {
+                ...item[t]
+              }
+            })
+          } else if (item.type.indexOf('queries') > -1) {
+            queries = Object.keys(item).map(t => {
+              return {
+                ...item[t]
+              }
+            })
+          }
+        })
+      }
+      bytes.splice(0, 1)
+      queries.splice(0, 1)
+      if (val === 'Bits/s') {
+        this.legendInit(bytes, active, show, 'bps')
+      } else if (val === 'Queries/s') {
+        const mpackets = _.cloneDeep(this.mpackets)
+        queries.forEach((d, i) => {
+          mpackets[i].data = d.values
+          mpackets[i].analysis = d.analysis
+        })
+        mpackets.forEach((e, i) => {
+          if (i !== 0) {
+            e.show = false
+          }
+          e.unitType = 'queries/s'
+          e.invertTab = false
+          this.lineTab = 'total'
+          this.legendSelectChange(e, 0)
+        })
+        this.mpackets = mpackets
+        this.echartsInit(this.mpackets, true)
+      }
+    },
+    legendInit (data, active, show, type) {
+      const mpackets = _.cloneDeep(this.mpackets)
+      data.forEach((d, i) => {
+        mpackets[i].data = d.values
+        mpackets[i].analysis = d.analysis
+      })
+      let num = 0
+      mpackets.forEach(e => {
+        e.unitType = type
+        if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
+          e.show = false
+          num += 1
+        } else {
+          e.show = true
+          if (!active && show !== this.lineRefer) {
+            this.legendSelectChange(e, 'index')
+          }
+        }
+        if (this.lineTab === e.class) {
+          if (parseFloat(e.analysis.avg) <= 0) {
+            this.lineTab = ''
+            this.lineRefer = ''
+            this.init()
+          }
+        }
+      })
+      this.mpackets = mpackets
+      if (num === 3) {
+        mpackets[0].invertTab = false
+        this.lineTab = 'total'
+        this.legendSelectChange(mpackets[0], 0)
+        this.echartsInit(this.mpackets)
+      } else {
+        this.echartsInit(this.mpackets, show)
+        if (!this.lineRefer) this.lineRefer = 'Average'
+      }
     }
   },
   mounted () {
