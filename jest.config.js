@@ -2,12 +2,12 @@ module.exports = {
   roots: [
     '<rootDir>/test'
   ],
-  verbose: true,
-  setupFilesAfterEnv: ['<rootDir>/test/init.js'],
   testMatch: [
     '<rootDir>/test/**/__tests__/**/*.{vue,js,jsx,ts,tsx}',
     '<rootDir>/test/**/*.{spec,test}.{vue,js,jsx,ts,tsx}'
   ],
+  setupFilesAfterEnv: ['<rootDir>/test/init.js'],
+  verbose: true,
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.(vue)$': '<rootDir>/node_modules/vue-jest',

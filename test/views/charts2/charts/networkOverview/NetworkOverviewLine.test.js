@@ -50,11 +50,11 @@ describe('NetworkOverviewLine.vue测试', () => {
     const textNode0 = await wrapper.get('[test-id="tabContent0"]')
     const textNode1 = await wrapper.get('[test-id="tabContent1"]')
     const textNode2 = await wrapper.get('[test-id="tabContent2"]')
-    await new Promise(res => setTimeout(() => {
+    await new Promise(resolve => setTimeout(() => {
       expect(textNode0.text()).toEqual('14.06Kpackets/s')
       expect(textNode1.text()).toEqual('4.24Kpackets/s')
       expect(textNode2.text()).toEqual('9.17Kpackets/s')
-      res()
+      resolve()
     }, 1000))
   })
 })

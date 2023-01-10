@@ -1,3 +1,8 @@
+/**
+ * jest: https://jestjs.io/docs/getting-started
+ * vue-jest: https://test-utils.vuejs.org/guide/
+ * */
+
 import Test from '../src/Test'
 import { mount } from '@vue/test-utils'
 import { getNameByEventType } from '@/utils/tools'
@@ -24,7 +29,7 @@ describe('单元测试demo', () => {
     // 断言点击按钮后文本dom的内容是否是'2'
     expect(textNode.text()).toBe('2')
 
-    /* 更多断言类型：https://jestjs.io/zh-Hans/docs/expect */
+    /* 更多断言类型：https://jestjs.io/docs/expect */
   })
 
   test('Vue组件--直接获取vue实例中的data和method', async () => {
