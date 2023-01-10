@@ -230,6 +230,26 @@ export default {
   },
   beforeUnmount () {
     clearTimeout(this.timer)
+    const path = this.$router.currentRoute.value.path
+    const list = window.currentChartTabList
+    if (list && this.router !== 'noRouter') {
+      if (list[1]) {
+        // 去其他界面，清除状态
+        if (path !== list[0].path && path !== list[1].path) {
+          window.currentChartTabList = null
+        } else if (path === this.tabsData[0].path) {
+          // 场景为在本界面点击tabs，通过遮罩菜单栏又进入该界面，则初始化状态，默认选中第一个
+          // 缺点：点击第一个tabs时没有过渡效果，后续会跟进解决
+          window.currentChartTabList = [
+            { path: list[1].path, index: list[1].index },
+            { path: this.tabsData[0].path, index: '0' }
+          ]
+        }
+      } else if (path !== list[0].path) {
+        // 避免刷新页面之后又点击菜单栏进入该界面，还保留上次点击状态
+        window.currentChartTabList = null
+      }
+    }
   }
 }
 </script>
