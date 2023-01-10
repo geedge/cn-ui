@@ -17,10 +17,11 @@
               <div :class="item.class"></div>
               <div class="mpackets-name">{{$t(item.name)}}</div>
             </div>
-            <div class="line-value-unit">
+            <div class="line-value-unit" :test-id="`tabContent${index}`">
               <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
               <span class="line-value-unit-number2">
-                <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span><span v-if="item.unitType">{{item.unitType}}</span>
+                <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span>
+                <span v-if="item.unitType">{{item.unitType}}</span>
               </span>
             </div>
           </div>
@@ -46,7 +47,7 @@
     </div>
     <div style="height: calc(100% - 74px); position: relative">
       <chart-no-data v-if="isNoData && !showError"></chart-no-data>
-      <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" id="overviewLineChart"></div>
+      <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" ref="overviewLineChart"></div>
 <!--      todo 后续改动，此处为框选返回-->
 <!--      <div id="brushBtn" style="position: absolute;left: 0;top: 0;" v-show="mouseDownFlag">-->
 <!--        <el-button @click.stop="backBrushHistory">返回</el-button>-->
@@ -63,7 +64,7 @@ import { unitTypes, chartColor3, chartColor4 } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import _ from 'lodash'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -205,7 +206,8 @@ export default {
       }
       this.toggleLoading(true)
 
-      get(api.netWorkOverview.totalTrafficAnalysis, params).then((res) => {
+      axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
+        const res = response.data
         this.errorMsg = res.message
 
         if (res.code === 200) {
@@ -260,163 +262,163 @@ export default {
       }
     },
     echartsInit (echartsData, show) {
-      if (this.lineTab) {
-        this.handleActiveBar()
-        echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
-      } else {
-        echartsData = echartsData.filter(t => t.show === true)
-      }
-      const _this = this
-      // !this.myChart && (this.myChart = echarts.init(dom))
-      // 此处为验证是否因dom未销毁，导致图表出错，后续可能会改
-      let dom = null
-      dom = document.getElementById('overviewLineChart')
-
-      this.chartOption = stackedLineChartOption
-      const chartOption = this.chartOption.series[0]
-      this.chartOption.series = echartsData.map((t, i) => {
-        return {
-          ...chartOption,
-          name: t.name,
-          lineStyle: {
-            color: chartColor3[t.positioning],
-            width: 1
-          },
-          stack: t.name !== 'network.total' ? 'network.total' : '',
-          symbolSize: function (value) {
-            return _this.symbolSizeSortChange(i, value[0])
-          },
-          emphasis: {
-            itemStyle: {
-              borderColor: chartColor4[t.positioning],
-              borderWidth: 2,
-              shadowColor: chartColor4[t.positioning],
-              shadowBlur: this.sizes[t.positioning] + 2
-            }
-          },
-          areaStyle: {
-            opacity: 0.1,
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
-                offset: 0,
-                color: chartColor3[t.positioning]
-              },
-              {
-                offset: 1,
-                color: chartColor3[t.positioning]
-              }
-            ])
-          },
-          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
-          markLine: {
-            silent: true,
-            lineStyle: {
-              color: '#B4B1A8'
-            },
-            symbol: 'none',
-            label: {
-              formatter (params) {
-                const arr = unitConvert(params.value, unitTypes.number).join('')
-                return _this.lineRefer + '(' + arr + echartsData[0].unitType + ')'
-              },
-              position: 'insideStartTop',
-              color: '#717171',
-              fontFamily: 'NotoSansSChineseRegular'
-            }
-          }
+      // echarts内容在单元测试时不执行
+      if (!this.isUnitTesting) {
+        if (this.lineTab) {
+          this.handleActiveBar()
+          echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
+        } else {
+          echartsData = echartsData.filter(t => t.show === true)
         }
-      })
-      if (!show) {
-        this.chartOption.series.forEach((t) => {
-          t.markLine.label.show = false
-          t.markLine = []
-        })
-      }
-      if (this.lineRefer === 'Average' && show) {
-        this.chartOption.series.forEach((t, i) => {
-          t.markLine.label.show = true
-          t.markLine.data = [
-            {
-              yAxis: echartsData[i].analysis.avg
-            }
-          ]
-        })
-      } else if (this.lineRefer === '95th Percentile' && show) {
-        this.chartOption.series.forEach((t, i) => {
-          t.markLine.label.show = true
-          t.markLine.data = [
-            { yAxis: echartsData[i].analysis.p95 }
-          ]
-        })
-      } else if (this.lineRefer === 'Maximum' && show) {
-        this.chartOption.series.forEach((t, i) => {
-          t.markLine.label.show = true
-          t.markLine.data = [
-            { yAxis: echartsData[i].analysis.max }
-          ]
-        })
-      }
-      this.chartOption.tooltip.formatter = (params) => {
-        params.forEach(t => {
-          t.seriesName = this.$t(t.seriesName)
-          this.mpackets.forEach(e => {
-            if (this.$t(e.name) === t.seriesName) {
-              t.borderColor = chartColor3[e.positioning]
-            }
-          })
-        })
-        return stackedLineTooltipFormatter(params)
-      }
-      this.showMarkLine = true
-      this.$nextTick(() => {
-        this.myChart = echarts.init(dom)
-        this.myChart.setOption(this.chartOption)
-        // 设置参见官网：https://echarts.apache.org/zh/api.html#action.brush.brush
-        this.myChart.dispatchAction({
-          // 刷选模式的开关。使用此 action 可将当前鼠标变为可刷选状态。事实上，点击 toolbox 中的 brush 按钮时，就是通过这个 action，将当前普通鼠标变为刷选器的。
-          type: 'takeGlobalCursor',
-          // 如果想变为“可刷选状态”，必须设置。不设置则会关闭“可刷选状态”。
-          key: 'brush',
-          brushOption: {
-            // 参见 brush 组件的 brushType。如果设置为 false 则关闭“可刷选状态”。
-            brushType: 'lineX',
-            xAxisIndex: 'all',
-            // 单击清除选框
-            brushMode: 'single',
-            // 选择完毕再返回所选数据
-            throttleType: 'debounce'
-          }
-        })
-
-        const self = this
-
-        this.myChart.on('brushEnd', function (params) {
-          self.myChart.dispatchAction({
-            type: 'brush',
-            areas: [] // 删除选框
-          })
-          if (!self.mouseDownFlag) {
-            // 避免点击空白区域报错
-            if (params.areas !== undefined && params.areas.length > 0) {
-              self.brushHistory.unshift({
-                startTime: _.cloneDeep(self.timeFilter.startTime) * 1000,
-                endTime: _.cloneDeep(self.timeFilter.endTime) * 1000
-              })
-
-              const rangeObj = {
-                startTime: Math.ceil(params.areas[0].coordRange[0]),
-                endTime: Math.ceil(params.areas[0].coordRange[1])
+        const _this = this
+        // !this.myChart && (this.myChart = echarts.init(dom))
+        // 此处为验证是否因dom未销毁，导致图表出错，后续可能会改
+        this.chartOption = stackedLineChartOption
+        const chartOption = this.chartOption.series[0]
+        this.chartOption.series = echartsData.map((t, i) => {
+          return {
+            ...chartOption,
+            name: t.name,
+            lineStyle: {
+              color: chartColor3[t.positioning],
+              width: 1
+            },
+            stack: t.name !== 'network.total' ? 'network.total' : '',
+            symbolSize: function (value) {
+              return _this.symbolSizeSortChange(i, value[0])
+            },
+            emphasis: {
+              itemStyle: {
+                borderColor: chartColor4[t.positioning],
+                borderWidth: 2,
+                shadowColor: chartColor4[t.positioning],
+                shadowBlur: this.sizes[t.positioning] + 2
               }
-
-              // todo 目前暂定框选最小范围为5分钟，后续可能会变动
-              if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
-                rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
+            },
+            areaStyle: {
+              opacity: 0.1,
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: chartColor3[t.positioning]
+                },
+                {
+                  offset: 1,
+                  color: chartColor3[t.positioning]
+                }
+              ])
+            },
+            data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
+            markLine: {
+              silent: true,
+              lineStyle: {
+                color: '#B4B1A8'
+              },
+              symbol: 'none',
+              label: {
+                formatter (params) {
+                  const arr = unitConvert(params.value, unitTypes.number).join('')
+                  return _this.lineRefer + '(' + arr + echartsData[0].unitType + ')'
+                },
+                position: 'insideStartTop',
+                color: '#717171',
+                fontFamily: 'NotoSansSChineseRegular'
               }
-              _this.$store.commit('setRangeEchartsData', rangeObj)
             }
           }
         })
-      })
+        if (!show) {
+          this.chartOption.series.forEach((t) => {
+            t.markLine.label.show = false
+            t.markLine = []
+          })
+        }
+        if (this.lineRefer === 'Average' && show) {
+          this.chartOption.series.forEach((t, i) => {
+            t.markLine.label.show = true
+            t.markLine.data = [
+              {
+                yAxis: echartsData[i].analysis.avg
+              }
+            ]
+          })
+        } else if (this.lineRefer === '95th Percentile' && show) {
+          this.chartOption.series.forEach((t, i) => {
+            t.markLine.label.show = true
+            t.markLine.data = [
+              { yAxis: echartsData[i].analysis.p95 }
+            ]
+          })
+        } else if (this.lineRefer === 'Maximum' && show) {
+          this.chartOption.series.forEach((t, i) => {
+            t.markLine.label.show = true
+            t.markLine.data = [
+              { yAxis: echartsData[i].analysis.max }
+            ]
+          })
+        }
+        this.chartOption.tooltip.formatter = (params) => {
+          params.forEach(t => {
+            t.seriesName = this.$t(t.seriesName)
+            this.mpackets.forEach(e => {
+              if (this.$t(e.name) === t.seriesName) {
+                t.borderColor = chartColor3[e.positioning]
+              }
+            })
+          })
+          return stackedLineTooltipFormatter(params)
+        }
+        this.showMarkLine = true
+        this.$nextTick(() => {
+          this.myChart = echarts.init(this.$refs.overviewLineChart)
+          this.myChart.setOption(this.chartOption)
+          // 设置参见官网：https://echarts.apache.org/zh/api.html#action.brush.brush
+          this.myChart.dispatchAction({
+            // 刷选模式的开关。使用此 action 可将当前鼠标变为可刷选状态。事实上，点击 toolbox 中的 brush 按钮时，就是通过这个 action，将当前普通鼠标变为刷选器的。
+            type: 'takeGlobalCursor',
+            // 如果想变为“可刷选状态”，必须设置。不设置则会关闭“可刷选状态”。
+            key: 'brush',
+            brushOption: {
+              // 参见 brush 组件的 brushType。如果设置为 false 则关闭“可刷选状态”。
+              brushType: 'lineX',
+              xAxisIndex: 'all',
+              // 单击清除选框
+              brushMode: 'single',
+              // 选择完毕再返回所选数据
+              throttleType: 'debounce'
+            }
+          })
+
+          const self = this
+
+          this.myChart.on('brushEnd', function (params) {
+            self.myChart.dispatchAction({
+              type: 'brush',
+              areas: [] // 删除选框
+            })
+            if (!self.mouseDownFlag) {
+              // 避免点击空白区域报错
+              if (params.areas !== undefined && params.areas.length > 0) {
+                self.brushHistory.unshift({
+                  startTime: _.cloneDeep(self.timeFilter.startTime) * 1000,
+                  endTime: _.cloneDeep(self.timeFilter.endTime) * 1000
+                })
+
+                const rangeObj = {
+                  startTime: Math.ceil(params.areas[0].coordRange[0]),
+                  endTime: Math.ceil(params.areas[0].coordRange[1])
+                }
+
+                // todo 目前暂定框选最小范围为5分钟，后续可能会变动
+                if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
+                  rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
+                }
+                _this.$store.commit('setRangeEchartsData', rangeObj)
+              }
+            }
+          })
+        })
+      }
     },
     activeChange (item, index) {
       if (this.isNoData) return
@@ -489,32 +491,34 @@ export default {
     referenceSelectChange (val) {
       this.lineRefer = val
       let echartsData
-      const chartOption = this.myChart.getOption()
       if (this.lineTab) {
         echartsData = this.mpackets.filter(t => t.show === true && t.invertTab === false)
       } else {
         echartsData = this.mpackets.filter(t => t.show === true)
       }
-      if (this.lineRefer === 'Average' && this.showMarkLine) {
-        chartOption.series.forEach((t, i) => {
-          if (t.name === echartsData[0].name) {
-            t.markLine.data = [{ yAxis: echartsData[0].analysis.avg }]
-          }
-        })
-      } else if (this.lineRefer === '95th Percentile' && this.showMarkLine) {
-        chartOption.series.forEach((t, i) => {
-          if (t.name === echartsData[0].name) {
-            t.markLine.data = [{ yAxis: echartsData[0].analysis.p95 }]
-          }
-        })
-      } else if (this.lineRefer === 'Maximum' && this.showMarkLine) {
-        chartOption.series.forEach((t, i) => {
-          if (t.name === echartsData[0].name) {
-            t.markLine.data = [{ yAxis: echartsData[0].analysis.max }]
-          }
-        })
+      if (!this.isUnitTesting) {
+        const chartOption = this.myChart.getOption()
+        if (this.lineRefer === 'Average' && this.showMarkLine) {
+          chartOption.series.forEach((t, i) => {
+            if (t.name === echartsData[0].name) {
+              t.markLine.data = [{ yAxis: echartsData[0].analysis.avg }]
+            }
+          })
+        } else if (this.lineRefer === '95th Percentile' && this.showMarkLine) {
+          chartOption.series.forEach((t, i) => {
+            if (t.name === echartsData[0].name) {
+              t.markLine.data = [{ yAxis: echartsData[0].analysis.p95 }]
+            }
+          })
+        } else if (this.lineRefer === 'Maximum' && this.showMarkLine) {
+          chartOption.series.forEach((t, i) => {
+            if (t.name === echartsData[0].name) {
+              t.markLine.data = [{ yAxis: echartsData[0].analysis.max }]
+            }
+          })
+        }
+        this.myChart.setOption(chartOption)
       }
-      this.myChart.setOption(chartOption)
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []

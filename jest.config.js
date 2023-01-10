@@ -2,6 +2,8 @@ module.exports = {
   roots: [
     '<rootDir>/test'
   ],
+  verbose: true,
+  setupFilesAfterEnv: ['<rootDir>/test/init.js'],
   testMatch: [
     '<rootDir>/test/**/__tests__/**/*.{vue,js,jsx,ts,tsx}',
     '<rootDir>/test/**/*.{spec,test}.{vue,js,jsx,ts,tsx}'
