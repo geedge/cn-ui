@@ -102,14 +102,11 @@ export default {
         if (condition.length > 1) {
           if (n === 0) {
             params.q = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
+            url = api.linkMonitor.drilldownQuadrupleIngressAnalysis // 入口
           } else {
             params.q = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
+            url = api.linkMonitor.drilldownQquadrupleEgressAnalysis // 出口
           }
-        }
-        if (n === 0) {
-          url = api.linkMonitor.drilldownQuadrupleIngressAnalysis // 入口
-        } else {
-          url = api.linkMonitor.drilldownQquadrupleEgressAnalysis // 出口
         }
       } else {
         if (n === 0) {
