@@ -24,13 +24,13 @@ describe('NetworkOverviewLine.vue测试', () => {
     const textNode0 = await wrapper.get('[test-id="tabContent0"]')
     const textNode1 = await wrapper.get('[test-id="tabContent1"]')
     const textNode2 = await wrapper.get('[test-id="tabContent2"]')
-    // 延迟1秒等待渲染。使用wrapper.vm.$nextTick有时不管用
+    // 延迟等待渲染。使用wrapper.vm.$nextTick有时不管用（例如组件中使用了setTimeout的时候）
     await new Promise(resolve => setTimeout(() => {
       expect(textNode0.text()).toEqual('112.04Mbps')
       expect(textNode1.text()).toEqual('18.59Mbps')
       expect(textNode2.text()).toEqual('87.56Mbps')
       resolve()
-    }, 1000))
+    }, 200))
   })
   test('Metric=Packets/s', async () => {
     // 模拟axios返回数据
@@ -55,6 +55,6 @@ describe('NetworkOverviewLine.vue测试', () => {
       expect(textNode1.text()).toEqual('4.24Kpackets/s')
       expect(textNode2.text()).toEqual('9.17Kpackets/s')
       resolve()
-    }, 1000))
+    }, 200))
   })
 })
