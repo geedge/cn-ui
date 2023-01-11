@@ -699,7 +699,7 @@ export default {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
 
-    let myChart = echarts.getInstanceByDom(document.getElementById('overviewLineChart'))
+    let myChart = echarts.getInstanceByDom(this.$refs.overviewLineChart)
     if (myChart) {
       echarts.dispose(myChart)
     }
