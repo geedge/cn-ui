@@ -324,8 +324,8 @@ export default {
     getMillisecond,
     query () {
       Promise.all([this.queryBasic(), this.queryEvent()]).then((responses) => {
-        responses[0].malwareTechniques = responses[0].malwareTechniques.length > 2 ? responses[0].malwareTechniques.replace('[', '').split(',', 5).join(', ') : ''
-        responses[0].malwareGroups = responses[0].malwareGroups.length > 2 ? responses[0].malwareGroups.replace('[', '').split(',', 5).join(', ') : ''
+        responses[0].malwareTechniques = responses[0].malwareTechniques.length > 2 ? responses[0].malwareTechniques.replace('[', '').replace(']', '').split(',', 5).join(', ') : ''
+        responses[0].malwareGroups = responses[0].malwareGroups.length > 2 ? responses[0].malwareGroups.replace('[', '').replace(']', '').split(',', 5).join(', ') : ''
         responses[0].malwarePlatforms = responses[0].malwarePlatforms.length > 1 ? responses[0].malwarePlatforms : ''
         responses[0].malwareDescription = responses[0].malwareDescription.length > 1 ? responses[0].malwareDescription : ''
         responses[0] && (this.basicInfo = responses[0])
