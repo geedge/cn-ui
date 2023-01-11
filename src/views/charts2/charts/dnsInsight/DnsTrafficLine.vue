@@ -567,7 +567,9 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
-    this.myChart = null
+    if (this.myChart) {
+      echarts.dispose(this.myChart)
+    }
     this.chartOption = null
     this.unitConvert = null
   }

@@ -147,6 +147,9 @@ export default {
   },
   beforeUnmount () {
     window.removeEventListener('resize', this.resize)
+    if (this.myChart) {
+      echarts.dispose(this.myChart)
+    }
   }
 }
 </script>

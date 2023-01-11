@@ -193,6 +193,14 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
+    const dom = document.getElementById('chart1')
+    const dom2 = document.getElementById('chart2')
+    if (dom) {
+      echarts.dispose(dom)
+    }
+    if (dom2) {
+      echarts.dispose(dom2)
+    }
     this.myChart = null
     this.myChart2 = null
   }

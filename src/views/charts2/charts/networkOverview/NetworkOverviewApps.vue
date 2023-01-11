@@ -734,7 +734,9 @@ export default {
     window.removeEventListener('resize', this.resize)
     clearTimeout(this.timerScroll)
     clearTimeout(this.timerSearch)
-    this.myChart = null
+    if (this.myChart) {
+      echarts.dispose(this.myChart)
+    }
     this.unitConvert = null
   }
 }

@@ -703,7 +703,9 @@ export default {
     if (myChart) {
       echarts.dispose(myChart)
     }
-    this.myChart = null
+    if (this.myChart) {
+      echarts.dispose(this.myChart)
+    }
     // 检测时发现该方法占用较大内存，且未被释放
     this.unitConvert = null
     myChart = null
