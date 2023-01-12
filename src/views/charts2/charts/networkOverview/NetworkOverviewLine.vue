@@ -569,25 +569,18 @@ export default {
       return this.sizes[sortIndex]
     },
     initData (data, val, active, show, n) {
-      let bytes = []
-      let packets = []
-      let sessions = []
+      let lineData = []
       if (data !== undefined && data.length > 0) {
         data.forEach((item) => {
-          if (item.type.indexOf('bytes') > -1) {
-            bytes = Object.keys(item).map(t => {
-              return {
-                ...item[t]
-              }
-            })
-          } else if (item.type.indexOf('packets') > -1) {
-            packets = Object.keys(item).map(t => {
-              return {
-                ...item[t]
-              }
-            })
-          } else if (item.type.indexOf('sessions') > -1) {
-            sessions = Object.keys(item).map(t => {
+          if (item.type === 'bytes') {
+            item.type = 'Bits/s'
+          } else if (item.type === 'packets') {
+            item.type = 'Packets/s'
+          } else if (item.type === 'sessions') {
+            item.type = 'Sessions/s'
+          }
+          if (item.type === val) {
+            lineData = Object.keys(item).map(t => {
               return {
                 ...item[t]
               }
@@ -595,16 +588,10 @@ export default {
           }
         })
       }
-      bytes.splice(0, 1)
-      packets.splice(0, 1)
-      sessions.splice(0, 1)
-      if (val === 'Bits/s') {
-        this.legendInit(bytes, active, show, 'bps', n)
-      } else if (val === 'Packets/s') {
-        this.legendInit(packets, active, show, 'packets/s', n)
-      } else if (val === 'Sessions/s') {
+      lineData.splice(0, 1)
+      if (val === 'Sessions/s') {
         const mpackets = _.cloneDeep(this.mpackets)
-        sessions.forEach((d, i) => {
+        lineData.forEach((d, i) => {
           mpackets[i].data = d.values
           mpackets[i].analysis = d.analysis
         })
@@ -621,6 +608,9 @@ export default {
         this.$nextTick(() => {
           this.echartsInit(this.mpackets, true)
         })
+      } else {
+        const unit = val === 'Bits/s' ? 'bps' : 'packets/s'
+        this.legendInit(lineData, active, show, unit, n)
       }
     },
     legendInit (data, active, show, type, n) {

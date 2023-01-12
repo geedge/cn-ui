@@ -473,18 +473,16 @@ export default {
       return this.sizes[sortIndex]
     },
     initData (data, val, active, show) {
-      let bytes = []
-      let queries = []
+      let lineData = []
       if (data !== undefined && data.length > 0) {
         data.forEach((item) => {
-          if (item.type.indexOf('bytes') > -1) {
-            bytes = Object.keys(item).map(t => {
-              return {
-                ...item[t]
-              }
-            })
-          } else if (item.type.indexOf('queries') > -1) {
-            queries = Object.keys(item).map(t => {
+          if (item.type === 'bytes') {
+            item.type = 'Bits/s'
+          } else if (item.type === 'queries') {
+            item.type = 'Queries/s'
+          }
+          if (item.type === val) {
+            lineData = Object.keys(item).map(t => {
               return {
                 ...item[t]
               }
@@ -492,13 +490,10 @@ export default {
           }
         })
       }
-      bytes.splice(0, 1)
-      queries.splice(0, 1)
-      if (val === 'Bits/s') {
-        this.legendInit(bytes, active, show, 'bps')
-      } else if (val === 'Queries/s') {
-        const mpackets = _.cloneDeep(this.mpackets)
-        queries.forEach((d, i) => {
+      lineData.splice(0, 1)
+      const mpackets = _.cloneDeep(this.mpackets)
+      if (val === 'Queries/s') {
+        lineData.forEach((d, i) => {
           mpackets[i].data = d.values
           mpackets[i].analysis = d.analysis
         })
@@ -513,16 +508,18 @@ export default {
         })
         this.mpackets = mpackets
         this.echartsInit(this.mpackets, true)
+      } else {
+        const unit = 'bps'
+        this.legendInit(lineData, active, show, unit, mpackets)
       }
     },
-    legendInit (data, active, show, type) {
-      const mpackets = _.cloneDeep(this.mpackets)
+    legendInit (data, active, show, type, dnsData) {
       data.forEach((d, i) => {
-        mpackets[i].data = d.values
-        mpackets[i].analysis = d.analysis
+        dnsData[i].data = d.values
+        dnsData[i].analysis = d.analysis
       })
       let num = 0
-      mpackets.forEach(e => {
+      dnsData.forEach(e => {
         e.unitType = type
         if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
           e.show = false
@@ -541,11 +538,11 @@ export default {
           }
         }
       })
-      this.mpackets = mpackets
+      this.mpackets = dnsData
       if (num === 3) {
-        mpackets[0].invertTab = false
+        dnsData[0].invertTab = false
         this.lineTab = 'total'
-        this.legendSelectChange(mpackets[0], 0)
+        this.legendSelectChange(dnsData[0], 0)
         this.echartsInit(this.mpackets)
       } else {
         this.echartsInit(this.mpackets, show)

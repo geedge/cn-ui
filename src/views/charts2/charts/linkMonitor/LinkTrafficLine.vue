@@ -373,18 +373,16 @@ export default {
       return this.sizes[sortIndex]
     },
     initData (data, val, active, show) {
-      let bytes = []
-      let packets = []
+      let lineData = []
       if (data !== undefined && data.length > 0) {
         data.forEach((item) => {
-          if (item.type.indexOf('bytes') > -1) {
-            bytes = Object.keys(item).map(t => {
-              return {
-                ...item[t]
-              }
-            })
-          } else if (item.type.indexOf('packets') > -1) {
-            packets = Object.keys(item).map(t => {
+          if (item.type === 'bytes') {
+            item.type = 'Bits/s'
+          } else if (item.type === 'packets') {
+            item.type = 'Packets/s'
+          }
+          if (item.type === val) {
+            lineData = Object.keys(item).map(t => {
               return {
                 ...item[t]
               }
@@ -392,22 +390,18 @@ export default {
           }
         })
       }
-      bytes.splice(0, 1)
-      packets.splice(0, 1)
-      if (val === 'Bits/s') {
-        this.legendInit(bytes, active, show, 'bps')
-      } else if (val === 'Packets/s') {
-        this.legendInit(packets, active, show, 'packets/s')
-      }
-    },
-    legendInit (data, active, show, type) {
+      lineData.splice(0, 1)
       const mpackets = _.cloneDeep(this.mpackets)
+      const unit = val === 'Bits/s' ? 'bps' : 'packets/s'
+      this.legendInit(lineData, active, show, unit, mpackets)
+    },
+    legendInit (data, active, show, type, linkData) {
       data.forEach((d, i) => {
-        mpackets[i].data = d.values
-        mpackets[i].analysis = d.analysis
+        linkData[i].data = d.values
+        linkData[i].analysis = d.analysis
       })
       let num = 0
-      mpackets.forEach(e => {
+      linkData.forEach(e => {
         e.unitType = type
         if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
           e.show = false
@@ -426,11 +420,11 @@ export default {
           }
         }
       })
-      this.mpackets = mpackets
+      this.mpackets = linkData
       if (num === 3) {
-        mpackets[0].invertTab = false
+        linkData[0].invertTab = false
         this.lineTab = 'total'
-        this.legendSelectChange(mpackets[0], 0)
+        this.legendSelectChange(linkData[0], 0)
         this.$nextTick(() => {
           this.echartsInit(this.mpackets)
         })
