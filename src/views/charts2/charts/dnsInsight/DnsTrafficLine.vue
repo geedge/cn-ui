@@ -79,7 +79,7 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'DnsTrafficLine',
   components: {
@@ -476,11 +476,7 @@ export default {
       let lineData = []
       if (data !== undefined && data.length > 0) {
         data.forEach((item) => {
-          if (item.type === 'bytes') {
-            item.type = 'Bits/s'
-          } else if (item.type === 'queries') {
-            item.type = 'Queries/s'
-          }
+          item.type = getLineType(item.type)
           if (item.type === val) {
             lineData = Object.keys(item).map(t => {
               return {

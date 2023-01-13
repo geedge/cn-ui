@@ -1105,3 +1105,45 @@ export function getNameByEventType (type) {
     }
   }
 }
+/**
+ 折线图通过事件类型 type 转换对应名称
+ */
+export function getLineType (type) {
+  switch (type) {
+    case 'bytes': {
+      return 'Bits/s'
+    }
+    case 'packets': {
+      return 'Packets/s'
+    }
+    case 'sessions': {
+      return 'Sessions/s'
+    }
+    case 'queries': {
+      return 'Queries/s'
+    }
+    default: return type
+  }
+}
+/**
+ npm折线图通过事件类型 type 转换对应 index 以及 unit
+ */
+export function getLineIndexUnit (type, show) {
+  switch (type) {
+    case 'establishLatencyMs': {
+      return show ? '(ms)' : 0
+    }
+    case 'tcpLostlenPercent': {
+      return show ? '(%)' : 3
+    }
+    case 'pktRetransPercent': {
+      return show ? '(%)' : 4
+    }
+    case 'httpResponseLatency': {
+      return show ? '(ms)' : 1
+    }
+    case 'sslConLatency': {
+      return show ? '(ms)' : 2
+    }
+  }
+}

@@ -70,7 +70,7 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
 export default {
   name: 'NetworkOverviewLine',
@@ -205,15 +205,12 @@ export default {
         }
       }
       this.toggleLoading(true)
-
       axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
         const res = response.data
         this.errorMsg = res.message
-
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
           this.showError = false
-
           if (this.isNoData) {
             this.lineTab = ''
             this.mpackets = [
@@ -572,13 +569,7 @@ export default {
       let lineData = []
       if (data !== undefined && data.length > 0) {
         data.forEach((item) => {
-          if (item.type === 'bytes') {
-            item.type = 'Bits/s'
-          } else if (item.type === 'packets') {
-            item.type = 'Packets/s'
-          } else if (item.type === 'sessions') {
-            item.type = 'Sessions/s'
-          }
+          item.type = getLineType(item.type)
           if (item.type === val) {
             lineData = Object.keys(item).map(t => {
               return {

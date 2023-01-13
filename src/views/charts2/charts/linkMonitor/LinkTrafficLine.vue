@@ -67,7 +67,7 @@ import { useRoute } from 'vue-router'
 import { ref, shallowRef } from 'vue'
 import unitConvert from '@/utils/unit-convert'
 import { chartColor3, chartColor4, unitTypes } from '@/utils/constants'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
@@ -376,11 +376,7 @@ export default {
       let lineData = []
       if (data !== undefined && data.length > 0) {
         data.forEach((item) => {
-          if (item.type === 'bytes') {
-            item.type = 'Bits/s'
-          } else if (item.type === 'packets') {
-            item.type = 'Packets/s'
-          }
+          item.type = getLineType(item.type)
           if (item.type === val) {
             lineData = Object.keys(item).map(t => {
               return {
