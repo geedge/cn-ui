@@ -45,6 +45,7 @@
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'ChartTabs',
@@ -69,8 +70,9 @@ export default {
   setup (props) {
     const tabsData = ref([])
     const router = useRouter()
+    const store = useStore()
     const routerPath = router.currentRoute.value.path
-    const tabList = window.currentChartTabList
+    const tabList = store.getters.getChartTabList
     let currentTab = '0'
 
     if (props.data) {
@@ -94,7 +96,7 @@ export default {
           return item.path === routerPath
         })
         currentTab = JSON.stringify(currentTab)
-        window.currentChartTabList = [{ path: routerPath, index: currentTab }]
+        store.dispatch('dispatchChartTabList', [{ path: routerPath, index: currentTab }])
       } else {
         // 此处为切换界面，如果window里保存的路径和tabsData里的路径一致，选择window数据并使用
         // 两个不一致的话，则默认选择tabsData里的第一条
@@ -111,12 +113,12 @@ export default {
           // 场景：从遮罩面板进入界面时，重置状态，默认选中第一个tab
           if (routerPath === tabList[0].path) {
             currentTab = tabList[0].index
-            window.currentChartTabList.splice(1, 1)
+            store.dispatch('dispatchChartTabList', [{ path: tabsData.value[0].path, index: '0' }])
           }
         } else if (obj0) {
           currentTab = tabList[0].index
         } else {
-          window.currentChartTabList = [{ path: tabsData.value[0].path, index: '0' }]
+          store.dispatch('dispatchChartTabList', [{ path: tabsData.value[0].path, index: '0' }])
           currentTab = '0'
         }
       }
@@ -161,9 +163,10 @@ export default {
           }
         }
       })
+      const tabList = this.$store.getters.getChartTabList
 
-      if (window.currentChartTabList && this.router !== 'noRouter') {
-        window.currentChartTabList.forEach((item) => {
+      if (tabList && this.router !== 'noRouter') {
+        tabList.forEach((item) => {
           this.$nextTick(() => {
             this.handleActiveBar(parseFloat(item.index))
           })
@@ -172,7 +175,7 @@ export default {
         this.$nextTick(() => {
           this.handleActiveBar(this.currentTab)
         })
-        window.currentChartTabList = null
+        this.$store.dispatch('dispatchChartTabList', null)
       }
     },
     handleActiveBar (index) {
@@ -191,7 +194,7 @@ export default {
           } else {
             // 数组长度为1，即代表刚刷新界面，获取active的dom添加样式，避免原模式错位问题
             // 可添加css样式，也可添加class类名，两个操作选一即可
-            if (window.currentChartTabList.length === 1) {
+            if (this.$store.getters.getChartTabList.length === 1) {
               // 此处操作是因为初始化时给active加border，导致tab下移，故需要将整体往上移动对应高度
               const topDom = document.getElementsByClassName('el-tabs__header is-top')
               topDom[0].style.cssText += 'top: -3px'
@@ -206,6 +209,7 @@ export default {
     },
     handleClick (item) {
       this.$emit('click', item)
+      const tabList = this.$store.getters.getChartTabList
 
       if (this.router === 'noRouter') {
         const { query } = this.$route
@@ -215,14 +219,15 @@ export default {
         })
         overwriteUrl(newUrl)
       } else {
-        window.currentChartTabList.push({
+        tabList.push({
           path: this.tabsData[item.index].path,
           index: item.index
         })
 
-        if (window.currentChartTabList.length > 2) {
-          window.currentChartTabList.splice(0, 1)
+        if (tabList.length > 2) {
+          tabList.splice(0, 1)
         }
+        this.$store.dispatch('dispatchChartTabList', tabList)
 
         this.$router.push({
           path: this.tabsData[item.index].path,
@@ -236,16 +241,16 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     const path = this.$router.currentRoute.value.path
-    const list = window.currentChartTabList
+    const list = this.$store.getters.getChartTabList
     if (list && this.router !== 'noRouter') {
       if (list[1]) {
         // 去其他界面，清除状态
         if (path !== list[0].path && path !== list[1].path) {
-          window.currentChartTabList = null
+          this.$store.dispatch('dispatchChartTabList', null)
         }
       } else if (path !== list[0].path) {
         // 避免刷新页面之后又点击菜单栏进入该界面，还保留上次点击状态
-        window.currentChartTabList = null
+        this.$store.dispatch('dispatchChartTabList', null)
       }
     }
   }

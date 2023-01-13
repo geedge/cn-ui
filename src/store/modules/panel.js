@@ -59,7 +59,8 @@ const panel = {
     rangeEchartsData: {}, // 框选echarts图表
     routerHistoryList: [], // 路由跳转记录列表
     dnsQtypeMapData: [],
-    dnsRcodeMapData: []
+    dnsRcodeMapData: [],
+    chartTabList: null // chartTabs组件的tab状态点击列表，初始化为null方便原有逻辑计算
   },
   mutations: {
     setShowRightBox (state, flag) {
@@ -151,6 +152,9 @@ const panel = {
     },
     setRouterHistoryList (state, list) {
       state.routerHistoryList = list
+    },
+    setChartTabList (state, list) {
+      state.chartTabList = list
     }
   },
   getters: {
@@ -225,6 +229,9 @@ const panel = {
     },
     getRouterHistoryList (state) {
       return state.routerHistoryList
+    },
+    getChartTabList (state) {
+      return state.chartTabList
     }
   },
   actions: {
@@ -253,6 +260,9 @@ const panel = {
     },
     clearPanel (store) {
       store.commit('cleanPanel')
+    },
+    dispatchChartTabList (store, list) {
+      store.commit('setChartTabList', list)
     }
   }
 }
