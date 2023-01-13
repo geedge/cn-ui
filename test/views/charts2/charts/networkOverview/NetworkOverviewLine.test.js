@@ -8,6 +8,7 @@ const mockGet = {
 
 describe('NetworkOverviewLine.vue测试', () => {
   test('Metric=Bits/s', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
     // 模拟axios返回数据
     axios.get.mockResolvedValue(mockGet)
     // 加载vue组件，获得实例
@@ -31,8 +32,14 @@ describe('NetworkOverviewLine.vue测试', () => {
       expect(textNode2.text()).toEqual('87.56Mbps')
       resolve()
     }, 200))
+
+    // 点击tab后，是否切换高亮状态
+    const textNode3 = await wrapper.get('[test-id="tab2"]')
+    await textNode3.trigger('click')
+    expect(textNode3.classes()).toContain('is-active')
   })
   test('Metric=Packets/s', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
     // 模拟axios返回数据
     axios.get.mockResolvedValue(mockGet)
     // 加载vue组件，获得实例

@@ -15,6 +15,9 @@ const mockCount = { data: 999 }
 
 describe('单元测试demo', () => {
   test('Vue组件--点击按钮后count的值+1', async () => {
+    // 若组件中使用了vue-router，需要细化模拟相关内容
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
     // 加载vue组件，获得实例
     const wrapper = mount(Test)
     // 取到文本和按钮的dom
@@ -33,12 +36,39 @@ describe('单元测试demo', () => {
 
     /* 更多断言类型：https://jestjs.io/docs/expect */
   })
+  test('Vue组件--获取路由中的参数', async () => {
+    // query中带上lineTab参数
+    require('vue-router').useRoute.mockReturnValue({ query: { lineTab: 'total' } })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
+    // 加载vue组件，获得实例
+    const wrapper = mount(Test)
+    // 取到文本和按钮的dom
+    const textNode = await wrapper.get('[test-id="tab"]')
+    expect(textNode.text()).toBe('total')
+  })
+  test('Vue组件--模拟获取localstorage/sessionStorage的内容', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
+    // 模拟getItem
+    jest.spyOn(localStorage.__proto__, 'getItem').mockImplementation(key => key)
+    // 加载vue组件，获得实例
+    const wrapper = mount(Test)
+    expect(wrapper.vm.localstorageValue).toBe('key')
+  })
   test('Vue组件--直接获取vue实例中的data和method', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
     // 模拟axios返回数据
     // 测试内容只有一个axios请求的时候
     axios.get.mockResolvedValue(mockCount)
     // 加载vue组件，获得实例
-    const wrapper = mount(Test)
+    const wrapper = mount(Test, {
+      global: {
+        mocks: {
+          $t: key => key
+        }
+      }
+    })
     const textNode = await wrapper.get('[test-id="count"]')
     // 通过wrapper.vm.xxx直接执行click方法、获取data的数据
     expect(wrapper.vm.count).toBe(0)
@@ -50,6 +80,8 @@ describe('单元测试demo', () => {
     })
   })
   test('Vue组件--多个axios请求', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
     // 模拟axios返回数据
     // 测试内容有多个url不同的axios请求的话，需分开写
     axios.get.mockImplementation(url => {
@@ -69,10 +101,10 @@ describe('单元测试demo', () => {
     await wrapper.vm.$nextTick(() => {
       expect(textNode.text()).toBe('2')
       expect(textNode2.text()).toBe('title2')
+      // 匹配整个对象
       expect(wrapper.vm.obj).toEqual({ id: 2, title: 'title2' })
     })
   })
-
   test('js方法--getNameByEventType', async () => {
     expect(getNameByEventType('http error')).toBe('http error ratio')
   })

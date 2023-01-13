@@ -3,12 +3,14 @@
   <span test-id="id">{{obj.id}}</span>
   <span test-id="title">{{obj.title}}</span>
   <button test-id="button" @click="click">click</button>
+  <span test-id="tab">{{lineTab}}</span>
 </template>
 
 <script>
 /* vue-jest的测试示例 */
-import VueRouter from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import { ref } from 'vue'
 export default {
   name: 'Test',
   data () {
@@ -35,10 +37,16 @@ export default {
       })
     }
   },
-  created () {
-    const { currentRoute } = VueRouter.useRouter()
+  setup () {
+    const { query } = useRoute()
+    const { currentRoute } = useRouter()
+    const localstorageValue = localStorage.getItem('key')
+    const lineTab = ref(query.lineTab || '')
+    const path = currentRoute.value.path
     return {
-      currentRoute
+      lineTab,
+      path,
+      localstorageValue
     }
   }
 }

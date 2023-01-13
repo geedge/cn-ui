@@ -12,7 +12,9 @@
                :key="index"
                @mouseenter="mouseenter(item)"
                @mouseleave="mouseleave(item)"
-               @click="activeChange(item, index)">
+               @click="activeChange(item, index)"
+               :test-id="`tab${index}`"
+          >
             <div class="line-value-mpackets-name">
               <div :class="item.class"></div>
               <div class="mpackets-name">{{$t(item.name)}}</div>
