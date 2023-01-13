@@ -215,8 +215,9 @@ export default {
                 { name: this.$t('networkAppPerformance.packetLoss'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 3 },
                 { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
               ]
+            } else {
+              this.initData(res.data.result, val)
             }
-            this.initData(res.data.result, val)
           } else {
             this.isNoData = false
             this.showError = true
@@ -240,6 +241,10 @@ export default {
           res.forEach(item => {
             if (item.code === 200) {
               npmLineData.push(...item.data.result)
+            } else {
+              this.isNoData = false
+              this.showError = true
+              this.errorMsg = res.message
             }
           })
           this.showError = false
@@ -260,8 +265,9 @@ export default {
               { name: this.$t('networkAppPerformance.packetLoss'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 3 },
               { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
             ]
+          } else {
+            this.initData(npmLineData, val)
           }
-          this.initData(npmLineData, val)
         }).catch(e => {
           this.isNoData = false
           this.showError = true

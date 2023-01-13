@@ -207,8 +207,9 @@ export default {
               { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
               { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
             ]
+          } else {
+            this.initData(res.data.result, val, active, show)
           }
-          this.initData(res.data.result, val, active, show)
         } else {
           this.isNoData = false
           this.showError = true

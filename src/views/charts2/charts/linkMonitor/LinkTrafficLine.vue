@@ -187,8 +187,9 @@ export default {
               { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
               { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
             ]
+          } else {
+            this.initData(res.data.result, val, active, show)
           }
-          this.initData(res.data.result, val, active, show)
         } else {
           this.showError = true
           this.errorMsg = res.message

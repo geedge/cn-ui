@@ -221,8 +221,9 @@ export default {
               { analysis: {}, name: 'network.through', class: 'through', show: true, invertTab: true, positioning: 4, data: [], unitType: '' },
               { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [], unitType: '' }
             ]
+          } else {
+            this.initData(res.data.result, val, active, show, n)
           }
-          this.initData(res.data.result, val, active, show, n)
         } else {
           this.showError = true
           this.errorMsg = res.message
