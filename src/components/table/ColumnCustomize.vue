@@ -25,12 +25,12 @@
       <el-button size="mini" v-if="!isCancel" :id="tableId+'-element-set-all'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="batchHandler(true)">
         <span class="top-tool-btn-txt">{{$t('overall.all')}}</span>
       </el-button>
-      <div>
+      <div class="custom-bottom-btns-right">
         <el-button size="mini" :id="tableId+'-element-set-esc'" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new" type="button" @click="esc">
           <span class="top-tool-btn-txt">{{$t('overall.cancel')}}</span>
         </el-button>
         <el-button size="mini" :id="tableId+'-element-set-save'" class="cn-btn cn-btn-size-small-new cn-btn-style-normal-new" type="button" @click="save" style="background-color: #0091ff;color:#DCDFE6">
-          <span class="top-tool-btn-txt">{{$t('overall.save')}}</span>
+          <span class="top-tool-btn-txt top-tool-btn-save">{{$t('overall.save')}}</span>
         </el-button>
       </div>
     </div>
