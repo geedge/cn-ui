@@ -208,9 +208,7 @@ export default {
       this.toggleLoading(true)
       get(api.dnsInsight.recentEvents, params).then(res => {
         if (res.code === 200) {
-          if (!res.data.result || res.data.result.length === 0) {
-            this.isNoData = true
-          }
+          this.isNoData = res.data.result.length === 0
           this.tableData = res.data.result
           this.tableData.forEach((t, index) => {
             if (index > 5) {

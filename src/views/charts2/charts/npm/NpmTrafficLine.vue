@@ -144,7 +144,6 @@ export default {
       if (!val) {
         val = this.metricFilter
       }
-      // const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       let condition = ''
       let type = this.dimensionType
       if (this.queryCondition.indexOf(' OR ') > -1) {

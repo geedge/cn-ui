@@ -123,11 +123,8 @@ export default {
       this.toggleLoading(true)
       get(api.dnsInsight.activeMaliciousDomain, params).then(res => {
         if (res.code === 200) {
-          const data = res.data.result
-          if (!data || data.length === 0) {
-            this.isNoData = true
-          }
-          this.tableData = data
+          this.isNoData = res.data.result.length === 0
+          this.tableData = res.data.result
         } else {
           this.isNoData = true
         }

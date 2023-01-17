@@ -66,12 +66,8 @@ export default {
       get(api.netWorkOverview.ddosEventAnalysis, params).then(res => {
         if (res.code === 200) {
           this.showError = false
-          if (res.data.result.length === 0) {
-            this.isNoData = true
-          } else {
-            this.ddosData = res.data.result[0]
-            this.isNoData = false
-          }
+          this.isNoData = res.data.result.length === 0
+          this.ddosData = res.data.result[0]
         } else {
           this.isNoData = false
           this.showError = true

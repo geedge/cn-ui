@@ -22,7 +22,6 @@ import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { drillDownPanelTypeMapping } from '@/utils/constants'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
-import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 export default {
   name: 'NpmTabs',

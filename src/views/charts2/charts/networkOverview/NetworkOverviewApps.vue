@@ -675,13 +675,6 @@ export default {
         })
       }
     },
-    // moreChange (app) {
-    //   this.appData.forEach(t => {
-    //     if (t.name === app.name && t.type === app.type) {
-    //       t.moreOptions = !t.moreOptions
-    //     }
-    //   })
-    // },
     resize () {
       this.myChart.forEach(t => {
         t.resize()
