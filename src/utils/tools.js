@@ -5,8 +5,7 @@ import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, n
 import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
-import { db } from '@/indexedDB'
-import { useRoute } from 'vue-router'
+import indexedDBUtils from '@/indexedDB'
 
 export const tableSort = {
   // 是否需要排序
@@ -488,11 +487,11 @@ export function loadGeoData () {
   keys.push(storageKey.iso36112Capital)
   keys.push(storageKey.iso36112WorldLow)
   keys.forEach(async k => {
-    const queryData = await db[dbGeoDataTableName].get({ name: k })
+    const queryData = await indexedDBUtils.selectTable(dbGeoDataTableName).get({ name: k })
     if (!queryData) {
       const data = await getIso36112JsonData(iso36112[k])
       if (data) {
-        db[dbGeoDataTableName].add({
+        indexedDBUtils.selectTable(dbGeoDataTableName).add({
           name: k,
           geo: data
         })
@@ -505,14 +504,14 @@ export function loadGeoData () {
 *  使用indexedDB缓存地图数据
 *  */
 export async function getGeoData (key) {
-  const data = await db[dbGeoDataTableName].get({ name: key })
+  const data = await indexedDBUtils.selectTable(dbGeoDataTableName).get({ name: key })
   if (data) {
     return data.geo
   } else {
     if (iso36112[key]) {
       const d = await getIso36112JsonData(iso36112[key])
       if (d) {
-        db[dbGeoDataTableName].add({
+        indexedDBUtils.selectTable(dbGeoDataTableName).add({
           name: key,
           geo: d
         })
@@ -937,7 +936,7 @@ export async function getDefaultCurTab (tableType, metric, columnName) {
 export async function readDrilldownTableConfigByUser () {
   // 获取用户定制的自定义配置
   const userId = localStorage.getItem(storageKey.userId)
-  const userLocalConfig = await db[dbDrilldownTableConfig].get({ id: userId })
+  const userLocalConfig = await indexedDBUtils.selectTable(dbDrilldownTableConfig).get({ id: userId })
   let defaultDrillDownTableConfigs = []
   if (userLocalConfig) {
     defaultDrillDownTableConfigs = userLocalConfig.config
@@ -946,15 +945,15 @@ export async function readDrilldownTableConfigByUser () {
 }
 
 export async function getConfigVersion (id) {
-  let defaultConfigInDb = await db[dbDrilldownTableConfig].get({ id: id })
+  let defaultConfigInDb = await indexedDBUtils.selectTable(dbDrilldownTableConfig).get({ id: id })
   if (!defaultConfigInDb) {
-    defaultConfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
+    defaultConfigInDb = await indexedDBUtils.selectTable(dbDrilldownTableConfig).get({ id: 'default' })
   }
   return defaultConfigInDb.version || ''
 }
 
 export async function combineDrilldownTableWithUserConfig () {
-  const defaultConfigInDb = await db[dbDrilldownTableConfig].get({ id: 'default' })
+  const defaultConfigInDb = await indexedDBUtils.selectTable(dbDrilldownTableConfig).get({ id: 'default' })
   const defaultConfigGroup = defaultConfigInDb ? defaultConfigInDb.config : []
   const currentUserConfigGroup = await readDrilldownTableConfigByUser()
   if (defaultConfigGroup && currentUserConfigGroup && currentUserConfigGroup.length > 0) {

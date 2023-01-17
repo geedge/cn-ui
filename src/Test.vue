@@ -11,12 +11,14 @@
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { ref } from 'vue'
+import indexedDBUtils from '@/indexedDB'
 export default {
   name: 'Test',
   data () {
     return {
       count: 0,
-      obj: { id: 1, title: 'title' }
+      obj: { id: 1, title: 'title' },
+      indexedDBValue: null
     }
   },
   methods: {
@@ -35,6 +37,12 @@ export default {
       axios.get('/api/getCount').then(response => {
         this.count = response.data
       })
+    },
+    async setIndexedDBValue () {
+      await indexedDBUtils.selectTable('test').put({ id: 1, name: 'test' })
+    },
+    async getIndexedDBValue () {
+      this.indexedDBValue = await indexedDBUtils.selectTable('test').get(1)
     }
   },
   setup () {

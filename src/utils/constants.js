@@ -1,6 +1,8 @@
 export const defaultPageSize = 20
 
+// indexedDB库名
 export const dbName = 'cn-db'
+// indexedDB表名
 export const dbGeoDataTableName = 'geodata'
 export const dbDrilldownTableConfig = 'cn-drilldown-table-config'
 export const storageKey = {

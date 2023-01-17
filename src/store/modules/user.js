@@ -5,7 +5,7 @@ import { ElMessage } from 'element-plus' // dependent on utc plugin
 import { storageKey, dbDrilldownTableConfig } from '@/utils/constants'
 import { getConfigVersion } from '@/utils/tools'
 import { api } from '@/utils/api'
-import { db } from '@/indexedDB'
+import indexedDBUtils from '@/indexedDB'
 
 const user = {
   state () {
@@ -92,7 +92,7 @@ const user = {
         if (res.code === 200 && res.page.list && res.page.list.length > 0) {
           // 从接口返回整体配置，再读取用户缓存，将对应条目覆盖，作为使用的配置
           const defaultConfigs = JSON.parse(res.page.list[0].cvalue)
-          await db[dbDrilldownTableConfig].put({
+          await indexedDBUtils.selectTable(dbDrilldownTableConfig).put({
             id: 'default',
             version: defaultConfigs.version,
             config: defaultConfigs.config
@@ -100,7 +100,7 @@ const user = {
           const userId = localStorage.getItem(storageKey.userId)
           const oldVersion = await getConfigVersion(userId)
           if (oldVersion !== defaultConfigs.version) {
-            db[dbDrilldownTableConfig].delete(userId)
+            indexedDBUtils.selectTable(dbDrilldownTableConfig).delete(userId)
           }
         }
       })

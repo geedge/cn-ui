@@ -7,6 +7,7 @@ import Test from '../src/Test'
 import { mount } from '@vue/test-utils'
 import { getNameByEventType } from '@/utils/tools'
 import axios from 'axios'
+import indexedDBUtils from '@/indexedDB'
 
 // 模拟的axios返回数据
 const mockId = { data: 2 }
@@ -33,7 +34,6 @@ describe('单元测试demo', () => {
     await button.trigger('click')
     // 断言点击按钮后文本dom的内容是否是'2'
     expect(textNode.text()).toBe('2')
-
     /* 更多断言类型：https://jestjs.io/docs/expect */
   })
   test('Vue组件--获取路由中的参数', async () => {
@@ -49,7 +49,7 @@ describe('单元测试demo', () => {
   test('Vue组件--模拟获取localstorage/sessionStorage的内容', async () => {
     require('vue-router').useRoute.mockReturnValue({ query: {} })
     require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
-    // 模拟getItem
+    // 模拟localStorage的getItem
     jest.spyOn(localStorage.__proto__, 'getItem').mockImplementation(key => key)
     // 加载vue组件，获得实例
     const wrapper = mount(Test)
@@ -104,6 +104,20 @@ describe('单元测试demo', () => {
       // 匹配整个对象
       expect(wrapper.vm.obj).toEqual({ id: 2, title: 'title2' })
     })
+  })
+  test('Vue组件--模拟indexedDB操作', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
+    // 加载vue组件，获得实例
+    const wrapper = mount(Test)
+    // 模拟indexedDB的内容
+    indexedDBUtils.selectTable.mockReturnValue({
+      put: jest.fn(),
+      get: jest.fn().mockResolvedValue({ a: 1 })
+    })
+    await wrapper.vm.setIndexedDBValue()
+    await wrapper.vm.getIndexedDBValue()
+    expect(wrapper.vm.indexedDBValue).toEqual({ a: 1 })
   })
   test('js方法--getNameByEventType', async () => {
     expect(getNameByEventType('http error')).toBe('http error ratio')

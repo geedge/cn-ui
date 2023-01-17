@@ -215,8 +215,8 @@ import unitConvert from '@/utils/unit-convert'
 import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combineDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
-import { db } from '@/indexedDB'
 import _ from 'lodash'
+import indexedDBUtils from '@/indexedDB'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -1729,7 +1729,7 @@ export default {
         version = await getConfigVersion('default')
       }
       // 更新缓存中的配置
-      await db[dbDrilldownTableConfig].put({
+      await indexedDBUtils.selectTable(dbDrilldownTableConfig).put({
         id: this.userId,
         version: version,
         config: this.$_.cloneDeep(curUserConfigGroup)

@@ -27,6 +27,8 @@ jest.mock('vue-router', () => {
 })
 /* 模拟axios */
 jest.mock('axios')
+/* 模拟indexedDB工具 */
+jest.mock('@/indexedDB')
 /* 模拟$t */
 config.global.mocks.$t = key => key
 /* 模拟$route，具体用例中需要不同值时重写覆盖即可 */
