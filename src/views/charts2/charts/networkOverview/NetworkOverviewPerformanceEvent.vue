@@ -61,7 +61,6 @@ export default {
   methods: {
     init () {
       const params = {
-        // startTime: true,
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }

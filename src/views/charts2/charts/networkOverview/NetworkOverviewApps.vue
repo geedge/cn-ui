@@ -152,7 +152,6 @@ export default {
       searcherApp: '',
       // 选中的app，不区分app和provider
       toSaveApp: [],
-      appShowType: 'bytes',
       pageObj: { // 分页对象
         pageNo: 1,
         pageSize: 24,
@@ -297,16 +296,6 @@ export default {
       }).finally(() => {
         this.toggleLoading(false)
       })
-    },
-    metricChange (value) {
-      if (value === 'Bits/s') {
-        this.appShowType = 'bytes'
-      } else if (value === 'Packets/s') {
-        this.appShowType = 'packets'
-      } else if (value === 'Sessions/s') {
-        this.appShowType = 'sessions'
-      }
-      this.init()
     },
     getUrlParam (param, defaultValue, isNumber) {
       if (isNumber) {

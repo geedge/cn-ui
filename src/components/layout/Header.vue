@@ -552,7 +552,7 @@ export default {
             queryCondition.push('common_l7_protocol=\'' + valueGroup[0] + '\'')
             queryCondition.push('common_server_port=' + valueGroup[1])
           }
-          console.log(queryCondition.join(' AND '))
+          // console.log(queryCondition.join(' AND '))
           this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
         } else {
           searchProps.forEach(item => {
