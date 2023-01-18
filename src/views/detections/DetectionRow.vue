@@ -134,15 +134,7 @@ export default {
     }
   },
   mounted () {
-    if (this.$route.query.eventId) {
-      if (parseFloat(this.$route.query.eventId) === this.detection.eventId) {
-        const container = document.getElementById('cnContainer')
-        container.scrollTop = 555 + this.index * 97
-
-        this.isCollapse = false
-        this.$emit('switchCollapse', this.isCollapse, this.index)
-      }
-    }
+    this.initExpendTab()
   },
   computed: {
     iconClass () {
@@ -186,7 +178,7 @@ export default {
       this.$emit('switchCollapse', this.isCollapse, this.index)
 
       if (this.isCollapse) {
-        const newQuery = this.$route.query // 深拷贝路由数据
+        const newQuery = this.$route.query
         delete newQuery.eventId
         this.reloadUrl(newQuery, 'cleanOldParams')
       } else {
@@ -207,6 +199,33 @@ export default {
         newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
       }
       overwriteUrl(newUrl)
+    },
+    /**
+     * 初始化从npm跳转过来的id，并展开tab
+     */
+    initExpendTab () {
+      if (this.$route.query.eventId) {
+        if (parseFloat(this.$route.query.eventId) === this.detection.eventId) {
+          const container = document.getElementById('cnContainer')
+          const dom = document.getElementsByClassName('cn-detection__case')
+          // 未展开的item折叠块，高度67+下边距10+底部线高度1，兼容不同分辨率下的tab高度
+          let itemHeight = 78
+          if (dom && this.index > 0) {
+            itemHeight = dom[0].clientHeight + 11
+          }
+
+          let topHeight = 554 + this.index * itemHeight
+          // 经过测试对比，第7个以后的tab会往上移动，但是手动展开和自动展开tab的滚动条高度一致，为解决该问题，自动加上误差值
+          if (this.index > 6) {
+            topHeight = topHeight + 6
+          }
+
+          container.scrollTop = topHeight
+
+          this.isCollapse = false
+          this.$emit('switchCollapse', this.isCollapse, this.index)
+        }
+      }
     }
   }
 }
