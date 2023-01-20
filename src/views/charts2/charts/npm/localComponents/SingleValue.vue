@@ -5,42 +5,42 @@
       <chart-error v-if="npm.message" tooltip :content="npm.message"></chart-error>
     </div>
 
-    <div class="single-value__content">
-      <div class="single-value__content-number" v-if="index ===0 || index ===1 || index ===2">
+    <div class="single-value__content" >
+      <div class="single-value__content-number" v-if="index ===0 || index ===1 || index ===2" :test-id="`singleValueContent${index}`">
         {{ unitConvert(npm.Avg, unitTypes.time).join(' ') }}
       </div>
-      <div class="single-value__content-number" v-else>
+      <div class="single-value__content-number" v-else :test-id="`singleValueContent${index}`">
         {{unitConvert(npm.Avg, unitTypes.percent).join(' ')}}
       </div>
-      <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red">
-        <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
-        <span v-if="npm.value <= 5">
+      <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red" >
+        <i class="cn-icon-rise1 cn-icon" :test-id="`singleValueTrendIcon${index}`"></i>&nbsp;
+        <span v-if="npm.value <= 5" :test-id="`singleValueTrendValue${index}`">
             {{ unitConvert(npm.value, unitTypes.percent).join('') }}
         </span>
-        <span v-else>>500.00%</span>
+        <span v-else :test-id="`singleValueTrendValue${index}`">>500.00%</span>
       </div>
-      <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
-        <i class="cn-icon-decline cn-icon"></i>&nbsp;
-        <span v-if="npm.value >= -5">
-            {{ unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '') }}
+      <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green" >
+        <i class="cn-icon-decline cn-icon" :test-id="`singleValueTrendIcon${index}`"></i>&nbsp;
+        <span v-if="npm.value >= -5" :test-id="`singleValueTrendValue${index}`">
+            {{ unitConvert(npm.value, unitTypes.percent).join('') }}
         </span>
-        <span v-else>>500.00%</span>
+        <span v-else :test-id="`singleValueTrendValue${index}`">>500.00%</span>
       </div>
-      <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
-        <i class="cn-icon-constant cn-icon"></i>
+      <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black" >
+        <i class="cn-icon-constant cn-icon" :test-id="`singleValueTrendIcon${index}`"></i>
       </div>
       <div v-else></div>
     </div>
 
     <div class="single-value__circle">
-      <div class="single-value__circle-p95">
+      <div class="single-value__circle-p95" :test-id="`singleValueP95${index}`">
         <span v-if="index ===0 || index ===1 || index ===2">
           P95:{{ unitConvert(npm.P95, unitTypes.time).join(' ') }}</span>
         <span v-else>
           P95:{{ unitConvert(npm.P95, unitTypes.percent).join(' ') }}
         </span>
       </div>
-      <div class="single-value__circle-p99">
+      <div class="single-value__circle-p99" :test-id="`singleValueP99${index}`">
         <span v-if="index ===0 || index ===1 || index ===2">
           P99:{{ unitConvert(npm.P99, unitTypes.time).join(' ') }}
         </span>
