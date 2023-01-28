@@ -1,7 +1,7 @@
 <template>
   <div class="link-statistical-dimension" style="position: relative">
-    <div class="dimension-title">{{ $t('linkMonitor.egressLink') }}&nbsp;&&nbsp;{{ $t('linkMonitor.ingressLink') }}
-    </div>
+    <div class="dimension-title" v-if="gridData.length>3">{{ $t('linkMonitor.egressLink') }}&nbsp;&&nbsp;{{ $t('linkMonitor.ingressLink') }}</div>
+    <div class="dimension-title" v-else>{{ $t('linkMonitor.nextHopInternetOfGrid') }}</div>
 
     <chart-no-data v-if="isNoData"></chart-no-data>
 
