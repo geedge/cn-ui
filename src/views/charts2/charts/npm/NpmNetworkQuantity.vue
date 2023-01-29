@@ -1,15 +1,60 @@
 <template>
-  <div class="npm-network-quantity">
-    <single-value
-        v-if="npmNetworkData.length>0"
-      :npm-network-name="npmNetworkName"
-      :npm-network-data="npmNetworkData"
-    ></single-value>
+  <div class="npm-network-quantity" test-id="npmOverviewQuantity">
+    <div class="single-value" v-for="(npm, index) in newNpmNetworkData" :key="index">
+      <div class="single-value__title" style="display: flex">
+        {{ $t(npmNetworkName[index].name) }}
+        <chart-error v-if="npm.message" tooltip :content="npm.message"></chart-error>
+      </div>
+
+      <div class="single-value__content">
+        <div class="single-value__content-number" v-if="index ===0 || index ===1 || index ===2">
+          {{ unitConvert(npm.Avg, unitTypes.time).join(' ') }}
+        </div>
+        <div class="single-value__content-number" v-else>
+          {{unitConvert(npm.Avg, unitTypes.percent).join(' ')}}
+        </div>
+        <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red">
+          <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
+          <span v-if="npm.value <= 5">
+            {{ unitConvert(npm.value, unitTypes.percent).join('') }}
+        </span>
+          <span v-else>>500.00%</span>
+        </div>
+        <div v-else-if="npm.value < 0" class="single-value__content-trend single-value__content-trend-green">
+          <i class="cn-icon-decline cn-icon"></i>&nbsp;
+          <span v-if="npm.value >= -5">
+            {{ unitConvert(npm.value, unitTypes.percent).join('').replaceAll('-', '') }}
+        </span>
+          <span v-else>>500.00%</span>
+        </div>
+        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
+          <i class="cn-icon-constant cn-icon"></i>
+        </div>
+        <div v-else></div>
+      </div>
+
+      <div class="single-value__circle">
+        <div class="single-value__circle-p95">
+        <span v-if="index ===0 || index ===1 || index ===2">
+          P95:{{ unitConvert(npm.P95, unitTypes.time).join(' ') }}</span>
+          <span v-else>
+          P95:{{ unitConvert(npm.P95, unitTypes.percent).join(' ') }}
+        </span>
+        </div>
+        <div class="single-value__circle-p99">
+        <span v-if="index ===0 || index ===1 || index ===2">
+          P99:{{ unitConvert(npm.P99, unitTypes.time).join(' ') }}
+        </span>
+          <span v-else>
+          P99:{{ unitConvert(npm.P99, unitTypes.percent).join(' ') }}
+        </span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import SingleValue from '@/views/charts2/charts/npm/localComponents/SingleValue'
 import { get } from '@/utils/http'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
@@ -18,9 +63,10 @@ import _ from 'lodash'
 import { getChainRatio } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
+import { unitTypes } from '@/utils/constants'
+import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'NpmNetworkQuantity',
-  components: { SingleValue },
   mixins: [chartMixin],
   setup () {
     const { query } = useRoute()
@@ -39,6 +85,8 @@ export default {
   },
   data () {
     return {
+      unitTypes,
+      unitConvert,
       npmNetworkName: [
         { name: 'networkAppPerformance.tcpConnectionEstablishLatency' },
         { name: 'networkAppPerformance.httpResponse' },
@@ -48,6 +96,7 @@ export default {
       ],
       npmNetworkCycleData: [],
       npmNetworkLastCycleData: [],
+      newNpmNetworkData: [],
       npmNetworkData: [],
       side: '',
       chartData: {},
@@ -79,6 +128,7 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 0
       }
+      console.log(params)
       if (parseFloat(this.tabIndex) === 0) {
         this.side = 'client'
       } else if (parseFloat(this.tabIndex) === 1) {
@@ -271,6 +321,39 @@ export default {
         })
         this.npmNetworkData = cycle
       }
+      this.initData(this.npmNetworkData)
+    },
+    initData (data) {
+      // 处理数据后的数组
+      const dealList = []
+
+      if (data !== undefined && data.length > 0) {
+        data.forEach((item) => {
+          const tempObj = {}
+          for (const i in item) {
+            if (item.msg || item.message) {
+              // 为了兼容字段为msg的情况
+              tempObj.message = item.msg ? item.msg : item.message
+            } else {
+              // 将含有avg、p90等关键字使用avg、p90来代替，形成统一属性
+              if (i.indexOf('Avg') > -1) {
+                tempObj.Avg = item[i]
+              } else if (i.indexOf('P50') > -1) {
+                tempObj.P50 = item[i]
+              } else if (i.indexOf('P90') > -1) {
+                tempObj.P90 = item[i]
+              } else if (i.indexOf('P95') > -1) {
+                tempObj.P95 = item[i]
+              } else if (i.indexOf('P99') > -1) {
+                tempObj.P99 = item[i]
+              }
+              tempObj.value = item.value
+            }
+          }
+          dealList.push(tempObj)
+        })
+        this.newNpmNetworkData = dealList
+      }
     }
   },
   mounted () {
@@ -282,6 +365,7 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer1)
     clearTimeout(this.timer2)
+    this.unitConvert = null
   }
 }
 </script>

@@ -11,15 +11,15 @@
      <div class="ddos-detection-type">
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.numberOfAttacks')}}</div>
-         <div class="ddos-detection-type-value-number">{{$_.get(ddosData, 'attackerCount') || 0}}</div>
+         <div class="ddos-detection-type-value-number">{{unitConvert($_.get(ddosData, 'attackerCount'), unitTypes.number).join(' ') || 0}}</div>
        </div>
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.number0fVictims')}}</div>
-         <div class="ddos-detection-type-value-number">{{$_.get(ddosData, 'victimCount') || 0}}</div>
+         <div class="ddos-detection-type-value-number">{{unitConvert($_.get(ddosData, 'victimCount'), unitTypes.number).join(' ') || 0}}</div>
        </div>
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.number0fDetectedAttackEvents')}}</div>
-         <div class="ddos-detection-type-value-number ddos-event">{{$_.get(ddosData, 'attackEventCount') || 0}}</div>
+         <div class="ddos-detection-type-value-number ddos-event">{{unitConvert($_.get(ddosData, 'attackEventCount'), unitTypes.number).join(' ') || 0}}</div>
        </div>
      </div>
      <el-button size="small">{{$t('network.ddosDetection')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
@@ -34,6 +34,8 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
+import unitConvert from '@/utils/unit-convert'
+import { unitTypes } from '@/utils/constants'
 export default {
   name: 'NetworkOverviewDdosDetection',
   components: {
@@ -44,6 +46,8 @@ export default {
   data () {
     return {
       ddosData: {},
+      unitConvert,
+      unitTypes,
       isNoData: false,
       showError: false,
       errorMsg: ''
@@ -68,6 +72,11 @@ export default {
           this.showError = false
           this.isNoData = res.data.result.length === 0
           this.ddosData = res.data.result[0]
+          this.ddosData = {
+            attackEventCount: 1200000,
+            attackerCount: 2687878,
+            victimCount: 36676767
+          }
         } else {
           this.isNoData = false
           this.showError = true
@@ -84,6 +93,9 @@ export default {
   },
   mounted () {
     this.ddosDetectDataRequests()
+  },
+  beforeUnmount () {
+    this.unitConvert = null
   }
 }
 </script>
