@@ -11,15 +11,15 @@
      <div class="ddos-detection-type">
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.numberOfAttacks')}}</div>
-         <div class="ddos-detection-type-value-number">{{unitConvert($_.get(ddosData, 'attackerCount'), unitTypes.number).join(' ') || 0}}</div>
+         <div class="ddos-detection-type-value-number" test-id="attackerCount">{{unitConvert($_.get(ddosData, 'attackerCount'), unitTypes.number).join(' ')}}</div>
        </div>
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.number0fVictims')}}</div>
-         <div class="ddos-detection-type-value-number">{{unitConvert($_.get(ddosData, 'victimCount'), unitTypes.number).join(' ') || 0}}</div>
+         <div class="ddos-detection-type-value-number" test-id="victimCount">{{unitConvert($_.get(ddosData, 'victimCount'), unitTypes.number).join(' ')}}</div>
        </div>
        <div class="ddos-detection-type-value">
          <div class="ddos-detection-type-value-name">{{$t('network.number0fDetectedAttackEvents')}}</div>
-         <div class="ddos-detection-type-value-number ddos-event">{{unitConvert($_.get(ddosData, 'attackEventCount'), unitTypes.number).join(' ') || 0}}</div>
+         <div class="ddos-detection-type-value-number ddos-event" test-id="attackEventCount">{{unitConvert($_.get(ddosData, 'attackEventCount'), unitTypes.number).join(' ')}}</div>
        </div>
      </div>
      <el-button size="small">{{$t('network.ddosDetection')}}<i class="cn-icon cn-icon-arrow-right"></i></el-button>
@@ -63,8 +63,8 @@ export default {
   methods: {
     ddosDetectDataRequests () {
       const params = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        startTime: this.timeFilter && this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : '',
+        endTime: this.timeFilter && this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : ''
       }
       this.toggleLoading(true)
       get(api.netWorkOverview.ddosEventAnalysis, params).then(res => {

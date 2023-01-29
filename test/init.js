@@ -13,6 +13,8 @@ dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
 dayjs.extend(weekday)
 window.$dayJs = dayjs
+// 引入 lodash 工具 模拟 lodash
+const _ = require('lodash') // lodash工具
 
 /* 模拟vue-router库，否则组件中引用vue-router的代码报错 */
 jest.mock('vue-router', () => {
@@ -33,5 +35,7 @@ jest.mock('@/indexedDB')
 config.global.mocks.$t = key => key
 /* 模拟$route，具体用例中需要不同值时重写覆盖即可 */
 config.global.mocks.$route = { query: '' }
+/* 模拟 lodash */
+config.global.mocks.$_ = _
 /* 消除warn */
 jest.spyOn(console, 'warn').mockImplementation(() => {})
