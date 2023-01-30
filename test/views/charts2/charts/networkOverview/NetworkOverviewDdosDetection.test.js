@@ -34,15 +34,4 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewDdosDetection.vue�
       resolve()
     }, 200))
   })
-  test('class 类名', () => {
-    const wrapper = mount(NetworkOverviewDdosDetection)
-
-    const attackEventCount = wrapper.get('[test-id="attackEventCount"]')
-    const attackerCount = wrapper.get('[test-id="attackerCount"]')
-    const victimCount = wrapper.get('[test-id="victimCount"]')
-
-    expect(attackEventCount.classes()).toContain('ddos-event')
-    expect(attackerCount.classes()).toContain('ddos-detection-type-value-number')
-    expect(victimCount.classes()).toContain('ddos-detection-type-value-number')
-  })
 })

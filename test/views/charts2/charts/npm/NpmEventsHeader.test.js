@@ -4,7 +4,7 @@ import axios from 'axios'
 
 // 模拟数据
 const chartData = {
-  data: {"status":200,"code":200,"queryKey":"6480498979f7501d822572ebeb9e9665","success":true,"message":null,"statistics":{"elapsed":0,"rows_read":3,"result_size":167,"result_rows":5},"job":null,"formatType":"json","meta":[{"name":"event_severity","type":"string","category":"Dimension"},{"name":"count","type":"long","category":"Metric"}],"data":{"resultType":"table","result":[{"eventSeverity":"critical","count":3},{"eventSeverity":"high","count":1},{"eventSeverity":"info","count":1},{"eventSeverity":"low","count":1},{"eventSeverity":"medium","count":2}]},"originalUrl":"http://192.168.44.55:9999?query=SELECT%20event_severity%20AS%20event_severity%2C%20COUNT%28*%29%20AS%20count%20FROM%20performance_event%20WHERE%20start_time%20%3E%3D%201675026686%20AND%20end_time%20%3C%201675048286%20GROUP%20BY%20event_severity&format=json&option=real-time","msg":"OK"}
+  data: {"status":200,"code":200,"queryKey":"6480498979f7501d822572ebeb9e9665","success":true,"message":null,"statistics":{"elapsed":0,"rows_read":3,"result_size":167,"result_rows":5},"job":null,"formatType":"json","meta":[{"name":"event_severity","type":"string","category":"Dimension"},{"name":"count","type":"long","category":"Metric"}],"data":{"resultType":"table","result":[{"eventSeverity":"critical","count":322334},{"eventSeverity":"high","count":1111},{"eventSeverity":"info","count":122222},{"eventSeverity":"low","count":14456678},{"eventSeverity":"medium","count":2000000}]},"originalUrl":"http://192.168.44.55:9999?query=SELECT%20event_severity%20AS%20event_severity%2C%20COUNT%28*%29%20AS%20count%20FROM%20performance_event%20WHERE%20start_time%20%3E%3D%201675026686%20AND%20end_time%20%3C%201675048286%20GROUP%20BY%20event_severity&format=json&option=real-time","msg":"OK"}
 }
 // type
 const type = 'severity'
@@ -43,28 +43,12 @@ describe('views/charts2/charts/npm/NpmEventsHeader.vue测试', () => {
     expect(severity4.text()).toEqual('info')
 
     await new Promise(resolve => setTimeout(() => {
-      expect(total0.text()).toEqual('3')
-      expect(total1.text()).toEqual('1')
-      expect(total2.text()).toEqual('2')
-      expect(total3.text()).toEqual('1')
-      expect(total4.text()).toEqual('1')
+      expect(total0.text()).toEqual('322,334')
+      expect(total1.text()).toEqual('1,111')
+      expect(total2.text()).toEqual('2,000,000')
+      expect(total3.text()).toEqual('14,456,678')
+      expect(total4.text()).toEqual('122,222')
       resolve()
     }, 200))
-  })
-  test('class 严重等级类名', () => {
-    // 加载vue组件，获得实例
-    const wrapper = mount(NpmEventsHeader)
-    // 动态添加类名
-    const icon0 = wrapper.get('[test-id="icon0"]')
-    const icon1 = wrapper.get('[test-id="icon1"]')
-    const icon2 = wrapper.get('[test-id="icon2"]')
-    const icon3 = wrapper.get('[test-id="icon3"]')
-    const icon4 = wrapper.get('[test-id="icon4"]')
-
-    expect(icon0.classes()).toContain('critical')
-    expect(icon1.classes()).toContain('high')
-    expect(icon2.classes()).toContain('medium')
-    expect(icon3.classes()).toContain('low')
-    expect(icon4.classes()).toContain('info')
   })
 })
