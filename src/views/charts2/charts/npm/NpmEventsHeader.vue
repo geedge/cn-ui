@@ -2,21 +2,21 @@
  <div class="npm-header">
   <div class="npm-header-body" v-for="(item, index) in chartData" :key=index>
     <div class="npm-header-body-severity">
-      <div class="npm-header-body-severity-icon" :class="item.eventSeverity"></div>
-      <div class="npm-header-body-severity-value">{{item.eventSeverity}}</div>
+      <div class="npm-header-body-severity-icon" :class="item.eventSeverity" :test-id="`icon${index}`"></div>
+      <div class="npm-header-body-severity-value" :test-id="`severity${index}`">{{item.eventSeverity}}</div>
     </div>
     <chart-error v-if="showError" tooltip :content="errorMsg" />
-    <div v-else class="npm-header-body-total">{{item.count}}</div>
+    <div v-else class="npm-header-body-total" :test-id="`total${index}`">{{item.count}}</div>
   </div>
  </div>
 </template>
 
 <script>
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
+import axios from 'axios'
 export default {
   name: 'NpmEventsHeader',
   components: { ChartError },
@@ -65,12 +65,13 @@ export default {
   methods: {
     recentEventsListData () {
       const params = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
+        startTime: this.timeFilter && this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : '',
+        endTime: this.timeFilter && this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : '',
         type: this.type
       }
       this.toggleLoading(true)
-      get(api.npm.events.list, params).then(res => {
+      axios.get(api.npm.events.list, { params: params }).then(res => {
+        res = res.data
         if (res.code === 200) {
           this.showError = false
           if (res.data.result.length === 0) {
@@ -96,7 +97,9 @@ export default {
     }
   },
   mounted () {
-    this.recentEventsListData()
+    this.$nextTick(() => {
+      this.recentEventsListData()
+    })
   }
 }
 </script>

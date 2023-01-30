@@ -29,13 +29,13 @@
 
 <script>
 import { api } from '@/utils/api'
-import { get } from '@/utils/http'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
+import axios from 'axios'
 export default {
   name: 'NetworkOverviewDdosDetection',
   components: {
@@ -67,16 +67,12 @@ export default {
         endTime: this.timeFilter && this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : ''
       }
       this.toggleLoading(true)
-      get(api.netWorkOverview.ddosEventAnalysis, params).then(res => {
+      axios.get(api.netWorkOverview.ddosEventAnalysis, { params: params }).then(res => {
+        res = res.data
         if (res.code === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
           this.ddosData = res.data.result[0]
-          this.ddosData = {
-            attackEventCount: 1200000,
-            attackerCount: 2687878,
-            victimCount: 36676767
-          }
         } else {
           this.isNoData = false
           this.showError = true
@@ -92,7 +88,9 @@ export default {
     }
   },
   mounted () {
-    this.ddosDetectDataRequests()
+    this.$nextTick(() => {
+      this.ddosDetectDataRequests()
+    })
   },
   beforeUnmount () {
     this.unitConvert = null
