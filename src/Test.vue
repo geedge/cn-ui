@@ -4,6 +4,20 @@
   <span test-id="title">{{obj.title}}</span>
   <button test-id="button" @click="click">click</button>
   <span test-id="tab">{{lineTab}}</span>
+  <el-table
+      :data="tableData"
+      class="test-table"
+      height="100%"
+      empty-text=" "
+  >
+    <template v-for="(item, index) in tableTitles" :key="index">
+      <el-table-column>
+        <template  #default="scope" :column="item">
+          {{scope.row[item.prop]}}
+        </template>
+      </el-table-column>
+    </template>
+  </el-table>
 </template>
 
 <script>
@@ -18,7 +32,21 @@ export default {
     return {
       count: 0,
       obj: { id: 1, title: 'title' },
-      indexedDBValue: null
+      indexedDBValue: null,
+      tableData: [
+        {
+          name: 'a',
+          age: 10
+        },
+        {
+          name: 'b',
+          age: 11
+        }
+      ],
+      tableTitles: [
+        { label: 'Name', prop: 'name' },
+        { label: 'Age', prop: 'age' }
+      ]
     }
   },
   methods: {

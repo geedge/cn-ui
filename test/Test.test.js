@@ -8,6 +8,7 @@ import { mount } from '@vue/test-utils'
 import { getNameByEventType } from '@/utils/tools'
 import axios from 'axios'
 import indexedDBUtils from '@/indexedDB'
+import ElementPlus from 'element-plus'
 
 // 模拟的axios返回数据
 const mockId = { data: 2 }
@@ -20,7 +21,11 @@ describe('单元测试demo', () => {
     require('vue-router').useRoute.mockReturnValue({ query: {} })
     require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
     // 加载vue组件，获得实例
-    const wrapper = mount(Test)
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
     // 取到文本和按钮的dom
     const textNode = await wrapper.get('[test-id="count"]')
     const button = await wrapper.get('[test-id="button"]')
@@ -41,7 +46,11 @@ describe('单元测试demo', () => {
     require('vue-router').useRoute.mockReturnValue({ query: { lineTab: 'total' } })
     require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
     // 加载vue组件，获得实例
-    const wrapper = mount(Test)
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
     // 取到文本和按钮的dom
     const textNode = await wrapper.get('[test-id="tab"]')
     expect(textNode.text()).toBe('total')
@@ -52,7 +61,11 @@ describe('单元测试demo', () => {
     // 模拟localStorage的getItem
     jest.spyOn(localStorage.__proto__, 'getItem').mockImplementation(key => key)
     // 加载vue组件，获得实例
-    const wrapper = mount(Test)
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
     expect(wrapper.vm.localstorageValue).toBe('key')
   })
   test('Vue组件--直接获取vue实例中的data和method', async () => {
@@ -66,7 +79,8 @@ describe('单元测试demo', () => {
       global: {
         mocks: {
           $t: key => key
-        }
+        },
+        plugins: [ElementPlus]
       }
     })
     const textNode = await wrapper.get('[test-id="count"]')
@@ -93,7 +107,11 @@ describe('单元测试demo', () => {
       }
     })
     // 加载vue组件，获得实例
-    const wrapper = mount(Test)
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
     const textNode = await wrapper.get('[test-id="id"]')
     const textNode2 = await wrapper.get('[test-id="title"]')
     expect(textNode2.text()).toBe('title')
@@ -109,7 +127,11 @@ describe('单元测试demo', () => {
     require('vue-router').useRoute.mockReturnValue({ query: {} })
     require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
     // 加载vue组件，获得实例
-    const wrapper = mount(Test)
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
     // 模拟indexedDB的内容
     indexedDBUtils.selectTable.mockReturnValue({
       put: jest.fn(),
@@ -118,6 +140,18 @@ describe('单元测试demo', () => {
     await wrapper.vm.setIndexedDBValue()
     await wrapper.vm.getIndexedDBValue()
     expect(wrapper.vm.indexedDBValue).toEqual({ a: 1 })
+  })
+  test('Vue组件--el-table', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
+    // 加载vue组件，获得实例
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
+    await wrapper.vm.$nextTick()
+    console.log(wrapper.html())
   })
   test('js方法--getNameByEventType', async () => {
     expect(getNameByEventType('http error')).toBe('http error ratio')
