@@ -14,6 +14,8 @@ import ElementPlus from 'element-plus'
 const mockId = { data: 2 }
 const mockTitle = { data: 'title2' }
 const mockCount = { data: 999 }
+const mockDifferentParam0 = { data: 0 }
+const mockDifferentParam1 = { data: 1 }
 
 describe('单元测试demo', () => {
   test('Vue组件--点击按钮后count的值+1', async () => {
@@ -122,6 +124,22 @@ describe('单元测试demo', () => {
       // 匹配整个对象
       expect(wrapper.vm.obj).toEqual({ id: 2, title: 'title2' })
     })
+  })
+  test('Vue组件--多个同url不同参数的axios请求', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
+    // 模拟axios返回数据
+    axios.get.mockResolvedValueOnce(mockDifferentParam0)
+    axios.get.mockResolvedValueOnce(mockDifferentParam1)
+    // 加载vue组件，获得实例
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
+    await wrapper.vm.differentRequestParam()
+    expect(wrapper.vm.differentParamData0).toBe(0)
+    expect(wrapper.vm.differentParamData1).toBe(1)
   })
   test('Vue组件--模拟indexedDB操作', async () => {
     require('vue-router').useRoute.mockReturnValue({ query: {} })

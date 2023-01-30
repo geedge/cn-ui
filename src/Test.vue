@@ -32,6 +32,8 @@ export default {
     return {
       count: 0,
       obj: { id: 1, title: 'title' },
+      differentParamData0: null,
+      differentParamData1: null,
       indexedDBValue: null,
       tableData: [
         {
@@ -64,6 +66,14 @@ export default {
     async getCount () {
       axios.get('/api/getCount').then(response => {
         this.count = response.data
+      })
+    },
+    async differentRequestParam () {
+      axios.get('/api/differentParam', { params: { name: 0 } }).then(response => {
+        this.differentParamData0 = response.data
+      })
+      axios.get('/api/differentParam', { params: { name: 1 } }).then(response => {
+        this.differentParamData1 = response.data
       })
     },
     async setIndexedDBValue () {
