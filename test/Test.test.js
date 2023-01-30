@@ -159,7 +159,7 @@ describe('单元测试demo', () => {
     await wrapper.vm.getIndexedDBValue()
     expect(wrapper.vm.indexedDBValue).toEqual({ a: 1 })
   })
-  test('Vue组件--el-table', async () => {
+  test('Vue组件--使用第三方组件的情况（以el-table为例）', async () => {
     require('vue-router').useRoute.mockReturnValue({ query: {} })
     require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
     // 加载vue组件，获得实例
@@ -168,8 +168,12 @@ describe('单元测试demo', () => {
         plugins: [ElementPlus]
       }
     })
+    // 执行nextTick等待el-table渲染完成
     await wrapper.vm.$nextTick()
-    console.log(wrapper.html())
+    const textNode = await wrapper.get('[test-id="name0"]')
+    const textNode2 = await wrapper.get('[test-id="age1"]')
+    expect(textNode.text()).toBe('a')
+    expect(textNode2.text()).toBe('11')
   })
   test('js方法--getNameByEventType', async () => {
     expect(getNameByEventType('http error')).toBe('http error ratio')

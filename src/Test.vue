@@ -12,8 +12,8 @@
   >
     <template v-for="(item, index) in tableTitles" :key="index">
       <el-table-column>
-        <template  #default="scope" :column="item">
-          {{scope.row[item.prop]}}
+        <template #default="scope" :column="item">
+          <span :test-id="`${item.prop}${scope.$index}`">{{scope.row[item.prop]}}</span>
         </template>
       </el-table-column>
     </template>
