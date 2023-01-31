@@ -189,22 +189,8 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      let condition = ''
-      if (this.queryCondition && this.tabOperationType !== '3') {
+      if (this.queryCondition) {
         params.q = this.queryCondition
-      } else if (this.tabOperationType == '3' && this.queryCondition) {
-        if (this.queryCondition.indexOf(' OR ') > -1) {
-          if (this.networkOverviewBeforeTab === 'isp') {
-            condition = this.queryCondition.split(/["|'= ](.*?)["|'= ]/)
-            params.q = `notEmpty(${condition[0]}) OR notEmpty(${condition[9]})`
-          } else {
-            condition = this.queryCondition.split(/["|'= ](.*?)["|'= ]/)
-            params.q = `notEmpty(${condition[0]}) OR notEmpty(${condition[5]})`
-          }
-        } else {
-          condition = this.queryCondition.split(/['=](.*?)['=]/)
-          params.q = `notEmpty(${condition[0]})`
-        }
       }
       this.toggleLoading(true)
       axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
