@@ -11,8 +11,8 @@
       <chart-no-data v-if="isNoData"></chart-no-data>
       <div class="npm-app-body" v-else>
         <div class="npm-app-body-patch" v-for="(data, index) in tableData" :key="index">
-          <div class="npm-app-body-icon"><span><i :class="data.icon"></i></span></div>
-          <div class="npm-app-body-color" v-for="(item, index) in 6" :key="index" :class="{'score-color': data.score >= index + 1}"></div>
+          <div class="npm-app-body-icon"><span><i :class="data.icon" :test-id="`iconContent${index}`"></i></span></div>
+          <div class="npm-app-body-color" v-for="index2 in 6" :key="index2" :class="{'score-color': data.score >= index2}"></div>
         </div>
       </div>
     </div>
@@ -86,35 +86,35 @@
                 <div class="data-trend">
                   <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
-                    <span v-if="scope.row.inboundBytesRateChainRatio <= 5">
+                    <span v-if="scope.row.inboundBytesRateChainRatio <= 5" :test-id="`inbound-${scope.row.appSubcategory}`">
                         {{unitConvert(scope.row.inboundBytesRateChainRatio, unitTypes.percent).join('')}}
                       </span>
-                    <span v-else>>500.00%</span>
+                    <span v-else :test-id="`inbound-${scope.row.appSubcategory}`">>500.00%</span>
                   </div>
                   <div v-else-if="scope.row.inboundBytesRateChainRatio < 0" class="data-total-trend data-total-trend-green">
                     <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                    <span v-if="scope.row.inboundBytesRateChainRatio >= -5">
+                    <span v-if="scope.row.inboundBytesRateChainRatio >= -5" :test-id="`inbound-${scope.row.appSubcategory}`">
                         {{unitConvert(scope.row.inboundBytesRateChainRatio, unitTypes.percent).join('').replaceAll('-', '')}}
                       </span>
-                    <span v-else>>500.00%</span>
+                    <span v-else :test-id="`inbound-${scope.row.appSubcategory}`">>500.00%</span>
                   </div>
-                  <div v-else-if="scope.row.inboundBytesRateChainRatio === 0" class="data-total-trend data-total-trend-black">
+                  <div v-else-if="scope.row.inboundBytesRateChainRatio === 0" :test-id="`inbound-${scope.row.appSubcategory}`" class="data-total-trend data-total-trend-black">
                     <i class="cn-icon-constant cn-icon"></i>
                   </div>
                   <div v-else></div>
                 </div>
               </template>
               <template v-else-if="item.prop === 'score'">
-                <div v-if="scope.row.score <= 2" :class="{'data-score-red': scope.row.score <= 2}" class="data-score">
+                <div v-if="scope.row.score <= 2" :test-id="`score-${scope.row.appSubcategory}`" class="data-score data-score-red">
                   {{scope.row.score}}
                 </div>
-                <div v-else-if="scope.row.score <= 4" :class="{'data-score-yellow': scope.row.score <= 4}" class="data-score">
+                <div v-else-if="scope.row.score <= 4" :test-id="`score-${scope.row.appSubcategory}`" class="data-score data-score-yellow">
                   {{scope.row.score}}
                 </div>
-                <div v-else-if="scope.row.score <= 6" :class="{'data-score-green': scope.row.score <= 6}" class="data-score">
+                <div v-else-if="scope.row.score <= 6" :test-id="`score-${scope.row.appSubcategory}`" class="data-score data-score-green">
                   {{scope.row.score}}
                 </div>
-                <div v-else-if="scope.row.score === '-'" class="data-score-no-data">
+                <div v-else-if="scope.row.score === '-'" :test-id="`score-${scope.row.appSubcategory}`" class="data-score-no-data">
                   -
                 </div>
               </template>
@@ -138,17 +138,12 @@ import { unitTypes, npmCategoryInfoMapping, networkTable, operationType, npmCate
 import unitConvert from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
-import {
-  getChainRatio,
-  computeScore,
-  urlParamsHandler,
-  overwriteUrl,
-  getUserDrilldownTableConfig
-} from '@/utils/tools'
+import { computeScore, getChainRatio, getUserDrilldownTableConfig, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import ChartError from '@/components/common/Error'
+import axios from 'axios'
+
 export default {
   name: 'NpmAppCategoryScore',
   data () {
@@ -198,15 +193,16 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       // 获取table后三列内容
-      const currentTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 0 })
-      const lastCycleTrafficRequest = get(api.npm.overview.appTrafficAnalysis, { ...params, cycle: 1 })
+      const currentTrafficRequest = axios.get(api.npm.overview.appTrafficAnalysis, { params: { ...params, cycle: 0 } })
+      const lastCycleTrafficRequest = axios.get(api.npm.overview.appTrafficAnalysis, { params: { ...params, cycle: 1 } })
       this.toggleLoading(true)
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
-        if (res[0].code === 200 && res[1].code === 200) {
+        // console.log('打印数据=====', res)
+        if (res[0].data.code === 200 && res[1].data.code === 200) {
           this.showError = false
           this.errorMsg = ''
-          const prevData = res[1].data.result
-          const data = res[0].data.result
+          const prevData = res[1].data.data.result
+          const data = res[0].data.data.result
           if (data && data.length > 0) {
             this.isNoData = false
             const tableData = data.map(d => {
@@ -228,24 +224,23 @@ export default {
               return result
             })
             // 计算分数
-            const tcpRequest = get(api.npm.overview.appTcpSessionDelay, params)
-            const httpRequest = get(api.npm.overview.appHttpResponseDelay, params)
-            const sslRequest = get(api.npm.overview.appSslConDelay, params)
-            const tcpLostRequest = get(api.npm.overview.appTcpLostlenPercent, params)
-            const packetRetransRequest = get(api.npm.overview.appPacketRetransPercent, params)
+            const tcpRequest = axios.get(api.npm.overview.appTcpSessionDelay, { params: params })
+            const httpRequest = axios.get(api.npm.overview.appHttpResponseDelay, { params: params })
+            const sslRequest = axios.get(api.npm.overview.appSslConDelay, { params: params })
+            const tcpLostRequest = axios.get(api.npm.overview.appTcpLostlenPercent, { params: params })
+            const packetRetransRequest = axios.get(api.npm.overview.appPacketRetransPercent, { params: params })
             Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res => {
               const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
               let msg = ''
 
               res.forEach((r, i) => {
-                if (r.code === 200) {
+                if (r.data.code === 200) {
                   tableData.forEach(t => {
-                    const find = r.data.result.find(d => d.appSubcategory === t.appSubcategory)
-                    t[keyPre[i] + 'Score'] = find
+                    t[keyPre[i] + 'Score'] = r.data.data.result.find(d => d.appSubcategory === t.appSubcategory)
                   })
                 } else {
                   this.showError = true
-                  msg = msg + ',' + r.message
+                  msg = msg + ',' + r.data.data.message
                   if (msg.indexOf(',') === 0) {
                     msg = msg.substring(1, msg.length)
                   }
@@ -348,7 +343,7 @@ export default {
         }
       })
       let toPanel = null
-      list.forEach((item, index) => {
+      list.forEach(item => {
         if (item.label === tabType) {
           item.checked = false
           toPanel = item.panelId
@@ -360,8 +355,7 @@ export default {
       this.$store.commit('setNetworkOverviewTabList', list)
       const tabObjGroup = list.filter(item => item.checked)
       if (tabObjGroup && tabObjGroup.length > 0) {
-        const curTab = tabObjGroup[0]
-        this.urlChangeParams[this.curTabState.curTab] = curTab
+        this.urlChangeParams[this.curTabState.curTab] = tabObjGroup[0]
       }
       this.changeUrlTabState()
       this.$router.push({
