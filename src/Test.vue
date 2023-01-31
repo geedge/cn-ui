@@ -48,7 +48,11 @@ export default {
       tableTitles: [
         { label: 'Name', prop: 'name' },
         { label: 'Age', prop: 'age' }
-      ]
+      ],
+      mergeRequestData0: null,
+      mergeRequestData1: null,
+      mergeRequestChildData0: null,
+      mergeRequestChildData1: null
     }
   },
   methods: {
@@ -74,6 +78,24 @@ export default {
       })
       axios.get('/api/differentParam', { params: { name: 1 } }).then(response => {
         this.differentParamData1 = response.data
+      })
+    },
+    /**
+     * 同一url，不同入参的axios请求内包含多个不同url请求的demo
+     * @returns {Promise<void>}
+     */
+    async mergeRequest () {
+      axios.get('/api/differentParam', { params: { name: 0 } }).then(response => {
+        this.mergeRequestData0 = response.data
+      })
+      axios.get('/api/differentParam', { params: { name: 1 } }).then(response => {
+        this.mergeRequestData1 = response.data
+        axios.get('/api/getChildId').then(response1 => {
+          this.mergeRequestChildData0 = response1.data
+        })
+        axios.get('/api/getChildTitle').then(response2 => {
+          this.mergeRequestChildData1 = response2.data
+        })
       })
     },
     async setIndexedDBValue () {

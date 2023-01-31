@@ -16,6 +16,10 @@ const mockTitle = { data: 'title2' }
 const mockCount = { data: 999 }
 const mockDifferentParam0 = { data: 0 }
 const mockDifferentParam1 = { data: 1 }
+const mergeRequestParam0 = { data: 0 }
+const mergeRequestParam1 = { data: 1 }
+const mergeRequestChildParam0 = { data: 0 }
+const mergeRequestChildParam1 = { data: 1 }
 
 describe('单元测试demo', () => {
   test('Vue组件--点击按钮后count的值+1', async () => {
@@ -140,6 +144,36 @@ describe('单元测试demo', () => {
     await wrapper.vm.differentRequestParam()
     expect(wrapper.vm.differentParamData0).toBe(0)
     expect(wrapper.vm.differentParamData1).toBe(1)
+  })
+  test('Vue组件--axios请求内包含多个不同url的组合请求', async () => {
+    require('vue-router').useRoute.mockReturnValue({ query: {} })
+    require('vue-router').useRouter.mockReturnValue({ currentRoute: { value: { path: '/' } } })
+    // 模拟axios返回数据
+    axios.get.mockResolvedValueOnce(mergeRequestParam0)
+    axios.get.mockResolvedValueOnce(mergeRequestParam1)
+
+    axios.get.mockImplementation(url => {
+      switch (url) {
+        case '/api/getChildId':
+          return Promise.resolve(mergeRequestChildParam0)
+        case '/api/getChildTitle':
+          return Promise.resolve(mergeRequestChildParam1)
+      }
+    })
+
+    // 加载vue组件，获得实例
+    const wrapper = mount(Test, {
+      global: {
+        plugins: [ElementPlus]
+      }
+    })
+    await wrapper.vm.mergeRequest()
+    await wrapper.vm.$nextTick(() => {
+      expect(wrapper.vm.mergeRequestData0).toBe(0)
+      expect(wrapper.vm.mergeRequestData1).toBe(1)
+      expect(wrapper.vm.mergeRequestChildData0).toBe(0)
+      expect(wrapper.vm.mergeRequestChildData1).toBe(1)
+    })
   })
   test('Vue组件--模拟indexedDB操作', async () => {
     require('vue-router').useRoute.mockReturnValue({ query: {} })
