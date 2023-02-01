@@ -25,6 +25,7 @@
                 class="date_style"
                 style="position: absolute;top: -53px;left: -536px;"
                 :clearable="false"
+                :default-time="defaultTime"
                 type="datetimerange"
                 @change="timeArrChange"
             />
@@ -127,6 +128,11 @@ export default {
       { value: 2880, name: 'last 2 days' }
     ]
     const dropdownFlag = ref(false)
+    // 默认日历选择时间，即开始时间YYYY-MM-DD 00:00:00,结束时间YYYY-MM-DD 59:59:59
+    const defaultTime = ref([
+      new Date(2023, 1, 1, 0, 0, 0),
+      new Date(2023, 1, 2, 23, 59, 59)
+    ])
 
     // computed
     const utcStr = computed(() => {
@@ -274,6 +280,7 @@ export default {
       rangeEchartsData,
       address,
       dateRangeArr,
+      defaultTime,
       dateRangeValue,
       isCustom,
       newDateValue,
