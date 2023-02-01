@@ -8,7 +8,7 @@
     </div>
     <div class="right-box__container">
       <div class="container__form">
-        <el-form ref="userForm" :model="editObject" :rules="rules" label-position="top" label-width="120px">
+        <el-form ref="reportForm" :model="editObject" :rules="rules" label-position="top" label-width="120px">
           <!--name-->
           <el-form-item :label="$t('report.name')" prop="name">
             <el-input id="account-input-name" v-model="editObject.name" maxlength="64" placeholder=" " show-word-limit size="small" type="text"></el-input>
@@ -76,7 +76,6 @@
                     :disabled="!!editObject.id"
                     :disabled-date="startDisabledDate"
                     @change="startTimeChang"
-                    @focus="startFocus"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -96,7 +95,6 @@
                     :disabled="!!editObject.id"
                     :disabled-date="endDisabledDate"
                     @change="endTimeChange"
-                    @focus="endFocus"
                     prefix-icon="cn-icon cn-icon-shijian"
                     type="datetime"
                     placeholder=" "
@@ -283,28 +281,8 @@ import { api } from '@/utils/api'
 import _ from 'lodash'
 import { get, post, put } from '@/utils/http'
 import { dateFormat, getMillisecond } from '@/utils/date-util'
-import { ref } from 'vue'
-const paramValidator = (rule, value, callback) => {
-  let validate = true
-  if (value && value.length > 0) {
-    const hasEmpty = value.some(v => {
-      return !v.value && v.value !== 0
-    })
-    validate = !hasEmpty
-  }
-  return validate
-}
-const nameValidator = (rule, value, callback) => {
-  let validate = true
-  const reg = /^[\u4e00-\u9fa5A-Za-z0-9\-\_]*$/
-  if (reg.test(value)) {
-    validate = true
-  } else {
-    validate = false
-  }
-  return validate
-}
-
+import { ref, getCurrentInstance } from 'vue'
+import i18n from '@/i18n'
 export default {
   name: 'ReportBox',
   mixins: [rightBoxMixin],
@@ -313,32 +291,21 @@ export default {
     currentCategoryId: Number
   },
   setup () {
+    const { proxy } = getCurrentInstance()
+
     const startTime = ref('')
     const endTime = ref('')
-    const focus = ref('')
-    const focusDate = ref('')
     function endTimeChange (val) {
       endTime.value = val
     }
     function startTimeChang (val) {
       startTime.value = val
     }
-    function startFocus (val) {
-      focus.value = val.target.value
-    }
-    function endFocus (val) {
-      focusDate.value = val.target.value
-    }
     const endDisabledDate = (time) => {
       if (time.getTime() > new Date()) {
         return true
       }
-      if (startTime.value != '' && startTime.value > time) {
-        return true
-      }
-      if (focusDate.value != '' && endTime.value > time) {
-        return false
-      } else if (endTime.value != '' && endTime.value < time) {
+      if (startTime.value !== '' && startTime.value > time) {
         return true
       }
     }
@@ -346,22 +313,71 @@ export default {
       if (time.getTime() > new Date()) {
         return true
       }
-      if (focus.value != '' && startTime.value > time) {
-        return false
-      } else if (startTime.value != '' && startTime.value > time) {
+      if (endTime.value !== '' && endTime.value < time) {
         return true
       }
-      if (endTime.value != '' && endTime.value < time) {
-        return true
+    }
+
+    const paramValidator = (rule, value, callback) => {
+      let validate = true
+      if (value && value.length > 0) {
+        const hasEmpty = value.some(v => {
+          return !v.value && v.value !== 0
+        })
+        validate = !hasEmpty
       }
+      return validate
+    }
+    const nameValidator = (rule, value, callback) => {
+      let validate = true
+      const reg = /^[\u4e00-\u9fa5A-Za-z0-9\-\_]*$/
+      validate = reg.test(value)
+      return validate
+    }
+    const startTimeValidator = (rule, value, callback) => {
+      const form = proxy.$refs.reportForm
+      if (form.model.config.endTime) {
+        form.validateField('config.endTime', () => null)
+      }
+      callback()
+    }
+    const endTimeValidator = (rule, value, callback) => {
+      let validate = true
+      if (startTime.value !== '' && value <= startTime.value) {
+        validate = false
+      }
+      return validate
+    }
+    const rules = { // 表单校验规则
+      name: [
+        { required: true, message: i18n.global.t('validate.required'), trigger: 'blur' },
+        { validator: nameValidator, message: i18n.global.t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
+      ],
+      categoryId: [
+        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
+      ],
+      schedulerStart: [
+        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
+      ],
+      'config.startTime': [
+        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
+        { validator: startTimeValidator, trigger: 'change' }
+      ],
+      'config.endTime': [
+        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' },
+        { validator: endTimeValidator, message: i18n.global.t('validate.endTimeGreaterThanStart'), trigger: 'change' }
+      ],
+      categoryParams: [
+        { required: true, message: i18n.global.t('validate.required'), trigger: 'blur' },
+        { validator: paramValidator, message: i18n.global.t('validate.required'), trigger: 'blur' }
+      ]
     }
     return {
       endDisabledDate,
       startDisabledDate,
       startTimeChang,
       endTimeChange,
-      startFocus,
-      endFocus
+      rules
     }
   },
   data () {
@@ -391,28 +407,6 @@ export default {
       monthWeekdayCheckedAll: false,
       monthWeekdayIsIndeterminate: false,
 
-      rules: { // 表单校验规则
-        name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: nameValidator, message: this.$t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
-        ],
-        categoryId: [
-          { required: true, message: this.$t('validate.required'), trigger: 'change' }
-        ],
-        schedulerStart: [
-          { required: true, message: this.$t('validate.required'), trigger: 'change' }
-        ],
-        'config.startTime': [
-          { required: true, message: this.$t('validate.required'), trigger: 'change' }
-        ],
-        'config.endTime': [
-          { required: true, message: this.$t('validate.required'), trigger: 'change' }
-        ],
-        categoryParams: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: paramValidator, message: this.$t('validate.required'), trigger: 'blur' }
-        ]
-      },
       paramsOptions: []
     }
   },
@@ -592,7 +586,7 @@ export default {
       if (this.blockOperation.save) { return }
       this.blockOperation.save = true
 
-      this.$refs.userForm.validate((valid) => {
+      this.$refs.reportForm.validate((valid) => {
         if (valid) {
           let startTime = ''
           let endTime = ''
