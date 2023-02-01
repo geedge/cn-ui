@@ -27,7 +27,7 @@
         </span>
           <span v-else :test-id="`singleValueTrendValue${index}`">>500.00%</span>
         </div>
-        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black" >
+        <div v-else-if="npm.value === 0" class="single-value__content-trend single-value__content-trend-black">
           <i class="cn-icon-constant cn-icon" :test-id="`singleValueTrendIcon${index}`"></i>
         </div>
         <div v-else></div>
@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
@@ -65,6 +64,7 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
+import axios from 'axios'
 export default {
   name: 'NpmNetworkQuantity',
   mixins: [chartMixin],
@@ -117,7 +117,7 @@ export default {
     npmNetworkCycleQuery () {
       let condition = ''
       let url = ''
-      if (this.queryCondition.indexOf(' OR ') > -1) {
+      if (this.queryCondition && this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
       } else {
         condition = this.queryCondition
@@ -133,37 +133,38 @@ export default {
       } else if (parseFloat(this.tabIndex) === 1) {
         this.side = 'server'
       }
-      if (condition && (typeof condition !== 'object') && type) {
-        if (type === 'clientIp' || type === 'serverIp') {
-          if (parseFloat(this.tabIndex) === 0) {
+      if (condition && (typeof condition !== 'object') && type) { // 判断 condition 不为空并且不为对象 type 不为空
+        if (type === 'clientIp' || type === 'serverIp') { // type  = clientIp || serverIp
+          if (parseFloat(this.tabIndex) === 0) { // npm 下钻 tabIndex 为 0
             type = 'clientIp'
-          } else if (parseFloat(this.tabIndex) === 1) {
+          } else if (parseFloat(this.tabIndex) === 1) { // npm 下钻 tabIndex 为 1
             type = 'serverIp'
           }
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}'`
+          params.q = `ip='${condition.split(/'(.*?)'/)[1]}'` // 拼接字段作为参数
         } else if (type === 'clientCity') {
-          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'`
+          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'` // 拼接字段作为参数
         } else if (type === 'serverCity') {
-          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'`
+          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'` // 拼接字段作为参数
         } else {
-          params.q = condition
+          params.q = condition // 默认参数
         }
         params.type = type
-      } else if (condition.length > 1 && type && type === 'ip') {
-        params.q = `${type}='${condition[1]}' and side='${this.side}'`
+      } else if (condition.length > 1 && type && type === 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type为ip
+        params.q = `${type}='${condition[1]}' and side='${this.side}'` // 拼接字段作为参数
         params.type = type
-      } else if (condition.length > 1 && type && type !== 'ip') {
-        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
-          params.q = `${type}='${condition[1]}'`
+      } else if (condition.length > 1 && type && type !== 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type不为ip
+        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') { // 根据接口所需，调整参数
+          params.q = `${type}='${condition[1]}'` // 拼接字段作为参数
           params.type = type
         } else if (type === 'idcRenter') {
-          params.q = `idc_renter='${condition[1]}'`
+          params.q = `idc_renter='${condition[1]}'` // 拼接字段作为参数
           params.type = type
         } else {
-          params.q = `${condition[0]}'${condition[1]}'`
+          params.q = `${condition[0]}'${condition[1]}'` // 拼接字段作为参数
           params.type = type
         }
       }
+      // 区分 3 级菜单和 2 级菜单使用不同的 url
       if (parseFloat(this.tabOperationType) === 3) {
         url = api.npm.overview.allNetworkAnalysis
       } else {
@@ -172,7 +173,8 @@ export default {
       if ((type && condition) || type) {
         params.type = params.type || type
         this.toggleLoading(true)
-        get(url, params).then(res => {
+        axios.get(url, { params: params }).then(res => {
+          res = res.data
           if (res.code === 200) {
             this.npmNetworkCycleData = res.data.result
           }
@@ -182,21 +184,21 @@ export default {
           this.toggleLoading(false)
         })
       } else {
-        const tcp = get(api.npm.overview.tcpSessionDelay, params)
-        const http = get(api.npm.overview.httpResponseDelay, params)
-        const ssl = get(api.npm.overview.sslConDelay, params)
-        const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
-        const packetPercent = get(api.npm.overview.packetRetransPercent, params)
+        const tcp = axios.get(api.npm.overview.tcpSessionDelay, { params: params })
+        const http = axios.get(api.npm.overview.httpResponseDelay, { params: params })
+        const ssl = axios.get(api.npm.overview.sslConDelay, { params: params })
+        const tcpPercent = axios.get(api.npm.overview.tcpLostlenPercent, { params: params })
+        const packetPercent = axios.get(api.npm.overview.packetRetransPercent, { params: params })
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
           // 状态为200的，赋值接口数据，不为200的传入报错提示message，
           // 传给子组件SingleValue，再进行error处理，注：error处理不在此处处理
           this.npmNetworkCycleData = []
           res.forEach(t => {
-            if (t.code === 200) {
-              this.npmNetworkCycleData.push(t.data.result)
+            if (t.data.code === 200) {
+              this.npmNetworkCycleData.push(t.data.data.result)
             } else {
-              this.npmNetworkCycleData.push(t)
+              this.npmNetworkCycleData.push(t.data)
             }
           })
           this.npmNetworkLastCycleQuery()
@@ -226,7 +228,8 @@ export default {
       if ((params.type && params.q) || (param && param.type)) {
         params.type = params.type || param.type
         this.toggleLoading(true)
-        get(url, params).then(res => {
+        axios.get(url, { params: params }).then(res => {
+          res = res.data
           if (res.code === 200) {
             this.npmNetworkLastCycleData = res.data.result
           } else {
@@ -244,20 +247,20 @@ export default {
           this.toggleLoading(false)
         })
       } else {
-        const tcp = get(api.npm.overview.tcpSessionDelay, params)
-        const http = get(api.npm.overview.httpResponseDelay, params)
-        const ssl = get(api.npm.overview.sslConDelay, params)
-        const tcpPercent = get(api.npm.overview.tcpLostlenPercent, params)
-        const packetPercent = get(api.npm.overview.packetRetransPercent, params)
+        const tcp = axios.get(api.npm.overview.tcpSessionDelay, { params: params })
+        const http = axios.get(api.npm.overview.httpResponseDelay, { params: params })
+        const ssl = axios.get(api.npm.overview.sslConDelay, { params: params })
+        const tcpPercent = axios.get(api.npm.overview.tcpLostlenPercent, { params: params })
+        const packetPercent = axios.get(api.npm.overview.packetRetransPercent, { params: params })
         this.toggleLoading(true)
         Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
           // 状态为200的，赋值接口数据，不为200的保留报错提示message，
           // 传给子组件SingleValue，再进行error处理，注：error处理不在此处处理
           res.forEach(t => {
-            if (t.code === 200) {
-              this.npmNetworkLastCycleData.push(t.data.result)
+            if (t.data.code === 200) {
+              this.npmNetworkLastCycleData.push(t.data.data.result)
             } else {
-              this.npmNetworkLastCycleData.push(t)
+              this.npmNetworkLastCycleData.push(t.data)
             }
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 1)
           })
