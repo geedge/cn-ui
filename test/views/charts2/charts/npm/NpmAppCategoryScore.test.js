@@ -93,7 +93,7 @@ describe('views/charts2/charts/npm/NpmAppCategoryScore.vue测试', () => {
       expect(textNode4.text()).toBe('5')
       expect(textNode5.text()).toBe('6')
       resolve()
-    }, 1000))
+    }, 200))
   })
   test('NpmAppCategoryScore测试分类不足6个时icon的class类名是否正确', async () => {
     // 模拟分类不足6个的情况
@@ -143,6 +143,6 @@ describe('views/charts2/charts/npm/NpmAppCategoryScore.vue测试', () => {
       expect(textNode4.text()).toBe('100.00%')
       expect(textNode5.text()).toBe('>500.00%')
       resolve()
-    }, 1000))
+    }, 200))
   })
 })
