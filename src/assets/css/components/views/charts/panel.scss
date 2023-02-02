@@ -7,7 +7,7 @@
     display: flex;
     &.panel__time--scrolled-out {
       position: fixed;
-      top: 70px;
+      top: 120px;
       padding-right: 10px;
     }
     &>div {
@@ -18,7 +18,7 @@
   .chart-list {
     &.chart-list--screen {
       display: grid;
-      height: calc(100vh - 90px);
+      height: calc(100vh - 130px);
       width: 100%;
       grid-template-columns: repeat(30,1fr);
       grid-template-rows: repeat(19,1fr);

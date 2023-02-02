@@ -23,7 +23,7 @@ export default {
     const boxDom = document.getElementById('frame-box')
     const dom = document.getElementById('frame')
     const height = boxDom.offsetHeight
-    dom.src = `http://192.168.44.114:8088/superset/explore/?r=15&standalone=1&height=${height || 800}`
+    dom.src = (BASE_CONFIG?.logUrl ?? 'http://192.168.44.114:8088/') + `superset/explore/?r=15&standalone=1&height=${height || 800}`
   }
 }
 </script>

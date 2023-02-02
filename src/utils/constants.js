@@ -63,7 +63,8 @@ export const panelTypeAndRouteMapping = {
   cryptocurrency: 7,
   ipDrillDownTest: 8,
   linkMonitor: 14,
-  linkMonitorDrillDown: 15
+  linkMonitorDrillDown: 15,
+  dns6: 18
 }
 
 /* operationLog state 执行状态属性 值与名称之间的映射 */
@@ -1554,7 +1555,7 @@ export const npmCategoryInfoMapping = [
 
 // 整屏滚动的路径映射
 export const wholeScreenRouterMapping = {
-  dns: '/panel/dnsServiceInsights'
+  dns: '/dns6/dns6'
 }
 
 export const themeData = [

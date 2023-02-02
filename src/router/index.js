@@ -20,6 +20,11 @@ const routes = [
         component: () => import('@/views/charts2/Panel')
       },
       {
+        name: 'dns6',
+        path: '/dns6/:typeName',
+        component: () => import('@/views/charts/Panel')
+      },
+      {
         path: '/report/builtIn',
         component: () => import('@/views/report/reportTest')
       },
