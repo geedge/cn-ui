@@ -22,6 +22,14 @@
         <div class="row__label row__label--width130">{{$t('entities.org')}}</div>
         <div class="row__content">{{entityData.domainWhoisOrg || '-'}}</div>
       </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('entities.icpCompanyName')}}</div>
+        <div class="row__content">{{entityData.domainIcpCompanyName || '-'}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('entities.icpLicense')}}</div>
+        <div class="row__content">{{entityData.domainIcpSiteLicense || '-'}}</div>
+      </div>
 <!--      <div class="overview__row">
         <div class="row__label row__label&#45;&#45;width130">{{$t('overall.remark')}}</div>
         <div class="row__content">{{entityData.domainDescription || '-'}}</div>
@@ -352,7 +360,9 @@ export default {
             domainDescription: response.data.result.domainDescription,
             domainReputationScore: response.data.result.domainReputationScore,
             domainWhoisAddress: response.data.result.domainWhoisAddress,
-            domainWhoisOrg: response.data.result.domainWhoisOrg
+            domainWhoisOrg: response.data.result.domainWhoisOrg,
+            domainIcpCompanyName: response.data.result.domainIcpCompanyName,
+            domainIcpSiteLicense: response.data.result.domainIcpSiteLicense
           }
         }
       })
