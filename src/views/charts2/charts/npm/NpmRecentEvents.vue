@@ -21,15 +21,15 @@
           <template  #default="scope" :column="item">
             <div class="data-recent-table">
               <template v-if="item.prop === 'eventSeverity'">
-                <span class="data-recent-table-severity" :class="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+                <span class="data-recent-table-severity" :class="scope.row[item.prop]" :test-id="`eventSeverity-${scope.row.eventSeverity}-${scope.$index}`">{{scope.row[item.prop]}}</span>
               </template>
               <template v-else-if="item.prop === 'eventKey'">
-                <span class="data-recent-table-entity click-active" @click="jumpPage(scope.row)">{{splitEventKey(scope.row[item.prop])}}</span>
+                <span class="data-recent-table-entity click-active" @click="jumpPage(scope.row)" :test-id="`eventKey-${splitEventKey(scope.row.eventKey)}-${scope.$index}`">{{splitEventKey(scope.row[item.prop])}}</span>
               </template>
               <template v-else-if="item.prop === 'eventType'">
-                <span class="data-recent-table-eventType">{{scope.row[item.prop]}}</span>
+                <span class="data-recent-table-eventType" :test-id="`eventType-${scope.row.eventType}-${scope.$index}`">{{scope.row[item.prop]}}</span>
               </template>
-              <span v-else-if="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+              <span v-else-if="scope.row[item.prop]" :test-id="`startTime-${scope.row.startTime}-${scope.$index}`">{{scope.row[item.prop]}}</span>
               <span v-else>-</span>
             </div>
           </template>
@@ -48,13 +48,13 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import ChartError from '@/components/common/Error'
+import axios from 'axios'
 
 export default {
   name: 'NpmRecentEvents',
@@ -99,7 +99,7 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         limit: 8
       }
-      if (condition.length > 1 && this.dimensionType) {
+      if (condition && condition.length > 1 && this.dimensionType) {
         params.param = condition[1]
         params.type = this.dimensionType
         if (params.type === 'serverIp' || params.type === 'clientIp') params.type = 'ip'
@@ -114,7 +114,8 @@ export default {
         url = api.npm.events.recentEvents
       }
       this.toggleLoading(true)
-      get(url, params).then(res => {
+      axios.get(url, { params: params }).then(res => {
+        res = res.data
         if (res.code === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
