@@ -30,7 +30,7 @@ export const line = {
   },
   animation: false,
   grid: {
-    left: 55,
+    left: 60,
     bottom: 30,
     top: 20,
     right: 25
