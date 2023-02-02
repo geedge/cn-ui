@@ -29,20 +29,20 @@
               <div class="popper-content__link-id">Link ID: {{ item.linkId }}</div>
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.total') }}</div>
-                <div class="info__value" style="margin-left: 8px">
+                <div class="info__value" :test-id="`linkBlockTotal${index}`" style="margin-left: 8px">
                   {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}
                 </div>
               </div>
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.bandwidthUsage') }}</div>
                 <div class="info__value" style="display: flex">
-                  <div>
+                  <div :test-id="`linkBlockEgressUsage${index}`">
                     <svg class="icon item-popover-up" aria-hidden="true">
                       <use xlink:href="#cn-icon-egress"></use>
                     </svg>
                     {{ convertValue(item.egressUsage) }}
                   </div>
-                  <div>
+                  <div :test-id="`linkBlockIngressUsage${index}`">
                     <svg class="icon item-popover-down" aria-hidden="true">
                       <use xlink:href="#cn-icon-ingress"></use>
                     </svg>
@@ -84,7 +84,7 @@
               <div class="popper-content__link-id">Next-Hop Internet: {{ item.linkDirection }}</div>
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.total') }}</div>
-                <div class="info__value" style="margin-left: 8px">
+                <div class="info__value" :test-id="`nextHopTotal${index}`" style="margin-left: 8px">
                   {{ unitConvert(item.totalBitsRate, unitTypes.bps).join(' ') }}
                 </div>
               </div>
@@ -118,13 +118,13 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { colorGradientCalculation } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
 import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
 import ChartError from '@/components/common/Error'
+import axios from 'axios'
 
 export default {
   name: 'LinkBlock',
@@ -170,15 +170,20 @@ export default {
       let linkInfo = null
       linkInfo = localStorage.getItem(storageKey.linkInfo)
       linkInfo = JSON.parse(linkInfo)
+      // console.log('打印缓存', linkInfo)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
 
-      const dataRequest = get(api.linkMonitor.analysis, params)
-      const nextHopRequest = get(api.linkMonitor.nextHopAnalysis, params)
+      const dataRequest = axios.get(api.linkMonitor.analysis, { params: params })
+      const nextHopRequest = axios.get(api.linkMonitor.nextHopAnalysis, { params: params })
 
-      Promise.all([dataRequest, nextHopRequest]).then(res => {
+      Promise.all([dataRequest, nextHopRequest]).then(response => {
+        const res = []
+        res[0] = response[0].data
+        res[1] = response[1].data
+        // console.log('打印数据', res)
         if (res[0].code === 200 && res[1].code === 200) {
           this.showError = false
 
