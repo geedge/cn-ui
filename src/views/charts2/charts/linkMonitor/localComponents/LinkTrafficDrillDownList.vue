@@ -6,36 +6,42 @@
     <div v-else>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
-        <div class="link-traffic-list-center-value" v-if="lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg, unitTypes.bps).join('')}}</div>
+        <div class="link-traffic-list-center-value" v-if="lineData && lineData.analysis" test-id="line-tabContent">
+          <span>{{unitConvert(lineData.analysis.avg, unitTypes.number)[0]}}</span>
+          <span>
+            <span>{{unitConvert(lineData.analysis.avg, unitTypes.number)[1]}}</span>
+            <span v-if="lineData.unitType">{{lineData.unitType}}</span>
+          </span>
+        </div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
-        <div class="link-traffic-list-center-value" v-if="bandWidth && lineData[0] && lineData[0].analysis">{{unitConvert(lineData[0].analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
+        <div class="link-traffic-list-center-value" v-if="lineData && lineData.analysis && bandWidth" test-id="line-percent">{{unitConvert(lineData.analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
         <div class="link-traffic-list-center-value" v-else>-</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('linkMonitor.npmScore')}}</div>
-        <div class="link-traffic-list-center-value">{{linkTrafficListData.npmScore || '-'}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-score">{{linkTrafficListData.npmScore || '-'}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.tcpConnectionEstablishLatency')}}</div>
-        <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-tcp">{{unitConvert(Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.httpResponse')}}</div>
-        <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-http">{{unitConvert(Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.sslResponseLatency')}}</div>
-        <div class="link-traffic-list-center-value">{{unitConvert(Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-ssl">{{unitConvert(Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.packetLoss')}}</div>
-        <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.tcpLostlenPercent, unitTypes.percent).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-packetLoss">{{unitConvert(linkTrafficListData.tcpLostlenPercent, unitTypes.percent).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('overall.packetRetrans')}}</div>
-        <div class="link-traffic-list-center-value">{{unitConvert(linkTrafficListData.pktRetransPercent, unitTypes.percent).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-packetRetrans">{{unitConvert(linkTrafficListData.pktRetransPercent, unitTypes.percent).join('')}}</div>
       </div>
     </div>
   </div>
@@ -45,7 +51,6 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import { storageKey, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -53,6 +58,7 @@ import { getSecond } from '@/utils/date-util'
 import { computeScore } from '@/utils/tools'
 import Loading from '@/components/common/Loading'
 import ChartError from '@/components/common/Error'
+import axios from 'axios'
 export default {
   name: 'linkTrafficList',
   mixins: [chartMixin],
@@ -136,7 +142,8 @@ export default {
         }
       }
       this.loading = true
-      get(api.linkMonitor.networkAnalysis, params).then(res => {
+      axios.get(api.linkMonitor.networkAnalysis, { params: params }).then(res => {
+        res = res.data
         if (res.code === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
@@ -165,6 +172,9 @@ export default {
   },
   mounted () {
     this.linkTrafficData()
+  },
+  beforeUnmount () {
+    this.unitConvert = null
   }
 }
 </script>

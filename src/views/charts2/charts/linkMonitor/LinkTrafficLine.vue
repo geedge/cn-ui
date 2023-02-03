@@ -2,7 +2,7 @@
  <div class="link-traffic-line">
    <link-traffic-drill-down-list
      :chart="chart"
-     :line-data="mpackets"
+     :line-data="mpackets[0]"
      :time-filter="timeFilter">
    </link-traffic-drill-down-list>
    <div class="line network link-traffic">
@@ -19,16 +19,18 @@
                 :key="index"
                 @mouseenter="mouseenter(item)"
                 @mouseleave="mouseleave(item)"
-                @click="activeChange(item, index)">
+                @click="activeChange(item, index)"
+                :test-id="`tab-${index}`">
              <div class="line-value-mpackets-name">
                <div :class="item.class"></div>
                <div class="mpackets-name">{{$t(item.name)}}</div>
              </div>
-             <div class="line-value-unit">
+             <div class="line-value-unit" :test-id="`tabContent${index}`">
                <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
                <span class="line-value-unit-number2">
-              <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span><span v-if="item.unitType">{{item.unitType}}</span>
-            </span>
+                 <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span>
+                 <span v-if="item.unitType">{{item.unitType}}</span>
+               </span>
              </div>
            </div>
          </div>
@@ -69,12 +71,12 @@ import unitConvert from '@/utils/unit-convert'
 import { chartColor3, chartColor4, unitTypes } from '@/utils/constants'
 import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import * as echarts from 'echarts'
 import { linkTrafficLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
+import axios from 'axios'
 
 export default {
   name: 'LinkTrafficLine',
@@ -176,7 +178,8 @@ export default {
         }
       }
       this.loading = true
-      get(api.linkMonitor.totalTrafficAnalysis, params).then((res) => {
+      axios.get(api.linkMonitor.totalTrafficAnalysis, { params: params }).then((res) => {
+        res = res.data
         if (res.code === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
@@ -204,67 +207,69 @@ export default {
       })
     },
     echartsInit (echartsData) {
-      if (this.lineTab) {
-        this.handleActiveBar()
-        echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
-      } else {
-        echartsData = echartsData.filter(t => t.show === true)
-      }
-      const _this = this
-      const dom = document.getElementById('linkTrafficLineChart')
-      !this.myChart && (this.myChart = echarts.init(dom))
-      this.chartOption = linkTrafficLineChartOption
-      const chartOption = this.chartOption.series[0]
-      this.chartOption.series = echartsData.map((t, i) => {
-        return {
-          ...chartOption,
-          name: t.name,
-          lineStyle: {
-            color: chartColor3[t.positioning],
-            width: 1
-          },
-          stack: t.name !== 'network.total' ? 'network.total' : '',
-          symbolSize: function (value) {
-            return _this.symbolSizeSortChange(i, value[0])
-          },
-          emphasis: {
-            itemStyle: {
-              borderColor: chartColor4[t.positioning],
-              borderWidth: 2,
-              shadowColor: chartColor4[t.positioning],
-              shadowBlur: this.sizes[t.positioning] + 2
-            }
-          },
-          areaStyle: {
-            opacity: 0.1,
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
-                offset: 0,
-                color: chartColor3[t.positioning]
-              },
-              {
-                offset: 1,
-                color: chartColor3[t.positioning]
-              }
-            ])
-          },
-          data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number'])
+      if (!this.isUnitTesting) {
+        if (this.lineTab) {
+          this.handleActiveBar()
+          echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
+        } else {
+          echartsData = echartsData.filter(t => t.show === true)
         }
-      })
-      this.chartOption.tooltip.formatter = (params) => {
-        params.forEach(t => {
-          t.seriesName = this.$t(t.seriesName)
-          this.mpackets.forEach(e => {
-            if (this.$t(e.name) === t.seriesName) {
-              t.borderColor = chartColor3[e.positioning]
-            }
-          })
+        const _this = this
+        const dom = document.getElementById('linkTrafficLineChart')
+        !this.myChart && (this.myChart = echarts.init(dom))
+        this.chartOption = linkTrafficLineChartOption
+        const chartOption = this.chartOption.series[0]
+        this.chartOption.series = echartsData.map((t, i) => {
+          return {
+            ...chartOption,
+            name: t.name,
+            lineStyle: {
+              color: chartColor3[t.positioning],
+              width: 1
+            },
+            stack: t.name !== 'network.total' ? 'network.total' : '',
+            symbolSize: function (value) {
+              return _this.symbolSizeSortChange(i, value[0])
+            },
+            emphasis: {
+              itemStyle: {
+                borderColor: chartColor4[t.positioning],
+                borderWidth: 2,
+                shadowColor: chartColor4[t.positioning],
+                shadowBlur: this.sizes[t.positioning] + 2
+              }
+            },
+            areaStyle: {
+              opacity: 0.1,
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: chartColor3[t.positioning]
+                },
+                {
+                  offset: 1,
+                  color: chartColor3[t.positioning]
+                }
+              ])
+            },
+            data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number'])
+          }
         })
-        // const str = stackedLineTooltipFormatter(params)
-        return stackedLineTooltipFormatter(params)
+        this.chartOption.tooltip.formatter = (params) => {
+          params.forEach(t => {
+            t.seriesName = this.$t(t.seriesName)
+            this.mpackets.forEach(e => {
+              if (this.$t(e.name) === t.seriesName) {
+                t.borderColor = chartColor3[e.positioning]
+              }
+            })
+          })
+          // const str = stackedLineTooltipFormatter(params)
+          return stackedLineTooltipFormatter(params)
+        }
+        this.showMarkLine = true
+        this.myChart.setOption(this.chartOption)
       }
-      this.showMarkLine = true
-      this.myChart.setOption(this.chartOption)
     },
     activeChange (item, index) {
       if (this.isNoData) return
