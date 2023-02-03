@@ -13,14 +13,14 @@
             <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('overall.type') }}</div>
             <template v-for="(legend, index) in chartData" :key="index">
               <div class="npm-event-pie-legend-type">
-                <div class="npm-event-pie-legend-type-severity">{{legend.name}}</div>
+                <div class="npm-event-pie-legend-type-severity" :test-id="`testNode${index}`">{{legend.name}}</div>
               </div>
             </template>
           </div>
           <div class="npm-event-pie-legend">
             <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('network.total') }}</div>
             <template v-for="(legend, index) in chartData" :key="index">
-              <div class="npm-event-pie-legend-total">{{legend.value}}</div>
+              <div class="npm-event-pie-legend-total" :test-id="`total${index}`">{{legend.value}}</div>
             </template>
           </div>
         </div>
@@ -31,7 +31,6 @@
 
 <script>
 import { shallowRef } from 'vue'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import * as echarts from 'echarts'
 import { pieChartOption3 } from '@/views/charts2/charts/options/echartOption'
@@ -39,6 +38,7 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
+import axios from 'axios'
 
 export default {
   name: 'NpmEventsByType',
@@ -108,7 +108,8 @@ export default {
         type: 'severity'
       }
       this.toggleLoading(true)
-      get(api.npm.events.recentEvents, params).then(res => {
+      axios.get(api.npm.events.recentEvents, { params: params }).then(res => {
+        res = res.data
         if (res.code === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
@@ -126,7 +127,9 @@ export default {
           this.chartData = arrData.sort((a, b) => { return b.value - a.value })
           this.$nextTick(() => {
             if (this.chartData.length > 0) {
-              this.init()
+              if (!this.isUnitTesting) {
+                this.init()
+              }
             }
           })
         } else {
