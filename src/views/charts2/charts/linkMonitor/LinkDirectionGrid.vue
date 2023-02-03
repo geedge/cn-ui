@@ -12,10 +12,10 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
-import { get } from '@/utils/http'
 import { storageKey } from '@/utils/constants'
 import PopoverContent from './LinkDirectionGrid/PopoverContent'
 import { computeScore } from '@/utils/tools'
+import axios from 'axios'
 
 export default {
   name: 'LinkDirectionGrid',
@@ -56,11 +56,14 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
 
-      const dataRequest = get(api.linkMonitor.bigramAnalysis, params)
-      const nextHopRequest = get(api.linkMonitor.bigramNextHopAnalysis, params)
+      const dataRequest = axios.get(api.linkMonitor.bigramAnalysis, { params: params })
+      const nextHopRequest = axios.get(api.linkMonitor.bigramNextHopAnalysis, { params: params })
       this.toggleLoading(true)
 
-      Promise.all([dataRequest, nextHopRequest]).then(res => {
+      Promise.all([dataRequest, nextHopRequest]).then(response => {
+        const res = []
+        res[0] = response[0].data
+        res[1] = response[1].data
         if (res[0].code === 200) {
           this.isLinkShowError = false
           // 链路流量数据
@@ -225,13 +228,11 @@ export default {
           this.nextErrorMsg = res[1].message
         }
       }).catch(e => {
-        console.error(e)
-
         this.isLinkShowError = true
-        this.linkErrorMsg = e[0].message
+        this.linkErrorMsg = e.message
 
         this.isNextShowError = true
-        this.nextErrorMsg = e[1].message
+        this.nextErrorMsg = e.message
       }).finally(() => {
         this.toggleLoading(false)
       })
