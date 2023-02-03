@@ -43,16 +43,6 @@ export default {
           i18n: 'I18n',
           path: '/administration/i18n',
           icon: 'cn-icon cn-icon-i18n'
-        },
-        {
-          i18n: 'galaxyProxy.galaxyProxy',
-          path: '/administration/galaxyProxy',
-          icon: 'cn-icon cn-icon-proxy'
-        },
-        {
-          i18n: 'overall.chart',
-          path: '/administration/chart',
-          icon: 'cn-icon cn-icon-chart'
         }
       ]
     }
