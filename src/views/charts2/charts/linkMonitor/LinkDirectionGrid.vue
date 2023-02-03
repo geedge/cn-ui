@@ -98,7 +98,7 @@ export default {
                 // 分数低于3分，赋红点
                 d.score = this.localComputeScore(d)
 
-                d.scoreLow3 = d.score < 3
+                d.scoreLow3 = d.score < 3 || d.score === '-'
 
                 if (data) {
                   const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
@@ -185,7 +185,7 @@ export default {
                 // 分数低于3分，赋红点
                 d.score = this.localComputeScore(d)
 
-                d.scoreLow3 = d.score < 3
+                d.scoreLow3 = d.score < 3 || d.score === '-'
 
                 if (data) {
                   const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)

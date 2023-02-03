@@ -2,6 +2,7 @@ import LinkDirectionGrid from '@/views/charts2/charts/linkMonitor/LinkDirectionG
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import { mockGet1, mockGet2, linkInfoData } from './LinkDirectionGridData'
+import ElementPlus from 'element-plus'
 
 const linkInfo = JSON.stringify(linkInfoData)
 const timeFilter = {
@@ -9,8 +10,6 @@ const timeFilter = {
   startTime: 1673244000000,
   endTime: 1673247600000
 }
-
-var wrapper = null
 
 /**
  * 进行axios请求，并挂载vue实例
@@ -34,18 +33,18 @@ function axiosPostAndMounted (list1, list2) {
 
   // 模拟localStorage获取数据
   jest.spyOn(localStorage.__proto__, 'getItem').mockImplementation(key => linkInfo)
-
-  // 加载vue组件，获得实例
-  wrapper = mount(LinkDirectionGrid, {
-    propsData: {
-      timeFilter
-    }
-  })
 }
 
 describe('views/charts2/charts/linkMonitor/LinkBlock.vue测试', () => {
-  test('鼠标移动到链路网格图第5行第3列，下一跳网格图第3行第1列，测试界面内容', async () => {
+  test('鼠标移动到链路网格图第5行第3列，下一跳网格图第3行第1列，测试链路编号和悬浮框dom内容', async () => {
     axiosPostAndMounted()
+    // 加载vue组件，获得实例
+    // 如需加载悬浮框dom，则此处不需要挂载Element，挂载Element的话，需要触发hover事件获取悬浮框dom
+    const wrapper = mount(LinkDirectionGrid, {
+      propsData: {
+        timeFilter
+      }
+    })
 
     await new Promise(resolve => setTimeout(() => {
       /**
@@ -120,52 +119,45 @@ describe('views/charts2/charts/linkMonitor/LinkBlock.vue测试', () => {
       resolve()
     }, 200))
   })
-  test('鼠标移动到链路网格图第5行第3列，下一跳网格图第3行第1列，测试total和上下行流量占比', async () => {
+  test('链路网格图第5行第3列，下一跳网格图第3行第1列，测试网格颜色随评分和流量占比变化', async () => {
     const list1 = JSON.parse(JSON.stringify(mockGet1))
     const list2 = JSON.parse(JSON.stringify(mockGet2))
-    // 5行3列的位置顺序为1053，因为数组index从0开始，在数组中键值即为43
-    // totalBitsRate原为576935.76，即576.94Kbps，修改后为57.69Mbps
-    list1.data.data.result[43].totalBitsRate = 57693576
-    list1.data.data.result[43].egressBitsRate = 100000000000
-    list1.data.data.result[43].ingressBitsRate = 0
+    // 修改链路评分为-，使得网格颜色为前绿后红
+    list1.data.data.result[43].establishLatencyMs = null
+    list1.data.data.result[43].httpResponseLatency = null
+    list1.data.data.result[43].sslConLatency = null
+    list1.data.data.result[43].tcpLostlenPercent = null
+    list1.data.data.result[43].pktRetransPercent = null
 
-    // 下一跳是3行3列，所以3行1列位置是7，键值为6
-    list2.data.data.result[6].totalBitsRate = 87726000
+    // 修改下一跳的流量占比为100%，使得网格颜色为前红后绿
     list2.data.data.result[6].egressBitsRate = 0
     list2.data.data.result[6].ingressBitsRate = 100000000000
     axiosPostAndMounted(list1, list2)
+
+    const wrapper = mount(LinkDirectionGrid, {
+      global: {
+        plugins: [ElementPlus]
+      },
+      propsData: {
+        timeFilter
+      }
+    })
 
     await new Promise(resolve => setTimeout(() => {
       /**
        * 此为左侧链路网格图dom
        */
-      // 出入流量占比dom，egressUsage10-5-3，表示第5行第3列的上行流量
-      const egressUsage1053 = wrapper.get('[test-id="egressUsage10-5-3"]')
-      const ingressUsage1053 = wrapper.get('[test-id="ingressUsage10-5-3"]')
-      // 总流量
-      const totalBitsRate1053 = wrapper.get('[test-id="totalBitsRate10-5-3"]')
-      // 评分
-      const score1053 = wrapper.get('[test-id="score10-5-3"]')
-
-      expect(egressUsage1053.text()).toBe('100.00%')
-      expect(ingressUsage1053.text()).toBe('0%')
-      expect(totalBitsRate1053.text()).toBe('57.69Mbps')
-      expect(score1053.text()).toBe('6')
-
+      const scorePoint1053 = wrapper.find('[test-id="scorePoint10-5-3"]')
+      const usagePoint1053 = wrapper.find('[test-id="usagePoint10-5-3"]')
+      expect(scorePoint1053.classes()).toContain('data-item__point-red')
+      expect(usagePoint1053.classes()).toContain('data-item__point')
       /**
        * 此为右侧下一跳网络网格图dom
        */
-      const egressUsage331 = wrapper.find('[test-id="egressUsage3-3-1"]')
-      const ingressUsage331 = wrapper.find('[test-id="ingressUsage3-3-1"]')
-      // 总流量
-      const totalBitsRate331 = wrapper.find('[test-id="totalBitsRate3-3-1"]')
-      // 评分
-      const score331 = wrapper.find('[test-id="score3-3-1"]')
-
-      expect(egressUsage331.text()).toBe('0%')
-      expect(ingressUsage331.text()).toBe('100.00%')
-      expect(totalBitsRate331.text()).toBe('87.73Mbps')
-      expect(score331.text()).toBe('5')
+      const usagePoint331 = wrapper.find('[test-id="usagePoint3-3-1"]')
+      const scorePoint331 = wrapper.find('[test-id="scorePoint3-3-1"]')
+      expect(usagePoint331.classes()).toContain('data-item__point-red')
+      expect(scorePoint331.classes()).toContain('data-item__point')
       resolve()
     }, 200))
   })

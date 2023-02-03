@@ -26,8 +26,8 @@
           <el-popover :width="item.popoverWidth" placement="right" trigger="click">
             <template #reference>
               <div class="data-item data-item__hover">
-                <div :class="item.usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
-                <div :class="item.scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
+                <div :test-id="`usagePoint${gridData.length}-${index2+1}-${index3+1}`" :class="item.usageMore90 ? 'data-item__point-red':'data-item__point'">{</div>
+                <div :test-id="`scorePoint${gridData.length}-${index2+1}-${index3+1}`" :class="item.scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
               </div>
             </template>
 
