@@ -22,6 +22,9 @@ export const line = {
   },
   yAxis: {
     type: 'value',
+    splitLine: {
+      show: false
+    },
     axisLabel: {
       formatter: function (value) {
         return unitConvert(value, unitTypes.number, null, null, 0).join(' ')
@@ -62,7 +65,7 @@ export const line = {
     {
       name: '',
       type: 'line',
-      smooth: false,
+      smooth: true,
       symbol: 'none',
       data: [],
       markLine: {}

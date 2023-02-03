@@ -126,7 +126,7 @@ export default {
               ? legendMapping[
                   `${this.entity && this.entity.ip ? 'ip_' : ''}${r.legend}`
               ]
-              : (legendMapping[r.legend] ? legendMapping[r.legend] : humpToSpace(r.legend)),
+              : (legendMapping[r.legend] ? legendMapping[r.legend] : r.legend),
             data: r.values.map((v) => [
               Number(v[0]) * 1000,
               Number(v[1]),
