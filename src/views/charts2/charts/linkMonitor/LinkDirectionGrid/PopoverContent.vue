@@ -21,13 +21,13 @@
           <span v-if="row.nextHop">{{ row.nextHop }}</span>
           <span v-else>{{ row.linkId }}</span>
         </div>
-        <div v-for="(item, index2) in row.egress" :key="index2">
+        <div v-for="(item, index3) in row.egress" :key="index3">
 
-          <el-popover :width="item.popoverWidth" placement="right" trigger="hover">
+          <el-popover :width="item.popoverWidth" placement="right" trigger="click">
             <template #reference>
               <div class="data-item data-item__hover">
-                <div :class="row.egress[index2].usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
-                <div :class="row.egress[index2].scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
+                <div :class="item.usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
+                <div :class="item.scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
               </div>
             </template>
 
@@ -35,13 +35,13 @@
             <template #default>
               <div class="item-popover-header">
                 <!--兼容下一跳情况-->
-                <span v-if="row.nextHop">{{ row.nextHop }}</span>
-                <span v-else>{{ row.linkId }}</span>
+                <span v-if="row.nextHop" :test-id="`toNextHop${index2+1}`">{{ row.nextHop }}</span>
+                <span v-else :test-id="`fromLinkId${index2+1}`">{{ row.linkId }}</span>
                 <svg class="icon item-popover-header-icon" aria-hidden="true">
                   <use xlink:href="#cn-icon-arrow-right2"></use>
                 </svg>
-                <span v-if="row.nextHop">{{ row.egress[index2].egressLinkDirection }}</span>
-                <span v-else>{{ row.egress[index2].linkId }}</span>
+                <span v-if="row.nextHop" :test-id="`toNextHop${index3+1}`">{{ item.egressLinkDirection }}</span>
+                <span v-else :test-id="`toLinkId${index3+1}`">{{ item.linkId }}</span>
               </div>
 
               <div class="item-popover-block">
@@ -49,24 +49,24 @@
 
                 <div style="display: flex">
                   <div class="row-dot">
-                    <div :class="row.egress[index2].usageMore90 ? 'red-dot':'green-dot'"></div>
+                    <div :class="item.usageMore90 ? 'red-dot':'green-dot'"></div>
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.bandwidthUsage') }}</div>
 
-                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        <div style="margin-left: -10px">
+                      <div class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                        <div :test-id="`egressUsage${gridData.length}-${index2+1}-${index3+1}`" style="margin-left: -10px">
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
                           </svg>
-                          {{ convertValue(row.egress[index2].egressUsage) }}
+                          {{ convertValue(item.egressUsage) }}
                         </div>
-                        <div>
+                        <div :test-id="`ingressUsage${gridData.length}-${index2+1}-${index3+1}`">
                           <svg class="icon item-popover-down" aria-hidden="true">
                             <use xlink:href="#cn-icon-ingress"></use>
                           </svg>
-                          {{ convertValue(row.egress[index2].ingressUsage) }}
+                          {{ convertValue(item.ingressUsage) }}
                         </div>
                       </div>
                     </div>
@@ -74,8 +74,8 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
-                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        {{ unitConvert(row.egress[index2].totalBitsRate, unitTypes.bps).join('') }}
+                      <div :test-id="`totalBitsRate${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                        {{ unitConvert(item.totalBitsRate, unitTypes.bps).join('') }}
                       </div>
                     </div>
                   </div>
@@ -87,48 +87,48 @@
 
                 <div style="display: flex">
                   <div class="row-dot">
-                    <div :class="row.egress[index2].scoreLow3 ? 'red-dot':'green-dot'"></div>
+                    <div :class="item.scoreLow3 ? 'red-dot':'green-dot'"></div>
                   </div>
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.npmScore1') }}</div>
-                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        {{ row.egress[index2].score }}
+                      <div :test-id="`score${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                        {{ item.score }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[0].name) }}</div>
-                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        {{ unitConvert(row.egress[index2].establishLatencyMs, unitTypes.time).join('') }}
+                      <div :test-id="`tcp${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                        {{ unitConvert(item.establishLatencyMs, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[1].name) }}</div>
-                      <div class="block-content-item-value" :style="{'width': row.egress[index2].valueWidth + 'px'}">
-                        {{ unitConvert(row.egress[index2].httpResponseLatency, unitTypes.time).join('') }}
+                      <div :test-id="`http${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{'width': item.valueWidth + 'px'}">
+                        {{ unitConvert(item.httpResponseLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[2].name) }}</div>
-                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        {{ unitConvert(row.egress[index2].sslConLatency, unitTypes.time).join('') }}
+                      <div :test-id="`ssl${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                        {{ unitConvert(item.sslConLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[3].name) }}</div>
-                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        {{ unitConvert(row.egress[index2].tcpLostlenPercent, unitTypes.percent).join('') }}
+                      <div :test-id="`packetLoss${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                        {{ unitConvert(item.tcpLostlenPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[4].name) }}</div>
-                      <div class="block-content-item-value" :style="{width: row.egress[index2].valueWidth + 'px'}">
-                        {{ unitConvert(row.egress[index2].pktRetransPercent, unitTypes.percent).join('') }}
+                      <div :test-id="`packetRetrans${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                        {{ unitConvert(item.pktRetransPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
                   </div>
