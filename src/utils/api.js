@@ -318,11 +318,12 @@ export async function getI18n () {
 
 /* 获得原始的3611-2 json字符串数据 */
 export async function getIso36112JsonData (suffix) {
+  const url = `${window.location.protocol}//${window.location.host}/geojson/${suffix}.json`
   const request = new Promise(resolve => {
-    axios({
-      url: `${window.location.protocol}//${window.location.host}:${window.location.port}/geojson/${suffix}.json`
-    }).then(response => {
+    axios({ url }).then(response => {
       resolve(response.data || response || null)
+    }).catch(err => {
+      console.error(err)
     })
   })
   return await request
