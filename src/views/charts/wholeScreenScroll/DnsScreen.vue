@@ -32,8 +32,8 @@ export default {
   methods: {
     reload () {
       this.dnsScreenDataList.forEach(item => {
-        if (this.$refs['chart' + item.id]) {
-          this.$refs['chart' + item.id].getChartData()
+        if (this.$refs['chart' + item.id] && this.$refs['chart' + item.id][0]) {
+          this.$refs['chart' + item.id][0].getChartData()
         }
       })
     }

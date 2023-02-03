@@ -114,8 +114,8 @@ export default {
     },
     reload () {
       this.copyDataList.forEach(item => {
-        if (this.$refs['chart' + item.id]) {
-          this.$refs['chart' + item.id].reload()
+        if (this.$refs['chart' + item.id] && this.$refs['chart' + item.id][0]) {
+          this.$refs['chart' + item.id][0].reload()
         }
       })
     },
