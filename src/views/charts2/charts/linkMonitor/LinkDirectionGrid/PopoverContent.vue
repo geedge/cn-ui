@@ -23,10 +23,10 @@
         </div>
         <div v-for="(item, index3) in row.egress" :key="index3">
 
-          <el-popover :width="item.popoverWidth" placement="right" trigger="click">
+          <el-popover :width="item.popoverWidth" placement="right" trigger="hover">
             <template #reference>
               <div class="data-item data-item__hover">
-                <div :test-id="`usagePoint${gridData.length}-${index2+1}-${index3+1}`" :class="item.usageMore90 ? 'data-item__point-red':'data-item__point'">{</div>
+                <div :test-id="`usagePoint${gridData.length}-${index2+1}-${index3+1}`" :class="item.usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
                 <div :test-id="`scorePoint${gridData.length}-${index2+1}-${index3+1}`" :class="item.scoreLow3 ? 'data-item__point-red':'data-item__point'"></div>
               </div>
             </template>
