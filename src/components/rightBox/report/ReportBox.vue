@@ -19,7 +19,6 @@
                        v-model="editObject.config.timeConfig.type"
                        class="right-box__select"
                        collapse-tags
-                       :disabled="!!editObject.id"
                        placeholder=" "
                        popper-class="right-box-select-dropdown right-box-select-report "
                        size="small"
@@ -31,7 +30,6 @@
             </el-select>
             <template v-if="editObject.config.timeConfig.type === 'this'">
               <el-select id="reportBoxTimeUnitSelect"
-                         :disabled="!!editObject.id"
                          v-model="editObject.config.timeConfig.unit"
                          class="right-box__select"
                          collapse-tags
@@ -45,7 +43,7 @@
               </el-select>
             </template>
             <div v-else-if="editObject.config.timeConfig.type === 'last' || editObject.config.timeConfig.type === 'previous'" style="display: flex;">
-              <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder=" " :disabled="!!editObject.id">
+              <el-input v-model.number="editObject.config.timeConfig.offset" size="small" class="el-input-single" placeholder=" ">
                 <template #prepend><i @click="timeOffsetHandle('m')" class="cn-icon cn-icon-a-"></i></template>
                 <template #append><i @click="timeOffsetHandle('p')" class="cn-icon cn-icon-a-1"></i></template>
               </el-input>
@@ -53,7 +51,6 @@
                          v-model="editObject.config.timeConfig.unit"
                          class="right-box__select right-box__select-single"
                          collapse-tags
-                         :disabled="!!editObject.id"
                          placeholder=" "
                          popper-class="right-box-select-dropdown  el-select-last"
                          size="small"
@@ -73,7 +70,6 @@
                     v-model="editObject.config.startTime"
                     size="small"
                     :format="dateFormat"
-                    :disabled="!!editObject.id"
                     :disabled-date="startDisabledDate"
                     @change="startTimeChang"
                     prefix-icon="cn-icon cn-icon-shijian"
@@ -92,7 +88,6 @@
                     v-model="editObject.config.endTime"
                     size="small"
                     :format="dateFormat"
-                    :disabled="!!editObject.id"
                     :disabled-date="endDisabledDate"
                     @change="endTimeChange"
                     prefix-icon="cn-icon cn-icon-shijian"
@@ -103,41 +98,41 @@
             </div>
           </el-form-item >
           <el-form-item class="el-height">
-            <el-checkbox v-model="scheduleChecked" :disabled="editObject.config.timeConfig.type === 'customize' || !!editObject.id" :label="$t('report.enableTimeSchedule')" size="large" />
+            <el-checkbox v-model="scheduleChecked" :disabled="editObject.config.timeConfig.type === 'customize'" :label="$t('report.enableTimeSchedule')" size="large" />
           </el-form-item>
           <!--Enable time schedule-->
           <el-form-item prop="enableTimeSchedule" v-if="scheduleChecked">
             <div class="enable-tab">
-              <div class="enable-tabs" @click="editObject.id ? null : (scheduleType = type.value)" v-for="type in scheduleTypeList" :key="type.value" :class="{'active': scheduleType === type.value, 'disable': editObject.id}">{{$t(type.name)}}</div>
+              <div class="enable-tabs" @click="scheduleTypeChange(type.value)" v-for="type in scheduleTypeList" :key="type.value" :class="{'active': scheduleType === type.value}">{{$t(type.name)}}</div>
             </div>
             <div class="enable-tabs-daily" v-if="scheduleType === scheduleTypeList[0].value">
               <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
+              <el-input v-model.number="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;">
                 <template #append>{{$t('report.day')}}</template>
               </el-input>
             </div>
-            <div class="enable-tabs-weekly" v-else-if="scheduleType === scheduleTypeList[1].value" :disabled="!!editObject.id">
+            <div class="enable-tabs-weekly" v-else-if="scheduleType === scheduleTypeList[1].value">
               <!-- 每隔几周暂时隐藏 -->
               <!-- <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
               <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder="Please input">
                 <template #append>{{$t('report.week')}}</template>
               </el-input>-->
-              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" style="margin-top: 0.3125rem" :disabled="!!editObject.id">
+              <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" style="margin-top: 0.3125rem">
                 <el-checkbox v-for="(item, index) in weekdayList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
               </el-checkbox-group>
             </div>
             <!-- 月 -->
             <div class="enable-tabs-per-month" v-else-if="scheduleType === scheduleTypeList[2].value">
               <div class="enable-month-tab">
-                <div class="enable-month-tabs" @click="editObject.id ? null : (monthScheduleType = 'daily')" :class="{'active': monthScheduleType === 'daily', 'disable': editObject.id}">{{$t('report.date')}}</div>
-                <div class="enable-month-tabs" @click="editObject.id ? null : (monthScheduleType = 'weekly')" :class="{'active': monthScheduleType === 'weekly', 'disable': editObject.id}">{{$t('report.week')}}</div>
-                <el-checkbox v-model="monthIsCycle" :label="$t('report.cycle')" size="large" :disabled="!!editObject.id"/>
+                <div class="enable-month-tabs" @click="monthScheduleType = 'daily'" :class="{'active': monthScheduleType === 'daily'}">{{$t('report.date')}}</div>
+                <div class="enable-month-tabs" @click="monthScheduleType = 'weekly'" :class="{'active': monthScheduleType === 'weekly'}">{{$t('report.week')}}</div>
+                <el-checkbox v-model="monthIsCycle" :label="$t('report.cycle')" size="large"/>
               </div>
               <div class="enable-month-data-tab">
                 <!-- 自定义月，循环 -->
                 <template v-if="monthIsCycle">
                   <div class="enable-tabs-custom">{{$t('report.customEvery')}}</div>
-                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;" :disabled="!!editObject.id">
+                  <el-input v-model="editObject.config.schedulerConfig.interval" size="small" placeholder=" " style="margin-top: 0.3125rem;">
                     <template #append>{{$t('report.month')}}</template>
                   </el-input>
                 </template>
@@ -145,8 +140,8 @@
                 <template v-else>
                   <div class="enable-month-moon-custom">{{$t('report.custom')}}</div>
                   <div class="enable-month-all">
-                    <el-checkbox v-model="monthCheckedAll" class="enable-month-all-months" :indeterminate="monthIsIndeterminate" @change="monthCheckAllChange" :label="$t('report.allMonths')" :disabled="!!editObject.id"/>
-                    <el-checkbox-group v-model="editObject.config.schedulerConfig.months" @change="monthCheckChange" :disabled="!!editObject.id">
+                    <el-checkbox v-model="monthCheckedAll" class="enable-month-all-months" :indeterminate="monthIsIndeterminate" @change="monthCheckAllChange" :label="$t('report.allMonths')"/>
+                    <el-checkbox-group v-model="editObject.config.schedulerConfig.months" @change="monthCheckChange">
                       <el-checkbox v-for="(item, index) in monthList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
                     </el-checkbox-group>
                   </div>
@@ -154,8 +149,8 @@
                 <!-- 按日期 -->
                 <template v-if="monthScheduleType === 'daily'">
                   <div class="enable-month-data-tabs">
-                    <el-checkbox v-model="dateCheckedAll" :indeterminate="dateIsIndeterminate" @change="dateCheckAllChange" :label="$t('report.all')" size="large" :disabled="!!editObject.id"/>
-                    <el-checkbox-group v-model="editObject.config.schedulerConfig.monthDates" @change="dateCheckChange" :disabled="!!editObject.id">
+                    <el-checkbox v-model="dateCheckedAll" :indeterminate="dateIsIndeterminate" @change="dateCheckAllChange" :label="$t('report.all')" size="large"/>
+                    <el-checkbox-group v-model="editObject.config.schedulerConfig.monthDates" @change="dateCheckChange">
                       <el-checkbox v-for="item in dateList" :key="item" :label="item"/>
                     </el-checkbox-group>
                   </div>
@@ -168,7 +163,6 @@
                              class="right-box__select"
                              multiple
                              placeholder=" "
-                             :disabled="!!editObject.id"
                              popper-class="right-box-select-dropdown right-box-select-report"
                              size="small"
                              @change="()=>{ this.$forceUpdate() }">
@@ -177,8 +171,8 @@
                     </template>
                   </el-select>
                   <div class="enable-month-week">
-                    <el-checkbox v-model="monthWeekdayCheckedAll" class="enable-month-week-all" :label="$t('report.all')" :indeterminate="monthWeekdayIsIndeterminate" @change="monthWeekdayCheckAllChange" size="large" :disabled="!!editObject.id"/>
-                    <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" @change="monthWeekdayCheckChange" :disabled="!!editObject.id">
+                    <el-checkbox v-model="monthWeekdayCheckedAll" class="enable-month-week-all" :label="$t('report.all')" :indeterminate="monthWeekdayIsIndeterminate" @change="monthWeekdayCheckAllChange" size="large"/>
+                    <el-checkbox-group v-model="editObject.config.schedulerConfig.weekDates" @change="monthWeekdayCheckChange">
                       <el-checkbox v-for="(item, index) in weekdayList" :key="index" :label="item.value">{{$t(item.name)}}</el-checkbox>
                     </el-checkbox-group>
                   </div>
@@ -228,7 +222,7 @@
                        :disabled="!!editObject.id"
                        popper-class="right-box-select-dropdown right-box-select-report"
                        size="small"
-                       @change="typeChange">
+            >
               <template v-for="category in categoryList" :key="category.id">
                 <el-option :label="category.name" :value="category.id"></el-option>
               </template>
@@ -413,20 +407,14 @@ export default {
   watch: {
     scheduleType (n, o) {
       this.editObject.config.schedulerConfig.type = n
-      if (!this.editObject.id) {
-        this.cleanScheduleConfig()
-      }
+      this.cleanScheduleConfig()
     },
     scheduleChecked (n) {
       this.editObject.config.isScheduler = n ? 1 : 0
-      if (!this.editObject.id) {
-        this.cleanScheduleConfig()
-      }
+      this.cleanScheduleConfig()
     },
     monthScheduleType (n) {
-      if (!this.editObject.id) {
-        this.cleanScheduleConfig()
-      }
+      this.cleanScheduleConfig()
     },
     monthIsCycle (n) {
       if (!this.editObject.id) {
@@ -561,14 +549,12 @@ export default {
         }
       }
     },
-    typeChange (id) {
-
-    },
     cleanScheduleConfig () {
       this.editObject.config.schedulerConfig.monthDates = []
       this.editObject.config.schedulerConfig.weekDates = []
       this.editObject.config.schedulerConfig.months = []
       this.editObject.config.schedulerConfig.monthWeekDates = []
+      this.editObject.config.schedulerConfig.interval = 1
       this.monthIsCycle = true
       this.dateCheckedAll = false
       this.dateIsIndeterminate = false
@@ -581,6 +567,9 @@ export default {
       if (val === 'customize') {
         this.scheduleChecked = false
       }
+    },
+    scheduleTypeChange (val) {
+      this.scheduleType = val
     },
     save () {
       if (this.blockOperation.save) { return }
