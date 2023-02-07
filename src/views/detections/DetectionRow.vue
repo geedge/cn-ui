@@ -205,7 +205,7 @@ export default {
      */
     initExpendTab () {
       if (this.$route.query.eventId) {
-        if (parseFloat(this.$route.query.eventId) === this.detection.eventId) {
+        if (this.$route.query.eventId === this.detection.eventId) {
           const container = document.getElementById('cnContainer')
           const dom = document.getElementsByClassName('cn-detection__case')
           // 未展开的item折叠块，高度67+下边距10+底部线高度1，兼容不同分辨率下的tab高度
