@@ -6,31 +6,31 @@
     </div>
 
     <div class="app-cards">
-      <div class="app-card" @mouseenter="mouseenter(app)" @mouseleave="mouseleave(app)" v-for="(app, index) in appData" :key="app.type + app.name">
+      <div class="app-card" @mouseenter="mouseenter(app)" @mouseleave="mouseleave(app)" v-for="(app, index) in appData" :key="app.type + app.name" test-id="app-data-card">
         <div class="app-card-title">
           <div class="app-card-title-name">
-            <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'"></i>
-            <span @click="drillDownData(app.type, app.name)">{{app.name}}</span>
+            <i class="cn-icon" :class="app.type === 'provider' ? 'cn-icon-entity' : 'cn-icon-app2'" :test-id="`icon${index}`"></i>
+            <span @click="drillDownData(app.type, app.name)" :test-id="`name${index}`">{{app.name}}</span>
           </div>
           <div class="app-card-title-more">
-            <span v-show="app.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(app)"></i></span>
-            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions" @mouseleave="mouseleaveMore(app)"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
+            <span v-show="app.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(app)" test-id="mouseenter-dark"></i></span>
+            <span class="app-card-title-more-delete" @click="del(app, index)" v-show="app.moreOptions" @mouseleave="mouseleaveMore(app)" test-id="mouseleave-more"><i class="cn-icon cn-icon-delete"></i>{{$t('overall.delete')}}</span>
           </div>
         </div>
         <div class="app-card__bodys">
           <div class="app-card__body">
             <div class="app-card__body-content">
               <div class="app-card__body-content-value">
-                <div class="app-card__body-content-number">{{unitConvert(app.rate, unitTypes.number).join(' ')}}</div>
-                <div class="app-card__body-content-percent red" v-if="app.value > 0">
+                <div class="app-card__body-content-number" :test-id="`rate${index}`">{{unitConvert(app.rate, unitTypes.number).join(' ')}}</div>
+                <div class="app-card__body-content-percent red" v-if="app.value > 0" :test-id="`percent${index}`">
                   <span v-if="app.value <= 5">
                     +{{unitConvert(app.value, unitTypes.percent).join('')}}
                   </span>
                   <span v-else>>500.00%</span>
                 </div>
-                <div class="app-card__body-content-percent green" v-else-if="app.value < 0">
+                <div class="app-card__body-content-percent green" v-else-if="app.value < 0" :test-id="`percent${index}`">
                   <span v-if="app.value >= -5">
-                    -{{unitConvert(app.value, unitTypes.percent).join('').replaceAll('-', '')}}
+                    -{{unitConvert(app.value, unitTypes.percent).join('').replace(/-/g, '')}}
                   </span>
                   <span v-else>>500.00%</span>
                 </div>
@@ -39,8 +39,8 @@
             </div>
             <div class="app-card__body-previous">
               <div>Total</div>
-              <div v-if="metric === 'Bits/s'">{{unitConvert(app.total, unitTypes.byte).join(' ')}}</div>
-              <div v-else>{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
+              <div v-if="metric === 'Bits/s'" :test-id="`total${index}`">{{unitConvert(app.total, unitTypes.byte).join(' ')}}</div>
+              <div v-else :test-id="`total${index}`">{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
             </div>
           </div>
           <div class="chart__drawing" v-show="!isNoData" :id="`chart-${app.name}-${app.type}`"></div>
@@ -48,7 +48,7 @@
       </div>
       <div class="app-card app-card--create">
         <i class="cn-icon cn-icon-add1" @click="addApp"></i>
-        <span @click="addApp">{{$t('overall.add')}}</span>
+        <span @click="addApp" test-id="add">{{$t('overall.add')}}</span>
       </div>
     </div>
     <el-drawer
@@ -62,7 +62,7 @@
         <div class="add-app__header">
           <div class="header__title">{{$t('overall.add')}}</div>
           <div class="header__operations">
-            <div class="header__operation header__operation--cancel" @click="cancelApp">{{$t('overall.cancel')}}</div>
+            <div class="header__operation header__operation--cancel" @click="cancelApp" test-id="cancel-app">{{$t('overall.cancel')}}</div>
             <div class="header__operation header__operation--save" @click="save">{{$t('overall.save')}}</div>
           </div>
         </div>
@@ -72,15 +72,15 @@
               <div class="body__apps" :class="{'body__apps-no-grid': providerOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
                 <chart-no-data v-if="providerOptions.length === 0 && !loadingBody"></chart-no-data>
-                <div class="body__app" v-else :class="{'provide-show': app.provideShow}" v-for="(app, index) in providerOptions" :key="index"  @click="appCheckedChange(app, 0)">
+                <div class="body__app" v-else :class="{'provide-show': app.provideShow}" v-for="(app, index) in providerOptions" :key="index"  @click="appCheckedChange(app, 0)" :test-id="`provide${index}`">
                   <div class="body__app-content">
                     <div class="body__app-left">
-                      <span><i class="cn-icon" :class="app.icon"></i></span>
-                      <span class="body__app-left-title">{{app.value}}</span>
+                      <span><i class="cn-icon" :class="app.icon" :test-id="`provide-icon${index}`"></i></span>
+                      <span class="body__app-left-title" :test-id="`provide-title${index}`">{{app.value}}</span>
                     </div>
                     <div class="body__app-content-right" v-if="app.provideShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
-                  <div class="body__app-value" v-if="app.remark" :title="app.remark">{{app.remark}}</div>
+                  <div class="body__app-value" v-if="app.remark" :title="app.remark" :test-id="`provide-remark${index}`">{{app.remark}}</div>
                   <div v-else>-</div>
                 </div>
               </div>
@@ -89,22 +89,22 @@
               <div class="body__apps" :class="{'body__apps-no-grid': appOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
                 <chart-no-data v-if="appOptions.length === 0 && !loadingBody"></chart-no-data>
-                <div class="body__app" v-else :class="{'app-show': app.appShow}" v-for="(app, index) in appOptions" :key="index" @click="appCheckedChange(app, 1)">
+                <div class="body__app" v-else :class="{'app-show': app.appShow}" v-for="(app, index) in appOptions" :key="index" @click="appCheckedChange(app, 1)" :test-id="`app${index}`">
                   <div class="body__app-content">
                     <div class="body__app-left">
-                      <span><i class="cn-icon" :class="app.icon"></i></span>
-                      <span class="body__app-left-title">{{app.value}}</span>
+                      <span><i class="cn-icon" :class="app.icon" :test-id="`app-icon${index}`"></i></span>
+                      <span class="body__app-left-title" :test-id="`app-title${index}`">{{app.value}}</span>
                     </div>
                     <div class="body__app-content-right" v-if="app.appShow"><span><i class="cn-icon cn-icon-a-allclear"></i></span></div>
                   </div>
-                  <div class="body__app-value" v-if="app.remark" :title="app.remark">{{app.remark}}</div>
+                  <div class="body__app-value" v-if="app.remark" :title="app.remark" :test-id="`app-remark${index}`">{{app.remark}}</div>
                   <div v-else>-</div>
                 </div>
               </div>
             </el-tab-pane>
           </el-tabs>
           <div class="body__searcher">
-            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="el-icon-search"></el-input>
+            <el-input v-model="searcherApp" @input="searcherAppChange" size="mini" :placeholder="$t('networkOverview.search')" prefix-icon="el-icon-search" test-id="search-input"></el-input>
           </div>
           <div class="body__loading"><loading :loading="loading"></loading></div>
         </div>
@@ -119,7 +119,7 @@ import { storageKey, unitTypes, networkTable, operationType, curTabState } from 
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
-import { get, put } from '@/utils/http'
+import { put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
@@ -128,6 +128,7 @@ import loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { appStackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import chartMixin from '@/views/charts2/chart-mixin'
+import axios from 'axios'
 
 export default {
   name: 'NetworkOverviewApps',
@@ -227,8 +228,8 @@ export default {
             return `'${item.name}'`
           }).join(',')
         }
-        prevRequest = get(api.netWorkOverview.applicationCycleTrafficTotal, params)
-        request = get(api.netWorkOverview.applicationTrafficAnalysis, params)
+        prevRequest = axios.get(api.netWorkOverview.applicationCycleTrafficTotal, { params: params })
+        request = axios.get(api.netWorkOverview.applicationTrafficAnalysis, { params: params })
         this.handleData(prevRequest, request, 'app')
       }
       if (providerCards.length > 0) {
@@ -239,15 +240,15 @@ export default {
             return `'${item.name}'`
           }).join(',')
         }
-        prevRequest = get(api.netWorkOverview.appCompanyCycleTrafficTotal, params)
-        request = get(api.netWorkOverview.appCompanyTrafficAnalysis, params)
+        prevRequest = axios.get(api.netWorkOverview.appCompanyCycleTrafficTotal, { params: params })
+        request = axios.get(api.netWorkOverview.appCompanyTrafficAnalysis, { params: params })
         this.handleData(prevRequest, request, 'provider')
       }
     },
     handleData (prevRequest, request, _t) {
       this.toggleLoading(true)
       Promise.all([prevRequest, request]).then(res => {
-        this.isNoData = (res[0].data.result.length && res[1].data.result.length) === 0
+        this.isNoData = (res[0].data.data.result.length && res[1].data.data.result.length) === 0
         if (this.isNoData) {
           this.appData = this.appData.map(t => {
             return {
@@ -256,10 +257,10 @@ export default {
             }
           })
         }
-        if (res[0].code === 200 && res[1].code === 200) {
+        if (res[0].data.code === 200 && res[1].data.code === 200) {
           this.showError = false
-          const prevData = res[0].data.result
-          const data = res[1].data.result
+          const prevData = res[0].data.data.result
+          const data = res[1].data.data.result
           let toCompareType = 'bytes'
           if (this.metric === 'Sessions/s') {
             toCompareType = 'sessions'
@@ -390,38 +391,40 @@ export default {
       this.urlChangeParams = {}
     },
     initChart (obj) {
-      let chart = this.myChart.find(m => m.name === obj.name && m.type === obj.type)
-      if (!chart) {
-        chart = echarts.init(document.getElementById(`chart-${obj.name}-${obj.type}`))
-        const chartOption = _.cloneDeep(appListChartOption)
-        chartOption.series = [{
-          ...chartOption.series[0],
-          data: obj.lineData.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
-          lineStyle: {
-            color: '#35ADDA'
-          },
-          areaStyle: {
-            opacity: 0.1,
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
-                offset: 0,
-                color: '#35ADDA'
-              },
-              {
-                offset: 1,
-                color: '#35ADDA'
-              }
-            ])
+      if (!this.isUnitTesting) {
+        let chart = this.myChart.find(m => m.name === obj.name && m.type === obj.type)
+        if (!chart) {
+          chart = echarts.init(document.getElementById(`chart-${obj.name}-${obj.type}`))
+          const chartOption = _.cloneDeep(appListChartOption)
+          chartOption.series = [{
+            ...chartOption.series[0],
+            data: obj.lineData.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number']),
+            lineStyle: {
+              color: '#35ADDA'
+            },
+            areaStyle: {
+              opacity: 0.1,
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: '#35ADDA'
+                },
+                {
+                  offset: 1,
+                  color: '#35ADDA'
+                }
+              ])
+            }
+          }]
+          chartOption.tooltip.formatter = (params) => {
+            return appStackedLineTooltipFormatter(params)
           }
-        }]
-        chartOption.tooltip.formatter = (params) => {
-          return appStackedLineTooltipFormatter(params)
+          chart.setOption(chartOption)
+          this.myChart.push(chart)
+          this.$nextTick(() => {
+            chart.resize()
+          })
         }
-        chart.setOption(chartOption)
-        this.myChart.push(chart)
-        this.$nextTick(() => {
-          chart.resize()
-        })
       }
     },
     handleScroll (e) {
@@ -458,7 +461,8 @@ export default {
       }
       if (parseFloat(this.appTypeTab) === 0) {
         params.type = 'overviewProvide'
-        get(api.dict, params).then(res => {
+        axios.get(api.dict, { params: params }).then(res => {
+          res = res.data
           if (res.code === 200) {
             res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'provider' && pd.name === l.value))
             this.pageObj.pages = res.data.pages
@@ -483,9 +487,10 @@ export default {
         })
       } else if (parseFloat(this.appTypeTab) === 1) {
         params.type = 'overviewApp'
-        get(api.dict, params).then(res => {
-          res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'app' && pd.name === l.value))
+        axios.get(api.dict, { params: params }).then(res => {
+          res = res.data
           if (res.code === 200) {
+            res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'app' && pd.name === l.value))
             this.pageObj.pages = res.data.pages
             res.data.list.forEach(t => {
               this.toSaveApp.forEach(e => {
@@ -700,7 +705,7 @@ export default {
     }
   },
   mounted () {
-    if (this.chart.params && this.chart.params.app) {
+    if (this.chart && this.chart.params && this.chart.params.app) {
       const userId = parseInt(localStorage.getItem(storageKey.userId))
       const apps = _.cloneDeep(this.chart.params.app)
       let app = apps.find(p => p.user === userId)
