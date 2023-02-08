@@ -17,6 +17,9 @@ function asciiCompute (num, ascii = 1000, units, dot = 2) {
     return ['', '']
   }
   num = Number(num)
+  if (num === 0) {
+    return [0, '']
+  }
   let carry = 0
   if (num > 1) {
     const log = Math.log(num) / Math.log(ascii)
