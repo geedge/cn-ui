@@ -38,11 +38,6 @@ export default {
           i18n: 'overall.operationLog',
           path: '/administration/operationLog',
           icon: 'cn-icon cn-icon-operation-log'
-        },
-        {
-          i18n: 'I18n',
-          path: '/administration/i18n',
-          icon: 'cn-icon cn-icon-i18n'
         }
       ]
     }

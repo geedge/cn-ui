@@ -1,9 +1,7 @@
 <template>
   <div class="logins">
     <div class="inside">
-      <div class="title">
-        <img src="../public/images/logo-title.svg" />
-      </div>
+      <div class="title">域名解析服务监测系统</div>
       <el-form class="login__box">
         <el-form-item>
           <el-input
@@ -193,11 +191,11 @@ export default {
 }
 
 .title {
-  margin-top: 65px;
+  margin-top: 90px;
+  padding: 0 70px;
+  color: white;
+  font-size: 40px;
   text-align: center;
-}
-.title > img {
-  height: 135px;
 }
 .login__box {
   display: flex;

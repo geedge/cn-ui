@@ -4,12 +4,12 @@
       <div class="banner__left">
         <span @click="shrink" class="shrink-button" :class="{'shrink-button--collapse': showMenu}"><i
             class="cn-icon cn-icon-navigation"></i></span>
-        <img alt="loading..." height="26" :src="logo?logo:require('../../assets/img/logo-header.svg')" @click="jump('/panel/networkOverview', '', '', 0)" style="cursor: pointer"/>
+        <span style="color: white; font-size: 20px;">域名解析服务监测系统</span>
       </div>
       <!--个人操作-->
       <div class="personal">
-        <el-dropdown>
-          <div class="header-menu--item"><i class="cn-icon cn-icon-language"></i></div>
+<!--        <el-dropdown>
+          <div class="header-menu&#45;&#45;item"><i class="cn-icon cn-icon-language"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>
@@ -24,7 +24,7 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
-        </el-dropdown>
+        </el-dropdown>-->
         <el-dropdown>
           <div class='login-user header-menu--item'>{{ username }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
           <template #dropdown>
