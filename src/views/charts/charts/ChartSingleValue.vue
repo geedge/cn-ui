@@ -202,10 +202,10 @@
             </div>
           </div>
           <div class="content__data-protocol-value">
-            <div class="content__data-protocol-value-title">{{$t('protocol.requestVolume')}}</div>
-            <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'bytes'), chartInfo.params.unitType).join('')}}</div>
+            <div class="content__data-protocol-value-title">{{$t('protocol.totalFlow')}}</div>
+            <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'count'), chartInfo.params.unitType).join('')}}</div>
           </div>
-          <div class="content__data-protocol-percent"><span>{{$t('protocol.proportion')}}</span>&nbsp;<span>{{unitConvert($_.get(chartData, 'bytesPercent'), unitTypes.percent).join('')}}</span></div>
+          <div class="content__data-protocol-percent"><span>{{$t('protocol.proportion')}}</span>&nbsp;<span>{{unitConvert($_.get(chartData, 'countPercent'), unitTypes.percent).join('')}}</span></div>
         </div>
         <div class="content__data-protocol">
           <div class="content__data-protocol-all">
@@ -214,10 +214,10 @@
             </div>
           </div>
           <div class="content__data-protocol-value">
-            <div class="content__data-protocol-value-title">{{$t('protocol.totalFlow')}}</div>
-            <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'count'), chartInfo.params.unitType).join('')}}</div>
+            <div class="content__data-protocol-value-title">{{$t('protocol.requestVolume')}}</div>
+            <div class="content__data-protocol-value-num">{{unitConvert($_.get(chartData, 'bytes'), unitTypes.byte).join('')}}</div>
           </div>
-          <div class="content__data-protocol-percent"><span>{{$t('protocol.proportion')}}</span>&nbsp;<span>{{unitConvert($_.get(chartData, 'countPercent'), unitTypes.percent).join('')}}</span></div>
+          <div class="content__data-protocol-percent"><span>{{$t('protocol.proportion')}}</span>&nbsp;<span>{{unitConvert($_.get(chartData, 'bytesPercent'), unitTypes.percent).join('')}}</span></div>
         </div>
       </div>
     </div>
