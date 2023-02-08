@@ -98,6 +98,8 @@
 .domain-detail-list {
   display: table;
   width: 100%;
+  height: 100%;
+  overflow: auto;
 
   .domain-detail-list__row {
     display: table-row;
