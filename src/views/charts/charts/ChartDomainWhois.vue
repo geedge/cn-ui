@@ -16,7 +16,7 @@
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">注册机构电话</div>
-          <div class="domain-detail-list__content">{{ $_.get(chartData, "domain_whois_phone") || '-'}}</div>
+          <div class="domain-detail-list__content">{{ $_.get(chartData, "domainWhoisPhone") || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">注册国家</div>
@@ -24,7 +24,7 @@
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">注册地邮编</div>
-          <div class="domain-detail-list__content">{{ $_.get(chartData, "domain_whois_postcode") || '-'}}</div>
+          <div class="domain-detail-list__content">{{ $_.get(chartData, "domainWhoisPostcode") || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">{{$t('entities.creationDate')}}</div>
@@ -36,15 +36,15 @@
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">主办单位名称</div>
-          <div class="domain-detail-list__content">{{ $_.get(chartData, "domain_icp_company_name") || '-'}}</div>
+          <div class="domain-detail-list__content">{{ $_.get(chartData, "domainIcpCompanyName") || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">主办单位性质</div>
-          <div class="domain-detail-list__content">{{ $_.get(chartData, "domain_icp_company_type") || '-'}}</div>
+          <div class="domain-detail-list__content">{{ $_.get(chartData, "domainIcpCompanyType") || '-'}}</div>
         </div>
         <div class="domain-detail-list__row">
           <div class="domain-detail-list__label">网站备案号</div>
-          <div class="domain-detail-list__content">{{ $_.get(chartData, "domain_icp_site_license") || '-'}}</div>
+          <div class="domain-detail-list__content">{{ $_.get(chartData, "domainIcpSiteLicense") || '-'}}</div>
         </div>
       </div>
     </div>
