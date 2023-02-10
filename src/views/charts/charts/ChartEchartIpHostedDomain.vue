@@ -35,10 +35,12 @@ export default {
     initEcharts (id) {
       this.initDom(id, 2)
       const chartParams = this.chartInfo.params
-      const domains = this.chartData.map(function (item, i) {
+      let domains = this.chartData.map(function (item, i) {
         return item.domain
       }).join(',')
-
+      // 参数字符串限制长度在4300以内。经测试，超过4600左右会报错
+      domains = domains.substring(0, 4300)
+      domains = domains.substring(0, domains.lastIndexOf(','))
       const byType = new Promise(resolve => {
         get(replaceUrlPlaceholder(chartParams.byCategoryUrl, { domains: domains })).then(response => {
           if (response.code === 200) {
@@ -47,13 +49,29 @@ export default {
             } else {
               // this.noData0 = false
               // chartOption = this.$_.cloneDeep(this.chartOption)
-              const data = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
+              const originalData = response.data.result.sort(reverseSortBy('uniqDomains')).map(d => {
                 return {
                   data: d,
                   name: d.categoryName,
                   value: parseInt(d.uniqDomains),
                   unitType: chartParams.unitType
                 }
+              })
+              const data = originalData.filter((d, i) => i < 5)
+              let otherValue = 0
+              originalData.forEach((d, i) => {
+                if (i > 4) {
+                  otherValue += parseInt(d.uniqDomains)
+                }
+              })
+              data.push({
+                data: {
+                  uniqDomains: otherValue,
+                  categoryName: 'other'
+                },
+                name: 'other',
+                value: otherValue,
+                unitType: chartParams.unitType
               })
               this.chartOption.series[0].data = data
             }
