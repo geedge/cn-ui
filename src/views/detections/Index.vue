@@ -294,7 +294,7 @@ export default {
           const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
 
-          const xData = []
+          let xData = []
           dataMap.forEach(function (value) {
             // eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
             value.forEach(item => {
@@ -302,6 +302,9 @@ export default {
                 xData.push(item[0])
               }
             })
+          })
+          xData = xData.sort((a, b) => {
+            return new Date(a) - new Date(b)
           })
           eventSeverityTrendOption.series.forEach(serie => {
             const seriesData = []

@@ -247,7 +247,7 @@ export default {
     handleData (prevRequest, request, _t) {
       this.toggleLoading(true)
       Promise.all([prevRequest, request]).then(res => {
-        this.isNoData = (res[0].data.result.length && res[1].data.result.length) === 0
+        this.isNoData = res[0].data.result.length === 0 && res[1].data.result.length === 0
         if (this.isNoData) {
           this.appData = this.appData.map(t => {
             return {
