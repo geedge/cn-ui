@@ -10,7 +10,7 @@ cache:
       - package.json
   paths:
     - node_modules
-    - dist/
+#    - dist/
 
 before_script:
   - export CNUI_TAG=$(date +%Y%m%d%H%M%S)
@@ -41,6 +41,11 @@ build_project:
     - cnpm install --save-dev --unsafe-perm
     - echo "npm run build"
     - cnpm run build
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+    when: on_success
+    paths:
+      - dist/
   only:
     - dev-22.12
     - tags
@@ -48,6 +53,8 @@ build_project:
     - galaxy
 
 build_image:
+  dependencies:
+    - build_project
   stage: build_image
   script:
     - echo "docker build"
@@ -64,6 +71,8 @@ build_image:
 
 
 build_release_image:
+  dependencies:
+    - build_project
   stage: build_image
   script:
     - echo 'tag名称是'
