@@ -10,7 +10,7 @@ cache:
       - package.json
   paths:
     - node_modules
-    - dist/
+#    - dist/
 
 before_script:
   - export CNUI_TAG=$(date +%Y%m%d%H%M%S)
