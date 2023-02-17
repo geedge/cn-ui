@@ -98,11 +98,11 @@
         //top: 0;
         //left: 0;
         display: flex;
-        .line-value-mpackets.mousemove-cursor {
+        .line-value-tabs.mousemove-cursor {
           border-top: 4px solid #D3D0D8;
           z-index: 0;
         }
-        .line-value-mpackets {
+        .line-value-tabs {
           cursor: pointer;
           padding: 16px 0 0 20px;
           border-top: 4px solid transparent;
@@ -122,10 +122,10 @@
               }
             }
           }
-          .line-value-mpackets-name {
+          .line-value-tabs-name {
             position: relative;
             display: flex;
-            .mpackets-name {
+            .tabs-name {
               flex: 1;
               padding-left: 19px;
             }

@@ -71,7 +71,7 @@ export default {
       unitConvert,
       unitTypes,
       side: '',
-      mpackets: [
+      tabs: [
         { name: this.$t('network.total'), show: true, positioning: 0, data: [], unitType: 'number' },
         { name: this.$t('network.inbound'), show: true, positioning: 1, data: [], unitType: 'number' },
         { name: this.$t('network.outbound'), show: true, positioning: 2, data: [], unitType: 'number' },
@@ -199,7 +199,7 @@ export default {
             this.showError = false
             this.isNoData = res.data.result.length === 0
             if (this.isNoData) {
-              this.mpackets = [
+              this.tabs = [
                 { name: this.$t('network.total'), show: true, positioning: 0, data: [], unitType: 'number' },
                 { name: this.$t('network.inbound'), show: true, positioning: 1, data: [], unitType: 'number' },
                 { name: this.$t('network.outbound'), show: true, positioning: 2, data: [], unitType: 'number' },
@@ -249,7 +249,7 @@ export default {
           this.showError = false
           this.isNoData = npmLineData.length === 0
           if (this.isNoData) {
-            this.mpackets = [
+            this.tabs = [
               { name: this.$t('network.total'), show: true, positioning: 0, data: [], unitType: 'number' },
               { name: this.$t('network.inbound'), show: true, positioning: 1, data: [], unitType: 'number' },
               { name: this.$t('network.outbound'), show: true, positioning: 2, data: [], unitType: 'number' },
@@ -320,7 +320,7 @@ export default {
           })
           this.chartOption.tooltip.formatter = (params) => {
             params.forEach(t => {
-              this.mpackets.forEach(e => {
+              this.tabs.forEach(e => {
                 if (e.name === t.seriesName) {
                   t.borderColor = chartColor3[e.positioning]
                 }
@@ -405,24 +405,24 @@ export default {
         })
       }
       lineData.splice(0, 1)
-      const mpackets = _.cloneDeep(this.mpackets)
+      const tabs = _.cloneDeep(this.tabs)
       const npmQuantity = _.cloneDeep(this.npmQuantity)
       if (val === 'Sessions/s') {
         lineData.forEach((d, i) => {
-          mpackets[i].data = d.values
-          mpackets[i].analysis = d.analysis
+          tabs[i].data = d.values
+          tabs[i].analysis = d.analysis
         })
-        mpackets.forEach((e, i) => {
+        tabs.forEach((e, i) => {
           if (i !== 0) {
             e.show = false
           }
         })
-        this.mpackets = mpackets
-        this.echartsInit(this.mpackets)
+        this.tabs = tabs
+        this.echartsInit(this.tabs)
       } else if (val !== 'Bits/s' && val !== 'Packets/s' && val !== 'Sessions/s') {
         this.legendInit(lineData, npmQuantity, true)
       } else {
-        this.legendInit(lineData, mpackets, false)
+        this.legendInit(lineData, tabs, false)
       }
     },
     legendInit (data, npmData, show) {
@@ -445,8 +445,8 @@ export default {
         npmData.forEach((e) => {
           e.show = true
         })
-        this.mpackets = npmData
-        this.echartsInit(this.mpackets)
+        this.tabs = npmData
+        this.echartsInit(this.tabs)
       }
     }
   },

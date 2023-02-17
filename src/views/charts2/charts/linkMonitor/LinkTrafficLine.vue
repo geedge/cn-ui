@@ -2,7 +2,7 @@
  <div class="link-traffic-line">
    <link-traffic-drill-down-list
      :chart="chart"
-     :line-data="mpackets[0]"
+     :line-data="tabs[0]"
      :time-filter="timeFilter">
    </link-traffic-drill-down-list>
    <div class="line network link-traffic">
@@ -12,18 +12,18 @@
        <div class="line-header-left">
          <div class="line-value-active" v-if="lineTab"></div>
          <div class="line-value">
-           <div class="line-value-mpackets"
+           <div class="line-value-tabs"
                 v-show="item.show"
                 :class=" {'is-active': lineTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
-                v-for="(item, index) in mpackets"
+                v-for="(item, index) in tabs"
                 :key="index"
                 @mouseenter="mouseenter(item)"
                 @mouseleave="mouseleave(item)"
                 @click="activeChange(item, index)"
                 :test-id="`tab-${index}`">
-             <div class="line-value-mpackets-name">
+             <div class="line-value-tabs-name">
                <div :class="item.class"></div>
-               <div class="mpackets-name">{{$t(item.name)}}</div>
+               <div class="tabs-name">{{$t(item.name)}}</div>
              </div>
              <div class="line-value-unit" :test-id="`tabContent${index}`">
                <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
@@ -114,7 +114,7 @@ export default {
           label: 'Packets/s'
         }
       ],
-      mpackets: [
+      tabs: [
         { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
         { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
         { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
@@ -185,7 +185,7 @@ export default {
           this.isNoData = res.data.result.length === 0
           if (this.isNoData) {
             this.lineTab = ''
-            this.mpackets = [
+            this.tabs = [
               { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
               { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
               { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
@@ -258,7 +258,7 @@ export default {
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
             t.seriesName = this.$t(t.seriesName)
-            this.mpackets.forEach(e => {
+            this.tabs.forEach(e => {
               if (this.$t(e.name) === t.seriesName) {
                 t.borderColor = chartColor3[e.positioning]
               }
@@ -301,16 +301,16 @@ export default {
     legendSelectChange (item, index, val) {
       if (index === 'index') {
         this.dispatchLegendSelectAction(item.name)
-      } else if (this.mpackets[index] && this.mpackets[index].name === item.name) {
+      } else if (this.tabs[index] && this.tabs[index].name === item.name) {
         this.dispatchLegendSelectAction(item.name)
-        this.mpackets.forEach((t) => {
+        this.tabs.forEach((t) => {
           if (t.name !== item.name) {
             this.dispatchLegendUnSelectAction(t.name)
           }
         })
       }
       if (val === 'active') {
-        this.mpackets.forEach(t => {
+        this.tabs.forEach(t => {
           if (item.name === t.name) {
             t.invertTab = !t.invertTab
           } else {
@@ -322,7 +322,7 @@ export default {
             } else {
               this.lineTab = t.class
             }
-            this.mpackets.forEach((e) => {
+            this.tabs.forEach((e) => {
               this.dispatchLegendSelectAction(e.name)
             })
           }
@@ -330,8 +330,8 @@ export default {
       }
     },
     handleActiveBar () {
-      if (document.querySelector('.network .line-value-mpackets.is-active')) {
-        const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-mpackets.is-active')
+      if (document.querySelector('.network .line-value-tabs.is-active')) {
+        const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-tabs.is-active')
         const activeBar = document.querySelector('.network .line-value-active')
         activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
       }
@@ -344,7 +344,7 @@ export default {
       this.lineTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
-      this.mpackets.forEach((e) => {
+      this.tabs.forEach((e) => {
         if (!e.invertTab) {
           e.invertTab = true
         }
@@ -393,9 +393,9 @@ export default {
         })
       }
       lineData.splice(0, 1)
-      const mpackets = _.cloneDeep(this.mpackets)
+      const tabs = _.cloneDeep(this.tabs)
       const unit = val === 'Bits/s' ? 'bps' : 'packets/s'
-      this.legendInit(lineData, active, show, unit, mpackets)
+      this.legendInit(lineData, active, show, unit, tabs)
     },
     legendInit (data, active, show, type, linkData) {
       data.forEach((d, i) => {
@@ -422,17 +422,17 @@ export default {
           }
         }
       })
-      this.mpackets = linkData
+      this.tabs = linkData
       if (num === 3) {
         linkData[0].invertTab = false
         this.lineTab = 'total'
         this.legendSelectChange(linkData[0], 0)
         this.$nextTick(() => {
-          this.echartsInit(this.mpackets)
+          this.echartsInit(this.tabs)
         })
       } else {
         this.$nextTick(() => {
-          this.echartsInit(this.mpackets)
+          this.echartsInit(this.tabs)
           if (!this.lineRefer) this.lineRefer = 'Average'
         })
       }
@@ -441,7 +441,7 @@ export default {
   mounted () {
     this.timer = setTimeout(() => {
       if (this.lineTab) {
-        const data = this.mpackets.find(t => t.class === this.lineTab)
+        const data = this.tabs.find(t => t.class === this.lineTab)
         this.activeChange(data, data.positioning)
       } else {
         this.init()

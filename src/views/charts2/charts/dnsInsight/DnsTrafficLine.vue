@@ -5,17 +5,17 @@
       <div class="line-header-left">
         <div class="line-value-active" v-if="lineTab"></div>
         <div class="line-value">
-          <div class="line-value-mpackets"
+          <div class="line-value-tabs"
                v-show="item.show"
                :class=" {'is-active': lineTab === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
-               v-for="(item, index) in mpackets"
+               v-for="(item, index) in tabs"
                :key="index"
                @mouseenter="mouseenter(item)"
                @mouseleave="mouseleave(item)"
                @click="activeChange(item, index)">
-            <div class="line-value-mpackets-name">
+            <div class="line-value-tabs-name">
               <div :class="item.class"></div>
-              <div class="mpackets-name">{{$t(item.name)}}</div>
+              <div class="tabs-name">{{$t(item.name)}}</div>
             </div>
             <div class="line-value-unit">
               <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
@@ -126,7 +126,7 @@ export default {
           label: 'Maximum'
         }
       ],
-      mpackets: [
+      tabs: [
         { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
         { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
         { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
@@ -202,7 +202,7 @@ export default {
           this.isNoData = res.data.result.length === 0
           if (this.isNoData) {
             this.lineTab = ''
-            this.mpackets = [
+            this.tabs = [
               { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
               { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
               { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
@@ -323,7 +323,7 @@ export default {
           this.chartOption.tooltip.formatter = (params) => {
             params.forEach(t => {
               t.seriesName = this.$t(t.seriesName)
-              this.mpackets.forEach(e => {
+              this.tabs.forEach(e => {
                 if (this.$t(e.name) === t.seriesName) {
                   t.borderColor = chartColor3[e.positioning]
                 }
@@ -366,16 +366,16 @@ export default {
     legendSelectChange (item, index, val) {
       if (index === 'index') {
         this.dispatchLegendSelectAction(item.name)
-      } else if (this.mpackets[index] && this.mpackets[index].name === item.name) {
+      } else if (this.tabs[index] && this.tabs[index].name === item.name) {
         this.dispatchLegendSelectAction(item.name)
-        this.mpackets.forEach((t) => {
+        this.tabs.forEach((t) => {
           if (t.name !== item.name) {
             this.dispatchLegendUnSelectAction(t.name)
           }
         })
       }
       if (val === 'active') {
-        this.mpackets.forEach(t => {
+        this.tabs.forEach(t => {
           if (item.name === t.name) {
             t.invertTab = !t.invertTab
           } else {
@@ -387,7 +387,7 @@ export default {
             } else {
               this.lineTab = t.class
             }
-            this.mpackets.forEach((e) => {
+            this.tabs.forEach((e) => {
               this.dispatchLegendSelectAction(e.name)
             })
           }
@@ -395,8 +395,8 @@ export default {
       }
     },
     handleActiveBar () {
-      if (document.querySelector('.network .line-value-mpackets.is-active')) {
-        const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-mpackets.is-active')
+      if (document.querySelector('.network .line-value-tabs.is-active')) {
+        const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-tabs.is-active')
         const activeBar = document.querySelector('.network .line-value-active')
         activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
       }
@@ -409,7 +409,7 @@ export default {
       this.lineTab = ''
       this.handleActiveBar()
       this.showMarkLine = !this.showMarkLine
-      this.mpackets.forEach((e) => {
+      this.tabs.forEach((e) => {
         if (!e.invertTab) {
           e.invertTab = true
         }
@@ -421,9 +421,9 @@ export default {
       let echartsData
       const chartOption = this.myChart.getOption()
       if (this.lineTab) {
-        echartsData = this.mpackets.filter(t => t.show === true && t.invertTab === false)
+        echartsData = this.tabs.filter(t => t.show === true && t.invertTab === false)
       } else {
-        echartsData = this.mpackets.filter(t => t.show === true)
+        echartsData = this.tabs.filter(t => t.show === true)
       }
       if (this.lineRefer === 'Average' && this.showMarkLine) {
         chartOption.series.forEach((t, i) => {
@@ -488,13 +488,13 @@ export default {
         })
       }
       lineData.splice(0, 1)
-      const mpackets = _.cloneDeep(this.mpackets)
+      const tabs = _.cloneDeep(this.tabs)
       if (val === 'Queries/s') {
         lineData.forEach((d, i) => {
-          mpackets[i].data = d.values
-          mpackets[i].analysis = d.analysis
+          tabs[i].data = d.values
+          tabs[i].analysis = d.analysis
         })
-        mpackets.forEach((e, i) => {
+        tabs.forEach((e, i) => {
           if (i !== 0) {
             e.show = false
           }
@@ -503,11 +503,11 @@ export default {
           this.lineTab = 'total'
           this.legendSelectChange(e, 0)
         })
-        this.mpackets = mpackets
-        this.echartsInit(this.mpackets, true)
+        this.tabs = tabs
+        this.echartsInit(this.tabs, true)
       } else {
         const unit = 'bps'
-        this.legendInit(lineData, active, show, unit, mpackets)
+        this.legendInit(lineData, active, show, unit, tabs)
       }
     },
     legendInit (data, active, show, type, dnsData) {
@@ -535,14 +535,14 @@ export default {
           }
         }
       })
-      this.mpackets = dnsData
+      this.tabs = dnsData
       if (num === 3) {
         dnsData[0].invertTab = false
         this.lineTab = 'total'
         this.legendSelectChange(dnsData[0], 0)
-        this.echartsInit(this.mpackets)
+        this.echartsInit(this.tabs)
       } else {
-        this.echartsInit(this.mpackets, show)
+        this.echartsInit(this.tabs, show)
         if (!this.lineRefer) this.lineRefer = 'Average'
       }
     }
@@ -550,7 +550,7 @@ export default {
   mounted () {
     this.timer = setTimeout(() => {
       if (this.lineTab) {
-        const data = this.mpackets.find(t => t.class === this.lineTab)
+        const data = this.tabs.find(t => t.class === this.lineTab)
         this.activeChange(data, data.positioning)
       } else {
         this.init()
