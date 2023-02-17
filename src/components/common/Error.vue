@@ -141,7 +141,6 @@ export default {
     hoverError (e) {
       // const dom = document.getElementById('error-content')
       // if (dom) {
-      //   console.log('---', dom.clientHeight)
       // }
     }
   }

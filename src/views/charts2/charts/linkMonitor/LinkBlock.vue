@@ -170,7 +170,6 @@ export default {
       let linkInfo = null
       linkInfo = localStorage.getItem(storageKey.linkInfo)
       linkInfo = JSON.parse(linkInfo)
-      // console.log('打印缓存', linkInfo)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
@@ -183,7 +182,6 @@ export default {
         const res = []
         res[0] = response[0].data
         res[1] = response[1].data
-        // console.log('打印数据', res)
         if (res[0].code === 200 && res[1].code === 200) {
           this.showError = false
 

@@ -197,7 +197,6 @@ export default {
       const lastCycleTrafficRequest = axios.get(api.npm.overview.appTrafficAnalysis, { params: { ...params, cycle: 1 } })
       this.toggleLoading(true)
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
-        // console.log('打印数据=====', res)
         if (res[0].data.code === 200 && res[1].data.code === 200) {
           this.showError = false
           this.errorMsg = ''

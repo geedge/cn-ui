@@ -98,7 +98,6 @@ export default {
       if (val && val.value !== -1) {
         // 切换轮询请求时间频率时，发现有未结束的请求，终止请求
         const cancelList = this.$store.state.panel.httpCancel
-        // console.log('timeRefresh.vue------setRefresh------查看终止数量', cancelList, cancelList.length)
         if (cancelList.length > 0) {
           cancelList.forEach((cancel, index) => {
             cancel()
