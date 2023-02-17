@@ -55,6 +55,7 @@ let wrapper = null
 function axiosPostAndMounted (Metric) {
   require('vue-router').useRoute.mockReturnValue({ query: {} })
   // 模拟localStorage获取数据
+  // eslint-disable-next-line no-proto
   jest.spyOn(localStorage.__proto__, 'getItem').mockImplementation(key => linkInfo)
   // 模拟 axios 数据
   axios.get.mockResolvedValueOnce(mockGet)

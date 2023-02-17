@@ -1,7 +1,7 @@
 import NpmAppEventTable from '@/views/charts2/charts/npm/NpmAppEventTable'
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
-import ElementPlus from "element-plus"
+import ElementPlus from 'element-plus'
 
 const timeFilter = {
   dateRangeValue: -1,
@@ -9,9 +9,7 @@ const timeFilter = {
   endTime: 1675731457
 }
 
-const mockGet = {
-  data: {"status":200,"code":200,"queryKey":"88eeb92e0ddb40c0327db494cfe5c74c","success":true,"message":null,"statistics":{"elapsed":0,"rows_read":2,"result_size":752,"result_rows":10},"job":null,"formatType":"json","meta":[{"name":"app_name","type":"string","category":"Dimension"},{"name":"event_severity","type":"string","category":"Dimension"},{"name":"event_type","type":"string","category":"Dimension"},{"name":"count","type":"long","category":"Metric"}],"data":{"resultType":"table","result":[{"appName":"youku","eventSeverity":"info","eventType":"http error","count":6},{"appName":"uplive","eventSeverity":"critical","eventType":"http error","count":5},{"appName":"youku","eventSeverity":"low","eventType":"http error","count":4},{"appName":"apple_hls","eventSeverity":"info","eventType":"http error","count":3},{"appName":"apple_hls","eventSeverity":"low","eventType":"http error","count":3},{"appName":"apple_hls","eventSeverity":"medium","eventType":"http error","count":2},{"appName":"uplive","eventSeverity":"high","eventType":"http error","count":2},{"appName":"windows_update","eventSeverity":"medium","eventType":"http error","count":2},{"appName":"apple_hls","eventSeverity":"critical","eventType":"http error","count":1},{"appName":"cloudflare","eventSeverity":"info","eventType":"http error","count":1}]},"originalUrl":"http://192.168.44.55:9999?query=SELECT%20app_name%20AS%20app_name%2C%20event_severity%20AS%20event_severity%2C%20event_type%20AS%20event_type%2C%20COUNT%28*%29%20AS%20count%20FROM%20performance_event%20WHERE%20start_time%20%3E%3D%201675580110%20AND%20end_time%20%3C%201675752910%20AND%20entity_type%20%3D%20%27app%27%20GROUP%20BY%20app_name%2Cevent_severity%2Cevent_type%20ORDER%20BY%20count%20DESC%20%20LIMIT%2010%20&format=json&option=real-time","msg":"OK"}
-}
+const mockGet = { data: { status: 200, code: 200, queryKey: '88eeb92e0ddb40c0327db494cfe5c74c', success: true, message: null, statistics: { elapsed: 0, rows_read: 2, result_size: 752, result_rows: 10 }, job: null, formatType: 'json', meta: [{ name: 'app_name', type: 'string', category: 'Dimension' }, { name: 'event_severity', type: 'string', category: 'Dimension' }, { name: 'event_type', type: 'string', category: 'Dimension' }, { name: 'count', type: 'long', category: 'Metric' }], data: { resultType: 'table', result: [{ appName: 'youku', eventSeverity: 'info', eventType: 'http error', count: 6 }, { appName: 'uplive', eventSeverity: 'critical', eventType: 'http error', count: 5 }, { appName: 'youku', eventSeverity: 'low', eventType: 'http error', count: 4 }, { appName: 'apple_hls', eventSeverity: 'info', eventType: 'http error', count: 3 }, { appName: 'apple_hls', eventSeverity: 'low', eventType: 'http error', count: 3 }, { appName: 'apple_hls', eventSeverity: 'medium', eventType: 'http error', count: 2 }, { appName: 'uplive', eventSeverity: 'high', eventType: 'http error', count: 2 }, { appName: 'windows_update', eventSeverity: 'medium', eventType: 'http error', count: 2 }, { appName: 'apple_hls', eventSeverity: 'critical', eventType: 'http error', count: 1 }, { appName: 'cloudflare', eventSeverity: 'info', eventType: 'http error', count: 1 }] }, originalUrl: 'http://192.168.44.55:9999?query=SELECT%20app_name%20AS%20app_name%2C%20event_severity%20AS%20event_severity%2C%20event_type%20AS%20event_type%2C%20COUNT%28*%29%20AS%20count%20FROM%20performance_event%20WHERE%20start_time%20%3E%3D%201675580110%20AND%20end_time%20%3C%201675752910%20AND%20entity_type%20%3D%20%27app%27%20GROUP%20BY%20app_name%2Cevent_severity%2Cevent_type%20ORDER%20BY%20count%20DESC%20%20LIMIT%2010%20&format=json&option=real-time', msg: 'OK' } }
 
 describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
   test('Npm 事件：APP事件信息表格 严重程度色块验证', async () => {
@@ -30,67 +28,67 @@ describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
 
     await new Promise(resolve => setTimeout(() => {
       // critical
-      let criticalArray = [1,8]
-      for(let index=0; index < criticalArray.length; index++){
-        let rowIndex = criticalArray[index]
-        for(let i=1; i<=5 ; i++){
-          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+      const criticalArray = [1, 8]
+      for (let index = 0; index < criticalArray.length; index++) {
+        const rowIndex = criticalArray[index]
+        for (let i = 1; i <= 5; i++) {
+          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityRedValue.classes()).toContain('red-dot')
         }
       }
 
       // high
-      let highArray = [6]
-      for(let index=0; index < highArray.length; index++){
-        let rowIndex = highArray[index]
-        for(let i=1; i<=4 ; i++){
-          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+      const highArray = [6]
+      for (let index = 0; index < highArray.length; index++) {
+        const rowIndex = highArray[index]
+        for (let i = 1; i <= 4; i++) {
+          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityRedValue.classes()).toContain('red-dot')
         }
-        for(let i=5; i<=5 ; i++){
-          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+        for (let i = 5; i <= 5; i++) {
+          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityGreyValue.classes()).toContain('grey-dot')
         }
       }
 
       // medium
-      let mediumArray = [5,7]
-      for(let index=0; index < mediumArray.length; index++){
-        let rowIndex = mediumArray[index]
-        for(let i=1; i<=3 ; i++){
-          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+      const mediumArray = [5, 7]
+      for (let index = 0; index < mediumArray.length; index++) {
+        const rowIndex = mediumArray[index]
+        for (let i = 1; i <= 3; i++) {
+          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityRedValue.classes()).toContain('red-dot')
         }
-        for(let i=4; i<=5 ; i++){
-          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+        for (let i = 4; i <= 5; i++) {
+          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityGreyValue.classes()).toContain('grey-dot')
         }
       }
 
       // low
-      let lowArray = [2,4]
-      for(let index=0; index < lowArray.length; index++){
-        let rowIndex = lowArray[index]
-        for(let i=1; i<=2 ; i++){
-          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+      const lowArray = [2, 4]
+      for (let index = 0; index < lowArray.length; index++) {
+        const rowIndex = lowArray[index]
+        for (let i = 1; i <= 2; i++) {
+          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityRedValue.classes()).toContain('red-dot')
         }
-        for(let i=3; i<=5 ; i++){
-          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+        for (let i = 3; i <= 5; i++) {
+          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityGreyValue.classes()).toContain('grey-dot')
         }
       }
 
       // info
-      let infoArray = [0,3,9]
-      for(let index=0; index < infoArray.length; index++){
-        let rowIndex = infoArray[index]
-        for(let i=1; i<=1 ; i++){
-          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+      const infoArray = [0, 3, 9]
+      for (let index = 0; index < infoArray.length; index++) {
+        const rowIndex = infoArray[index]
+        for (let i = 1; i <= 1; i++) {
+          const eventSeverityRedValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityRedValue.classes()).toContain('red-dot')
         }
-        for(let i=2; i<=5 ; i++){
-          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue'+rowIndex+i+'"]')
+        for (let i = 2; i <= 5; i++) {
+          const eventSeverityGreyValue = wrapper.find('[test-id="eventSeverityValue' + rowIndex + i + '"]')
           expect(eventSeverityGreyValue.classes()).toContain('grey-dot')
         }
       }

@@ -32,6 +32,7 @@ function axiosPostAndMounted (list1, list2) {
   })
 
   // 模拟localStorage获取数据
+  // eslint-disable-next-line no-proto
   jest.spyOn(localStorage.__proto__, 'getItem').mockImplementation(key => linkInfo)
 }
 
