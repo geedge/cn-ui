@@ -5,7 +5,7 @@
       <chart-error tooltip v-if="showError" :content="errorMsg"></chart-error>
     </div>
     <div class="npm-event-pie">
-      <chart-no-data v-if="isNoData"></chart-no-data>
+      <chart-no-data v-if="isNoData" test-id="noData"></chart-no-data>
       <div class="npm-event-pies" v-show="!isNoData">
         <div class="chart-drawing" id="chart"></div>
         <div class="npm-event-pie-legends">
@@ -65,7 +65,7 @@ export default {
   },
   watch: {
     timeFilter: {
-      handler (n) {
+      handler () {
         this.eventsByTypeData()
       }
     }
@@ -91,11 +91,11 @@ export default {
           return num
         }
       }
-      this.myChart.on('mouseover', function (params) {
+      this.myChart.on('mouseover', function () {
         _this.chartOption.series[0].label.show = false
         _this.myChart.setOption(_this.chartOption)
       })
-      this.myChart.on('mouseout', function (params) {
+      this.myChart.on('mouseout', function () {
         _this.chartOption.series[0].label.show = true
         _this.myChart.setOption(_this.chartOption)
       })
@@ -118,7 +118,9 @@ export default {
             const hit = arrData.find(e => e.name === t.eventType)
             if (hit) {
               arrData.forEach(d => {
-                d.value++
+                if (hit.name === d.name) {
+                  d.value++
+                }
               })
             } else {
               arrData.push({ name: t.eventType, value: 1 })
