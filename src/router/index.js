@@ -36,6 +36,10 @@ const routes = [
         component: () => import('@/views/businessLog/Viewer')
       },
       {
+        path: '/knowledgeBase',
+        component: () => import('@/views/setting/KnowledgeBase')
+      },
+      {
         name: 'Administration',
         path: '/administration',
         redirect: '/administration/user',
@@ -52,26 +56,21 @@ const routes = [
             component: () => import('@/views/administration/Roles')
           },
           {
-            name: 'I18n',
-            path: '/administration/i18n',
-            component: () => import('@/views/administration/I18n')
-          },
-          {
             name: 'OperationLog',
             path: '/administration/operationLog',
             component: () => import('@/views/administration/OperationLog')
-          },
-          {
-            name: 'GalaxyProxy',
-            path: '/administration/galaxyProxy',
-            component: () => import('@/views/administration/GalaxyProxy')
-          },
-          {
-            name: 'Chart',
-            path: '/administration/chart',
-            component: () => import('@/views/administration/Chart')
           }
         ]
+      },
+      {
+        name: 'I18n',
+        path: '/i18n',
+        component: () => import('@/views/administration/I18n')
+      },
+      {
+        name: 'Chart',
+        path: '/chart',
+        component: () => import('@/views/administration/Chart')
       }
     ]
   }

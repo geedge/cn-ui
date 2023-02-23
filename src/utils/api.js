@@ -33,6 +33,8 @@ export const api = {
   chartList: '/visual/chart/list',
   // galaxyProxy
   galaxyProxy: '/galaxy/setting',
+  // 知识库
+  knowledgeBase: '/knowledgeBase',
 
   // 报告相关
   reportJob: '/report/job',

@@ -6,9 +6,9 @@
 @import './components/common/pagination';
 // @import './components/entities/entities';
 @import './components/layout/layout';
-@import 'components/rightBox/settings/chart-box';
+@import 'components/rightBox/administration/chart-box';
 @import 'components/setting/galaxy-proxy-debug';
-@import 'components/table/settings/galaxy-proxy-table';
+@import 'components/table/administration/galaxy-proxy-table';
 @import './components/table/common';
 @import './views/charts/chart';
 @import 'views/entityExplorer/entity-explorer';
@@ -77,3 +77,4 @@
 
 @import 'views/administration/AdministrationTabs';
 
+@import 'views/setting/knowledgeBase';

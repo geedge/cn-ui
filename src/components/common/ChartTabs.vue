@@ -10,7 +10,7 @@
         <template #label>
           <div class="chart-tabs__label">
             <i :class="tab.icon"></i>
-            <span>{{ $t(tab.i18n) }}</span>
+            <span>{{ $t(tab.i18n || tab.name) }}</span>
           </div>
         </template>
       </el-tab-pane>

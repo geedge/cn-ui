@@ -16,35 +16,21 @@
 
 <script>
 import ChartTabs from '@/components/common/ChartTabs'
+import { useStore } from 'vuex'
 export default {
   name: 'index',
   components: {
     ChartTabs
   },
-  data () {
+  setup () {
+    const store = useStore()
+    const menu = store.getters.menuList.find(m => m.code === 'administration')
+    const tabsData = menu.children.map(l => ({
+      ...l,
+      path: l.route
+    })).sort((a, b) => a.sort - b.sort)
     return {
-      tabsData: [
-        {
-          i18n: 'overall.user',
-          path: '/administration/user',
-          icon: 'cn-icon cn-icon-user2'
-        },
-        {
-          i18n: 'overall.role',
-          path: '/administration/role',
-          icon: 'cn-icon cn-icon-role2'
-        },
-        {
-          i18n: 'overall.operationLog',
-          path: '/administration/operationLog',
-          icon: 'cn-icon cn-icon-operation-log'
-        },
-        {
-          i18n: 'I18n',
-          path: '/administration/i18n',
-          icon: 'cn-icon cn-icon-i18n'
-        }
-      ]
+      tabsData
     }
   }
 }
