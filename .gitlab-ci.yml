@@ -2,6 +2,7 @@
 stages:
   - gen_git-log
   - build_project
+  - test
   - build_image
 
 cache:
