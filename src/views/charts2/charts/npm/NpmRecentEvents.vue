@@ -29,7 +29,7 @@
               <template v-else-if="item.prop === 'eventType'">
                 <span class="data-recent-table-eventType" :test-id="`eventType-${scope.row.eventType}-${scope.$index}`">{{scope.row[item.prop]}}</span>
               </template>
-              <span v-else-if="scope.row[item.prop]" :test-id="`startTime-${scope.row.startTime}-${scope.$index}`">{{scope.row[item.prop]}}</span>
+              <span v-else-if="scope.row[item.prop]" :test-id="`startTime-${scope.$index}`">{{scope.row[item.prop]}}</span>
               <span v-else>-</span>
             </div>
           </template>
@@ -125,6 +125,7 @@ export default {
             }
           })
           this.tableData = res.data.result
+          console.log('打印tableData', this.tableData)
         } else {
           // this.isNoData = true
           this.showError = true

@@ -144,11 +144,11 @@ describe('views/charts2/charts/npm/NpmRecentEvents.vue测试', () => {
       expect(eventType3.text()).toEqual('http error')
       expect(eventType4.text()).toEqual('dns error')
 
-      const startTime0 = wrapper.get('[test-id="startTime-2023-01-04T11:25:00+08:00-0"]')
-      const startTime1 = wrapper.get('[test-id="startTime-2023-01-04T00:30:00+08:00-1"]')
-      const startTime2 = wrapper.get('[test-id="startTime-2023-01-03T13:05:00+08:00-2"]')
-      const startTime3 = wrapper.get('[test-id="startTime-2023-01-03T12:35:00+08:00-3"]')
-      const startTime4 = wrapper.get('[test-id="startTime-2023-01-03T12:15:00+08:00-4"]')
+      const startTime0 = wrapper.get('[test-id="startTime-0"]')
+      const startTime1 = wrapper.get('[test-id="startTime-1"]')
+      const startTime2 = wrapper.get('[test-id="startTime-2"]')
+      const startTime3 = wrapper.get('[test-id="startTime-3"]')
+      const startTime4 = wrapper.get('[test-id="startTime-4"]')
 
       expect(startTime0.text()).toEqual('2023-01-04T11:25:00+08:00')
       expect(startTime1.text()).toEqual('2023-01-04T00:30:00+08:00')
