@@ -52,6 +52,16 @@ build_project:
   tags:
     - galaxy
 
+test:
+  stage: test
+  script:
+    - cnpm run test
+  when: on_success
+  only:
+    - dev
+  tags:
+    - galaxy
+
 build_image:
   dependencies:
     - build_project
