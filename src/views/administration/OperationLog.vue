@@ -34,7 +34,7 @@
 <script>
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
-import operationLogTable from '@/components/table/settings/OperationLogTable'
+import operationLogTable from '@/components/table/administration/OperationLogTable'
 import { api } from '@/utils/api'
 
 export default {

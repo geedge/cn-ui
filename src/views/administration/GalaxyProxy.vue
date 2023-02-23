@@ -76,7 +76,7 @@
 <script>
 import cnDataList from '@/components/table/CnDataList'
 import galaxyProxyBox from '@/components/rightBox/settings/GalaxyProxyBox'
-import galaxyProxyTable from '@/components/table/settings/GalaxyProxyTable'
+import galaxyProxyTable from '@/components/table/administration/GalaxyProxyTable'
 import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
 import { get, put } from '@/utils/http'

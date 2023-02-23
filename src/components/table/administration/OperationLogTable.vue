@@ -92,7 +92,7 @@ export default {
           show: true
         },
         {
-          label: this.$t('config.operationlog.type'),
+          label: this.$t('overall.type'),
           prop: 'type',
           show: true
         },

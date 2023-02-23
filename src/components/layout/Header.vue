@@ -285,7 +285,7 @@ export default {
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
     },
     otherMenu () {
-      return this.$store.getters.menuList.filter(menu => menu.code !== 'networkAnalytics')
+      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'chart', 'I18N'].indexOf(menu.code) === -1)
 
       /* function excludeButton (menu) {
         for (let i = 0; i < menu.length; i++) {
@@ -333,6 +333,9 @@ export default {
         result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu] : []
       } else {
         result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
+      }
+      if (!breadcrumb.parentName) {
+        result = result.filter((r, i) => i > 0)
       }
       return result
     },

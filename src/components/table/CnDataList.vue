@@ -2,22 +2,21 @@
   <div :class="from" class="list-page">
     <!-- 主页面 -->
     <div class="main-list">
-      <!-- 顶部工具栏 -->
       <div class="main-container">
+        <!-- 顶部工具栏 -->
         <div class="top-tools">
           <div class="top-tool-left" style="min-width: 300px">
             <slot name="top-tool-left"></slot>
           </div>
           <div class="top-tool-right">
 <!--           <el-input v-model="keyWord" value="keyWord"></el-input>
-            <el-button @click="onsearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>-->
+            <el-button @click="onSearch" icon="el-icon-search" type="info" size="mini" style="margin-right: 10px"></el-button>-->
             <div v-if="showLayout.indexOf('search') > -1" class="top-tool-search margin-r-20">
               <div style="display: flex">
-                <el-input
-                    v-model="keyWord"  size="small" @keyup.enter="onsearch"></el-input>
-<!--                <el-button icon="el-icon-search" @click="onsearch" size="small"></el-button>-->
-                <button   class="top-tool-btn" style="border-radius: 0px"
-                        type="button" @click="onsearch">
+                <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
+<!--                <el-button icon="el-icon-search" @click="onSearch" size="small"></el-button>-->
+                <button   class="top-tool-btn" style="border-radius: 0"
+                        type="button" @click="onSearch">
                   <i class="el-icon-search"></i>
                 </button>
               </div>
@@ -94,7 +93,7 @@ export default {
     updateCustomTableTitle (custom) {
       this.$emit('update:customTableTitle', custom)
     },
-    onsearch () {
+    onSearch () {
       const params = {
         q: this.keyWord
       }

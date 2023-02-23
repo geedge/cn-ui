@@ -55,7 +55,7 @@
 <script>
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
-import i18nTable from '@/components/table/settings/I18nTable'
+import i18nTable from '@/components/table/administration/I18nTable'
 import i18nBox from '@/components/rightBox/settings/I18nBox'
 import { api } from '@/utils/api'
 
