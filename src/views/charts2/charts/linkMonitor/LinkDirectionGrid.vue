@@ -143,12 +143,12 @@ export default {
 
           // 链路下一跳信息
           const nextLinkData = res[1].data.result
-          // 接口数据乱序，根据出方向排序，再根据同个出方向下的入进行排序
+          // 接口数据乱序，根据入方向排序，再根据同个入方向下的出方向进行排序
           nextLinkData.sort((a, b) => {
             if (a.ingressLinkDirection !== b.ingressLinkDirection) {
-              return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection)
+              return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection, 'zh')
             }
-            return a.egressLinkDirection.localeCompare(b.egressLinkDirection)
+            return a.egressLinkDirection.localeCompare(b.egressLinkDirection, 'zh')
           })
 
           this.isNextNoData = nextLinkData.length === 0
