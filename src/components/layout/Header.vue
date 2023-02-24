@@ -208,6 +208,7 @@ import {
   handleSpecialValue
 } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
+import _ from 'lodash'
 
 export default {
   name: 'Header',
@@ -301,41 +302,17 @@ export default {
       } */
     },
     breadcrumb () {
-      const breadcrumbMap = []
-      this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
-      this.$store.getters.menuList.forEach(menu => {
-        if (this.$_.isEmpty(menu.children) && menu.route) {
-          breadcrumbMap.push({
-            name: this.$t(menu.i18n),
-            path: menu.route,
-            columnName: menu.columnName,
-            columnValue: menu.columnValue
-          })
-        } else if (!this.$_.isEmpty(menu.children)) {
-          menu.children.forEach(child => {
-            breadcrumbMap.push({
-              name: child.i18n ? this.$t(child.i18n) : child.name,
-              parentName: menu.i18n ? this.$t(menu.i18n) : menu.name,
-              path: child.route,
-              columnName: child.columnName,
-              columnValue: child.columnValue
-            })
-          })
-        }
-      })
-      const breadcrumb = breadcrumbMap.find(b => this.route === b.path)
+      const breadcrumb = []
+      this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList)
+
       const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
       const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
-      let result = []
+
+      let result = [...breadcrumb]
       if (fourthMenu) {
-        result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu, fourthMenu] : []
+        result = [...result, thirdMenu, fourthMenu]
       } else if (thirdMenu) {
-        result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name, thirdMenu] : []
-      } else {
-        result = breadcrumb ? [breadcrumb.parentName, breadcrumb.name] : []
-      }
-      if (!breadcrumb.parentName) {
-        result = result.filter((r, i) => i > 0)
+        result = [...result, thirdMenu]
       }
       return result
     },
@@ -359,6 +336,7 @@ export default {
       }
     },
     async breadcrumb (n) {
+      this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
       if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
         if (this.dnsQtypeMapData.size === 0) {
           this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
@@ -399,6 +377,22 @@ export default {
     }
   },
   methods: {
+    generateBreadcrumb (breadcrumb, menus) {
+      const menu = menus.find(m => m.route === this.route)
+      if (menu) {
+        breadcrumb.unshift(menu.i18n ? this.$t(menu.i18n) : menu.name)
+        return true
+      } else {
+        for (let i = 0; i < menus.length; i++) {
+          if (!_.isEmpty(menus[i].children)) {
+            if (this.generateBreadcrumb(breadcrumb, menus[i].children)) {
+              breadcrumb.unshift(menus[i].i18n ? this.$t(menus[i].i18n) : menus[i].name)
+              return true
+            }
+          }
+        }
+      }
+    },
     handleClose () {
       this.showChangePin = false
     },

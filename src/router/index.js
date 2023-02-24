@@ -40,6 +40,10 @@ const routes = [
         component: () => import('@/views/setting/KnowledgeBase')
       },
       {
+        path: '/knowledgeBase/form',
+        component: () => import('@/views/setting/KnowledgeBaseForm')
+      },
+      {
         name: 'Administration',
         path: '/administration',
         redirect: '/administration/user',

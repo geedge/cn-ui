@@ -36,11 +36,12 @@ router.beforeEach(async (to, from, next) => {
         store.commit('setRoleList', roleList)
       }
       if (to.path) {
-        if (hasMenu(store.getters.menuList, to.path)) {
+        next()
+        /* if (hasMenu(store.getters.menuList, to.path)) {
           next()
         } else {
           ElMessage.error('No access') // TODO 国际化
-        }
+        } */
       }
     }
   } else {
