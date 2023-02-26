@@ -42,9 +42,9 @@
     </div>
     <div class="cn-header__nav">
       <i class="cn-icon cn-icon-a-NetworkAnalytics"></i>
-      <el-breadcrumb class="header__left-breadcrumb" :separator="route.indexOf('detection') === -1 && route.indexOf('administration') === -1 ? '>' : ''">
-        <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item}`" :title="item"
-                            v-for="(item,index) in breadcrumb" :key="item">
+      <el-breadcrumb class="header__left-breadcrumb" separator=">">
+        <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item.value}`" :title="item.value"
+                            v-for="(item,index) in breadcrumb" :key="item.value">
           <template v-if="index===3">
             <div class="header__left-breadcrumb-item-select">
               <el-popover placement="bottom-start"
@@ -54,7 +54,7 @@
                           :hide-after="0"
                           :show-after="0"
                           popper-class="breadcrumb__popper"
-                          @show="showBreadcrumbPopover(item)"
+                          @show="showBreadcrumbPopover(item.value)"
                           @hide="hideBreadcrumbPopover()"
                           trigger="click">
                 <template #reference>
@@ -62,13 +62,13 @@
                        :class="showBackground?'breadcrumb-button__active':''">
                     <span id="breadcrumbValue">
                       <template v-if="curTabProp === 'qtype'">
-                        <span>{{ dnsQtypeMapData.get(item)}}</span>
+                        <span>{{ dnsQtypeMapData.get(item.value)}}</span>
                       </template>
                       <template v-else-if="curTabProp === 'rcode'">
-                        <span>{{ dnsRcodeMapData.get(item)}}</span>
+                        <span>{{ dnsRcodeMapData.get(item.value)}}</span>
                       </template>
                       <template v-else>
-                        <span>{{ item }}</span>
+                        <span>{{ item.value }}</span>
                       </template>
                     </span><i class="cn-icon-xiala cn-icon"></i>
                   </div>
@@ -82,7 +82,7 @@
                   </div>
                   <ul class="select-dropdown" id="breadcrumbSelectDropdown" @scroll="scrollList()">
                     <li v-for="item in breadcrumbColumnValueListShow" title='' :key="item" :id="item"
-                        class="select-dropdown__item" @click="changeValue(item)" :class="selected?'':''">
+                        class="select-dropdown__item" @click="changeValue(item)">
                       <template v-if="curTabProp === 'qtype'">
                         <span>{{ dnsQtypeMapData.get(item) }}</span>
                       </template>
@@ -99,14 +99,17 @@
             </div>
           </template>
           <template v-else-if="index===2">
-            <span v-if="route===wholeScreenRouterMapping.dns">{{ $t(item) }}</span>
-            <span v-else class="route-menu" @click="jump(route,item,'',3)">{{ $t(item) }}</span>
+            <span v-if="route===wholeScreenRouterMapping.dns">{{ $t(item.value) }}</span>
+            <span v-else class="route-menu" @click="jump(route,item.value,'',3)">{{ $t(item.value) }}</span>
           </template>
+          <!-- index=0和index=1的点击跳转由breadcrumb里的数据控制 -->
           <template v-else-if="index===1">
-            <span class="route-menu" @click="jump(route,'','',2)">{{ item }}</span>
+            <span v-if="item.clickable" class="route-menu" @click="jump(route,'','',2)">{{ item.value }}</span>
+            <span v-else>{{ item.value }}</span>
           </template>
           <template v-else>
-            <span>{{ item }}</span>
+            <span v-if="item.clickable" class="route-menu" @click="jump(item.route,'','',0)">{{ item.value }}</span>
+            <span v-else>{{ item.value }}</span>
           </template>
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -304,15 +307,27 @@ export default {
     breadcrumb () {
       const breadcrumb = []
       this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList)
+      // 写死一级和二级菜单是否可以点击跳转
+      if (breadcrumb[0]) {
+        if (['knowledgeBase'].indexOf(breadcrumb[0].code) > -1) {
+          breadcrumb[0].clickable = true
+        }
+        if (breadcrumb[1]) {
+          if (breadcrumb[1].route && breadcrumb[1].route.indexOf('/panel/') === 0) {
+            breadcrumb[1].clickable = true
+          }
+        }
+      }
+
 
       const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
       const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
 
       let result = [...breadcrumb]
       if (fourthMenu) {
-        result = [...result, thirdMenu, fourthMenu]
+        result = [...result, { value: thirdMenu }, { value: fourthMenu }]
       } else if (thirdMenu) {
-        result = [...result, thirdMenu]
+        result = [...result, { value: thirdMenu }]
       }
       return result
     },
@@ -380,13 +395,23 @@ export default {
     generateBreadcrumb (breadcrumb, menus) {
       const menu = menus.find(m => m.route === this.route)
       if (menu) {
-        breadcrumb.unshift(menu.i18n ? this.$t(menu.i18n) : menu.name)
+        breadcrumb.unshift({
+          code: menu.code,
+          value: menu.i18n ? this.$t(menu.i18n) : menu.name,
+          route: menu.route,
+          type: menu.type
+        })
         return true
       } else {
         for (let i = 0; i < menus.length; i++) {
           if (!_.isEmpty(menus[i].children)) {
             if (this.generateBreadcrumb(breadcrumb, menus[i].children)) {
-              breadcrumb.unshift(menus[i].i18n ? this.$t(menus[i].i18n) : menus[i].name)
+              breadcrumb.unshift({
+                code: menus[i].code,
+                value: menus[i].i18n ? this.$t(menus[i].i18n) : menus[i].name,
+                route: menus[i].route,
+                type: menus[i].type
+              })
               return true
             }
           }
@@ -599,9 +624,6 @@ export default {
         this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
         this.urlChangeParams[this.curTabState.tabOperationType] = opeType
         if (opeType === 3) {
-          /* if (route !== '/panel/networkOverview') {
-            this.urlChangeParams.queryCondition = ''
-          } */
           this.urlChangeParams.queryCondition = ''
         }
       } else {
