@@ -10,8 +10,8 @@
         @search="search"
     >
       <template v-slot:top-tool-right>
-        <button id="roles-add" :title="$t('overall.createRole')" class="top-tool-btn margin-r-10"
-                type="button" @click="add">
+        <button id="knowledge-base-add" :title="$t('knowledgeBase.createKnowledgeBase')" class="top-tool-btn margin-r-10"
+                type="button" @click="jumpToCreatePage">
           <i class="cn-icon-add cn-icon"></i>
         </button>
       </template>
@@ -54,15 +54,8 @@ export default {
   data () {
     return {
       url: api.knowledgeBase,
-      tableId: 'knowledgeBaseTable', // 需要分页的table的id，用于记录每页数量
-      blankObject: { // 空白对象
-        tagName: '',
-        buildIn: '',
-        id: '',
-        tagType: '',
-        remark: '',
-        updateTime: ''
-      }
+      tableId: 'knowledgeBaseTable' // 需要分页的table的id，用于记录每页数量
+
     }
   },
   methods: {
@@ -71,6 +64,14 @@ export default {
         if (response.code === 200) {
           this.object = response.data.list[0]
           this.rightBox.show = true
+        }
+      })
+    },
+    jumpToCreatePage () {
+      this.$router.push({
+        path: '/knowledgeBase/form',
+        query: {
+          t: +new Date()
         }
       })
     },

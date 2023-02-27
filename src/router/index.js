@@ -28,6 +28,10 @@ const routes = [
         component: () => import('@/views/entityExplorer/EntityExplorer')
       },
       {
+        path: '/detection',
+        redirect: '/detection/securityEvent'
+      },
+      {
         path: '/detection/:typeName',
         component: () => import('@/views/detections/Index')
       },
@@ -38,6 +42,10 @@ const routes = [
       {
         path: '/knowledgeBase',
         component: () => import('@/views/setting/KnowledgeBase')
+      },
+      {
+        path: '/knowledgeBase/form',
+        component: () => import('@/views/setting/KnowledgeBaseForm')
       },
       {
         name: 'Administration',
