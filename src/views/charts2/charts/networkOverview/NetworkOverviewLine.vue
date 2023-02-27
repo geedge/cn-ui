@@ -75,7 +75,6 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
-import mockData from '../../../../../test/views/charts2/charts/networkOverview/NetworkOverviewLineMockData'
 
 export default {
   name: 'NetworkOverviewLine',
