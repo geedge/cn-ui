@@ -82,7 +82,7 @@
                 </div>
               </template>
               <template v-else-if="item.prop === 'inbound'">
-                <div class="data-total-value">{{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join(' ')}}</div>
+                <div class="data-total-value" :test-id="`inbound-packet-${scope.row.appSubcategory}`">{{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;

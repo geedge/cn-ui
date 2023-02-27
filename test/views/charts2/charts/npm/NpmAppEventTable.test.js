@@ -2,6 +2,10 @@ import NpmAppEventTable from '@/views/charts2/charts/npm/NpmAppEventTable'
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import ElementPlus from 'element-plus'
+import { mockData } from './mockData/NpmAppEventByTable'
+
+let wrapper = null
+const mockGet = mockData.common.data
 
 const timeFilter = {
   dateRangeValue: -1,
@@ -9,22 +13,30 @@ const timeFilter = {
   endTime: 1675731457
 }
 
-const mockGet = { data: { status: 200, code: 200, queryKey: '88eeb92e0ddb40c0327db494cfe5c74c', success: true, message: null, statistics: { elapsed: 0, rows_read: 2, result_size: 752, result_rows: 10 }, job: null, formatType: 'json', meta: [{ name: 'app_name', type: 'string', category: 'Dimension' }, { name: 'event_severity', type: 'string', category: 'Dimension' }, { name: 'event_type', type: 'string', category: 'Dimension' }, { name: 'count', type: 'long', category: 'Metric' }], data: { resultType: 'table', result: [{ appName: 'youku', eventSeverity: 'info', eventType: 'http error', count: 6 }, { appName: 'uplive', eventSeverity: 'critical', eventType: 'http error', count: 5 }, { appName: 'youku', eventSeverity: 'low', eventType: 'http error', count: 4 }, { appName: 'apple_hls', eventSeverity: 'info', eventType: 'http error', count: 3 }, { appName: 'apple_hls', eventSeverity: 'low', eventType: 'http error', count: 3 }, { appName: 'apple_hls', eventSeverity: 'medium', eventType: 'http error', count: 2 }, { appName: 'uplive', eventSeverity: 'high', eventType: 'http error', count: 2 }, { appName: 'windows_update', eventSeverity: 'medium', eventType: 'http error', count: 2 }, { appName: 'apple_hls', eventSeverity: 'critical', eventType: 'http error', count: 1 }, { appName: 'cloudflare', eventSeverity: 'info', eventType: 'http error', count: 1 }] }, originalUrl: 'http://192.168.44.55:9999?query=SELECT%20app_name%20AS%20app_name%2C%20event_severity%20AS%20event_severity%2C%20event_type%20AS%20event_type%2C%20COUNT%28*%29%20AS%20count%20FROM%20performance_event%20WHERE%20start_time%20%3E%3D%201675580110%20AND%20end_time%20%3C%201675752910%20AND%20entity_type%20%3D%20%27app%27%20GROUP%20BY%20app_name%2Cevent_severity%2Cevent_type%20ORDER%20BY%20count%20DESC%20%20LIMIT%2010%20&format=json&option=real-time', msg: 'OK' } }
+/**
+ * 进行axios请求，并挂载vue实例
+ * @param data
+ */
+function axiosPostAndMounted (data) {
+  require('vue-router').useRoute.mockReturnValue({ query: {} })
+  const _data = data || mockGet
+  // 模拟 axios 数据
+  axios.get.mockResolvedValue(_data)
+
+  // 加载vue组件，获得实例
+  wrapper = mount(NpmAppEventTable, {
+    global: {
+      plugins: [ElementPlus]
+    },
+    propsData: {
+      timeFilter
+    }
+  })
+}
 
 describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
   test('Npm 事件：APP事件信息表格 严重程度色块验证', async () => {
-    require('vue-router').useRoute.mockReturnValue({ query: {} })
-    // 模拟 axios 数据
-    axios.get.mockResolvedValue(mockGet)
-    // 加载vue组件，获得实例
-    const wrapper = mount(NpmAppEventTable, {
-      global: {
-        plugins: [ElementPlus]
-      },
-      propsData: {
-        timeFilter
-      }
-    })
+    axiosPostAndMounted()
 
     await new Promise(resolve => setTimeout(() => {
       // critical
@@ -96,18 +108,7 @@ describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
     }, 200))
   })
   test('Npm 事件：APP事件信息表格 数据验证(应用数据列)', async () => {
-    require('vue-router').useRoute.mockReturnValue({ query: {} })
-    // 模拟 axios 数据
-    axios.get.mockResolvedValue(mockGet)
-    // 加载vue组件，获得实例
-    const wrapper = mount(NpmAppEventTable, {
-      global: {
-        plugins: [ElementPlus]
-      },
-      propsData: {
-        timeFilter
-      }
-    })
+    axiosPostAndMounted()
 
     await new Promise(resolve => setTimeout(() => {
       const textNode0 = wrapper.find('[test-id="appName0"]')
@@ -136,18 +137,7 @@ describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
     }, 200))
   })
   test('Npm 事件：APP事件信息表格 数据验证(严重程度数据列)', async () => {
-    require('vue-router').useRoute.mockReturnValue({ query: {} })
-    // 模拟 axios 数据
-    axios.get.mockResolvedValue(mockGet)
-    // 加载vue组件，获得实例
-    const wrapper = mount(NpmAppEventTable, {
-      global: {
-        plugins: [ElementPlus]
-      },
-      propsData: {
-        timeFilter
-      }
-    })
+    axiosPostAndMounted()
 
     await new Promise(resolve => setTimeout(() => {
       const textNode0 = wrapper.find('[test-id="eventSeverity0"]')
@@ -176,18 +166,7 @@ describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
     }, 200))
   })
   test('Npm 事件：APP事件信息表格 数据验证(事件类型数据列)', async () => {
-    require('vue-router').useRoute.mockReturnValue({ query: {} })
-    // 模拟 axios 数据
-    axios.get.mockResolvedValue(mockGet)
-    // 加载vue组件，获得实例
-    const wrapper = mount(NpmAppEventTable, {
-      global: {
-        plugins: [ElementPlus]
-      },
-      propsData: {
-        timeFilter
-      }
-    })
+    axiosPostAndMounted()
 
     await new Promise(resolve => setTimeout(() => {
       const textNode0 = wrapper.find('[test-id="eventType0"]')
@@ -216,18 +195,7 @@ describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
     }, 200))
   })
   test('Npm 事件：APP事件信息表格 数据验证(事件数量数据列)', async () => {
-    require('vue-router').useRoute.mockReturnValue({ query: {} })
-    // 模拟 axios 数据
-    axios.get.mockResolvedValue(mockGet)
-    // 加载vue组件，获得实例
-    const wrapper = mount(NpmAppEventTable, {
-      global: {
-        plugins: [ElementPlus]
-      },
-      propsData: {
-        timeFilter
-      }
-    })
+    axiosPostAndMounted()
 
     await new Promise(resolve => setTimeout(() => {
       const textNode0 = wrapper.find('[test-id="count0"]')
@@ -252,6 +220,15 @@ describe('views/charts2/charts/npm/NpmAppEventTable.vue测试', () => {
       expect(textNode8.text()).toEqual('1')
       expect(textNode9.text()).toEqual('1')
 
+      resolve()
+    }, 200))
+  })
+  test('Npm 事件：APP事件信息表格 无数据', async () => {
+    axiosPostAndMounted(mockData.empty.data)
+
+    await new Promise(resolve => setTimeout(() => {
+      const noData = wrapper.get('[test-id="noData"]')
+      expect(noData.text()).toBe('npm.noData')
       resolve()
     }, 200))
   })

@@ -17,6 +17,7 @@ import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
+
 export default {
   name: 'NpmEventsHeader',
   components: { ChartError },

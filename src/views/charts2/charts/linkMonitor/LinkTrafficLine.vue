@@ -53,7 +53,7 @@
        </div>
      </div>
      <div style="height: calc(100% - 74px); position: relative">
-       <chart-no-data v-if="isNoData"></chart-no-data>
+       <chart-no-data v-if="isNoData" test-id="noData"></chart-no-data>
        <div class="chart-drawing" v-show="showMarkLine && !isNoData" id="linkTrafficLineChart"></div>
      </div>
    </div>
@@ -201,7 +201,7 @@ export default {
         console.error(e)
         this.showError = true
         this.errorMsg = e.message
-        // this.isNoData = true
+        this.isNoData = false
       }).finally(() => {
         this.loading = false
       })

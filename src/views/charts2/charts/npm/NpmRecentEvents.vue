@@ -40,7 +40,7 @@
           <svg class="icon" aria-hidden="true">
             <use xlink:href="#cn-icon-good"></use>
           </svg>
-          <div class="table-no-data__title">{{ $t('npm.thereNoEvents') }}</div>
+          <div class="table-no-data__title" test-id="noData">{{ $t('npm.thereNoEvents') }}</div>
         </div>
       </template>
     </el-table>
@@ -125,13 +125,13 @@ export default {
             }
           })
           this.tableData = res.data.result
-          console.log('打印tableData', this.tableData)
         } else {
-          // this.isNoData = true
+          this.isNoData = false
           this.showError = true
           this.errorMsg = res.message
         }
       }).catch(error => {
+        this.isNoData = false
         this.showError = true
         this.errorMsg = error.message
       }).finally(() => {

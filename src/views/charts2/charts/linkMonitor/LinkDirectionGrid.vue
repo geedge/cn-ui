@@ -146,9 +146,9 @@ export default {
           // 接口数据乱序，根据入方向排序，再根据同个入方向下的出方向进行排序
           nextLinkData.sort((a, b) => {
             if (a.ingressLinkDirection !== b.ingressLinkDirection) {
-              return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection, 'zh')
+              return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection)
             }
-            return a.egressLinkDirection.localeCompare(b.egressLinkDirection, 'zh')
+            return a.egressLinkDirection.localeCompare(b.egressLinkDirection)
           })
 
           this.isNextNoData = nextLinkData.length === 0

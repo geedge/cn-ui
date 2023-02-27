@@ -3,7 +3,7 @@
     <div class="dimension-title" v-if="gridData.length>3">{{ $t('linkMonitor.egressLink') }}&nbsp;&&nbsp;{{ $t('linkMonitor.ingressLink') }}</div>
     <div class="dimension-title" v-else>{{ $t('linkMonitor.nextHopInternetOfGrid') }}</div>
 
-    <chart-no-data v-if="isNoData"></chart-no-data>
+    <chart-no-data v-if="isNoData" :test-id="`noData${gridData.length}`"></chart-no-data>
 
     <chart-error class="link-block-error" v-if="showError" :content="content"/>
 

@@ -1,6 +1,6 @@
 <template>
  <div class="ddos-detection">
-   <chart-no-data v-if="isNoData"></chart-no-data>
+   <chart-no-data v-if="isNoData" test-id="noData"></chart-no-data>
    <chart-error info v-if="showError" :content="errorMsg" />
 
    <div class="ddos-detection-title">

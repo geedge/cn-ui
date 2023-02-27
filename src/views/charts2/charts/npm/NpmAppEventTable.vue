@@ -54,7 +54,7 @@
       </template>
       <template v-slot:empty>
         <div class="table-no-data" v-show="isNoData">
-          <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+          <div class="table-no-data__title" test-id="noData">{{ $t('npm.noData') }}</div>
         </div>
       </template>
     </el-table>

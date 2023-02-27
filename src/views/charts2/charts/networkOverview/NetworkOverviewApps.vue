@@ -71,7 +71,7 @@
             <el-tab-pane :label="$t('network.providers')" :name="0">
               <div class="body__apps" :class="{'body__apps-no-grid': providerOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
-                <chart-no-data v-if="providerOptions.length === 0 && !loadingBody"></chart-no-data>
+                <chart-no-data v-if="providerOptions.length === 0 && !loadingBody" test-id="noData"></chart-no-data>
                 <div class="body__app" v-else :class="{'provide-show': app.provideShow}" v-for="(app, index) in providerOptions" :key="index"  @click="appCheckedChange(app, 0)" :test-id="`provide${index}`">
                   <div class="body__app-content">
                     <div class="body__app-left">
@@ -463,7 +463,7 @@ export default {
         params.type = 'overviewProvide'
         axios.get(api.dict, { params: params }).then(res => {
           res = res.data
-          if (res.code === 200) {
+          if (res.code === 200 && res.data.list) {
             res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'provider' && pd.name === l.value))
             this.pageObj.pages = res.data.pages
             res.data.list.forEach(t => {
