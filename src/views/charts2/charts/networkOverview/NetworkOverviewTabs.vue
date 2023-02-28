@@ -24,6 +24,7 @@
                   border
                   :cell-style="tableCellStyle"
                   :header-cell-style="tableHeaderCellStyle"
+                  :row-class-name="rowClassName"
                   :class="tableClass"
                   height="100%"
                   empty-text=" "
@@ -47,7 +48,7 @@
                 <template  #default="scope" :column="item">
                   <template v-if="item.columnType === tableColumnType.chainRatio"  >
                     <div class="data-total" >
-                      <div class="data-value">
+                      <div class="data-value" :test-id="`data-value-${item.prop}${scope.row.index}`">
                         <template v-if="showUnit && item.unit">
                           {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], item.unit).join(' ') : '-'):'' }}
                         </template>
@@ -55,16 +56,16 @@
                           {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
                         </template>
                       </div>
-                      <div class="data-trend">
+                      <div class="data-trend" :test-id="`data-trend-all-${item.prop}${scope.row.index}`">
                         <template v-if="scope.row[item.prop]">
-                          <div v-if="scope.row[item.prop][1] === 'up'" class="data-total-trend data-total-trend-red">
-                            <i class="cn-icon-rise1 cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
+                          <div v-if="scope.row[item.prop][1] === 'up'" class="data-total-trend data-total-trend-red" :test-id="`data-trend-${item.prop}${scope.row.index}`">
+                            <i class="cn-icon-rise1 cn-icon" :test-id="`data-trend-icon-${item.prop}${scope.row.index}`"></i><span :test-id="`data-trend-value-${item.prop}${scope.row.index}`">{{scope.row[item.prop][2]}}</span>
                           </div>
-                          <div v-else-if="scope.row[item.prop][1] === 'down'" class="data-total-trend data-total-trend-green">
-                            <i class="cn-icon-decline cn-icon"></i><span>{{scope.row[item.prop][2]}}</span>
+                          <div v-else-if="scope.row[item.prop][1] === 'down'" class="data-total-trend data-total-trend-green" :test-id="`data-trend-${item.prop}${scope.row.index}`">
+                            <i class="cn-icon-decline cn-icon" :test-id="`data-trend-icon-${item.prop}${scope.row.index}`"></i><span :test-id="`data-trend-value-${item.prop}${scope.row.index}`">{{scope.row[item.prop][2]}}</span>
                           </div>
-                          <div v-else-if="scope.row[item.prop][1] === 'noChange'" class="data-total-trend data-total-trend-black">
-                            <i class="cn-icon-constant cn-icon"></i>
+                          <div v-else-if="scope.row[item.prop][1] === 'noChange'" class="data-total-trend data-total-trend-black" :test-id="`data-trend-${item.prop}${scope.row.index}`">
+                            <i class="cn-icon-constant cn-icon" :test-id="`data-trend-icon-${item.prop}${scope.row.index}`"></i>
                           </div>
                         </template>
                         <template  v-else>
@@ -74,7 +75,7 @@
                     </div>
                   </template>
                   <template v-else-if="item.columnType === tableColumnType.dillDown" >
-                    <div v-if="isOnlyRead" >
+                    <div v-if="isOnlyRead" :test-id="`dnsMapType-${scope.row.index}`">
                       <template v-if="tableType === fromRoute.dnsServiceInsights && isDnsMapType">
                         {{dnsMapData.get(scope.row['tab'])}}
                       </template>
@@ -82,7 +83,7 @@
                         {{scope.row['tab']}}
                       </template>
                     </div>
-                    <div v-else class="data-click" @click="handleTabValue(item.name,scope.row['tab'])">
+                    <div v-else class="data-click" :test-id="`dnsMapType-${scope.row.index}`" @click="handleTabValue(item.name,scope.row['tab'])">
                       <template v-if="tableType === fromRoute.dnsServiceInsights && isDnsMapType">
                         {{dnsMapData.get(scope.row['tab'])}}
                       </template>
@@ -94,10 +95,10 @@
                   <template v-else-if="item.columnType === tableColumnType.percent" >
                     <div class="dns-in-ex">
                       <div class="dns-percent-pic">
-                        <div v-if="scope.row[item.prop][0] !== false" class="div-green" id="green" :style="`width:${scope.row[item.prop][0]}`"></div>
-                        <div v-if="scope.row[item.prop][0] !== false" class="div-yellow" id="yellow" :style="`width:${scope.row[item.prop][1]}`"></div>
+                        <div v-if="scope.row[item.prop][0] !== false" class="div-green" id="green" :test-id="`percent-green-${scope.row.index}`" :style="`width:${scope.row[item.prop][0]}`"></div>
+                        <div v-if="scope.row[item.prop][0] !== false" class="div-yellow" id="yellow" :test-id="`percent-yellow-${scope.row.index}`" :style="`width:${scope.row[item.prop][1]}`"></div>
                       </div>
-                      <div class="dns-percent">{{scope.row[item.prop][2]}}</div>
+                      <div class="dns-percent" :test-id="`percent-value-${scope.row.index}`">{{scope.row[item.prop][2]}}</div>
                     </div>
                   </template>
                   <template v-else-if="item.prop === 'score'" >
@@ -105,10 +106,10 @@
                       <div v-if="scope.row.score <= 2" class="data-score data-score-red" >
                         {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                       </div>
-                      <div v-else-if="scope.row.score <= 4" class="data-score data-score-yellow" >
+                      <div v-else-if="scope.row.score <= 4" class="data-score data-score-yellow" :test-id="`score-${scope.row.index}`">
                         {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                       </div>
-                      <div v-else-if="scope.row.score <= 6" class="data-score data-score-green" >
+                      <div v-else-if="scope.row.score <= 6" class="data-score data-score-green" :test-id="`score-${scope.row.index}`">
                         {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                       </div>
                     </div>
@@ -326,6 +327,10 @@ export default {
   },
   mixins: [chartMixin],
   methods: {
+    rowClassName ({ row, rowIndex }) {
+      // 把每一行的索引放进row
+      row.index = rowIndex
+    },
     /* 参数 extraParams 额外请求参数 */
     getChartData (extraParams = {}) {
       this.initState()
@@ -1053,7 +1058,6 @@ export default {
           type: tabList[0].prop
         }
         this.changeUrlTabState()
-        // const condition = this.$store.getters.getQueryCondition
         const condition = this.getQueryCondition()
         if (condition) {
           queryParams = {
