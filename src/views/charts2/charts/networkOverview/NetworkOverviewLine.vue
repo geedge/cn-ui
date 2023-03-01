@@ -249,7 +249,7 @@ export default {
       if (!this.isUnitTesting) {
         if (this.lineTab) {
           this.handleActiveBar()
-          echartsData = echartsData.filter(t => t.show === true && t.invertTab === false)
+          echartsData = echartsData.filter(t => t.show === true && t.class === this.lineTab)//t.invertTab === false
         } else {
           echartsData = echartsData.filter(t => t.show === true)
         }
@@ -262,6 +262,10 @@ export default {
           return {
             ...chartOption,
             name: t.name,
+            type: "line",
+            showSymbol: false,
+            smooth: true,
+            symbol: "circle",
             lineStyle: {
               color: chartColor3[t.positioning],
               width: 1
@@ -405,9 +409,15 @@ export default {
     },
     activeChange (item, index) {
       if (this.isNoData) return
-      this.lineTab = item.class
-      this.legendSelectChange(item, index, 'active')
-      this.showMarkLine = !item.invertTab
+      if(this.lineTab === item.class){//点击高亮 tab 后取消高亮，恢复到全不高亮的状态
+        this.legendSelectChange(item, index, 'active',true)
+        this.lineTab = ''
+        this.showMarkLine = false
+      }else {
+        this.legendSelectChange(item, index, 'active')
+        this.lineTab = item.class
+        this.showMarkLine = !item.invertTab
+      }
       this.init(this.metric, this.showMarkLine, 'active')
     },
     mouseenter (item) {
@@ -430,16 +440,22 @@ export default {
         name: name
       })
     },
-    legendSelectChange (item, index, val) {
+    legendSelectChange (item, index, val,isActiveAll) {
       if (index === 'index') {
         this.dispatchLegendSelectAction(item.name)
       } else if (this.tabs[index] && this.tabs[index].name === item.name) {
-        this.dispatchLegendSelectAction(item.name)
-        this.tabs.forEach((t) => {
-          if (t.name !== item.name) {
-            this.dispatchLegendUnSelectAction(t.name)
-          }
-        })
+        if(isActiveAll){
+          this.tabs.forEach((t) => {
+            this.dispatchLegendSelectAction(t.name)
+          })
+        } else {
+          this.dispatchLegendSelectAction(item.name)
+          this.tabs.forEach((t) => {
+            if (t.name !== item.name) {
+              this.dispatchLegendUnSelectAction(t.name)
+            }
+          })
+        }
       }
       if (val === 'active') {
         this.tabs.forEach(t => {
@@ -475,7 +491,7 @@ export default {
       this.lineRefer = val
       let echartsData
       if (this.lineTab) {
-        echartsData = this.tabs.filter(t => t.show === true && t.invertTab === false)
+        echartsData = this.tabs.filter(t => t.show === true && t.class === this.lineTab)//t.invertTab === false
       } else {
         echartsData = this.tabs.filter(t => t.show === true)
       }
@@ -597,6 +613,7 @@ export default {
         tabs[i].analysis = d.analysis
       })
       let num = 0
+      let self = this
       tabs.forEach(e => {
         e.unitType = type
         if (e.name !== 'network.total' && parseFloat(e.analysis.avg) == 0) {
@@ -604,15 +621,15 @@ export default {
           num += 1
         } else {
           e.show = true
-          if (!active && show !== this.lineRefer) {
-            this.legendSelectChange(e, 'index')
+          if (!active && show !== self.lineRefer) {
+            self.legendSelectChange(e, 'index')
           }
         }
-        if (this.lineTab === e.class) {
+        if (self.lineTab === e.class) {
           if (parseFloat(e.analysis.avg) <= 0) {
-            this.lineTab = ''
-            this.lineRefer = ''
-            this.init()
+            self.lineTab = ''
+            self.lineRefer = ''
+            self.init()
           }
         }
       })
@@ -652,12 +669,13 @@ export default {
     // this.domInit()
     this.myChart = null
     this.chartOption = null
-    this.timer = setTimeout(() => {
-      if (this.lineTab && this.metric !== 'Sessions/s') {
-        const data = this.tabsTemplate.find(t => t.class === this.lineTab)
-        this.activeChange(data, data.positioning)
+    let self = this
+    self.timer = setTimeout(() => {
+      if (self.lineTab && self.metric !== 'Sessions/s') {
+        const data = self.tabsTemplate.find(t => t.class === self.lineTab)
+        self.activeChange(data, data.positioning)
       } else {
-        this.init()
+        self.init()
       }
     }, 200)
     window.addEventListener('resize', this.resize)
