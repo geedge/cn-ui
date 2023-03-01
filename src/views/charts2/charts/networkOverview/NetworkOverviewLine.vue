@@ -12,7 +12,7 @@
                  :key="index"
                  @mouseenter="mouseenter(item)"
                  @mouseleave="mouseleave(item)"
-                 @click="activeChange(item, index)"
+                 @click="activeChange(item, index,true)"
                  :test-id="`tab${index}`"
             >
               <div class="line-value-tabs-name">
@@ -407,15 +407,15 @@ export default {
         })
       }
     },
-    activeChange (item, index) {
+    activeChange (item, index,isClick) {//isClick:代表是通过点击操作来的
       if (this.isNoData) return
-      if(this.lineTab === item.class){//点击高亮 tab 后取消高亮，恢复到全不高亮的状态
+      if(isClick && this.lineTab === item.class){//点击高亮 tab 后取消高亮，恢复到全不高亮的状态
         this.legendSelectChange(item, index, 'active',true)
         this.lineTab = ''
         this.showMarkLine = false
       }else {
-        this.legendSelectChange(item, index, 'active')
         this.lineTab = item.class
+        this.legendSelectChange(item, index, 'active')
         this.showMarkLine = !item.invertTab
       }
       this.init(this.metric, this.showMarkLine, 'active')
@@ -485,7 +485,9 @@ export default {
       }
     },
     resize () {
-      this.myChart.resize()
+      if(this.myChart){
+        this.myChart.resize()
+      }
     },
     referenceSelectChange (val) {
       this.lineRefer = val
