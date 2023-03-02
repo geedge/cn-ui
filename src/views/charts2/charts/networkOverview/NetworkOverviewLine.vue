@@ -1,6 +1,6 @@
 <template>
   <div class="line network">
-    <chart-error v-if="showError" :content="errorMsg" />
+    <chart-error v-if="showError" :content="errorMsg"/>
     <div class="line-header" v-if="!showError">
       <div class="line-header-left">
         <div class="line-value-active" v-if="lineTab"></div>
@@ -17,13 +17,13 @@
             >
               <div class="line-value-tabs-name">
                 <div :class="item.class"></div>
-                <div class="tabs-name" :test-id="`tabTitle${index}`">{{$t(item.name)}}</div>
+                <div class="tabs-name" :test-id="`tabTitle${index}`">{{ $t(item.name) }}</div>
               </div>
               <div class="line-value-unit" :test-id="`tabContent${index}`">
-                <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
+                <span class="line-value-unit-number">{{ unitConvert(item.analysis.avg, unitTypes.number)[0] }}</span>
                 <span class="line-value-unit-number2">
-                <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span>
-                <span v-if="item.unitType">{{item.unitType}}</span>
+                <span>{{ unitConvert(item.analysis.avg, unitTypes.number)[1] }}</span>
+                <span v-if="item.unitType">{{ item.unitType }}</span>
               </span>
               </div>
             </div>
@@ -32,7 +32,7 @@
       </div>
       <div class="line-select line-header-right">
         <div class="line-select-reference-line">
-          <span>{{$t('network.referenceLine')}}:</span>
+          <span>{{ $t('network.referenceLine') }}:</span>
           <div class="line-select__operation">
             <el-select
                 size="mini"
@@ -51,10 +51,10 @@
     <div style="height: calc(100% - 74px); position: relative">
       <chart-no-data v-if="isNoData && !showError"></chart-no-data>
       <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" ref="overviewLineChart"></div>
-<!--      todo 后续改动，此处为框选返回-->
-<!--      <div id="brushBtn" style="position: absolute;left: 0;top: 0;" v-show="mouseDownFlag">-->
-<!--        <el-button @click.stop="backBrushHistory">返回</el-button>-->
-<!--      </div>-->
+      <!--      todo 后续改动，此处为框选返回-->
+      <!--      <div id="brushBtn" style="position: absolute;left: 0;top: 0;" v-show="mouseDownFlag">-->
+      <!--        <el-button @click.stop="backBrushHistory">返回</el-button>-->
+      <!--      </div>-->
     </div>
   </div>
 </template>
@@ -122,12 +122,66 @@ export default {
         }
       ],
       tabsTemplate: [
-        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' },
-        { analysis: {}, name: 'network.internal', class: 'internal', show: true, invertTab: true, positioning: 3, data: [], unitType: '' },
-        { analysis: {}, name: 'network.through', class: 'through', show: true, invertTab: true, positioning: 4, data: [], unitType: '' },
-        { analysis: {}, name: 'network.other', class: 'other', show: true, invertTab: true, positioning: 5, data: [], unitType: '' }
+        {
+          analysis: {},
+          name: 'network.total',
+          class: 'total',
+          show: true,
+          invertTab: true,
+          positioning: 0,
+          data: [],
+          unitType: ''
+        },
+        {
+          analysis: {},
+          name: 'network.inbound',
+          class: 'inbound',
+          show: true,
+          invertTab: true,
+          positioning: 1,
+          data: [],
+          unitType: ''
+        },
+        {
+          analysis: {},
+          name: 'network.outbound',
+          class: 'outbound',
+          show: true,
+          invertTab: true,
+          positioning: 2,
+          data: [],
+          unitType: ''
+        },
+        {
+          analysis: {},
+          name: 'network.internal',
+          class: 'internal',
+          show: true,
+          invertTab: true,
+          positioning: 3,
+          data: [],
+          unitType: ''
+        },
+        {
+          analysis: {},
+          name: 'network.through',
+          class: 'through',
+          show: true,
+          invertTab: true,
+          positioning: 4,
+          data: [],
+          unitType: ''
+        },
+        {
+          analysis: {},
+          name: 'network.other',
+          class: 'other',
+          show: true,
+          invertTab: true,
+          positioning: 5,
+          data: [],
+          unitType: ''
+        }
       ],
       tabs: [],
       unitConvert,
@@ -225,31 +279,31 @@ export default {
     /**
      * 初始化echartsdom，用于右键点击返回框选
      */
-    domInit () {
-      const self = this
-      // 去掉默认的contextmenu事件，否则会和右键事件同时出现。
-      document.oncontextmenu = function (e) {
-        e.preventDefault()
-      }
-      document.getElementById('overviewLineChart').onmousedown = function (e) {
-        // e.button: 0左键，1滚轮，2右键
-        if (e.button === 2) {
-          self.myChart.dispatchAction({
-            type: 'brush',
-            areas: [] // 删除选框
-          })
-          self.mouseDownFlag = true
-          document.getElementById('brushBtn').style.left = e.layerX + 'px'
-          document.getElementById('brushBtn').style.top = e.layerY + 74 + 'px'
-        }
-      }
-    },
+    // domInit () {
+    //   const self = this
+    //   // 去掉默认的contextmenu事件，否则会和右键事件同时出现。
+    //   document.oncontextmenu = function (e) {
+    //     e.preventDefault()
+    //   }
+    //   document.getElementById('overviewLineChart').onmousedown = function (e) {
+    //     // e.button: 0左键，1滚轮，2右键
+    //     if (e.button === 2) {
+    //       self.myChart.dispatchAction({
+    //         type: 'brush',
+    //         areas: [] // 删除选框
+    //       })
+    //       self.mouseDownFlag = true
+    //       document.getElementById('brushBtn').style.left = e.layerX + 'px'
+    //       document.getElementById('brushBtn').style.top = e.layerY + 74 + 'px'
+    //     }
+    //   }
+    // },
     echartsInit (echartsData, show) {
       // echarts内容在单元测试时不执行
       if (!this.isUnitTesting) {
         if (this.lineTab) {
           this.handleActiveBar()
-          echartsData = echartsData.filter(t => t.show === true && t.class === this.lineTab)//t.invertTab === false
+          echartsData = echartsData.filter(t => t.show === true && t.class === this.lineTab) // t.invertTab === false
         } else {
           echartsData = echartsData.filter(t => t.show === true)
         }
@@ -262,10 +316,10 @@ export default {
           return {
             ...chartOption,
             name: t.name,
-            type: "line",
+            type: 'line',
             showSymbol: false,
             smooth: true,
-            symbol: "circle",
+            symbol: 'circle',
             lineStyle: {
               color: chartColor3[t.positioning],
               width: 1
@@ -407,13 +461,13 @@ export default {
         })
       }
     },
-    activeChange (item, index,isClick) {//isClick:代表是通过点击操作来的
+    activeChange (item, index, isClick) { // isClick:代表是通过点击操作来的
       if (this.isNoData) return
-      if(isClick && this.lineTab === item.class){//点击高亮 tab 后取消高亮，恢复到全不高亮的状态
-        this.legendSelectChange(item, index, 'active',true)
+      if (isClick && this.lineTab === item.class) { // 点击高亮 tab 后取消高亮，恢复到全不高亮的状态
+        this.legendSelectChange(item, index, 'active', true)
         this.lineTab = ''
         this.showMarkLine = false
-      }else {
+      } else {
         this.lineTab = item.class
         this.legendSelectChange(item, index, 'active')
         this.showMarkLine = !item.invertTab
@@ -440,11 +494,11 @@ export default {
         name: name
       })
     },
-    legendSelectChange (item, index, val,isActiveAll) {
+    legendSelectChange (item, index, val, isActiveAll) {
       if (index === 'index') {
         this.dispatchLegendSelectAction(item.name)
       } else if (this.tabs[index] && this.tabs[index].name === item.name) {
-        if(isActiveAll){
+        if (isActiveAll) {
           this.tabs.forEach((t) => {
             this.dispatchLegendSelectAction(t.name)
           })
@@ -479,13 +533,17 @@ export default {
     },
     handleActiveBar () {
       if (document.querySelector('.network .line-value-tabs.is-active')) {
-        const { offsetLeft, clientWidth, clientLeft } = document.querySelector('.network .line-value-tabs.is-active')
+        const {
+          offsetLeft,
+          clientWidth,
+          clientLeft
+        } = document.querySelector('.network .line-value-tabs.is-active')
         const activeBar = document.querySelector('.network .line-value-active')
         activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
       }
     },
     resize () {
-      if(this.myChart){
+      if (this.myChart) {
         this.myChart.resize()
       }
     },
@@ -493,26 +551,26 @@ export default {
       this.lineRefer = val
       let echartsData
       if (this.lineTab) {
-        echartsData = this.tabs.filter(t => t.show === true && t.class === this.lineTab)//t.invertTab === false
+        echartsData = this.tabs.filter(t => t.show === true && t.class === this.lineTab) // t.invertTab === false
       } else {
         echartsData = this.tabs.filter(t => t.show === true)
       }
       if (!this.isUnitTesting) {
         const chartOption = this.myChart.getOption()
         if (this.lineRefer === 'Average' && this.showMarkLine) {
-          chartOption.series.forEach((t, i) => {
+          chartOption.series.forEach((t) => {
             if (t.name === echartsData[0].name) {
               t.markLine.data = [{ yAxis: echartsData[0].analysis.avg }]
             }
           })
         } else if (this.lineRefer === '95th Percentile' && this.showMarkLine) {
-          chartOption.series.forEach((t, i) => {
+          chartOption.series.forEach((t) => {
             if (t.name === echartsData[0].name) {
               t.markLine.data = [{ yAxis: echartsData[0].analysis.p95 }]
             }
           })
         } else if (this.lineRefer === 'Maximum' && this.showMarkLine) {
-          chartOption.series.forEach((t, i) => {
+          chartOption.series.forEach((t) => {
             if (t.name === echartsData[0].name) {
               t.markLine.data = [{ yAxis: echartsData[0].analysis.max }]
             }
@@ -565,7 +623,9 @@ export default {
           otherData[2] = 5
         }
       }
-      dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
+      dataIntegrationArray.sort((a, b) => {
+        return a[1] - b[1]
+      })
       const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
       return this.sizes[sortIndex]
     },
@@ -615,10 +675,10 @@ export default {
         tabs[i].analysis = d.analysis
       })
       let num = 0
-      let self = this
+      const self = this
       tabs.forEach(e => {
         e.unitType = type
-        if (e.name !== 'network.total' && parseFloat(e.analysis.avg) == 0) {
+        if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
           e.show = false
           num += 1
         } else {
@@ -650,28 +710,28 @@ export default {
           if (!this.lineRefer) this.lineRefer = 'Average'
         })
       }
-    },
+    }
     /**
      * 鼠标右键返回框选的时间范围
      */
-    backBrushHistory () {
-      this.myChart.dispatchAction({
-        type: 'brush',
-        areas: [] // 删除选框
-      })
-      if (this.brushHistory.length > 0) {
-        this.$store.commit('setRangeEchartsData', _.cloneDeep(this.brushHistory[0]))
-        this.brushHistory.shift()
-      }
-      this.mouseDownFlag = false
-    }
+    // backBrushHistory () {
+    //   this.myChart.dispatchAction({
+    //     type: 'brush',
+    //     areas: [] // 删除选框
+    //   })
+    //   if (this.brushHistory.length > 0) {
+    //     this.$store.commit('setRangeEchartsData', _.cloneDeep(this.brushHistory[0]))
+    //     this.brushHistory.shift()
+    //   }
+    //   this.mouseDownFlag = false
+    // }
   },
   mounted () {
     // todo 初始化鼠标事件，开启右键返回
     // this.domInit()
     this.myChart = null
     this.chartOption = null
-    let self = this
+    const self = this
     self.timer = setTimeout(() => {
       if (self.lineTab && self.metric !== 'Sessions/s') {
         const data = self.tabsTemplate.find(t => t.class === self.lineTab)
