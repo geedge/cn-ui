@@ -148,7 +148,7 @@ export default {
   align-items: center;
 }
 
->>>.el-input__inner {
+:deep .el-input__inner {
   background-color: #0B325C !important;
   border: none;
   border-radius: 0px;
@@ -156,10 +156,10 @@ export default {
   font-size: 14px;
   line-height: 14px;
 }
->>>.el-input__inner:hover {
+:deep .el-input__inner:hover {
   border-color: #295688;
 }
->>>.el-input__inner:focus {
+:deep .el-input__inner:focus {
   border-color: #295688;
 }
 .el-button--primary:hover, .el-button--primary:focus, .el-button--primary:active {
@@ -167,10 +167,10 @@ export default {
   border-color: #21B4ED;
   color: #FFFFFF;
 }
->>>.el-loading-mask {
+:deep .el-loading-mask {
   background-color: transparent;
 }
->>>input {
+:deep input {
   -webkit-text-fill-color: rgba(231,234,237, .8) !important;
   transition: background-color 500000000000000000s ease-in-out 0s !important;
   caret-color: #fff ;
@@ -205,14 +205,14 @@ export default {
   flex-direction: column;
   align-items: center;
 }
->>>.el-form-item {
+:deep .el-form-item {
   width: 334px;
   margin-bottom: 25px;
 }
->>>.el-input__prefix {
+:deep .el-input__prefix {
   color: #6DBBFF;
 }
->>>.el-input__prefix i {
+:deep .el-input__prefix i {
   width: 17px;
   font-size: 17px;
 }
