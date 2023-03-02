@@ -532,14 +532,14 @@ export function getUserDrilldownTableGeo (userId) {
   return data[userId]
 }
 
-function JSONParse (data) {
-  const firstParse = JSON.parse(data)
-  if (typeof firstParse === 'string') {
-    return JSON.parse(firstParse)
-  } else {
-    return firstParse
-  }
-}
+// function JSONParse (data) {
+//   const firstParse = JSON.parse(data)
+//   if (typeof firstParse === 'string') {
+//     return JSON.parse(firstParse)
+//   } else {
+//     return firstParse
+//   }
+// }
 
 export function copyValue (item) {
   const str = item
@@ -879,8 +879,8 @@ export async function getDnsMapData (type) {
 export function handleSpecialValue (value) {
   if (value) {
     value.replace(/\'/g, "\\\\'")
-        .replace(/\"/g, '\\"')
-        .replace(/\&/g, '%26')
+      .replace(/\"/g, '\\"')
+      .replace(/\&/g, '%26')
   }
   return value
 }
@@ -894,13 +894,13 @@ export function combineTabList (tableType, list, commonTabList) {
     const commonTab = commonTabList.find(item => item.name === tabName)
     tab.label = commonTab ? commonTab.i18n : ''
     tab.prop = commonTab ? commonTab.prop : ''
-    if (!tab.hasOwnProperty('checked')) {
+    if (!Object.prototype.hasOwnProperty.call(tab, 'checked')) {
       tab.checked = tab ? tab.show : true
     }
-    if (!tab.hasOwnProperty('disabled')) {
+    if (!Object.prototype.hasOwnProperty.call(tab, 'disabled')) {
       tab.disabled = tab ? !tab.enable : false
     }
-    if (!tab.hasOwnProperty('panelId')) {
+    if (!Object.prototype.hasOwnProperty.call(tab, 'panelId')) {
       tab.panelId = tab ? tab.panelIdOfFourthMenu : null
     }
     // 代码里写死的

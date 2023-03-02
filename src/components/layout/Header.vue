@@ -319,7 +319,6 @@ export default {
         }
       }
 
-
       const thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
       const fourthMenu = this.getUrlParam(this.curTabState.fourthMenu, '')
 

@@ -1543,13 +1543,13 @@ export default {
         const commonTab = this.commonTabList.find(item => item.name === tabName)
         tab.label = commonTab ? commonTab.i18n : ''
         tab.prop = commonTab ? commonTab.prop : ''
-        if (!tab.hasOwnProperty('checked') || tab.checked === undefined || tab.checked === null) {
+        if (!Object.prototype.hasOwnProperty.call(tab, 'checked') || tab.checked === undefined || tab.checked === null) {
           tab.checked = tab ? tab.show : true
         }
-        if (!tab.hasOwnProperty('disabled') || tab.disabled === undefined || tab.disabled === null) {
+        if (!Object.prototype.hasOwnProperty.call(tab, 'disabled') || tab.disabled === undefined || tab.disabled === null) {
           tab.disabled = tab ? !tab.enable : false
         }
-        if (!tab.hasOwnProperty('panelId') || tab.panelId === undefined || tab.panelId === null) {
+        if (!Object.prototype.hasOwnProperty.call(tab, 'panelId') || tab.panelId === undefined || tab.panelId === null) {
           tab.panelId = tab ? tab.panelIdOfFourthMenu : null
         }
         // 代码里写死的
@@ -1566,7 +1566,7 @@ export default {
         const drilldownTabFull = []
         const drilldownTabList = tab.drilldownTabs
         drilldownTabList.forEach(drilldownTab => {
-          if (!drilldownTab.hasOwnProperty('name') || drilldownTab.name === undefined || drilldownTab.name === null) {
+          if (!Object.prototype.hasOwnProperty.call(drilldownTab, 'name') || drilldownTab.name === undefined || drilldownTab.name === null) {
             const drilldownTabName = drilldownTab ? (drilldownTab.name ? drilldownTab.name : drilldownTab) : ''
             const fullTab = oldList.find(item => item.name === drilldownTabName)
             const drilldownTabWithAllInfo = this.$_.cloneDeep(fullTab)
@@ -1664,7 +1664,7 @@ export default {
       let isSetDrilldownTabInfo = false
       if (tabList && tabList.length > 0) {
         const drilldownTab = tabList[0].drilldownTabs
-        if (drilldownTab && drilldownTab.length > 0 && drilldownTab.hasOwnProperty('name')) {
+        if (drilldownTab && drilldownTab.length > 0 && Object.prototype.hasOwnProperty.call(drilldownTab, 'name')) {
           isSetDrilldownTabInfo = true
         }
       }
@@ -1747,7 +1747,7 @@ export default {
           const tabItem = this.curTable.tabs.find(tabItem => tabItem.name === tab.name)
           tab.hiddenDrilldownTabs = this.getHiddenDrilldownTabNameGroup(tabItem)
           if (tab && tab.hasMetricSearch === true) {
-            const columnsForMetric = tab.metrics.find(metric => metric.name === this.metric)
+            // const columnsForMetric = tab.metrics.find(metric => metric.name === this.metric)
             tab.metrics.forEach(metric => {
               const oldSortColumns = metric.columns
               const newSortColumns = this.customTableTitles.slice(1)

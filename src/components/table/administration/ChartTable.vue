@@ -110,7 +110,6 @@
 <script>
 import table from '@/mixins/table'
 import { panelTypeAndRouteMapping } from '@/utils/constants'
-import { api } from '@/utils/api'
 
 export default {
   name: 'chartTable',

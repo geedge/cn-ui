@@ -1,6 +1,5 @@
 import router from './router'
 import store from './store'
-import { ElMessage } from 'element-plus'
 import { getPermission } from '@/utils/api'
 import { loadGeoData } from '@/utils/tools'
 import axios from 'axios'
@@ -18,6 +17,7 @@ router.beforeEach(async (to, from, next) => {
   loadGeoData()
   // 加载baseUrl
   if (!axios.defaults.baseURL) {
+    // eslint-disable-next-line no-undef
     axios.defaults.baseURL = BASE_CONFIG.baseUrl
   }
   if (localStorage.getItem(storageKey.token)) {
@@ -81,7 +81,7 @@ export function hasMenu (menuList, route) {
 export function hasParam (url, param) {
   let hasParam = false
   let tempArr = url.split('?')
-  const query = {}
+  // const query = {}
   if (tempArr[1]) {
     tempArr = tempArr[1].split('&')
     tempArr.forEach(t => {
