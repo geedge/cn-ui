@@ -11,6 +11,7 @@
         :page-size="Number(pageObj.pageSize)"
         :layout="layout"
         :total="pageObj.total"
+        v-bind="bind"
     >
       <el-select v-model="pageSize" :placeholder="pageSize+$t('pageSize')" size="mini"
                  :popper-append-to-body="appendToBody" class="pagination-size-select" @change="size"
@@ -42,15 +43,23 @@ export default {
     layout: {
       type: String,
       default: 'total, prev, pager, next, slot'
+    },
+    bind: {
+      type: Object,
+      default: () => {}
+    },
+    storePageNoOnUrl: {
+      type: Boolean,
+      default: true
     }
   },
   /**
    * 添加vue3的setup，目的是添加/获取地址栏的参数
    */
-  setup () {
+  setup (props) {
     const { query } = useRoute()
     const pageSize = ref(defaultPageSize)
-    const currentPageNo = ref(query.pageNo || 1)
+    const currentPageNo = ref(props.storePageNoOnUrl ? (query.pageNo || (props.pageObj.pageNo || 1)) : (props.pageObj.pageNo || 1))
 
     return {
       pageSize,

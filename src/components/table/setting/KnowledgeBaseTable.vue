@@ -44,6 +44,14 @@
             <span>-</span>
           </template>
         </template>
+        <template v-else-if="item.prop === 'utime'">
+          <template v-if="scope.row[item.prop]">
+            {{dateFormatByAppearance(scope.row[item.prop])}}
+          </template>
+          <template v-else>
+            <span>-</span>
+          </template>
+        </template>
         <span v-else>{{scope.row[item.prop]}}</span>
       </template>
     </el-table-column>
@@ -103,7 +111,7 @@ export default {
           show: true
         }, {
           label: this.$t('overall.updateTime'),
-          prop: 'updateTime',
+          prop: 'utime',
           show: true
         }
       ]

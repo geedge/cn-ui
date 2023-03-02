@@ -277,6 +277,21 @@ export const cycle = {
   pre: 1
 }
 
+export const knowledgeBaseType = [
+  {
+    name: 'IP',
+    value: 'ip'
+  },
+  {
+    name: 'Domain',
+    value: 'domain'
+  },
+  {
+    name: 'APP',
+    value: 'app'
+  }
+]
+
 export const curTabState = {
   curTab: 'curTab',
   tableMetric: 'tableMetric',

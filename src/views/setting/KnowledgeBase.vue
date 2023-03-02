@@ -74,28 +74,6 @@ export default {
           t: +new Date()
         }
       })
-    },
-    getTableData () {
-      this.tools.loading = false
-      this.tableData = [
-        {
-          tagName: '我的IP库',
-          buildIn: 0,
-          id: 1,
-          tagType: 'ip',
-          remark: '我的IP库描述',
-          updateTime: new Date()
-        },
-        {
-          tagName: '我的domain库',
-          buildIn: 0,
-          id: 2,
-          tagType: 'domain',
-          remark: '我的domain库描述',
-          updateTime: new Date()
-        }
-      ]
-      this.pageObj.total = 2
     }
   }
 }

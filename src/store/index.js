@@ -12,7 +12,8 @@ const store = createStore({
     return {
       i18n: false,
       showEntityTypeSelector: false, // 在entity explore页面时，控制header显示实体类型选择框
-      from: '' // entity type
+      from: '', // entity type
+      test: 'jest' // 用于单测的demo
     }
   },
   getters: {
@@ -24,6 +25,9 @@ const store = createStore({
     },
     entityName (state) {
       return state.entityName
+    },
+    getTest (state) {
+      return state.test
     }
   },
   mutations: {
@@ -37,6 +41,9 @@ const store = createStore({
     },
     showEntityTypeSelector (state, show) {
       state.showEntityTypeSelector = show
+    },
+    setTest (state, test) {
+      state.test = test
     }
   }
 })
