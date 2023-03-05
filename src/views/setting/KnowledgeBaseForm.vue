@@ -18,7 +18,7 @@
                          class="form-select"
                          placeholder=" "
                          popper-class="form-select-popper"
-                         :disabled="!!editObject.id"
+                         :disabled="!!editObject.id || typeSelectDisable"
                          size="mini"
               >
                 <template v-for="type in knowledgeBaseType" :key="type.name">
@@ -40,6 +40,7 @@
                      :file-list="fileList"
                      :on-change="fileChange"
                      :on-success="uploadSuccess"
+                     :on-remove="onRemove"
                      :class="uploadErrorTip ? 'el-upload--error' : ''"
                      drag
                      accept=".csv"
@@ -142,6 +143,7 @@ export default {
         // 上传成功后去掉upload和preview的错误提示
         this.uploadErrorTip = ''
         this.previewErrorTip = ''
+        this.typeSelectDisable = true
 
         this.importedType = this.editObject.tagType
         const originalImportedData = response.data.data
@@ -153,6 +155,17 @@ export default {
         originalImportedData.sort((a, b) => b.status - a.status)
         this.importedData = originalImportedData
         this.handleShowImportedData()
+      }
+    },
+    onRemove (files, fileList) {
+      this.uploaded = false
+      this.typeSelectDisable = false
+      this.importedData = []
+      this.showImportedData = []
+      this.originalImportInfo = {
+        total: null,
+        succeeded: null,
+        failed: null
       }
     },
     handleShowImportedData () {
@@ -236,14 +249,14 @@ export default {
             d.itemList = [...d.itemList]
           })
           axios.post(this.url, postData).then(response => {
-            if (response.code === 200) {
+            if (response.data.code === 200) {
               this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
               this.$router.push({
-                path: this.url,
+                path: '/knowledgeBase',
                 t: +new Date()
               })
             } else {
-              this.$message.error(response.msg)
+              this.$message.error(response.data.message)
             }
           }).finally(() => {
             this.blockOperation.save = false
@@ -379,7 +392,8 @@ export default {
       url: api.knowledgeBase,
       originalImportInfo,
       uploadErrorTip,
-      previewErrorTip
+      previewErrorTip,
+      typeSelectDisable: ref(false)
     }
   }
 }

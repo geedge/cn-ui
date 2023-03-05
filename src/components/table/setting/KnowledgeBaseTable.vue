@@ -44,9 +44,17 @@
             <span>-</span>
           </template>
         </template>
-        <template v-else-if="item.prop === 'utime'">
+        <template v-else-if="item.prop === 'utime' || item.prop === 'ctime'">
           <template v-if="scope.row[item.prop]">
             {{dateFormatByAppearance(scope.row[item.prop])}}
+          </template>
+          <template v-else>
+            <span>-</span>
+          </template>
+        </template>
+        <template v-else-if="item.prop === 'cbyObj' || item.prop === 'ubyObj'">
+          <template v-if="scope.row[item.prop]">
+            {{scope.row[item.prop].name || '-'}}
           </template>
           <template v-else>
             <span>-</span>
@@ -64,7 +72,7 @@
       </template>
       <template #default="scope">
         <div class="table-operation-items">
-          <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-edit"></i></button>
+<!--          <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-edit"></i></button>-->
           <el-dropdown size="medium" trigger="hover" @command="tableOperation">
             <div class="table-operation-item table-operation-item--more">
               <i class="cn-icon cn-icon-more-arrow-down"></i>
@@ -109,10 +117,26 @@ export default {
           label: this.$t('overall.remark'),
           prop: 'remark',
           show: true
-        }, {
+        },
+        {
+          label: this.$t('overall.createdBy'),
+          prop: 'cbyObj',
+          show: true
+        },
+        {
+          label: this.$t('overall.createTime'),
+          prop: 'ctime',
+          show: false
+        },
+        {
+          label: this.$t('overall.updatedBy'),
+          prop: 'ubyObj',
+          show: false
+        },
+        {
           label: this.$t('overall.updateTime'),
           prop: 'utime',
-          show: true
+          show: false
         }
       ]
     }
