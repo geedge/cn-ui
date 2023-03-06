@@ -28,7 +28,7 @@ export default {
       if (n) {
         setTimeout(() => {
           this.$refs.dataTable.doLayout()
-        }, 100)
+        }, 200)
       }
     }
   },

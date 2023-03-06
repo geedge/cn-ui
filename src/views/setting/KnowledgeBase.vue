@@ -42,7 +42,7 @@ import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTable from '@/components/table/setting/KnowledgeBaseTable'
 import { api } from '@/utils/api'
-import {del, get} from '@/utils/http'
+import { del, get } from '@/utils/http'
 
 export default {
   name: 'knowledgeBase',
@@ -55,7 +55,6 @@ export default {
     return {
       url: api.knowledgeBase,
       tableId: 'knowledgeBaseTable' // 需要分页的table的id，用于记录每页数量
-
     }
   },
   methods: {
@@ -73,7 +72,8 @@ export default {
         cancelButtonText: this.$t('tip.no'),
         type: 'warning'
       }).then(() => {
-        del(this.url + '?ids=' + row.knowledgeId).then(response => {
+        this.tools.loading = true
+        del(this.url + '?ids=' + row.id).then(response => {
           if (response.code === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
@@ -81,6 +81,8 @@ export default {
           } else {
             this.$message.error(response.msg)
           }
+        }).finally(() => {
+          this.tools.loading = false
         })
       })
     },

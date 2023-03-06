@@ -33,6 +33,7 @@
         </el-collapse-item>
         <el-collapse-item name="1" class="upload-collapse">
           <template #title><div class="form-sub-title">{{$t('overall.importFromFile')}}</div></template>
+          <loading :loading="uploadLoading"></loading>
           <el-upload :action="`${baseUrl}knowledge/import`"
                      :headers="uploadHeaders"
                      :data="uploadParams"
@@ -41,6 +42,8 @@
                      :on-change="fileChange"
                      :on-success="uploadSuccess"
                      :on-remove="onRemove"
+                     :before-upload="beforeUpload"
+                     :on-progress="onUpload"
                      :class="uploadErrorTip ? 'el-upload--error' : ''"
                      drag
                      accept=".csv"
@@ -108,10 +111,11 @@
       </el-collapse>
     </div>
     <div class="edit-knowledge-base__footer">
-      <button class="footer__btn footer__btn--light">
-      <span>{{$t('overall.cancel')}}</span>
-    </button>
-      <button :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+      <button class="footer__btn footer__btn--light" @click="cancel">
+        <span>{{$t('overall.cancel')}}</span>
+      </button>
+      <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+        <loading size="small" :loading="blockOperation.save"></loading>
         <span>{{$t('overall.save')}}</span>
       </button>
     </div>
@@ -121,17 +125,20 @@
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import _ from 'lodash'
-import { knowledgeBaseType, storageKey } from '@/utils/constants'
+import { knowledgeBaseType, storageKey, unitTypes } from '@/utils/constants'
 import i18n from '@/i18n'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
 import { api } from '@/utils/api'
+import unitConvert from '@/utils/unit-convert'
+import Loading from '@/components/common/Loading'
 export default {
   name: 'CreateKnowledgeBase',
   components: {
     Pagination,
-    ChartNoData
+    ChartNoData,
+    Loading
   },
   methods: {
     fileChange (files, fileList) {
@@ -155,6 +162,9 @@ export default {
         originalImportedData.sort((a, b) => b.status - a.status)
         this.importedData = originalImportedData
         this.handleShowImportedData()
+      } else {
+        this.uploadLoading = false
+        this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
       }
     },
     onRemove (files, fileList) {
@@ -168,10 +178,25 @@ export default {
         failed: null
       }
     },
+    beforeUpload (file) {
+      // 判断文件大小
+      if (file.size > this.uploadFileSizeLimit) {
+        this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
+        this.fileList = []
+        return false
+      }
+      return true
+    },
+    onUpload (event, file) {
+      this.uploadLoading = true
+    },
     handleShowImportedData () {
       const startIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize
       const endIndex = this.importedPageObj.pageNo * this.importedPageObj.pageSize
       this.showImportedData = this.importedData.slice(startIndex, endIndex)
+      this.$nextTick(() => {
+        this.uploadLoading = false
+      })
     },
     pageNo (val) {
       this.importedPageObj.pageNo = val
@@ -201,6 +226,9 @@ export default {
         this.previewErrorTip = ''
       }
     },
+    cancel () {
+      history.back()
+    },
     save () {
       if (this.blockOperation.save) { return }
       this.blockOperation.save = true
@@ -226,44 +254,41 @@ export default {
 
       // 校验通过后组织数据、请求接口
       if (formValid && !this.uploadErrorTip && !this.previewErrorTip) {
-        try {
-          const postData = {
-            tagName: this.editObject.tagName,
-            tagType: this.editObject.tagType,
-            data: []
-          }
-          this.importedData.forEach(d => {
-            const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
-            if (findData) {
-              findData.itemList.add(d.tagItem)
-            } else {
-              const set = new Set()
-              set.add(d.tagItem)
-              postData.data.push({
-                tagValue: d.tagValue,
-                itemList: set
-              })
-            }
-          })
-          postData.data.forEach(d => {
-            d.itemList = [...d.itemList]
-          })
-          axios.post(this.url, postData).then(response => {
-            if (response.data.code === 200) {
-              this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
-              this.$router.push({
-                path: '/knowledgeBase',
-                t: +new Date()
-              })
-            } else {
-              this.$message.error(response.data.message)
-            }
-          }).finally(() => {
-            this.blockOperation.save = false
-          })
-        } finally {
-          this.blockOperation.save = false
+        const postData = {
+          tagName: this.editObject.tagName,
+          tagType: this.editObject.tagType,
+          data: []
         }
+        this.importedData.forEach(d => {
+          const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
+          if (findData) {
+            findData.itemList.add(d.tagItem)
+          } else {
+            const set = new Set()
+            set.add(d.tagItem)
+            postData.data.push({
+              tagValue: d.tagValue,
+              itemList: set
+            })
+          }
+        })
+        postData.data.forEach(d => {
+          d.itemList = [...d.itemList]
+        })
+        postData.remark = this.editObject.remark
+        axios.post(this.url, postData).then(response => {
+          if (response.data.code === 200) {
+            this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+            this.$router.push({
+              path: '/knowledgeBase',
+              t: +new Date()
+            })
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).finally(() => {
+          this.blockOperation.save = false
+        })
       } else {
         this.blockOperation.save = false
       }
@@ -393,7 +418,9 @@ export default {
       originalImportInfo,
       uploadErrorTip,
       previewErrorTip,
-      typeSelectDisable: ref(false)
+      typeSelectDisable: ref(false),
+      uploadFileSizeLimit: 100 * 1024 * 1024,
+      uploadLoading: ref(false)
     }
   }
 }

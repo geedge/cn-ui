@@ -52,9 +52,9 @@
             <span>-</span>
           </template>
         </template>
-        <template v-else-if="item.prop === 'cbyObj' || item.prop === 'ubyObj'">
+        <template v-else-if="item.prop === 'cuser' || item.prop === 'uuser'">
           <template v-if="scope.row[item.prop]">
-            {{scope.row[item.prop].name || '-'}}
+            {{scope.row[item.prop].username || '-'}}
           </template>
           <template v-else>
             <span>-</span>
@@ -111,8 +111,7 @@ export default {
         }, {
           label: this.$t('overall.type'),
           prop: 'tagType',
-          show: true,
-          sortable: 'custom'
+          show: true
         }, {
           label: this.$t('overall.remark'),
           prop: 'remark',
@@ -120,18 +119,18 @@ export default {
         },
         {
           label: this.$t('overall.createdBy'),
-          prop: 'cbyObj',
+          prop: 'cuser',
           show: true
         },
         {
-          label: this.$t('overall.createTime'),
+          label: this.$t('config.user.createTime'),
           prop: 'ctime',
           show: false,
           sortable: 'custom'
         },
         {
           label: this.$t('overall.updatedBy'),
-          prop: 'ubyObj',
+          prop: 'uuser',
           show: false
         },
         {
