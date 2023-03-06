@@ -126,7 +126,8 @@ export default {
         {
           label: this.$t('overall.createTime'),
           prop: 'ctime',
-          show: false
+          show: false,
+          sortable: 'custom'
         },
         {
           label: this.$t('overall.updatedBy'),
@@ -136,7 +137,8 @@ export default {
         {
           label: this.$t('overall.updateTime'),
           prop: 'utime',
-          show: false
+          show: false,
+          sortable: 'custom'
         }
       ]
     }

@@ -122,7 +122,8 @@ export const chartTableColumnMapping = {
   ip: 'IP'
 }
 export const chartTableOrderOptionsMapping = {
-  lastTime: 'last_time'
+  lastTime: 'last_time',
+  tagName: 'tag_name'
 }
 export const chartPieTableTopOptions = [
   { name: 'Sessions', value: 'sessions' },

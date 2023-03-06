@@ -42,7 +42,7 @@ import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTable from '@/components/table/setting/KnowledgeBaseTable'
 import { api } from '@/utils/api'
-import { get } from '@/utils/http'
+import {del, get} from '@/utils/http'
 
 export default {
   name: 'knowledgeBase',
@@ -65,6 +65,23 @@ export default {
           this.object = response.data.list[0]
           this.rightBox.show = true
         }
+      })
+    },
+    del (row) {
+      this.$confirm(this.$t('tip.confirmDelete'), {
+        confirmButtonText: this.$t('tip.yes'),
+        cancelButtonText: this.$t('tip.no'),
+        type: 'warning'
+      }).then(() => {
+        del(this.url + '?ids=' + row.knowledgeId).then(response => {
+          if (response.code === 200) {
+            this.delFlag = true
+            this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
+            this.getTableData()
+          } else {
+            this.$message.error(response.msg)
+          }
+        })
       })
     },
     jumpToCreatePage () {
