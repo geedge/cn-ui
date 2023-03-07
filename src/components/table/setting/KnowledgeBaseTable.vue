@@ -44,6 +44,9 @@
             <span>-</span>
           </template>
         </template>
+        <template v-else-if="item.prop === 'tagType'">
+          <span class="type-tag">{{tagTypeText(scope.row[item.prop])}}</span>
+        </template>
         <template v-else-if="item.prop === 'utime' || item.prop === 'ctime'">
           <template v-if="scope.row[item.prop]">
             {{dateFormatByAppearance(scope.row[item.prop])}}
@@ -60,7 +63,7 @@
             <span>-</span>
           </template>
         </template>
-        <span v-else>{{scope.row[item.prop]}}</span>
+        <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column>
     <el-table-column
@@ -91,6 +94,7 @@
 
 <script>
 import table from '@/mixins/table'
+import { knowledgeBaseType } from '@/utils/constants'
 export default {
   name: 'knowledgeBaseTable',
   mixins: [table],
@@ -140,6 +144,14 @@ export default {
           sortable: 'custom'
         }
       ]
+    }
+  },
+  computed: {
+    tagTypeText () {
+      return function (type) {
+        const t = knowledgeBaseType.find(t => t.value === type)
+        return t ? t.name : ''
+      }
     }
   }
 }

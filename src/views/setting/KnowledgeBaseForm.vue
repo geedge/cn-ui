@@ -26,7 +26,7 @@
                 </template>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('overall.remark')">
+            <el-form-item :label="$t('overall.remark')" prop="remark">
               <el-input maxlength="256" show-word-limit :rows="4" size='mini' type="textarea" v-model="editObject.remark" id="role-box-input-remark"/>
             </el-form-item>
           </el-form>
@@ -89,7 +89,7 @@
                   <td class="imported-data-item" :title="d.tagItem">{{d.tagItem}}</td>
                   <td class="imported-data-value" :title="d.tagValue">{{d.tagValue}}</td>
                   <td class="imported-data-msg" :title="d.msg"><i :class="d.status === 1 ? 'el-icon-success' : 'el-icon-error'"></i>&nbsp;&nbsp;{{d.msg}}</td>
-                  <td><i class="el-icon-close" @click="removeImportedData(d)"></i></td>
+                  <td><i class="el-icon-close" @click="removeImportedData(i)"></i></td>
                 </tr>
               </table>
               <chart-no-data v-else></chart-no-data>
@@ -142,6 +142,7 @@ export default {
   },
   methods: {
     fileChange (files, fileList) {
+      console.info(111)
       this.fileList = fileList.slice(-1)
     },
     uploadSuccess (response) {
@@ -150,10 +151,10 @@ export default {
         // 上传成功后去掉upload和preview的错误提示
         this.uploadErrorTip = ''
         this.previewErrorTip = ''
-        this.typeSelectDisable = true
 
         this.importedType = this.editObject.tagType
-        const originalImportedData = response.data.data
+        const originalImportedData = _.cloneDeep(response.data.data)
+        this.importedDataNoData = originalImportedData.length === 0
         this.originalImportInfo = {
           total: originalImportedData.length,
           succeeded: originalImportedData.filter(d => d.status === 1).length,
@@ -168,6 +169,7 @@ export default {
       }
     },
     onRemove (files, fileList) {
+      console.info(222)
       this.uploaded = false
       this.typeSelectDisable = false
       this.importedData = []
@@ -189,6 +191,7 @@ export default {
     },
     onUpload (event, file) {
       this.uploadLoading = true
+      this.typeSelectDisable = true
     },
     handleShowImportedData () {
       const startIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize
@@ -207,10 +210,10 @@ export default {
     next () {
       this.importedPageObj.pageNo++
     },
-    removeImportedData (data) {
-      const toRemoveIndex = this.importedData.findIndex(d => d.tagName === data.tagName && d.tagItem === data.tagItem)
+    removeImportedData (index) {
+      /* const toRemoveIndex = this.importedData.findIndex(d => d.tagName === data.tagName && d.tagItem === data.tagItem) */
+      const toRemoveIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize + index
       this.importedData.splice(toRemoveIndex, 1)
-      this.importedPageObj.total = this.importedData.length
       this.handleShowImportedData()
       // 若删除后本页无数据，则页码减1，或者提示无数据
       if (this.showImportedData.length === 0) {
@@ -365,12 +368,23 @@ export default {
     }
     const stepHeights = ref([stepHeightConstant.first, stepHeightConstant.second, stepHeightConstant.collapse])
     // 表单校验规则
+    const nameValidator = (rule, value, callback) => {
+      let validate = true
+      // /^[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEFA-Za-z0-9\-\_]*$/
+      const reg = /^[\u4e00-\u9fa5A-Za-z0-9\-\_]*$/
+      validate = reg.test(value)
+      return validate
+    }
     const rules = {
       tagName: [
-        { required: true, message: i18n.global.t('validate.required'), trigger: 'blur' }
+        { required: true, message: i18n.global.t('validate.required'), trigger: 'blur' },
+        { validator: nameValidator, message: i18n.global.t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
       ],
       tagType: [
         { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
+      ],
+      remark: [
+        { validator: nameValidator, message: i18n.global.t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
       ]
     }
     // 所有导入的数据
