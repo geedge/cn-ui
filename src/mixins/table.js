@@ -55,23 +55,7 @@ export default {
       })
     },
     tableDataSort (item) {
-      /*let orderBy = ''
-      if (item.order === 'ascending') {
-        if (item.prop === 'lastTime') {
-          orderBy = chartTableOrderOptionsMapping[item.prop]
-        } else {
-          orderBy = item.prop
-        }
-        orderBy = chartTableOrderOptionsMapping[item.prop] || item.prop
-      }
-      if (item.order === 'descending') {
-        if (item.prop === 'lastTime') {
-          orderBy = '-' + chartTableOrderOptionsMapping[item.prop]
-        } else {
-          orderBy = '-' + item.prop
-        }
-      }*/
-      const orderBy = (item.order === 'descending' ? '-' : '') + (chartTableOrderOptionsMapping[item.prop] || item.prop)
+      const orderBy = (item.order === 'descending' ? '-' : '') + (item.prop ? (chartTableOrderOptionsMapping[item.prop] || item.prop) : '')
       this.$emit('orderBy', orderBy)
     }
   }

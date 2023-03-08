@@ -42,7 +42,7 @@ import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTable from '@/components/table/setting/KnowledgeBaseTable'
 import { api } from '@/utils/api'
-import { del, get } from '@/utils/http'
+import axios from 'axios'
 
 export default {
   name: 'knowledgeBase',
@@ -59,10 +59,9 @@ export default {
   },
   methods: {
     edit (u) {
-      get(`${this.url}`, { ids: u.id }).then(response => {
-        if (response.code === 200) {
-          this.object = response.data.list[0]
-          this.rightBox.show = true
+      axios.get(`${this.url}`, { params: { ids: u.id } }).then(response => {
+        if (response.data.code === 200) {
+          this.object = response.data.data.list[0]
         }
       })
     },
@@ -73,13 +72,13 @@ export default {
         type: 'warning'
       }).then(() => {
         this.tools.loading = true
-        del(this.url + '?ids=' + row.id).then(response => {
-          if (response.code === 200) {
+        axios.delete(this.url + '?ids=' + row.id).then(response => {
+          if (response.data.code === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
             this.getTableData()
           } else {
-            this.$message.error(response.msg)
+            this.$message.error(response.data.message)
           }
         }).finally(() => {
           this.tools.loading = false

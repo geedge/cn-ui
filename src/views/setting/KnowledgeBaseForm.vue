@@ -27,7 +27,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('overall.remark')" prop="remark">
-              <el-input maxlength="256" show-word-limit :rows="4" size='mini' type="textarea" v-model="editObject.remark" id="role-box-input-remark"/>
+              <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" v-model="editObject.remark" id="role-box-input-remark"/>
             </el-form-item>
           </el-form>
         </el-collapse-item>
@@ -44,9 +44,10 @@
                      :on-remove="onRemove"
                      :before-upload="beforeUpload"
                      :on-progress="onUpload"
+                     :on-error="uploadError"
                      :class="uploadErrorTip ? 'el-upload--error' : ''"
                      drag
-                     accept=".csv"
+                     :accept="fileTypeLimit"
                      ref="upload"
           >
             <i class="el-icon-upload"></i>
@@ -126,7 +127,6 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import _ from 'lodash'
 import { knowledgeBaseType, storageKey, unitTypes } from '@/utils/constants'
-import i18n from '@/i18n'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
@@ -140,10 +140,64 @@ export default {
     ChartNoData,
     Loading
   },
+  data () {
+    const nameValidator = (rule, value, callback) => {
+      let validate = true
+      // /^[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEFA-Za-z0-9\-\_]*$/
+      const reg = /^[\u4e00-\u9fa5A-Za-z0-9\-\_]*$/
+      validate = reg.test(value)
+      return validate
+    }
+    const nameAndTypeValidator = async (rule, value, callback) => {
+      this.$refs.form.clearValidate('tagType')
+      let validate = true
+      const response = await this.getKnowledgeBaseList()
+      if (response.data.code === 200) {
+        const find = response.data.data.list.find(d => d.tagName === value && d.tagType === this.editObject.tagType)
+        if (find) {
+          validate = false
+          callback(new Error())
+        }
+      }
+      return validate
+    }
+    const typeAndNameValidator = async (rule, value, callback) => {
+      this.$refs.form.clearValidate('tagName')
+      let validate = true
+      const response = await this.getKnowledgeBaseList()
+      if (response.data.code === 200) {
+        const find = response.data.data.list.find(d => d.tagName === this.editObject.tagName && d.tagType === value)
+        if (find) {
+          validate = false
+          callback(new Error())
+        }
+      }
+      return validate
+    }
+    return {
+      rules: {
+        tagName: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: nameValidator, message: this.$t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' },
+          { validator: nameAndTypeValidator, message: this.$t('validate.duplicateRecord', { columns: '(' + this.$t('config.roles.name') + '+' + this.$t('overall.type') + ')' }), trigger: 'blur' }
+        ],
+        tagType: [
+          { required: true, message: this.$t('validate.required'), trigger: 'change' },
+          { validator: typeAndNameValidator, message: this.$t('validate.duplicateRecord', { columns: '(' + this.$t('config.roles.name') + '+' + this.$t('overall.type') + ')' }), trigger: 'change' }
+        ],
+        remark: [
+          { validator: nameValidator, message: this.$t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
+        ]
+      }
+    }
+  },
   methods: {
     fileChange (files, fileList) {
-      console.info(111)
       this.fileList = fileList.slice(-1)
+    },
+    uploadError () {
+      this.uploadLoading = false
+      this.$message.error(this.$t('tip.uploadFailed', { msg: 'error' }))
     },
     uploadSuccess (response) {
       this.uploaded = response.code === 200
@@ -169,7 +223,6 @@ export default {
       }
     },
     onRemove (files, fileList) {
-      console.info(222)
       this.uploaded = false
       this.typeSelectDisable = false
       this.importedData = []
@@ -181,6 +234,12 @@ export default {
       }
     },
     beforeUpload (file) {
+      // 判断后缀，仅支持.csv
+      if (!_.endsWith(file.name, '.csv')) {
+        this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
+        this.fileList = []
+        return false
+      }
       // 判断文件大小
       if (file.size > this.uploadFileSizeLimit) {
         this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
@@ -211,7 +270,6 @@ export default {
       this.importedPageObj.pageNo++
     },
     removeImportedData (index) {
-      /* const toRemoveIndex = this.importedData.findIndex(d => d.tagName === data.tagName && d.tagItem === data.tagItem) */
       const toRemoveIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize + index
       this.importedData.splice(toRemoveIndex, 1)
       this.handleShowImportedData()
@@ -219,6 +277,7 @@ export default {
       if (this.showImportedData.length === 0) {
         if (this.importedData.length > 0) {
           this.importedPageObj.pageNo--
+          this.importedPageObj.total = this.importedData.length
           this.handleShowImportedData()
         } else {
           this.importedDataNoData = true
@@ -298,6 +357,9 @@ export default {
     },
     hasErrorImportedData () {
       return this.importedData.filter(d => d.status !== 1).length > 0
+    },
+    async getKnowledgeBaseList () {
+      return await axios.get(this.url, { params: { pageSize: 999 } })
     }
   },
   computed: {
@@ -346,6 +408,7 @@ export default {
   setup () {
     const { query } = useRoute()
     const knowledgeBaseId = ref(query.id || '')
+    const url = api.knowledgeBase
     // 空白对象
     const blankObject = {
       tagName: '',
@@ -367,26 +430,6 @@ export default {
       second: 284
     }
     const stepHeights = ref([stepHeightConstant.first, stepHeightConstant.second, stepHeightConstant.collapse])
-    // 表单校验规则
-    const nameValidator = (rule, value, callback) => {
-      let validate = true
-      // /^[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEFA-Za-z0-9\-\_]*$/
-      const reg = /^[\u4e00-\u9fa5A-Za-z0-9\-\_]*$/
-      validate = reg.test(value)
-      return validate
-    }
-    const rules = {
-      tagName: [
-        { required: true, message: i18n.global.t('validate.required'), trigger: 'blur' },
-        { validator: nameValidator, message: i18n.global.t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
-      ],
-      tagType: [
-        { required: true, message: i18n.global.t('validate.required'), trigger: 'change' }
-      ],
-      remark: [
-        { validator: nameValidator, message: i18n.global.t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
-      ]
-    }
     // 所有导入的数据
     const importedData = ref([])
     // 导入数据的原始数量信息
@@ -416,7 +459,6 @@ export default {
       stepHeightConstant,
       stepHeights,
       knowledgeBaseType,
-      rules,
       importedData,
       showImportedData,
       importedPageObj,
@@ -428,13 +470,14 @@ export default {
       },
       uploaded: ref(false),
       importedDataNoData: ref(false),
-      url: api.knowledgeBase,
+      url,
       originalImportInfo,
       uploadErrorTip,
       previewErrorTip,
       typeSelectDisable: ref(false),
       uploadFileSizeLimit: 100 * 1024 * 1024,
-      uploadLoading: ref(false)
+      uploadLoading: ref(false),
+      fileTypeLimit: '.csv'
     }
   }
 }
