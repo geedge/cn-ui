@@ -233,26 +233,29 @@
 <!--            <el-input v-model="param.value" placeholder=" " v-for="(param, index) in editObject.categoryParams" :key="index" size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
               <template #prepend>{{param.key}}</template>
             </el-input>-->
-            <el-select v-model="param.value"
-                       v-for="(param, index) in editObject.categoryParams"
-                       :key="index"
-                       class="right-box__select right-box__select--param"
-                       placeholder=" "
-                       filterable
-                       :disabled="!!editObject.id"
-                       popper-class="right-box-select-dropdown right-box-select-report "
-                       size="small"
-            >
-              <template #prefix>
-                {{$t(param.i18n)}}
-              </template>
-              <template v-for="paramOption in paramsOptions">
-                <template v-if="paramOption.key === param.key">
+            <template v-for="(param, index) in editObject.categoryParams" :key="index">
+              <el-input v-if="param.labelType === 'input'" v-model="param.value" placeholder=" " size="small" style="vertical-align: unset;" :disabled="!!editObject.id">
+                <template #prepend>{{param.key}}</template>
+              </el-input>
+              <el-select v-model="param.value"
+                         v-else
+                         class="right-box__select right-box__select--param"
+                         placeholder=" "
+                         filterable
+                         :disabled="!!editObject.id"
+                         popper-class="right-box-select-dropdown right-box-select-report "
+                         size="small"
+              >
+                <template #prefix>
+                  {{$t(param.i18n)}}
+                </template>
+                <template v-for="paramOption in paramsOptions">
+                  <template v-if="paramOption.key === param.key">
                     <el-option :key="p" :value="p" v-for="p in paramOption.options"></el-option>
                   </template>
                 </template>
-
-            </el-select>
+              </el-select>
+            </template>
           </el-form-item>
         </el-form>
       </div>

@@ -210,7 +210,7 @@ export default {
   methods: {
     queryGetTempData () {
       this.builtinLeftLoading = true
-      get(api.reportCategory).then(res => {
+      get(api.reportCategory, { pageSize: 999 }).then(res => {
         if (res.code === 200) {
           this.builtinReportLeftMenu = res.data.list.map(c => {
             return {
@@ -265,7 +265,7 @@ export default {
                 }
               })
               this.pageObj.total = response.data.total
-            })            
+            })
             // TODO 回到顶部
           }
         })
