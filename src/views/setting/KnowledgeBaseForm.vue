@@ -272,12 +272,12 @@ export default {
     removeImportedData (index) {
       const toRemoveIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize + index
       this.importedData.splice(toRemoveIndex, 1)
+      this.importedPageObj.total--
       this.handleShowImportedData()
       // 若删除后本页无数据，则页码减1，或者提示无数据
       if (this.showImportedData.length === 0) {
         if (this.importedData.length > 0) {
           this.importedPageObj.pageNo--
-          this.importedPageObj.total = this.importedData.length
           this.handleShowImportedData()
         } else {
           this.importedDataNoData = true
