@@ -11,7 +11,7 @@
     >
       <template v-slot:top-tool-right>
         <button id="knowledge-base-add" :title="$t('knowledgeBase.createKnowledgeBase')" class="top-tool-btn margin-r-10"
-                type="button" @click="jumpToCreatePage">
+                @click="jumpToCreatePage">
           <i class="cn-icon-add cn-icon"></i>
         </button>
       </template>

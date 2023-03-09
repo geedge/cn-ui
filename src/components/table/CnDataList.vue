@@ -15,15 +15,13 @@
               <div style="display: flex">
                 <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
 <!--                <el-button icon="el-icon-search" @click="onSearch" size="small"></el-button>-->
-                <button   class="top-tool-btn" style="border-radius: 0"
-                        type="button" @click="onSearch">
+                <button class="top-tool-btn" style="border-radius: 0" @click="onSearch">
                   <i class="el-icon-search"></i>
                 </button>
               </div>
             </div>
             <slot name="top-tool-right"></slot>
-            <button v-if="showLayout.indexOf('elementSet') > -1"  class="top-tool-btn"
-                    type="button" @click="tools.showCustomTableTitle = true">
+            <button v-if="showLayout.indexOf('elementSet') > -1" class="top-tool-btn" @click="tools.showCustomTableTitle = true">
               <i class="cn-icon-gear cn-icon"></i>
             </button>
           </div>

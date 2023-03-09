@@ -11,7 +11,7 @@
           <el-form :model="editObject" label-position="top" ref="form" :rules="rules">
             <!--name-->
             <el-form-item :label="$t('config.roles.name')" prop="tagName">
-              <el-input maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit size="mini" type="text" v-model="editObject.tagName"></el-input>
+              <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit size="mini" type="text" v-model="editObject.tagName"></el-input>
             </el-form-item>
             <el-form-item :label="$t('overall.type')" prop="tagType">
               <el-select v-model="editObject.tagType"
@@ -423,7 +423,7 @@ export default {
     // 折叠组件控制
     const activeCollapses = ref(['0', '1', '2'])
     // 步骤条控制
-    const activeStep = ref('')
+    const activeStep = ref(0)
     const stepHeightConstant = {
       collapse: 58,
       first: 333,

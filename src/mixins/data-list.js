@@ -20,7 +20,7 @@ export default {
       pageObj: { // 分页对象
         pageNo: 1,
         pageSize: defaultPageSize,
-        total: ''
+        total: 0
       },
       /* 工具参数 */
       tools: {
