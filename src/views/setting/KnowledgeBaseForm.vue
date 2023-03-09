@@ -1,6 +1,6 @@
 <template>
   <div class="edit-knowledge-base">
-    <div class="edit-knowledge-base__header">{{$t('knowledgeBase.createKnowledgeBase')}}</div>
+    <div class="edit-knowledge-base__header">{{$t('overall.create')}}</div>
     <div class="edit-knowledge-base__body">
       <el-steps direction="vertical" :active="activeStep">
         <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px;`" :key="index"></el-step>
@@ -11,7 +11,7 @@
           <el-form :model="editObject" label-position="top" ref="form" :rules="rules">
             <!--name-->
             <el-form-item :label="$t('config.roles.name')" prop="tagName">
-              <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit size="mini" type="text" v-model="editObject.tagName"></el-input>
+              <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit size="mini" type="text" v-model="editObject.tagName" @blur="tagNameBlur"></el-input>
             </el-form-item>
             <el-form-item :label="$t('overall.type')" prop="tagType">
               <el-select v-model="editObject.tagType"
@@ -192,6 +192,15 @@ export default {
     }
   },
   methods: {
+    tagNameBlur () {
+      if (!this.tagNameFirstBlur) {
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            this.tagNameFirstBlur = true
+          }
+        })
+      }
+    },
     fileChange (files, fileList) {
       this.fileList = fileList.slice(-1)
     },
@@ -371,6 +380,13 @@ export default {
     importedTableFirstColumn () {
       const t = this.knowledgeBaseType.find(t => t.value === this.importedType)
       return t ? t.name : ''
+    },
+    activeStep () {
+      if (this.tagNameFirstBlur) {
+        return this.uploaded ? 2 : 1
+      } else {
+        return 0
+      }
     }
   },
   watch: {
@@ -423,7 +439,6 @@ export default {
     // 折叠组件控制
     const activeCollapses = ref(['0', '1', '2'])
     // 步骤条控制
-    const activeStep = ref(0)
     const stepHeightConstant = {
       collapse: 58,
       first: 333,
@@ -453,9 +468,9 @@ export default {
     return {
       knowledgeBaseId,
       editObject,
+      tagNameFirstBlur: ref(false),
       blankObject,
       activeCollapses,
-      activeStep,
       stepHeightConstant,
       stepHeights,
       knowledgeBaseType,
