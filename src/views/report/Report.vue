@@ -1,18 +1,18 @@
 <template>
-  <div class="cn-builtin">
-    <div class="cn-builtin-left">
+  <div class="cn-report">
+    <div class="cn-report-left">
       <loading :loading="builtinLeftLoading"></loading>
-      <div class="cn-builtin-left-title">
+      <div class="cn-report-left-title">
         {{$t('report.category')}}
       </div>
-      <div class="cn-builtin-left-menu" :class="{'cn-active': !builtinId}" @click="builtinTabs(null)">
+      <div class="cn-report-left-menu" :class="{'cn-active': !builtinId}" @click="builtinTabs(null)">
         {{$t('dns.all')}}
       </div>
-      <div class="cn-builtin-left-menu" :class="{'cn-active': builtinId === item.id}" v-for="item in builtinReportLeftMenu" :key="item.id" @click="builtinTabs(item.id)">
+      <div class="cn-report-left-menu" :class="{'cn-active': builtinId === item.id}" v-for="item in builtinReportLeftMenu" :key="item.id" @click="builtinTabs(item.id)">
         {{item.name}}
       </div>
     </div>
-    <div class="cn-builtin-right">
+    <div class="cn-report-right">
       <cn-data-list
           ref="dataList"
           :tableId="tableId"
@@ -34,7 +34,7 @@
         </template>
         <template #default>
           <loading :loading="builtinRightLoading"></loading>
-          <builtin-report-table
+          <report-table
               ref="dataTable"
               :api="url"
               :custom-table-title="tools.customTableTitle"
@@ -73,7 +73,7 @@
 
 <script>
 import { get } from '@/utils/http'
-import builtinReportTable from '@/components/table/report/reportTestTable'
+import ReportTable from '@/components/table/report/ReportTable'
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
@@ -148,7 +148,7 @@ export default {
         'report.november',
         'report.december'
       ],
-      tableId: 'builtinReportTable',
+      tableId: 'reportTable',
       builtinLeftLoading: false,
       builtinRightLoading: false,
       getNum: -1
@@ -171,7 +171,7 @@ export default {
   components: {
     Loading,
     cnDataList,
-    builtinReportTable,
+    ReportTable,
     ReportBox
   },
   mounted () {

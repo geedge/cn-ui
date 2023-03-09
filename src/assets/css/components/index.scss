@@ -42,8 +42,8 @@
 @import './views/chartHeader';
 @import './views/charts/chartMap';
 @import 'views/charts/chartRelationShipList';
-@import './views/report/builtinReport';
-@import './components/rightBox/report/builtinReportBox';
+@import 'views/report/report';
+@import 'components/rightBox/report/reportBox';
 
 @import './views/charts2/panel';
 @import './views/charts2/networkOverviewLine';

@@ -21,7 +21,7 @@ const routes = [
       },
       {
         path: '/report/builtIn',
-        component: () => import('@/views/report/reportTest')
+        component: () => import('@/views/report/Report')
       },
       {
         path: '/entityExplorer',
