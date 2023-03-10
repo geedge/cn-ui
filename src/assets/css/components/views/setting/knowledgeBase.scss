@@ -1,4 +1,7 @@
 .knowledge-base {
+  &.list-page {
+    height: calc(100% - 52px);
+  }
   .type-tag {
     display: inline-block;
     padding: 0 10px;
@@ -9,7 +12,6 @@
   }
 
   .top-title {
-    font-family: NotoSansHans-Black;
     font-size: 24px;
     color: #353636;
     font-weight: 900;

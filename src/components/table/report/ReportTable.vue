@@ -189,7 +189,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="table-operation-all">
+<!--    <div class="table-operation-all">
       <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
       <div class="table-operation-all-span">
         <span>{{ $t('overall.all') }}</span>
@@ -200,7 +200,7 @@
           <span>{{ $t('report.batchDeletion') }}</span>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
