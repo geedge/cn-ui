@@ -1,5 +1,8 @@
 <template>
-  <div style="height: 100%;">
+  <div style="height: 100%;" class="knowledge-base">
+    <div class="top-title">
+      {{$t('overall.knowledgeBase')}}
+    </div>
     <cn-data-list
         ref="dataList"
         :tableId="tableId"
@@ -9,10 +12,23 @@
         :layout="['columnCustomize','elementSet','search']"
         @search="search"
     >
-      <template v-slot:top-tool-right>
-        <button id="knowledge-base-add" :title="$t('knowledgeBase.createKnowledgeBase')" class="top-tool-btn margin-r-10"
+      <template v-slot:top-tool-left>
+        <button id="knowledge-base-add" :title="$t('knowledgeBase.createKnowledgeBase')" class="top-tool-btn margin-r-10 top-tool-btn--create"
                 @click="jumpToCreatePage">
-          <i class="cn-icon-add cn-icon"></i>
+          <i class="cn-icon-xinjian cn-icon"></i>
+          <span>{{$t('overall.create')}}</span>
+        </button>
+        <!--
+        <button id="knowledge-base-edit" :title="$t('knowledgeBase.editKnowledgeBase')" class="top-tool-btn margin-r-10"  :disabled="disableEdit"
+                @click="edit">
+          <i class="cn-icon-edit cn-icon" ></i>
+          <span>{{$t('overall.edit')}}</span>
+        </button>
+        -->
+        <button id="knowledge-base-delete" :title="$t('knowledgeBase.deleteKnowledgeBase')" class="top-tool-btn margin-r-10"
+                @click="delBatch">
+          <i class="cn-icon-delete cn-icon"></i>
+          <span>{{$t('overall.delete')}}</span>
         </button>
       </template>
       <template v-slot:default>

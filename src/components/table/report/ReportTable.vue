@@ -188,22 +188,6 @@
           <span v-else>{{ scope.row[item.prop] || '-' }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-          :resizable="false"
-          :width="operationWidth"
-          fixed="right">
-        <template #header>
-          <div class="table-operation-title">{{ $t('overall.option') }}</div>
-        </template>
-        <template #default="scope">
-          <div class="table-operation-items">
-            <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i
-                class="cn-icon cn-icon-bianji"></i></button>
-            <button class="table-operation-item" @click="tableOperation(['delete', scope.row])"><i
-                class="cn-icon cn-icon-shanchu"></i></button>
-          </div>
-        </template>
-      </el-table-column>
     </el-table>
     <div class="table-operation-all">
       <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
@@ -308,6 +292,7 @@ export default {
       loadingTableId: '',
       loadingPreviewId: '',
       downDataList: [],
+      disableEdit:false,//编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
       // pageObj: {
       //   pageNo: 1,
       //   pageSize: 20,
@@ -556,6 +541,12 @@ export default {
         })
         // this.selectIds = selectIds
       }
+      this.batchDeleteObjs = objs
+      if(objs.length > 1) {
+        this.disableEdit = true
+      }else {
+        this.disableEdit = false
+      }
     },
     /**
      * 全选按钮
@@ -572,6 +563,13 @@ export default {
         })
       } else {
         this.$refs.dataTable.clearSelection()
+      }
+
+      this.batchDeleteObjs = objs
+      if(objs.length > 1) {
+        this.disableEdit = true
+      }else {
+        this.disableEdit = false
       }
 
       // this.selectIds = selectIds

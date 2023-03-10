@@ -7,6 +7,19 @@
     box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
     border-radius: 12px;
   }
+
+  .top-title {
+    font-family: NotoSansHans-Black;
+    font-size: 24px;
+    color: #353636;
+    font-weight: 900;
+    line-height: 24px;
+    display: flex;
+    align-items: center;
+    padding-bottom: 8px;
+    padding-top: 20px;
+    margin-left:20px;
+  }
 }
 .edit-knowledge-base {
   height: 100%;

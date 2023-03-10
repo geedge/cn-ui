@@ -31,12 +31,12 @@ $--button-primary-background-color: $--color-primary; // 普通按钮背景色
 $--button-hover-tint-percent: 20%; // 非灰色按钮在鼠标hover时背景色变浅的幅度
 $--button-active-shade-percent: 0; // 非灰色按钮在focus时背景色变深的幅度
 
-$--button-gray-color: #666; // 灰色按钮字色
+$--button-gray-color: #353636; // 灰色按钮字色
 $--button-gray-hover-color: $--button-gray-color; // 灰色按钮hover字色
 $--button-gray-active-color: $--color-primary; // 灰色按钮focus字色
 $--button-gray-background-color: #F9F9F9; // 灰色按钮背景色
-$--button-gray-hover-background-color: #FFF; // 灰色按钮hover背景色
-$--button-gray-active-background-color: $--button-gray-hover-background-color; // 灰色按钮focus背景色
+$--button-gray-hover-background-color: #EBF1F4; // 灰色按钮hover背景色
+$--button-gray-active-background-color: #E0E7EA; // 灰色按钮focus背景色
 $--button-gray-border-color: $--border-color-primary; // 灰色按钮边框色
 $--button-gray-hover-border-color: $--button-gray-border-color; // 灰色按钮hover边框色
 $--button-gray-active-border-color-tint-percent: 30%; // 灰色按钮在focus时边框色相对于主题色变浅的幅度

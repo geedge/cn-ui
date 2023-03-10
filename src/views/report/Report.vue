@@ -22,14 +22,21 @@
           :layout="['search']"
           @search="search"
       >
-        <template #top-tool-right>
-          <button
-              id="account-add"
-              class="top-tool-btn"
-              type="button"
-              @click="add"
-          >
-            <i class="cn-icon-add cn-icon"/>
+        <template #top-tool-left>
+          <button id="account-add"  class="top-tool-btn margin-r-10 top-tool-btn--create"
+                  @click="add">
+            <i class="cn-icon-xinjian cn-icon"></i>
+            <span>{{$t('overall.create')}}</span>
+          </button>
+          <button id="report-edit"  class="top-tool-btn margin-r-10" :disabled="disableEdit"
+                  @click="editReport">
+            <i class="cn-icon-edit cn-icon"></i>
+            <span>{{$t('overall.edit')}}</span>
+          </button>
+          <button id="report-delete"  class="top-tool-btn margin-r-10"
+                  @click="delBatch">
+            <i class="cn-icon-delete cn-icon"></i>
+            <span>{{$t('overall.delete')}}</span>
           </button>
         </template>
         <template #default>
@@ -286,6 +293,19 @@ export default {
       this.initConfig(u)
       this.object = u
       this.rightBox.show = true
+    },
+    editReport () {
+      if(this.batchDeleteObjs.length === 0){
+        this.$alert(this.$t('tip.pleaseSelectForEdit'),{
+          confirmButtonText: this.$t('tip.yes'),
+          type:'warning'
+        })
+      }else {
+        let curRecord = this.batchDeleteObjs[0]
+        this.initConfig(curRecord)
+        this.object = curRecord
+        this.rightBox.show = true
+      }
     },
     initConfig (u) {
       if (!u.config) {

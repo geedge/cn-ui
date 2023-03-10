@@ -78,12 +78,28 @@
   border-radius: 2px;
   background-color: #F9F9F9;
   transition: background-color linear .1s;
+  padding-left:10px;
+}
+
+
+.list-page .top-tools .top-tool-btn--search{
+  width:28px !important;
+  height:28px !important;
+  padding:unset !important;
+  i {
+    font-size: 14px;
+    color: #575757;
+    margin-right:unset !important;
+  }
 }
 
 .list-page {
+  .el-input--small{
+    width: 214px !important;
+    line-height: 27px;
+  }
   .el-input--small .el-input__inner {
-    height: 33px;
-    line-height: 32px;
-    border-radius: 0px;
+    height: 28px;
+    border-radius: 2px 0px 0px 2px;
   }
 }

@@ -9,11 +9,23 @@
             :layout="['columnCustomize','elementSet','search']"
             @search="search"
     >
-      <template v-slot:top-tool-right>
-        <button id="roles-add" :title="$t('overall.createRole')" class="top-tool-btn margin-r-10"
-                type="button" @click="add">
-          <i class="cn-icon-add cn-icon"></i>
+      <template v-slot:top-tool-left>
+        <button id="roles-add"  class="top-tool-btn margin-r-10 top-tool-btn--create"
+                @click="add">
+          <i class="cn-icon-xinjian cn-icon"></i>
+          <span>{{$t('overall.create')}}</span>
         </button>
+        <button id="roles-edit"  class="top-tool-btn margin-r-10" :disabled="disableEdit"
+                @click="edit">
+          <i class="cn-icon-edit cn-icon"></i>
+          <span>{{$t('overall.edit')}}</span>
+        </button>
+        <button id="roles-delete"  class="top-tool-btn margin-r-10"
+                @click="delBatch">
+          <i class="cn-icon-delete cn-icon"></i>
+          <span>{{$t('overall.delete')}}</span>
+        </button>
+
         <delete-button id="role-list-batch-delete" :api="url" :delete-objs="batchDeleteObjs" @after="getTableData" @before="delFlag=true"></delete-button>
       </template>
       <template v-slot:default>
@@ -78,13 +90,20 @@ export default {
     }
   },
   methods: {
-    edit (u) {
-      get(`${this.url}`, { ids: u.id }).then(response => {
-        if (response.code === 200) {
-          this.object = response.data.list[0]
-          this.rightBox.show = true
-        }
-      })
+    edit () {
+      if(this.batchDeleteObjs.length === 0){
+        this.$alert(this.$t('tip.pleaseSelectForEdit'),{
+          confirmButtonText: this.$t('tip.yes'),
+          type:'warning'
+        })
+      }else {
+        get(`${this.url}`, { ids: this.batchDeleteObjs[0].id }).then(response => {
+          if (response.code === 200) {
+            this.object = response.data.list[0]
+            this.rightBox.show = true
+          }
+        })
+      }
     }
   }
 }

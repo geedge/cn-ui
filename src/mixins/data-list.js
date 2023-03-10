@@ -37,6 +37,7 @@ export default {
       tableData: [],
       scrollbarWrap: null,
       delFlag: false,
+      disableEdit:false,//编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
       operationWidth: '165' // 操作列宽
     }
   },
@@ -74,6 +75,11 @@ export default {
     },
     selectionChange (objs) {
       this.batchDeleteObjs = objs
+      if(this.batchDeleteObjs.length > 1) {
+        this.disableEdit = true
+      }else {
+        this.disableEdit = false
+      }
     },
     getTableData (params) {
       if (params) {
@@ -115,6 +121,39 @@ export default {
         })
       })
     },
+    delBatch () {
+      let ids = []
+      if(this.batchDeleteObjs && this.batchDeleteObjs.length > 0){
+        this.batchDeleteObjs.forEach(item =>{
+          ids.push(item.id)
+        })
+      }
+      if(ids.length === 0){
+        this.$alert(this.$t('tip.pleaseSelect'),{
+          confirmButtonText: this.$t('tip.yes'),
+          type:'warning'
+        })
+      }else {
+        this.$confirm(this.$t('tip.confirmDelete'), {
+          confirmButtonText: this.$t('tip.yes'),
+          cancelButtonText: this.$t('tip.no'),
+          type: 'warning'
+        }).then(() => {
+          this.tools.loading = true
+          axios.delete(this.url + '?ids=' + ids).then(response => {
+            if (response.data.code === 200) {
+              this.delFlag = true
+              this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
+              this.getTableData()
+            } else {
+              this.$message.error(response.data.message)
+            }
+          }).finally(() => {
+            this.tools.loading = false
+          })
+        })
+      }
+    },
     newObject () {
       return JSON.parse(JSON.stringify(this.blankObject))
     },
@@ -152,6 +191,21 @@ export default {
           this.rightBox.show = true
         }
       })
+    },
+    editSelectRecord(){
+      if(this.batchDeleteObjs.length === 0){
+        this.$alert(this.$t('tip.pleaseSelectForEdit'),{
+          confirmButtonText: this.$t('tip.yes'),
+          type:'warning'
+        })
+      }else {
+        get(`${this.url}/${this.batchDeleteObjs[0].id}`).then(response => {
+          if (response.code === 200) {
+            this.object = response.data
+            this.rightBox.show = true
+          }
+        })
+      }
     },
     copy (u) {
       this.object = { ...u, name: 'Copy from ' + u.name, id: '' }

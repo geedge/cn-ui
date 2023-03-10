@@ -66,29 +66,6 @@
         <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column>
-    <el-table-column
-        :resizable="false"
-        :width="operationWidth"
-        fixed="right">
-      <template #header>
-        <div class="table-operation-title">{{$t('overall.option')}}</div>
-      </template>
-      <template #default="scope">
-        <div class="table-operation-items">
-<!--          <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-edit"></i></button>-->
-          <el-dropdown size="medium" trigger="hover" @command="tableOperation">
-            <div class="table-operation-item table-operation-item--more">
-              <i class="cn-icon cn-icon-more-arrow-down"></i>
-            </div>
-            <template #dropdown>
-              <el-dropdown-menu >
-                <el-dropdown-item :command="['delete', scope.row]" :disabled="scope.row.id === 1"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </div>
-      </template>
-    </el-table-column>
   </el-table>
 </template>
 

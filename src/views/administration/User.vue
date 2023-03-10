@@ -9,14 +9,21 @@
       :layout="['columnCustomize','elementSet','search']"
       @search="search"
     >
-      <template #top-tool-right>
-        <button
-          id="account-add"
-          class="top-tool-btn margin-r-10"
-          type="button"
-          @click="add"
-        >
-          <i class="cn-icon-add cn-icon"/>
+      <template #top-tool-left>
+        <button id="account-add" class="top-tool-btn margin-r-10 top-tool-btn--create"
+                @click="add">
+          <i class="cn-icon-xinjian cn-icon"></i>
+          <span>{{$t('overall.create')}}</span>
+        </button>
+        <button id="account-edit"  class="top-tool-btn margin-r-10" :disabled="disableEdit"
+                @click="editSelectRecord">
+          <i class="cn-icon-edit cn-icon"></i>
+          <span>{{$t('overall.edit')}}</span>
+        </button>
+        <button id="account-delete"  class="top-tool-btn margin-r-10"
+                @click="delBatch">
+          <i class="cn-icon-delete cn-icon"></i>
+          <span>{{$t('overall.delete')}}</span>
         </button>
       </template>
       <template #default>
