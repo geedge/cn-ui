@@ -305,21 +305,21 @@ export default {
       this.blockOperation.save = true
       // 校验form + upload + preview
       this.$refs.form.validate(valid => {
+        this.$refs.form.validateField('tagName')
+        if (!this.uploaded) {
+          this.uploadErrorTip = this.$t('validate.required')
+        } else {
+          this.uploadErrorTip = ''
+        }
+
+        if (this.importedData.length === 0) {
+          this.previewErrorTip = this.$t('validate.required')
+        } else if (this.hasErrorImportedData()) {
+          this.previewErrorTip = this.$t('validate.pleaseCheckForErrorItem')
+        } else {
+          this.previewErrorTip = ''
+        }
         if (valid) {
-          if (!this.uploaded) {
-            this.uploadErrorTip = this.$t('validate.required')
-          } else {
-            this.uploadErrorTip = ''
-          }
-
-          if (this.importedData.length === 0) {
-            this.previewErrorTip = this.$t('validate.required')
-          } else if (this.hasErrorImportedData()) {
-            this.previewErrorTip = this.$t('validate.pleaseCheckForErrorItem')
-          } else {
-            this.previewErrorTip = ''
-          }
-
           // 校验通过后组织数据、请求接口
           if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
             const postData = {
