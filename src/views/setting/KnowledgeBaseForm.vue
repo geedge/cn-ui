@@ -304,65 +304,66 @@ export default {
       if (this.blockOperation.save) { return }
       this.blockOperation.save = true
       // 校验form + upload + preview
-      let formValid
       this.$refs.form.validate(valid => {
-        formValid = valid
-      })
-
-      if (!this.uploaded) {
-        this.uploadErrorTip = this.$t('validate.required')
-      } else {
-        this.uploadErrorTip = ''
-      }
-
-      if (this.importedData.length === 0) {
-        this.previewErrorTip = this.$t('validate.required')
-      } else if (this.hasErrorImportedData()) {
-        this.previewErrorTip = this.$t('validate.pleaseCheckForErrorItem')
-      } else {
-        this.previewErrorTip = ''
-      }
-
-      // 校验通过后组织数据、请求接口
-      if (formValid && !this.uploadErrorTip && !this.previewErrorTip) {
-        const postData = {
-          tagName: this.editObject.tagName,
-          tagType: this.editObject.tagType,
-          data: []
-        }
-        this.importedData.forEach(d => {
-          const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
-          if (findData) {
-            findData.itemList.add(d.tagItem)
+        if (valid) {
+          if (!this.uploaded) {
+            this.uploadErrorTip = this.$t('validate.required')
           } else {
-            const set = new Set()
-            set.add(d.tagItem)
-            postData.data.push({
-              tagValue: d.tagValue,
-              itemList: set
-            })
+            this.uploadErrorTip = ''
           }
-        })
-        postData.data.forEach(d => {
-          d.itemList = [...d.itemList]
-        })
-        postData.remark = this.editObject.remark
-        axios.post(this.url, postData).then(response => {
-          if (response.data.code === 200) {
-            this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
-            this.$router.push({
-              path: '/knowledgeBase',
-              t: +new Date()
+
+          if (this.importedData.length === 0) {
+            this.previewErrorTip = this.$t('validate.required')
+          } else if (this.hasErrorImportedData()) {
+            this.previewErrorTip = this.$t('validate.pleaseCheckForErrorItem')
+          } else {
+            this.previewErrorTip = ''
+          }
+
+          // 校验通过后组织数据、请求接口
+          if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
+            const postData = {
+              tagName: this.editObject.tagName,
+              tagType: this.editObject.tagType,
+              data: []
+            }
+            this.importedData.forEach(d => {
+              const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
+              if (findData) {
+                findData.itemList.add(d.tagItem)
+              } else {
+                const set = new Set()
+                set.add(d.tagItem)
+                postData.data.push({
+                  tagValue: d.tagValue,
+                  itemList: set
+                })
+              }
+            })
+            postData.data.forEach(d => {
+              d.itemList = [...d.itemList]
+            })
+            postData.remark = this.editObject.remark
+            axios.post(this.url, postData).then(response => {
+              if (response.data.code === 200) {
+                this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                this.$router.push({
+                  path: '/knowledgeBase',
+                  t: +new Date()
+                })
+              } else {
+                this.$message.error(response.data.message)
+              }
+            }).finally(() => {
+              this.blockOperation.save = false
             })
           } else {
-            this.$message.error(response.data.message)
+            this.blockOperation.save = false
           }
-        }).finally(() => {
+        } else {
           this.blockOperation.save = false
-        })
-      } else {
-        this.blockOperation.save = false
-      }
+        }
+      })
     },
     hasErrorImportedData () {
       return this.importedData.filter(d => d.status !== 1).length > 0
