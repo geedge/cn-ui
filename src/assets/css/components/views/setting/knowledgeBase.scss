@@ -94,13 +94,14 @@
             padding-left: 35px;
           }
         }
-        .el-collapse-item__header > i {
-          transform: translateX(-630px);
+        [role|=tab] {
+          display: flex;
+          align-items: flex-start;
+        }
+        .el-collapse-item__arrow {
+          position: absolute;
           color: #38ACD2;
           font-weight: bold;
-        }
-        .el-collapse-item__header > i.is-active {
-          transform: translateX(-630px) rotate(90deg);
         }
         .el-collapse-item__wrap {
           padding-left: 35px;
