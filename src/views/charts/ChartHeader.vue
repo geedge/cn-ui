@@ -247,9 +247,8 @@ import {
   chartActiveIpTableOrderOptions,
   chartPieTableTopOptions,
   eventSeverity,
-  chartTableColumnMapping, panelTypeAndRouteMapping
+  chartTableColumnMapping
 } from '@/utils/constants'
-import { useRouter } from 'vue-router'
 
 export default {
   name: 'ChartHeader',
@@ -370,17 +369,12 @@ export default {
     }
   },
   setup (props) {
-    const { currentRoute } = useRouter()
-
-    function isEntityDetail (r) {
-      return r.indexOf('entityDetail') > -1
-    }
-    const dateRangeValue = isEntityDetail(currentRoute.value.path) ? 60 * 24 : 60
+    const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     // entity详情内的chart时间工具不是公共的，需要单独定义
     const chartTimeFilter = ref({ startTime, endTime, dateRangeValue })
     // 复制一份prop中需要被组件v-model的内容，避免报错
-    const copyOrderPieTable = props.orderPieTable
+    const copyOrderPieTable = ref(props.orderPieTable)
     return {
       chartTimeFilter,
       chartTableTopOptions,

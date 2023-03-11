@@ -129,6 +129,16 @@ export default {
   beforeUnmount () {
     window.removeEventListener('resize', this.debounceFunc)
   },
+  watch: {
+    top (n) {
+      const findIndex = this.anchorPoints.findLastIndex(a => a.top < n + 100)
+      if (findIndex > -1) {
+        this.anchorPoints.forEach((a, i) => {
+          a.isActive = i === findIndex
+        })
+      }
+    }
+  },
   computed: {
     iconClass () {
       let className
