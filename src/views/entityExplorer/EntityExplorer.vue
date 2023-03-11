@@ -717,7 +717,7 @@ export default {
     }
   },
   setup () {
-    const dateRangeValue = 60 * 24
+    const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const timeFilter = ref({ startTime, endTime, dateRangeValue })
     return {
