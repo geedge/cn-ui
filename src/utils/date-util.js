@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { storageKey } from '@/utils/constants'
+import {storageKey} from '@/utils/constants'
 
 // 将时间转化为秒
 export function getSecond (time) {
@@ -47,7 +47,7 @@ export function toTime (date) {
 }
 // 时间格式转换
 export function dateFormat (date, format = 'YYYY-MM-DD HH:mm:ss') {
-  let d = date
+  let d
   // date不是数字，则视为utc时区的时间字符串，例如2022-02-22 22:22
   if (isNaN(date)) {
     d = window.$dayJs(date).valueOf() + parseInt(localStorage.getItem(storageKey.timezoneLocalOffset)) * 3600000
@@ -93,6 +93,47 @@ export function timestampToList (time) {
   const m = date.getMinutes()
   const s = date.getSeconds()
 
-  const arr = [Y, M, D, H, m, s]
-  return arr
+  return [Y, M, D, H, m, s]
+}
+/**
+ * 返回浏览器本地时区和服务器时区的毫秒差
+ * @returns {number}
+ */
+export function millTimestampDiffFromTz () {
+  return parseInt(localStorage.getItem(storageKey.timezoneLocalOffset)) * 3600 * 1000 - window.$dayJs.tz().utcOffset() * 60 * 1000
+}
+/**
+ * echarts时间类型横坐标formatter
+ * @returns {String}
+ */
+export function xAxisTimeFormatter (value) {
+  const date = new Date(value - millTimestampDiffFromTz())
+  const dayStart = new Date(value - millTimestampDiffFromTz())
+  dayStart.setHours(0)
+  dayStart.setMinutes(0)
+  dayStart.setSeconds(0)
+  dayStart.setMilliseconds(0)
+  const hourStart = new Date(value - millTimestampDiffFromTz())
+  hourStart.setMinutes(0)
+  hourStart.setSeconds(0)
+  hourStart.setMilliseconds(0)
+  const HHmm = (date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()) +
+    ':' +
+    (date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes())
+  // 如果是一天的开始
+  if (date.getTime() === dayStart.getTime()) {
+    return '{day|' + dayStart.getDate() + '}'
+  } else if (date.getTime() === hourStart.getTime()) {
+    return '{hour|' + HHmm + '}'
+  } else {
+    return HHmm
+  }
+}
+export const xAxisTimeRich = {
+  day: {
+    fontWeight: 'bold'
+  },
+  hour: {
+    fontWeight: 'bold'
+  }
 }

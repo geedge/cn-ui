@@ -8,6 +8,7 @@ import {
 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { axisFormatter } from '@/views/charts/charts/tools'
+import { xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
 
 export const pieChartOption1 = {
   tooltip: {
@@ -185,15 +186,11 @@ export const stackedLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 8
-      // axisLabel: {
-      //   formatter: function (value) {
-      //     const data = new Date(value)
-      //     const h = data.getHours() > 9 ? data.getHours() : '0' + data.getHours()
-      //     const m = data.getMinutes() > 9 ? data.getMinutes() : '0' + data.getMinutes()
-      //     return h + ':' + m
-      //   }
-      // }
+      splitNumber: 8,
+      axisLabel: {
+        formatter: xAxisTimeFormatter,
+        rich: xAxisTimeRich
+      }
     }
   ],
   yAxis: [

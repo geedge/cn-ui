@@ -79,7 +79,7 @@
 <script>
 import { ref, computed, watch, reactive } from 'vue'
 import { storageKey } from '@/utils/constants'
-import { getMillisecond, timestampToList } from '@/utils/date-util'
+import { getMillisecond, millTimestampDiffFromTz, timestampToList } from '@/utils/date-util'
 import { useStore } from 'vuex'
 
 export default {
@@ -220,8 +220,9 @@ export default {
      * @param val，开始/结束时间数组
      */
     const timeArrChange = (val) => {
-      myStartTime.value = getMillisecond(val[0])
-      myEndTime.value = getMillisecond(val[1])
+      // 按服务器时区修正时间戳
+      myStartTime.value = getMillisecond(val[0]) + millTimestampDiffFromTz()
+      myEndTime.value = getMillisecond(val[1]) + millTimestampDiffFromTz()
       isCustom.value = true
       dateRangeValue.value = -1
       returnValue()
