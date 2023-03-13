@@ -124,12 +124,18 @@ import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize, detectionPageType } from '@/utils/constants'
-import { getNowTime, getSecond, rTime } from '@/utils/date-util'
+import { getNowTime, getSecond, toTime } from '@/utils/date-util'
 import { ref, shallowRef } from 'vue'
 import * as echarts from 'echarts'
-import { multipleBarOption, pieForSeverity, activeAttackBar, getAttackColor, getSeverityColor } from '@/views/detections/options/detectionOptions'
+import {
+  activeAttackBar,
+  getAttackColor,
+  getSeverityColor,
+  multipleBarOption,
+  pieForSeverity
+} from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
-import { reverseSortBy, extensionEchartY } from '@/utils/tools'
+import { extensionEchartY, reverseSortBy } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
@@ -283,10 +289,14 @@ export default {
           data.forEach(item => {
             if (item.eventSeverity) {
               if (!dataMap.has(item.eventSeverity)) {
-                const count = [[rTime(item.statTime), item.count]]
+                // todo 暂时保留原来的，后续若使用新版，则删除该注释
+                // const count = [[rTime(item.statTime), item.count]]
+                const count = [[toTime(item.statTime), item.count]]
                 dataMap.set(item.eventSeverity, count)
               } else {
-                dataMap.get(item.eventSeverity).push([rTime(item.statTime), item.count])
+                // 原来的
+                // dataMap.get(item.eventSeverity).push([rTime(item.statTime), item.count])
+                dataMap.get(item.eventSeverity).push([toTime(item.statTime), item.count])
               }
             }
           })
@@ -303,6 +313,7 @@ export default {
               }
             })
           })
+
           eventSeverityTrendOption.series.forEach(serie => {
             const seriesData = []
             xData.forEach(item => {
@@ -311,22 +322,33 @@ export default {
                 // eslint-disable-next-line array-callback-return
                 const hasX = dataMap.get(serie.name).some(function (v) {
                   if (item === v[0]) {
-                    seriesData.push(Number(v[1]))
+                    // 原来的
+                    // seriesData.push(Number(v[1]))
+                    seriesData.push([item, Number(v[1])])
                     return true
                   }
                 })
                 if (!hasX) {
-                  seriesData.push(0)
+                  // 原来的
+                  // seriesData.push(0)
+                  seriesData.push([item, 0])
                 }
               } else {
-                seriesData.push(0)
+                // 原来的
+                // seriesData.push(0)
+                seriesData.push([item, 0])
               }
             })
             serie.data = seriesData
           })
 
           // eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
-          eventSeverityTrendOption.xAxis.data = xData
+          // 原来的
+          // eventSeverityTrendOption.xAxis.data = xData
+          eventSeverityTrendOption.xAxis = [{
+            type: 'time',
+            splitNumber: 8
+          }]
           let detectionChart = echarts.getInstanceByDom(chartDom)
           if (detectionChart) {
             echarts.dispose(detectionChart)

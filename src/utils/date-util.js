@@ -41,6 +41,10 @@ export function getNowTime (interval) {
 export function rTime (date) {
   return window.$dayJs.tz(new Date(date)).format('MM-DD HH:mm')
 }
+// 日期转换为时间戳
+export function toTime (date) {
+  return new Date(date).getTime()
+}
 // 时间格式转换
 export function dateFormat (date, format = 'YYYY-MM-DD HH:mm:ss') {
   let d = date

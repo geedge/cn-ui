@@ -1,4 +1,5 @@
 import {
+  detectionTooltipFormatter,
   tooLongFormatter
 } from '@/views/charts/charts/tools'
 import unitConvert from '@/utils/unit-convert'
@@ -57,7 +58,11 @@ export const multipleBarOption = {
     itemWidth: 10, // 设置宽度
     itemHeight: 10 // 设置高度
   },
-  tooltip: {},
+  tooltip: {
+    formatter: function (params) {
+      return detectionTooltipFormatter(params)
+    }
+  },
   dataset: {
     source: [
     ]

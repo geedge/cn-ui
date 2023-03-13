@@ -514,3 +514,24 @@ export function appStackedLineTooltipFormatter (params) {
   str += '</div>'
   return str
 }
+
+export function detectionTooltipFormatter (params) {
+  let str = '<div>'
+  const tData = params.data[0]
+  str += '<div style="margin-bottom: 5px">'
+  str += dateFormatByAppearance(tData)
+  str += '</div>'
+  str += '<div class="cn-chart-tooltip">'
+  str += '<span class="cn-chart-tooltip-box">'
+  str += params.marker
+  str += `<span class="cn-chart-tooltip-content"> 
+      ${params.seriesName}
+  </span>`
+  str += '</span>'
+  str += `<span class="cn-chart-tooltip-value cn-chart-tooltip__color" style="position: absolute;right: 10px">
+      ${params.data[1]}
+  </span>`
+  str += '</div>'
+  str += '</div>'
+  return str
+}
