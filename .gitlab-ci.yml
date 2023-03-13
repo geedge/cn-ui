@@ -95,7 +95,7 @@ build_release_image:
     - echo "docker tag"
     - sudo docker tag cn-ui-$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG 192.168.40.153:9080/cyber-narrator/cn-ui-$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG
     - echo "docker push"
-    - sudo docker push 192.168.40.153:9080/cyber-narrator/cn-ui-$CI_COMMIT_REF_NAME:$CI_COMMIT_TAG
+    - sudo docker push 192.168.40.153:9080/cyber-narrator/cn-ui-tag:$CI_COMMIT_TAG
   only:
     - tags
   tags:
