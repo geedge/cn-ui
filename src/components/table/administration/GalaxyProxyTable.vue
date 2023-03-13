@@ -91,7 +91,6 @@
       </template>
       <template #default="scope">
         <div class="table-operation-items">
-          <button class="table-operation-item" @click="tableOperation(['edit', scope.row])"><i class="cn-icon cn-icon-edit"></i></button>
           <el-dropdown size="medium" trigger="hover" @command="tableOperation">
             <div class="table-operation-item table-operation-item--more">
               <i class="cn-icon cn-icon-more-arrow-down"></i>
@@ -99,7 +98,6 @@
             <template #dropdown>
               <el-dropdown-menu >
                 <el-dropdown-item :command="['copy', scope.row]"><i class="cn-icon cn-icon-override"></i><span class="operation-dropdown-text">{{$t('overall.duplicate')}}</span></el-dropdown-item>
-                <el-dropdown-item :command="['delete', scope.row]"><i class="cn-icon cn-icon-delete"></i><span class="operation-dropdown-text">{{$t('overall.delete')}}</span></el-dropdown-item>
                 <el-dropdown-item :command="['debug', scope.row]"><i class="cn-icon cn-icon-debug"></i><span class="operation-dropdown-text">{{$t('overall.debug')}}</span></el-dropdown-item>
               </el-dropdown-menu>
             </template>

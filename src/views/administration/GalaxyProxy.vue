@@ -9,14 +9,26 @@
         :layout="['columnCustomize','elementSet','search']"
         @search="search"
     >
-      <template v-slot:top-tool-right>
+      <template v-slot:top-tool-left>
         <button id="galaxy-proxy-clear-cache" class="top-tool-btn margin-r-10" :title="$t('overall.clearCache')"
                 type="button" @click="clearCache">
           <i class="cn-icon cn-icon-clear-cache"></i>
         </button>
-        <button id="galaxy-proxy-add" class="top-tool-btn margin-r-10"
-                type="button" @click="add">
-          <i class="cn-icon-add cn-icon"></i>
+        <button id="galaxy-proxy-add"
+                class="top-tool-btn margin-r-10 top-tool-btn--create"
+                @click="add">
+          <i class="cn-icon-xinjian cn-icon"></i>
+          <span>{{$t('overall.create')}}</span>
+        </button>
+        <button id="galaxy-edit"  class="top-tool-btn margin-r-10" :disabled="disableEdit"
+                @click="editSelectRecord">
+          <i class="cn-icon-edit cn-icon"></i>
+          <span>{{$t('overall.edit')}}</span>
+        </button>
+        <button id="galaxy-delete"  class="top-tool-btn margin-r-10"
+                @click="delBatch">
+          <i class="cn-icon-delete cn-icon"></i>
+          <span>{{$t('overall.delete')}}</span>
         </button>
         <button id="galaxy-proxy-debug" class="top-tool-btn margin-r-10"  :title="$t('overall.debug')"
                 type="button" @click="debug(true,{})">
