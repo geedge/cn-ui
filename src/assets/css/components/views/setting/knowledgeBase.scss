@@ -94,6 +94,7 @@
       }
       .el-collapse-item {
         min-height: 58px;
+        position: relative;
 
         .el-collapse-item__header {
           height: unset;
