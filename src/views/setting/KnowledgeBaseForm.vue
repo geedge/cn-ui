@@ -354,6 +354,13 @@ export default {
               } else {
                 this.$message.error(response.data.message)
               }
+            }).catch(e => {
+              console.error(e)
+              if (e.response.data && e.response.data.message) {
+                this.$message.error(e.response.data.message)
+              } else {
+                this.$message.error('Something went wrong...')
+              }
             }).finally(() => {
               this.blockOperation.save = false
             })

@@ -79,6 +79,13 @@ export default {
         if (response.data.code === 200) {
           this.object = response.data.data.list[0]
         }
+      }).catch(e => {
+        console.error(e)
+        if (e.response.data && e.response.data.message) {
+          this.$message.error(e.response.data.message)
+        } else {
+          this.$message.error('Something went wrong...')
+        }
       })
     },
     del (row) {
@@ -95,6 +102,13 @@ export default {
             this.getTableData()
           } else {
             this.$message.error(response.data.message)
+          }
+        }).catch(e => {
+          console.error(e)
+          if (e.response.data && e.response.data.message) {
+            this.$message.error(e.response.data.message)
+          } else {
+            this.$message.error('Something went wrong...')
           }
         }).finally(() => {
           this.tools.loading = false
