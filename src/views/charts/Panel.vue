@@ -107,11 +107,8 @@ export default {
     const { params } = useRoute()
     panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
 
-    function isEntityDetail (t) {
-      return [4, 5, 6].indexOf(t) > -1
-    }
     // date
-    const dateRangeValue = isEntityDetail(panelType) ? 60 * 24 : 60
+    const dateRangeValue = 60
     const { startTime, endTime } = getNowTime(dateRangeValue)
     const timeFilter = ref({ startTime, endTime, dateRangeValue })
 

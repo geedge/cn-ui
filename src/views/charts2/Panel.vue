@@ -239,19 +239,16 @@ export default {
       panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
     }
 
-    function isEntityDetail (t) {
-      return [4, 5, 6].indexOf(t) > -1
-    }
     // 获取url携带的range、startTime、endTime
     const rangeParam = query.range
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
     // 若url携带了，使用携带的值，否则使用默认值。
 
-    const dateRangeValue = rangeParam ? parseInt(query.range) : (isEntityDetail(panelType) ? 60 * 24 : 60)
+    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
-      const { startTime, endTime } = getNowTime(isEntityDetail(panelType) ? 60 * 24 : 60)
+      const { startTime, endTime } = getNowTime(60)
       timeFilter.value.startTime = startTime
       timeFilter.value.endTime = endTime
     } else {
