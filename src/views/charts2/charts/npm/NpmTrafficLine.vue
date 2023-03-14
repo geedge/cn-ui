@@ -533,7 +533,7 @@ export default {
                 color: chartColor3[t.positioning],
                 width: 1
               },
-              stack: t.name !== 'network.total' ? 'network.total' : '',
+              stack: t.name !== this.$t('network.total') ? this.$t('network.total') : '',
               areaStyle: {
                 opacity: 0.1,
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
