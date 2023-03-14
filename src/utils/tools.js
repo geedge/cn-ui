@@ -1146,3 +1146,20 @@ export function getLineIndexUnit (type, show) {
     }
   }
 }
+export function getLineIndexUnit2 (type) {
+  if (type.indexOf('total') > -1) {
+    return 0
+  } else if (type.indexOf('inbound') > -1) {
+    return 1
+  } else if (type.indexOf('outbound') > -1) {
+    return 2
+  } else if (type.indexOf('internal') > -1) {
+    return 3
+  } else if (type.indexOf('through') > -1) {
+    return 4
+  } else if (type.indexOf('other') > -1) {
+    return 5
+  } else {
+    return 0
+  }
+}

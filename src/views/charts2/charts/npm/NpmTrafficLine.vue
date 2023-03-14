@@ -42,7 +42,7 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import _ from 'lodash'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
-import { getLineType, getLineIndexUnit, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getLineType, getLineIndexUnit, getLineIndexUnit2, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
 
 export default {
@@ -215,6 +215,7 @@ export default {
                 { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
               ]
             } else {
+              console.info(res.data.result)
               this.initData(res.data.result, val)
             }
           } else {
@@ -226,6 +227,7 @@ export default {
           this.isNoData = false
           this.showError = true
           this.errorMsg = e.message
+          console.error(e)
         }).finally(() => {
           this.toggleLoading(false)
         })
@@ -265,6 +267,7 @@ export default {
               { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
             ]
           } else {
+            console.info(npmLineData)
             this.initData(npmLineData, val)
           }
         }).catch(e => {
@@ -282,7 +285,7 @@ export default {
         if (echartsData.length > 0) {
           const dom = document.getElementById('chart-line')
           !this.myChart && (this.myChart = echarts.init(dom))
-          this.chartOption = trafficLineChartOption
+          this.chartOption = _.cloneDeep(trafficLineChartOption)
           const chartOption = this.chartOption.series[0]
           this.chartOption.series = echartsData.map((t) => {
             this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
@@ -301,7 +304,7 @@ export default {
                 color: chartColor3[t.positioning],
                 width: 1
               },
-              stack: t.name !== 'network.total' ? 'network.total' : '',
+              stack: t.name !== this.$t('network.total') ? this.$t('network.total') : '',
               areaStyle: {
                 opacity: 0.1,
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
@@ -393,18 +396,32 @@ export default {
       if (data !== undefined && data.length > 0) {
         data.forEach(item => {
           item.type = getLineType(item.type)
-          if (item.type === val) {
-            lineData = Object.keys((item)).map(t => {
-              return {
-                ...item[t],
-                index: getLineIndexUnit(item.type, false),
-                unit: getLineIndexUnit(item.type, true)
-              }
-            })
+          if (['Bits/s', 'Packets/s', 'Sessions/s'].indexOf(val) > -1) {
+            if (item.type === val) {
+              lineData = Object.keys((item)).map(t => {
+                return {
+                  ...item[t],
+                  index: getLineIndexUnit2(t, false),
+                  key: t
+                }
+              })
+            }
+          } else {
+            if (item.type === val) {
+              lineData = Object.keys((item)).map(t => {
+                return {
+                  ...item[t],
+                  index: getLineIndexUnit(item.type, false),
+                  unit: getLineIndexUnit(item.type, true),
+                  key: t
+                }
+              })
+            }
           }
         })
       }
       lineData.splice(0, 1)
+      console.info(lineData)
       const tabs = _.cloneDeep(this.tabs)
       const npmQuantity = _.cloneDeep(this.npmQuantity)
       if (val === 'Sessions/s') {
@@ -419,7 +436,7 @@ export default {
         })
         this.tabs = tabs
         this.echartsInit(this.tabs)
-      } else if (val !== 'Bits/s' && val !== 'Packets/s' && val !== 'Sessions/s') {
+      } else if (val !== 'Bits/s' && val !== 'Packets/s') {
         this.legendInit(lineData, npmQuantity, true)
       } else {
         this.legendInit(lineData, tabs, false)
@@ -431,8 +448,8 @@ export default {
           npmData[d.index].data = d.values
           npmData[d.index].analysis = d.analysis
         } else {
-          npmData[i].data = d.values
-          npmData[i].analysis = d.analysis
+          npmData[d.index].data = d.values
+          npmData[d.index].analysis = d.analysis
         }
       })
       if (show) {
