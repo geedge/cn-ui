@@ -101,6 +101,13 @@ export default {
           this.tableData = response.data.list
           this.pageObj.total = response.data.total
           // TODO 回到顶部
+        } else {
+          console.error(response)
+          if (response.message) {
+            this.$message.error(response.message)
+          } else {
+            this.$message.error('Something went wrong...')
+          }
         }
       })
     },
