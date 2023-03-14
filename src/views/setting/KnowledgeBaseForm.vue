@@ -3,7 +3,7 @@
     <div class="edit-knowledge-base__header">{{$t('overall.create')}}</div>
     <div class="edit-knowledge-base__body">
       <el-steps direction="vertical" :active="activeStep">
-        <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px;`" :key="index"></el-step>
+        <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px; flex-shrink: 0;`" :key="index"></el-step>
       </el-steps>
       <el-collapse v-model="activeCollapses">
         <el-collapse-item name="0">
