@@ -878,7 +878,7 @@ export async function getDnsMapData (type) {
 }
 export function handleSpecialValue (value) {
   if (value) {
-    value.replace(/\'/g, "\\\\'")
+    value = value.replace(/\'/g, "\\\\'")
       .replace(/\"/g, '\\"')
       .replace(/\&/g, '%26')
   }
