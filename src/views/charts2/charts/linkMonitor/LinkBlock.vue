@@ -1,15 +1,14 @@
 <template>
   <div class="link-blocks">
     <div class="block-list" style="position: relative">
-      <div class="block-list__title" v-if="!showError1">{{ $t('linkMonitor.links') }}</div>
+      <div class="block-list__title">{{ $t('linkMonitor.links') }}</div>
 
       <!--无数据noData-->
       <chart-no-data v-if="linkNoData" test-id="linkBlockNoData"></chart-no-data>
 
-      <div class="block-list__list" v-show="!linkNoData">
-        <chart-error v-if="showError1" :content="errorMsg1" />
+      <chart-error style="top: 40px;" v-show="!linkNoData" v-if="showError1" :content="errorMsg1" />
+      <div class="block-list__list" v-show="!linkNoData" v-else>
         <el-popover
-            v-else
             placement="bottom"
             trigger="hover"
             popper-class="link-block__popper"
@@ -57,14 +56,12 @@
     </div>
 
     <div class="block-list" >
-      <div class="block-list__title" v-if="!showError2">{{ $t('linkMonitor.nextHopInternet') }}</div>
+      <div class="block-list__title">{{ $t('linkMonitor.nextHopInternet') }}</div>
 
       <chart-no-data v-if="nextHopNoData" test-id="nextHpNoData"></chart-no-data>
-
-      <div class="block-list__list" v-show="!nextHopNoData">
-        <chart-error v-if="showError2" :content="errorMsg2" />
+      <chart-error style="top: 40px;" v-show="!nextHopNoData" class="link-block-error" v-if="showError2" :content="errorMsg2" />
+      <div class="block-list__list" v-show="!nextHopNoData" v-else>
         <el-popover
-            v-else
             placement="bottom"
             trigger="hover"
             popper-class="link-block__popper"
@@ -177,133 +174,145 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
 
-      const dataRequest = axios.get(api.linkMonitor.analysis, { params: params })
-      const nextHopRequest = axios.get(api.linkMonitor.nextHopAnalysis, { params: params })
+      const dataRequest = axios.get(api.linkMonitor.analysis, { params: params }).catch(e => {
+        console.error(e)
+        this.linkNoData = false
+        this.showError1 = true
+        this.errorMsg1 = this.errorMsgHandler(e)
+      })
+      const nextHopRequest = axios.get(api.linkMonitor.nextHopAnalysis, { params: params }).catch(e => {
+        console.error(e)
+        this.nextHopNoData = false
+        this.showError2 = true
+        this.errorMsg2 = this.errorMsgHandler(e)
+      })
 
-      Promise.all([dataRequest, nextHopRequest]).then(response => {
-        const res = []
-        res[0] = response[0].data
-        res[1] = response[1].data
-        if (res[0].code === 200) {
-          this.showError1 = false
+      axios.all([dataRequest, nextHopRequest]).then(response => {
+        if (response[0] && response[1]) {
+          const res = []
+          res[0] = response[0].data
+          res[1] = response[1].data
+          if (res[0].code === 200) {
+            this.showError1 = false
 
-          const linkData = res[0].data.result
+            const linkData = res[0].data.result
 
-          this.linkNoData = linkData.length === 0
-          if (!this.linkNoData) {
-            const data = []
-            linkData.forEach(d => {
-              const info = linkInfo.find(i => i.originalLinkId === d.linkId)
-              if (info) {
-                const hit = data.find(d => d.linkId === info.linkId)
-                if (hit) {
-                  hit.egressBitsRate += d.egressBitsRate
-                  hit.ingressBitsRate += d.ingressBitsRate
-                  if (info.direction === 'egress') {
-                    hit.egressBandwidth = info.bandwidth
-                    hit.egressLinkId = d.linkId
-                  } else if (info.direction === 'ingress') {
-                    hit.ingressBandwidth = info.bandwidth
-                    hit.ingressLinkId = d.linkId
+            this.linkNoData = linkData.length === 0
+            if (!this.linkNoData) {
+              const data = []
+              linkData.forEach(d => {
+                const info = linkInfo.find(i => i.originalLinkId === d.linkId)
+                if (info) {
+                  const hit = data.find(d => d.linkId === info.linkId)
+                  if (hit) {
+                    hit.egressBitsRate += d.egressBitsRate
+                    hit.ingressBitsRate += d.ingressBitsRate
+                    if (info.direction === 'egress') {
+                      hit.egressBandwidth = info.bandwidth
+                      hit.egressLinkId = d.linkId
+                    } else if (info.direction === 'ingress') {
+                      hit.ingressBandwidth = info.bandwidth
+                      hit.ingressLinkId = d.linkId
+                    }
+                  } else {
+                    const hit = {
+                      linkId: info.linkId,
+                      egressBitsRate: d.egressBitsRate,
+                      ingressBitsRate: d.ingressBitsRate
+                    }
+                    if (info.direction === 'egress') {
+                      hit.egressBandwidth = info.bandwidth
+                      hit.egressLinkId = d.linkId
+                    } else if (info.direction === 'ingress') {
+                      hit.ingressBandwidth = info.bandwidth
+                      hit.ingressLinkId = d.linkId
+                    }
+                    data.push(hit)
                   }
-                } else {
-                  const hit = {
-                    linkId: info.linkId,
-                    egressBitsRate: d.egressBitsRate,
-                    ingressBitsRate: d.ingressBitsRate
-                  }
-                  if (info.direction === 'egress') {
-                    hit.egressBandwidth = info.bandwidth
-                    hit.egressLinkId = d.linkId
-                  } else if (info.direction === 'ingress') {
-                    hit.ingressBandwidth = info.bandwidth
-                    hit.ingressLinkId = d.linkId
-                  }
-                  data.push(hit)
-                }
-              }
-            })
-            data.forEach((item) => {
-              item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
-            })
-
-            const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
-            const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
-            sorted.forEach((s, i) => {
-              s.color = linkColors[i]
-              s.egressUsage = this.computeUsage(s.egressBitsRate, s.egressBandwidth)
-              s.ingressUsage = this.computeUsage(s.ingressBitsRate, s.ingressBandwidth)
-              s.popoverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
-            })
-            this.linkData = sorted
-          }
-        } else {
-          this.linkNoData = false
-          this.showError1 = true
-          this.errorMsg1 = res[0].message
-        }
-
-        if (res[1].code === 200) {
-          this.showError2 = false
-
-          const nextHopData = res[1].data.result
-          this.nextHopNoData = nextHopData.length === 0
-          if (!this.nextHopNoData) {
-            let directionArr = []
-            nextHopData.forEach((item) => {
-              if (item.egressLinkDirection !== '' && item.ingressLinkDirection !== '') {
-                directionArr.push(item.egressLinkDirection)
-                directionArr.push(item.ingressLinkDirection)
-              }
-            })
-            directionArr = Array.from(new Set(directionArr))
-
-            const newNextHopData = []
-
-            directionArr.forEach((item1) => {
-              const newObj = { egressBitsRate: 0, ingressBitsRate: 0, totalBitsRate: 0, linkDirection: item1 }
-              nextHopData.forEach((item2) => {
-                if (item1 === item2.egressLinkDirection) {
-                  newObj.egressBitsRate += item2.egressBitsRate
-                  newObj.totalBitsRate += item2.egressBitsRate
-                }
-                if (item1 === item2.ingressLinkDirection) {
-                  newObj.ingressBitsRate += item2.ingressBitsRate
-                  newObj.totalBitsRate += item2.ingressBitsRate
                 }
               })
-              newNextHopData.push(newObj)
-            })
-
-            // 下一跳数据处理
-            const nextHopSorted = newNextHopData.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
-            const nextHopColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], nextHopSorted.map(s => s.totalBitsRate))
-            nextHopSorted.forEach((s, i) => {
-              s.color = nextHopColors[i]
-
-              let sum = 0
-              linkInfo.forEach((item) => {
-                // todo 此处需注意，不明确接口返回的方向字段名是拼音还是汉字，后期可能会变动缓存中的nextHop
-                if (s.linkDirection === item.nextHop) {
-                  sum += item.bandwidth
-                }
+              data.forEach((item) => {
+                item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
               })
 
-              // 上行使用情况计算
-              const egressUsage = this.computeUsage(s.egressBitsRate, sum)
-              // 下行使用情况计算
-              const ingressUsage = this.computeUsage(s.ingressBitsRate, sum)
-              s.egressUsage = egressUsage
-              s.ingressUsage = ingressUsage
-              s.popoverWidth = this.computePopoverWidth(egressUsage, ingressUsage)
-            })
-
-            this.nextHopData = nextHopSorted
+              const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
+              const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
+              sorted.forEach((s, i) => {
+                s.color = linkColors[i]
+                s.egressUsage = this.computeUsage(s.egressBitsRate, s.egressBandwidth)
+                s.ingressUsage = this.computeUsage(s.ingressBitsRate, s.ingressBandwidth)
+                s.popoverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
+              })
+              this.linkData = sorted
+            }
+          } else {
+            this.linkNoData = false
+            this.showError1 = true
+            this.errorMsg1 = res[0].message
           }
-        } else {
-          this.showError2 = true
-          this.nextHopNoData = false
-          this.errorMsg2 = res[1].message
+
+          if (res[1].code === 200) {
+            this.showError2 = false
+
+            const nextHopData = res[1].data.result
+            this.nextHopNoData = nextHopData.length === 0
+            if (!this.nextHopNoData) {
+              let directionArr = []
+              nextHopData.forEach((item) => {
+                if (item.egressLinkDirection !== '' && item.ingressLinkDirection !== '') {
+                  directionArr.push(item.egressLinkDirection)
+                  directionArr.push(item.ingressLinkDirection)
+                }
+              })
+              directionArr = Array.from(new Set(directionArr))
+
+              const newNextHopData = []
+
+              directionArr.forEach((item1) => {
+                const newObj = { egressBitsRate: 0, ingressBitsRate: 0, totalBitsRate: 0, linkDirection: item1 }
+                nextHopData.forEach((item2) => {
+                  if (item1 === item2.egressLinkDirection) {
+                    newObj.egressBitsRate += item2.egressBitsRate
+                    newObj.totalBitsRate += item2.egressBitsRate
+                  }
+                  if (item1 === item2.ingressLinkDirection) {
+                    newObj.ingressBitsRate += item2.ingressBitsRate
+                    newObj.totalBitsRate += item2.ingressBitsRate
+                  }
+                })
+                newNextHopData.push(newObj)
+              })
+
+              // 下一跳数据处理
+              const nextHopSorted = newNextHopData.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
+              const nextHopColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], nextHopSorted.map(s => s.totalBitsRate))
+              nextHopSorted.forEach((s, i) => {
+                s.color = nextHopColors[i]
+
+                let sum = 0
+                linkInfo.forEach((item) => {
+                  // todo 此处需注意，不明确接口返回的方向字段名是拼音还是汉字，后期可能会变动缓存中的nextHop
+                  if (s.linkDirection === item.nextHop) {
+                    sum += item.bandwidth
+                  }
+                })
+
+                // 上行使用情况计算
+                const egressUsage = this.computeUsage(s.egressBitsRate, sum)
+                // 下行使用情况计算
+                const ingressUsage = this.computeUsage(s.ingressBitsRate, sum)
+                s.egressUsage = egressUsage
+                s.ingressUsage = ingressUsage
+                s.popoverWidth = this.computePopoverWidth(egressUsage, ingressUsage)
+              })
+
+              this.nextHopData = nextHopSorted
+            }
+          } else {
+            this.showError2 = true
+            this.nextHopNoData = false
+            this.errorMsg2 = res[1].message
+          }
         }
       }).catch(e => {
         console.error(e)

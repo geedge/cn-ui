@@ -61,8 +61,8 @@ import { shallowRef } from 'vue'
 import _ from 'lodash'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import axios from 'axios'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import unitConvert from '@/utils/unit-convert'
@@ -154,7 +154,8 @@ export default {
           url = api.npm.location.packetsRetrains
         }
         if (url) {
-          get(url, params).then(res => {
+          axios.get(url, { params: params }).then(res => {
+            res = res.data
             if (res.code === 200) {
               this.showError = false
               this.isNoData = res.data.result.length === 0
@@ -180,10 +181,11 @@ export default {
               this.showError = true
               this.errorMsg = res.message
             }
-          }).catch((e) => {
+          }).catch(e => {
+            console.error(e)
             this.isNoData = false
             this.showError = true
-            this.errorMsg = e.message
+            this.errorMsg = this.errorMsgHandler(e)
           }).finally(() => {
             this.toggleLoading(false)
           })

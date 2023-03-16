@@ -1,5 +1,6 @@
 import { hasButton } from '@/permission'
 import { dateFormatByAppearance } from '@/utils/date-util'
+import { commonErrorTip } from '@/utils/constants'
 export default {
   data () {
     return {
@@ -28,6 +29,16 @@ export default {
   methods: {
     hasButton (code) {
       return hasButton(this.$store.getters.buttonList, code)
+    },
+    errorMsgHandler (axiosError) {
+      if (axiosError.response) {
+        if (axiosError.response.data) {
+          return axiosError.response.data.message || commonErrorTip
+        }
+      } else if (axiosError.message) {
+        return axiosError.message
+      }
+      return commonErrorTip
     },
     isBuiltIn (row) {
       return (row.buildIn && row.buildIn === 1) || (row.builtIn && row.builtIn === 1)

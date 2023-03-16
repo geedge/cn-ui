@@ -26,7 +26,7 @@
 import { pieChartOption1, pieChartOption2 } from '@/views/charts2/charts/options/echartOption.js'
 import * as echarts from 'echarts'
 import { shallowRef } from 'vue'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -70,16 +70,16 @@ export default {
         this.myChart = echarts.init(dom)
         this.chartOption = pieChartOption1
         this.loading1 = true
-        get(api.netWorkOverview.eventSeverity, params).then(res => {
-          if (res.code === 200) {
+        axios.get(api.netWorkOverview.eventSeverity, { params: params }).then(res => {
+          if (res.data.code === 200) {
             this.showError1 = false
-            if (res.data.result.length === 0) {
+            if (res.data.data.result.length === 0) {
               this.isNoData = true
               return
             } else {
               this.isNoData = false
             }
-            res.data.result = res.data.result.map(t => {
+            res.data.data.result = res.data.data.result.map(t => {
               if (t.eventSeverity === 'critical') {
                 t.index = 0
               } else if (t.eventSeverity === 'high') {
@@ -97,18 +97,19 @@ export default {
                 index: t.index
               }
             })
-            this.chartOption.legend.show = res.data.result.length > 0
-            this.chartOption.series[0].data = res.data.result.sort((a, b) => { return a.index - b.index })
+            this.chartOption.legend.show = res.data.data.result.length > 0
+            this.chartOption.series[0].data = res.data.data.result.sort((a, b) => { return a.index - b.index })
             this.myChart.setOption(this.chartOption)
           } else {
             this.isNoData = false
             this.showError1 = true
-            this.errorMsg1 = res.message
+            this.errorMsg1 = res.data.message
           }
-        }).catch((e) => {
+        }).catch(e => {
+          console.error(e)
           this.isNoData = false
           this.showError1 = true
-          this.errorMsg1 = e.message
+          this.errorMsg1 = this.errorMsgHandler(e)
         }).finally(() => {
           this.loading1 = false
         })
@@ -117,23 +118,23 @@ export default {
         this.myChart2 = echarts.init(dom2)
         this.chartOption2 = pieChartOption2
         this.loading2 = true
-        get(api.netWorkOverview.eventType, params).then(res => {
-          if (res.code === 200) {
+        axios.get(api.netWorkOverview.eventType, { params: params }).then(res => {
+          if (res.data.code === 200) {
             this.showError2 = false
 
-            if (res.data.result.length === 0) {
+            if (res.data.data.result.length === 0) {
               this.isNoData2 = true
               return
             } else {
               this.isNoData2 = false
             }
-            res.data.result = res.data.result.map(t => {
+            res.data.data.result = res.data.data.result.map(t => {
               return {
                 name: t.eventType,
                 value: t.count
               }
             })
-            if (res.data.result.length <= 0) {
+            if (res.data.data.result.length <= 0) {
               this.chartOption2.legend.show = false
             } else {
               this.chartOption2.legend.show = true
@@ -145,10 +146,10 @@ export default {
             this.showError2 = true
             this.errorMsg2 = res.message
           }
-        }).catch((e) => {
+        }).catch(e => {
           this.isNoData2 = false
           this.showError2 = true
-          this.errorMsg2 = e.message
+          this.errorMsg2 = this.errorMsgHandler(e)
         }).finally(() => {
           this.loading2 = false
         })

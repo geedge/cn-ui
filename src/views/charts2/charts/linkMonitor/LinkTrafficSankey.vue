@@ -33,7 +33,7 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { linksTrafficSankeyOption } from '@/views/charts2/charts/options/echartOption'
 import { ref, shallowRef } from 'vue'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { useRoute } from 'vue-router'
@@ -116,7 +116,8 @@ export default {
         }
       }
       this.toggleLoading(true)
-      get(url, params).then(res => {
+      axios.get(url, { params: params }).then(res => {
+        res = res.data
         if (res.code === 200) {
           this.showError = false
           if (n === 0) {
@@ -131,10 +132,10 @@ export default {
         }
       }).catch(e => {
         console.error(e)
-        this.egress = true
-        this.ingress = true
+        this.egress = false
+        this.ingress = false
         this.showError = true
-        this.errorMsg = e.message
+        this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
       })

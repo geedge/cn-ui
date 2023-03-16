@@ -54,7 +54,8 @@ import { storageKey, unitTypes, countryNameIdMapping } from '@/utils/constants'
 import locationOptions from '@/views/charts2/charts/locationOptions'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
-import { api, getData } from '@/utils/api'
+import { api } from '@/utils/api'
+import axios from 'axios'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
 // import { Rectangle3D } from '@amcharts/amcharts4/.internal/core/elements/3d/Rectangle3D'
@@ -121,7 +122,8 @@ export default {
           side: this.trafficDirection.toLowerCase(),
           country: this.location
         }
-        getData(api.npm.location.map, params).then(res => {
+        axios.get(api.npm.location.map, { params: params }).then(res => {
+          res = res.data
           if (res.length > 0) {
             // 计算分数
             this.showError = false
@@ -176,7 +178,7 @@ export default {
           }
         }).catch((e) => {
           this.showError = true
-          this.errorMsg = e.message
+          this.errorMsg = this.errorMsgHandler(e)
         }).finally(() => {
           this.toggleLoading(false)
         })

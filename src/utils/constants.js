@@ -121,6 +121,7 @@ export const chartTableColumnMapping = {
   responseFailRate: 'dns.responseFailureRate',
   ip: 'IP'
 }
+export const commonErrorTip = 'Something went wrong...'
 export const chartTableOrderOptionsMapping = {
   lastTime: 'last_time',
   tagName: 'tag_name'

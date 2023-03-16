@@ -285,8 +285,7 @@ export default {
         console.error(e)
         this.toggleLoading(false)
         this.showError = true
-        this.errorMsg = ''
-        this.errorMsg = e.message
+        this.errorMsg = this.errorMsgHandler(e)
       })
     },
     getUrlParam (param, defaultValue, isNumber) {

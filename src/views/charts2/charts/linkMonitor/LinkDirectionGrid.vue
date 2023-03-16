@@ -1,10 +1,10 @@
 <template>
   <div class="link-direction-grid">
     <!--左侧链路出入口-->
-    <popover-content :isNoData="isLinkNoData" :gridData="linkGridData" :showError="isLinkShowError" :content="linkErrorMsg" style="width: 900px;"/>
+    <popover-content :title="$t('linkMonitor.egressLink') + ' & ' + $t('linkMonitor.ingressLink')" :isNoData="isLinkNoData" :gridData="linkGridData" :showError="isLinkShowError" :content="linkErrorMsg" style="width: 900px;"/>
 
     <!--右侧链路下一跳-->
-    <popover-content :isNoData="isNextNoData" :gridData="nextGridData" :showError="isNextShowError" :content="nextErrorMsg" />
+    <popover-content :title="$t('linkMonitor.nextHopInternetOfGrid')" :isNoData="isNextNoData" :gridData="nextGridData" :showError="isNextShowError" :content="nextErrorMsg" />
   </div>
 </template>
 
@@ -56,183 +56,185 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
 
-      const dataRequest = axios.get(api.linkMonitor.bigramAnalysis, { params: params })
-      const nextHopRequest = axios.get(api.linkMonitor.bigramNextHopAnalysis, { params: params })
+      const dataRequest = axios.get(api.linkMonitor.bigramAnalysis, { params: params }).catch(e => {
+        this.isLinkShowError = true
+        this.isLinkNoData = false
+        this.linkErrorMsg = this.errorMsgHandler(e)
+      })
+      const nextHopRequest = axios.get(api.linkMonitor.bigramNextHopAnalysis, { params: params }).catch(e => {
+        this.isNextShowError = true
+        this.isNextNoData = false
+        this.nextErrorMsg = this.errorMsgHandler(e)
+      })
       this.toggleLoading(true)
 
-      Promise.all([dataRequest, nextHopRequest]).then(response => {
-        const res = []
-        res[0] = response[0].data
-        res[1] = response[1].data
-        if (res[0].code === 200) {
-          this.isLinkShowError = false
-          // 链路流量数据
-          const linkData = res[0].data.result
-          // 接口数据乱序，根据入链路id（ingressLinkId）大小排序之后，
-          // 再根据同ingressLinkId下的egressLinkId进行排序
-          linkData.sort((a, b) => {
-            if (a.ingressLinkId !== b.ingressLinkId) {
-              return a.ingressLinkId - b.ingressLinkId
-            }
-            return a.egressLinkId - b.egressLinkId
-          })
-
-          this.isLinkNoData = linkData.length === 0
-          if (!this.isLinkNoData) {
+      axios.all([dataRequest, nextHopRequest]).then(response => {
+        if (response[0] && response[1]) {
+          const res = []
+          res[0] = response[0].data
+          res[1] = response[1].data
+          if (res[0].code === 200) {
+            this.isLinkShowError = false
             // 链路流量数据
-            const linkGridData = []
-            linkData.forEach(d => {
-              const ingressLink = linkInfo.find(l => l.originalLinkId === d.ingressLinkId)
-              const egressLink = linkInfo.find(l => l.originalLinkId === d.egressLinkId)
-              if (ingressLink && egressLink) {
-                const data = linkGridData.find(g => g.linkId === ingressLink.linkId)
-
-                // 上行使用情况计算
-                const egressUsage = this.computeUsage(d.egressBitsRate, egressLink.bandwidth)
-                // 下行使用情况计算
-                const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressLink.bandwidth)
-                // 宽带使用超过90%，赋红点
-
-                d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
-                // 计算npm分数
-                // 分数低于3分，赋红点
-                d.score = this.localComputeScore(d)
-
-                d.scoreLow3 = d.score < 3 || d.score === '-'
-
-                if (data) {
-                  const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
-                  if (!existedEgressLink) {
-                    data.egress.push({
-                      linkId: egressLink.linkId,
-                      egressUsage: egressUsage,
-                      ingressUsage: ingressUsage,
-                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                      totalBitsRate: d.totalBitsRate,
-                      ...d
-                    })
-                  }
-                } else {
-                  linkGridData.push({
-                    linkId: ingressLink.linkId,
-                    egress: [{
-                      linkId: egressLink.linkId,
-                      egressUsage: egressUsage,
-                      ingressUsage: ingressUsage,
-                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                      totalBitsRate: d.totalBitsRate,
-                      ...d
-                    }]
-                  })
-                }
+            const linkData = res[0].data.result
+            // 接口数据乱序，根据入链路id（ingressLinkId）大小排序之后，
+            // 再根据同ingressLinkId下的egressLinkId进行排序
+            linkData.sort((a, b) => {
+              if (a.ingressLinkId !== b.ingressLinkId) {
+                return a.ingressLinkId - b.ingressLinkId
               }
+              return a.egressLinkId - b.egressLinkId
             })
 
-            this.linkGridData = linkGridData
-          }
-        } else {
-          this.isLinkNoData = false
-          this.isLinkShowError = true
-          this.linkErrorMsg = res[0].message
-        }
+            this.isLinkNoData = linkData.length === 0
+            if (!this.isLinkNoData) {
+              // 链路流量数据
+              const linkGridData = []
+              linkData.forEach(d => {
+                const ingressLink = linkInfo.find(l => l.originalLinkId === d.ingressLinkId)
+                const egressLink = linkInfo.find(l => l.originalLinkId === d.egressLinkId)
+                if (ingressLink && egressLink) {
+                  const data = linkGridData.find(g => g.linkId === ingressLink.linkId)
 
-        if (res[1].code === 200) {
-          this.isNextShowError = false
+                  // 上行使用情况计算
+                  const egressUsage = this.computeUsage(d.egressBitsRate, egressLink.bandwidth)
+                  // 下行使用情况计算
+                  const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressLink.bandwidth)
+                  // 宽带使用超过90%，赋红点
 
-          // 链路下一跳信息
-          const nextLinkData = res[1].data.result
-          // 接口数据乱序，根据入方向排序，再根据同个入方向下的出方向进行排序
-          nextLinkData.sort((a, b) => {
-            if (a.ingressLinkDirection !== b.ingressLinkDirection) {
-              return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection, 'zh')
+                  d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
+                  // 计算npm分数
+                  // 分数低于3分，赋红点
+                  d.score = this.localComputeScore(d)
+
+                  d.scoreLow3 = d.score < 3 || d.score === '-'
+
+                  if (data) {
+                    const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
+                    if (!existedEgressLink) {
+                      data.egress.push({
+                        linkId: egressLink.linkId,
+                        egressUsage: egressUsage,
+                        ingressUsage: ingressUsage,
+                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                        totalBitsRate: d.totalBitsRate,
+                        ...d
+                      })
+                    }
+                  } else {
+                    linkGridData.push({
+                      linkId: ingressLink.linkId,
+                      egress: [{
+                        linkId: egressLink.linkId,
+                        egressUsage: egressUsage,
+                        ingressUsage: ingressUsage,
+                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                        totalBitsRate: d.totalBitsRate,
+                        ...d
+                      }]
+                    })
+                  }
+                }
+              })
+              this.linkGridData = linkGridData
             }
-            return a.egressLinkDirection.localeCompare(b.egressLinkDirection, 'zh')
-          })
+          } else {
+            this.isLinkNoData = false
+            this.isLinkShowError = true
+            this.linkErrorMsg = res[0].message
+          }
 
-          this.isNextNoData = nextLinkData.length === 0
-          if (!this.isNextNoData) {
-            // 链路下一跳数据
-            const nextGridData = []
+          if (res[1].code === 200) {
+            this.isNextShowError = false
 
-            nextLinkData.forEach(d => {
-              const ingressLink = linkInfo.find(l => l.nextHop === d.ingressLinkDirection && l.direction === 'ingress')
-              const egressLink = linkInfo.find(l => l.nextHop === d.egressLinkDirection && l.direction === 'egress')
-
-              if (ingressLink && egressLink) {
-                const data = nextGridData.find(g => g.linkId === ingressLink.linkId)
-
-                let egressBanwidth = 0
-                let ingressBanwidth = 0
-                linkInfo.forEach((item) => {
-                  if (item.nextHop === d.egressLinkDirection && item.direction === 'egress') {
-                    egressBanwidth += item.bandwidth
-                  }
-                  if (item.nextHop === d.ingressLinkDirection && item.direction === 'ingress') {
-                    ingressBanwidth += item.bandwidth
-                  }
-                })
-
-                // 上行使用情况计算
-                const egressUsage = this.computeUsage(d.egressBitsRate, egressBanwidth)
-                // 下行使用情况计算
-                const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressBanwidth)
-                // 宽带使用超过90%，赋红点
-
-                d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
-                // 计算npm分数
-                // 分数低于3分，赋红点
-                d.score = this.localComputeScore(d)
-
-                d.scoreLow3 = d.score < 3 || d.score === '-'
-
-                if (data) {
-                  const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
-                  if (!existedEgressLink) {
-                    data.egress.push({
-                      linkId: egressLink.linkId,
-                      nextHop: egressLink.nextHop,
-                      egressUsage: egressUsage,
-                      ingressUsage: ingressUsage,
-                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                      totalBitsRate: d.totalBitsRate,
-                      ...d
-                    })
-                  }
-                } else {
-                  nextGridData.push({
-                    linkId: ingressLink.linkId,
-                    nextHop: ingressLink.nextHop,
-                    egress: [{
-                      linkId: egressLink.linkId,
-                      nextHop: ingressLink.nextHop,
-                      egressUsage: egressUsage,
-                      ingressUsage: ingressUsage,
-                      popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                      valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
-                      totalBitsRate: d.totalBitsRate,
-                      ...d
-                    }]
-                  })
-                }
+            // 链路下一跳信息
+            const nextLinkData = res[1].data.result
+            // 接口数据乱序，根据入方向排序，再根据同个入方向下的出方向进行排序
+            nextLinkData.sort((a, b) => {
+              if (a.ingressLinkDirection !== b.ingressLinkDirection) {
+                return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection, 'zh')
               }
+              return a.egressLinkDirection.localeCompare(b.egressLinkDirection, 'zh')
             })
 
-            this.nextGridData = nextGridData
-          }
-        } else {
-          this.isNextNoData = false
-          this.isNextShowError = true
-          this.nextErrorMsg = res[1].message
-        }
-      }).catch(e => {
-        this.isLinkShowError = true
-        this.linkErrorMsg = e.message
+            this.isNextNoData = nextLinkData.length === 0
+            if (!this.isNextNoData) {
+              // 链路下一跳数据
+              const nextGridData = []
 
-        this.isNextShowError = true
-        this.nextErrorMsg = e.message
+              nextLinkData.forEach(d => {
+                const ingressLink = linkInfo.find(l => l.nextHop === d.ingressLinkDirection && l.direction === 'ingress')
+                const egressLink = linkInfo.find(l => l.nextHop === d.egressLinkDirection && l.direction === 'egress')
+
+                if (ingressLink && egressLink) {
+                  const data = nextGridData.find(g => g.linkId === ingressLink.linkId)
+
+                  let egressBanwidth = 0
+                  let ingressBanwidth = 0
+                  linkInfo.forEach((item) => {
+                    if (item.nextHop === d.egressLinkDirection && item.direction === 'egress') {
+                      egressBanwidth += item.bandwidth
+                    }
+                    if (item.nextHop === d.ingressLinkDirection && item.direction === 'ingress') {
+                      ingressBanwidth += item.bandwidth
+                    }
+                  })
+
+                  // 上行使用情况计算
+                  const egressUsage = this.computeUsage(d.egressBitsRate, egressBanwidth)
+                  // 下行使用情况计算
+                  const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressBanwidth)
+                  // 宽带使用超过90%，赋红点
+
+                  d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
+                  // 计算npm分数
+                  // 分数低于3分，赋红点
+                  d.score = this.localComputeScore(d)
+
+                  d.scoreLow3 = d.score < 3 || d.score === '-'
+
+                  if (data) {
+                    const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
+                    if (!existedEgressLink) {
+                      data.egress.push({
+                        linkId: egressLink.linkId,
+                        nextHop: egressLink.nextHop,
+                        egressUsage: egressUsage,
+                        ingressUsage: ingressUsage,
+                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                        totalBitsRate: d.totalBitsRate,
+                        ...d
+                      })
+                    }
+                  } else {
+                    nextGridData.push({
+                      linkId: ingressLink.linkId,
+                      nextHop: ingressLink.nextHop,
+                      egress: [{
+                        linkId: egressLink.linkId,
+                        nextHop: ingressLink.nextHop,
+                        egressUsage: egressUsage,
+                        ingressUsage: ingressUsage,
+                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
+                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                        totalBitsRate: d.totalBitsRate,
+                        ...d
+                      }]
+                    })
+                  }
+                }
+              })
+              this.nextGridData = nextGridData
+            }
+          } else {
+            this.isNextNoData = false
+            this.isNextShowError = true
+            this.nextErrorMsg = res[1].message
+          }
+        }
       }).finally(() => {
         this.toggleLoading(false)
       })

@@ -209,7 +209,8 @@ import {
   storageKey,
   dbDrilldownTableConfig,
   fromRoute,
-  drillDownPanelTypeMapping
+  drillDownPanelTypeMapping,
+  commonErrorTip
 } from '@/utils/constants'
 import { get } from '@/utils/http'
 import unitConvert from '@/utils/unit-convert'
@@ -217,6 +218,7 @@ import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilld
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
+import axios from 'axios'
 import indexedDBUtils from '@/indexedDB'
 
 export default {
@@ -340,22 +342,22 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       const requestUrl = this.getCurUrl()
-      get(requestUrl, queryParams).then(response => {
-        if (response.code === 200) {
+      axios.get(requestUrl, { params: queryParams }).then(response => {
+        if (response.data.code === 200) {
           this.showError = false
           this.errorMsg = ''
-          this.chartData = response.data.result
+          this.chartData = response.data.data.result
           this.initData()
         } else {
           this.showError = true
-          this.errorMsg = response.message || 'Unknown'
+          this.errorMsg = response.data.message || commonErrorTip
           this.isNoData = true
           this.toggleLoading(false)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
-        this.errorMsg = e.message || 'Unknown'
+        this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.changeUrlTabState()
         this.toggleLoading(false)
@@ -653,11 +655,11 @@ export default {
       if (this.customTableTitles && this.customTableTitles.length > 0) {
         this.customTableTitles.forEach(tableColumn => {
           if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl && tableDataTmp && tableDataTmp.length > 0) {
-            get(self.gerCycleUrl(), queryParams).then(response => {
-              if (response.code === 200) {
+            axios.get(self.gerCycleUrl(), { params: queryParams }).then(response => {
+              if (response.data.code === 200) {
                 tableColumn.showError = false
                 tableColumn.errorMsg = ''
-                cycleTotalList = response.data.result
+                cycleTotalList = response.data.data.result
                 tableDataTmp.forEach(item => {
                   const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
                   let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
@@ -703,12 +705,12 @@ export default {
                 })
               } else {
                 tableColumn.showError = true
-                tableColumn.errorMsg = response.message || 'Unknown'
+                tableColumn.errorMsg = response.data.message || commonErrorTip
               }
             }).catch(e => {
-              console.log(e)
+              console.error(e)
               tableColumn.showError = true
-              tableColumn.errorMsg = e.message || 'Unknown'
+              tableColumn.errorMsg = this.errorMsgHandler(e)
             }).finally(e => {
               this.tableData = tableDataTmp
               this.tableDataBackup = tableDataTmp
@@ -719,13 +721,13 @@ export default {
               // 查询需要单独查询的，且需要展示环比图标，列的当前周期的数据
               this.customTableTitles.forEach(tableColumn => {
                 if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
-                  get(self.gerColumnUrl(tableColumn), queryParams).then(response => {
-                    if (response.code === 200) {
+                  axios.get(self.gerColumnUrl(tableColumn), { params: queryParams }).then(response => {
+                    if (response.data.code === 200) {
                       if (!tableColumn.showError) {
                         tableColumn.showError = false
                         tableColumn.errorMsg = ''
                       }
-                      const columnList = response.data.result
+                      const columnList = response.data.data.result
                       self.tableData.forEach((item, i) => {
                         const data = columnList.find(i => i[curTab.prop] === item.tab)
                         if (!item.scoreGroup) {
@@ -746,12 +748,12 @@ export default {
                       })
                     } else {
                       tableColumn.showError = true
-                      tableColumn.errorMsg = response.message || 'Unknown'
+                      tableColumn.errorMsg = response.data.message || commonErrorTip
                     }
                   }).catch(e => {
-                    console.log(e)
+                    console.error(e)
                     tableColumn.showError = true
-                    tableColumn.errorMsg = e.message || 'Unknown'
+                    tableColumn.errorMsg = this.errorMsgHandler(e)
                   }).finally(e => {
                     // 查询需要单独查询的，且需要展示环比图标，列的前一周期的数据
                     if (tableColumn.cycle && self.tableData && self.tableData.length > 0) {
@@ -759,13 +761,13 @@ export default {
                         ...queryParams,
                         cycle: tableColumn.cycle
                       }
-                      get(self.gerColumnUrl(tableColumn), queryCycleParams).then(response => {
-                        if (response.code === 200) {
+                      axios.get(self.gerColumnUrl(tableColumn), { params: queryCycleParams }).then(response => {
+                        if (response.data.code === 200) {
                           if (!tableColumn.showError) {
                             tableColumn.showError = false
                             tableColumn.errorMsg = ''
                           }
-                          cycleTotalList = response.data.result
+                          cycleTotalList = response.data.data.result
                           self.tableData.forEach(item => {
                             const cycle = cycleTotalList.find(i => i[curTab.prop] === item.tab)
                             let trend = ''// 空：无图标；up：向上的图标；down：向下的图标；noChange：横向箭头图标
@@ -814,12 +816,12 @@ export default {
                           })
                         } else {
                           tableColumn.showError = true
-                          tableColumn.errorMsg = response.message || 'Unknown'
+                          tableColumn.errorMsg = response.data.message || commonErrorTip
                         }
                       }).catch(e => {
-                        console.log(e)
+                        console.error(e)
                         tableColumn.showError = true
-                        tableColumn.errorMsg = e.message || 'Unknown'
+                        tableColumn.errorMsg = this.errorMsgHandler(e)
                       })
                     }
                   })

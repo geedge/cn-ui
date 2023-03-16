@@ -36,6 +36,7 @@ import { chartColor3, unitTypes } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
@@ -194,7 +195,8 @@ export default {
       }
       this.toggleLoading(true)
       if (params.type && params.q) {
-        get(api.npm.overview.trafficGraph, params).then((res) => {
+        axios.get(api.npm.overview.trafficGraph, { params: params }).then(res => {
+          res = res.data
           if (res.code === 200) {
             this.showError = false
             this.isNoData = res.data.result.length === 0
@@ -215,7 +217,6 @@ export default {
                 { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
               ]
             } else {
-              console.info(res.data.result)
               this.initData(res.data.result, val)
             }
           } else {
@@ -226,17 +227,17 @@ export default {
         }).catch(e => {
           this.isNoData = false
           this.showError = true
-          this.errorMsg = e.message
+          this.errorMsg = this.errorMsgHandler(e)
           console.error(e)
         }).finally(() => {
           this.toggleLoading(false)
         })
       } else {
         this.toggleLoading(true)
-        const totalTrafficAnalysis = get(api.npm.overview.totalTrafficAnalysis, params)
-        const totalNetworkAnalysis = get(api.npm.overview.totalNetworkAnalysis, params)
-        const totalHttpResponseDelay = get(api.npm.overview.totalHttpResponseDelay, params)
-        const totalSslConDelay = get(api.npm.overview.totalSslConDelay, params)
+        const totalTrafficAnalysis = axios.get(api.npm.overview.totalTrafficAnalysis, { params: params })
+        const totalNetworkAnalysis = get(api.npm.overview.totalNetworkAnalysis, { params: params })
+        const totalHttpResponseDelay = get(api.npm.overview.totalHttpResponseDelay, { params: params })
+        const totalSslConDelay = get(api.npm.overview.totalSslConDelay, { params: params })
         const npmLineData = []
         Promise.all([totalNetworkAnalysis, totalTrafficAnalysis, totalHttpResponseDelay, totalSslConDelay]).then(res => {
           res.forEach(item => {
@@ -267,13 +268,12 @@ export default {
               { name: this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
             ]
           } else {
-            console.info(npmLineData)
             this.initData(npmLineData, val)
           }
         }).catch(e => {
           this.isNoData = false
           this.showError = true
-          this.errorMsg = e.message
+          this.errorMsg = this.errorMsgHandler(e)
         }).finally(() => {
           this.toggleLoading(false)
         })

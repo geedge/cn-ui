@@ -291,8 +291,9 @@ export default {
           this.errorMsg = res[0].message
         }
       }).catch(e => {
+        console.error(e)
         this.showError = true
-        this.errorMsg = e.message
+        this.errorMsg = this.errorMsgHandler(e)
         this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)

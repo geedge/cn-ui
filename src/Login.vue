@@ -40,6 +40,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { post, get } from '@/utils/http'
+import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
@@ -69,21 +70,21 @@ export default {
         return
       }
       this.loading = true
-      post(api.login, { username: this.username, pin: this.pin }).then(
+      axios.post(api.login, { username: this.username, pin: this.pin }).then(
         res => {
-          if (res.code === 200) {
-            if (!_.isEmpty(res.data.lang)) {
-              localStorage.setItem(storageKey.language, res.data.lang)
+          if (res.data.code === 200) {
+            if (!_.isEmpty(res.data.data.lang)) {
+              localStorage.setItem(storageKey.language, res.data.data.lang)
             }
-            if (!_.isEmpty(res.data.theme)) {
-              localStorage.setItem(storageKey.theme, res.data.theme)
+            if (!_.isEmpty(res.data.data.theme)) {
+              localStorage.setItem(storageKey.theme, res.data.data.theme)
             }
             res.loginSuccessPath = this.$route.query.redirect
             this.loginSuccess(res)
             localStorage.setItem(storageKey.username, this.username)
-            localStorage.setItem(storageKey.userId, res.data.userId)
-            localStorage.setItem(storageKey.token, res.data.token)
-          } else if (res.code === 518005) {
+            localStorage.setItem(storageKey.userId, res.data.data.userId)
+            localStorage.setItem(storageKey.token, res.data.data.token)
+          } else if (res.data.code === 518005) {
             this.$message.error(this.$t('Incorrect username or password'))
             this.loading = false
             this.blockOperation.query = false
@@ -97,7 +98,7 @@ export default {
         console.error(e)
         this.loading = false
         this.blockOperation.query = false
-        this.$message.error(this.$t('tip.unknownError'))
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     queryAppearance () {

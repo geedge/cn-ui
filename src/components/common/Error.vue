@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showDefault" class="error-component">
+  <div v-if="showDefault" class="error-component" :style="style" :class="class">
     <div class="error-block" :style="{'max-width': localMaxWidth, 'width': localWidth}">
       <svg class="icon error-icon-default" aria-hidden="true">
         <use xlink:href="#cn-icon-baocuo"></use>
@@ -100,6 +100,12 @@ export default {
     },
     // 自定义svg图标
     svg: {
+      type: String
+    },
+    style: {
+      type: String
+    },
+    class: {
       type: String
     }
   },

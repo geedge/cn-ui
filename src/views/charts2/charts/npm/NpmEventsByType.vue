@@ -139,10 +139,10 @@ export default {
           this.showError = true
           this.errorMsg = res.message
         }
-      }).catch((e) => {
+      }).catch(e => {
         this.isNoData = false
         this.showError = true
-        this.errorMsg = e.message
+        this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
       })
