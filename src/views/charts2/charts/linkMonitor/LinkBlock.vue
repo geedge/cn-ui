@@ -187,7 +187,7 @@ export default {
         this.errorMsg2 = this.errorMsgHandler(e)
       })
 
-      axios.all([dataRequest, nextHopRequest]).then(response => {
+      Promise.all([dataRequest, nextHopRequest]).then(response => {
         if (response[0] && response[1]) {
           const res = []
           res[0] = response[0].data
