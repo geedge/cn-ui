@@ -1,10 +1,10 @@
 <template>
   <div class="link-direction-grid">
     <!--左侧链路出入口-->
-    <popover-content :isNoData="isLinkNoData" :gridData="linkGridData" :showError="isLinkShowError" :content="linkErrorMsg" style="width: 900px;"/>
+    <popover-content :title="$t('linkMonitor.egressLink') + ' & ' + $t('linkMonitor.ingressLink')" :isNoData="isLinkNoData" :gridData="linkGridData" :showError="isLinkShowError" :content="linkErrorMsg" style="width: 900px;"/>
 
     <!--右侧链路下一跳-->
-    <popover-content :isNoData="isNextNoData" :gridData="nextGridData" :showError="isNextShowError" :content="nextErrorMsg" />
+    <popover-content :title="$t('linkMonitor.nextHopInternetOfGrid')" :isNoData="isNextNoData" :gridData="nextGridData" :showError="isNextShowError" :content="nextErrorMsg" />
   </div>
 </template>
 
