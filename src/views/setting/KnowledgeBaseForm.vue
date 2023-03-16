@@ -298,7 +298,10 @@ export default {
       }
     },
     cancel () {
-      history.back()
+      this.$router.push({
+        path: '/knowledgeBase',
+        t: +new Date()
+      })
     },
     save () {
       if (this.blockOperation.save) { return }
