@@ -235,14 +235,14 @@ export default {
       } else {
         this.toggleLoading(true)
         const totalTrafficAnalysis = axios.get(api.npm.overview.totalTrafficAnalysis, { params: params })
-        const totalNetworkAnalysis = get(api.npm.overview.totalNetworkAnalysis, { params: params })
-        const totalHttpResponseDelay = get(api.npm.overview.totalHttpResponseDelay, { params: params })
-        const totalSslConDelay = get(api.npm.overview.totalSslConDelay, { params: params })
+        const totalNetworkAnalysis = axios.get(api.npm.overview.totalNetworkAnalysis, { params: params })
+        const totalHttpResponseDelay = axios.get(api.npm.overview.totalHttpResponseDelay, { params: params })
+        const totalSslConDelay = axios.get(api.npm.overview.totalSslConDelay, { params: params })
         const npmLineData = []
         Promise.all([totalNetworkAnalysis, totalTrafficAnalysis, totalHttpResponseDelay, totalSslConDelay]).then(res => {
           res.forEach(item => {
-            if (item.code === 200) {
-              npmLineData.push(...item.data.result)
+            if (item.data.code === 200) {
+              npmLineData.push(...item.data.data.result)
             } else {
               this.isNoData = false
               this.showError = true
