@@ -67,7 +67,9 @@ export default {
       const dom = document.getElementById('chart1')
       const dom2 = document.getElementById('chart2')
       if (dom) {
-        this.myChart = echarts.init(dom)
+        if (!this.myChart) {
+          this.myChart = echarts.init(dom)
+        }
         this.chartOption = pieChartOption1
         this.loading1 = true
         axios.get(api.netWorkOverview.eventSeverity, { params: params }).then(res => {
@@ -115,7 +117,9 @@ export default {
         })
       }
       if (dom2) {
-        this.myChart2 = echarts.init(dom2)
+        if (!this.myChart2) {
+          this.myChart2 = echarts.init(dom2)
+        }
         this.chartOption2 = pieChartOption2
         this.loading2 = true
         axios.get(api.netWorkOverview.eventType, { params: params }).then(res => {
@@ -139,7 +143,7 @@ export default {
             } else {
               this.chartOption2.legend.show = true
             }
-            this.chartOption2.series[0].data = res.data.result
+            this.chartOption2.series[0].data = res.data.data.result
             this.myChart2.setOption(this.chartOption2)
           } else {
             this.isNoData2 = false
