@@ -4,13 +4,14 @@
     <template v-if="chartData.i18n === 'overall.throughput'">
       <div class="npm-line-header">
         <div class="npm-line-header-title">
-          {{$t(chartData.i18n) || chartData.name}}
+          {{ $t(chartData.i18n) || chartData.name }}
           <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
         </div>
         <div class="npm-line-header-rights" v-if="chartData.params && chartData.params.showLegend && !isNoData">
-          <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData" :key="index" @click="highlightEvent(item)">
+          <div class="npm-line-header-right" :class="{'active': item.show}" v-for="(item, index) in chartOptionLineData"
+               :key="index" @click="highlightEvent(item)">
             <div class="npm-line-header-icon" :class="'icon' + index"></div>
-            <div class="npm-line-header-value">{{item.legend}}</div>
+            <div class="npm-line-header-value">{{ item.legend }}</div>
           </div>
         </div>
       </div>
@@ -18,35 +19,35 @@
     </template>
     <template v-else-if="chartData.i18n === 'networkAppPerformance.tripTime'">
       <div class="npm-line-title">
-        {{$t(chartData.i18n) || chartData.name}}(ms)
+        {{ $t(chartData.i18n) || chartData.name }}(ms)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.i18n === 'networkAppPerformance.httpResponse'">
       <div class="npm-line-title">
-        {{$t(chartData.i18n) || chartData.name}}(ms)
+        {{ $t(chartData.i18n) || chartData.name }}(ms)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.i18n === 'networkAppPerformance.sslResponseLatency'">
       <div class="npm-line-title">
-        {{$t(chartData.i18n) || chartData.name}}(ms)
+        {{ $t(chartData.i18n) || chartData.name }}(ms)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.i18n === 'networkAppPerformance.packetLoss'">
       <div class="npm-line-title">
-        {{$t(chartData.i18n) || chartData.name}}(%)
+        {{ $t(chartData.i18n) || chartData.name }}(%)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
     </template>
     <template v-else-if="chartData.i18n === 'networkAppPerformance.packetRetrans'">
       <div class="npm-line-title">
-        {{$t(chartData.i18n) || chartData.name}}(%)
+        {{ $t(chartData.i18n) || chartData.name }}(%)
         <chart-error v-if="showError" tooltip :content="errorMsg"></chart-error>
       </div>
       <div v-show="!isNoData" class="chart-drawing" :id="`chart${chartData.name}`"></div>
@@ -67,6 +68,7 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import unitConvert from '@/utils/unit-convert'
 import ChartError from '@/components/common/Error'
+import { dataForNpmLine } from '@/utils/static-data'
 
 export default {
   name: 'NpmLine',
@@ -83,16 +85,8 @@ export default {
   data () {
     return {
       chartData: {},
-      chartOptionLineData: [
-        { legend: this.$t('network.total'), index: 0, invertTab: true, show: false, color: '#749F4D' },
-        { legend: this.$t('network.inbound'), index: 1, invertTab: true, show: false, color: '#98709B' },
-        { legend: this.$t('network.outbound'), index: 2, invertTab: true, show: false, color: '#E5A219' }
-      ],
-      npmLineColor: [
-        { legend: '', color: '#749F4D' },
-        { legend: '', color: '#98709B' },
-        { legend: '', color: '#E5A219' }
-      ],
+      chartOptionLineData: dataForNpmLine.chartOptionLineData,
+      npmLineColor: dataForNpmLine.npmLineColor,
       timer: null,
       myChartArray: [],
       side: this.$store.state.panel.npmLocationSide,
@@ -129,46 +123,26 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         side: this.side
-        // country: this.country
-        // province: this.province
       }
-      if (n) {
-        params.country = n
-      } else {
-        params.country = ''
-      }
+
+      params.country = n || ''
+
       this.toggleLoading(true)
       let url
       if (this.chart.params) {
-        if (this.chart.params.index === 0) {
-          url = api.npm.location.thoughput
-        } else if (this.chart.params.index === 1) {
-          url = api.npm.location.tcpConnectionEstablishLatency
-        } else if (this.chart.params.index === 2) {
-          url = api.npm.location.httpResponseLatency
-        } else if (this.chart.params.index === 3) {
-          url = api.npm.location.sslHandshakeLatency
-        } else if (this.chart.params.index === 4) {
-          url = api.npm.location.packetsLoss
-        } else if (this.chart.params.index === 5) {
-          url = api.npm.location.packetsRetrains
-        }
+        url = this.switchUrl(this.chart.params.index)
+
         if (url) {
           axios.get(url, { params: params }).then(res => {
             res = res.data
             if (res.code === 200) {
               this.showError = false
               this.isNoData = res.data.result.length === 0
+
               if (!this.isNoData) {
                 if (this.chart.params.index === 0) {
                   res.data.result.forEach((t, i) => {
-                    if (t.type === 'totalBitsRate') {
-                      this.chartOptionLineData[i].values = t.values
-                    } else if (t.type === 'inboundBitsRate') {
-                      this.chartOptionLineData[i].values = t.values
-                    } else if (t.type === 'outboundBitsRate') {
-                      this.chartOptionLineData[i].values = t.values
-                    }
+                    this.chartOptionLineData[i].values = t.values
                   })
                   const result = this.chartOptionLineData.filter(t => this.chartData.params.color.indexOf(t.color) > -1)
                   this.echartsInit(result, this.chartData, this.chartData.params.unitType)
@@ -179,7 +153,7 @@ export default {
             } else {
               this.isNoData = false
               this.showError = true
-              this.errorMsg = res.message
+              this.errorMsg = this.errorMsgHandler(res.message)
             }
           }).catch(e => {
             console.error(e)
@@ -203,6 +177,7 @@ export default {
         }
         this.chartOption = npmLineChartOption
         this.chartOption.color = this.chartData.params.color
+
         this.chartOption.series = data.map((t, i) => {
           return {
             type: 'line',
@@ -223,6 +198,7 @@ export default {
             data: t.values.map((v) => [Number(v[0]) * 1000, Number(v[1]), type])
           }
         })
+
         this.chartOption.yAxis[0].axisLabel.formatter = (value) => {
           if (type === 'percent') {
             return unitConvert(value, type)[0]
@@ -230,6 +206,7 @@ export default {
             return unitConvert(value, 'number').join('')
           }
         }
+
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
             this.chartOptionLineData.forEach(e => {
@@ -243,6 +220,7 @@ export default {
           })
           return stackedLineTooltipFormatter(params)
         }
+
         this.myChartArray.push(this.myChart)
         this.myChart.setOption(this.chartOption)
         this.$nextTick(() => {
@@ -250,15 +228,9 @@ export default {
         })
       }
     },
-    dispatchLegendSelectAction (name) {
+    dispatchSelectAction (type, name) {
       this.myChart.dispatchAction({
-        type: 'legendSelect',
-        name: name
-      })
-    },
-    dispatchLegendUnSelectAction (name) {
-      this.myChart.dispatchAction({
-        type: 'legendUnSelect',
+        type: type,
         name: name
       })
     },
@@ -271,8 +243,10 @@ export default {
           t.show = t.invertTab
         }
       })
+
       const legend = chartOptionLineData.filter(t => t.invertTab)
-      const legends = chartOptionLineData.filter(t => !t.invertTab)
+      const legendList = chartOptionLineData.filter(t => !t.invertTab)
+
       chartOptionLineData.forEach(t => {
         if ((t.legend === item.legend) && t.invertTab) {
           if (legend.length === 2) {
@@ -283,30 +257,32 @@ export default {
             })
           }
         } else if ((t.legend !== item.legend) && !t.invertTab) {
-          legends.forEach(r => {
+          legendList.forEach(r => {
             if (r.legend === item.legend) {
               r.show = false
             }
           })
         }
       })
+
       if (legend.length === 0) {
         chartOptionLineData.forEach((t, i) => {
           t.invertTab = true
         })
       }
+
       this.chartOptionLineData = chartOptionLineData
-      this.legendSelectChange(legends, legend)
+      this.legendSelectChange(legendList, legend)
     },
-    legendSelectChange (legends, legend) {
-      if (legends.length > 0) {
+    legendSelectChange (legendList, legend) {
+      if (legendList.length > 0) {
         this.chartOptionLineData.forEach(t => {
-          legends.forEach(r => {
+          legendList.forEach(r => {
             if (t.legend !== r.legend) {
-              this.dispatchLegendUnSelectAction(t.legend)
+              this.dispatchSelectAction('legendUnSelect', t.legend)
             }
             if (!t.show) {
-              this.dispatchLegendSelectAction(t.legend)
+              this.dispatchSelectAction('legendSelect', t.legend)
             }
           })
         })
@@ -314,7 +290,7 @@ export default {
         this.chartOptionLineData.forEach(t => {
           legend.forEach(r => {
             if (t.legend !== r.legend) {
-              this.dispatchLegendSelectAction(t.legend)
+              this.dispatchSelectAction('legendSelect', t.legend)
             }
           })
         })
@@ -324,6 +300,22 @@ export default {
       this.myChartArray.forEach(t => {
         t.resize()
       })
+    },
+    switchUrl (index) {
+      switch (index) {
+        case 0:
+          return api.npm.location.thoughput
+        case 1:
+          return api.npm.location.tcpConnectionEstablishLatency
+        case 2:
+          return api.npm.location.httpResponseLatency
+        case 3:
+          return api.npm.location.sslHandshakeLatency
+        case 4:
+          return api.npm.location.packetsLoss
+        case 5:
+          return api.npm.location.packetsRetrains
+      }
     }
   },
   mounted () {

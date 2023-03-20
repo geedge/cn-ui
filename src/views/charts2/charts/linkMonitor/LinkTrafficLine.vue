@@ -46,7 +46,7 @@
                  :popper-append-to-body="false"
                  @change="metricSelectChange"
              >
-               <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
+               <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
              </el-select>
            </div>
          </div>
@@ -77,6 +77,7 @@ import * as echarts from 'echarts'
 import { linkTrafficLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import axios from 'axios'
+import { dataForLinkTrafficLine } from '@/utils/static-data'
 
 export default {
   name: 'LinkTrafficLine',
@@ -104,21 +105,8 @@ export default {
   },
   data () {
     return {
-      options1: [
-        {
-          value: 'Bits/s',
-          label: 'Bits/s'
-        },
-        {
-          value: 'Packets/s',
-          label: 'Packets/s'
-        }
-      ],
-      tabs: [
-        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-        { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-        { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
-      ],
+      options: dataForLinkTrafficLine.options,
+      tabs: dataForLinkTrafficLine.tabs,
       unitConvert,
       unitTypes,
       chartDateObject: [],
@@ -137,19 +125,11 @@ export default {
     lineTab (n) {
       this.$nextTick(() => {
         this.handleActiveBar(n)
-        const { query } = this.$route
-        const newUrl = urlParamsHandler(window.location.href, query, {
-          lineTab: n
-        })
-        overwriteUrl(newUrl)
+        this.reloadUrl({ lineTab: n })
       })
     },
     lineMetric (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        lineMetric: n
-      })
-      overwriteUrl(newUrl)
+      this.reloadUrl({ lineMetric: n })
     },
     timeFilter: {
       handler () {
@@ -162,6 +142,11 @@ export default {
     }
   },
   methods: {
+    reloadUrl (newParam) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, newParam)
+      overwriteUrl(newUrl)
+    },
     init (val, show, active) {
       if (!val) {
         val = this.lineMetric
@@ -185,22 +170,18 @@ export default {
           this.isNoData = res.data.result.length === 0
           if (this.isNoData) {
             this.lineTab = ''
-            this.tabs = [
-              { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-              { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-              { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
-            ]
+            this.tabs = dataForLinkTrafficLine.tabs
           } else {
             this.initData(res.data.result, val, active, show)
           }
         } else {
           this.showError = true
-          this.errorMsg = res.message
+          this.errorMsg = this.errorMsgHandler(res.message)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
-        this.errorMsg = e.message
+        this.errorMsg = this.errorMsgHandler(e.message)
         this.isNoData = false
       }).finally(() => {
         this.loading = false
@@ -214,11 +195,14 @@ export default {
         } else {
           echartsData = echartsData.filter(t => t.show === true)
         }
+
         const _this = this
         const dom = document.getElementById('linkTrafficLineChart')
         !this.myChart && (this.myChart = echarts.init(dom))
+
         this.chartOption = linkTrafficLineChartOption
         const chartOption = this.chartOption.series[0]
+
         this.chartOption.series = echartsData.map((t, i) => {
           return {
             ...chartOption,
@@ -255,6 +239,7 @@ export default {
             data: t.data.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number'])
           }
         })
+
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
             t.seriesName = this.$t(t.seriesName)
@@ -264,9 +249,9 @@ export default {
               }
             })
           })
-          // const str = stackedLineTooltipFormatter(params)
           return stackedLineTooltipFormatter(params)
         }
+
         this.showMarkLine = true
         this.myChart.setOption(this.chartOption)
       }
@@ -286,44 +271,30 @@ export default {
     mouseleave () {
       this.mousemoveCursor = ''
     },
-    dispatchLegendSelectAction (name) {
+    dispatchSelectAction (type, name) {
       this.myChart && this.myChart.dispatchAction({
-        type: 'legendSelect',
-        name: name
-      })
-    },
-    dispatchLegendUnSelectAction (name) {
-      this.myChart && this.myChart.dispatchAction({
-        type: 'legendUnSelect',
+        type: type,
         name: name
       })
     },
     legendSelectChange (item, index, val) {
       if (index === 'index') {
-        this.dispatchLegendSelectAction(item.name)
+        this.dispatchSelectAction('legendSelect', item.name)
       } else if (this.tabs[index] && this.tabs[index].name === item.name) {
-        this.dispatchLegendSelectAction(item.name)
+        this.dispatchSelectAction('legendSelect', item.name)
         this.tabs.forEach((t) => {
           if (t.name !== item.name) {
-            this.dispatchLegendUnSelectAction(t.name)
+            this.dispatchSelectAction('legendUnSelect', t.name)
           }
         })
       }
       if (val === 'active') {
         this.tabs.forEach(t => {
-          if (item.name === t.name) {
-            t.invertTab = !t.invertTab
-          } else {
-            t.invertTab = true
-          }
+          t.invertTab = item.name === t.name ? !t.invertTab : true
           if (t.invertTab && item.name === t.name) {
-            if (this.lineTab) {
-              this.lineTab = ''
-            } else {
-              this.lineTab = t.class
-            }
+            this.lineTab = this.lineTab ? '' : t.class
             this.tabs.forEach((e) => {
-              this.dispatchLegendSelectAction(e.name)
+              this.dispatchSelectAction('legendSelect', e.name)
             })
           }
         })
@@ -353,25 +324,13 @@ export default {
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []
-      if (linkTrafficLineChartOption.series[0]) {
-        const totalData = linkTrafficLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
-        if (totalData) {
-          dataIntegrationArray.push(totalData)
-          totalData[2] = 0
-        }
-      }
-      if (linkTrafficLineChartOption.series[1]) {
-        const ingressData = linkTrafficLineChartOption.series[1].data.find(t => t[0] === time)
-        if (ingressData) {
-          dataIntegrationArray.push(ingressData)
-          ingressData[2] = 1
-        }
-      }
-      if (linkTrafficLineChartOption.series[2]) {
-        const egressData = linkTrafficLineChartOption.series[2].data.find(t => t[0] === time)
-        if (egressData) {
-          dataIntegrationArray.push(egressData)
-          egressData[2] = 2
+      for (let i = 0; i < 3; i++) {
+        if (linkTrafficLineChartOption.series[i]) {
+          const item = linkTrafficLineChartOption.series[i].data.find(t => t[0] === time)
+          if (item) {
+            dataIntegrationArray.push(item)
+            item[2] = i
+          }
         }
       }
       dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })

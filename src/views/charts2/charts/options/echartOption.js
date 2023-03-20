@@ -239,7 +239,11 @@ export const linkTrafficLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 8
+      splitNumber: 8,
+      axisLabel: {
+        formatter: xAxisTimeFormatter,
+        rich: xAxisTimeRich
+      }
       // axisLabel: {
       //   formatter: function (value) {
       //     const data = new Date(value)
@@ -286,7 +290,11 @@ export const appListChartOption = {
   },
   xAxis: {
     show: false,
-    type: 'time'
+    type: 'time',
+    axisLabel: {
+      formatter: xAxisTimeFormatter,
+      rich: xAxisTimeRich
+    }
   },
   yAxis: {
     show: false,
@@ -331,7 +339,11 @@ export const npmLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 8
+      splitNumber: 8,
+      axisLabel: {
+        formatter: xAxisTimeFormatter,
+        rich: xAxisTimeRich
+      }
       // axisLabel: {
       //   formatter: function (value) {
       //     const data = new Date(value)
@@ -391,7 +403,11 @@ export const trafficLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 8
+      splitNumber: 8,
+      axisLabel: {
+        formatter: xAxisTimeFormatter,
+        rich: xAxisTimeRich
+      }
       // axisLabel: {
       //   formatter: function (value) {
       //     const data = new Date(value)
@@ -487,6 +503,10 @@ export const stackedBarChartOption = {
     },
     axisTick: {
       show: false
+    },
+    axisLabel: {
+      formatter: xAxisTimeFormatter,
+      rich: xAxisTimeRich
     }
     // axisLabel: {
     //   margin: 12,

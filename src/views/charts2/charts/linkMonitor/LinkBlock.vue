@@ -320,9 +320,8 @@ export default {
         this.nextHopNoData = false
         this.showError1 = true
         this.showError2 = true
-        // todo 此处数据还待验证
-        this.errorMsg1 = e.message
-        this.errorMsg2 = e.message
+        this.errorMsg1 = this.errorMsgHandler(e)
+        this.errorMsg2 = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
       })

@@ -1163,3 +1163,37 @@ export function getLineIndexUnit2 (type) {
     return 0
   }
 }
+/**
+ 通过lineRefer切换来选择markLine对应的值
+ */
+export function getMarkLineByLineRefer (data) {
+  switch (data) {
+    case 'Average': {
+      return 'avg'
+    }
+    case '95th Percentile': {
+      return 'p95'
+    }
+    case 'Maximum': {
+      return 'max'
+    }
+  }
+}
+/**
+ 通过 type 判断参数q的值
+ */
+export function getQueryByType (type, condition) {
+  switch (type) {
+    case 'clientIp':
+    case 'serverIp': {
+      return `ip='${condition.split(/'(.*?)'/)[1]}'`
+    }
+    case 'clientCity': {
+      return `client_city='${condition.split(/'(.*?)'/)[1]}'`
+    }
+    case 'serverCity': {
+      return `server_city='${condition.split(/'(.*?)'/)[1]}'`
+    }
+    default: return condition
+  }
+}

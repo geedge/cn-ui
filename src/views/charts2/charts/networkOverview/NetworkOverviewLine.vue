@@ -51,10 +51,6 @@
     <div style="height: calc(100% - 74px); position: relative">
       <chart-no-data v-if="isNoData && !showError"></chart-no-data>
       <div class="chart-drawing" v-show="showMarkLine && !isNoData && !showError" ref="overviewLineChart"></div>
-      <!--      todo 后续改动，此处为框选返回-->
-      <!--      <div id="brushBtn" style="position: absolute;left: 0;top: 0;" v-show="mouseDownFlag">-->
-      <!--        <el-button @click.stop="backBrushHistory">返回</el-button>-->
-      <!--      </div>-->
     </div>
   </div>
 </template>
@@ -73,8 +69,9 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
-import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getLineType, getMarkLineByLineRefer, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
+import { dataForNetworkOverviewLine } from '@/utils/static-data'
 
 export default {
   name: 'NetworkOverviewLine',
@@ -107,82 +104,8 @@ export default {
   mixins: [chartMixin],
   data () {
     return {
-      options2: [
-        {
-          value: 'Average',
-          label: 'Average'
-        },
-        {
-          value: '95th Percentile',
-          label: '95th Percentile'
-        },
-        {
-          value: 'Maximum',
-          label: 'Maximum'
-        }
-      ],
-      tabsTemplate: [
-        {
-          analysis: {},
-          name: 'network.total',
-          class: 'total',
-          show: true,
-          invertTab: true,
-          positioning: 0,
-          data: [],
-          unitType: ''
-        },
-        {
-          analysis: {},
-          name: 'network.inbound',
-          class: 'inbound',
-          show: true,
-          invertTab: true,
-          positioning: 1,
-          data: [],
-          unitType: ''
-        },
-        {
-          analysis: {},
-          name: 'network.outbound',
-          class: 'outbound',
-          show: true,
-          invertTab: true,
-          positioning: 2,
-          data: [],
-          unitType: ''
-        },
-        {
-          analysis: {},
-          name: 'network.internal',
-          class: 'internal',
-          show: true,
-          invertTab: true,
-          positioning: 3,
-          data: [],
-          unitType: ''
-        },
-        {
-          analysis: {},
-          name: 'network.through',
-          class: 'through',
-          show: true,
-          invertTab: true,
-          positioning: 4,
-          data: [],
-          unitType: ''
-        },
-        {
-          analysis: {},
-          name: 'network.other',
-          class: 'other',
-          show: true,
-          invertTab: true,
-          positioning: 5,
-          data: [],
-          unitType: ''
-        }
-      ],
+      options2: dataForNetworkOverviewLine.options2,
+      tabsTemplate: dataForNetworkOverviewLine.tabsTemplate,
       tabs: [],
       unitConvert,
       unitTypes,
@@ -203,19 +126,11 @@ export default {
     lineTab (n) {
       this.$nextTick(() => {
         this.handleActiveBar(n)
-        const { query } = this.$route
-        const newUrl = urlParamsHandler(window.location.href, query, {
-          lineTab: n
-        })
-        overwriteUrl(newUrl)
+        this.reloadUrl({ lineTab: n })
       })
     },
     lineRefer (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        lineRefer: n
-      })
-      overwriteUrl(newUrl)
+      this.reloadUrl({ lineRefer: n })
     },
     timeFilter: {
       handler () {
@@ -238,22 +153,28 @@ export default {
     }
   },
   methods: {
+    reloadUrl (newParam) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, newParam)
+      overwriteUrl(newUrl)
+    },
     init (val, show, active, n) {
-      if (!val) {
-        val = this.metric
-      }
+      const newVal = val ? _.clone(val) : this.metric
+
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
+
       if (this.queryCondition) {
         params.q = this.queryCondition
       }
+
       this.toggleLoading(true)
       axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
         const res = response.data
-        // const res = mockData.bytes.boundary.data
         this.errorMsg = res.message
+
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
           this.showError = false
@@ -261,43 +182,21 @@ export default {
             this.lineTab = ''
             this.tabs = _.cloneDeep(this.tabsTemplate)
           } else {
-            this.initData(res.data.result, val, active, show, n)
+            this.initData(res.data.result, newVal, active, show, n)
           }
         } else {
           this.showError = true
-          this.errorMsg = res.message
+          this.errorMsg = this.errorMsgHandler(res.message)
         }
       }).catch(e => {
         console.error(e)
-        this.showError = true
-        this.errorMsg = e.message
         this.isNoData = false
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e.message)
       }).finally(() => {
         this.toggleLoading(false)
       })
     },
-    /**
-     * 初始化echartsdom，用于右键点击返回框选
-     */
-    // domInit () {
-    //   const self = this
-    //   // 去掉默认的contextmenu事件，否则会和右键事件同时出现。
-    //   document.oncontextmenu = function (e) {
-    //     e.preventDefault()
-    //   }
-    //   document.getElementById('overviewLineChart').onmousedown = function (e) {
-    //     // e.button: 0左键，1滚轮，2右键
-    //     if (e.button === 2) {
-    //       self.myChart.dispatchAction({
-    //         type: 'brush',
-    //         areas: [] // 删除选框
-    //       })
-    //       self.mouseDownFlag = true
-    //       document.getElementById('brushBtn').style.left = e.layerX + 'px'
-    //       document.getElementById('brushBtn').style.top = e.layerY + 74 + 'px'
-    //     }
-    //   }
-    // },
     echartsInit (echartsData, show) {
       // echarts内容在单元测试时不执行
       if (!this.isUnitTesting) {
@@ -368,36 +267,24 @@ export default {
             }
           }
         })
-        if (!show) {
+        if (!show && !this.lineTab) {
           this.chartOption.series.forEach((t) => {
             t.markLine.label.show = false
             t.markLine = []
           })
         }
-        if (this.lineRefer === 'Average' && show) {
+
+        if (show) {
           this.chartOption.series.forEach((t, i) => {
             t.markLine.label.show = true
             t.markLine.data = [
               {
-                yAxis: echartsData[i].analysis.avg
+                yAxis: echartsData[i].analysis[getMarkLineByLineRefer(this.lineRefer)]
               }
             ]
           })
-        } else if (this.lineRefer === '95th Percentile' && show) {
-          this.chartOption.series.forEach((t, i) => {
-            t.markLine.label.show = true
-            t.markLine.data = [
-              { yAxis: echartsData[i].analysis.p95 }
-            ]
-          })
-        } else if (this.lineRefer === 'Maximum' && show) {
-          this.chartOption.series.forEach((t, i) => {
-            t.markLine.label.show = true
-            t.markLine.data = [
-              { yAxis: echartsData[i].analysis.max }
-            ]
-          })
         }
+
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
             t.seriesName = this.$t(t.seriesName)
@@ -413,51 +300,23 @@ export default {
         this.$nextTick(() => {
           this.myChart = echarts.init(this.$refs.overviewLineChart)
           this.myChart.setOption(this.chartOption)
-          // 设置参见官网：https://echarts.apache.org/zh/api.html#action.brush.brush
+
           this.myChart.dispatchAction({
-            // 刷选模式的开关。使用此 action 可将当前鼠标变为可刷选状态。事实上，点击 toolbox 中的 brush 按钮时，就是通过这个 action，将当前普通鼠标变为刷选器的。
             type: 'takeGlobalCursor',
-            // 如果想变为“可刷选状态”，必须设置。不设置则会关闭“可刷选状态”。
             key: 'brush',
             brushOption: {
-              // 参见 brush 组件的 brushType。如果设置为 false 则关闭“可刷选状态”。
               brushType: 'lineX',
               xAxisIndex: 'all',
-              // 单击清除选框
               brushMode: 'single',
-              // 选择完毕再返回所选数据
               throttleType: 'debounce'
             }
           })
+          // 选中tab并刷新界面时，自动触发，避免markLine不显示的情况
+          if (this.lineTab) {
+            this.referenceSelectChange(this.lineRefer)
+          }
 
-          const self = this
-
-          this.myChart.on('brushEnd', function (params) {
-            self.myChart.dispatchAction({
-              type: 'brush',
-              areas: [] // 删除选框
-            })
-            if (!self.mouseDownFlag) {
-              // 避免点击空白区域报错
-              if (params.areas !== undefined && params.areas.length > 0) {
-                self.brushHistory.unshift({
-                  startTime: _.cloneDeep(self.timeFilter.startTime) * 1000,
-                  endTime: _.cloneDeep(self.timeFilter.endTime) * 1000
-                })
-
-                const rangeObj = {
-                  startTime: Math.ceil(params.areas[0].coordRange[0]),
-                  endTime: Math.ceil(params.areas[0].coordRange[1])
-                }
-
-                // todo 目前暂定框选最小范围为5分钟，后续可能会变动
-                if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
-                  rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
-                }
-                _this.$store.commit('setRangeEchartsData', rangeObj)
-              }
-            }
-          })
+          this.myChart.on('brushEnd', this.brushEcharts)
         })
       }
     },
@@ -482,50 +341,36 @@ export default {
     mouseleave () {
       this.mousemoveCursor = ''
     },
-    dispatchLegendSelectAction (name) {
+    dispatchSelectAction (type, name) {
       this.myChart && this.myChart.dispatchAction({
-        type: 'legendSelect',
-        name: name
-      })
-    },
-    dispatchLegendUnSelectAction (name) {
-      this.myChart && this.myChart.dispatchAction({
-        type: 'legendUnSelect',
+        type: type,
         name: name
       })
     },
     legendSelectChange (item, index, val, isActiveAll) {
       if (index === 'index') {
-        this.dispatchLegendSelectAction(item.name)
+        this.dispatchSelectAction('legendSelect', item.name)
       } else if (this.tabs[index] && this.tabs[index].name === item.name) {
         if (isActiveAll) {
           this.tabs.forEach((t) => {
-            this.dispatchLegendSelectAction(t.name)
+            this.dispatchSelectAction('legendSelect', t.name)
           })
         } else {
-          this.dispatchLegendSelectAction(item.name)
+          this.dispatchSelectAction('legendSelect', item.name)
           this.tabs.forEach((t) => {
             if (t.name !== item.name) {
-              this.dispatchLegendUnSelectAction(t.name)
+              this.dispatchSelectAction('legendUnSelect', t.name)
             }
           })
         }
       }
       if (val === 'active') {
         this.tabs.forEach(t => {
-          if (item.name === t.name) {
-            t.invertTab = !t.invertTab
-          } else {
-            t.invertTab = true
-          }
+          t.invertTab = item.name === t.name ? !t.invertTab : true
           if (t.invertTab && item.name === t.name) {
-            if (this.lineTab) {
-              this.lineTab = ''
-            } else {
-              this.lineTab = t.class
-            }
+            this.lineTab = this.lineTab ? '' : t.class
             this.tabs.forEach((e) => {
-              this.dispatchLegendSelectAction(e.name)
+              this.dispatchSelectAction('legendSelect', e.name)
             })
           }
         })
@@ -581,48 +426,16 @@ export default {
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []
-      if (stackedLineChartOption.series[0]) {
-        const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
-        if (totalData) {
-          dataIntegrationArray.push(totalData)
-          totalData[2] = 0
+      for (let i = 0; i < 5; i++) {
+        if (stackedLineChartOption.series[i]) {
+          const item = stackedLineChartOption.series[i].data.find(t => t[0] === time)
+          if (item) {
+            dataIntegrationArray.push(item)
+            item[2] = i
+          }
         }
       }
-      if (stackedLineChartOption.series[1]) {
-        const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
-        if (inboundData) {
-          dataIntegrationArray.push(inboundData)
-          inboundData[2] = 1
-        }
-      }
-      if (stackedLineChartOption.series[2]) {
-        const outboundData = stackedLineChartOption.series[2].data.find(t => t[0] === time)
-        if (outboundData) {
-          dataIntegrationArray.push(outboundData)
-          outboundData[2] = 2
-        }
-      }
-      if (stackedLineChartOption.series[3]) {
-        const internalData = stackedLineChartOption.series[3].data.find(t => t[0] === time)
-        if (internalData) {
-          dataIntegrationArray.push(internalData)
-          internalData[2] = 3
-        }
-      }
-      if (stackedLineChartOption.series[4]) {
-        const throughData = stackedLineChartOption.series[4].data.find(t => t[0] === time)
-        if (throughData) {
-          dataIntegrationArray.push(throughData)
-          throughData[2] = 4
-        }
-      }
-      if (stackedLineChartOption.series[5]) {
-        const otherData = stackedLineChartOption.series[5].data.find(t => t[0] === time)
-        if (otherData) {
-          dataIntegrationArray.push(otherData)
-          otherData[2] = 5
-        }
-      }
+
       dataIntegrationArray.sort((a, b) => {
         return a[1] - b[1]
       })
@@ -710,25 +523,39 @@ export default {
           if (!this.lineRefer) this.lineRefer = 'Average'
         })
       }
-    }
+    },
     /**
-     * 鼠标右键返回框选的时间范围
+     * echarts框选
+     * @param params
      */
-    // backBrushHistory () {
-    //   this.myChart.dispatchAction({
-    //     type: 'brush',
-    //     areas: [] // 删除选框
-    //   })
-    //   if (this.brushHistory.length > 0) {
-    //     this.$store.commit('setRangeEchartsData', _.cloneDeep(this.brushHistory[0]))
-    //     this.brushHistory.shift()
-    //   }
-    //   this.mouseDownFlag = false
-    // }
+    brushEcharts (params) {
+      this.myChart.dispatchAction({
+        type: 'brush',
+        areas: [] // 删除选框
+      })
+      if (!this.mouseDownFlag) {
+        // 避免点击空白区域报错
+        if (params.areas && params.areas.length > 0) {
+          this.brushHistory.unshift({
+            startTime: _.cloneDeep(this.timeFilter.startTime) * 1000,
+            endTime: _.cloneDeep(this.timeFilter.endTime) * 1000
+          })
+
+          const rangeObj = {
+            startTime: Math.ceil(params.areas[0].coordRange[0]),
+            endTime: Math.ceil(params.areas[0].coordRange[1])
+          }
+
+          // 暂定框选最小范围为5分钟，后续可能会变动
+          if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
+            rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
+          }
+          this.$store.commit('setRangeEchartsData', rangeObj)
+        }
+      }
+    }
   },
   mounted () {
-    // todo 初始化鼠标事件，开启右键返回
-    // this.domInit()
     this.myChart = null
     this.chartOption = null
     const self = this
