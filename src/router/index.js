@@ -67,6 +67,11 @@ const routes = [
             name: 'OperationLog',
             path: '/administration/operationLog',
             component: () => import('@/views/administration/OperationLog')
+          },
+          {
+            name: 'Appearance',
+            path: '/administration/appearance',
+            component: () => import('@/views/administration/Appearance')
           }
         ]
       },
