@@ -185,3 +185,35 @@ export const dataForNpmLine = {
     { legend: '', color: '#E5A219' }
   ]
 }
+
+export const dataForDnsTrafficLine = {
+  options1: [
+    {
+      value: 'Bits/s',
+      label: 'Bits/s'
+    },
+    {
+      value: 'Queries/s',
+      label: 'Queries/s'
+    }
+  ],
+  options2: [
+    {
+      value: 'Average',
+      label: 'Average'
+    },
+    {
+      value: '95th Percentile',
+      label: '95th Percentile'
+    },
+    {
+      value: 'Maximum',
+      label: 'Maximum'
+    }
+  ],
+  tabs: [
+    { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+    { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+    { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
+  ]
+}

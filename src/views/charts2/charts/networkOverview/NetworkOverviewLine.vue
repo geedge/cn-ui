@@ -402,25 +402,15 @@ export default {
       }
       if (!this.isUnitTesting) {
         const chartOption = this.myChart.getOption()
-        if (this.lineRefer === 'Average' && this.showMarkLine) {
-          chartOption.series.forEach((t) => {
+
+        if (this.showMarkLine) {
+          chartOption.series.forEach(t => {
             if (t.name === echartsData[0].name) {
-              t.markLine.data = [{ yAxis: echartsData[0].analysis.avg }]
-            }
-          })
-        } else if (this.lineRefer === '95th Percentile' && this.showMarkLine) {
-          chartOption.series.forEach((t) => {
-            if (t.name === echartsData[0].name) {
-              t.markLine.data = [{ yAxis: echartsData[0].analysis.p95 }]
-            }
-          })
-        } else if (this.lineRefer === 'Maximum' && this.showMarkLine) {
-          chartOption.series.forEach((t) => {
-            if (t.name === echartsData[0].name) {
-              t.markLine.data = [{ yAxis: echartsData[0].analysis.max }]
+              t.markLine.data = [{ yAxis: echartsData[0].analysis[getMarkLineByLineRefer(this.lineRefer)] }]
             }
           })
         }
+
         this.myChart.setOption(chartOption)
       }
     },

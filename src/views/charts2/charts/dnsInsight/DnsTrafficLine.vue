@@ -79,7 +79,8 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
-import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { getLineType, getMarkLineByLineRefer, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { dataForDnsTrafficLine } from '@/utils/static-data'
 export default {
   name: 'DnsTrafficLine',
   components: {
@@ -102,35 +103,9 @@ export default {
   mixins: [chartMixin],
   data () {
     return {
-      options1: [
-        {
-          value: 'Bits/s',
-          label: 'Bits/s'
-        },
-        {
-          value: 'Queries/s',
-          label: 'Queries/s'
-        }
-      ],
-      options2: [
-        {
-          value: 'Average',
-          label: 'Average'
-        },
-        {
-          value: '95th Percentile',
-          label: '95th Percentile'
-        },
-        {
-          value: 'Maximum',
-          label: 'Maximum'
-        }
-      ],
-      tabs: [
-        { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-        { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-        { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
-      ],
+      options1: dataForDnsTrafficLine.options1,
+      options2: dataForDnsTrafficLine.options2,
+      tabs: dataForDnsTrafficLine.tabs,
       unitConvert,
       unitTypes,
       chartDateObject: [],
@@ -148,26 +123,14 @@ export default {
     lineTab (n) {
       this.$nextTick(() => {
         this.handleActiveBar(n)
-        const { query } = this.$route
-        const newUrl = urlParamsHandler(window.location.href, query, {
-          lineTab: n
-        })
-        overwriteUrl(newUrl)
+        this.reloadUrl({ lineTab: n })
       })
     },
     lineMetric (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        lineMetric: n
-      })
-      overwriteUrl(newUrl)
+      this.reloadUrl({ lineMetric: n })
     },
     lineRefer (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        lineRefer: n
-      })
-      overwriteUrl(newUrl)
+      this.reloadUrl({ lineRefer: n })
     },
     timeFilter: {
       handler () {
@@ -180,6 +143,11 @@ export default {
     }
   },
   methods: {
+    reloadUrl (newParam) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, newParam)
+      overwriteUrl(newUrl)
+    },
     init (val, show, active) {
       if (!val) {
         val = this.lineMetric
@@ -188,38 +156,35 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
+
       if (this.queryCondition) {
         params.q = this.queryCondition
       }
+
       this.toggleLoading(true)
-      let url = api.dnsInsight.totalTrafficAnalysis
-      if (this.queryCondition) {
-        url = api.dnsInsight.drilldownTrafficAnalysis
-      }
+
+      const url = this.queryCondition ? api.dnsInsight.drilldownTrafficAnalysis : api.dnsInsight.totalTrafficAnalysis
+
       get(url, params).then((res) => {
         if (res.code === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
           if (this.isNoData) {
             this.lineTab = ''
-            this.tabs = [
-              { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-              { analysis: {}, name: 'network.inbound', class: 'inbound', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-              { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
-            ]
+            this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
           } else {
             this.initData(res.data.result, val, active, show)
           }
         } else {
           this.isNoData = false
           this.showError = true
-          this.errorMsg = res.message
+          this.errorMsg = this.errorMsgHandler(res.message)
         }
       }).catch(e => {
         console.error(e)
         this.isNoData = false
         this.showError = true
-        this.errorMsg = e.message
+        this.errorMsg = this.errorMsgHandler(e.message)
       }).finally(() => {
         this.toggleLoading(false)
       })
@@ -296,30 +261,17 @@ export default {
               t.markLine = []
             })
           }
-          if (this.lineRefer === 'Average' && show) {
+          if (show) {
             this.chartOption.series.forEach((t, i) => {
               t.markLine.label.show = true
               t.markLine.data = [
                 {
-                  yAxis: echartsData[i].analysis.avg
+                  yAxis: echartsData[i].analysis[getMarkLineByLineRefer(this.lineRefer)]
                 }
               ]
             })
-          } else if (this.lineRefer === '95th Percentile' && show) {
-            this.chartOption.series.forEach((t, i) => {
-              t.markLine.label.show = true
-              t.markLine.data = [
-                { yAxis: echartsData[i].analysis.p95 }
-              ]
-            })
-          } else if (this.lineRefer === 'Maximum' && show) {
-            this.chartOption.series.forEach((t, i) => {
-              t.markLine.label.show = true
-              t.markLine.data = [
-                { yAxis: echartsData[i].analysis.max }
-              ]
-            })
           }
+
           this.chartOption.tooltip.formatter = (params) => {
             params.forEach(t => {
               t.seriesName = this.$t(t.seriesName)
@@ -351,44 +303,31 @@ export default {
     mouseleave () {
       this.mousemoveCursor = ''
     },
-    dispatchLegendSelectAction (name) {
+    dispatchSelectAction (type, name) {
       this.myChart && this.myChart.dispatchAction({
-        type: 'legendSelect',
-        name: name
-      })
-    },
-    dispatchLegendUnSelectAction (name) {
-      this.myChart && this.myChart.dispatchAction({
-        type: 'legendUnSelect',
+        type: type,
         name: name
       })
     },
     legendSelectChange (item, index, val) {
       if (index === 'index') {
-        this.dispatchLegendSelectAction(item.name)
+        this.dispatchSelectAction('legendSelect', item.name)
       } else if (this.tabs[index] && this.tabs[index].name === item.name) {
-        this.dispatchLegendSelectAction(item.name)
+        this.dispatchSelectAction('legendSelect', item.name)
         this.tabs.forEach((t) => {
           if (t.name !== item.name) {
-            this.dispatchLegendUnSelectAction(t.name)
+            this.dispatchSelectAction('legendUnSelect', t.name)
           }
         })
       }
       if (val === 'active') {
         this.tabs.forEach(t => {
-          if (item.name === t.name) {
-            t.invertTab = !t.invertTab
-          } else {
-            t.invertTab = true
-          }
+          t.invertTab = item.name === t.name ? !t.invertTab : true
+
           if (t.invertTab && item.name === t.name) {
-            if (this.lineTab) {
-              this.lineTab = ''
-            } else {
-              this.lineTab = t.class
-            }
+            this.lineTab = this.lineTab ? '' : t.class
             this.tabs.forEach((e) => {
-              this.dispatchLegendSelectAction(e.name)
+              this.dispatchSelectAction('legendSelect', e.name)
             })
           }
         })
@@ -420,55 +359,34 @@ export default {
       this.lineRefer = val
       let echartsData
       const chartOption = this.myChart.getOption()
+
       if (this.lineTab) {
         echartsData = this.tabs.filter(t => t.show === true && t.invertTab === false)
       } else {
         echartsData = this.tabs.filter(t => t.show === true)
       }
-      if (this.lineRefer === 'Average' && this.showMarkLine) {
-        chartOption.series.forEach((t, i) => {
+      if (this.showMarkLine) {
+        chartOption.series.forEach(t => {
           if (t.name === echartsData[0].name) {
-            t.markLine.data = [{ yAxis: echartsData[0].analysis.avg }]
-          }
-        })
-      } else if (this.lineRefer === '95th Percentile' && this.showMarkLine) {
-        chartOption.series.forEach((t, i) => {
-          if (t.name === echartsData[0].name) {
-            t.markLine.data = [{ yAxis: echartsData[0].analysis.p95 }]
-          }
-        })
-      } else if (this.lineRefer === 'Maximum' && this.showMarkLine) {
-        chartOption.series.forEach((t, i) => {
-          if (t.name === echartsData[0].name) {
-            t.markLine.data = [{ yAxis: echartsData[0].analysis.max }]
+            t.markLine.data = [{ yAxis: echartsData[0].analysis[getMarkLineByLineRefer(this.lineRefer)] }]
           }
         })
       }
+
       this.myChart.setOption(chartOption)
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []
-      if (stackedLineChartOption.series[0]) {
-        const totalData = stackedLineChartOption.series[0].data.find(t => t[0] === time) // [time, value]
-        if (totalData) {
-          dataIntegrationArray.push(totalData)
-          totalData[2] = 0
+      for (let i = 0; i < 3; i++) {
+        if (stackedLineChartOption.series[i]) {
+          const item = stackedLineChartOption.series[i].data.find(t => t[0] === time)
+          if (item) {
+            dataIntegrationArray.push(item)
+            item[2] = i
+          }
         }
       }
-      if (stackedLineChartOption.series[1]) {
-        const inboundData = stackedLineChartOption.series[1].data.find(t => t[0] === time)
-        if (inboundData) {
-          dataIntegrationArray.push(inboundData)
-          inboundData[2] = 1
-        }
-      }
-      if (stackedLineChartOption.series[2]) {
-        const outboundData = stackedLineChartOption.series[2].data.find(t => t[0] === time)
-        if (outboundData) {
-          dataIntegrationArray.push(outboundData)
-          outboundData[2] = 2
-        }
-      }
+
       dataIntegrationArray.sort((a, b) => { return a[1] - b[1] })
       const sortIndex = dataIntegrationArray.findIndex(a => a[2] === index)
       return this.sizes[sortIndex]
@@ -515,7 +433,9 @@ export default {
         dnsData[i].data = d.values
         dnsData[i].analysis = d.analysis
       })
+
       let num = 0
+
       dnsData.forEach(e => {
         e.unitType = type
         if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
@@ -535,6 +455,7 @@ export default {
           }
         }
       })
+
       this.tabs = dnsData
       if (num === 3) {
         dnsData[0].invertTab = false
