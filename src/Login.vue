@@ -120,7 +120,7 @@ export default {
       window.$dayJs.tz.setDefault(data.timezone)
       localStorage.setItem(storageKey.timezoneOffset, window.$dayJs.tz().utcOffset() / 60)
       localStorage.setItem(storageKey.timezoneLocalOffset, dayjs().utcOffset() / 60)
-      localStorage.setItem(storageKey.dateFormat, data.dateFormat)
+      localStorage.setItem(storageKey.dateFormat, data.date_format)
       localStorage.setItem(storageKey.sysName, data.system_name)
       localStorage.setItem(storageKey.sysLogo, data.system_logo)
     }
