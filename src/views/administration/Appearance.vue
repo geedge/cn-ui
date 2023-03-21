@@ -2,9 +2,9 @@
   <div class="appearance" :class="from">
     <div class="appearance-form">
       <el-form ref="appearanceForm" :model="appearanceObject"  label-position="top" label-width="120px">
-        <el-form-item :label="$t('config.appearance.dateFormat')" prop="dateFormat">
+        <el-form-item :label="$t('config.appearance.dateFormat')" prop="date_format">
           <el-select id="appearance-dateFormat"
-                     v-model="appearanceObject.dateFormat"
+                     v-model="appearanceObject.date_format"
                      collapse-tags
                      placeholder=" "
                      popper-class="right-box-select-dropdown right-box-select-report "
@@ -68,7 +68,7 @@
       return {
         url: api.appearance,
         appearanceObject: { // 空白对象
-          dateFormat: '',
+          date_format: '',
           lang: '',
           timezone: ''
         },
@@ -171,8 +171,8 @@
           }
         }).finally(() => {
           this.blockOperation.save = false
-          if (this.appearanceObject.dateFormat !== localStorage.getItem(storageKey.dateFormat)) {
-            localStorage.setItem(storageKey.dateFormat, this.appearanceObject.dateFormat)
+          if (this.appearanceObject.date_format !== localStorage.getItem(storageKey.dateFormat)) {
+            localStorage.setItem(storageKey.dateFormat, this.appearanceObject.date_format)
           }
           if (this.appearanceObject.timezone !== localStorage.getItem(storageKey.sysTimezone)) {
             localStorage.setItem(storageKey.sysTimezone, this.appearanceObject.timezone)
