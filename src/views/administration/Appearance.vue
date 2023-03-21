@@ -38,21 +38,21 @@
                      popper-class="right-box-select-dropdown right-box-select-report "
                      size="small">
             <template v-for="timezone in timezoneList" :key="timezone.id">
-              <el-option :label="timezone.value" :value="timezone.value">
-                <span style="float: left">{{ timezone.value }}</span>
-                <span style="float: right;">{{ timezone.remark}}</span>
+              <el-option :label="timezone.name" :value="timezone.name">
+                <span style="float: left">{{ timezone.name }}</span>
+                <span style="float: right;">{{ timezone.offset}}</span>
               </el-option>
             </template>
           </el-select>
 
         </el-form-item>
       </el-form>
-    </div>
-    <div class="edit-appearance-base__footer">
-      <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
-        <loading size="small" :loading="blockOperation.save"></loading>
-        <span>{{$t('overall.save')}}</span>
-      </button>
+      <div class="edit-appearance-base__footer">
+        <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+          <loading size="small" :loading="blockOperation.save"></loading>
+          <span>{{$t('overall.save')}}</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -115,16 +115,21 @@
         this.dateFormatList.forEach(date => {
           date.example = window.$dayJs(new Date()).tz().format(date.value)
         })
-        this.timezoneList = await getDictList({ type: 'timezoneList',pageSize: -1 })
+        await get(api.timezone).then(response => {
+          if (response.code === 200) {
+            this.timezoneList = response.data
+          }
+        })
+
         if (this.timezoneList && this.timezoneList.length > 0) {
           this.timezoneList.forEach(mapData => {
-            let remark = Number(mapData.remark)/3600000 //转换为小
-            mapData.timezoneOffset = remark
-            let hour = Math.abs(parseInt(remark))
-            let remarkStr = remark.toString()
+            let offset = Number(mapData.offset)/3600000 //转换为小
+            mapData.timezoneOffset = offset
+            let hour = Math.abs(parseInt(offset))
+            let offsetStr = offset.toString()
             let minute = 0
-            if(remarkStr.indexOf('.') > -1){
-              minute = Math.abs(Number(remarkStr.substring(remarkStr.indexOf('.')))*60)
+            if(offsetStr.indexOf('.') > -1){
+              minute = Math.abs(Number(offsetStr.substring(offsetStr.indexOf('.')))*60)
             }
             let str = ''
             if(hour<10){
@@ -138,12 +143,12 @@
             }else {
               str += minute
             }
-            if(remark > 0){
-              mapData.remark = 'UTC+'+str
-            }else if(remark === 0){
-              mapData.remark = 'UTC'
+            if(offset > 0){
+              mapData.offset = 'UTC+'+str
+            }else if(offset === 0){
+              mapData.offset = 'UTC'
             }else {
-              mapData.remark = 'UTC-'+str
+              mapData.offset = 'UTC-'+str
             }
           })
         }
@@ -177,7 +182,7 @@
           if (this.appearanceObject.timezone !== localStorage.getItem(storageKey.sysTimezone)) {
             localStorage.setItem(storageKey.sysTimezone, this.appearanceObject.timezone)
           }
-          let timezone = this.timezoneList.find(mapData => mapData.value === this.appearanceObject.timezone)
+          let timezone = this.timezoneList.find(mapData => mapData.name === this.appearanceObject.timezone)
           if (timezone.timezoneOffset !== localStorage.getItem(storageKey.timezoneOffset)) {
             localStorage.setItem(storageKey.timezoneOffset, timezone.timezoneOffset)
           }
