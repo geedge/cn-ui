@@ -173,7 +173,6 @@ export default {
       this.toggleLoading(true)
       axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
         const res = response.data
-        this.errorMsg = this.errorMsgHandler(res)
 
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
