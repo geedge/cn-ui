@@ -111,12 +111,12 @@ export default {
           }
         } else {
           this.showError = true
-          this.errorMsg = res.message
+          this.errorMsg = this.errorMsgHandler(res)
           this.changeByErrorOrNodata()
         }
       }).catch(error => {
         this.showError = true
-        this.errorMsg = error.message
+        this.errorMsg = this.errorMsgHandler(error)
         this.changeByErrorOrNodata()
       }).finally(() => {
         this.toggleLoading(false)

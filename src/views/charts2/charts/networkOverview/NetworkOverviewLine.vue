@@ -173,7 +173,7 @@ export default {
       this.toggleLoading(true)
       axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
         const res = response.data
-        this.errorMsg = res.message
+        this.errorMsg = this.errorMsgHandler(res)
 
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
@@ -186,13 +186,13 @@ export default {
           }
         } else {
           this.showError = true
-          this.errorMsg = this.errorMsgHandler(res.message)
+          this.errorMsg = this.errorMsgHandler(res)
         }
       }).catch(e => {
         console.error(e)
         this.isNoData = false
         this.showError = true
-        this.errorMsg = this.errorMsgHandler(e.message)
+        this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
       })

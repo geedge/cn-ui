@@ -248,7 +248,7 @@ export default {
           } else {
             this.linkNoData = false
             this.showError1 = true
-            this.errorMsg1 = res[0].message
+            this.errorMsg1 = this.errorMsgHandler(res[0])
           }
 
           if (res[1].code === 200) {
@@ -311,7 +311,7 @@ export default {
           } else {
             this.showError2 = true
             this.nextHopNoData = false
-            this.errorMsg2 = res[1].message
+            this.errorMsg2 = this.errorMsgHandler(res[1])
           }
         }
       }).catch(e => {

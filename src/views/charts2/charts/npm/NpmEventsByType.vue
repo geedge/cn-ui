@@ -137,7 +137,7 @@ export default {
         } else {
           this.isNoData = false
           this.showError = true
-          this.errorMsg = res.message
+          this.errorMsg = this.errorMsgHandler(res)
         }
       }).catch(e => {
         this.isNoData = false

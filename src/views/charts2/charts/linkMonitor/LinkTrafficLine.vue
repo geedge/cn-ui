@@ -176,12 +176,12 @@ export default {
           }
         } else {
           this.showError = true
-          this.errorMsg = this.errorMsgHandler(res.message)
+          this.errorMsg = this.errorMsgHandler(res)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
-        this.errorMsg = this.errorMsgHandler(e.message)
+        this.errorMsg = this.errorMsgHandler(e)
         this.isNoData = false
       }).finally(() => {
         this.loading = false

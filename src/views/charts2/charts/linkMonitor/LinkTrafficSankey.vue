@@ -128,7 +128,7 @@ export default {
           this.dataProcessing(res.data.result, parseInt(n))
         } else {
           this.showError = true
-          this.errorMsg = res.message
+          this.errorMsg = this.errorMsgHandler(res)
         }
       }).catch(e => {
         console.error(e)

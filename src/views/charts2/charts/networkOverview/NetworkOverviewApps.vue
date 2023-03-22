@@ -288,7 +288,7 @@ export default {
           })
         } else {
           this.showError = true
-          this.errorMsg = res[0].message
+          this.errorMsg = this.errorMsgHandler(res[0])
         }
       }).catch(e => {
         console.error(e)

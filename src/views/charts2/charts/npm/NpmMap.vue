@@ -171,7 +171,7 @@ export default {
               this.loadMarkerData(imageSeries, mapData)
             }).catch((e) => {
               this.showError = true
-              this.errorMsg = e.message
+              this.errorMsg = this.errorMsgHandler(e)
             })
           } else {
             imageSeries.data = [{}]
@@ -185,7 +185,7 @@ export default {
       } catch (e) {
         this.showError = true
         // todo 此处错误信息有待考证，后续可能会改动
-        this.errorMsg = e
+        this.errorMsg = this.errorMsgHandler(e)
         console.error(e)
       }
     },

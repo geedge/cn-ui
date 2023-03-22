@@ -105,7 +105,7 @@ export default {
           } else {
             this.isNoData = false
             this.showError1 = true
-            this.errorMsg1 = res.data.message
+            this.errorMsg1 = this.errorMsgHandler(res.data.message)
           }
         }).catch(e => {
           console.error(e)
@@ -148,7 +148,7 @@ export default {
           } else {
             this.isNoData2 = false
             this.showError2 = true
-            this.errorMsg2 = res.message
+            this.errorMsg2 = this.errorMsgHandler(res)
           }
         }).catch(e => {
           this.isNoData2 = false

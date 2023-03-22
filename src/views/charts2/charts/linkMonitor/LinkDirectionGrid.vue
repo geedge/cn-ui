@@ -143,7 +143,7 @@ export default {
           } else {
             this.isLinkNoData = false
             this.isLinkShowError = true
-            this.linkErrorMsg = res[0].message
+            this.linkErrorMsg = this.errorMsgHandler(res[0])
           }
 
           if (res[1].code === 200) {
@@ -232,7 +232,7 @@ export default {
           } else {
             this.isNextNoData = false
             this.isNextShowError = true
-            this.nextErrorMsg = res[1].message
+            this.nextErrorMsg = this.errorMsgHandler(res[1])
           }
         }
       }).finally(() => {

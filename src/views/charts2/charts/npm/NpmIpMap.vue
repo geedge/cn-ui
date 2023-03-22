@@ -122,7 +122,7 @@ export default {
                   })
                 } else {
                   this.showError = true
-                  this.errorMsg = r.message
+                  this.errorMsg = this.errorMsgHandler(r)
                 }
               })
               mapData.forEach(t => {
@@ -146,14 +146,14 @@ export default {
           }
         }).catch(e => {
           this.showError = true
-          this.errorMsg = e.message
+          this.errorMsg = this.errorMsgHandler(e)
         }).finally(() => {
           this.toggleLoading(false)
         })
       } catch (e) {
         console.error(e)
         this.showError = true
-        this.errorMsg = e.message
+        this.errorMsg = this.errorMsgHandler(e)
       }
     },
     loadMarkerData (imageSeries, data) {
