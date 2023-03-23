@@ -430,6 +430,9 @@ export default {
     if (this.knowledgeBaseId) {
       axios.get(`${api.knowledgeBase}/${this.knowledgeBaseId}`).then(response => {
         if (response.data.code === 200) {
+          if (!response.data.data) {
+            throw new Error('No data found, id: ' + this.knowledgeBaseId)
+          }
           this.editObject = response.data.data
           this.importedData = this.revertImportedData(this.editObject.data)
           this.handleShowImportedData()
