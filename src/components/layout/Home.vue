@@ -1,7 +1,9 @@
 <template>
   <div class="cn-home">
     <cn-header @refresh="refresh"></cn-header>
-    <cn-container v-if="containerShow" ref="container"></cn-container>
+    <suspense>
+      <cn-container v-if="containerShow" ref="container"></cn-container>
+    </suspense>
   </div>
 </template>
 

@@ -18,13 +18,11 @@
           <i class="cn-icon-xinjian cn-icon"></i>
           <span>{{$t('overall.create')}}</span>
         </button>
-        <!--
         <button id="knowledge-base-edit" :title="$t('knowledgeBase.editKnowledgeBase')" class="top-tool-btn margin-r-10"  :disabled="disableEdit"
-                @click="edit">
+                @click="editSelectRecord">
           <i class="cn-icon-edit cn-icon" ></i>
           <span>{{$t('overall.edit')}}</span>
         </button>
-        -->
         <button id="knowledge-base-delete" :title="$t('knowledgeBase.deleteKnowledgeBase')" class="top-tool-btn margin-r-10"
                 @click="delBatch">
           <i class="cn-icon-delete cn-icon"></i>
@@ -75,9 +73,10 @@ export default {
   },
   methods: {
     edit (u) {
-      axios.get(`${this.url}`, { params: { ids: u.id } }).then(response => {
+      axios.get(`${this.url}/${u.id}`).then(response => {
         if (response.data.code === 200) {
           this.object = response.data.data.list[0]
+          console.info(this.object)
         }
       }).catch(e => {
         console.error(e)
@@ -87,6 +86,16 @@ export default {
           this.$message.error('Something went wrong...')
         }
       })
+    },
+    editSelectRecord () {
+      if (this.batchDeleteObjs.length === 0) {
+        this.$alert(this.$t('tip.pleaseSelectForEdit'), {
+          confirmButtonText: this.$t('tip.yes'),
+          type: 'warning'
+        })
+      } else {
+        this.jumpToEditPage(this.batchDeleteObjs[0].id)
+      }
     },
     del (row) {
       this.$confirm(this.$t('tip.confirmDelete'), {
@@ -115,9 +124,18 @@ export default {
         })
       })
     },
+    jumpToEditPage (id) {
+      this.$router.push({
+        path: '/knowledgeBase/edit',
+        query: {
+          t: +new Date(),
+          id: id
+        }
+      })
+    },
     jumpToCreatePage () {
       this.$router.push({
-        path: '/knowledgeBase/form',
+        path: '/knowledgeBase/create',
         query: {
           t: +new Date()
         }

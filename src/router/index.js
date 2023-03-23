@@ -44,7 +44,11 @@ const routes = [
         component: () => import('@/views/setting/KnowledgeBase')
       },
       {
-        path: '/knowledgeBase/form',
+        path: '/knowledgeBase/create',
+        component: () => import('@/views/setting/KnowledgeBaseForm')
+      },
+      {
+        path: '/knowledgeBase/edit',
         component: () => import('@/views/setting/KnowledgeBaseForm')
       },
       {
