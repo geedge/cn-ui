@@ -184,14 +184,11 @@ export default {
             this.initData(res.data.result, newVal, active, show, n)
           }
         } else {
-          this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
+          this.httpError(res)
         }
       }).catch(e => {
         console.error(e)
-        this.isNoData = false
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
+        this.httpError(e)
       }).finally(() => {
         this.toggleLoading(false)
       })
@@ -542,6 +539,11 @@ export default {
           this.$store.commit('setRangeEchartsData', rangeObj)
         }
       }
+    },
+    httpError (e) {
+      this.isNoData = false
+      this.showError = true
+      this.errorMsg = this.errorMsgHandler(e)
     }
   },
   mounted () {

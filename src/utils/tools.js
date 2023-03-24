@@ -1194,6 +1194,48 @@ export function getQueryByType (type, condition) {
     case 'serverCity': {
       return `server_city='${condition.split(/'(.*?)'/)[1]}'`
     }
-    default: return condition
+    default: {
+      return condition
+    }
+  }
+}
+/**
+ 根据EventSeverity获取对应的键值index
+ */
+export function getIndexByEventSeverity (type) {
+  switch (type) {
+    case 'critical': {
+      return 0
+    }
+    case 'high': {
+      return 1
+    }
+    case 'medium': {
+      return 2
+    }
+    case 'low': {
+      return 3
+    }
+    case 'info': {
+      return 4
+    }
+  }
+}
+
+export function getQueryByFlag2 (type, condition) {
+  switch (type) {
+    case 'country':
+    case 'asn':
+    case 'province':
+    case 'city':
+    case 'isp': {
+      return `${type}='${condition[1]}'`
+    }
+    case 'idcRenter': {
+      return `idc_renter='${condition[1]}'`
+    }
+    default: {
+      return `${condition[0]}'${condition[1]}'`
+    }
   }
 }

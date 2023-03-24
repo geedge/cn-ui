@@ -48,7 +48,7 @@ import {
   getLineIndexUnit2,
   overwriteUrl,
   urlParamsHandler,
-  getQueryByType
+  getQueryByType, getQueryByFlag2
 } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
 import { dataForNpmTrafficLine } from '@/utils/static-data'
@@ -148,16 +148,7 @@ export default {
       } else if (condition.length > 1 && type && type === 'ip') {
         params.q = `${type}='${condition[1]}' and side='${this.side}'`
       } else if (condition.length > 1 && type && type !== 'ip') {
-        const typeList = ['country', 'asn', 'province', 'city', 'isp']
-        const typeFlag = typeList.find(t => type === t)
-
-        if (typeFlag) {
-          params.q = `${type}='${condition[1]}'`
-        } else if (type === 'idcRenter') {
-          params.q = `idc_renter='${condition[1]}'`
-        } else {
-          params.q = `${condition[0]}'${condition[1]}'`
-        }
+        params.q = getQueryByFlag2(type, condition)
       }
 
       this.toggleLoading(true)
@@ -174,14 +165,10 @@ export default {
               this.initLineData(res.data.result, val)
             }
           } else {
-            this.isNoData = false
-            this.showError = true
-            this.errorMsg = this.errorMsgHandler(res)
+            this.httpError(res)
           }
         }).catch(e => {
-          this.isNoData = false
-          this.showError = true
-          this.errorMsg = this.errorMsgHandler(e)
+          this.httpError(e)
           console.error(e)
         }).finally(() => {
           this.toggleLoading(false)
@@ -198,9 +185,7 @@ export default {
             if (item.data.code === 200) {
               npmLineData.push(...item.data.data.result)
             } else {
-              this.isNoData = false
-              this.showError = true
-              this.errorMsg = this.errorMsgHandler(res)
+              this.httpError(res)
             }
           })
           this.showError = false
@@ -212,9 +197,7 @@ export default {
             this.initLineData(npmLineData, val)
           }
         }).catch(e => {
-          this.isNoData = false
-          this.showError = true
-          this.errorMsg = this.errorMsgHandler(e)
+          this.httpError(e)
         }).finally(() => {
           this.toggleLoading(false)
         })
@@ -431,6 +414,11 @@ export default {
         this.tabs = newNpmData
         this.initEchartsOption(this.tabs)
       }
+    },
+    httpError (e) {
+      this.isNoData = false
+      this.showError = true
+      this.errorMsg = this.errorMsgHandler(e)
     }
   },
   mounted () {

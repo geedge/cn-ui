@@ -217,3 +217,56 @@ export const dataForDnsTrafficLine = {
     { analysis: {}, name: 'network.outbound', class: 'outbound', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
   ]
 }
+
+export const dataForNpmEventsHeader = {
+  chartData: [
+    {
+      eventSeverity: 'critical',
+      count: '-',
+      index: 0
+    },
+    {
+      eventSeverity: 'high',
+      count: '-',
+      index: 1
+    },
+    {
+      eventSeverity: 'medium',
+      count: '-',
+      index: 2
+    },
+    {
+      eventSeverity: 'low',
+      count: '-',
+      index: 3
+    },
+    {
+      eventSeverity: 'info',
+      count: '-',
+      index: 4
+    }
+  ]
+}
+
+export const dataForNpmRecentEvents = {
+  customTableTitles: [
+    { label: 'network.severity', prop: 'eventSeverity' },
+    { label: 'network.entity', prop: 'eventKey' },
+    { label: 'detections.eventType', prop: 'eventType' }
+  ],
+  // 下钻后
+  customTableTitles1: [
+    { label: 'network.severity', prop: 'eventSeverity' },
+    { label: 'detections.eventType', prop: 'eventType' },
+    { label: 'detection.list.startTime', prop: 'startTime' }
+  ]
+}
+export const dataForNpmNetworkQuantity = {
+  npmNetworkName: [
+    { name: 'networkAppPerformance.tcpConnectionEstablishLatency' },
+    { name: 'networkAppPerformance.httpResponse' },
+    { name: 'networkAppPerformance.sslResponseLatency' },
+    { name: 'networkAppPerformance.packetLoss' },
+    { name: 'overall.packetRetrans' }
+  ]
+}

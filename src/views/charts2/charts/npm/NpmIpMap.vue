@@ -13,7 +13,7 @@ import { ref, shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { computeScore, getGeoData } from '@/utils/tools'
-import { storageKey, unitTypes, curTabState } from '@/utils/constants'
+import { curTabState, storageKey, unitTypes } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
@@ -21,6 +21,7 @@ import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import ChartError from '@/components/common/Error'
+
 export default {
   name: 'NpmIpMap',
   components: { ChartError },
@@ -117,8 +118,7 @@ export default {
               res2.forEach((r, i) => {
                 if (r.code === 200) {
                   mapData.forEach(t => {
-                    const find = r.data.result.find(d => d.country === t.country)
-                    t[keyPre[i] + 'Score'] = find
+                    t[keyPre[i] + 'Score'] = r.data.result.find(d => d.country === t.country)
                   })
                 } else {
                   this.showError = true

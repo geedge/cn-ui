@@ -32,6 +32,7 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
+import { getIndexByEventSeverity } from '@/utils/tools'
 export default {
   name: 'NetworkOverviewPerformanceEvent',
   setup () {
@@ -81,18 +82,9 @@ export default {
             } else {
               this.isNoData = false
             }
+            
             res.data.data.result = res.data.data.result.map(t => {
-              if (t.eventSeverity === 'critical') {
-                t.index = 0
-              } else if (t.eventSeverity === 'high') {
-                t.index = 1
-              } else if (t.eventSeverity === 'medium') {
-                t.index = 1
-              } else if (t.eventSeverity === 'low') {
-                t.index = 3
-              } else if (t.eventSeverity === 'info') {
-                t.index = 4
-              }
+              t.index = getIndexByEventSeverity(t.eventSeverity)
               return {
                 name: t.eventSeverity,
                 value: t.count,
@@ -138,11 +130,7 @@ export default {
                 value: t.count
               }
             })
-            if (res.data.data.result.length <= 0) {
-              this.chartOption2.legend.show = false
-            } else {
-              this.chartOption2.legend.show = true
-            }
+            this.chartOption2.legend.show = res.data.data.result.length > 0
             this.chartOption2.series[0].data = res.data.data.result
             this.myChart2.setOption(this.chartOption2)
           } else {
@@ -183,7 +171,7 @@ export default {
       this.toggleLoading(n)
     },
     timeFilter: {
-      handler (n) {
+      handler () {
         this.init()
       }
     }
@@ -199,14 +187,8 @@ export default {
     window.removeEventListener('resize', this.resize)
     const dom = document.getElementById('chart1')
     const dom2 = document.getElementById('chart2')
-    if (dom) {
-      echarts.dispose(dom)
-    }
-    if (dom2) {
-      echarts.dispose(dom2)
-    }
-    this.myChart = null
-    this.myChart2 = null
+    dom && echarts.dispose(dom)
+    dom2 && echarts.dispose(dom2)
   }
 }
 </script>

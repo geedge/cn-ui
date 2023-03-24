@@ -184,7 +184,6 @@ export default {
         })
       } catch (e) {
         this.showError = true
-        // todo 此处错误信息有待考证，后续可能会改动
         this.errorMsg = this.errorMsgHandler(e)
         console.error(e)
       }

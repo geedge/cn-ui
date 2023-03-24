@@ -70,14 +70,17 @@ export default {
     relatedSessionsData () {
       const conditionStr = this.$route.query.queryCondition ? this.$route.query.queryCondition : ''
       const condition = conditionStr.split(/["|'](.*?)["|']/)
+
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         ip: condition[1]
       }
+
       const divGreen = document.getElementById('green')
       const divRed = document.getElementById('red')
       const divGray = document.getElementById('gray')
+
       get(api.npm.overview.relatedSessions, params).then(res => {
         if (res.code === 200) {
           this.showError = false
@@ -110,14 +113,10 @@ export default {
             this.changeByErrorOrNodata()
           }
         } else {
-          this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
-          this.changeByErrorOrNodata()
+          this.httpError(res)
         }
       }).catch(error => {
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(error)
-        this.changeByErrorOrNodata()
+        this.httpError(error)
       }).finally(() => {
         this.toggleLoading(false)
       })
@@ -133,6 +132,12 @@ export default {
       this.sessionData.serverSessions = '—'
       this.clientSessions = 0
       this.serverSessions = 0
+    },
+    httpError (res) {
+      this.isNoData = false
+      this.showError = true
+      this.errorMsg = this.errorMsgHandler(res)
+      this.changeByErrorOrNodata()
     }
   },
   mounted () {

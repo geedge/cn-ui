@@ -59,12 +59,13 @@ import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
-import { getChainRatio } from '@/utils/tools'
+import { getChainRatio, getQueryByFlag2, getQueryByType } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
+import { dataForNpmNetworkQuantity } from '@/utils/static-data'
 export default {
   name: 'NpmNetworkQuantity',
   mixins: [chartMixin],
@@ -87,13 +88,7 @@ export default {
     return {
       unitTypes,
       unitConvert,
-      npmNetworkName: [
-        { name: 'networkAppPerformance.tcpConnectionEstablishLatency' },
-        { name: 'networkAppPerformance.httpResponse' },
-        { name: 'networkAppPerformance.sslResponseLatency' },
-        { name: 'networkAppPerformance.packetLoss' },
-        { name: 'overall.packetRetrans' }
-      ],
+      npmNetworkName: dataForNpmNetworkQuantity.npmNetworkName,
       npmNetworkCycleData: [],
       npmNetworkLastCycleData: [],
       newNpmNetworkData: [],
@@ -128,11 +123,13 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         cycle: 0
       }
+
       if (parseFloat(this.tabIndex) === 0) {
         this.side = 'client'
       } else if (parseFloat(this.tabIndex) === 1) {
         this.side = 'server'
       }
+
       if (condition && (typeof condition !== 'object') && type) { // 判断 condition 不为空并且不为对象 type 不为空
         if (type === 'clientIp' || type === 'serverIp') { // type  = clientIp || serverIp
           if (parseFloat(this.tabIndex) === 0) { // npm 下钻 tabIndex 为 0
@@ -140,37 +137,20 @@ export default {
           } else if (parseFloat(this.tabIndex) === 1) { // npm 下钻 tabIndex 为 1
             type = 'serverIp'
           }
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}'` // 拼接字段作为参数
-        } else if (type === 'clientCity') {
-          params.q = `client_city='${condition.split(/'(.*?)'/)[1]}'` // 拼接字段作为参数
-        } else if (type === 'serverCity') {
-          params.q = `server_city='${condition.split(/'(.*?)'/)[1]}'` // 拼接字段作为参数
-        } else {
-          params.q = condition // 默认参数
         }
-        params.type = type
+        params.q = getQueryByType(type, condition)
       } else if (condition.length > 1 && type && type === 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type为ip
         params.q = `${type}='${condition[1]}' and side='${this.side}'` // 拼接字段作为参数
-        params.type = type
       } else if (condition.length > 1 && type && type !== 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type不为ip
-        if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') { // 根据接口所需，调整参数
-          params.q = `${type}='${condition[1]}'` // 拼接字段作为参数
-          params.type = type
-        } else if (type === 'idcRenter') {
-          params.q = `idc_renter='${condition[1]}'` // 拼接字段作为参数
-          params.type = type
-        } else {
-          params.q = `${condition[0]}'${condition[1]}'` // 拼接字段作为参数
-          params.type = type
-        }
+        params.q = getQueryByFlag2(type, condition)
       }
+      params.type = type
+
       // 区分 3 级菜单和 2 级菜单使用不同的 url
-      if (parseFloat(this.tabOperationType) === 3) {
-        url = api.npm.overview.allNetworkAnalysis
-      } else {
-        url = api.npm.overview.networkAnalysis
-      }
-      if ((type && condition) || type) {
+      url = parseFloat(this.tabOperationType) === 3 ? api.npm.overview.allNetworkAnalysis : api.npm.overview.networkAnalysis
+
+      // if ((type && condition) || type) {
+      if (condition || type) {
         params.type = params.type || type
         this.toggleLoading(true)
         axios.get(url, { params: params }).then(res => {
@@ -265,7 +245,6 @@ export default {
             this.npmNetworkQuantity(this.npmNetworkCycleData, this.npmNetworkLastCycleData, 1)
           })
         }).catch((e) => {
-          // todo 此处的e可能为数组
           if (e instanceof Array) {
             e.forEach(t => {
               this.npmNetworkLastCycleData.push(t)

@@ -48,11 +48,7 @@ export default {
   emits: ['tabChange'],
   watch: {
     currentTab (n) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        tabIndex: n
-      })
-      overwriteUrl(newUrl)
+      this.reloadUrl(n)
 
       this.$nextTick(() => {
         this.handleActiveBar(n)
@@ -130,11 +126,8 @@ export default {
             self.currentTab = JSON.stringify(curTabIndex)
             self.isCurTabReady = true
             // URL中tabIndex的设置，client初始化时查询条件需要：side条件
-            const { query } = this.$route
-            const newUrl = urlParamsHandler(window.location.href, query, {
-              tabIndex: self.currentTab
-            })
-            overwriteUrl(newUrl)
+            self.reloadUrl(self.currentTab)
+
             setTimeout(() => {
               self.handleActiveBar(self.currentTab)
             }, 400)
@@ -152,11 +145,7 @@ export default {
       }
     },
     handleClick (tab) {
-      const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        tabIndex: tab.index
-      })
-      overwriteUrl(newUrl)
+      this.reloadUrl(tab.index)
     },
     handleActiveBar (index) {
       const tabDom = document.getElementById('tab-' + index)
@@ -177,6 +166,13 @@ export default {
       this.tabs[n].disable = false
       const tabEle = document.getElementById('tab-' + n)
       tabEle.style.cssText = 'cursor: pointer;'
+    },
+    reloadUrl (index) {
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        tabIndex: index
+      })
+      overwriteUrl(newUrl)
     }
   },
   mounted () {

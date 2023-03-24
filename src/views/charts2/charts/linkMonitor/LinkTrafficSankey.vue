@@ -109,11 +109,7 @@ export default {
           }
         }
       } else {
-        if (n === 0) {
-          url = api.linkMonitor.quadrupleIngressAnalysis // 入口
-        } else {
-          url = api.linkMonitor.quadrupleEgressAnalysis // 出口
-        }
+        url = n === 0 ? api.linkMonitor.quadrupleIngressAnalysis : api.linkMonitor.quadrupleEgressAnalysis
       }
       this.toggleLoading(true)
       axios.get(url, { params: params }).then(res => {
@@ -463,15 +459,8 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
-    if (this.myChart) {
-      this.myChart.dispose()
-      // 避免不能生效
-      this.myChart = null
-    }
-    if (this.myChart2) {
-      this.myChart2.dispose()
-      this.myChart2 = null
-    }
+    this.myChart && this.myChart.dispose()
+    this.myChart2 && this.myChart2.dispose()
     this.chartOption = null
 
     this.cnLinkInfo = null

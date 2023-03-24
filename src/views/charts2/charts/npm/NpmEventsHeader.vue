@@ -17,6 +17,7 @@ import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
+import { dataForNpmEventsHeader } from '@/utils/static-data'
 
 export default {
   name: 'NpmEventsHeader',
@@ -24,33 +25,7 @@ export default {
   mixins: [chartMixin],
   data () {
     return {
-      chartData: [
-        {
-          eventSeverity: 'critical',
-          count: '-',
-          index: 0
-        },
-        {
-          eventSeverity: 'high',
-          count: '-',
-          index: 1
-        },
-        {
-          eventSeverity: 'medium',
-          count: '-',
-          index: 2
-        },
-        {
-          eventSeverity: 'low',
-          count: '-',
-          index: 3
-        },
-        {
-          eventSeverity: 'info',
-          count: '-',
-          index: 4
-        }
-      ],
+      chartData: dataForNpmEventsHeader.chartData,
       type: 'severity',
       showError: false,
       errorMsg: ''

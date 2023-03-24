@@ -55,6 +55,7 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
+import { dataForNpmRecentEvents } from '@/utils/static-data'
 
 export default {
   name: 'NpmRecentEvents',
@@ -72,11 +73,7 @@ export default {
   data () {
     return {
       tableData: [],
-      customTableTitles: [
-        { label: 'network.severity', prop: 'eventSeverity' },
-        { label: 'network.entity', prop: 'eventKey' },
-        { label: 'detections.eventType', prop: 'eventType' }
-      ],
+      customTableTitles: dataForNpmRecentEvents.customTableTitles,
       showError: false,
       errorMsg: ''
     }
@@ -99,20 +96,18 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         limit: 8
       }
+
       if (condition && condition.length > 1 && this.dimensionType) {
         params.param = condition[1]
         params.type = this.dimensionType
         if (params.type === 'serverIp' || params.type === 'clientIp') params.type = 'ip'
         params.limit = 10
         url = api.npm.events.recentEventsD
-        this.customTableTitles = [
-          { label: 'network.severity', prop: 'eventSeverity' },
-          { label: 'detections.eventType', prop: 'eventType' },
-          { label: 'detection.list.startTime', prop: 'startTime' }
-        ]
+        this.customTableTitles = dataForNpmRecentEvents.customTableTitles1
       } else {
         url = api.npm.events.recentEvents
       }
+
       this.toggleLoading(true)
       axios.get(url, { params: params }).then(res => {
         res = res.data
@@ -126,14 +121,10 @@ export default {
           })
           this.tableData = res.data.result
         } else {
-          this.isNoData = false
-          this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
+          this.httpError(res)
         }
       }).catch(e => {
-        this.isNoData = false
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
+        this.httpError(e)
       }).finally(() => {
         this.toggleLoading(false)
       })
@@ -145,11 +136,7 @@ export default {
      */
     splitEventKey (key) {
       let name = ''
-      if (key) {
-        name = key.split(' ')[0]
-      } else {
-        name = '-'
-      }
+      name = key ? key.split(' ')[0] : '-'
       return name
     },
     jumpPage (item) {
@@ -191,6 +178,11 @@ export default {
         historyList.push(tempObj)
       }
       this.$store.commit('setRouterHistoryList', historyList)
+    },
+    httpError (res) {
+      this.isNoData = false
+      this.showError = true
+      this.errorMsg = this.errorMsgHandler(res)
     }
   },
   mounted () {
