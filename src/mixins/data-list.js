@@ -37,7 +37,7 @@ export default {
       tableData: [],
       scrollbarWrap: null,
       delFlag: false,
-      disableEdit:false,//编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
+      disableEdit: false, // 编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
       operationWidth: '165' // 操作列宽
     }
   },
@@ -75,9 +75,9 @@ export default {
     },
     selectionChange (objs) {
       this.batchDeleteObjs = objs
-      if(this.batchDeleteObjs.length > 1) {
+      if (this.batchDeleteObjs.length > 1) {
         this.disableEdit = true
-      }else {
+      } else {
         this.disableEdit = false
       }
     },
@@ -129,18 +129,18 @@ export default {
       })
     },
     delBatch () {
-      let ids = []
-      if(this.batchDeleteObjs && this.batchDeleteObjs.length > 0){
-        this.batchDeleteObjs.forEach(item =>{
+      const ids = []
+      if (this.batchDeleteObjs && this.batchDeleteObjs.length > 0) {
+        this.batchDeleteObjs.forEach(item => {
           ids.push(item.id)
         })
       }
-      if(ids.length === 0){
-        this.$alert(this.$t('tip.pleaseSelect'),{
+      if (ids.length === 0) {
+        this.$alert(this.$t('tip.pleaseSelect'), {
           confirmButtonText: this.$t('tip.yes'),
-          type:'warning'
+          type: 'warning'
         })
-      }else {
+      } else {
         this.$confirm(this.$t('tip.confirmDelete'), {
           confirmButtonText: this.$t('tip.yes'),
           cancelButtonText: this.$t('tip.no'),
@@ -199,13 +199,13 @@ export default {
         }
       })
     },
-    editSelectRecord(){
-      if(this.batchDeleteObjs.length === 0){
-        this.$alert(this.$t('tip.pleaseSelectForEdit'),{
+    editSelectRecord () {
+      if (this.batchDeleteObjs.length === 0) {
+        this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),
-          type:'warning'
+          type: 'warning'
         })
-      }else {
+      } else {
         get(`${this.url}/${this.batchDeleteObjs[0].id}`).then(response => {
           if (response.code === 200) {
             this.object = response.data

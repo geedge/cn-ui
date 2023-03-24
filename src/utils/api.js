@@ -20,7 +20,7 @@ export const api = {
   login: '/sys/login',
   // user
   user: '/sys/user',
-  timezone:'/sys/timezones',
+  timezone: '/sys/timezones',
   // 获取配置
   config: '/sys/config',
   // role

@@ -292,7 +292,7 @@ export default {
       loadingTableId: '',
       loadingPreviewId: '',
       downDataList: [],
-      disableEdit:false,//编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
+      disableEdit: false, // 编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
       // pageObj: {
       //   pageNo: 1,
       //   pageSize: 20,
@@ -542,9 +542,9 @@ export default {
         // this.selectIds = selectIds
       }
       this.batchDeleteObjs = objs
-      if(objs.length > 1) {
+      if (objs.length > 1) {
         this.disableEdit = true
-      }else {
+      } else {
         this.disableEdit = false
       }
     },
@@ -566,9 +566,9 @@ export default {
       }
 
       this.batchDeleteObjs = objs
-      if(objs.length > 1) {
+      if (objs.length > 1) {
         this.disableEdit = true
-      }else {
+      } else {
         this.disableEdit = false
       }
 

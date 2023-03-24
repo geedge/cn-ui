@@ -295,13 +295,13 @@ export default {
       this.rightBox.show = true
     },
     editReport () {
-      if(this.batchDeleteObjs.length === 0){
-        this.$alert(this.$t('tip.pleaseSelectForEdit'),{
+      if (this.batchDeleteObjs.length === 0) {
+        this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),
-          type:'warning'
+          type: 'warning'
         })
-      }else {
-        let curRecord = this.batchDeleteObjs[0]
+      } else {
+        const curRecord = this.batchDeleteObjs[0]
         this.initConfig(curRecord)
         this.object = curRecord
         this.rightBox.show = true

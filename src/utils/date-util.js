@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import {storageKey} from '@/utils/constants'
+import { storageKey } from '@/utils/constants'
 
 // 将时间转化为秒
 export function getSecond (time) {
