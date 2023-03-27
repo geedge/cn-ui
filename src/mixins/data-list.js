@@ -126,7 +126,7 @@ export default {
             this.$message.error(response.msg)
           }
         })
-      })
+      }).catch(e => {})
     },
     delBatch () {
       const ids = []
@@ -139,7 +139,7 @@ export default {
         this.$alert(this.$t('tip.pleaseSelect'), {
           confirmButtonText: this.$t('tip.yes'),
           type: 'warning'
-        })
+        }).catch(() => {})
       } else {
         this.$confirm(this.$t('tip.confirmDelete'), {
           confirmButtonText: this.$t('tip.yes'),
@@ -158,7 +158,7 @@ export default {
           }).finally(() => {
             this.tools.loading = false
           })
-        })
+        }).catch(() => {})
       }
     },
     newObject () {
@@ -204,7 +204,7 @@ export default {
         this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),
           type: 'warning'
-        })
+        }).catch(() => {})
       } else {
         get(`${this.url}/${this.batchDeleteObjs[0].id}`).then(response => {
           if (response.code === 200) {

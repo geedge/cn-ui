@@ -92,7 +92,7 @@ export default {
         this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),
           type: 'warning'
-        })
+        }).catch(() => {})
       } else {
         this.jumpToEditPage(this.batchDeleteObjs[0].id)
       }
@@ -122,7 +122,7 @@ export default {
         }).finally(() => {
           this.tools.loading = false
         })
-      })
+      }).catch(() => {})
     },
     jumpToEditPage (id) {
       this.$router.push({

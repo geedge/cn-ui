@@ -91,12 +91,12 @@ export default {
   },
   methods: {
     edit () {
-      if(this.batchDeleteObjs.length === 0){
-        this.$alert(this.$t('tip.pleaseSelectForEdit'),{
+      if (this.batchDeleteObjs.length === 0) {
+        this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),
-          type:'warning'
-        })
-      }else {
+          type: 'warning'
+        }).catch(() => {})
+      } else {
         get(`${this.url}`, { ids: this.batchDeleteObjs[0].id }).then(response => {
           if (response.code === 200) {
             this.object = response.data.list[0]

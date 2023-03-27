@@ -299,7 +299,7 @@ export default {
         this.$alert(this.$t('tip.pleaseSelectForEdit'), {
           confirmButtonText: this.$t('tip.yes'),
           type: 'warning'
-        })
+        }).catch(() => {})
       } else {
         const curRecord = this.batchDeleteObjs[0]
         this.initConfig(curRecord)

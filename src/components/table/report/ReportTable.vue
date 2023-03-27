@@ -660,7 +660,7 @@ export default {
             this.$message.error(response.msg)
           }
         })
-      })
+      }).catch(() => {})
     },
     pageJump (val) {
       this.pageObj.pageNo = val
