@@ -1239,3 +1239,17 @@ export function getQueryByFlag2 (type, condition) {
     }
   }
 }
+
+/**
+ 根据语言环境获取字符所占像素px
+ */
+export function getWidthByLanguage (language) {
+  switch (language) {
+    case 'en': {
+      return 7
+    }
+    case 'cn': {
+      return 16
+    }
+  }
+}
