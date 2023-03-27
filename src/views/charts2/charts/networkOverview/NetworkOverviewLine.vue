@@ -294,7 +294,7 @@ export default {
         }
         this.showMarkLine = true
         this.$nextTick(() => {
-          this.myChart = echarts.init(this.$refs.overviewLineChart)
+          !this.myChart && (this.myChart = echarts.init(this.$refs.overviewLineChart))
           this.myChart.setOption(this.chartOption)
 
           this.myChart.dispatchAction({
