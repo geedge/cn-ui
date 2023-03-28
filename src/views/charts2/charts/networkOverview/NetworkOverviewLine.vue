@@ -203,8 +203,6 @@ export default {
           echartsData = echartsData.filter(t => t.show === true)
         }
         const _this = this
-        // !this.myChart && (this.myChart = echarts.init(dom))
-        // 此处为验证是否因dom未销毁，导致图表出错，后续可能会改
         this.chartOption = stackedLineChartOption
         const chartOption = this.chartOption.series[0]
         this.chartOption.series = echartsData.map((t, i) => {
@@ -294,7 +292,10 @@ export default {
         }
         this.showMarkLine = true
         this.$nextTick(() => {
-          !this.myChart && (this.myChart = echarts.init(this.$refs.overviewLineChart))
+          if (this.myChart) {
+            this.myChart.dispose()
+          }
+          this.myChart = echarts.init(this.$refs.overviewLineChart)
           this.myChart.setOption(this.chartOption)
 
           this.myChart.dispatchAction({
