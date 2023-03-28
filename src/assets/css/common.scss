@@ -60,3 +60,8 @@ body {
     display: none !important;
   }
 }
+
+// 单词换行不被拆开
+.el-table .cell {
+  word-break: keep-all !important;
+}

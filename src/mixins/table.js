@@ -22,6 +22,7 @@ export default {
   computed: {
     customTableTitles () {
       if (this.customTableTitle) {
+        // 设置列宽，避免分辨率过小时，文本显示省略号
         this.getTableWidth(this.customTableTitle)
       }
 
