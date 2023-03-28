@@ -212,8 +212,8 @@ export default {
       echartsData = echartsData.filter(t => t.show === true)
       this.$nextTick(() => {
         if (echartsData.length > 0) {
-          const dom = this.$refs['chart-line']
-          !this.myChart && (this.myChart = echarts.init(dom))
+          // const dom = this.$refs['chart-line']
+          // !this.myChart && (this.myChart = echarts.init(dom))
 
           this.chartOption = _.cloneDeep(trafficLineChartOption)
           const chartOption = this.chartOption.series[0]
@@ -275,8 +275,15 @@ export default {
             return stackedLineTooltipFormatter(params)
           }
 
-          this.myChart.on('legendselectchanged', this.selectLegend)
-          this.myChart.setOption(this.chartOption, true)
+          this.$nextTick(() => {
+            if (this.myChart) {
+              this.myChart.dispose()
+            }
+            const dom = this.$refs['chart-line']
+            this.myChart = echarts.init(dom)
+            this.myChart.setOption(this.chartOption, true)
+            this.myChart.on('legendselectchanged', this.selectLegend)
+          })
         }
       })
     },

@@ -199,8 +199,6 @@ export default {
         }
         const _this = this
         if (echartsData.length > 0) {
-          const dom = document.getElementById('dnsLineChart')
-          !this.myChart && (this.myChart = echarts.init(dom))
           this.chartOption = stackedLineChartOption
           const chartOption = this.chartOption.series[0]
           this.chartOption.series = echartsData.map((t, i) => {
@@ -284,7 +282,13 @@ export default {
             return stackedLineTooltipFormatter(params)
           }
           this.showMarkLine = true
-          this.myChart.setOption(this.chartOption)
+          this.$nextTick(() => {
+            if (this.myChart) {
+              this.myChart.dispose()
+            }
+            this.myChart = echarts.init(document.getElementById('dnsLineChart'))
+            this.myChart.setOption(this.chartOption)
+          })
         }
       })
     },

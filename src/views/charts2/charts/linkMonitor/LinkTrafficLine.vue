@@ -197,8 +197,8 @@ export default {
         }
 
         const _this = this
-        const dom = document.getElementById('linkTrafficLineChart')
-        !this.myChart && (this.myChart = echarts.init(dom))
+        // const dom = document.getElementById('linkTrafficLineChart')
+        // !this.myChart && (this.myChart = echarts.init(dom))
 
         this.chartOption = linkTrafficLineChartOption
         const chartOption = this.chartOption.series[0]
@@ -253,7 +253,13 @@ export default {
         }
 
         this.showMarkLine = true
-        this.myChart.setOption(this.chartOption)
+        this.$nextTick(() => {
+          if (this.myChart) {
+            this.myChart.dispose()
+          }
+          this.myChart = echarts.init(document.getElementById('linkTrafficLineChart'))
+          this.myChart.setOption(this.chartOption)
+        })
       }
     },
     activeChange (item, index) {
