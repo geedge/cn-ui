@@ -61,7 +61,11 @@ body {
   }
 }
 
-// 单词换行不被拆开
-.el-table .cell {
+// 表头单词换行不被拆开
+.el-table th > .cell  {
   word-break: keep-all !important;
+}
+// 表格内容换行，不对中文生效，避免中文出现省略号
+.el-table .cell {
+  word-break: break-word !important;
 }

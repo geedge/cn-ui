@@ -55,7 +55,7 @@ export default {
         }
 
         list.forEach((item, index) => {
-          if (item.label) {
+          if (item.label && item.label !== 'IP') {
             let tempLength = 0
 
             if (item.label.indexOf(' ') > -1) {
@@ -72,20 +72,22 @@ export default {
             // 为了避免没有minWidth这种情况
             if (!item.minWidth) {
               item.minWidth = newWidth
-            } else if (item.minWidth < newWidth) {
-              item.minWidth = newWidth
             }
 
             // 排序最后一位一般是'操作'，或者是较长的字符，故不让其换行，宽度直接为字符宽度
             if (index === list.length - 1) {
               item.minWidth = (num * item.label.length) + 22
-              item.width = (num * item.label.length) + 22
             }
 
             // 有排序的，额外添加24px的排序图标宽度
             if (item.sortable) {
               item.minWidth = item.minWidth + 30
-              item.width = item.width + 30
+            }
+
+            if (item.minWidth < newWidth) {
+              item.minWidth = newWidth
+            } else if (item.width < item.minWidth) {
+              item.width = item.minWidth
             }
           }
         })

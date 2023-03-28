@@ -92,6 +92,7 @@ export default {
         }, {
           label: this.$t('overall.type'),
           prop: 'tagType',
+          minWidth: 80,
           show: true
         }, {
           label: this.$t('overall.remark'),
