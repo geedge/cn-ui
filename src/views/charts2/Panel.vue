@@ -15,7 +15,7 @@
             v-model="metric"
             placeholder=""
             popper-class="common-select"
-            v-if="panelType === panelTypeAndRouteMapping.networkOverview"
+            v-if="showMetric"
             :popper-append-to-body="false"
             @change="metricChange"
         >
@@ -99,6 +99,10 @@ export default {
     // npmThirdLevelMenuScore () {
     //   return this.$store.getters.getNpmThirdLevelMenuScore
     // }
+    // 显示顶部的Metric单位选项标识
+    showMetric () {
+      return this.panelType === panelTypeAndRouteMapping.networkOverview || this.panelType === panelTypeAndRouteMapping.networkOverviewDrillDown
+    }
   },
   watch: {
     // npmThirdLevelMenuScore: {
