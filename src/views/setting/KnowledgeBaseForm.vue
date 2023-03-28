@@ -190,9 +190,6 @@ export default {
         tagType: [
           { required: true, message: this.$t('validate.required'), trigger: 'change' },
           { validator: typeAndNameValidator, message: this.$t('validate.duplicateRecord', { columns: '(' + this.$t('config.roles.name') + '+' + this.$t('overall.type') + ')' }), trigger: 'change' }
-        ],
-        remark: [
-          { validator: nameValidator, message: this.$t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' }
         ]
       }
     }
@@ -356,15 +353,11 @@ export default {
                     t: +new Date()
                   })
                 } else {
-                  this.$message.error(response.data.message)
+                  this.errorMsgHandler(response)
                 }
               }).catch(e => {
                 console.error(e)
-                if (e.response.data && e.response.data.message) {
-                  this.$message.error(e.response.data.message)
-                } else {
-                  this.$message.error('Something went wrong...')
-                }
+                this.errorMsgHandler(e)
               }).finally(() => {
                 this.blockOperation.save = false
               })
@@ -378,15 +371,11 @@ export default {
                     t: +new Date()
                   })
                 } else {
-                  this.$message.error(response.data.message)
+                  this.errorMsgHandler(response)
                 }
               }).catch(e => {
                 console.error(e)
-                if (e.response.data && e.response.data.message) {
-                  this.$message.error(e.response.data.message)
-                } else {
-                  this.$message.error('Something went wrong...')
-                }
+                this.errorMsgHandler(e)
               }).finally(() => {
                 this.blockOperation.save = false
               })
@@ -403,7 +392,10 @@ export default {
       return this.importedData.filter(d => d.status !== 1).length > 0
     },
     async getKnowledgeBaseList () {
-      return await axios.get(this.url, { params: { pageSize: 999 } })
+      return await axios.get(this.url, { params: { pageSize: 999 } }).catch(e => {
+        console.error(e)
+        this.errorMsgHandler(e)
+      })
     }
   },
   computed: {
@@ -444,10 +436,12 @@ export default {
           this.importedPageObj.total = this.importedData.length
           this.importedType = this.editObject.tagType
           this.initLoading = false
+        } else {
+          this.errorMsgHandler(response)
         }
       }).catch(e => {
         console.error(e)
-        this.$message.error(this.errorMsgHandler(e))
+        this.errorMsgHandler(e)
         this.$router.push({
           path: '/knowledgeBase',
           t: +new Date()
