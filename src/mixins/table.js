@@ -81,7 +81,7 @@ export default {
 
             // 有排序的，额外添加24px的排序图标宽度
             if (item.sortable) {
-              item.minWidth = item.minWidth + 30
+              item.minWidth = item.minWidth + 32
             }
 
             if (item.minWidth < newWidth) {
