@@ -248,7 +248,7 @@
     }
     .imported-table-box {
       position: relative;
-      height: 367px;
+      height: 413px;
       border: 1px solid #DEDEDE;
       border-radius: 2px;
       transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -275,6 +275,12 @@
           overflow: hidden;
           text-overflow: ellipsis;
         }
+        :deep .imported-data-item-edit__input .el-input {
+          height: 30px;
+        }
+        :deep .imported-data-item-edit__input .el-input__inner {
+          height: 30px;
+        }
         .imported-data-msg {
           width: 140px;
         }
@@ -299,7 +305,7 @@
       .imported-pagination.pagination {
         position: absolute;
         width: 100%;
-        bottom: 0;
+        bottom: 48px;
         margin-top: 4px;
         padding-top: 8px;
         height: 42px;

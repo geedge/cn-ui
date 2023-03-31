@@ -1,18 +1,22 @@
 <template>
   <div class="edit-knowledge-base">
     <loading :loading="initLoading"></loading>
-    <div class="edit-knowledge-base__header">{{editObject.id ? $t('overall.edit') : $t('overall.create')}}</div>
+    <div class="edit-knowledge-base__header">{{ editObject.id ? $t('overall.edit') : $t('overall.create') }}</div>
     <div class="edit-knowledge-base__body">
       <el-steps direction="vertical" :active="activeStep">
-        <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px; flex-shrink: 0;`" :key="index"></el-step>
+        <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px; flex-shrink: 0;`"
+                 :key="index"></el-step>
       </el-steps>
       <el-collapse v-model="activeCollapses">
         <el-collapse-item name="0">
-          <template #title><div class="form-sub-title">{{$t('knowledgeBase.editInformation')}}</div></template>
+          <template #title>
+            <div class="form-sub-title">{{ $t('knowledgeBase.editInformation') }}</div>
+          </template>
           <el-form :model="editObject" label-position="top" ref="form" :rules="rules">
             <!--name-->
             <el-form-item :label="$t('config.roles.name')" prop="tagName">
-              <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit size="mini" type="text" v-model="editObject.tagName" @blur="tagNameBlur"></el-input>
+              <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit
+                        size="mini" type="text" v-model="editObject.tagName" @blur="tagNameBlur"></el-input>
             </el-form-item>
             <el-form-item :label="$t('overall.type')" prop="tagType">
               <el-select v-model="editObject.tagType"
@@ -28,12 +32,15 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('overall.remark')" prop="remark">
-              <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" v-model="editObject.remark" id="role-box-input-remark"/>
+              <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea"
+                        v-model="editObject.remark" id="role-box-input-remark"/>
             </el-form-item>
           </el-form>
         </el-collapse-item>
         <el-collapse-item name="1" class="upload-collapse">
-          <template #title><div class="form-sub-title">{{$t('overall.importFromFile')}}</div></template>
+          <template #title>
+            <div class="form-sub-title">{{ $t('overall.importFromFile') }}</div>
+          </template>
           <loading :loading="uploadLoading"></loading>
           <el-upload :action="`${baseUrl}knowledge/import`"
                      :headers="uploadHeaders"
@@ -53,16 +60,18 @@
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
-              <div>{{$t('knowledgeBase.dropFileHereOr')}}<em>{{$t('knowledgeBase.clickToUpload')}}</em></div>
-              <div class="upload-tip">{{$t('knowledgeBase.supportCsv')}}</div>
+              <div>{{ $t('knowledgeBase.dropFileHereOr') }}<em>{{ $t('knowledgeBase.clickToUpload') }}</em></div>
+              <div class="upload-tip">{{ $t('knowledgeBase.supportCsv') }}</div>
             </div>
           </el-upload>
           <transition name="el-zoom-in-top">
-            <div class="upload-error-tip" v-if="uploadErrorTip">{{uploadErrorTip}}</div>
+            <div class="upload-error-tip" v-if="uploadErrorTip">{{ uploadErrorTip }}</div>
           </transition>
         </el-collapse-item>
         <el-collapse-item name="2">
-          <template #title><div class="form-sub-title">{{$t('overall.preview')}}</div></template>
+          <template #title>
+            <div class="form-sub-title">{{ $t('overall.preview') }}</div>
+          </template>
           <div class="skeleton-border" v-if="!uploaded && !editObject.id">
             <el-skeleton>
               <template #template>
@@ -73,30 +82,73 @@
                 </div>
               </template>
             </el-skeleton>
-            <div class="skeleton-tip">{{$t('knowledgeBase.skeletonTip')}}</div>
+            <div class="skeleton-tip">{{ $t('knowledgeBase.skeletonTip') }}</div>
           </div>
           <template v-else>
             <div class="imported-tip"><i class="cn-icon cn-icon-baocuo"/>
-              &nbsp;&nbsp;{{$t('knowledgeBase.importTip', { total: originalImportInfo.total, succeeded: originalImportInfo.succeeded, failed: originalImportInfo.failed })}}
+              &nbsp;&nbsp;{{
+                $t('knowledgeBase.importTip', {
+                  total: originalImportInfo.total,
+                  succeeded: originalImportInfo.succeeded,
+                  failed: originalImportInfo.failed
+                })
+              }}
             </div>
             <div class="imported-table-box" :class="previewErrorTip ? 'imported-table-box--error' : ''">
-              <table class="imported-table" v-if="!importedDataNoData">
-                <tr>
-                  <th width="230">{{importedTableFirstColumn}}</th>
-                  <th width="180">Label</th>
-                  <th>{{$t('overall.import')}}</th>
-                  <th width="16"></th>
-                </tr>
-                <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagItem + d.tagValue + i">
-                  <td class="imported-data-item" :title="d.tagItem">{{d.tagItem}}</td>
-                  <td class="imported-data-value" :title="d.tagValue">{{d.tagValue}}</td>
-                  <td class="imported-data-msg" :title="d.msg"><i :class="d.status === 1 ? 'el-icon-success' : 'el-icon-error'"></i>&nbsp;&nbsp;{{d.msg}}</td>
-                  <td><i class="el-icon-close" @click="removeImportedData(i)"></i></td>
-                </tr>
-              </table>
-              <chart-no-data v-else></chart-no-data>
+              <el-form ref="editForm" :model="editTagForm" :rules="editTagFormRules">
+                <table class="imported-table" v-if="!importedDataNoData">
+                  <tr>
+                    <th width="230">{{ importedTableFirstColumn }}</th>
+                    <th width="180">Label</th>
+                    <th v-if="!editObject.id">{{ $t('overall.import') }}</th>
+                    <th width="16"></th>
+                  </tr>
+                  <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagItem + d.tagValue + i">
+                    <td class="imported-data-item" :title="d.tagItem">
+                      <el-form-item v-if="editObject.id && editIndex === i" prop="tagItem">
+                        <span class="imported-data-item-edit__input">
+                          <el-input v-model="editTagForm.tagItem" @blur="onBlurTagItem"></el-input>
+                        </span>
+                      </el-form-item>
+                      <span v-else>{{ d.tagItem }}</span>
+                    </td>
+                    <td class="imported-data-value" :title="d.tagValue">
+                      <el-form-item v-if="editObject.id && editIndex === i" prop="tagValue">
+                        <span class="imported-data-item-edit__input">
+                          <el-input v-model="editTagForm.tagValue" @blur="onBlurTagItem"></el-input>
+                        </span>
+                      </el-form-item>
+                      <span v-else>{{ d.tagValue }}</span>
+                    </td>
+                    <td v-if="!editObject.id" class="imported-data-msg" :title="d.msg">
+                      <i :class="d.status === 1 ? 'el-icon-success' : 'el-icon-error'"></i>&nbsp;&nbsp;{{ d.msg }}
+                    </td>
+                    <td v-else></td>
+                    <!--返回和保存按钮-->
+                    <td v-if="editObject.id && backEditFlag && editIndex === i" class="imported-data-btn">
+                      <i v-if="editObject.id" class="cn-icon cn-icon-revoke imported-data-left-btn imported-data-back"
+                         @click="backImportedData"></i>
+                      <i class="cn-icon cn-icon-save imported-data-save" @click="saveImportedData(i)"></i>
+                    </td>
+                    <!--保存和删除按钮-->
+                    <td v-else-if="editObject.id && addEditFlag && editIndex === i" class="imported-data-btn">
+                      <i class="cn-icon cn-icon-save imported-data-save" style="margin: 0 7px"
+                         @click="saveImportedData(i)"></i>
+                      <i class="el-icon-close" @click="removeImportedData(i)"></i>
+                    </td>
+                    <!--编辑和删除按钮-->
+                    <td v-else class="imported-data-btn">
+                      <i v-if="editObject.id" class="cn-icon cn-icon-edit1 imported-data-left-btn"
+                         @click="editImportedData(i)"></i>
+                      <i class="el-icon-close" @click="removeImportedData(i)"></i>
+                    </td>
+                  </tr>
+                </table>
+                <chart-no-data v-else></chart-no-data>
+              </el-form>
               <Pagination
                   class="imported-pagination"
+                  :style="{'bottom': editObject.id ? '48px' : '0'}"
                   :page-obj="importedPageObj"
                   :store-page-no-on-url="false"
                   layout="prev,pager,next"
@@ -104,9 +156,15 @@
                   @prev-click="prev"
                   @next-click="next"
               ></Pagination>
+              <!--新增按钮-->
+              <el-button v-if="editObject.id" class="addTagBtn" :disabled="addEditFlag" @click="addTagAtLast">
+                <i class="cn-icon cn-icon-add add-tag-btn" :style="{'color': addEditFlag ? '#C0C4CC' : '#575757'}"></i>
+                Add
+              </el-button>
             </div>
             <transition name="el-zoom-in-top">
-              <div class="preview-error-tip" v-if="previewErrorTip">{{previewErrorTip}}</div>
+              <div class="preview-error-tip" v-if="previewErrorTip">{{ previewErrorTip }}</div>
+              <div class="preview-error-tip" v-else-if="editTagErrorTip">{{ editTagErrorTip }}</div>
             </transition>
           </template>
         </el-collapse-item>
@@ -114,18 +172,19 @@
     </div>
     <div class="edit-knowledge-base__footer">
       <button class="footer__btn footer__btn--light" @click="cancel">
-        <span>{{$t('overall.cancel')}}</span>
+        <span>{{ $t('overall.cancel') }}</span>
       </button>
-      <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+      <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}"
+              :disabled="blockOperation.save" class="footer__btn" @click="save">
         <loading size="small" :loading="blockOperation.save"></loading>
-        <span>{{$t('overall.save')}}</span>
+        <span>{{ $t('overall.save') }}</span>
       </button>
     </div>
   </div>
 </template>
 <script>
 import { useRoute } from 'vue-router'
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, reactive } from 'vue'
 import _ from 'lodash'
 import { knowledgeBaseType, storageKey, unitTypes } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
@@ -180,18 +239,86 @@ export default {
       }
       return validate
     }
+
+    const nameAndLabelValidator = (rule, value, callback) => {
+      let validate = true
+      let index = -1 // 当前编辑的键值index
+      // todo 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
+      const findData = this.importedData.find((item, i) => {
+        index = i
+        return item.tagItem === this.editTagForm.tagItem
+      })
+      if (findData) {
+        // 如果name重复的第一个键值不是当前编辑item的index，即代表后续有重名的项了，提示重名
+        if (index !== this.editIndex) {
+          validate = false
+          callback(new Error())
+        } else {
+          // 此情况为，仅修改label，不修改name
+          if (findData.tagValue === this.editTagForm.tagValue) {
+            validate = false
+            callback(new Error())
+          }
+        }
+      }
+      return validate
+    }
     return {
       rules: {
         tagName: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: nameValidator, message: this.$t('validate.onlyAllowNumberLetterChinese-_'), trigger: 'blur' },
-          { validator: nameAndTypeValidator, message: this.$t('validate.duplicateRecord', { columns: '(' + this.$t('config.roles.name') + '+' + this.$t('overall.type') + ')' }), trigger: 'blur' }
+          {
+            required: true,
+            message: this.$t('validate.required'),
+            trigger: 'blur'
+          },
+          {
+            validator: nameValidator,
+            message: this.$t('validate.onlyAllowNumberLetterChinese-_'),
+            trigger: 'blur'
+          },
+          {
+            validator: nameAndTypeValidator,
+            message: this.$t('validate.duplicateRecord', { columns: '(' + this.$t('config.roles.name') + '+' + this.$t('overall.type') + ')' }),
+            trigger: 'blur'
+          }
         ],
         tagType: [
-          { required: true, message: this.$t('validate.required'), trigger: 'change' },
-          { validator: typeAndNameValidator, message: this.$t('validate.duplicateRecord', { columns: '(' + this.$t('config.roles.name') + '+' + this.$t('overall.type') + ')' }), trigger: 'change' }
+          {
+            required: true,
+            message: this.$t('validate.required'),
+            trigger: 'change'
+          },
+          {
+            validator: typeAndNameValidator,
+            message: this.$t('validate.duplicateRecord', { columns: '(' + this.$t('config.roles.name') + '+' + this.$t('overall.type') + ')' }),
+            trigger: 'change'
+          }
         ]
-      }
+      },
+      editTagFormRules: {
+        tagItem: [
+          {
+            required: true,
+            message: this.$t('validate.required'),
+            trigger: 'blur'
+          },
+          {
+            validator: nameAndLabelValidator,
+            message: this.$t('validate.duplicateRecord'),
+            trigger: 'blur'
+          }
+        ],
+        tagValue: [{
+          required: true,
+          message: this.$t('validate.required'),
+          trigger: 'blur'
+        }]
+      },
+      editIndex: -1,
+      backEditFlag: false,
+      addEditFlag: false,
+      editTagErrorTip: '', // 编辑错误提示
+      timer: null
     }
   },
   methods: {
@@ -268,14 +395,21 @@ export default {
     },
     pageNo (val) {
       this.importedPageObj.pageNo = val
+      this.editIndex = -1
     },
     prev () {
       this.importedPageObj.pageNo--
+      this.editIndex = -1
     },
     next () {
       this.importedPageObj.pageNo++
+      this.editIndex = -1
     },
     removeImportedData (index) {
+      this.editIndex = -1 // 取消编辑标识
+      this.addEditFlag = false // 取消新增标识
+      this.editTagErrorTip = ''
+
       const toRemoveIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize + index
       this.importedData.splice(toRemoveIndex, 1)
       this.importedPageObj.total--
@@ -301,7 +435,9 @@ export default {
       })
     },
     save () {
-      if (this.blockOperation.save) { return }
+      if (this.blockOperation.save) {
+        return
+      }
       this.blockOperation.save = true
       // 校验form + upload + preview
       this.$refs.form.validate(valid => {
@@ -327,6 +463,10 @@ export default {
               tagType: this.editObject.tagType,
               data: []
             }
+            // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
+            if (this.importedData[this.importedData.length - 1].tagItem === '') {
+              this.importedData.pop()
+            }
             this.importedData.forEach(d => {
               const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
               if (findData) {
@@ -347,7 +487,11 @@ export default {
             if (!this.editObject.id) {
               axios.post(this.url, postData).then(response => {
                 if (response.data.code === 200) {
-                  this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                  this.$message({
+                    duration: 2000,
+                    type: 'success',
+                    message: this.$t('tip.saveSuccess')
+                  })
                   this.$router.push({
                     path: '/knowledgeBase',
                     t: +new Date()
@@ -365,7 +509,11 @@ export default {
               postData.id = this.editObject.id
               axios.put(this.url, postData).then(response => {
                 if (response.data.code === 200) {
-                  this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                  this.$message({
+                    duration: 2000,
+                    type: 'success',
+                    message: this.$t('tip.saveSuccess')
+                  })
                   this.$router.push({
                     path: '/knowledgeBase',
                     t: +new Date()
@@ -396,6 +544,85 @@ export default {
         console.error(e)
         this.errorMsgHandler(e)
       })
+    },
+    editImportedData (index) {
+      this.editTagForm.tagItem = this.showImportedData[index].tagItem
+      this.editTagForm.tagValue = this.showImportedData[index].tagValue
+
+      // 点击编辑时，如正处于新增状态，则去除新增项（此时新增并为保存，不必保留）
+      if (this.addEditFlag) {
+        this.addEditFlag = false
+        this.importedData.pop()
+        this.handleShowImportedData()
+      }
+
+      this.editIndex = index
+      this.backEditFlag = true
+      this.editTagErrorTip = ''
+    },
+    backImportedData () {
+      this.editTagForm = reactive({
+        tagItem: '',
+        tagValue: ''
+      })
+
+      this.editIndex = -1
+      this.backEditFlag = false
+      this.editTagErrorTip = ''
+    },
+    saveImportedData (index) {
+      this.$refs.editForm.validate(valid => {
+        if (valid) {
+          this.showImportedData[index].tagItem = this.editTagForm.tagItem
+          this.showImportedData[index].tagValue = this.editTagForm.tagValue
+          let num = -1
+          const findData = this.importedData.find((item, i) => {
+            num = i
+            return item.tagItem === this.editTagForm.tagItem
+          })
+          if (!findData) {
+            this.importedData[num].tagItem = this.editTagForm.tagItem
+            this.importedData[num].tagValue = this.editTagForm.tagValue
+          }
+
+          this.addEditFlag = false
+          this.editIndex = -1
+          this.backEditFlag = false
+        } else {
+          this.editTagErrorTip = this.$t('validate.duplicateNameOrWrongFormat')
+        }
+      })
+    },
+    onBlurTagItem () {
+      this.$refs.editForm.validate(valid => {
+        if (valid) {
+          this.editTagErrorTip = ''
+        } else {
+          this.editTagErrorTip = this.$t('validate.duplicateNameOrWrongFormat')
+        }
+      })
+    },
+    addTagAtLast () {
+      const total = this.importedPageObj.total
+      this.addEditFlag = true
+      // 如果已经有新增空白项，则不再进行新增操作
+      if (this.importedData[this.importedData.length - 1].tagItem !== '' && this.importedData[this.importedData.length - 1].tagValue !== '') {
+        this.importedPageObj.total = this.importedPageObj.total + 1
+        if (total > 0 && total < 10) {
+          this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
+          this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
+        } else {
+          const lastPageSize = Math.ceil((total + 1) / 10)
+          this.pageNo(lastPageSize)
+          this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
+          this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
+        }
+        this.timer = setTimeout(() => {
+          this.editIndex = this.showImportedData.length - 1
+          this.editTagForm.tagItem = ''
+          this.editTagForm.tagValue = ''
+        }, 100)
+      }
     }
   },
   computed: {
@@ -550,6 +777,12 @@ export default {
     const uploadErrorTip = ref('')
     // 预览区无内容的提示
     const previewErrorTip = ref('')
+    // 编辑项的form表单内容
+    const editTagForm = reactive({
+      tagItem: '', // 待编辑的item项，如ip、domain、app等
+      tagValue: '' // 待编辑的label
+    })
+
     return {
       knowledgeBaseId,
       editObject,
@@ -580,8 +813,74 @@ export default {
       uploadFileSizeLimit: 100 * 1024 * 1024,
       uploadLoading,
       initLoading,
-      fileTypeLimit: '.csv'
+      fileTypeLimit: '.csv',
+      editTagForm
     }
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
   }
 }
 </script>
+
+<style scoped lang="scss">
+:deep .imported-table-box .el-form {
+  margin-top: 0 !important;
+}
+
+:deep .imported-table .el-input {
+  height: 24px;
+}
+
+:deep .imported-table .el-form-item__content {
+  margin-top: -16px;
+  margin-bottom: -17px;
+}
+
+:deep .imported-table .el-form-item__error {
+  display: none;
+}
+
+:deep .imported-data-item-edit__input .el-input__inner {
+  width: calc(100% - 50px);
+  height: 24px;
+  line-height: 0;
+  padding: 0 !important;
+  border-radius: 2px;
+}
+
+.imported-data-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.imported-data-left-btn {
+  font-size: 14px;
+  margin: 0 7px;
+  color: #666;
+}
+
+.imported-data-back {
+  color: #cbcbcb;
+}
+
+.imported-data-save {
+  color: #38ACD2;
+}
+
+.addTagBtn {
+  position: absolute;
+  bottom: 12px;
+  width: calc(100% - 24px);
+  margin-left: 12px;
+  background: rgb(245, 248, 250);
+  border: 1px #DEDEDE solid;
+
+  .add-tag-btn {
+    color: #575757;
+    font-size: 12px;
+    margin: 0 8px 2px 8px;
+  }
+}
+</style>
