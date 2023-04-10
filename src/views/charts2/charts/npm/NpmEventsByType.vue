@@ -104,8 +104,7 @@ export default {
     eventsByTypeData () {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        type: 'severity'
+        endTime: getSecond(this.timeFilter.endTime)
       }
       this.toggleLoading(true)
       axios.get(api.npm.events.recentEvents, { params: params }).then(res => {
