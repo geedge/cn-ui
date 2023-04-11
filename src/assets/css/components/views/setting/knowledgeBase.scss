@@ -342,7 +342,7 @@
       min-width: 74px;
       padding: 0 15px;
       color: white;
-      background-color: #38ACD2;
+      background-color: #699DC9;
       border: none;
       border-radius: 4px;
       outline: none;
@@ -351,7 +351,7 @@
       transition: background-color linear .2s, color linear .1s;
     }
     .footer__btn:hover:not(.footer__btn--disabled) {
-      background-color: lighten(#38ACD2, 10%);
+      background-color: lighten(#699DC9, 10%);
     }
     .footer__btn--light {
       background-color: #F5F6F7;

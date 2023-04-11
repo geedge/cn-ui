@@ -86,13 +86,13 @@
           </div>
           <template v-else>
             <div class="imported-tip"><i class="cn-icon cn-icon-baocuo"/>
-              &nbsp;&nbsp;{{
-                $t('knowledgeBase.importTip', {
-                  total: originalImportInfo.total,
-                  succeeded: originalImportInfo.succeeded,
-                  failed: originalImportInfo.failed
-                })
-              }}
+              &nbsp;&nbsp;{{ editObject.id && isLoad? $t('knowledgeBase.loadTip', {
+              load: originalImportInfo.total
+              }) : $t('knowledgeBase.importTip', {
+              total: originalImportInfo.total,
+              succeeded: originalImportInfo.succeeded,
+              failed: originalImportInfo.failed
+              }) }}
             </div>
             <div class="imported-table-box" :class="previewErrorTip ? 'imported-table-box--error' : ''">
               <el-form ref="editForm" :model="editTagForm" :rules="editTagFormRules">
@@ -105,7 +105,7 @@
                   </tr>
                   <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagItem + d.tagValue + i">
                     <td class="imported-data-item" :title="d.tagItem">
-                      <el-form-item v-if="editObject.id && editIndex === i" prop="tagItem">
+                      <el-form-item v-if="(editObject.id && editIndex === i)  || (addEditFlag && d.tagItem === '' && d.tagValue === '')" prop="tagItem">
                         <span class="imported-data-item-edit__input">
                           <el-input v-model="editTagForm.tagItem" @blur="onBlurTagItem"></el-input>
                         </span>
@@ -113,7 +113,7 @@
                       <span v-else>{{ d.tagItem }}</span>
                     </td>
                     <td class="imported-data-value" :title="d.tagValue">
-                      <el-form-item v-if="editObject.id && editIndex === i" prop="tagValue">
+                      <el-form-item v-if="(editObject.id && editIndex === i) || (addEditFlag && d.tagItem === '' && d.tagValue === '')" prop="tagValue">
                         <span class="imported-data-item-edit__input">
                           <el-input v-model="editTagForm.tagValue" @blur="onBlurTagItem"></el-input>
                         </span>
@@ -125,13 +125,13 @@
                     </td>
                     <td v-else></td>
                     <!--返回和保存按钮-->
-                    <td v-if="editObject.id && backEditFlag && editIndex === i" class="imported-data-btn">
+                    <td v-if="editObject.id && backEditFlag && !addEditFlag && editIndex === i" class="imported-data-btn">
                       <i v-if="editObject.id" class="cn-icon cn-icon-revoke imported-data-left-btn imported-data-back"
                          @click="backImportedData"></i>
                       <i class="cn-icon cn-icon-save imported-data-save" @click="saveImportedData(i)"></i>
                     </td>
                     <!--保存和删除按钮-->
-                    <td v-else-if="editObject.id && addEditFlag && editIndex === i" class="imported-data-btn">
+                    <td v-else-if="(editObject.id && addEditFlag && editIndex === i) || (addEditFlag && d.tagItem === '' && d.tagValue === '')" class="imported-data-btn">
                       <i class="cn-icon cn-icon-save imported-data-save" style="margin: 0 7px"
                          @click="saveImportedData(i)"></i>
                       <i class="el-icon-close" @click="removeImportedData(i)"></i>
@@ -191,6 +191,7 @@ import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
 import { api } from '@/utils/api'
+import { regular } from '@/utils/regular'
 import unitConvert from '@/utils/unit-convert'
 import Loading from '@/components/common/Loading'
 
@@ -239,26 +240,110 @@ export default {
       }
       return validate
     }
-
-    const nameAndLabelValidator = (rule, value, callback) => {
+    const nameAndLabelDuplicateValidator = (rule, value, callback) => {
       let validate = true
       let index = -1 // 当前编辑的键值index
       // todo 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
       const findData = this.importedData.find((item, i) => {
         index = i
-        return item.tagItem === this.editTagForm.tagItem
+        return (item.tagItem === this.editTagForm.tagItem && item.tagValue === this.editTagForm.tagValue)
       })
-      if (findData) {
+      if (findData) { // 找到1条记录
         // 如果name重复的第一个键值不是当前编辑item的index，即代表后续有重名的项了，提示重名
-        if (index !== this.editIndex) {
+        const realIndex = (this.importedPageObj.pageSize * (this.importedPageObj.pageNo - 1)) + this.editIndex
+        if (index !== realIndex) { // 记录为非当前记录，则数据重复
           validate = false
+          this.editTagErrorTip = rule.message
           callback(new Error())
-        } else {
-          // 此情况为，仅修改label，不修改name
-          if (findData.tagValue === this.editTagForm.tagValue) {
+        }
+      }
+      return validate
+    }
+    const requiredItemValidator = (rule, value, callback) => {
+      let validate = true
+      const realValue = value.replace(/\s+/g, '')// 去掉空格
+      if (realValue === '') {
+        validate = false
+        this.editTagErrorTip = rule.message
+        callback(new Error())
+      }
+      return validate
+    }
+    const requiredValueValidator = (rule, value, callback) => {
+      let validate = true
+      const realValue = value.replace(/\s+/g, '')// 去掉空格
+      if (realValue === '') {
+        validate = false
+        this.editTagErrorTip = rule.message
+        callback(new Error())
+      }
+      return validate
+    }
+    const nameFormatValidator = (rule, value, callback) => {
+      let validate = true
+      const tagType = this.editObject.tagType// 当前选中的类型
+      if (tagType === 'ip') {
+        const formal = value.replace(/\s+/g, '')// 去掉空格
+        if (formal.indexOf('/') != -1) {
+          if (!(regular.ipv4CIDR.test(formal)) && !(regular.ipv6CIDR.test(formal))) {
             validate = false
+            this.editTagErrorTip = rule.message
             callback(new Error())
           }
+        } else {
+          if (!regular.ip.test(formal)) {
+            validate = false
+            this.editTagErrorTip = rule.message
+            callback(new Error())
+          }
+        }
+      } else if (tagType === 'app') {
+        const pattern = /.*[*?!&$%#^,.;:<>/@\"{}\-\]\[=+_\\|].*$/
+        if (pattern.test(value)) {
+          validate = false
+          this.editTagErrorTip = rule.message
+          callback(new Error())
+        }
+      } else if (tagType === 'domain') { // 域名只支持 字母数字.-_
+        if ((value.substr(0, 1) === '*' || value.substr(0, 1) === '$') &&
+            !(value.substr(-1) === '*' || value.substr(-1) === '$')) {
+          if (value.substr(0, 1) === '$') { // 处理$开头的情况
+            // 域名中的标号都由英文字母和数字组成，每一个标号不超过63个字符，也不区分大小写字母。标号中除连字符（-）外不能使用其他的标点符号。
+            // 级别最低的域名写在最左边，而级别最高的域名写在最右边。由多个标号组成的完整域名总共不超过255个字符
+            const strFqdn = value.replace('$', '').trim()
+            // let fqdnPattern = /^(?=^.{3,255}$)[a-zA-Z0-9_][-a-zA-Z0-9_]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
+            const fqdnPattern = /^(?=^.{3,255}$)[a-zA-Z0-9*]?[-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9*][-a-zA-Z0-9]{0,62})+[(com)|(cn)|(xin)|(net)|(top)|(xyz)|(wang)|(shop)|(site)|(club)|(cc)|(fun)|(online)|(biz)|(red)|(link)|(ltd)|(mobi)|(info)|(org)|(name)|(vip)|(pro)|(work)|(tv)|(co)|(kim)|(group)|(tech)|(store)|(ren)|(pub)|(ink)|(live)|(wiki)|(design)]$/
+            if (!fqdnPattern.test(strFqdn)) {
+              validate = false
+            }
+          }
+          const pattern = /^[*$]{1}[0-9a-zA-Z-._]{1,}$/
+          if (!pattern.test(value.trim())) {
+            validate = false
+          }
+          // 验证域名的合法 长度小于255
+          const domain = value.replace('*', '').replace('$', '').trim()
+          // 域名 长度小于255最多三级
+          if (domain.length > 255 || domain.length < 3) {
+            validate = false
+          }
+          // 域名不能以.或-或_结尾，且.与.不能连续
+          if (domain.indexOf('..') > -1 || domain.substr(-1) === '.' || domain.substr(-1) === '-' || domain.substr(-1) === '_') {
+            validate = false
+          }
+          // 每个.之间字符不大于63
+          const split = domain.split('\\.')
+          split.forEach(item => {
+            if (item.length > 63) {
+              validate = false
+            }
+          })
+        } else {
+          validate = false
+        }
+        if (!validate) {
+          this.editTagErrorTip = rule.message
+          callback(new Error())
         }
       }
       return validate
@@ -298,18 +383,25 @@ export default {
       editTagFormRules: {
         tagItem: [
           {
-            required: true,
+            // required: true,
+            validator: requiredItemValidator,
             message: this.$t('validate.required'),
             trigger: 'blur'
           },
           {
-            validator: nameAndLabelValidator,
-            message: this.$t('validate.duplicateRecord'),
+            validator: nameFormatValidator,
+            message: this.$t('validate.wrongFormat'),
+            trigger: 'blur'
+          },
+          {
+            validator: nameAndLabelDuplicateValidator,
+            message: this.$t('validate.duplicateName'),
             trigger: 'blur'
           }
         ],
         tagValue: [{
-          required: true,
+          //required: true,
+          validator: requiredValueValidator,
           message: this.$t('validate.required'),
           trigger: 'blur'
         }]
@@ -354,10 +446,14 @@ export default {
           succeeded: originalImportedData.filter(d => d.status === 1).length,
           failed: originalImportedData.filter(d => d.status !== 1).length
         }
+        this.isLoad = false
         originalImportedData.sort((a, b) => b.status - a.status)
         this.importedData = originalImportedData
 
         this.handleShowImportedData()
+        this.addEditFlag = false
+        this.editTagErrorTip = ''
+        this.editIndex = -1
       } else {
         this.uploadLoading = false
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
@@ -373,6 +469,9 @@ export default {
         succeeded: null,
         failed: null
       }
+      this.addEditFlag = false
+      this.editTagErrorTip = ''
+      this.editIndex = -1
     },
     beforeUpload (file) {
       // 判断后缀，仅支持.csv
@@ -394,6 +493,9 @@ export default {
       this.typeSelectDisable = true
     },
     pageNo (val) {
+      if (val !== this.importedPageObj.pageNo) {
+        this.editTagErrorTip = ''
+      }
       this.importedPageObj.pageNo = val
       this.editIndex = -1
     },
@@ -405,14 +507,21 @@ export default {
       this.importedPageObj.pageNo++
       this.editIndex = -1
     },
-    removeImportedData (index) {
+    removeImportedData (index) { // index 为记录在当前页的索引
       this.editIndex = -1 // 取消编辑标识
       this.addEditFlag = false // 取消新增标识
       this.editTagErrorTip = ''
 
       const toRemoveIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize + index
       this.importedData.splice(toRemoveIndex, 1)
-      this.importedPageObj.total--
+      // 删除内容为空的新增记录
+      const lastIndex = this.importedData.length - 1
+      const lastData = this.importedData[lastIndex]
+      if (lastData.tagItem === '' && lastData.tagValue === '') {
+        this.importedData.pop()
+      }
+      // this.importedPageObj.total--
+      this.importedPageObj.total = this.importedData.length
       this.handleShowImportedData()
       // 若删除后本页无数据，则页码减1，或者提示无数据
       if (this.showImportedData.length === 0) {
@@ -447,7 +556,6 @@ export default {
         } else {
           this.uploadErrorTip = ''
         }
-
         if (this.importedData.length === 0) {
           this.previewErrorTip = this.$t('validate.required')
         } else if (this.hasErrorImportedData()) {
@@ -456,81 +564,88 @@ export default {
           this.previewErrorTip = ''
         }
         if (valid) {
-          // 校验通过后组织数据、请求接口
-          if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
-            const postData = {
-              tagName: this.editObject.tagName,
-              tagType: this.editObject.tagType,
-              data: []
-            }
-            // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
-            if (this.importedData[this.importedData.length - 1].tagItem === '') {
-              this.importedData.pop()
-            }
-            this.importedData.forEach(d => {
-              const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
-              if (findData) {
-                findData.itemList.add(d.tagItem)
-              } else {
-                const set = new Set()
-                set.add(d.tagItem)
-                postData.data.push({
-                  tagValue: d.tagValue,
-                  itemList: set
+          this.$refs.editForm.validate((validImportData) => {
+            if (validImportData) {
+              // 校验通过后组织数据、请求接口
+              if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
+                const postData = {
+                  tagName: this.editObject.tagName,
+                  tagType: this.editObject.tagType,
+                  data: []
+                }
+                // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
+                if (this.importedData[this.importedData.length - 1].tagItem === '') {
+                  this.importedData.pop()
+                }
+                this.importedData.forEach(d => {
+                  const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
+                  if (findData) {
+                    findData.itemList.add(d.tagItem)
+                  } else {
+                    const set = new Set()
+                    set.add(d.tagItem)
+                    postData.data.push({
+                      tagValue: d.tagValue,
+                      itemList: set
+                    })
+                  }
                 })
+                postData.data.forEach(d => {
+                  // d.itemList = [...d.itemList]
+                  d.itemList = Array.from(d.itemList)
+                })
+                postData.remark = this.editObject.remark
+                if (!this.editObject.id) {
+                  axios.post(this.url, postData).then(response => {
+                    if (response.data.code === 200) {
+                      this.$message({
+                        duration: 2000,
+                        type: 'success',
+                        message: this.$t('tip.saveSuccess')
+                      })
+                      this.$router.push({
+                        path: '/knowledgeBase',
+                        t: +new Date()
+                      })
+                    } else {
+                      this.errorMsgHandler(response)
+                    }
+                  }).catch(e => {
+                    console.error(e)
+                    this.errorMsgHandler(e)
+                  }).finally(() => {
+                    this.blockOperation.save = false
+                  })
+                } else {
+                  postData.id = this.editObject.id
+                  axios.put(this.url, postData).then(response => {
+                    if (response.data.code === 200) {
+                      this.$message({
+                        duration: 2000,
+                        type: 'success',
+                        message: this.$t('tip.saveSuccess')
+                      })
+                      this.$router.push({
+                        path: '/knowledgeBase',
+                        t: +new Date()
+                      })
+                    } else {
+                      this.errorMsgHandler(response)
+                    }
+                  }).catch(e => {
+                    console.error(e)
+                    this.errorMsgHandler(e)
+                  }).finally(() => {
+                    this.blockOperation.save = false
+                  })
+                }
+              } else {
+                this.blockOperation.save = false
               }
-            })
-            postData.data.forEach(d => {
-              d.itemList = [...d.itemList]
-            })
-            postData.remark = this.editObject.remark
-            if (!this.editObject.id) {
-              axios.post(this.url, postData).then(response => {
-                if (response.data.code === 200) {
-                  this.$message({
-                    duration: 2000,
-                    type: 'success',
-                    message: this.$t('tip.saveSuccess')
-                  })
-                  this.$router.push({
-                    path: '/knowledgeBase',
-                    t: +new Date()
-                  })
-                } else {
-                  this.errorMsgHandler(response)
-                }
-              }).catch(e => {
-                console.error(e)
-                this.errorMsgHandler(e)
-              }).finally(() => {
-                this.blockOperation.save = false
-              })
             } else {
-              postData.id = this.editObject.id
-              axios.put(this.url, postData).then(response => {
-                if (response.data.code === 200) {
-                  this.$message({
-                    duration: 2000,
-                    type: 'success',
-                    message: this.$t('tip.saveSuccess')
-                  })
-                  this.$router.push({
-                    path: '/knowledgeBase',
-                    t: +new Date()
-                  })
-                } else {
-                  this.errorMsgHandler(response)
-                }
-              }).catch(e => {
-                console.error(e)
-                this.errorMsgHandler(e)
-              }).finally(() => {
-                this.blockOperation.save = false
-              })
+              this.blockOperation.save = false
             }
-          } else {
-            this.blockOperation.save = false
-          }
+          })
         } else {
           this.blockOperation.save = false
         }
@@ -552,6 +667,10 @@ export default {
       // 点击编辑时，如正处于新增状态，则去除新增项（此时新增并为保存，不必保留）
       if (this.addEditFlag) {
         this.addEditFlag = false
+        const dataLen = this.importedData.length % this.importedPageObj.pageSize
+        if (dataLen === 1) {
+          this.importedPageObj.total--
+        }
         this.importedData.pop()
         this.handleShowImportedData()
       }
@@ -575,21 +694,21 @@ export default {
         if (valid) {
           this.showImportedData[index].tagItem = this.editTagForm.tagItem
           this.showImportedData[index].tagValue = this.editTagForm.tagValue
+          this.showImportedData[index].status = 1
           let num = -1
           const findData = this.importedData.find((item, i) => {
             num = i
-            return item.tagItem === this.editTagForm.tagItem
+            return (item.tagItem === this.editTagForm.tagItem && item.tagValue === this.editTagForm.tagValue)
           })
           if (!findData) {
             this.importedData[num].tagItem = this.editTagForm.tagItem
             this.importedData[num].tagValue = this.editTagForm.tagValue
+            this.importedData[num].status = 1
           }
 
           this.addEditFlag = false
           this.editIndex = -1
           this.backEditFlag = false
-        } else {
-          this.editTagErrorTip = this.$t('validate.duplicateNameOrWrongFormat')
         }
       })
     },
@@ -597,17 +716,18 @@ export default {
       this.$refs.editForm.validate(valid => {
         if (valid) {
           this.editTagErrorTip = ''
-        } else {
-          this.editTagErrorTip = this.$t('validate.duplicateNameOrWrongFormat')
         }
       })
     },
     addTagAtLast () {
-      const total = this.importedPageObj.total
+      this.editTagForm.tagItem = ''
+      this.editTagForm.tagValue = ''
+      // const total = this.importedPageObj.total
+      const total = this.importedData.length
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
-      if (this.importedData[this.importedData.length - 1].tagItem !== '' && this.importedData[this.importedData.length - 1].tagValue !== '') {
-        this.importedPageObj.total = this.importedPageObj.total + 1
+      if (this.importedData.length === 0 ||
+                   this.importedData[this.importedData.length - 1].tagItem !== '' && this.importedData[this.importedData.length - 1].tagValue !== '') {
         if (total > 0 && total < 10) {
           this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
           this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
@@ -617,10 +737,9 @@ export default {
           this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
           this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
         }
+        this.importedPageObj.total = this.importedData.length
         this.timer = setTimeout(() => {
           this.editIndex = this.showImportedData.length - 1
-          this.editTagForm.tagItem = ''
-          this.editTagForm.tagValue = ''
         }, 100)
       }
     }
@@ -647,6 +766,7 @@ export default {
   },
   mounted () {
     if (this.knowledgeBaseId) {
+      this.isLoad = true
       axios.get(`${api.knowledgeBase}/${this.knowledgeBaseId}`).then(response => {
         if (response.data.code === 200) {
           if (!response.data.data) {
@@ -701,6 +821,15 @@ export default {
     },
     importedData (n) {
       this.importedPageObj.total = n.length
+    },
+    addEditFlag (n) {
+      if (!n) {
+        const lastIndex = this.importedData.length - 1
+        const lastData = this.importedData[lastIndex]
+        if (lastData && lastData.tagItem === '' && lastData.tagValue === '') {
+          this.importedData.pop()
+        }
+      }
     },
     'importedPageObj.pageNo': {
       handler (n) {
@@ -783,9 +912,11 @@ export default {
       tagValue: '' // 待编辑的label
     })
 
+    const isLoad = ref(false)
     return {
       knowledgeBaseId,
       editObject,
+      isLoad,
       tagNameFirstBlur: ref(false),
       blankObject,
       activeCollapses,
@@ -859,14 +990,17 @@ export default {
   font-size: 14px;
   margin: 0 7px;
   color: #666;
+  cursor: pointer;
 }
 
 .imported-data-back {
-  color: #cbcbcb;
+  color: #666;
+  cursor: pointer;
 }
 
 .imported-data-save {
   color: #38ACD2;
+  cursor: pointer;
 }
 
 .addTagBtn {
