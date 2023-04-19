@@ -53,6 +53,7 @@
                      :before-upload="beforeUpload"
                      :on-progress="onUpload"
                      :on-error="uploadError"
+                     @click=""
                      :class="uploadErrorTip ? 'el-upload--error' : ''"
                      drag
                      :accept="fileTypeLimit"
@@ -157,8 +158,8 @@
                   @next-click="next"
               ></Pagination>
               <!--新增按钮-->
-              <el-button v-if="editObject.id" class="addTagBtn" :disabled="addEditFlag" @click="addTagAtLast">
-                <i class="cn-icon cn-icon-add add-tag-btn" :style="{'color': addEditFlag ? '#C0C4CC' : '#575757'}"></i>
+              <el-button class="addTagBtn" :disabled="addEditFlag" @click="addTagAtLast">
+                <i class="cn-icon cn-icon-add add-tag-btn" :style="{'color': addEditFlag ? '#C0C4CC !important' : '#575757'}"></i>
                 Add
               </el-button>
             </div>
@@ -400,7 +401,7 @@ export default {
           }
         ],
         tagValue: [{
-          //required: true,
+          // required: true,
           validator: requiredValueValidator,
           message: this.$t('validate.required'),
           trigger: 'blur'
@@ -410,7 +411,10 @@ export default {
       backEditFlag: false,
       addEditFlag: false,
       editTagErrorTip: '', // 编辑错误提示
-      timer: null
+      timer: null,
+      isShowUploadTips: false,
+      isPreviewChange: false,
+      isClick: false
     }
   },
   methods: {
@@ -424,7 +428,11 @@ export default {
       }
     },
     fileChange (files, fileList) {
-      this.fileList = fileList.slice(-1)
+      if (this.fileList.length > 0 && this.fileList[0].status === 'success') {
+        this.fileListBack = this.fileList[0]
+      }
+      const file = fileList.slice(-1)
+      this.fileList = file
     },
     uploadError () {
       this.uploadLoading = false
@@ -436,9 +444,7 @@ export default {
         // 上传成功后去掉upload和preview的错误提示
         this.uploadErrorTip = ''
         this.previewErrorTip = ''
-
         this.importedType = this.editObject.tagType
-
         const originalImportedData = _.cloneDeep(response.data.data)
         this.importedDataNoData = originalImportedData.length === 0
         this.originalImportInfo = {
@@ -454,43 +460,95 @@ export default {
         this.addEditFlag = false
         this.editTagErrorTip = ''
         this.editIndex = -1
+        this.isPreviewChange = true
       } else {
         this.uploadLoading = false
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
       }
     },
     onRemove (files, fileList) {
-      this.uploaded = false
-      this.typeSelectDisable = false
-      this.importedData = []
-      this.showImportedData = []
-      this.originalImportInfo = {
-        total: null,
-        succeeded: null,
-        failed: null
+      if (files && files.status === 'success') {
+        this.uploaded = false
+        this.typeSelectDisable = false
+        this.importedData = []
+        this.showImportedData = []
+        this.originalImportInfo = {
+          total: null,
+          succeeded: null,
+          failed: null
+        }
+        this.addEditFlag = false
+        this.editTagErrorTip = ''
+        this.editIndex = -1
+        this.isPreviewChange = true
       }
-      this.addEditFlag = false
-      this.editTagErrorTip = ''
-      this.editIndex = -1
+      if (this.fileListBack !== undefined && this.fileListBack.status === 'success' &&
+            this.importedData.length > 0) {
+        this.fileList[0] = this.fileListBack
+      }
+    },
+    uploadTip (e) {
+      if (!this.isShowUploadTips) {
+        this.isShowUploadTips = true
+        const self = this
+        this.$confirm(this.$t('tip.uploadFile'), {
+          confirmButtonText: this.$t('tip.confirm'),
+          cancelButtonText: this.$t('overall.cancel'),
+          message: this.$t('tip.uploadFileTips'),
+          title: this.$t('tip.uploadFile'),
+          type: 'warning',
+          iconClass: 'width:0px;height:0px;',
+          customClass: 'del-model'
+        }).then(() => {
+          this.isClick = true
+          self.$refs.upload.$refs.uploadRef.handleClick()
+        }).catch(e => {}).finally(() => {
+          this.isShowUploadTips = false
+        })
+      }
+    },
+    promiseState (p) {
+      const t = {}
+      return Promise.race([p, t])
+        .then(v => (v === t) ? 'pending' : 'fulfilled', () => 'rejected')
     },
     beforeUpload (file) {
-      // 判断后缀，仅支持.csv
-      if (!_.endsWith(file.name, '.csv')) {
-        this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
-        this.fileList = []
-        return false
-      }
-      // 判断文件大小
-      if (file.size > this.uploadFileSizeLimit) {
-        this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
-        this.fileList = []
-        return false
-      }
-      return true
+      const promise = new Promise((resolve, reject) => {
+        // 判断后缀，仅支持.csv
+        if (!_.endsWith(file.name, '.csv')) {
+          this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
+          this.fileList = []
+          reject(new Error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit })))
+        } else if (file.size > this.uploadFileSizeLimit) { // 判断文件大小
+          this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
+          this.fileList = []
+          reject(new Error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') })))
+        } else {
+          if (!this.isClick) {
+            this.$confirm(this.$t('tip.uploadFile'), {
+              confirmButtonText: this.$t('tip.confirm'),
+              cancelButtonText: this.$t('overall.cancel'),
+              message: this.$t('tip.uploadFileTips'),
+              title: this.$t('tip.uploadFile'),
+              type: 'warning',
+              iconClass: 'width:0px;height:0px;',
+              customClass: 'del-model'
+            }).then(() => {
+              resolve()
+            }).catch(e => {
+              reject(e)
+            })
+          } else {
+            resolve()
+          }
+        }
+      })
+      return promise
     },
     onUpload (event, file) {
       this.uploadLoading = true
       this.typeSelectDisable = true
+      this.isClick = false
     },
     pageNo (val) {
       if (val !== this.importedPageObj.pageNo) {
@@ -520,7 +578,6 @@ export default {
       if (lastData.tagItem === '' && lastData.tagValue === '') {
         this.importedData.pop()
       }
-      // this.importedPageObj.total--
       this.importedPageObj.total = this.importedData.length
       this.handleShowImportedData()
       // 若删除后本页无数据，则页码减1，或者提示无数据
@@ -536,12 +593,30 @@ export default {
       if (!this.hasErrorImportedData() && this.previewErrorTip) {
         this.previewErrorTip = ''
       }
+      this.isPreviewChange = true
     },
     cancel () {
-      this.$router.push({
-        path: '/knowledgeBase',
-        t: +new Date()
-      })
+      if (this.isPreviewChange) {
+        this.$confirm(this.$t('tip.leavePage'), {
+          confirmButtonText: this.$t('tip.confirm'),
+          cancelButtonText: this.$t('overall.cancel'),
+          message: this.$t('tip.leavePageTips'),
+          title: this.$t('tip.leavePage'),
+          type: 'warning',
+          iconClass: 'width:0px;height:0px;',
+          customClass: 'del-model'
+        }).then(() => {
+          this.$router.push({
+            path: '/knowledgeBase',
+            t: +new Date()
+          })
+        }).catch(e => {})
+      } else {
+        this.$router.push({
+          path: '/knowledgeBase',
+          t: +new Date()
+        })
+      }
     },
     save () {
       if (this.blockOperation.save) {
@@ -709,6 +784,7 @@ export default {
           this.addEditFlag = false
           this.editIndex = -1
           this.backEditFlag = false
+          this.isPreviewChange = true
         }
       })
     },
@@ -722,7 +798,6 @@ export default {
     addTagAtLast () {
       this.editTagForm.tagItem = ''
       this.editTagForm.tagValue = ''
-      // const total = this.importedPageObj.total
       const total = this.importedData.length
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
@@ -765,6 +840,14 @@ export default {
     }
   },
   mounted () {
+    const div = document.getElementsByClassName('el-upload-dragger')[0]
+    const self = this
+    div.addEventListener('click', function (event) {
+      this.isClick = true
+      event.stopPropagation()
+      event.preventDefault()
+      self.uploadTip(event)
+    })
     if (this.knowledgeBaseId) {
       this.isLoad = true
       axios.get(`${api.knowledgeBase}/${this.knowledgeBaseId}`).then(response => {
@@ -931,6 +1014,7 @@ export default {
       handleShowImportedData,
       baseUrl: BASE_CONFIG.baseUrl,
       fileList: ref([]),
+      fileListBack: ref(),
       uploadHeaders: {
         'Cn-Authorization': localStorage.getItem(storageKey.token)
       },
@@ -957,6 +1041,17 @@ export default {
 <style scoped lang="scss">
 :deep .imported-table-box .el-form {
   margin-top: 0 !important;
+}
+.imported-table-box {
+  height:394px !important;
+}
+.imported-table-box .imported-pagination.pagination {
+  border-top: 0px !important;
+  border-bottom: 1px solid #eee;
+  bottom: 42px !important;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  padding-top: 10px;
 }
 
 :deep .imported-table .el-input {
@@ -1005,16 +1100,115 @@ export default {
 
 .addTagBtn {
   position: absolute;
-  bottom: 12px;
-  width: calc(100% - 24px);
-  margin-left: 12px;
+  bottom: 9px;
+  height:24px !important;
+  min-height: 24px !important;
+  font-size: 12px;
+  color: #353636;
+  font-weight: 500;
+  width: 598px;
+  margin-left: 10px;
   background: rgb(245, 248, 250);
   border: 1px #DEDEDE solid;
+  padding: 0px !important;
+  box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+  border-radius: 2px;
+  font-family:NotoSansHans-Medium !important;
 
   .add-tag-btn {
-    color: #575757;
-    font-size: 12px;
+    color: #575757 !important;
+    font-size: 9px !important;
     margin: 0 8px 2px 8px;
   }
 }
+.addTagBtn:hover {
+  i {
+    color: #699DC9 !important;
+  }
+}
+.addTagBtn span {
+    font-family:NotoSansHans-Medium !important;
+}
+</style>
+<style lang="scss">
+  .del-model {
+    display:flex;
+    flex-direction: column;
+    padding-bottom:0px !important;
+    width:480px !important;
+    height:190px;
+    .el-message-box__header{
+      display: flex;
+      flex-direction: row;
+      border-bottom:1px solid #eee;
+      height:42px;
+      background: #F7F7F7;
+      box-shadow: 0 1px 0 0 rgba(53,54,54,0.08);
+      padding-left:20px;
+      padding-top:14px;
+      padding-bottom:14px;
+      .el-message-box__headerbtn {
+        display: flex !important;
+        flex-direction: row-reverse;
+        justify-content: center;
+        align-items: center;
+        font-size: 10px;
+        line-height: 10px;
+        padding-right: 5px !important;
+        i {
+          width:10px;
+          height:10px;
+        }
+      }
+      .el-message-box__title {
+        font-size: 14px !important;
+        color: #353636;
+        letter-spacing: 0;
+        font-weight: 400;
+      }
+     }
+    .el-message-box__content {
+      height:96px;
+      font-size: 14px;
+      color: #353636;
+      letter-spacing: 0;
+      line-height: 22px;
+      font-weight: 400;
+      padding-top:8px;
+      padding-right:20px;
+      padding-left:20px;
+      .el-message-box__message {
+        padding-left:0px !important;
+        padding-right:0px !important;
+      }
+    }
+    .el-message-box__btns {
+      height:52px;
+      border-top:1px solid #eee;
+      box-shadow: inset 0 -1px 0 0 rgba(0,0,0,0.07);
+      padding:11px 0px 12px!important;
+      .el-button--small {
+        padding:8px 21px !important;
+        line-height: 12px;
+        font-family: NotoSansHans-Medium !important;
+        font-size: 12px;
+        font-weight: 500;
+        min-height: 28px;
+      }
+      .el-button:nth-child(1) {
+        margin-right:20px;
+        width:80px;
+        height:28px;
+        color: #353636;
+      }
+      .el-button:nth-child(2) {
+        width:80px;
+        height:28px;
+        margin-right:20px;
+        margin-left:0px !important;
+        background-color:#2d8cf0;
+        border-color:#2d8cf0;
+      }
+    }
+  }
 </style>
