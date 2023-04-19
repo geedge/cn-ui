@@ -27,8 +27,8 @@
                 width="48">
             </el-table-column>
             <el-table-column
-                v-for="(item, index) in tableTitlesOther"
-                :key="index"
+                v-for="item in tableTitlesOther"
+                :key="item.prop"
                 show-overflow-tooltip
                 :min-width="item.width"
                 :label="item.label"
@@ -55,8 +55,8 @@
       </template>
     </el-table-column>
     <el-table-column
-        v-for="(item, index) in tableTitles"
-        :key="index"
+        v-for="item in tableTitles"
+        :key="item.prop"
         show-overflow-tooltip
         :min-width="item.width"
         :label="(tableNameColumn === 'appName'&& item.prop === 'tableNameColumn')? $t('overall.appName'):item.label"

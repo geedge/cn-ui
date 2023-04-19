@@ -25,9 +25,9 @@
         </el-table-column>
 
         <el-table-column
-            v-for="(c, i) in table.tableColumns"
+            v-for="c in table.tableColumns"
             show-overflow-tooltip
-            :key="i"
+            :key="c"
             :label="c"
             :prop="c"
         >

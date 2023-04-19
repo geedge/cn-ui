@@ -9,17 +9,17 @@
         <el-table-column :width="60" v-if="table.currentPageData.length" type="index" label="#">
         </el-table-column>
         <el-table-column
-            v-for="(c, i) in table.tableColumns.common"
+            v-for="c in table.tableColumns.common"
             show-overflow-tooltip
-            :key="i"
+            :key="c"
             :label="$t(chartTableColumnMapping[c] || c)"
             :prop="c"
         >
         </el-table-column>
         <el-table-column
-            v-for="(c, i) in table.tableColumns.order"
+            v-for="c in table.tableColumns.order"
             show-overflow-tooltip
-            :key="i"
+            :key="c"
             :label="$t(chartTableColumnMapping[c] || c)"
             :prop="c"
         >

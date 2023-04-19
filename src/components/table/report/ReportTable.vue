@@ -96,8 +96,8 @@
           width="30">
       </el-table-column>
       <el-table-column
-          v-for="(item, index) in customTableTitles"
-          :key="`col-${index}`"
+          v-for="item in customTableTitles"
+          :key="item.prop"
           :fixed="item.fixed"
           :label="item.label"
           :min-width="`${item.minWidth}`"

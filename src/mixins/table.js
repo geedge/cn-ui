@@ -81,7 +81,11 @@ export default {
 
             // 有排序的，额外添加24px的排序图标宽度
             if (item.sortable) {
-              item.minWidth = item.minWidth + 32
+              if (!item.initFlag) {
+                item.minWidth = item.minWidth + 32
+              }
+              // 避免customize多次点击save生成表格，导致width越来越大，保证初始化一次就确定宽度
+              item.initFlag = true
             }
 
             if (item.minWidth < newWidth) {

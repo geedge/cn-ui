@@ -11,8 +11,8 @@
                 :size="'mini'"
                 :height="'100%'">
             <el-table-column
-                    v-for="(item,index) in tableKey"
-                    :key="index"
+                    v-for="item in tableKey"
+                    :key="item.prop"
                     :label="item.label"
                     :prop="item.prop"
                     :min-width="item.width"
