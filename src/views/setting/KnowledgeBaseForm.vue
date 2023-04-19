@@ -431,8 +431,7 @@ export default {
       if (this.fileList.length > 0 && this.fileList[0].status === 'success') {
         this.fileListBack = this.fileList[0]
       }
-      const file = fileList.slice(-1)
-      this.fileList = file
+      this.fileList = fileList.slice(-1)
     },
     uploadError () {
       this.uploadLoading = false
@@ -481,6 +480,7 @@ export default {
         this.editTagErrorTip = ''
         this.editIndex = -1
         this.isPreviewChange = true
+        this.importedDataNoData = true
       }
       if (this.fileListBack !== undefined && this.fileListBack.status === 'success' &&
             this.importedData.length > 0) {
@@ -491,20 +491,26 @@ export default {
       if (!this.isShowUploadTips) {
         this.isShowUploadTips = true
         const self = this
-        this.$confirm(this.$t('tip.uploadFile'), {
-          confirmButtonText: this.$t('tip.confirm'),
-          cancelButtonText: this.$t('overall.cancel'),
-          message: this.$t('tip.uploadFileTips'),
-          title: this.$t('tip.uploadFile'),
-          type: 'warning',
-          iconClass: 'width:0px;height:0px;',
-          customClass: 'del-model'
-        }).then(() => {
+        if (this.importedData.length > 0) {
+          this.$confirm(this.$t('tip.uploadFile'), {
+            confirmButtonText: this.$t('tip.confirm'),
+            cancelButtonText: this.$t('overall.cancel'),
+            message: this.$t('tip.uploadFileTips'),
+            title: this.$t('tip.uploadFile'),
+            type: 'warning',
+            iconClass: 'width:0px;height:0px;',
+            customClass: 'del-model'
+          }).then(() => {
+            this.isClick = true
+            self.$refs.upload.$refs.uploadRef.handleClick()
+          }).catch(e => {}).finally(() => {
+            this.isShowUploadTips = false
+          })
+        } else {
           this.isClick = true
-          self.$refs.upload.$refs.uploadRef.handleClick()
-        }).catch(e => {}).finally(() => {
           this.isShowUploadTips = false
-        })
+          self.$refs.upload.$refs.uploadRef.handleClick()
+        }
       }
     },
     promiseState (p) {
@@ -525,19 +531,23 @@ export default {
           reject(new Error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') })))
         } else {
           if (!this.isClick) {
-            this.$confirm(this.$t('tip.uploadFile'), {
-              confirmButtonText: this.$t('tip.confirm'),
-              cancelButtonText: this.$t('overall.cancel'),
-              message: this.$t('tip.uploadFileTips'),
-              title: this.$t('tip.uploadFile'),
-              type: 'warning',
-              iconClass: 'width:0px;height:0px;',
-              customClass: 'del-model'
-            }).then(() => {
+            if (this.importedData.length > 0) {
+              this.$confirm(this.$t('tip.uploadFile'), {
+                confirmButtonText: this.$t('tip.confirm'),
+                cancelButtonText: this.$t('overall.cancel'),
+                message: this.$t('tip.uploadFileTips'),
+                title: this.$t('tip.uploadFile'),
+                type: 'warning',
+                iconClass: 'width:0px;height:0px;',
+                customClass: 'del-model'
+              }).then(() => {
+                resolve()
+              }).catch(e => {
+                reject(e)
+              })
+            } else {
               resolve()
-            }).catch(e => {
-              reject(e)
-            })
+            }
           } else {
             resolve()
           }
@@ -575,7 +585,7 @@ export default {
       // 删除内容为空的新增记录
       const lastIndex = this.importedData.length - 1
       const lastData = this.importedData[lastIndex]
-      if (lastData.tagItem === '' && lastData.tagValue === '') {
+      if (lastData !== undefined && lastData.tagItem === '' && lastData.tagValue === '') {
         this.importedData.pop()
       }
       this.importedPageObj.total = this.importedData.length
@@ -639,88 +649,96 @@ export default {
           this.previewErrorTip = ''
         }
         if (valid) {
-          this.$refs.editForm.validate((validImportData) => {
-            if (validImportData) {
-              // 校验通过后组织数据、请求接口
-              if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
-                const postData = {
-                  tagName: this.editObject.tagName,
-                  tagType: this.editObject.tagType,
-                  data: []
-                }
-                // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
-                if (this.importedData[this.importedData.length - 1].tagItem === '') {
-                  this.importedData.pop()
-                }
-                this.importedData.forEach(d => {
-                  const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
-                  if (findData) {
-                    findData.itemList.add(d.tagItem)
+          if (this.$refs.editForm) {
+            this.$refs.editForm.validate((validImportData) => {
+              if (validImportData) {
+                // 校验通过后组织数据、请求接口
+                if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
+                  if (this.importedData.length === 1 && this.importedData[0].tagItem === '') {
+                    // this.blockOperation.save = false
                   } else {
-                    const set = new Set()
-                    set.add(d.tagItem)
-                    postData.data.push({
-                      tagValue: d.tagValue,
-                      itemList: set
+                    const postData = {
+                      tagName: this.editObject.tagName,
+                      tagType: this.editObject.tagType,
+                      data: []
+                    }
+                    // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
+                    if (this.importedData[this.importedData.length - 1].tagItem === '') {
+                      this.importedData.pop()
+                    }
+                    this.importedData.forEach(d => {
+                      const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
+                      if (findData) {
+                        findData.itemList.add(d.tagItem)
+                      } else {
+                        const set = new Set()
+                        set.add(d.tagItem)
+                        postData.data.push({
+                          tagValue: d.tagValue,
+                          itemList: set
+                        })
+                      }
                     })
+                    postData.data.forEach(d => {
+                      // d.itemList = [...d.itemList]
+                      d.itemList = Array.from(d.itemList)
+                    })
+                    postData.remark = this.editObject.remark
+                    if (!this.editObject.id) {
+                      axios.post(this.url, postData).then(response => {
+                        if (response.data.code === 200) {
+                          this.$message({
+                            duration: 2000,
+                            type: 'success',
+                            message: this.$t('tip.saveSuccess')
+                          })
+                          this.$router.push({
+                            path: '/knowledgeBase',
+                            t: +new Date()
+                          })
+                        } else {
+                          this.errorMsgHandler(response)
+                        }
+                      }).catch(e => {
+                        console.error(e)
+                        this.errorMsgHandler(e)
+                      }).finally(() => {
+                        this.blockOperation.save = false
+                      })
+                    } else {
+                      postData.id = this.editObject.id
+                      axios.put(this.url, postData).then(response => {
+                        if (response.data.code === 200) {
+                          this.$message({
+                            duration: 2000,
+                            type: 'success',
+                            message: this.$t('tip.saveSuccess')
+                          })
+                          this.$router.push({
+                            path: '/knowledgeBase',
+                            t: +new Date()
+                          })
+                        } else {
+                          this.errorMsgHandler(response)
+                        }
+                      }).catch(e => {
+                        console.error(e)
+                        this.errorMsgHandler(e)
+                      }).finally(() => {
+                        this.blockOperation.save = false
+                      })
+                    }
                   }
-                })
-                postData.data.forEach(d => {
-                  // d.itemList = [...d.itemList]
-                  d.itemList = Array.from(d.itemList)
-                })
-                postData.remark = this.editObject.remark
-                if (!this.editObject.id) {
-                  axios.post(this.url, postData).then(response => {
-                    if (response.data.code === 200) {
-                      this.$message({
-                        duration: 2000,
-                        type: 'success',
-                        message: this.$t('tip.saveSuccess')
-                      })
-                      this.$router.push({
-                        path: '/knowledgeBase',
-                        t: +new Date()
-                      })
-                    } else {
-                      this.errorMsgHandler(response)
-                    }
-                  }).catch(e => {
-                    console.error(e)
-                    this.errorMsgHandler(e)
-                  }).finally(() => {
-                    this.blockOperation.save = false
-                  })
                 } else {
-                  postData.id = this.editObject.id
-                  axios.put(this.url, postData).then(response => {
-                    if (response.data.code === 200) {
-                      this.$message({
-                        duration: 2000,
-                        type: 'success',
-                        message: this.$t('tip.saveSuccess')
-                      })
-                      this.$router.push({
-                        path: '/knowledgeBase',
-                        t: +new Date()
-                      })
-                    } else {
-                      this.errorMsgHandler(response)
-                    }
-                  }).catch(e => {
-                    console.error(e)
-                    this.errorMsgHandler(e)
-                  }).finally(() => {
-                    this.blockOperation.save = false
-                  })
+                  this.blockOperation.save = false
                 }
               } else {
                 this.blockOperation.save = false
               }
-            } else {
-              this.blockOperation.save = false
-            }
-          })
+            })
+          } else {
+            this.blockOperation.save = false
+          }
         } else {
           this.blockOperation.save = false
         }
@@ -806,11 +824,13 @@ export default {
         if (total > 0 && total < 10) {
           this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
           this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
+          this.importedDataNoData = false
         } else {
           const lastPageSize = Math.ceil((total + 1) / 10)
           this.pageNo(lastPageSize)
           this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
           this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
+          this.importedDataNoData = false
         }
         this.importedPageObj.total = this.importedData.length
         this.timer = setTimeout(() => {
