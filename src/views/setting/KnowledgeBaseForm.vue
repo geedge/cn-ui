@@ -1058,177 +1058,95 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-:deep .imported-table-box .el-form {
-  margin-top: 0 !important;
-}
-.imported-table-box {
-  height:394px !important;
-}
-.imported-table-box .imported-pagination.pagination {
-  border-top: 0px !important;
-  border-bottom: 1px solid #eee;
-  bottom: 42px !important;
-  margin-bottom: 0px;
-  padding-bottom: 0px;
-  padding-top: 10px;
-}
-
-:deep .imported-table .el-input {
-  height: 24px;
-}
-
-:deep .imported-table .el-form-item__content {
-  margin-top: -16px;
-  margin-bottom: -17px;
-}
-
-:deep .imported-table .el-form-item__error {
-  display: none;
-}
-
-:deep .imported-data-item-edit__input .el-input__inner {
-  width: calc(100% - 50px);
-  height: 24px;
-  line-height: 0;
-  padding: 0 !important;
-  border-radius: 2px;
-}
-
-.imported-data-btn {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.imported-data-left-btn {
-  font-size: 14px;
-  margin: 0 7px;
-  color: #666;
-  cursor: pointer;
-}
-
-.imported-data-back {
-  color: #666;
-  cursor: pointer;
-}
-
-.imported-data-save {
-  color: #38ACD2;
-  cursor: pointer;
-}
-
-.addTagBtn {
-  position: absolute;
-  bottom: 9px;
-  height:24px !important;
-  min-height: 24px !important;
-  font-size: 12px;
-  color: #353636;
-  font-weight: 500;
-  width: 598px;
-  margin-left: 10px;
-  background: rgb(245, 248, 250);
-  border: 1px #DEDEDE solid;
-  padding: 0px !important;
-  box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
-  border-radius: 2px;
-  font-family:NotoSansHans-Medium !important;
-
-  .add-tag-btn {
-    color: #575757 !important;
-    font-size: 9px !important;
-    margin: 0 8px 2px 8px;
-  }
-}
-.addTagBtn:hover {
-  i {
-    color: #699DC9 !important;
-  }
-}
-.addTagBtn span {
-    font-family:NotoSansHans-Medium !important;
-}
-</style>
 <style lang="scss">
-  .del-model {
-    display:flex;
-    flex-direction: column;
-    padding-bottom:0px !important;
-    width:480px !important;
-    height:190px;
-    .el-message-box__header{
-      display: flex;
-      flex-direction: row;
-      border-bottom:1px solid #eee;
-      height:42px;
-      background: #F7F7F7;
-      box-shadow: 0 1px 0 0 rgba(53,54,54,0.08);
-      padding-left:20px;
-      padding-top:14px;
-      padding-bottom:14px;
-      .el-message-box__headerbtn {
-        display: flex !important;
-        flex-direction: row-reverse;
-        justify-content: center;
-        align-items: center;
-        font-size: 10px;
-        line-height: 10px;
-        padding-right: 5px !important;
-        i {
-          width:10px;
-          height:10px;
-        }
+.del-model {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0 !important;
+  width: 480px !important;
+  height: 190px;
+
+  .el-message-box__header {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid #eee;
+    height: 42px;
+    background: #F7F7F7;
+    box-shadow: 0 1px 0 0 rgba(53, 54, 54, 0.08);
+    padding-left: 20px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+
+    .el-message-box__headerbtn {
+      display: flex !important;
+      flex-direction: row-reverse;
+      justify-content: center;
+      align-items: center;
+      font-size: 10px;
+      line-height: 10px;
+      padding-right: 5px !important;
+
+      i {
+        width: 10px;
+        height: 10px;
       }
-      .el-message-box__title {
-        font-size: 14px !important;
-        color: #353636;
-        letter-spacing: 0;
-        font-weight: 400;
-      }
-     }
-    .el-message-box__content {
-      height:96px;
-      font-size: 14px;
+    }
+
+    .el-message-box__title {
+      font-size: 14px !important;
       color: #353636;
       letter-spacing: 0;
-      line-height: 22px;
       font-weight: 400;
-      padding-top:8px;
-      padding-right:20px;
-      padding-left:20px;
-      .el-message-box__message {
-        padding-left:0px !important;
-        padding-right:0px !important;
-      }
-    }
-    .el-message-box__btns {
-      height:52px;
-      border-top:1px solid #eee;
-      box-shadow: inset 0 -1px 0 0 rgba(0,0,0,0.07);
-      padding:11px 0px 12px!important;
-      .el-button--small {
-        padding:8px 21px !important;
-        line-height: 12px;
-        font-family: NotoSansHans-Medium !important;
-        font-size: 12px;
-        font-weight: 500;
-        min-height: 28px;
-      }
-      .el-button:nth-child(1) {
-        margin-right:20px;
-        width:80px;
-        height:28px;
-        color: #353636;
-      }
-      .el-button:nth-child(2) {
-        width:80px;
-        height:28px;
-        margin-right:20px;
-        margin-left:0px !important;
-        background-color:#2d8cf0;
-        border-color:#2d8cf0;
-      }
     }
   }
+
+  .el-message-box__content {
+    height: 96px;
+    font-size: 14px;
+    color: #353636;
+    letter-spacing: 0;
+    line-height: 22px;
+    font-weight: 400;
+    padding-top: 8px;
+    padding-right: 20px;
+    padding-left: 20px;
+
+    .el-message-box__message {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  .el-message-box__btns {
+    height: 52px;
+    border-top: 1px solid #eee;
+    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
+    padding: 11px 0 12px !important;
+
+    .el-button--small {
+      padding: 8px 21px !important;
+      line-height: 12px;
+      font-family: NotoSansHans-Medium !important;
+      font-size: 12px;
+      font-weight: 500;
+      min-height: 28px;
+    }
+
+    .el-button:nth-child(1) {
+      margin-right: 20px;
+      width: 80px;
+      height: 28px;
+      color: #353636;
+    }
+
+    .el-button:nth-child(2) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      margin-left: 0 !important;
+      background-color: #2d8cf0;
+      border-color: #2d8cf0;
+    }
+  }
+}
 </style>
