@@ -53,7 +53,6 @@
                      :before-upload="beforeUpload"
                      :on-progress="onUpload"
                      :on-error="uploadError"
-                     @click=""
                      :class="uploadErrorTip ? 'el-upload--error' : ''"
                      drag
                      :accept="fileTypeLimit"
@@ -99,10 +98,10 @@
               <el-form ref="editForm" :model="editTagForm" :rules="editTagFormRules">
                 <table class="imported-table" v-if="!importedDataNoData">
                   <tr>
-                    <th width="230">{{ importedTableFirstColumn }}</th>
-                    <th width="180">Label</th>
+                    <th style="width: 230px">{{ importedTableFirstColumn }}</th>
+                    <th style="width: 180px">Label</th>
                     <th v-if="!editObject.id">{{ $t('overall.import') }}</th>
-                    <th width="16"></th>
+                    <th style="width: 16px"></th>
                   </tr>
                   <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagItem + d.tagValue + i">
                     <td class="imported-data-item" :title="d.tagItem">
@@ -185,7 +184,7 @@
 </template>
 <script>
 import { useRoute } from 'vue-router'
-import { ref, nextTick, reactive } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import _ from 'lodash'
 import { knowledgeBaseType, storageKey, unitTypes } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
@@ -204,12 +203,10 @@ export default {
     Loading
   },
   data () {
-    const nameValidator = (rule, value, callback) => {
-      let validate = true
+    const nameValidator = (rule, value) => {
       // /^[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEFA-Za-z0-9\-\_]*$/
       const reg = /^[\u4e00-\u9fa5A-Za-z0-9\-\_]*$/
-      validate = reg.test(value)
-      return validate
+      return reg.test(value)
     }
     const nameAndTypeValidator = async (rule, value, callback) => {
       let validate = true
@@ -285,7 +282,7 @@ export default {
       const tagType = this.editObject.tagType// 当前选中的类型
       if (tagType === 'ip') {
         const formal = value.replace(/\s+/g, '')// 去掉空格
-        if (formal.indexOf('/') != -1) {
+        if (formal.indexOf('/') !== -1) {
           if (!(regular.ipv4CIDR.test(formal)) && !(regular.ipv6CIDR.test(formal))) {
             validate = false
             this.editTagErrorTip = rule.message
@@ -465,7 +462,7 @@ export default {
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
       }
     },
-    onRemove (files, fileList) {
+    onRemove (files) {
       if (files && files.status === 'success') {
         this.uploaded = false
         this.typeSelectDisable = false
@@ -487,7 +484,7 @@ export default {
         this.fileList[0] = this.fileListBack
       }
     },
-    uploadTip (e) {
+    uploadTip () {
       if (!this.isShowUploadTips) {
         this.isShowUploadTips = true
         const self = this
@@ -503,7 +500,7 @@ export default {
           }).then(() => {
             this.isClick = true
             self.$refs.upload.$refs.uploadRef.handleClick()
-          }).catch(e => {}).finally(() => {
+          }).catch(() => {}).finally(() => {
             this.isShowUploadTips = false
           })
         } else {
@@ -519,7 +516,7 @@ export default {
         .then(v => (v === t) ? 'pending' : 'fulfilled', () => 'rejected')
     },
     beforeUpload (file) {
-      const promise = new Promise((resolve, reject) => {
+      return new Promise((resolve, reject) => {
         // 判断后缀，仅支持.csv
         if (!_.endsWith(file.name, '.csv')) {
           this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
@@ -553,9 +550,8 @@ export default {
           }
         }
       })
-      return promise
     },
-    onUpload (event, file) {
+    onUpload () {
       this.uploadLoading = true
       this.typeSelectDisable = true
       this.isClick = false
@@ -620,7 +616,7 @@ export default {
             path: '/knowledgeBase',
             t: +new Date()
           })
-        }).catch(e => {})
+        }).catch(() => {})
       } else {
         this.$router.push({
           path: '/knowledgeBase',
@@ -819,8 +815,7 @@ export default {
       const total = this.importedData.length
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
-      if (this.importedData.length === 0 ||
-                   this.importedData[this.importedData.length - 1].tagItem !== '' && this.importedData[this.importedData.length - 1].tagValue !== '') {
+      if (this.importedData.length === 0 || (this.importedData[this.importedData.length - 1].tagItem !== '' && this.importedData[this.importedData.length - 1].tagValue !== '')) {
         if (total > 0 && total < 10) {
           this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
           this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
@@ -935,7 +930,7 @@ export default {
       }
     },
     'importedPageObj.pageNo': {
-      handler (n) {
+      handler () {
         this.handleShowImportedData()
       }
     }
