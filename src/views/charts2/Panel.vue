@@ -1,6 +1,6 @@
 <template>
-  <div class="panel-box2" :class="{'panel-box2--entity-detail': entity.entityType}">
-    <div class="panel__header" v-if="!entity.entityType">
+  <div class="panel-box2" :class="{'panel-box2--entity-detail': entity && entity.entityType}">
+    <div class="panel__header" v-if="!entity">
       <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}
         <div v-if="showScore" class="score">
           <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
