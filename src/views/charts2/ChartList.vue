@@ -24,6 +24,7 @@
             :metric="metric"
             :extra-params="extraParams"
             :id="item.id"
+            :entity="entity"
             ref="chartGrid"
             @npmTabChange="npmTabChange"
             :chart="item"

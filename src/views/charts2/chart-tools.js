@@ -31,5 +31,10 @@ export const typeMapping = {
     dnsEventChart: 711,
     dnsRecentEvents: 605,
     dnsActiveMaliciousDomain: 604
+  },
+  entityDetail: {
+    basicInfo: 712,
+    line: 107,
+    tabsChart: 713
   }
 }

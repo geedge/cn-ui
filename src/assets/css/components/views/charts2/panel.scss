@@ -1,3 +1,14 @@
+.panel-box2.panel-box2--entity-detail {
+  height: 100%;
+
+  .chart-list {
+    height: 100%;
+
+    &>.vue-grid-layout {
+      margin-top: 0;
+    }
+  }
+}
 .panel-box2 {
   height: calc(100% - 20px);
   .panel__header {

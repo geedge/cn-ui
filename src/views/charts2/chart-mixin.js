@@ -1,7 +1,8 @@
 export default {
   props: {
     chart: Object,
-    timeFilter: Object
+    timeFilter: Object,
+    entity: Object
   },
   data () {
     return {

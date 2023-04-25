@@ -160,6 +160,24 @@
         :chart="chart"
         @toggleLoading="toggleLoading"
     ></dns-traffic-line>
+    <entity-detail-basic-info
+        v-else-if="chart.type === typeMapping.entityDetail.basicInfo"
+        :chart="chart"
+        :entity="entity"
+        @toggleLoading="toggleLoading"
+    ></entity-detail-basic-info>
+    <entity-detail-line
+        v-else-if="chart.type === typeMapping.entityDetail.line"
+        :chart="chart"
+        :entity="entity"
+        @toggleLoading="toggleLoading"
+    ></entity-detail-line>
+    <entity-detail-tabs-chart
+        v-else-if="chart.type === typeMapping.entityDetail.tabsChart"
+        :chart="chart"
+        :entity="entity"
+        @toggleLoading="toggleLoading"
+    ></entity-detail-tabs-chart>
   </div>
 </template>
 
@@ -190,6 +208,9 @@ import DnsActiveMaliciousDomain from '@/views/charts2/charts/dnsInsight/DnsActiv
 import DnsEventChart from '@/views/charts2/charts/dnsInsight/DnsEventChart'
 import DnsRecentEvents from '@/views/charts2/charts/dnsInsight/DnsRecentEvents'
 import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
+import EntityDetailBasicInfo from '@/views/charts2/charts/entityDetail/EntityDetailBasicInfo'
+import EntityDetailLine from '@/views/charts2/charts/entityDetail/EntityDetailLine'
+import EntityDetailTabsChart from '@/views/charts2/charts/entityDetail/EntityDetailTabsChart'
 
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
@@ -222,13 +243,17 @@ export default {
     DnsActiveMaliciousDomain,
     DnsEventChart,
     DnsRecentEvents,
-    DnsTrafficLine
+    DnsTrafficLine,
+    EntityDetailBasicInfo,
+    EntityDetailLine,
+    EntityDetailTabsChart
   },
   props: {
     chart: Object,
     metric: String,
     timeFilter: Object,
-    extraParams: Object
+    extraParams: Object,
+    entity: Object
   },
   data () {
     return {
