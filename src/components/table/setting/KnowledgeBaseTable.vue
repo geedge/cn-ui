@@ -1,72 +1,36 @@
 <template>
-  <el-table
-      id="knowledgeBaseTable"
-      ref="dataTable"
-      :data="tableData"
-      :height="height"
-      border
-      @header-dragend="dragend"
-      @sort-change="tableDataSort"
-      @selection-change="selectionChange"
-  >
-    <el-table-column
-        :resizable="false"
-        align="center"
-        type="selection"
-        width="55">
-    </el-table-column>
-    <el-table-column
-        v-for="(item, index) in customTableTitles"
-        :key="`col-${index}`"
-        :fixed="item.fixed"
-        :label="item.label"
-        :min-width="`${item.minWidth}`"
-        :prop="item.prop"
-        :resizable="true"
-        :sort-orders="['ascending', 'descending']"
-        :sortable="item.sortable"
-        :width="`${item.width}`"
-        class="data-column"
-    >
-      <template #header>
-        <span class="data-column__span">{{item.label}}</span>
-        <div class="col-resize-area"></div>
-      </template>
-      <template  #default="scope" :column="item">
-        <template v-if="item.prop === 'name'">
-          <template v-if="scope.row.i18n">
-            <span>{{$t(scope.row.i18n)}}</span>
-          </template>
-          <template v-else-if="scope.row.name">
-            <span>{{scope.row.name}}</span>
-          </template>
-          <template v-else>
-            <span>-</span>
-          </template>
-        </template>
-        <template v-else-if="item.prop === 'tagType'">
-          <span class="type-tag">{{tagTypeText(scope.row[item.prop])}}</span>
-        </template>
-        <template v-else-if="item.prop === 'utime' || item.prop === 'ctime'">
-          <template v-if="scope.row[item.prop]">
-            {{dateFormatByAppearance(scope.row[item.prop])}}
-          </template>
-          <template v-else>
-            <span>-</span>
-          </template>
-        </template>
-        <template v-else-if="item.prop === 'cuser' || item.prop === 'uuser'">
-          <template v-if="scope.row[item.prop]">
-            {{scope.row[item.prop].username || '-'}}
-          </template>
-          <template v-else>
-            <span>-</span>
-          </template>
-        </template>
-        <span v-else>{{scope.row[item.prop] || '-'}}</span>
-      </template>
-    </el-table-column>
-  </el-table>
+  <el-checkbox-group v-model="checkList" @change="" style="display:flex;flex-flow:row wrap;">
+    <div @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.id" class="card-item" style="">
+      <div class="card-content">
+        <div class="card-title">
+          <div class="card-title-name">
+            {{data.tagName}}
+          </div>
+          <div class="card-title-more">
+            <span v-show="!isSelectedStatus && data.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(data)" test-id="mouseenter-dark"></i></span>
+            <div class="card-operate" v-show="!isSelectedStatus && data.moreOptions" @mouseleave="mouseleaveMore(data)">
+              <div class="card-title-more-edit" @click="edit(data.id)" >{{$t('overall.edit')}}</div>
+              <div class="card-title-more-delete" @click="del(data)" >{{$t('overall.delete')}}</div>
+            </div>
+            <el-checkbox @change="(val) => {checkboxStatusChange(val,data)}" style="position: absolute;right: -12px;" v-if="isSelectedStatus" :key="data.id" :label="data"><br></el-checkbox>
+
+          </div>
+        </div>
+        <div class="card-id">ID:{{data.id}}</div>
+        <div class="card-desc">{{data.remark?data.remark:'—'}}</div>
+      </div>
+      <div class="card-operate__footer">
+        <div class="card-type">{{data.tagType}}</div>
+        <el-switch class="card-enable"
+                   disabled
+                   v-model="data.status"
+                   active-color="#38ACD2"
+                   inactive-color="#C0CEDB"
+        >
+        </el-switch>
+      </div>
+    </div>
+  </el-checkbox-group>
 </template>
 
 <script>
@@ -75,62 +39,87 @@ import { knowledgeBaseType } from '@/utils/constants'
 export default {
   name: 'knowledgeBaseTable',
   mixins: [table],
-  data () {
-    return {
-      tableTitle: [ // 原table列
-        {
-          label: 'ID',
-          prop: 'id',
-          show: true,
-          width: 100,
-          sortable: 'custom'
-        }, {
-          label: this.$t('config.roles.name'),
-          prop: 'tagName',
-          show: true,
-          sortable: 'custom'
-        }, {
-          label: this.$t('overall.type'),
-          prop: 'tagType',
-          minWidth: 80,
-          show: true
-        }, {
-          label: this.$t('overall.remark'),
-          prop: 'remark',
-          show: true
-        },
-        {
-          label: this.$t('overall.createdBy'),
-          prop: 'cuser',
-          show: true
-        },
-        {
-          label: this.$t('config.user.createTime'),
-          prop: 'ctime',
-          show: false,
-          sortable: 'custom'
-        },
-        {
-          label: this.$t('overall.updatedBy'),
-          prop: 'uuser',
-          show: false
-        },
-        {
-          label: this.$t('overall.updateTime'),
-          prop: 'utime',
-          show: false,
-          sortable: 'custom'
-        }
-      ]
+  props: {
+    isSelectedStatus: {
+      type: Boolean
     }
   },
-  computed: {
-    tagTypeText () {
-      return function (type) {
-        const t = knowledgeBaseType.find(t => t.value === type)
-        return t ? t.name : ''
+  data () {
+    return {
+      tableTitle: [],
+      checkList: []
+    }
+  },
+  watch: {
+    tableData: {
+      handler (n) {
+        if (this.tableData && this.tableData.length > 0) {
+          this.tableData.forEach(item => {
+            item.status = true
+          })
+        }
       }
     }
-  }
+  },
+  methods: {
+    checkboxStatusChange (val, data) {
+      this.$emit('checkboxStatusChange', val, data)
+    },
+    showSelect () {
+      // this.isSelectedStatus = true
+    },
+    hideSelect () {
+      // this.isSelectedStatus = false
+    },
+    mouseenterMore (card) {
+      this.tableData.forEach(t => {
+        if (t.id === card.id) {
+          t.moreOptions = true
+        }
+      })
+    },
+    mouseleaveMore (card) {
+      this.tableData.forEach(t => {
+        if (t.id === card.id) {
+          t.moreOptions = false
+        }
+      })
+    },
+    mouseenter (card) {
+      this.tableData.forEach(t => {
+        if (t.id === card.id) {
+          t.showMore = true
+        }
+      })
+    },
+    mouseleave (card) {
+      this.tableData.forEach(t => {
+        if (t.id === card.id) {
+          t.showMore = false
+          t.moreOptions = false
+        }
+      })
+    },
+    del (data) {
+      this.$emit('delete', data)
+    },
+    edit (id) {
+      this.$router.push({
+        path: '/knowledgeBase/edit',
+        query: {
+          t: +new Date(),
+          id: id
+        }
+      })
+    }
+  },
+  mounted () {
+    this.tableData.forEach(item => {
+      item.showMore = false
+      item.moreOptions = false
+      item.status = true
+    })
+  },
+  computed: {}
 }
 </script>

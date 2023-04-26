@@ -38,6 +38,7 @@ export default {
       scrollbarWrap: null,
       delFlag: false,
       disableEdit: false, // 编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
+      disableDelete: true,
       operationWidth: '165' // 操作列宽
     }
   },
@@ -73,15 +74,54 @@ export default {
           break
       }
     },
-    selectionChange (objs) {
-      this.batchDeleteObjs = objs
+    checkboxStatusChange (isCheck, data) {
+      if (isCheck) {
+        const delObj = this.batchDeleteObjs.find(item => item.id === data.id)
+        if (delObj === undefined) {
+          this.batchDeleteObjs.push(data)
+        }
+      } else {
+        const cancleObjIndex = this.batchDeleteObjs.findIndex(item => item.id === data.id)
+        if (cancleObjIndex > -1) {
+          this.batchDeleteObjs.splice(cancleObjIndex, 1)
+        }
+      }
       if (this.batchDeleteObjs.length > 1) {
         this.disableEdit = true
       } else {
         this.disableEdit = false
       }
+      if (this.batchDeleteObjs.length >= 1) {
+        this.disableDelete = false
+      } else {
+        this.disableDelete = true
+      }
     },
-    getTableData (params) {
+    selectionChange (objs) {
+      this.batchDeleteObjs = []
+      objs.forEach(obj => {
+        const delObj = this.batchDeleteObjs.find(item => item.id === obj.id)
+        if (delObj === undefined) {
+          this.batchDeleteObjs.push(obj)
+        }
+      })
+      if (this.batchDeleteObjs.length > 1) {
+        this.disableEdit = true
+      } else {
+        this.disableEdit = false
+      }
+      if (this.batchDeleteObjs.length >= 1) {
+        this.disableDelete = false
+      } else {
+        this.disableDelete = true
+      }
+    },
+    getTableData (params, isAll, isClearType) {
+      if (isAll) {
+        this.searchLabel = null
+      } else if (isClearType) {
+        this.searchLabel.tagType = ''
+      }
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
@@ -128,6 +168,8 @@ export default {
         })
       }).catch(e => {})
     },
+    delSelectionChange () {
+    },
     delBatch () {
       const ids = []
       if (this.batchDeleteObjs && this.batchDeleteObjs.length > 0) {
@@ -157,8 +199,21 @@ export default {
             }
           }).finally(() => {
             this.tools.loading = false
+            /*
+            if(this.isSelectedStatus != undefined){
+              this.isSelectedStatus = false
+              this.disableDelete = true
+              this.batchDeleteObjs = []
+            } */
           })
         }).catch(() => {})
+          .finally(() => {
+            if (this.isSelectedStatus != undefined) {
+              this.isSelectedStatus = false
+              this.disableDelete = true
+              this.batchDeleteObjs = []
+            }
+          })
       }
     },
     newObject () {
@@ -309,7 +364,9 @@ export default {
     },
     dragend () {
       this.$nextTick(() => {
-        this.$refs.dataTable.$refs.dataTable.doLayout()
+        if (this.$refs.dataTable.$refs.dataTable) {
+          this.$refs.dataTable.$refs.dataTable.doLayout()
+        }
       })
     },
     tableDataSort (orderBy) {

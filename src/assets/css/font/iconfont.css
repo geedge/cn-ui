@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1680168392586') format('woff2'),
-       url('iconfont.woff?t=1680168392586') format('woff'),
-       url('iconfont.ttf?t=1680168392586') format('truetype');
+  src: url('iconfont.woff2?t=1682420421444') format('woff2'),
+       url('iconfont.woff?t=1682420421444') format('woff'),
+       url('iconfont.ttf?t=1682420421444') format('truetype');
 }
 
 .cn-icon {
@@ -11,6 +11,102 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-xuanzebianji:before {
+  content: "\e7eb";
+}
+
+.cn-icon-guoqishijian:before {
+  content: "\e7d4";
+}
+
+.cn-icon-zhucejigouyouxiang:before {
+  content: "\e7d5";
+}
+
+.cn-icon-diliweizhi:before {
+  content: "\e7d6";
+}
+
+.cn-icon-xinyudengji:before {
+  content: "\e7d7";
+}
+
+.cn-icon-zhuceshijian:before {
+  content: "\e7d8";
+}
+
+.cn-icon-APPquancheng:before {
+  content: "\e7d9";
+}
+
+.cn-icon-miaoshu:before {
+  content: "\e7da";
+}
+
+.cn-icon-jishu:before {
+  content: "\e7db";
+}
+
+.cn-icon-zhuceshang:before {
+  content: "\e7dc";
+}
+
+.cn-icon-zhucejigou:before {
+  content: "\e7dd";
+}
+
+.cn-icon-yunyingshang:before {
+  content: "\e7de";
+}
+
+.cn-icon-zileibie:before {
+  content: "\e7df";
+}
+
+.cn-icon-APPmingcheng:before {
+  content: "\e7e0";
+}
+
+.cn-icon-zhuceguojia:before {
+  content: "\e7e1";
+}
+
+.cn-icon-AShao:before {
+  content: "\e7e2";
+}
+
+.cn-icon-ASziwang:before {
+  content: "\e7e3";
+}
+
+.cn-icon-leibie:before {
+  content: "\e7e4";
+}
+
+.cn-icon-a-Domainnameresolution:before {
+  content: "\e7e5";
+}
+
+.cn-icon-a-Openport:before {
+  content: "\e7e6";
+}
+
+.cn-icon-a-Securityevent:before {
+  content: "\e7e7";
+}
+
+.cn-icon-a-DNSPTR:before {
+  content: "\e7e8";
+}
+
+.cn-icon-a-Informationaggregation:before {
+  content: "\e7e9";
+}
+
+.cn-icon-a-Digitalcertificate:before {
+  content: "\e7ea";
 }
 
 .cn-icon-save:before {

@@ -33,7 +33,9 @@ export default {
     customTableTitle (n) {
       if (n) {
         setTimeout(() => {
-          this.$refs.dataTable.doLayout()
+          if (this.$refs.dataTable) {
+            this.$refs.dataTable.doLayout()
+          }
         }, 200)
       }
     }
@@ -106,6 +108,9 @@ export default {
     },
     selectionChange (objs) {
       this.$emit('selectionChange', objs)
+    },
+    checkboxStatusChange (isCheck, data) {
+      this.$emit('checkboxStatusChange', isCheck, data)
     },
     dragend () {
       this.$nextTick(() => {
