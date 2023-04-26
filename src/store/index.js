@@ -1,7 +1,6 @@
 import { createStore } from 'vuex'
 import user from './modules/user'
 import panel from './modules/panel'
-import { storageKey } from '@/utils/constants'
 
 const store = createStore({
   modules: {

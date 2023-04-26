@@ -232,6 +232,9 @@ export const api = {
     totalTrafficAnalysis: '/interface/dns/overview/totalTrafficAnalysis',
     eventChart: '/interface/dnsInsight/eventChart',
     drilldownTrafficAnalysis: '/interface/dns/overview/drilldown/trafficAnalysis'
+  },
+  entity: {
+    totalTrafficAnalysis: 'interface/entityDetail/totalTrafficAnalysis'
   }
 }
 

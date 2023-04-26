@@ -1,0 +1,40 @@
+.entity-detail-line {
+  height: 100%;
+  border-radius: 4px;
+
+  .line-header-right {
+    .panel__tools {
+      display: flex;
+      align-items: center;
+
+      & > .el-select {
+        width: 162px;
+        margin-right: 10px;
+
+        .select-prefix {
+          font-size: 14px;
+          color: #999;
+          padding: 0 6px 0 3px;
+        }
+
+        .el-input__inner {
+          font-size: 14px;
+          color: #353636;
+        }
+
+        .common-select {
+          top: 32px !important;
+        }
+      }
+
+      .panel__time {
+        display: flex;
+      }
+    }
+
+    .line-select-reference-line {
+      margin-left: 0 !important;
+      line-height: 1;
+    }
+  }
+}
