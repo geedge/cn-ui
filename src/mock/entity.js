@@ -6,10 +6,13 @@ if (openMock) {
     const titleList = ['totalBitsRate', 'inboundBitsRate', 'outboundBitsRate', 'internalBitsRate', 'throughBitsRate', 'other']
     const arr = [{ type: 'Bits/s' }, { type: 'Packets/s' }, { type: 'Sessions/s' }]
 
+    const endTime = JSON.parse(getQuery(requestObj.url).endTime)
+    let step = 0
     for (let i = 0; i < arr.length; i++) {
       for (const j in titleList) {
-        // 目前模拟数据仅支持1小时的时间选择范围
         let startTime = JSON.parse(getQuery(requestObj.url).startTime)
+        step = (endTime - startTime) / 100 // 每条数据的时间间隔
+
         const values = []
         let max = 2975
         let min = 0
@@ -20,7 +23,7 @@ if (openMock) {
         for (let i = 0; i < 101; i++) {
           const random = Math.floor(Math.random() * (max - min) + min)
           values.push([startTime, random])
-          startTime += 36
+          startTime += step
         }
 
         const newValues = JSON.parse(JSON.stringify(values))
