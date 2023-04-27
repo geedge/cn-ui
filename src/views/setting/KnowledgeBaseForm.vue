@@ -816,17 +816,14 @@ export default {
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
       if (this.importedData.length === 0 || (this.importedData[this.importedData.length - 1].tagItem !== '' && this.importedData[this.importedData.length - 1].tagValue !== '')) {
-        if (total > 0 && total < 10) {
-          this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
-          this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
-          this.importedDataNoData = false
-        } else {
+        if (total >= 10) {
           const lastPageSize = Math.ceil((total + 1) / 10)
           this.pageNo(lastPageSize)
-          this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
-          this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
-          this.importedDataNoData = false
         }
+        this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
+        this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
+        this.importedDataNoData = false
+
         this.importedPageObj.total = this.importedData.length
         this.timer = setTimeout(() => {
           this.editIndex = this.showImportedData.length - 1
