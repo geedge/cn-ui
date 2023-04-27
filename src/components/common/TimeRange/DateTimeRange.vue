@@ -1,5 +1,5 @@
 <template>
-  <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 1" class="date-range-box">
+  <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 3" class="date-range-box">
     <div @click="showDropdown" class="date-range-text">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
@@ -168,7 +168,7 @@ export default {
       value: computed(() => store.state.panel.rangeEchartsData)
     })
 
-    watch(() => rangeEchartsData.value, (newVal, oldVal) => {
+    watch(() => rangeEchartsData.value, (newVal) => {
       if (newVal) {
         myStartTime.value = getMillisecond(newVal.startTime)
         myEndTime.value = getMillisecond(newVal.endTime)
