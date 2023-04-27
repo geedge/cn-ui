@@ -2,15 +2,20 @@
   <div class="cn-entity--list" :style="{ zIndex: !isCollapse ? 1 : 'unset' }">
     <!-- 左侧下拉按钮 -->
     <div class="cn-entity__collapse">
-      <span @click="switchCollapse" :class="{ 'reg-down': !isCollapse }">
-        <i class="cn-icon cn-icon-arrow-right"></i>
-      </span>
+      <span @click="switchCollapse" :class="{ 'reg-down': !isCollapse }"
+        ><i class="cn-icon cn-icon-arrow-right"></i
+      ></span>
     </div>
     <div class="cn-entity__case">
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
       <div class="cn-entity__row">
         <div class="cn-entity__header">
-          {{ entityData.ipAddr || entityData.domainName || entityData.appName || 'Unknown' }}
+          {{
+            entityData.ipAddr ||
+            entityData.domainName ||
+            entityData.appName ||
+            'Unknown'
+          }}
         </div>
         <div class="cn-entity__body">
           <div class="body__basic-info">
@@ -35,7 +40,11 @@
               <template v-else-if="entityData.entityType === 'domain'">
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category"></i>
-                  <span>{{ $t('entities.domainDetail.categoryGroup') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span
+                    >{{
+                      $t('entities.domainDetail.categoryGroup')
+                    }}&nbsp;:&nbsp;&nbsp;</span
+                  >
                   <span>{{ entityData.domainCategoryGroup || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
@@ -45,7 +54,11 @@
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-credit"></i>
-                  <span>{{ $t('entities.reputationLevel') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span
+                    >{{
+                      $t('entities.reputationLevel')
+                    }}&nbsp;:&nbsp;&nbsp;</span
+                  >
                   <span>{{ entityData.domainReputationScore || '-' }}</span>
                 </div>
               </template>
@@ -58,7 +71,7 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category"></i>
                   <span
-                  >{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span
+                    >{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span
                   >
                   <span>{{ entityData.appSubcategory || '-' }}</span>
                 </div>
@@ -72,30 +85,37 @@
               <div class="basic-info__item">
                 <div class="item__box">
                   <i class="cn-icon cn-icon-rise"></i>
-                  <span>{{ $t('entities.sentThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>
-                    {{
-                      entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'
-                    }}
-                  </span>
+                  <span
+                    >{{
+                      $t('entities.sentThroughput')
+                    }}&nbsp;:&nbsp;&nbsp;</span
+                  >
+                  <span>{{
+                    entityData.bytesSentRate
+                      ? unitConvert(
+                          entityData.bytesSentRate,
+                          unitTypes.byte,
+                        ).join(' ') + 'ps'
+                      : '-'
+                  }}</span>
                   <!-- 曲线-->
                   <div class="item-box-loading">
                     <loading :loading="loading" size="small"></loading>
                     <div
                         class="row__charts"
                         :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'domain'">
-                    </div>
+                        v-if="entityData.entityType === 'domain'"
+                    ></div>
                     <div
                         class="row__charts"
                         :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'app'">
-                    </div>
+                        v-if="entityData.entityType === 'app'"
+                    ></div>
                     <div
                         class="row__charts"
                         :id="`entityDetailSend${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'ip'">
-                    </div>
+                        v-if="entityData.entityType === 'ip'"
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -103,44 +123,57 @@
               <div class="basic-info__item">
                 <div class="item__box">
                   <i class="cn-icon cn-icon-fall"></i>
-                  <span>{{ $t('entities.receivedThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>
-                    {{
-                      entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'
-                    }}
-                  </span>
+                  <span
+                    >{{
+                      $t('entities.receivedThroughput')
+                    }}&nbsp;:&nbsp;&nbsp;</span
+                  >
+                  <span>{{
+                    entityData.bytesReceivedRate
+                      ? unitConvert(
+                          entityData.bytesReceivedRate,
+                          unitTypes.byte,
+                        ).join(' ') + 'ps'
+                      : '-'
+                  }}</span>
+
                   <div class="item-box-loading">
                     <loading :loading="loading" size="small"></loading>
                     <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'domain'">
-                    </div>
+                      class="row__charts"
+                      :id="`entityDetailReceived${entityType}${listMode}`"
+                      v-if="entityData.entityType === 'domain'"
+                    ></div>
                     <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'app'">
-                    </div>
+                      class="row__charts"
+                      :id="`entityDetailReceived${entityType}${listMode}`"
+                      v-if="entityData.entityType === 'app'"
+                    ></div>
                     <div
-                        class="row__charts"
-                        :id="`entityDetailReceived${entityType}${listMode}`"
-                        v-if="entityData.entityType === 'ip'">
-                    </div>
+                      class="row__charts"
+                      :id="`entityDetailReceived${entityType}${listMode}`"
+                      v-if="entityData.entityType === 'ip'"
+                    ></div>
                   </div>
                 </div>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-entity-alert"></i>
                 <span>{{ $t('entities.recentAlert') }}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ entityData.performanceCount }}</span>
+                <span>{{ entityData.performanceCount}}</span>
               </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-safe"></i>
-                <span>{{ $t('entities.recentSecurity') }}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ entityData.securityCount }}</span>
+                <span
+                  >{{ $t('entities.recentSecurity') }}&nbsp;:&nbsp;&nbsp;</span
+                >
+                <span>{{ entityData.securityCount}}</span>
               </div>
             </div>
-            <div class="show-detail" @click="showDetail">
+            <div
+              class="show-detail"
+              @click="showDetail"
+            >
               {{ $t('overall.detail') }}>
             </div>
           </div>
@@ -149,7 +182,10 @@
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
-          <detail-overview :entity="entityData" :time-filter="timeFilter"/>
+          <detail-overview
+            :entity="entityData"
+            :time-filter="timeFilter"
+          ></detail-overview>
         </div>
       </el-collapse-transition>
     </div>
@@ -184,15 +220,15 @@ export default {
     ipLocationRegion () {
       return function (entityData) {
         const hasProvinceAndCity =
-            entityData.ipLocationProvince &&
-            entityData.ipLocationCity &&
-            entityData.ipLocationProvince !== 'null' &&
-            entityData.ipLocationCity !== 'null'
+          entityData.ipLocationProvince &&
+          entityData.ipLocationCity &&
+          entityData.ipLocationProvince !== 'null' &&
+          entityData.ipLocationCity !== 'null'
         const hasProvince =
-            entityData.ipLocationProvince &&
-            entityData.ipLocationProvince !== 'null'
+          entityData.ipLocationProvince &&
+          entityData.ipLocationProvince !== 'null'
         const hasCity =
-            entityData.ipLocationCity && entityData.ipLocationCity !== 'null'
+          entityData.ipLocationCity && entityData.ipLocationCity !== 'null'
         if (hasProvinceAndCity) {
           return `${entityData.ipLocationProvince}, ${entityData.ipLocationCity}`
         } else if (hasProvince) {
