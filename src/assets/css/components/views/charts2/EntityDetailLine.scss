@@ -31,10 +31,34 @@
         display: flex;
       }
     }
+    .line-select-metric {
+      margin-right: 20px;
+
+      .el-input__inner {
+        width: 127px;
+        height: 24px;
+        line-height: 24px;
+        padding-left: 4px;
+        font-size: 12px;
+        color: #2C72C6;
+        font-weight: 400;
+        border-radius: 2px;
+      }
+    }
 
     .line-select-reference-line {
       margin-left: 0 !important;
       line-height: 1;
+    }
+
+    .line-margin-right {
+      margin-right: 10px;
+    }
+
+    .entity-detail-date-time-range {
+      height: 24px;
+      line-height: 24px;
+      border: 1px solid #DCDFE6;
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 3" class="date-range-box">
-    <div @click="showDropdown" class="date-range-text">
+    <div @click="showDropdown" class="date-range-text" :class="class" :style="style">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
         <div class="calendar-popover-text">{{ dateFormatByAppearance(getMillisecond(startTime)) }}</div>
@@ -95,6 +95,12 @@ export default {
     },
     dateRange: {
       type: Number
+    },
+    class: {
+      type: String
+    },
+    style: {
+      type: String
     }
   },
   emits: ['change'],

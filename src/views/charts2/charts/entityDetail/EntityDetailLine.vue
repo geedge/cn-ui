@@ -35,9 +35,9 @@
         </div>
         <div class="line-select line-header-right">
           <div class="panel__tools">
-            <div class="panel__time">
+            <div class="panel__time line-margin-right">
               <date-time-range
-                  class="date-time-range"
+                  class="entity-detail-date-time-range"
                   :start-time="timeFilter.startTime"
                   :end-time="timeFilter.endTime"
                   :date-range="timeFilter.dateRangeValue"
@@ -45,22 +45,22 @@
                   @change="reload"
               />
             </div>
-            <el-select
-                size="mini"
-                v-model="metric"
-                placeholder=""
-                popper-class="common-select"
-                :popper-append-to-body="false"
-                @change="metricChange"
-            >
-              <template #prefix>
-                <span class="select-prefix">Metric:</span>
-              </template>
-              <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
+            <div class="line-select-metric">
+              <span class="select-prefix line-margin-right">Metric:</span>
+              <el-select
+                  size="mini"
+                  v-model="metric"
+                  placeholder=""
+                  popper-class="common-select"
+                  :popper-append-to-body="false"
+                  @change="metricChange"
+              >
+                <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </div>
           </div>
           <div class="line-select-reference-line">
-            <span>{{ $t('network.referenceLine') }}:</span>
+            <span class="line-margin-right">{{ $t('network.referenceLine') }}:</span>
             <div class="line-select__operation">
               <el-select
                   size="mini"
