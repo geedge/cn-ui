@@ -20,7 +20,7 @@
           <button id="knowledge-base-edit" :title="$t('knowledgeBase.select')" class="top-tool-btn margin-r-10"
                   style="width:72px;"
                   @click="toSelect">
-            <i class="cn-icon-xuanzebianji cn-icon" ></i>
+            <i class="cn-icon-select cn-icon" ></i>
             <span>{{$t('overall.select')}}</span>
           </button>
           <button id="knowledge-base-delete" :title="$t('knowledgeBase.deleteKnowledgeBase')" class="top-tool-btn margin-r-10"

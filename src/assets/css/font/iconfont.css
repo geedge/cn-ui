@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1682420421444') format('woff2'),
-       url('iconfont.woff?t=1682420421444') format('woff'),
-       url('iconfont.ttf?t=1682420421444') format('truetype');
+  src: url('iconfont.woff2?t=1682497546555') format('woff2'),
+       url('iconfont.woff?t=1682497546555') format('woff'),
+       url('iconfont.ttf?t=1682497546555') format('truetype');
 }
 
 .cn-icon {
@@ -13,99 +13,99 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.cn-icon-xuanzebianji:before {
+.cn-icon-select:before {
   content: "\e7eb";
 }
 
-.cn-icon-guoqishijian:before {
+.cn-icon-expire-date:before {
   content: "\e7d4";
 }
 
-.cn-icon-zhucejigouyouxiang:before {
+.cn-icon-register-email:before {
   content: "\e7d5";
 }
 
-.cn-icon-diliweizhi:before {
+.cn-icon-geo-location:before {
   content: "\e7d6";
 }
 
-.cn-icon-xinyudengji:before {
+.cn-icon-credit-rating:before {
   content: "\e7d7";
 }
 
-.cn-icon-zhuceshijian:before {
+.cn-icon-registration-date:before {
   content: "\e7d8";
 }
 
-.cn-icon-APPquancheng:before {
+.cn-icon-app-full-name:before {
   content: "\e7d9";
 }
 
-.cn-icon-miaoshu:before {
+.cn-icon-description:before {
   content: "\e7da";
 }
 
-.cn-icon-jishu:before {
+.cn-icon-technology:before {
   content: "\e7db";
 }
 
-.cn-icon-zhuceshang:before {
+.cn-icon-registrar:before {
   content: "\e7dc";
 }
 
-.cn-icon-zhucejigou:before {
+.cn-icon-registration-agency:before {
   content: "\e7dd";
 }
 
-.cn-icon-yunyingshang:before {
+.cn-icon-operator:before {
   content: "\e7de";
 }
 
-.cn-icon-zileibie:before {
+.cn-icon-sub-type:before {
   content: "\e7df";
 }
 
-.cn-icon-APPmingcheng:before {
+.cn-icon-app-name:before {
   content: "\e7e0";
 }
 
-.cn-icon-zhuceguojia:before {
+.cn-icon-registration-country:before {
   content: "\e7e1";
 }
 
-.cn-icon-AShao:before {
+.cn-icon-as:before {
   content: "\e7e2";
 }
 
-.cn-icon-ASziwang:before {
+.cn-icon-as-subnet:before {
   content: "\e7e3";
 }
 
-.cn-icon-leibie:before {
+.cn-icon-category2:before {
   content: "\e7e4";
 }
 
-.cn-icon-a-Domainnameresolution:before {
+.cn-icon-domain-name-resolution:before {
   content: "\e7e5";
 }
 
-.cn-icon-a-Openport:before {
+.cn-icon-open-port:before {
   content: "\e7e6";
 }
 
-.cn-icon-a-Securityevent:before {
+.cn-icon-security-event:before {
   content: "\e7e7";
 }
 
-.cn-icon-a-DNSPTR:before {
+.cn-icon-dns-ptr:before {
   content: "\e7e8";
 }
 
-.cn-icon-a-Informationaggregation:before {
+.cn-icon-information-aggregation:before {
   content: "\e7e9";
 }
 
-.cn-icon-a-Digitalcertificate:before {
+.cn-icon-digital-certificate:before {
   content: "\e7ea";
 }
 
