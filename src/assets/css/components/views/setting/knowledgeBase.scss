@@ -282,6 +282,7 @@
         overflow-y:auto;
         .card-selected{
           box-shadow: 3px 3px 11px 0px rgba(0,0,0,0.1);
+          border: 1px solid rgba(197,197,197,1) !important;
         }
         .card-item {
           background: #FFFFFF;
@@ -317,6 +318,7 @@
               }
               .card-title-more {
                 position: relative;
+                color:#575757;
                 .el-checkbox__input.is-checked .el-checkbox__inner {
                   background-color: #38ACD2;
                   border-color: #38ACD2;
