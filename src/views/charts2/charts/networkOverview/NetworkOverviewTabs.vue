@@ -1972,6 +1972,7 @@ export default {
         this.initMetric()
         this.isOnlyRead = this.curTable.isOnlyRead ? this.curTable.isOnlyRead : false
         this.showUnit = this.curTable.showUnit ? this.curTable.showUnit : false
+        this.showUnit = this.curTable.showUnit ? this.curTable.showUnit : false
         if (this.curTableInCode.defaultOrderBy) {
           this.orderBy = this.curTableInCode.defaultOrderBy
         }

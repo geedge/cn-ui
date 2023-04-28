@@ -88,6 +88,16 @@ export const entityType = {
   ip: 'IP'
 }
 
+export const entityDetailTabsName = {
+  informationAggregation: 'informationAggregation',
+  domainNameResolution: 'domainNameResolution',
+  subdomain: 'subdomain',
+  openPort: 'openPort',
+  digitalCertificate: 'digitalCertificate',
+  securityEvent: 'securityEvent',
+  performanceEvent: 'performanceEvent'
+}
+
 export const echartsFontSize = {
   legendFirstFontSize: 12, // <1920
   legendSecondFontSize: 14, // >=1920 && <2560

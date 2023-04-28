@@ -210,7 +210,7 @@ import DnsRecentEvents from '@/views/charts2/charts/dnsInsight/DnsRecentEvents'
 import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
 import EntityDetailBasicInfo from '@/views/charts2/charts/entityDetail/EntityDetailBasicInfo'
 import EntityDetailLine from '@/views/charts2/charts/entityDetail/EntityDetailLine'
-import EntityDetailTabsChart from '@/views/charts2/charts/entityDetail/EntityDetailTabsChart'
+import EntityDetailTabsChart from '@/views/charts2/charts/entityDetail/EntityDetailTabs'
 
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
