@@ -11,7 +11,7 @@
         </div>
         <el-collapse-transition>
           <div class="filter__body" v-show="!filter.collapse">
-            <el-checkbox label="all" v-if="index === 0" key="all" @change="handleCheckedAllChange" v-model="checkAll" :indeterminate="isIndeterminateModel">
+            <el-checkbox style="padding-bottom: 5px;" label="all" v-if="index === 0" key="all" @change="handleCheckedAllChange" v-model="checkAll" :indeterminate="isIndeterminateModel">
               <div class="filter__checkbox-label">
                 <div class="filter-label" style="">
                   <span>All</span>

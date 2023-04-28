@@ -124,6 +124,7 @@ export default {
       const params = {
         q: this.keyWord
       }
+      this.clearList()
       this.search(params)
     },
     handleClose () {
@@ -224,7 +225,11 @@ export default {
       this.pageObj.total = 0
     },
     toSelect () {
+      this.$refs.dataTable.clearSelect()
       this.isSelectedStatus = !this.isSelectedStatus
+      this.disableDelete = true
+      this.batchDeleteObjs = []
+      this.secondBatchDeleteObjs = []
     },
     editSelectRecord () {
       if (this.batchDeleteObjs.length === 0) {
@@ -377,5 +382,13 @@ export default {
         border-color:#2d8cf0;
       }
     }
+  }
+  .el-dialog {
+    display: flex;
+    flex-direction: column; // 水平分布
+    margin: 0 !important;
+    position: absolute;
+    top: calc(50% - 150px);
+    left: calc(50% - 240px);
   }
 </style>

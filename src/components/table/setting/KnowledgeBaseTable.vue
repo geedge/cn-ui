@@ -1,23 +1,21 @@
 <template>
-  <el-checkbox-group v-model="checkList" @change="" style="display:flex;flex-flow:row wrap;">
-    <div @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.id" class="card-item" style="">
+  <el-checkbox-group v-model="checkList" @change="" style="display:flex;flex-flow:row wrap;align-content: flex-start;">
+    <div @click="isSelectedStatus && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.id" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
       <div class="card-content">
         <div class="card-title">
-          <div class="card-title-name">
-            {{data.tagName}}
-          </div>
+          <div class="card-title-name" :title="data.tagName">{{data.tagName}}</div>
           <div class="card-title-more">
             <span v-show="!isSelectedStatus && data.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(data)" test-id="mouseenter-dark"></i></span>
             <div class="card-operate" v-show="!isSelectedStatus && data.moreOptions" @mouseleave="mouseleaveMore(data)">
               <div class="card-title-more-edit" @click="edit(data.id)" >{{$t('overall.edit')}}</div>
               <div class="card-title-more-delete" @click="del(data)" >{{$t('overall.delete')}}</div>
             </div>
-            <el-checkbox @change="(val) => {checkboxStatusChange(val,data)}" style="position: absolute;right: -12px;" v-if="isSelectedStatus" :key="data.id" :label="data"><br></el-checkbox>
+            <el-checkbox @click.stop="" @change="(val) => {checkboxStatusChange(val,data)}" style="position: absolute;right: -12px;" v-if="isSelectedStatus" :key="data.id" :label="data"><br></el-checkbox>
 
           </div>
         </div>
         <div class="card-id">ID:{{data.id}}</div>
-        <div class="card-desc">{{data.remark?data.remark:'—'}}</div>
+        <div class="card-desc" :title="data.remark">{{data.remark?data.remark:'—'}}</div>
       </div>
       <div class="card-operate__footer">
         <div class="card-type">{{data.tagType}}</div>
@@ -62,7 +60,24 @@ export default {
     }
   },
   methods: {
+    clickCard (data, event) {
+      if (data.isSelected) { // 原来为选中，当前点击后未选中
+        const index = this.checkList.indexOf(data)
+        if (index > -1) {
+          this.checkList.splice(index, 1)
+        }
+      } else {
+        const index = this.checkList.indexOf(data)
+        if (index === -1) {
+          this.checkList.push(data)
+        }
+      }
+      const val = !data.isSelected
+      data.isSelected = val
+      this.$emit('checkboxStatusChange', val, data)
+    },
     checkboxStatusChange (val, data) {
+      data.isSelected = val
       this.$emit('checkboxStatusChange', val, data)
     },
     showSelect () {
@@ -70,6 +85,16 @@ export default {
     },
     hideSelect () {
       // this.isSelectedStatus = false
+    },
+    clearSelect () {
+      this.$nextTick(() => {
+        this.checkList = []
+        if (this.tableData && this.tableData.length > 0) {
+          this.tableData.forEach(data => {
+            data.isSelected = false
+          })
+        }
+      })
     },
     mouseenterMore (card) {
       this.tableData.forEach(t => {

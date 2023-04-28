@@ -171,7 +171,6 @@
         align-items : center;
         flex-direction:row;
         height:28px;
-        //border:solid 1px red;
         width:100%;
         .top-tool-btn {
           cursor: pointer;
@@ -281,6 +280,9 @@
         width:100%;
         height:calc(100% - 152px);
         overflow-y:auto;
+        .card-selected{
+          box-shadow: 3px 3px 11px 0px rgba(0,0,0,0.1);
+        }
         .card-item {
           background: #FFFFFF;
           border: 1px solid rgba(226,229,236,1);
@@ -307,7 +309,11 @@
               flex-direction: row;
               justify-content: space-between;
               .card-title-name {
-
+                width:210px;
+                overflow: hidden; //超出的文本隐藏
+                text-overflow: ellipsis; //溢出用省略号显示
+                white-space:nowrap;
+                word-break: break-all;
               }
               .card-title-more {
                 position: relative;
@@ -331,23 +337,6 @@
                   left: 5px;
                   top: 2px;
                   transform: rotate(45deg) scaleY(1);
-
-                  /*
-
-                  box-sizing: content-box;
-                  content: "";
-                  border: 10px solid red;
-                  border-left: 0;
-                  border-top: 0;
-                  height: 0.5rem;
-
-
-                  width: 0.21429rem;
-                  transform: rotate(
-                                  45deg
-                  ) scaleY(0);
-                  transition: transform .15s ease-in .05s;
-                  transform-origin: center;*/
                 }
                 .card-operate {
                   background: #FFFFFF;
@@ -409,7 +398,6 @@
                   }
                 }
               }
-
             }
             .card-id {
               //font-family: NotoSansSChineseRegular;
@@ -424,7 +412,14 @@
               color: #717171;
               line-height: 18px;
               font-weight: 400;
-              margin-bottom:12px;
+              margin-bottom:0px;
+              max-height:88px;
+
+              overflow: hidden;
+              display: -webkit-box;
+              -webkit-line-clamp: 5;
+              line-clamp: 5;
+              -webkit-box-orient: vertical;
             }
           }
           .card-operate__footer {
@@ -454,6 +449,9 @@
             .card-enable {
             }
           }
+        }
+        .card-item:hover{
+          box-shadow: 3px 3px 11px 0px rgba(0,0,0,0.1);
         }
         .card-item__enable {
           background: #FFFFFF;
