@@ -1,5 +1,6 @@
 <template>
   <div class="entity-detail-tabs">
+    <div class="entity-detail-tabs__active-bar"></div>
     <el-tabs v-model="activeTab"
              class="cn-chart__tabs--border-card"
              type="border-card"
@@ -21,8 +22,19 @@
 </template>
 <style lang="scss">
 .entity-detail-tabs {
+  position: relative;
   $tab-border-color: #E2E5EC;
   height: 100%;
+
+  .entity-detail-tabs__active-bar {
+    position: absolute;
+    height: 3px;
+    top: 0;
+    background-color: #046EC9;
+    border-radius: 5px 5px 0 0;
+    transition: all linear .2s;
+    z-index: 9;
+  }
 
   .cn-chart__tabs--border-card {
     height: 100%;
@@ -86,10 +98,21 @@ export default {
   },
   data () {
     return {
+      timer: null
+    }
+  },
+  watch: {
+    activeTab (n) {
+      this.$nextTick(() => {
+        this.handleActiveBar(n)
+      })
     }
   },
   mounted () {
     this.toggleLoading(false)
+    this.timer = setTimeout(() => {
+      this.handleActiveBar(this.activeTab)
+    }, 400)
   },
   setup (props) {
     // eslint-disable-next-line vue/no-setup-props-destructure
@@ -115,6 +138,21 @@ export default {
       tabs,
       entityDetailTabsName
     }
+  },
+  methods: {
+    handleActiveBar (name) {
+      const tabDom = document.getElementById('tab-' + name)
+      if (tabDom) {
+        const offsetLeft = tabDom.offsetLeft
+        const clientWidth = tabDom.clientWidth
+        const clientLeft = tabDom.clientLeft
+        const activeBar = document.querySelector('.entity-detail-tabs .entity-detail-tabs__active-bar')
+        activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + clientLeft - 1}px;`
+      }
+    }
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
   }
 }
 </script>
