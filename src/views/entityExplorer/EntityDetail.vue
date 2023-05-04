@@ -22,7 +22,7 @@ export default {
   setup (props) {
     const { query } = useRoute()
     let panelType
-    const entityData = { entityType: query.entityType }
+    const entityData = { entityType: query.entityType, entityName: query.name }
     switch (query.entityType) {
       case 'ip': {
         panelType = panelTypeAndRouteMapping.ipEntityDetail
