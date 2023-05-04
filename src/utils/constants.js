@@ -91,7 +91,6 @@ export const entityType = {
 export const entityDetailTabsName = {
   informationAggregation: 'informationAggregation',
   domainNameResolution: 'domainNameResolution',
-  subdomain: 'subdomain',
   openPort: 'openPort',
   digitalCertificate: 'digitalCertificate',
   securityEvent: 'securityEvent',
