@@ -1,7 +1,7 @@
 <template>
   <chart-no-data v-if="isNoData && !showError"></chart-no-data>
   <div
-      class="detection-border"
+      class="entity-detail-event-border"
       v-for="item in eventList"
       :key="item.eventId"
       style="margin-bottom: 10px;">
@@ -70,10 +70,10 @@
 </template>
 
 <script>
-import { getMillisecond, getNowTime, getSecond } from '@/utils/date-util'
+import { getNowTime, getSecond } from '@/utils/date-util'
 import { eventSeverityColor1 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
-import axios from '_axios@0.21.4@axios'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -118,19 +118,6 @@ export default {
   mounted () {
     this.initData()
   },
-  computed: {
-    pointColor () {
-      return function (item) {
-        let color = '#8FA1BE'
-        if (item.startTime && item.endTime) {
-          if (getMillisecond(item.endTime) - getMillisecond(item.startTime) < 5 * 60 * 1000) {
-            color = '#D84C4C'
-          }
-        }
-        return { backgroundColor: color }
-      }
-    }
-  },
   methods: {
     unitConvert,
     initData () {
@@ -167,18 +154,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.detection-border {
-  border: 1px solid #E2E5EC;
-  border-radius: 4px;
-}
-
-.basic-info__item-duration {
-  display: inline-block;
-  height: 6px;
-  width: 6px;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-</style>

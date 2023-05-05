@@ -57,6 +57,7 @@
       height: calc(100% - 39px);
       border: 1px solid $tab-border-color;
       border-top: none;
+      padding: 30px 20px 20px 20px; // 根据原型调整上边距为30px，但20px更协调
     }
 
     .tab-pane--border-card {
@@ -64,4 +65,9 @@
       overflow: auto;
     }
   }
+}
+
+.entity-detail-event-border {
+  border: 1px solid #E2E5EC;
+  border-radius: 4px;
 }
