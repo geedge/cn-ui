@@ -13,7 +13,6 @@
         </template>
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution"></domain-name-resolution>
-        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate" />
         <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent" :timeFilter="timeFilter" />
         <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent" />
       </el-tab-pane>
@@ -30,13 +29,11 @@ import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/Inf
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'
 import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEvent'
 import PerformanceEvent from '@/views/charts2/charts/entityDetail/tabs/PerformanceEvent'
-import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/DigitalCertificate'
 
 export default {
   name: 'EntityDetailTabs',
   mixins: [chartMixin],
   components: {
-    DigitalCertificate,
     PerformanceEvent,
     SecurityEvent,
     InformationAggregation,
@@ -77,7 +74,7 @@ export default {
     if (entityType === 'domain') {
       tabs.splice(2, 0, { name: entityDetailTabsName.subdomain, label: i18n.global.t('entities.subdomain'), icon: 'cn-icon cn-icon-sub-type' })
     }
-    const activeTab = ref(tabs[2].name)
+    const activeTab = ref(tabs[0].name)
     return {
       entityType,
       activeTab,
