@@ -30,9 +30,11 @@
         }
 
       }
+
       .el-tabs__item:not(.is-disabled):not(.is-active):hover {
         color: #353636;
       }
+
       .el-tabs__item.is-active {
         color: #046ECA;
         background-color: #FFFFFF;
@@ -45,14 +47,21 @@
           color: #046ECA;
         }
       }
+
       .el-tabs__item:first-of-type.is-active {
         box-shadow: 1px 1px $tab-border-color inset;
       }
     }
+
     .el-tabs__content {
       height: calc(100% - 39px);
       border: 1px solid $tab-border-color;
       border-top: none;
+    }
+
+    .tab-pane--border-card {
+      height: 100%;
+      overflow: auto;
     }
   }
 }
