@@ -1,0 +1,58 @@
+.entity-detail-tabs {
+  position: relative;
+  $tab-border-color: #E2E5EC;
+  height: 100%;
+
+  .entity-detail-tabs__active-bar {
+    position: absolute;
+    height: 3px;
+    top: 1px;
+    background-color: #046EC9;
+    border-radius: 4px 4px 0 0;
+    transition: all linear .2s;
+    z-index: 3;
+  }
+
+  .cn-chart__tabs--border-card {
+    height: 100%;
+    border: none;
+    box-shadow: none;
+
+    & > .el-tabs__header {
+      background-color: #fff;
+      border-bottom: 1px solid $tab-border-color;
+
+      .el-tabs__item {
+        color: #353636;
+
+        i {
+          margin-right: 8px;
+        }
+
+      }
+      .el-tabs__item:not(.is-disabled):not(.is-active):hover {
+        color: #353636;
+      }
+      .el-tabs__item.is-active {
+        color: #046ECA;
+        background-color: #FFFFFF;
+        border-right-color: $tab-border-color;
+        border-left-color: $tab-border-color;
+        border-radius: 4px 4px 0 0;
+        box-shadow: 0 1px $tab-border-color inset;
+
+        &:hover {
+          color: #046ECA;
+        }
+      }
+      .el-tabs__item:first-of-type.is-active {
+        box-shadow: 1px 1px $tab-border-color inset;
+      }
+    }
+    .el-tabs__content {
+      height: calc(100% - 39px);
+      border: 1px solid $tab-border-color;
+      border-top: none;
+    }
+  }
+}

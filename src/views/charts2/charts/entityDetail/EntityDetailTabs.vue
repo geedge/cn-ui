@@ -16,71 +16,13 @@
         </template>
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution"></domain-name-resolution>
+        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent" :timeFilter="timeFilter" />
+        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent" />
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
-<style lang="scss">
-.entity-detail-tabs {
-  position: relative;
-  $tab-border-color: #E2E5EC;
-  height: 100%;
 
-  .entity-detail-tabs__active-bar {
-    position: absolute;
-    height: 3px;
-    top: 0;
-    background-color: #046EC9;
-    border-radius: 5px 5px 0 0;
-    transition: all linear .2s;
-    z-index: 9;
-  }
-
-  .cn-chart__tabs--border-card {
-    height: 100%;
-    border: none;
-    box-shadow: none;
-
-    & > .el-tabs__header {
-      background-color: #fff;
-      border-bottom: 1px solid $tab-border-color;
-
-      .el-tabs__item {
-        color: #353636;
-
-        i {
-          margin-right: 8px;
-        }
-
-      }
-      .el-tabs__item:not(.is-disabled):not(.is-active):hover {
-        color: #353636;
-      }
-      .el-tabs__item.is-active {
-        color: #046ECA;
-        background-color: #FFFFFF;
-        border-right-color: $tab-border-color;
-        border-left-color: $tab-border-color;
-        border-radius: 4px 4px 0 0;
-        box-shadow: 0 1px $tab-border-color inset;
-
-        &:hover {
-          color: #046ECA;
-        }
-      }
-      .el-tabs__item:first-of-type.is-active {
-        box-shadow: 1px 1px $tab-border-color inset;
-      }
-    }
-    .el-tabs__content {
-      height: calc(100% - 39px);
-      border: 1px solid $tab-border-color;
-      border-top: none;
-    }
-  }
-}
-
-</style>
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
 import i18n from '@/i18n'
@@ -88,11 +30,15 @@ import { entityDetailTabsName } from '@/utils/constants'
 import { ref } from 'vue'
 import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/InformationAggregation'
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'
+import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEvent'
+import PerformanceEvent from '@/views/charts2/charts/entityDetail/tabs/PerformanceEvent'
 
 export default {
   name: 'EntityDetailTabs',
   mixins: [chartMixin],
   components: {
+    PerformanceEvent,
+    SecurityEvent,
     InformationAggregation,
     DomainNameResolution
   },
@@ -112,7 +58,7 @@ export default {
     this.toggleLoading(false)
     this.timer = setTimeout(() => {
       this.handleActiveBar(this.activeTab)
-    }, 400)
+    }, 200)
   },
   setup (props) {
     // eslint-disable-next-line vue/no-setup-props-destructure
