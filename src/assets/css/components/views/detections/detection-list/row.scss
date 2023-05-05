@@ -107,6 +107,9 @@
           letter-spacing: 0;
           line-height: 14px;
           margin-left: 5px;
+          font-style: italic;
+          padding: 0 2px;
+          font-weight: 500;
         }
         .detection-event-severity-color-block {
           width: 5px;
@@ -143,12 +146,12 @@
             flex-wrap: wrap;
 
             .basic-info__item {
-              padding-right: 40px;
+              padding-right: 30px;
               display: flex;
               align-items: center;
 
               i {
-                padding-right: 6px;
+                padding-right: 5px;
                 color: #8FA1BE;
                 font-size: 14px;
               }

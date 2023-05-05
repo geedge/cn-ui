@@ -165,6 +165,13 @@ export const eventSeverityColor = {
   low: '#FFD82D',
   info: '#D1BD50'
 }
+export const eventSeverityColor1 = {
+  Critical: '#D84C4C',
+  High: '#FE845D',
+  Medium: '#FFB65A',
+  Low: '#FFD82D',
+  Info: '#D1BD50'
+}
 export const securityType = {
   commandAndControl: 'common and control',
   payloadDelivery: 'payload delivery',

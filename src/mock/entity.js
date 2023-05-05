@@ -66,6 +66,84 @@ if (openMock) {
       }
     }
   })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/entityDetail/securityEvent.*'), 'get', function (requestObj) {
+    const result = [
+      {
+        eventId: '1298414830886991872',
+        securityType: 'command and control',
+        domain: null,
+        offenderIp: '213.186.33.5',
+        victimIp: '116.178.217.92',
+        offenderDomain: 'baidu.com',
+        victimDomain: 'mi.com',
+        eventSeverity: 'Critical',
+        malwareName: 'NetWire RC',
+        cryptominingPool: null,
+        startTime: 1683186600,
+        durationMs: 300000,
+        endTime: 1683186900
+      },
+      {
+        eventId: '1298414830886991873',
+        securityType: 'command and control',
+        domain: null,
+        offenderIp: '213.186.33.5',
+        victimIp: '116.178.217.93',
+        offenderDomain: 'baidu.com',
+        victimDomain: 'mi.com',
+        eventSeverity: 'Low',
+        malwareName: 'NetWire RC',
+        cryptominingPool: null,
+        startTime: 1683186600,
+        durationMs: 300000,
+        endTime: 1683186900
+      }
+    ]
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/entityDetail/performanceEvent.*'), 'get', function (requestObj) {
+    const result = [
+      {
+        eventId: '1308078720390412288',
+        entityType: 'ip',
+        serverIp: '116.178.78.180',
+        domain: null,
+        appName: null,
+        eventSeverity: 'Critical',
+        eventType: 'Http error',
+        startTime: 1683250500,
+        durationMs: 900000,
+        endTime: 1683251400
+      },
+      {
+        eventId: '1308078720390412289',
+        entityType: 'ip',
+        serverIp: '116.178.78.180',
+        domain: null,
+        appName: null,
+        eventSeverity: 'Info',
+        eventType: 'Http error',
+        startTime: 1683250500,
+        durationMs: 900000,
+        endTime: 1683251400
+      }
+    ]
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
 }
 
 const getQuery = (url) => {
