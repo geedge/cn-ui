@@ -1,3 +1,57 @@
+.entity-detail {
+  .entity-tag {
+    display: flex;
+    height: 28px;
+    padding: 0 12px;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    border: 1px solid;
+    border-radius: 2px;
+
+    &.entity-tag--small {
+      height: 20px;
+      padding: 0 6px;
+      font-size: 12px;
+    }
+    $normal-color: #778391;
+    $normal-light-color: #F7F8F9;
+    $negative-color: #E26154;
+    $negative-light-color: #FEF6F5;
+    $positive-color: #749F4D;
+    $positive-light-color: #F7FAF5;
+    &.entity-tag--level-one-normal {
+      border-color: $normal-color;
+      color: white;
+      background-color: $normal-color;
+    }
+    &.entity-tag--level-one-negative {
+      border-color: $negative-color;
+      color: white;
+      background-color: $negative-color;
+    }
+    &.entity-tag--level-one-positive {
+      border-color: $positive-color;
+      color: white;
+      background-color: $positive-color;
+    }
+    &.entity-tag--level-two-normal {
+      border-color: $normal-color;
+      color: $normal-color;
+      background-color: $normal-light-color;
+    }
+    &.entity-tag--level-two-negative {
+      border-color: $negative-color;
+      color: $negative-color;
+      background-color: $negative-light-color;
+    }
+    &.entity-tag--level-two-positive {
+      border-color: $positive-color;
+      color: $positive-color;
+      background-color: $positive-light-color;
+    }
+  }
+}
 /*
 .entity-detail.cn-home {
   .panel-chart {

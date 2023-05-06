@@ -1253,3 +1253,21 @@ export function getWidthByLanguage (language) {
     }
   }
 }
+
+export function selectElementText (el) {
+  const range = document.createRange() // create new range object
+  range.selectNodeContents(el) // set range to encompass desired element text
+  const selection = window.getSelection() // get Selection object from currently user selected text
+  selection.removeAllRanges() // unselect any user selected text (if any)
+  selection.addRange(range) // add range to Selection object to select it
+}
+
+export function copySelectionText () {
+  let copySuccess // var to check whether execCommand successfully executed
+  try {
+    copySuccess = document.execCommand('copy') // run command to copy selected text to clipboard
+  } catch (e) {
+    copySuccess = false
+  }
+  return copySuccess
+}
