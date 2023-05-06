@@ -15,6 +15,7 @@
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution"></domain-name-resolution>
         <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent" :timeFilter="timeFilter" />
         <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent" />
+        <open-port v-else-if="tab.name === entityDetailTabsName.openPort"></open-port>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -29,6 +30,7 @@ import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/Inf
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'
 import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEvent'
 import PerformanceEvent from '@/views/charts2/charts/entityDetail/tabs/PerformanceEvent'
+import OpenPort from '@/views/charts2/charts/entityDetail/tabs/OpenPort'
 
 export default {
   name: 'EntityDetailTabs',
@@ -37,7 +39,8 @@ export default {
     PerformanceEvent,
     SecurityEvent,
     InformationAggregation,
-    DomainNameResolution
+    DomainNameResolution,
+    OpenPort
   },
   data () {
     return {
