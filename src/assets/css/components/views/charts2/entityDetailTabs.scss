@@ -24,6 +24,7 @@
 
       .el-tabs__item {
         color: #353636;
+        user-select: none; // 避免鼠标框选文字
 
         i {
           margin-right: 8px;
