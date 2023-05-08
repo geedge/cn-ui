@@ -1,39 +1,43 @@
 <template>
+  <chart-error v-if="showError" style="margin-top: 18px;margin-left: 8px;"></chart-error>
   <chart-no-data v-if="isNoData && !showError"></chart-no-data>
-  <div
-      class="entity-detail-event-border"
-      v-for="item in eventList"
-      :key="item.eventId"
-      style="margin-bottom: 10px;">
-    <div class="cn-detection--list">
-      <div class="cn-detection__case" style="height: 46px">
-        <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor1[item.eventSecurity]}`"></div>
-        <div class="cn-detection__row">
-          <div class="cn-detection__header">
+
+  <div v-if="!isNoData && !showError">
+    <div
+        class="entity-detail-event-border"
+        v-for="item in eventList"
+        :key="item.eventId"
+        style="margin-bottom: 10px;">
+      <div class="cn-detection--list">
+        <div class="cn-detection__case" style="height: 46px">
+          <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor1[item.eventSecurity]}`"></div>
+          <div class="cn-detection__row">
+            <div class="cn-detection__header">
             <span
                 class="detection-event-severity-color-block"
                 :style="`background-color: ${eventSeverityColor1[item.eventSeverity]}`">
             </span>
-            <span class="detection-event-severity-block" style="margin-right: 30px">
+              <span class="detection-event-severity-block" style="margin-right: 30px">
               {{ item.eventType || '-' }}
             </span>
-            <div class="cn-detection__body">
-              <div class="body__basic-info">
-                <div class="basic-info">
-                  <div class="basic-info__item" v-if="item.eventSeverity">
-                    <i class="cn-icon cn-icon-severity-level"></i>
-                    <span>{{ $t('network.severity') }}&nbsp;:&nbsp;&nbsp;</span>
-                    <span>{{ item.eventSeverity || '-' }}</span>
-                  </div>
-                  <div class="basic-info__item">
-                    <i class="cn-icon cn-icon-time2"></i>
-                    <span>{{ $t('detection.list.startTime') }}&nbsp;:&nbsp;&nbsp;</span>
-                    <span>{{ dateFormatByAppearance(item.startTime) || '-' }}</span>
-                  </div>
-                  <div class="basic-info__item">
-                    <i class="cn-icon cn-icon-Duration"></i>
-                    <span>{{ $t('overall.duration') }}&nbsp;:&nbsp;&nbsp;&nbsp;</span>
-                    <span>{{ unitConvert(item.durationMs, 'time', null, null, 0).join(' ') || '-' }}</span>
+              <div class="cn-detection__body">
+                <div class="body__basic-info">
+                  <div class="basic-info">
+                    <div class="basic-info__item" v-if="item.eventSeverity">
+                      <i class="cn-icon cn-icon-severity-level"></i>
+                      <span>{{ $t('network.severity') }}&nbsp;:&nbsp;&nbsp;</span>
+                      <span>{{ item.eventSeverity || '-' }}</span>
+                    </div>
+                    <div class="basic-info__item">
+                      <i class="cn-icon cn-icon-time2"></i>
+                      <span>{{ $t('detection.list.startTime') }}&nbsp;:&nbsp;&nbsp;</span>
+                      <span>{{ dateFormatByAppearance(item.startTime) || '-' }}</span>
+                    </div>
+                    <div class="basic-info__item">
+                      <i class="cn-icon cn-icon-Duration"></i>
+                      <span>{{ $t('overall.duration') }}&nbsp;:&nbsp;&nbsp;&nbsp;</span>
+                      <span>{{ unitConvert(item.durationMs, 'time', null, null, 0).join(' ') || '-' }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -54,9 +58,11 @@ import { api } from '@/utils/api'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import chartMixin from '@/views/charts2/chart-mixin'
+import ChartError from '@/components/common/Error'
 
 export default {
   name: 'PerformanceEvent',
+  components: { ChartError },
   mixins: [chartMixin],
   data () {
     return {
@@ -67,6 +73,8 @@ export default {
   },
   setup () {
     const { query } = useRoute()
+    const entityType = query.entityType
+    const entityName = query.entityName
     // 获取url携带的range、startTime、endTime
     const rangeParam = query.range
     const startTimeParam = query.startTime
@@ -76,10 +84,7 @@ export default {
     const dateRangeValue = rangeParam ? parseInt(query.range) : 60
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
-      const {
-        startTime,
-        endTime
-      } = getNowTime(60)
+      const { startTime, endTime } = getNowTime(60)
       timeFilter.value.startTime = startTime
       timeFilter.value.endTime = endTime
     } else {
@@ -88,6 +93,8 @@ export default {
     }
 
     return {
+      entityType,
+      entityName,
       timeFilter
     }
   },
@@ -98,6 +105,8 @@ export default {
     unitConvert,
     initData () {
       const params = {
+        type: this.entityType,
+        name: this.entityName,
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
