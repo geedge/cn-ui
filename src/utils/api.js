@@ -236,7 +236,11 @@ export const api = {
   entity: {
     totalTrafficAnalysis: 'interface/entityDetail/totalTrafficAnalysis',
     securityEvent: 'interface/entityDetail/securityEvent',
-    performanceEvent: 'interface/entityDetail/performanceEvent'
+    performanceEvent: 'interface/entityDetail/performanceEvent',
+    domainNameResolutionRelatedApp: 'interface/entity/detail/overview/ip/relatedApp',
+    domainNameResolutionRelatedIP: 'interface/entity/detail/overview/ip/relatedIp',
+    domainNameResolutionRelatedDomain: 'interface/entity/detail/overview/ip/relatedDomain',
+    openPort: ''
   }
 }
 
