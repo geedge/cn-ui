@@ -61,7 +61,22 @@ export default {
       rowHeight: 40,
       rowMargin: 20,
       colMargin: 20,
-      debounceFunc: null
+      debounceFunc: null,
+      timeoutFunc: null,
+      // 需要动态处理高度的chart
+      dynamicHeightCharts: [
+        {
+          selector: '.app-cards',
+          // 需要额外修正的值
+          correctionHeight: 24,
+          chartType: typeMapping.networkOverview.appList
+        },
+        {
+          selector: '.entity-detail-info',
+          correctionHeight: 174,
+          chartType: typeMapping.entityDetail.basicInfo
+        }
+      ]
     }
   },
   components: {
@@ -123,26 +138,33 @@ export default {
     resizeLine () {
       this.$refs.chartGrid.resizeLine()
     },
-    resizeAppChart () {
-      const appCardsDom = document.querySelector('.app-cards')
-      const layout = _.cloneDeep(this.layout)
-      const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
-      if (appCardsDom) {
-        const cardsHeight = appCardsDom.offsetHeight
-        if (cardsHeight) {
-          const headerHeight = 24
-          overviewAppChart.h = (cardsHeight + headerHeight + this.rowMargin) / (this.rowHeight + this.rowMargin)
-          this.layout = layout
+    // 动态处理chart高度
+    handleDynamicChartHeight () {
+      this.dynamicHeightCharts.forEach(chart => {
+        const dom = document.querySelector(chart.selector)
+        if (dom) {
+          const layout = _.cloneDeep(this.layout)
+          const destinationChart = layout.find(c => c.type === chart.chartType)
+          const domHeight = dom.offsetHeight
+          if (domHeight) {
+            destinationChart.h = (domHeight + chart.correctionHeight + this.rowMargin) / (this.rowHeight + this.rowMargin)
+            this.layout = layout
+          }
         }
-      }
+      })
     }
   },
   mounted () {
-    this.debounceFunc = _.debounce(this.resizeAppChart, 400)
+    this.timeoutFunc = setTimeout(() => {
+      this.handleDynamicChartHeight()
+    }, 400)
+    this.handleDynamicChartHeight()
+    this.debounceFunc = _.debounce(this.handleDynamicChartHeight, 400)
     window.addEventListener('resize', this.debounceFunc)
   },
   beforeUnmount () {
     window.removeEventListener('resize', this.debounceFunc)
+    clearTimeout(this.timeoutFunc)
   }
 }
 </script>

@@ -40,7 +40,7 @@
         <i :class="card.icon"></i>
         <div class="detail-card__text">
           <div class="detail-card__label">{{card.label}}:</div>
-          <div class="detail-card__value">{{card.value}}</div>
+          <div class="detail-card__value" :title="card.value">{{card.value}}</div>
         </div>
       </div>
     </div>
@@ -118,7 +118,7 @@
 
   .dividing-line {
     position: absolute;
-    top: 169px;
+    top: 159px;
     left: 30px;
     height: 1px;
     width: calc(100% - 60px);
@@ -184,7 +184,7 @@
   .entity-tags {
     display: flex;
     align-items: center;
-    height: 70px;
+    height: 60px;
 
     .entity-tag {
       margin-right: 10px;
@@ -199,12 +199,12 @@
     flex-flow: row wrap;
     align-content: space-around;
     margin-top: 5px;
-    height: calc(100% - 135px);
 
     .detail-card {
       display: flex;
       padding: 0 12px;
       width: 298px;
+      height: 83px;
       align-items: center;
 
       i {
@@ -219,9 +219,13 @@
           color: #717171;
         }
         .detail-card__value {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
+          overflow: hidden;
+          color: #222;
           line-height: 18px;
           font-size: 14px;
-          color: #222;
         }
       }
     }
@@ -338,6 +342,32 @@ export default {
           { icon: 'cn-icon cn-icon-operator', name: 'isp', label: 'ISP', value: 'aerae343331' },
           { icon: 'cn-icon cn-icon-geo-location', name: 'location', label: i18n.global.t('entities.geographicLocation'), value: '你好啊' },
           { icon: 'cn-icon cn-icon-dns-ptr', name: 'dnsPtr', label: 'DNS PTR', value: '-' }
+        )
+        break
+      }
+      case 'domain': {
+        detailCards.value = _.concat(detailCards.value,
+          { icon: 'cn-icon cn-icon-category2', name: 'category', label: i18n.global.t('entities.category'), value: 'category' },
+          { icon: 'cn-icon cn-icon-sub-type', name: 'subcategory', label: i18n.global.t('entities.subcategory'), value: 'this is a long long long long long subcategory' },
+          { icon: 'cn-icon cn-icon-credit-rating', name: 'creditLevel', label: i18n.global.t('entities.creditLevel2'), value: 'a value of credit level' },
+          { icon: 'cn-icon cn-icon-expire-date', name: 'expirationDate', label: i18n.global.t('entities.expirationDate2'), value: '2022-02-22 22:22:22' },
+          { icon: 'cn-icon cn-icon-registrar', name: 'registrar', label: i18n.global.t('entities.registrar'), value: 'XX注册商' },
+          { icon: 'cn-icon cn-icon-registration-agency', name: 'registry', label: i18n.global.t('entities.registry'), value: 'XX注册机构' },
+          { icon: 'cn-icon cn-icon-registration-country', name: 'country', label: i18n.global.t('entities.registrationCountry'), value: 'China' },
+          { icon: 'cn-icon cn-icon-registration-date', name: 'registrationDate', label: i18n.global.t('entities.registrationDate'), value: '2011-11-11 11:11:11' },
+          { icon: 'cn-icon cn-icon-registry-email', name: 'registryEmail', label: i18n.global.t('entities.registryEmail'), value: '注册机构邮箱' }
+        )
+        break
+      }
+      case 'app': {
+        detailCards.value = _.concat(detailCards.value,
+          { icon: 'cn-icon cn-icon-category2', name: 'category', label: i18n.global.t('entities.category'), value: 'category' },
+          { icon: 'cn-icon cn-icon-sub-type', name: 'subcategory', label: i18n.global.t('entities.subcategory'), value: 'this is a long long long long long subcategory' },
+          { icon: 'cn-icon cn-icon-credit-rating', name: 'creditLevel', label: i18n.global.t('entities.creditLevel2'), value: 'a value of credit level' },
+          { icon: 'cn-icon cn-icon-technology', name: 'technology', label: i18n.global.t('overall.technology'), value: 'xx技术' },
+          { icon: 'cn-icon cn-icon-app-name', name: 'name', label: i18n.global.t('overall.appName2'), value: 'APP的名称' },
+          { icon: 'cn-icon cn-icon-app-full-name', name: 'fullName', label: i18n.global.t('overall.appFullName'), value: 'APP的全称' },
+          { icon: 'cn-icon cn-icon-description', name: 'description', label: i18n.global.t('config.dataSource.description'), value: 'A domain registry is an organization responsible for managing the top-level domain (TLD), such as .com, .net, .org, and more, for any given domain name. Domain registries can act as a database of available domains and work with registrars, such as DomainRegistry.com, to purchase a domain.' }
         )
       }
     }
