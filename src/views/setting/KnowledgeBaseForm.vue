@@ -879,11 +879,11 @@ export default {
           this.importedType = this.editObject.tagType
           this.initLoading = false
         } else {
-          this.errorMsgHandler(response)
+          this.$message.error(this.errorMsgHandler(response))
         }
       }).catch(e => {
         console.error(e)
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
           path: '/knowledgeBase',
           t: +new Date()
