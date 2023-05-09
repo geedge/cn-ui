@@ -13,6 +13,7 @@
         </template>
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution"></domain-name-resolution>
+        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate" />
         <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent" :timeFilter="timeFilter" />
         <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent" />
         <open-port v-else-if="tab.name === entityDetailTabsName.openPort"></open-port>
@@ -31,6 +32,7 @@ import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/Domai
 import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEvent'
 import PerformanceEvent from '@/views/charts2/charts/entityDetail/tabs/PerformanceEvent'
 import OpenPort from '@/views/charts2/charts/entityDetail/tabs/OpenPort'
+import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/DigitalCertificate'
 
 export default {
   name: 'EntityDetailTabs',
@@ -40,7 +42,8 @@ export default {
     SecurityEvent,
     InformationAggregation,
     DomainNameResolution,
-    OpenPort
+    OpenPort,
+    DigitalCertificate
   },
   data () {
     return {

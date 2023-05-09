@@ -1,0 +1,70 @@
+.digital-certificate {
+  $font-family: NotoSansSChineseRegular;
+
+  .digital-certificate-header {
+    display: flex;
+    align-items: center;
+
+    .digital-certificate-header__icon {
+      width: 4px;
+      height: 16px;
+      background: #38ACD2;
+      border-radius: 1px;
+      margin-right: 6px;
+    }
+
+    .digital-certificate-header-name {
+      font-family: PingFangSC-Semibold;
+      font-size: 14px;
+      color: #575757;
+      font-weight: 600;
+    }
+  }
+
+  .digital-certificate-body {
+    height: auto;
+    min-height: 262px;
+    padding: 20px;
+    background: rgba(113, 113, 113, 0.04);
+    border: 1px solid #E2E5ECFF;
+    border-radius: 4px;
+
+    .digital-certificate-body-tags {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .certificate-list-list {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .certificate-list-item {
+      width: 50%;
+      display: flex;
+      margin-bottom: 10px;
+
+      .certificate-list-item__label {
+        width: 176px;
+        font-family: $font-family;
+        font-size: 14px;
+        color: #717171;
+        font-weight: 400;
+      }
+
+      .certificate-list-item__value, .certificate-list-item__value1 {
+        width: calc(100% - 176px - 75px);
+        font-family: $font-family;
+        font-size: 14px;
+        color: #353636;
+        font-weight: 400;
+      }
+
+      .certificate-list-item__value1 {
+        padding-bottom: 2px;
+        border-bottom: 1px #353636 solid;
+        word-break: break-word;
+      }
+    }
+  }
+}

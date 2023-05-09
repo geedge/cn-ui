@@ -50,6 +50,18 @@
       color: $positive-color;
       background-color: $positive-light-color;
     }
+    &.entity-tag--level-two-negative-no-background {
+      border-color: $negative-color;
+      color: $negative-color;
+      padding: 8px 10px;
+      box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+    }
+    &.entity-tag--level-two-positive-no-background {
+      border-color: $positive-color;
+      color: $positive-color;
+      padding: 8px 10px;
+      box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
+    }
   }
 }
 /*
