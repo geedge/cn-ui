@@ -73,7 +73,7 @@ export default {
         },
         {
           selector: '.entity-detail-info',
-          correctionHeight: 174,
+          correctionHeight: 161,
           chartType: typeMapping.entityDetail.basicInfo
         }
       ]

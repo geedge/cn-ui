@@ -198,6 +198,7 @@
     display: flex;
     flex-flow: row wrap;
     align-content: space-around;
+    padding: 10px 0;
     margin-top: 5px;
 
     .detail-card {
@@ -352,7 +353,7 @@ export default {
           { icon: 'cn-icon cn-icon-credit-rating', name: 'creditLevel', label: i18n.global.t('entities.creditLevel2'), value: 'a value of credit level' },
           { icon: 'cn-icon cn-icon-expire-date', name: 'expirationDate', label: i18n.global.t('entities.expirationDate2'), value: '2022-02-22 22:22:22' },
           { icon: 'cn-icon cn-icon-registrar', name: 'registrar', label: i18n.global.t('entities.registrar'), value: 'XX注册商' },
-          { icon: 'cn-icon cn-icon-registration-agency', name: 'registry', label: i18n.global.t('entities.registry'), value: 'XX注册机构' },
+          { icon: 'cn-icon cn-icon-registry', name: 'registry', label: i18n.global.t('entities.registry'), value: 'XX注册机构' },
           { icon: 'cn-icon cn-icon-registration-country', name: 'country', label: i18n.global.t('entities.registrationCountry'), value: 'China' },
           { icon: 'cn-icon cn-icon-registration-date', name: 'registrationDate', label: i18n.global.t('entities.registrationDate'), value: '2011-11-11 11:11:11' },
           { icon: 'cn-icon cn-icon-registry-email', name: 'registryEmail', label: i18n.global.t('entities.registryEmail'), value: '注册机构邮箱' }
