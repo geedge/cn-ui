@@ -1,6 +1,7 @@
 .entity-detail-tabs {
   position: relative;
   $tab-border-color: #E2E5EC;
+  $tab-border-radius: 4px;
   height: 100%;
 
   .entity-detail-tabs__active-bar {
@@ -66,9 +67,29 @@
       overflow: auto;
     }
   }
-}
 
-.entity-detail-event-border {
-  border: 1px solid #E2E5EC;
-  border-radius: 4px;
+  .entity-detail-event-border {
+    border: 1px solid #E2E5EC;
+    border-radius: $tab-border-radius;
+    margin-bottom: 10px;
+  }
+
+  .entity-detail-event-block {
+    width: calc(100% - 2px);
+  }
+
+  .entity-detail-event-error {
+    margin-top: 18px;
+    margin-left: 8px;
+  }
+
+  .entity-detail-performance {
+    height: 46px;
+    border-radius: $tab-border-radius;
+  }
+
+  .entity-detail-security {
+    height: 70px;
+    border-radius: $tab-border-radius;
+  }
 }
