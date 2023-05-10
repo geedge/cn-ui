@@ -33,7 +33,7 @@
                       <span>{{ dateFormatByAppearance(item.startTime) || '-' }}</span>
                     </div>
                     <div class="basic-info__item">
-                      <i class="cn-icon cn-icon-Duration"></i>
+                      <i class="cn-icon cn-icon-duration"></i>
                       <span>{{ $t('overall.duration') }}&nbsp;:&nbsp;&nbsp;&nbsp;</span>
                       <span>{{ unitConvert(item.durationMs, 'time', null, null, 0).join(' ') || '-' }}</span>
                     </div>

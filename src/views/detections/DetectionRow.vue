@@ -61,7 +61,7 @@
                 <span>{{dateFormatByAppearance(detection.startTime) || '-'}}</span>
               </div>
               <div class="basic-info__item">
-                <i class="cn-icon cn-icon-Duration"></i>
+                <i class="cn-icon cn-icon-duration"></i>
                 <span>{{$t('overall.duration')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span style="display: inline-block;height: 6px;width: 6px;border-radius: 50%;margin-right: 8px;"
                       :style="pointColor(detection)"></span>
