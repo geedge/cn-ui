@@ -33,6 +33,8 @@ import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEven
 import PerformanceEvent from '@/views/charts2/charts/entityDetail/tabs/PerformanceEvent'
 import OpenPort from '@/views/charts2/charts/entityDetail/tabs/OpenPort'
 import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/DigitalCertificate'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'EntityDetailTabs',
@@ -81,6 +83,13 @@ export default {
       tabs.splice(2, 0, { name: entityDetailTabsName.subdomain, label: i18n.global.t('entities.subdomain'), icon: 'cn-icon cn-icon-sub-type' })
     }
     const activeTab = ref(tabs[0].name)
+
+    const { query } = useRoute()
+    const item = tabs.find(item => item.name === query.currentTab)
+    if (item) {
+      activeTab.value = query.currentTab
+    }
+
     return {
       entityType,
       activeTab,
@@ -92,6 +101,10 @@ export default {
     handleActiveBar (name) {
       const tabDom = document.getElementById('tab-' + name)
       if (tabDom) {
+        const { query } = this.$route
+        const newUrl = urlParamsHandler(window.location.href, query, { currentTab: name })
+        overwriteUrl(newUrl)
+
         const offsetLeft = tabDom.offsetLeft
         const clientWidth = tabDom.clientWidth
         const clientLeft = tabDom.clientLeft
