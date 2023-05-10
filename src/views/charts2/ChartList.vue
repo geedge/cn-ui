@@ -119,7 +119,7 @@ export default {
         const overviewAppChart = layout.find(c => c.type === typeMapping.networkOverview.appList)
         if (overviewAppChart) {
           this.$nextTick(() => {
-            this.resizeAppChart()
+            this.handleDynamicChartHeight()
           })
         }
       }

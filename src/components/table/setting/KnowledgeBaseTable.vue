@@ -1,5 +1,5 @@
 <template>
-  <el-checkbox-group v-model="checkList" @change="" style="display:flex;flex-flow:row wrap;align-content: flex-start;">
+  <el-checkbox-group v-model="checkList">
     <div @click="isSelectedStatus && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.id" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
       <div class="card-content">
         <div class="card-title">
