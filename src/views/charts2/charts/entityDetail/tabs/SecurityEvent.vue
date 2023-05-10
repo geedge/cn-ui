@@ -1,15 +1,14 @@
 <template>
-  <chart-error v-if="showError" style="margin-top: 18px;margin-left: 8px;"></chart-error>
+  <chart-error v-if="showError" class="entity-detail-event-error"></chart-error>
   <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
-  <div v-if="!isNoData && !showError">
+  <div v-if="!isNoData && !showError" class="entity-detail-event-block">
     <div
         class="entity-detail-event-border"
         v-for="item in eventList"
-        :key="item.eventId"
-        style="margin-bottom: 10px;">
+        :key="item.eventId">
       <div class="cn-detection--list">
-        <div class="cn-detection__case" style="height: 70px">
+        <div class="cn-detection__case entity-detail-security">
           <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor1[item.eventSecurity]}`"></div>
           <div class="cn-detection__row">
             <div class="cn-detection__header">

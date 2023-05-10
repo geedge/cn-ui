@@ -3,7 +3,7 @@
     <chart-error v-if="showError" style="margin-top: 18px;margin-left: 8px;"></chart-error>
     <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
-    <div class="digital-certificate" v-if="!showError && !isNoData">
+    <div class="digital-certificate" v-if="!showError && !isNoData" :style="{width: moreCertificatesWidth}">
       <div class="digital-certificate-header">
         <div class="digital-certificate-header__icon"></div>
         <div class="digital-certificate-header-name">
@@ -67,6 +67,16 @@ export default {
     return {
       entityType,
       entityName
+    }
+  },
+  computed: {
+    // 当多个证书时，宽度会因为边框线条撑大2px，导致滚动条与边框重叠影响观感
+    moreCertificatesWidth () {
+      let width = '100%'
+      if (this.infoList.length > 1) {
+        width = 'calc(100% - 2px)'
+      }
+      return width
     }
   },
   methods: {
