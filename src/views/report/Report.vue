@@ -235,6 +235,10 @@ export default {
         this.builtinLeftLoading = false
       })
     },
+    tableDataSort (orderBy) {
+      this.searchLabel.orderBy = orderBy
+      this.getTableData(this.searchLabel)
+    },
     getTableData (params) {
       this.searchLabel = null
       if (params) {
