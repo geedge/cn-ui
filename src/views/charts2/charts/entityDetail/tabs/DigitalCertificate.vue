@@ -1,6 +1,6 @@
 <template>
   <div>
-    <chart-error v-if="showError" style="margin-top: 18px;margin-left: 8px;"></chart-error>
+    <chart-error v-if="showError" :content="errorMsg" style="margin-top: 18px;margin-left: 8px;"></chart-error>
     <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
     <div class="digital-certificate" v-if="!showError && !isNoData" :style="{width: moreCertificatesWidth}">
@@ -52,7 +52,8 @@ export default {
     return {
       showError: false,
       isNoData: false,
-      infoList: []
+      infoList: [],
+      errorMsg: ''
     }
   },
   mixins: [chartMixin],
