@@ -20,7 +20,7 @@ export default {
       pageObj: { // 分页对象
         pageNo: 1,
         pageSize: defaultPageSize,
-        total: 0
+        total: null//total为0时，elment分页组件pagination,修改当前页无效。修改为null即可解决此问题
       },
       /* 工具参数 */
       tools: {

@@ -58,9 +58,9 @@ export const panelTypeAndRouteMapping = {
   networkOverviewDrillDown: 13,
   networkAppPerformance: 2,
   dnsServiceInsights: 3,
-/*  ipEntityDetail: 4,
+  /*  ipEntityDetail: 4,
   domainEntityDetail: 5,
-  appEntityDetail: 6,*/
+  appEntityDetail: 6, */
   ipEntityDetail: 21,
   domainEntityDetail: 22,
   appEntityDetail: 23,

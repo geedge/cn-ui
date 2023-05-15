@@ -1,6 +1,6 @@
 <template>
-  <div v-ele-click-outside="changeDropdown" style="position: relative;z-index: 4" class="date-range-box">
-    <div @click="showDropdown" class="date-range-text" :class="class" :style="style">
+  <div v-ele-click-outside="changeDropdown" style="position: relative;" class="date-range-box">
+    <div @click="showDropdown" class="date-range-text" :class="myClass" :style="style">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
       <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
         <div class="calendar-popover-text">{{ dateFormatByAppearance(getMillisecond(startTime)) }}</div>
@@ -14,7 +14,7 @@
         <i class="cn-icon cn-icon-dropdown" :class="dropdownFlag ? 'cn-icon-up' : ''"></i>
       </div>
     </div>
-    <transition name="el-zoom-in-top">
+    <transition name="el-zoom-in-top" style="z-index: 4;">
       <div v-if="dropdownFlag" class="date-range-panel">
         <el-row class="date-range-panel-top" style="position: relative">
           <el-col :span="16" class="date-range-panel-content date-range-panel-content-left">
@@ -109,6 +109,7 @@ export default {
     const store = useStore()
     const myStartTime = ref(props.startTime)
     const myEndTime = ref(props.endTime)
+    const myClass = ref(props.class)
     // 时间选择器绑定的值
     const newDateValue = ref([
       new Date(...timestampToList(myStartTime.value)),
@@ -282,6 +283,7 @@ export default {
     return {
       myStartTime,
       myEndTime,
+      myClass,
       dropdownFlag,
       utcStr,
       rangeEchartsData,

@@ -411,7 +411,8 @@ export default {
       timer: null,
       isShowUploadTips: false,
       isPreviewChange: false,
-      isClick: false
+      isClick: false,
+      pageNoForTable: 1
     }
   },
   methods: {
@@ -602,6 +603,7 @@ export default {
       this.isPreviewChange = true
     },
     cancel () {
+      const self = this
       if (this.isPreviewChange) {
         this.$confirm(this.$t('tip.leavePage'), {
           confirmButtonText: this.$t('tip.confirm'),
@@ -614,13 +616,19 @@ export default {
         }).then(() => {
           this.$router.push({
             path: '/knowledgeBase',
-            t: +new Date()
+            query: {
+              pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
+              t: +new Date()
+            }
           })
         }).catch(() => {})
       } else {
         this.$router.push({
           path: '/knowledgeBase',
-          t: +new Date()
+          query: {
+            pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
+            t: +new Date()
+          }
         })
       }
     },
@@ -680,6 +688,7 @@ export default {
                       d.itemList = Array.from(d.itemList)
                     })
                     postData.remark = this.editObject.remark
+                    const self = this
                     if (!this.editObject.id) {
                       axios.post(this.url, postData).then(response => {
                         if (response.data.code === 200) {
@@ -690,7 +699,10 @@ export default {
                           })
                           this.$router.push({
                             path: '/knowledgeBase',
-                            t: +new Date()
+                            query: {
+                              pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
+                              t: +new Date()
+                            }
                           })
                         } else {
                           this.errorMsgHandler(response)
@@ -712,7 +724,10 @@ export default {
                           })
                           this.$router.push({
                             path: '/knowledgeBase',
-                            t: +new Date()
+                            query: {
+                              pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
+                              t: +new Date()
+                            }
                           })
                         } else {
                           this.errorMsgHandler(response)
@@ -852,6 +867,8 @@ export default {
     }
   },
   mounted () {
+    const pageNo = this.$router.currentRoute.value.query.pageNoForTable
+    this.pageNoForTable = pageNo || 1
     const div = document.getElementsByClassName('el-upload-dragger')[0]
     const self = this
     div.addEventListener('click', function (event) {
@@ -886,7 +903,10 @@ export default {
         this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
           path: '/knowledgeBase',
-          t: +new Date()
+          query: {
+            pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
+            t: +new Date()
+          }
         })
       })
     }
