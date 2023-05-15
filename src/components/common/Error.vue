@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showDefault" class="error-component" :style="style" :class="class">
+  <div v-if="showDefault" class="error-component" :style="style" :class="myClass">
     <div class="error-block" :style="{'max-width': localMaxWidth, 'width': localWidth}">
       <svg class="icon error-icon-default" aria-hidden="true">
         <use xlink:href="#cn-icon-baocuo"></use>
@@ -115,7 +115,8 @@ export default {
       showSmall: false, // 显示错误的类型，true为图表模块内显示报错，false为标题后显示报错
       localWidth: '',
       localMaxWidth: '',
-      localPopoverWidth: ''
+      localPopoverWidth: '',
+      myClass: this.class
     }
   },
   mounted () {
