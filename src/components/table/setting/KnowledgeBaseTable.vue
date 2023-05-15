@@ -129,10 +129,12 @@ export default {
       this.$emit('delete', data)
     },
     edit (id) {
+      const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
         path: '/knowledgeBase/edit',
         query: {
           t: +new Date(),
+          pageNoForTable: pageNo || 1,
           id: id
         }
       })

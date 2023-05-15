@@ -1,5 +1,5 @@
 <template>
-  <div class="pagination">
+  <div class="pagination" >
     <el-pagination
         ref="page"
         @size-change="size"
@@ -60,7 +60,6 @@ export default {
     const { query } = useRoute()
     const pageSize = ref(defaultPageSize)
     const currentPageNo = ref(props.storePageNoOnUrl ? (query.pageNo || (props.pageObj.pageNo || 1)) : (props.pageObj.pageNo || 1))
-
     return {
       pageSize,
       currentPageNo
