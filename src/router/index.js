@@ -7,10 +7,6 @@ const routes = [
     component: () => import('@/Login')
   },
   {
-    path: '/entityDetail',
-    component: () => import('@/views/entityExplorer/EntityDetail')
-  },
-  {
     path: '/',
     component: () => import('@/components/layout/Home'),
     children: [
@@ -26,6 +22,10 @@ const routes = [
       {
         path: '/entityExplorer',
         component: () => import('@/views/entityExplorer/EntityExplorer')
+      },
+      {
+        path: '/entityDetail',
+        component: () => import('@/views/entityExplorer/EntityDetail')
       },
       {
         path: '/detection',

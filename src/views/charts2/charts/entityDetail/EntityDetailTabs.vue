@@ -79,9 +79,6 @@ export default {
     if (entityType !== 'app') {
       tabs.unshift({ name: entityDetailTabsName.informationAggregation, label: i18n.global.t('entities.informationAggregation'), icon: 'cn-icon cn-icon-information-aggregation' })
     }
-    if (entityType === 'domain') {
-      tabs.splice(2, 0, { name: entityDetailTabsName.subdomain, label: i18n.global.t('entities.subdomain'), icon: 'cn-icon cn-icon-sub-type' })
-    }
     const activeTab = ref(tabs[0].name)
 
     const { query } = useRoute()

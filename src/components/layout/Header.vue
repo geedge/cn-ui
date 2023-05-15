@@ -289,7 +289,7 @@ export default {
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
     },
     otherMenu () {
-      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'chart', 'I18N'].indexOf(menu.code) === -1)
+      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'chart', 'I18N', 'entityDetail', 'temp'].indexOf(menu.code) === -1)
 
       /* function excludeButton (menu) {
         for (let i = 0; i < menu.length; i++) {
@@ -392,6 +392,23 @@ export default {
   },
   methods: {
     generateBreadcrumb (breadcrumb, menus) {
+      if (this.route === '/entityDetail') {
+        const entityMenu = menus.find(m => m.route === '/entityExplorer')
+        const entityDetailMenu = menus.find(m => m.route === '/entityDetail')
+        breadcrumb.push({
+          code: entityMenu.code,
+          value: entityMenu.i18n ? this.$t(entityMenu.i18n) : entityMenu.name,
+          route: entityMenu.route,
+          type: entityMenu.type
+        })
+        breadcrumb.push({
+          code: entityDetailMenu.code,
+          value: entityDetailMenu.i18n ? this.$t(entityDetailMenu.i18n) : entityDetailMenu.name,
+          route: entityDetailMenu.route,
+          type: entityDetailMenu.type
+        })
+        return true
+      }
       const menu = menus.find(m => m.route === this.route)
       if (menu) {
         breadcrumb.unshift({
