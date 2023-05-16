@@ -67,9 +67,10 @@ export default {
       if (refreshTime !== null) {
         // 此处是避免下钻后浏览器返回，获取不到url的refreshTime情况
         // 以及重新加载后改变时间但url回退仍保留上次数据的情况
-        refreshObj = refreshArr.find(item => item.value === refreshTime)
+        refreshObj = refreshArr.find(item => item.value === refreshTime) || refreshArr[0]
       } else if (query.refreshTime !== undefined) {
-        refreshObj = refreshArr.find(item => item.value === Number(query.refreshTime))
+        // 若地址栏的refreshTime不是数组里的值，直接关闭刷新
+        refreshObj = refreshArr.find(item => item.value === Number(query.refreshTime)) || refreshArr[0]
       }
     } else {
       // 浏览器回退时，清除掉地址栏的refreshTime
@@ -112,6 +113,8 @@ export default {
         this.$store.commit('setRefreshTime', val.value)
         this.$store.commit('setRefreshFlag', true)
 
+        // 在新的轮询开始前清除掉已经可能存在的定时器，避免新的刷新时间不生效
+        clearInterval(this.intervalTimer)
         // 设置定时器
         this.intervalTimer = setInterval(() => {
           this.$emit('change')
