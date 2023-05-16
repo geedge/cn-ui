@@ -32,7 +32,7 @@
               </el-select>
             </el-form-item>
             <el-form-item :label="$t('overall.remark')" prop="remark">
-              <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea"
+              <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" resize='none'
                         v-model="editObject.remark" id="role-box-input-remark"/>
             </el-form-item>
           </el-form>
