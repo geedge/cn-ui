@@ -78,22 +78,26 @@
               v-if="pageType === detectionPageType.securityEvent"
               :detection="detection"
               :time-filter="timeFilter"
+              :pageObj="pageObj"
           ></detection-security-event-overview>
           <template v-else>
             <detection-performance-event-ip-overview
                 v-if="detection.entityType === entityType.ip.toLowerCase()"
                 :detection="detection"
                 :time-filter="timeFilter"
+                :pageObj="pageObj"
             ></detection-performance-event-ip-overview>
             <detection-performance-event-domain-overview
                 v-else-if="detection.entityType === entityType.domain.toLowerCase()"
                 :detection="detection"
                 :time-filter="timeFilter"
+                :pageObj="pageObj"
             ></detection-performance-event-domain-overview>
             <detection-performance-event-app-overview
                 v-else-if="detection.entityType === entityType.app.toLowerCase()"
                 :detection="detection"
                 :time-filter="timeFilter"
+                :pageObj="pageObj"
             ></detection-performance-event-app-overview>
           </template>
         </div>
@@ -123,7 +127,8 @@ export default {
     index: Number,
     timeFilter: Object,
     detection: Object,
-    pageType: String // 安全事件、服务质量
+    pageType: String, // 安全事件、服务质量
+    pageObj: Object
   },
   data () {
     return {

@@ -94,7 +94,8 @@ import _ from 'lodash'
 export default {
   name: 'DetectionPerformanceEventIpOverview',
   props: {
-    detection: Object
+    detection: Object,
+    pageObj: Object
   },
   data () {
     return {
@@ -220,7 +221,7 @@ export default {
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
-          getData(api.detection.performanceEvent.overviewBasic, { serverIp: this.detection.serverIp, startTime: this.detection.startTime }).then(data => {
+          getData(api.detection.performanceEvent.overviewBasic, { serverIp: this.detection.serverIp, startTime: this.detection.startTime, endTime: this.detection.endTime, pageNo: this.pageObj.pageNo, pageSize: this.pageObj.pageSize }).then(data => {
             resolve(data[0])
           }).catch(error => {
             reject(error)

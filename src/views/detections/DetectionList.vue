@@ -13,6 +13,7 @@
             :page-type="pageType"
             :timeFilter="timeFilter"
             :key="index"
+            :pageObj="pageObj"
             :ref="`detectionRow${index}`"
             :index="index"
             @switchCollapse="switchCollapse"
