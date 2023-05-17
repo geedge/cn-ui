@@ -329,6 +329,9 @@
           border-right:none;
           border-bottom:none;
         }
+        .el-table--border th ,.el-table--border td {
+          border-right: none;
+        }
         .el-table {
           th {
             padding-top:6px;
