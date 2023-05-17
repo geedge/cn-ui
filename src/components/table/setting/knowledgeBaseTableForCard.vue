@@ -35,7 +35,7 @@
 import table from '@/mixins/table'
 import { knowledgeBaseType } from '@/utils/constants'
 export default {
-  name: 'knowledgeBaseTable',
+  name: 'knowledgeBaseTableForCard',
   mixins: [table],
   props: {
     isSelectedStatus: {

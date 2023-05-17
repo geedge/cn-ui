@@ -1,0 +1,139 @@
+<template>
+  <el-table
+      id="knowledgeBaseTable"
+      ref="dataTable"
+      :data="tableData"
+      :height="height"
+      border
+      @header-dragend="dragend"
+      @sort-change="tableDataSort"
+      @selection-change="selectionChange"
+  >
+    <el-table-column
+        :resizable="false"
+        align="center"
+        type="selection"
+        width="55">
+    </el-table-column>
+    <el-table-column
+        v-for="(item, index) in customTableTitles"
+        :key="`col-${index}`"
+        :fixed="item.fixed"
+        :label="item.label"
+        :min-width="`${item.minWidth}`"
+        :prop="item.prop"
+        :resizable="true"
+        :sort-orders="['ascending', 'descending']"
+        :sortable="item.sortable"
+        :width="`${item.width}`"
+        class="data-column"
+    >
+      <template #header>
+        <span class="data-column__span">{{item.label}}</span>
+        <div class="col-resize-area"></div>
+      </template>
+      <template  #default="scope" :column="item">
+        <template v-if="item.prop === 'name'">
+          <template v-if="scope.row.i18n">
+            <span>{{$t(scope.row.i18n)}}</span>
+          </template>
+          <template v-else-if="scope.row.name">
+            <span>{{scope.row.name}}</span>
+          </template>
+          <template v-else>
+            <span>-</span>
+          </template>
+        </template>
+        <template v-else-if="item.prop === 'tagType'">
+          <span class="type-tag">{{tagTypeText(scope.row[item.prop])}}</span>
+        </template>
+        <template v-else-if="item.prop === 'utime' || item.prop === 'ctime'">
+          <template v-if="scope.row[item.prop]">
+            {{dateFormatByAppearance(scope.row[item.prop])}}
+          </template>
+          <template v-else>
+            <span>-</span>
+          </template>
+        </template>
+        <template v-else-if="item.prop === 'cuser' || item.prop === 'uuser'">
+          <template v-if="scope.row[item.prop]">
+            {{scope.row[item.prop].username || '-'}}
+          </template>
+          <template v-else>
+            <span>-</span>
+          </template>
+        </template>
+        <template v-else-if="item.prop === 'remark'">
+          <span class="list-desc" :title="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+        </template>
+        <span v-else>{{scope.row[item.prop] || '-'}}</span>
+      </template>
+    </el-table-column>
+  </el-table>
+</template>
+
+<script>
+import table from '@/mixins/table'
+import { knowledgeBaseType } from '@/utils/constants'
+export default {
+  name: 'KnowledgeBaseTableForRow',
+  mixins: [table],
+  data () {
+    return {
+      tableTitle: [ // 原table列
+        {
+          label: 'ID',
+          prop: 'id',
+          show: true,
+          width: 100,
+          sortable: 'custom'
+        }, {
+          label: this.$t('config.roles.name'),
+          prop: 'tagName',
+          show: true,
+          sortable: 'custom'
+        }, {
+          label: this.$t('overall.type'),
+          prop: 'tagType',
+          minWidth: 80,
+          show: true
+        }, {
+          label: this.$t('overall.remark'),
+          prop: 'remark',
+          show: true
+        },
+        {
+          label: this.$t('overall.createdBy'),
+          prop: 'cuser',
+          show: true
+        },
+        {
+          label: this.$t('config.user.createTime'),
+          prop: 'ctime',
+          show: false,
+          sortable: 'custom'
+        },
+        {
+          label: this.$t('overall.updatedBy'),
+          prop: 'uuser',
+          show: false
+        },
+        {
+          label: this.$t('overall.updateTime'),
+          prop: 'utime',
+          show: false,
+          sortable: 'custom'
+        }
+      ]
+    }
+  },
+  computed: {
+    tagTypeText () {
+      return function (type) {
+        const t = knowledgeBaseType.find(t => t.value === type)
+        return t ? t.name : ''
+      }
+    }
+  }
+}
+</script>

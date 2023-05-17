@@ -3,52 +3,84 @@
     <div class="top-title">
       {{$t('overall.knowledgeBase')}}
     </div>
-    <div class="knowledge-base__content" style="">
+    <div class="knowledge-base__content" >
       <div class="left-filter" style="">
           <knowledge-filter ref="knowledgeFilter"
                   @reload="reload"
                   @clearList="clearList"></knowledge-filter>
       </div>
-      <div class="right-list-card" style="">
-        <div class="top-tools" style="">
-          <button id="knowledge-base-add" :title="$t('knowledgeBase.createKnowledgeBase')" class="top-tool-btn margin-r-10 top-tool-btn--create"
-                  style="width:72px;"
-                  @click="jumpToCreatePage">
-            <i class="cn-icon-xinjian cn-icon"></i>
-            <span>{{$t('overall.create')}}</span>
-          </button>
-          <button id="knowledge-base-edit" :title="$t('knowledgeBase.select')" class="top-tool-btn margin-r-10"
-                  style="width:72px;"
-                  @click="toSelect">
-            <i class="cn-icon-select cn-icon" ></i>
-            <span>{{$t('overall.select')}}</span>
-          </button>
-          <button id="knowledge-base-delete" :title="$t('knowledgeBase.deleteKnowledgeBase')" class="top-tool-btn margin-r-10"
-                  style="width:72px;" :disabled="disableDelete"
-                  @click="toDelete">
-            <i class="cn-icon-delete cn-icon"></i>
-            <span>{{$t('overall.delete')}}</span>
-          </button>
-          <div class="top-tool-search margin-l-10" style="">
-            <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
-            <button class="top-tool-btn  top-tool-btn--search" style="border-radius: 0 2px 2px 0 !important;" @click="onSearch">
-              <i class="el-icon-search"></i>
+      <div class="right-list-card" >
+        <div class="top-tools" >
+          <div class="top-tools__left">
+            <button id="knowledge-base-add" :title="$t('knowledgeBase.createKnowledgeBase')" class="top-tool-btn margin-r-10 top-tool-btn--create"
+                    style="width:72px;"
+                    @click="jumpToCreatePage">
+              <i class="cn-icon-xinjian cn-icon"></i>
+              <span>{{$t('overall.create')}}</span>
             </button>
+            <button v-if="listMode === 'block'" id="knowledge-base-edit" :title="$t('knowledgeBase.select')" class="top-tool-btn margin-r-10"
+                    style="width:72px;"
+                    @click="toSelect">
+              <i class="cn-icon-select cn-icon" ></i>
+              <span>{{$t('overall.select')}}</span>
+            </button>
+            <button id="knowledge-base-delete" :title="$t('knowledgeBase.deleteKnowledgeBase')" class="top-tool-btn margin-r-10"
+                    style="width:72px;" :disabled="disableDelete"
+                    @click="toDelete">
+              <i class="cn-icon-delete cn-icon"></i>
+              <span>{{$t('overall.delete')}}</span>
+            </button>
+            <div class="top-tool-search margin-l-10" style="">
+              <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
+              <button class="top-tool-btn  top-tool-btn--search" style="border-radius: 0 2px 2px 0 !important;" @click="onSearch">
+                <i class="el-icon-search"></i>
+              </button>
+            </div>
+          </div>
+          <div class="top-tools__right" >
+            <el-button-group size="mini">
+              <el-button size="mini" @click="listMode = 'list'" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
+              <el-button size="mini" @click="listMode = 'block'" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
+            </el-button-group>
           </div>
         </div>
-        <div class="cards" style="" >
-          <knowledge-base-table
-                  ref="dataTable"
-                  v-loading="tools.loading"
-                  :api="url"
-                  :custom-table-title="tools.customTableTitle"
-                  :table-data="tableData"
-                  :is-selected-status="isSelectedStatus"
-                  :all-count="18"
-                  @delete="toDelete"
-                  @checkboxStatusChange="checkboxStatusChange"
-          ></knowledge-base-table>
-        </div>
+        <!-- 列表式 -->
+        <template v-if="listMode === 'list'">
+          <div class="list-mode__row" >
+            <knowledge-base-table-for-row
+                    ref="dataTable"
+                    v-loading="tools.loading"
+                    height="100%"
+                    :api="url"
+                    :custom-table-title="tools.customTableTitle"
+                    :table-data="tableData"
+                    :is-selected-status="isSelectedStatus"
+                    :all-count="18"
+                    @delete="toDelete"
+                    @selectionChange="selectionChange"
+                    @edit="edit"
+                    @orderBy="tableDataSort"
+                    @reload="getTableData"
+            ></knowledge-base-table-for-row>
+          </div>
+        </template>
+        <!-- 卡片式 -->
+        <template v-else-if="listMode === 'block'">
+          <div class="list-mode__card" >
+            <knowledge-base-table-for-card
+                    ref="dataTable"
+                    v-loading="tools.loading"
+                    :api="url"
+                    :custom-table-title="tools.customTableTitle"
+                    :table-data="tableData"
+                    :is-selected-status="isSelectedStatus"
+                    :all-count="18"
+                    @delete="toDelete"
+                    @checkboxStatusChange="checkboxStatusChange"
+            ></knowledge-base-table-for-card>
+          </div>
+        </template>
+
         <div class="knowledge-pagination" style="">
           <pagination ref="pagination" :page-obj="pageObj" :table-id="tableId" @pageNo='pageNo' @pageSize='pageSize'></pagination>
         </div>
@@ -93,7 +125,8 @@
 <script>
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
-import KnowledgeBaseTable from '@/components/table/setting/KnowledgeBaseTable'
+import KnowledgeBaseTableForCard from '@/components/table/setting/knowledgeBaseTableForCard'
+import KnowledgeBaseTableForRow from '@/components/table/setting/KnowledgeBaseTableForRow'
 import { api } from '@/utils/api'
 import axios from 'axios'
 import KnowledgeFilter from '@/views/setting/KnowledgeFilter'
@@ -102,7 +135,8 @@ export default {
   name: 'knowledgeBase',
   components: {
     cnDataList,
-    KnowledgeBaseTable,
+    KnowledgeBaseTableForCard,
+    KnowledgeBaseTableForRow,
     KnowledgeFilter
   },
   mixins: [dataListMixin],
@@ -114,7 +148,8 @@ export default {
       keyWord: '',
       showConfirmDialog: false,
       delItemList: [],
-      secondBatchDeleteObjs: []
+      secondBatchDeleteObjs: [],
+      listMode: 'list' // 列表的模式，list|block
     }
   },
   watch: {
