@@ -6,7 +6,7 @@
       <div style="display: flex">
         <div class="explorer-top-tools-block">
           <i class="cn-icon cn-icon-setting detection-icon-setting"></i>
-          <span>Configure Policies</span>
+          <span>{{$t('config.detections.configurePolicies')}}</span>
         </div>
         <DateTimeRange
             class="date-time-range"
