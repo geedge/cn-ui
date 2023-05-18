@@ -12,30 +12,30 @@
           <!--name-->
           <el-form-item :label="$t('config.user.name')" prop="name">
             <el-input id="account-input-name" v-model="editObject.name" :disabled="editObject.username==='admin' && editObject.id === 1"
-                      maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
+                      minlength="2" maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
           </el-form-item>
           <!--username-->
           <el-form-item :label="$t('config.user.username')" prop="username">
             <el-input id="account-input-username" v-model="editObject.username" :disabled="editObject.username==='admin' && editObject.id === 1"
-                      maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
+                      minlength="2" maxlength="64" placeholder="" show-word-limit size="small" type="text"></el-input>
           </el-form-item>
           <!--password-->
           <el-form-item :label="$t('config.user.pin')" prop="pin">
-            <el-input id="account-input-password" v-model="editObject.pin"  maxlength="64" placeholder=""
+            <el-input id="account-input-password" v-model="editObject.pin" minlength="5" maxlength="64" placeholder=""
                       show-word-limit size="small" type="password" @blur="pinBlur" autocomplete="new-password"></el-input>
           </el-form-item>
           <!--pinChange-->
           <el-form-item :label="$t('config.user.confirmPin')" label-width="200px" prop="pinChange">
-            <el-input id="account-input-pinChange" v-model="editObject.pinChange"  maxlength="64" placeholder=""
+            <el-input id="account-input-pinChange" v-model="editObject.pinChange" minlength="5" maxlength="64" placeholder=""
                       show-word-limit size="small" type="password"></el-input>
           </el-form-item>
           <!--email-->
           <el-form-item label="E-mail" prop="email">
-            <el-input id="account-input-email" v-model="editObject.email" maxlength="64" show-word-limit placeholder="" size="small" type="text"></el-input>
+            <el-input id="account-input-email" v-model="editObject.email" maxlength="35" show-word-limit placeholder="" size="small" type="text"></el-input>
           </el-form-item>
           <!--mobile-->
           <el-form-item :label="$t('config.user.mobile')" prop="mobile">
-            <el-input id="account-input-mobile" v-model.number="editObject.mobile" maxlength="64" show-word-limit placeholder="" size="small" type="text"></el-input>
+            <el-input id="account-input-mobile" v-model.number="editObject.mobile" maxlength="11" show-word-limit placeholder="" size="small" type="text"></el-input>
           </el-form-item>
           <!--roles-->
           <el-form-item :label="$t('config.user.roles')" prop="roleIds">
@@ -89,7 +89,7 @@
             <el-switch
                id="account-input-status"
                v-model="editObject.status"
-               :disabled="(editObject.username === loginName) || (editObject.username==='admin' && editObject.id==1)"
+               :disabled="(editObject.username === loginName) || (editObject.username === 'admin' && editObject.id === 1)"
                :active-value="1"
                :inactive-value="0">
             </el-switch>
@@ -125,7 +125,7 @@ export default {
   data () {
     const validatePin = (rule, value, callback) => { // 确认密码的二次校验
       if (value === '' && this.editObject.pin) {
-        callback(new Error(this.$t('config.user.inputConfirmPin')))
+        callback(new Error(this.$t('config.user.confirmPin')))
       } else if (value !== this.editObject.pin) {
         callback(new Error(this.$t('config.user.confirmPinErr')))
       } else {
@@ -137,23 +137,31 @@ export default {
       loginName: localStorage.getItem(storageKey.username),
       rules: { // 表单校验规则
         name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { pattern: /^[a-zA-Z0-9]{2,64}$/, message: this.$t('validate.atLeastTwo') }
         ],
         username: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { pattern: /^[a-zA-Z0-9]{2,64}$/, message: this.$t('validate.atLeastTwo') }
         ],
         pin: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { pattern: /^[a-zA-Z0-9]{5,64}$/, message: this.$t('validate.atLeastFive') }
         ],
         pinChange: [
           { validator: validatePin, trigger: 'blur' },
-          { required: true, message: '', trigger: 'blur' }
+          { required: true, message: this.$t('validate.required') },
+          { pattern: /^[a-zA-Z0-9]{5,64}$/, message: this.$t('validate.atLeastFive') }
         ],
         roleIds: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         email: [
           { type: 'email', message: this.$t('validate.email') }
+        ],
+        mobile: [
+          { required: false, message: this.$t('validate.required') },
+          { pattern: /^(1[345678]\d{9})$/, message: this.$t('validate.mobile') }
         ]
       },
       rules2: { // 表单校验规则
@@ -161,13 +169,19 @@ export default {
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         pinChange: [
-          { validator: validatePin, trigger: 'blur' }
+          { validator: validatePin, trigger: 'blur' },
+          { required: true, message: this.$t('validate.required') },
+          { pattern: /^[a-zA-Z0-9]{5,64}$/, message: this.$t('validate.atLeastFive') }
         ],
         roleIds: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         email: [
           { type: 'email', message: this.$t('validate.email') }
+        ],
+        mobile: [
+          { required: false, message: this.$t('validate.required') },
+          { pattern: /^(1[345678]\d{9})$/, message: this.$t('validate.mobile') }
         ]
       },
       roleData: [],
