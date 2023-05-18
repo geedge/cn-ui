@@ -15,7 +15,7 @@
                        show-word-limit size="small" type="text" v-model="editRole.name"></el-input>
           </el-form-item>
           <el-form-item :label="$t('overall.remark')">
-            <el-input maxlength="256" show-word-limit :rows="2" size='mini' type="textarea" v-model="editRole.remark" id="role-box-input-remark"/>
+            <el-input maxlength="255" show-word-limit :rows="2" size='mini' type="textarea" v-model="editRole.remark" id="role-box-input-remark"/>
           </el-form-item>
 
           <el-form-item :label="$t('config.roles.permission')">
@@ -26,8 +26,8 @@
             <el-tree :data="menus" :default-expand-all="expandAllFlag" :props="{label:labelFormatter}"  @check-change="selectChange" class="tree-border" node-key="id" ref="menuTree" show-checkbox id="role-box-input-menus">
               <template #default="{ data }">
               <span>
-                <i v-if="data.type == '1'" class="el-icon-menu"></i>
-                <i v-if="data.type == '2'" class="el-icon-edit"></i>
+                <i v-if="data.type === '1'" class="el-icon-menu"></i>
+                <i v-if="data.type === '2'" class="el-icon-edit"></i>
               </span>
                 {{$t(data.i18n)}}
               </template>
@@ -70,7 +70,8 @@ export default {
       rightBox: { model: { show: false } },
       rules: { // 表单校验规则
         name: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { pattern: /^[a-zA-Z0-9]{2,64}$/, message: this.$t('validate.atLeastTwo') } // 目前仅对长度要求在2-64之间，后续有需求再添加
         ]
       },
       menus: [],
@@ -113,7 +114,7 @@ export default {
         self.menus = []
         if (self.editRole.id) {
           get(api.menu + self.editRole.id).then(response => {
-            if (response.code == 200) {
+            if (response.code === 200) {
               self.menus = response.data.menus
               self.selectedIds = response.data.selectedIds
             } else {
@@ -123,7 +124,7 @@ export default {
           })
         } else {
           get(api.sysMenu).then(response => {
-            if (response.code == 200) {
+            if (response.code === 200) {
               self.menus = response.data.list
             } else {
               self.$message.error('load menu faild')
@@ -161,7 +162,7 @@ export default {
       }
     },
     save () {
-      if (this.prevent_opt.save) { return } ;
+      if (this.prevent_opt.save) { return }
       this.prevent_opt.save = true
 
       this.$refs.roleForm.validate((valid) => {
