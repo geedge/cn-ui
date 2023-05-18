@@ -37,7 +37,7 @@
     }
     .el-button--mini{
       padding: 4px 6px !important;
-      min-height: 26px !important;
+      min-height: 28px !important;
       &.active i {
         color: $--color-primary;
       }
@@ -64,7 +64,7 @@
     color: #353636;
     font-weight: 500;
     padding: 0 10px;
-    margin-right: 10px;
+    margin-right: 20px;
     border: 1px solid #E2E5EC;
     border-radius: 2px;
     cursor: pointer;

@@ -35,7 +35,7 @@
         </div>
         <div class="line-select line-header-right">
           <div class="panel__tools">
-            <div class="panel__time line-margin-right">
+            <div class="panel__time line-date-right">
               <date-time-range
                   class="entity-detail-date-time-range"
                   :start-time="timeFilter.startTime"
