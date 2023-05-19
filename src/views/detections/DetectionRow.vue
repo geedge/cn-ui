@@ -32,12 +32,12 @@
             <div class="basic-info">
               <div class="basic-info__item" v-if="detection.eventSecurity">
                 <i class="cn-icon cn-icon-severity-level"></i>
-                <span>{{$t('detection.list.eventSecurity')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{$t('detection.list.security')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventSecurity || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.eventSeverity">
                 <i class="cn-icon cn-icon-severity-level"></i>
-                <span>{{$t('detections.eventSeverity')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{$t('detections.severity')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventSeverity || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.eventType">
