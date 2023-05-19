@@ -5,7 +5,7 @@
       <div class="explorer-top-tools-title">{{$t('overall.detections')}}</div>
       <div style="display: flex">
         <div class="explorer-top-tools-block">
-          <i class="cn-icon cn-icon-setting detection-icon-setting"></i>
+          <i class="cn-icon cn-icon-a-ConfigurePolicies detection-icon-setting"></i>
           <span>{{$t('config.detections.configurePolicies')}}</span>
         </div>
         <DateTimeRange
