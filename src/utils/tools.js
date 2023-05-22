@@ -878,9 +878,9 @@ export async function getDnsMapData (type) {
 }
 export function handleSpecialValue (value) {
   if (value) {
-    value = value.replace(/\'/g, "\\\\'")
-      .replace(/\"/g, '\\"')
-      .replace(/\&/g, '%26')
+    value = value.replace(/\'/g, "\\'\\'") // Xi'an -> Xi''an
+      .replace(/\"/g, '\\"') // ISP中可能有带双引号的数据
+      .replace(/\&/g, '%26') // ISP中可能有带&的数据
   }
   return value
 }
