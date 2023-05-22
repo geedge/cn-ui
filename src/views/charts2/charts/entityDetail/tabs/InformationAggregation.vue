@@ -1,82 +1,88 @@
 <template>
-  <div class="information-aggregation__table">
-    <el-table
-            style="width: 100%"
-            tooltip-effect="light"
-            border
-            id="informationAggregationTable"
-            ref="informationAggregationTable"
-            :data="informationAggregationList"
-            :cell-class-name="intelligenceContentClass"
-    >
-      <el-table-column
-              key="discoveryTime"
-              width="150px"
-              :label="$t('entities.tab.informationAggregation.discoveryTime')"
-              prop="discoveryTime"
-      ></el-table-column>
-      <el-table-column
-              key="updateTime"
-              width="150px"
-              :label="$t('entities.tab.informationAggregation.updateTime')"
-              prop="updateTime"
-      ></el-table-column>
-      <el-table-column
-              key="intelligenceContent"
-              :label="$t('entities.tab.informationAggregation.intelligenceContent')"
-              prop="intelligenceContent"
+  <div>
+    <!--初步方案：error提示替换table。后续若改为table内error提示，记得在此修改-->
+    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+    <chart-no-data v-if="isNoData && !showError"></chart-no-data>
+
+    <div v-if="!isNoData && !showError" class="information-aggregation__table">
+      <el-table
+          style="width: 100%"
+          tooltip-effect="light"
+          border
+          id="informationAggregationTable"
+          ref="informationAggregationTable"
+          :data="informationAggregationList"
+          :cell-class-name="intelligenceContentClass"
       >
-        <template #default="scope">
-          <div class="intelligence-content">
-            <div class="information-aggregation-tags">
-              <template v-for="ic in scope.row.intelligenceContent" >
-                <template v-if="ic.type === 0" >
-                  <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag--small entity-tag--level-one-negative margin-r-6">
-                    {{ic.value}}
-                  </div>
-                  <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag--small entity-tag--level-one-normal margin-r-6">
-                    {{ic.value}}
-                  </div>
-                  <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag--small entity-tag--level-one-positive margin-r-6">
-                    {{ic.value}}
-                  </div>
+        <el-table-column
+            key="discoveryTime"
+            width="150px"
+            :label="$t('entities.tab.informationAggregation.discoveryTime')"
+            prop="discoveryTime"
+        ></el-table-column>
+        <el-table-column
+            key="updateTime"
+            width="150px"
+            :label="$t('entities.tab.informationAggregation.updateTime')"
+            prop="updateTime"
+        ></el-table-column>
+        <el-table-column
+            key="intelligenceContent"
+            :label="$t('entities.tab.informationAggregation.intelligenceContent')"
+            prop="intelligenceContent"
+        >
+          <template #default="scope">
+            <div class="intelligence-content">
+              <div class="information-aggregation-tags">
+                <template v-for="ic in scope.row.intelligenceContent" >
+                  <template v-if="ic.type === 0" >
+                    <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag--small entity-tag--level-one-negative margin-r-6">
+                      {{ic.value}}
+                    </div>
+                    <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag--small entity-tag--level-one-normal margin-r-6">
+                      {{ic.value}}
+                    </div>
+                    <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag--small entity-tag--level-one-positive margin-r-6">
+                      {{ic.value}}
+                    </div>
+                  </template>
                 </template>
-              </template>
-            </div>
-            <div class="information-aggregation-tags">
-              <div v-for="ic in scope.row.intelligenceContent" >
-                <div v-if="ic.type === 1">
-                  <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag--small entity-tag--level-two-negative margin-r-6">
-                    {{ic.value}}
-                  </div>
-                  <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag--small entity-tag--level-two-normal margin-r-6">
-                    {{ic.value}}
-                  </div>
-                  <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag--small entity-tag--level-two-positive margin-r-6">
-                    {{ic.value}}
+              </div>
+              <div class="information-aggregation-tags">
+                <div v-for="ic in scope.row.intelligenceContent" >
+                  <div v-if="ic.type === 1">
+                    <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag--small entity-tag--level-two-negative margin-r-6">
+                      {{ic.value}}
+                    </div>
+                    <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag--small entity-tag--level-two-normal margin-r-6">
+                      {{ic.value}}
+                    </div>
+                    <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag--small entity-tag--level-two-positive margin-r-6">
+                      {{ic.value}}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-              key="status"
-              width="150px"
-              :label="$t('entities.tab.informationAggregation.status')"
-              prop="status"
-      >
-        <template #default="scope">
-          <div v-if="scope.row.status === 1" class="information-aggregation__valid">
-            有效
-          </div>
-          <div v-else-if="scope.row.status === 0" class="information-aggregation__invalid">
-            无效
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column
+            key="status"
+            width="150px"
+            :label="$t('entities.tab.informationAggregation.status')"
+            prop="status"
+        >
+          <template #default="scope">
+            <div v-if="scope.row.status === 1" class="information-aggregation__valid">
+              有效
+            </div>
+            <div v-else-if="scope.row.status === 0" class="information-aggregation__invalid">
+              无效
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
@@ -87,7 +93,9 @@ export default {
   name: 'InformationAggregation',
   data () {
     return {
-      informationAggregationList: []
+      informationAggregationList: [],
+      errorMsg: '',
+      showError: false
     }
   },
   mixins: [chartMixin],

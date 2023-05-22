@@ -1,11 +1,15 @@
 <template>
-  <chart-no-data v-if="isNoData && !showError"></chart-no-data>
-  <div class="type-data__column">
-    <div class="type-data">
-      <div class="type-title">
-        <span class="title-mark" ></span>{{ $t('entities.tab.currentDevelopmentPortsAndServices') }}&nbsp;&nbsp;(5)</div>
-      <div class="type-content">
-        <div v-for="openPort in openPortList" class="data-item">{{openPort}}</div>
+  <div>
+    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+    <chart-no-data v-if="isNoData && !showError"></chart-no-data>
+
+    <div v-if="!showError && !isNoData && !loading" class="type-data__column">
+      <div class="type-data">
+        <div class="type-title">
+          <span class="title-mark" ></span>{{ $t('entities.tab.currentDevelopmentPortsAndServices') }}&nbsp;&nbsp;(5)</div>
+        <div class="type-content">
+          <div v-for="openPort in openPortList" class="data-item">{{openPort}}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -26,7 +30,9 @@ export default {
   data () {
     return {
       openPortList: [],
-      showError: false
+      showError: false,
+      errorMsg: '',
+      loading: true
     }
   },
   mounted () {
@@ -64,6 +70,7 @@ export default {
       }
 
       this.toggleLoading(true)
+      this.loading = true
       axios.get(api.entity.openPort, { params: params }).then(response => {
         const res = response.data
         if (res.code === 200) {
@@ -80,6 +87,7 @@ export default {
         this.httpError(e)
       }).finally(() => {
         this.toggleLoading(false)
+        this.loading = false
       })
     },
     httpError (e) {

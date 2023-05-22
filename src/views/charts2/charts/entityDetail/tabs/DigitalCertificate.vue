@@ -1,9 +1,9 @@
 <template>
   <div>
-    <chart-error v-if="showError" :content="errorMsg" style="margin-top: 18px;margin-left: 8px;"></chart-error>
+    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
     <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
-    <div class="digital-certificate" v-if="!showError && !isNoData" :style="{width: moreCertificatesWidth}">
+    <div v-if="!isNoData && !showError && !loading" class="digital-certificate" :style="{width: moreCertificatesWidth}">
       <div class="digital-certificate-header">
         <div class="digital-certificate-header__icon"></div>
         <div class="digital-certificate-header-name">
@@ -51,9 +51,9 @@ export default {
   data () {
     return {
       showError: false,
-      isNoData: false,
       infoList: [],
-      errorMsg: ''
+      errorMsg: '',
+      loading: true // 添加loading，为了避免初始化loading时，标题显示，而在loading结束error出现时标题隐藏，导致闪一下的效果
     }
   },
   mixins: [chartMixin],
@@ -88,6 +88,7 @@ export default {
         name: this.entityName // 实体名称
       }
 
+      this.loading = true
       this.toggleLoading(true)
       // todo 接口、数据不明确，故没有模拟mock数据，后续此处需修改
       axios.get(api.entity.performanceEvent, { params: params }).then(response => {
@@ -160,6 +161,7 @@ export default {
         console.error(e)
         this.httpError(e)
       }).finally(() => {
+        this.loading = false
         this.toggleLoading(false)
       })
     },

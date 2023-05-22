@@ -1,25 +1,29 @@
 <template>
-  <chart-no-data v-if="isNoData && !showError"></chart-no-data>
-  <div class="type-data__column">
-    <div class="type-data">
-      <div class="type-title">
-        <span class="title-mark" ></span>{{ $t('entities.tab.relatedApp') }}&nbsp;&nbsp;({{relatedAppList.length}})</div>
-      <div class="type-content">
-        <div v-for="entity in relatedAppList" class="data-item">{{entity.appName?entity.appName:entity}}</div>
+  <div>
+    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+    <chart-no-data v-if="isNoData && !showError"></chart-no-data>
+
+    <div v-if="!isNoData && !showError && !loading" class="type-data__column">
+      <div class="type-data">
+        <div class="type-title">
+          <span class="title-mark" ></span>{{ $t('entities.tab.relatedApp') }}&nbsp;&nbsp;({{relatedAppList.length}})</div>
+        <div class="type-content">
+          <div v-for="entity in relatedAppList" class="data-item">{{entity.appName?entity.appName:entity}}</div>
+        </div>
       </div>
-    </div>
-    <div class="type-data">
-      <div class="type-title">
-        <span class="title-mark" ></span>{{ $t('entities.tab.relatedIp') }}&nbsp;&nbsp;({{relatedIpList.length}})</div>
-      <div class="type-content">
-        <div v-for="entity in relatedIpList" class="data-item">{{entity.ip?entity.ip:entity}}</div>
+      <div class="type-data">
+        <div class="type-title">
+          <span class="title-mark" ></span>{{ $t('entities.tab.relatedIp') }}&nbsp;&nbsp;({{relatedIpList.length}})</div>
+        <div class="type-content">
+          <div v-for="entity in relatedIpList" class="data-item">{{entity.ip?entity.ip:entity}}</div>
+        </div>
       </div>
-    </div>
-    <div class="type-data">
-      <div class="type-title">
-        <span class="title-mark" ></span>{{ $t('entities.tab.relatedDomain') }}&nbsp;&nbsp;({{relatedDomainList.length}})</div>
-      <div class="type-content">
-        <div v-for="entity in relatedDomainList"  class="data-item">{{entity.domain?entity.domain:entity}}</div>
+      <div class="type-data">
+        <div class="type-title">
+          <span class="title-mark" ></span>{{ $t('entities.tab.relatedDomain') }}&nbsp;&nbsp;({{relatedDomainList.length}})</div>
+        <div class="type-content">
+          <div v-for="entity in relatedDomainList"  class="data-item">{{entity.domain?entity.domain:entity}}</div>
+        </div>
       </div>
     </div>
   </div>
@@ -42,7 +46,9 @@ export default {
       relatedAppList: [],
       relatedIpList: [],
       relatedDomainList: [],
-      showError: false
+      showError: false,
+      errorMsg: '',
+      loading: true
     }
   },
   mounted () {
@@ -79,6 +85,7 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         ip: '116.178.70.242'
       }
+      this.loading = true
       this.toggleLoading(true)
       const relatedApp = new Promise(resolve => {
         axios.get(api.entity.domainNameResolutionRelatedApp, { params: params }).then(response => {
@@ -140,6 +147,7 @@ export default {
       })
       Promise.all([relatedApp, relatedIp, relatedDomain]).finally(response => {
         this.toggleLoading(false)
+        this.loading = false
       })
     },
     httpError (e) {
