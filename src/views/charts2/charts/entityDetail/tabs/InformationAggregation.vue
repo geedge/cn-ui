@@ -81,6 +81,8 @@
 </template>
 
 <script>
+import chartMixin from '@/views/charts2/chart-mixin'
+
 export default {
   name: 'InformationAggregation',
   data () {
@@ -88,6 +90,7 @@ export default {
       informationAggregationList: []
     }
   },
+  mixins: [chartMixin],
   methods: {
     intelligenceContentClass ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 2) {
@@ -96,6 +99,12 @@ export default {
     }
   },
   mounted () {
+    this.toggleLoading(true)
+    // 模拟loading，后续添加post请求时记得删除
+    const timer = setTimeout(() => {
+      this.toggleLoading(false)
+      clearTimeout(timer)
+    }, 150)
     this.informationAggregationList = [
       {
         discoveryTime: '2022-04-12',

@@ -8,15 +8,15 @@
           :name="tab.name"
           class="tab-pane--border-card">
         <template #label>
-<!--          <div class="el-tabs__active-bar is-top" style="width: 80.9998px; transform: translateX(177px);"></div>-->
+          <!--<div class="el-tabs__active-bar is-top" style="width: 80.9998px; transform: translateX(177px);"></div>-->
           <i :class="tab.icon"></i>{{tab.label}}
         </template>
-        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation"></information-aggregation>
-        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution"></domain-name-resolution>
-        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate" />
-        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent" :timeFilter="timeFilter" />
-        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent" />
-        <open-port v-else-if="tab.name === entityDetailTabsName.openPort"></open-port>
+        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading"></information-aggregation>
+        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution && tab.name === activeTab" @toggleLoading="setLoading"></domain-name-resolution>
+        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" />
+        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="timeFilter" />
+        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" />
+        <open-port v-else-if="tab.name === entityDetailTabsName.openPort && tab.name === activeTab" @toggleLoading="setLoading"></open-port>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -60,7 +60,7 @@ export default {
     }
   },
   mounted () {
-    this.toggleLoading(false)
+    // this.toggleLoading(false)
     this.timer = setTimeout(() => {
       this.handleActiveBar(this.activeTab)
     }, 200)
@@ -108,6 +108,9 @@ export default {
         const activeBar = document.querySelector('.entity-detail-tabs .entity-detail-tabs__active-bar')
         activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + clientLeft - 1}px;`
       }
+    },
+    setLoading (loading) {
+      this.toggleLoading(loading)
     }
   },
   beforeUnmount () {
