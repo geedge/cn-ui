@@ -416,12 +416,24 @@ export default {
     }
     let localStorageTableTitle = localStorage.getItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId)
     localStorageTableTitle = localStorageTableTitle ? JSON.parse(localStorageTableTitle) : this.$refs.dataTable.tableTitle
-    this.tools.customTableTitle = this.$refs.dataTable.tableTitle.map((item, index) => { // 修复切换中英文的问题
-      if (localStorageTableTitle[index]) {
-        item.show = localStorageTableTitle[index].show
+    // this.tools.customTableTitle = this.$refs.dataTable.tableTitle.map((item, index) => { // 修复切换中英文的问题
+    //   if (localStorageTableTitle[index]) {
+    //     item.show = localStorageTableTitle[index].show
+    //   }
+    //   return item
+    // })
+
+    // 不够优美，后续修改
+    // 为了避免缓存里的label在切换中英文时不一致，因为在拖拽后，键值不一致了，故根据prop匹配来修改label
+    for (let i = 0; i < localStorageTableTitle.length; i++) {
+      for (let j = 0; j < this.tools.customTableTitle.length; j++) {
+        if (localStorageTableTitle[i].prop === this.tools.customTableTitle.prop) {
+          localStorageTableTitle[i].label = this.tools.customTableTitle.label
+          break
+        }
       }
-      return item
-    })
+    }
+    this.tools.customTableTitle = localStorageTableTitle
     if (localStorageTableTitle && (localStorageTableTitle.length > this.$refs.dataTable.tableTitle.length)) {
       const arr = localStorageTableTitle.splice(this.$refs.dataTable.tableTitle.length, localStorageTableTitle.length)
       this.tools.customTableTitle = this.tools.customTableTitle.concat(arr)

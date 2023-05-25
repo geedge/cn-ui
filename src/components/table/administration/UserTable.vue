@@ -17,8 +17,8 @@
       width="55">
     </el-table-column>
     <el-table-column
-      v-for="item in customTableTitles"
-      :key="item.prop"
+      v-for="(item, index) in customTableTitles"
+      :key="item.prop+index"
       :fixed="item.fixed"
       :label="item.label"
       :min-width="`${item.minWidth}`"
@@ -51,12 +51,12 @@
         </template>
         <template v-else-if="item.prop === 'status'">
           <el-switch
-                  v-if="scope.row.id"
-                  v-model="scope.row.status"
-                  active-value="1"
-                  :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id==1) "
-                  inactive-value="0"
-                  @change="()=>{statusChange(scope.row)}">
+              v-if="scope.row.id"
+              v-model="scope.row.status"
+              active-value="1"
+              :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id==1) "
+              inactive-value="0"
+              @change="()=>{statusChange(scope.row)}">
           </el-switch>
         </template>
         <span v-else>{{scope.row[item.prop]}}</span>
