@@ -68,7 +68,10 @@
         </div>
         <div class="add-app__body">
           <el-tabs v-model="appTypeTab" @tab-click="appTypeTabChange">
-            <el-tab-pane :label="$t('network.providers')" :name="0">
+            <el-tab-pane :name="0">
+              <template #label>
+                <i class="cn-icon cn-icon-providers"></i>&nbsp;&nbsp;{{$t('network.providers')}}
+              </template>
               <div class="body__apps" :class="{'body__apps-no-grid': providerOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
                 <chart-no-data v-if="providerOptions.length === 0 && !loadingBody" test-id="noData"></chart-no-data>
@@ -85,7 +88,10 @@
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane :label="$t('networkOverview.appType.app')" :name="1">
+            <el-tab-pane :name="1">
+              <template #label>
+                <i class="cn-icon cn-icon-app-name"></i>&nbsp;&nbsp;{{$t('networkOverview.appType.app')}}
+              </template>
               <div class="body__apps" :class="{'body__apps-no-grid': appOptions.length === 0}">
                 <loading :loading="loadingBody"></loading>
                 <chart-no-data v-if="appOptions.length === 0 && !loadingBody"></chart-no-data>

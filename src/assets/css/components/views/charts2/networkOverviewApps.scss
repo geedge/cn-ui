@@ -256,7 +256,15 @@
           position: relative;
         }
         .el-tabs__item.is-top {
-          height: 32px;
+          height: 50px;
+          line-height: 60px;
+
+          &.is-active {
+            color: #046eca;
+          }
+        }
+        .el-tabs__active-bar {
+          background-color: #306DC2;
         }
         .el-tabs__item.is-top:nth-child(2) {
           padding: 0;
@@ -264,7 +272,7 @@
         .body__searcher {
           position: absolute;
           right: 28px;
-          top: 9px;
+          top: 11px;
           width: 280px;
           .el-input.el-input--mini {
             .el-input__inner {
@@ -282,9 +290,9 @@
             }
           }
         }
-        .el-tabs__nav-wrap::after {
+        /*.el-tabs__nav-wrap::after {
           height: 0;
-        }
+        }*/
         .el-tabs__header {
           padding-left: 20px;
         }
