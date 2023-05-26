@@ -22,7 +22,7 @@
             <el-date-picker
                 v-model="newDateValue"
                 ref="newDatePicker"
-                class="date_style"
+                popper-class="my-date-picker"
                 style="position: absolute;top: -53px;left: -536px;"
                 :clearable="false"
                 :default-time="defaultTime"
@@ -216,11 +216,6 @@ export default {
         new Date(...timestampToList(myEndTime.value))
       ]
       newDatePicker.value.focus()
-
-      // todo 此处为弹窗打开的方向标识，控制css的position修改其left与top属性未生效，只好隐藏，后续有更好的处理办法再修改
-      const dom = document.getElementsByClassName('el-picker__popper el-popper is-light is-pure')
-      const dom1 = dom[0].getElementsByClassName('el-popper__arrow')
-      dom1[0].style.display = 'none'
     }
     /**
      * 时间选择器，选择时间，点击OK后的回调
