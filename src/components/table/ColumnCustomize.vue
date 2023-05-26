@@ -103,14 +103,19 @@ export default {
         this.lastIndex = index
         this.custom[index].disabled = true
       } else if (this.lastIndex > -1) {
-        this.custom[this.lastIndex].disabled = false
+        this.custom.forEach(item => {
+          // 该方案仅用于原始table列表无禁用的情况，目前无原始列表禁用的情况，后续有原始列表禁用的情况再修改
+          item.disabled = false
+        })
         this.lastIndex = -1
       }
       this.save()
     },
+    /** 开始拖拽，获取键值 */
     dragstart (index) {
       this.dragIndex = index
     },
+    /** 获取拖拽键值，修改数组，将数组保存到本地 */
     dragenter (e, index) {
       e.preventDefault()
       if (this.dragIndex !== index) {
