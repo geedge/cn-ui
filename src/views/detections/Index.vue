@@ -289,13 +289,9 @@ export default {
           data.forEach(item => {
             if (item.eventSeverity) {
               if (!dataMap.has(item.eventSeverity)) {
-                // todo 暂时保留原来的，后续若使用新版，则删除该注释
-                // const count = [[rTime(item.statTime), item.count]]
                 const count = [[toTime(item.statTime), item.count]]
                 dataMap.set(item.eventSeverity, count)
               } else {
-                // 原来的
-                // dataMap.get(item.eventSeverity).push([rTime(item.statTime), item.count])
                 dataMap.get(item.eventSeverity).push([toTime(item.statTime), item.count])
               }
             }
@@ -318,24 +314,17 @@ export default {
             const seriesData = []
             xData.forEach(item => {
               if (dataMap.has(serie.name)) {
-                // todo 下面这行注释可解决eslint报红线的问题，暂不知道原因，后续解决
                 // eslint-disable-next-line array-callback-return
                 const hasX = dataMap.get(serie.name).some(function (v) {
                   if (item === v[0]) {
-                    // 原来的
-                    // seriesData.push(Number(v[1]))
                     seriesData.push([item, Number(v[1])])
                     return true
                   }
                 })
                 if (!hasX) {
-                  // 原来的
-                  // seriesData.push(0)
                   seriesData.push([item, 0])
                 }
               } else {
-                // 原来的
-                // seriesData.push(0)
                 seriesData.push([item, 0])
               }
             })
@@ -343,8 +332,7 @@ export default {
           })
 
           // eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
-          // 原来的
-          // eventSeverityTrendOption.xAxis.data = xData
+
           eventSeverityTrendOption.xAxis = [{
             type: 'time',
             splitNumber: 8
