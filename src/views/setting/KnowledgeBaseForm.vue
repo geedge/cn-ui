@@ -241,7 +241,7 @@ export default {
     const nameAndLabelDuplicateValidator = (rule, value, callback) => {
       let validate = true
       let index = -1 // 当前编辑的键值index
-      // todo 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
+      // 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
       const findData = this.importedData.find((item, i) => {
         index = i
         return (item.tagItem === this.editTagForm.tagItem && item.tagValue === this.editTagForm.tagValue)

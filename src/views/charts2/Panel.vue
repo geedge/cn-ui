@@ -205,7 +205,7 @@ export default {
     }
   },
   setup (props) {
-    // todo 目前在panel页面测试，后续会挪到router里
+    // router引入store会报错，故在panel里调用
     const store = useStore()
     const cancelList = store.state.panel.httpCancel
 

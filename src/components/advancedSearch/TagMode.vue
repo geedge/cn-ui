@@ -298,7 +298,6 @@ export default {
       }
     },
     search () {
-      console.log('???????', this.metaList)
       if (this.metaList.length > 0) {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
@@ -391,7 +390,6 @@ export default {
     const vm = this
     this.emitter.on('advanced-search', function () {
       vm.search()
-      console.log('打印', this.metaList)
     })
   },
   watch: {
