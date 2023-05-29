@@ -1,5 +1,9 @@
 import { config } from '@vue/test-utils'
-
+var BASE_CONFIG = {
+  baseUrl: 'http://192.168.44.54:8091/',
+  version: '23.06',
+  apiVersion: 'v1'
+}
 /* 开启测试 */
 config.global.mocks.isUnitTesting = true
 /* 初始化dayjs */
@@ -13,6 +17,7 @@ dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
 dayjs.extend(weekday)
 window.$dayJs = dayjs
+window.BASE_CONFIG = BASE_CONFIG
 // 引入 lodash 工具 模拟 lodash
 const _ = require('lodash') // lodash工具
 
