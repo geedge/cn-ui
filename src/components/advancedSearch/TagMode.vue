@@ -29,7 +29,7 @@
               ></el-option>
             </el-select>
           </div>
-          <span v-show="!meta.column.isEditing" @click="columnClick(meta)">{{meta.column.label}}</span>
+          <span v-show="!meta.column.isEditing" @click="columnClick(meta, index)">{{meta.column.label}}</span>
         </div>
         <!-- 已选操作符显示 -->
         <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show">{{meta.operator.value}}</div>
@@ -38,7 +38,7 @@
           <div v-if="meta.value.isEditing">
             <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput" @keyup.enter="valueBlur(meta)"></el-input>
           </div>
-          <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
+          <span v-else @click="valueClick(meta, index)">{{meta.value.label}}</span>
         </div>
         <!-- 操作符选择器 -->
         <div class="condition__operation-select" v-if="meta.operator.show && meta.operator.isEditing">
@@ -131,7 +131,10 @@ export default {
         this.metaList.push(newCondition)
 
         this.$nextTick(() => {
-          this.$refs.columnSelect.focus()
+          const selectList = this.$refs.columnSelect
+          if (selectList && selectList.length > 0) {
+            this.$refs.columnSelect[selectList.length - 1].focus() // 在for循环里生成的dom，所以是数组
+          }
         })
       }
     },
@@ -178,10 +181,10 @@ export default {
     selectConnection (value, meta) {
       meta.isEditing = false
     },
-    columnClick (meta) {
+    columnClick (meta, index) {
       meta.column.isEditing = true
       this.$nextTick(() => {
-        this.$refs.columnSelect.focus()
+        this.$refs.columnSelect[index].focus()
       })
     },
     columnBlur (meta, index) {
@@ -220,7 +223,10 @@ export default {
         }
       }
       this.$nextTick(() => {
-        this.$refs.valueInput.focus()
+        const selectList = this.$refs.valueInput
+        if (selectList && selectList.length > 0) {
+          this.$refs.valueInput[selectList.length - 1].focus() // 在for循环里生成的dom，所以是数组
+        }
       })
     },
     operatorClick (meta) {
@@ -273,10 +279,10 @@ export default {
       }
       meta.value.isEditing = !meta.isCompleteCondition()
     },
-    valueClick (meta) {
+    valueClick (meta, index) {
       meta.value.isEditing = true
       this.$nextTick(() => {
-        this.$refs.valueInput.focus()
+        this.$refs.valueInput[index].focus()
       })
     },
     // 判断是否是用户自己添加的内容，用于判断是否是全局搜索
@@ -292,6 +298,7 @@ export default {
       }
     },
     search () {
+      console.log('???????', this.metaList)
       if (this.metaList.length > 0) {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
@@ -384,6 +391,7 @@ export default {
     const vm = this
     this.emitter.on('advanced-search', function () {
       vm.search()
+      console.log('打印', this.metaList)
     })
   },
   watch: {
