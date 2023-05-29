@@ -18,11 +18,17 @@
               <i class="cn-icon-xinjian cn-icon"></i>
               <span>{{$t('overall.create')}}</span>
             </button>
-            <button v-if="listMode === 'block'" id="knowledge-base-edit" :title="$t('knowledgeBase.select')" class="top-tool-btn margin-r-10"
+            <button v-if="listMode === 'block'" id="knowledge-base-select" :title="$t('knowledgeBase.select')" class="top-tool-btn margin-r-10"
                     style="width:72px;"
                     @click="toSelect">
               <i class="cn-icon-select cn-icon" ></i>
               <span>{{$t('overall.select')}}</span>
+            </button>
+            <button v-if="listMode === 'list'" id="knowledge-base-edit" :title="$t('knowledgeBase.editKnowledgeBase')" class="top-tool-btn margin-r-10"  :disabled="disableEdit"
+                    style="width:72px;"
+                    @click="editSelectRecord">
+              <i class="cn-icon-edit cn-icon" ></i>
+              <span>{{$t('overall.edit')}}</span>
             </button>
             <button id="knowledge-base-delete" :title="$t('knowledgeBase.deleteKnowledgeBase')" class="top-tool-btn margin-r-10"
                     style="width:72px;" :disabled="disableDelete"
@@ -39,8 +45,8 @@
           </div>
           <div class="top-tools__right" >
             <el-button-group size="mini">
-              <el-button size="mini" @click="listMode = 'list'" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
-              <el-button size="mini" @click="listMode = 'block'" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
+              <el-button size="mini" @click="modeChange('list')" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
+              <el-button size="mini" @click="modeChange('block')" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
             </el-button-group>
           </div>
         </div>
@@ -68,7 +74,7 @@
         <template v-else-if="listMode === 'block'">
           <div class="list-mode__card" >
             <knowledge-base-table-for-card
-                    ref="dataTable"
+                    ref="dataTableCard"
                     v-loading="tools.loading"
                     :api="url"
                     :custom-table-title="tools.customTableTitle"
@@ -110,9 +116,10 @@
               type="selection"
               width="50">
       </el-table-column>
-      <el-table-column property="id" label="ID" width="112"></el-table-column>
-      <el-table-column property="tagType" label="Type" width="112"></el-table-column>
-      <el-table-column property="tagName" label="Name"></el-table-column>
+      <el-table-column property="knowledgeId" label="ID" width="50"></el-table-column>
+      <el-table-column property="category" label="Category" width="100"></el-table-column>
+      <el-table-column property="source" label="Source" width="110"></el-table-column>
+      <el-table-column property="name" label="Name"></el-table-column>
     </el-table>
     <template #footer>
         <span class="dialog-footer">
@@ -128,6 +135,7 @@ import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTableForCard from '@/components/table/setting/knowledgeBaseTableForCard'
 import KnowledgeBaseTableForRow from '@/components/table/setting/KnowledgeBaseTableForRow'
 import { api } from '@/utils/api'
+import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import axios from 'axios'
 import KnowledgeFilter from '@/views/setting/KnowledgeFilter'
 
@@ -143,6 +151,7 @@ export default {
   data () {
     return {
       url: api.knowledgeBase,
+      listUrl: api.knowledgeBaseList,
       tableId: 'knowledgeBaseTable', // 需要分页的table的id，用于记录每页数量
       isSelectedStatus: false,
       keyWord: '',
@@ -176,12 +185,53 @@ export default {
     secondSelectionChange (objs) {
       this.secondBatchDeleteObjs = objs
     },
-
+    selectionChange (objs) {
+      this.batchDeleteObjs = []
+      objs.forEach(obj => {
+        const delObj = this.batchDeleteObjs.find(item => item.knowledgeId === obj.knowledgeId)
+        if (delObj === undefined) {
+          this.batchDeleteObjs.push(obj)
+        }
+      })
+      if (this.batchDeleteObjs.length > 1) {
+        this.disableEdit = true
+      } else {
+        this.disableEdit = false
+      }
+      if (this.batchDeleteObjs.length >= 1) {
+        this.disableDelete = false
+      } else {
+        this.disableDelete = true
+      }
+    },
+    checkboxStatusChange (isCheck, data) {
+      if (isCheck) {
+        const delObj = this.batchDeleteObjs.find(item => item.knowledgeId === data.knowledgeId)
+        if (delObj === undefined) {
+          this.batchDeleteObjs.push(data)
+        }
+      } else {
+        const cancleObjIndex = this.batchDeleteObjs.findIndex(item => item.knowledgeId === data.knowledgeId)
+        if (cancleObjIndex > -1) {
+          this.batchDeleteObjs.splice(cancleObjIndex, 1)
+        }
+      }
+      if (this.batchDeleteObjs.length > 1) {
+        this.disableEdit = true
+      } else {
+        this.disableEdit = false
+      }
+      if (this.batchDeleteObjs.length >= 1) {
+        this.disableDelete = false
+      } else {
+        this.disableDelete = true
+      }
+    },
     delBatchKnowledge () {
       const ids = []
       if (this.secondBatchDeleteObjs && this.secondBatchDeleteObjs.length > 0) {
         this.secondBatchDeleteObjs.forEach(item => {
-          ids.push(item.id)
+          ids.push(item.knowledgeId)
         })
       }
       if (ids.length === 0) {
@@ -191,7 +241,7 @@ export default {
         }).catch(() => {})
       } else {
         this.tools.loading = true
-        axios.delete(this.url + '?ids=' + ids).then(response => {
+        axios.delete(this.url + '?knowledgeIds=' + ids).then(response => {
           if (response.data.code === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
@@ -260,7 +310,7 @@ export default {
       this.pageObj.total = 0
     },
     toSelect () {
-      this.$refs.dataTable.clearSelect()
+      this.$refs.dataTableCard.clearSelect()
       this.isSelectedStatus = !this.isSelectedStatus
       this.disableDelete = true
       this.batchDeleteObjs = []
@@ -273,17 +323,23 @@ export default {
           type: 'warning'
         }).catch(() => {})
       } else {
-        this.jumpToEditPage(this.batchDeleteObjs[0].id)
+        this.jumpToEditPage(this.batchDeleteObjs[0].knowledgeId)
       }
     },
     toDelete (data) {
-      if (data && data.id) {
+      if (data && data.knowledgeId) {
         this.secondBatchDeleteObjs = []
         this.batchDeleteObjs = []
         this.secondBatchDeleteObjs.push(data)
         this.batchDeleteObjs.push(data)
       }
       this.showDelDialog()
+    },
+    modeChange (mode) {
+      this.listMode = mode
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, { listMode: mode })
+      overwriteUrl(newUrl)
     },
     del (row) {
       this.$confirm(this.$t('tip.confirmDelete'), {
@@ -292,7 +348,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.tools.loading = true
-        axios.delete(this.url + '?ids=' + row.id).then(response => {
+        axios.delete(this.url + '?knowledgeIds=' + row.id).then(response => {
           if (response.data.code === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
@@ -317,7 +373,8 @@ export default {
         path: '/knowledgeBase/edit',
         query: {
           t: +new Date(),
-          id: id
+          id: id,
+          listMode: this.listMode
         }
       })
     },
@@ -325,13 +382,15 @@ export default {
       this.$router.push({
         path: '/knowledgeBase/create',
         query: {
-          t: +new Date()
+          t: +new Date(),
+          listMode: this.listMode
         }
       })
     }
   },
   mounted () {
-
+    const curMode = this.$router.currentRoute.value.query.listMode
+    this.listMode = curMode || 'list'
   },
   computed: {
   }

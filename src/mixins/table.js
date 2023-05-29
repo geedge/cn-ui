@@ -1,5 +1,7 @@
 import { chartTableOrderOptionsMapping, storageKey } from '@/utils/constants'
 import { getWidthByLanguage } from '@/utils/tools'
+import { put, patch } from '@/utils/http'
+import { api } from '@/utils/api'
 export default {
   props: {
     tableData: {
@@ -98,6 +100,21 @@ export default {
           }
         })
       }
+    },
+    changeStatus (status, id) {
+      const statusNum = status ? 1 : 0
+      patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: 0 }] }).then(response => {
+        if (response.code === 200) {
+
+        } else {
+          console.error(response)
+          if (response.message) {
+            this.$message.error(response.message)
+          } else {
+            this.$message.error('Something went wrong...')
+          }
+        }
+      })
     },
     tableOperation ([command, row]) {
       switch (command) {

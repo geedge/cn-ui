@@ -74,29 +74,6 @@ export default {
           break
       }
     },
-    checkboxStatusChange (isCheck, data) {
-      if (isCheck) {
-        const delObj = this.batchDeleteObjs.find(item => item.id === data.id)
-        if (delObj === undefined) {
-          this.batchDeleteObjs.push(data)
-        }
-      } else {
-        const cancleObjIndex = this.batchDeleteObjs.findIndex(item => item.id === data.id)
-        if (cancleObjIndex > -1) {
-          this.batchDeleteObjs.splice(cancleObjIndex, 1)
-        }
-      }
-      if (this.batchDeleteObjs.length > 1) {
-        this.disableEdit = true
-      } else {
-        this.disableEdit = false
-      }
-      if (this.batchDeleteObjs.length >= 1) {
-        this.disableDelete = false
-      } else {
-        this.disableDelete = true
-      }
-    },
     selectionChange (objs) {
       this.batchDeleteObjs = []
       objs.forEach(obj => {
@@ -120,7 +97,8 @@ export default {
       if (isAll) {
         this.searchLabel = null
       } else if (isClearType) {
-        this.searchLabel.tagType = ''
+        // this.searchLabel.tagType = ''
+        this.searchLabel.type = ''// 换新接口需要修改的属性名称
       }
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
@@ -136,7 +114,7 @@ export default {
         this.tools.loading = false
         if (response.code === 200) {
           for (let i = 0; i < response.data.list.length; i++) {
-            response.data.list[i].status = response.data.list[i].status + ''
+            response.data.list[i].status = response.data.list[i].status === 1
           }
           this.tableData = response.data.list
           this.pageObj.total = response.data.total
@@ -364,7 +342,7 @@ export default {
     },
     dragend () {
       this.$nextTick(() => {
-        if (this.$refs.dataTable.$refs.dataTable) {
+        if (this.$refs.dataTable && this.$refs.dataTable.$refs.dataTable) {
           this.$refs.dataTable.$refs.dataTable.doLayout()
         }
       })

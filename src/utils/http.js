@@ -142,6 +142,21 @@ export function put (url, params, headers) {
   })
 }
 
+export function patch (url, params, headers) {
+  return new Promise((resolve) => {
+    axios.patch(url, params, { headers: headers }).then(response => {
+      resolve(response.data, response)
+    }).catch(err => {
+      if (err.response) {
+        resolve(err.response.data)
+        console.error(err)
+      } else if (err.message) {
+        resolve(err.message)
+      }
+    })
+  })
+}
+
 export function del (url, params) {
   return new Promise((resolve) => {
     axios.delete(url, params).then(response => {

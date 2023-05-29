@@ -1,29 +1,32 @@
 <template>
   <el-checkbox-group v-model="checkList">
-    <div @click="isSelectedStatus && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.id" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
+    <div @click="isSelectedStatus && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.knowledgeId" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
       <div class="card-content">
         <div class="card-title">
-          <div class="card-title-name" :title="data.tagName">{{data.tagName}}</div>
+          <div class="card-title-name" :title="data.name">{{data.name}}</div>
           <div class="card-title-more">
             <span v-show="!isSelectedStatus && data.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(data)" test-id="mouseenter-dark"></i></span>
             <div class="card-operate" v-show="!isSelectedStatus && data.moreOptions" @mouseleave="mouseleaveMore(data)">
-              <div class="card-title-more-edit" @click="edit(data.id)" >{{$t('overall.edit')}}</div>
+              <div class="card-title-more-edit" @click="edit(data.knowledgeId)" >{{$t('overall.edit')}}</div>
               <div class="card-title-more-delete" @click="del(data)" >{{$t('overall.delete')}}</div>
             </div>
-            <el-checkbox @click.stop="" @change="(val) => {checkboxStatusChange(val,data)}" style="position: absolute;right: -12px;" v-if="isSelectedStatus" :key="data.id" :label="data"><br></el-checkbox>
+            <el-checkbox @click.stop="" @change="(val) => {checkboxStatusChange(val,data)}" style="position: absolute;right: -12px;" v-if="isSelectedStatus" :key="data.knowledgeId" :label="data"><br></el-checkbox>
 
           </div>
         </div>
-        <div class="card-id">ID:{{data.id}}</div>
-        <div class="card-desc" :title="data.remark">{{data.remark?data.remark:'—'}}</div>
+        <div class="card-id">ID:{{data.knowledgeId}}</div>
+        <div class="card-desc" :title="data.description">{{data.description?data.description:'—'}}</div>
       </div>
       <div class="card-operate__footer">
-        <div class="card-type">{{data.tagType}}</div>
+        <div class="card-type">
+          <div class="card-category">{{tagCategoryText(data.category)}}</div>
+          <div class="card-source">{{tagSourceText(data.source)}}</div>
+        </div>
         <el-switch class="card-enable"
-                   disabled
                    v-model="data.status"
                    active-color="#38ACD2"
                    inactive-color="#C0CEDB"
+                   @change="changeStatus($event,data.knowledgeId)"
         >
         </el-switch>
       </div>
@@ -33,7 +36,7 @@
 
 <script>
 import table from '@/mixins/table'
-import { knowledgeBaseType } from '@/utils/constants'
+import { knowledgeBaseCategory, knowledgeBaseSource } from '@/utils/constants'
 export default {
   name: 'knowledgeBaseTableForCard',
   mixins: [table],
@@ -53,7 +56,7 @@ export default {
       handler (n) {
         if (this.tableData && this.tableData.length > 0) {
           this.tableData.forEach(item => {
-            item.status = true
+            // item.status = true
           })
         }
       }
@@ -98,28 +101,28 @@ export default {
     },
     mouseenterMore (card) {
       this.tableData.forEach(t => {
-        if (t.id === card.id) {
+        if (t.knowledgeId === card.knowledgeId) {
           t.moreOptions = true
         }
       })
     },
     mouseleaveMore (card) {
       this.tableData.forEach(t => {
-        if (t.id === card.id) {
+        if (t.knowledgeId === card.knowledgeId) {
           t.moreOptions = false
         }
       })
     },
     mouseenter (card) {
       this.tableData.forEach(t => {
-        if (t.id === card.id) {
+        if (t.knowledgeId === card.knowledgeId) {
           t.showMore = true
         }
       })
     },
     mouseleave (card) {
       this.tableData.forEach(t => {
-        if (t.id === card.id) {
+        if (t.knowledgeId === card.knowledgeId) {
           t.showMore = false
           t.moreOptions = false
         }
@@ -130,12 +133,14 @@ export default {
     },
     edit (id) {
       const pageNo = this.$router.currentRoute.value.query.pageNo
+      const listMode = this.$router.currentRoute.value.query.listMode
       this.$router.push({
         path: '/knowledgeBase/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,
-          id: id
+          id: id,
+          listMode: listMode
         }
       })
     }
@@ -144,9 +149,23 @@ export default {
     this.tableData.forEach(item => {
       item.showMore = false
       item.moreOptions = false
-      item.status = true
+      // item.status = true
     })
   },
-  computed: {}
+  computed: {
+    tagCategoryText () {
+      return function (type) {
+        const t = knowledgeBaseCategory.find(t => t.value === type)
+        return t ? t.name : ''
+      }
+    },
+    tagSourceText () {
+      return function (type) {
+        const t = knowledgeBaseSource.find(t => t.value === type)
+        return t ? t.name : ''
+      }
+    }
+
+  }
 }
 </script>

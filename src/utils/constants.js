@@ -299,18 +299,97 @@ export const cycle = {
   pre: 1
 }
 
+export const itemListHeight = {
+  hasData: 478,
+  noData: 250
+}
+
 export const knowledgeBaseType = [
   {
-    name: 'IP',
-    value: 'ip'
+    label: 'IP',
+    value: 'cn_ip_tag_user_defined',
+    name: 'ip'
   },
   {
-    name: 'Domain',
-    value: 'domain'
+    label: 'Domain',
+    value: 'cn_domain_tag_user_defined',
+    name: 'domain'
   },
   {
-    name: 'APP',
-    value: 'app'
+    label: 'APP',
+    value: 'cn_app_tag_user_defined',
+    name: 'app'
+  }
+]
+
+export const knowledgeBaseCategory = [
+  {
+    name: 'WebSketch',
+    value: 'websketch'
+  },
+  {
+    name: 'AI Tagging',
+    value: 'ai_tagging'
+  },
+  {
+    name: 'User-defined',
+    value: 'user_defined'
+  }
+]
+
+export const knowledgeCategoryValue = {
+  webSketch: 'websketch',
+  aiTagging: 'ai_tagging',
+  userDefined: 'user_defined'
+}
+export const knowledgeSourceValue = {
+  fqdnCategory: 'cn_fqdn_category_built_in',
+  iocMalware: 'cn_ioc_malware',
+  iocDarkweb: 'cn_ioc_darkweb',
+  ipLocation: 'cn_ip_location_built_in',
+  asn: 'cn_ip_asn_built_in',
+  psiphon3: 'cn_psiphon3_ip',
+  ipTag: 'cn_ip_tag_user_defined',
+  domainTag: 'cn_domain_tag_user_defined',
+  appTag: 'cn_app_tag_user_defined'
+}
+
+export const knowledgeBaseSource = [
+  {
+    name: 'FQDN Category',
+    value: 'cn_fqdn_category_built_in'
+  },
+  {
+    name: 'Ioc Malware',
+    value: 'cn_ioc_malware'
+  },
+  {
+    name: 'Ioc Darkweb',
+    value: 'cn_ioc_darkweb'
+  },
+  {
+    name: 'IP Location',
+    value: 'cn_ip_location_built_in'
+  },
+  {
+    name: 'ASN',
+    value: 'cn_ip_asn_built_in'
+  },
+  {
+    name: 'Psiphon3',
+    value: 'cn_psiphon3_ip'
+  },
+  {
+    name: 'IP Tag',
+    value: 'cn_ip_tag_user_defined'
+  },
+  {
+    name: 'Domain Tag',
+    value: 'cn_domain_tag_user_defined'
+  },
+  {
+    name: 'APP Tag',
+    value: 'cn_app_tag_user_defined'
   }
 ]
 

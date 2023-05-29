@@ -33,21 +33,24 @@
         <div class="col-resize-area"></div>
       </template>
       <template  #default="scope" :column="item">
-        <template v-if="item.prop === 'name'">
+        <template v-if="item.prop === 'name'" >
           <template v-if="scope.row.i18n">
-            <span>{{$t(scope.row.i18n)}}</span>
+            <span :title="scope.row[item.prop]">{{$t(scope.row.i18n)}}</span>
           </template>
           <template v-else-if="scope.row.name">
-            <span>{{scope.row.name}}</span>
+            <span :title="scope.row[item.prop]">{{scope.row.name}}</span>
           </template>
           <template v-else>
             <span>-</span>
           </template>
         </template>
-        <template v-else-if="item.prop === 'tagType'">
-          <span class="type-tag">{{tagTypeText(scope.row[item.prop])}}</span>
+        <template v-else-if="item.prop === 'category'">
+          <span >{{tagCategoryText(scope.row[item.prop])}}</span>
         </template>
-        <template v-else-if="item.prop === 'utime' || item.prop === 'ctime'">
+        <template v-else-if="item.prop === 'source'">
+          <span class="type-tag">{{tagSourceText(scope.row[item.prop])}}</span>
+        </template>
+        <template v-else-if="item.prop === 'opTime' || item.prop === 'ctime'">
           <template v-if="scope.row[item.prop]">
             {{dateFormatByAppearance(scope.row[item.prop])}}
           </template>
@@ -63,8 +66,17 @@
             <span>-</span>
           </template>
         </template>
-        <template v-else-if="item.prop === 'remark'">
+        <template v-else-if="item.prop === 'description'">
           <span class="list-desc" :title="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
+        </template>
+        <template v-else-if="item.prop === 'status'">
+          <el-switch class="card-enable"
+                     v-model="scope.row['status']"
+                     active-color="#38ACD2"
+                     inactive-color="#C0CEDB"
+                     @change="changeStatus($event,scope.row.knowledgeId)"
+          >
+          </el-switch>
         </template>
         <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
@@ -74,7 +86,7 @@
 
 <script>
 import table from '@/mixins/table'
-import { knowledgeBaseType } from '@/utils/constants'
+import { knowledgeBaseCategory, knowledgeBaseSource } from '@/utils/constants'
 export default {
   name: 'KnowledgeBaseTableForRow',
   mixins: [table],
@@ -83,29 +95,36 @@ export default {
       tableTitle: [ // 原table列
         {
           label: 'ID',
-          prop: 'id',
+          prop: 'knowledgeId',
           show: true,
-          width: 100,
+          width: 60,
           sortable: 'custom'
         }, {
           label: this.$t('config.roles.name'),
-          prop: 'tagName',
+          prop: 'name',
+          minWidth: 100,
           show: true,
           sortable: 'custom'
         }, {
-          label: this.$t('overall.type'),
-          prop: 'tagType',
-          minWidth: 80,
+          label: this.$t('overall.category'),
+          prop: 'category',
+          width: 100,
+          show: true
+        }, {
+          label: this.$t('overall.source'),
+          prop: 'source',
+          width: 130,
           show: true
         }, {
           label: this.$t('overall.remark'),
-          prop: 'remark',
+          prop: 'description',
+          minWidth: 150,
           show: true
         },
         {
           label: this.$t('overall.createdBy'),
-          prop: 'cuser',
-          show: true
+          prop: 'opUser',
+          show: false
         },
         {
           label: this.$t('config.user.createTime'),
@@ -120,17 +139,29 @@ export default {
         },
         {
           label: this.$t('overall.updateTime'),
-          prop: 'utime',
-          show: false,
+          prop: 'opTime',
+          show: true,
           sortable: 'custom'
+        },
+        {
+          label: this.$t('knowledge.status'),
+          prop: 'status',
+          show: true,
+          minWidth: 40
         }
       ]
     }
   },
   computed: {
-    tagTypeText () {
+    tagCategoryText () {
       return function (type) {
-        const t = knowledgeBaseType.find(t => t.value === type)
+        const t = knowledgeBaseCategory.find(t => t.value === type)
+        return t ? t.name : ''
+      }
+    },
+    tagSourceText () {
+      return function (type) {
+        const t = knowledgeBaseSource.find(t => t.value === type)
         return t ? t.name : ''
       }
     }

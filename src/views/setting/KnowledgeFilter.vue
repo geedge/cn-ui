@@ -11,34 +11,17 @@
         </div>
         <el-collapse-transition>
           <div class="filter__body" v-show="!filter.collapse">
-            <el-checkbox style="padding-bottom: 5px;" label="all" v-if="index === 0" key="all" @change="handleCheckedAllChange" v-model="checkAll" :indeterminate="isIndeterminateModel">
-              <div class="filter__checkbox-label">
-                <div class="filter-label" style="">
-                  <span>All</span>
-                </div>
-                <div class="filter-count">{{allCount}}</div>
-              </div>
-            </el-checkbox>
-            <el-checkbox-group v-if="index === 0" v-model="filter.value" @change="handleCheckedItemChange">
-              <el-checkbox checked="true"  v-for="(d, i) in filter.data"  :label="d.value" :key="d.value" >
-                <div class="filter__checkbox-label">
-                  <div class="filter-label" style="">
-                    <span>{{d.label}}</span>
-                  </div>
-                  <div class="filter-count" v-if="d.count || d.count === 0">{{d.count}}</div>
-                </div>
-              </el-checkbox>
-            </el-checkbox-group>
-            <el-checkbox-group v-else v-model="filter.value" >
-              <el-checkbox checked="true" v-for="(d, i) in filter.data" :label="d.value" :key="d.value" >
-                <div class="filter__checkbox-label">
-                  <div class="filter-label" style="">
-                    <span>{{d.label}}</span>
-                  </div>
-                  <div class="filter-count" v-if="d.count || d.count === 0">{{d.count}}</div>
-                </div>
-              </el-checkbox>
-            </el-checkbox-group>
+            <el-tree
+                    :ref="`knowledgeTree${index}`"
+                    :data="filter.data"
+                    show-checkbox
+                    node-key="id"
+                    default-expand-all
+                    :default-checked-keys="[1,2,3]"
+                    :render-content="renderContent"
+                    @check="(data,checkinfo)=>handleCheckedItemChange(data,checkinfo,index)"
+                    >
+            </el-tree>
           </div>
         </el-collapse-transition>
       </div>
@@ -49,6 +32,7 @@
 <script>
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
+import { knowledgeCategoryValue, knowledgeSourceValue } from '@/utils/constants'
 
 export default {
   name: 'KnowledgeFilter',
@@ -56,7 +40,7 @@ export default {
   },
   data () {
     return {
-      url: api.knowledgeBase,
+      url: api.knowledgeBaseList,
       checkAll: true,
       isIndeterminateModel: false,
       filterData: [
@@ -73,6 +57,10 @@ export default {
           data: []
         }
       ],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
       allTableData: [],
       allCount: 0
     }
@@ -80,43 +68,43 @@ export default {
   watch: {
   },
   methods: {
-    handleCheckedAllChange (item) {
-      const values = []
-      this.filterData[0].data.forEach(d => {
-        values.push(d.value)
-      })
-      this.filterData[0].value = item ? values : []
-      this.isIndeterminateModel = false
-      if (item) {
-        this.$emit('reload', null, true)
-      } else {
-        this.$emit('clearList')
-      }
+    renderContent (h, { node, data, store }) {
+      return h('span', { class: 'custom-tree-node' }, [
+        h('span', {}, data.label),
+        h('span', { class: 'count-tree-node' }, data.count)
+      ])
     },
-    handleCheckedItemChange (values) {
-      const len = values.length
-      const allTypeLen = this.filterData[0].data.length
+    handleCheckedItemChange (data, checkinfo, index) {
+      let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
+      const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
+      typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
+      const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
+      const typeCheckedLen = typeCheckedNodes.length
+      const statusCheckedLen = statusCheckedNodes.length
       let params = {}
-      if (len === 0) {
-        this.isIndeterminateModel = false
-        this.checkAll = false
-        // this.$emit('reload',null,true)
+      if (typeCheckedLen === 0 || statusCheckedLen === 0) {
         this.$emit('clearList')
-      } else if (len > 0 && len < allTypeLen) {
-        this.checkAll = true
-        this.isIndeterminateModel = true
-        const types = []
-        values.forEach(val => {
-          types.push(val)
+      } else {
+        const categorys = []
+        const sources = []
+        typeCheckedNodes.forEach(val => {
+          if (val.type === 0) {
+            categorys.push(val.value)
+          } else if (val.type === 1) {
+            sources.push(val.value)
+          }
         })
         params = {
-          tagType: types.toString()
+          category: categorys.toString(),
+          source: sources.toString()
+        }
+        if (statusCheckedLen === 1) {
+          params = {
+            ...params,
+            status: statusCheckedNodes[0].value
+          }
         }
         this.$emit('reload', params, true)
-      } else if (len === allTypeLen) {
-        this.isIndeterminateModel = false
-        this.checkAll = true
-        this.$emit('reload', null, true)
       }
     },
     getAllTableData (params) {
@@ -127,51 +115,181 @@ export default {
       get(this.url, searchParams).then(response => {
         if (response.code === 200) {
           this.allTableData = response.data.list
-          this.initAllData()
-          this.initStatusData()
         } else {
           console.error(response)
         }
+      }).finally(() => {
+        this.initAllData()
+        this.initStatusData()
       })
     },
     initAllData () {
       this.allCount = this.allTableData.length
+      let webSketchCount = 0
+      let fqdnCategoryCount = 0
+      let iocMalwareCount = 0
+      let iocDarkwebCount = 0
+      let ipLocationCount = 0
+      let asnCount = 0
+      const fqdnWhoCount = 0
+      const fqdnIcpCount = 0
+      const appCategoryCount = 0
+
+      let aiTaggingCount = 0
+      let psiphon3Count = 0
+
+      let userDefinedCount = 0
       let ipCount = 0
       let domainCount = 0
       let appCount = 0
-      let builtInCount = 0
+
+      const builtInCount = 0
       this.allTableData.forEach(data => {
-        if (data.tagType === 'ip') {
+        if (data.category === knowledgeCategoryValue.webSketch) {
+          webSketchCount++
+        } else if (data.category === knowledgeCategoryValue.aiTagging) {
+          aiTaggingCount++
+        } else if (data.category === knowledgeCategoryValue.userDefined) {
+          userDefinedCount++
+        }
+
+        if (data.source === knowledgeSourceValue.fqdnCategory) {
+          fqdnCategoryCount++
+        } else if (data.source === knowledgeSourceValue.iocMalware) {
+          iocMalwareCount++
+        } else if (data.source === knowledgeSourceValue.iocDarkweb) {
+          iocDarkwebCount++
+        } else if (data.source === knowledgeSourceValue.ipLocation) {
+          ipLocationCount++
+        } else if (data.source === knowledgeSourceValue.asn) {
+          asnCount++
+        } else if (data.source === knowledgeSourceValue.psiphon3) {
+          psiphon3Count++
+        } else if (data.source === knowledgeSourceValue.ipTag) {
           ipCount++
-        } else if (data.tagType === 'domain') {
+        } else if (data.source === knowledgeSourceValue.domainTag) {
           domainCount++
-        } else if (data.tagType === 'app') {
+        } else if (data.source === knowledgeSourceValue.appTag) {
           appCount++
-        } else if (data.tagType === 'builtIn') {
-          builtInCount++
         }
       })
       this.filterData[0].data = [
-        // { label: 'All', value: 'all', count: 18 },
-        { label: 'IP', value: 'ip', count: ipCount },
-        { label: 'Domain', value: 'domain', count: domainCount },
-        { label: 'Application', value: 'app', count: appCount },
-        { label: 'Built-in', value: 'builtIn', count: builtInCount }
+        {
+          id: 1,
+          label: 'WebSketch',
+          value: knowledgeCategoryValue.webSketch,
+          count: webSketchCount,
+          type: 0,
+          children: [{
+            id: 11,
+            label: 'FQDN Category',
+            value: knowledgeSourceValue.fqdnCategory,
+            count: fqdnCategoryCount,
+            type: 1
+          }, {
+            id: 12,
+            label: 'Ioc Malware',
+            value: knowledgeSourceValue.iocMalware,
+            count: iocMalwareCount,
+            type: 1
+          }, {
+            id: 13,
+            label: 'Ioc Darkweb',
+            value: knowledgeSourceValue.iocDarkweb,
+            count: iocDarkwebCount,
+            type: 1
+          }, {
+            id: 14,
+            label: 'IP Location',
+            value: knowledgeSourceValue.ipLocation,
+            count: ipLocationCount,
+            type: 1
+          }, {
+            id: 15,
+            label: 'ASN',
+            value: knowledgeSourceValue.asn,
+            count: asnCount,
+            type: 1
+          }/*, {
+            id: 16,
+            label: 'FQDN Who',
+            value: 'cn_fqdn_who_isBuiltIn',
+            count:fqdnWhoCount,
+            children: []
+          },{
+            id: 17,
+            label: 'FQDN Icp',
+            value: 'cn_fqdn_icp_built_in',
+            count:fqdnIcpCount,
+            children: []
+          },{
+            id: 18,
+            label: 'APP Category',
+            value: 'cn_app_category_built_indad',
+            count:appCategoryCount,
+            children: []
+          } */
+          ]
+        },
+        {
+          id: 2,
+          label: 'AI Tagging',
+          value: knowledgeCategoryValue.aiTagging,
+          count: aiTaggingCount,
+          type: 0,
+          children: [
+            {
+              id: 21,
+              label: 'Psiphon3',
+              value: knowledgeSourceValue.psiphon3,
+              count: psiphon3Count,
+              type: 1
+            }
+          ]
+        },
+        {
+          id: 3,
+          label: 'User-defined',
+          value: knowledgeCategoryValue.userDefined,
+          count: userDefinedCount,
+          type: 0,
+          children: [
+            {
+              id: 31,
+              label: 'IP Tag',
+              value: knowledgeSourceValue.ipTag,
+              count: ipCount,
+              type: 1
+            }, {
+              id: 32,
+              label: 'Domain Tag',
+              value: knowledgeSourceValue.domainTag,
+              count: domainCount,
+              type: 1
+            }, {
+              id: 33,
+              label: 'APP Tag',
+              value: knowledgeSourceValue.appTag,
+              count: appCount,
+              type: 1
+            }
+          ]
+        }
       ]
     },
     initStatusData () {
       let enableCount = 0
       let disableCount = 0
       this.allTableData.forEach(data => {
-        if (data.status === 'disable') {
+        if (data.status === 0) {
           disableCount++
         } else {
           enableCount++
         }
       })
       this.filterData[1].data = [
-        { label: 'enabled', value: 'enabled', count: enableCount },
-        { label: 'disable', value: 'ip', count: disableCount }
+        { id: 1, label: 'enabled', value: 1, count: enableCount, type: 0 },
+        { id: 2, label: 'disable', value: 0, count: disableCount, type: 0 }
       ]
     },
     reloadFilter () {

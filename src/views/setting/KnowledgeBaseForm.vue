@@ -1,7 +1,7 @@
 <template>
   <div class="edit-knowledge-base">
     <loading :loading="initLoading"></loading>
-    <div class="edit-knowledge-base__header">{{ editObject.id ? $t('overall.edit') : $t('overall.create') }}</div>
+    <div class="edit-knowledge-base__header">{{ editObject.knowledgeId ? $t('overall.edit') : $t('overall.create') }}</div>
     <div class="edit-knowledge-base__body">
       <el-steps direction="vertical" :active="activeStep">
         <el-step v-for="(height, index) in stepHeights" :style="`flex-basis: ${height}px; flex-shrink: 0;`"
@@ -14,26 +14,26 @@
           </template>
           <el-form :model="editObject" label-position="top" ref="form" :rules="rules">
             <!--name-->
-            <el-form-item :label="$t('config.roles.name')" prop="tagName">
-              <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.id" show-word-limit
-                        size="mini" type="text" v-model="editObject.tagName" @blur="tagNameBlur"></el-input>
+            <el-form-item :label="$t('config.roles.name')" prop="name">
+              <el-input class="form-input" maxlength="64" placeholder="" :disabled="!!editObject.knowledgeId" show-word-limit
+                        size="mini" type="text" v-model="editObject.name" @blur="tagNameBlur"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('overall.type')" prop="tagType">
-              <el-select v-model="editObject.tagType"
+            <el-form-item :label="$t('overall.type')" prop="source">
+              <el-select v-model="editObject.source"
                          class="form-select"
                          placeholder=" "
                          popper-class="form-select-popper"
-                         :disabled="!!editObject.id || typeSelectDisable"
+                         :disabled="!!editObject.knowledgeId || typeSelectDisable"
                          size="mini"
               >
                 <template v-for="type in knowledgeBaseType" :key="type.name">
-                  <el-option :label="type.name" :value="type.value"></el-option>
+                  <el-option :label="type.label" :value="type.value"></el-option>
                 </template>
               </el-select>
             </el-form-item>
-            <el-form-item :label="$t('overall.remark')" prop="remark">
+            <el-form-item :label="$t('overall.remark')" prop="description">
               <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" resize='none'
-                        v-model="editObject.remark" id="role-box-input-remark"/>
+                        v-model="editObject.description" id="role-box-input-remark"/>
             </el-form-item>
           </el-form>
         </el-collapse-item>
@@ -42,7 +42,7 @@
             <div class="form-sub-title">{{ $t('overall.importFromFile') }}</div>
           </template>
           <loading :loading="uploadLoading"></loading>
-          <el-upload :action="`${baseUrl}knowledge/import`"
+          <el-upload :action="`${baseUrl}${apiVersion}/knowledgeBase/parser`"
                      :headers="uploadHeaders"
                      :data="uploadParams"
                      :multiple="false"
@@ -72,7 +72,7 @@
           <template #title>
             <div class="form-sub-title">{{ $t('overall.preview') }}</div>
           </template>
-          <div class="skeleton-border" v-if="!uploaded && !editObject.id">
+          <div class="skeleton-border" v-if="!uploaded && !editObject.knowledgeId">
             <el-skeleton>
               <template #template>
                 <div v-for="item of 6" :key="item" class="skeleton-item-row">
@@ -86,7 +86,7 @@
           </div>
           <template v-else>
             <div class="imported-tip"><i class="cn-icon cn-icon-baocuo"/>
-              &nbsp;&nbsp;{{ editObject.id && isLoad? $t('knowledgeBase.loadTip', {
+              &nbsp;&nbsp;{{ editObject.knowledgeId && isLoad? $t('knowledgeBase.loadTip', {
               load: originalImportInfo.total
               }) : $t('knowledgeBase.importTip', {
               total: originalImportInfo.total,
@@ -100,45 +100,45 @@
                   <tr>
                     <th style="width: 230px">{{ importedTableFirstColumn }}</th>
                     <th style="width: 180px">Label</th>
-                    <th v-if="!editObject.id">{{ $t('overall.import') }}</th>
+                    <th v-if="!editObject.knowledgeId">{{ $t('overall.import') }}</th>
                     <th style="width: 16px"></th>
                   </tr>
-                  <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagItem + d.tagValue + i">
-                    <td class="imported-data-item" :title="d.tagItem">
-                      <el-form-item v-if="(editObject.id && editIndex === i)  || (addEditFlag && d.tagItem === '' && d.tagValue === '')" prop="tagItem">
+                  <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagName + d.tagValue + i">
+                    <td class="imported-data-item" :title="d.tagName">
+                      <el-form-item v-if="(editObject.knowledgeId && editIndex === i)  || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagName">
                         <span class="imported-data-item-edit__input">
-                          <el-input v-model="editTagForm.tagItem" @blur="onBlurTagItem"></el-input>
+                          <el-input v-model="editTagForm.tagName" @blur="onBlurTagItem"></el-input>
                         </span>
                       </el-form-item>
-                      <span v-else>{{ d.tagItem }}</span>
+                      <span v-else>{{ d.tagName }}</span>
                     </td>
                     <td class="imported-data-value" :title="d.tagValue">
-                      <el-form-item v-if="(editObject.id && editIndex === i) || (addEditFlag && d.tagItem === '' && d.tagValue === '')" prop="tagValue">
+                      <el-form-item v-if="(editObject.knowledgeId && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagValue">
                         <span class="imported-data-item-edit__input">
                           <el-input v-model="editTagForm.tagValue" @blur="onBlurTagItem"></el-input>
                         </span>
                       </el-form-item>
                       <span v-else>{{ d.tagValue }}</span>
                     </td>
-                    <td v-if="!editObject.id" class="imported-data-msg" :title="d.msg">
-                      <i :class="d.status === 1 ? 'el-icon-success' : 'el-icon-error'"></i>&nbsp;&nbsp;{{ d.msg }}
+                    <td v-if="!editObject.knowledgeId" class="imported-data-msg" :title="d.msg">
+                      <i :class="d.isValid === 1 ? 'el-icon-success' : 'el-icon-error'"></i>&nbsp;&nbsp;{{ d.msg }}
                     </td>
                     <td v-else></td>
                     <!--返回和保存按钮-->
-                    <td v-if="editObject.id && backEditFlag && !addEditFlag && editIndex === i" class="imported-data-btn">
-                      <i v-if="editObject.id" class="cn-icon cn-icon-revoke imported-data-left-btn imported-data-back"
+                    <td v-if="editObject.knowledgeId && backEditFlag && !addEditFlag && editIndex === i" class="imported-data-btn">
+                      <i v-if="editObject.knowledgeId" class="cn-icon cn-icon-revoke imported-data-left-btn imported-data-back"
                          @click="backImportedData"></i>
                       <i class="cn-icon cn-icon-save imported-data-save" @click="saveImportedData(i)"></i>
                     </td>
                     <!--保存和删除按钮-->
-                    <td v-else-if="(editObject.id && addEditFlag && editIndex === i) || (addEditFlag && d.tagItem === '' && d.tagValue === '')" class="imported-data-btn">
+                    <td v-else-if="(editObject.knowledgeId && addEditFlag && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" class="imported-data-btn">
                       <i class="cn-icon cn-icon-save imported-data-save" style="margin: 0 7px"
                          @click="saveImportedData(i)"></i>
                       <i class="el-icon-close" @click="removeImportedData(i)"></i>
                     </td>
                     <!--编辑和删除按钮-->
                     <td v-else class="imported-data-btn">
-                      <i v-if="editObject.id" class="cn-icon cn-icon-edit1 imported-data-left-btn"
+                      <i v-if="editObject.knowledgeId" class="cn-icon cn-icon-edit1 imported-data-left-btn"
                          @click="editImportedData(i)"></i>
                       <i class="el-icon-close" @click="removeImportedData(i)"></i>
                     </td>
@@ -148,7 +148,7 @@
               </el-form>
               <Pagination
                   class="imported-pagination"
-                  :style="{'bottom': editObject.id ? '48px' : '0'}"
+                  :style="{'bottom': editObject.knowledgeId ? '48px' : '0'}"
                   :page-obj="importedPageObj"
                   :store-page-no-on-url="false"
                   layout="prev,pager,next"
@@ -168,6 +168,18 @@
             </transition>
           </template>
         </el-collapse-item>
+        <el-collapse-item name="3" class="enable-form__mt">
+          <template #title>
+            <div class="form-sub-title">{{ $t('knowledge.enable') }}</div>
+          </template>
+
+              <el-switch class="card-enable"
+                         v-model="status"
+                         active-color="#38ACD2"
+                         inactive-color="#C0CEDB"
+              >
+              </el-switch>
+        </el-collapse-item>
       </el-collapse>
     </div>
     <div class="edit-knowledge-base__footer">
@@ -186,7 +198,7 @@
 import { useRoute } from 'vue-router'
 import { nextTick, reactive, ref } from 'vue'
 import _ from 'lodash'
-import { knowledgeBaseType, storageKey, unitTypes } from '@/utils/constants'
+import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
@@ -210,11 +222,11 @@ export default {
     }
     const nameAndTypeValidator = async (rule, value, callback) => {
       let validate = true
-      if (!this.editObject.id) {
-        this.$refs.form.clearValidate('tagType')
+      if (!this.editObject.knowledgeId) {
+        this.$refs.form.clearValidate('type')
         const response = await this.getKnowledgeBaseList()
         if (response.data.code === 200) {
-          const find = response.data.data.list.find(d => d.tagName === value && d.tagType === this.editObject.tagType)
+          const find = response.data.data.list.find(d => d.name === value && d.source === this.editObject.source)
           if (find) {
             validate = false
             callback(new Error())
@@ -225,11 +237,11 @@ export default {
     }
     const typeAndNameValidator = async (rule, value, callback) => {
       let validate = true
-      if (!this.editObject.id) {
-        this.$refs.form.clearValidate('tagName')
+      if (!this.editObject.knowledgeId) {
+        this.$refs.form.clearValidate('name')
         const response = await this.getKnowledgeBaseList()
         if (response.data.code === 200) {
-          const find = response.data.data.list.find(d => d.tagName === this.editObject.tagName && d.tagType === value)
+          const find = response.data.data.list.find(d => d.name === this.editObject.name && d.source === value)
           if (find) {
             validate = false
             callback(new Error())
@@ -241,10 +253,10 @@ export default {
     const nameAndLabelDuplicateValidator = (rule, value, callback) => {
       let validate = true
       let index = -1 // 当前编辑的键值index
-      // 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
+      //查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
       const findData = this.importedData.find((item, i) => {
         index = i
-        return (item.tagItem === this.editTagForm.tagItem && item.tagValue === this.editTagForm.tagValue)
+        return (item.tagName === this.editTagForm.tagName && item.tagValue === this.editTagForm.tagValue)
       })
       if (findData) { // 找到1条记录
         // 如果name重复的第一个键值不是当前编辑item的index，即代表后续有重名的项了，提示重名
@@ -279,8 +291,8 @@ export default {
     }
     const nameFormatValidator = (rule, value, callback) => {
       let validate = true
-      const tagType = this.editObject.tagType// 当前选中的类型
-      if (tagType === 'ip') {
+      const type = this.editObject.source// 当前选中的类型
+      if (type === knowledgeSourceValue.ipTag) {
         const formal = value.replace(/\s+/g, '')// 去掉空格
         if (formal.indexOf('/') !== -1) {
           if (!(regular.ipv4CIDR.test(formal)) && !(regular.ipv6CIDR.test(formal))) {
@@ -295,14 +307,14 @@ export default {
             callback(new Error())
           }
         }
-      } else if (tagType === 'app') {
+      } else if (type === knowledgeSourceValue.appTag) {
         const pattern = /.*[*?!&$%#^,.;:<>/@\"{}\-\]\[=+_\\|].*$/
         if (pattern.test(value)) {
           validate = false
           this.editTagErrorTip = rule.message
           callback(new Error())
         }
-      } else if (tagType === 'domain') { // 域名只支持 字母数字.-_
+      } else if (type === knowledgeSourceValue.domainTag) { // 域名只支持 字母数字.-_
         if ((value.substr(0, 1) === '*' || value.substr(0, 1) === '$') &&
             !(value.substr(-1) === '*' || value.substr(-1) === '$')) {
           if (value.substr(0, 1) === '$') { // 处理$开头的情况
@@ -348,7 +360,7 @@ export default {
     }
     return {
       rules: {
-        tagName: [
+        name: [
           {
             required: true,
             message: this.$t('validate.required'),
@@ -365,7 +377,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        tagType: [
+        source: [
           {
             required: true,
             message: this.$t('validate.required'),
@@ -379,7 +391,7 @@ export default {
         ]
       },
       editTagFormRules: {
-        tagItem: [
+        tagName: [
           {
             // required: true,
             validator: requiredItemValidator,
@@ -412,7 +424,9 @@ export default {
       isShowUploadTips: false,
       isPreviewChange: false,
       isClick: false,
-      pageNoForTable: 1
+      pageNoForTable: 1,
+      listMode: 'list',
+      status: true
     }
   },
   methods: {
@@ -435,29 +449,47 @@ export default {
       this.uploadLoading = false
       this.$message.error(this.$t('tip.uploadFailed', { msg: 'error' }))
     },
+    handleSpeticalTypeData (originalImportedData) {
+      originalImportedData.forEach(item => {
+        const names = item.tagNames
+        if (this.editObject.source === knowledgeSourceValue.ipTag && names) {
+          const format = names.addrFormat
+          if (format === 'Single') {
+            item.tagName = names.ip1
+          } else if (format === 'CIDR') {
+            item.tagName = names.ip1 + '/' + names.ip2
+          } else if (format === 'Range') {
+            item.tagName = names.ip1 + '~' + names.ip2
+          }
+        }
+      })
+      return originalImportedData
+    },
     uploadSuccess (response) {
       this.uploaded = response.code === 200
       if (response.code === 200) {
         // 上传成功后去掉upload和preview的错误提示
         this.uploadErrorTip = ''
         this.previewErrorTip = ''
-        this.importedType = this.editObject.tagType
+        this.importedType = this.editObject.source
         const originalImportedData = _.cloneDeep(response.data.data)
         this.importedDataNoData = originalImportedData.length === 0
         this.originalImportInfo = {
           total: originalImportedData.length,
-          succeeded: originalImportedData.filter(d => d.status === 1).length,
-          failed: originalImportedData.filter(d => d.status !== 1).length
+          succeeded: originalImportedData.filter(d => d.isValid === 1).length,
+          failed: originalImportedData.filter(d => d.isValid !== 1).length
         }
         this.isLoad = false
-        originalImportedData.sort((a, b) => b.status - a.status)
-        this.importedData = originalImportedData
+        originalImportedData.sort((a, b) => b.isValid - a.isValid)
+        this.importedData = this.handleSpeticalTypeData(originalImportedData)
 
         this.handleShowImportedData()
         this.addEditFlag = false
         this.editTagErrorTip = ''
         this.editIndex = -1
         this.isPreviewChange = true
+        this.stepHeights[2] = itemListHeight.hasData
+        this.stepHeightConstant.third = itemListHeight.hasData
       } else {
         this.uploadLoading = false
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
@@ -479,6 +511,11 @@ export default {
         this.editIndex = -1
         this.isPreviewChange = true
         this.importedDataNoData = true
+
+        if (!this.editObject.knowledgeId) { // 新增且删除文件时，高度变为250
+          this.stepHeights[2] = itemListHeight.noData
+          this.stepHeightConstant.third = itemListHeight.noData
+        }
       }
       if (this.fileListBack !== undefined && this.fileListBack.status === 'success' &&
             this.importedData.length > 0) {
@@ -582,7 +619,7 @@ export default {
       // 删除内容为空的新增记录
       const lastIndex = this.importedData.length - 1
       const lastData = this.importedData[lastIndex]
-      if (lastData !== undefined && lastData.tagItem === '' && lastData.tagValue === '') {
+      if (lastData !== undefined && lastData.tagName === '' && lastData.tagValue === '') {
         this.importedData.pop()
       }
       this.importedPageObj.total = this.importedData.length
@@ -618,7 +655,8 @@ export default {
             path: '/knowledgeBase',
             query: {
               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-              t: +new Date()
+              t: +new Date(),
+              listMode: this.listMode
             }
           })
         }).catch(() => {})
@@ -627,7 +665,8 @@ export default {
           path: '/knowledgeBase',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-            t: +new Date()
+            t: +new Date(),
+            listMode: this.listMode
           }
         })
       }
@@ -639,8 +678,8 @@ export default {
       this.blockOperation.save = true
       // 校验form + upload + preview
       this.$refs.form.validate(valid => {
-        this.$refs.form.validateField('tagName')
-        if (!this.uploaded && !this.editObject.id) {
+        this.$refs.form.validateField('name')
+        if (!this.uploaded && !this.editObject.knowledgeId) {
           this.uploadErrorTip = this.$t('validate.required')
         } else {
           this.uploadErrorTip = ''
@@ -658,38 +697,54 @@ export default {
               if (validImportData) {
                 // 校验通过后组织数据、请求接口
                 if (valid && !this.uploadErrorTip && !this.previewErrorTip) {
-                  if (this.importedData.length === 1 && this.importedData[0].tagItem === '') {
+                  if (this.importedData.length === 1 && this.importedData[0].tagName === '') {
                     // this.blockOperation.save = false
                   } else {
+                    const t = this.knowledgeBaseType.find(t => t.value === this.editObject.source)
                     const postData = {
-                      tagName: this.editObject.tagName,
-                      tagType: this.editObject.tagType,
-                      data: []
+                      name: this.editObject.name,
+                      category: 'user_defined',
+                      type: t ? t.name : '',
+                      description: this.editObject.description,
+                      status: this.status ? 1 : 0
                     }
                     // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
-                    if (this.importedData[this.importedData.length - 1].tagItem === '') {
+                    if (this.importedData[this.importedData.length - 1].tagName === '') {
                       this.importedData.pop()
                     }
-                    this.importedData.forEach(d => {
-                      const findData = postData.data.find(d2 => d2.tagValue === d.tagValue)
-                      if (findData) {
-                        findData.itemList.add(d.tagItem)
-                      } else {
-                        const set = new Set()
-                        set.add(d.tagItem)
-                        postData.data.push({
-                          tagValue: d.tagValue,
-                          itemList: set
-                        })
-                      }
-                    })
-                    postData.data.forEach(d => {
-                      // d.itemList = [...d.itemList]
-                      d.itemList = Array.from(d.itemList)
-                    })
-                    postData.remark = this.editObject.remark
+
                     const self = this
-                    if (!this.editObject.id) {
+                    if (!this.editObject.knowledgeId) {
+                      postData.addItemList = []
+                      this.importedData.forEach(d => {
+                        if (this.editObject.source === knowledgeSourceValue.ipTag) {
+                          const sepIndex = d.tagName.indexOf('/')
+                          if (sepIndex > -1) { // CIDR
+                            postData.addItemList.push({
+                              tagValue: d.tagValue,
+                              tagNames: {
+                                addrFormat: 'CIDR',
+                                ip1: d.tagName.substring(0, sepIndex),
+                                ip2: d.tagName.substring(sepIndex + 1)
+                              }
+                            })
+                          } else { // Single
+                            postData.addItemList.push({
+                              tagValue: d.tagValue,
+                              tagNames: {
+                                addrFormat: 'Single',
+                                ip1: d.tagName,
+                                ip2: ''
+                              }
+                            })
+                          }
+                        } else {
+                          postData.addItemList.push({
+                            tagValue: d.tagValue,
+                            tagName: d.tagName
+                          })
+                        }
+                      })
                       axios.post(this.url, postData).then(response => {
                         if (response.data.code === 200) {
                           this.$message({
@@ -701,7 +756,8 @@ export default {
                             path: '/knowledgeBase',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-                              t: +new Date()
+                              t: +new Date(),
+                              listMode: this.listMode
                             }
                           })
                         } else {
@@ -714,7 +770,37 @@ export default {
                         this.blockOperation.save = false
                       })
                     } else {
-                      postData.id = this.editObject.id
+                      postData.updateItemList = []
+                      this.importedData.forEach(d => {
+                        if (this.editObject.source === knowledgeSourceValue.ipTag) {
+                          const sepIndex = d.tagName.indexOf('/')
+                          if (sepIndex > -1) { // CIDR
+                            postData.updateItemList.push({
+                              tagValue: d.tagValue,
+                              tagNames: {
+                                addrFormat: 'CIDR',
+                                ip1: d.tagName.substring(0, sepIndex),
+                                ip2: d.tagName.substring(sepIndex + 1)
+                              }
+                            })
+                          } else { // Single
+                            postData.updateItemList.push({
+                              tagValue: d.tagValue,
+                              tagNames: {
+                                addrFormat: 'Single',
+                                ip1: d.tagName,
+                                ip2: ''
+                              }
+                            })
+                          }
+                        } else {
+                          postData.updateItemList.push({
+                            tagValue: d.tagValue,
+                            tagName: d.tagName
+                          })
+                        }
+                      })
+                      postData.knowledgeId = this.editObject.knowledgeId
                       axios.put(this.url, postData).then(response => {
                         if (response.data.code === 200) {
                           this.$message({
@@ -726,7 +812,8 @@ export default {
                             path: '/knowledgeBase',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-                              t: +new Date()
+                              t: +new Date(),
+                              listMode: this.listMode
                             }
                           })
                         } else {
@@ -756,16 +843,16 @@ export default {
       })
     },
     hasErrorImportedData () {
-      return this.importedData.filter(d => d.status !== 1).length > 0
+      return this.importedData.filter(d => d.isValid !== 1).length > 0
     },
     async getKnowledgeBaseList () {
-      return await axios.get(this.url, { params: { pageSize: 999 } }).catch(e => {
+      return await axios.get(this.listUrl, { params: { pageSize: 999 } }).catch(e => {
         console.error(e)
         this.errorMsgHandler(e)
       })
     },
     editImportedData (index) {
-      this.editTagForm.tagItem = this.showImportedData[index].tagItem
+      this.editTagForm.tagName = this.showImportedData[index].tagName
       this.editTagForm.tagValue = this.showImportedData[index].tagValue
 
       // 点击编辑时，如正处于新增状态，则去除新增项（此时新增并为保存，不必保留）
@@ -785,7 +872,7 @@ export default {
     },
     backImportedData () {
       this.editTagForm = reactive({
-        tagItem: '',
+        tagName: '',
         tagValue: ''
       })
 
@@ -796,18 +883,18 @@ export default {
     saveImportedData (index) {
       this.$refs.editForm.validate(valid => {
         if (valid) {
-          this.showImportedData[index].tagItem = this.editTagForm.tagItem
+          this.showImportedData[index].tagName = this.editTagForm.tagName
           this.showImportedData[index].tagValue = this.editTagForm.tagValue
-          this.showImportedData[index].status = 1
+          this.showImportedData[index].isValid = 1
           let num = -1
           const findData = this.importedData.find((item, i) => {
             num = i
-            return (item.tagItem === this.editTagForm.tagItem && item.tagValue === this.editTagForm.tagValue)
+            return (item.tagName === this.editTagForm.tagName && item.tagValue === this.editTagForm.tagValue)
           })
           if (!findData) {
-            this.importedData[num].tagItem = this.editTagForm.tagItem
+            this.importedData[num].tagName = this.editTagForm.tagName
             this.importedData[num].tagValue = this.editTagForm.tagValue
-            this.importedData[num].status = 1
+            this.importedData[num].isValid = 1
           }
 
           this.addEditFlag = false
@@ -825,18 +912,18 @@ export default {
       })
     },
     addTagAtLast () {
-      this.editTagForm.tagItem = ''
+      this.editTagForm.tagName = ''
       this.editTagForm.tagValue = ''
       const total = this.importedData.length
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
-      if (this.importedData.length === 0 || (this.importedData[this.importedData.length - 1].tagItem !== '' && this.importedData[this.importedData.length - 1].tagValue !== '')) {
+      if (this.importedData.length === 0 || (this.importedData[this.importedData.length - 1].tagName !== '' && this.importedData[this.importedData.length - 1].tagValue !== '')) {
         if (total >= 10) {
           const lastPageSize = Math.ceil((total + 1) / 10)
           this.pageNo(lastPageSize)
         }
-        this.importedData.push({ tagItem: '', tagValue: '', status: 1 })
-        this.showImportedData.push({ tagItem: '', tagValue: '', status: 1 })
+        this.importedData.push({ tagName: '', tagValue: '', status: 1 })
+        this.showImportedData.push({ tagName: '', tagValue: '', status: 1 })
         this.importedDataNoData = false
 
         this.importedPageObj.total = this.importedData.length
@@ -848,8 +935,9 @@ export default {
   },
   computed: {
     uploadParams () {
+      const t = this.knowledgeBaseType.find(t => t.value === this.editObject.source)
       return {
-        type: this.editObject.tagType
+        type: t ? t.name : ''
       }
     },
     importedTableFirstColumn () {
@@ -857,9 +945,10 @@ export default {
       return t ? t.name : ''
     },
     activeStep () {
-      if (this.editObject.id) {
-        return 2
+      if (this.editObject.knowledgeId) {
+        return 3
       } else if (this.tagNameFirstBlur) {
+        // return this.uploaded ? 2 : 1
         return this.uploaded ? 2 : 1
       } else {
         return 0
@@ -868,7 +957,9 @@ export default {
   },
   mounted () {
     const pageNo = this.$router.currentRoute.value.query.pageNoForTable
+    const listMode = this.$router.currentRoute.value.query.listMode
     this.pageNoForTable = pageNo || 1
+    this.listMode = listMode || 'list'
     const div = document.getElementsByClassName('el-upload-dragger')[0]
     const self = this
     div.addEventListener('click', function (event) {
@@ -878,6 +969,8 @@ export default {
       self.uploadTip(event)
     })
     if (this.knowledgeBaseId) {
+      this.stepHeights[2] = itemListHeight.hasData// 修改的时候一直是478
+      this.stepHeightConstant.third = itemListHeight.hasData// 修改的时候一直是478
       this.isLoad = true
       axios.get(`${api.knowledgeBase}/${this.knowledgeBaseId}`).then(response => {
         if (response.data.code === 200) {
@@ -885,7 +978,10 @@ export default {
             throw new Error('No data found, id: ' + this.knowledgeBaseId)
           }
           this.editObject = response.data.data
-          this.importedData = this.revertImportedData(this.editObject.data)
+          this.status = this.editObject.isValid === 1
+          // this.importedData = this.revertImportedData(this.editObject.data)
+          this.importedData = this.handleSpeticalTypeData(this.editObject.list)
+
           this.handleShowImportedData()
           this.originalImportInfo = {
             total: this.importedData.length,
@@ -893,7 +989,7 @@ export default {
             failed: 0
           }
           this.importedPageObj.total = this.importedData.length
-          this.importedType = this.editObject.tagType
+          this.importedType = this.editObject.source
           this.initLoading = false
         } else {
           this.$message.error(this.errorMsgHandler(response))
@@ -905,17 +1001,21 @@ export default {
           path: '/knowledgeBase',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-            t: +new Date()
+            t: +new Date(),
+            listMode: this.listMode
           }
         })
       })
+    } else {
+      this.stepHeightConstant.third = itemListHeight.noData// 进入新增时为250
     }
   },
   watch: {
     activeCollapses (n) {
       const index0 = n.indexOf('0')
       const index1 = n.indexOf('1')
-      if (index0 > -1) {
+      const index2 = n.indexOf('2')
+      if (index0 > -1) { // 第一个折叠为发开状态
         if (this.stepHeights[0] === this.stepHeightConstant.collapse) {
           this.stepHeights.splice(0, 1, this.stepHeightConstant.first)
         }
@@ -933,6 +1033,15 @@ export default {
           this.stepHeights.splice(1, 1, this.stepHeightConstant.collapse)
         }
       }
+      if (index2 > -1) {
+        if (this.stepHeights[2] === this.stepHeightConstant.collapse) {
+          this.stepHeights.splice(2, 1, this.stepHeightConstant.third)
+        }
+      } else {
+        if (this.stepHeights[2] === this.stepHeightConstant.third) {
+          this.stepHeights.splice(2, 1, this.stepHeightConstant.collapse)
+        }
+      }
     },
     importedData (n) {
       this.importedPageObj.total = n.length
@@ -941,7 +1050,7 @@ export default {
       if (!n) {
         const lastIndex = this.importedData.length - 1
         const lastData = this.importedData[lastIndex]
-        if (lastData && lastData.tagItem === '' && lastData.tagValue === '') {
+        if (lastData && lastData.tagName === '' && lastData.tagValue === '') {
           this.importedData.pop()
         }
       }
@@ -956,14 +1065,16 @@ export default {
     const { query } = useRoute()
     const knowledgeBaseId = query.id || ''
     const url = api.knowledgeBase
+    const listUrl = api.knowledgeBaseList
     // 空白对象
     const blankObject = {
-      tagName: '',
+      name: '',
       buildIn: '',
-      id: '',
-      tagType: 'ip',
-      remark: '',
-      updateTime: ''
+      knowledgeId: '',
+      source: 'cn_ip_tag_user_defined',
+      description: '',
+      updateTime: '',
+      status: true
     }
     /* 将组织后的数据还原拉平 */
     const revertImportedData = (data) => {
@@ -971,9 +1082,9 @@ export default {
       data.forEach(d => {
         d.itemList.forEach(item => {
           importedData.push({
-            tagItem: item,
+            tagName: item,
             tagValue: d.tagValue,
-            status: 1
+            isValid: 1
           })
         })
       })
@@ -1008,14 +1119,16 @@ export default {
       uploadLoading.value = false
     }
     // 折叠组件控制
-    const activeCollapses = ref(['0', '1', '2'])
+    const activeCollapses = ref(['0', '1', '2', '3'])
     // 步骤条控制
     const stepHeightConstant = {
       collapse: 58,
       first: 333,
-      second: 284
+      second: 284,
+      third: itemListHeight.noData
     }
-    const stepHeights = ref([stepHeightConstant.first, stepHeightConstant.second, stepHeightConstant.collapse])
+
+    const stepHeights = ref([stepHeightConstant.first, stepHeightConstant.second, stepHeightConstant.third, stepHeightConstant.collapse])
 
     // 没上传过文件的提示
     const uploadErrorTip = ref('')
@@ -1023,7 +1136,7 @@ export default {
     const previewErrorTip = ref('')
     // 编辑项的form表单内容
     const editTagForm = reactive({
-      tagItem: '', // 待编辑的item项，如ip、domain、app等
+      tagName: '', // 待编辑的item项，如ip、domain、app等
       tagValue: '' // 待编辑的label
     })
 
@@ -1045,6 +1158,7 @@ export default {
       revertImportedData,
       handleShowImportedData,
       baseUrl: BASE_CONFIG.baseUrl,
+      apiVersion: BASE_CONFIG.apiVersion,
       fileList: ref([]),
       fileListBack: ref(),
       uploadHeaders: {
@@ -1053,6 +1167,7 @@ export default {
       uploaded: ref(false),
       importedDataNoData: ref(false),
       url,
+      listUrl,
       originalImportInfo,
       uploadErrorTip,
       previewErrorTip,
