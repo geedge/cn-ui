@@ -93,56 +93,144 @@ export default {
       return href
     }
     // 右上角analysis按钮
+    const networkOverviewAnalysisItem = {
+      icon: 'cn-icon cn-icon-overview',
+      label: i18n.global.t('networkOverview.networkOverview'),
+      path: '/panel/networkOverview'
+    }
+    const npmAnalysisItem = {
+      icon: 'cn-icon cn-icon-network-performance',
+      label: i18n.global.t('entities.networkPerformance'),
+      path: '/panel/networkAppPerformance'
+    }
+    const dnsAnalysisItem = {
+      icon: 'cn-icon cn-icon-dns-insight',
+      label: i18n.global.t('dns.dnsInsights'),
+      path: '/panel/dnsServiceInsights'
+    }
     switch (props.entity.entityType) {
-      default: {
-        analysisItems.value.push({
-          icon: 'cn-icon cn-icon-overview',
-          label: i18n.global.t('networkOverview.networkOverview'),
-          url: resolvePath({
-            path: '/panel/networkOverview',
-            query: {
-              queryCondition: `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`,
-              panelName: props.entity.entityName,
-              thirdMenu: 'network.ips',
-              dimensionType: 'ip',
-              fourthMenu: props.entity.entityName,
-              thirdPanel: drillDownPanelTypeMapping.networkOverview,
-              fourthPanel: drillDownPanelTypeMapping.networkOverview
-            }
-          })
+      case 'ip': {
+        const queryCondition = `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`
+        const networkOverviewAnalysisItemCopy = _.cloneDeep(networkOverviewAnalysisItem)
+        networkOverviewAnalysisItemCopy.url = resolvePath({
+          path: networkOverviewAnalysisItemCopy.path,
+          query: {
+            queryCondition: queryCondition,
+            panelName: props.entity.entityName,
+            thirdMenu: 'network.ips',
+            dimensionType: 'ip',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.networkOverview,
+            fourthPanel: drillDownPanelTypeMapping.networkOverview
+          }
         })
-        analysisItems.value.push({
-          icon: 'cn-icon cn-icon-network-performance',
-          label: i18n.global.t('entities.networkPerformance'),
-          url: resolvePath({
-            path: '/panel/networkAppPerformance',
-            query: {
-              queryCondition: `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`,
-              panelName: props.entity.entityName,
-              thirdMenu: 'network.ips',
-              dimensionType: 'ip',
-              fourthMenu: props.entity.entityName,
-              thirdPanel: drillDownPanelTypeMapping.npmThirdMenu,
-              fourthPanel: drillDownPanelTypeMapping.npmOverviewIp
-            }
-          })
+        const npmAnalysisItemCopy = _.cloneDeep(npmAnalysisItem)
+        npmAnalysisItemCopy.url = resolvePath({
+          path: npmAnalysisItemCopy.path,
+          query: {
+            queryCondition: queryCondition,
+            panelName: props.entity.entityName,
+            thirdMenu: 'network.ips',
+            dimensionType: 'ip',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.npmThirdMenu,
+            fourthPanel: drillDownPanelTypeMapping.npmOverviewIp
+          }
         })
-        analysisItems.value.push({
-          icon: 'cn-icon cn-icon-dns-insight',
-          label: i18n.global.t('dns.dnsInsights'),
-          url: resolvePath({
-            path: '/panel/dnsServiceInsights',
-            query: {
-              queryCondition: `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`,
-              panelName: props.entity.entityName,
-              thirdMenu: 'dns.dnsServer',
-              dimensionType: 'dnsServer',
-              fourthMenu: props.entity.entityName,
-              thirdPanel: drillDownPanelTypeMapping.dnsThirdMenu,
-              fourthPanel: drillDownPanelTypeMapping.dnsFourthMenu
-            }
-          })
+        const dnsAnalysisItemCopy = _.cloneDeep(dnsAnalysisItem)
+        dnsAnalysisItemCopy.url = resolvePath({
+          path: dnsAnalysisItem.path,
+          query: {
+            queryCondition: queryCondition,
+            panelName: props.entity.entityName,
+            thirdMenu: 'dns.dnsServer',
+            dimensionType: 'dnsServer',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.dnsThirdMenu,
+            fourthPanel: drillDownPanelTypeMapping.dnsFourthMenu
+          }
         })
+        analysisItems.value.push(networkOverviewAnalysisItemCopy)
+        analysisItems.value.push(npmAnalysisItemCopy)
+        analysisItems.value.push(dnsAnalysisItemCopy)
+        break
+      }
+      case 'domain': {
+        const networkOverviewAnalysisItemCopy = _.cloneDeep(networkOverviewAnalysisItem)
+        networkOverviewAnalysisItemCopy.url = resolvePath({
+          path: networkOverviewAnalysisItemCopy.path,
+          query: {
+            queryCondition: `domain='${props.entity.entityName}'`,
+            panelName: props.entity.entityName,
+            thirdMenu: 'network.domains',
+            dimensionType: 'domain',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.networkOverview,
+            fourthPanel: drillDownPanelTypeMapping.networkOverview
+          }
+        })
+        const npmAnalysisItemCopy = _.cloneDeep(npmAnalysisItem)
+        npmAnalysisItemCopy.url = resolvePath({
+          path: npmAnalysisItemCopy.path,
+          query: {
+            queryCondition: `domain='${props.entity.entityName}'`,
+            panelName: props.entity.entityName,
+            thirdMenu: 'network.domains',
+            dimensionType: 'domain',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.npmThirdMenu,
+            fourthPanel: drillDownPanelTypeMapping.npmOverviewDomain
+          }
+        })
+        const dnsAnalysisItemCopy = _.cloneDeep(dnsAnalysisItem)
+        dnsAnalysisItemCopy.url = resolvePath({
+          path: dnsAnalysisItem.path,
+          query: {
+            queryCondition: `dns_qname='${props.entity.entityName}'`,
+            panelName: props.entity.entityName,
+            thirdMenu: 'QNames',
+            dimensionType: 'qname',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.dnsThirdMenu,
+            fourthPanel: drillDownPanelTypeMapping.dnsFourthMenu
+          }
+        })
+        analysisItems.value.push(networkOverviewAnalysisItemCopy)
+        analysisItems.value.push(npmAnalysisItemCopy)
+        analysisItems.value.push(dnsAnalysisItemCopy)
+        break
+      }
+      case 'app': {
+        const queryCondition = `common_app_label='${props.entity.entityName}'`
+        const networkOverviewAnalysisItemCopy = _.cloneDeep(networkOverviewAnalysisItem)
+        networkOverviewAnalysisItemCopy.url = resolvePath({
+          path: networkOverviewAnalysisItemCopy.path,
+          query: {
+            queryCondition: queryCondition,
+            panelName: props.entity.entityName,
+            thirdMenu: 'network.applications',
+            dimensionType: 'appLabel',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.networkOverview,
+            fourthPanel: drillDownPanelTypeMapping.networkOverview
+          }
+        })
+        const npmAnalysisItemCopy = _.cloneDeep(npmAnalysisItem)
+        npmAnalysisItemCopy.url = resolvePath({
+          path: npmAnalysisItemCopy.path,
+          query: {
+            queryCondition: queryCondition,
+            panelName: props.entity.entityName,
+            thirdMenu: 'network.applications',
+            dimensionType: 'appLabel',
+            fourthMenu: props.entity.entityName,
+            thirdPanel: drillDownPanelTypeMapping.npmThirdMenu,
+            fourthPanel: drillDownPanelTypeMapping.npmOverviewApp
+          }
+        })
+        analysisItems.value.push(networkOverviewAnalysisItemCopy)
+        analysisItems.value.push(npmAnalysisItemCopy)
+        break
       }
     }
     // 底部各属性
