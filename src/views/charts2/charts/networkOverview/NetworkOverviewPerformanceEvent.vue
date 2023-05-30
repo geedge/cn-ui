@@ -82,7 +82,7 @@ export default {
             } else {
               this.isNoData = false
             }
-            
+
             res.data.data.result = res.data.data.result.map(t => {
               t.index = getIndexByEventSeverity(t.eventSeverity)
               return {
@@ -148,12 +148,16 @@ export default {
       }
     },
     routerJump () {
+      const params = {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime,
+        range: this.timeFilter.dateRangeValue,
+        tabIndex: 2,
+        t: +new Date()
+      }
       this.$router.push({
         path: '/panel/networkAppPerformance',
-        query: {
-          tabIndex: 2,
-          t: +new Date()
-        }
+        query: params
       })
     },
     resize () {
