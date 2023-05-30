@@ -13,6 +13,7 @@
       :resizable="false"
       align="center"
       type="selection"
+      :selectable="checkSelectable"
       width="55">
     </el-table-column>
     <!--key只使用item.prop的话，拖拽后，界面无响应，添加index后问题解决-->
@@ -76,6 +77,12 @@ export default {
           show: true
         }
       ]
+    }
+  },
+  methods: {
+    // 禁止勾选buildIn为1的项，即禁止修改admin的权限
+    checkSelectable (row) {
+      return row.buildIn !== 1
     }
   }
 }
