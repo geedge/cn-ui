@@ -250,8 +250,13 @@ function handleType (value) {
 
 // 使用单引号包裹
 export function stringInQuot (value) {
+  if (value.indexOf("'") > -1) {
+    value = value.split("'").join("''") // 如xi'an，多添加一个单引号，处理为xi''an
+  }
+
   const match = `${value}`.match(/^'.+?'$/)
-  return match ? value : `'${value}'`
+  // return match ? value : `'${value}'`
+  return match ? value : `${value}`
 }
 // IN和LIKE前后加空格
 export function handleOperatorSpace (operator) {

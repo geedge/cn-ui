@@ -751,8 +751,13 @@ export default class Parser {
 
 // 使用单引号包裹
 export function stringInQuot (value) {
+  if (value.indexOf("'") > -1) {
+    value = value.split("'").join("''") // 如xi'an，多添加一个单引号，处理为xi''an
+  }
+
   const match = `${value}`.match(/^'.+?'$/)
-  return match ? value : `'${value}'`
+  // return match ? value : `'${value}'` // 单引号包裹，暂时保留
+  return match ? value : `${value}`
 }
 
 // IN和LIKE前后加空格

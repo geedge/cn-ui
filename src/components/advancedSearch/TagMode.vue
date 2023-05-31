@@ -36,7 +36,8 @@
         <!-- 值 -->
         <div class="condition__value">
           <div v-if="meta.value.isEditing">
-            <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput" @keyup.enter="valueBlur(meta)"></el-input>
+            <!--避免blur事件和keyup.enter重复执行-->
+            <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput" @keyup.enter="$event.target.blur(meta)"></el-input>
           </div>
           <span v-else @click="valueClick(meta, index)">{{meta.value.label}}</span>
         </div>
@@ -184,7 +185,7 @@ export default {
     columnClick (meta, index) {
       meta.column.isEditing = true
       this.$nextTick(() => {
-        this.$refs.columnSelect[index].focus()
+        this.$refs.columnSelect[index === 0 ? index : index - 1].focus() // 避免参数有and等情况
       })
     },
     columnBlur (meta, index) {
@@ -251,7 +252,8 @@ export default {
             str = str.substring(1, str.length)
             str = str.substring(0, str.length - 1)
           }
-          if (str.indexOf("'") > -1) {
+          // 如果此时参数为xi'an，处理为xi''an，后一个条件避免若参数为xi''an,则不处理
+          if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
             str = str.replace(/'/g, "''")
           }
           return str
@@ -270,7 +272,8 @@ export default {
             str = str.substring(1, str.length)
             str = str.substring(0, str.length - 1)
           }
-          if (str.indexOf("'") > -1) {
+          // 如果此时参数为xi'an，处理为xi''an，后一个条件避免若参数为xi''an,则不处理
+          if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
             str = str.replace(/'/g, "''")
           }
           meta.value.value = str
@@ -282,7 +285,7 @@ export default {
     valueClick (meta, index) {
       meta.value.isEditing = true
       this.$nextTick(() => {
-        this.$refs.valueInput[index].focus()
+        this.$refs.valueInput[index === 0 ? index : index - 1].focus() // 避免参数有and等情况
       })
     },
     // 判断是否是用户自己添加的内容，用于判断是否是全局搜索
