@@ -255,8 +255,7 @@ export function stringInQuot (value) {
   }
 
   const match = `${value}`.match(/^'.+?'$/)
-  // return match ? value : `'${value}'`
-  return match ? value : `${value}`
+  return match ? value : `'${value}'`
 }
 // IN和LIKE前后加空格
 export function handleOperatorSpace (operator) {

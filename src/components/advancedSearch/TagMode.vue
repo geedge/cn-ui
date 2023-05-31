@@ -29,7 +29,7 @@
               ></el-option>
             </el-select>
           </div>
-          <span v-show="!meta.column.isEditing" @click="columnClick(meta, index)">{{meta.column.label}}</span>
+          <span v-show="!meta.column.isEditing" @click="columnClick(meta)">{{meta.column.label}}</span>
         </div>
         <!-- 已选操作符显示 -->
         <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show">{{meta.operator.value}}</div>
@@ -37,9 +37,9 @@
         <div class="condition__value">
           <div v-if="meta.value.isEditing">
             <!--避免blur事件和keyup.enter重复执行-->
-            <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput" @keyup.enter="$event.target.blur(meta)"></el-input>
+            <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput" @keyup.enter="valueBlur(meta)"></el-input>
           </div>
-          <span v-else @click="valueClick(meta, index)">{{meta.value.label}}</span>
+          <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
         </div>
         <!-- 操作符选择器 -->
         <div class="condition__operation-select" v-if="meta.operator.show && meta.operator.isEditing">
@@ -182,10 +182,10 @@ export default {
     selectConnection (value, meta) {
       meta.isEditing = false
     },
-    columnClick (meta, index) {
+    columnClick (meta) {
       meta.column.isEditing = true
       this.$nextTick(() => {
-        this.$refs.columnSelect[index === 0 ? index : index - 1].focus() // 避免参数有and等情况
+        this.$refs.columnSelect[this.$refs.columnSelect.length - 1].focus()
       })
     },
     columnBlur (meta, index) {
@@ -282,10 +282,10 @@ export default {
       }
       meta.value.isEditing = !meta.isCompleteCondition()
     },
-    valueClick (meta, index) {
+    valueClick (meta) {
       meta.value.isEditing = true
       this.$nextTick(() => {
-        this.$refs.valueInput[index === 0 ? index : index - 1].focus() // 避免参数有and等情况
+        this.$refs.valueInput[0].focus()
       })
     },
     // 判断是否是用户自己添加的内容，用于判断是否是全局搜索
@@ -323,7 +323,7 @@ export default {
       }
     },
     // 处理value，例如转换IN的值
-    handleValue (value, column, operator) {
+    handleValue (value, column, operator, flag) {
       const isArray = ['IN', 'NOT IN'].indexOf(operator) > -1
       if (isArray) {
         if (_.isArray(value)) {
@@ -333,7 +333,14 @@ export default {
           return value
         }
       } else {
-        return column.type === columnType.string ? stringInQuot(value) : value
+        let newValue = column.type === columnType.string ? stringInQuot(value) : value
+        if (flag) {
+          newValue = newValue.slice(1)
+          newValue = newValue.slice(0, newValue.length - 1)
+          return newValue
+        } else {
+          return newValue
+        }
       }
     },
     addParams (params) {
@@ -347,7 +354,7 @@ export default {
         meta.column.label = column ? column.label : param.column
         meta.operator.value = '='
         meta.operator.show = true
-        meta.value.value = this.handleValue(param.value, column, column.operator)
+        meta.value.value = this.handleValue(param.value, column, column.operator, 'noQuotes')
         meta.value.show = true
         meta.value.label = meta.value.value
         this.addCondition(meta)
