@@ -35,9 +35,9 @@ export const api = {
   // galaxyProxy
   galaxyProxy: '/galaxy/setting',
   // 知识库
-  knowledgeBase: window.BASE_CONFIG.apiVersion + '/knowledgeBase',
-  knowledgeBaseList: window.BASE_CONFIG.apiVersion + '/knowledgeBase/list',
-  knowledgeBaseEnable: window.BASE_CONFIG.apiVersion + '/knowledgeBase/status',
+  knowledgeBase: BASE_CONFIG.apiVersion + '/knowledgeBase',
+  knowledgeBaseList: BASE_CONFIG.apiVersion + '/knowledgeBase/list',
+  knowledgeBaseEnable: BASE_CONFIG.apiVersion + '/knowledgeBase/status',
 
   // 报告相关
   reportJob: '/report/job',

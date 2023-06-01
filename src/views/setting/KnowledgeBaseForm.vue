@@ -1157,8 +1157,8 @@ export default {
       importedType,
       revertImportedData,
       handleShowImportedData,
-      baseUrl: window.BASE_CONFIG.baseUrl,
-      apiVersion: window.BASE_CONFIG.apiVersion,
+      baseUrl: BASE_CONFIG.baseUrl,
+      apiVersion: BASE_CONFIG.apiVersion,
       fileList: ref([]),
       fileListBack: ref(),
       uploadHeaders: {

@@ -3,5 +3,3 @@ const BASE_CONFIG = {
   version: '23.06',
   apiVersion: 'v1'
 }
-
-window.BASE_CONFIG = BASE_CONFIG
