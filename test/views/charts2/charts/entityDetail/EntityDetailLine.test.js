@@ -29,6 +29,10 @@ const chart = {
   firstShow: false,
   moved: false
 }
+const entity = {
+  entityType: 'ip',
+  entityName: '153.99.250.123'
+}
 
 function init (query) {
   require('vue-router').useRoute.mockReturnValue({ query: query || {} })
@@ -40,6 +44,7 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
     axios.get.mockResolvedValue(mockData.empty)
     const wrapper = mount(EntityDetailLine, {
       propsData: {
+        entity,
         timeFilter,
         chart
       }
@@ -66,6 +71,7 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
     axios.get.mockResolvedValue(mockData.bytes.boundary)
     const wrapper = mount(EntityDetailLine, {
       propsData: {
+        entity,
         timeFilter,
         chart
       }
@@ -95,6 +101,7 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
     // 加载vue组件，获得实例
     const wrapper = mount(EntityDetailLine, {
       propsData: {
+        entity,
         timeFilter,
         chart
       }
@@ -124,6 +131,7 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
     // 加载vue组件，获得实例
     const wrapper = mount(EntityDetailLine, {
       propsData: {
+        entity,
         timeFilter,
         chart,
         metric: 'Packets/s'
@@ -148,6 +156,7 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
     // 加载vue组件，获得实例
     const wrapper = mount(EntityDetailLine, {
       propsData: {
+        entity,
         timeFilter,
         chart,
         metric: 'Sessions/s'
