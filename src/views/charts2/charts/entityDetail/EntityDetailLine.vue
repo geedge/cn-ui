@@ -208,8 +208,10 @@ export default {
       const newVal = val ? _.clone(val) : this.metric
 
       const params = {
+        resource: this.entity.entityName,
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        endTime: getSecond(this.timeFilter.endTime),
+        metric: newVal
       }
 
       if (this.queryCondition) {
@@ -217,8 +219,7 @@ export default {
       }
 
       this.toggleLoading(true)
-      // axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
-      axios.get(api.entity.totalTrafficAnalysis, { params: params }).then(response => {
+      axios.get(`${api.entity.throughput}/${this.entity.entityType}`, { params: params }).then(response => {
         const res = response.data
 
         if (res.code === 200) {

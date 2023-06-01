@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 
 const openMock = true
 if (openMock) {
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/entityDetail/totalTrafficAnalysis.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + BASE_CONFIG.apiVersion + '/entity/detail/traffic/throughput.*'), 'get', function (requestObj) {
     const titleList = ['totalBitsRate', 'inboundBitsRate', 'outboundBitsRate', 'internalBitsRate', 'throughBitsRate', 'other']
     const arr = [{ type: 'Bits/s' }, { type: 'Packets/s' }, { type: 'Sessions/s' }]
 

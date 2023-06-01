@@ -231,7 +231,7 @@ export const api = {
     drilldownTrafficAnalysis: '/interface/dns/overview/drilldown/trafficAnalysis'
   },
   entity: {
-    totalTrafficAnalysis: 'interface/entityDetail/totalTrafficAnalysis',
+    throughput: BASE_CONFIG.apiVersion + '/entity/detail/traffic/throughput',
     securityEvent: 'interface/entityDetail/securityEvent',
     performanceEvent: 'interface/entityDetail/performanceEvent',
     domainNameResolutionRelatedApp: 'interface/entity/detail/overview/ip/relatedApp',
