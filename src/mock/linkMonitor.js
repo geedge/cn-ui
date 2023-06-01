@@ -114,7 +114,7 @@ if (openMock) {
     }
   })
 
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/bigramAnalysis1.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/bigramAnalysis.*'), 'get', function (requestObj) {
     const data = []
     const ingressLinkIds = ['256', '512', '768', '1024', '1280', '1536', '1792', '2048', '2304', '2816']
     const egressLinkIds = ['257', '513', '769', '1025', '1281', '1537', '1793', '2049', '2305', '2817']
@@ -132,7 +132,7 @@ if (openMock) {
     }
   })
 
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/bigramNextHopAnalysis1.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/bigramNextHopAnalysis.*'), 'get', function (requestObj) {
     const data = []
     const ingressLinkIds = ['西安', '太原', '西宁']
     const egressLinkIds = ['西安', '太原', '西宁']
@@ -150,7 +150,7 @@ if (openMock) {
     }
   })
 
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/analysis1.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/analysis.*'), 'get', function (requestObj) {
     const linkData = []
     for (let i = 0; i < 10; i++) {
       linkData.push({ linkId: 'Hundredgige' + (i + 1), egressBytes: Math.floor(Math.pow(1.3, i) * 1000000000), ingressBytes: Math.floor(Math.pow(1.5, i) * 1000000000) })
@@ -164,7 +164,7 @@ if (openMock) {
     }
   })
 
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/nextHopAnalysis1.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/linkMonitor/nextHopAnalysis.*'), 'get', function (requestObj) {
     const linkData = [
       { linkDirection: '西安', egressBytes: 1024000000000, ingressBytes: 1224000000000 },
       { linkDirection: '太原', egressBytes: 102400000000, ingressBytes: 142400000000 },
