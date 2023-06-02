@@ -4,13 +4,13 @@
       {{ $t('knowledge.filters') }}
     </div>
     <template v-for="(filter, index) in filterData" :key="index">
-      <div class="knowledge-filter" v-show="filter.data.length > 0">
+      <div class="knowledge-filter" v-if="filter.data.length > 0">
         <div class="filter__header" @click="filter.collapse = !filter.collapse">
           <span class="new-knowledge-filter-header-title">{{filter.title}}</span>
           <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filter.collapse }"></i>
         </div>
         <el-collapse-transition>
-          <div class="filter__body" v-show="!filter.collapse">
+          <div class="filter__body" v-if="!filter.collapse">
             <el-tree
                     :ref="`knowledgeTree${index}`"
                     :data="filter.data"
@@ -75,37 +75,39 @@ export default {
       ])
     },
     handleCheckedItemChange (data, checkinfo, index) {
-      let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
-      const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
-      typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
-      const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
-      const typeCheckedLen = typeCheckedNodes.length
-      const statusCheckedLen = statusCheckedNodes.length
-      let params = {}
-      if (typeCheckedLen === 0 || statusCheckedLen === 0) {
-        this.$emit('clearList')
-      } else {
-        const categorys = []
-        const sources = []
-        typeCheckedNodes.forEach(val => {
-          if (val.type === 0) {
-            categorys.push(val.value)
-          } else if (val.type === 1) {
-            sources.push(val.value)
-          }
-        })
-        params = {
-          category: categorys.toString(),
-          source: sources.toString()
-        }
-        if (statusCheckedLen === 1) {
+      this.$nextTick(() => {
+        let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
+        const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
+        typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
+        const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
+        const typeCheckedLen = typeCheckedNodes.length
+        const statusCheckedLen = statusCheckedNodes.length
+        let params = {}
+        if (typeCheckedLen === 0 || statusCheckedLen === 0) {
+          this.$emit('clearList')
+        } else {
+          const categorys = []
+          const sources = []
+          typeCheckedNodes.forEach(val => {
+            if (val.type === 0) {
+              categorys.push(val.value)
+            } else if (val.type === 1) {
+              sources.push(val.value)
+            }
+          })
           params = {
-            ...params,
-            status: statusCheckedNodes[0].value
+            category: categorys.toString(),
+            source: sources.toString()
           }
+          if (statusCheckedLen === 1) {
+            params = {
+              ...params,
+              status: statusCheckedNodes[0].value
+            }
+          }
+          this.$emit('reload', params, true)
         }
-        this.$emit('reload', params, true)
-      }
+      })
     },
     getAllTableData (params) {
       let searchParams = { pageSize: -1 }

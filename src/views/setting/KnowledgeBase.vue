@@ -306,7 +306,7 @@ export default {
       this.isSelectedStatus = false
       this.batchDeleteObjs = []
       this.secondBatchDeleteObjs = []
-      this.tableData = 0
+      this.tableData = []
       this.pageObj.total = 0
     },
     toSelect () {

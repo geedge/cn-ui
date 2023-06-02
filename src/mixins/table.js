@@ -40,12 +40,20 @@ export default {
           }
         }, 200)
       }
+    },
+    tableData: {
+      handler (n) {
+        if (this.tableData && this.tableData.length > 0) {
+          this.isInit = false
+        }
+      }
     }
   },
   data () {
     return {
       operationWidth: '165', // 操作列宽
-      show: true
+      show: true,
+      isInit: true
     }
   },
   methods: {
@@ -102,19 +110,20 @@ export default {
       }
     },
     changeStatus (status, id) {
-      const statusNum = status ? 1 : 0
-      patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: 0 }] }).then(response => {
-        if (response.code === 200) {
+      if (!this.isInit) {
+        patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: status }] }).then(response => {
+          if (response.code === 200) {
 
-        } else {
-          console.error(response)
-          if (response.message) {
-            this.$message.error(response.message)
           } else {
-            this.$message.error('Something went wrong...')
+            console.error(response)
+            if (response.message) {
+              this.$message.error(response.message)
+            } else {
+              this.$message.error('Something went wrong...')
+            }
           }
-        }
-      })
+        })
+      }
     },
     tableOperation ([command, row]) {
       switch (command) {

@@ -113,12 +113,8 @@ export default {
       get(listUrl, this.searchLabel).then(response => {
         this.tools.loading = false
         if (response.code === 200) {
-          for (let i = 0; i < response.data.list.length; i++) {
-            response.data.list[i].status = response.data.list[i].status === 1
-          }
           this.tableData = response.data.list
           this.pageObj.total = response.data.total
-          // TODO 回到顶部
         } else {
           console.error(response)
           if (response.message) {
@@ -177,12 +173,6 @@ export default {
             }
           }).finally(() => {
             this.tools.loading = false
-            /*
-            if(this.isSelectedStatus != undefined){
-              this.isSelectedStatus = false
-              this.disableDelete = true
-              this.batchDeleteObjs = []
-            } */
           })
         }).catch(() => {})
           .finally(() => {

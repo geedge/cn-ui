@@ -26,6 +26,8 @@
                    v-model="data.status"
                    active-color="#38ACD2"
                    inactive-color="#C0CEDB"
+                   :active-value="1"
+                   :inactive-value="0"
                    @change="changeStatus($event,data.knowledgeId)"
         >
         </el-switch>
@@ -49,17 +51,6 @@ export default {
     return {
       tableTitle: [],
       checkList: []
-    }
-  },
-  watch: {
-    tableData: {
-      handler (n) {
-        if (this.tableData && this.tableData.length > 0) {
-          this.tableData.forEach(item => {
-            // item.status = true
-          })
-        }
-      }
     }
   },
   methods: {
@@ -149,7 +140,6 @@ export default {
     this.tableData.forEach(item => {
       item.showMore = false
       item.moreOptions = false
-      // item.status = true
     })
   },
   computed: {
