@@ -73,12 +73,11 @@
 </template>
 
 <script>
-import { getNowTime, getSecond } from '@/utils/date-util'
+import { getSecond } from '@/utils/date-util'
 import { eventSeverityColor1 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import chartMixin from '@/views/charts2/chart-mixin'
 
@@ -96,28 +95,11 @@ export default {
   setup () {
     const { query } = useRoute()
     const entityType = query.entityType
-    const entityName = query.entityName
-    // 获取url携带的range、startTime、endTime
-    const rangeParam = query.range
-    const startTimeParam = query.startTime
-    const endTimeParam = query.endTime
-    // 若url携带了，使用携带的值，否则使用默认值。
-
-    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
-    const timeFilter = ref({ dateRangeValue })
-    if (!startTimeParam || !endTimeParam) {
-      const { startTime, endTime } = getNowTime(60)
-      timeFilter.value.startTime = startTime
-      timeFilter.value.endTime = endTime
-    } else {
-      timeFilter.value.startTime = parseInt(startTimeParam)
-      timeFilter.value.endTime = parseInt(endTimeParam)
-    }
+    const entityName = query.name
 
     return {
       entityType,
-      entityName,
-      timeFilter
+      entityName
     }
   },
   mounted () {
@@ -127,14 +109,13 @@ export default {
     unitConvert,
     initData () {
       const params = {
-        type: this.entityType,
-        name: this.entityName,
+        resource: this.entityName,
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
 
       this.toggleLoading(true)
-      axios.get(api.entity.securityEvent, { params: params }).then(response => {
+      axios.get(`${api.entity.security}/${this.entityType}`, { params: params }).then(response => {
         const res = response.data
 
         if (res.code === 200) {

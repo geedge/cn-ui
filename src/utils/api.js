@@ -232,8 +232,8 @@ export const api = {
   },
   entity: {
     throughput: BASE_CONFIG.apiVersion + '/entity/detail/traffic/throughput',
-    securityEvent: 'interface/entityDetail/securityEvent',
-    performanceEvent: 'interface/entityDetail/performanceEvent',
+    security: BASE_CONFIG.apiVersion + '/entity/detail/event/security',
+    performance: BASE_CONFIG.apiVersion + '/entity/detail/event/performance',
     domainNameResolutionRelatedApp: 'interface/entity/detail/overview/ip/relatedApp',
     domainNameResolutionRelatedIP: 'interface/entity/detail/overview/ip/relatedIp',
     domainNameResolutionRelatedDomain: 'interface/entity/detail/overview/ip/relatedDomain',

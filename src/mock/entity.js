@@ -1,8 +1,8 @@
 import Mock from 'mockjs'
-
+const urlAndVersion = BASE_CONFIG.baseUrl + BASE_CONFIG.apiVersion
 const openMock = true
 if (openMock) {
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + BASE_CONFIG.apiVersion + '/entity/detail/traffic/throughput.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/traffic/throughput.*'), 'get', function (requestObj) {
     const titleList = ['totalBitsRate', 'inboundBitsRate', 'outboundBitsRate', 'internalBitsRate', 'throughBitsRate', 'other']
     const arr = [{ type: 'Bits/s' }, { type: 'Packets/s' }, { type: 'Sessions/s' }]
 
@@ -66,7 +66,7 @@ if (openMock) {
       }
     }
   })
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/entityDetail/securityEvent.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/event/security.*'), 'get', function (requestObj) {
     const result = [
       {
         eventId: '1298414830886991872',
@@ -183,7 +183,7 @@ if (openMock) {
       }
     }
   })
-  Mock.mock(new RegExp(BASE_CONFIG.baseUrl + 'interface/entityDetail/performanceEvent.*'), 'get', function (requestObj) {
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/event/performance.*'), 'get', function (requestObj) {
     const result = [
       {
         eventId: '1308078720390412288',
