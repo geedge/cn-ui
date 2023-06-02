@@ -71,9 +71,11 @@
         </template>
         <template v-else-if="item.prop === 'status'">
           <el-switch class="card-enable"
-                     v-model="scope.row['status']"
+                     v-model="scope.row.status"
                      active-color="#38ACD2"
                      inactive-color="#C0CEDB"
+                     :active-value="1"
+                     :inactive-value="0"
                      @change="changeStatus($event,scope.row.knowledgeId)"
           >
           </el-switch>

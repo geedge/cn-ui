@@ -174,9 +174,11 @@
           </template>
 
               <el-switch class="card-enable"
-                         v-model="status"
+                         v-model="editObject.status"
                          active-color="#38ACD2"
                          inactive-color="#C0CEDB"
+                         :active-value="1"
+                         :inactive-value="0"
               >
               </el-switch>
         </el-collapse-item>
@@ -426,7 +428,8 @@ export default {
       isClick: false,
       pageNoForTable: 1,
       listMode: 'list',
-      status: true
+      status: 1,
+      oldItemIds: []
     }
   },
   methods: {
@@ -451,16 +454,20 @@ export default {
     },
     handleSpeticalTypeData (originalImportedData) {
       originalImportedData.forEach(item => {
-        const names = item.tagNames
-        if (this.editObject.source === knowledgeSourceValue.ipTag && names) {
-          const format = names.addrFormat
+        // const names = item.tagNames
+        if (this.editObject.source === knowledgeSourceValue.ipTag) {
+          const format = item.addrFormat
           if (format === 'Single') {
-            item.tagName = names.ip1
+            item.tagName = item.ip1
           } else if (format === 'CIDR') {
-            item.tagName = names.ip1 + '/' + names.ip2
+            item.tagName = item.ip1 + '/' + item.ip2
           } else if (format === 'Range') {
-            item.tagName = names.ip1 + '~' + names.ip2
+            item.tagName = item.ip1 + '~' + item.ip2
           }
+        } else if (this.editObject.source === knowledgeSourceValue.domainTag) {
+          item.tagName = item.domain
+        } else if (this.editObject.source === knowledgeSourceValue.appTag) {
+          item.tagName = item.appName
         }
       })
       return originalImportedData
@@ -482,6 +489,9 @@ export default {
         this.isLoad = false
         originalImportedData.sort((a, b) => b.isValid - a.isValid)
         this.importedData = this.handleSpeticalTypeData(originalImportedData)
+        this.addItemList = _.cloneDeep(this.importedData)
+        this.updateItemList = []
+        this.deleteItemIds = this.oldItemIds
 
         this.handleShowImportedData()
         this.addEditFlag = false
@@ -499,6 +509,16 @@ export default {
       if (files && files.status === 'success') {
         this.uploaded = false
         this.typeSelectDisable = false
+        this.importedData.forEach(item => {
+          if (item.id) {
+            const delIndex = this.deleteItemIds.indexOf(item.id)
+            if (delIndex === -1) {
+              this.deleteItemIds.push(item.id)
+            }
+          }
+        })
+        this.addItemList = []
+        this.updateItemList = []
         this.importedData = []
         this.showImportedData = []
         this.originalImportInfo = {
@@ -615,6 +635,21 @@ export default {
       this.editTagErrorTip = ''
 
       const toRemoveIndex = (this.importedPageObj.pageNo - 1) * this.importedPageObj.pageSize + index
+      const delItem = this.importedData[toRemoveIndex]
+      if (delItem.id) {
+        if (this.deleteItemIds.indexOf(delItem.id) === -1) {
+          this.deleteItemIds.push(delItem.id)
+        }
+        const delIndex = this.updateItemList.findIndex(item => item.id === delItem.id)
+        if (delIndex > -1) {
+          this.updateItemList.splice(delIndex, 1)
+        }
+      } else {
+        const delIndex = this.addItemList.findIndex(item => item.tagName === delItem.tagName && item.tagValue === delItem.tagValue)
+        if (delIndex > -1) {
+          this.addItemList.splice(delIndex, 1)
+        }
+      }
       this.importedData.splice(toRemoveIndex, 1)
       // 删除内容为空的新增记录
       const lastIndex = this.importedData.length - 1
@@ -700,13 +735,16 @@ export default {
                   if (this.importedData.length === 1 && this.importedData[0].tagName === '') {
                     // this.blockOperation.save = false
                   } else {
-                    const t = this.knowledgeBaseType.find(t => t.value === this.editObject.source)
+                    const userId = localStorage.getItem(storageKey.userId)
                     const postData = {
                       name: this.editObject.name,
                       category: 'user_defined',
-                      type: t ? t.name : '',
+                      source: this.editObject.source,
                       description: this.editObject.description,
-                      status: this.status ? 1 : 0
+                      status: this.editObject.status,
+                      user: {
+                        id: userId ? Number(userId) : 1
+                      }
                     }
                     // 避免点击新增后，并没有保存新增项就点击了save，此时删除新增的空白项
                     if (this.importedData[this.importedData.length - 1].tagName === '') {
@@ -715,36 +753,7 @@ export default {
 
                     const self = this
                     if (!this.editObject.knowledgeId) {
-                      postData.addItemList = []
-                      this.importedData.forEach(d => {
-                        if (this.editObject.source === knowledgeSourceValue.ipTag) {
-                          const sepIndex = d.tagName.indexOf('/')
-                          if (sepIndex > -1) { // CIDR
-                            postData.addItemList.push({
-                              tagValue: d.tagValue,
-                              tagNames: {
-                                addrFormat: 'CIDR',
-                                ip1: d.tagName.substring(0, sepIndex),
-                                ip2: d.tagName.substring(sepIndex + 1)
-                              }
-                            })
-                          } else { // Single
-                            postData.addItemList.push({
-                              tagValue: d.tagValue,
-                              tagNames: {
-                                addrFormat: 'Single',
-                                ip1: d.tagName,
-                                ip2: ''
-                              }
-                            })
-                          }
-                        } else {
-                          postData.addItemList.push({
-                            tagValue: d.tagValue,
-                            tagName: d.tagName
-                          })
-                        }
-                      })
+                      postData.addItemList = this.addItemList
                       axios.post(this.url, postData).then(response => {
                         if (response.data.code === 200) {
                           this.$message({
@@ -770,36 +779,9 @@ export default {
                         this.blockOperation.save = false
                       })
                     } else {
-                      postData.updateItemList = []
-                      this.importedData.forEach(d => {
-                        if (this.editObject.source === knowledgeSourceValue.ipTag) {
-                          const sepIndex = d.tagName.indexOf('/')
-                          if (sepIndex > -1) { // CIDR
-                            postData.updateItemList.push({
-                              tagValue: d.tagValue,
-                              tagNames: {
-                                addrFormat: 'CIDR',
-                                ip1: d.tagName.substring(0, sepIndex),
-                                ip2: d.tagName.substring(sepIndex + 1)
-                              }
-                            })
-                          } else { // Single
-                            postData.updateItemList.push({
-                              tagValue: d.tagValue,
-                              tagNames: {
-                                addrFormat: 'Single',
-                                ip1: d.tagName,
-                                ip2: ''
-                              }
-                            })
-                          }
-                        } else {
-                          postData.updateItemList.push({
-                            tagValue: d.tagValue,
-                            tagName: d.tagName
-                          })
-                        }
-                      })
+                      postData.updateItemList = this.updateItemList
+                      postData.addItemList = this.addItemList
+                      postData.deleteItemIds = this.deleteItemIds
                       postData.knowledgeId = this.editObject.knowledgeId
                       axios.put(this.url, postData).then(response => {
                         if (response.data.code === 200) {
@@ -880,6 +862,87 @@ export default {
       this.backEditFlag = false
       this.editTagErrorTip = ''
     },
+    updateData (data) {
+      if (data) {
+        const updateItemIndex = this.updateItemList.findIndex(item => item.id === data.id)
+        if (updateItemIndex > -1) {
+          this.updateItemList.splice(updateItemIndex, 1, data)
+        } else {
+          let updateItemData = {
+            id: data.id,
+            tagValue: data.tagValue,
+            isValid: 1
+          }
+          if (this.editObject.source === knowledgeSourceValue.ipTag) {
+            const sepIndex = data.tagName.indexOf('/')
+            if (sepIndex > -1) { // CIDR
+              updateItemData = {
+                ...updateItemData,
+                addrFormat: 'CIDR',
+                ip1: data.tagName.substring(0, sepIndex),
+                ip2: data.tagName.substring(sepIndex + 1)
+              }
+            } else { // Single
+              updateItemData = {
+                ...updateItemData,
+                addrFormat: 'Single',
+                ip1: data.tagName,
+                ip2: ''
+              }
+            }
+          } else if (this.editObject.source === knowledgeSourceValue.domainTag) {
+            updateItemData = {
+              ...updateItemData,
+              domain: data.tagName
+            }
+          } else if (this.editObject.source === knowledgeSourceValue.appTag) {
+            updateItemData = {
+              ...updateItemData,
+              appName: data.tagName
+            }
+          }
+          this.updateItemList.push(updateItemData)
+        }
+      }
+    },
+    addData (data) {
+      if (data) {
+        const addItemIndex = this.addItemList.findIndex(item => item.tagName === data.tagName && item.tagValue === data.tagValue)
+        if (addItemIndex === -1) {
+          let addItem = data
+          if (this.editObject.source === knowledgeSourceValue.ipTag) {
+            const sepIndex = data.tagName.indexOf('/')
+            if (sepIndex > -1) { // CIDR
+              addItem = {
+                ...addItem,
+                addrFormat: 'CIDR',
+                ip1: data.tagName.substring(0, sepIndex),
+                ip2: data.tagName.substring(sepIndex + 1)
+              }
+            } else { // Single
+              addItem = {
+                ...addItem,
+                addrFormat: 'Single',
+                ip1: data.tagName,
+                ip2: ''
+              }
+            }
+          } else if (this.editObject.source === knowledgeSourceValue.domainTag) {
+            addItem = {
+              ...addItem,
+              domain: data.tagName
+            }
+          } else if (this.editObject.source === knowledgeSourceValue.appTag) {
+            addItem = {
+              ...addItem,
+              appName: data.tagName
+            }
+          }
+
+          this.addItemList.push(addItem)
+        }
+      }
+    },
     saveImportedData (index) {
       this.$refs.editForm.validate(valid => {
         if (valid) {
@@ -895,6 +958,13 @@ export default {
             this.importedData[num].tagName = this.editTagForm.tagName
             this.importedData[num].tagValue = this.editTagForm.tagValue
             this.importedData[num].isValid = 1
+            this.addData(this.importedData[num])
+          } else {
+            if (findData.id) {
+              this.updateData(findData)
+            } else {
+              this.addData(findData)
+            }
           }
 
           this.addEditFlag = false
@@ -935,9 +1005,8 @@ export default {
   },
   computed: {
     uploadParams () {
-      const t = this.knowledgeBaseType.find(t => t.value === this.editObject.source)
       return {
-        type: t ? t.name : ''
+        source: this.editObject.source
       }
     },
     importedTableFirstColumn () {
@@ -972,16 +1041,16 @@ export default {
       this.stepHeights[2] = itemListHeight.hasData// 修改的时候一直是478
       this.stepHeightConstant.third = itemListHeight.hasData// 修改的时候一直是478
       this.isLoad = true
-      axios.get(`${api.knowledgeBase}/${this.knowledgeBaseId}`).then(response => {
+      axios.get(`${api.knowledgeBase}/${this.knowledgeBaseId}`, { params: { pageSize: -1 } }).then(response => {
         if (response.data.code === 200) {
           if (!response.data.data) {
             throw new Error('No data found, id: ' + this.knowledgeBaseId)
           }
           this.editObject = response.data.data
-          this.status = this.editObject.isValid === 1
-          // this.importedData = this.revertImportedData(this.editObject.data)
-          this.importedData = this.handleSpeticalTypeData(this.editObject.list)
-
+          this.importedData = this.handleSpeticalTypeData(this.editObject.itemList)
+          this.importedData.forEach(item => {
+            this.oldItemIds.push(item.id)
+          })
           this.handleShowImportedData()
           this.originalImportInfo = {
             total: this.importedData.length,
@@ -1074,7 +1143,7 @@ export default {
       source: 'cn_ip_tag_user_defined',
       description: '',
       updateTime: '',
-      status: true
+      status: 1
     }
     /* 将组织后的数据还原拉平 */
     const revertImportedData = (data) => {
@@ -1102,6 +1171,12 @@ export default {
     })
     // table中显示的导入的数据
     const showImportedData = ref([])
+    // 新增数据
+    const addItemList = ref([])
+    // 修改的数据
+    const updateItemList = ref([])
+    // 删除的数据
+    const deleteItemIds = ref([])
     // table分页对象
     const importedPageObj = ref({
       pageNo: 1,
@@ -1153,6 +1228,9 @@ export default {
       knowledgeBaseType,
       importedData,
       showImportedData,
+      addItemList,
+      updateItemList,
+      deleteItemIds,
       importedPageObj,
       importedType,
       revertImportedData,
