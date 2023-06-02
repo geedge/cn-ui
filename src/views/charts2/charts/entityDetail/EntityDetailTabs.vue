@@ -11,7 +11,7 @@
           <!--<div class="el-tabs__active-bar is-top" style="width: 80.9998px; transform: translateX(177px);"></div>-->
           <i :class="tab.icon"></i>{{tab.label}}
         </template>
-        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading"></information-aggregation>
+        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution && tab.name === activeTab" @toggleLoading="setLoading"></domain-name-resolution>
         <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" />
         <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" />

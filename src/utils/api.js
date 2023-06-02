@@ -239,7 +239,8 @@ export const api = {
     domainNameResolutionRelatedDomain: 'interface/entity/detail/overview/ip/relatedDomain',
     openPort: '',
     basicInfo: BASE_CONFIG.apiVersion + '/entity/detail/basic',
-    tags: BASE_CONFIG.apiVersion + '/entity/detail/kb/intelligence/tag'
+    tags: BASE_CONFIG.apiVersion + '/entity/detail/kb/intelligence/tag',
+    informationAggregation: BASE_CONFIG.apiVersion + '/entity/kb/intelligence/list'
   }
 }
 

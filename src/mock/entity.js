@@ -286,6 +286,59 @@ if (openMock) {
     return {
       msg: 'success',
       code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${BASE_CONFIG.baseUrl}${BASE_CONFIG.apiVersion}/entity/kb/intelligence/list.*`), 'get', function (requestObj) {
+    const result = [
+      {
+        location: {
+          isp: 'dba Omsoft',
+          updateTime: 1685696510,
+          createTime: 1685696510,
+          isValid: 1
+        }
+      },
+      {
+        malware: {
+          threatType: 'command and control',
+          malwareName: 'IcedID',
+          malwareAlias: 'BokBot,IceID',
+          updateTime: 1685696510,
+          createTime: 1685696510,
+          isValid: 1
+        }
+      },
+      {
+        darkweb: {
+          nodeType: 'i2p',
+          updateTime: 1685696510,
+          createTime: 1685696510,
+          isValid: 1
+        }
+      },
+      {
+        userDefinedTag: {
+          id: 1,
+          tagValue: '门户网站',
+          updateTime: 1685696500,
+          createTime: 1685696500,
+          isValid: 1
+        }
+      },
+      {
+        userDefinedTag: {
+          id: 1,
+          tagValue: '用户tag',
+          updateTime: 1685696500,
+          createTime: 1685696500,
+          isValid: 1
+        }
+      }
+    ]
+    return {
+      msg: 'success',
+      code: 200,
       data: {
         result: result
       }

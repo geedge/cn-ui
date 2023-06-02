@@ -15,17 +15,25 @@
           :cell-class-name="intelligenceContentClass"
       >
         <el-table-column
-            key="discoveryTime"
-            width="150px"
+            key="createTime"
+            width="250px"
             :label="$t('entities.tab.informationAggregation.discoveryTime')"
-            prop="discoveryTime"
-        ></el-table-column>
+            prop="createTime"
+        >
+          <template #default="scope">
+            {{dateFormatByAppearance(scope.row.createTime)}}
+          </template>
+        </el-table-column>
         <el-table-column
             key="updateTime"
-            width="150px"
+            width="250px"
             :label="$t('entities.tab.informationAggregation.updateTime')"
             prop="updateTime"
-        ></el-table-column>
+        >
+          <template #default="scope">
+            {{dateFormatByAppearance(scope.row.updateTime)}}
+          </template>
+        </el-table-column>
         <el-table-column
             key="intelligenceContent"
             :label="$t('entities.tab.informationAggregation.intelligenceContent')"
@@ -33,31 +41,25 @@
         >
           <template #default="scope">
             <div class="intelligence-content">
-              <div class="information-aggregation-tags">
+<!--              <div class="information-aggregation-tags">
                 <template v-for="ic in scope.row.intelligenceContent" >
                   <template v-if="ic.type === 0" >
-                    <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag--small entity-tag--level-one-negative margin-r-6">
+                    <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag&#45;&#45;small entity-tag&#45;&#45;level-one-negative margin-r-6">
                       {{ic.value}}
                     </div>
-                    <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag--small entity-tag--level-one-normal margin-r-6">
+                    <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag&#45;&#45;small entity-tag&#45;&#45;level-one-normal margin-r-6">
                       {{ic.value}}
                     </div>
-                    <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag--small entity-tag--level-one-positive margin-r-6">
+                    <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag&#45;&#45;small entity-tag&#45;&#45;level-one-positive margin-r-6">
                       {{ic.value}}
                     </div>
                   </template>
                 </template>
-              </div>
+              </div>-->
               <div class="information-aggregation-tags">
-                <div v-for="ic in scope.row.intelligenceContent" >
-                  <div v-if="ic.type === 1">
-                    <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag--small entity-tag--level-two-negative margin-r-6">
-                      {{ic.value}}
-                    </div>
-                    <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag--small entity-tag--level-two-normal margin-r-6">
-                      {{ic.value}}
-                    </div>
-                    <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag--small entity-tag--level-two-positive margin-r-6">
+                <div v-for="ic in scope.row.intelligenceContent" :key="ic.key">
+                  <div>
+                    <div class="entity-tag entity-tag--small margin-r-6" :class="`entity-tag--level-two-${ic.type}`">
                       {{ic.value}}
                     </div>
                   </div>
@@ -74,10 +76,10 @@
         >
           <template #default="scope">
             <div v-if="scope.row.status === 1" class="information-aggregation__valid">
-              有效
+              valid
             </div>
             <div v-else-if="scope.row.status === 0" class="information-aggregation__invalid">
-              无效
+              invalid
             </div>
           </template>
         </el-table-column>
@@ -88,178 +90,70 @@
 
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
+import axios from 'axios'
+import { api } from '@/utils/api'
+import { entityDetailTags } from '@/utils/constants'
+import { dateFormatByAppearance } from '@/utils/date-util'
 
 export default {
   name: 'InformationAggregation',
   data () {
     return {
-      informationAggregationList: [],
-      errorMsg: '',
-      showError: false
+      informationAggregationList: []
     }
   },
   mixins: [chartMixin],
   methods: {
+    dateFormatByAppearance,
     intelligenceContentClass ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 2) {
         return 'padding-0'
       }
+    },
+    getData () {
+      this.toggleLoading(true)
+      this.informationAggregationList = []
+      axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}`).then(response => {
+        const res = response.data
+        if (res.code === 200) {
+          res.data.result.forEach(r => {
+            Object.keys(r).forEach(k => {
+              const aggregation = {
+                createTime: r[k].createTime,
+                updateTime: r[k].updateTime,
+                status: r[k].isValid,
+                intelligenceContent: []
+              }
+              if (k === 'userDefinedTag') {
+                aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal' })
+              } else {
+                Object.keys(r[k]).forEach(k2 => {
+                  const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
+                  if (find) {
+                    aggregation.intelligenceContent.push({ key: k2, value: r[k][k2], type: find.type })
+                  }
+                })
+              }
+              if (aggregation.intelligenceContent.length > 0) {
+                this.informationAggregationList.push(aggregation)
+              }
+            })
+          })
+        } else {
+          this.showError = true
+          this.errorMsg = this.errorMsgHandler(res)
+        }
+      }).catch(e => {
+        console.error(e)
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
+      }).finally(() => {
+        this.toggleLoading(false)
+      })
     }
   },
   mounted () {
-    this.toggleLoading(true)
-    // 模拟loading，后续添加post请求时记得删除
-    const timer = setTimeout(() => {
-      this.toggleLoading(false)
-      clearTimeout(timer)
-    }, 150)
-    this.informationAggregationList = [
-      {
-        discoveryTime: '2022-04-12',
-        updateTime: '2022-04-13',
-        intelligenceContent: [
-          {
-            type: 0,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '安全'
-          },
-          {
-            type: 0,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '工具'
-          },
-          {
-            type: 1,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '信息技术'
-          },
-          {
-            type: 1,
-            threatLevel: 0, // 红色：-1；灰色：0；绿色：1；
-            value: '互联网'
-          }
-        ],
-        status: 1// 1有效；0无效；
-      },
-      {
-        discoveryTime: '2022-04-11',
-        updateTime: '2022-04-14',
-        intelligenceContent: [
-          {
-            type: 0,
-            threatLevel: -1, // 红色：-1；灰色：0；绿色：1；
-            value: '恶意软件'
-          },
-          {
-            type: 0,
-            threatLevel: -1, // 红色：-1；灰色：0；绿色：1；
-            value: '垃圾软件'
-          },
-          {
-            type: 1,
-            threatLevel: -1, // 红色：-1；灰色：0；绿色：1；
-            value: '病毒软件'
-          },
-          {
-            type: 1,
-            threatLevel: -1, // 红色：-1；灰色：0；绿色：1；
-            value: '病毒软件'
-          },
-          {
-            type: 1,
-            threatLevel: 0, // 红色：-1；灰色：0；绿色：1；
-            value: '互联网'
-          }
-        ],
-        status: 1// 1有效；0无效；
-      },
-      {
-        discoveryTime: '2022-04-12',
-        updateTime: '2022-04-12',
-        intelligenceContent: [
-          {
-            type: 0,
-            threatLevel: -1, // 红色：-1；灰色：0；绿色：1；
-            value: '恶意软件'
-          },
-          {
-            type: 1,
-            threatLevel: -1, // 红色：-1；灰色：0；绿色：1；
-            value: '病毒软件'
-          },
-          {
-            type: 1,
-            threatLevel: 0, // 红色：-1；灰色：0；绿色：1；
-            value: '互联网'
-          }
-        ],
-        status: 0// 1有效；0无效；
-      },
-      {
-        discoveryTime: '2022-04-12',
-        updateTime: '2022-04-12',
-        intelligenceContent: [
-          {
-            type: 0,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '安全'
-          },
-          {
-            type: 0,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '工具'
-          },
-          {
-            type: 1,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '信息技术'
-          },
-          {
-            type: 1,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '信息技术'
-          },
-          {
-            type: 1,
-            threatLevel: 0, // 红色：-1；灰色：0；绿色：1；
-            value: '互联网'
-          }
-        ],
-        status: 1// 1有效；0无效；
-      },
-      {
-        discoveryTime: '2022-04-12',
-        updateTime: '2022-04-12',
-        intelligenceContent: [
-          {
-            type: 0,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '安全'
-          },
-          {
-            type: 0,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '工具'
-          },
-          {
-            type: 1,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '信息技术'
-          },
-          {
-            type: 1,
-            threatLevel: 1, // 红色：-1；灰色：0；绿色：1；
-            value: '信息技术'
-          },
-          {
-            type: 1,
-            threatLevel: 0, // 红色：-1；灰色：0；绿色：1；
-            value: '互联网'
-          }
-        ],
-        status: 0// 1有效；0无效；
-      }
-    ]
+    this.getData()
   }
 }
 </script>

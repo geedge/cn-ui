@@ -90,28 +90,18 @@ export default {
         if (tagData) {
           const res = tagData.data
           if (res.code === 200) {
-            switch (this.entity.entityType) {
-              case 'domain': {
-                if (res.data.result.malware && res.data.result.malware.malwareName) {
-                  this.levelTwoTags.push({ value: res.data.result.malware.malwareName, type: entityDetailTags.domain.find(t => t.name === 'malwareName').type })
-                }
-                if (res.data.result.darkweb && res.data.result.darkweb.nodeType) {
-                  this.levelTwoTags.push({ value: res.data.result.darkweb.nodeType, type: entityDetailTags.domain.find(t => t.name === 'nodeType').type })
-                }
-                break
+            Object.keys(res.data).forEach(k => {
+              if (k !== 'userDefinedTags') {
+                Object.keys(res.data[k]).forEach(k2 => {
+                  const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
+                  if (find) {
+                    this.levelTwoTags.push({ key: k2, value: res.data[k][k2], type: find.type })
+                  }
+                })
               }
-              case 'ip': {
-                if (res.data.result.malware && res.data.result.malware.malwareName) {
-                  this.levelTwoTags.push({ value: res.data.result.malware.malwareName, type: entityDetailTags.ip.find(t => t.name === 'malwareName').type })
-                }
-                if (res.data.result.darkweb && res.data.result.darkweb.nodeType) {
-                  this.levelTwoTags.push({ value: res.data.result.darkweb.nodeType, type: entityDetailTags.ip.find(t => t.name === 'nodeType').type })
-                }
-                break
-              }
-            }
-            if (_.isArray(res.data.result.userDefinedTags)) {
-              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.result.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
+            })
+            if (_.isArray(res.data.userDefinedTags)) {
+              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
             }
           } else {
             tagError = this.errorMsgHandler(res)
