@@ -6,7 +6,9 @@ export default {
   },
   data () {
     return {
-      isNoData: false
+      isNoData: false,
+      showError: false,
+      errorMsg: ''
     }
   },
   emits: ['toggleLoading'],

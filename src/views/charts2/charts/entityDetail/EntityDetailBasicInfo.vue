@@ -1,5 +1,6 @@
 <template>
   <div class="entity-detail-basic-info">
+    <chart-error v-if="showError" :content="errorMsg"/>
     <div class="entity-type">{{entityType[entity.entityType]}}</div>
     <div class="entity-basic-info">
       <div class="entity-basic-info__name">
@@ -40,7 +41,7 @@
         <i :class="card.icon"></i>
         <div class="detail-card__text">
           <div class="detail-card__label">{{card.label}}:</div>
-          <div class="detail-card__value" :title="card.value">{{card.value}}</div>
+          <div class="detail-card__value" :title="card.value">{{card.value || '-'}}</div>
         </div>
       </div>
     </div>
@@ -48,18 +49,24 @@
 </template>
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
-import { drillDownPanelTypeMapping, entityType } from '@/utils/constants'
+import ChartError from '@/components/common/Error'
+import { drillDownPanelTypeMapping, entityType, entityDetailTags } from '@/utils/constants'
 import { selectElementText, copySelectionText } from '@/utils/tools'
 import { ref } from 'vue'
 import i18n from '@/i18n'
 import { useRouter } from 'vue-router'
 import _ from 'lodash'
+import axios from 'axios'
+import { api } from '@/utils/api'
 
 export default {
   name: 'EntityDetailBasicInfo',
   mixins: [chartMixin],
+  components: {
+    ChartError
+  },
   mounted () {
-    this.toggleLoading(false)
+    this.getData()
   },
   data () {
     return {
@@ -69,6 +76,126 @@ export default {
     }
   },
   methods: {
+    getData () {
+      this.toggleLoading(true)
+      this.showError = false
+      this.levelTwoTags = []
+      const tagRequest = axios.get(`${api.entity.tags}/${this.entity.entityType}?resource=${this.entity.entityName}`)
+      const basicInfoRequest = axios.get(`${api.entity.basicInfo}/${this.entity.entityType}?resource=${this.entity.entityName}`)
+      Promise.all([tagRequest, basicInfoRequest]).then(response => {
+        const tagData = response[0]
+        let tagError = ''
+        const basicInfoData = response[1]
+        let basicInfoError = ''
+        if (tagData) {
+          const res = tagData.data
+          if (res.code === 200) {
+            switch (this.entity.entityType) {
+              case 'domain': {
+                if (res.data.result.malware && res.data.result.malware.malwareName) {
+                  this.levelTwoTags.push({ value: res.data.result.malware.malwareName, type: entityDetailTags.domain.find(t => t.name === 'malwareName').type })
+                }
+                if (res.data.result.darkweb && res.data.result.darkweb.nodeType) {
+                  this.levelTwoTags.push({ value: res.data.result.darkweb.nodeType, type: entityDetailTags.domain.find(t => t.name === 'nodeType').type })
+                }
+                break
+              }
+              case 'ip': {
+                if (res.data.result.malware && res.data.result.malware.malwareName) {
+                  this.levelTwoTags.push({ value: res.data.result.malware.malwareName, type: entityDetailTags.ip.find(t => t.name === 'malwareName').type })
+                }
+                if (res.data.result.darkweb && res.data.result.darkweb.nodeType) {
+                  this.levelTwoTags.push({ value: res.data.result.darkweb.nodeType, type: entityDetailTags.ip.find(t => t.name === 'nodeType').type })
+                }
+                break
+              }
+            }
+            if (_.isArray(res.data.result.userDefinedTags)) {
+              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.result.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
+            }
+          } else {
+            tagError = this.errorMsgHandler(res)
+          }
+        }
+        if (basicInfoData) {
+          const res = basicInfoData.data
+          if (res.code === 200) {
+            switch (this.entity.entityType) {
+              case 'ip': {
+                if (res.data.result.asn) {
+                  this.detailCards.find(c => c.name === 'asn').value = res.data.result.asn.asn
+                  this.detailCards.find(c => c.name === 'asOrg').value = res.data.result.asn.organization
+                  // AS子网接口未返回
+                }
+                if (res.data.result.location) {
+                  this.detailCards.find(c => c.name === 'isp').value = res.data.result.location.isp
+                  this.detailCards.find(c => c.name === 'location').value = this.handleLocation(res.data.result.location)
+                  // DNS PTR接口未返回
+                }
+                break
+              }
+              case 'domain': {
+                if (res.data.result.categories) {
+                  this.detailCards.find(c => c.name === 'categoryName').value = res.data.result.categories.categoryName
+                  this.detailCards.find(c => c.name === 'categoryGroup').value = res.data.result.categories.categoryGroup
+                  this.detailCards.find(c => c.name === 'reputationLevel').value = res.data.result.categories.reputationLevel
+                }
+                if (res.data.result.whois) {
+                  this.detailCards.find(c => c.name === 'expireDate').value = res.data.result.whois.expireDate
+                  this.detailCards.find(c => c.name === 'registrarName').value = res.data.result.whois.registrarName
+                  this.detailCards.find(c => c.name === 'registrantOrg').value = res.data.result.whois.registrantOrg
+                  this.detailCards.find(c => c.name === 'registrantCountry').value = res.data.result.whois.registrantCountry
+                  this.detailCards.find(c => c.name === 'createDate').value = res.data.result.whois.createDate
+                  this.detailCards.find(c => c.name === 'email').value = res.data.result.whois.email
+                }
+                break
+              }
+              case 'app': {
+                if (res.data.result.categories) {
+                  this.detailCards.find(c => c.name === 'appCategory').value = res.data.result.categories.appCategory
+                  this.detailCards.find(c => c.name === 'appSubcategory').value = res.data.result.categories.appSubcategory
+                  this.detailCards.find(c => c.name === 'appRisk').value = res.data.result.categories.appRisk
+                  this.detailCards.find(c => c.name === 'appTechnology').value = res.data.result.categories.appTechnology
+                  this.detailCards.find(c => c.name === 'appName').value = res.data.result.categories.appName
+                  this.detailCards.find(c => c.name === 'appLongname').value = res.data.result.categories.appLongname
+                  this.detailCards.find(c => c.name === 'appDescription').value = res.data.result.categories.appDescription
+                }
+                break
+              }
+            }
+          } else {
+            basicInfoError = this.errorMsgHandler(res)
+          }
+        }
+        if (tagError) {
+          this.showError = true
+          this.errorMsg += tagError
+        }
+        if (basicInfoError) {
+          this.showError = true
+          this.errorMsg += basicInfoError
+        }
+      }).catch(e => {
+        console.error(e)
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
+      }).finally(() => {
+        this.toggleLoading(false)
+      })
+    },
+    handleLocation (data) {
+      const location = []
+      if (data.country) {
+        location.push(data.country)
+      }
+      if (data.province) {
+        location.push(data.province)
+      }
+      if (data.city) {
+        location.push(data.city)
+      }
+      return location.join(' - ')
+    },
     copyEntityName () {
       selectElementText(document.getElementById('entityName'))
       if (copySelectionText()) {
@@ -238,38 +365,38 @@ export default {
     switch (props.entity.entityType) {
       case 'ip': {
         detailCards.value = _.concat(detailCards.value,
-          { icon: 'cn-icon cn-icon-as', name: 'asNumber', label: i18n.global.t('entities.asNumber'), value: 'aaaaaaaaaaaa' },
-          { icon: 'cn-icon cn-icon-registration-agency', name: 'asOrg', label: i18n.global.t('entities.asOrg'), value: 'this is agency a that word indispensable' },
-          { icon: 'cn-icon cn-icon-as-subnet', name: 'asSubnet', label: i18n.global.t('entities.asSubnet'), value: 'bbbaee' },
-          { icon: 'cn-icon cn-icon-operator', name: 'isp', label: 'ISP', value: 'aerae343331' },
-          { icon: 'cn-icon cn-icon-geo-location', name: 'location', label: i18n.global.t('entities.geographicLocation'), value: '你好啊' },
-          { icon: 'cn-icon cn-icon-dns-ptr', name: 'dnsPtr', label: 'DNS PTR', value: '-' }
+          { icon: 'cn-icon cn-icon-as', name: 'asn', label: 'ASN', value: '' },
+          { icon: 'cn-icon cn-icon-registration-agency', name: 'asOrg', label: i18n.global.t('entities.asOrg'), value: '' },
+          // { icon: 'cn-icon cn-icon-as-subnet', name: 'asSubnet', label: i18n.global.t('entities.asSubnet'), value: '' },
+          { icon: 'cn-icon cn-icon-operator', name: 'isp', label: 'ISP', value: '' },
+          { icon: 'cn-icon cn-icon-geo-location', name: 'location', label: i18n.global.t('entities.geographicLocation'), value: '' }
+          // { icon: 'cn-icon cn-icon-dns-ptr', name: 'dnsPtr', label: 'DNS PTR', value: '' }
         )
         break
       }
       case 'domain': {
         detailCards.value = _.concat(detailCards.value,
-          { icon: 'cn-icon cn-icon-category2', name: 'category', label: i18n.global.t('entities.category'), value: 'category' },
-          { icon: 'cn-icon cn-icon-sub-type', name: 'subcategory', label: i18n.global.t('entities.subcategory'), value: 'this is a long long long long long subcategory' },
-          { icon: 'cn-icon cn-icon-credit-rating', name: 'creditLevel', label: i18n.global.t('entities.creditLevel2'), value: 'a value of credit level' },
-          { icon: 'cn-icon cn-icon-expire-date', name: 'expirationDate', label: i18n.global.t('entities.expirationDate2'), value: '2022-02-22 22:22:22' },
-          { icon: 'cn-icon cn-icon-registrar', name: 'registrar', label: i18n.global.t('entities.registrar'), value: 'XX注册商' },
-          { icon: 'cn-icon cn-icon-registry', name: 'registry', label: i18n.global.t('entities.registry'), value: 'XX注册机构' },
-          { icon: 'cn-icon cn-icon-registration-country', name: 'country', label: i18n.global.t('entities.registrationCountry'), value: 'China' },
-          { icon: 'cn-icon cn-icon-registration-date', name: 'registrationDate', label: i18n.global.t('entities.registrationDate'), value: '2011-11-11 11:11:11' },
-          { icon: 'cn-icon cn-icon-registry-email', name: 'registryEmail', label: i18n.global.t('entities.registryEmail'), value: '注册机构邮箱' }
+          { icon: 'cn-icon cn-icon-category2', name: 'categoryName', label: i18n.global.t('entities.category'), value: '' },
+          { icon: 'cn-icon cn-icon-sub-type', name: 'categoryGroup', label: i18n.global.t('entities.group'), value: '' },
+          { icon: 'cn-icon cn-icon-credit-rating', name: 'reputationLevel', label: i18n.global.t('entities.creditLevel2'), value: '' },
+          { icon: 'cn-icon cn-icon-expire-date', name: 'expireDate', label: i18n.global.t('entities.expirationDate2'), value: '' },
+          { icon: 'cn-icon cn-icon-registrar', name: 'registrarName', label: i18n.global.t('entities.registrar'), value: '' },
+          { icon: 'cn-icon cn-icon-registry', name: 'registrantOrg', label: i18n.global.t('entities.registry'), value: '' },
+          { icon: 'cn-icon cn-icon-registration-country', name: 'registrantCountry', label: i18n.global.t('entities.registrationCountry'), value: '' },
+          { icon: 'cn-icon cn-icon-registration-date', name: 'createDate', label: i18n.global.t('entities.registrationDate'), value: '' },
+          { icon: 'cn-icon cn-icon-registry-email', name: 'email', label: i18n.global.t('entities.registryEmail'), value: '' }
         )
         break
       }
       case 'app': {
         detailCards.value = _.concat(detailCards.value,
-          { icon: 'cn-icon cn-icon-category2', name: 'category', label: i18n.global.t('entities.category'), value: 'category' },
-          { icon: 'cn-icon cn-icon-sub-type', name: 'subcategory', label: i18n.global.t('entities.subcategory'), value: 'this is a long long long long long subcategory' },
-          { icon: 'cn-icon cn-icon-credit-rating', name: 'creditLevel', label: i18n.global.t('entities.creditLevel2'), value: 'a value of credit level' },
-          { icon: 'cn-icon cn-icon-technology', name: 'technology', label: i18n.global.t('overall.technology'), value: 'xx技术' },
-          { icon: 'cn-icon cn-icon-app-name', name: 'name', label: i18n.global.t('overall.appName2'), value: 'APP的名称' },
-          { icon: 'cn-icon cn-icon-app-full-name', name: 'fullName', label: i18n.global.t('overall.appFullName'), value: 'APP的全称' },
-          { icon: 'cn-icon cn-icon-description', name: 'description', label: i18n.global.t('config.dataSource.description'), value: 'A domain registry is an organization responsible for managing the top-level domain (TLD), such as .com, .net, .org, and more, for any given domain name. Domain registries can act as a database of available domains and work with registrars, such as DomainRegistry.com, to purchase a domain.' }
+          { icon: 'cn-icon cn-icon-category2', name: 'appCategory', label: i18n.global.t('entities.category'), value: '' },
+          { icon: 'cn-icon cn-icon-sub-type', name: 'appSubcategory', label: i18n.global.t('entities.subcategory'), value: '' },
+          { icon: 'cn-icon cn-icon-credit-rating', name: 'appRisk', label: i18n.global.t('entities.riskLevel'), value: '' },
+          { icon: 'cn-icon cn-icon-technology', name: 'appTechnology', label: i18n.global.t('overall.technology'), value: '' },
+          { icon: 'cn-icon cn-icon-app-name', name: 'appName', label: i18n.global.t('overall.appName2'), value: '' },
+          { icon: 'cn-icon cn-icon-app-full-name', name: 'appLongname', label: i18n.global.t('overall.appFullName'), value: '' },
+          { icon: 'cn-icon cn-icon-description', name: 'appDescription', label: i18n.global.t('config.dataSource.description'), value: '' }
         )
       }
     }

@@ -219,6 +219,78 @@ if (openMock) {
       }
     }
   })
+  Mock.mock(new RegExp(`${BASE_CONFIG.baseUrl}${BASE_CONFIG.apiVersion}/entity/detail/basic.*`), 'get', function (requestObj) {
+    const result = {
+      asn: {
+        asn: 'ASN',
+        organization: 'AS org'
+      },
+      location: {
+        country: 'China',
+        province: 'Hebei',
+        city: 'Langfang',
+        isp: 'an ISP'
+      },
+      categories: {
+        categoryName: '类别1',
+        categoryGroup: '类别组1',
+        reputationLevel: '1',
+        appCategory: '类别1',
+        appSubcategory: '子类别1',
+        appTechnology: '技术1',
+        appName: '名称1',
+        appRisk: '风险等级1',
+        appLongname: '全称1',
+        appDescription: '这是描述'
+      },
+      whois: {
+        expireDate: '23-12',
+        registrarName: '注册商',
+        registrantOrg: '注册机构',
+        registrantCountry: 'China',
+        createDate: '22-12',
+        email: '1@2.3'
+      }
+    }
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(`${BASE_CONFIG.baseUrl}${BASE_CONFIG.apiVersion}/entity/detail/kb/intelligence/tag.*`), 'get', function (requestObj) {
+    const result = {
+      malware: {
+        malwareName: 'malware'
+      },
+      darkweb: {
+        nodeType: 'nodeType'
+      },
+      userDefinedTags: [
+        {
+          id: 1,
+          tagValue: 'userTag1'
+        },
+        {
+          id: 2,
+          tagValue: 'userTag2'
+        },
+        {
+          id: 3,
+          tagValue: 'userTag3'
+        }
+      ]
+    }
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
 }
 
 const getQuery = (url) => {
