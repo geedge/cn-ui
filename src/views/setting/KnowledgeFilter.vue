@@ -37,6 +37,7 @@ import { knowledgeCategoryValue, knowledgeSourceValue } from '@/utils/constants'
 export default {
   name: 'KnowledgeFilter',
   props: {
+    keyWord: String
   },
   data () {
     return {
@@ -61,8 +62,7 @@ export default {
         children: 'children',
         label: 'label'
       },
-      allTableData: [],
-      allCount: 0
+      allTableData: []
     }
   },
   watch: {
@@ -76,37 +76,45 @@ export default {
     },
     handleCheckedItemChange (data, checkinfo, index) {
       this.$nextTick(() => {
-        let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
-        const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
-        typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
-        const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
-        const typeCheckedLen = typeCheckedNodes.length
-        const statusCheckedLen = statusCheckedNodes.length
-        let params = {}
-        if (typeCheckedLen === 0 || statusCheckedLen === 0) {
-          this.$emit('clearList')
-        } else {
-          const categorys = []
-          const sources = []
-          typeCheckedNodes.forEach(val => {
-            if (val.type === 0) {
-              categorys.push(val.value)
-            } else if (val.type === 1) {
-              sources.push(val.value)
-            }
+        setTimeout(() => {
+          let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
+          const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
+          typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
+          const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
+          const typeCheckedLen = typeCheckedNodes.length
+          const statusCheckedLen = statusCheckedNodes.length
+          let params = {}
+          let allSourceNum = 0
+          this.filterData[0].data.forEach(item => {
+            allSourceNum = allSourceNum + item.children.length
           })
-          params = {
-            category: categorys.toString(),
-            source: sources.toString()
-          }
-          if (statusCheckedLen === 1) {
-            params = {
-              ...params,
-              status: statusCheckedNodes[0].value
+          if (typeCheckedLen === 0 || statusCheckedLen === 0) {
+            this.$emit('clearList')
+          } else {
+            const categorys = []
+            const sources = []
+            typeCheckedNodes.forEach(val => {
+              if (val.type === 0) {
+                categorys.push(val.value)
+              } else if (val.type === 1) {
+                sources.push(val.value)
+              }
+            })
+            if (!(categorys.length === this.filterData[0].data.length && sources.length === allSourceNum)) {
+              params = {
+                category: categorys.toString(),
+                source: sources.toString()
+              }
             }
+            if (statusCheckedLen === 1) {
+              params = {
+                ...params,
+                status: statusCheckedNodes[0].value
+              }
+            }
+            this.$emit('reload', params, true)
           }
-          this.$emit('reload', params, true)
-        }
+        }, 200)
       })
     },
     getAllTableData (params) {
@@ -126,16 +134,12 @@ export default {
       })
     },
     initAllData () {
-      this.allCount = this.allTableData.length
       let webSketchCount = 0
       let fqdnCategoryCount = 0
       let iocMalwareCount = 0
       let iocDarkwebCount = 0
       let ipLocationCount = 0
       let asnCount = 0
-      const fqdnWhoCount = 0
-      const fqdnIcpCount = 0
-      const appCategoryCount = 0
 
       let aiTaggingCount = 0
       let psiphon3Count = 0
@@ -212,25 +216,7 @@ export default {
             value: knowledgeSourceValue.asn,
             count: asnCount,
             type: 1
-          }/*, {
-            id: 16,
-            label: 'FQDN Who',
-            value: 'cn_fqdn_who_isBuiltIn',
-            count:fqdnWhoCount,
-            children: []
-          },{
-            id: 17,
-            label: 'FQDN Icp',
-            value: 'cn_fqdn_icp_built_in',
-            count:fqdnIcpCount,
-            children: []
-          },{
-            id: 18,
-            label: 'APP Category',
-            value: 'cn_app_category_built_indad',
-            count:appCategoryCount,
-            children: []
-          } */
+          }
           ]
         },
         {
@@ -294,12 +280,16 @@ export default {
         { id: 2, label: 'disable', value: 0, count: disableCount, type: 0 }
       ]
     },
-    reloadFilter () {
-      this.getAllTableData()
+    reloadFilter (params) {
+      this.getAllTableData(params)
     }
   },
   mounted () {
-    this.getAllTableData()
+    let params = {}
+    params = {
+      name: this.keyWord
+    }
+    this.getAllTableData(params)
   },
   computed: {
   }

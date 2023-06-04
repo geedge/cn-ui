@@ -6,6 +6,7 @@
     <div class="knowledge-base__content" >
       <div class="left-filter" style="">
           <knowledge-filter ref="knowledgeFilter"
+                            :keyWord="keyWord"
                   @reload="reload"
                   @clearList="clearList"></knowledge-filter>
       </div>
@@ -166,10 +167,11 @@ export default {
   methods: {
     onSearch () {
       const params = {
-        q: this.keyWord
+        name: this.keyWord
       }
       this.clearList()
       this.search(params)
+      this.$refs.knowledgeFilter.reloadFilter(params)
     },
     handleClose () {
       this.showConfirmDialog = false
@@ -299,6 +301,10 @@ export default {
       this.isSelectedStatus = false
       this.batchDeleteObjs = []
       this.secondBatchDeleteObjs = []
+      params = {
+        ...params,
+        name: this.keyWord
+      }
       this.getTableData(params, isAll, isClearType)
     },
     clearList () {

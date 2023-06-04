@@ -343,6 +343,8 @@ export default {
     },
     search (params) {
       this.pageObj.pageNo = 1
+      delete this.searchLabel.category
+      delete this.searchLabel.source
       this.getTableData(params)
     },
     getTimeString () {
