@@ -171,7 +171,7 @@ export default {
       }
       this.clearList()
       this.search(params)
-      this.$refs.knowledgeFilter.reloadFilter(params)
+      this.$refs.knowledgeFilter.reloadFilter()
     },
     handleClose () {
       this.showConfirmDialog = false
