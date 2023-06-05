@@ -113,7 +113,7 @@ export default {
       if (!this.isInit) {
         patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: status }] }).then(response => {
           if (response.code === 200) {
-
+            this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
           } else {
             console.error(response)
             if (response.message) {
@@ -122,6 +122,7 @@ export default {
               this.$message.error('Something went wrong...')
             }
           }
+          this.$emit('reload')
         })
       }
     },
