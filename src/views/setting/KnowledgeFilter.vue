@@ -4,15 +4,16 @@
       {{ $t('knowledge.filters') }}
     </div>
     <template v-for="(filter, index) in filterData" :key="index">
-      <div class="knowledge-filter" v-if="filter.data.length > 0">
+      <div class="knowledge-filter">
         <div class="filter__header" @click="filter.collapse = !filter.collapse">
           <span class="new-knowledge-filter-header-title">{{filter.title}}</span>
           <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filter.collapse }"></i>
         </div>
         <el-collapse-transition>
-          <div class="filter__body" v-if="!filter.collapse">
+          <div class="filter__body">
             <el-tree
-                    :ref="`knowledgeTree${index}`"
+                    :ref="`knowledgeTree${filter.id}`"
+                    v-if="!filter.collapse"
                     :data="filter.data"
                     show-checkbox
                     node-key="id"
@@ -46,12 +47,14 @@ export default {
       isIndeterminateModel: false,
       filterData: [
         {
+          id:0,
           title: this.$t('knowledge.type'),
           collapse: false,
           value: [],
           data: []
         },
         {
+          id:1,
           title: this.$t('knowledge.status'),
           collapse: false,
           value: [],
@@ -75,47 +78,43 @@ export default {
       ])
     },
     handleCheckedItemChange (data, checkinfo, index) {
-      this.$nextTick(() => {
-        setTimeout(() => {
-          let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
-          const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
-          typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
-          const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
-          const typeCheckedLen = typeCheckedNodes.length
-          const statusCheckedLen = statusCheckedNodes.length
-          let params = {}
-          let allSourceNum = 0
-          this.filterData[0].data.forEach(item => {
-            allSourceNum = allSourceNum + item.children.length
-          })
-          if (typeCheckedLen === 0 || statusCheckedLen === 0) {
-            this.$emit('clearList')
-          } else {
-            const categorys = []
-            const sources = []
-            typeCheckedNodes.forEach(val => {
-              if (val.type === 0) {
-                categorys.push(val.value)
-              } else if (val.type === 1) {
-                sources.push(val.value)
-              }
-            })
-            if (!(categorys.length === this.filterData[0].data.length && sources.length === allSourceNum)) {
-              params = {
-                category: categorys.toString(),
-                source: sources.toString()
-              }
-            }
-            if (statusCheckedLen === 1) {
-              params = {
-                ...params,
-                status: statusCheckedNodes[0].value
-              }
-            }
-            this.$emit('reload', params, true)
-          }
-        }, 200)
+      let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
+      const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
+      typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
+      const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
+      const typeCheckedLen = typeCheckedNodes.length
+      const statusCheckedLen = statusCheckedNodes.length
+      let params = {}
+      let allSourceNum = 0
+      this.filterData[0].data.forEach(item => {
+        allSourceNum = allSourceNum + item.children.length
       })
+      if (typeCheckedLen === 0 || statusCheckedLen === 0) {
+        this.$emit('clearList')
+      } else {
+        const categorys = []
+        const sources = []
+        typeCheckedNodes.forEach(val => {
+          if (val.type === 0) {
+            categorys.push(val.value)
+          } else if (val.type === 1) {
+            sources.push(val.value)
+          }
+        })
+        if (!(categorys.length === this.filterData[0].data.length && sources.length === allSourceNum)) {
+          params = {
+            category: categorys.toString(),
+            source: sources.toString()
+          }
+        }
+        if (statusCheckedLen === 1) {
+          params = {
+            ...params,
+            status: statusCheckedNodes[0].value
+          }
+        }
+        this.$emit('reload', params, true)
+      }
     },
     getAllTableData (params) {
       let searchParams = { pageSize: -1 }
