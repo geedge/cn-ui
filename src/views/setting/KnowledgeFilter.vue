@@ -4,20 +4,18 @@
       {{ $t('knowledge.filters') }}
     </div>
     <div class="knowledge-filter">
-      <div class="filter__header" @click="filterTypeData.collapse = !filterTypeData.collapse">
-        <span class="new-knowledge-filter-header-title">{{filterTypeData.title}}</span>
-        <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filterTypeData.collapse }"></i>
+      <div class="filter__header" @click="filterCategoryData.collapse = !filterCategoryData.collapse">
+        <span class="new-knowledge-filter-header-title">{{filterCategoryData.title}}</span>
+        <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filterCategoryData.collapse }"></i>
       </div>
       <el-collapse-transition>
-        <div class="filter__body">
+        <div class="filter__body"  v-if="!filterCategoryData.collapse">
           <el-tree
                   ref="knowledgeTreeTypeFilter"
-                  v-if="!filterTypeData.collapse"
-                  :data="filterTypeData.data"
+                  :data="filterCategoryData.data"
                   show-checkbox
                   node-key="id"
                   default-expand-all
-                  :default-checked-keys="[1,2,3]"
                   :render-content="renderContent"
                   @check="(data,checkinfo)=>handleCheckedItemChange(data,checkinfo)"
                   >
@@ -31,15 +29,13 @@
         <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filterStatusData.collapse }"></i>
       </div>
       <el-collapse-transition>
-        <div class="filter__body">
+        <div class="filter__body"   v-if="!filterStatusData.collapse">
           <el-tree
                   ref="knowledgeTreeStatusFilter"
-                  v-if="!filterStatusData.collapse"
                   :data="filterStatusData.data"
                   show-checkbox
                   node-key="id"
                   default-expand-all
-                  :default-checked-keys="[1,2,3]"
                   :render-content="renderContent"
                   @check="(data,checkinfo)=>handleCheckedItemChange(data,checkinfo)"
           >
@@ -53,7 +49,7 @@
 <script>
 import { api } from '@/utils/api'
 import { get } from '@/utils/http'
-import { knowledgeCategoryValue, knowledgeSourceValue } from '@/utils/constants'
+import { knowledgeBaseCategory, knowledgeBaseSource } from '@/utils/constants'
 
 export default {
   name: 'KnowledgeFilter',
@@ -62,28 +58,28 @@ export default {
   },
   data () {
     return {
-      url: api.knowledgeBaseList,
+      url: api.knowledgeBaseStatistics,
       checkAll: true,
       isIndeterminateModel: false,
-      filterTypeData: {
-        id:0,
+      filterCategoryData: {
+        id: 0,
         title: this.$t('knowledge.type'),
         collapse: false,
-        value: [],
         data: []
       },
       filterStatusData: {
-        id:1,
+        id: 1,
         title: this.$t('knowledge.status'),
         collapse: false,
-        value: [],
         data: []
       },
       defaultProps: {
         children: 'children',
         label: 'label'
       },
-      allTableData: []
+      typeData: [],
+      statusData: [],
+      defaultCheckedCategory: []
     }
   },
   watch: {
@@ -97,24 +93,24 @@ export default {
     },
     handleCheckedItemChange (data, checkinfo) {
       let typeCheckedNodes = []
-      if(this.$refs.knowledgeTreeTypeFilter instanceof Array ) {
+      if (this.$refs.knowledgeTreeTypeFilter instanceof Array) {
         typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter[0].getCheckedNodes()
-      }else {
+      } else {
         typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter.getCheckedNodes()
       }
-      let typeHalfCheckedNodes = checkinfo.halfCheckedNodes
+      const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
       typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
       let statusCheckedNodes = []
-      if(this.$refs.knowledgeTreeStatusFilter instanceof Array ) {
+      if (this.$refs.knowledgeTreeStatusFilter instanceof Array) {
         statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter[0].getCheckedNodes()
-      }else {
+      } else {
         statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter.getCheckedNodes()
       }
       const typeCheckedLen = typeCheckedNodes.length
       const statusCheckedLen = statusCheckedNodes.length
       let params = {}
       let allSourceNum = 0
-      this.filterTypeData.data.forEach(item => {
+      this.filterCategoryData.data.forEach(item => {
         allSourceNum = allSourceNum + item.children.length
       })
       if (typeCheckedLen === 0 || statusCheckedLen === 0) {
@@ -129,7 +125,7 @@ export default {
             sources.push(val.value)
           }
         })
-        if (!(categorys.length === this.filterTypeData.data.length && sources.length === allSourceNum)) {
+        if (!(categorys.length === this.filterCategoryData.data.length && sources.length === allSourceNum)) {
           params = {
             category: categorys.toString(),
             source: sources.toString()
@@ -151,172 +147,70 @@ export default {
       }
       get(this.url, searchParams).then(response => {
         if (response.code === 200) {
-          this.allTableData = response.data.list
+          this.typeData = response.data.categoryList
+          this.statusData = response.data.statusList
         } else {
           console.error(response)
         }
       }).finally(() => {
-        this.initAllData()
+        this.initTypeData()
         this.initStatusData()
+        const self = this
+        this.$nextTick(() => {
+          self.$refs.knowledgeTreeTypeFilter.setCheckedKeys(this.defaultCheckedCategory)
+        })
+        this.$nextTick(() => {
+          self.$refs.knowledgeTreeStatusFilter.setCheckedKeys([0, 1])
+        })
       })
     },
-    initAllData () {
-      let webSketchCount = 0
-      let fqdnCategoryCount = 0
-      let iocMalwareCount = 0
-      let iocDarkwebCount = 0
-      let ipLocationCount = 0
-      let asnCount = 0
-
-      let aiTaggingCount = 0
-      let psiphon3Count = 0
-
-      let userDefinedCount = 0
-      let ipCount = 0
-      let domainCount = 0
-      let appCount = 0
-
-      const builtInCount = 0
-      this.allTableData.forEach(data => {
-        if (data.category === knowledgeCategoryValue.webSketch) {
-          webSketchCount++
-        } else if (data.category === knowledgeCategoryValue.aiTagging) {
-          aiTaggingCount++
-        } else if (data.category === knowledgeCategoryValue.userDefined) {
-          userDefinedCount++
-        }
-
-        if (data.source === knowledgeSourceValue.fqdnCategory) {
-          fqdnCategoryCount++
-        } else if (data.source === knowledgeSourceValue.iocMalware) {
-          iocMalwareCount++
-        } else if (data.source === knowledgeSourceValue.iocDarkweb) {
-          iocDarkwebCount++
-        } else if (data.source === knowledgeSourceValue.ipLocation) {
-          ipLocationCount++
-        } else if (data.source === knowledgeSourceValue.asn) {
-          asnCount++
-        } else if (data.source === knowledgeSourceValue.psiphon3) {
-          psiphon3Count++
-        } else if (data.source === knowledgeSourceValue.ipTag) {
-          ipCount++
-        } else if (data.source === knowledgeSourceValue.domainTag) {
-          domainCount++
-        } else if (data.source === knowledgeSourceValue.appTag) {
-          appCount++
-        }
-      })
-      this.filterTypeData.data = [
-        {
-          id: 1,
-          label: 'WebSketch',
-          value: knowledgeCategoryValue.webSketch,
-          count: webSketchCount,
+    initTypeData () {
+      this.typeData.forEach((type, typeIndex) => {
+        const categoryLabel = knowledgeBaseCategory.find(t => t.value === type.name)
+        const categoryId = typeIndex
+        const category = {
+          id: categoryId,
+          label: categoryLabel ? categoryLabel.name : type.name,
+          value: type.name,
+          count: type.count,
           type: 0,
-          children: [{
-            id: 11,
-            label: 'FQDN Category',
-            value: knowledgeSourceValue.fqdnCategory,
-            count: fqdnCategoryCount,
-            type: 1
-          }, {
-            id: 12,
-            label: 'Ioc Malware',
-            value: knowledgeSourceValue.iocMalware,
-            count: iocMalwareCount,
-            type: 1
-          }, {
-            id: 13,
-            label: 'Ioc Darkweb',
-            value: knowledgeSourceValue.iocDarkweb,
-            count: iocDarkwebCount,
-            type: 1
-          }, {
-            id: 14,
-            label: 'IP Location',
-            value: knowledgeSourceValue.ipLocation,
-            count: ipLocationCount,
-            type: 1
-          }, {
-            id: 15,
-            label: 'ASN',
-            value: knowledgeSourceValue.asn,
-            count: asnCount,
+          children: []
+        }
+        this.defaultCheckedCategory.push(categoryId)
+        this.filterCategoryData.data.push(category)
+        const sourceList = type.sourceList
+        sourceList.forEach((item, sourceIndex) => {
+          const sourceLabel = knowledgeBaseSource.find(t => t.value === item.name)
+          const source = {
+            id: Number(typeIndex + '' + sourceIndex),
+            label: sourceLabel ? sourceLabel.name : item.name,
+            value: item.name,
+            count: item.count,
             type: 1
           }
-          ]
-        },
-        {
-          id: 2,
-          label: 'AI Tagging',
-          value: knowledgeCategoryValue.aiTagging,
-          count: aiTaggingCount,
-          type: 0,
-          children: [
-            {
-              id: 21,
-              label: 'Psiphon3',
-              value: knowledgeSourceValue.psiphon3,
-              count: psiphon3Count,
-              type: 1
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: 'User-defined',
-          value: knowledgeCategoryValue.userDefined,
-          count: userDefinedCount,
-          type: 0,
-          children: [
-            {
-              id: 31,
-              label: 'IP Tag',
-              value: knowledgeSourceValue.ipTag,
-              count: ipCount,
-              type: 1
-            }, {
-              id: 32,
-              label: 'Domain Tag',
-              value: knowledgeSourceValue.domainTag,
-              count: domainCount,
-              type: 1
-            }, {
-              id: 33,
-              label: 'APP Tag',
-              value: knowledgeSourceValue.appTag,
-              count: appCount,
-              type: 1
-            }
-          ]
-        }
-      ]
+          category.children.push(source)
+        })
+      })
     },
     initStatusData () {
-      let enableCount = 0
-      let disableCount = 0
-      this.allTableData.forEach(data => {
-        if (data.status === 0) {
-          disableCount++
-        } else {
-          enableCount++
-        }
+      const enableCount = 0
+      const disableCount = 0
+      this.statusData.forEach((data, index) => {
+        this.filterStatusData.data.push({
+          id: index,
+          label: data.status === 1 ? 'enabled' : 'disable',
+          value: data.status,
+          count: data.count,
+          type: 0
+        })
       })
-      this.filterStatusData.data = [
-        { id: 1, label: 'enabled', value: 1, count: enableCount, type: 0 },
-        { id: 2, label: 'disable', value: 0, count: disableCount, type: 0 }
-      ]
     },
     reloadFilter (params) {
       this.getAllTableData(params)
     }
   },
   mounted () {
-    let params = {}
-    params = {
-      name: this.keyWord
-    }
-    this.getAllTableData(params)
+    this.getAllTableData()
   },
   computed: {
   }

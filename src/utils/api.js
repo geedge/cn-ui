@@ -38,6 +38,7 @@ export const api = {
   knowledgeBase: BASE_CONFIG.apiVersion + '/knowledgeBase',
   knowledgeBaseList: BASE_CONFIG.apiVersion + '/knowledgeBase/list',
   knowledgeBaseEnable: BASE_CONFIG.apiVersion + '/knowledgeBase/status',
+  knowledgeBaseStatistics: BASE_CONFIG.apiVersion + '/knowledgeBase/statistics',
 
   // 报告相关
   reportJob: '/report/job',

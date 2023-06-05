@@ -376,6 +376,34 @@ export const knowledgeBaseSource = [
     value: 'cn_ip_asn_built_in'
   },
   {
+    name: 'FQDN Whois',
+    value: 'cn_fqdn_who_is_built_in'
+  },
+  {
+    name: 'FQDN ICP',
+    value: 'cn_fqdn_icp_built_in'
+  },
+  {
+    name: 'APP Category',
+    value: 'cn_app_category_built_in'
+  },
+  {
+    name: 'DNS Server Info',
+    value: 'cn_dns_server_info_built_in'
+  },
+  {
+    name: 'Link Direction',
+    value: 'cn_link_direction_built_in'
+  },
+  {
+    name: 'Internal IP',
+    value: 'cn_internal_ip_built_in'
+  },
+  {
+    name: 'IDC Renter',
+    value: 'cn_idc_renter_built_in'
+  },
+  {
     name: 'Psiphon3',
     value: 'cn_psiphon3_ip'
   },
