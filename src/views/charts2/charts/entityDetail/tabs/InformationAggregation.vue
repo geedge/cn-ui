@@ -113,7 +113,7 @@ export default {
     getData () {
       this.toggleLoading(true)
       this.informationAggregationList = []
-      axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}`).then(response => {
+      axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`).then(response => {
         const res = response.data
         if (res.code === 200) {
           res.data.result.forEach(r => {
