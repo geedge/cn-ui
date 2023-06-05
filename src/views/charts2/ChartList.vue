@@ -157,9 +157,9 @@ export default {
   mounted () {
     this.timeoutFunc = setTimeout(() => {
       this.handleDynamicChartHeight()
-    }, 400)
+    }, 500)
     this.handleDynamicChartHeight()
-    this.debounceFunc = _.debounce(this.handleDynamicChartHeight, 400)
+    this.debounceFunc = _.debounce(this.handleDynamicChartHeight, 500)
     window.addEventListener('resize', this.debounceFunc)
   },
   beforeUnmount () {
