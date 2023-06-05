@@ -3,30 +3,50 @@
     <div class="filter-title">
       {{ $t('knowledge.filters') }}
     </div>
-    <template v-for="(filter, index) in filterData" :key="index">
-      <div class="knowledge-filter">
-        <div class="filter__header" @click="filter.collapse = !filter.collapse">
-          <span class="new-knowledge-filter-header-title">{{filter.title}}</span>
-          <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filter.collapse }"></i>
-        </div>
-        <el-collapse-transition>
-          <div class="filter__body">
-            <el-tree
-                    :ref="`knowledgeTree${filter.id}`"
-                    v-if="!filter.collapse"
-                    :data="filter.data"
-                    show-checkbox
-                    node-key="id"
-                    default-expand-all
-                    :default-checked-keys="[1,2,3]"
-                    :render-content="renderContent"
-                    @check="(data,checkinfo)=>handleCheckedItemChange(data,checkinfo,index)"
-                    >
-            </el-tree>
-          </div>
-        </el-collapse-transition>
+    <div class="knowledge-filter">
+      <div class="filter__header" @click="filterTypeData.collapse = !filterTypeData.collapse">
+        <span class="new-knowledge-filter-header-title">{{filterTypeData.title}}</span>
+        <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filterTypeData.collapse }"></i>
       </div>
-    </template>
+      <el-collapse-transition>
+        <div class="filter__body">
+          <el-tree
+                  ref="knowledgeTreeTypeFilter"
+                  v-if="!filterTypeData.collapse"
+                  :data="filterTypeData.data"
+                  show-checkbox
+                  node-key="id"
+                  default-expand-all
+                  :default-checked-keys="[1,2,3]"
+                  :render-content="renderContent"
+                  @check="(data,checkinfo)=>handleCheckedItemChange(data,checkinfo)"
+                  >
+          </el-tree>
+        </div>
+      </el-collapse-transition>
+    </div>
+    <div class="knowledge-filter">
+      <div class="filter__header" @click="filterStatusData.collapse = !filterStatusData.collapse">
+        <span class="new-knowledge-filter-header-title">{{filterStatusData.title}}</span>
+        <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filterStatusData.collapse }"></i>
+      </div>
+      <el-collapse-transition>
+        <div class="filter__body">
+          <el-tree
+                  ref="knowledgeTreeStatusFilter"
+                  v-if="!filterStatusData.collapse"
+                  :data="filterStatusData.data"
+                  show-checkbox
+                  node-key="id"
+                  default-expand-all
+                  :default-checked-keys="[1,2,3]"
+                  :render-content="renderContent"
+                  @check="(data,checkinfo)=>handleCheckedItemChange(data,checkinfo)"
+          >
+          </el-tree>
+        </div>
+      </el-collapse-transition>
+    </div>
   </div>
 </template>
 
@@ -45,22 +65,20 @@ export default {
       url: api.knowledgeBaseList,
       checkAll: true,
       isIndeterminateModel: false,
-      filterData: [
-        {
-          id:0,
-          title: this.$t('knowledge.type'),
-          collapse: false,
-          value: [],
-          data: []
-        },
-        {
-          id:1,
-          title: this.$t('knowledge.status'),
-          collapse: false,
-          value: [],
-          data: []
-        }
-      ],
+      filterTypeData: {
+        id:0,
+        title: this.$t('knowledge.type'),
+        collapse: false,
+        value: [],
+        data: []
+      },
+      filterStatusData: {
+        id:1,
+        title: this.$t('knowledge.status'),
+        collapse: false,
+        value: [],
+        data: []
+      },
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -77,16 +95,26 @@ export default {
         h('span', { class: 'count-tree-node' }, data.count)
       ])
     },
-    handleCheckedItemChange (data, checkinfo, index) {
-      let typeCheckedNodes = this.$refs.knowledgeTree0.getCheckedNodes()
-      const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
+    handleCheckedItemChange (data, checkinfo) {
+      let typeCheckedNodes = []
+      if(this.$refs.knowledgeTreeTypeFilter instanceof Array ) {
+        typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter[0].getCheckedNodes()
+      }else {
+        typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter.getCheckedNodes()
+      }
+      let typeHalfCheckedNodes = checkinfo.halfCheckedNodes
       typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
-      const statusCheckedNodes = this.$refs.knowledgeTree1.getCheckedNodes()
+      let statusCheckedNodes = []
+      if(this.$refs.knowledgeTreeStatusFilter instanceof Array ) {
+        statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter[0].getCheckedNodes()
+      }else {
+        statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter.getCheckedNodes()
+      }
       const typeCheckedLen = typeCheckedNodes.length
       const statusCheckedLen = statusCheckedNodes.length
       let params = {}
       let allSourceNum = 0
-      this.filterData[0].data.forEach(item => {
+      this.filterTypeData.data.forEach(item => {
         allSourceNum = allSourceNum + item.children.length
       })
       if (typeCheckedLen === 0 || statusCheckedLen === 0) {
@@ -101,7 +129,7 @@ export default {
             sources.push(val.value)
           }
         })
-        if (!(categorys.length === this.filterData[0].data.length && sources.length === allSourceNum)) {
+        if (!(categorys.length === this.filterTypeData.data.length && sources.length === allSourceNum)) {
           params = {
             category: categorys.toString(),
             source: sources.toString()
@@ -178,7 +206,7 @@ export default {
           appCount++
         }
       })
-      this.filterData[0].data = [
+      this.filterTypeData.data = [
         {
           id: 1,
           label: 'WebSketch',
@@ -274,7 +302,7 @@ export default {
           enableCount++
         }
       })
-      this.filterData[1].data = [
+      this.filterStatusData.data = [
         { id: 1, label: 'enabled', value: 1, count: enableCount, type: 0 },
         { id: 2, label: 'disable', value: 0, count: disableCount, type: 0 }
       ]
