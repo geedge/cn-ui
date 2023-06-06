@@ -58,10 +58,10 @@
                      :accept="fileTypeLimit"
                      ref="upload"
           >
-            <i class="el-icon-upload"></i>
+            <i class="cn-icon cn-icon-upload2"></i>
             <div class="el-upload__text">
               <div>{{ $t('knowledgeBase.dropFileHereOr') }}<em>{{ $t('knowledgeBase.clickToUpload') }}</em></div>
-              <div class="upload-tip">{{ $t('knowledgeBase.supportCsv') }}</div>
+              <div class="upload-tip">{{ $t('knowledgeBase.supportCsv') }}<span @click.stop="downloadTemplate">{{$t('knowledgeBase.downloadTemplate')}}</span></div>
             </div>
           </el-upload>
           <transition name="el-zoom-in-top">
@@ -1001,6 +1001,9 @@ export default {
           this.editIndex = this.showImportedData.length - 1
         }, 100)
       }
+    },
+    downloadTemplate () {
+      window.open('/assets/knowledgeBaseTemplate.zip', '_blank')
     }
   },
   computed: {
