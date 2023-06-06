@@ -91,7 +91,7 @@ export default {
           const res = tagData.data
           if (res.code === 200) {
             Object.keys(res.data).forEach(k => {
-              if (k !== 'userDefinedTags') {
+              if (k !== 'userDefinedTags' && res.data[k]) {
                 Object.keys(res.data[k]).forEach(k2 => {
                   const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
                   if (find) {
@@ -112,43 +112,43 @@ export default {
           if (res.code === 200) {
             switch (this.entity.entityType) {
               case 'ip': {
-                if (res.data.result.asn) {
-                  this.detailCards.find(c => c.name === 'asn').value = res.data.result.asn.asn
-                  this.detailCards.find(c => c.name === 'asOrg').value = res.data.result.asn.organization
+                if (res.data.asn) {
+                  this.detailCards.find(c => c.name === 'asn').value = res.data.asn.asn
+                  this.detailCards.find(c => c.name === 'asOrg').value = res.data.asn.organization
                   // AS子网接口未返回
                 }
-                if (res.data.result.location) {
-                  this.detailCards.find(c => c.name === 'isp').value = res.data.result.location.isp
-                  this.detailCards.find(c => c.name === 'location').value = this.handleLocation(res.data.result.location)
+                if (res.data.location) {
+                  this.detailCards.find(c => c.name === 'isp').value = res.data.location.isp
+                  this.detailCards.find(c => c.name === 'location').value = this.handleLocation(res.data.location)
                   // DNS PTR接口未返回
                 }
                 break
               }
               case 'domain': {
-                if (res.data.result.categories) {
-                  this.detailCards.find(c => c.name === 'categoryName').value = res.data.result.categories.categoryName
-                  this.detailCards.find(c => c.name === 'categoryGroup').value = res.data.result.categories.categoryGroup
-                  this.detailCards.find(c => c.name === 'reputationLevel').value = res.data.result.categories.reputationLevel
+                if (res.data.categories) {
+                  this.detailCards.find(c => c.name === 'categoryName').value = res.data.categories.categoryName
+                  this.detailCards.find(c => c.name === 'categoryGroup').value = res.data.categories.categoryGroup
+                  this.detailCards.find(c => c.name === 'reputationLevel').value = res.data.categories.reputationLevel
                 }
-                if (res.data.result.whois) {
-                  this.detailCards.find(c => c.name === 'expireDate').value = res.data.result.whois.expireDate
-                  this.detailCards.find(c => c.name === 'registrarName').value = res.data.result.whois.registrarName
-                  this.detailCards.find(c => c.name === 'registrantOrg').value = res.data.result.whois.registrantOrg
-                  this.detailCards.find(c => c.name === 'registrantCountry').value = res.data.result.whois.registrantCountry
-                  this.detailCards.find(c => c.name === 'createDate').value = res.data.result.whois.createDate
-                  this.detailCards.find(c => c.name === 'email').value = res.data.result.whois.email
+                if (res.data.whois) {
+                  this.detailCards.find(c => c.name === 'expireDate').value = res.data.whois.expireDate
+                  this.detailCards.find(c => c.name === 'registrarName').value = res.data.whois.registrarName
+                  this.detailCards.find(c => c.name === 'registrantOrg').value = res.data.whois.registrantOrg
+                  this.detailCards.find(c => c.name === 'registrantCountry').value = res.data.whois.registrantCountry
+                  this.detailCards.find(c => c.name === 'createDate').value = res.data.whois.createDate
+                  this.detailCards.find(c => c.name === 'email').value = res.data.whois.email
                 }
                 break
               }
               case 'app': {
-                if (res.data.result.categories) {
-                  this.detailCards.find(c => c.name === 'appCategory').value = res.data.result.categories.appCategory
-                  this.detailCards.find(c => c.name === 'appSubcategory').value = res.data.result.categories.appSubcategory
-                  this.detailCards.find(c => c.name === 'appRisk').value = res.data.result.categories.appRisk
-                  this.detailCards.find(c => c.name === 'appTechnology').value = res.data.result.categories.appTechnology
-                  this.detailCards.find(c => c.name === 'appName').value = res.data.result.categories.appName
-                  this.detailCards.find(c => c.name === 'appLongname').value = res.data.result.categories.appLongname
-                  this.detailCards.find(c => c.name === 'appDescription').value = res.data.result.categories.appDescription
+                if (res.data.categories) {
+                  this.detailCards.find(c => c.name === 'appCategory').value = res.data.categories.appCategory
+                  this.detailCards.find(c => c.name === 'appSubcategory').value = res.data.categories.appSubcategory
+                  this.detailCards.find(c => c.name === 'appRisk').value = res.data.categories.appRisk
+                  this.detailCards.find(c => c.name === 'appTechnology').value = res.data.categories.appTechnology
+                  this.detailCards.find(c => c.name === 'appName').value = res.data.categories.appName
+                  this.detailCards.find(c => c.name === 'appLongname').value = res.data.categories.appLongname
+                  this.detailCards.find(c => c.name === 'appDescription').value = res.data.categories.appDescription
                 }
                 break
               }
