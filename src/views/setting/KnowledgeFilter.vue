@@ -4,7 +4,7 @@
       {{ $t('knowledge.filters') }}
     </div>
     <div class="knowledge-filter">
-      <div class="filter__header" @click="filterCategoryData.collapse = !filterCategoryData.collapse">
+      <div class="filter__header" @click="collapseCategory">
         <span class="new-knowledge-filter-header-title">{{filterCategoryData.title}}</span>
         <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filterCategoryData.collapse }"></i>
       </div>
@@ -24,7 +24,7 @@
       </el-collapse-transition>
     </div>
     <div class="knowledge-filter">
-      <div class="filter__header" @click="filterStatusData.collapse = !filterStatusData.collapse">
+      <div class="filter__header" @click="collapseStatus">
         <span class="new-knowledge-filter-header-title">{{filterStatusData.title}}</span>
         <i class="el-icon-arrow-right new-knowledge-filter-icon" :class="{ 'arrow-rotate': !filterStatusData.collapse }"></i>
       </div>
@@ -79,7 +79,9 @@ export default {
       },
       typeData: [],
       statusData: [],
-      defaultCheckedCategory: []
+      defaultCheckedCategory: [],
+      defaultCheckedStatus: [0, 1],
+      filterParams: {}
     }
   },
   watch: {
@@ -91,20 +93,60 @@ export default {
         h('span', { class: 'count-tree-node' }, data.count)
       ])
     },
+    collapseCategory () {
+      this.filterCategoryData.collapse = !this.filterCategoryData.collapse
+      const self = this
+      if (!this.filterCategoryData.collapse) {
+        this.$nextTick(() => {
+          if (self.$refs.knowledgeTreeTypeFilter instanceof Array) {
+            self.$refs.knowledgeTreeTypeFilter[0].setCheckedKeys(this.defaultCheckedCategory)
+          } else {
+            self.$refs.knowledgeTreeTypeFilter.setCheckedKeys(this.defaultCheckedCategory)
+          }
+        })
+      }
+    },
+    collapseStatus () {
+      this.filterStatusData.collapse = !this.filterStatusData.collapse
+      const self = this
+      if (!this.filterStatusData.collapse) {
+        this.$nextTick(() => {
+          if (self.$refs.knowledgeTreeStatusFilter instanceof Array) {
+            self.$refs.knowledgeTreeStatusFilter[0].setCheckedKeys(this.defaultCheckedStatus)
+          } else {
+            self.$refs.knowledgeTreeStatusFilter.setCheckedKeys(this.defaultCheckedStatus)
+          }
+        })
+      }
+    },
     handleCheckedItemChange (data, checkinfo) {
       let typeCheckedNodes = []
-      if (this.$refs.knowledgeTreeTypeFilter instanceof Array) {
-        typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter[0].getCheckedNodes()
-      } else {
-        typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter.getCheckedNodes()
+      if (this.$refs.knowledgeTreeTypeFilter) {
+        if (this.$refs.knowledgeTreeTypeFilter instanceof Array) {
+          typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter[0].getCheckedNodes()
+        } else {
+          typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter.getCheckedNodes()
+        }
+        const categoryIds = []
+        typeCheckedNodes.forEach(item => {
+          categoryIds.push(item.id)
+        })
+        this.defaultCheckedCategory = categoryIds
+        const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
+        typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
       }
-      const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
-      typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
       let statusCheckedNodes = []
-      if (this.$refs.knowledgeTreeStatusFilter instanceof Array) {
-        statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter[0].getCheckedNodes()
-      } else {
-        statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter.getCheckedNodes()
+      if (this.$refs.knowledgeTreeStatusFilter) {
+        if (this.$refs.knowledgeTreeStatusFilter instanceof Array) {
+          statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter[0].getCheckedNodes()
+        } else {
+          statusCheckedNodes = this.$refs.knowledgeTreeStatusFilter.getCheckedNodes()
+        }
+        const sourceIds = []
+        statusCheckedNodes.forEach(item => {
+          sourceIds.push(item.id)
+        })
+        this.defaultCheckedStatus = sourceIds
       }
       const typeCheckedLen = typeCheckedNodes.length
       const statusCheckedLen = statusCheckedNodes.length
@@ -113,7 +155,7 @@ export default {
       this.filterCategoryData.data.forEach(item => {
         allSourceNum = allSourceNum + item.children.length
       })
-      if (typeCheckedLen === 0 || statusCheckedLen === 0) {
+      if (this.defaultCheckedCategory.length === 0 || this.defaultCheckedStatus.length === 0) {
         this.$emit('clearList')
       } else {
         const categorys = []
@@ -126,17 +168,32 @@ export default {
           }
         })
         if (!(categorys.length === this.filterCategoryData.data.length && sources.length === allSourceNum)) {
-          params = {
-            category: categorys.toString(),
-            source: sources.toString()
+          if (this.filterCategoryData.collapse) {
+            params = {
+              category: categorys.toString() ? categorys.toString() : this.filterParams.category,
+              source: sources.toString() ? sources.toString() : this.filterParams.source
+            }
+          } else {
+            params = {
+              category: categorys.toString(),
+              source: sources.toString()
+            }
           }
         }
-        if (statusCheckedLen === 1) {
-          params = {
-            ...params,
-            status: statusCheckedNodes[0].value
+        if (this.defaultCheckedStatus.length === 1) {
+          if (this.filterStatusData.collapse) {
+            params = {
+              ...params,
+              status: statusCheckedNodes[0].value ? statusCheckedNodes[0].value : this.filterParams.status
+            }
+          } else {
+            params = {
+              ...params,
+              status: statusCheckedNodes[0].value
+            }
           }
         }
+        this.filterParams = params
         this.$emit('reload', params, true)
       }
     },
@@ -158,13 +215,12 @@ export default {
         const self = this
         this.$nextTick(() => {
           self.$refs.knowledgeTreeTypeFilter.setCheckedKeys(this.defaultCheckedCategory)
-        })
-        this.$nextTick(() => {
-          self.$refs.knowledgeTreeStatusFilter.setCheckedKeys([0, 1])
+          self.$refs.knowledgeTreeStatusFilter.setCheckedKeys(this.defaultCheckedStatus)
         })
       })
     },
     initTypeData () {
+      this.filterCategoryData.data = []
       this.typeData.forEach((type, typeIndex) => {
         const categoryLabel = knowledgeBaseCategory.find(t => t.value === type.name)
         const categoryId = typeIndex
@@ -182,7 +238,7 @@ export default {
         sourceList.forEach((item, sourceIndex) => {
           const sourceLabel = knowledgeBaseSource.find(t => t.value === item.name)
           const source = {
-            id: Number(typeIndex + '' + sourceIndex),
+            id: typeIndex + '' + sourceIndex,
             label: sourceLabel ? sourceLabel.name : item.name,
             value: item.name,
             count: item.count,
@@ -195,6 +251,7 @@ export default {
     initStatusData () {
       const enableCount = 0
       const disableCount = 0
+      this.filterStatusData.data = []
       this.statusData.forEach((data, index) => {
         this.filterStatusData.data.push({
           id: index,
