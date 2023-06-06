@@ -124,14 +124,14 @@ export default {
     const dateRangeValue = props.dateRange ? ref(props.dateRange) : ref(60)
     const isCustom = ref(dateRangeValue.value === -1)
     const dateRangeArr = [
-      { value: 5, name: 'last 5 Min' },
-      { value: 15, name: 'last 15 Min' },
-      { value: 30, name: 'last 30 Min' },
+      { value: 5, name: 'last 5 mins' },
+      { value: 15, name: 'last 15 mins' },
+      { value: 30, name: 'last 30 mins' },
       { value: 60, name: 'last 1 hour' },
-      { value: 180, name: 'last 3 hour' },
-      { value: 360, name: 'last 6 hour' },
-      { value: 720, name: 'last 12 hour' },
-      { value: 1440, name: 'last 1 days' },
+      { value: 180, name: 'last 3 hours' },
+      { value: 360, name: 'last 6 hours' },
+      { value: 720, name: 'last 12 hours' },
+      { value: 1440, name: 'last 1 day' },
       { value: 2880, name: 'last 2 days' }
     ]
     const dropdownFlag = ref(false)
