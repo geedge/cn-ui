@@ -76,10 +76,10 @@
         >
           <template #default="scope">
             <div v-if="scope.row.status === 1" class="information-aggregation__valid">
-              valid
+              {{ $t("entity.detail.valid") }}
             </div>
             <div v-else-if="scope.row.status === 0" class="information-aggregation__invalid">
-              invalid
+              {{ $t("entity.detail.invalid") }}
             </div>
           </template>
         </el-table-column>
@@ -94,6 +94,7 @@ import axios from 'axios'
 import { api } from '@/utils/api'
 import { entityDetailTags } from '@/utils/constants'
 import { dateFormatByAppearance } from '@/utils/date-util'
+import chartNoData from '@/views/charts/charts/ChartNoData'
 
 export default {
   name: 'InformationAggregation',
@@ -103,6 +104,7 @@ export default {
     }
   },
   mixins: [chartMixin],
+  components: { chartNoData },
   methods: {
     dateFormatByAppearance,
     intelligenceContentClass ({ row, column, rowIndex, columnIndex }) {
@@ -116,6 +118,8 @@ export default {
       axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`).then(response => {
         const res = response.data
         if (res.code === 200) {
+          this.isNoData = res.data.result.length === 0
+          this.showError = false
           res.data.result.forEach(r => {
             Object.keys(r).forEach(k => {
               const aggregation = {
@@ -141,11 +145,13 @@ export default {
           })
         } else {
           this.showError = true
+          this.isNoData = false
           this.errorMsg = this.errorMsgHandler(res)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
+        this.isNoData = false
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)

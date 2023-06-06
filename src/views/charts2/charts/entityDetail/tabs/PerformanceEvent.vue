@@ -9,15 +9,15 @@
         :key="item.eventId">
       <div class="cn-detection--list">
         <div class="cn-detection__case entity-detail-performance">
-          <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor1[item.eventSecurity]}`"></div>
+          <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[item.eventSecurity]}`"></div>
           <div class="cn-detection__row">
             <div class="cn-detection__header">
             <span
                 class="detection-event-severity-color-block"
-                :style="`background-color: ${eventSeverityColor1[item.eventSeverity]}`">
+                :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
             </span>
               <span class="detection-event-severity-block" style="margin-right: 30px">
-              {{ item.eventType || '-' }}
+              {{ toUpperCaseByString(item.eventType) || '-' }}
             </span>
               <div class="cn-detection__body">
                 <div class="body__basic-info">
@@ -25,7 +25,7 @@
                     <div class="basic-info__item" v-if="item.eventSeverity">
                       <i class="cn-icon cn-icon-severity-level"></i>
                       <span>{{ $t('network.severity') }}&nbsp;:&nbsp;&nbsp;</span>
-                      <span>{{ item.eventSeverity || '-' }}</span>
+                      <span>{{ toUpperCaseByString(item.eventSeverity) || '-' }}</span>
                     </div>
                     <div class="basic-info__item">
                       <i class="cn-icon cn-icon-time2"></i>
@@ -49,24 +49,26 @@
 </template>
 
 <script>
-import { getSecond } from '@/utils/date-util'
-import { eventSeverityColor1 } from '@/utils/constants'
+import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
+import { eventSeverityColor } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { useRoute } from 'vue-router'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
+import { toUpperCaseByString } from '@/utils/tools'
+import ChartNoData from '@/views/charts/charts/ChartNoData'
 
 export default {
   name: 'PerformanceEvent',
-  components: { ChartError },
+  components: { ChartError, ChartNoData },
   mixins: [chartMixin],
   data () {
     return {
       eventList: [],
       showError: false,
-      eventSeverityColor1,
+      eventSeverityColor,
       errorMsg: ''
     }
   },
@@ -85,6 +87,8 @@ export default {
   },
   methods: {
     unitConvert,
+    toUpperCaseByString,
+    dateFormatByAppearance,
     initData () {
       const params = {
         resource: this.entityName,

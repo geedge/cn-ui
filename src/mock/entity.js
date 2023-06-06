@@ -76,7 +76,7 @@ if (openMock) {
         victimIp: '116.178.217.92',
         offenderDomain: 'baidu.com',
         victimDomain: 'mi.com',
-        eventSeverity: 'Critical',
+        eventSeverity: 'critical',
         malwareName: 'NetWire RC',
         cryptominingPool: null,
         startTime: 1683186600,
@@ -91,7 +91,7 @@ if (openMock) {
         victimIp: '116.178.217.93',
         offenderDomain: 'baidu.com',
         victimDomain: 'mi.com',
-        eventSeverity: 'Low',
+        eventSeverity: 'low',
         malwareName: 'NetWire RC',
         cryptominingPool: null,
         startTime: 1683186600,
@@ -106,7 +106,7 @@ if (openMock) {
         victimIp: '116.178.217.93',
         offenderDomain: 'baidu.com',
         victimDomain: 'mi.com',
-        eventSeverity: 'Low',
+        eventSeverity: 'low',
         malwareName: 'NetWire RC',
         cryptominingPool: null,
         startTime: 1683186600,
@@ -121,7 +121,7 @@ if (openMock) {
         victimIp: '116.178.217.93',
         offenderDomain: 'baidu.com',
         victimDomain: 'mi.com',
-        eventSeverity: 'Low',
+        eventSeverity: 'low',
         malwareName: 'NetWire RC',
         cryptominingPool: null,
         startTime: 1683186600,
@@ -136,7 +136,7 @@ if (openMock) {
         victimIp: '116.178.217.93',
         offenderDomain: 'baidu.com',
         victimDomain: 'mi.com',
-        eventSeverity: 'Low',
+        eventSeverity: 'low',
         malwareName: 'NetWire RC',
         cryptominingPool: null,
         startTime: 1683186600,
@@ -151,7 +151,7 @@ if (openMock) {
         victimIp: '116.178.217.93',
         offenderDomain: 'baidu.com',
         victimDomain: 'mi.com',
-        eventSeverity: 'Low',
+        eventSeverity: 'low',
         malwareName: 'NetWire RC',
         cryptominingPool: null,
         startTime: 1683186600,
@@ -166,7 +166,7 @@ if (openMock) {
         victimIp: '116.178.217.93',
         offenderDomain: 'baidu.com',
         victimDomain: 'mi.com',
-        eventSeverity: 'Low',
+        eventSeverity: 'low',
         malwareName: 'NetWire RC',
         cryptominingPool: null,
         startTime: 1683186600,
@@ -191,7 +191,7 @@ if (openMock) {
         serverIp: '116.178.78.180',
         domain: null,
         appName: null,
-        eventSeverity: 'Critical',
+        eventSeverity: 'critical',
         eventType: 'Http error',
         startTime: 1683250500,
         durationMs: 900000,
@@ -203,7 +203,7 @@ if (openMock) {
         serverIp: '116.178.78.180',
         domain: null,
         appName: null,
-        eventSeverity: 'Info',
+        eventSeverity: 'info',
         eventType: 'Http error',
         startTime: 1683250500,
         durationMs: 900000,
@@ -289,7 +289,7 @@ if (openMock) {
       data: result
     }
   })
-  Mock.mock(new RegExp(`${BASE_CONFIG.baseUrl}${BASE_CONFIG.apiVersion}/entity/kb/intelligence/list.*`), 'get', function (requestObj) {
+  Mock.mock(new RegExp(`${BASE_CONFIG.baseUrl}${BASE_CONFIG.apiVersion}/entity/detail/kb/intelligence/list.*`), 'get', function (requestObj) {
     const result = [
       {
         location: {

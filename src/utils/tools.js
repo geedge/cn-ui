@@ -1271,3 +1271,15 @@ export function copySelectionText () {
   }
   return copySuccess
 }
+
+/**
+ * 字符串首字母转大写
+ * @param str
+ * @returns {*}
+ */
+export function toUpperCaseByString (str) {
+  if (str) {
+    str = str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase()
+  }
+  return str
+}

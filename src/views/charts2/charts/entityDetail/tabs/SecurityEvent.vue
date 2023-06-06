@@ -9,14 +9,14 @@
         :key="item.eventId">
       <div class="cn-detection--list">
         <div class="cn-detection__case entity-detail-security">
-          <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor1[item.eventSecurity]}`"></div>
+          <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[item.eventSecurity]}`"></div>
           <div class="cn-detection__row">
             <div class="cn-detection__header">
           <span
               class="detection-event-severity-color-block"
-              :style="`background-color: ${eventSeverityColor1[item.eventSeverity]}`">
+              :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
           </span>
-              <span class="detection-event-severity-block">{{ item.securityType || '-' }}</span>
+              <span class="detection-event-severity-block">{{ toUpperCaseByString(item.securityType) || '-' }}</span>
               <i class="cn-icon cn-icon-attacker"></i>{{ item.offenderIp || '-' }}
               <div class="domain">{{ item.offenderDomain }}</div>
               <span class="line">-------</span>
@@ -35,7 +35,7 @@
                   <div class="basic-info__item" v-if="item.eventSeverity">
                     <i class="cn-icon cn-icon-severity-level"></i>
                     <span>{{ $t('network.severity') }}&nbsp;:&nbsp;&nbsp;</span>
-                    <span>{{ item.eventSeverity || '-' }}</span>
+                    <span>{{ toUpperCaseByString(item.eventSeverity) || '-' }}</span>
                   </div>
                   <div class="basic-info__item" v-if="item.eventType">
                     <i class="cn-icon cn-icon-event-type"></i>
@@ -74,12 +74,14 @@
 
 <script>
 import { getSecond } from '@/utils/date-util'
-import { eventSeverityColor1 } from '@/utils/constants'
+import { eventSeverityColor } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { useRoute } from 'vue-router'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { toUpperCaseByString } from '@/utils/tools'
+import chartNoData from '@/views/charts/charts/ChartNoData'
 
 export default {
   name: 'SecurityEvent',
@@ -88,10 +90,11 @@ export default {
     return {
       eventList: [],
       showError: false,
-      eventSeverityColor1,
+      eventSeverityColor,
       errorMsg: ''
     }
   },
+  components: { chartNoData },
   setup () {
     const { query } = useRoute()
     const entityType = query.entityType
@@ -107,6 +110,7 @@ export default {
   },
   methods: {
     unitConvert,
+    toUpperCaseByString,
     initData () {
       const params = {
         resource: this.entityName,
