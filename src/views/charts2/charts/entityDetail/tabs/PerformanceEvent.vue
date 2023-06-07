@@ -5,7 +5,7 @@
   <div v-if="!isNoData && !showError" class="entity-detail-event-block">
     <div
         class="entity-detail-event-border"
-        v-for="item in eventList"
+        v-for="(item, index) in eventList"
         :key="item.eventId">
       <div class="cn-detection--list">
         <div class="cn-detection__case entity-detail-performance">
@@ -13,6 +13,7 @@
           <div class="cn-detection__row">
             <div class="cn-detection__header">
             <span
+                :test-id="`severity-color-block${index}`"
                 class="detection-event-severity-color-block"
                 :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
             </span>
@@ -25,17 +26,17 @@
                     <div class="basic-info__item" v-if="item.eventSeverity">
                       <i class="cn-icon cn-icon-severity-level"></i>
                       <span>{{ $t('network.severity') }}&nbsp;:&nbsp;&nbsp;</span>
-                      <span>{{ toUpperCaseByString(item.eventSeverity) || '-' }}</span>
+                      <span :test-id="`severity${index}`">{{ toUpperCaseByString(item.eventSeverity) || '-' }}</span>
                     </div>
                     <div class="basic-info__item">
                       <i class="cn-icon cn-icon-time2"></i>
                       <span>{{ $t('detection.list.startTime') }}&nbsp;:&nbsp;&nbsp;</span>
-                      <span>{{ dateFormatByAppearance(item.startTime) || '-' }}</span>
+                      <span :test-id="`start-time${index}`">{{ dateFormatByAppearance(item.startTime) || '-' }}</span>
                     </div>
                     <div class="basic-info__item">
                       <i class="cn-icon cn-icon-duration"></i>
                       <span>{{ $t('overall.duration') }}&nbsp;:&nbsp;&nbsp;&nbsp;</span>
-                      <span>{{ unitConvert(item.durationMs, 'time', null, null, 0).join(' ') || '-' }}</span>
+                      <span :test-id="`duration-time${index}`">{{ unitConvert(item.durationMs, 'time', null, null, 0).join(' ') || '-' }}</span>
                     </div>
                   </div>
                 </div>

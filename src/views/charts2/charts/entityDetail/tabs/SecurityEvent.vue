@@ -1,27 +1,30 @@
 <template>
   <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
-  <chart-no-data v-if="isNoData && !showError"></chart-no-data>
+  <chart-no-data v-if="isNoData && !showError" test-id="no-data"></chart-no-data>
 
   <div v-if="!isNoData && !showError" class="entity-detail-event-block">
     <div
         class="entity-detail-event-border"
-        v-for="item in eventList"
+        v-for="(item, index) in eventList"
         :key="item.eventId">
       <div class="cn-detection--list">
         <div class="cn-detection__case entity-detail-security">
           <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[item.eventSecurity]}`"></div>
           <div class="cn-detection__row">
             <div class="cn-detection__header">
-          <span
-              class="detection-event-severity-color-block"
-              :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
-          </span>
+              <span
+                  :test-id="`severity-color-block${index}`"
+                  class="detection-event-severity-color-block"
+                  :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
+              </span>
               <span class="detection-event-severity-block">{{ toUpperCaseByString(item.securityType) || '-' }}</span>
-              <i class="cn-icon cn-icon-attacker"></i>{{ item.offenderIp || '-' }}
+              <i class="cn-icon cn-icon-attacker"></i>
+              <span :test-id="`offender-ip${index}`">{{ item.offenderIp || '-' }}</span>
               <div class="domain">{{ item.offenderDomain }}</div>
               <span class="line">-------</span>
               <span class="circle"></span>
-              <i class="cn-icon cn-icon-attacked"></i>{{ item.victimIp || '-' }}
+              <i class="cn-icon cn-icon-attacked"></i>
+              <span :test-id="`victim-ip${index}`">{{ item.victimIp || '-' }}</span>
               <div class="domain">{{ item.victimDomain }}</div>
             </div>
             <div class="cn-detection__body">
@@ -73,7 +76,7 @@
 </template>
 
 <script>
-import { getSecond } from '@/utils/date-util'
+import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
 import { eventSeverityColor } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
@@ -111,6 +114,7 @@ export default {
   methods: {
     unitConvert,
     toUpperCaseByString,
+    dateFormatByAppearance,
     initData () {
       const params = {
         resource: this.entityName,
