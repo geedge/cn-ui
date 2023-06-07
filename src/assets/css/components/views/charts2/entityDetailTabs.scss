@@ -66,6 +66,12 @@
       height: 100%;
       overflow: auto;
     }
+    .tab-pane-warn--icon {
+      width: 16px;
+      color: #E48F3E;
+      margin-left: 10px;
+      margin-right: 0 !important;
+    }
   }
 
   .entity-detail-event-border {

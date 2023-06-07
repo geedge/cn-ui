@@ -10,6 +10,7 @@
         <template #label>
           <!--<div class="el-tabs__active-bar is-top" style="width: 80.9998px; transform: translateX(177px);"></div>-->
           <i :class="tab.icon"></i>{{tab.label}}
+          <i v-if="tab.warnFlag" :class="tab.warnIcon" class="tab-pane-warn--icon"></i>
         </template>
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution && tab.name === activeTab" @toggleLoading="setLoading"></domain-name-resolution>
@@ -26,7 +27,7 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import i18n from '@/i18n'
 import { entityDetailTabsName } from '@/utils/constants'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/InformationAggregation'
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'
 import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEvent'
@@ -35,6 +36,9 @@ import OpenPort from '@/views/charts2/charts/entityDetail/tabs/OpenPort'
 import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/DigitalCertificate'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { useRoute } from 'vue-router'
+import { getSecond } from '@/utils/date-util'
+import axios from '_axios@0.21.4@axios'
+import { api } from '@/utils/api'
 
 export default {
   name: 'EntityDetailTabs',
@@ -69,18 +73,19 @@ export default {
     this.timer = setTimeout(() => {
       this.handleActiveBar(this.activeTab)
     }, 200)
+    this.initData()
   },
   setup (props) {
     // eslint-disable-next-line vue/no-setup-props-destructure
     const entityType = props.entity.entityType
 
-    const tabs = [
+    const tabs = reactive([
       { name: entityDetailTabsName.domainNameResolution, label: i18n.global.t('entities.domainNameResolution'), icon: 'cn-icon cn-icon-domain-name-resolution' },
       { name: entityDetailTabsName.openPort, label: i18n.global.t('entities.openPort'), icon: 'cn-icon cn-icon-open-port' },
       // { name: entityDetailTabsName.digitalCertificate, label: i18n.global.t('entities.digitalCertificate'), icon: 'cn-icon cn-icon-digital-certificate' },
-      { name: entityDetailTabsName.securityEvent, label: i18n.global.t('overall.securityEvent'), icon: 'cn-icon cn-icon-security-event' },
-      { name: entityDetailTabsName.performanceEvent, label: i18n.global.t('overall.performanceEvent'), icon: 'cn-icon cn-icon-a-PerformanceEvent' }
-    ]
+      { name: entityDetailTabsName.securityEvent, label: i18n.global.t('overall.securityEvent'), icon: 'cn-icon cn-icon-security-event', warnIcon: 'cn-icon cn-icon-warn', warnFlag: false },
+      { name: entityDetailTabsName.performanceEvent, label: i18n.global.t('overall.performanceEvent'), icon: 'cn-icon cn-icon-a-PerformanceEvent', warnIcon: 'cn-icon cn-icon-warn', warnFlag: false }
+    ])
     if (entityType !== 'app') {
       tabs.unshift({ name: entityDetailTabsName.informationAggregation, label: i18n.global.t('entities.informationAggregation'), icon: 'cn-icon cn-icon-information-aggregation' })
     }
@@ -100,6 +105,41 @@ export default {
     }
   },
   methods: {
+    initData () {
+      const params = {
+        resource: this.entity.entityName,
+        startTime: getSecond(this.oneDayTimeFilter.startTime),
+        endTime: getSecond(this.oneDayTimeFilter.endTime)
+      }
+
+      const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: params })
+      const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: params })
+
+      Promise.all([security, performance]).then(response => {
+        if (response[0].data.code === 200 && response[1].data.code === 200) {
+          let index1 = 0
+          let index2 = 0
+          const name1 = entityDetailTabsName.securityEvent
+          const name2 = entityDetailTabsName.performanceEvent
+
+          // 为了避免tabs其中某项被注释或删除，导致index不对导致icon显示错误
+          const obj1 = this.tabs.find((t, i) => {
+            index1 = i
+            return t.name === name1
+          })
+          const obj2 = this.tabs.find((t, i) => {
+            index2 = i
+            return t.name === name2
+          })
+          if (obj1) {
+            this.tabs[index1].warnFlag = response[0].data.data.result.length > 0
+          }
+          if (obj2) {
+            this.tabs[index2].warnFlag = response[1].data.data.result.length > 0
+          }
+        }
+      })
+    },
     handleActiveBar (name) {
       const tabDom = document.getElementById('tab-' + name)
       if (tabDom) {
