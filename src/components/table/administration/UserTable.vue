@@ -14,6 +14,7 @@
       :resizable="false"
       align="center"
       type="selection"
+      :selectable="checkSelectable"
       width="55">
     </el-table-column>
     <el-table-column
@@ -54,7 +55,7 @@
               v-if="scope.row.id"
               v-model="scope.row.status"
               active-value="1"
-              :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id==1) "
+              :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id===1) "
               inactive-value="0"
               @change="()=>{statusChange(scope.row)}">
           </el-switch>
@@ -144,6 +145,10 @@ export default {
         }
         this.$emit('reload')
       })
+    },
+    // 禁止勾选buildIn为1的项，即禁止修改、删除admin的账号
+    checkSelectable (row) {
+      return row.buildIn !== 1
     }
   }
 }

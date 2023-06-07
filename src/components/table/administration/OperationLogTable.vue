@@ -10,13 +10,9 @@
     @header-dragend="dragend"
     @sort-change="tableDataSort"
     @selection-change="selectionChange"
+    :cell-style="{paddingLeft: '20px'}"
+    :header-cell-style="{paddingLeft: '20px'}"
   >
-    <el-table-column
-      :resizable="false"
-      align="center"
-      type="selection"
-      width="55">
-    </el-table-column>
     <el-table-column
       v-for="(item, index) in customTableTitles"
       :key="item.prop+index"
@@ -39,10 +35,10 @@
                 {{scope.row[item.prop]}}ms
               </span>
         <span v-else-if="item.prop === 'state'">
-          <template v-if="scope.row[item.prop]==operationLogStateMapping.success">
+          <template v-if="scope.row[item.prop]===operationLogStateMapping.success">
             {{$t('operationLog.state.success')}}
           </template>
-          <template v-else-if="scope.row[item.prop]==operationLogStateMapping.fail">
+          <template v-else-if="scope.row[item.prop]===operationLogStateMapping.fail">
             {{$t('operationLog.state.fail')}}
           </template>
           <template v-else>
