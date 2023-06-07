@@ -37,7 +37,7 @@ import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/Digital
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import { getSecond } from '@/utils/date-util'
-import axios from '_axios@0.21.4@axios'
+import axios from 'axios'
 import { api } from '@/utils/api'
 
 export default {
