@@ -23,8 +23,8 @@
         </div>
         <div class="foot__item">
           <span @click="search">{{$t('overall.explore')}}</span>
-          <el-divider direction="vertical"></el-divider>
-          <span>{{$t('overall.help')}}</span>
+<!--          <el-divider direction="vertical"></el-divider>
+          <span>{{$t('overall.help')}}</span>-->
         </div>
         <transition name="el-zoom-in-top">
           <div class="search__history" v-show="showHistory">
@@ -36,7 +36,7 @@
             </div>
             <div class="clear-all">
               <span @click="clearHistory" v-if="!$_.isEmpty(history)">{{$t('overall.clear')}}</span>
-              <div v-else>暂无记录</div>
+              <div v-else>{{$t('overall.noRecords')}}</div>
             </div>
           </div>
         </transition>
@@ -239,7 +239,7 @@ export default {
           label: 'APP.Technology'
         }
       ],
-      operatorList: ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
+      operatorList: ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
       connectionList: [
         {
           value: 'AND',

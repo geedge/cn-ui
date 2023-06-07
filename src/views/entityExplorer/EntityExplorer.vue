@@ -534,7 +534,7 @@ export default {
       }
       this.loadingLeft = true
       get(api.entityFilter, queryParams).then(response => {
-        if (response.data && response.data.result) {
+        if (response.code === 200 && response.data && response.data.result) {
           switch (params.entityType) {
             case 'ip': {
               this.filterData[0].data.forEach(d => {
@@ -601,6 +601,9 @@ export default {
           this.$nextTick(() => {
             this.listData = response.data.result
           })
+        } else {
+          console.error(response.message)
+          this.$message.error(response.message)
         }
       }).finally(() => {
         this.listLoading = false

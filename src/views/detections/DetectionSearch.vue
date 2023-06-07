@@ -93,7 +93,7 @@ export default {
           }
         ]
       },
-      operatorList: ['=', '!=', '>', '<', '>=', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
+      operatorList: ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
       connectionList: [
         {
           value: 'AND',
