@@ -545,13 +545,13 @@ export default {
     changeValue (value) {
       // 设置面包屑显示的内容及hover时的title
       let valName = value
-      if (this.tab === 'qtype') {
+      if (this.curTabProp === 'qtype') {
         valName = this.dnsQtypeMapData.get(value)
-      } else if (this.tab === 'rcode') {
+      } else if (this.curTabProp === 'rcode') {
         valName = this.dnsRcodeMapData.get(value)
       }
       this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
-      document.getElementById('breadcrumbValue').innerText = value
+      document.getElementById('breadcrumbValue').innerText = valName
       document.getElementById(this.valueMenuId).setAttribute('title', valName)
       document.getElementById('breadcrumbButton').click()
       const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
