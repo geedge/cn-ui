@@ -342,7 +342,6 @@ export default {
       this.showDelDialog()
     },
     modeChange (mode) {
-      console.log(this.batchDeleteObjs)
       this.disableDelete = true
       this.isSelectedStatus = false
       this.batchDeleteObjs = []
@@ -380,10 +379,12 @@ export default {
       }).catch(() => {})
     },
     jumpToEditPage (id) {
+      const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
         path: '/knowledgeBase/edit',
         query: {
           t: +new Date(),
+          pageNoForTable: pageNo || 1,
           id: id,
           listMode: this.listMode
         }
