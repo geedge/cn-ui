@@ -612,7 +612,7 @@ export default {
       }
       get(api.detection[this.pageType].listBasic, params).then(response => {
         if (response.code === 200) {
-          this.listData = response.data
+          this.listData = response.data.result
         } else {
           this.listData = []
           console.error(response.message)
