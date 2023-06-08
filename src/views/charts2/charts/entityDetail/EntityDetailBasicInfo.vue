@@ -50,7 +50,7 @@
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
-import { drillDownPanelTypeMapping, entityType, entityDetailTags } from '@/utils/constants'
+import { drillDownPanelTypeMapping, entityType, entityDetailTags, psiphon3IpType } from '@/utils/constants'
 import { selectElementText, copySelectionText } from '@/utils/tools'
 import { ref } from 'vue'
 import i18n from '@/i18n'
@@ -76,6 +76,17 @@ export default {
     }
   },
   methods: {
+    tagValueHandler (k, k2, value) {
+      if (k === 'psiphon3Ip') {
+        if (k2 === 'type') {
+          const find = psiphon3IpType.find(t => t.value === value)
+          if (find) {
+            return find.name
+          }
+        }
+      }
+      return value
+    },
     getData () {
       this.toggleLoading(true)
       this.showError = false
@@ -95,7 +106,7 @@ export default {
                 Object.keys(res.data[k]).forEach(k2 => {
                   const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
                   if (find) {
-                    this.levelTwoTags.push({ key: k2, value: res.data[k][k2], type: find.type })
+                    this.levelTwoTags.push({ key: k2, value: this.tagValueHandler(k, k2, res.data[k][k2]), type: find.type })
                   }
                 })
               }

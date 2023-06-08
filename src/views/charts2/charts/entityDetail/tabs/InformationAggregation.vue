@@ -92,7 +92,7 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDetailTags } from '@/utils/constants'
+import {entityDetailTags, psiphon3IpType} from '@/utils/constants'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 
@@ -111,6 +111,17 @@ export default {
       if (columnIndex === 2) {
         return 'padding-0'
       }
+    },
+    tagValueHandler (k, k2, value) {
+      if (k === 'psiphon3Ip') {
+        if (k2 === 'type') {
+          const find = psiphon3IpType.find(t => t.value === value)
+          if (find) {
+            return find.name
+          }
+        }
+      }
+      return value
     },
     getData () {
       this.toggleLoading(true)
@@ -135,7 +146,7 @@ export default {
                   Object.keys(r[k]).forEach(k2 => {
                     const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
                     if (find) {
-                      aggregation.intelligenceContent.push({ key: k2, value: r[k][k2], type: find.type })
+                      aggregation.intelligenceContent.push({ key: k2, value: this.tagValueHandler(k, k2, r[k][k2]), type: find.type })
                     }
                   })
                 }

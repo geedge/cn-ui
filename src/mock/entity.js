@@ -268,6 +268,9 @@ if (openMock) {
       darkweb: {
         nodeType: 'nodeType'
       },
+      psiphon3Ip: {
+        type: 1
+      },
       userDefinedTags: [
         {
           id: 1,
@@ -315,6 +318,11 @@ if (openMock) {
           updateTime: 1685696510,
           createTime: 1685696510,
           isValid: 1
+        }
+      },
+      {
+        psiphon3Ip: {
+          type: 1
         }
       },
       {
