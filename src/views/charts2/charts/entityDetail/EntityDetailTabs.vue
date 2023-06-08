@@ -117,25 +117,17 @@ export default {
 
       Promise.all([security, performance]).then(response => {
         if (response[0].data.code === 200 && response[1].data.code === 200) {
-          let index1 = 0
-          let index2 = 0
           const name1 = entityDetailTabsName.securityEvent
           const name2 = entityDetailTabsName.performanceEvent
 
-          // 为了避免tabs其中某项被注释或删除，导致index不对导致icon显示错误
-          const obj1 = this.tabs.find((t, i) => {
-            index1 = i
-            return t.name === name1
-          })
-          const obj2 = this.tabs.find((t, i) => {
-            index2 = i
-            return t.name === name2
-          })
+          // 为了避免tabs其中某项被注释或删除，使用name查找到该项进行更改，避免icon显示错误
+          const obj1 = this.tabs.find(t => t.name === name1)
+          const obj2 = this.tabs.find(t => t.name === name2)
           if (obj1) {
-            this.tabs[index1].warnFlag = response[0].data.data.result.length > 0
+            obj1.warnFlag = response[0].data.data.result.length > 0
           }
           if (obj2) {
-            this.tabs[index2].warnFlag = response[1].data.data.result.length > 0
+            obj2.warnFlag = response[1].data.data.result.length > 0
           }
         }
       })
