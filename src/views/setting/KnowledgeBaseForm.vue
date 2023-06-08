@@ -100,12 +100,12 @@
                   <tr>
                     <th style="width: 230px">{{ importedTableFirstColumn }}</th>
                     <th style="width: 180px">Label</th>
-                    <th v-if="!editObject.knowledgeId">{{ $t('overall.import') }}</th>
+                    <th >{{ $t('overall.import') }}</th>
                     <th style="width: 16px"></th>
                   </tr>
                   <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagName + d.tagValue + i">
                     <td class="imported-data-item" :title="d.tagName">
-                      <el-form-item v-if="(editObject.knowledgeId && editIndex === i)  || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagName">
+                      <el-form-item v-if="(editIndex === i)  || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagName">
                         <span class="imported-data-item-edit__input">
                           <el-input v-model="editTagForm.tagName" @blur="onBlurTagItem"></el-input>
                         </span>
@@ -113,32 +113,31 @@
                       <span v-else>{{ d.tagName }}</span>
                     </td>
                     <td class="imported-data-value" :title="d.tagValue">
-                      <el-form-item v-if="(editObject.knowledgeId && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagValue">
+                      <el-form-item v-if="editIndex === i || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagValue">
                         <span class="imported-data-item-edit__input">
                           <el-input v-model="editTagForm.tagValue" @blur="onBlurTagItem"></el-input>
                         </span>
                       </el-form-item>
                       <span v-else>{{ d.tagValue }}</span>
                     </td>
-                    <td v-if="!editObject.knowledgeId" class="imported-data-msg" :title="d.msg">
-                      <i :class="d.isValid === 1 ? 'el-icon-success' : 'el-icon-error'"></i>&nbsp;&nbsp;{{ d.msg }}
+                    <td class="imported-data-msg" :title="d.msg">
+                      <i :class="d.isValid === 1 ? 'el-icon-success' : (d.isValid === 0 ? 'el-icon-error' : '')"></i>&nbsp;&nbsp;{{(d.isValid === 1 && (d.msg==='' || !d.msg) )? 'success': d.msg }}
                     </td>
-                    <td v-else></td>
-                    <!--返回和保存按钮-->
-                    <td v-if="editObject.knowledgeId && backEditFlag && !addEditFlag && editIndex === i" class="imported-data-btn">
-                      <i v-if="editObject.knowledgeId" class="cn-icon cn-icon-revoke imported-data-left-btn imported-data-back"
-                         @click="backImportedData"></i>
+                    <!--返回和保存按钮:修改记录-->
+                    <td v-if="backEditFlag && !addEditFlag && editIndex === i" class="imported-data-btn">
+                      <i class="cn-icon cn-icon-revoke imported-data-left-btn imported-data-back"
+                         @click="backImportedData(i)"></i>
                       <i class="cn-icon cn-icon-save imported-data-save" @click="saveImportedData(i)"></i>
                     </td>
-                    <!--保存和删除按钮-->
-                    <td v-else-if="(editObject.knowledgeId && addEditFlag && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" class="imported-data-btn">
+                    <!--保存和删除按钮：新增记录-->
+                    <td v-else-if="(addEditFlag && editIndex === i) || (addEditFlag && d.tagName === '' && d.tagValue === '')" class="imported-data-btn">
                       <i class="cn-icon cn-icon-save imported-data-save" style="margin: 0 7px"
                          @click="saveImportedData(i)"></i>
                       <i class="el-icon-close" @click="removeImportedData(i)"></i>
                     </td>
-                    <!--编辑和删除按钮-->
+                    <!--编辑和删除按钮：进入修改记录状态-->
                     <td v-else class="imported-data-btn">
-                      <i v-if="editObject.knowledgeId" class="cn-icon cn-icon-edit1 imported-data-left-btn"
+                      <i class="cn-icon cn-icon-edit1 imported-data-left-btn"
                          @click="editImportedData(i)"></i>
                       <i class="el-icon-close" @click="removeImportedData(i)"></i>
                     </td>
@@ -266,6 +265,8 @@ export default {
         if (index !== realIndex) { // 记录为非当前记录，则数据重复
           validate = false
           this.editTagErrorTip = rule.message
+          this.showImportedData[this.editIndex].msg = rule.message
+          this.showImportedData[this.editIndex].isValid = 0
           callback(new Error())
         }
       }
@@ -282,17 +283,25 @@ export default {
       return validate
     }
     const requiredValueValidator = (rule, value, callback) => {
+      value = this.editTagForm.tagValue
+      const index = this.editIndex
       let validate = true
       const realValue = value.replace(/\s+/g, '')// 去掉空格
       if (realValue === '') {
         validate = false
         this.editTagErrorTip = rule.message
+        this.showImportedData[index].msg = rule.message
+        this.showImportedData[index].isValid = 0
         callback(new Error())
       }
       return validate
     }
     const nameFormatValidator = (rule, value, callback) => {
+      value = this.editTagForm.tagName
+      const index = this.editIndex
       let validate = true
+      this.showImportedData[index].msg = 'success'
+      this.showImportedData[index].isValid = 1
       const type = this.editObject.source// 当前选中的类型
       if (type === knowledgeSourceValue.ipTag) {
         const formal = value.replace(/\s+/g, '')// 去掉空格
@@ -300,12 +309,16 @@ export default {
           if (!(regular.ipv4CIDR.test(formal)) && !(regular.ipv6CIDR.test(formal))) {
             validate = false
             this.editTagErrorTip = rule.message
+            this.showImportedData[index].msg = rule.message
+            this.showImportedData[index].isValid = 0
             callback(new Error())
           }
         } else {
           if (!regular.ip.test(formal)) {
             validate = false
             this.editTagErrorTip = rule.message
+            this.showImportedData[index].msg = rule.message
+            this.showImportedData[index].isValid = 0
             callback(new Error())
           }
         }
@@ -314,6 +327,8 @@ export default {
         if (pattern.test(value)) {
           validate = false
           this.editTagErrorTip = rule.message
+          this.showImportedData[index].msg = rule.message
+          this.showImportedData[index].isValid = 0
           callback(new Error())
         }
       } else if (type === knowledgeSourceValue.domainTag) { // 域名只支持 字母数字.-_
@@ -355,6 +370,8 @@ export default {
         }
         if (!validate) {
           this.editTagErrorTip = rule.message
+          this.showImportedData[index].msg = rule.message
+          this.showImportedData[index].isValid = 0
           callback(new Error())
         }
       }
@@ -429,7 +446,8 @@ export default {
       pageNoForTable: 1,
       listMode: 'list',
       status: 1,
-      oldItemIds: []
+      oldItemIds: [],
+      oldTagItem: {}
     }
   },
   methods: {
@@ -489,7 +507,7 @@ export default {
         this.isLoad = false
         originalImportedData.sort((a, b) => b.isValid - a.isValid)
         this.importedData = this.handleSpeticalTypeData(originalImportedData)
-        this.addItemList = _.cloneDeep(this.importedData)
+        this.addItemList = _.cloneDeep(this.importedData).filter(item => { return item.isValid === 1 })
         this.updateItemList = []
         this.deleteItemIds = this.oldItemIds
 
@@ -837,7 +855,7 @@ export default {
       this.editTagForm.tagName = this.showImportedData[index].tagName
       this.editTagForm.tagValue = this.showImportedData[index].tagValue
 
-      // 点击编辑时，如正处于新增状态，则去除新增项（此时新增并为保存，不必保留）
+      // 点击编辑时，如正处于新增状态，则去除新增项（此时新增并未保存，不必保留）
       if (this.addEditFlag) {
         this.addEditFlag = false
         const dataLen = this.importedData.length % this.importedPageObj.pageSize
@@ -847,17 +865,21 @@ export default {
         this.importedData.pop()
         this.handleShowImportedData()
       }
-
+      this.oldTagItem = {
+        isValid: this.showImportedData[index].isValid,
+        msg: this.showImportedData[index].msg
+      }
       this.editIndex = index
       this.backEditFlag = true
       this.editTagErrorTip = ''
     },
-    backImportedData () {
+    backImportedData (index) {
       this.editTagForm = reactive({
         tagName: '',
         tagValue: ''
       })
-
+      this.showImportedData[index].isValid = this.oldTagItem.isValid
+      this.showImportedData[index].msg = this.oldTagItem.msg
       this.editIndex = -1
       this.backEditFlag = false
       this.editTagErrorTip = ''
@@ -905,72 +927,85 @@ export default {
         }
       }
     },
-    addData (data) {
+    addData (data, oldTag) {
       if (data) {
-        const addItemIndex = this.addItemList.findIndex(item => item.tagName === data.tagName && item.tagValue === data.tagValue)
-        if (addItemIndex === -1) {
-          let addItem = data
-          if (this.editObject.source === knowledgeSourceValue.ipTag) {
-            const sepIndex = data.tagName.indexOf('/')
-            if (sepIndex > -1) { // CIDR
-              addItem = {
-                ...addItem,
-                addrFormat: 'CIDR',
-                ip1: data.tagName.substring(0, sepIndex),
-                ip2: data.tagName.substring(sepIndex + 1)
-              }
-            } else { // Single
-              addItem = {
-                ...addItem,
-                addrFormat: 'Single',
-                ip1: data.tagName,
-                ip2: ''
-              }
-            }
-          } else if (this.editObject.source === knowledgeSourceValue.domainTag) {
+        let addItemIndex = -1
+        if (oldTag) {
+          addItemIndex = this.addItemList.findIndex(item => item.tagName === oldTag.tagName && item.tagValue === oldTag.tagValue)
+        } else {
+          addItemIndex = this.addItemList.findIndex(item => item.tagName === data.tagName && item.tagValue === data.tagValue)
+        }
+        let addItem = data
+        if (this.editObject.source === knowledgeSourceValue.ipTag) {
+          const sepIndex = data.tagName.indexOf('/')
+          if (sepIndex > -1) { // CIDR
             addItem = {
               ...addItem,
-              domain: data.tagName
+              addrFormat: 'CIDR',
+              ip1: data.tagName.substring(0, sepIndex),
+              ip2: data.tagName.substring(sepIndex + 1)
             }
-          } else if (this.editObject.source === knowledgeSourceValue.appTag) {
+          } else { // Single
             addItem = {
               ...addItem,
-              appName: data.tagName
+              addrFormat: 'Single',
+              ip1: data.tagName,
+              ip2: ''
             }
           }
+        } else if (this.editObject.source === knowledgeSourceValue.domainTag) {
+          addItem = {
+            ...addItem,
+            domain: data.tagName
+          }
+        } else if (this.editObject.source === knowledgeSourceValue.appTag) {
+          addItem = {
+            ...addItem,
+            appName: data.tagName
+          }
+        }
 
+        if (addItemIndex === -1) {
           this.addItemList.push(addItem)
+        } else {
+          this.addItemList.splice(addItemIndex, 1, addItem)
         }
       }
     },
-    saveImportedData (index) {
+    saveImportedData (index) { // 分为新增的保存，修改的保存
+      const self = this
       this.$refs.editForm.validate(valid => {
         if (valid) {
-          this.showImportedData[index].tagName = this.editTagForm.tagName
-          this.showImportedData[index].tagValue = this.editTagForm.tagValue
-          this.showImportedData[index].isValid = 1
+          const oldTag = {
+            tagName: self.showImportedData[index].tagName,
+            tagValue: self.showImportedData[index].tagValue
+          }
+          self.showImportedData[index].tagName = self.editTagForm.tagName
+          self.showImportedData[index].tagValue = self.editTagForm.tagValue
           let num = -1
-          const findData = this.importedData.find((item, i) => {
+          const findData = self.importedData.find((item, i) => {
             num = i
-            return (item.tagName === this.editTagForm.tagName && item.tagValue === this.editTagForm.tagValue)
+            return (item.tagName === self.editTagForm.tagName && item.tagValue === self.editTagForm.tagValue)
           })
-          if (!findData) {
-            this.importedData[num].tagName = this.editTagForm.tagName
-            this.importedData[num].tagValue = this.editTagForm.tagValue
-            this.importedData[num].isValid = 1
-            this.addData(this.importedData[num])
-          } else {
-            if (findData.id) {
-              this.updateData(findData)
-            } else {
-              this.addData(findData)
+          if (!findData) { // 新增记录(包括新增和修改界面)
+            self.importedData[num].tagName = self.editTagForm.tagName
+            self.importedData[num].tagValue = self.editTagForm.tagValue
+            self.importedData[num].isValid = 1
+            self.addData(self.importedData[num])
+          } else { // 修改记录
+            if (findData.id) { // 修改界面的修改记录
+              self.updateData(findData, oldTag)
+            } else { // 新增界面的修改记录
+              self.addData(findData, oldTag)
             }
           }
 
-          this.addEditFlag = false
-          this.editIndex = -1
-          this.backEditFlag = false
-          this.isPreviewChange = true
+          self.addEditFlag = false
+          self.editIndex = -1
+          self.backEditFlag = false
+          self.isPreviewChange = true
+        } else {
+          self.showImportedData[index].isValid = 0
         }
       })
     },
@@ -984,16 +1019,17 @@ export default {
     addTagAtLast () {
       this.editTagForm.tagName = ''
       this.editTagForm.tagValue = ''
+      // this.editTagForm.isValid = 1
       const total = this.importedData.length
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
-      if (this.importedData.length === 0 || (this.importedData[this.importedData.length - 1].tagName !== '' && this.importedData[this.importedData.length - 1].tagValue !== '')) {
+      if (this.importedData.length === 0 || !(this.importedData[this.importedData.length - 1].tagName === '' && this.importedData[this.importedData.length - 1].tagValue === '')) {
         if (total >= 10) {
           const lastPageSize = Math.ceil((total + 1) / 10)
           this.pageNo(lastPageSize)
         }
-        this.importedData.push({ tagName: '', tagValue: '', status: 1 })
-        this.showImportedData.push({ tagName: '', tagValue: '', status: 1 })
+        this.importedData.push({ tagName: '', tagValue: '' })
+        this.showImportedData.push({ tagName: '', tagValue: '' })
         this.importedDataNoData = false
 
         this.importedPageObj.total = this.importedData.length
