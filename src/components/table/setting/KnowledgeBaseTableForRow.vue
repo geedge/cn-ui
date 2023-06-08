@@ -76,6 +76,7 @@
                      inactive-color="#C0CEDB"
                      :active-value="1"
                      :inactive-value="0"
+                     :disabled="scope.row.isBuiltIn === 1"
                      @change="changeStatus($event,scope.row.knowledgeId)"
           >
           </el-switch>

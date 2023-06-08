@@ -342,6 +342,11 @@ export default {
       this.showDelDialog()
     },
     modeChange (mode) {
+      console.log(this.batchDeleteObjs)
+      this.disableDelete = true
+      this.isSelectedStatus = false
+      this.batchDeleteObjs = []
+      this.secondBatchDeleteObjs = []
       this.listMode = mode
       const { query } = this.$route
       const newUrl = urlParamsHandler(window.location.href, query, { listMode: mode })

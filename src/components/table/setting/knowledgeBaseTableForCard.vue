@@ -28,6 +28,7 @@
                    inactive-color="#C0CEDB"
                    :active-value="1"
                    :inactive-value="0"
+                   :disabled="data.isBuiltIn === 1"
                    @change="changeStatus($event,data.knowledgeId)"
         >
         </el-switch>
