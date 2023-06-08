@@ -121,18 +121,20 @@ export default {
     },
     handleCheckedItemChange (data, checkinfo) {
       let typeCheckedNodes = []
+      let typeHalfCheckedNodes = []
       if (this.$refs.knowledgeTreeTypeFilter) {
         if (this.$refs.knowledgeTreeTypeFilter instanceof Array) {
           typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter[0].getCheckedNodes()
+          typeHalfCheckedNodes = this.$refs.knowledgeTreeTypeFilter[0].getHalfCheckedNodes()
         } else {
           typeCheckedNodes = this.$refs.knowledgeTreeTypeFilter.getCheckedNodes()
+          typeHalfCheckedNodes = this.$refs.knowledgeTreeTypeFilter.getHalfCheckedNodes()
         }
         const categoryIds = []
         typeCheckedNodes.forEach(item => {
           categoryIds.push(item.id)
         })
         this.defaultCheckedCategory = categoryIds
-        const typeHalfCheckedNodes = checkinfo.halfCheckedNodes
         typeCheckedNodes = typeCheckedNodes.concat(typeHalfCheckedNodes)
       }
       let statusCheckedNodes = []
@@ -214,8 +216,12 @@ export default {
         this.initStatusData()
         const self = this
         this.$nextTick(() => {
-          self.$refs.knowledgeTreeTypeFilter.setCheckedKeys(this.defaultCheckedCategory)
-          self.$refs.knowledgeTreeStatusFilter.setCheckedKeys(this.defaultCheckedStatus)
+          if (self.$refs.knowledgeTreeTypeFilter) {
+            self.$refs.knowledgeTreeTypeFilter.setCheckedKeys(this.defaultCheckedCategory)
+          }
+          if (self.$refs.knowledgeTreeStatusFilter) {
+            self.$refs.knowledgeTreeStatusFilter.setCheckedKeys(this.defaultCheckedStatus)
+          }
         })
       })
     },

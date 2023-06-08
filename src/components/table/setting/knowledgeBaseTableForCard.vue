@@ -5,12 +5,12 @@
         <div class="card-title">
           <div class="card-title-name" :title="data.name">{{data.name}}</div>
           <div class="card-title-more">
-            <span v-show="!isSelectedStatus && data.showMore"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(data)" test-id="mouseenter-dark"></i></span>
+            <span v-show="!isSelectedStatus && data.showMore && data.isBuiltIn !== 1"><i class="cn-icon cn-icon-more-dark" @mouseenter="mouseenterMore(data)" test-id="mouseenter-dark"></i></span>
             <div class="card-operate" v-show="!isSelectedStatus && data.moreOptions" @mouseleave="mouseleaveMore(data)">
               <div class="card-title-more-edit" @click="edit(data.knowledgeId)" >{{$t('overall.edit')}}</div>
               <div class="card-title-more-delete" @click="del(data)" >{{$t('overall.delete')}}</div>
             </div>
-            <el-checkbox @click.stop="" @change="(val) => {checkboxStatusChange(val,data)}" style="position: absolute;right: -12px;" v-if="isSelectedStatus" :key="data.knowledgeId" :label="data"><br></el-checkbox>
+            <el-checkbox @click.stop="" :disabled="data.isBuiltIn === 1" @change="(val) => {checkboxStatusChange(val,data)}" style="position: absolute;right: -12px;" v-if="isSelectedStatus" :key="data.knowledgeId" :label="data"><br></el-checkbox>
 
           </div>
         </div>

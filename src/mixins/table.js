@@ -109,6 +109,9 @@ export default {
         })
       }
     },
+    init () {
+      this.isInit = true
+    },
     changeStatus (status, id) {
       if (!this.isInit) {
         patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: status }] }).then(response => {
@@ -124,6 +127,13 @@ export default {
           }
           this.$emit('reload')
         })
+      }
+    },
+    selectable (row, rowIndex) {
+      if (row.isBuiltIn === 1) {
+        return false
+      } else {
+        return true
       }
     },
     tableOperation ([command, row]) {

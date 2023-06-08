@@ -13,6 +13,7 @@
         :resizable="false"
         align="center"
         type="selection"
+        :selectable="selectable"
         width="55">
     </el-table-column>
     <el-table-column

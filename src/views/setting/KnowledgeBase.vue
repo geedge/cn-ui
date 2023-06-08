@@ -253,6 +253,8 @@ export default {
             this.$refs.knowledgeFilter.reloadFilter()
             this.secondBatchDeleteObjs = []
             this.batchDeleteObjs = []
+            delete this.searchLabel.category
+            delete this.searchLabel.source
             this.getTableData()
           } else {
             this.$message.error(response.data.message)
@@ -347,6 +349,8 @@ export default {
       this.batchDeleteObjs = []
       this.secondBatchDeleteObjs = []
       this.listMode = mode
+      // this.$refs.dataTable.init()
+      // this.$refs.dataTableCard.init()
       const { query } = this.$route
       const newUrl = urlParamsHandler(window.location.href, query, { listMode: mode })
       overwriteUrl(newUrl)
@@ -362,6 +366,8 @@ export default {
           if (response.data.code === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
+            delete this.searchLabel.category
+            delete this.searchLabel.source
             this.getTableData()
           } else {
             this.$message.error(response.data.message)
