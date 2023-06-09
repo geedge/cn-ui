@@ -1,6 +1,6 @@
 <template>
   <el-checkbox-group v-model="checkList">
-    <div @click="isSelectedStatus && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.knowledgeId" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
+    <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.knowledgeId" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
       <div class="card-content">
         <div class="card-title">
           <div class="card-title-name" :title="data.name">{{data.name}}</div>
