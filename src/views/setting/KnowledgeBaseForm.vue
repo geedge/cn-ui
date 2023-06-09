@@ -23,7 +23,7 @@
                          class="form-select"
                          placeholder=" "
                          popper-class="form-select-popper"
-                         :disabled="!!editObject.knowledgeId || typeSelectDisable"
+                         :disabled="!!editObject.knowledgeId || (uploaded && !importedDataNoData)"
                          size="mini"
               >
                 <template v-for="type in knowledgeBaseType" :key="type.name">
