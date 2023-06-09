@@ -291,7 +291,6 @@ export default {
 
                 let sum = 0
                 linkInfo.forEach((item) => {
-                  // todo 此处需注意，不明确接口返回的方向字段名是拼音还是汉字，后期可能会变动缓存中的nextHop
                   if (s.linkDirection === item.nextHop) {
                     sum += item.bandwidth
                   }

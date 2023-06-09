@@ -581,7 +581,6 @@ export default {
             endTime: Math.ceil(params.areas[0].coordRange[1])
           }
 
-          // 暂定框选最小范围为5分钟，后续可能会变动
           if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
             rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
           }

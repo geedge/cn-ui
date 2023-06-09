@@ -158,7 +158,7 @@ export default {
       tableId: 'reportTable',
       builtinLeftLoading: false,
       builtinRightLoading: false,
-      getNum: -1
+      isInit: true
     }
   },
   /**
@@ -257,9 +257,7 @@ export default {
         this.searchLabel.categoryId = this.builtinId
       }
 
-      // 该请求不知道为什么会走2次，此处留个记录，后续解决。
-      this.getNum = this.getNum + 1
-      if (this.getNum > 0) {
+      if (!this.isInit) {
         get(listUrl, this.searchLabel).then(response => {
           // this.tools.loading = false
           this.builtinRightLoading = false
@@ -281,6 +279,7 @@ export default {
           }
         })
       }
+      this.isInit = false
     },
     /**
      * 点击左侧tab页

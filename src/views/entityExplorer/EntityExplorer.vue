@@ -464,7 +464,6 @@ export default {
         this.queryList({ ...this.pageObj, ...this.timeFilter })
         this.queryListTotal({ ...this.timeFilter })
 
-        // todo 当前页面选择其他值，重刷界面仍会被重置，后续记得添加上
         // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
         if (!this.initFlag) {
           this.timer = setTimeout(() => {
