@@ -251,9 +251,6 @@ export default {
       return validate
     }
     const nameAndLabelDuplicateValidator = (rule, value, callback) => {
-      if (this.backEditFlag) {
-        return true
-      }
       let validate = true
       let index = -1 // 当前编辑的键值index
       // 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
@@ -275,22 +272,20 @@ export default {
       return validate
     }
     const requiredItemValidator = (rule, value, callback) => {
-      if (this.backEditFlag) {
-        return true
-      }
+      value = this.editTagForm.tagName
       let validate = true
+      const index = this.editIndex
       const realValue = value.replace(/\s+/g, '')// 去掉空格
       if (realValue === '') {
         validate = false
         this.editTagErrorTip = rule.message
+        this.showImportedData[index].msg = rule.message
+        this.showImportedData[index].isValid = 0
         callback(new Error())
       }
       return validate
     }
     const requiredValueValidator = (rule, value, callback) => {
-      if (this.backEditFlag) {
-        return true
-      }
       value = this.editTagForm.tagValue
       const index = this.editIndex
       let validate = true
@@ -305,9 +300,6 @@ export default {
       return validate
     }
     const nameFormatValidator = (rule, value, callback) => {
-      if (this.backEditFlag) {
-        return true
-      }
       value = this.editTagForm.tagName
       const index = this.editIndex
       let validate = true
@@ -641,22 +633,35 @@ export default {
       this.typeSelectDisable = true
       this.isClick = false
     },
+    backEditData(){
+      if(this.oldTagItem.isValid){
+        this.showImportedData[this.oldTagItem.index].isValid = this.oldTagItem.isValid
+        this.showImportedData[this.oldTagItem.index].msg = this.oldTagItem.msg
+      }
+    },
     pageNo (val) {
+      this.backEditData()
       if (val !== this.importedPageObj.pageNo) {
         this.editTagErrorTip = ''
       }
       this.importedPageObj.pageNo = val
       this.editIndex = -1
+      this.oldTagItem = {}
     },
     prev () {
+      this.backEditData()
       this.importedPageObj.pageNo--
       this.editIndex = -1
+      this.oldTagItem = {}
     },
     next () {
+      this.backEditData()
       this.importedPageObj.pageNo++
       this.editIndex = -1
+      this.oldTagItem = {}
     },
     removeImportedData (index) { // index 为记录在当前页的索引
+      this.backEditData()
       this.editIndex = -1 // 取消编辑标识
       this.addEditFlag = false // 取消新增标识
       this.editTagErrorTip = ''
@@ -700,6 +705,7 @@ export default {
         this.previewErrorTip = ''
       }
       this.isPreviewChange = true
+      this.oldTagItem = {}
     },
     cancel () {
       const self = this
@@ -861,6 +867,7 @@ export default {
       })
     },
     editImportedData (index) {
+      this.backEditData()
       this.editTagForm.tagName = this.showImportedData[index].tagName
       this.editTagForm.tagValue = this.showImportedData[index].tagValue
 
@@ -876,7 +883,10 @@ export default {
       }
       this.oldTagItem = {
         isValid: this.showImportedData[index].isValid,
-        msg: this.showImportedData[index].msg
+        msg: this.showImportedData[index].msg,
+        tagName: this.showImportedData[index].tagName,
+        tagValue: this.showImportedData[index].tagValue,
+        index:index
       }
       this.editIndex = index
       this.backEditFlag = true
@@ -1013,6 +1023,7 @@ export default {
           self.editIndex = -1
           self.backEditFlag = false
           self.isPreviewChange = true
+          this.oldTagItem = {}
         } else {
           self.showImportedData[index].isValid = 0
         }
@@ -1030,9 +1041,9 @@ export default {
       })
     },
     addTagAtLast () {
+      this.backEditData()
       this.editTagForm.tagName = ''
       this.editTagForm.tagValue = ''
-      // this.editTagForm.isValid = 1
       const total = this.importedData.length
       this.addEditFlag = true
       // 如果已经有新增空白项，则不再进行新增操作
@@ -1050,6 +1061,7 @@ export default {
           this.editIndex = this.showImportedData.length - 1
         }, 100)
       }
+      this.oldTagItem = {}
     },
     downloadTemplate () {
       window.open('/assets/knowledgeBaseTemplate.zip', '_blank')
