@@ -67,7 +67,7 @@
                     @selectionChange="selectionChange"
                     @edit="edit"
                     @orderBy="tableDataSort"
-                    @reload="getTableData"
+                    @reload="reloadRowList"
             ></knowledge-base-table-for-row>
           </div>
         </template>
@@ -84,6 +84,7 @@
                     :all-count="18"
                     @delete="toDelete"
                     @checkboxStatusChange="checkboxStatusChange"
+                    @reload="reloadRowList"
             ></knowledge-base-table-for-card>
           </div>
         </template>
@@ -118,9 +119,9 @@
               width="50">
       </el-table-column>
       <el-table-column property="knowledgeId" label="ID" width="50"></el-table-column>
-      <el-table-column property="category" label="Category" width="100"></el-table-column>
-      <el-table-column property="source" label="Source" width="110"></el-table-column>
       <el-table-column property="name" label="Name"></el-table-column>
+      <el-table-column property="category" label="Category" width="100" :formatter = "categoryFormat"></el-table-column>
+      <el-table-column property="source" label="Source" width="110" :formatter = "sourceFormat"></el-table-column>
     </el-table>
     <template #footer>
         <span class="dialog-footer">
@@ -137,6 +138,7 @@ import KnowledgeBaseTableForCard from '@/components/table/setting/knowledgeBaseT
 import KnowledgeBaseTableForRow from '@/components/table/setting/KnowledgeBaseTableForRow'
 import { api } from '@/utils/api'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
+import { knowledgeBaseCategory, knowledgeBaseSource } from '@/utils/constants'
 import axios from 'axios'
 import KnowledgeFilter from '@/views/setting/KnowledgeFilter'
 
@@ -172,6 +174,20 @@ export default {
       this.clearList()
       this.search(params)
       this.$refs.knowledgeFilter.reloadFilter()
+    },
+    reloadRowList () {
+      this.getTableData()
+      this.$refs.knowledgeFilter.reloadFilter()
+    },
+    categoryFormat (row, column) {
+      const category = row.category
+      const t = knowledgeBaseCategory.find(t => t.value === category)
+      return t ? t.name : category
+    },
+    sourceFormat (row, column) {
+      const source = row.source
+      const t = knowledgeBaseSource.find(t => t.value === source)
+      return t ? t.name : source
     },
     handleClose () {
       this.showConfirmDialog = false
@@ -349,8 +365,9 @@ export default {
       this.batchDeleteObjs = []
       this.secondBatchDeleteObjs = []
       this.listMode = mode
-      // this.$refs.dataTable.init()
-      // this.$refs.dataTableCard.init()
+      if (this.$refs.dataTableCard) {
+        this.$refs.dataTableCard.clearSelect()
+      }
       const { query } = this.$route
       const newUrl = urlParamsHandler(window.location.href, query, { listMode: mode })
       overwriteUrl(newUrl)

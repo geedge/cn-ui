@@ -44,7 +44,7 @@ export default {
     tableData: {
       handler (n) {
         if (this.tableData && this.tableData.length > 0) {
-          this.isInit = false
+          //this.isInit = false
         }
       }
     }
@@ -52,8 +52,7 @@ export default {
   data () {
     return {
       operationWidth: '165', // 操作列宽
-      show: true,
-      isInit: true
+      show: true
     }
   },
   methods: {
@@ -109,11 +108,8 @@ export default {
         })
       }
     },
-    init () {
-      this.isInit = true
-    },
     changeStatus (status, id) {
-      if (!this.isInit) {
+      if (id) {
         patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: status }] }).then(response => {
           if (response.code === 200) {
             this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })

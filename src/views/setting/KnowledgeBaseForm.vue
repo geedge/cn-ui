@@ -99,15 +99,15 @@
                 <table class="imported-table" v-if="!importedDataNoData">
                   <tr>
                     <th style="width: 230px">{{ importedTableFirstColumn }}</th>
-                    <th style="width: 180px">Label</th>
-                    <th >{{ $t('overall.import') }}</th>
-                    <th style="width: 16px"></th>
+                    <th >Label</th>
+                    <th style="width: 200px">{{ $t('overall.tip') }}</th>
+                    <th style="width: 50px"></th>
                   </tr>
                   <tr v-for="(d, i) in showImportedData" :key="importedType + d.tagName + d.tagValue + i">
                     <td class="imported-data-item" :title="d.tagName">
                       <el-form-item v-if="(editIndex === i)  || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagName">
                         <span class="imported-data-item-edit__input">
-                          <el-input v-model="editTagForm.tagName" @blur="onBlurTagItem"></el-input>
+                          <el-input v-model="editTagForm.tagName" @blur="onBlurTagItem(i)"></el-input>
                         </span>
                       </el-form-item>
                       <span v-else>{{ d.tagName }}</span>
@@ -115,7 +115,7 @@
                     <td class="imported-data-value" :title="d.tagValue">
                       <el-form-item v-if="editIndex === i || (addEditFlag && d.tagName === '' && d.tagValue === '')" prop="tagValue">
                         <span class="imported-data-item-edit__input">
-                          <el-input v-model="editTagForm.tagValue" @blur="onBlurTagItem"></el-input>
+                          <el-input v-model="editTagForm.tagValue" @blur="onBlurTagItem(i)"></el-input>
                         </span>
                       </el-form-item>
                       <span v-else>{{ d.tagValue }}</span>
@@ -252,6 +252,9 @@ export default {
       return validate
     }
     const nameAndLabelDuplicateValidator = (rule, value, callback) => {
+      if (this.backEditFlag) {
+        return true
+      }
       let validate = true
       let index = -1 // 当前编辑的键值index
       // 查看是否重名前，需要对名称进行校验，分别是IP、domain、APP的校验
@@ -273,6 +276,9 @@ export default {
       return validate
     }
     const requiredItemValidator = (rule, value, callback) => {
+      if (this.backEditFlag) {
+        return true
+      }
       let validate = true
       const realValue = value.replace(/\s+/g, '')// 去掉空格
       if (realValue === '') {
@@ -283,6 +289,9 @@ export default {
       return validate
     }
     const requiredValueValidator = (rule, value, callback) => {
+      if (this.backEditFlag) {
+        return true
+      }
       value = this.editTagForm.tagValue
       const index = this.editIndex
       let validate = true
@@ -297,11 +306,12 @@ export default {
       return validate
     }
     const nameFormatValidator = (rule, value, callback) => {
+      if (this.backEditFlag) {
+        return true
+      }
       value = this.editTagForm.tagName
       const index = this.editIndex
       let validate = true
-      this.showImportedData[index].msg = 'success'
-      this.showImportedData[index].isValid = 1
       const type = this.editObject.source// 当前选中的类型
       if (type === knowledgeSourceValue.ipTag) {
         const formal = value.replace(/\s+/g, '')// 去掉空格
@@ -1009,10 +1019,14 @@ export default {
         }
       })
     },
-    onBlurTagItem () {
+    onBlurTagItem (index) {
       this.$refs.editForm.validate(valid => {
         if (valid) {
           this.editTagErrorTip = ''
+          this.showImportedData[index].isValid = 1
+          this.showImportedData[index].msg = 'success'
+        } else {
+          this.showImportedData[index].isValid = 0
         }
       })
     },
