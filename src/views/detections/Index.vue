@@ -4,10 +4,10 @@
     <div class="explorer-top-tools explorer-detection-top-tools">
       <div class="explorer-top-tools-title">{{$t('overall.detections')}}</div>
       <div style="display: flex">
-        <div class="explorer-top-tools-block">
+<!--        <div class="explorer-top-tools-block">
           <i class="cn-icon cn-icon-configure-policies detection-icon-setting"></i>
           <span>{{$t('config.detections.configurePolicies')}}</span>
-        </div>
+        </div>-->
         <DateTimeRange
             class="date-time-range"
             :start-time="timeFilter.startTime"
@@ -612,7 +612,7 @@ export default {
       }
       get(api.detection[this.pageType].listBasic, params).then(response => {
         if (response.code === 200) {
-          this.listData = response.data
+          this.listData = response.data.result
         } else {
           this.listData = []
           console.error(response.message)

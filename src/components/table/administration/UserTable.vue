@@ -55,7 +55,7 @@
               v-if="scope.row.id"
               v-model="scope.row.status"
               active-value="1"
-              :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id===1) "
+              :disabled="(scope.row.username === loginName) || (scope.row.username==='admin' && scope.row.id===1) || scope.row.buildIn === 1"
               inactive-value="0"
               @change="()=>{statusChange(scope.row)}">
           </el-switch>

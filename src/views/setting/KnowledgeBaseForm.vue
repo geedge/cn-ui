@@ -49,7 +49,6 @@
                      :file-list="fileList"
                      :on-change="fileChange"
                      :on-success="uploadSuccess"
-                     :on-remove="onRemove"
                      :before-upload="beforeUpload"
                      :on-progress="onUpload"
                      :on-error="uploadError"
