@@ -15,8 +15,8 @@
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"></information-aggregation>
         <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution && tab.name === activeTab" @toggleLoading="setLoading"></domain-name-resolution>
         <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" />
-        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" />
-        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" />
+        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkWarn="setWarn" />
+        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkWarn="setWarn" />
         <open-port v-else-if="tab.name === entityDetailTabsName.openPort && tab.name === activeTab" @toggleLoading="setLoading"></open-port>
       </el-tab-pane>
     </el-tabs>
@@ -148,6 +148,12 @@ export default {
     },
     setLoading (loading) {
       this.toggleLoading(loading)
+    },
+    setWarn (name, flag) {
+      const obj = this.tabs.find(t => t.name === name)
+      if (obj) {
+        obj.warnFlag = flag
+      }
     }
   },
   beforeUnmount () {

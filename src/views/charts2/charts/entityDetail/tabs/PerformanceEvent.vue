@@ -51,7 +51,7 @@
 
 <script>
 import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
-import { eventSeverityColor } from '@/utils/constants'
+import { eventSeverityColor, entityDetailTabsName } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
@@ -103,6 +103,7 @@ export default {
 
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
+          this.$emit('checkWarn', entityDetailTabsName.securityEvent, !this.isNoData)
           this.showError = false
           if (!this.isNoData) {
             this.eventList = res.data.result
