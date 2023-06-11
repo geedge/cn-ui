@@ -157,6 +157,9 @@ export default {
       listUrl: api.knowledgeBaseList,
       tableId: 'knowledgeBaseTable', // 需要分页的table的id，用于记录每页数量
       isSelectedStatus: false,
+      filterParams: {},
+      checkedCategoryIds: [],
+      checkedStatusIds: [],
       keyWord: '',
       showConfirmDialog: false,
       delItemList: [],
@@ -168,12 +171,13 @@ export default {
   },
   methods: {
     onSearch () {
-      const params = {
+      let params = {
+        ...this.filterParams,
         name: this.keyWord
       }
       this.clearList()
       this.search(params)
-      this.$refs.knowledgeFilter.reloadFilter()
+      this.$refs.knowledgeFilter.reloadFilter(this.checkedCategoryIds,this.checkedStatusIds)
     },
     reloadRowList () {
       this.getTableData()
@@ -314,11 +318,14 @@ export default {
         }
       })
     },
-    reload (params, isAll, isClearType) {
+    reload (params, isAll, isClearType,checkedCategoryIds,checkedStatusIds) {
       this.disableDelete = true
       this.isSelectedStatus = false
       this.batchDeleteObjs = []
       this.secondBatchDeleteObjs = []
+      this.filterParams = params
+      this.checkedCategoryIds = checkedCategoryIds
+      this.checkedStatusIds = checkedStatusIds
       params = {
         ...params,
         name: this.keyWord
@@ -426,6 +433,7 @@ export default {
   mounted () {
     const curMode = this.$router.currentRoute.value.query.listMode
     this.listMode = curMode || 'list'
+    this.filterParams = {}
   },
   computed: {
   }

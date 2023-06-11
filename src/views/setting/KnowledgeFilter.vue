@@ -80,7 +80,7 @@ export default {
       typeData: [],
       statusData: [],
       defaultCheckedCategory: [],
-      defaultCheckedStatus: [0, 1],
+      defaultCheckedStatus: [],
       filterParams: {}
     }
   },
@@ -196,7 +196,7 @@ export default {
           }
         }
         this.filterParams = params
-        this.$emit('reload', params, true)
+        this.$emit('reload', params, true,false,this.defaultCheckedCategory,this.defaultCheckedStatus)
       }
     },
     getAllTableData (params) {
@@ -227,6 +227,7 @@ export default {
     },
     initTypeData () {
       this.filterCategoryData.data = []
+      let categoryIds = []
       this.typeData.forEach((type, typeIndex) => {
         const categoryLabel = knowledgeBaseCategory.find(t => t.value === type.name)
         const categoryId = typeIndex
@@ -238,7 +239,7 @@ export default {
           type: 0,
           children: []
         }
-        this.defaultCheckedCategory.push(categoryId)
+        categoryIds.push(categoryId)
         this.filterCategoryData.data.push(category)
         const sourceList = type.sourceList
         sourceList.forEach((item, sourceIndex) => {
@@ -253,11 +254,15 @@ export default {
           category.children.push(source)
         })
       })
+      if(this.defaultCheckedCategory.length === 0){
+        this.defaultCheckedCategory = categoryIds
+      }
     },
     initStatusData () {
       const enableCount = 0
       const disableCount = 0
       this.filterStatusData.data = []
+      let statusIds = []
       this.statusData.forEach((data, index) => {
         this.filterStatusData.data.push({
           id: index,
@@ -266,10 +271,20 @@ export default {
           count: data.count,
           type: 0
         })
+        statusIds.push(index)
       })
+      if(this.defaultCheckedStatus.length === 0){
+        this.defaultCheckedStatus = statusIds
+      }
     },
-    reloadFilter (params) {
-      this.getAllTableData(params)
+    reloadFilter (checkedCategoryIds ,checkedStatusIds) {
+      if(checkedCategoryIds && checkedCategoryIds.length > 0){
+        this.defaultCheckedCategory = checkedCategoryIds
+      }
+      if(checkedStatusIds && checkedStatusIds.length > 0){
+        this.defaultCheckedStatus = checkedStatusIds
+      }
+      this.getAllTableData()
     }
   },
   mounted () {
