@@ -352,6 +352,105 @@ if (openMock) {
       }
     }
   })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/ip/relate/ports.*'), 'get', function (requestObj) {
+    const result = [
+      {
+        port: 80,
+        l7Protocol: 'HTTP'
+      },
+      {
+        port: 443,
+        l7Protocol: 'HTTPS'
+      },
+      {
+        port: 53,
+        l7Protocol: 'DNS'
+      }
+    ]
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/ip/relate/apps.*'), 'get', function (requestObj) {
+    const result = ['Wechat', 'baidu', 'Wechat', 'baidu', 'Wechat', 'baidu', 'Wechat']
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/ip/relate/domains.*'), 'get', function (requestObj) {
+    const result = ['-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com']
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/app/relate/ips.*'), 'get', function (requestObj) {
+    const result = ['116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242']
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/app/relate/domains.*'), 'get', function (requestObj) {
+    const result = ['-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com']
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/domain/relate/ips.*'), 'get', function (requestObj) {
+    const result = ['116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242']
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/domain/relate/apps.*'), 'get', function (requestObj) {
+    const result = ['Wechat', 'baidu', 'Wechat', 'baidu', 'Wechat', 'baidu', 'Wechat']
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
+  Mock.mock(new RegExp(urlAndVersion + '/entity/detail/domain/relate/fqdns.*'), 'get', function (requestObj) {
+    const result = ['-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com']
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: {
+        result: result
+      }
+    }
+  })
 }
 
 const getQuery = (url) => {

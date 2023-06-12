@@ -7,6 +7,7 @@ import { get, post } from '@/utils/http'
 import axios from 'axios'
 import { sortByOrderNum } from '@/permission'
 import { storageKey } from '@/utils/constants'
+const apiVersion = BASE_CONFIG.apiVersion
 
 export const api = {
   // 系统相关
@@ -232,16 +233,26 @@ export const api = {
     drilldownTrafficAnalysis: '/interface/dns/overview/drilldown/trafficAnalysis'
   },
   entity: {
-    throughput: BASE_CONFIG.apiVersion + '/entity/detail/traffic/throughput',
-    security: BASE_CONFIG.apiVersion + '/entity/detail/event/security',
-    performance: BASE_CONFIG.apiVersion + '/entity/detail/event/performance',
-    domainNameResolutionRelatedApp: 'interface/entity/detail/overview/ip/relatedApp',
-    domainNameResolutionRelatedIP: 'interface/entity/detail/overview/ip/relatedIp',
-    domainNameResolutionRelatedDomain: 'interface/entity/detail/overview/ip/relatedDomain',
-    openPort: '',
-    basicInfo: BASE_CONFIG.apiVersion + '/entity/detail/basic',
-    tags: BASE_CONFIG.apiVersion + '/entity/detail/kb/intelligence/tag',
-    informationAggregation: BASE_CONFIG.apiVersion + '/entity/detail/kb/intelligence/list'
+    throughput: apiVersion + '/entity/detail/traffic/throughput',
+    security: apiVersion + '/entity/detail/event/security',
+    performance: apiVersion + '/entity/detail/event/performance',
+    // 域名解析：ip相关app、domain
+    domainNameResolutionAboutAppsOfIp: apiVersion + '/entity/detail/ip/relate/apps',
+    domainNameResolutionAboutDomainsOfIp: apiVersion + '/entity/detail/ip/relate/domains',
+    // 域名解析：app相关ip、domain
+    domainNameResolutionAboutIpsOfApp: apiVersion + '/entity/detail/app/relate/ips',
+    domainNameResolutionAboutDomainsOfApp: apiVersion + '/entity/detail/app/relate/domains',
+    // 域名解析：domain相关ip、app、fqdn
+    domainNameResolutionAboutAppsOfDomain: apiVersion + '/entity/detail/domain/relate/apps',
+    domainNameResolutionAboutIpsOfDomain: apiVersion + '/entity/detail/domain/relate/ips',
+    domainNameResolutionAboutFQDNsOfDomain: apiVersion + '/entity/detail/domain/relate/fqdns',
+    // 开放端口：ip、domain、app相关
+    openPortOfIp: apiVersion + '/entity/detail/ip/relate/ports',
+    openPortOfDomain: apiVersion + '/entity/detail/domain/relate/ports',
+    openPortOfApp: apiVersion + '/entity/detail/app/relate/ports',
+    basicInfo: apiVersion + '/entity/detail/basic',
+    tags: apiVersion + '/entity/detail/kb/intelligence/tag',
+    informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list'
   }
 }
 

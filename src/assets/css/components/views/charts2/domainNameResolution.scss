@@ -28,6 +28,9 @@
         background: #38ACD2;
         border-radius: 1px;
       }
+      .type-title-word {
+        margin-right: 6px;
+      }
     }
 
     .type-content {
@@ -48,6 +51,19 @@
         font-size: 12px;
         color: #353636;
         font-weight: 400;
+      }
+    }
+
+    .type-error-content {
+      width:100%;
+      height: 40px;
+      margin-bottom: 12px;
+      position: relative;
+
+      .type-error-content__block {
+        position: absolute;
+        left: -12px;
+        top: -12px;
       }
     }
   }

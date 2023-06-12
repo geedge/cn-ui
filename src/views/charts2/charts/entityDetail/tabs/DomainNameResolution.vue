@@ -1,162 +1,200 @@
 <template>
   <div>
-    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
-    <chart-no-data v-if="isNoData && !showError"></chart-no-data>
+    <chart-no-data v-if="isNoData"></chart-no-data>
 
-    <div v-if="!isNoData && !showError && !loading" class="type-data__column">
-      <div class="type-data">
+    <div v-if="!isNoData && initFlag" class="type-data__column">
+      <div class="type-data" v-if="entity.entityType !== 'app'">
         <div class="type-title">
-          <span class="title-mark" ></span>{{ $t('entities.tab.relatedApp') }}&nbsp;&nbsp;({{relatedAppList.length}})</div>
-        <div class="type-content">
-          <div v-for="entity in relatedAppList" class="data-item">{{entity.appName?entity.appName:entity}}</div>
+          <span class="title-mark"></span>
+          {{ $t('entities.tab.relatedApp') }}&nbsp;&nbsp;({{ relatedAppList.length }})
+        </div>
+        <div class="type-content" v-if="!showError0">
+          <div v-for="(entity, index) in relatedAppList" class="data-item" :key="index">
+            {{ entity.appName ? entity.appName : entity }}
+          </div>
+        </div>
+        <div class="type-error-content" v-else>
+          <chart-error class="type-error-content__block" :content="errorMsg0"></chart-error>
         </div>
       </div>
-      <div class="type-data">
+
+      <div class="type-data" v-if="entity.entityType !== 'ip'">
         <div class="type-title">
-          <span class="title-mark" ></span>{{ $t('entities.tab.relatedIp') }}&nbsp;&nbsp;({{relatedIpList.length}})</div>
-        <div class="type-content">
-          <div v-for="entity in relatedIpList" class="data-item">{{entity.ip?entity.ip:entity}}</div>
+          <span class="title-mark"></span>
+          {{ $t('entities.tab.relatedIp') }}&nbsp;&nbsp;({{ relatedIpList.length }})
+        </div>
+        <div class="type-content" v-if="!showError1">
+          <div v-for="(entity, index) in relatedIpList" :key="index" class="data-item">
+            {{ entity.ip ? entity.ip : entity }}
+          </div>
+        </div>
+        <div class="type-error-content" v-else>
+          <chart-error class="type-error-content__block" :content="errorMsg1"></chart-error>
         </div>
       </div>
+
       <div class="type-data">
         <div class="type-title">
-          <span class="title-mark" ></span>{{ $t('entities.tab.relatedDomain') }}&nbsp;&nbsp;({{relatedDomainList.length}})</div>
-        <div class="type-content">
-          <div v-for="entity in relatedDomainList"  class="data-item">{{entity.domain?entity.domain:entity}}</div>
+          <span class="title-mark"></span>
+          {{ $t('entities.tab.relatedDomain') }}&nbsp;&nbsp;({{ relatedDomainList.length }})
+        </div>
+        <div class="type-content" v-if="!showError2">
+          <div v-for="(entity, index) in relatedDomainList" class="data-item" :key="index">
+            {{ entity.domain ? entity.domain : entity }}
+          </div>
+        </div>
+        <div class="type-error-content" v-else>
+          <chart-error class="type-error-content__block" :content="errorMsg2"></chart-error>
         </div>
       </div>
+
     </div>
   </div>
 </template>
+
 <script>
-import { getNowTime, getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
 import chartMixin from '@/views/charts2/chart-mixin'
+import { getSecond } from '@/utils/date-util'
+import chartNoData from '@/views/charts/charts/ChartNoData'
 
 export default {
   name: 'DomainNameResolution',
   mixins: [chartMixin],
   props: {
   },
+  components: {
+    chartNoData
+  },
   data () {
     return {
       relatedAppList: [],
       relatedIpList: [],
       relatedDomainList: [],
-      showError: false,
-      errorMsg: '',
-      loading: true
+      initFlag: false, // 初始化标识，请求接口之后再显示，避免标题初始化会闪一下
+      showError0: false,
+      errorMsg0: '',
+      showError1: false,
+      errorMsg1: '',
+      showError2: false,
+      errorMsg2: ''
     }
   },
   mounted () {
     this.initData()
   },
-  setup () {
-    const { query } = useRoute()
-    // 获取url携带的range、startTime、endTime
-    const rangeParam = query.range
-    const startTimeParam = query.startTime
-    const endTimeParam = query.endTime
-    // 若url携带了，使用携带的值，否则使用默认值。
-    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
-    const timeFilter = ref({ dateRangeValue })
-    if (!startTimeParam || !endTimeParam) {
-      const {
-        startTime,
-        endTime
-      } = getNowTime(60)
-      timeFilter.value.startTime = startTime
-      timeFilter.value.endTime = endTime
-    } else {
-      timeFilter.value.startTime = parseInt(startTimeParam)
-      timeFilter.value.endTime = parseInt(endTimeParam)
-    }
-    return {
-      timeFilter
-    }
-  },
   methods: {
     initData () {
       const params = {
+        resource: this.entity.entityName,
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        ip: '116.178.70.242'
+        endTime: getSecond(this.timeFilter.endTime)
       }
-      this.loading = true
-      this.toggleLoading(true)
-      const relatedApp = new Promise(resolve => {
-        axios.get(api.entity.domainNameResolutionRelatedApp, { params: params }).then(response => {
-          const res = response.data
-          if (res.code === 200) {
-            this.isNoData = res.data.result.length === 0
-            this.showError = false
-            if (!this.isNoData) {
-              this.relatedAppList = res.data.result
-            }
-          } else {
-            this.httpError(res)
-          }
-        }).catch(e => {
-          // console.error(e)
-          this.httpError(e)
-        }).finally(() => {
-          // this.toggleLoading(false)
-          resolve()
-        })
-      })
-      const relatedIp = new Promise(resolve => {
-        axios.get(api.entity.domainNameResolutionRelatedIP, { params: params }).then(response => {
-          const res = response.data
-          if (res.code === 200) {
-            this.isNoData = res.data.result.length === 0
-            this.showError = false
-            if (!this.isNoData) {
-              this.relatedIpList = res.data.result
-            }
-          } else {
-            this.httpError(res)
-          }
-        }).catch(e => {
-          // console.error(e)
-          this.httpError(e)
-        }).finally(() => {
-          resolve()
-        })
-      })
-      const relatedDomain = new Promise(resolve => {
-        axios.get(api.entity.domainNameResolutionRelatedDomain, { params: params }).then(response => {
-          const res = response.data
-          if (res.code === 200) {
-            this.isNoData = res.data.result.length === 0
-            this.showError = false
-            if (!this.isNoData) {
-              this.relatedDomainList = res.data.result
-            }
-          } else {
-            this.httpError(res)
-          }
-        }).catch(e => {
-          // console.error(e)
-          this.httpError(e)
-        }).finally(() => {
-          resolve()
-        })
-      })
-      Promise.all([relatedApp, relatedIp, relatedDomain]).finally(response => {
-        this.toggleLoading(false)
-        this.loading = false
-      })
+      if (this.entity.entityType === 'app') {
+        const ipsOfApp = axios.get(api.entity.domainNameResolutionAboutIpsOfApp, { params: params })
+        const domainsOfApp = axios.get(api.entity.domainNameResolutionAboutDomainsOfApp, { params: params })
+        this.promiseData(ipsOfApp, domainsOfApp)
+      }
+
+      if (this.entity.entityType === 'ip') {
+        const appsOfIp = axios.get(api.entity.domainNameResolutionAboutAppsOfIp, { params: params })
+        const domainsOfIp = axios.get(api.entity.domainNameResolutionAboutDomainsOfIp, { params: params })
+        this.promiseData(appsOfIp, domainsOfIp)
+      }
+
+      if (this.entity.entityType === 'domain') {
+        const appsOfDomain = axios.get(api.entity.domainNameResolutionAboutAppsOfDomain, { params: params })
+        const ipsOfDomain = axios.get(api.entity.domainNameResolutionAboutIpsOfDomain, { params: params })
+        const fqdnsOfDomain = axios.get(api.entity.domainNameResolutionAboutFQDNsOfDomain, { params: params })
+        this.promiseData(appsOfDomain, ipsOfDomain, fqdnsOfDomain)
+      }
     },
-    httpError (e) {
-      this.isNoData = false
-      this.showError = true
-      this.errorMsg = this.errorMsgHandler(e)
-      this.relatedAppList = ['Wechat', 'baidu', 'Wechat', 'baidu', 'Wechat', 'baidu', 'Wechat']
-      this.relatedIpList = ['116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242', '116.178.70.242']
-      this.relatedDomainList = ['-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com', '-*.pangolin-sdk-toutiao.com']
+    promiseData (data1, data2, data3) {
+      this.showError0 = false
+      this.showError1 = false
+      this.showError2 = false
+      this.toggleLoading(true)
+      Promise.all([data1, data2, data3]).then(res => {
+        const res0 = res[0].data
+        const res1 = res[1].data
+        if (res0.code === 200 && res1.code === 200) {
+          this.isNoData = res0.data.result.length === 0 && res1.data.result.length === 0
+        }
+
+        // app相关，显示ip、domain
+        if (this.entity.entityType === 'app' && !this.isNoData) {
+          if (res0.code === 200) {
+            this.relatedIpList = res0.data.result
+          } else {
+            this.showError1 = true
+            this.errorMsg1 = this.errorMsgHandler(res0)
+          }
+
+          if (res1.code === 200) {
+            this.relatedDomainList = res1.data.result
+          } else {
+            this.showError2 = true
+            this.errorMsg2 = this.errorMsgHandler(res1)
+          }
+        }
+
+        // ip相关，显示app，domain
+        if (this.entity.entityType === 'ip' && !this.isNoData) {
+          if (res0.code === 200) {
+            this.relatedAppList = res0.data.result
+          } else {
+            this.showError0 = true
+            this.errorMsg0 = this.errorMsgHandler(res0)
+          }
+          if (res1.code === 200) {
+            this.relatedDomainList = res1.data.result
+          } else {
+            this.showError2 = true
+            this.errorMsg2 = this.errorMsgHandler(res1)
+          }
+        }
+
+        // domain相关，显示app，ip，domain
+        if (this.entity.entityType === 'domain') {
+          const res2 = res[2].data
+          if (res0.code === 200 && res1.code === 200 && res2.code === 200) {
+            this.isNoData = res0.data.result.length === 0 && res1.data.result.length === 0 && res2.data.result.length === 0
+          }
+
+          if (res0.code === 200) {
+            this.relatedAppList = res0.data.result
+          } else {
+            this.showError0 = true
+            this.errorMsg0 = this.errorMsgHandler(res0)
+          }
+
+          if (res1.code === 200) {
+            this.relatedIpList = res1.data.result
+          } else {
+            this.showError1 = true
+            this.errorMsg1 = this.errorMsgHandler(res1)
+          }
+
+          if (res2.code === 200) {
+            this.relatedDomainList = res2.data.result
+          } else {
+            this.showError2 = true
+            this.errorMsg2 = this.errorMsgHandler(res2)
+          }
+        }
+      }).catch(e => {
+        console.log(e)
+        this.showError0 = true
+        this.showError1 = true
+        this.showError2 = true
+        this.errorMsg0 = this.errorMsgHandler(e)
+        this.errorMsg1 = this.errorMsgHandler(e)
+        this.errorMsg2 = this.errorMsgHandler(e)
+      }).finally(() => {
+        this.initFlag = true
+        this.toggleLoading(false)
+      })
     }
   }
 }
