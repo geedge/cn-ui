@@ -50,7 +50,13 @@
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
-import { drillDownPanelTypeMapping, entityType, entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import {
+  drillDownPanelTypeMapping,
+  entityType,
+  entityDetailTags,
+  psiphon3IpType,
+  riskLevelMapping
+} from '@/utils/constants'
 import { selectElementText, copySelectionText } from '@/utils/tools'
 import { ref } from 'vue'
 import i18n from '@/i18n'
@@ -58,6 +64,7 @@ import { useRouter } from 'vue-router'
 import _ from 'lodash'
 import axios from 'axios'
 import { api } from '@/utils/api'
+import { dateFormatByAppearance } from '@/utils/date-util'
 
 export default {
   name: 'EntityDetailBasicInfo',
@@ -136,30 +143,30 @@ export default {
                 break
               }
               case 'domain': {
-                if (res.data.categories) {
-                  this.detailCards.find(c => c.name === 'categoryName').value = res.data.categories.categoryName
-                  this.detailCards.find(c => c.name === 'categoryGroup').value = res.data.categories.categoryGroup
-                  this.detailCards.find(c => c.name === 'reputationLevel').value = res.data.categories.reputationLevel
+                if (res.data.category) {
+                  this.detailCards.find(c => c.name === 'categoryName').value = res.data.category.categoryName
+                  this.detailCards.find(c => c.name === 'categoryGroup').value = res.data.category.categoryGroup
+                  this.detailCards.find(c => c.name === 'reputationLevel').value = res.data.category.reputationLevel
                 }
                 if (res.data.whois) {
-                  this.detailCards.find(c => c.name === 'expireDate').value = res.data.whois.expireDate
+                  this.detailCards.find(c => c.name === 'expireDate').value = dateFormatByAppearance(res.data.whois.expireDate)
                   this.detailCards.find(c => c.name === 'registrarName').value = res.data.whois.registrarName
                   this.detailCards.find(c => c.name === 'registrantOrg').value = res.data.whois.registrantOrg
                   this.detailCards.find(c => c.name === 'registrantCountry').value = res.data.whois.registrantCountry
-                  this.detailCards.find(c => c.name === 'createDate').value = res.data.whois.createDate
+                  this.detailCards.find(c => c.name === 'createDate').value = dateFormatByAppearance(res.data.whois.createDate)
                   this.detailCards.find(c => c.name === 'email').value = res.data.whois.email
                 }
                 break
               }
               case 'app': {
-                if (res.data.categories) {
-                  this.detailCards.find(c => c.name === 'appCategory').value = res.data.categories.appCategory
-                  this.detailCards.find(c => c.name === 'appSubcategory').value = res.data.categories.appSubcategory
-                  this.detailCards.find(c => c.name === 'appRisk').value = res.data.categories.appRisk
-                  this.detailCards.find(c => c.name === 'appTechnology').value = res.data.categories.appTechnology
-                  this.detailCards.find(c => c.name === 'appName').value = res.data.categories.appName
-                  this.detailCards.find(c => c.name === 'appLongname').value = res.data.categories.appLongname
-                  this.detailCards.find(c => c.name === 'appDescription').value = res.data.categories.appDescription
+                if (res.data.category) {
+                  this.detailCards.find(c => c.name === 'appCategory').value = res.data.category.appCategory
+                  this.detailCards.find(c => c.name === 'appSubcategory').value = res.data.category.appSubcategory
+                  this.detailCards.find(c => c.name === 'appRisk').value = this.appRisk(res.data.category.appRisk)
+                  this.detailCards.find(c => c.name === 'appTechnology').value = res.data.category.appTechnology
+                  this.detailCards.find(c => c.name === 'appName').value = res.data.category.appName
+                  this.detailCards.find(c => c.name === 'appLongname').value = res.data.category.appLongname
+                  this.detailCards.find(c => c.name === 'appDescription').value = res.data.category.appDescription
                 }
                 break
               }
@@ -183,6 +190,12 @@ export default {
       }).finally(() => {
         this.toggleLoading(false)
       })
+    },
+    appRisk (level) {
+      const m = riskLevelMapping.find(mapping => {
+        return mapping.value == level
+      })
+      return (m && m.name) || level
     },
     handleLocation (data) {
       const location = []
