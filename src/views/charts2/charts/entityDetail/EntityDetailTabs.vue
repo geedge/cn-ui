@@ -132,7 +132,7 @@ export default {
         }
       })
     },
-    handleActiveBar (name) {
+    handleActiveBar (name, change) {
       const tabDom = document.getElementById('tab-' + name)
       if (tabDom) {
         const { query } = this.$route
@@ -143,7 +143,9 @@ export default {
         const clientWidth = tabDom.clientWidth
         const clientLeft = tabDom.clientLeft
         const activeBar = document.querySelector('.entity-detail-tabs .entity-detail-tabs__active-bar')
-        activeBar.style.cssText += `width: ${clientWidth + 2}px; left: ${offsetLeft + clientLeft - 1}px;`
+        const addWidth = change === 'add' ? 30 : 0
+        const reduceWidth = change === 'reduce' ? -30 : 0
+        activeBar.style.cssText += `width: ${clientWidth + 2 + addWidth + reduceWidth}px; left: ${offsetLeft + clientLeft - 1}px;`
       }
     },
     setLoading (loading) {
@@ -152,7 +154,14 @@ export default {
     setWarn (name, flag) {
       const obj = this.tabs.find(t => t.name === name)
       if (obj) {
+        const oldFlag = JSON.parse(JSON.stringify(obj.warnFlag))
         obj.warnFlag = flag
+        if (oldFlag && !flag) {
+          this.handleActiveBar(name, 'reduce') // 之前有warn，再次切换无数据
+        }
+        if (!oldFlag && flag) {
+          this.handleActiveBar(name, 'add') // 之前无warn，再次切换有数据
+        }
       }
     }
   },
