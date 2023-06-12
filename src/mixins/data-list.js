@@ -37,7 +37,7 @@ export default {
       tableData: [],
       scrollbarWrap: null,
       delFlag: false,
-      disableEdit: false, // 编辑按钮是否不可用，当选择多条记录的时候你，编辑按钮不可用
+      disableEdit: true, // 编辑按钮是否不可用，当选择多条记录的时候，编辑按钮不可用
       disableDelete: true,
       operationWidth: '165' // 操作列宽
     }
@@ -82,10 +82,10 @@ export default {
           this.batchDeleteObjs.push(obj)
         }
       })
-      if (this.batchDeleteObjs.length > 1) {
-        this.disableEdit = true
-      } else {
+      if (this.batchDeleteObjs.length == 1) {
         this.disableEdit = false
+      } else {
+        this.disableEdit = true
       }
       if (this.batchDeleteObjs.length >= 1) {
         this.disableDelete = false

@@ -20,7 +20,7 @@
           <i class="cn-icon-edit cn-icon"></i>
           <span>{{$t('overall.edit')}}</span>
         </button>
-        <button id="account-delete"  class="top-tool-btn margin-r-10"
+        <button id="account-delete"  class="top-tool-btn margin-r-10" :disabled="disableDelete"
                 @click="delBatch">
           <i class="cn-icon-delete cn-icon"></i>
           <span>{{$t('overall.delete')}}</span>
@@ -63,7 +63,7 @@ import dataListMixin from '@/mixins/data-list'
 import userTable from '@/components/table/administration/UserTable'
 import userBox from '@/components/rightBox/settings/UserBox'
 import { api } from '@/utils/api'
-import {get} from '@/utils/http'
+import { get } from '@/utils/http'
 
 export default {
   name: 'User',

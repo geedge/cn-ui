@@ -20,7 +20,7 @@
           <i class="cn-icon-edit cn-icon"></i>
           <span>{{$t('overall.edit')}}</span>
         </button>
-        <button id="roles-delete"  class="top-tool-btn margin-r-10"
+        <button id="roles-delete"  class="top-tool-btn margin-r-10" :disabled="disableDelete"
                 @click="delBatch">
           <i class="cn-icon-delete cn-icon"></i>
           <span>{{$t('overall.delete')}}</span>

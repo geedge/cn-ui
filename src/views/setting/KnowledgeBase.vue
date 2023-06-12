@@ -215,10 +215,10 @@ export default {
           this.batchDeleteObjs.push(obj)
         }
       })
-      if (this.batchDeleteObjs.length > 1) {
-        this.disableEdit = true
-      } else {
+      if (this.batchDeleteObjs.length === 1) {
         this.disableEdit = false
+      } else {
+        this.disableEdit = true
       }
       if (this.batchDeleteObjs.length >= 1) {
         this.disableDelete = false
@@ -238,10 +238,10 @@ export default {
           this.batchDeleteObjs.splice(cancleObjIndex, 1)
         }
       }
-      if (this.batchDeleteObjs.length > 1) {
-        this.disableEdit = true
-      } else {
+      if (this.batchDeleteObjs.length === 1) {
         this.disableEdit = false
+      } else {
+        this.disableEdit = true
       }
       if (this.batchDeleteObjs.length >= 1) {
         this.disableDelete = false
