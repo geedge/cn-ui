@@ -1151,7 +1151,7 @@ export default {
           }
         })
         this.list = this.getDrilldownTabList(tabName)
-        const curTab = this.getCurTab(clickTab)
+        const curTab = this.getCurTab()
         tabList.forEach(tab => {
           if (tab.name === curTab.name) {
             this.combineColumnList(tab.name)
@@ -1163,7 +1163,7 @@ export default {
         /* this.list.forEach(tab => {
             const hiddenTab = tabList.find(item => item.name == tab.name)
           }) */
-        const curTab = this.getCurTab(clickTab)
+        const curTab = this.getCurTab()
         tabList.forEach(tab => {
           if (tab.name === curTab.name) {
             this.combineColumnList(tab.name)
