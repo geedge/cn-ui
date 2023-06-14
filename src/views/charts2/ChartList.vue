@@ -70,12 +70,12 @@ export default {
           // 需要额外修正的值
           correctionHeight: 24,
           chartType: typeMapping.networkOverview.appList
-        },
+        }/*,
         {
           selector: '.entity-detail-info',
           correctionHeight: 161,
           chartType: typeMapping.entityDetail.basicInfo
-        }
+        }*/
       ]
     }
   },
@@ -152,6 +152,23 @@ export default {
           }
         }
       })
+    },
+    // 实体详情基础信息的特殊处理：tag动态高度、底部详情动态高度
+    // 顶部padding+entityType+entityName高度94，tag高度实时获取，空隙6，分割线22，底下信息实时获取
+    handleEntityDetailBasicInfoHeight () {
+      const tagsDom = document.querySelector('.entity-tags')
+      const detailInfoDom = document.querySelector('.entity-detail-info')
+      let height = 94 + 6 + 22
+      if (tagsDom) {
+        height += tagsDom.offsetHeight
+      }
+      if (detailInfoDom) {
+        height += detailInfoDom.offsetHeight
+      }
+      const layout = _.cloneDeep(this.layout)
+      const destinationChart = layout.find(c => c.type === typeMapping.entityDetail.basicInfo)
+      destinationChart.h = (height + this.rowMargin) / (this.rowHeight + this.rowMargin)
+      this.layout = layout
     }
   },
   mounted () {
@@ -161,10 +178,13 @@ export default {
     this.handleDynamicChartHeight()
     this.debounceFunc = _.debounce(this.handleDynamicChartHeight, 500)
     window.addEventListener('resize', this.debounceFunc)
+
+    this.emitter.on('entity-detail-hide-tag-area', this.handleEntityDetailBasicInfoHeight)
   },
   beforeUnmount () {
     window.removeEventListener('resize', this.debounceFunc)
     clearTimeout(this.timeoutFunc)
+    this.emitter.off('entity-detail-hide-tag-area')
   }
 }
 </script>

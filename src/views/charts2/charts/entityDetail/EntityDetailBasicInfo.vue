@@ -31,7 +31,7 @@
         </div>
       </el-popover>
     </div>
-    <div class="entity-tags">
+    <div class="entity-tags" v-if="!hideTagArea">
       <div v-for="tag in levelTwoTags" :key="tag.value" class="entity-tag" :class="`entity-tag--level-two-${tag.type}`">{{tag.value}}</div>
     </div>
 <!--    分割线-->
@@ -79,7 +79,8 @@ export default {
     return {
       // type: positive 正面的，绿色；normal 灰色；negative 负面的，红色
       levelTwoTags: [{ value: '安全', type: 'positive' }, { value: '工具', type: 'normal' }, { value: '恶意IP', type: 'negative' }],
-      analysisPopShow: false
+      analysisPopShow: false,
+      hideTagArea: false
     }
   },
   methods: {
@@ -121,6 +122,10 @@ export default {
             if (_.isArray(res.data.userDefinedTags)) {
               this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
             }
+            this.hideTagArea = _.isEmpty(this.levelTwoTags)
+            this.$nextTick(() => {
+              this.emitter.emit('entity-detail-hide-tag-area')
+            })
           } else {
             tagError = this.errorMsgHandler(res)
           }
@@ -380,7 +385,7 @@ export default {
       case 'ip': {
         detailCards.value = _.concat(detailCards.value,
           { icon: 'cn-icon cn-icon-as', name: 'asn', label: 'ASN', value: '' },
-          { icon: 'cn-icon cn-icon-registration-agency', name: 'asOrg', label: i18n.global.t('entities.asOrg'), value: '' },
+          { icon: 'cn-icon cn-icon-registry', name: 'asOrg', label: i18n.global.t('entities.asOrg'), value: '' },
           // { icon: 'cn-icon cn-icon-as-subnet', name: 'asSubnet', label: i18n.global.t('entities.asSubnet'), value: '' },
           { icon: 'cn-icon cn-icon-operator', name: 'isp', label: 'ISP', value: '' },
           { icon: 'cn-icon cn-icon-geo-location', name: 'location', label: i18n.global.t('entities.geographicLocation'), value: '' }
