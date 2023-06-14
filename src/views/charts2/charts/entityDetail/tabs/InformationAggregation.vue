@@ -4,7 +4,7 @@
     <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
     <chart-no-data v-if="isNoData && !showError" test-id="no-data"></chart-no-data>
 
-    <div v-if="!isNoData && !showError" class="information-aggregation__table">
+    <div v-if="!isNoData && !showError && !loading" class="information-aggregation__table">
       <el-table
           style="width: 100%"
           tooltip-effect="light"
@@ -92,7 +92,7 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import {entityDetailTags, psiphon3IpType} from '@/utils/constants'
+import { entityDetailTags, psiphon3IpType } from '@/utils/constants'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 
@@ -100,7 +100,8 @@ export default {
   name: 'InformationAggregation',
   data () {
     return {
-      informationAggregationList: []
+      informationAggregationList: [],
+      loading: true
     }
   },
   mixins: [chartMixin],
@@ -124,6 +125,7 @@ export default {
       return value
     },
     getData () {
+      this.loading = true
       this.toggleLoading(true)
       this.informationAggregationList = []
       axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`).then(response => {
@@ -167,6 +169,7 @@ export default {
         this.isNoData = false
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
+        this.loading = false
         this.toggleLoading(false)
       })
     }
