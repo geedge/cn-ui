@@ -9,8 +9,12 @@
     <div class="cn-entity__case">
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
       <div class="cn-entity__row">
-        <div class="cn-entity__header">
-          {{ entityData.ipAddr || entityData.domainName || entityData.appName || 'Unknown' }}
+        <div class="cn-entity__header" style="display: flex">
+          <span class="cn-entity__header-title">{{ entityData.ipAddr || entityData.domainName || entityData.appName || 'Unknown' }}</span>
+          <span class="entity-detail" style="display: flex">
+            <span style="width: 62px;" class="entity-tag entity-tag--small entity-tag--level-two-positive margin-r-6">信息技术</span>
+            <span style="width: 50px;" class="entity-tag entity-tag--small entity-tag--level-two-normal margin-r-6">互联网</span>
+          </span>
         </div>
         <div class="cn-entity__body">
           <div class="body__basic-info">
@@ -127,19 +131,20 @@
                   </div>
                 </div>
               </div>
-              <div class="basic-info__item">
-                <i class="cn-icon cn-icon-entity-alert"></i>
-                <span>{{ $t('entities.recentAlert') }}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ entityData.performanceCount }}</span>
-              </div>
-              <div class="basic-info__item">
-                <i class="cn-icon cn-icon-safe"></i>
-                <span>{{ $t('entities.recentSecurity') }}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ entityData.securityCount }}</span>
-              </div>
+<!--              <div class="basic-info__item">-->
+<!--                <i class="cn-icon cn-icon-entity-alert"></i>-->
+<!--                <span>{{ $t('entities.recentAlert') }}&nbsp;:&nbsp;&nbsp;</span>-->
+<!--                <span>{{ entityData.performanceCount }}</span>-->
+<!--              </div>-->
+<!--              <div class="basic-info__item">-->
+<!--                <i class="cn-icon cn-icon-safe"></i>-->
+<!--                <span>{{ $t('entities.recentSecurity') }}&nbsp;:&nbsp;&nbsp;</span>-->
+<!--                <span>{{ entityData.securityCount }}</span>-->
+<!--              </div>-->
             </div>
-            <div class="show-detail" @click="showDetail">
-              {{ $t('overall.detail') }}>
+            <div class="show-detail">
+              <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>
+              <div><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
             </div>
           </div>
         </div>

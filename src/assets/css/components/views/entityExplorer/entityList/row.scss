@@ -1,5 +1,8 @@
 .cn-entity--list {
   display: flex;
+  border: 1px #E2E5EC solid;
+  margin-bottom: 10px;
+  border-radius: 4px;
 
   .cn-entity__collapse {
     margin-bottom: 1px;
@@ -9,6 +12,7 @@
     justify-content: center;
     align-items: flex-start;
     background-color: #F3F7FA;
+    border-radius: 4px 0 0 4px;
 
     span {
       transform: rotate(0);
@@ -36,9 +40,11 @@
     overflow: hidden;
     display: flex;
     flex-wrap: wrap;
+    align-content: center;
     padding: 16px 0;
     margin-bottom: 1px;
     background-color: white;
+    border-radius: 0 4px 4px 0;
 
     .cn-entity__icon {
       margin-left: 26px;
@@ -70,6 +76,12 @@
         font-size: 16px;
         padding-bottom: 3px;
         color: #333333;
+        .cn-entity__header-title {
+          margin-right: 10px;
+        }
+        .cn-entity__header-tag {
+
+        }
       }
 
       .cn-entity__body {
@@ -147,8 +159,6 @@
               span:last-of-type {
                 color: #666;
               }
-
-
             }
           }
 
@@ -156,10 +166,17 @@
             flex-shrink: 0;
             padding: 0 30px;
             font-size: 12px;
-            color: #3976CB;
+            color: #2C72C6;
+            font-weight: 400;
+            margin-top: -17px;
 
             &:hover {
               cursor: pointer;
+            }
+
+            i {
+              font-size: 12px;
+              margin-right: 5px;
             }
           }
         }
