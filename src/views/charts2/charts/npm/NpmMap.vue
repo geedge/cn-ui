@@ -122,61 +122,67 @@ export default {
           side: this.trafficDirection.toLowerCase(),
           country: this.location
         }
-        axios.get(api.npm.location.map, { params: params }).then(res => {
-          res = res.data
-          if (res.length > 0) {
-            // 计算分数
-            this.showError = false
-            params.country = params.country ? `'${params.country}'` : ''
-            const tcpRequest = get(api.npm.location.mapTcp, params)
-            const httpRequest = get(api.npm.location.mapHttp, params)
-            const sslRequest = get(api.npm.location.mapSsl, params)
-            const tcpLostRequest = get(api.npm.location.mapPacketLoss, params)
-            const packetRetransRequest = get(api.npm.location.mapPacketRetrans, params)
-            Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
-              const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
-              const mapData = res
-              let msg = ''
-              res2.forEach((r, i) => {
-                if (r.code === 200) {
-                  mapData.forEach(t => {
-                    const find = r.data.result.find(d => d.country === t.country)
-                    t[keyPre[i] + 'Score'] = find
-                  })
-                } else {
-                  this.showError = true
-                  msg = msg + ',' + r.message
-                  if (msg.indexOf(',') === 0) {
-                    msg = msg.substring(1, msg.length)
+        axios.get(api.npm.location.map, { params: params }).then(response => {
+          if (response.data.code === 200) {
+            const res = response.data.data.result
+            if (res.length > 0) {
+              // 计算分数
+              this.showError = false
+              params.country = params.country ? `'${params.country}'` : ''
+              const tcpRequest = get(api.npm.location.mapTcp, params)
+              const httpRequest = get(api.npm.location.mapHttp, params)
+              const sslRequest = get(api.npm.location.mapSsl, params)
+              const tcpLostRequest = get(api.npm.location.mapPacketLoss, params)
+              const packetRetransRequest = get(api.npm.location.mapPacketRetrans, params)
+              Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
+                const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
+                const mapData = res
+                let msg = ''
+                res2.forEach((r, i) => {
+                  if (r.code === 200) {
+                    mapData.forEach(t => {
+                      const find = r.data.result.find(d => d.country === t.country)
+                      t[keyPre[i] + 'Score'] = find
+                    })
+                  } else {
+                    this.showError = true
+                    msg = msg + ',' + r.message
+                    if (msg.indexOf(',') === 0) {
+                      msg = msg.substring(1, msg.length)
+                    }
+                    if (msg.lastIndexOf(',') === msg.length - 1) {
+                      msg = msg.substring(0, msg.length - 1)
+                    }
+                    this.errorMsg = msg
                   }
-                  if (msg.lastIndexOf(',') === msg.length - 1) {
-                    msg = msg.substring(0, msg.length - 1)
+                })
+                mapData.forEach(t => {
+                  const data = {
+                    establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
+                    httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
+                    sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
+                    tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
+                    pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
                   }
-                  this.errorMsg = msg
-                }
+                  t.score = computeScore(data)
+                  if (t.score === '-') {
+                    t.score = ''
+                  }
+                })
+                this.loadMarkerData(imageSeries, mapData)
+              }).catch(e => {
+                this.showError = true
+                this.errorMsg = this.errorMsgHandler(e)
               })
-              mapData.forEach(t => {
-                const data = {
-                  establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
-                  httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
-                  sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
-                  tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
-                  pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
-                }
-                t.score = computeScore(data)
-                if (t.score === '-') {
-                  t.score = ''
-                }
-              })
-              this.loadMarkerData(imageSeries, mapData)
-            }).catch((e) => {
-              this.showError = true
-              this.errorMsg = this.errorMsgHandler(e)
-            })
+            } else {
+              imageSeries.data = [{}]
+            }
           } else {
+            this.showError = true
+            this.errorMsg = this.errorMsgHandler(response)
             imageSeries.data = [{}]
           }
-        }).catch((e) => {
+        }).catch(e => {
           this.showError = true
           this.errorMsg = this.errorMsgHandler(e)
         }).finally(() => {
