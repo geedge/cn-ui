@@ -3,11 +3,18 @@
       class="entity-explorer"
       :class="{'entity-explorer--show-list': showList}">
     <!-- 顶部工具栏，在列表页显示 -->
-    <div class="explorer-top-tools explorer-top-tools-new" v-show="showList">
-      <div class="explorer-detection-top-tools">
-        <div class="explorer-top-tools-title">{{$t('network.entity')}}</div>
-      </div>
-      <div class="explorer-top-tools">
+<!--    <div class="explorer-top-tools explorer-top-tools-new" v-show="showList">-->
+<!--      <div class="explorer-detection-top-tools">-->
+<!--        <div class="explorer-top-tools-title">{{$t('network.entity')}}</div>-->
+<!--      </div>-->
+<!--      <div class="explorer-top-tools">-->
+<!--        <DateTimeRange :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>-->
+<!--        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>-->
+<!--        <el-button-group size="mini">-->
+<!--          <el-button size="mini" @click="listMode = 'list'" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>-->
+<!--          <el-button size="mini" @click="listMode = 'block'" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>-->
+<!--        </el-button-group>-->
+      <div class="explorer-top-tools" v-show="showList">
         <DateTimeRange :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
         <el-button-group size="mini">
@@ -15,7 +22,7 @@
           <el-button size="mini" @click="listMode = 'block'" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
         </el-button-group>
       </div>
-    </div>
+<!--    </div>-->
     <!-- 搜索组件 -->
     <explorer-search
         ref="search"
@@ -25,9 +32,9 @@
     ></explorer-search>
 
     <!--todo静态数据，之后记得修改-->
-    <div class="explorer-result" v-if="showList">
-      8,866 results，IP 2666，Domain 3200，APP 3000
-    </div>
+<!--    <div class="explorer-result" v-if="showList">-->
+<!--      8,866 results，IP 2666，Domain 3200，APP 3000-->
+<!--    </div>-->
     <!-- 内容区 -->
     <div class="explorer-container" v-if="showList"  style="height: calc(100% - 20px); flex-direction: column">
       <div style="display: flex; height: auto;">

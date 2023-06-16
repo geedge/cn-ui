@@ -75,10 +75,13 @@
     </div>
     <div class="tag-search__add" @click="addCondition">{{$t('entities.advancedSearch.add')}}</div>
     <div class="search__suffixes search__suffixes--tag-mode">
-      <div class="search__suffix" style="margin-right: 12px" @click="changeMode">
+      <div class="search__suffix" @click="changeMode">
+<!--        新版实体列表改版，后续记得解开-->
+<!--      <div class="search__suffix" style="margin-right: 12px" @click="changeMode">-->
         <i class="cn-icon cn-icon-search-normal"></i>
       </div>
-      <div class="search__suffix new-search__suffix" @click="search">
+      <div class="search__suffix" @click="search">
+<!--      <div class="search__suffix new-search__suffix" @click="search">-->
         <i class="el-icon-search"></i>
       </div>
     </div>
@@ -416,19 +419,20 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.new-search__suffix {
-  width: 41px;
-  height: 41px;
-  line-height: 41px;
-  background: #38ACD2;
-  text-align: center;
-  margin-top: -10px;
-  margin-right: -10px;
+<!--// 新版实体列表改版，后续记得解开-->
+<!--<style lang="scss">-->
+<!--.new-search__suffix {-->
+<!--  width: 41px;-->
+<!--  height: 41px;-->
+<!--  line-height: 41px;-->
+<!--  background: #38ACD2;-->
+<!--  text-align: center;-->
+<!--  margin-top: -10px;-->
+<!--  margin-right: -10px;-->
 
-  .el-icon-search {
-    color: #fff !important;
-    margin-top: 9px !important;
-  }
-}
-</style>
+<!--  .el-icon-search {-->
+<!--    color: #fff !important;-->
+<!--    margin-top: 9px !important;-->
+<!--  }-->
+<!--}-->
+<!--</style>-->

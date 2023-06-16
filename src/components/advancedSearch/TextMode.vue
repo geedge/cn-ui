@@ -4,12 +4,13 @@
   ></textarea>
   <div class="search__suffixes search__suffixes--text-mode">
     <div class="search__suffix" @click="changeMode">
-      <i class="cn-icon cn-icon-filter"></i>
+      <i class="cn-icon cn-icon-search-advance"></i>
     </div>
-    <div class="search__suffix-close" @click="cleanParams">
-      <i class="el-icon-error"></i>
-    </div>
-    <div class="search__suffix new-search__suffix" @click="search">
+<!--    <div class="search__suffix-close" @click="cleanParams">-->
+<!--      <i class="el-icon-error"></i>-->
+<!--    </div>-->
+<!--    <div class="search__suffix new-search__suffix" @click="search">-->
+    <div class="search__suffix" @click="search">
       <i class="el-icon-search"></i>
     </div>
   </div>
@@ -41,9 +42,9 @@ export default {
   },
   emits: ['changeMode', 'search'],
   methods: {
-    cleanParams () {
-      toRaw(this.codeMirror).setValue('')
-    },
+    // cleanParams () {
+    //   toRaw(this.codeMirror).setValue('')
+    // },
     initCodeMirror () {
       this.codeMirror = CodeMirror.fromTextArea(this.$refs.textSearch, {
         mode: {
@@ -158,28 +159,28 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.search__suffix-close {
-  .el-icon-error {
-    font-size: 17px;
-    color: #C4C4C4;
-    margin: 0 12px;
-    cursor: pointer;
-  }
-}
+<!--<style lang="scss">-->
+<!--.search__suffix-close {-->
+<!--  .el-icon-error {-->
+<!--    font-size: 17px;-->
+<!--    color: #C4C4C4;-->
+<!--    margin: 0 12px;-->
+<!--    cursor: pointer;-->
+<!--  }-->
+<!--}-->
 
-.new-search__suffix {
-  width: 41px;
-  height: 41px;
-  line-height: 41px;
-  background: #38ACD2;
-  text-align: center;
-  margin-top: -10px;
-  margin-right: -10px;
+<!--.new-search__suffix {-->
+<!--  width: 41px;-->
+<!--  height: 41px;-->
+<!--  line-height: 41px;-->
+<!--  background: #38ACD2;-->
+<!--  text-align: center;-->
+<!--  margin-top: -10px;-->
+<!--  margin-right: -10px;-->
 
-  .el-icon-search {
-    color: #fff !important;
-    margin-top: 9px !important;
-  }
-}
-</style>
+<!--  .el-icon-search {-->
+<!--    color: #fff !important;-->
+<!--    margin-top: 9px !important;-->
+<!--  }-->
+<!--}-->
+<!--</style>-->
