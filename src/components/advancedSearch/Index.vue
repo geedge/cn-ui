@@ -115,11 +115,11 @@ export default {
   },
   setup (props) {
     // 默认为文本模式
-    let searchMode = ref('text')
+    const searchMode = ref('text')
     if (props.defaultMode) {
       switch (props.defaultMode) {
         case 'tag': {
-          searchMode = 'tag'
+          searchMode.value = 'tag'
           break
         }
       }

@@ -93,6 +93,7 @@ import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import Parser, { stringInQuot } from '@/components/advancedSearch/meta/parser'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'TagMode',
   props: {
@@ -320,8 +321,10 @@ export default {
       const parser = new Parser(this.columnList)
       const errorList = parser.validateMeta(this.metaList)
       if (_.isEmpty(errorList)) {
+        this.reloadUrl({ mode: 'text' })
         this.$emit('changeMode', 'text', parser.parseMeta(this.metaList))
       } else {
+        this.reloadUrl({ mode: 'text' })
         this.$emit('changeMode', 'text', { metaList: [], str: '' })
       }
     },
@@ -397,10 +400,28 @@ export default {
           this.metaList.splice(metaIndex, 2)
         }
       })
+    },
+    /**
+     * 向地址栏添加/删除参数
+     */
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
+      }
+      overwriteUrl(newUrl)
     }
   },
   mounted () {
     const vm = this
+    // 如果地址栏包含参数q，则匹配出metaList到搜索栏回显使用
+    const { q } = this.$route.query
+    if (q) {
+      const parser = new Parser(this.columnList)
+      this.metaList = parser.parseStr(q).metaList
+    }
+
     this.emitter.on('advanced-search', function () {
       vm.search()
     })

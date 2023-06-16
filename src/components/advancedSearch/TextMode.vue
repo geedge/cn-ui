@@ -28,6 +28,7 @@ import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 
 export default {
   name: 'TextMode',
@@ -81,11 +82,14 @@ export default {
         const errorList = parser.validateStr(str)
         if (_.isEmpty(errorList)) {
           const metaList = parser.parseStr(str)
+          this.reloadUrl({ mode: 'tag' })
           this.$emit('changeMode', 'tag', metaList)
         } else {
+          this.reloadUrl({ mode: 'tag' })
           this.$emit('changeMode', 'tag', { metaList: [], str: '' })
         }
       } else {
+        this.reloadUrl({ mode: 'tag' })
         this.$emit('changeMode', 'tag', { str: '', metaList: [] })
       }
     },
@@ -135,6 +139,17 @@ export default {
         current = current.replace(oldSqlPiece, newSqlPiece)
       })
       toRaw(this.codeMirror).setValue(current.trim())
+    },
+    /**
+     * 向地址栏添加/删除参数
+     */
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
+      }
+      overwriteUrl(newUrl)
     }
   },
   watch: {
@@ -150,7 +165,13 @@ export default {
     }
   },
   mounted () {
+    // 如果地址栏包含参数q，则将参数q回显到搜索栏内
+    const { q } = this.$route.query
     this.initCodeMirror()
+    if (q) {
+      toRaw(this.codeMirror).setValue(q)
+    }
+
     const vm = this
     this.emitter.on('advanced-search', function () {
       vm.search()

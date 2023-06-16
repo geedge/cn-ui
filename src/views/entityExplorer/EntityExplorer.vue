@@ -18,8 +18,8 @@
         <DateTimeRange :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
         <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
         <el-button-group size="mini">
-          <el-button size="mini" @click="listMode = 'list'" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
-          <el-button size="mini" @click="listMode = 'block'" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
+          <el-button size="mini" @click="setListMode('list')" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
+          <el-button size="mini" @click="setListMode('block')" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
         </el-button-group>
       </div>
 <!--    </div>-->
@@ -161,6 +161,11 @@ import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
 import Loading from '@/components/common/Loading'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import Parser from '@/components/advancedSearch/meta/parser'
+import { handleErrorTip } from '@/components/advancedSearch/meta/error'
+import { columnList } from '@/utils/static-data'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'entity-explorer',
@@ -428,8 +433,32 @@ export default {
         this.metaList = []
       }
 
+      // 在非列表模式下选择tag模式，在地址栏输入内容时将mode添加到地址栏
+      const mode = this.$route.query.mode || 'text'
+
+      this.reloadUrl({
+        listMode: this.listMode,
+        q: q,
+        mode: mode,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
+      })
+
       if (!this.showList) {
+        // 首页进入搜索时重载页面，视觉上进入列表页面
+        this.$router.push({
+          path: '/entityExplorer',
+          query: {
+            listMode: this.listMode,
+            q: q,
+            mode: mode,
+            startTime: getSecond(this.timeFilter.startTime),
+            endTime: getSecond(this.timeFilter.endTime)
+          }
+        })
         this.showList = true
+        // 跳转页面，则不执行搜索功能
+        return true
       }
       if (this.pageObj.resetPageNo) {
         this.pageObj.pageNo = 1
@@ -725,20 +754,80 @@ export default {
         d.value = 0
       })
       this.filterData[index].totalCount = 0
+    },
+    setListMode (mode) {
+      this.listMode = mode
+      const newParam = {
+        listMode: mode
+      }
+      this.reloadUrl(newParam)
+    },
+    /**
+     * 向地址栏添加/删除参数
+     */
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
+      }
+      overwriteUrl(newUrl)
+    },
+    /**
+     * 初始化搜索，分享url或者刷新界面，保留本次搜索结果
+     * @param q
+     */
+    initSearch (q) {
+      const str = q
+      // 此处的mode不做text和tag区分，是因为text和tag构造搜索参数过程不一样，但结果的参数一致
+      // 故采用text的参数形式进行搜索，tag形式在tagMode.vue的mounted里根据地址栏的参数q构造metaList
+      if (str) {
+        const parser = new Parser(columnList)
+        const errorList = parser.validateStr(str)
+        if (_.isEmpty(errorList)) {
+          this.search(parser.parseStr(str))
+        } else {
+          this.$message.error(handleErrorTip(errorList[0]))
+        }
+      } else {
+        this.search({ q: '', str: '', metaList: [] })
+      }
     }
   },
   mounted () {
     this.getEntityIndexData()
+    const { q, listMode } = this.$route.query
+
+    // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
+    if (listMode) {
+      this.showList = true
+      this.initSearch(q)
+      this.listMode = listMode
+    }
   },
   watch: {
-    timeFilter (n) {
+    timeFilter () {
       this.search({ metaList: this.metaList, q: this.q })
     }
   },
   setup () {
-    const dateRangeValue = 60
-    const { startTime, endTime } = getNowTime(dateRangeValue)
-    const timeFilter = ref({ startTime, endTime, dateRangeValue })
+    const { query } = useRoute()
+    // 获取url携带的range、startTime、endTime
+    const rangeParam = query.range
+    const startTimeParam = query.startTime
+    const endTimeParam = query.endTime
+    // 若url携带了，使用携带的值，否则使用默认值。
+    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
+    const timeFilter = ref({ dateRangeValue })
+    if (!startTimeParam || !endTimeParam) {
+      const { startTime, endTime } = getNowTime(60)
+      timeFilter.value.startTime = startTime
+      timeFilter.value.endTime = endTime
+    } else {
+      timeFilter.value.startTime = parseInt(startTimeParam)
+      timeFilter.value.endTime = parseInt(endTimeParam)
+    }
+    timeFilter.value.dateRangeValue = 60
     return {
       timeFilter
     }
