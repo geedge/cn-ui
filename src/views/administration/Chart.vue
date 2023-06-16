@@ -28,10 +28,11 @@
         </button>
       </template>
       <template #default>
+        <loading :loading="loading"></loading>
         <chart-table
           ref="dataTable"
-          v-loading="tools.loading"
           :api="url"
+          :isNoData="isNoData"
           :custom-table-title="tools.customTableTitle"
           :height="mainTableHeight"
           :table-data="tableData"

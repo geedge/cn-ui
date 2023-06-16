@@ -9,10 +9,11 @@
       :from="fromRoute.operationLog"
       @search="search">
       <template v-slot:default>
+        <loading :loading="loading"></loading>
         <operation-log-table
           ref="dataTable"
-          v-loading="tools.loading"
           :api="url"
+          :isNoData="isNoData"
           :custom-table-title="tools.customTableTitle"
           :height="mainTableHeight"
           :table-data="tableData"

@@ -7,6 +7,7 @@
     :height="height"
     tooltip-effect="light"
     border
+    empty-text=" "
     @header-dragend="dragend"
     @sort-change="tableDataSort"
     @selection-change="selectionChange"
@@ -105,6 +106,11 @@
         </div>
       </template>
     </el-table-column>
+    <template v-slot:empty >
+      <div class="table-no-data" v-if="isNoData">
+        <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+      </div>
+    </template>
   </el-table>
 </template>
 
@@ -115,6 +121,12 @@ import { copyValue } from '@/utils/tools'
 export default {
   name: 'galaxyProxyTable',
   mixins: [table],
+  props: {
+    isNoData: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       tableTitle: [ // 原始table列

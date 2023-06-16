@@ -5,10 +5,12 @@ import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
 import axios from 'axios'
 import { api } from '@/utils/api'
+import Loading from '@/components/common/Loading'
 
 export default {
   components: {
-    pagination
+    pagination,
+    Loading
   },
   data () {
     return {
@@ -24,7 +26,7 @@ export default {
       },
       /* 工具参数 */
       tools: {
-        loading: true, // 是否显示table加载动画
+        // loading: true, // 是否显示table加载动画
         customTableTitle: [] // 自定义列工具的数据
       },
       mainTableHeight: position.tableHeight.normal, // 主列表table高度
@@ -39,7 +41,9 @@ export default {
       delFlag: false,
       disableEdit: true, // 编辑按钮是否不可用，当选择多条记录的时候，编辑按钮不可用
       disableDelete: true,
-      operationWidth: '165' // 操作列宽
+      operationWidth: '165', // 操作列宽
+      loading: true,
+      isNoData: false
     }
   },
   methods: {
@@ -74,6 +78,9 @@ export default {
           break
       }
     },
+    toggleLoading (loading) {
+      this.loading = loading
+    },
     selectionChange (objs) {
       this.batchDeleteObjs = []
       objs.forEach(obj => {
@@ -104,24 +111,33 @@ export default {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      this.tools.loading = true
+      this.tableData = []
+      this.isNoData = false
+      this.toggleLoading(true)
       delete this.searchLabel.total
       let listUrl = this.url
       if (this.listUrl) {
         listUrl = this.listUrl
       }
       get(listUrl, this.searchLabel).then(response => {
-        this.tools.loading = false
         if (response.code === 200) {
           this.tableData = response.data.list
           this.pageObj.total = response.data.total
         } else {
           console.error(response)
+          this.isNoData = true
           if (response.message) {
             this.$message.error(response.message)
           } else {
             this.$message.error('Something went wrong...')
           }
+        }
+      }).finally(() => {
+        this.toggleLoading(false)
+        if (!this.tableData || this.tableData.length === 0) {
+          this.isNoData = true
+        } else {
+          this.isNoData = false
         }
       })
     },
@@ -162,7 +178,7 @@ export default {
           cancelButtonText: this.$t('tip.no'),
           type: 'warning'
         }).then(() => {
-          this.tools.loading = true
+          this.toggleLoading(true)
           axios.delete(this.url + '?ids=' + ids).then(response => {
             if (response.data.code === 200) {
               this.delFlag = true
@@ -172,7 +188,7 @@ export default {
               this.$message.error(response.data.message)
             }
           }).finally(() => {
-            this.tools.loading = false
+            this.toggleLoading(false)
           })
         }).catch(() => {})
           .finally(() => {
@@ -409,5 +425,8 @@ export default {
       this.tools.customTableTitle = this.tools.customTableTitle.concat(arr)
     }
     // this.getTableData()
+  },
+  unmounted () {
+    this.isNoData = false
   }
 }

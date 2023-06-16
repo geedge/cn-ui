@@ -1,5 +1,5 @@
 <template>
-  <el-checkbox-group v-model="checkList">
+  <el-checkbox-group v-model="checkList" v-if="!isNoData">
     <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in tableData" :key="data.knowledgeId" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
       <div class="card-content">
         <div class="card-title">
@@ -34,6 +34,9 @@
       </div>
     </div>
   </el-checkbox-group>
+  <div class="table-no-data" v-else="isNoData">
+    <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+  </div>
 </template>
 
 <script>
@@ -43,6 +46,10 @@ export default {
   name: 'knowledgeBaseTableForCard',
   mixins: [table],
   props: {
+    isNoData: {
+      type: Boolean,
+      default: false
+    },
     isSelectedStatus: {
       type: Boolean
     }

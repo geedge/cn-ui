@@ -6,8 +6,8 @@
         :data="tableData"
         :height="height"
         :expand-row-keys="expandedIds"
-        :empty-text="$t('npm.noData')"
         border
+        empty-text=" "
         tooltip-effect="light"
         :row-key="(row) => { return row.id }"
         :reserve-selection="true"
@@ -188,6 +188,11 @@
           <span v-else>{{ scope.row[item.prop] || '-' }}</span>
         </template>
       </el-table-column>
+      <template v-slot:empty >
+        <div class="table-no-data" v-if="isNoData">
+          <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+        </div>
+      </template>
     </el-table>
 <!--    <div class="table-operation-all">
       <el-checkbox v-model="checkboxAll" :indeterminate="isIndeterminate" @change="selectAll(tableData)"></el-checkbox>
@@ -229,7 +234,11 @@ export default {
   props: {
     categoryList: Array,
     toolsLoading: Boolean,
-    categoryId: Number
+    categoryId: Number,
+    isNoData: {
+      type: Boolean,
+      default: false
+    }
   },
   inject: ['reload'],
   data () {

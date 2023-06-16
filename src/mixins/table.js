@@ -44,7 +44,7 @@ export default {
     tableData: {
       handler (n) {
         if (this.tableData && this.tableData.length > 0) {
-          //this.isInit = false
+          // this.isInit = false
         }
       }
     }
@@ -52,10 +52,14 @@ export default {
   data () {
     return {
       operationWidth: '165', // 操作列宽
-      show: true
+      show: true,
+      isNoData: false
     }
   },
   methods: {
+    toggleLoading (loading) {
+      this.$emit('toggleLoading', loading)
+    },
     getTableWidth (list) {
       if (list && list.length > 0) {
         const language = localStorage.getItem(storageKey.language)

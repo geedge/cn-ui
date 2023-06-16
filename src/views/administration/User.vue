@@ -27,10 +27,11 @@
         </button>
       </template>
       <template #default>
+        <loading :loading="loading"></loading>
         <user-table
           ref="dataTable"
-          v-loading="tools.loading"
           :api="url"
+          :isNoData="isNoData"
           :custom-table-title="tools.customTableTitle"
           :height="mainTableHeight"
           :table-data="tableData"
@@ -102,14 +103,15 @@ export default {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      this.tools.loading = true
+      this.isNoData = false
+      this.tableData = []
+      this.toggleLoading(true)
       delete this.searchLabel.total
       let listUrl = this.url
       if (this.listUrl) {
         listUrl = this.listUrl
       }
       get(listUrl, this.searchLabel).then(response => {
-        this.tools.loading = false
         if (response.code === 200) {
           for (let i = 0; i < response.data.list.length; i++) {
             response.data.list[i].status = response.data.list[i].status + ''
@@ -118,14 +120,25 @@ export default {
           this.pageObj.total = response.data.total
         } else {
           console.error(response)
+          this.isNoData = true
           if (response.message) {
             this.$message.error(response.message)
           } else {
             this.$message.error('Something went wrong...')
           }
         }
+      }).finally(() => {
+        this.toggleLoading(false)
+        if (!this.tableData || this.tableData.length === 0) {
+          this.isNoData = true
+        } else {
+          this.isNoData = false
+        }
       })
     }
+  },
+  unmounted () {
+    this.isNoData = false
   }
 }
 </script>

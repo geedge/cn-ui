@@ -5,6 +5,7 @@
       :data="tableData"
       :height="height"
       border
+      empty-text=" "
       @header-dragend="dragend"
       @sort-change="tableDataSort"
       @selection-change="selectionChange"
@@ -34,7 +35,11 @@
       <template #default="scope" :column="item">
         <span>{{scope.row[item.prop]}}</span>
       </template>
-    </el-table-column>
+    </el-table-column><template v-slot:empty >
+    <div class="table-no-data" v-if="isNoData">
+      <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+    </div>
+  </template>
   </el-table>
 </template>
 
@@ -45,6 +50,12 @@ import { api } from '@/utils/api'
 export default {
   name: 'I18nTable',
   mixins: [table],
+  props: {
+    isNoData: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       url: api.i18nLang,

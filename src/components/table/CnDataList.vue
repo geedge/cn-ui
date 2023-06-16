@@ -85,7 +85,8 @@ export default {
       tools: {
         showCustomTableTitle: false // 自定义列弹框是否显示
       },
-      showLayout: []
+      showLayout: [],
+      loading: true
     }
   },
   methods: {

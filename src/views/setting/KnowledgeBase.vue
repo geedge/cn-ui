@@ -53,12 +53,13 @@
         </div>
         <!-- 列表式 -->
         <template v-if="listMode === 'list'">
-          <div class="list-mode__row" >
+          <div class="list-mode__row" style="position:relative;">
+            <loading :loading="loading"></loading>
             <knowledge-base-table-for-row
                     ref="dataTable"
-                    v-loading="tools.loading"
                     height="100%"
                     :api="url"
+                    :isNoData="isNoData"
                     :custom-table-title="tools.customTableTitle"
                     :table-data="tableData"
                     :is-selected-status="isSelectedStatus"
@@ -68,16 +69,18 @@
                     @edit="edit"
                     @orderBy="tableDataSort"
                     @reload="reloadRowList"
+                    @toggleLoading="toggleLoading"
             ></knowledge-base-table-for-row>
           </div>
         </template>
         <!-- 卡片式 -->
         <template v-else-if="listMode === 'block'">
-          <div class="list-mode__card" >
+          <div class="list-mode__card" style="position:relative;">
+            <loading :loading="loading"></loading>
             <knowledge-base-table-for-card
                     ref="dataTableCard"
-                    v-loading="tools.loading"
                     :api="url"
+                    :isNoData="isNoData"
                     :custom-table-title="tools.customTableTitle"
                     :table-data="tableData"
                     :is-selected-status="isSelectedStatus"
@@ -85,10 +88,10 @@
                     @delete="toDelete"
                     @checkboxStatusChange="checkboxStatusChange"
                     @reload="reloadRowList"
+                    @toggleLoading="toggleLoading"
             ></knowledge-base-table-for-card>
           </div>
         </template>
-
         <div class="knowledge-pagination" style="">
           <pagination ref="pagination" :page-obj="pageObj" :table-id="tableId" @pageNo='pageNo' @pageSize='pageSize'></pagination>
         </div>
@@ -132,7 +135,6 @@
   </el-dialog>
 </template>
 <script>
-import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTableForCard from '@/components/table/setting/knowledgeBaseTableForCard'
 import KnowledgeBaseTableForRow from '@/components/table/setting/KnowledgeBaseTableForRow'
@@ -145,7 +147,6 @@ import KnowledgeFilter from '@/views/setting/KnowledgeFilter'
 export default {
   name: 'knowledgeBase',
   components: {
-    cnDataList,
     KnowledgeBaseTableForCard,
     KnowledgeBaseTableForRow,
     KnowledgeFilter
@@ -171,13 +172,13 @@ export default {
   },
   methods: {
     onSearch () {
-      let params = {
+      const params = {
         ...this.filterParams,
         name: this.keyWord
       }
       this.clearList()
       this.search(params)
-      this.$refs.knowledgeFilter.reloadFilter(this.checkedCategoryIds,this.checkedStatusIds)
+      this.$refs.knowledgeFilter.reloadFilter(this.checkedCategoryIds, this.checkedStatusIds)
     },
     reloadRowList () {
       this.getTableData()
@@ -262,7 +263,7 @@ export default {
           type: 'warning'
         }).catch(() => {})
       } else {
-        this.tools.loading = true
+        this.toggleLoading(true)
         axios.delete(this.url + '?knowledgeIds=' + ids).then(response => {
           if (response.data.code === 200) {
             this.delFlag = true
@@ -280,7 +281,7 @@ export default {
             this.$message.error(response.data.message)
           }
         }).finally(() => {
-          this.tools.loading = false
+          this.toggleLoading(false)
           if (this.isSelectedStatus != undefined) {
             this.isSelectedStatus = false
             this.disableDelete = true
@@ -318,7 +319,7 @@ export default {
         }
       })
     },
-    reload (params, isAll, isClearType,checkedCategoryIds,checkedStatusIds) {
+    reload (params, isAll, isClearType, checkedCategoryIds, checkedStatusIds) {
       this.disableDelete = true
       this.isSelectedStatus = false
       this.batchDeleteObjs = []
@@ -385,7 +386,7 @@ export default {
         cancelButtonText: this.$t('tip.no'),
         type: 'warning'
       }).then(() => {
-        this.tools.loading = true
+        this.toggleLoading(true)
         axios.delete(this.url + '?knowledgeIds=' + row.id).then(response => {
           if (response.data.code === 200) {
             this.delFlag = true
@@ -404,7 +405,7 @@ export default {
             this.$message.error('Something went wrong...')
           }
         }).finally(() => {
-          this.tools.loading = false
+          this.toggleLoading(false)
         })
       }).catch(() => {})
     },

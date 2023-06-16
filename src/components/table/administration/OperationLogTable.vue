@@ -6,6 +6,7 @@
     :height="height"
     tooltip-effect="light"
     border
+    empty-text=" "
     class="no-operation"
     @header-dragend="dragend"
     @sort-change="tableDataSort"
@@ -53,6 +54,11 @@
         <span v-else>{{scope.row[item.prop]}}</span>
       </template>
     </el-table-column>
+    <template v-slot:empty >
+      <div class="table-no-data" v-if="isNoData">
+        <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+      </div>
+    </template>
   </el-table>
 </template>
 
@@ -63,6 +69,12 @@ import { operationLogStateMapping } from '@/utils/constants'
 export default {
   name: 'roleTable',
   mixins: [table],
+  props: {
+    isNoData: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       operationLogStateMapping: operationLogStateMapping,

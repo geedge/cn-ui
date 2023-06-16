@@ -40,10 +40,11 @@
           </button>
         </template>
         <template #default>
-          <loading :loading="builtinRightLoading"></loading>
+          <loading :loading="loading"></loading>
           <report-table
               ref="dataTable"
               :api="url"
+              :isNoData="isNoData"
               :custom-table-title="tools.customTableTitle"
               :category-list="builtinReportLeftMenu"
               :height="mainTableHeight"
@@ -157,7 +158,7 @@ export default {
       ],
       tableId: 'reportTable',
       builtinLeftLoading: false,
-      builtinRightLoading: false,
+      // builtinRightLoading: false,
       isInit: true
     }
   },
@@ -246,7 +247,11 @@ export default {
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       // this.tools.loading = true
-      this.builtinRightLoading = true
+      // this.builtinRightLoading = true
+      // this.loading = true
+      this.isNoData = false
+      this.tableData = []
+      this.toggleLoading(true)
       delete this.searchLabel.total
       let listUrl = this.url
       if (this.listUrl) {
@@ -260,13 +265,13 @@ export default {
       if (!this.isInit) {
         get(listUrl, this.searchLabel).then(response => {
           // this.tools.loading = false
-          this.builtinRightLoading = false
+          // this.builtinRightLoading = false
+          // this.loading = false
           if (response.code === 200) {
             for (let i = 0; i < response.data.list.length; i++) {
               response.data.list[i].status = response.data.list[i].status + ''
             }
             this.$nextTick(() => {
-              this.tableData = []
               this.tableData = response.data.list.map(item => {
                 return {
                   ...item,
@@ -274,9 +279,18 @@ export default {
                 }
               })
               this.pageObj.total = response.data.total
+              if (!this.tableData || this.tableData.length === 0) {
+                this.isNoData = true
+              } else {
+                this.isNoData = false
+              }
             })
             // TODO 回到顶部
+          } else {
+            this.isNoData = true
           }
+        }).finally(() => {
+          this.toggleLoading(false)
         })
       }
       this.isInit = false
@@ -349,6 +363,9 @@ export default {
         }
       }
     }
+  },
+  unmounted () {
+    this.isNoData = false
   }
 }
 </script>

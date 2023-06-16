@@ -633,8 +633,8 @@ export default {
       this.typeSelectDisable = true
       this.isClick = false
     },
-    backEditData(){
-      if(this.oldTagItem.isValid){
+    backEditData () {
+      if (this.oldTagItem.isValid) {
         this.showImportedData[this.oldTagItem.index].isValid = this.oldTagItem.isValid
         this.showImportedData[this.oldTagItem.index].msg = this.oldTagItem.msg
       }
@@ -886,7 +886,7 @@ export default {
         msg: this.showImportedData[index].msg,
         tagName: this.showImportedData[index].tagName,
         tagValue: this.showImportedData[index].tagValue,
-        index:index
+        index: index
       }
       this.editIndex = index
       this.backEditFlag = true

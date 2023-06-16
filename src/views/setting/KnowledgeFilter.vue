@@ -196,7 +196,7 @@ export default {
           }
         }
         this.filterParams = params
-        this.$emit('reload', params, true,false,this.defaultCheckedCategory,this.defaultCheckedStatus)
+        this.$emit('reload', params, true, false, this.defaultCheckedCategory, this.defaultCheckedStatus)
       }
     },
     getAllTableData (params) {
@@ -254,7 +254,7 @@ export default {
           category.children.push(source)
         })
       })
-      if(this.defaultCheckedCategory.length === 0){
+      if (this.defaultCheckedCategory.length === 0) {
         this.defaultCheckedCategory = categoryIds
       }
     },
@@ -273,15 +273,15 @@ export default {
         })
         statusIds.push(index)
       })
-      if(this.defaultCheckedStatus.length === 0){
+      if (this.defaultCheckedStatus.length === 0) {
         this.defaultCheckedStatus = statusIds
       }
     },
-    reloadFilter (checkedCategoryIds ,checkedStatusIds) {
-      if(checkedCategoryIds && checkedCategoryIds.length > 0){
+    reloadFilter (checkedCategoryIds, checkedStatusIds) {
+      if (checkedCategoryIds && checkedCategoryIds.length > 0) {
         this.defaultCheckedCategory = checkedCategoryIds
       }
-      if(checkedStatusIds && checkedStatusIds.length > 0){
+      if (checkedStatusIds && checkedStatusIds.length > 0) {
         this.defaultCheckedStatus = checkedStatusIds
       }
       this.getAllTableData()

@@ -29,10 +29,11 @@
         <delete-button id="role-list-batch-delete" :api="url" :delete-objs="batchDeleteObjs" @after="getTableData" @before="delFlag=true"></delete-button>
       </template>
       <template v-slot:default>
+        <loading :loading="loading"></loading>
         <roles-table
           ref="dataTable"
-          v-loading="tools.loading"
           :api="url"
+          :isNoData="isNoData"
           :custom-table-title="tools.customTableTitle"
           :height="mainTableHeight"
           :table-data="tableData"

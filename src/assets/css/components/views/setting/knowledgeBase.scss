@@ -392,6 +392,14 @@
         overflow-y:auto;
         padding-right: 2px;
         margin-bottom:30px;
+        .table-no-data{
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 60px;
+          color: #909399;
+        }
         .el-checkbox-group {
           display: grid;
           grid-template-rows: repeat(auto-fill, 218px);

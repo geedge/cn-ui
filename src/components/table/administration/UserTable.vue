@@ -4,7 +4,7 @@
     ref="dataTable"
     :data="tableData"
     :height="height"
-    empty-text=""
+    empty-text=" "
     border
     @header-dragend="dragend"
     @sort-change="tableDataSort"
@@ -63,6 +63,11 @@
         <span v-else>{{scope.row[item.prop]}}</span>
       </template>
     </el-table-column>
+    <template v-slot:empty >
+      <div class="table-no-data" v-if="isNoData">
+        <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
+      </div>
+    </template>
   </el-table>
 </template>
 
@@ -73,6 +78,12 @@ import { storageKey } from '@/utils/constants'
 
 export default {
   name: 'userTable',
+  props: {
+    isNoData: {
+      type: Boolean,
+      default: false
+    }
+  },
   mixins: [table],
   data () {
     return {

@@ -49,10 +49,11 @@
         </top-tool-more-options>
       </template>
       <template v-slot:default>
+        <loading :loading="loading"></loading>
         <galaxy-proxy-table
             ref="dataTable"
-            v-loading="tools.loading"
             :api="url"
+            :isNoData="isNoData"
             :custom-table-title="tools.customTableTitle"
             :height="mainTableHeight"
             :table-data="tableData"
