@@ -13,7 +13,7 @@
           <i v-if="tab.warnFlag" :class="tab.warnIcon" class="tab-pane-warn--icon"></i>
         </template>
         <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"></information-aggregation>
-        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.domainNameResolution && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter"></domain-name-resolution>
+        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.relatedEntity && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter"></domain-name-resolution>
         <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" />
         <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkWarn="setWarn" />
         <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkWarn="setWarn" />
@@ -80,7 +80,7 @@ export default {
     const entityType = props.entity.entityType
 
     const tabs = reactive([
-      { name: entityDetailTabsName.domainNameResolution, label: i18n.global.t('entities.relatedEntity'), icon: 'cn-icon cn-icon-domain-name-resolution' },
+      { name: entityDetailTabsName.relatedEntity, label: i18n.global.t('entities.relatedEntity'), icon: 'cn-icon cn-icon-domain-name-resolution' },
       { name: entityDetailTabsName.openPort, label: i18n.global.t('entities.openPort'), icon: 'cn-icon cn-icon-open-port' },
       // { name: entityDetailTabsName.digitalCertificate, label: i18n.global.t('entities.digitalCertificate'), icon: 'cn-icon cn-icon-digital-certificate' },
       { name: entityDetailTabsName.securityEvent, label: i18n.global.t('overall.securityEvent'), icon: 'cn-icon cn-icon-security-event', warnIcon: 'cn-icon cn-icon-warn', warnFlag: false },

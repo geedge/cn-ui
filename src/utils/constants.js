@@ -90,7 +90,7 @@ export const entityType = {
 
 export const entityDetailTabsName = {
   informationAggregation: 'informationAggregation',
-  domainNameResolution: 'domainNameResolution',
+  relatedEntity: 'relatedEntity',
   openPort: 'openPort',
   digitalCertificate: 'digitalCertificate',
   securityEvent: 'securityEvent',

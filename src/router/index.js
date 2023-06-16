@@ -28,6 +28,10 @@ const routes = [
         component: () => import('@/views/entityExplorer/EntityDetail')
       },
       {
+        path: '/entityGraph',
+        component: () => import('@/views/entityExplorer/EntityGraph')
+      },
+      {
         path: '/detection',
         redirect: '/detection/securityEvent'
       },
