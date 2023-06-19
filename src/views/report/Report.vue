@@ -363,9 +363,6 @@ export default {
         }
       }
     }
-  },
-  unmounted () {
-    this.isNoData = false
   }
 }
 </script>
