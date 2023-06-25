@@ -1283,3 +1283,16 @@ export function toUpperCaseByString (str) {
   }
   return str
 }
+/**
+ * 数字满1000逗号分隔，如99999转变为99,999
+ * 小数点后保留原状，不做逗号分隔，也不进行四舍五入
+ * @param num
+ * @returns {string}
+ */
+export function numberWithCommas (num) {
+  if (typeof num === 'number') {
+    return num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ', ')
+  } else {
+    return num
+  }
+}

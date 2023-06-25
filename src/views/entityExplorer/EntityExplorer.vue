@@ -63,7 +63,7 @@
           <div class="overview-left">
             <span class="overview-left-loading">
               <loading :loading="loadingApp"></loading>
-              <span class="overview-left-loading-span">{{entityAppTotal}}</span>
+              <span class="overview-left-loading-span">{{ numberWithCommas(entityAppTotal) }}</span>
             </span>
             <span class="overview-left-span">APP</span>
           </div>
@@ -73,7 +73,7 @@
               <div class="right-label">New</div>
               <div class="right-label-loading">
                 <loading :loading="loadingAppNew" size="small"></loading>
-                <div class="right-value">{{entityAppNew}}</div>
+                <div class="right-value">{{ numberWithCommas(entityAppNew) }}</div>
               </div>
             </div>
             <div class="right-row">
@@ -81,7 +81,7 @@
               <div class="right-label">Active</div>
               <div class="right-label-loading">
                 <loading :loading="loadingAppActive" size="small"></loading>
-                <div class="right-value">{{entityAppActive}}</div>
+                <div class="right-value">{{ numberWithCommas(entityAppActive) }}</div>
               </div>
             </div>
           </div>
@@ -91,7 +91,7 @@
           <div class="overview-left">
             <span class="overview-left-loading">
               <loading :loading="loadingDomain"></loading>
-              <span class="overview-left-loading-span">{{entityDomainTotal}}</span>
+              <span class="overview-left-loading-span">{{ numberWithCommas(entityDomainTotal) }}</span>
             </span>
             <span class="overview-left-span">DOMAIN</span>
           </div>
@@ -101,7 +101,7 @@
               <div class="right-label">New</div>
               <div class="right-label-loading">
                 <loading :loading="loadingDomainNew" size="small"></loading>
-                <div class="right-value">{{entityDomainNew}}</div>
+                <div class="right-value">{{ numberWithCommas(entityDomainNew) }}</div>
               </div>
             </div>
             <div class="right-row">
@@ -109,7 +109,7 @@
               <div class="right-label">Active</div>
               <div class="right-label-loading">
                 <loading :loading="loadingDomainActive" size="small"></loading>
-                <div class="right-value">{{entityDomainActive}}</div>
+                <div class="right-value">{{ numberWithCommas(entityDomainActive) }}</div>
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@
           <div class="overview-left">
             <span class="overview-left-loading">
               <loading :loading="loadingIp"></loading>
-              <span class="overview-left-loading-span">{{entityIpTotal}}</span>
+              <span class="overview-left-loading-span">{{ numberWithCommas(entityIpTotal) }}</span>
             </span>
             <span class="overview-left-span">IP</span>
           </div>
@@ -129,7 +129,7 @@
               <div class="right-label">New</div>
               <div class="right-label-loading">
                 <loading :loading="loadingIpNew" size="small"></loading>
-                <div class="right-value">{{entityIpNew}}</div>
+                <div class="right-value">{{ numberWithCommas(entityIpNew) }}</div>
               </div>
             </div>
             <div class="right-row">
@@ -137,7 +137,7 @@
               <div class="right-label">Active</div>
               <div class="right-label-loading">
                 <loading :loading="loadingIpActive" size="small"></loading>
-                <div class="right-value">{{entityIpActive}}</div>
+                <div class="right-value">{{ numberWithCommas(entityIpActive) }}</div>
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
 import Loading from '@/components/common/Loading'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { overwriteUrl, urlParamsHandler, numberWithCommas } from '@/utils/tools'
 import Parser from '@/components/advancedSearch/meta/parser'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import { columnList } from '@/utils/static-data'
@@ -371,6 +371,7 @@ export default {
     }
   },
   methods: {
+    numberWithCommas,
     timeRefreshChange () {
       if (!this.$refs.dateTimeRange.isCustom) {
         const value = this.timeFilter.dateRangeValue
