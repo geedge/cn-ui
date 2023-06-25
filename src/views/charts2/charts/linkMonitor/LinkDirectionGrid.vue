@@ -138,10 +138,11 @@ export default {
                   }
                 }
               })
+              this.isLinkNoData = linkGridData.length === 0
               this.linkGridData = linkGridData
             }
           } else {
-            this.isLinkNoData = false
+            this.isLinkNoData = true
             this.isLinkShowError = true
             this.linkErrorMsg = this.errorMsgHandler(res[0])
           }
@@ -227,10 +228,11 @@ export default {
                   }
                 }
               })
+              this.isNextNoData = nextGridData.length === 0
               this.nextGridData = nextGridData
             }
           } else {
-            this.isNextNoData = false
+            this.isNextNoData = true
             this.isNextShowError = true
             this.nextErrorMsg = this.errorMsgHandler(res[1])
           }
