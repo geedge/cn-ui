@@ -250,7 +250,7 @@ export default {
       // this.builtinRightLoading = true
       // this.loading = true
       this.isNoData = false
-      this.tableData = []
+      //this.tableData = []
       this.toggleLoading(true)
       delete this.searchLabel.total
       let listUrl = this.url

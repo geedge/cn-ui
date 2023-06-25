@@ -111,7 +111,7 @@ export default {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      this.tableData = []
+      //this.tableData = []
       this.isNoData = false
       this.toggleLoading(true)
       delete this.searchLabel.total

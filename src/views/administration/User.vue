@@ -104,7 +104,7 @@ export default {
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       this.isNoData = false
-      this.tableData = []
+      //this.tableData = []
       this.toggleLoading(true)
       delete this.searchLabel.total
       let listUrl = this.url
