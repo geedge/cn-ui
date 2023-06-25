@@ -1291,7 +1291,7 @@ export function toUpperCaseByString (str) {
  */
 export function numberWithCommas (num) {
   if (typeof num === 'number') {
-    return num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ', ')
+    return num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
   } else {
     return num
   }
