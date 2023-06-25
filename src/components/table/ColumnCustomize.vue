@@ -70,8 +70,7 @@ export default {
     return {
       custom: [],
       dragIndex: -1,
-      selectList: [],
-      lastIndex: -1
+      selectList: []
     }
   },
   created () {
@@ -95,19 +94,13 @@ export default {
       this.selectList = this.custom.filter(item => item.show)
       // 最少保留一个选项
       if (this.selectList.length === 1) {
-        let index = -1
-        this.custom.find((item, i) => {
-          index = i
-          return item.prop === this.selectList[0].prop
-        })
-        this.lastIndex = index
-        this.custom[index].disabled = true
-      } else if (this.lastIndex > -1) {
+        const obj = this.custom.find(item => item.prop === this.selectList[0].prop)
+        obj.disabled = true
+      } else if (this.selectList.length > 1) {
         this.custom.forEach(item => {
           // 该方案仅用于原始table列表无禁用的情况，目前无原始列表禁用的情况，后续有原始列表禁用的情况再修改
           item.disabled = false
         })
-        this.lastIndex = -1
       }
       this.save()
     },

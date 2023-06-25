@@ -44,7 +44,7 @@
         </template>
         <template v-else-if="item.prop === 'lastLoginTime'">
           <template v-if="scope.row[item.prop]">
-            {{dateFormatByAppearance(scope.row[item.prop])}}
+            {{dateFormatByAppearance(scope.row[item.prop]) || '-'}}
           </template>
           <template v-else>
             <span>-</span>
@@ -60,7 +60,7 @@
               @change="()=>{statusChange(scope.row)}">
           </el-switch>
         </template>
-        <span v-else>{{scope.row[item.prop]}}</span>
+        <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column>
     <template v-slot:empty >
