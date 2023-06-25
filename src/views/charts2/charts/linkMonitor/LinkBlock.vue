@@ -231,6 +231,7 @@ export default {
                   }
                 }
               })
+              this.linkNoData = data.length === 0
               data.forEach((item) => {
                 item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
               })
@@ -246,7 +247,7 @@ export default {
               this.linkData = sorted
             }
           } else {
-            this.linkNoData = false
+            this.linkNoData = true
             this.showError1 = true
             this.errorMsg1 = this.errorMsgHandler(res[0])
           }
@@ -267,7 +268,7 @@ export default {
               directionArr = Array.from(new Set(directionArr))
 
               const newNextHopData = []
-
+              this.nextHopNoData = directionArr.length === 0
               directionArr.forEach((item1) => {
                 const newObj = { egressBitsRate: 0, ingressBitsRate: 0, totalBitsRate: 0, linkDirection: item1 }
                 nextHopData.forEach((item2) => {
@@ -309,7 +310,7 @@ export default {
             }
           } else {
             this.showError2 = true
-            this.nextHopNoData = false
+            this.nextHopNoData = true
             this.errorMsg2 = this.errorMsgHandler(res[1])
           }
         }
