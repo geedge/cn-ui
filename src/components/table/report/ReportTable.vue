@@ -117,9 +117,7 @@
             {{ handleTimeRange(scope.row) }}
           </span>
           <span v-else-if="item.prop === 'categoryId'">
-            <span v-for="(item, i) in categoryList" :key="i">
-              <span v-if="scope.row.categoryId === item.id">{{ item.name }}</span>
-            </span>
+            <span>{{ getCategoryName(scope.row.categoryId) }}</span>
           </span>
           <span v-else-if="item.prop === 'timePlan'">
             <template v-if="scope.row.config && scope.row.config.isScheduler === 0">
@@ -768,6 +766,16 @@ export default {
         }
       }
       this.configCustom = str
+    },
+    getCategoryName (id) {
+      let name = '-'
+      for (let i = 0; i < this.categoryList.length; i++) {
+        if (id === this.categoryList[i].id) {
+          name = this.categoryList[i].name
+          break
+        }
+      }
+      return name
     }
   },
   beforeUnmount () {

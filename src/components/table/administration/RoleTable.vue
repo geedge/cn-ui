@@ -47,7 +47,7 @@
             <span>-</span>
           </template>
         </template>
-        <span v-else>{{scope.row[item.prop]}}</span>
+        <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column>
     <template v-slot:empty >

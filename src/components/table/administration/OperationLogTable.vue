@@ -43,15 +43,15 @@
             {{$t('operationLog.state.fail')}}
           </template>
           <template v-else>
-            {{scope.row[item.prop]}}
+            {{scope.row[item.prop] || '-'}}
           </template>
         </span>
         <span v-else-if="item.prop === 'username'">{{formatUsername(scope.row)}}</span>
         <span v-else-if="item.prop === 'ctime'">{{dateFormatByAppearance(scope.row[item.prop])}}</span>
         <template v-else-if="item.prop === 'params' || item.prop === 'response'">
-          <span>{{scope.row[item.prop]}}</span>
+          <span>{{scope.row[item.prop] || '-'}}</span>
         </template>
-        <span v-else>{{scope.row[item.prop]}}</span>
+        <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column>
     <template v-slot:empty >

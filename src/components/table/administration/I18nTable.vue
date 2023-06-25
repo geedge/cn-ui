@@ -33,7 +33,7 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <span>{{scope.row[item.prop]}}</span>
+        <span>{{scope.row[item.prop] || '-'}}</span>
       </template>
     </el-table-column><template v-slot:empty >
     <div class="table-no-data" v-if="isNoData">
