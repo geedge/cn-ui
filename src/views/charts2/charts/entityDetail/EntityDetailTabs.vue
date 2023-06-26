@@ -10,14 +10,16 @@
         <template #label>
           <!--<div class="el-tabs__active-bar is-top" style="width: 80.9998px; transform: translateX(177px);"></div>-->
           <i :class="tab.icon"></i>{{tab.label}}
-          <i v-if="tab.warnFlag" :class="tab.warnIcon" class="tab-pane-warn--icon"></i>
+          <el-tag size="small" style="margin-left: 6px" :color="tab.name === activeTab ? 'rgb(223,237,248)' : 'rgb(237,237,237)'" round>
+            <span :style="{color: tab.name === activeTab ? '#046ECA' : '#717171'}">{{ tab.tag }}</span>
+          </el-tag>
         </template>
-        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"></information-aggregation>
-        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.relatedEntity && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter"></domain-name-resolution>
-        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" />
-        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkWarn="setWarn" />
-        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkWarn="setWarn" />
-        <open-port v-else-if="tab.name === entityDetailTabsName.openPort && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter"></open-port>
+        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" @checkTag="setTag"></information-aggregation>
+        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.relatedEntity && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter" @checkTag="setTag"></domain-name-resolution>
+        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
+        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
+        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
+        <open-port v-else-if="tab.name === entityDetailTabsName.openPort && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter" @checkTag="setTag"></open-port>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -26,7 +28,7 @@
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
 import i18n from '@/i18n'
-import { entityDetailTabsName } from '@/utils/constants'
+import { entityDetailTabsName, entityDetailTags, psiphon3IpType } from '@/utils/constants'
 import { reactive, ref } from 'vue'
 import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/InformationAggregation'
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'
@@ -80,14 +82,14 @@ export default {
     const entityType = props.entity.entityType
 
     const tabs = reactive([
-      { name: entityDetailTabsName.relatedEntity, label: i18n.global.t('entities.relatedEntity'), icon: 'cn-icon cn-icon-domain-name-resolution' },
-      { name: entityDetailTabsName.openPort, label: i18n.global.t('entities.openPort'), icon: 'cn-icon cn-icon-open-port' },
-      // { name: entityDetailTabsName.digitalCertificate, label: i18n.global.t('entities.digitalCertificate'), icon: 'cn-icon cn-icon-digital-certificate' },
-      { name: entityDetailTabsName.securityEvent, label: i18n.global.t('overall.securityEvent'), icon: 'cn-icon cn-icon-security-event', warnIcon: 'cn-icon cn-icon-warn', warnFlag: false },
-      { name: entityDetailTabsName.performanceEvent, label: i18n.global.t('overall.performanceEvent'), icon: 'cn-icon cn-icon-a-PerformanceEvent', warnIcon: 'cn-icon cn-icon-warn', warnFlag: false }
+      { name: entityDetailTabsName.relatedEntity, label: i18n.global.t('entities.relatedEntity'), icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
+      { name: entityDetailTabsName.openPort, label: i18n.global.t('entities.openPort'), icon: 'cn-icon cn-icon-open-port', tag: 0 },
+      // { name: entityDetailTabsName.digitalCertificate, label: i18n.global.t('entities.digitalCertificate'), icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
+      { name: entityDetailTabsName.securityEvent, label: i18n.global.t('overall.securityEvent'), icon: 'cn-icon cn-icon-security-event', tag: 30 },
+      { name: entityDetailTabsName.performanceEvent, label: i18n.global.t('overall.performanceEvent'), icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ])
     if (entityType !== 'app') {
-      tabs.unshift({ name: entityDetailTabsName.informationAggregation, label: i18n.global.t('entities.informationAggregation'), icon: 'cn-icon cn-icon-information-aggregation' })
+      tabs.unshift({ name: entityDetailTabsName.informationAggregation, label: i18n.global.t('entities.informationAggregation'), icon: 'cn-icon cn-icon-information-aggregation', tag: 0 })
     }
     const activeTab = ref(tabs[0].name)
 
@@ -112,27 +114,102 @@ export default {
         endTime: getSecond(this.oneDayTimeFilter.endTime)
       }
 
+      const url = this.getUrlByEntityType(this.entity.entityType)
+      const informationAggregation = axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`, { params: params })
+      const openPort = axios.get(url, { params: params })
       const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: params })
       const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: params })
 
-      Promise.all([security, performance]).then(response => {
-        if (response[0].data.code === 200 && response[1].data.code === 200) {
-          const name1 = entityDetailTabsName.securityEvent
-          const name2 = entityDetailTabsName.performanceEvent
+      Promise.all([informationAggregation, openPort, security, performance]).then(response => {
+        if (response[0].data.code === 200) {
+          const list = []
+          response[0].data.data.result.forEach(r => {
+            Object.keys(r).forEach(k => {
+              const aggregation = {
+                createTime: r[k].createTime,
+                updateTime: r[k].updateTime,
+                status: r[k].isValid,
+                intelligenceContent: []
+              }
+              if (k === 'userDefinedTag') {
+                aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal' })
+              } else {
+                Object.keys(r[k]).forEach(k2 => {
+                  const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
+                  if (find) {
+                    aggregation.intelligenceContent.push({ key: k2, value: this.tagValueHandler(k, k2, r[k][k2]), type: find.type })
+                  }
+                })
+              }
+              if (aggregation.intelligenceContent.length > 0) {
+                list.push(aggregation)
+              }
+            })
+          })
 
-          // 为了避免tabs其中某项被注释或删除，使用name查找到该项进行更改，避免icon显示错误
-          const obj1 = this.tabs.find(t => t.name === name1)
-          const obj2 = this.tabs.find(t => t.name === name2)
-          if (obj1) {
-            obj1.warnFlag = response[0].data.data.result.length > 0
+          this.initSetTag(entityDetailTabsName.informationAggregation, list.length)
+        }
+        if (response[1].data.code === 200) {
+          this.initSetTag(entityDetailTabsName.openPort, response[1].data.data.result.length)
+        }
+        if (response[2].data.code === 200) {
+          this.initSetTag(entityDetailTabsName.securityEvent, response[2].data.data.result.length)
+        }
+        if (response[3].data.code === 200) {
+          this.initSetTag(entityDetailTabsName.performanceEvent, response[3].data.data.result.length)
+        }
+      })
+
+      // 域名解析
+      if (this.entity.entityType === 'app') {
+        const ipsOfApp = axios.get(api.entity.domainNameResolutionAboutIpsOfApp, { params: params })
+        const domainsOfApp = axios.get(api.entity.domainNameResolutionAboutDomainsOfApp, { params: params })
+        this.promiseData(ipsOfApp, domainsOfApp)
+      }
+
+      if (this.entity.entityType === 'ip') {
+        const appsOfIp = axios.get(api.entity.domainNameResolutionAboutAppsOfIp, { params: params })
+        const domainsOfIp = axios.get(api.entity.domainNameResolutionAboutDomainsOfIp, { params: params })
+        this.promiseData(appsOfIp, domainsOfIp)
+      }
+
+      if (this.entity.entityType === 'domain') {
+        const appsOfDomain = axios.get(api.entity.domainNameResolutionAboutAppsOfDomain, { params: params })
+        const ipsOfDomain = axios.get(api.entity.domainNameResolutionAboutIpsOfDomain, { params: params })
+        const fqdnsOfDomain = axios.get(api.entity.domainNameResolutionAboutFQDNsOfDomain, { params: params })
+        this.promiseData(appsOfDomain, ipsOfDomain, fqdnsOfDomain)
+      }
+    },
+    promiseData (data1, data2, data3) {
+      Promise.all([data1, data2, data3]).then(res => {
+        const res0 = res[0].data
+        const res1 = res[1].data
+
+        switch (this.entity.entityType) {
+          case 'ip': {
+            const len1 = res0.code === 200 ? res0.data.result.length : 0
+            const len2 = res1.code === 200 ? res1.data.result.length : 0
+            this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
+            break
           }
-          if (obj2) {
-            obj2.warnFlag = response[1].data.data.result.length > 0
+          case 'domain': {
+            const res2 = res[2].data
+            const len1 = res0.code === 200 ? res0.data.result.length : 0
+            const len2 = res1.code === 200 ? res1.data.result.length : 0
+            const len3 = res2.code === 200 ? res2.data.result.length : 0
+            this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2 + len3)
+            break
+          }
+          case 'app': {
+            const len1 = res0.code === 200 ? res0.data.result.length : 0
+            const len2 = res1.code === 200 ? res1.data.result.length : 0
+            this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
+            break
           }
         }
       })
     },
-    handleActiveBar (name, change) {
+    handleActiveBar (name, num) {
       const tabDom = document.getElementById('tab-' + name)
       if (tabDom) {
         const { query } = this.$route
@@ -143,26 +220,46 @@ export default {
         const clientWidth = tabDom.clientWidth
         const clientLeft = tabDom.clientLeft
         const activeBar = document.querySelector('.entity-detail-tabs .entity-detail-tabs__active-bar')
-        const addWidth = change === 'add' ? 30 : 0
-        const reduceWidth = change === 'reduce' ? -30 : 0
-        activeBar.style.cssText += `width: ${clientWidth + 2 + addWidth + reduceWidth}px; left: ${offsetLeft + clientLeft - 1}px;`
+        const newWidth = num ? num * 6 : 0
+        activeBar.style.cssText += `width: ${clientWidth + 2 + newWidth}px; left: ${offsetLeft + clientLeft - 1}px;`
       }
     },
     setLoading (loading) {
       this.toggleLoading(loading)
     },
-    setWarn (name, flag) {
+    setTag (name, num) {
       const obj = this.tabs.find(t => t.name === name)
       if (obj) {
-        const oldFlag = JSON.parse(JSON.stringify(obj.warnFlag))
-        obj.warnFlag = flag
-        if (oldFlag && !flag) {
-          this.handleActiveBar(name, 'reduce') // 之前有warn，再次切换无数据
-        }
-        if (!oldFlag && flag) {
-          this.handleActiveBar(name, 'add') // 之前无warn，再次切换有数据
+        const oldNum = JSON.parse(JSON.stringify(obj.tag))
+        obj.tag = num
+        // 根据前后位数的变化来增减状态栏的长短，
+        // 如初始是0（位数是1），点击tab变成10条（位数是2），所以状态栏宽度增加(2-1)*6px
+        this.handleActiveBar(name, JSON.stringify(num).length - JSON.stringify(oldNum).length)
+      }
+    },
+    initSetTag (name, num) {
+      const obj = this.tabs.find(t => t.name === name)
+      if (obj) {
+        obj.tag = num
+      }
+    },
+    getUrlByEntityType (type) {
+      switch (type) {
+        case 'ip': return api.entity.openPortOfIp
+        case 'domain': return api.entity.openPortOfDomain
+        case 'app': return api.entity.openPortOfApp
+      }
+    },
+    tagValueHandler (k, k2, value) {
+      if (k === 'psiphon3Ip') {
+        if (k2 === 'type') {
+          const find = psiphon3IpType.find(t => t.value === value)
+          if (find) {
+            return find.name
+          }
         }
       }
+      return value
     }
   },
   beforeUnmount () {
@@ -170,3 +267,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.el-tag {
+  font-size: 12px !important;
+  border-radius: 20px !important;
+}
+</style>

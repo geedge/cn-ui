@@ -103,7 +103,7 @@ export default {
 
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
-          this.$emit('checkWarn', entityDetailTabsName.performanceEvent, !this.isNoData)
+          this.$emit('checkTag', entityDetailTabsName.performanceEvent, res.data.result.length)
           this.showError = false
           if (!this.isNoData) {
             this.eventList = res.data.result

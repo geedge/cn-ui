@@ -24,6 +24,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
+import { entityDetailTabsName } from '@/utils/constants'
 
 export default {
   name: 'OpenPort',
@@ -60,6 +61,7 @@ export default {
         const res = response.data
         if (res.code === 200) {
           this.isNoData = res.data.result.length === 0
+          this.$emit('checkTag', entityDetailTabsName.openPort, res.data.result.length)
           this.showError = false
           if (!this.isNoData) {
             this.openPortList = res.data.result

@@ -58,6 +58,7 @@ import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { getSecond } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
+import { entityDetailTabsName } from '@/utils/constants'
 
 export default {
   name: 'DomainNameResolution',
@@ -137,6 +138,7 @@ export default {
             this.showError2 = true
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
         }
 
         // ip相关，显示app，domain
@@ -153,6 +155,7 @@ export default {
             this.showError2 = true
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
         }
 
         // domain相关，显示app，ip，domain
@@ -182,6 +185,7 @@ export default {
             this.showError2 = true
             this.errorMsg2 = this.errorMsgHandler(res2)
           }
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length + res2.data.result.length)
         }
       }).catch(e => {
         console.log(e)

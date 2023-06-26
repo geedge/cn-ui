@@ -92,7 +92,7 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import { entityDetailTabsName, entityDetailTags, psiphon3IpType } from '@/utils/constants'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 
@@ -157,6 +157,7 @@ export default {
                 }
               })
             })
+            this.$emit('checkTag', entityDetailTabsName.informationAggregation, this.informationAggregationList.length)
           }
         } else {
           this.showError = true
