@@ -58,7 +58,9 @@
 </template>
 
 <script>
-import { storageKey } from '@/utils/constants'
+import indexedDBUtils from '@/indexedDB'
+import { storageKey, dbTableColumnCustomizeConfigPre } from '@/utils/constants'
+import { get } from '@/utils/http'
 export default {
   props: {
     customTableTitle: Array, // 自定义的title
@@ -74,10 +76,11 @@ export default {
     }
   },
   created () {
+    /*
     const localStorageTitle = JSON.parse(localStorage.getItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId))
     if (localStorageTitle) {
       localStorage.setItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId, JSON.stringify(localStorageTitle))
-    }
+    } */
   },
   watch: {
     customTableTitle: {
@@ -147,10 +150,30 @@ export default {
       }
     },
     // 点击第二个cancel
-    save () {
+    async save () {
       this.$emit('update', this.custom)
-      localStorage.setItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId, JSON.stringify(this.custom))
-      // this.esc()
+      const userId = localStorage.getItem(storageKey.userId)
+      const tableName = dbTableColumnCustomizeConfigPre + '-' + this.tableId
+
+      const defaultConfigInDb = await indexedDBUtils.selectTable(tableName).get({ id: userId })
+      let fullVersion = ''
+      if (defaultConfigInDb && defaultConfigInDb.version) {
+        const oldVersion = defaultConfigInDb.version
+        if (oldVersion.startsWith(BASE_CONFIG.version)) {
+          const realVersion = Number(oldVersion.substring(BASE_CONFIG.version.length + 1))
+          fullVersion = BASE_CONFIG.version + '.' + (realVersion + 1)
+        } else {
+          fullVersion = BASE_CONFIG.version + '.1'
+        }
+      } else {
+        fullVersion = BASE_CONFIG.version + '.1'
+      }
+
+      await indexedDBUtils.selectTable(tableName).put({
+        id: userId,
+        version: fullVersion,
+        config: _.cloneDeep(this.custom)
+      })
     }
   },
   computed: {

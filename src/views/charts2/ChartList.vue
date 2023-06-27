@@ -75,7 +75,7 @@ export default {
           selector: '.entity-detail-info',
           correctionHeight: 161,
           chartType: typeMapping.entityDetail.basicInfo
-        }*/
+        } */
       ]
     }
   },

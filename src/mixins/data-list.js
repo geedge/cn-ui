@@ -1,11 +1,12 @@
 import { tableSort } from '@/utils/tools'
-import { defaultPageSize, fromRoute, position, storageKey } from '@/utils/constants'
+import { defaultPageSize, fromRoute, position, storageKey, dbTableColumnCustomizeConfigPre } from '@/utils/constants'
 import { get, del } from '@/utils/http'
 import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import Loading from '@/components/common/Loading'
+import indexedDBUtils from '@/indexedDB'
 
 export default {
   components: {
@@ -111,7 +112,7 @@ export default {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      //this.tableData = []
+      // this.tableData = []
       this.isNoData = false
       this.toggleLoading(true)
       delete this.searchLabel.total
@@ -395,13 +396,17 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     const pageSize = localStorage.getItem(storageKey.pageSize + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId)
     if (pageSize && pageSize !== 'undefined') {
       this.pageObj.pageSize = pageSize
     }
-    let localStorageTableTitle = localStorage.getItem(storageKey.tableTitle + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId)
-    localStorageTableTitle = localStorageTableTitle ? JSON.parse(localStorageTableTitle) : this.$refs.dataTable.tableTitle
+    const userId = localStorage.getItem(storageKey.userId)
+    let localStorageTableTitle = await indexedDBUtils.selectTable(dbTableColumnCustomizeConfigPre + '-' + this.tableId).get({ id: userId })
+
+    localStorageTableTitle = localStorageTableTitle && localStorageTableTitle.config
+      ? localStorageTableTitle.config
+      : (this.$refs.dataTable && this.$refs.dataTable.tableTitle ? this.$refs.dataTable.tableTitle : [])
     // this.tools.customTableTitle = this.$refs.dataTable.tableTitle.map((item, index) => { // 修复切换中英文的问题
     //   if (localStorageTableTitle[index]) {
     //     item.show = localStorageTableTitle[index].show

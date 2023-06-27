@@ -5,6 +5,14 @@ export const dbName = 'cn-db'
 // indexedDB表名
 export const dbGeoDataTableName = 'geodata'
 export const dbDrilldownTableConfig = 'cn-drilldown-table-config'
+export const dbTableColumnCustomizeConfigPre = 'cn-table-column-customize-config'
+export const dbUserTableColumnCustomizeConfig = 'cn-table-column-customize-config-userTable'
+export const dbRoleTableColumnCustomizeConfig = 'cn-table-column-customize-config-rolesTable'
+export const dbOperationLogTableColumnCustomizeConfig = 'cn-table-column-customize-config-operationLogTable'
+export const dbChartTableColumnCustomizeConfig = 'cn-table-column-customize-config-chartTable'
+export const dbI18nTableColumnCustomizeConfig = 'cn-table-column-customize-config-i18nTable'
+export const dbReportTableColumnCustomizeConfig = 'cn-table-column-customize-config-reportTable'
+export const dbGalaxySettingTableColumnCustomizeConfig = 'cn-table-column-customize-config-galaxySettingTable'
 export const storageKey = {
   iso36112Capital: 'cn-iso3611-2-capital',
   iso36112WorldLow: 'cn-iso3611-2-world-low',
