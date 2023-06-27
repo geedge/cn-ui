@@ -166,9 +166,18 @@ export default {
   },
   mounted () {
     // 如果地址栏包含参数q，则将参数q回显到搜索栏内
-    const { q } = this.$route.query
+    let { q } = this.$route.query
     this.initCodeMirror()
     if (q) {
+      // 为避免地址栏任意输入导致全查询的q带QUERY，解析时不识别导致的语法错误
+      // 如地址栏输入116.178.222.171，此时的q很长，刷新界面时需要把q里的116.178.222.171拿出来进行搜索
+      if (q.indexOf('QUERY') > -1) {
+        const strList = q.split(' ')
+        if (strList.length > 0) {
+          // 此时strList[1]为ip_addr:116.178.222.171，获取116.178.222.171
+          q = strList[1].slice(8)
+        }
+      }
       toRaw(this.codeMirror).setValue(q)
     }
 

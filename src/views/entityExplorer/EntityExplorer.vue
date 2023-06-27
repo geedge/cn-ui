@@ -779,10 +779,19 @@ export default {
      * @param q
      */
     initSearch (q) {
-      const str = q
+      let str = q
       // 此处的mode不做text和tag区分，是因为text和tag构造搜索参数过程不一样，但结果的参数一致
       // 故采用text的参数形式进行搜索，tag形式在tagMode.vue的mounted里根据地址栏的参数q构造metaList
       if (str) {
+        // 为避免地址栏任意输入导致全查询的q带QUERY，解析时不识别导致的语法错误
+        // 如地址栏输入116.178.222.171，此时的q很长，刷新界面时需要把q里的116.178.222.171拿出来进行搜索
+        if (str.indexOf('QUERY') > -1) {
+          const strList = str.split(' ')
+          if (strList.length > 0) {
+            // 此时strList[1]为ip_addr:116.178.222.171，获取116.178.222.171
+            str = strList[1].slice(8)
+          }
+        }
         const parser = new Parser(columnList)
         const errorList = parser.validateStr(str)
         if (_.isEmpty(errorList)) {
