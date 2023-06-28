@@ -402,7 +402,11 @@ export default {
       this.pageObj.pageSize = pageSize
     }
     const userId = localStorage.getItem(storageKey.userId)
-    let localStorageTableTitle = await indexedDBUtils.selectTable(dbTableColumnCustomizeConfigPre + '-' + this.tableId).get({ id: userId })
+    let tableName = dbTableColumnCustomizeConfigPre + '-' + this.tableId
+    let localStorageTableTitle = []
+    if(indexedDBUtils.selectTable(tableName)){
+      localStorageTableTitle = await indexedDBUtils.selectTable(tableName).get({ id: userId })
+    }
 
     localStorageTableTitle = localStorageTableTitle && localStorageTableTitle.config
       ? localStorageTableTitle.config
