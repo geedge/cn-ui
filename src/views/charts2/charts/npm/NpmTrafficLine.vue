@@ -32,7 +32,7 @@
 import * as echarts from 'echarts'
 import { trafficLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert from '@/utils/unit-convert'
-import { chartColor3, unitTypes } from '@/utils/constants.js'
+import { chartColor3, chartColor4, unitTypes } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import axios from 'axios'
@@ -84,7 +84,8 @@ export default {
       npmQuantity: dataForNpmTrafficLine.npmQuantity,
       metricOptions: dataForNpmTrafficLine.metricOptions,
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      sizes: [3, 4, 6, 8, 9, 10]
     }
   },
   watch: {
@@ -238,6 +239,14 @@ export default {
                 width: 1
               },
               stack: t.name !== this.$t('network.total') ? this.$t('network.total') : '',
+              emphasis: {
+                itemStyle: {
+                  borderColor: chartColor4[t.positioning],
+                  borderWidth: 2,
+                  shadowColor: chartColor4[t.positioning],
+                  shadowBlur: this.sizes[t.positioning] + 2
+                }
+              },
               areaStyle: {
                 opacity: 0.1,
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
