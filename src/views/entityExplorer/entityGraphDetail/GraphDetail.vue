@@ -115,7 +115,7 @@
 import i18n from '@/i18n'
 import { copySelectionText, selectElementText } from '@/utils/tools'
 import { entityType, riskLevelMapping } from '@/utils/constants'
-import axios from '_axios@0.21.4@axios'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { dateFormatByAppearance } from '@/utils/date-util'
