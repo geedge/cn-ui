@@ -252,7 +252,11 @@ export const api = {
     openPortOfApp: apiVersion + '/entity/detail/app/relate/ports',
     basicInfo: apiVersion + '/entity/detail/basic',
     tags: apiVersion + '/entity/detail/kb/intelligence/tag',
-    informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list'
+    informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list',
+    // 实体关系
+    entityGraph: {
+      relatedEntityCount: apiVersion + '/entity/graph/relation/summaryCount'
+    }
   }
 }
 

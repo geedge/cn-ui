@@ -76,7 +76,7 @@ export default {
   setup () {
     const { query } = useRoute()
     const entityType = query.entityType
-    const entityName = query.name || query.entityName
+    const entityName = query.entityName
 
     return {
       entityType,

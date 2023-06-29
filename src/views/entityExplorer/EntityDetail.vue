@@ -22,21 +22,21 @@ export default {
   setup (props) {
     const { query } = useRoute()
     let panelType
-    const entityData = { entityType: query.entityType, entityName: query.name }
+    const entityData = { entityType: query.entityType, entityName: query.entityName }
     switch (query.entityType) {
       case 'ip': {
         panelType = panelTypeAndRouteMapping.ipEntityDetail
-        entityData.ip = query.name
+        entityData.ip = query.entityName
         break
       }
       case 'domain': {
         panelType = panelTypeAndRouteMapping.domainEntityDetail
-        entityData.domain = query.name
+        entityData.domain = query.entityName
         break
       }
       case 'app': {
         panelType = panelTypeAndRouteMapping.appEntityDetail
-        entityData.appName = query.name
+        entityData.appName = query.entityName
         break
       }
       default: {
