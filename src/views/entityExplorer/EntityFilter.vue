@@ -111,8 +111,8 @@ export default {
         entityType: filter.type,
         column: item.topColumn,
         top: 10,
-        startTime: parseInt(this.timeFilter.startTime / 1000),
-        endTime: parseInt(this.timeFilter.endTime / 1000)
+        startTime: parseInt(this.timeFilter.startTime),
+        endTime: parseInt(this.timeFilter.endTime)
       }
       this.loading = true
       this.popoverData = []
@@ -142,7 +142,6 @@ export default {
     },
     filter (name, topData) {
       this.showTopDialog('', topData)
-      console.log('打印数据', name, topData)
       this.$emit('filter', name, topData)
     }
   }
