@@ -16,7 +16,10 @@
 
     <div class="graph-list-expand-btn-block">
       <el-button type="primary" class="graph-list-expand-btn">
-        {{ $t('entity.graph.continueToExpand') }}
+        <span>
+          <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>
+          {{ $t('entity.graph.continueToExpand') }}
+        </span>
       </el-button>
     </div>
 
