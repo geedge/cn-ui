@@ -48,7 +48,22 @@ export default {
       entityName: name
     })
     const mode = ref('')
-    mode.value = 'appList'
+    switch (entityType) {
+      case 'ip':
+      {
+        mode.value = 'ipList'
+        break
+      }
+      case 'domain':
+      {
+        mode.value = 'domainList'
+        break
+      }
+      case 'app':
+      {
+        mode.value = 'appList'
+      }
+    }
 
     return {
       entity,
