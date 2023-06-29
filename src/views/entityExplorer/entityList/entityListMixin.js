@@ -97,24 +97,24 @@ export default {
       switch (this.entityData.entityType) {
         case ('ip'): {
           params = {
-            startTime: this.timeFilter.startTime ? parseInt(this.timeFilter.startTime / 1000) : Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime ? parseInt(this.timeFilter.endTime / 1000) : Math.floor(now / 1000),
+            startTime: this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : Math.floor(now / 1000),
             ip: this.entityData.ipAddr
           }
           break
         }
         case ('domain'): {
           params = {
-            startTime: this.timeFilter.startTime ? parseInt(this.timeFilter.startTime / 1000) : Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime ? parseInt(this.timeFilter.endTime / 1000) : Math.floor(now / 1000),
+            startTime: this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : Math.floor(now / 1000),
             domain: this.entityData.domainName
           }
           break
         }
         case ('app'): {
           params = {
-            startTime: this.timeFilter.startTime ? parseInt(this.timeFilter.startTime / 1000) : Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime ? parseInt(this.timeFilter.endTime / 1000) : Math.floor(now / 1000),
+            startTime: this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : Math.floor(now / 1000 - 3600),
+            endTime: this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : Math.floor(now / 1000),
             appName: this.entityData.appName
           }
           break

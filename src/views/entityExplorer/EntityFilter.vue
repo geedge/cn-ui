@@ -44,6 +44,7 @@ import EntityTop from '@/views/entityExplorer/EntityTop'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
 import Loading from '@/components/common/Loading'
+import { getSecond } from '@/utils/date-util'
 export default {
   name: 'EntityFilter',
   components: {
@@ -111,8 +112,8 @@ export default {
         entityType: filter.type,
         column: item.topColumn,
         top: 10,
-        startTime: parseInt(this.timeFilter.startTime),
-        endTime: parseInt(this.timeFilter.endTime)
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
       this.loading = true
       this.popoverData = []
