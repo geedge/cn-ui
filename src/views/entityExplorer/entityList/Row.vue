@@ -146,16 +146,16 @@
               </div>
               <!--新版实体列表改版，去除这一段-->
             </div>
-            <div class="show-detail" @click="showDetail">
-              {{ $t('overall.detail') }}>
-            </div>
-<!--            新版实体列表改版，后续记得解开-->
-<!--            <div class="show-detail">-->
-<!--              <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>-->
-<!--              <div><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>-->
+<!--            <div class="show-detail" @click="showDetail">-->
+<!--              {{ $t('overall.detail') }}>-->
 <!--            </div>-->
+<!--            新版实体列表改版，后续记得解开-->
           </div>
         </div>
+      </div>
+      <div class="new-show-detail">
+        <div @click="showDetail"><i class="cn-icon cn-icon-detail"></i>{{ $t('overall.detail') }} ></div>
+        <div @click="showGraph"><i class="cn-icon cn-icon-graph"></i>{{ $t('entities.graph') }} ></div>
       </div>
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">

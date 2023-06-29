@@ -140,7 +140,6 @@
                 .row__charts {
                   height: 19px;
                   width: 60px;
-                  padding-left: 5px;
                 }
               }
 
@@ -164,26 +163,47 @@
             }
           }
 
-          .show-detail {
-            flex-shrink: 0;
-            padding: 0 30px;
-            font-size: 12px;
-            color: #3976CB;
-            //color: #2C72C6;
-            //font-weight: 400;
-            //margin-top: -17px;
-            // 新版实体列表改版，后续记得解开
-
-            &:hover {
-              cursor: pointer;
-            }
-
-            //i {
-            //  font-size: 12px;
-            //  margin-right: 5px;
-            //}
-          }
+          //.show-detail {
+          //  flex-shrink: 0;
+          //  padding: 0 30px;
+          //  font-size: 12px;
+          //  color: #3976CB;
+          //  //color: #2C72C6;
+          //  //font-weight: 400;
+          //  //margin-top: -17px;
+          //  // 新版实体列表改版，后续记得解开
+          //
+          //  &:hover {
+          //    cursor: pointer;
+          //  }
+          //
+          //  //i {
+          //  //  font-size: 12px;
+          //  //  margin-right: 5px;
+          //  //}
+          //}
         }
+      }
+    }
+
+    .new-show-detail {
+      flex-shrink: 0;
+      padding: 0 30px;
+      font-size: 12px;
+      color: #2C72C6;
+      font-weight: 400;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      i {
+        font-size: 12px;
+        margin-right: 5px;
       }
     }
 

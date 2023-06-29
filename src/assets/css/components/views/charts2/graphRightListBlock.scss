@@ -1,0 +1,131 @@
+$font-size: 14px;
+.graph-list-header {
+  display: flex;
+  justify-content: space-between;
+
+  .graph-list-header-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+
+    span {
+      font-family: PingFangSC-Semibold;
+      font-size: 16px;
+      color: #353636;
+      line-height: 22px;
+      font-weight: 600;
+    }
+
+    .graph-list-header-icon {
+      font-size: 21px;
+      color: #717171;
+      margin-right: 9px;
+    }
+  }
+
+  .graph-list-header-number {
+    font-family: NotoSansSChineseRegular;
+    font-size: 14px;
+    color: #717171;
+    font-weight: 400;
+
+    span {
+      font-weight: bold;
+    }
+  }
+}
+
+.graph-list-expand-btn-block {
+  margin-top: 20px;
+  margin-bottom: 30px;
+
+  .graph-list-expand-btn {
+    background: #38ACD2;
+    border: 1px solid rgba(46, 136, 166, 0.85);
+    border-radius: 2px;
+  }
+}
+
+.graph-list-content-header {
+  font-family: NotoSansHans-Medium;
+  font-size: 14px;
+  color: #353636;
+  font-weight: bold;
+}
+
+.graph-list-content {
+  padding: 0 10px;
+
+  .graph-list-item-ip {
+    margin-bottom: 12px;
+    font-family: NotoSansSChineseRegular;
+    font-size: $font-size;
+    color: #353636;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      color: #D80000;
+    }
+  }
+
+  .graph-list-item-block {
+    width: 300px;
+    background: rgba(247, 247, 247, 1);
+    border: 1px solid rgba(226, 229, 236, 1);
+    border-radius: 2px;
+    padding: 15px;
+
+    .graph-list-item, .graph-list-item__app {
+      display: flex;
+
+      .graph-list-item-label, .graph-list-item-label__app {
+        width: 62px;
+        margin-right: 15px;
+        font-family: NotoSansSChineseRegular;
+        font-size: $font-size; // 原型上为12px，但页面呈现效果不好
+        color: #717171;
+        font-weight: 400;
+        flex-shrink: 0;
+      }
+
+      .graph-list-item-label__app {
+        width: 78px;
+        line-height: 24px;
+      }
+
+      .graph-list-country-flag {
+        width: 20px;
+        height: 18px;
+        margin-right: 5px;
+      }
+
+      .graph-list-item-value {
+        font-family: NotoSansSChineseRegular;
+        font-size: $font-size;
+        color: #353636;
+        font-weight: 400;
+      }
+
+      .graph-list-item-value1 {
+        display: flex;
+        align-content: center;
+      }
+    }
+
+    .graph-list-item {
+      align-items: center;
+    }
+  }
+}
+
+.padding-b-20 {
+  padding-bottom: 20px;
+}
+
+.graph-list-dividing-line {
+  width: 300px;
+  height: 1px;
+  background: #ECECEC;
+  margin: 12px 0;
+}

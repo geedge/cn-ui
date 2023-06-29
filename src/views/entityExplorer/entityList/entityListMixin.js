@@ -135,6 +135,16 @@ export default {
       })
       window.open(href, '_blank')
     },
+    showGraph () {
+      const { href } = this.$router.resolve({
+        path: '/entityGraph',
+        query: {
+          entityType: this.entityData.entityType,
+          name: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
+        }
+      })
+      window.open(href, '_blank')
+    },
     querySecurity () {
       const queryParams = {
         startTime: getSecond(this.timeFilter.startTime),

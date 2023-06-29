@@ -1,0 +1,170 @@
+$font-size: 14px;
+.graph-detail-basic-info {
+  position: relative;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  //height: 100%;
+
+  .entity-type {
+    color: #717171;
+  }
+
+  .graph-basic-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .graph-basic-info-name__block {
+      display: flex;
+      align-items: center;
+
+      .graph-basic-info-name {
+        padding-right: 10px;
+        font-family: Helvetica-Bold;
+        font-size: 20px;
+        color: #353636;
+        font-weight: 700;
+      }
+
+      .graph-basic-info-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 28px;
+        width: 28px;
+        border-radius: 50%;
+        background-color: #EFF1F4;
+        cursor: pointer;
+        flex-shrink: 0;
+
+        i {
+          color: #717171;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .graph-detail__icon {
+    width: 52px;
+    height: 52px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    margin-right: 10px;
+    border-radius: 50%;
+    background-color: #e5edf3;
+
+    i {
+      font-size: 26px;
+      color: #4E84B4;
+    }
+  }
+}
+
+.graph-close {
+  color: #575757;
+  font-size: 8px;
+  cursor: pointer;
+}
+
+.graph-basic-info__block {
+  margin: 10px 0;
+
+  .graph-header__icon {
+    width: 3px !important;
+    height: 14px !important;
+  }
+
+  .graph-basic-info__block-content {
+
+    .graph-content-item, .graph-content-relationship-item {
+      display: flex;
+      line-height: 24px;
+    }
+
+    .graph-content-item {
+
+      .graph-content-item-label, .graph-content-item-value {
+        width: 100px;
+        font-family: NotoSansSChineseRegular;
+        font-size: $font-size;
+        color: #717171;
+        font-weight: 400;
+        padding-right: 10px;
+        flex-shrink: 0;
+      }
+
+      .graph-content-item-value {
+        width: 230px;
+        color: #353636;
+        font-weight: 400;
+        overflow-wrap: break-word;
+      }
+    }
+
+    .graph-content-relationship-item {
+      justify-content: space-between;
+      line-height: 24px;
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(135, 135, 135, 0.1);
+      }
+
+      .graph-relationship-item-label, .graph-relationship-item-value {
+        font-family: NotoSansSChineseRegular;
+        font-size: $font-size; // 原型上为12px，呈现效果不好，后续再调节
+        color: #353636;
+        font-weight: 400;
+        //height: 40px;
+        display: flex;
+        align-items: center !important;
+        padding-top: 1px;
+      }
+
+      .graph-relationship-item-value {
+        color: #717171;
+
+      }
+    }
+  }
+
+  .graph-tag-list {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin: 6px 0;
+
+    .graph-tag-item {
+      margin-bottom: 10px;
+      margin-right: 9px;
+      padding: 0 8px;
+      font-size: 12px;
+    }
+  }
+}
+
+.padding-b-10 {
+  padding-bottom: 10px;
+}
+
+//修改popover样式
+.graph-popover {
+  width: auto !important;
+  background: #303133 !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  padding: 10px !important;
+}
+
+.graph-popover .el-popper__arrow::before {
+  background: #303133 !important;
+}
+
+.graph-expand-relationship__icon:hover {
+  color: #D80000 !important;
+}
