@@ -49,8 +49,7 @@ export const pieChartOption1 = {
         }
       })
       name = name.length > 9 ? name.substr(0, 9) + '...' : name
-      const arr = ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
-      return arr
+      return ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
     }
   },
   series: [
@@ -108,8 +107,7 @@ export const pieChartOption2 = {
         }
       })
       name = name.length > 9 ? name.substr(0, 9) + '...' : name
-      const arr = ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
-      return arr
+      return ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
     }
   },
   color: chartColor2,
@@ -136,7 +134,7 @@ export const pieChartOption3 = {
     {
       name: 'Access From',
       type: 'pie',
-      radius: ['45%', '50%'],
+      radius: ['40%', '50%'],
       avoidLabelOverlap: false,
       emphasis: {
         label: {
