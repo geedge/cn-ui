@@ -180,7 +180,7 @@ export const pieForSeverity = {
     appendToBody: true
   },
   color: activeAttackColor,
-  animation: false,
+  animation: true,
   legend: {
     orient: 'vertical',
     type: 'plain',
@@ -199,7 +199,7 @@ export const pieForSeverity = {
     {
       type: 'pie',
       selectedMode: 'single',
-      radius: ['42%', '65%'],
+      radius: ['43%', '65%'],
       center: ['30%', '50%'],
       data: [],
       label: {
@@ -211,13 +211,6 @@ export const pieForSeverity = {
       tooltip: {
         formatter: function (param, index, callback) {
           return `${param.name}: ${param.value}`
-        }
-      },
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowOffsetX: 0,
-          shadowColor: 'rgba(0, 0, 0, 0.5)'
         }
       }
     }
