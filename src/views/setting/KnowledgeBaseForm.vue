@@ -803,11 +803,11 @@ export default {
                             }
                           })
                         } else {
-                          this.errorMsgHandler(response)
+                          this.$message.error(this.errorMsgHandler(response))
                         }
                       }).catch(e => {
                         console.error(e)
-                        this.errorMsgHandler(e)
+                        this.$message.error(this.errorMsgHandler(e))
                       }).finally(() => {
                         this.blockOperation.save = false
                       })
@@ -832,11 +832,11 @@ export default {
                             }
                           })
                         } else {
-                          this.errorMsgHandler(response)
+                          this.$message.error(this.errorMsgHandler(response))
                         }
                       }).catch(e => {
                         console.error(e)
-                        this.errorMsgHandler(e)
+                        this.$message.error(this.errorMsgHandler(e))
                       }).finally(() => {
                         this.blockOperation.save = false
                       })
@@ -863,7 +863,7 @@ export default {
     async getKnowledgeBaseList () {
       return await axios.get(this.listUrl, { params: { pageSize: 999 } }).catch(e => {
         console.error(e)
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     editImportedData (index) {

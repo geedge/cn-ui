@@ -25,8 +25,8 @@
           <span>{{$t('search.searchHistory')}}</span>
         </div>
         <div class="foot__item">
-          <span @click="search">{{$t('overall.explore')}}</span>
-<!--          <el-divider direction="vertical"></el-divider>
+          <!-- <span @click="search">{{$t('overall.explore')}}</span>
+          <el-divider direction="vertical"></el-divider>
           <span>{{$t('overall.help')}}</span>-->
         </div>
         <transition name="el-zoom-in-top">
