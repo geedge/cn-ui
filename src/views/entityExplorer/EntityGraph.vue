@@ -11,9 +11,12 @@
           <!-- primary节点 -->
           <template v-else-if="node.data.level && node.data.level.length === 1">
             <i :class="node.data.iconClass"></i>
-            <div class="graph-node__text">{{node.text}}</div>
+            <div class="graph-node__text">{{node.text}}({{node.data.count}})</div>
           </template>
           <!-- entity节点 -->
+          <template v-else-if="node.data.level && node.data.level.length === 3">
+            <i :class="node.data.iconClass"></i>
+          </template>
         </template>
       </relation-graph>
     </div>
@@ -63,7 +66,9 @@ export default {
   },
   data () {
     return {
-      chartOption: {}
+      chartOption: {
+        debug: false
+      }
     }
   },
   methods: {
@@ -72,29 +77,36 @@ export default {
       *  1.类型：根节点 root；状态：ip、app、domain;
       *  2.类型：普通节点 primary；状态：normal、active;
       *  3.类型：实体 entity；状态1：ip、app、domain；状态2：normal、active.
+      *
       *  ip基色#7E9F54，domain基色#38ACD2，app基色E5A219
+      *
+      *  为方便在逻辑上区分实体列表（圆圈节点）和实体（纯图标节点），将层级分为整层和半层两种，实体列表为整层，实体为半层。
       *  */
       this.graphData.rootId = this.entity.entityName
+      // 初始化时加载到2层半
       const rootNode = this.generateRootNode()
-      const secondLevelNodes = await this.generateSecondLevelNodes()
-      this.graphData.nodes = [rootNode, ...secondLevelNodes]
-      this.graphData.lines = this.generateLines(rootNode, secondLevelNodes)
-      console.info(this.graphData)
+      const secondLevelNodes = await this.generateSecondLevelNodes(rootNode)
+      const secondHalfLevelNodes = await this.generateHalfLevelNodes(secondLevelNodes)
+      this.graphData.nodes = [rootNode, ...secondLevelNodes, ...secondHalfLevelNodes]
+      this.graphData.lines = this.generateLines(rootNode)
+      this.graphData.lines.push(...this.generateLines(secondLevelNodes))
+
+      console.info(JSON.stringify(this.graphData))
       this.$refs.relationGraph.setJsonData(this.graphData)
     },
     generateRootNode () {
-      let nodeIconClass = ''
+      let iconClass = ''
       switch (this.entity.entityType) {
         case 'ip': {
-          nodeIconClass = 'cn-icon cn-icon-resolve-ip'
+          iconClass = 'cn-icon cn-icon-resolve-ip'
           break
         }
         case 'domain': {
-          nodeIconClass = 'cn-icon cn-icon-domain1'
+          iconClass = 'cn-icon cn-icon-domain1'
           break
         }
         case 'app': {
-          nodeIconClass = 'cn-icon cn-icon-app-name'
+          iconClass = 'cn-icon cn-icon-app-name'
           break
         }
       }
@@ -103,84 +115,156 @@ export default {
         text: this.entity.entityName,
         nodeShape: 0,
         styleClass: `graph-node graph-node--root graph-node--${this.entity.entityType}`,
-        data: { level: '1', iconClass: nodeIconClass }
+        data: { level: '1', iconClass }
       }
     },
     generatePrimaryNode (props) {
       const node = {
-        styleClass: `graph-node graph-node--primary graph-node--${this.entity.entityType}`
+        styleClass: 'graph-node graph-node--primary'
       }
       return {
         ...node,
         ...props
       }
     },
-    async generateSecondLevelNodes () {
-      /*
-      * 2级及以上的整数节点，先查数量，大于0的才展示
-      * */
-      const relatedEntityCount = await this.queryRelatedEntityCount(this.entity.entityType, this.entity.entityName)
-      const ipNode = this.generatePrimaryNode({
-        id: 'ip-1',
-        text: this.$t('entities.graph.resolveIp'),
-        data: { level: '2', iconClass: 'cn-icon cn-icon-resolve-ip' }
-      })
-      const domainNode = this.generatePrimaryNode({
-        id: 'domain-1',
-        text: this.$t('entity.graph.resolveDomain'),
-        data: { level: '2', iconClass: 'cn-icon cn-icon-subdomain' }
-      })
-      const subdomainNode = this.generatePrimaryNode({
-        id: 'domain-1',
-        text: this.$t('entities.subdomain'),
-        data: { level: '2', iconClass: 'cn-icon cn-icon-subdomain' }
-      })
-      const appNode = this.generatePrimaryNode({
-        id: 'app-1',
-        text: this.$t('entities.tab.relatedApp'),
-        data: { level: '2', iconClass: 'cn-icon cn-icon-app-name' }
-      })
-      const nodes = []
-      switch (this.entity.entityType) {
+    generateEntityNode (level, relatedType, data) {
+      let iconClass = ''
+      switch (relatedType) {
         case 'ip': {
-          if (relatedEntityCount.domainCount) {
-            domainNode.data.count = relatedEntityCount.domainCount
-            nodes.push(domainNode)
-          }
-          if (relatedEntityCount.appCount) {
-            domainNode.data.count = relatedEntityCount.appCount
-            nodes.push(appNode)
-          }
+          iconClass = 'cn-icon cn-icon-resolve-ip'
           break
         }
         case 'domain': {
-          if (relatedEntityCount.ipCount) {
-            ipNode.data.count = relatedEntityCount.ipCount
-            nodes.push(ipNode)
-          }
-          if (relatedEntityCount.subDomainCount) {
-            subdomainNode.data.count = relatedEntityCount.subDomainCount
-            nodes.push(subdomainNode)
-          }
-          if (relatedEntityCount.appCount) {
-            appNode.data.count = relatedEntityCount.appCount
-            nodes.push(appNode)
-          }
+          iconClass = 'cn-icon cn-icon-subdomain'
           break
         }
         case 'app': {
-          if (relatedEntityCount.ipCount) {
-            ipNode.data.count = relatedEntityCount.ipCount
-            nodes.push(ipNode)
-          }
-          if (relatedEntityCount.domainCount) {
-            domainNode.data.count = relatedEntityCount.domainCount
-            nodes.push(domainNode)
-          }
+          iconClass = 'cn-icon cn-icon-app-name'
           break
         }
       }
+      return {
+        id: data.vertex,
+        text: data.vertex,
+        styleClass: `graph-node graph-node--entity graph-node--${relatedType}`,
+        data: {
+          level,
+          iconClass,
+          entityName: data.vertex,
+          entityType: relatedType
+        }
+      }
+    },
+    async generateSecondLevelNodes (rootNode) {
+      /*
+      * 2级及以上的整数层节点，先查数量，大于0的才展示
+      * */
+      const relatedEntityCount = await this.queryRelatedEntityCount(this.entity.entityType, this.entity.entityName)
+      const nodes = []
+      if (relatedEntityCount) {
+        const ipNode = this.generatePrimaryNode({
+          id: 'ip-1',
+          text: this.$t('entities.graph.resolveIp'),
+          data: {
+            level: '2',
+            iconClass: 'cn-icon cn-icon-resolve-ip',
+            entityName: this.entity.entityName,
+            entityType: this.entity.entityType,
+            relatedType: 'ip'
+          }
+        })
+        const domainNode = this.generatePrimaryNode({
+          id: 'domain-1',
+          text: this.$t('entity.graph.resolveDomain'),
+          data: {
+            level: '2',
+            iconClass: 'cn-icon cn-icon-subdomain',
+            entityName: this.entity.entityName,
+            entityType: this.entity.entityType,
+            relatedType: 'domain'
+          }
+        })
+        const subdomainNode = this.generatePrimaryNode({
+          id: 'domain-1',
+          text: this.$t('entities.subdomain'),
+          data: {
+            level: '2',
+            iconClass: 'cn-icon cn-icon-subdomain',
+            entityName: this.entity.entityName,
+            entityType: this.entity.entityType,
+            relatedType: 'domain'
+          }
+        })
+        const appNode = this.generatePrimaryNode({
+          id: 'app-1',
+          text: this.$t('entities.tab.relatedApp'),
+          data: {
+            level: '2',
+            iconClass: 'cn-icon cn-icon-app-name',
+            entityName: this.entity.entityName,
+            entityType: this.entity.entityType,
+            relatedType: 'app'
+          }
+        })
+        switch (this.entity.entityType) {
+          case 'ip': {
+            if (relatedEntityCount.domainCount) {
+              domainNode.data.count = relatedEntityCount.domainCount
+              nodes.push(domainNode)
+            }
+            if (relatedEntityCount.appCount) {
+              domainNode.data.count = relatedEntityCount.appCount
+              nodes.push(appNode)
+            }
+            break
+          }
+          case 'domain': {
+            if (relatedEntityCount.ipCount) {
+              ipNode.data.count = relatedEntityCount.ipCount
+              nodes.push(ipNode)
+            }
+            if (relatedEntityCount.subDomainCount) {
+              subdomainNode.data.count = relatedEntityCount.subDomainCount
+              nodes.push(subdomainNode)
+            }
+            if (relatedEntityCount.appCount) {
+              appNode.data.count = relatedEntityCount.appCount
+              nodes.push(appNode)
+            }
+            break
+          }
+          case 'app': {
+            if (relatedEntityCount.ipCount) {
+              ipNode.data.count = relatedEntityCount.ipCount
+              nodes.push(ipNode)
+            }
+            if (relatedEntityCount.domainCount) {
+              domainNode.data.count = relatedEntityCount.domainCount
+              nodes.push(domainNode)
+            }
+            break
+          }
+        }
+        rootNode.data.childNodes = nodes
+      }
       return nodes
+    },
+    async generateHalfLevelNodes (nodes) {
+      const newNodes = []
+      for (const node of nodes) {
+        const newNodes2 = []
+        const data = await this.queryRelatedEntity(node.data.entityType, node.data.entityName, node.data.relatedType)
+        if (data) {
+          // 生成节点
+          data.list.forEach(d => {
+            newNodes2.push(this.generateEntityNode(String(parseInt(node.data.level) + 0.5), node.data.relatedType, d))
+          })
+          // 更新源节点的已拓展数和列表
+          this.handleLoaded(node, data, newNodes2)
+          newNodes.push(...newNodes2)
+        }
+      }
+      return newNodes
     },
     async queryRelatedEntityCount (entityType, entityName) {
       const response = await axios.get(`${api.entity.entityGraph.relatedEntityCount}/${entityType}?resource=${entityName}`).catch(e => {
@@ -197,16 +281,66 @@ export default {
         return null
       }
     },
-    generateLines (source, targets) {
-      const lines = []
-      targets.forEach(t => {
-        lines.push({
-          from: source.id,
-          to: t.id,
-          color: '#BEBEBE'
-        })
+    async queryRelatedEntity (entityType, entityName, relatedType) {
+      if (entityType === relatedType) {
+        // 若源type和关联type都是domain，说明关联type是subdomain
+        relatedType = 'subdomain'
+      }
+      const response = await axios.get(`${api.entity.entityGraph[`${entityType}Related${_.upperFirst(relatedType)}`]}?resource=${entityName}`).catch(e => {
+        console.error(e)
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
       })
+      if (response.data && response.data.code === 200) {
+        return response.data.data
+      } else {
+        console.error(response)
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(response)
+        return null
+      }
+    },
+    /*
+    * 若只有一个参数，则取参数的childNodes集合作为line终点；
+    * 若有两个参数，则以第一个参数作为line起点，第二个参数作为终点
+    * */
+    generateLines (source, target) {
+      const lines = []
+
+      if (!target) {
+        const sourceArr = []
+        if (!source.length) {
+          sourceArr.push(source)
+        } else {
+          sourceArr.push(...source)
+        }
+        sourceArr.forEach(s => {
+          if (s.data && s.data.childNodes) {
+            const lines2 = []
+            s.data.childNodes.forEach(c => {
+              lines2.push({
+                from: s.id,
+                to: c.id,
+                color: '#BEBEBE'
+              })
+            })
+            s.lines = lines2
+            lines.push(...lines2)
+          }
+        })
+      }
       return lines
+    },
+    handleLoaded (node, data, childNodes) {
+      if (!node.data.loaded) {
+        node.data.loaded = []
+      }
+      node.data.loaded.push(...data.list)
+
+      if (!node.data.childNodes) {
+        node.data.childNodes = []
+      }
+      node.data.childNodes.push(...childNodes)
     },
     onCloseBlock () {
       // todo 关闭右侧graph面板
@@ -256,6 +390,9 @@ export default {
 .entity-graph {
   display: flex;
 
+  .rel-node-peel {
+    padding: 4px;
+  }
   .entity-graph__chart {
     width: calc(100% - 360px);
 
@@ -264,6 +401,7 @@ export default {
       flex-direction: column;
       align-items: center;
       background-color: transparent !important;
+      transition: linear all .2s;
 
       .graph-node__text {
         width: 120px;
@@ -290,7 +428,7 @@ export default {
         }
         &.graph-node--domain {
           border-color: #AFDEED !important;
-          box-shadow: 0 0 0 8px #E3F3F9;
+          box-shadow: 0 0 0 8px rgba(56,172,210,0.14);
           i {
             color: #38ACD2;
           }
@@ -316,11 +454,10 @@ export default {
         height: 66px;
         border: 1px solid #A7B0B9 !important;
         box-shadow: none;
-        transition: linear all .2s;
 
         // 覆盖自带的node点击效果
         &.rel-node-checked {
-          box-shadow: 0 0 0 5px #E9E9E9;
+          box-shadow: 0 0 0 5px rgba(151,151,151,0.21);
           animation: none;
           border-color: #778391 !important;
         }
@@ -330,6 +467,32 @@ export default {
         }
         .graph-node__text {
           padding-top: 24px;
+        }
+      }
+
+      &.graph-node--entity {
+        width: 21px;
+        height: 21px;
+        justify-content: center;
+        border: none !important;
+
+        &.graph-node--ip {
+          i {
+            color: #7E9F54;
+          }
+        }
+        &.graph-node--domain {
+          i {
+            color: #38ACD2;
+          }
+        }
+        &.graph-node--app {
+          i {
+            color: #E5A219;
+          }
+        }
+        i {
+          font-size: 21px;
         }
       }
     }

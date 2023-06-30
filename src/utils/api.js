@@ -255,7 +255,14 @@ export const api = {
     informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list',
     // 实体关系
     entityGraph: {
-      relatedEntityCount: apiVersion + '/entity/graph/relation/summaryCount'
+      relatedEntityCount: apiVersion + '/entity/graph/relation/summaryCount',
+      domainRelatedIp: apiVersion + '/entity/graph/relation/domain/relate/ips',
+      domainRelatedApp: apiVersion + '/entity/graph/relation/domain/relate/apps',
+      domainRelatedSubdomain: apiVersion + '/entity/graph/relation/domain/relate/subdomains',
+      ipRelatedDomain: apiVersion + '/entity/graph/relation/ip/relate/domains',
+      ipRelatedApp: apiVersion + '/entity/graph/relation/ip/relate/apps',
+      appRelatedIp: apiVersion + '/entity/graph/relation/app/relate/ips',
+      appRelatedDomain: apiVersion + '/entity/graph/relation/app/relate/domains'
     }
   }
 }
