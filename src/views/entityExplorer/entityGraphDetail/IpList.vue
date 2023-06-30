@@ -15,17 +15,21 @@
     </div>
 
     <div class="graph-list-expand-btn-block">
-      <el-button type="primary" class="graph-list-expand-btn">
-        <span>
-          <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>
-          {{ $t('entity.graph.continueToExpand') }}
-        </span>
-      </el-button>
+      <div class="graph-list-expand-btn">
+        <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>
+        {{ $t('entity.graph.continueToExpand') }}
+      </div>
+<!--      <el-button type="primary" class="graph-list-expand-btn">-->
+<!--        <span>-->
+<!--          <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>-->
+<!--          {{ $t('entity.graph.continueToExpand') }}-->
+<!--        </span>-->
+<!--      </el-button>-->
     </div>
 
     <div>
       <div class="digital-certificate">
-        <div class="digital-certificate-header padding-b-20">
+        <div class="digital-certificate-header padding-b-16">
           <div class="digital-certificate-header__icon graph-header__icon"></div>
           <div class="graph-list-content-header ">
             {{ $t('entity.graph.expandedEntityQuantity') }}:&nbsp;&nbsp;
@@ -37,9 +41,9 @@
           <div v-for="(item, index) in ipList" :key="index" @mouseenter="onMouseenter(item)">
             <div class="graph-list-item-ip"><span @click="expandDetail">{{ item.ip }}</span></div>
             <div class="graph-list-item-block">
-              <div class="graph-list-item padding-b-10">
+              <div class="graph-list-item padding-b-4">
                 <div class="graph-list-item-label">{{ $t('overall.location') }}:</div>
-                <div class="graph-list-item-value graph-list-item-value1">
+                <div class="graph-list-item-value graph-list-item-value1" style="display: flex;align-items: center;">
                   <img :src="require(`../../../../public/images/flag/${item.flag}.svg`)" class="graph-list-country-flag"/>
                   <span>{{ item.city }}</span>
                 </div>

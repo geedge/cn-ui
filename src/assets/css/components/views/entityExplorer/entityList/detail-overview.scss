@@ -34,6 +34,7 @@
     .overview__title {
       color: #333;
       font-size: 14px;
+      font-weight: 600;
     }
     .overview__content-loading.overview__content {
       position: relative;
@@ -130,6 +131,9 @@
               background-color: #F6C738;
             }
           }
+          &.row__content--width90 {
+            width: 90px;
+          }
           &.row__content--width200 {
             width: 200px;
           }
@@ -144,7 +148,7 @@
         }
         .row__contents {
           display: flex;
-          flex-direction: column;
+          //flex-direction: column;
 
           .row__content {
             padding: 2px 0;
@@ -157,14 +161,21 @@
               padding-bottom: 0;
             }
           }
+          .row__content-accept {
+            margin-left: 39px;
+          }
           .row__charts-msg {
             width: auto;
-            padding-right: 20px;
+            padding-right: 10px;
+          }
+          .new-row__charts-msg {
+            width: auto;
+            padding-right: 10px;
           }
           .row__charts {
             height: 20px;
             width: 60px;
-            padding-left: 5px;
+            //padding-left: 5px;
           }
         }
         .row__charts {
@@ -291,4 +302,7 @@
       }
     }
   }
+}
+.margin-l-140 {
+  margin-left: 140px;
 }

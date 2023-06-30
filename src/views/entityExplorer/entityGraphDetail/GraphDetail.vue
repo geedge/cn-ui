@@ -4,7 +4,7 @@
     <div style="display: flex">
       <div class="graph-detail__icon"><i :class="iconClass"></i></div>
 
-      <div style="display: flex;flex-direction: column;">
+      <div class="graph-detail-header">
         <div class="entity-graph-type">{{ entityType[entity.entityType] }}</div>
         <div class="graph-basic-info">
           <div class="graph-basic-info-name__block">
@@ -24,7 +24,7 @@
   <div class="digital-certificate graph-basic-info__block">
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
-      <div class="digital-certificate-header-name">
+      <div class="graph-basic-info__block-title">
         {{ $t('overall.basicInfo') }}
       </div>
     </div>
@@ -41,12 +41,12 @@
   <div class="digital-certificate graph-basic-info__block">
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
-      <div class="digital-certificate-header-name">
+      <div class="graph-basic-info__block-title">
         {{ $t('entity.graph.relationshipExpansion') }}
       </div>
     </div>
 
-    <div class="graph-basic-info__block-content">
+    <div class="graph-basic-info__block-content" style="margin-top: -4px;">
       <div v-for="item in relationList" :key="item.name" @click="expandRelation(item.name)">
         <el-popover
             v-if="item.value.length === item.total"
@@ -72,7 +72,7 @@
 
         <div v-else class="graph-content-item graph-content-relationship-item">
           <div class="graph-relationship-item-label">
-            <i class="margin-r-6" :class="item.icon"></i>
+            <i class="graph-relationship-item-label-icon margin-r-6" :class="item.icon"></i>
             <span>{{ item.label }}：</span>
           </div>
           <div class="graph-relationship-item-value">
@@ -94,7 +94,7 @@
   <div class="digital-certificate graph-basic-info__block">
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
-      <div class="digital-certificate-header-name">
+      <div class="graph-basic-info__block-title">
         {{ $t('entity.graph.labels') }}
       </div>
     </div>
@@ -103,7 +103,7 @@
       <div class="graph-tag-list">
         <div v-for="ic in tagList" :key="ic.key">
           <div class="entity-tag graph-tag-item" :class="`entity-tag--level-two-${ic.type}`">
-            {{ic.value}}
+            <span>{{ic.value}}</span>
           </div>
         </div>
       </div>
@@ -185,10 +185,10 @@ export default {
     switch (props.entity.entityType) {
       case 'ip': {
         detailCards.value = _.concat(detailCards.value,
-          { name: 'asn', label: 'ASN', value: '' },
+          { name: 'asn', label: i18n.global.t('entities.asNumber'), value: '' },
           { name: 'asOrg', label: i18n.global.t('entities.asOrg'), value: '' },
-          // { name: 'asSubnet', label: i18n.global.t('entities.asSubnet'), value: '' },
-          { name: 'isp', label: 'ISP', value: '' },
+          { name: 'asSubnet', label: i18n.global.t('entities.asSubnet'), value: '' },
+          { name: 'isp', label: i18n.global.t('entities.graph.isp'), value: '' },
           { name: 'location', label: i18n.global.t('entities.geographicLocation'), value: '' }
           // { name: 'dnsPtr', label: 'DNS PTR', value: '' }
         )

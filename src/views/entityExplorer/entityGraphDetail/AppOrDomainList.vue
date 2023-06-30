@@ -6,7 +6,7 @@
           <i class="graph-list-header-icon" :class="entityIcon"></i>
           <span>{{ $t(entityName) }}</span>
         </div>
-        <div class="graph-list-header-number" style="margin-bottom: 30px">
+        <div class="graph-list-header-number" style="margin-bottom: 24px">
           {{ $t('entity.graph.associatedQuantity') }}：<span>2</span>
         </div>
       </div>
@@ -16,7 +16,7 @@
 
     <div>
       <div class="digital-certificate">
-        <div class="digital-certificate-header padding-b-20">
+        <div class="digital-certificate-header padding-b-12">
           <div class="digital-certificate-header__icon graph-header__icon"></div>
           <div class="graph-list-content-header ">
             {{ $t('entity.graph.expandedEntityQuantity') }}:&nbsp;&nbsp;
