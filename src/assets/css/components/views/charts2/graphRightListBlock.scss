@@ -40,11 +40,10 @@ $font-size: 12px;
   margin-bottom: 24px;
 
   .graph-list-expand-btn {
-    width: 90px;
     height: 28px;
     line-height: 28px;
     background: #38ACD2;
-    border-radius: 4px;
+    border-radius: 3px;
     font-size: 12px;
     color: #FFFFFF;
     display: flex;
@@ -52,8 +51,9 @@ $font-size: 12px;
     justify-content: center;
     font-family: NotoSansHans-Medium;
     font-weight: 500;
-    padding: 10px 0;
+    padding: 14px 10px;
     cursor: pointer;
+    border: 1px solid rgba(46,136,166,0.85);
 
     i {
       font-size: 16px;

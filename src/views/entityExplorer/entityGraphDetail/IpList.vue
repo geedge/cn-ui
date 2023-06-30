@@ -15,16 +15,10 @@
     </div>
 
     <div class="graph-list-expand-btn-block">
-      <div class="graph-list-expand-btn">
-        <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>
+      <div class="graph-list-expand-btn" style="display: inline-flex;" @click="expandList">
+          <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>
         {{ $t('entity.graph.continueToExpand') }}
       </div>
-<!--      <el-button type="primary" class="graph-list-expand-btn">-->
-<!--        <span>-->
-<!--          <i class="cn-icon cn-icon-expand-continue graph-expand-continue"></i>-->
-<!--          {{ $t('entity.graph.continueToExpand') }}-->
-<!--        </span>-->
-<!--      </el-button>-->
     </div>
 
     <div>
@@ -92,6 +86,10 @@ export default {
     onMouseenter (val) {
       // 鼠标移动过graph列表名称时，graph图的分支图形会变大一点
       this.$emit('mouseenter', val)
+    },
+    expandList () {
+      // 继续拓展ip列表，传递信息，调用接口
+      // this.$emit('expandList')
     }
   }
 }
