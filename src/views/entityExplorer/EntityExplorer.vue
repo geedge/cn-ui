@@ -442,7 +442,8 @@ export default {
         q: q,
         mode: mode,
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        endTime: getSecond(this.timeFilter.endTime),
+        range: this.timeFilter.dateRangeValue
       })
 
       if (!this.showList) {
@@ -454,7 +455,8 @@ export default {
             q: q,
             mode: mode,
             startTime: getSecond(this.timeFilter.startTime),
-            endTime: getSecond(this.timeFilter.endTime)
+            endTime: getSecond(this.timeFilter.endTime),
+            range: this.timeFilter.dateRangeValue
           }
         })
         this.showList = true
@@ -837,7 +839,6 @@ export default {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
-    timeFilter.value.dateRangeValue = 60
     return {
       timeFilter
     }
