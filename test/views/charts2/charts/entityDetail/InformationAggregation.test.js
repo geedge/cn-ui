@@ -2,7 +2,7 @@ import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/Inf
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import mockData from './mockData/InformationAggregation'
-import ElementPlus from '_element-plus@1.0.2-beta.71@element-plus'
+import ElementPlus from 'element-plus'
 
 let wrapper = null
 const mockGet = mockData.common
