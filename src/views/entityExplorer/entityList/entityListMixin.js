@@ -140,7 +140,7 @@ export default {
         path: '/entityGraph',
         query: {
           entityType: this.entityData.entityType,
-          name: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
+          entityName: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
         }
       })
       window.open(href, '_blank')
