@@ -52,7 +52,9 @@
     <el-drawer
             v-model="rightBox.show"
             direction="rtl"
+            custom-class="common-right-box"
             :with-header="false"
+            :size="700"
             destroy-on-close>
       <role-box :object="object" @close="closeRightBox"></role-box>
     </el-drawer>

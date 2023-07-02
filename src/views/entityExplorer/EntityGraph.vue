@@ -1,46 +1,37 @@
 <template>
   <div class="entity-graph">
     <div class="entity-graph__chart" id="entityGraph">
-      <relation-graph ref="relationGraph" :options="chartOption">
-        <template #node="{ node }">
-          <!-- root节点 -->
-          <template v-if="node.data.level === '1'">
-            <i :class="node.data.iconClass"></i>
-            <div class="graph-node__text">{{node.text}}</div>
-          </template>
-          <!-- primary节点 -->
-          <template v-else-if="node.data.level && node.data.level.length === 1">
-            <i :class="node.data.iconClass"></i>
-            <div class="graph-node__text">{{node.text}}({{node.data.count}})</div>
-          </template>
-          <!-- entity节点 -->
-          <template v-else-if="node.data.level && node.data.level.length === 3">
-            <i :class="node.data.iconClass"></i>
-          </template>
-        </template>
-      </relation-graph>
     </div>
-    <div class="entity-graph__detail">
-      <ip-list
-          v-if="mode === 'ipList'"
-          :entity="entity"
-          @closeBlock="onCloseBlock"
-          @mouseenter="onMouseenter"
-          @expandDetail="onExpandDetail">
-      </ip-list>
-      <app-or-domain-list
-          v-if="mode === 'appList' || mode === 'domainList'"
-          :entity="entity"
-          @expandDetail="onExpandDetail"
-          @mouseenter="onMouseenter"
-          @closeBlock="onCloseBlock">
-      </app-or-domain-list>
-      <graph-detail
-          v-if="mode === 'appDetail' || mode === 'ipDetail' || mode === 'domainDetail'"
-          :entity="entity"
-          @expand="onExpand"
-          @closeBlock="onCloseBlock">
-      </graph-detail>
+    <div class="entity-graph__right-box">
+      <el-drawer
+          v-model="rightBox.show"
+          direction="rtl"
+          custom-class="entity-graph__detail"
+          :modal="false"
+          :size="360"
+          :with-header="false"
+          destroy-on-close>
+        <ip-list
+            v-if="rightBox.mode === 'ipList'"
+            :entity="entity"
+            @closeBlock="onCloseBlock"
+            @mouseenter="onMouseenter"
+            @expandDetail="onExpandDetail">
+        </ip-list>
+        <app-or-domain-list
+            v-if="rightBox.mode === 'appList' || rightBox.mode === 'domainList'"
+            :entity="entity"
+            @expandDetail="onExpandDetail"
+            @mouseenter="onMouseenter"
+            @closeBlock="onCloseBlock">
+        </app-or-domain-list>
+        <graph-detail
+            v-if="rightBox.mode === 'appDetail' || rightBox.mode === 'ipDetail' || rightBox.mode === 'domainDetail'"
+            :entity="entity"
+            @expand="onExpand"
+            @closeBlock="onCloseBlock">
+        </graph-detail>
+      </el-drawer>
     </div>
   </div>
 </template>
@@ -54,104 +45,256 @@ import { ref, shallowRef } from 'vue'
 import _ from 'lodash'
 import { api } from '@/utils/api'
 import axios from 'axios'
-import RelationGraph from 'relation-graph/vue3'
+import G6 from '@antv/g6'
+import testData from './testData'
 
 export default {
   name: 'EntityRelationship',
   components: {
     IpList,
     GraphDetail,
-    AppOrDomainList,
-    RelationGraph
+    AppOrDomainList
   },
   data () {
     return {
+      rightBox: {
+        show: false
+      },
       chartOption: {
-        debug: false
+        container: 'entityGraph',
+        layout: {
+          type: 'force',
+          preventOverlap: true,
+          linkDistance: (d) => {
+            if (!d.target.isRoot && d.target.data.level && d.target.data.level.length === 1) {
+              return 300
+            }
+            return 80
+          },
+          nodeStrength: (d) => {
+            if (!d.isRoot && d.data.level && d.data.level.length === 1) {
+              return -50
+            }
+            return -10
+          },
+          edgeStrength: (d) => {
+            if (!d.target.isRoot && d.target.data.level && d.target.data.level.length === 1) {
+              return 0.1
+            }
+            return 0.7
+          }
+        },
+        modes: {
+          default: ['drag-nodes', 'click-select', 'zoom-canvas']
+        }
       }
     }
   },
   methods: {
     async init () {
-      /* 定义了以下几种节点类型和节点状态：
-      *  1.类型：根节点 root；状态：ip、app、domain;
-      *  2.类型：普通节点 primary；状态：normal、active;
-      *  3.类型：实体 entity；状态1：ip、app、domain；状态2：normal、active.
-      *
-      *  ip基色#7E9F54，domain基色#38ACD2，app基色E5A219
-      *
-      *  为方便在逻辑上区分实体列表（圆圈节点）和实体（纯图标节点），将层级分为整层和半层两种，实体列表为整层，实体为半层。
-      *  */
-      this.graphData.rootId = this.entity.entityName
-      // 初始化时加载到2层半
-      const rootNode = this.generateRootNode()
+      const _this = this
+      const graph = new G6.Graph(this.chartOption)
+      /*const rootNode = this.generateRootNode()
       const secondLevelNodes = await this.generateSecondLevelNodes(rootNode)
       const secondHalfLevelNodes = await this.generateHalfLevelNodes(secondLevelNodes)
       this.graphData.nodes = [rootNode, ...secondLevelNodes, ...secondHalfLevelNodes]
-      this.graphData.lines = this.generateLines(rootNode)
-      this.graphData.lines.push(...this.generateLines(secondLevelNodes))
+      const rootEdges = this.generateEdges(rootNode)
+      const secondEdges = this.generateEdges(secondLevelNodes)
+      this.graphData.edges = [...rootEdges, ...secondEdges]
+      graph.data(this.graphData)*/
+      graph.data(testData)
+      graph.render()
 
-      console.info(JSON.stringify(this.graphData))
-      this.$refs.relationGraph.setJsonData(this.graphData)
+      graph.on('node:dragstart', function (e) {
+        graph.layout()
+        refreshDragedNodePosition(e)
+      })
+      graph.on('node:drag', function (e) {
+        refreshDragedNodePosition(e)
+      })
+      graph.on('node:dragend', function (e) {
+        e.item.get('model').fx = null
+        e.item.get('model').fy = null
+      })
+      graph.on('node:click', function (e) {
+        const node = e.item.get('model')
+        if (!_this.rightBox.show) {
+          _this.rightBox.show = true
+        }
+        if (node.data.level && node.data.level.length === 1) {
+          _this.rightBox.mode = `${node.data.type}List`
+        } else {
+          _this.rightBox.mode = `${node.data.type}Detail`
+        }
+      })
+      function refreshDragedNodePosition (e) {
+        const model = e.item.get('model')
+        model.fx = e.x
+        model.fy = e.y
+      }
+    },
+    generateIconUrl (entityType, colored, isRoot) {
+      let subfix = ''
+      if (entityType === 'domain' && isRoot) {
+        subfix = '-colored2'
+      } else {
+        subfix = colored ? '-colored' : ''
+      }
+      return `${window.location.protocol}//${window.location.host}/images/entity-symbol2/${entityType}${subfix}.svg`
     },
     generateRootNode () {
-      let iconClass = ''
+      let borderColor = ''
+      let shadowColor = ''
+      let width = 0
+      let height = 0
       switch (this.entity.entityType) {
         case 'ip': {
-          iconClass = 'cn-icon cn-icon-resolve-ip'
+          borderColor = '#CBD9BB'
+          shadowColor = 'rgba(126,159,84,0.14)'
+          width = 36
+          height = 33
           break
         }
         case 'domain': {
-          iconClass = 'cn-icon cn-icon-domain1'
+          borderColor = '#AFDEED'
+          shadowColor = 'rgba(56,172,210,0.14)'
+          width = 36
+          height = 30
           break
         }
         case 'app': {
-          iconClass = 'cn-icon cn-icon-app-name'
+          borderColor = '#F5DAA3'
+          shadowColor = 'rgba(229,162,25,0.14)'
+          width = 30
+          height = 36
           break
         }
       }
       return {
+        isRoot: true,
+        type: 'circle',
         id: this.entity.entityName,
-        text: this.entity.entityName,
-        nodeShape: 0,
-        styleClass: `graph-node graph-node--root graph-node--${this.entity.entityType}`,
-        data: { level: '1', iconClass }
+        label: this.entity.entityName,
+        size: 82,
+        x: 0,
+        y: 0,
+        icon: {
+          show: true,
+          img: this.generateIconUrl(this.entity.entityType, true, true),
+          width,
+          height
+        },
+        style: {
+          fill: 'white',
+          stroke: borderColor,
+          lineWidth: 5
+        },
+        labelCfg: {
+          position: 'bottom',
+          offset: 10,
+          style: {
+            fill: '#353636',
+            fontSize: 12
+          }
+        },
+        data: {
+          level: '1'
+        }
       }
     },
     generatePrimaryNode (props) {
-      const node = {
-        styleClass: 'graph-node graph-node--primary'
-      }
-      return {
-        ...node,
-        ...props
-      }
-    },
-    generateEntityNode (level, relatedType, data) {
-      let iconClass = ''
-      switch (relatedType) {
+      let width = 0
+      let height = 0
+      switch (props.data.type) {
         case 'ip': {
-          iconClass = 'cn-icon cn-icon-resolve-ip'
+          width = 24
+          height = 22
           break
         }
         case 'domain': {
-          iconClass = 'cn-icon cn-icon-subdomain'
+          width = 24
+          height = 24
           break
         }
         case 'app': {
-          iconClass = 'cn-icon cn-icon-app-name'
+          width = 20
+          height = 24
+          break
+        }
+      }
+      return {
+        ...props,
+        type: 'circle',
+        size: 66,
+        icon: {
+          show: true,
+          img: this.generateIconUrl(props.data.type, false),
+          width,
+          height
+        },
+        style: {
+          fill: 'white',
+          stroke: '#A7B0B9',
+          lineWidth: 1
+        },
+        labelCfg: {
+          position: 'bottom',
+          offset: 10,
+          style: {
+            fill: '#353636',
+            fontSize: 12
+          }
+        }
+      }
+    },
+    generateEntityNode (level, type, data) {
+      let width = 0
+      let height = 0
+      switch (type) {
+        case 'ip': {
+          width = 20
+          height = 18
+          break
+        }
+        case 'domain': {
+          width = 20
+          height = 20
+          break
+        }
+        case 'app': {
+          width = 17
+          height = 20
           break
         }
       }
       return {
         id: data.vertex,
-        text: data.vertex,
-        styleClass: `graph-node graph-node--entity graph-node--${relatedType}`,
+        type: 'circle',
+        size: 28,
+        icon: {
+          show: true,
+          img: this.generateIconUrl(type, true),
+          width,
+          height
+        },
+        style: {
+          fill: 'transparent',
+          stroke: 'transparent',
+          lineWidth: 0
+        },
+        labelCfg: {
+          position: 'bottom',
+          offset: 10,
+          style: {
+            fill: '#353636',
+            fontSize: 12
+          }
+        },
         data: {
           level,
-          iconClass,
-          entityName: data.vertex,
-          entityType: relatedType
+          type,
+          name: data.vertex,
+          data
         }
       }
     },
@@ -164,56 +307,62 @@ export default {
       if (relatedEntityCount) {
         const ipNode = this.generatePrimaryNode({
           id: 'ip-1',
-          text: this.$t('entities.graph.resolveIp'),
+          label: this.$t('entities.graph.resolveIp'),
+          x: 0,
+          y: 300,
           data: {
             level: '2',
-            iconClass: 'cn-icon cn-icon-resolve-ip',
-            entityName: this.entity.entityName,
-            entityType: this.entity.entityType,
-            relatedType: 'ip'
+            sourceName: this.entity.entityName,
+            sourceType: this.entity.entityType,
+            type: 'ip'
           }
         })
         const domainNode = this.generatePrimaryNode({
           id: 'domain-1',
-          text: this.$t('entity.graph.resolveDomain'),
+          label: this.$t('entity.graph.resolveDomain'),
+          x: 260,
+          y: -150,
           data: {
             level: '2',
-            iconClass: 'cn-icon cn-icon-subdomain',
-            entityName: this.entity.entityName,
-            entityType: this.entity.entityType,
-            relatedType: 'domain'
+            sourceName: this.entity.entityName,
+            sourceType: this.entity.entityType,
+            type: 'domain'
           }
         })
         const subdomainNode = this.generatePrimaryNode({
           id: 'domain-1',
-          text: this.$t('entities.subdomain'),
+          label: this.$t('entities.subdomain'),
+          x: 260,
+          y: -150,
           data: {
             level: '2',
-            iconClass: 'cn-icon cn-icon-subdomain',
-            entityName: this.entity.entityName,
-            entityType: this.entity.entityType,
-            relatedType: 'domain'
+            sourceName: this.entity.entityName,
+            sourceType: this.entity.entityType,
+            type: 'domain'
           }
         })
         const appNode = this.generatePrimaryNode({
           id: 'app-1',
-          text: this.$t('entities.tab.relatedApp'),
+          label: this.$t('entities.tab.relatedApp'),
+          x: -260,
+          y: -150,
           data: {
             level: '2',
-            iconClass: 'cn-icon cn-icon-app-name',
-            entityName: this.entity.entityName,
-            entityType: this.entity.entityType,
-            relatedType: 'app'
+            sourceName: this.entity.entityName,
+            sourceType: this.entity.entityType,
+            type: 'app'
           }
         })
         switch (this.entity.entityType) {
           case 'ip': {
             if (relatedEntityCount.domainCount) {
               domainNode.data.count = relatedEntityCount.domainCount
+              domainNode.label += `(${relatedEntityCount.domainCount})`
               nodes.push(domainNode)
             }
             if (relatedEntityCount.appCount) {
-              domainNode.data.count = relatedEntityCount.appCount
+              appNode.data.count = relatedEntityCount.appCount
+              appNode.label += `(${relatedEntityCount.appCount})`
               nodes.push(appNode)
             }
             break
@@ -221,14 +370,17 @@ export default {
           case 'domain': {
             if (relatedEntityCount.ipCount) {
               ipNode.data.count = relatedEntityCount.ipCount
+              ipNode.label += `(${relatedEntityCount.ipCount})`
               nodes.push(ipNode)
             }
             if (relatedEntityCount.subDomainCount) {
               subdomainNode.data.count = relatedEntityCount.subDomainCount
+              subdomainNode.label += `(${relatedEntityCount.subDomainCount})`
               nodes.push(subdomainNode)
             }
             if (relatedEntityCount.appCount) {
               appNode.data.count = relatedEntityCount.appCount
+              appNode.label += `(${relatedEntityCount.appCount})`
               nodes.push(appNode)
             }
             break
@@ -236,10 +388,12 @@ export default {
           case 'app': {
             if (relatedEntityCount.ipCount) {
               ipNode.data.count = relatedEntityCount.ipCount
+              ipNode.label += `(${relatedEntityCount.ipCount})`
               nodes.push(ipNode)
             }
             if (relatedEntityCount.domainCount) {
               domainNode.data.count = relatedEntityCount.domainCount
+              domainNode.label += `(${relatedEntityCount.domainCount})`
               nodes.push(domainNode)
             }
             break
@@ -247,17 +401,18 @@ export default {
         }
         rootNode.data.childNodes = nodes
       }
+      console.info(nodes)
       return nodes
     },
     async generateHalfLevelNodes (nodes) {
       const newNodes = []
       for (const node of nodes) {
         const newNodes2 = []
-        const data = await this.queryRelatedEntity(node.data.entityType, node.data.entityName, node.data.relatedType)
+        const data = await this.queryRelatedEntity(node.data.sourceType, node.data.sourceName, node.data.type)
         if (data) {
           // 生成节点
           data.list.forEach(d => {
-            newNodes2.push(this.generateEntityNode(String(parseInt(node.data.level) + 0.5), node.data.relatedType, d))
+            newNodes2.push(this.generateEntityNode(String(parseInt(node.data.level) + 0.5), node.data.type, d))
           })
           // 更新源节点的已拓展数和列表
           this.handleLoaded(node, data, newNodes2)
@@ -281,12 +436,12 @@ export default {
         return null
       }
     },
-    async queryRelatedEntity (entityType, entityName, relatedType) {
-      if (entityType === relatedType) {
+    async queryRelatedEntity (sourceType, sourceName, type) {
+      if (sourceType === type) {
         // 若源type和关联type都是domain，说明关联type是subdomain
-        relatedType = 'subdomain'
+        type = 'subdomain'
       }
-      const response = await axios.get(`${api.entity.entityGraph[`${entityType}Related${_.upperFirst(relatedType)}`]}?resource=${entityName}`).catch(e => {
+      const response = await axios.get(`${api.entity.entityGraph[`${sourceType}Related${_.upperFirst(type)}`]}?resource=${sourceName}`).catch(e => {
         console.error(e)
         this.showError = true
         this.errorMsg = this.errorMsgHandler(e)
@@ -304,8 +459,8 @@ export default {
     * 若只有一个参数，则取参数的childNodes集合作为line终点；
     * 若有两个参数，则以第一个参数作为line起点，第二个参数作为终点
     * */
-    generateLines (source, target) {
-      const lines = []
+    generateEdges (source, target) {
+      const edges = []
 
       if (!target) {
         const sourceArr = []
@@ -316,20 +471,26 @@ export default {
         }
         sourceArr.forEach(s => {
           if (s.data && s.data.childNodes) {
-            const lines2 = []
+            const edges2 = []
             s.data.childNodes.forEach(c => {
-              lines2.push({
-                from: s.id,
-                to: c.id,
-                color: '#BEBEBE'
+              edges2.push({
+                id: `${s.id}-${c.id}`,
+                source: s.id,
+                target: c.id,
+                style: {
+                  stroke: '#BEBEBE',
+                  endArrow: {
+                    path: G6.Arrow.triangle(5, 5)
+                  }
+                }
               })
             })
-            s.lines = lines2
-            lines.push(...lines2)
+            s.edges = edges2
+            edges.push(...edges2)
           }
         })
       }
-      return lines
+      return edges
     },
     handleLoaded (node, data, childNodes) {
       if (!node.data.loaded) {
@@ -344,10 +505,11 @@ export default {
     },
     onCloseBlock () {
       // todo 关闭右侧graph面板
-      this.mode = ''
+      this.rightBox.mode = ''
+      this.rightBox.show = false
     },
     onExpandDetail (mode) {
-      this.mode = mode
+      this.rightBox.mode = mode
     },
     onExpand (val) {
       // todo 调用接口，拓展关系
@@ -371,7 +533,10 @@ export default {
       entityType,
       entityName
     }
-    const mode = ref('ipList') // ipList, ipDetail, domainList, domainDetail, appList, appDetail
+    const rightBox = ref({
+      mode: 'ipList', // ipList, ipDetail, domainList, domainDetail, appList, appDetail
+      show: false
+    })
 
     // echarts关系图的节点和连线
     const graphData = ref({})
@@ -381,7 +546,7 @@ export default {
       graphData,
       entity,
       myChart,
-      mode
+      rightBox
     }
   }
 }
@@ -390,11 +555,8 @@ export default {
 .entity-graph {
   display: flex;
 
-  .rel-node-peel {
-    padding: 4px;
-  }
   .entity-graph__chart {
-    width: calc(100% - 360px);
+    width: 100%;
 
     .graph-node {
       display: flex;
@@ -421,7 +583,7 @@ export default {
         }
         &.graph-node--ip {
           border-color: #CBD9BB !important;
-          box-shadow: 0 0 0 8px #EDF1E7;
+          box-shadow: 0 0 0 8px rgba(126,159,84,0.14);
           i {
             color: #7E9F54;
           }
@@ -435,7 +597,7 @@ export default {
         }
         &.graph-node--app {
           border-color: #F5DAA3 !important;
-          box-shadow: 0 0 0 8px #FBF2DF;
+          box-shadow: 0 0 0 8px rgba(229,162,25,0.14);
           i {
             color: #E5A219;
           }
@@ -497,12 +659,19 @@ export default {
       }
     }
   }
-
-  .entity-graph__detail {
-    width: 360px;
-    border-left: 1px solid #E2E5EC;
-    overflow: auto;
-    padding: 20px;
+  .entity-graph__right-box {
+    & > div {
+      left: unset !important;
+      right: 0 !important;
+      width: 360px;
+    }
+    .entity-graph__detail {
+      height: calc(100% - 100px) !important;
+      top: 100px !important;
+      border-left: 1px solid #E2E5EC;
+      overflow: auto;
+      padding: 20px;
+    }
   }
 }
 </style>
