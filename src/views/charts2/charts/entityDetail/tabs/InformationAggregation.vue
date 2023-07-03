@@ -111,7 +111,7 @@ export default {
       axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`).then(response => {
         const res = response.data
         if (res.code === 200) {
-          //this.isNoData = res.data.result.length === 0
+          // this.isNoData = res.data.result.length === 0
           this.showError = false
           if (res.data.result.length > 0) {
             res.data.result.forEach(r => {
@@ -148,9 +148,9 @@ export default {
         this.showError = true
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
-        if(this.informationAggregationList.length > 0){
+        if (this.informationAggregationList.length > 0) {
           this.isNoData = false
-        }else {
+        } else {
           this.isNoData = true
         }
         this.loading = false

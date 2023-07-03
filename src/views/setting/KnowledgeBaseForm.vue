@@ -314,12 +314,12 @@ export default {
             this.showImportedData[index].isValid = 0
             callback(new Error())
           }
-        } else if(formal.indexOf('-') !== -1) {
+        } else if (formal.indexOf('-') !== -1) {
           let split2 = formal.split('-')
-          let startIp = split2[0].replace(/\s+/g, '');
-          let endIp = split2[1].replace(/\s+/g, '');
+          let startIp = split2[0].replace(/\s+/g, '')
+          let endIp = split2[1].replace(/\s+/g, '')
           if (regular.ipv4Range.test(startIp) && regular.ipv4Range.test(endIp)) {
-            //ipv4对比大小
+            // ipv4对比大小
             if (!(regular.compareIP4(startIp) <= regular.compareIP4(endIp))) {
               validate = false
               this.editTagErrorTip = rule.message
@@ -328,7 +328,7 @@ export default {
               callback(new Error())
             }
           } else if (regular.ipv6Range.test(startIp) && regular.ipv6Range.test(endIp)) {
-            //ipv6对比大小
+            // ipv6对比大小
             if (!regular.ipv6Reg(startIp, endIp)) {
               validate = false
               this.editTagErrorTip = rule.message
@@ -953,7 +953,7 @@ export default {
                 ip1: data.tagName.substring(0, sepCidrIndex),
                 ip2: data.tagName.substring(sepCidrIndex + 1)
               }
-            } else if(sepRangeIndex > -1){
+            } else if (sepRangeIndex > -1) {
               updateItemData = {
                 ...updateItemData,
                 addrFormat: 'Range',
@@ -1002,7 +1002,7 @@ export default {
               ip1: data.tagName.substring(0, sepCidrIndex),
               ip2: data.tagName.substring(sepCidrIndex + 1)
             }
-          } else if(sepRangeIndex > -1){
+          } else if (sepRangeIndex > -1) {
             addItem = {
               ...addItem,
               addrFormat: 'Range',

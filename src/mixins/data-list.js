@@ -105,14 +105,12 @@ export default {
       if (isAll) {
         this.searchLabel = null
       } else if (isClearType) {
-        // this.searchLabel.tagType = ''
         this.searchLabel.type = ''// 换新接口需要修改的属性名称
       }
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
       this.searchLabel = { ...this.searchLabel, ...this.pageObj }
-      // this.tableData = []
       this.isNoData = false
       this.toggleLoading(true)
       delete this.searchLabel.total
@@ -124,6 +122,11 @@ export default {
         if (response.code === 200) {
           this.tableData = response.data.list
           this.pageObj.total = response.data.total
+          if (!this.tableData || this.tableData.length === 0) {
+            this.isNoData = true
+          } else {
+            this.isNoData = false
+          }
         } else {
           console.error(response)
           this.isNoData = true
@@ -133,13 +136,10 @@ export default {
             this.$message.error('Something went wrong...')
           }
         }
+      }).catch(() => {
+        this.isNoData = true
       }).finally(() => {
         this.toggleLoading(false)
-        if (!this.tableData || this.tableData.length === 0) {
-          this.isNoData = true
-        } else {
-          this.isNoData = false
-        }
       })
     },
     del (row) {
@@ -217,6 +217,7 @@ export default {
     },
     pageSize (val) {
       this.pageObj.pageSize = val
+      this.pageObj.pageNo = 1
       localStorage.setItem(storageKey.pageSize + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId, val)
       this.getTableData()
     },
@@ -402,9 +403,9 @@ export default {
       this.pageObj.pageSize = pageSize
     }
     const userId = localStorage.getItem(storageKey.userId)
-    let tableName = dbTableColumnCustomizeConfigPre + '-' + this.tableId
+    const tableName = dbTableColumnCustomizeConfigPre + '-' + this.tableId
     let localStorageTableTitle = []
-    if(indexedDBUtils.selectTable(tableName)){
+    if (indexedDBUtils.selectTable(tableName)) {
       localStorageTableTitle = await indexedDBUtils.selectTable(tableName).get({ id: userId })
     }
 
