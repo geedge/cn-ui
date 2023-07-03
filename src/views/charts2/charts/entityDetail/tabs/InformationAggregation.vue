@@ -3,7 +3,6 @@
     <!--初步方案：error提示替换table。后续若改为table内error提示，记得在此修改-->
     <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
     <chart-no-data v-if="isNoData && !showError" test-id="no-data"></chart-no-data>
-
     <div v-if="!isNoData && !showError && !loading" class="information-aggregation__table">
       <el-table
           style="width: 100%"
@@ -40,32 +39,12 @@
             prop="intelligenceContent"
         >
           <template #default="scope">
-            <div class="intelligence-content">
-<!--              <div class="information-aggregation-tags">
-                <template v-for="ic in scope.row.intelligenceContent" >
-                  <template v-if="ic.type === 0" >
-                    <div v-if="ic.threatLevel === -1" class="entity-tag entity-tag--small entity-tag--level-one-negative margin-r-6">
-                      {{ic.value}}
-                    </div>
-                    <div v-else-if="ic.threatLevel === 0" class="entity-tag entity-tag--small entity-tag--level-one-normal margin-r-6">
-                      {{ic.value}}
-                    </div>
-                    <div v-else-if="ic.threatLevel === 1" class="entity-tag entity-tag--small entity-tag--level-one-positive margin-r-6">
-                      {{ic.value}}
-                    </div>
-                  </template>
-                </template>
-              </div>-->
               <div class="information-aggregation-tags">
-                <div v-for="ic in scope.row.intelligenceContent" :key="ic.key">
-                  <div>
-                    <div class="entity-tag entity-tag--small margin-r-6" :test-id="`entity-tag${scope.$index}`" :class="`entity-tag--level-two-${ic.type}`">
-                      {{ic.value}}
-                    </div>
-                  </div>
+                <div  v-for="ic in scope.row.intelligenceContent" :key="ic.key"
+                      class="entity-tag entity-tag--small margin-r-6" :test-id="`entity-tag${scope.$index}`" :class="`entity-tag--level-two-${ic.type}`">
+                  {{ic.value}}
                 </div>
               </div>
-            </div>
           </template>
         </el-table-column>
         <el-table-column
@@ -126,14 +105,15 @@ export default {
     },
     getData () {
       this.loading = true
+      this.showError = false
       this.toggleLoading(true)
       this.informationAggregationList = []
       axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`).then(response => {
         const res = response.data
         if (res.code === 200) {
-          this.isNoData = res.data.result.length === 0
+          //this.isNoData = res.data.result.length === 0
           this.showError = false
-          if (!this.isNoData) {
+          if (res.data.result.length > 0) {
             res.data.result.forEach(r => {
               Object.keys(r).forEach(k => {
                 const aggregation = {
@@ -161,15 +141,18 @@ export default {
           }
         } else {
           this.showError = true
-          this.isNoData = false
           this.errorMsg = this.errorMsgHandler(res)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
-        this.isNoData = false
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
+        if(this.informationAggregationList.length > 0){
+          this.isNoData = false
+        }else {
+          this.isNoData = true
+        }
         this.loading = false
         this.toggleLoading(false)
       })

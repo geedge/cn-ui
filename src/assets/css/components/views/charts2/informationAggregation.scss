@@ -1,19 +1,13 @@
 .information-aggregation__table {
-  .intelligence-content {
-    padding-top:10px !important;
-    padding-bottom:4px !important;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
     .information-aggregation-tags {
       display: flex;
       flex-direction: row;
-      justify-content: center;
+      justify-content: left;
       align-items: flex-start;
       margin-bottom:6px;
+      padding-top:10px !important;
+      padding-bottom:4px !important;
     }
-  }
   .information-aggregation__valid {
     background: #eff3e9;
     border-radius: 10px;

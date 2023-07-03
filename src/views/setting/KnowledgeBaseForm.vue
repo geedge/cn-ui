@@ -314,6 +314,35 @@ export default {
             this.showImportedData[index].isValid = 0
             callback(new Error())
           }
+        } else if(formal.indexOf('-') !== -1) {
+          let split2 = formal.split('-')
+          let startIp = split2[0].replace(/\s+/g, '');
+          let endIp = split2[1].replace(/\s+/g, '');
+          if (regular.ipv4Range.test(startIp) && regular.ipv4Range.test(endIp)) {
+            //ipv4对比大小
+            if (!(regular.compareIP4(startIp) <= regular.compareIP4(endIp))) {
+              validate = false
+              this.editTagErrorTip = rule.message
+              this.showImportedData[index].msg = rule.message
+              this.showImportedData[index].isValid = 0
+              callback(new Error())
+            }
+          } else if (regular.ipv6Range.test(startIp) && regular.ipv6Range.test(endIp)) {
+            //ipv6对比大小
+            if (!regular.ipv6Reg(startIp, endIp)) {
+              validate = false
+              this.editTagErrorTip = rule.message
+              this.showImportedData[index].msg = rule.message
+              this.showImportedData[index].isValid = 0
+              callback(new Error())
+            }
+          } else {
+            validate = false
+            this.editTagErrorTip = rule.message
+            this.showImportedData[index].msg = rule.message
+            this.showImportedData[index].isValid = 0
+            callback(new Error())
+          }
         } else {
           if (!regular.ip.test(formal)) {
             validate = false
@@ -481,7 +510,7 @@ export default {
           } else if (format === 'CIDR') {
             item.tagName = item.ip1 + '/' + item.ip2
           } else if (format === 'Range') {
-            item.tagName = item.ip1 + '~' + item.ip2
+            item.tagName = item.ip1 + '-' + item.ip2
           }
         } else if (this.editObject.source === knowledgeSourceValue.domainTag) {
           item.tagName = item.domain
@@ -915,13 +944,21 @@ export default {
             isValid: 1
           }
           if (this.editObject.source === knowledgeSourceValue.ipTag) {
-            const sepIndex = data.tagName.indexOf('/')
-            if (sepIndex > -1) { // CIDR
+            const sepCidrIndex = data.tagName.indexOf('/')
+            const sepRangeIndex = data.tagName.indexOf('-')
+            if (sepCidrIndex > -1) { // CIDR
               updateItemData = {
                 ...updateItemData,
                 addrFormat: 'CIDR',
-                ip1: data.tagName.substring(0, sepIndex),
-                ip2: data.tagName.substring(sepIndex + 1)
+                ip1: data.tagName.substring(0, sepCidrIndex),
+                ip2: data.tagName.substring(sepCidrIndex + 1)
+              }
+            } else if(sepRangeIndex > -1){
+              updateItemData = {
+                ...updateItemData,
+                addrFormat: 'Range',
+                ip1: data.tagName.substring(0, sepRangeIndex),
+                ip2: data.tagName.substring(sepRangeIndex + 1)
               }
             } else { // Single
               updateItemData = {
@@ -956,13 +993,21 @@ export default {
         }
         let addItem = data
         if (this.editObject.source === knowledgeSourceValue.ipTag) {
-          const sepIndex = data.tagName.indexOf('/')
-          if (sepIndex > -1) { // CIDR
+          const sepCidrIndex = data.tagName.indexOf('/')
+          const sepRangeIndex = data.tagName.indexOf('-')
+          if (sepCidrIndex > -1) { // CIDR
             addItem = {
               ...addItem,
               addrFormat: 'CIDR',
-              ip1: data.tagName.substring(0, sepIndex),
-              ip2: data.tagName.substring(sepIndex + 1)
+              ip1: data.tagName.substring(0, sepCidrIndex),
+              ip2: data.tagName.substring(sepCidrIndex + 1)
+            }
+          } else if(sepRangeIndex > -1){
+            addItem = {
+              ...addItem,
+              addrFormat: 'Range',
+              ip1: data.tagName.substring(0, sepRangeIndex),
+              ip2: data.tagName.substring(sepRangeIndex + 1)
             }
           } else { // Single
             addItem = {
