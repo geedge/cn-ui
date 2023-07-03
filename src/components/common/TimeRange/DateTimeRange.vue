@@ -251,6 +251,7 @@ export default {
      * 重置时间，将时间存入缓存，并触发方法请求接口刷新界面
      */
     const returnValue = () => {
+      store.commit('setTimeFilter', { startTime: myStartTime.value, endTime: myEndTime.value, range: dateRangeValue.value })
       cancelHttp()
       rangeHistory.value.unshift({
         start: myStartTime.value,

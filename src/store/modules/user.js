@@ -13,7 +13,8 @@ const user = {
       menuList: [],
       buttonList: [],
       roleList: [],
-      drilldownTableConfigList: []
+      drilldownTableConfigList: [],
+      timeFilter: {}
     }
   },
   mutations: {
@@ -33,6 +34,9 @@ const user = {
       state.menuList = []
       state.buttonList = []
       state.roleList = []
+    },
+    setTimeFilter (state, data) {
+      state.timeFilter = data
     }
   },
   getters: {
@@ -47,6 +51,9 @@ const user = {
     },
     drilldownTableConfigList (state) {
       return state.drilldownTableConfigList
+    },
+    timeFilter (state) {
+      return state.timeFilter
     }
   },
   actions: {

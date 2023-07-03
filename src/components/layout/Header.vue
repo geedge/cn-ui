@@ -192,26 +192,27 @@ import { get, put } from '@/utils/http'
 import {
   curTabState,
   entityType,
+  fromRoute,
   networkTable,
   operationType,
   storageKey,
-  wholeScreenRouterMapping,
-  fromRoute
+  wholeScreenRouterMapping
 } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
 import {
+  combineDrilldownTableWithUserConfig,
   combineTabList,
   getDefaultCurTab,
-  getTabList,
-  overwriteUrl,
-  urlParamsHandler,
-  combineDrilldownTableWithUserConfig,
   getDnsMapData,
-  handleSpecialValue
+  getTabList,
+  handleSpecialValue,
+  overwriteUrl,
+  urlParamsHandler
 } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import _ from 'lodash'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'Header',
@@ -359,6 +360,11 @@ export default {
           this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
         }
       }
+    },
+    '$store.getters.timeFilter': function (newVal) {
+      if (newVal && Object.keys(newVal).length > 0) {
+        this.chartTimeFilter = newVal
+      }
     }
   },
   async mounted () {
@@ -375,16 +381,24 @@ export default {
     this.initDropdownList()
   },
   setup () {
-    const dateRangeValue = 60
-    const {
-      startTime,
-      endTime
-    } = getNowTime(dateRangeValue)
-    const chartTimeFilter = ref({
-      startTime,
-      endTime,
-      dateRangeValue
-    })
+    const { query } = useRoute()
+    // 获取url携带的range、startTime、endTime
+    const rangeParam = query.range
+    const startTimeParam = query.startTime
+    const endTimeParam = query.endTime
+    // 若url携带了，使用携带的值，否则使用默认值。
+
+    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
+    const chartTimeFilter = ref({ dateRangeValue })
+    if (!startTimeParam || !endTimeParam) {
+      const { startTime, endTime } = getNowTime(60)
+      chartTimeFilter.value.startTime = startTime
+      chartTimeFilter.value.endTime = endTime
+    } else {
+      chartTimeFilter.value.startTime = parseInt(startTimeParam)
+      chartTimeFilter.value.endTime = parseInt(endTimeParam)
+    }
+
     return {
       chartTimeFilter,
       entityType // 所有entity类型，用于header下拉框选择
