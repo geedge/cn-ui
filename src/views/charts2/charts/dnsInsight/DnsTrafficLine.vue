@@ -288,6 +288,18 @@ export default {
             }
             this.myChart = echarts.init(document.getElementById('dnsLineChart'))
             this.myChart.setOption(this.chartOption)
+
+            this.myChart.dispatchAction({
+              type: 'takeGlobalCursor',
+              key: 'brush',
+              brushOption: {
+                brushType: 'lineX',
+                xAxisIndex: 'all',
+                brushMode: 'single',
+                throttleType: 'debounce'
+              }
+            })
+            this.myChart.on('brushEnd', this.brushEcharts)
           })
         }
       })
@@ -469,6 +481,29 @@ export default {
       } else {
         this.echartsInit(this.tabs, show)
         if (!this.lineRefer) this.lineRefer = 'Average'
+      }
+    },
+    /**
+     * echarts框选
+     * @param params
+     */
+    brushEcharts (params) {
+      this.myChart.dispatchAction({
+        type: 'brush',
+        areas: [] // 删除选框
+      })
+      // 避免点击空白区域报错
+      if (params.areas && params.areas.length > 0) {
+        const rangeObj = {
+          startTime: Math.ceil(params.areas[0].coordRange[0]),
+          endTime: Math.ceil(params.areas[0].coordRange[1])
+        }
+
+        // 暂定框选最小范围为5分钟，后续可能会变动
+        if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
+          rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
+        }
+        this.$store.commit('setRangeEchartsData', rangeObj)
       }
     }
   },

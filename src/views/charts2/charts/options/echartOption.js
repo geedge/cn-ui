@@ -227,6 +227,12 @@ export const linkTrafficLineChartOption = {
   legend: {
     show: false
   },
+  brush: {
+    toolbox: ['lineX'],
+    xAxisIndex: 'all',
+    throttleType: 'debounce',
+    transformable: false
+  },
   grid: {
     top: '12%',
     left: '2%',
@@ -390,6 +396,12 @@ export const trafficLineChartOption = {
       color: '#717171',
       fontFamily: 'NotoSansSChineseRegular'
     }
+  },
+  brush: {
+    toolbox: ['lineX'],
+    xAxisIndex: 'all',
+    throttleType: 'debounce',
+    transformable: false
   },
   grid: {
     top: '21%',
