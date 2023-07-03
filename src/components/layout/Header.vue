@@ -606,6 +606,15 @@ export default {
               this.showChangePin = false
             } else if (res.code === 518005) {
               this.$message.error('密码错误')
+            } else {
+              this.$message.error(res.message)
+            }
+          }).catch(e => {
+            console.error(e)
+            if (e.response.data && e.response.data.message) {
+              this.$message.error(e.response.data.message)
+            } else {
+              this.$message.error('Something went wrong...')
             }
           })
         } else {
