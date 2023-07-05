@@ -26,6 +26,7 @@
                 style="position: absolute;top: -53px;left: -536px;"
                 :clearable="false"
                 :default-time="defaultTime"
+                :unlink-panels="true"
                 type="datetimerange"
                 @change="timeArrChange"
             />
