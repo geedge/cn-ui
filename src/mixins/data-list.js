@@ -263,8 +263,14 @@ export default {
       if (this.$refs.dataTable.loadingTableId === u.id) { // 列表单个下载
         return
       }
-      if (u.state !== 1 || u.upload !== 1) {
-        return
+      if (localStorage.getItem(storageKey.s3Enable) == 1) {
+        if (u.state !== 1 || u.upload !== 1) {
+          return
+        }
+      } else {
+        if (u.state !== 1) {
+          return
+        }
       }
       let fileName = ''
       let url = ''
@@ -325,8 +331,14 @@ export default {
       if (this.$refs.dataTable.loadingPreviewId === u.id) { // 列表单个下载
         return
       }
-      if (u.state !== 1 || u.upload !== 1) {
-        return
+      if (localStorage.getItem(storageKey.s3Enable) == 1) {
+        if (u.state !== 1 || u.upload !== 1) {
+          return
+        }
+      } else {
+        if (u.state !== 1) {
+          return
+        }
       }
       const params = {
         id: u.id
