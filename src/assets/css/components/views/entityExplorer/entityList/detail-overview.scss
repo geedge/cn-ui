@@ -160,6 +160,10 @@
             &:last-of-type {
               padding-bottom: 0;
             }
+
+            .el-popper {
+              min-width: 90px !important;
+            }
           }
           .row__content-accept {
             margin-left: 39px;
@@ -186,6 +190,12 @@
         .row__desc {
           color: #666666;
         }
+      }
+
+      .overview__row-related {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
       }
     }
 
@@ -305,4 +315,9 @@
 }
 .margin-l-140 {
   margin-left: 140px;
+}
+
+.line-center {
+  display: flex;
+  align-items: center;
 }

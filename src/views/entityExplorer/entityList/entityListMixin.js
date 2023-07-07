@@ -45,43 +45,10 @@ export default {
       return className
     },
     entityType () {
-      let type
-      switch (this.entityData.entityType) {
-        case 'ip': {
-          type = this.entityData.ipAddr
-          break
-        }
-        case 'domain': {
-          type = this.entityData.domainName
-          break
-        }
-        case 'app': {
-          type = this.entityData.appName
-          break
-        }
-        default:
-          break
-      }
-      return type
+      return this.entity.entityValue
     },
     entityName () {
-      let name
-      switch (this.entityData.entityType) {
-        case ('ip'): {
-          name = this.entity.ipAddr
-          break
-        }
-        case ('domain'): {
-          name = this.entity.domainName
-          break
-        }
-        case ('app'): {
-          name = this.entity.appName
-          break
-        }
-        default: break
-      }
-      return name
+      return this.entity.entityValue
     },
     appRisk () {
       return function (level) {
@@ -94,32 +61,11 @@ export default {
     queryParams () {
       let params
       const now = window.$dayJs.tz().valueOf()
-      switch (this.entityData.entityType) {
-        case ('ip'): {
-          params = {
-            startTime: this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : Math.floor(now / 1000),
-            ip: this.entityData.ipAddr
-          }
-          break
-        }
-        case ('domain'): {
-          params = {
-            startTime: this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : Math.floor(now / 1000),
-            domain: this.entityData.domainName
-          }
-          break
-        }
-        case ('app'): {
-          params = {
-            startTime: this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : Math.floor(now / 1000 - 3600),
-            endTime: this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : Math.floor(now / 1000),
-            appName: this.entityData.appName
-          }
-          break
-        }
-        default: break
+      // eslint-disable-next-line prefer-const
+      params = {
+        startTime: this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : Math.floor(now / 1000 - 3600),
+        endTime: this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : Math.floor(now / 1000),
+        resource: this.entityData.entityValue
       }
       return params
     }
@@ -130,7 +76,7 @@ export default {
         path: '/entityDetail',
         query: {
           entityType: this.entityData.entityType,
-          entityName: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
+          entityName: this.entityData.entityValue
         }
       })
       window.open(href, '_blank')
@@ -140,7 +86,7 @@ export default {
         path: '/entityGraph',
         query: {
           entityType: this.entityData.entityType,
-          entityName: this.entityData.ipAddr || this.entityData.domainName || this.entityData.appName
+          entityName: this.entityData.entityValue
         }
       })
       window.open(href, '_blank')
@@ -209,9 +155,7 @@ export default {
       return {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        appName: this.entityType,
-        domain: this.entityType,
-        ip: this.entityType
+        resource: this.entityType
       }
     },
     queryEntityDetailTraffic () {
@@ -295,30 +239,36 @@ export default {
     },
     resize () {
       this.echartsArray.forEach(item => { item.value.resize() })
+    },
+    initUrl () {
+      if (this.entity.entityType) {
+        switch (this.entity.entityType) {
+          case 'ip': {
+            // this.trafficUrl = api.entityIpDetailTraffic
+            this.trafficUrl = api.entity.entityList.ipThroughput
+            break
+          }
+          case 'domain': {
+            // this.trafficUrl = api.entityDomainDetailTraffic
+            this.trafficUrl = api.entity.entityList.domainThroughput
+            break
+          }
+          case 'app': {
+            // this.trafficUrl = api.entityAppDetailTraffic
+            this.trafficUrl = api.entity.entityList.appThroughput
+            break
+          }
+          default:
+            break
+        }
+      }
     }
   },
   watch: {
     entityData: {
       deep: true,
       handler (n) {
-        if (n.entityType) {
-          switch (n.entityType) {
-            case 'ip': {
-              this.trafficUrl = api.entityIpDetailTraffic
-              break
-            }
-            case 'domain': {
-              this.trafficUrl = api.entityDomainDetailTraffic
-              break
-            }
-            case 'app': {
-              this.trafficUrl = api.entityAppDetailTraffic
-              break
-            }
-            default:
-              break
-          }
-        }
+        this.initUrl()
       }
     }
   },
@@ -326,7 +276,9 @@ export default {
     this.debounceFunc = this.$_.debounce(this.resize, 200)
     window.addEventListener('resize', this.debounceFunc)
     this.chartOption = _.cloneDeep(entityListLineOption)
-    this.entityData = _.cloneDeep(this.entity)
+    // this.entityData = _.cloneDeep(this.entity)
+    this.entityData = { ...this.entityData, ...this.entity }
+    this.initUrl()
     setTimeout(() => {
       this.querySecurity()
       this.queryEntityDetailTraffic()

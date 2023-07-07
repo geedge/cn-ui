@@ -6,7 +6,7 @@ import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { shallowRef, markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
-import { sortBy, reverseSortBy } from '@/utils/tools'
+import { sortBy, reverseSortBy, computeScore } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 
@@ -45,29 +45,13 @@ export default {
       metricChart: null,
       performanceChartList: [],
       loadingPerformance: [],
-
+      score: '-', // 网络质量评分
       performanceMetricEndTimeInterval: 3600 // 服务质量事件指标的结束时间与开始时间的秒间隔
     }
   },
   computed: {
     entityName () {
-      let name
-      switch (this.entity.entityType) {
-        case ('ip'): {
-          name = this.entity.ipAddr
-          break
-        }
-        case ('domain'): {
-          name = this.entity.domainName
-          break
-        }
-        case ('app'): {
-          name = this.entity.appName
-          break
-        }
-        default: break
-      }
-      return name
+      return this.entity.entityValue
     },
     appRisk () {
       return function (level) {
@@ -234,7 +218,7 @@ export default {
                     this.performanceChartList.push(metricChart)
                     this.echartsArray.push(shallowRef(metricChart))
                   } else {
-                    const chartDom = document.getElementById(`entityPerformanceChart${this.entityName}${index}`)
+                    const chartDom = document.getElementById(`entityPerformanceChart${this.entityName}_${index}`)
                     chartDom.innerHTML = '<span style="padding-left:5px;">-</span>'
                   }
                 })
@@ -272,6 +256,14 @@ export default {
       if (this.networkQuantityUrl) {
         get(this.networkQuantityUrl, this.getQueryParams()).then(response => {
           if (response.code === 200) {
+            const data = {
+              establishLatencyMs: response.data.result.establishLatencyValue || null,
+              httpResponseLatency: response.data.result.httpResponseLatencyValue || null,
+              sslConLatency: response.data.result.sslConLatencyValue || null,
+              tcpLostlenPercent: response.data.result.sequenceGapLossPercentValue || null,
+              pktRetransPercent: response.data.result.pktRetransPercentValue || null
+            }
+            this.score = computeScore(data)
             this.entityData.establishLatencyValue = response.data.result.establishLatencyValue
             this.entityData.establishLatencyP50 = response.data.result.establishLatencyP50
             this.entityData.establishLatencyP90 = response.data.result.establishLatencyP90
@@ -389,11 +381,6 @@ export default {
           this.entityData.performanceNum = response.data.result.length
           this.performanceData = response.data.result
           this.entityData.performanceList = this.getTargetPageData(1, this.showMore.performancePageSize, this.performanceData)
-          this.$nextTick(() => {
-            setTimeout(() => {
-              this.queryEntityDetailPerformanceChart(this.entityData.performanceList, 0)
-            }, 200)
-          })
         }
         this.loadingAlert = false
       })
@@ -412,16 +399,16 @@ export default {
     },
 
     performanceShowMore (num) {
-      const startIndex = this.showMore.performancePageSize
+      // const startIndex = this.showMore.performancePageSize
       this.showMore.performancePageSize += num
       this.entityData.performanceList = this.getTargetPageData(this.showMore.pageNo, this.showMore.performancePageSize, this.performanceData)
-      this.$nextTick(() => {
-        setTimeout(() => {
-          if (this.entityData.performanceList && this.entityData.performanceList.length > 0) {
-            this.queryEntityDetailPerformanceChart(this.entityData.performanceList.slice(startIndex, this.entityData.performanceList.length), startIndex)
-          }
-        }, 200)
-      })
+      // this.$nextTick(() => {
+      //   setTimeout(() => lltext
+      //     if (this.entityData.performanceList && this.entityData.performanceList.length > 0) {
+      //       this.queryEntityDetailPerformanceChart(this.entityData.performanceList.slice(startIndex, this.entityData.performanceList.length), startIndex)
+      //     }
+      //   }, 200)
+      // })
     },
 
     securityShowMore (num) {
@@ -520,6 +507,7 @@ export default {
     this.chartOption = _.cloneDeep(entityListLineOption)
     setTimeout(() => { this.queryEntityDetail() })
     const _this = this
+    this.entityData = { ...this.entityData, ...this.entity }
     this.emitter.on('switch-collapse', function () {
       setTimeout(() => { _this.queryEntityDetail() }, 200)
     })

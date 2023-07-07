@@ -4,11 +4,15 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.location')}}</div>
-        <div class="row__content">{{ipLocationRegion(entity)}}</div>
+        <div class="row__content">{{ipLocationRegion(entity.location)}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">ASN</div>
-        <div class="row__content">{{entity.ipAsn || '-'}}</div>
+        <div class="row__content">{{entity.asn ? entity.asn.asn : '-'}}</div>
+      </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('entities.openPort')}}</div>
+        <div class="row__content">{{ openPort }}</div>
       </div>
     </div>
   </div>
@@ -44,7 +48,7 @@
             <!-- 曲线-->
             <div class="row__content-loading">
               <loading :loading="!loadingDns && loading" size="small"></loading>
-              <div class="row__charts" :id="`entityDnsServerInfo${entity.ipAddr}`"></div>
+              <div class="row__charts" :id="`entityDnsServerInfo${entity.entityValue}`"></div>
             </div>
           </div>
         </div>
@@ -70,103 +74,77 @@
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <div class="row__charts" :id="`entityDetailSend${entity.ipAddr}`"></div>
+              <div class="row__charts" :id="`entityDetailSend${entity.entityValue}`"></div>
             </div>
           </div>
-          <div class="row__content">
+          <div class="row__content row__content-accept">
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-              <div class="row__charts" :id="`entityDetailReceived${entity.ipAddr}`"></div>
+              <div class="row__charts" :id="`entityDetailReceived${entity.entityValue}`"></div>
             </div>
           </div>
         </div>
       </div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
+        <loading :loading="loadingNetworkQuality" size="small" inner-style="left: 1rem;"></loading>
+        <div class="entity-score" v-if="!loadingNetworkQuality">
+          <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
+          <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
+          <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
+          Score:{{score}}
+        </div>
+      </div>
     </div>
   </div>
+
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
     <div class="overview__content domain__content">
-      <div class="overview__tags domain__tags" ref="relationship">
-        <div class="overview__domain-tabs overview__domain-tabs-loading">
-          <loading :loading="loadingRelationshipOne" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
-          <div class="overview__domain-tab">
-            <div class="overview__tag domain__tag">
-              <span class="tag__value">{{relationshipDataOne.length}}</span>
-              <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
-            </div>
-            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
-              <span class="tag__desc">{{item.domain}}</span>
-            </div>
+      <div class="overview__tags domain__tags" ref="relationship"></div>
+      <div class="overview__row overview__row-related">
+        <div class="row__label row__label--width130">{{$t('entities.tab.relatedApp')}}</div>
+
+        <loading :loading="loadingRelationshipOne" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
+        <div class="row__content">
+          <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+            {{item.value}}
           </div>
-          <div class="overview__domain-btn">
-            <div class="overview__domain-more" @click="more(relationshipDataOne, 1)" v-if="relationshipShowOne">...</div>
-            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreOne" v-ele-click-outside="mouseout">
-              <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
-                <span v-if="item.domain" :title="item.domain">{{item.domain}}</span>
-              </div>
-            </div>
+
+          <div v-if="relationshipShowOne">
+            <el-popover placement="right-end" trigger="click" show-arrow="false" offset="20">
+              <template #reference>
+                <div class="data-item show-more-related">...</div>
+              </template>
+              <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">{{item.value}}</div>
+            </el-popover>
           </div>
         </div>
-        <div class="overview__domain-tabs overview__domain-tabs-loading">
-          <loading :loading="loadingRelationshipTwo" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
-          <div class="overview__domain-tab">
-            <div class="overview__tag domain__tag">
-              <span class="tag__value">{{relationshipDataTwo.length}}</span>
-              <span class="tag__desc">{{$t('entities.relatedApp')}}</span>
-            </div>
-            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
-              <span class="tag__desc">{{item.appName}}</span>
-            </div>
+      </div>
+
+      <div class="overview__row overview__row-related">
+        <div class="row__label row__label--width130">{{$t('entities.relatedDomain')}}</div>
+
+        <loading :loading="loadingRelationshipTwo" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
+        <div class="row__content">
+          <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
+            {{item.value}}
           </div>
-          <div class="overview__domain-btn">
-            <div class="overview__domain-more" @click="more(relationshipDataTwo, 2)" v-if="relationshipShowTwo">...</div>
-            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreTwo" v-ele-click-outside="mouseout">
-              <div class="domain-more-tab" v-for="item in relationshipMoreDataTwo" :key="item">
-                <span v-if="item.appName" :title="item.appName">{{item.appName}}</span>
-              </div>
-            </div>
+
+          <div v-if="relationshipShowTwo">
+            <el-popover class="entity-expand-detail" placement="right-end" trigger="click" show-arrow="false" offset="20">
+              <template #reference>
+                <div class="data-item show-more-related">...</div>
+              </template>
+              <div v-for="(item, index) in relationshipDataTwo" :key="index">{{item.value}}</div>
+            </el-popover>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="overview-item">
-    <div class="overview__title">{{$t('overall.networkQuality')}}</div>
-    <div class="overview__content overview__content-loading-net">
-      <loading :loading="loadingNetworkQuality" size="small"></loading>
-      <div class="overview__row overview__row--single-value">
-        <chart-single-value
-            v-for="(chartInfo, i) in singleValues.chartInfos"
-            :chart-info="chartInfo"
-            :chart-data="singleValues.chartDatas[i]"
-            :key="i"
-            class="cn-chart__single-value--detail-overview"
-        ></chart-single-value>
-      </div>
-    </div>
-  </div>
-  <div class="overview-item">
-    <div class="overview__title">{{$t('entities.accessLink')}}</div>
-    <div class="overview__content">
-      <div class="overview__tags">
-        <div class="overview__tag overview__tag-loading">
-          <loading :loading="loadingOut" size="small"></loading>
-          <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
-          <span class="tag__value">{{entityData.linkOutId ? entityData.linkOutId : '-'}},&nbsp;</span>
-          <span class="tag__desc">{{$t('entities.percentage')}}</span>
-          <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') : '-'}}</span>
-        </div>
-        <div class="overview__tag overview__tag-loading">
-          <loading :loading="loadingIn" size="small"></loading>
-          <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
-          <span class="tag__value">{{entityData.linkInId ? entityData.linkInId : '-'}},&nbsp;</span>
-          <span class="tag__desc">{{$t('entities.percentage')}}</span>
-          <span class="tag__value">{{entityData.linkInPercent ? unitConvert(entityData.linkInPercent, unitTypes.percent).join(' ') : '-'}}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.alert')}}</div>
     <div class="overview__content overview__content-loading">
@@ -175,18 +153,16 @@
         <span  class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
       <div class="overview__row" v-if="performanceData.length > 0">
-        <div class="row__label">{{$t('entities.recentAlert')}}</div>
+        <div class="row__label row__label--width130">{{$t('entities.recentAlert')}}</div>
         <div class="row__content">{{entityData.performanceNum}}</div>
       </div>
       <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
-        <div class="row__label row__label--width160">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
-        <div class="row__content">
+        <div class="row__label row__label--width130">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
+        <div class="row__content row__content--width90">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
-          <div>{{performance.eventType}}</div>
         </div>
-        <div class="row__content-loading"  style="position: relative; padding-left: 10px;">
-          <loading :loading="!loadingAlert && loadingPerformance[index]?loadingPerformance[index]:false" :id="`loading${entity.ipAddr}_${index}`" size="small"></loading>
-          <div class="row__charts" :id="`entityPerformanceChart${entity.ipAddr}_${index}`"></div>
+        <div class="row__content-loading" style="position: relative;">
+          <div class="performance-event-remark">{{performance.eventType}}</div>
         </div>
         <div class="row__desc"></div>
       </div>
@@ -203,15 +179,26 @@
         <span class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
       <div class="overview__row" v-if="securityData.length > 0">
-        <div class="row__label">{{$t('entities.recentSecurity')}}</div>
+        <div class="row__label row__label--width130">{{$t('entities.recentSecurity')}}</div>
         <div class="row__content">{{entityData.securityNum}}</div>
       </div>
+
       <div class="overview__row overview__row--small-font" v-for="(security, index) in entityData.securityList" :key="index">
-        <div class="row__label row__label--width160">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
-        <div class="row__content row__content--width200">
+        <div class="row__label row__label--width130">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
+        <div class="row__content row__content--width90">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(security)">{{security.eventSeverity}}</div>
-          <div>{{security.securityType}}</div>
         </div>
+        <div class="cn-detection__header" >
+          <i class="cn-icon cn-icon-attacker"></i>
+          <span>{{ security.offenderIp }}</span>
+          <div class="domain" v-if="security.offenderIp===security.serverIp">{{ security.domain }}</div>
+          <span class="line">-------</span>
+          <span class="circle"></span>
+          <i class="cn-icon cn-icon-attacked"></i>
+          <span>{{ security.victimIp }}</span>
+          <div class="domain" v-if="security.victimIp===security.serverIp">{{ security.domain }}</div>
+        </div>
+
         <div class="row__desc"></div>
       </div>
       <div class="overview__row overview__row--small-font" v-if="securityData && securityData.length > 5">
@@ -234,7 +221,6 @@
 
 <script>
 import entityDetailMixin from './entityDetailMixin'
-import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { api } from '@/utils/api'
 import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
@@ -242,30 +228,35 @@ import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
-import { getSecond, getMillisecond } from '@/utils/date-util'
+import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
+import axios from 'axios'
 
 export default {
   name: 'Ip',
   mixins: [entityDetailMixin, relatedServer],
   components: {
     Loading,
-    Chart,
-    ChartSingleValue
+    Chart
   },
   data () {
     return {
       entityType: 'ip',
-      trafficUrl: api.entityIpDetailTraffic,
-      trafficUrlMap: api.entityIpDetailTrafficMap,
+      // trafficUrl: api.entityIpDetailTraffic,
+      trafficUrl: api.entity.entityList.ipThroughput,
+      // trafficUrlMap: api.entityIpDetailTrafficMap,
+      trafficUrlMap: api.entity.entityList.ipTrafficMap,
       relationUrl: api.entityIpDetailRelation,
-      networkQuantityUrl: api.entityIpDetailNetworkQuantity,
+      // networkQuantityUrl: api.entityIpDetailNetworkQuantity,
+      networkQuantityUrl: api.entity.entityList.ipPerformance,
       linkInUrl: api.entityIpDetailLinkIn,
       linkOutUrl: api.entityIpDetailLinkOut,
-      performanceUrl: api.entityIpDetailPerformance,
-      securityUrl: api.entityIpDetailSecurity,
-      relatedServerDomainUrl: api.entityIpRelatedServerDomain,
-      relatedServerAppUrl: api.entityIpRelatedServerApp,
+      performanceUrl: api.entity.entityList.ipEventPerformance,
+      // performanceUrl: api.entityIpDetailPerformance,
+      // securityUrl: api.entityIpDetailSecurity,
+      securityUrl: api.entity.entityList.ipSecurity,
+      relatedServerDomainUrl: api.entity.entityList.ipRelatedDomain,
+      relatedServerAppUrl: api.entity.entityList.ipRelatedApp,
       entityDetectionsIpUrl: api.entityDetectionsIp,
       entityDetectionsIpQueryRateUrl: api.entityDetectionsIpQueryRate,
       listMode: 'list',
@@ -336,21 +327,22 @@ export default {
       loadingIn: false,
       loadingAlert: false,
       loadingSecurityEvents: false,
-      loadingMap: false
+      loadingMap: false,
+      openPort: '-'
     }
   },
   computed: {
     ipLocationRegion () {
       return function (entityData) {
         let result = ''
-        if (entityData.ipLocationCountry) {
-          result += `${entityData.ipLocationCountry},`
+        if (entityData.country) {
+          result += `${entityData.country},`
         }
-        if (entityData.ipLocationProvince) {
-          result += `${entityData.ipLocationProvince},`
+        if (entityData.province) {
+          result += `${entityData.province},`
         }
-        if (entityData.ipLocationCity) {
-          result += `${entityData.ipLocationCity},`
+        if (entityData.city) {
+          result += `${entityData.city},`
         }
         result = result.substr(0, result.length - 1)
         if (!result) {
@@ -381,19 +373,19 @@ export default {
   },
   methods: {
     getMillisecond,
+    dateFormatByAppearance,
     getQueryParams () {
-      const queryParams = {
+      return {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        ip: this.entity.ipAddr
+        resource: this.entity.entityValue,
+        ip: this.entity.entityValue
       }
-      return queryParams
     },
     getPerformanceQueryParams () {
-      const queryParams = {
-        serverIp: this.entity.ipAddr
+      return {
+        serverIp: this.entity.entityValue
       }
-      return queryParams
     },
     handleRelationData (result) {
       this.entityData.appCount = result.appCount
@@ -411,11 +403,29 @@ export default {
     queryRelated () {
       this.getRelatedServerDataOne(this.relatedServerDomainUrl)
       this.getRelatedServerDataTwo(this.relatedServerAppUrl)
+    },
+    getOpenPort () {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        resource: this.entity.entityValue
+      }
+
+      axios.get(api.entity.entityList.ipRelatedPort, { params: params }).then(res => {
+        if (res.data.code === 200 && res.data.data.result.length) {
+          this.openPort = ''
+          res.data.data.result.forEach(item => {
+            this.openPort += item.port + '/' + item.l7Protocol + ','
+          })
+          this.openPort = this.openPort.slice(0, -1)
+        }
+      })
     }
   },
   mounted () {
     this.queryParams = this.getQueryParams()
     this.chartGetMap()
+    this.getOpenPort()
     this.$nextTick(() => {
       setTimeout(() => {
         this.queryRelated()
@@ -425,7 +435,7 @@ export default {
   setup (props) {
     const entityCopy = {
       ..._.cloneDeep(props.entity),
-      ip: props.entity.ipAddr
+      ip: props.entity.entityValue
     }
     return {
       chart: {
@@ -434,7 +444,7 @@ export default {
           unitType: 'number',
           valueColumn: 'sessions'
         },
-        id: props.entity.ipAddr,
+        id: props.entity.entityValue,
         type: 2
       },
       entityCopy,
@@ -444,3 +454,110 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+//.type-content {
+//  margin-bottom:15px;
+//  display:flex;
+//  flex-flow: row wrap;
+//  width:100%;
+  .data-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(119,131,145,0.06);
+    border: 1px solid rgba(119,131,145,0.36);
+    border-radius: 2px;
+    height:28px;
+    padding:8px 15px;
+    margin-right:10px;
+    //margin-bottom:15px;
+    font-size: 12px;
+    color: #353636;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+.show-more-related {
+  height: 28px;
+  line-height: 28px;
+  padding-bottom: 12px;
+  cursor: pointer;
+}
+//}
+.entity-score {
+  .circle-icon {
+    border-radius: 3px;
+    width: 6px;
+    height: 6px;
+    margin-right: 4px;
+  }
+  .data-score-red {
+    background: #E26154;
+  }
+  .data-score-yellow {
+    background: #E5A219;
+  }
+  .data-score-green {
+    background: #749F4D;
+  }
+  height:24px;
+  font-size: 14px;
+  color: #046ECA;
+  font-weight: 500;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+.cn-detection__header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  padding-bottom: 3px;
+  color: #333333;
+  align-items: center;
+  font-size: 12px;
+
+  i {
+    color: #7b8fa2;
+    margin-right: 5px;
+    font-size: 18px;
+  }
+
+  .line {
+    color: #da5656;
+    margin-left: 12px;
+    font-size: xx-small;
+    font-weight: bold;
+  }
+
+  .circle {
+    width: 10px;
+    height: 10px;
+    border: 2px solid #da5656;
+    border-radius: 10px;
+    margin-top: 4px;
+    margin-right: 12px;
+  }
+
+  .domain {
+    background: #EFF2F5;
+    border-radius: 2px;
+    font-size: 14px;
+    color: #333333;
+    letter-spacing: 0;
+    line-height: 14px;
+    margin-left: 5px;
+    font-style: italic;
+    padding: 0 2px;
+    font-weight: 500;
+  }
+}
+.el-popper {
+  min-width: 90px !important;
+  width: auto !important;
+  max-width: 300px !important;
+  max-height: 180px !important;
+  overflow: scroll !important;
+  line-height: 24px !important;
+}
+</style>

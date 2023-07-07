@@ -2,9 +2,7 @@
   <div class="explorer-search">
     <div class="explorer-search__title" v-show="!showList">{{$t('search.title')}}</div>
     <div class="explorer-search__input-case" :class="{'explorer-search__input-case--question-mark-in-line': showList}">
-      <div class="explorer-search__input">
-      <!--新版实体列表改版，后续记得解开-->
-      <!--<div class="explorer-search__input" style="border: 1px #DEDEDE solid;height: 42px;">-->
+      <div class="explorer-search__input" style="border: 1px #DEDEDE solid;height: 42px;">
         <advanced-search
           ref="search"
           :column-list="columnList"

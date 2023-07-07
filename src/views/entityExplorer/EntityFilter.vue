@@ -1,150 +1,76 @@
-<template >
+<template>
   <div class="entity-filter-case">
-    <div class="filter-case__header">{{$t('entities.filter')}}</div>
-    <div
-        class="entity-filter"
-        v-for="(filters, index) in filterData"
-        :key="index"
-    >
-      <div class="filter__header">{{filters.title}}</div>
-      <div class="filter__body">
+    <div class="filter-case__header">{{ $t('entities.filter1') }}</div>
 
-        <div class="filter__row" v-for="(item, i) in filters.data" :key="i">
-          <el-popover popper-class="filter__row-popover" placement="right-start" :width="440" v-model:visible="item.showTopTen">
-            <template #reference>
-              <div class="filter__row-popover" @click="showTopDialog(i, item, filters)">
-                <div class="row__label">
-                  <i :class="item.icon"></i>
-                  <span>{{item.label}}</span>
-                </div>
-                <div class="row__value">
-                  <loading :loading="loadingLeft" size="small"></loading>
-                  <span>{{item.value}}</span>
-                </div>
-              </div>
-            </template>
-            <entity-top
-              ref="entityTopTenPop"
-              :loading="loading"
-              :popover-data="popoverData"
-              :item-data="itemData"
-              :total-count="totalCount"
-              :top-column="item.topColumn"
-              @filter="filter"
-            ></entity-top>
-          </el-popover>
+    <div class="entity-filter" v-for="(item, index) in filterData" :key="index">
+      <div class="filter__header">
+        <i :class="item.icon"></i>
+        {{ item.title }}
+      </div>
+
+      <div class="filter__body" style="position: relative">
+        <loading :loading="loadingLeft" style="top: -5px;"></loading>
+        <div class="filter__body-item" v-for="(data, i) in item.data" :key="i" @click="filter(data.label, data)">
+          <div class="filter__body-item-left">
+<!--            当前无更好方案匹配国旗，后续解决-->
+<!--            <div v-if="data.flag">-->
+<!--              <img :src="require(`../../../public/images/flag/${data.flag}.svg`)" class="filter-country-flag"/>-->
+<!--            </div>-->
+            <div class="filter__body-item-left-index">{{ i+1 }}</div>
+            <div class="filter__body-item-left-label">
+              <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
+                <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">{{ data.label }}</span>
+              </el-tooltip>
+            </div>
+          </div>
+
+          <div class="filter__body-item-right">{{ data.value }}</div>
         </div>
+        <div class="filter-hr"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import EntityTop from '@/views/entityExplorer/EntityTop'
-import { get } from '@/utils/http'
-import { api } from '@/utils/api'
 import Loading from '@/components/common/Loading'
-import { getSecond } from '@/utils/date-util'
 export default {
   name: 'EntityFilter',
-  components: {
-    Loading,
-    EntityTop
-  },
+  components: { Loading },
   props: {
-    filterData: Array,
-    q: String,
-    timeFilter: Object,
-    loadingLeft: Boolean
+    filterData: {
+      type: Object
+    },
+    loadingLeft: {
+      type: Boolean
+    }
   },
   data () {
     return {
-      topList: 'list',
-      topData: [],
-      entityTopTenData: [],
-      currentColumn: {},
-      totalCount: 0,
-      loading: false,
-      popoverData: [],
-      itemData: {}
-    }
-  },
-  watch: {
-    currentColumn (n, o) {
-      if (n.column === 'dnsServerOrgCount') {
-        this.totalCount = this.filterData[3].orgTotalCount
-      } else if (n.column === 'dnsServerSoftwareCount') {
-        this.totalCount = this.filterData[3].softwareTotalCount
-      } else if (n.column === 'dnsServerOsCount') {
-        this.totalCount = this.filterData[3].osTotalCount
-      } else if (n.column === 'categoryDistinctCount' && n.type === 'app') {
-        this.totalCount = this.filterData[1].totalCount
-      } else {
-        let count = 0
-        this.filterData.forEach(f => {
-          const filter = f.data.some(d => d.column === n.column)
-          if (filter) {
-            count = f.totalCount
-          }
-        })
-        this.totalCount = count
-      }
+      disabledLabel: true
     }
   },
   methods: {
-    showTopDialog (i, item, filter) {
-      if (this.currentColumn.column === item.column && item.showTopTen) {
-        item.showTopTen = false
-        return
+    /**
+     * 判断文字是否溢出，超出则鼠标移入tooltip显示，否则鼠标移入不显示
+     * @param id
+     */
+    handleMouse (id) {
+      const dom = document.getElementById(id)
+      if (dom) {
+        const width = document.getElementById(id).offsetWidth
+        this.disabledLabel = width < 180
+      } else {
+        this.disabledLabel = true
       }
-      this.filterData.forEach(f => {
-        f.data.forEach(ff => {
-          ff.showTopTen = false
-        })
-      })
-      item.showTopTen = true
-      this.currentColumn = {
-        column: item.column,
-        type: filter.type
-      }
-      const queryParams = {
-        q: this.q,
-        entityType: filter.type,
-        column: item.topColumn,
-        top: 10,
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
-      }
-      this.loading = true
-      this.popoverData = []
-      this.itemData = {}
-      get(api.filterTop, queryParams).then(response => {
-        if (response.code === 200) {
-          if (this.currentColumn.column === item.column) {
-            if (filter.type === 'dns') {
-              this.popoverData = response.data.result.filter(f => {
-                return f.count > 0
-              })
-            } else {
-              this.popoverData = response.data.result
-            }
-            this.itemData = item
-          }
-        } else {
-          this.popoverData = []
-          this.itemData = item
-        }
-        this.loading = false
-      }).catch(e => {
-        this.popoverData = []
-        this.itemData = item
-        this.loading = false
-      })
     },
-    filter (name, topData) {
-      this.showTopDialog('', topData)
-      this.$emit('filter', name, topData)
+    filter (name, data) {
+      this.$emit('filter', name, data)
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+</style>

@@ -262,7 +262,47 @@ export const api = {
       ipRelatedDomain: apiVersion + '/entity/graph/relation/ip/relate/domains',
       ipRelatedApp: apiVersion + '/entity/graph/relation/ip/relate/apps',
       appRelatedIp: apiVersion + '/entity/graph/relation/app/relate/ips',
-      appRelatedDomain: apiVersion + '/entity/graph/relation/app/relate/domains'
+      appRelatedDomain: apiVersion + '/entity/graph/relation/app/relate/domains',
+      basicInfo: apiVersion + '/entity/graph/relation/basic',
+      tags: apiVersion + '/entity/graph/relation/kb/intelligence/tag'
+    },
+    entityList: {
+      list: apiVersion + '/entity/explorer/query/list', // 实体列表
+      domainBasicInfo: apiVersion + '/entity/explorer/detail/basic/domain', // Domain实体响应结果
+      ipBasicInfo: apiVersion + '/entity/explorer/detail/basic/ip', // ip实体响应
+      appBasicInfo: apiVersion + '/entity/explorer/detail/basic/app', // app实体响应
+      domainTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/domain', // Domain实体标签响应结果
+      ipTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/ip', // ip实体标签响应结果
+      appTags: apiVersion + '/entity/explorer/detail/kb/intelligence/tag/app', // app实体标签响应结果
+      domainThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/domain', // 实体流量信息
+      ipThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/ip', // 实体流量信息
+      appThroughput: apiVersion + '/entity/explorer/detail/traffic/throughput/app', // 实体流量信息
+      domainPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/domain', // domain网络质量
+      ipPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/ip', // ip网络质量
+      appPerformance: apiVersion + '/entity/explorer/detail/traffic/performance/app', // app网络质量
+      domainRelatedApp: apiVersion + '/entity/explorer/detail/domain/relate/apps', // 域名相关app
+      domainRelatedIp: apiVersion + '/entity/explorer/detail/domain/relate/ips', // 域名相关ip
+      appRelatedDomain: apiVersion + '/entity/explorer/detail/app/relate/domains', // app相关域名
+      appRelatedIp: apiVersion + '/entity/explorer/detail/app/relate/ips', // app相关ip
+      ipRelatedApp: apiVersion + '/entity/explorer/detail/ip/relate/apps', // ip相关app
+      ipRelatedDomain: apiVersion + '/entity/explorer/detail/ip/relate/domains', // ip相关域名
+      ipRelatedPort: apiVersion + '/entity/explorer/detail/ip/relate/ports', // ip开放端口
+      domainTrafficMap: apiVersion + '/entity/explorer/detail/traffic/map/domain', // domain流量地图
+      ipTrafficMap: apiVersion + '/entity/explorer/detail/traffic/map/ip', // ip流量地图
+      appTrafficMap: apiVersion + '/entity/explorer/detail/traffic/map/app', // app流量地图
+      summaryCount: apiVersion + '/entity/explorer/query/summaryCount', // 实体基数统计
+      aggCountry: apiVersion + '/entity/explorer/top/aggCountry', // 国家实体基数统计
+      aggAsn: apiVersion + '/entity/explorer/top/aggAsn', // ASN实体基数统计
+      aggCity: apiVersion + '/entity/explorer/top/aggCity', // 城市实体基数统计
+      domainSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // domain安全事件详情
+      ipSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // ip安全事件详情
+      appSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // app安全事件详情
+      domainEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/domain', // domain服务质量详情
+      ipEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/ip', // ip服务质量详情
+      appEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/app', // app服务质量详情
+      entityActive: apiVersion + '/entity/explorer/overview/active', // entity首页active数据概览
+      entityNew: apiVersion + '/entity/explorer/overview/new', // entity首页new数据概览
+      entityTotal: apiVersion + '/entity/explorer/overview/total' // entity首页total数据概览
     }
   }
 }

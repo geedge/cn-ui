@@ -282,7 +282,7 @@ export const columnList = [
     label: 'IP.Address'
   },
   {
-    name: 'ip_location_country',
+    name: 'country',
     type: 'string',
     label: 'IP.Country'
   },
@@ -292,12 +292,12 @@ export const columnList = [
     label: 'IP.Province'
   },
   {
-    name: 'ip_location_city',
+    name: 'region',
     type: 'string',
     label: 'IP.City'
   },
   {
-    name: 'ip_asn',
+    name: 'asn',
     type: 'string',
     label: 'IP.ASN'
   },
@@ -367,7 +367,7 @@ export const columnList = [
     label: 'Domain.Whois address'
   },
   {
-    name: 'domain_whois_city',
+    name: 'region',
     type: 'string',
     label: 'Domain.Whois city'
   },
@@ -377,7 +377,7 @@ export const columnList = [
     label: 'Domain.Whois state'
   },
   {
-    name: 'domain_whois_country',
+    name: 'country',
     type: 'string',
     label: 'Domain.Whois country'
   },

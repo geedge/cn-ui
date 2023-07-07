@@ -3,60 +3,60 @@
       class="entity-explorer"
       :class="{'entity-explorer--show-list': showList}">
     <!-- 顶部工具栏，在列表页显示 -->
-<!--    <div class="explorer-top-tools explorer-top-tools-new" v-show="showList">-->
-<!--      <div class="explorer-detection-top-tools">-->
-<!--        <div class="explorer-top-tools-title">{{$t('network.entity')}}</div>-->
-<!--      </div>-->
-<!--      <div class="explorer-top-tools">-->
-<!--        <DateTimeRange :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>-->
-<!--        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>-->
-<!--        <el-button-group size="mini">-->
-<!--          <el-button size="mini" @click="listMode = 'list'" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>-->
-<!--          <el-button size="mini" @click="listMode = 'block'" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>-->
-<!--        </el-button-group>-->
-      <div class="explorer-top-tools" v-show="showList">
-        <DateTimeRange :start-time="timeFilter.startTime" :end-time="timeFilter.endTime" :date-range="timeFilter.dateRangeValue" ref="dateTimeRange" @change="reload"/>
-        <TimeRefresh class="date-time-range" @change="timeRefreshChange" :end-time="timeFilter.endTime"/>
-        <el-button-group size="mini">
-          <el-button size="mini" @click="setListMode('list')" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
-          <el-button size="mini" @click="setListMode('block')" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
-        </el-button-group>
+    <div class="explorer-top-tools explorer-top-tools-new" style="margin: 2px 0;" v-show="showList">
+      <div class="explorer-detection-top-tools">
+        <div class="explorer-top-tools-title" style="padding: 0;margin-left: -10px;">{{$t('network.entity')}}</div>
       </div>
-<!--    </div>-->
+    </div>
     <!-- 搜索组件 -->
     <explorer-search
+        v-if="!showList"
         ref="search"
         :class="{'explorer-search--show-list': showList}"
         :show-list="showList"
         @search="search"
     ></explorer-search>
-
-    <!--todo静态数据，之后记得修改-->
-<!--    <div class="explorer-result" v-if="showList">-->
-<!--      8,866 results，IP 2666，Domain 3200，APP 3000-->
-<!--    </div>-->
     <!-- 内容区 -->
-    <div class="explorer-container" v-if="showList"  style="height: calc(100% - 20px); flex-direction: column">
-      <div style="display: flex; height: auto;">
-        <entity-filter
-            :filter-data="filterData"
-            :loading-left="loadingLeft"
-            :q="q"
-            :time-filter="timeFilter"
-            @filter="filter"
-        ></entity-filter>
-        <entity-list
-            :list-data="listData"
-            :list-mode="listMode"
-            :pageObj="pageObj"
-            :time-filter="timeFilter"
-            @pageSize="pageSize"
-            @pageNo="pageNo"
-            :loading="listLoading"
-        ></entity-list>
+    <div v-if="showList" style="display: flex;flex-direction: row;">
+      <entity-filter
+          :filter-data="newFilterData"
+          :loading-left="loadingLeft"
+          :q="q"
+          :time-filter="timeFilter"
+          @filter="filter"
+      ></entity-filter>
+      <div class="explorer-container" style="height: calc(100% - 62px);flex-direction: column;width: 100%;">
+        <explorer-search
+            ref="search"
+            :class="{'explorer-search--show-list': showList}"
+            :show-list="showList"
+            @search="search"
+        ></explorer-search>
+
+        <div style="display: flex;flex-direction: column;height: calc(100% - 42px);">
+          <div class="explorer-result" v-if="showList">
+            <loading :loading="loadingCount"></loading>
+            <span>{{ summaryCount.total }}</span>results，IP
+            <span>{{ summaryCount.ipCount }}</span>，Domain
+            <span>{{ summaryCount.fqdnCount }}</span>，APP
+            <span>{{ summaryCount.appCount }}</span>
+          </div>
+
+          <entity-list
+              style="width: 100%;"
+              :list-data="listData"
+              :list-mode="listMode"
+              :pageObj="pageObj"
+              :time-filter="timeFilter"
+              @pageSize="pageSize"
+              @pageNo="pageNo"
+              :loading="listLoading"
+          ></entity-list>
+        </div>
       </div>
     </div>
-    <div class="explorer-foot" v-else>
+
+    <div class="explorer-foot" v-if="!showList">
       <div>
         <el-divider direction="vertical"></el-divider>
         <div class="entity-overview">
@@ -150,8 +150,6 @@
 
 <script>
 import ExplorerSearch from '@/views/entityExplorer/search/ExplorerSearch'
-import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
-import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
 import { entityType, defaultPageSize, riskLevelMapping } from '@/utils/constants'
@@ -172,8 +170,6 @@ export default {
   components: {
     Loading,
     ExplorerSearch,
-    DateTimeRange,
-    TimeRefresh,
     EntityFilter,
     EntityList
   },
@@ -210,23 +206,15 @@ export default {
             {
               label: this.$t('overall.country'),
               column: 'countryDistinctCount',
-              topColumn: 'ip_location_country', // top弹框查询字段
+              topColumn: 'country', // top弹框查询字段
               icon: 'cn-icon cn-icon-country',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('overall.province'),
-              column: 'provinceDistinctCount',
-              topColumn: 'ip_location_province', // top弹框查询字段
-              icon: 'cn-icon cn-icon-position',
               showTopTen: false,
               value: 0
             },
             {
               label: this.$t('overall.city'),
               column: 'cityDistinctCount',
-              topColumn: 'ip_location_city', // top弹框查询字段
+              topColumn: 'region', // top弹框查询字段
               icon: 'cn-icon cn-icon-city',
               showTopTen: false,
               value: 0
@@ -234,7 +222,7 @@ export default {
             {
               label: this.$t('entities.asn'),
               column: 'asnDistinctCount',
-              topColumn: 'ip_asn', // top弹框查询字段
+              topColumn: 'asn', // top弹框查询字段
               icon: 'cn-icon cn-icon-cloud',
               showTopTen: false,
               value: 0
@@ -346,6 +334,26 @@ export default {
           ]
         }
       ],
+      newFilterData: [
+        {
+          icon: 'cn-icon cn-icon-registration-country',
+          title: 'Top Countries',
+          totalCount: 0,
+          data: []
+        },
+        {
+          icon: 'cn-icon cn-icon-city',
+          title: 'Top Cities',
+          totalCount: 0,
+          data: []
+        },
+        {
+          icon: 'cn-icon cn-icon-as',
+          title: 'Top ASNs',
+          totalCount: 0,
+          data: []
+        }
+      ],
       listData: [],
       q: '',
       metaList: [],
@@ -367,7 +375,14 @@ export default {
       // 实体详情列表页面 左侧筛选条件
       loadingLeft: false,
       initFlag: false, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
-      timer: null // 初始化标志的延时器，需要销毁
+      timer: null, // 初始化标志的延时器，需要销毁
+      summaryCount: {
+        total: 0,
+        fqdnCount: 0,
+        ipCount: 0,
+        appCount: 0
+      },
+      loadingCount: false // 实体基数统计的loading
     }
   },
   methods: {
@@ -420,6 +435,12 @@ export default {
       return result
     },
     search (param) {
+      // todo 下版本08版本删除 ---- start
+      if (param && param.q.indexOf("QUERY('") > -1) {
+        this.$message.error(this.$t('overall.versionNotSupportThisFormat'))
+        return true
+      }
+      // 下版本08版本删除 ---- end
       let q
       let metaList
       if (param) {
@@ -489,29 +510,35 @@ export default {
           } else {
             this.limitFilterType = false
           }
-          this.queryFilter({ entityType: entityType, q: this.q, ...this.timeFilter })
-          if (entityType === 'ip') {
-            this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
-          }
+          // this.queryFilter({ entityType: entityType, q: this.q, ...this.timeFilter })
+          // if (entityType === 'ip') {
+          //   this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
+          // }
+          this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
           this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          this.queryListTotal({ q: this.q, ...this.timeFilter })
+          this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
+          // this.queryListTotal({ q: this.q, ...this.timeFilter })
         } else {
           this.limitFilterType = false
-          this.queryFilter({ entityType: 'ip', q: this.q, ...this.timeFilter })
-          this.queryFilter({ entityType: 'domain', q: this.q, ...this.timeFilter })
-          this.queryFilter({ entityType: 'app', q: this.q, ...this.timeFilter })
-          this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
+          // this.queryFilter({ entityType: 'ip', q: this.q, ...this.timeFilter })
+          // this.queryFilter({ entityType: 'domain', q: this.q, ...this.timeFilter })
+          // this.queryFilter({ entityType: 'app', q: this.q, ...this.timeFilter })
+          // this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
+          this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
           this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          this.queryListTotal({ q: this.q, ...this.timeFilter })
+          this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
+          // this.queryListTotal({ q: this.q, ...this.timeFilter })
         }
       } else {
         this.limitFilterType = false
-        this.queryFilter({ entityType: 'ip', ...this.timeFilter })
-        this.queryFilter({ entityType: 'app', ...this.timeFilter })
-        this.queryFilter({ entityType: 'domain', ...this.timeFilter })
-        this.queryFilter({ entityType: 'dns', ...this.timeFilter })
+        // this.queryFilter({ entityType: 'ip', ...this.timeFilter })
+        // this.queryFilter({ entityType: 'app', ...this.timeFilter })
+        // this.queryFilter({ entityType: 'domain', ...this.timeFilter })
+        // this.queryFilter({ entityType: 'dns', ...this.timeFilter })
+        this.queryFilterNew({ ...this.pageObj, ...this.timeFilter })
         this.queryList({ ...this.pageObj, ...this.timeFilter })
-        this.queryListTotal({ ...this.timeFilter })
+        this.queryCount({ ...this.pageObj, ...this.timeFilter })
+        // this.queryListTotal({ ...this.timeFilter })
 
         // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
         if (!this.initFlag) {
@@ -636,25 +663,85 @@ export default {
         }
       })
     },
+    /** 新版查询filter数据 */
+    queryFilterNew (params) {
+      const queryParams = {
+        // startTime: getSecond(params.startTime),
+        // endTime: getSecond(params.endTime),
+        resource: params.q || ''
+      }
+      this.loadingLeft = true
+      const aggCountry = get(api.entity.entityList.aggCountry, queryParams)
+      const aggCity = get(api.entity.entityList.aggCity, queryParams)
+      const aggAsn = get(api.entity.entityList.aggAsn, queryParams)
+
+      Promise.all([aggCountry, aggCity, aggAsn]).then(response => {
+        response.forEach((item, index) => {
+          if (item.code === 200 && item.data.list) {
+            this.newFilterData[index].data = []
+            item.data.list.forEach(item => {
+              const obj = { label: item.value, flag: '011-china', topColumn: 'country', value: item.uniqueEntities }
+              if (index === 0) {
+                obj.flag = item.uniqueEntities // 接口字段名称为'China'，目前svg名称为'011-china'，后续再指定方案调整
+              }
+              if (index === 1) {
+                obj.topColumn = 'region'
+              }
+              if (index === 2) {
+                obj.topColumn = 'asn'
+              }
+              this.newFilterData[index].data.push(obj)
+            })
+          }
+        })
+      }).catch(e => {
+        // e
+      }).finally(() => {
+        this.loadingLeft = false
+      })
+    },
+    /** 实体列表查询 */
     queryList (params) {
       this.listLoading = true
       const queryParams = {
         ...params,
-        startTime: getSecond(params.startTime),
-        endTime: getSecond(params.endTime)
+        // startTime: getSecond(params.startTime),
+        // endTime: getSecond(params.endTime),
+        resource: params.q || ''
       }
-      get(api.entityList, queryParams).then(response => {
+      get(api.entity.entityList.list, queryParams).then(response => {
         if (response.code === 200) {
           this.listData = []
           this.$nextTick(() => {
-            this.listData = response.data.result
+            this.listData = response.data.list
+            this.pageObj.total = response.data.total
           })
         } else {
-          console.error(response.message)
           this.$message.error(response.message)
         }
       }).finally(() => {
         this.listLoading = false
+      })
+    },
+    /** 实体基数统计 */
+    queryCount (params) {
+      this.loadingCount = true
+      const queryParams = {
+        // startTime: getSecond(params.startTime),
+        // endTime: getSecond(params.endTime),
+        resource: params.q || '' // 目前版本搜索不支持实体名称搜索，下版本改进
+      }
+      get(api.entity.entityList.summaryCount, queryParams).then(response => {
+        if (response.code === 200) {
+          this.summaryCount = response.data
+        } else {
+          this.summaryCount = { total: 0, fqdnCount: 0, ipCount: 0, appCount: 0 }
+        }
+      }).catch(e => {
+        console.log(e)
+        this.summaryCount = { total: 0, fqdnCount: 0, ipCount: 0, appCount: 0 }
+      }).finally(() => {
+        this.loadingCount = false
       })
     },
 
@@ -677,11 +764,6 @@ export default {
     },
 
     getEntityIndexData () {
-      const now = window.$dayJs.tz().valueOf()
-      const timeFilter = {
-        startTime: parseInt(now / 1000 - 3600),
-        endTime: parseInt(now / 1000)
-      }
       // Total
       this.loadingApp = true
       this.loadingDomain = true
@@ -695,61 +777,37 @@ export default {
       this.loadingDomainActive = true
       this.loadingIpActive = true
 
-      get(api.entityTotal, { entityType: 'app' }).then(response => {
+      get(api.entity.entityList.entityActive).then(response => {
         if (response.code === 200) {
-          this.entityAppTotal = response.data.result
-        }
-        this.loadingApp = false
-      })
-      get(api.entityTotal, { entityType: 'domain' }).then(response => {
-        if (response.code === 200) {
-          this.entityDomainTotal = response.data.result
+          this.entityDomainTotal = response.data.domainCount
+          this.entityIpTotal = response.data.ipCount
+          this.entityAppTotal = response.data.appCount
         }
         this.loadingDomain = false
-      })
-      get(api.entityTotal, { entityType: 'ip' }).then(response => {
-        if (response.code === 200) {
-          this.entityIpTotal = response.data.result
-        }
         this.loadingIp = false
+        this.loadingApp = false
       })
       // New
-      get(api.entityNew, { entityType: 'app', ...timeFilter }).then(response => {
+      get(api.entity.entityList.entityNew).then(response => {
         if (response.code === 200) {
-          this.entityAppNew = response.data.result
-        }
-        this.loadingAppNew = false
-      })
-      get(api.entityNew, { entityType: 'domain', ...timeFilter }).then(response => {
-        if (response.code === 200) {
-          this.entityDomainNew = response.data.result
+          this.entityDomainNew = response.data.domainCount
+          this.entityIpNew = response.data.ipCount
+          this.entityAppNew = response.data.appCount
         }
         this.loadingDomainNew = false
-      })
-      get(api.entityNew, { entityType: 'ip', ...timeFilter }).then(response => {
-        if (response.code === 200) {
-          this.entityIpNew = response.data.result
-        }
         this.loadingIpNew = false
+        this.loadingAppNew = false
       })
       // Active
-      get(api.entityActive, { entityType: 'app', ...timeFilter }).then(response => {
+      get(api.entity.entityList.entityActive).then(response => {
         if (response.code === 200) {
-          this.entityAppActive = response.data.result
-        }
-        this.loadingAppActive = false
-      })
-      get(api.entityActive, { entityType: 'domain', ...timeFilter }).then(response => {
-        if (response.code === 200) {
-          this.entityDomainActive = response.data.result
+          this.entityDomainActive = response.data.domainCount
+          this.entityIpActive = response.data.ipCount
+          this.entityAppActive = response.data.appCount
         }
         this.loadingDomainActive = false
-      })
-      get(api.entityActive, { entityType: 'ip', ...timeFilter }).then(response => {
-        if (response.code === 200) {
-          this.entityIpActive = response.data.result
-        }
         this.loadingIpActive = false
+        this.loadingAppActive = false
       })
     },
     cleanFilterData (index) {

@@ -4,23 +4,23 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">APP ID</div>
-        <div class="row__content">{{entity.appId|| '-'}}</div>
+        <div class="row__content">{{entity.category.appId || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.category')}}</div>
-        <div class="row__content">{{entity.appCategory|| '-'}}</div>
+        <div class="row__content">{{entity.category.appCategory || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.subcategory')}}</div>
-        <div class="row__content">{{entity.appSubcategory || '-'}}</div>
+        <div class="row__content">{{entity.category.appSubcategory || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.riskLevel')}}</div>
-        <div class="row__content">{{appRisk(entity.appRisk) || '-'}}</div>
+        <div class="row__content">{{appRisk(parseInt(entity.category.appRisk)) || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.remark')}}</div>
-        <div class="row__content">{{entity.appDescription || '-'}}</div>
+        <div class="row__content">{{entity.category.appDescription || '-'}}</div>
       </div>
     </div>
   </div>
@@ -43,103 +43,78 @@
             <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-               <div class="row__charts" :id="`entityDetailSend${entity.appName}`" ></div>
+               <div class="row__charts" :id="`entityDetailSend${entity.entityValue}`" ></div>
             </div>
           </div>
-          <div class="row__content">
+          <div class="row__content row__content-accept">
             <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
-               <div class="row__charts" :id="`entityDetailReceived${entity.appName}`" ></div>
+               <div class="row__charts" :id="`entityDetailReceived${entity.entityValue}`" ></div>
             </div>
           </div>
         </div>
       </div>
+
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
+        <loading :loading="loadingNetworkQuality" size="small" inner-style="left: 1rem;"></loading>
+        <div class="entity-score" v-if="!loadingNetworkQuality">
+          <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
+          <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
+          <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
+          Score:{{score}}
+        </div>
+      </div>
     </div>
   </div>
+
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.relationship')}}</div>
     <div class="overview__content domain__content">
-      <div class="overview__tags domain__tags" ref="relationship">
-        <div class="overview__domain-tabs overview__domain-tabs-loading">
-          <loading :loading="loadingRelationshipOne" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
-          <div class="overview__domain-tab">
-            <div class="overview__tag domain__tag">
-              <span class="tag__value">{{relationshipDataOne.length}}</span>
-              <span class="tag__desc">{{$t('entities.relatedDomains')}}</span>
-            </div>
-            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
-              <span class="tag__desc">{{item.domain}}</span>
-            </div>
+      <div class="overview__tags domain__tags" ref="relationship"></div>
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('entities.tab.relatedIp')}}</div>
+
+        <loading :loading="loadingRelationshipOne" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
+        <div class="row__content overview__row-related">
+          <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+            {{item.value}}
           </div>
-          <div class="overview__domain-btn">
-            <div class="overview__domain-more" @click="more(relationshipDataOne, 1)" v-if="relationshipShowOne">...</div>
-            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreOne" v-ele-click-outside="mouseout">
-              <div class="domain-more-tab" v-for="item in relationshipMoreDataOne" :key="item">
-                <span v-if="item.domain" :title="item.domain">{{item.domain}}</span>
-              </div>
-            </div>
+
+          <div v-if="relationshipShowOne">
+            <el-popover placement="right-end" trigger="click" show-arrow="false" offset="20">
+              <template #reference>
+                <div class="data-item show-more-related">...</div>
+              </template>
+              <div v-for="(item, index) in relationshipDataOne" :key="index">{{item.value}}</div>
+            </el-popover>
           </div>
         </div>
-        <div class="overview__domain-tabs overview__domain-tabs-loading">
-          <loading :loading="loadingRelationshipTwo" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
-          <div class="overview__domain-tab">
-            <div class="overview__tag domain__tag">
-              <span class="tag__value">{{relationshipDataTwo.length}}</span>
-              <span class="tag__desc">{{$t('entities.relatedServerIp')}}</span>
-            </div>
-            <div class="overview__tag domain__tag-list" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
-              <span class="tag__desc">{{item.ip}}</span>
-            </div>
+      </div>
+
+      <div class="overview__row overview__row-related">
+        <div class="row__label row__label--width130">{{$t('entities.tab.relatedIp')}}</div>
+
+        <loading :loading="loadingRelationshipTwo" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
+        <div class="row__content">
+          <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
+            {{item.value}}
           </div>
-          <div class="overview__domain-btn">
-            <div class="overview__domain-more" @click="more(relationshipDataTwo, 2)" v-if="relationshipShowTwo">...</div>
-            <div class="overview__domain-more-tabs show-more-list" v-if="relationshipShowMoreTwo" v-ele-click-outside="mouseout">
-              <div class="domain-more-tab" v-for="item in relationshipMoreDataTwo" :key="item">
-                <span v-if="item.ip" :title="item.ip">{{item.ip}}</span>
-              </div>
-            </div>
+
+          <div v-if="relationshipShowTwo">
+            <el-popover class="entity-expand-detail" placement="right-end" trigger="click" show-arrow="false" offset="20">
+              <template #reference>
+                <div class="data-item show-more-related">...</div>
+              </template>
+              <div v-for="(item, index) in relationshipDataTwo" :key="index">{{item.value}}</div>
+            </el-popover>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="overview-item">
-    <div class="overview__title">{{$t('overall.networkQuality')}}</div>
-    <div class="overview__content overview__content-loading-net">
-      <loading :loading="loadingNetworkQuality" size="small"></loading>
-      <div class="overview__row overview__row--single-value">
-        <chart-single-value
-            v-for="(chartInfo, i) in singleValues.chartInfos"
-            :chart-info="chartInfo"
-            :chart-data="singleValues.chartDatas[i]"
-            :key="i"
-            class="cn-chart__single-value--detail-overview"
-        ></chart-single-value>
-      </div>
-    </div>
-  </div>
-  <div class="overview-item">
-    <div class="overview__title">{{$t('entities.accessLink')}}</div>
-    <div class="overview__content">
-      <div class="overview__tags">
-        <div class="overview__tag overview__tag-loading">
-          <loading :loading="loadingOut" size="small"></loading>
-          <span class="tag__desc">{{$t('entities.outLinkTrafficPercentage')}}</span>
-          <span class="tag__value">{{entityData.linkOutId ? entityData.linkOutId : '-'}},</span>
-          <span class="tag__desc">{{$t('entities.percentage')}}</span>
-          <span class="tag__value">{{entityData.linkOutPercent ? unitConvert(entityData.linkOutPercent, unitTypes.percent).join(' ') : '-'}}</span>
-        </div>
-        <div class="overview__tag overview__tag-loading">
-          <loading :loading="loadingIn" size="small"></loading>
-          <span class="tag__desc">{{$t('entities.inLinkTrafficPercentage')}}</span>
-          <span class="tag__value">{{entityData.linkInId ? entityData.linkInId : '-'}},</span>
-          <span class="tag__desc">{{$t('entities.percentage')}}</span>
-          <span class="tag__value">{{entityData.linkInPercent ? unitConvert(entityData.linkInPercent, unitTypes.percent).join(' ') : '-'}}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+
   <div class="overview-item">
     <div class="overview__title">{{$t('overall.alert')}}</div>
     <div class="overview__content overview__content-loading">
@@ -148,20 +123,17 @@
         <span  class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
       <div class="overview__row" v-if="performanceData.length > 0">
-        <div class="row__label">{{$t('entities.recentAlert')}}</div>
+        <div class="row__label row__label--width130">{{$t('entities.recentAlert')}}</div>
         <div class="row__content">{{entityData.performanceNum}}</div>
       </div>
-      <div class="overview__row overview__row--small-font"   v-for="(performance, index) in entityData.performanceList" :key="index">
-        <div class="row__label row__label--width160">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
-        <div class="row__content row__content--width200">
+      <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
+        <div class="row__label row__label--width130">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
+        <div class="row__content row__content--width90">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
-          <div>{{performance.eventType}}</div>
         </div>
-        <div class="row__content-loading"  style="position: relative;" >
-          <loading :loading="!loadingAlert && loadingPerformance[index]?loadingPerformance[index]:false" :id="`loading${entity.ipAddr}_${index}`" size="small"></loading>
-          <div class="row__charts"  :id="`entityPerformanceChart${entity.appName}_${index}`"></div>
+        <div class="row__content-loading" style="position: relative;">
+          <div class="performance-event-remark">{{performance.eventType}}</div>
         </div>
-
         <div class="row__desc"></div>
       </div>
       <div class="overview__row overview__row--small-font" v-if="performanceData && performanceData.length > 5">
@@ -177,15 +149,26 @@
         <span class="no-recent-alerts"><i class="el-icon-success"></i>{{$t('relationShip.noRecentAlerts')}}</span>
       </div>
       <div class="overview__row" v-if="securityData.length > 0">
-        <div class="row__label">{{$t('entities.recentSecurity')}}</div>
+        <div class="row__label row__label--width130">{{$t('entities.recentSecurity')}}</div>
         <div class="row__content">{{entityData.securityNum}}</div>
       </div>
-      <div class="overview__row overview__row--small-font"   v-for="(security, index) in entityData.securityList" :key="index">
-        <div class="row__label row__label--width160">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
-        <div class="row__content row__content--width200">
+
+      <div class="overview__row overview__row--small-font" v-for="(security, index) in entityData.securityList" :key="index">
+        <div class="row__label row__label--width130">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
+        <div class="row__content row__content--width90">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(security)">{{security.eventSeverity}}</div>
-          <div>{{security.securityType}}</div>
         </div>
+        <div class="cn-detection__header">
+          <i class="cn-icon cn-icon-attacker"></i>
+          <span>{{ security.offenderIp }}</span>
+          <div class="domain" v-if="security.offenderIp===security.serverIp">{{ security.domain }}</div>
+          <span class="line">-------</span>
+          <span class="circle"></span>
+          <i class="cn-icon cn-icon-attacked"></i>
+          <span>{{ security.victimIp }}</span>
+          <div class="domain" v-if="security.victimIp===security.serverIp">{{ security.domain }}</div>
+        </div>
+
         <div class="row__desc"></div>
       </div>
       <div class="overview__row overview__row--small-font" v-if="securityData && securityData.length > 5">
@@ -213,34 +196,38 @@ import { unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
-import ChartSingleValue from '@/views/charts/charts/ChartSingleValue'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
-import { getSecond, getMillisecond } from '@/utils/date-util'
+import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
+import { ref } from 'vue'
 
 export default {
   name: 'App',
   mixins: [entityDetailMixin, relatedServer],
   components: {
     Chart,
-    Loading,
-    ChartSingleValue
+    Loading
   },
   data () {
     return {
       // entityData: {}
       entityType: 'app',
-      trafficUrl: api.entityAppDetailTraffic,
+      // trafficUrl: api.entityAppDetailTraffic,
+      trafficUrl: api.entity.entityList.appThroughput,
       relationUrl: api.entityAppDetailRelation,
-      networkQuantityUrl: api.entityAppDetailNetworkQuantity,
+      // networkQuantityUrl: api.entityAppDetailNetworkQuantity,
+      networkQuantityUrl: api.entity.entityList.appPerformance,
       linkInUrl: api.entityAppDetailLinkIn,
       linkOutUrl: api.entityAppDetailLinkOut,
-      performanceUrl: api.entityAppDetailPerformance,
-      securityUrl: api.entityAppDetailSecurity,
-      trafficUrlMap: api.entityAppDetailTrafficMap,
-      relatedServerDomainUrl: api.entityAppRelatedServerDomain,
-      relatedServerIpUrl: api.entityAppRelatedServerIp,
+      // performanceUrl: api.entityAppDetailPerformance,
+      performanceUrl: api.entity.entityList.appEventPerformance,
+      securityUrl: api.entity.entityList.appSecurity,
+      // securityUrl: api.entityAppDetailSecurity,
+      // trafficUrlMap: api.entityAppDetailTrafficMap,
+      trafficUrlMap: api.entity.entityList.appTrafficMap,
+      relatedServerDomainUrl: api.entity.entityList.appRelatedDomain,
+      relatedServerIpUrl: api.entity.entityList.appRelatedIp,
       chartData: null,
       listMode: 'list',
       singleValues: {
@@ -296,34 +283,34 @@ export default {
             i18n: 'entities.pktRetransPercent'
           }
         ],
-        chartDatas: [null, null, null, null, null],
-        loadingTraffic: false,
-        loadingRelationshipOne: false,
-        loadingRelationshipTwo: false,
-        loadingNetworkQuality: false,
-        loadingOut: false,
-        loadingIn: false,
-        loadingAlert: false,
-        loadingSecurityEvents: false,
-        loadingMap: false
-      }
+        chartDatas: [null, null, null, null, null]
+      },
+      loadingTraffic: false,
+      loadingRelationshipOne: false,
+      loadingRelationshipTwo: false,
+      loadingNetworkQuality: false,
+      loadingOut: false,
+      loadingIn: false,
+      loadingAlert: false,
+      loadingSecurityEvents: false,
+      loadingMap: false
     }
   },
   methods: {
     getMillisecond,
+    dateFormatByAppearance,
     getQueryParams () {
-      const queryParams = {
+      return {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        appName: this.entity.appName
+        resource: this.entity.entityValue,
+        appName: this.entity.entityValue
       }
-      return queryParams
     },
     getPerformanceQueryParams () {
-      const queryParams = {
-        appName: this.entity.appName
+      return {
+        appName: this.entity.entityValue
       }
-      return queryParams
     },
     handleRelationData (result) {
       this.entityData.domainCount = result.domainCount
@@ -353,6 +340,7 @@ export default {
     })
   },
   setup (props) {
+    const entityData = ref({ ...props.entity })
     return {
       chart: {
         params: {
@@ -366,7 +354,8 @@ export default {
       entityCopy: {
         ..._.cloneDeep(props.entity)
       },
-      unitConvert
+      unitConvert,
+      entityData
     }
   }
 }

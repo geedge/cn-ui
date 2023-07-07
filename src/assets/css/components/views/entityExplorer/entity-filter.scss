@@ -1,104 +1,100 @@
 .entity-filter-case {
   display: flex;
   flex-direction: column;
-  width: 280px;
-  margin-right: 10px;
+  width: 320px;
+  margin-right: 20px;
   overflow: auto;
   z-index: 1;
+  border: 1px solid rgba(226, 229, 236, 1) !important;
+  border-radius: 4px !important;
 
   .filter-case__header {
-    background-color: #E1E6ED;
-    margin-bottom: 10px;
-    padding-left: 8px;
-    height: 36px;
-    line-height: 36px;
-    color: #666;
-    font-size: 14px;
-  }
-  .entity-filter {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #E7EAED;
-    margin-bottom: 10px;
-    background-color: white;
-
-    .filter__header {
-      height: 46px;
-      margin: 0 15px;
-      line-height: 46px;
-      border-bottom: 1px solid #EFF2F5;
+      padding-left: 8px;
+      height: 36px;
+      line-height: 36px;
+      color: #666;
       font-size: 14px;
-      color: #333;
+      background: #F7F7F7;
+      box-shadow: 0 1px 0 0 rgba(226,229,236,1);
+      border-radius: 4px 4px 0 0;
     }
-    .filter__body {
-      padding: 11px 0 21px 0;
-      .filter__row {
-        padding: 0 15px;
+
+  .filter__header {
+    height: 46px;
+    line-height: 46px;
+    margin: 0 20px;
+    font-size: 14px;
+    color: #353636;
+    font-weight: 500;
+  }
+
+  .filter__body {
+    width: calc(100% - 40px);
+    margin: 0 20px;
+
+    .filter-hr {
+      width: calc(100% + 20px);
+      margin-left: -10px;
+      margin-top: 10px;
+      height: 1px;
+      background: #EFF2F5;
+      //background: #000;
+    }
+
+    .filter__body-item {
+      height: 26px;
+      line-height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+
+      .filter__body-item-left {
+        display: flex;
         align-items: center;
-        cursor: pointer;
-        transition: all linear .2s;
-        .filter__row-popover {
-          display: flex;
-          line-height: 26px;
+        font-size: 14px;
+        color: #353636;
+        font-weight: 400;
+
+        .filter-country-flag {
+          width: 18px;
+          height: 12px;
         }
 
-        &:hover, &.filter__row--active {
-          background-color: #F3F7FA;
-        }
-        .row__label {
-          font-size: 14px;
-          flex: 8;
-          display: flex;
-          i {
-            color: #8FA1BE;
-          }
-          span {
-            padding-left: 6px;
-            color: #333;
-          }
-        }
-        .row__value {
-          color: #666;
-          position: relative;
-          display: inline-block;
+        .filter__body-item-left-index {
+          width: 16px;
+          height: 16px;
           text-align: center;
-          flex: 1;
-          .chart__loading img {
-            left: unset;
-            right: 0;
-          }
+          background: #EFF2F5;
+          border-radius: 2px;
+          margin-right: 6px;
+          font-family: NotoSansHans-Black;
+          font-size: 9px;
+          color: #96A2B0;
+          font-weight: 900;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .filter__body-item-left-label {
+          max-width: 180px;
+          font-family: NotoSansSChineseRegular;
+          font-size: 14px;
+          color: #353636;
+          font-weight: 400;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
-    }
-  }
-}
-.filter__row-popover {
-  .pop-title {
-    i {
-      margin-right: 6px;
-    }
-  }
-  .entity-pop-custom {
-    .filter-top-box {
-      .chart__loading {
-        height: calc(100% - 65px);
-        top: 64px;
-      }
-      .top-table-percent{
-        display:grid;
-        grid-template-columns: 50% auto;
-        grid-template-rows: 100%;
-        grid-row-gap: 0px;
-        grid-column-gap: 0px;
-        .top-table-progress{
-          align-content: center;
-          padding-top: 8px;
-        }
-      }
-      .customer-no-border-table {
-        .el-table__body-wrapper {
-          height: calc(100% - 36px);
-        }
+
+      .filter__body-item-right {
+        flex-shrink: 0;
+        font-family: NotoSansSChineseRegular;
+        font-size: 12px;
+        color: #717171;
+        font-weight: 400;
       }
     }
   }

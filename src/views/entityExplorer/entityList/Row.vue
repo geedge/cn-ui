@@ -9,75 +9,76 @@
     <div class="cn-entity__case">
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
       <div class="cn-entity__row">
-        <div class="cn-entity__header">
-          {{ entityData.ipAddr || entityData.domainName || entityData.appName || 'Unknown' }}
-          <!--        <div class="cn-entity__header" style="display: flex">-->
-<!--          <span class="cn-entity__header-title">{{ entityData.ipAddr || entityData.domainName || entityData.appName || 'Unknown' }}</span>-->
-<!--          <span class="entity-detail" style="display: flex">-->
-<!--            <span style="width: 62px;" class="entity-tag entity-tag&#45;&#45;small entity-tag&#45;&#45;level-two-positive margin-r-6">信息技术</span>-->
-<!--            <span style="width: 50px;" class="entity-tag entity-tag&#45;&#45;small entity-tag&#45;&#45;level-two-normal margin-r-6">互联网</span>-->
-<!--          </span>-->
+        <!--标签-->
+        <div class="cn-entity__header" style="display: flex;align-items: center">
+          <span class="cn-entity__header-title">{{ entityData.entityValue || 'Unknown' }}</span>
+          <span class="entity-detail" style="display: flex;margin-left: 6px;margin-top: 1px;">
+            <span v-for="(item, index) in levelTwoTags" :key="index" class="entity-tag entity-tag--small margin-r-10" :class="`entity-tag--level-two-${item.type}`">
+              {{ item.value }}
+            </span>
+          </span>
         </div>
+
         <div class="cn-entity__body">
           <div class="body__basic-info">
             <div class="basic-info">
               <template v-if="entityData.entityType === 'ip'">
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-country"></i>
-                  <span>{{ $t('overall.country') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ entityData.ipLocationCountry || '-' }}</span>
+                  <span class="row-item-label">{{ $t('overall.country') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.location ? entityData.location.country : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
-                  <span>{{ $t('overall.region') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ ipLocationRegion(entityData) }}</span>
+                  <span class="row-item-label">{{ $t('overall.region') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.location ? ipLocationRegion(entityData.location) : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-cloud"></i>
-                  <span>{{ $t('entities.asn') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ entityData.ipAsn || '-' }}</span>
+                  <span class="row-item-label">{{ $t('entities.asn') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.asn ? entityData.asn.asn : '-' }}</span>
                 </div>
               </template>
               <template v-else-if="entityData.entityType === 'domain'">
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-category"></i>
-                  <span>{{ $t('entities.domainDetail.categoryGroup') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ entityData.domainCategoryGroup || '-' }}</span>
+                  <i class="cn-icon cn-icon-sub-category"></i>
+                  <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.category ? entityData.category.name : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-sub-category"></i>
-                  <span>{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ entityData.domainCategory || '-' }}</span>
+                  <i class="cn-icon cn-icon-category"></i>
+                  <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.category ? entityData.category.group : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-credit"></i>
-                  <span>{{ $t('entities.reputationLevel') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ entityData.domainReputationScore || '-' }}</span>
+                  <span class="row-item-label">{{ $t('entities.reputationLevel') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.category ? entityData.category.reputationLevel : '-' }}</span>
                 </div>
               </template>
               <template v-else-if="entityData.entityType === 'app'">
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-id"></i>
-                  <span>{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ entityData.appCategory || '-' }}</span>
+                  <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.category ? entityData.category.appCategory : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category"></i>
-                  <span>{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ entityData.appSubcategory || '-' }}</span>
+                  <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.category ? entityData.category.appSubcategory : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
-                  <span>{{ $t('entities.risk') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>{{ appRisk(entityData.appRisk) || '-' }}</span>
+                  <span class="row-item-label">{{ $t('entities.risk') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">{{ entityData.category ? appRisk(entityData.category.appRisk) : '-' }}</span>
                 </div>
               </template>
               <!-- 通用字段 -->
               <div class="basic-info__item">
                 <div class="item__box">
                   <i class="cn-icon cn-icon-rise"></i>
-                  <span>{{ $t('entities.sentThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>
+                  <span class="row-item-label">{{ $t('entities.sentThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">
                     {{
                       entityData.bytesSentRate ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'
                     }}
@@ -107,8 +108,8 @@
               <div class="basic-info__item">
                 <div class="item__box">
                   <i class="cn-icon cn-icon-fall"></i>
-                  <span>{{ $t('entities.receivedThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span>
+                  <span class="row-item-label">{{ $t('entities.receivedThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value">
                     {{
                       entityData.bytesReceivedRate ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'
                     }}
@@ -133,23 +134,7 @@
                   </div>
                 </div>
               </div>
-              <!--新版实体列表改版，去除这一段-->
-              <div class="basic-info__item">
-                <i class="cn-icon cn-icon-entity-alert"></i>
-                <span>{{ $t('entities.recentAlert') }}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ entityData.performanceCount }}</span>
-              </div>
-              <div class="basic-info__item">
-                <i class="cn-icon cn-icon-safe"></i>
-                <span>{{ $t('entities.recentSecurity') }}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ entityData.securityCount }}</span>
-              </div>
-              <!--新版实体列表改版，去除这一段-->
             </div>
-<!--            <div class="show-detail" @click="showDetail">-->
-<!--              {{ $t('overall.detail') }}>-->
-<!--            </div>-->
-<!--            新版实体列表改版，后续记得解开-->
           </div>
         </div>
       </div>
@@ -172,6 +157,10 @@ import DetailOverview from '@/views/entityExplorer/entityList/detailOverview/Det
 import entityListMixin from './entityListMixin'
 import relatedServer from '@/mixins/relatedServer'
 import Loading from '@/components/common/Loading'
+import axios from 'axios'
+import { api } from '@/utils/api'
+import { entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import _ from 'lodash'
 
 export default {
   name: 'Row',
@@ -188,35 +177,109 @@ export default {
   data () {
     return {
       loading: false,
-      isCollapse: true // 是否是折叠状态
+      isCollapse: true, // 是否是折叠状态
+      levelTwoTags: []
     }
   },
   computed: {
     ipLocationRegion () {
       return function (entityData) {
         const hasProvinceAndCity =
-            entityData.ipLocationProvince &&
-            entityData.ipLocationCity &&
-            entityData.ipLocationProvince !== 'null' &&
-            entityData.ipLocationCity !== 'null'
+            entityData.province &&
+            entityData.city &&
+            entityData.province !== 'null' &&
+            entityData.city !== 'null'
         const hasProvince =
-            entityData.ipLocationProvince &&
-            entityData.ipLocationProvince !== 'null'
+            entityData.province &&
+            entityData.province !== 'null'
         const hasCity =
-            entityData.ipLocationCity && entityData.ipLocationCity !== 'null'
+            entityData.city && entityData.city !== 'null'
         if (hasProvinceAndCity) {
-          return `${entityData.ipLocationProvince}, ${entityData.ipLocationCity}`
+          return `${entityData.province}, ${entityData.city}`
         } else if (hasProvince) {
-          return entityData.ipLocationProvince
+          return entityData.province
         } else if (hasCity) {
-          return entityData.ipLocationCity
+          return entityData.city
         } else {
           return '-'
         }
       }
     }
   },
+  mounted () {
+    this.initData()
+    this.initTagsData()
+  },
   methods: {
+    initData () {
+      let url = ''
+      switch (this.entity.entityType) {
+        case ('domain'): {
+          url = api.entity.entityList.domainBasicInfo
+          break
+        }
+        case ('ip'): {
+          url = api.entity.entityList.ipBasicInfo
+          break
+        }
+        case ('app'): {
+          url = api.entity.entityList.appBasicInfo
+          break
+        }
+      }
+      axios.get(`${url}?resource=${this.entity.entityValue}`).then(response => {
+        this.$nextTick(() => {
+          this.entityData = { ...response.data.data, ...this.entity }
+        })
+      })
+    },
+    initTagsData () {
+      let url = ''
+      switch (this.entity.entityType) {
+        case ('domain'): {
+          url = api.entity.entityList.domainTags
+          break
+        }
+        case ('ip'): {
+          url = api.entity.entityList.ipTags
+          break
+        }
+        case ('app'): {
+          url = api.entity.entityList.appTags
+          break
+        }
+      }
+      axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
+        const res = responese.data
+        if (res.code === 200) {
+          Object.keys(res.data).forEach(k => {
+            if (k !== 'userDefinedTags' && res.data[k]) {
+              Object.keys(res.data[k]).forEach(k2 => {
+                const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
+                if (find) {
+                  this.levelTwoTags.push({ key: k2, value: this.tagValueHandler(k, k2, res.data[k][k2]), type: find.type })
+                }
+              })
+            }
+          })
+          if (_.isArray(res.data.userDefinedTags)) {
+            this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
+          }
+          this.hideTagArea = _.isEmpty(this.levelTwoTags)
+        }
+      })
+    },
+    tagValueHandler (k, k2, value) {
+      if (k === 'psiphon3Ip') {
+        if (k2 === 'type') {
+          const find = psiphon3IpType.find(t => t.value === value)
+          if (find) {
+            return find.name
+          }
+        }
+      }
+      return value
+    },
     /* 切换折叠状态 */
     switchCollapse () {
       this.isCollapse = !this.isCollapse

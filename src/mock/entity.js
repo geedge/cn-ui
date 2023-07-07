@@ -451,6 +451,300 @@ if (openMock) {
       }
     }
   })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/query/list.*`), 'get', function (requestObj) {
+    const result = {
+      pageNo: 1,
+      pageSize: 10,
+      total: 3,
+      list: [
+        { entityValue: '192.168.12.34', entityType: 'ip' },
+        { entityValue: 'gdbzkz.com', entityType: 'domain' },
+        { entityValue: 'qqvideo', entityType: 'app' }
+      ]
+    }
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/basic.*`), 'get', function (requestObj) {
+    const entityType = getEntityType(requestObj.url)
+    let result = {}
+    switch (entityType) {
+      case ('domain'): {
+        result = {
+          whois: {
+            registrarName: 'Beijing Baidu Company',
+            registrantOrg: 'Beijing Baidu Netcom Science Technology Co., Ltd.',
+            registrantCountry: 'China',
+            email: '信息已设置隐私保护',
+            createDate: 1685329698,
+            expireDate: 1685329698
+          },
+          icp: {
+            icpSiteLicense: '京ICP证030173号',
+            icpCompanyName: '北京百度网讯科技有限公司',
+            icpCompanyType: '企业'
+          },
+          category: {
+            name: '门户网站',
+            group: '互联网',
+            reputationLevel: 'Trustworthy'
+          }
+        }
+        break
+      }
+      case ('ip'): {
+        result = {
+          asn: { id: 2, asn: '14061', organization: 'DIGITALOCEAN-ASN - DigitalOcean, LLC, US' },
+          location: {
+            continent: 'North America',
+            country: 'United States',
+            province: 'New York',
+            city: '',
+            lngwgs: '-74.006',
+            latwgs: '40.713',
+            isp: 'dba Omsoft',
+            owner: 'tie net'
+          }
+        }
+        break
+      }
+      case ('app'): {
+        result = {
+          category: {
+            appName: 'QQ',
+            appId: 333,
+            appCategory: '娱乐',
+            appSubcategory: '聊天',
+            appRisk: '1',
+            appDescription: '聊天社交软件',
+            appLongname: 'Tencent qq',
+            appTechnology: 'socket',
+            appCompany: 'tencent',
+            appCompanyCategory: '互联网'
+          }
+        }
+        break
+      }
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/kb/intelligence/tag.*`), 'get', function (requestObj) {
+    const entityType = getEntityType(requestObj.url)
+    let result = {}
+    switch (entityType) {
+      case ('domain'): {
+        result = {
+          malware: {
+            threatType: 'command and control',
+            malwareName: '情报攻击',
+            malwareAlias: '攻击'
+          },
+          darkweb: {
+            nodeType: 'mtproxy'
+          },
+          userDefinedTags: [
+            {
+              id: 1,
+              tagValue: '门户网站'
+            }
+          ]
+        }
+        break
+      }
+      case ('ip'): {
+        result = {
+          malware: {
+            threatType: 'command and control',
+            malwareName: 'IcedID',
+            malwareAlias: 'BokBot,IceID'
+          },
+          darkweb: {
+            nodeType: '12p'
+          },
+          psiphon3Ip: {
+            type: 'high',
+            method: 'passive_ml',
+            confidence: 88,
+            confidenceLevel: 'confirmed'
+          },
+          userDefinedTags: [
+            {
+              id: 1,
+              tagValue: '门户网站'
+            }
+          ]
+        }
+        break
+      }
+      case ('app'): {
+        result = {
+          userDefinedTags: [
+            {
+              id: 1,
+              tagValue: '门户网站'
+            },
+            {
+              id: 2,
+              tagValue: '新闻软件'
+            }
+          ]
+        }
+        break
+      }
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/domain/relate.*`), 'get', function (requestObj) {
+    const relateType = getRelateType(requestObj.url)
+    let result = {}
+    switch (relateType) {
+      case ('ip'): {
+        result = {
+          total: 5,
+          result: ['bittorrent', 'qq_web', 'wechat', 'tencent', 'outlook']
+        }
+        break
+      }
+      case ('app'): {
+        result = {
+          total: 5,
+          result: ['192.107.175.180', '192.107.175.180', '192.107.175.180', '192.107.175.180', '192.107.175.180']
+        }
+        break
+      }
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/ip/relate.*`), 'get', function (requestObj) {
+    const relateType = getRelateType(requestObj.url)
+    let result = {}
+    switch (relateType) {
+      case ('domain'): {
+        result = {
+          total: 5,
+          result: ['bittorrent', 'qq_web', 'wechat', 'tencent', 'outlook']
+        }
+        break
+      }
+      case ('app'): {
+        result = {
+          total: 5,
+          result: ['gdbzkz.com', 'gdbzkz.com', 'gdbzkz.com', 'gdbzkz.com', 'gdbzkz.com']
+        }
+        break
+      }
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/app/relate.*`), 'get', function (requestObj) {
+    const relateType = getRelateType(requestObj.url)
+    let result = {}
+    switch (relateType) {
+      case ('ip'): {
+        result = {
+          total: 5,
+          result: ['gdbzkz.com', 'gdbzkz.com', 'gdbzkz.com', 'gdbzkz.com', 'gdbzkz.com']
+        }
+        break
+      }
+      case ('domain'): {
+        result = {
+          total: 5,
+          result: ['192.107.175.180', '192.107.175.180', '192.107.175.180', '192.107.175.180', '192.107.175.180']
+        }
+        break
+      }
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/detail/traffic/performance.*`), 'get', function (requestObj) {
+    const result = {
+      resultType: 'object',
+      result: {
+        httpResponseLatencyValue: null,
+        httpResponseLatencyP50: null,
+        httpResponseLatencyP90: null,
+        httpResponseLatencyP99: null,
+        sslConLatencyValue: 191,
+        sslConLatencyP50: 137,
+        sslConLatencyP90: 311,
+        sslConLatencyP99: 1610,
+        establishLatencyValue: 42,
+        establishLatencyP50: 33,
+        establishLatencyP90: 54,
+        establishLatencyP99: 177,
+        sequenceGapLossPercentValue: 0.001,
+        sequenceGapLossPercentP50: 0,
+        sequenceGapLossPercentP90: 0.0038,
+        sequenceGapLossPercentP99: 0.0087,
+        pktRetransPercentValue: 0.0124,
+        pktRetransPercentP50: 0.0096,
+        pktRetransPercentP90: 0.0183,
+        pktRetransPercentP99: 0.0769
+      }
+    }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: result
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/overview/active.*`), 'get', function (requestObj) {
+    const data = { domainCount: 755, ipCount: 8373, appCount: 263 }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/overview/new.*`), 'get', function (requestObj) {
+    const data = { domainCount: 262, ipCount: 4201, appCount: 43 }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
+  Mock.mock(new RegExp(`${urlAndVersion}/entity/explorer/overview/total.*`), 'get', function (requestObj) {
+    const data = { domainCount: 7686274, ipCount: 2169957, appCount: 856 }
+
+    return {
+      msg: 'success',
+      code: 200,
+      data: data
+    }
+  })
 }
 
 const getQuery = (url) => {
@@ -466,4 +760,32 @@ const getQuery = (url) => {
     result[item[0]] = item[1]
   }
   return result
+}
+
+const getEntityType = (url) => {
+  let entityType = ''
+  if (url.indexOf('/domain?') > -1) {
+    entityType = 'domain'
+  }
+  if (url.indexOf('/ip?') > -1) {
+    entityType = 'ip'
+  }
+  if (url.indexOf('/app?') > -1) {
+    entityType = 'app'
+  }
+  return entityType
+}
+
+const getRelateType = (url) => {
+  let entityType = ''
+  if (url.indexOf('/domains?') > -1) {
+    entityType = 'domain'
+  }
+  if (url.indexOf('/ips?') > -1) {
+    entityType = 'ip'
+  }
+  if (url.indexOf('/apps?') > -1) {
+    entityType = 'app'
+  }
+  return entityType
 }

@@ -10,10 +10,9 @@
       right: 10px;
 
       .search__suffix {
-        margin-left: 8px; // 新版实体列表改版，后续记得解开
+        // margin-left: 8px;
 
-        .cn-icon-search-advance, .cn-icon-search-normal {
-        //.cn-icon-search-advance, .cn-icon-search-normal, .cn-icon-filter {
+        .cn-icon-search-advance, .cn-icon-search-normal, .cn-icon-filter {
           color: #A6AAAE;
           font-size: 18px;
         }

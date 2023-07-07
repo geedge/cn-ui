@@ -19,7 +19,12 @@ export default {
       this.loadingRelationshipOne = true
       get(relationshipUrlOne, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          const relationshipDataOne = response.data.result
+          const relationshipDataOne = []
+          if (response.data.result.length > 0) {
+            response.data.result.forEach(item => {
+              relationshipDataOne.push({ value: item, show: true })
+            })
+          }
           // 将请求数据 传入方法中
           this.relatedServerWidth(relationshipDataOne, refOne, 1)
         }
@@ -30,7 +35,12 @@ export default {
       this.loadingRelationshipTwo = true
       get(relationshipUrlTow, this.getQueryParams()).then(response => {
         if (response.code === 200) {
-          const relationshipDataTwo = response.data.result
+          const relationshipDataTwo = []
+          if (response.data.result.length > 0) {
+            response.data.result.forEach(item => {
+              relationshipDataTwo.push({ value: item, show: true })
+            })
+          }
           // 将请求数据 传入方法中
           this.relatedServerWidth(relationshipDataTwo, refTow, 2)
         }
@@ -45,7 +55,7 @@ export default {
       let flag = true
       data.forEach((item) => {
         // 每条数据的宽度
-        const width = getTextRect(item.appName || item.domain || item.ip).width + 67
+        const width = getTextRect(item.value).width + 67
         if (width > 67 && width !== 0) {
           sum += width
           if (flag && sum >= relatedServerWidth && num === 1) {
