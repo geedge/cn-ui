@@ -103,7 +103,7 @@ $font-size: 12px;
     .graph-content-item {
 
       .graph-content-item-label, .graph-content-item-value {
-        width: 100px;
+        width: 130px;
         font-family: NotoSansSChineseRegular;
         font-size: $font-size;
         color: #717171;
@@ -125,14 +125,8 @@ $font-size: 12px;
     .graph-content-relationship-item {
       justify-content: space-between;
       line-height: 24px;
-      cursor: pointer;
-
-      &:hover {
-        background: rgba(135, 135, 135, 0.1);
-      }
 
       .graph-relationship-item-label, .graph-relationship-item-value {
-        font-family: NotoSansSChineseRegular;
         font-size: $font-size;
         color: #353636;
         font-weight: 400;
@@ -148,6 +142,10 @@ $font-size: 12px;
 
       .graph-relationship-item-value {
         color: #717171;
+
+        i {
+          cursor: pointer;
+        }
       }
     }
   }
@@ -196,9 +194,6 @@ $font-size: 12px;
 
 .graph-expand-relationship__icon {
   font-size: 13px;
-  &:hover {
-    color: #D80000 !important;
-  }
 }
 
 .graph-basic-info__block-title {

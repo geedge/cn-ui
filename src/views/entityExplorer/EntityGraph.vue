@@ -7,28 +7,37 @@
           v-model="rightBox.show"
           direction="rtl"
           custom-class="entity-graph__detail"
+          :close-on-click-modal="true"
           :modal="false"
-          :size="360"
+          :size="400"
           :with-header="false"
           destroy-on-close>
         <ip-list
             v-if="rightBox.mode === 'ipList'"
             :entity="entity"
+            @expandList="expandList"
             @closeBlock="onCloseBlock"
             @mouseenter="onMouseenter"
             @expandDetail="onExpandDetail">
         </ip-list>
-        <app-or-domain-list
-            v-if="rightBox.mode === 'appList' || rightBox.mode === 'domainList'"
+        <domain-list
+            v-else-if="rightBox.mode === 'domainList'"
             :entity="entity"
-            @expandDetail="onExpandDetail"
+            @expandList="expandList"
             @mouseenter="onMouseenter"
             @closeBlock="onCloseBlock">
-        </app-or-domain-list>
-        <graph-detail
-            v-if="rightBox.mode === 'appDetail' || rightBox.mode === 'ipDetail' || rightBox.mode === 'domainDetail'"
+        </domain-list>
+        <app-list
+            v-else-if="rightBox.mode === 'appList'"
             :entity="entity"
-            @expand="onExpand"
+            @expandList="expandList"
+            @mouseenter="onMouseenter"
+            @closeBlock="onCloseBlock">
+        </app-list>
+        <graph-detail
+            v-else-if="rightBox.mode === 'appDetail' || rightBox.mode === 'ipDetail' || rightBox.mode === 'domainDetail'"
+            :entity="entity"
+            @expandDetailList="expandDetailList"
             @closeBlock="onCloseBlock">
         </graph-detail>
       </el-drawer>
@@ -39,53 +48,52 @@
 <script>
 import IpList from '@/views/entityExplorer/entityGraphDetail/IpList'
 import GraphDetail from '@/views/entityExplorer/entityGraphDetail/GraphDetail'
-import AppOrDomainList from '@/views/entityExplorer/entityGraphDetail/AppOrDomainList'
+import DomainList from '@/views/entityExplorer/entityGraphDetail/DomainList'
+import AppList from '@/views/entityExplorer/entityGraphDetail/AppList'
 import { useRoute } from 'vue-router'
 import { ref, shallowRef } from 'vue'
 import _ from 'lodash'
 import { api } from '@/utils/api'
 import axios from 'axios'
 import G6 from '@antv/g6'
-import testData from './testData'
+import { entityDetailTags } from '@/utils/constants'
 
 export default {
   name: 'EntityRelationship',
   components: {
     IpList,
     GraphDetail,
-    AppOrDomainList
+    DomainList,
+    AppList
   },
   data () {
     return {
-      rightBox: {
-        show: false
-      },
       chartOption: {
         container: 'entityGraph',
         layout: {
           type: 'force',
           preventOverlap: true,
           linkDistance: (d) => {
-            if (!d.target.isRoot && d.target.data.level && d.target.data.level.length === 1) {
-              return 300
+            if (d.target.nodeType && d.target.nodeType === 'primary') {
+              return 200
             }
             return 80
           },
           nodeStrength: (d) => {
-            if (!d.isRoot && d.data.level && d.data.level.length === 1) {
-              return -50
+            if (d.nodeType && d.nodeType === 'primary') {
+              return -100
             }
             return -10
           },
           edgeStrength: (d) => {
-            if (!d.target.isRoot && d.target.data.level && d.target.data.level.length === 1) {
+            if (d.target.nodeType && d.target.nodeType === 'primary') {
               return 0.1
             }
             return 0.7
           }
         },
         modes: {
-          default: ['drag-nodes', 'click-select', 'zoom-canvas']
+          default: ['drag-canvas', 'drag-nodes', 'click-select', 'zoom-canvas']
         }
       }
     }
@@ -93,38 +101,247 @@ export default {
   methods: {
     async init () {
       const _this = this
-      const graph = new G6.Graph(this.chartOption)
-      /*const rootNode = this.generateRootNode()
+      const tooltip = this.buildTooltip() // tooltip组件
+      this.chartOption.plugins = [tooltip]
+      this.graph = new G6.Graph(this.chartOption)
+      const rootNode = await this.generateRootNode()
       const secondLevelNodes = await this.generateSecondLevelNodes(rootNode)
       const secondHalfLevelNodes = await this.generateHalfLevelNodes(secondLevelNodes)
+      this.updateRelatedCount(rootNode, rootNode.data.childNodes)
       this.graphData.nodes = [rootNode, ...secondLevelNodes, ...secondHalfLevelNodes]
       const rootEdges = this.generateEdges(rootNode)
       const secondEdges = this.generateEdges(secondLevelNodes)
       this.graphData.edges = [...rootEdges, ...secondEdges]
-      graph.data(this.graphData)*/
-      graph.data(testData)
-      graph.render()
-
-      graph.on('node:dragstart', function (e) {
-        graph.layout()
+      console.info(this.graphData)
+      this.graph.data(this.graphData)
+      this.graph.render()
+      this.graph.on('node:dragstart', function (e) {
+        _this.graph.layout()
         refreshDragedNodePosition(e)
       })
-      graph.on('node:drag', function (e) {
+      this.graph.on('node:drag', function (e) {
         refreshDragedNodePosition(e)
       })
-      graph.on('node:dragend', function (e) {
+      this.graph.on('node:dragend', function (e) {
         e.item.get('model').fx = null
         e.item.get('model').fy = null
       })
-      graph.on('node:click', function (e) {
+      this.graph.on('node:click', async function (e) {
         const node = e.item.get('model')
-        if (!_this.rightBox.show) {
-          _this.rightBox.show = true
+        // 点击后，若不是临时节点，且右侧没弹框，就弹出弹框。若是临时节点，在另一处逻辑中处理
+        if (!node.data.isTemp) {
+          if (node.nodeType && (node.nodeType === 'root' || node.nodeType === 'entity')) {
+            _this.rightBox.mode = `${node.data.type || _this.entity.entityType}Detail`
+          } else if (node.nodeType && node.nodeType === 'primary') {
+            _this.rightBox.mode = `${node.data.type}List`
+          }
+          if (!_this.rightBox.show) {
+            _this.rightBox.show = true
+          }
         }
-        if (node.data.level && node.data.level.length === 1) {
-          _this.rightBox.mode = `${node.data.type}List`
-        } else {
-          _this.rightBox.mode = `${node.data.type}Detail`
+        // 先清除所有temp node和temp edge
+        // 若是primary node，在弹框中显示相关list数据，且高亮node和target=node的edge
+        // 若是entity node，查数量，生成temp edge关联的、除已有的primary node外的temp node。并在弹框中显示detail，且高亮node和target=node的edge
+        /* 若是temp node，增加primary node，并高亮此node.
+        *  然后判断primary node的level，若小于5，查询其关联的entity node并渲染，并高亮target=node和source=node的edge。
+        * 若等于5，不渲染下级node并提示用户。
+        * */
+        let change = false // 图数据是否有变更，需要刷新
+        // 清除temp node和temp edge
+        _this.graphData.nodes = _this.graphData.nodes.filter(n => {
+          if (n.data && !n.data.isTemp) {
+            return true
+          }
+          change = true
+          return false
+        })
+        _this.graphData.edges = _this.graphData.edges.filter(e => {
+          if (e.data && !e.data.isTemp) {
+            return true
+          }
+          change = true
+          return false
+        })
+        if (node.nodeType === 'root') { // 点击了root
+          _this.entity = {
+            entityName: node.id,
+            entityType: _this.entity.entityType,
+            name: node.id,
+            tags: node.data.tags,
+            type: node.data.type,
+            detailData: node.data.data,
+            isSubdomain: node.data.isSubdomain || false,
+            loading: true
+          }
+          const relatedEntityCount = await _this.queryRelatedEntityCount(_this.entity.entityType, node.id)
+          _this.entity = {
+            ..._this.entity,
+            relatedEntityCount: _this.handleRelatedEntityCount(node, relatedEntityCount),
+            loading: false
+          }
+          // 更新childNodes的label的数值
+          if (node.data.childNodes) {
+            node.data.childNodes.forEach(n => {
+              switch (n.data.type) {
+                case 'ip': {
+                  n.data.count = relatedEntityCount.ipCount
+                  n.label = _this.$t('entities.graph.resolveIp') + `(${n.data.count})`
+                  break
+                }
+                case 'domain': {
+                  if (n.data.isSubdomain) {
+                    n.data.count = relatedEntityCount.subDomainCount
+                    n.label = _this.$t('entities.subdomain') + `(${n.data.count})`
+                  } else {
+                    n.data.count = relatedEntityCount.domainCount
+                    n.label = _this.$t('entity.graph.resolveDomain') + `(${n.data.count})`
+                  }
+                  break
+                }
+                case 'app': {
+                  n.data.count = relatedEntityCount.appCount
+                  n.label = _this.$t('entities.tab.relatedApp') + `(${n.data.count})`
+                  break
+                }
+              }
+              _this.graph.refreshItem(n.id)
+            })
+          }
+        } else if (node.nodeType === 'primary') { // 点击了primary
+          _this.entity.loading = true
+          const queryRelatedEntityCount = await _this.queryRelatedEntityCount(node.data.sourceType, node.data.sourceName)
+          const sourceNode = _this.graphData.nodes.find(n => n.id === node.data.sourceName)
+          _this.handleRelatedEntityCount(sourceNode, queryRelatedEntityCount)
+          _this.entity = {
+            entityType: _this.entity.entityType,
+            entityName: _this.entity.entityName,
+            listData: node.data.loaded,
+            count: node.data.count,
+            isSubdomain: node.data.isSubdomain || false,
+            sourceType: node.data.sourceType,
+            sourceName: node.data.sourceName,
+            type: node.data.type,
+            nodeId: node.id,
+            loading: false
+          }
+          switch (node.data.type) {
+            case 'ip': {
+              node.data.count = queryRelatedEntityCount.ipCount
+              node.label = _this.$t('entities.graph.resolveIp') + `(${node.data.count})`
+              break
+            }
+            case 'domain': {
+              if (node.data.isSubdomain) {
+                node.data.count = queryRelatedEntityCount.subDomainCount
+                node.label = _this.$t('entities.subdomain') + `(${node.data.count})`
+              } else {
+                node.data.count = queryRelatedEntityCount.domainCount
+                node.label = _this.$t('entity.graph.resolveDomain') + `(${node.data.count})`
+              }
+              break
+            }
+            case 'app': {
+              node.data.count = queryRelatedEntityCount.appCount
+              node.label = _this.$t('entities.tab.relatedApp') + `(${node.data.count})`
+              break
+            }
+          }
+          _this.graph.refreshItem(node.id)
+          // TODO 高亮
+        } else if (node.nodeType === 'entity') {
+          _this.entity.loading = true
+          const relatedEntityCount = await _this.queryRelatedEntityCount(node.data.type, node.id)
+          // 赋值总数和已拓展数。entity node可从其childNodes取到已拓展数
+          _this.entity = {
+            entityType: _this.entity.entityType,
+            entityName: _this.entity.entityName,
+            relatedEntityCount: _this.handleRelatedEntityCount(node, relatedEntityCount),
+            detailData: node.data.data,
+            type: node.data.type,
+            isSubdomain: false,
+            name: node.id,
+            loading: false
+          }
+          // 更新childNodes的label的数值
+          if (node.data.childNodes) {
+            node.data.childNodes.forEach(n => {
+              switch (n.data.type) {
+                case 'ip': {
+                  n.data.count = relatedEntityCount.ipCount
+                  n.label = _this.$t('entities.graph.resolveIp') + `(${n.data.count})`
+                  break
+                }
+                case 'domain': {
+                  if (n.data.isSubdomain) {
+                    n.data.count = relatedEntityCount.subDomainCount
+                    n.label = _this.$t('entities.subdomain') + `(${n.data.count})`
+                  } else {
+                    n.data.count = relatedEntityCount.domainCount
+                    n.label = _this.$t('entity.graph.resolveDomain') + `(${n.data.count})`
+                  }
+                  break
+                }
+                case 'app': {
+                  n.data.count = relatedEntityCount.appCount
+                  n.label = _this.$t('entities.tab.relatedApp') + `(${n.data.count})`
+                  break
+                }
+              }
+              _this.graph.refreshItem(n.id)
+            })
+          }
+          const { tempNodes, tempEdges } = _this.generateTempNodesAndEdges(node, relatedEntityCount)
+          if (tempNodes.length > 0) {
+            change = true
+            _this.addNodes(tempNodes)
+          }
+          if (tempEdges.length > 0) {
+            change = true
+            _this.addEdges(tempEdges)
+          }
+          // TODO 高亮
+        } else if (node.nodeType === 'temp') {
+          change = true
+          // 根据temp node生成primary node
+          const primaryNode = _this.generatePrimaryNode({
+            id: `${node.data.type}-${node.data.sourceName}`,
+            label: node.label + `(${node.data.count})`,
+            data: {
+              sourceName: node.data.sourceName,
+              sourceType: node.data.sourceType,
+              type: node.data.type,
+              isSubdomain: node.data.isSubdomain || false,
+              count: node.data.count
+            }
+          })
+          const sourceNode = _this.graphData.nodes.find(n => n.id === node.data.sourceName)
+          // 新node放入source node的childNodes中
+          if (!sourceNode.data.childNodes) {
+            sourceNode.data.childNodes = []
+          }
+          sourceNode.data.childNodes.push(primaryNode)
+          _this.addNodes([primaryNode])
+
+          const edge = _this.generateEdges(sourceNode, primaryNode)
+          _this.addEdges(edge)
+          // 判断primary层级，若大于等于5，则不继续拓展entity node，并给用户提示。否则拓展entity node
+          const level = _this.getNodeLevel(primaryNode.id)
+          const entityNodes = []
+          const edges = []
+          if (level < 9) {
+            const queryEntityNodes = await _this.generateHalfLevelNodes(primaryNode)
+            _this.updateRelatedCount(sourceNode, [primaryNode])
+            entityNodes.push(...queryEntityNodes)
+            edges.push(..._this.generateEdges(primaryNode))
+            // TODO 高亮
+          } else {
+            // TODO 提示无法拓展
+          }
+          _this.addNodes(entityNodes)
+          _this.addEdges(edges)
+        }
+        if (change) {
+          _this.graph.changeData(_this.graphData)
         }
       })
       function refreshDragedNodePosition (e) {
@@ -140,9 +357,36 @@ export default {
       } else {
         subfix = colored ? '-colored' : ''
       }
-      return `${window.location.protocol}//${window.location.host}/images/entity-symbol2/${entityType}${subfix}.svg`
+      return require(`@/assets/img/entity-symbol2/${entityType}${subfix}.svg`)
     },
-    generateRootNode () {
+    async generateRootNode () {
+      const basicInfo = await this.queryEntityBasicInfo(this.entity.entityType, this.entity.entityName)
+      const tags = await this.queryTags(this.entity.entityType, this.entity.entityName)
+      let _tags = []
+      Object.keys(tags).forEach(k => {
+        if (k !== 'userDefinedTags' && tags[k]) {
+          Object.keys(tags[k]).forEach(k2 => {
+            const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
+            if (find) {
+              _tags.push({ key: k2, value: this.tagValueHandler(k, k2, tags[k][k2]), type: find.type })
+            }
+          })
+        }
+      })
+      if (_.isArray(tags.userDefinedTags)) {
+        _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
+      }
+      this.entity = {
+        ...this.entity,
+        detailData: {
+          vertex: this.entity.entityName,
+          detail: basicInfo
+        },
+        tags: _tags,
+        type: this.entity.entityType,
+        name: this.entity.entityName
+      }
+
       let borderColor = ''
       let shadowColor = ''
       let width = 0
@@ -151,22 +395,22 @@ export default {
         case 'ip': {
           borderColor = '#CBD9BB'
           shadowColor = 'rgba(126,159,84,0.14)'
-          width = 36
-          height = 33
+          width = 30
+          height = 27
           break
         }
         case 'domain': {
           borderColor = '#AFDEED'
           shadowColor = 'rgba(56,172,210,0.14)'
-          width = 36
-          height = 30
+          width = 30
+          height = 25
           break
         }
         case 'app': {
           borderColor = '#F5DAA3'
           shadowColor = 'rgba(229,162,25,0.14)'
-          width = 30
-          height = 36
+          width = 25
+          height = 30
           break
         }
       }
@@ -175,7 +419,8 @@ export default {
         type: 'circle',
         id: this.entity.entityName,
         label: this.entity.entityName,
-        size: 82,
+        nodeType: 'root',
+        size: 52,
         x: 0,
         y: 0,
         icon: {
@@ -198,7 +443,13 @@ export default {
           }
         },
         data: {
-          level: '1'
+          type: this.entity.entityType,
+          name: this.entity.entityName,
+          data: {
+            vertex: this.entity.entityName,
+            detail: basicInfo
+          },
+          tags: _tags
         }
       }
     },
@@ -207,8 +458,8 @@ export default {
       let height = 0
       switch (props.data.type) {
         case 'ip': {
-          width = 24
-          height = 22
+          width = 22
+          height = 20
           break
         }
         case 'domain': {
@@ -225,7 +476,8 @@ export default {
       return {
         ...props,
         type: 'circle',
-        size: 66,
+        size: 42,
+        nodeType: 'primary',
         icon: {
           show: true,
           img: this.generateIconUrl(props.data.type, false),
@@ -247,10 +499,10 @@ export default {
         }
       }
     },
-    generateEntityNode (level, type, data) {
+    generateEntityNode (nodeData, data) {
       let width = 0
       let height = 0
-      switch (type) {
+      switch (nodeData.type) {
         case 'ip': {
           width = 20
           height = 18
@@ -271,9 +523,66 @@ export default {
         id: data.vertex,
         type: 'circle',
         size: 28,
+        nodeType: 'entity',
         icon: {
           show: true,
-          img: this.generateIconUrl(type, true),
+          img: this.generateIconUrl(nodeData.type, true),
+          width,
+          height
+        },
+        style: {
+          fill: 'transparent',
+          stroke: 'transparent',
+          lineWidth: 0
+        },
+        data: {
+          type: nodeData.type,
+          isSubdomain: nodeData.isSubdomain || false,
+          name: data.vertex,
+          data
+        }
+      }
+    },
+    generateTempNode (entityType, node, isSubdomain) {
+      let width = 0
+      let height = 0
+      let label = ''
+      switch (entityType) {
+        case 'ip': {
+          width = 24
+          height = 22
+          label = this.$t('entities.graph.resolveIp')
+          break
+        }
+        case 'subdomain': {
+          width = 24
+          height = 24
+          label = this.$t('entities.subdomain')
+          break
+        }
+        case 'domain': {
+          width = 24
+          height = 24
+          label = this.$t('entity.graph.resolveDomain')
+          break
+        }
+        case 'app': {
+          width = 20
+          height = 24
+          label = this.$t('entities.tab.relatedApp')
+          break
+        }
+      }
+      return {
+        id: `${node.id}-${entityType}-temp`,
+        parentId: node.id,
+        label,
+        type: 'circle',
+        size: 28,
+        nodeType: 'temp',
+        icon: {
+          show: true,
+          img: this.generateIconUrl(entityType, false),
           width,
           height
         },
@@ -291,27 +600,36 @@ export default {
           }
         },
         data: {
-          level,
-          type,
-          name: data.vertex,
-          data
+          type: entityType,
+          isSubdomain: isSubdomain || false,
+          isTemp: true,
+          sourceType: node.data.type,
+          sourceName: node.id
         }
       }
+    },
+    hasChildNodeByType (node, type) {
+      if (node.data && node.data.childNodes) {
+        return node.data.childNodes.some(n => n.data.type === type)
+      }
+      return false
     },
     async generateSecondLevelNodes (rootNode) {
       /*
       * 2级及以上的整数层节点，先查数量，大于0的才展示
+      * TODO 优化：与generatePrimaryNode合并
       * */
       const relatedEntityCount = await this.queryRelatedEntityCount(this.entity.entityType, this.entity.entityName)
       const nodes = []
       if (relatedEntityCount) {
+        this.entity.relatedEntityCount = this.handleRelatedEntityCount(rootNode, relatedEntityCount)
         const ipNode = this.generatePrimaryNode({
           id: 'ip-1',
+          parentId: rootNode.id,
           label: this.$t('entities.graph.resolveIp'),
           x: 0,
           y: 300,
           data: {
-            level: '2',
             sourceName: this.entity.entityName,
             sourceType: this.entity.entityType,
             type: 'ip'
@@ -319,11 +637,11 @@ export default {
         })
         const domainNode = this.generatePrimaryNode({
           id: 'domain-1',
+          parentId: rootNode.id,
           label: this.$t('entity.graph.resolveDomain'),
           x: 260,
           y: -150,
           data: {
-            level: '2',
             sourceName: this.entity.entityName,
             sourceType: this.entity.entityType,
             type: 'domain'
@@ -331,23 +649,24 @@ export default {
         })
         const subdomainNode = this.generatePrimaryNode({
           id: 'domain-1',
+          parentId: rootNode.id,
           label: this.$t('entities.subdomain'),
           x: 260,
           y: -150,
           data: {
-            level: '2',
             sourceName: this.entity.entityName,
             sourceType: this.entity.entityType,
-            type: 'domain'
+            type: 'domain',
+            isSubdomain: true
           }
         })
         const appNode = this.generatePrimaryNode({
           id: 'app-1',
+          parentId: rootNode.id,
           label: this.$t('entities.tab.relatedApp'),
           x: -260,
           y: -150,
           data: {
-            level: '2',
             sourceName: this.entity.entityName,
             sourceType: this.entity.entityType,
             type: 'app'
@@ -401,18 +720,26 @@ export default {
         }
         rootNode.data.childNodes = nodes
       }
-      console.info(nodes)
       return nodes
     },
+    // nodes: primary nodes
     async generateHalfLevelNodes (nodes) {
+      const nodeArr = []
+      if (_.isArray(nodes)) {
+        nodeArr.push(...nodes)
+      } else {
+        nodeArr.push(nodes)
+      }
       const newNodes = []
-      for (const node of nodes) {
+
+      for (const node of nodeArr) {
         const newNodes2 = []
-        const data = await this.queryRelatedEntity(node.data.sourceType, node.data.sourceName, node.data.type)
+        const pageNo = node.data.loaded ? node.data.loaded.length / 10 + 1 : 1
+        const data = await this.queryRelatedEntity(node.data.sourceType, node.data.sourceName, node.data.type, pageNo)
         if (data) {
           // 生成节点
           data.list.forEach(d => {
-            newNodes2.push(this.generateEntityNode(String(parseInt(node.data.level) + 0.5), node.data.type, d))
+            newNodes2.push(this.generateEntityNode(node.data, d))
           })
           // 更新源节点的已拓展数和列表
           this.handleLoaded(node, data, newNodes2)
@@ -420,6 +747,38 @@ export default {
         }
       }
       return newNodes
+    },
+    async queryEntityBasicInfo (entityType, entityName) {
+      const response = await axios.get(`${api.entity.entityGraph.basicInfo}/${entityType}?resource=${entityName}`).catch(e => {
+        console.error(e)
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
+      })
+      if (response.data && response.data.code === 200) {
+        return response.data.data
+      } else {
+        console.error(response)
+        this.entity.loading = false
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(response)
+        return {}
+      }
+    },
+    async queryTags (entityType, entityName) {
+      const response = await axios.get(`${api.entity.entityGraph.tags}/${entityType}?resource=${entityName}`).catch(e => {
+        console.error(e)
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
+      })
+      if (response.data && response.data.code === 200) {
+        return response.data.data
+      } else {
+        console.error(response)
+        this.entity.loading = false
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(response)
+        return []
+      }
     },
     async queryRelatedEntityCount (entityType, entityName) {
       const response = await axios.get(`${api.entity.entityGraph.relatedEntityCount}/${entityType}?resource=${entityName}`).catch(e => {
@@ -431,17 +790,22 @@ export default {
         return response.data.data
       } else {
         console.error(response)
+        this.entity.loading = false
         this.showError = true
         this.errorMsg = this.errorMsgHandler(response)
         return null
       }
     },
-    async queryRelatedEntity (sourceType, sourceName, type) {
+    async queryRelatedEntity (sourceType, sourceName, type, pageNo) {
       if (sourceType === type) {
         // 若源type和关联type都是domain，说明关联type是subdomain
         type = 'subdomain'
       }
-      const response = await axios.get(`${api.entity.entityGraph[`${sourceType}Related${_.upperFirst(type)}`]}?resource=${sourceName}`).catch(e => {
+      let url = `${api.entity.entityGraph[`${sourceType}Related${_.upperFirst(type)}`]}?resource=${sourceName}&pageSize=10`
+      if (pageNo) {
+        url += `&pageNo=${pageNo}`
+      }
+      const response = await axios.get(url).catch(e => {
         console.error(e)
         this.showError = true
         this.errorMsg = this.errorMsgHandler(e)
@@ -462,14 +826,14 @@ export default {
     generateEdges (source, target) {
       const edges = []
 
-      if (!target) {
-        const sourceArr = []
-        if (!source.length) {
-          sourceArr.push(source)
-        } else {
-          sourceArr.push(...source)
-        }
-        sourceArr.forEach(s => {
+      const sourceArr = []
+      if (!source.length) {
+        sourceArr.push(source)
+      } else {
+        sourceArr.push(...source)
+      }
+      sourceArr.forEach(s => {
+        if (!target) {
           if (s.data && s.data.childNodes) {
             const edges2 = []
             s.data.childNodes.forEach(c => {
@@ -482,15 +846,123 @@ export default {
                   endArrow: {
                     path: G6.Arrow.triangle(5, 5)
                   }
-                }
+                },
+                data: {}
               })
             })
             s.edges = edges2
             edges.push(...edges2)
           }
-        })
-      }
+        } else {
+          const edges2 = []
+          const targetArr = []
+          if (!target.length) {
+            targetArr.push(target)
+          } else {
+            targetArr.push(...target)
+          }
+          targetArr.forEach(c => {
+            edges2.push({
+              id: `${s.id}-${c.id}`,
+              source: s.id,
+              target: c.id,
+              style: {
+                stroke: '#BEBEBE',
+                endArrow: {
+                  path: G6.Arrow.triangle(5, 5)
+                }
+              },
+              data: {}
+            })
+          })
+          s.edges = edges2
+          edges.push(...edges2)
+        }
+      })
       return edges
+    },
+    generateTempNodesAndEdges (node, relatedEntityCount) {
+      // 根据parent node和其childNodes，生成temp node和temp edge
+      const tempNodes = []
+      const tempEdges = []
+      switch (node.data.type) {
+        case 'ip': {
+          if (relatedEntityCount.domainCount && !this.hasChildNodeByType(node, 'domain')) {
+            const tempNode = this.generateTempNode('domain', node)
+            tempNode.data.count = relatedEntityCount.domainCount
+            const tempEdge = this.generateTempEdge(node, tempNode)
+            tempNodes.push(tempNode)
+            tempEdges.push(tempEdge)
+          }
+          if (relatedEntityCount.appCount && !this.hasChildNodeByType(node, 'app')) {
+            const tempNode = this.generateTempNode('app', node)
+            tempNode.data.count = relatedEntityCount.appCount
+            const tempEdge = this.generateTempEdge(node, tempNode)
+            tempNodes.push(tempNode)
+            tempEdges.push(tempEdge)
+          }
+          break
+        }
+        case 'domain': {
+          if (relatedEntityCount.ipCount && !this.hasChildNodeByType(node, 'ip')) {
+            const tempNode = this.generateTempNode('ip', node)
+            tempNode.data.count = relatedEntityCount.ipCount
+            const tempEdge = this.generateTempEdge(node, tempNode)
+            tempNodes.push(tempNode)
+            tempEdges.push(tempEdge)
+          }
+          if (relatedEntityCount.subDomainCount && !this.hasChildNodeByType(node, 'domain')) {
+            const tempNode = this.generateTempNode('domain', node, true)
+            tempNode.data.count = relatedEntityCount.subDomainCount
+            const tempEdge = this.generateTempEdge(node, tempNode)
+            tempNodes.push(tempNode)
+            tempEdges.push(tempEdge)
+          }
+          if (relatedEntityCount.appCount && !this.hasChildNodeByType(node, 'app')) {
+            const tempNode = this.generateTempNode('app', node)
+            tempNode.data.count = relatedEntityCount.appCount
+            const tempEdge = this.generateTempEdge(node, tempNode)
+            tempNodes.push(tempNode)
+            tempEdges.push(tempEdge)
+          }
+          break
+        }
+        case 'app': {
+          if (relatedEntityCount.ipCount && !this.hasChildNodeByType(node, 'ip')) {
+            const tempNode = this.generateTempNode('ip', node)
+            tempNode.data.count = relatedEntityCount.ipCount
+            const tempEdge = this.generateTempEdge(node, tempNode)
+            tempNodes.push(tempNode)
+            tempEdges.push(tempEdge)
+          }
+          if (relatedEntityCount.domainCount && !this.hasChildNodeByType(node, 'domain')) {
+            const tempNode = this.generateTempNode('domain', node)
+            tempNode.data.count = relatedEntityCount.domainCount
+            const tempEdge = this.generateTempEdge(node, tempNode)
+            tempNodes.push(tempNode)
+            tempEdges.push(tempEdge)
+          }
+          break
+        }
+      }
+      return { tempNodes, tempEdges }
+    },
+    generateTempEdge (node, tempNode) {
+      return {
+        id: `${node.id}-${tempNode.id}`,
+        source: node.id,
+        target: tempNode.id,
+        style: {
+          stroke: '#DDD',
+          lineDash: [3, 2],
+          endArrow: {
+            path: G6.Arrow.triangle(5, 5)
+          },
+          data: {
+            isTemp: true
+          }
+        }
+      }
     },
     handleLoaded (node, data, childNodes) {
       if (!node.data.loaded) {
@@ -502,6 +974,64 @@ export default {
         node.data.childNodes = []
       }
       node.data.childNodes.push(...childNodes)
+    },
+    handleRelatedEntityCount (node, relatedEntityTotalCount) {
+      const relatedEntityCount = {
+        ip: { total: relatedEntityTotalCount.ipCount, current: null },
+        domain: { total: relatedEntityTotalCount.domainCount, current: null },
+        subDomain: { total: relatedEntityTotalCount.subDomainCount, current: null },
+        app: { total: relatedEntityTotalCount.appCount, current: null }
+      }
+      if (node.data.childNodes) {
+        node.data.childNodes.forEach(n => {
+          switch (n.data.type) {
+            case 'ip': {
+              relatedEntityCount.ip.current = n.data.loaded ? n.data.loaded.length : 0
+              n.data.count = relatedEntityTotalCount.ipCount
+              break
+            }
+            case 'domain': {
+              if (n.data.isSubdomain) {
+                relatedEntityCount.subDomain.current = n.data.loaded ? n.data.loaded.length : 0
+                n.data.count = relatedEntityTotalCount.subDomainCount
+              } else {
+                relatedEntityCount.domain.current = n.data.loaded ? n.data.loaded.length : 0
+                n.data.count = relatedEntityTotalCount.domainCount
+              }
+              break
+            }
+            case 'app': {
+              relatedEntityCount.app.current = n.data.loaded ? n.data.loaded.length : 0
+              n.data.count = relatedEntityTotalCount.appCount
+              break
+            }
+          }
+        })
+      }
+      return relatedEntityCount
+    },
+    addNodes (nodes) {
+      const _nodes = nodes.filter(n => {
+        return !this.graphData.nodes.some(n2 => n2.id === n.id)
+      })
+      this.graphData.nodes.push(..._nodes)
+    },
+    addEdges (edges) {
+      const _edges = edges.filter(e => {
+        return !this.graphData.edges.some(e2 => e2.source === e.source && e2.target === e.target)
+      })
+      this.graphData.edges.push(..._edges)
+    },
+    updateRelatedCount (node, childNodes) {
+      childNodes.forEach(c => {
+        this.entity.relatedEntityCount[c.data.isSubdomain ? 'subDomain' : c.data.type].current = c.data.loaded.length
+      })
+    },
+    getNodeLevel (id) {
+      const matrix = this.graph.getShortestPathMatrix(false)
+      const rootPathMatrix = matrix[0]
+      const nodeIndex = this.graphData.nodes.findIndex(n => n.id === id)
+      return rootPathMatrix[nodeIndex]
     },
     onCloseBlock () {
       // todo 关闭右侧graph面板
@@ -519,6 +1049,131 @@ export default {
       if (!val.isTrusted) {
         // 鼠标移动反馈
       }
+    },
+    buildTooltip () {
+      const _this = this
+      return new G6.Tooltip({
+        offsetX: 10,
+        offsetY: 20,
+        itemTypes: ['node'],
+        getContent (e) {
+          const node = e.item.getModel()
+          if (node.nodeType === 'primary') {
+            let iconClass = ''
+            let title = ''
+            switch (node.data.type) {
+              case 'ip': {
+                iconClass = 'cn-icon cn-icon-resolve-ip'
+                title = _this.$t('entities.graph.resolveIp')
+                break
+              }
+              case 'domain': {
+                iconClass = 'cn-icon cn-icon-subdomain'
+                title = _this.$t('entity.graph.resolveDomain')
+                break
+              }
+              case 'app': {
+                iconClass = 'cn-icon cn-icon-app-name'
+                title = _this.$t('entities.tab.relatedApp')
+                break
+              }
+            }
+            return `<div class="primary-node-tooltip">
+              <div class="tooltip__header"><i class="${iconClass}"></i><span class="tooltip__title">${title}</span></div>
+              <div class="tooltip__content">
+                <span>${_this.$t('entity.graph.associatedQuantity')}:&nbsp;${node.data.count || 0}</span>
+                <span>${_this.$t('entity.graph.expandedEntityQuantity')}:&nbsp;${node.data.loaded ? node.data.loaded.length : 0}</span>
+              </div>
+            </div>`
+          } else {
+            // TODO 逻辑
+            return `<div class="entity-node-tooltip">
+              <div class="tooltip__header"><span class="tooltip__title">${node.id}</span></div>
+            </div>`
+          }
+        }
+      })
+    },
+    async expandList (sourceNodeId, nodeId) {
+      const sourceNode = this.graphData.nodes.find(n => n.id === sourceNodeId)
+      const node = this.graphData.nodes.find(n => n.id === nodeId)
+      if (node && sourceNode) {
+        if (node.data.childNodes && node.data.childNodes.length < 50) {
+          const queryEntityNodes = await this.generateHalfLevelNodes(node)
+          const relatedEntityCount = await this.queryRelatedEntityCount(sourceNode.data.type, sourceNodeId)
+          // 赋值总数和已拓展数。entity node可从其childNodes取到已拓展数
+          this.entity = {
+            ...this.entity,
+            relatedEntityCount: this.handleRelatedEntityCount(sourceNode, relatedEntityCount),
+            listData: node.data.loaded
+          }
+          this.addNodes(queryEntityNodes)
+          this.addEdges(this.generateEdges(node, queryEntityNodes))
+          this.graph.changeData(this.graphData)
+        } else {
+          // TODO 提示已达50上限
+        }
+      }
+    },
+    async expandDetailList (expandType, currentName) {
+      const currentNode = this.graphData.nodes.find(n => n.id === currentName)
+      console.info(expandType, currentName, currentNode)
+      // 如果存在primary node，直接拓展
+      const _primaryNode = currentNode.data.childNodes ? currentNode.data.childNodes.find(n => n.data.type === expandType) : null
+      console.info('primary', _primaryNode)
+      if (_primaryNode) {
+        await this.expandList(currentName, _primaryNode.id)
+      } else {
+        // 如果是temp node，删掉，新增primary node，再拓展
+        const tempNode = this.graphData.nodes.find(n => n.nodeType === 'temp' && n.data.sourceName === currentName && n.data.type === expandType)
+        console.info('temp', tempNode)
+        if (tempNode) {
+          // 先清除此temp node和temp edge
+          this.graphData.nodes = this.graphData.nodes.filter(n => {
+            return n.id !== tempNode.id
+          })
+          this.graphData.edges = this.graphData.edges.filter(e => {
+            return e.target !== tempNode.id
+          })
+
+          const primaryNode = this.generatePrimaryNode({
+            id: `${tempNode.data.type}-${tempNode.data.sourceName}`,
+            label: tempNode.label + `(${tempNode.data.count})`,
+            data: {
+              sourceName: tempNode.data.sourceName,
+              sourceType: tempNode.data.sourceType,
+              type: tempNode.data.type,
+              isSubdomain: tempNode.data.isSubdomain || false,
+              count: tempNode.data.count
+            }
+          })
+          // 新node放入source node的childNodes中
+          if (!currentNode.data.childNodes) {
+            currentNode.data.childNodes = []
+          }
+          currentNode.data.childNodes.push(primaryNode)
+          const edge = this.generateEdges(currentNode, primaryNode)
+          this.addNodes([primaryNode])
+          this.addEdges(edge)
+          // 判断primary层级，若大于等于5，则不继续拓展entity node，并给用户提示。否则拓展entity node
+          const entityNodes = []
+          const edges = []
+          const level = this.getNodeLevel(primaryNode.id)
+          if (level < 9) {
+            const queryEntityNodes = await this.generateHalfLevelNodes(primaryNode)
+            this.updateRelatedCount(currentNode, [primaryNode])
+            entityNodes.push(...queryEntityNodes)
+            edges.push(...this.generateEdges(primaryNode))
+            // TODO 高亮
+          } else {
+            // TODO 提示无法拓展
+          }
+          this.addNodes(entityNodes)
+          this.addEdges(edges)
+          console.info(this.graphData)
+          this.graph.changeData(this.graphData)
+        }
+      }
     }
   },
   async mounted () {
@@ -529,24 +1184,23 @@ export default {
   setup () {
     const route = useRoute()
     const { entityType, entityName } = route.query
-    const entity = {
+    const entity = ref({
       entityType,
       entityName
-    }
+    })
+    const graph = shallowRef(null)
     const rightBox = ref({
-      mode: 'ipList', // ipList, ipDetail, domainList, domainDetail, appList, appDetail
-      show: false
+      mode: `${entityType}Detail`, // ipList, ipDetail, domainList, domainDetail, appList, appDetail
+      show: true
     })
 
     // echarts关系图的节点和连线
-    const graphData = ref({})
-    // 从url获取实体类型、名称，若为空直接报错
-    const myChart = shallowRef(null)
+    const graphData = shallowRef({})
     return {
       graphData,
       entity,
-      myChart,
-      rightBox
+      rightBox,
+      graph
     }
   }
 }
@@ -659,18 +1313,65 @@ export default {
       }
     }
   }
+
   .entity-graph__right-box {
     & > div {
       left: unset !important;
       right: 0 !important;
-      width: 360px;
     }
     .entity-graph__detail {
       height: calc(100% - 100px) !important;
       top: 100px !important;
-      border-left: 1px solid #E2E5EC;
+      // border-left: 1px solid #E2E5EC;
       overflow: auto;
       padding: 20px;
+    }
+  }
+
+  .g6-component-tooltip {
+    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
+
+    .primary-node-tooltip {
+      padding: 5px;
+
+      .tooltip__header {
+        display: flex;
+        align-items: center;
+
+        i {
+          color: #717171;
+          font-size: 14px;
+        }
+        .tooltip__title {
+          padding-left: 6px;
+          font-size: 15px;
+          line-height: 15px;
+          color: #111;
+        }
+      }
+      .tooltip__content {
+        padding-top: 10px;
+        color: #222;
+        font-size: 12px;
+
+        span:first-of-type {
+          padding-right: 20px;
+        }
+      }
+    }
+    .entity-node-tooltip {
+      padding: 5px;
+
+      .tooltip__header {
+        display: flex;
+        align-items: center;
+
+        .tooltip__title {
+          font-size: 15px;
+          line-height: 15px;
+          color: #111;
+        }
+      }
     }
   }
 }

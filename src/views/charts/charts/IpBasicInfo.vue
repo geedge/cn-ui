@@ -37,24 +37,14 @@ export default {
     location () {
       let location = ''
       if (this.chartInfo) {
-        if (this.chartInfo.country) {
-          location = this.chartInfo.country
-          if (this.chartInfo.province) {
-            location += ', '
-            location += this.chartInfo.province
-            if (this.chartInfo.city) {
-              location += ', '
-              location += this.chartInfo.city
-            }
-          }
-        } else if (this.chartInfo.province) {
-          location = this.chartInfo.province
-          if (this.chartInfo.city) {
-            location += ', '
-            location += this.chartInfo.city
-          }
-        } else if (this.chartInfo.city) {
+        if (this.chartInfo.city) {
           location = this.chartInfo.city
+        }
+        if (this.chartInfo.province) {
+          location = location ? `${this.chartInfo.province}, ${location}` : this.chartInfo.province
+        }
+        if (this.chartInfo.country) {
+          location = location ? `${this.chartInfo.country}, ${location}` : this.chartInfo.country
         }
       }
       return location

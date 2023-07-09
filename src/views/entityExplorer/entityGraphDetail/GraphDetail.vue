@@ -5,10 +5,10 @@
       <div class="graph-detail__icon"><i :class="iconClass"></i></div>
 
       <div class="graph-detail-header">
-        <div class="entity-graph-type">{{ entityType[entity.entityType] }}</div>
+        <div class="entity-graph-type">{{ entityType[entity.type || entity.entityType] }}</div>
         <div class="graph-basic-info">
           <div class="graph-basic-info-name__block">
-            <div class="graph-basic-info-name" id="entityName">{{ entity.entityName }}</div>
+            <div class="graph-basic-info-name" id="entityName">{{ $_.get(entity, 'detailData.vertex', '') }}</div>
             <div class="graph-basic-info-icon" @click="copyEntityName">
               <i class="cn-icon cn-icon-copy"></i>
             </div>
@@ -30,15 +30,94 @@
     </div>
 
     <div class="graph-basic-info__block-content">
-      <div class="graph-content-item" v-for="item in detailCards" :key="item.name">
-        <div class="graph-content-item-label">{{ item.label }}:</div>
-        <div class="graph-content-item-value">{{ item.value || '-' }}</div>
-      </div>
+      <template v-if="entity.type === 'ip'">
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.asNumber') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity.detailData, 'detail.asn.asn', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.asOrg') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity.detailData, 'detail.asn.organization', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.graph.isp') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity.detailData, 'detail.location.isp', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('overall.location') }}:</div>
+          <div class="graph-content-item-value">{{ location(entity.detailData) }}</div>
+        </div>
+      </template>
+      <template v-else-if="entity.type === 'domain'">
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.category') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.name', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.group') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.group', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.creditLevel2') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.reputationLevel', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.graph.expirationDate') }}:</div>
+          <div class="graph-content-item-value">{{ handleDate('detailData.detail.whois.expireDate') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.registrar') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.whois.registrarName', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.registry') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.whois.registrantOrg', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.registrationCountry') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.whois.registrantCountry', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.registrationDate') }}:</div>
+          <div class="graph-content-item-value">{{ handleDate('detailData.detail.whois.createDate') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.registryEmail') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.whois.email', '-') }}</div>
+        </div>
+      </template>
+      <template v-else-if="entity.type === 'app'">
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.category') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.appCategory', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.subcategory') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.appSubcategory', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('entities.riskLevel') }}:</div>
+          <div class="graph-content-item-value">{{ appRisk($_.get(entity, 'detailData.detail.category.appRisk', '-')) }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('overall.technology') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.appTechnology', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('overall.appFullName') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.appLongname', '-') }}</div>
+        </div>
+        <div class="graph-content-item" >
+          <div class="graph-content-item-label">{{ $t('config.dataSource.description') }}:</div>
+          <div class="graph-content-item-value">{{ $_.get(entity, 'detailData.detail.category.appDescription', '-') }}</div>
+        </div>
+      </template>
     </div>
   </div>
 
   <!--关系拓展-->
   <div class="digital-certificate graph-basic-info__block">
+    <loading :loading="entity.loading" size="small"></loading>
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
       <div class="graph-basic-info__block-title">
@@ -47,28 +126,17 @@
     </div>
 
     <div class="graph-basic-info__block-content" style="margin-top: -4px;">
-      <div v-for="item in relationList" :key="item.name" @click="expandRelation(item.name)">
-        <el-popover
-            v-if="item.value.length === item.total"
-            placement="top"
-            auto-close="2000"
-            trigger="click"
-            :content="$t('entity.graph.completed')"
-            popper-class="graph-popover"
-        >
-          <template #reference>
-            <div class="graph-content-item graph-content-relationship-item">
-              <div class="graph-relationship-item-label">
-                <i class="margin-r-6" :class="item.icon"></i>
-                <span>{{ item.label }}：</span>
-              </div>
-              <div class="graph-relationship-item-value">
-                <span class="margin-r-6">{{ item.value.length }}/{{ item.total }}</span>
-                <i class="cn-icon cn-icon-expand-relationship" :style="{color: iconColor(item.value.length, item.total)}"></i>
-              </div>
-            </div>
-          </template>
-        </el-popover>
+      <div v-for="item in relationList" :key="item.name">
+        <div class="graph-content-item graph-content-relationship-item" v-if="item.value === item.total">
+          <div class="graph-relationship-item-label">
+            <i class="margin-r-6" :class="item.icon"></i>
+            <span>{{ item.label }}：</span>
+          </div>
+          <div class="graph-relationship-item-value">
+            <span class="margin-r-6">{{ item.value }}/{{ item.total }}</span>
+            <i class="cn-icon cn-icon-expand-relationship" :style="{color: iconColor(item.value, item.total)}"></i>
+          </div>
+        </div>
 
         <div v-else class="graph-content-item graph-content-relationship-item">
           <div class="graph-relationship-item-label">
@@ -76,14 +144,8 @@
             <span>{{ item.label }}：</span>
           </div>
           <div class="graph-relationship-item-value">
-            <span class="margin-r-6">{{ item.value.length }}/{{ item.total }}</span>
-            <el-tooltip
-                effect="dark"
-                :content="$t('entity.graph.expandDownward')"
-                placement="top-end"
-            >
-              <i class="cn-icon cn-icon-expand-relationship graph-expand-relationship__icon" :style="{color: iconColor(item.value.length, item.total)}"></i>
-            </el-tooltip>
+            <span class="margin-r-6">{{ item.value }}/{{ item.total }}</span>
+            <i class="cn-icon cn-icon-expand-relationship graph-expand-relationship__icon" :style="{color: iconColor(item.value, item.total)}" @click="expandRelation(item.name)"></i>
           </div>
         </div>
       </div>
@@ -95,13 +157,13 @@
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
       <div class="graph-basic-info__block-title">
-        {{ $t('entity.graph.labels') }}
+        {{ $t('entity.graph.tags') }}
       </div>
     </div>
 
     <div class="entity-detail graph-basic-info__block-content">
       <div class="graph-tag-list">
-        <div v-for="ic in tagList" :key="ic.key">
+        <div v-for="ic in entity.tags" :key="ic.value">
           <div class="entity-tag graph-tag-item" :class="`entity-tag--level-two-${ic.type}`">
             <span>{{ic.value}}</span>
           </div>
@@ -112,15 +174,13 @@
 </template>
 
 <script>
-import i18n from '@/i18n'
 import { copySelectionText, selectElementText } from '@/utils/tools'
 import { entityType, riskLevelMapping } from '@/utils/constants'
-import axios from 'axios'
-import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'DomainDetail',
@@ -130,12 +190,23 @@ export default {
     }
   },
   mixins: [chartMixin],
+  components: {
+    Loading
+  },
   data () {
     return {
       entityType
     }
   },
   computed: {
+    appRisk () {
+      return function (level) {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.value == level
+        })
+        return (m && m.name) || level
+      }
+    },
     iconClass () {
       let className
       switch (this.entity.entityType) {
@@ -155,87 +226,187 @@ export default {
           break
       }
       return className
+    },
+    handleDate () {
+      return function (key) {
+        const date = _.get(this.entity, key, '')
+        return date ? dateFormatByAppearance(date) : '-'
+      }
     }
   },
-  mounted () {
-    this.initData()
+  watch: {
+    entity: {
+      deep: true,
+      handler (n) {
+        const type = n.type || n.entityType
+        switch (type) {
+          case 'ip': {
+            this.detailCards = [
+              { name: 'asn', label: this.$t('entities.asNumber'), value: _.get(n.detailData, 'detail.asn.asn', '-') },
+              {
+                name: 'asOrg',
+                label: this.$t('entities.asOrg'),
+                value: _.get(n.detailData, 'detail.asn.organization', '-')
+              },
+              {
+                name: 'isp',
+                label: this.$t('entities.graph.isp'),
+                value: _.get(n.detailData, 'detail.location.isp', '-')
+              },
+              { name: 'location', label: this.$t('overall.location'), value: this.location(n.detailData) }
+            ]
+            this.relationList = [
+              {
+                icon: 'cn-icon cn-icon-subdomain',
+                name: 'domain',
+                label: this.$t('entity.graph.resolveDomain'),
+                value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
+                total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
+              },
+              {
+                icon: 'cn-icon cn-icon-app-name',
+                name: 'app',
+                label: this.$t('entities.tab.relatedApp'),
+                value: _.get(n.relatedEntityCount, 'app.current', '0') || 0,
+                total: _.get(n.relatedEntityCount, 'app.total', '0') || 0
+              }
+            ]
+            break
+          }
+          case 'domain': {
+            const expireDate = _.get(n.detailData, 'detail.whois.expireDate', '')
+            const createDate = _.get(n.detailData, 'detail.whois.createDate', '')
+            this.detailCards = [
+              {
+                name: 'categoryName',
+                label: this.$t('entities.category'),
+                value: _.get(n.detailData, 'detail.category.name', '-')
+              },
+              {
+                name: 'categoryGroup',
+                label: this.$t('entities.group'),
+                value: _.get(n.detailData, 'detail.category.group', '-')
+              },
+              {
+                name: 'reputationLevel',
+                label: this.$t('entities.creditLevel2'),
+                value: _.get(n.detailData, 'detail.category.reputationLevel', '-')
+              },
+              {
+                name: 'expireDate',
+                label: this.$t('entities.graph.expirationDate'),
+                value: expireDate ? dateFormatByAppearance(expireDate) : '-'
+              },
+              {
+                name: 'registrarName',
+                label: this.$t('entities.registrar'),
+                value: _.get(n.detailData, 'detail.whois.registrarName', '-')
+              },
+              {
+                name: 'registrantOrg',
+                label: this.$t('entities.registry'),
+                value: _.get(n.detailData, 'detail.whois.registrantOrg', '-')
+              },
+              {
+                name: 'registrantCountry',
+                label: this.$t('entities.registrationCountry'),
+                value: _.get(n.detailData, 'detail.whois.registrantCountry', '-')
+              },
+              {
+                name: 'createDate',
+                label: this.$t('entities.registrationDate'),
+                value: createDate ? dateFormatByAppearance(createDate) : '-'
+              },
+              {
+                name: 'email',
+                label: this.$t('entities.registryEmail'),
+                value: _.get(n.detailData, 'detail.whois.email', '-')
+              }
+            ]
+            this.relationList = [
+              {
+                icon: 'cn-icon cn-icon-resolve-ip',
+                name: 'ip',
+                label: this.$t('entities.graph.resolveIp'),
+                value: _.get(n.relatedEntityCount, 'ip.current', '0') || 0,
+                total: _.get(n.relatedEntityCount, 'ip.total', '0') || 0
+              },
+              {
+                icon: 'cn-icon cn-icon-subdomain',
+                name: 'subDomain',
+                label: this.$t('entities.subdomain'),
+                value: _.get(n.relatedEntityCount, 'subDomain.current', '0') || 0,
+                total: _.get(n.relatedEntityCount, 'subDomain.total', '0') || 0
+              },
+              {
+                icon: 'cn-icon cn-icon-app-name',
+                name: 'app',
+                label: this.$t('entities.tab.relatedApp'),
+                value: _.get(n.relatedEntityCount, 'app.current', 0) || 0,
+                total: _.get(n.relatedEntityCount, 'app.total', 0) || 0
+              }
+            ]
+            break
+          }
+          case 'app': {
+            this.detailCards = [
+              {
+                name: 'appCategory',
+                label: this.$t('entities.category'),
+                value: _.get(n.detailData, 'detail.category.appCategory', '-')
+              },
+              {
+                name: 'appSubcategory',
+                label: this.$t('entities.subcategory'),
+                value: _.get(n.detailData, 'detail.category.appSubcategory', '-')
+              },
+              {
+                name: 'appRisk',
+                label: this.$t('entities.riskLevel'),
+                value: _.get(n.detailData, 'detail.category.appRisk', '-')
+              },
+              {
+                name: 'appTechnology',
+                label: this.$t('overall.technology'),
+                value: _.get(n.detailData, 'detail.category.appTechnology', '-')
+              },
+              {
+                name: 'appLongname',
+                label: this.$t('overall.appFullName'),
+                value: _.get(n.detailData, 'detail.category.appLongname', '-')
+              },
+              {
+                name: 'appDescription',
+                label: this.$t('config.dataSource.description'),
+                value: _.get(n.detailData, 'detail.category.appDescription', '-')
+              }
+            ]
+
+            this.relationList = [
+              {
+                icon: 'cn-icon cn-icon-resolve-ip',
+                name: 'ip',
+                label: this.$t('entities.graph.resolveIp'),
+                value: _.get(n.relatedEntityCount, 'ip.current', '0') || 0,
+                total: _.get(n.relatedEntityCount, 'ip.total', '0') || 0
+              },
+              {
+                icon: 'cn-icon cn-icon-subdomain',
+                name: 'domain',
+                label: this.$t('entity.graph.resolveDomain'),
+                value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
+                total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
+              }
+            ]
+          }
+        }
+      }
+    }
   },
   setup (props) {
     const detailCards = ref([])
     const relationList = ref([])
     const tagList = ref([])
-    // 标签列表，后续请求接口时处理
-    tagList.value = [
-      { key: 'isp', value: '信息技术', type: 'positive' },
-      { key: 'malwareName', value: '互联网', type: 'normal' },
-      { key: 'malwareName1', value: '互联网', type: 'normal' },
-      { key: 'malwareName2', value: '互联网', type: 'normal' },
-      { key: 'malwareName3', value: '互联网', type: 'normal' },
-      { key: 'malwareName4', value: '互联网', type: 'normal' },
-      { key: 'malwareName5', value: '互联网', type: 'normal' },
-      { key: 'malwareName6', value: '互联网', type: 'normal' },
-      { key: 'malwareName7', value: '互联网', type: 'normal' },
-      { key: 'malwareName8', value: '互联网', type: 'normal' },
-      { key: 'malwareName9', value: '互联网', type: 'normal' },
-      { key: 'malwareName10', value: '互联网', type: 'normal' },
-      { key: 'malwareName11', value: '互联网', type: 'normal' },
-      { key: 'malwareName12', value: '互联网', type: 'normal' }
-    ]
-
-    switch (props.entity.entityType) {
-      case 'ip': {
-        detailCards.value = _.concat(detailCards.value,
-          { name: 'asn', label: i18n.global.t('entities.asNumber'), value: '' },
-          { name: 'asOrg', label: i18n.global.t('entities.asOrg'), value: '' },
-          { name: 'asSubnet', label: i18n.global.t('entities.asSubnet'), value: '' },
-          { name: 'isp', label: i18n.global.t('entities.graph.isp'), value: '' },
-          { name: 'location', label: i18n.global.t('entities.geographicLocation'), value: '' }
-          // { name: 'dnsPtr', label: 'DNS PTR', value: '' }
-        )
-
-        relationList.value = _.concat(relationList.value,
-          { icon: 'cn-icon cn-icon-subdomain', name: 'resolveIp', label: i18n.global.t('entity.graph.resolveDomain'), value: [], total: 12 },
-          { icon: 'cn-icon cn-icon-app-name', name: 'relatedApp', label: i18n.global.t('entities.tab.relatedApp'), value: [], total: 6 }
-        )
-        break
-      }
-      case 'domain': {
-        detailCards.value = _.concat(detailCards.value,
-          { name: 'categoryName', label: i18n.global.t('entities.category'), value: '' },
-          { name: 'categoryGroup', label: i18n.global.t('entities.domainDetail.subcategory'), value: '' },
-          { name: 'reputationLevel', label: i18n.global.t('entities.creditLevel2'), value: '' },
-          { name: 'expireDate', label: i18n.global.t('entities.graph.expirationDate'), value: '' },
-          { name: 'registrarName', label: i18n.global.t('entities.registrar'), value: '' },
-          { name: 'registrantOrg', label: i18n.global.t('entities.registry'), value: '' },
-          { name: 'registrantCountry', label: i18n.global.t('entities.registrationCountry'), value: '' },
-          { name: 'createDate', label: i18n.global.t('entities.registrationDate'), value: '' },
-          { name: 'email', label: i18n.global.t('entities.registryEmail'), value: '' }
-        )
-
-        relationList.value = _.concat(relationList.value,
-          { icon: 'cn-icon cn-icon-resolve-ip', name: 'resolveIp', label: i18n.global.t('entities.graph.resolveIp'), value: [], total: 12 },
-          { icon: 'cn-icon cn-icon-subdomain', name: 'subdomain', label: i18n.global.t('entities.subdomain'), value: [1, 2], total: 2 },
-          { icon: 'cn-icon cn-icon-app-name', name: 'relatedApp', label: i18n.global.t('entities.tab.relatedApp'), value: [], total: 6 }
-        )
-        break
-      }
-      case 'app': {
-        detailCards.value = _.concat(detailCards.value,
-          { name: 'appCategory', label: i18n.global.t('entities.category'), value: '' },
-          { name: 'appSubcategory', label: i18n.global.t('entities.subcategory'), value: '' },
-          { name: 'appRisk', label: i18n.global.t('entities.riskLevel'), value: '' },
-          { name: 'appTechnology', label: i18n.global.t('overall.technology'), value: '' },
-          { name: 'appName', label: i18n.global.t('overall.appName2'), value: '' },
-          { name: 'appLongname', label: i18n.global.t('overall.appFullName'), value: '' },
-          { name: 'appDescription', label: i18n.global.t('config.dataSource.description'), value: '' }
-        )
-
-        relationList.value = _.concat(relationList.value,
-          { icon: 'cn-icon cn-icon-resolve-ip', name: 'resolveIp', label: i18n.global.t('entities.graph.resolveIp'), value: [], total: 12 },
-          { icon: 'cn-icon cn-icon-subdomain', name: 'resolveDomain', label: i18n.global.t('entity.graph.resolveDomain'), value: [], total: 12 }
-        )
-      }
-    }
 
     return {
       detailCards,
@@ -244,62 +415,6 @@ export default {
     }
   },
   methods: {
-    initData () {
-      axios.get(`${api.entity.basicInfo}/${this.entity.entityType}?resource=${this.entity.entityName}`).then(response => {
-        const res = response.data
-        if (res.code === 200) {
-          switch (this.entity.entityType) {
-            case 'ip': {
-              if (res.data.asn) {
-                this.detailCards.find(c => c.name === 'asn').value = res.data.asn.asn
-                this.detailCards.find(c => c.name === 'asOrg').value = res.data.asn.organization
-                // AS子网接口未返回
-              }
-              if (res.data.location) {
-                this.detailCards.find(c => c.name === 'isp').value = res.data.location.isp
-                this.detailCards.find(c => c.name === 'location').value = this.handleLocation(res.data.location)
-                // DNS PTR接口未返回
-              }
-              break
-            }
-            case 'domain': {
-              if (res.data.category) {
-                this.detailCards.find(c => c.name === 'categoryName').value = res.data.category.categoryName
-                this.detailCards.find(c => c.name === 'categoryGroup').value = res.data.category.categoryGroup
-                this.detailCards.find(c => c.name === 'reputationLevel').value = res.data.category.reputationLevel
-              }
-
-              if (res.data.whois) {
-                this.detailCards.find(c => c.name === 'expireDate').value = dateFormatByAppearance(res.data.whois.expireDate)
-                this.detailCards.find(c => c.name === 'registrarName').value = res.data.whois.registrarName
-                this.detailCards.find(c => c.name === 'registrantOrg').value = res.data.whois.registrantOrg
-                this.detailCards.find(c => c.name === 'registrantCountry').value = res.data.whois.registrantCountry
-                this.detailCards.find(c => c.name === 'createDate').value = dateFormatByAppearance(res.data.whois.createDate)
-                this.detailCards.find(c => c.name === 'email').value = res.data.whois.email
-              }
-              break
-            }
-            case 'app': {
-              if (res.data.category) {
-                this.detailCards.find(c => c.name === 'appCategory').value = res.data.category.appCategory
-                this.detailCards.find(c => c.name === 'appSubcategory').value = res.data.category.appSubcategory
-                this.detailCards.find(c => c.name === 'appRisk').value = this.appRisk(res.data.category.appRisk)
-                this.detailCards.find(c => c.name === 'appTechnology').value = res.data.category.appTechnology
-                this.detailCards.find(c => c.name === 'appName').value = res.data.category.appName
-                this.detailCards.find(c => c.name === 'appLongname').value = res.data.category.appLongname
-                this.detailCards.find(c => c.name === 'appDescription').value = res.data.category.appDescription
-              }
-              break
-            }
-          }
-        }
-      }).catch(e => {
-        console.error(e)
-        this.httpError(e)
-      }).finally(() => {
-        this.toggleLoading(false)
-      })
-    },
     /** 复制实体名称 */
     copyEntityName () {
       selectElementText(document.getElementById('entityName'))
@@ -312,7 +427,11 @@ export default {
     /** 修改关系拓展图标颜色，全部拓展浅灰色，否则深灰色 */
     iconColor (length, total) {
       if (length < total) {
-        return 'rgba(57, 57, 57, 1)'
+        if (length === 50) {
+          return 'rgba(57, 57, 57, 0.5)'
+        } else {
+          return 'rgba(57, 57, 57, 1)'
+        }
       } else {
         return 'rgba(57, 57, 57, 0.5)'
       }
@@ -335,31 +454,32 @@ export default {
       }
       return location.join(' - ')
     },
-    appRisk (level) {
-      const m = riskLevelMapping.find(mapping => {
-        return mapping.value === level
-      })
-      return (m && m.name) || level
-    },
     /** 关系拓展 */
     expandRelation (name) {
-      // todo 模拟效果，后续修改
-      const obj = this.relationList.find(item => item.name === name)
-      if (obj) {
-        const num = obj.total - obj.value.length
-        if (num > 0) {
-          const len = num < 10 ? num : 10
-          for (let i = 0; i < len; i++) {
-            obj.value.push(i)
-          }
-          this.$emit('expand')
-        }
-      }
+      this.$emit('expandDetailList', name === 'subDomain' ? 'domain' : name, this.entity.name)
     },
     httpError (e) {
       this.isNoData = false
       this.showError = true
       this.errorMsg = this.errorMsgHandler(e)
+    },
+    location (detailData) {
+      let location = ''
+      if (detailData) {
+        const data = detailData.detail
+        if (data) {
+          if (data.city) {
+            location = data.city
+          }
+          if (data.province) {
+            location = location ? `${data.province}, ${location}` : data.province
+          }
+          if (data.country) {
+            location = location ? `${data.country}, ${location}` : data.country
+          }
+        }
+      }
+      return location || '-'
     }
   }
 }

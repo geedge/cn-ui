@@ -255,6 +255,8 @@ export const api = {
     informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list',
     // 实体关系
     entityGraph: {
+      basicInfo: apiVersion + '/entity/graph/relation/basic',
+      tags: apiVersion + '/entity/graph/relation/kb/intelligence/tag',
       relatedEntityCount: apiVersion + '/entity/graph/relation/summaryCount',
       domainRelatedIp: apiVersion + '/entity/graph/relation/domain/relate/ips',
       domainRelatedApp: apiVersion + '/entity/graph/relation/domain/relate/apps',
