@@ -34,9 +34,9 @@
         ></explorer-search>
 
         <div style="display: flex;flex-direction: column;height: calc(100% - 42px);">
-          <div class="explorer-result" v-if="showList">
-            <loading :loading="loadingCount"></loading>
-            <span>{{ summaryCount.total }}</span>results，IP
+          <div class="explorer-result" v-if="showList" style="position: relative;">
+            <loading :loading="loadingCount" style="width: 240px"></loading>
+            <span>{{ summaryCount.total }}&nbsp;</span>results，IP
             <span>{{ summaryCount.ipCount }}</span>，Domain
             <span>{{ summaryCount.fqdnCount }}</span>，APP
             <span>{{ summaryCount.appCount }}</span>

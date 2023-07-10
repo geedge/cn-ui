@@ -66,12 +66,15 @@
 
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
-        <loading :loading="loadingNetworkQuality" size="small" inner-style="left: 1rem;"></loading>
-        <div class="entity-score" v-if="!loadingNetworkQuality">
-          <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
-          <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
-          <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
-          Score:{{score}}
+        <div style="position: relative;">
+          <div class="entity-score" v-if="!loadingNetworkQuality">
+            <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
+            <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
+            <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
+            Score:{{score}}
+          </div>
+
+          <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
         </div>
       </div>
     </div>
@@ -83,9 +86,11 @@
       <div class="overview__tags domain__tags" ref="relationship"></div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.tab.relatedApp')}}</div>
-
-        <loading :loading="loadingRelationshipOne" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
         <div class="row__content overview__row-related">
+          <div v-if="loadingRelationshipOne" style="position: relative;width: 450px;">
+            <loading :loading="loadingRelationshipOne" size="small" style="left: 1rem;"></loading>
+          </div>
+
           <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
             {{item.value}}
           </div>
@@ -103,9 +108,10 @@
 
       <div class="overview__row overview__row-related">
         <div class="row__label row__label--width130">{{$t('entities.tab.relatedIp')}}</div>
-
-        <loading :loading="loadingRelationshipTwo" size="small" inner-style="left: 1rem;" style="width: 50%;"></loading>
         <div class="row__content">
+          <div v-if="loadingRelationshipTwo" style="position: relative;width: 450px;">
+            <loading :loading="loadingRelationshipTwo" size="small" style="left: 1rem;"></loading>
+          </div>
           <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
             {{item.value}}
           </div>
