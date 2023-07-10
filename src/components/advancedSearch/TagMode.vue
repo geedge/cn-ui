@@ -81,7 +81,7 @@
             placement="top"
             :popper-style="{border: '1px red solid'}"
             trigger="hover"
-            :content="$t('entity.switchToAdvancedSearch')"
+            :content="$t('entity.switchToBasicSearch')"
         >
           <template #reference>
             <i class="cn-icon cn-icon-search-normal" @click="changeMode"></i>

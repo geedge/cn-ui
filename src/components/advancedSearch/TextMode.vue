@@ -8,7 +8,7 @@
           popper-class="my-popper-class"
           placement="top"
           trigger="hover"
-          :content="$t('entity.switchToBasicSearch')"
+          :content="$t('entity.switchToAdvancedSearch')"
       >
         <template #reference>
           <i class="cn-icon cn-icon-filter" @click="changeMode"></i>
