@@ -272,179 +272,66 @@ export const dataForNpmNetworkQuantity = {
 }
 export const columnList = [
   {
-    name: 'entity_type',
+    name: 'ip',
     type: 'string',
-    label: 'Entity type'
+    label: 'Ip',
+    doc: {
+      constraints: {
+        type: 'ip',
+        operator_functions: '=,in'
+      }
+    }
   },
   {
-    name: 'ip_addr',
+    name: 'fqdn',
     type: 'string',
-    label: 'IP.Address'
-  },
-  {
-    name: 'country',
-    type: 'string',
-    label: 'IP.Country'
-  },
-  {
-    name: 'ip_location_province',
-    type: 'string',
-    label: 'IP.Province'
-  },
-  {
-    name: 'region',
-    type: 'string',
-    label: 'IP.City'
-  },
-  {
-    name: 'asn',
-    type: 'string',
-    label: 'IP.ASN'
-  },
-  {
-    name: 'dns_server_role',
-    type: 'string',
-    label: 'IP.DNS server role'
-  },
-  {
-    name: 'dns_server_org',
-    type: 'string',
-    label: 'IP.DNS server organization'
-  },
-  {
-    name: 'dns_server_os',
-    type: 'string',
-    label: 'IP.Operating system'
-  },
-  {
-    name: 'dns_server_software',
-    type: 'string',
-    label: 'IP.DNS server software'
-  },
-  {
-    name: 'domain_name',
-    type: 'string',
-    label: 'Domain.Name'
-  },
-  {
-    name: 'domain_category',
-    type: 'string',
-    label: 'Domain.Category'
-  },
-  {
-    name: 'domain_category_group',
-    type: 'string',
-    label: 'Domain.Category group'
-  },
-  {
-    name: 'domain_reputation_level',
-    type: 'string',
-    label: 'Domain.Reputation'
-  },
-  {
-    name: 'domain_whois_email',
-    type: 'string',
-    label: 'Domain.Whois email'
-  },
-  {
-    name: 'domain_whois_name_servers',
-    type: 'string',
-    label: 'Domain.Whois nameserver'
-  },
-  {
-    name: 'domain_whois_registrar',
-    type: 'string',
-    label: 'Domain.Whois registrar'
-  },
-  {
-    name: 'domain_whois_org',
-    type: 'string',
-    label: 'Domain.Whois organization'
-  },
-  {
-    name: 'domain_whois_address',
-    type: 'string',
-    label: 'Domain.Whois address'
-  },
-  {
-    name: 'region',
-    type: 'string',
-    label: 'Domain.Whois city'
-  },
-  {
-    name: 'domain_whois_state',
-    type: 'string',
-    label: 'Domain.Whois state'
-  },
-  {
-    name: 'country',
-    type: 'string',
-    label: 'Domain.Whois country'
-  },
-  {
-    name: 'domain_icp_owner',
-    type: 'string',
-    label: 'Domain.ICP owner'
-  },
-  {
-    name: 'domain_icp_company_name',
-    type: 'string',
-    label: 'Domain.ICP company'
-  },
-  {
-    name: 'domain_icp_company_type',
-    type: 'string',
-    label: 'Domain.ICP company type'
-  },
-  {
-    name: 'domain_icp_site_license',
-    type: 'string',
-    label: 'Domain.ICP site license'
-  },
-  {
-    name: 'domain_icp_site_name',
-    type: 'string',
-    label: 'Domain.ICP site'
+    label: 'Domain',
+    doc: {
+      constraints: {
+        type: 'domain',
+        operator_functions: '=,in'
+      }
+    }
   },
   {
     name: 'app_name',
     type: 'string',
-    label: 'APP.Name'
+    label: 'App',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
   },
   {
-    name: 'app_id',
+    name: 'region',
     type: 'string',
-    label: 'APP.ID'
+    label: 'City',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
   },
   {
-    name: 'app_category',
+    name: 'country',
     type: 'string',
-    label: 'APP.Category'
+    label: 'Country',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
   },
   {
-    name: 'app_subcategory',
+    name: 'asn',
     type: 'string',
-    label: 'APP.Subcategory'
-  },
-  {
-    name: 'app_risk',
-    type: 'string',
-    label: 'APP.Risk'
-  },
-  {
-    name: 'app_description',
-    type: 'string',
-    label: 'APP.Description'
-  },
-  {
-    name: 'app_longname',
-    type: 'string',
-    label: 'APP.Long name'
-  },
-  {
-    name: 'app_technology',
-    type: 'string',
-    label: 'APP.Technology'
+    label: 'ASN',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
   }
 ]
 export const operatorList = ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE']
