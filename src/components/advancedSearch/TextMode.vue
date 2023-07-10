@@ -3,8 +3,17 @@
       ref="textSearch"
   ></textarea>
   <div class="search__suffixes search__suffixes--text-mode">
-    <div class="search__suffix" @click="changeMode">
-      <i class="cn-icon cn-icon-filter"></i>
+    <div class="search__suffix">
+      <el-popover
+          popper-class="my-popper-class"
+          placement="top"
+          trigger="hover"
+          :content="$t('entity.switchToBasicSearch')"
+      >
+        <template #reference>
+          <i class="cn-icon cn-icon-filter" @click="changeMode"></i>
+        </template>
+      </el-popover>
     </div>
     <div class="search__suffix-close" @click="cleanParams">
       <i class="el-icon-error"></i>

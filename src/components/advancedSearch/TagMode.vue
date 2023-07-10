@@ -75,8 +75,18 @@
     </div>
     <div class="tag-search__add" @click="addCondition">{{$t('entities.advancedSearch.add')}}</div>
     <div class="search__suffixes search__suffixes--tag-mode">
-      <div class="search__suffix" style="margin-right: 12px" @click="changeMode">
-        <i class="cn-icon cn-icon-search-normal"></i>
+      <div class="search__suffix" style="margin-right: 12px">
+        <el-popover
+            popper-class="my-popper-class"
+            placement="top"
+            :popper-style="{border: '1px red solid'}"
+            trigger="hover"
+            :content="$t('entity.switchToAdvancedSearch')"
+        >
+          <template #reference>
+            <i class="cn-icon cn-icon-search-normal" @click="changeMode"></i>
+          </template>
+        </el-popover>
       </div>
       <div class="search__suffix new-search__suffix" @click="search">
         <i class="el-icon-search"></i>
@@ -451,5 +461,8 @@ export default {
     color: #fff !important;
     margin-top: 9px !important;
   }
+}
+.my-popper-class .el-popper__arrow {
+  display: none;
 }
 </style>
