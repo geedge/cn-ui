@@ -704,7 +704,8 @@ export default {
     queryList (params) {
       this.listLoading = true
       const queryParams = {
-        ...params,
+        pageSize: params.pageSize,
+        pageNo: params.pageNo,
         // startTime: getSecond(params.startTime),
         // endTime: getSecond(params.endTime),
         resource: params.q || ''
