@@ -15,9 +15,9 @@
                 allow-create
                 filterable
                 size="mini"
-                v-model="meta.column.name"
+                v-model="meta.column.label"
                 ref="columnSelect"
-                :placeholder="meta.column.name || ''"
+                :placeholder="meta.column.label || ''"
                 @blur="columnBlur(meta, index)"
                 @change="(value) => selectColumn(value, meta)"
             >
@@ -25,7 +25,7 @@
                   v-for="(column, index) in columnList"
                   :key="index"
                   :label="column.label"
-                  :value="column.name"
+                  :value="column.label"
               ></el-option>
             </el-select>
           </div>
@@ -175,7 +175,7 @@ export default {
         meta.resetValue()
       } else {
         const selectedColumn = this.columnList.find(column => {
-          return column.name === value
+          return column.label === value
         })
         meta.column.label = selectedColumn.label
         meta.column.type = selectedColumn.type
@@ -201,7 +201,7 @@ export default {
     },
     columnBlur (meta, index) {
       setTimeout(() => {
-        meta.column.name = meta.column.name.replace(/"/g, '')
+        meta.column.label = meta.column.label.replace(/"/g, '')
         meta.column.isEditing = false
         if (meta.isEmpty()) {
           if (this.metaList.length > 1) {
@@ -302,7 +302,7 @@ export default {
     // 判断是否是用户自己添加的内容，用于判断是否是全局搜索
     isCustomized (value) {
       return !this.columnList.some(meta => {
-        return meta.name === value
+        return meta.label === value
       })
     },
     enterSearch () {
@@ -359,10 +359,10 @@ export default {
     addParams (params) {
       params.forEach(param => {
         const column = this.columnList.find(column => {
-          return column.name === param.column
+          return column.label === param.column
         })
         const meta = new Meta()
-        meta.column.name = param.column
+        meta.column.label = param.column
         meta.column.type = column ? column.type : columnType.string
         meta.column.label = column ? column.label : param.column
         meta.operator.value = '='
@@ -376,16 +376,16 @@ export default {
     changeParams (params) {
       params.forEach(param => {
         const oldColumn = this.columnList.find(column => {
-          return column.name === param.oldParam.column
+          return column.label === param.oldParam.column
         })
         const newColumn = this.columnList.find(column => {
-          return column.name === param.newParam.column
+          return column.label === param.newParam.column
         })
-        const meta = this.metaList.find(m => m.column && m.column.name === oldColumn.name && m.operator.value === param.oldParam.operator && m.value.value === this.handleValue(param.oldParam.value, oldColumn, param.oldParam.operator))
+        const meta = this.metaList.find(m => m.column && m.column.label === oldColumn.label && m.operator.value === param.oldParam.operator && m.value.value === this.handleValue(param.oldParam.value, oldColumn, param.oldParam.operator))
         if (meta) {
-          meta.column.name = newColumn.name
+          meta.column.label = newColumn.label
           meta.column.type = newColumn.type
-          meta.column.label = newColumn.label ? newColumn.label : newColumn.name
+          meta.column.label = newColumn.label ? newColumn.label : newColumn.label
           meta.operator.value = param.newParam.operator
           meta.value.value = this.handleValue(param.newParam.value, newColumn, param.newParam.operator)
           meta.value.label = meta.value.value
@@ -395,9 +395,9 @@ export default {
     removeParams (params) {
       params.forEach(param => {
         const column = this.columnList.find(c => {
-          return c.name === param.column
+          return c.label === param.column
         })
-        const metaIndex = this.metaList.findIndex(m => m.column && m.column.name === param.column && m.operator.value === param.operator && m.value.value === this.handleValue(param.value, column, param.operator))
+        const metaIndex = this.metaList.findIndex(m => m.column && m.column.label === param.column && m.operator.value === param.operator && m.value.value === this.handleValue(param.value, column, param.operator))
         // 不是在首位，则删除时顺带删除前一个index（and或or），否则顺带删除后一个index
         if (metaIndex > 0) {
           this.metaList.splice(metaIndex - 1, 2)

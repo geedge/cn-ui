@@ -63,7 +63,7 @@ export default class Meta {
 
   isEmpty () {
     if (this.meta === condition) {
-      return _.isEmpty(this.column.name)
+      return _.isEmpty(this.column.label)
     } else {
       return true
     }
@@ -73,8 +73,8 @@ export default class Meta {
   isCompleteCondition () {
     if (this.meta === condition) {
       return (this.column.type === columnType.fullText)
-        ? !_.isEmpty(this.column.name)
-        : !_.isEmpty(this.column.name) && !_.isEmpty(this.operator.value) && (!_.isEmpty(this.value.value) || (_.isNumber(this.value.value) && !_.isNaN(this.value.value)))
+        ? !_.isEmpty(this.column.label)
+        : !_.isEmpty(this.column.label) && !_.isEmpty(this.operator.value) && (!_.isEmpty(this.value.value) || (_.isNumber(this.value.value) && !_.isNaN(this.value.value)))
     } else if (this.meta === connection) {
       return !!this.value
     }

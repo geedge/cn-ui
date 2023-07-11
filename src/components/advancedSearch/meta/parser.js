@@ -80,9 +80,9 @@ export default class Parser {
           str += `${meta.value.toUpperCase()} `
         } else if (meta.meta === condition) {
           if (meta.column.type === columnType.fullText) {
-            str += `'${meta.column.name}' `
+            str += `'${meta.column.label}' `
           } else if (meta.column.type === columnType.array) {
-            str += `${meta.column.name} ${meta.operator.value} (`
+            str += `${meta.column.label} ${meta.operator.value} (`
             meta.value.value.forEach((s, j) => {
               str += `'${s}'`
               if (j < meta.value.value.length) {
@@ -93,13 +93,13 @@ export default class Parser {
             str += ') '
           } else if (meta.column.type === columnType.string) {
             if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
-              str += `${meta.column.name} ${meta.operator.value} '${meta.value.value}' `
+              str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
             } else {
-              str += `${meta.column.name}${meta.operator.value}'${meta.value.value}' `
+              str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
             }
           } else if (meta.column.type === columnType.number) {
             if (_.isNumber(Number(meta.value.value))) {
-              str += `${meta.column.name}${meta.operator.value}${meta.value.value} `
+              str += `${meta.column.label}${meta.operator.value}${meta.value.value} `
             } else {
               this.errorList.push(new ParserError(i, errorTypes.typeError, errorDesc.typeError.number))
               return
@@ -125,11 +125,11 @@ export default class Parser {
         if (meta.column.type === columnType.fullText) {
           str += "QUERY('"
           this.columnList.forEach(column => {
-            str += `${column.name}:${meta.column.name} `
+            str += `${column.label}:${meta.column.label} `
           })
           str += "') "
         } else if (meta.column.type === columnType.array) {
-          str += `${meta.column.name} ${meta.operator.value} (`
+          str += `${meta.column.label} ${meta.operator.value} (`
           meta.value.value.forEach((s, j) => {
             str += `'${s}'`
             if (j < meta.value.value.length) {
@@ -140,13 +140,13 @@ export default class Parser {
           str += ') '
         } else if (meta.column.type === columnType.string) {
           if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
-            str += `${meta.column.name} ${meta.operator.value} '${meta.value.value}' `
+            str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
           } else {
-            str += `${meta.column.name}${meta.operator.value}'${meta.value.value}' `
+            str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
           }
         } else if (meta.column.type === columnType.number) {
           if (_.isNumber(Number(meta.value.value))) {
-            str += `${meta.column.name}${meta.operator.value}${meta.value.value} `
+            str += `${meta.column.label}${meta.operator.value}${meta.value.value} `
           }
         }
       }
@@ -566,12 +566,12 @@ export default class Parser {
             // 前面是连接符或空，后面是操作符，不在单引号内，则是key
             // 前面是连接符或操作符或空后面是连接符或空，或在单引号内，是value
             if (isInApostrophe) {
-              if (meta.column.name) {
+              if (meta.column.label) {
                 meta.value.value = token.value
                 meta.column.type = columnType.string
               } else {
                 meta.column.type = columnType.fullText
-                meta.column.name = token.value
+                meta.column.label = token.value
               }
             } else {
               let isColumn = true
@@ -579,14 +579,14 @@ export default class Parser {
                 if (prevToken) {
                   if (prevToken.type === types.connection && [types.commonOperator, types.letterOperator].indexOf(nextToken.type) > -1) {
                     meta.column.type = columnType.string
-                    meta.column.name = token.value
+                    meta.column.label = token.value
                   } else {
                     isColumn = false
                   }
                 } else {
                   if ([types.commonOperator, types.letterOperator].indexOf(nextToken.type) > -1) {
                     meta.column.type = columnType.string
-                    meta.column.name = token.value
+                    meta.column.label = token.value
                   } else {
                     isColumn = false
                   }
@@ -604,7 +604,7 @@ export default class Parser {
                     meta.column.type = columnType.string
                   } else if (prevToken && (!prevToken.prevToken || prevToken.prevToken.type === types.connection)) {
                     meta.column.type = columnType.fullText
-                    meta.column.name = token.value
+                    meta.column.label = token.value
                   } else {
                     errorList.push(new ParserError(token.end, errorTypes.syntaxError, errorDesc.syntaxError.unexpectedString))
                     break
@@ -631,14 +631,14 @@ export default class Parser {
                           meta.value.value = token.value
                         }
                       } else if (prevToken.type === types.connection) {
-                        meta.column.name = token.value
+                        meta.column.label = token.value
                         meta.column.type = columnType.fullText
                       } else {
                         errorList.push(new ParserError(token.end, errorTypes.syntaxError, errorDesc.syntaxError.unexpectedString))
                         break
                       }
                     } else {
-                      meta.column.name = token.value
+                      meta.column.label = token.value
                       meta.column.type = columnType.fullText
                     }
                   } else {
@@ -707,10 +707,10 @@ export default class Parser {
           if (meta.column.type === columnType.fullText) {
             meta.operator.show = false
             meta.value.show = false
-            meta.column.label = meta.column.name
+            // meta.column.label = meta.column.name
             metaList.push(meta)
           } else {
-            const column = this.columnList.find(c => c.name === meta.column.name)
+            const column = this.columnList.find(c => c.label === meta.column.label)
             if (column) {
               meta.operator.show = true
               meta.value.show = true

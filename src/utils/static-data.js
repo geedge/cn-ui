@@ -274,7 +274,7 @@ export const columnList = [
   {
     name: 'ip',
     type: 'string',
-    label: 'Ip',
+    label: 'IP',
     doc: {
       constraints: {
         type: 'ip',

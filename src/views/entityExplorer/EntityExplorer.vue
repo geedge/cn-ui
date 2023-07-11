@@ -206,7 +206,7 @@ export default {
             {
               label: this.$t('overall.country'),
               column: 'countryDistinctCount',
-              topColumn: 'country', // top弹框查询字段
+              topColumn: 'Country', // top弹框查询字段
               icon: 'cn-icon cn-icon-country',
               showTopTen: false,
               value: 0
@@ -214,7 +214,7 @@ export default {
             {
               label: this.$t('overall.city'),
               column: 'cityDistinctCount',
-              topColumn: 'region', // top弹框查询字段
+              topColumn: 'City', // top弹框查询字段
               icon: 'cn-icon cn-icon-city',
               showTopTen: false,
               value: 0
@@ -222,7 +222,7 @@ export default {
             {
               label: this.$t('entities.asn'),
               column: 'asnDistinctCount',
-              topColumn: 'asn', // top弹框查询字段
+              topColumn: 'ASN', // top弹框查询字段
               icon: 'cn-icon cn-icon-cloud',
               showTopTen: false,
               value: 0
@@ -680,15 +680,15 @@ export default {
           if (item.code === 200 && item.data.list) {
             this.newFilterData[index].data = []
             item.data.list.forEach(item => {
-              const obj = { label: item.value, flag: '011-china', topColumn: 'country', value: item.uniqueEntities }
+              const obj = { label: item.value, flag: '011-china', topColumn: 'Country', value: item.uniqueEntities }
               if (index === 0) {
                 obj.flag = item.uniqueEntities // 接口字段名称为'China'，目前svg名称为'011-china'，后续再指定方案调整
               }
               if (index === 1) {
-                obj.topColumn = 'region'
+                obj.topColumn = 'City'
               }
               if (index === 2) {
-                obj.topColumn = 'asn'
+                obj.topColumn = 'ASN'
               }
               this.newFilterData[index].data.push(obj)
             })

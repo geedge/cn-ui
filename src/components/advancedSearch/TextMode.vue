@@ -118,7 +118,7 @@ export default {
     addParams (params) {
       let current = this.codeMirror.getValue()
       params.forEach(param => {
-        const column = this.columnList.find(c => c.name === param.column)
+        const column = this.columnList.find(c => c.label === param.column)
         current = `${current ? current + ' AND ' : ''}${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`
       })
       toRaw(this.codeMirror).setValue(current.trim())
@@ -126,7 +126,7 @@ export default {
     removeParams (params) {
       let current = this.codeMirror.getValue()
       params.forEach(param => {
-        const column = this.columnList.find(c => c.name === param.column)
+        const column = this.columnList.find(c => c.label === param.column)
         // 将对应内容替换为空串
         const sqlPiece = `${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`.trim()
         const sqlPieceWithConnection = [` AND ${sqlPiece}`, ` OR ${sqlPiece}`, `${sqlPiece} AND `, `${sqlPiece} OR `, sqlPiece]
@@ -139,8 +139,8 @@ export default {
     changeParams (params) {
       let current = this.codeMirror.getValue()
       params.forEach(param => {
-        const oldColumn = this.columnList.find(c => c.name === param.oldParam.column)
-        const newColumn = this.columnList.find(c => c.name === param.newParam.column)
+        const oldColumn = this.columnList.find(c => c.label === param.oldParam.column)
+        const newColumn = this.columnList.find(c => c.label === param.newParam.column)
         // 将oldParam内容替换为newParam
         const oldSqlPiece = `${param.oldParam.column}${handleOperatorSpace(param.oldParam.operator)}${this.handleValue(param.oldParam.value, oldColumn, param.oldParam.operator)}`.trim()
         const newSqlPiece = `${param.newParam.column}${handleOperatorSpace(param.newParam.operator)}${this.handleValue(param.newParam.value, newColumn, param.newParam.operator)}`.trim()
