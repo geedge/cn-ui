@@ -116,6 +116,7 @@
           <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
             {{item.value}}
           </div>
+          <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
 
           <div v-if="relationshipShowOne">
             <el-popover placement="right-end" trigger="click" show-arrow="false" offset="20">
@@ -138,6 +139,7 @@
           <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
             {{item.value}}
           </div>
+          <div v-if="relationshipDataTwo.length===0 && !loadingRelationshipTwo">-</div>
 
           <div v-if="relationshipShowTwo">
             <el-popover class="entity-expand-detail" placement="right-end" trigger="click" show-arrow="false" offset="20">
