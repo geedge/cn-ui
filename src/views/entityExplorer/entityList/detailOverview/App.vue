@@ -30,24 +30,32 @@
       <loading :loading="loadingTraffic" size="small" inner-style="left: 8.75rem;" style="width: 50%;"></loading>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
-        <div class="row__content">{{unitConvert(entityData.max, unitTypes.byte).join(' ')}}/s</div>
+        <div class="row__content">
+          {{unitConvert(entityData.max, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.max, unitTypes.byte).join(' ') + '/s' : '-'}}
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.mean')}}</div>
-        <div class="row__content">{{unitConvert(entityData.avg, unitTypes.byte).join(' ')}}/s</div>
+        <div class="row__content">
+          {{unitConvert(entityData.avg, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.avg, unitTypes.byte).join(' ') + '/s' : '-'}}
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.throughput')}}</div>
         <div class="row__contents">
           <div class="row__content">
-            <div class="row__charts-msg">{{$t('overall.sent')}}：{{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ')}}ps</div>
+            <div class="row__charts-msg">{{$t('overall.sent')}}：
+              {{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+            </div>
             <!-- 曲线-->
             <div class="row__content-loading">
                <div class="row__charts" :id="`entityDetailSend${entity.entityValue}`" ></div>
             </div>
           </div>
           <div class="row__content row__content-accept">
-            <div class="row__charts-msg">{{$t('overall.received')}}：{{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps</div>
+            <div class="row__charts-msg">{{$t('overall.received')}}：
+              {{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps
+            </div>
             <!-- 曲线-->
             <div class="row__content-loading">
                <div class="row__charts" :id="`entityDetailReceived${entity.entityValue}`" ></div>
