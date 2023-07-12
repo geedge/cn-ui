@@ -60,6 +60,7 @@
 
 <script>
 import Loading from '@/components/common/Loading'
+import { scrollToTop } from '@/utils/tools'
 export default {
   name: 'IpList',
   props: {
@@ -90,6 +91,11 @@ export default {
       // 继续拓展ip列表，传递信息，调用接口
       this.$emit('expandList', this.entity.sourceName, this.entity.nodeId)
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      scrollToTop()
+    })
   }
 }
 </script>

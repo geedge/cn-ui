@@ -741,34 +741,38 @@ export function truncateText (text, limitWidth, fontSize = 12, ellipsis = '...')
 }
 
 export function scrollToTop (dom, toTop, duration, direction) {
-  const clientHeight = dom.clientHeight
-  const currentTop = dom.scrollTop
-  const totalScrollDistance = Math.abs(currentTop - toTop)
-  let scrollY = currentTop
-  let oldTimestamp = null
-
-  function step (newTimestamp) {
-    if (oldTimestamp !== null) {
-      if (direction === 'up') {
-        scrollY -= totalScrollDistance * (newTimestamp - oldTimestamp) / duration
-        if (scrollY < 0) {
-          dom.scrollTop = 0
-          return
+  if (toTop && duration && direction) {
+    const clientHeight = dom.clientHeight
+    const currentTop = dom.scrollTop
+    const totalScrollDistance = Math.abs(currentTop - toTop)
+    let scrollY = currentTop
+    let oldTimestamp = null
+    function step (newTimestamp) {
+      if (oldTimestamp !== null) {
+        if (direction === 'up') {
+          scrollY -= totalScrollDistance * (newTimestamp - oldTimestamp) / duration
+          if (scrollY < 0) {
+            dom.scrollTop = 0
+            return
+          }
+          dom.scrollTop = scrollY
+        } else if (direction === 'down') {
+          scrollY += totalScrollDistance * (newTimestamp - oldTimestamp) / duration
+          if (scrollY > clientHeight) {
+            dom.scrollTop = clientHeight
+            return
+          }
+          dom.scrollTop = scrollY
         }
-        dom.scrollTop = scrollY
-      } else if (direction === 'down') {
-        scrollY += totalScrollDistance * (newTimestamp - oldTimestamp) / duration
-        if (scrollY > clientHeight) {
-          dom.scrollTop = clientHeight
-          return
-        }
-        dom.scrollTop = scrollY
       }
+      oldTimestamp = newTimestamp
+      window.requestAnimationFrame(step)
     }
-    oldTimestamp = newTimestamp
     window.requestAnimationFrame(step)
+  } else {
+    const wraps = document.querySelector('.entity-graph__detail')
+    wraps.scrollTop = 0
   }
-  window.requestAnimationFrame(step)
 }
 
 export function getChainRatio (current, prev) {

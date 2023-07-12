@@ -9,7 +9,7 @@
       </div>
       <el-popover
           placement="bottom-end"
-          :width="390"
+          :width="450"
           trigger="click"
           popper-class="analysis-popper"
           @show="analysisPopSwitch(true)"
@@ -254,6 +254,17 @@ export default {
       label: i18n.global.t('dns.dnsInsights'),
       path: '/panel/dnsServiceInsights'
     }
+    const graphItem = {
+      icon: 'cn-icon cn-icon-graph',
+      label: i18n.global.t('entities.graph'),
+      url: resolvePath({
+        path: '/entityGraph',
+        query: {
+          entityType: props.entity.entityType,
+          entityName: props.entity.entityName
+        }
+      })
+    }
     switch (props.entity.entityType) {
       case 'ip': {
         const queryCondition = `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`
@@ -379,6 +390,7 @@ export default {
         break
       }
     }
+    analysisItems.value.push(graphItem)
     // 底部各属性
     const detailCards = ref([])
     switch (props.entity.entityType) {

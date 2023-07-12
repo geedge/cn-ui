@@ -8,7 +8,7 @@
         <div class="entity-graph-type">{{ entityType[entity.type || entity.entityType] }}</div>
         <div class="graph-basic-info">
           <div class="graph-basic-info-name__block">
-            <div class="graph-basic-info-name" id="entityName">{{ $_.get(entity, 'detailData.vertex', '') }}</div>
+            <div class="graph-basic-info-name" :title="$_.get(entity, 'detailData.vertex', '')" id="entityName">{{ $_.get(entity, 'detailData.vertex', '') }}</div>
             <div class="graph-basic-info-icon" @click="copyEntityName">
               <i class="cn-icon cn-icon-copy"></i>
             </div>
@@ -153,7 +153,7 @@
   </div>
 
   <!--标签-->
-  <div class="digital-certificate graph-basic-info__block">
+  <div v-if="entity.tags" class="digital-certificate graph-basic-info__block">
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
       <div class="graph-basic-info__block-title">
@@ -238,170 +238,12 @@ export default {
     entity: {
       deep: true,
       handler (n) {
-        const type = n.type || n.entityType
-        switch (type) {
-          case 'ip': {
-            this.detailCards = [
-              { name: 'asn', label: this.$t('entities.asNumber'), value: _.get(n.detailData, 'detail.asn.asn', '-') },
-              {
-                name: 'asOrg',
-                label: this.$t('entities.asOrg'),
-                value: _.get(n.detailData, 'detail.asn.organization', '-')
-              },
-              {
-                name: 'isp',
-                label: this.$t('entities.graph.isp'),
-                value: _.get(n.detailData, 'detail.location.isp', '-')
-              },
-              { name: 'location', label: this.$t('overall.location'), value: this.location(n.detailData) }
-            ]
-            this.relationList = [
-              {
-                icon: 'cn-icon cn-icon-subdomain',
-                name: 'domain',
-                label: this.$t('entity.graph.resolveDomain'),
-                value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
-                total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
-              },
-              {
-                icon: 'cn-icon cn-icon-app-name',
-                name: 'app',
-                label: this.$t('entities.tab.relatedApp'),
-                value: _.get(n.relatedEntityCount, 'app.current', '0') || 0,
-                total: _.get(n.relatedEntityCount, 'app.total', '0') || 0
-              }
-            ]
-            break
-          }
-          case 'domain': {
-            const expireDate = _.get(n.detailData, 'detail.whois.expireDate', '')
-            const createDate = _.get(n.detailData, 'detail.whois.createDate', '')
-            this.detailCards = [
-              {
-                name: 'categoryName',
-                label: this.$t('entities.category'),
-                value: _.get(n.detailData, 'detail.category.name', '-')
-              },
-              {
-                name: 'categoryGroup',
-                label: this.$t('entities.group'),
-                value: _.get(n.detailData, 'detail.category.group', '-')
-              },
-              {
-                name: 'reputationLevel',
-                label: this.$t('entities.creditLevel2'),
-                value: _.get(n.detailData, 'detail.category.reputationLevel', '-')
-              },
-              {
-                name: 'expireDate',
-                label: this.$t('entities.graph.expirationDate'),
-                value: expireDate ? dateFormatByAppearance(expireDate) : '-'
-              },
-              {
-                name: 'registrarName',
-                label: this.$t('entities.registrar'),
-                value: _.get(n.detailData, 'detail.whois.registrarName', '-')
-              },
-              {
-                name: 'registrantOrg',
-                label: this.$t('entities.registry'),
-                value: _.get(n.detailData, 'detail.whois.registrantOrg', '-')
-              },
-              {
-                name: 'registrantCountry',
-                label: this.$t('entities.registrationCountry'),
-                value: _.get(n.detailData, 'detail.whois.registrantCountry', '-')
-              },
-              {
-                name: 'createDate',
-                label: this.$t('entities.registrationDate'),
-                value: createDate ? dateFormatByAppearance(createDate) : '-'
-              },
-              {
-                name: 'email',
-                label: this.$t('entities.registryEmail'),
-                value: _.get(n.detailData, 'detail.whois.email', '-')
-              }
-            ]
-            this.relationList = [
-              {
-                icon: 'cn-icon cn-icon-resolve-ip',
-                name: 'ip',
-                label: this.$t('entities.graph.resolveIp'),
-                value: _.get(n.relatedEntityCount, 'ip.current', '0') || 0,
-                total: _.get(n.relatedEntityCount, 'ip.total', '0') || 0
-              },
-              {
-                icon: 'cn-icon cn-icon-subdomain',
-                name: 'subDomain',
-                label: this.$t('entities.subdomain'),
-                value: _.get(n.relatedEntityCount, 'subDomain.current', '0') || 0,
-                total: _.get(n.relatedEntityCount, 'subDomain.total', '0') || 0
-              },
-              {
-                icon: 'cn-icon cn-icon-app-name',
-                name: 'app',
-                label: this.$t('entities.tab.relatedApp'),
-                value: _.get(n.relatedEntityCount, 'app.current', 0) || 0,
-                total: _.get(n.relatedEntityCount, 'app.total', 0) || 0
-              }
-            ]
-            break
-          }
-          case 'app': {
-            this.detailCards = [
-              {
-                name: 'appCategory',
-                label: this.$t('entities.category'),
-                value: _.get(n.detailData, 'detail.category.appCategory', '-')
-              },
-              {
-                name: 'appSubcategory',
-                label: this.$t('entities.subcategory'),
-                value: _.get(n.detailData, 'detail.category.appSubcategory', '-')
-              },
-              {
-                name: 'appRisk',
-                label: this.$t('entities.riskLevel'),
-                value: _.get(n.detailData, 'detail.category.appRisk', '-')
-              },
-              {
-                name: 'appTechnology',
-                label: this.$t('overall.technology'),
-                value: _.get(n.detailData, 'detail.category.appTechnology', '-')
-              },
-              {
-                name: 'appLongname',
-                label: this.$t('overall.appFullName'),
-                value: _.get(n.detailData, 'detail.category.appLongname', '-')
-              },
-              {
-                name: 'appDescription',
-                label: this.$t('config.dataSource.description'),
-                value: _.get(n.detailData, 'detail.category.appDescription', '-')
-              }
-            ]
-
-            this.relationList = [
-              {
-                icon: 'cn-icon cn-icon-resolve-ip',
-                name: 'ip',
-                label: this.$t('entities.graph.resolveIp'),
-                value: _.get(n.relatedEntityCount, 'ip.current', '0') || 0,
-                total: _.get(n.relatedEntityCount, 'ip.total', '0') || 0
-              },
-              {
-                icon: 'cn-icon cn-icon-subdomain',
-                name: 'domain',
-                label: this.$t('entity.graph.resolveDomain'),
-                value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
-                total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
-              }
-            ]
-          }
-        }
+        this.handleDetailData(n)
       }
     }
+  },
+  mounted () {
+    this.handleDetailData(this.entity)
   },
   setup (props) {
     const detailCards = ref([])
@@ -480,6 +322,171 @@ export default {
         }
       }
       return location || '-'
+    },
+    handleDetailData (entity) {
+      const n = entity
+      const type = n.type || n.entityType
+      switch (type) {
+        case 'ip': {
+          this.detailCards = [
+            { name: 'asn', label: this.$t('entities.asNumber'), value: _.get(n.detailData, 'detail.asn.asn', '-') },
+            {
+              name: 'asOrg',
+              label: this.$t('entities.asOrg'),
+              value: _.get(n.detailData, 'detail.asn.organization', '-')
+            },
+            {
+              name: 'isp',
+              label: this.$t('entities.graph.isp'),
+              value: _.get(n.detailData, 'detail.location.isp', '-')
+            },
+            { name: 'location', label: this.$t('overall.location'), value: this.location(n.detailData) }
+          ]
+          this.relationList = [
+            {
+              icon: 'cn-icon cn-icon-subdomain',
+              name: 'domain',
+              label: this.$t('entity.graph.resolveDomain'),
+              value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
+              total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
+            },
+            {
+              icon: 'cn-icon cn-icon-app-name',
+              name: 'app',
+              label: this.$t('entities.tab.relatedApp'),
+              value: _.get(n.relatedEntityCount, 'app.current', '0') || 0,
+              total: _.get(n.relatedEntityCount, 'app.total', '0') || 0
+            }
+          ]
+          break
+        }
+        case 'domain': {
+          const expireDate = _.get(n.detailData, 'detail.whois.expireDate', '')
+          const createDate = _.get(n.detailData, 'detail.whois.createDate', '')
+          this.detailCards = [
+            {
+              name: 'categoryName',
+              label: this.$t('entities.category'),
+              value: _.get(n.detailData, 'detail.category.name', '-')
+            },
+            {
+              name: 'categoryGroup',
+              label: this.$t('entities.group'),
+              value: _.get(n.detailData, 'detail.category.group', '-')
+            },
+            {
+              name: 'reputationLevel',
+              label: this.$t('entities.creditLevel2'),
+              value: _.get(n.detailData, 'detail.category.reputationLevel', '-')
+            },
+            {
+              name: 'expireDate',
+              label: this.$t('entities.graph.expirationDate'),
+              value: expireDate ? dateFormatByAppearance(expireDate) : '-'
+            },
+            {
+              name: 'registrarName',
+              label: this.$t('entities.registrar'),
+              value: _.get(n.detailData, 'detail.whois.registrarName', '-')
+            },
+            {
+              name: 'registrantOrg',
+              label: this.$t('entities.registry'),
+              value: _.get(n.detailData, 'detail.whois.registrantOrg', '-')
+            },
+            {
+              name: 'registrantCountry',
+              label: this.$t('entities.registrationCountry'),
+              value: _.get(n.detailData, 'detail.whois.registrantCountry', '-')
+            },
+            {
+              name: 'createDate',
+              label: this.$t('entities.registrationDate'),
+              value: createDate ? dateFormatByAppearance(createDate) : '-'
+            },
+            {
+              name: 'email',
+              label: this.$t('entities.registryEmail'),
+              value: _.get(n.detailData, 'detail.whois.email', '-')
+            }
+          ]
+          this.relationList = [
+            {
+              icon: 'cn-icon cn-icon-resolve-ip',
+              name: 'ip',
+              label: this.$t('entities.graph.resolveIp'),
+              value: _.get(n.relatedEntityCount, 'ip.current', '0') || 0,
+              total: _.get(n.relatedEntityCount, 'ip.total', '0') || 0
+            },
+            {
+              icon: 'cn-icon cn-icon-subdomain',
+              name: 'subDomain',
+              label: this.$t('entities.subdomain'),
+              value: _.get(n.relatedEntityCount, 'subDomain.current', '0') || 0,
+              total: _.get(n.relatedEntityCount, 'subDomain.total', '0') || 0
+            },
+            {
+              icon: 'cn-icon cn-icon-app-name',
+              name: 'app',
+              label: this.$t('entities.tab.relatedApp'),
+              value: _.get(n.relatedEntityCount, 'app.current', 0) || 0,
+              total: _.get(n.relatedEntityCount, 'app.total', 0) || 0
+            }
+          ]
+          break
+        }
+        case 'app': {
+          this.detailCards = [
+            {
+              name: 'appCategory',
+              label: this.$t('entities.category'),
+              value: _.get(n.detailData, 'detail.category.appCategory', '-')
+            },
+            {
+              name: 'appSubcategory',
+              label: this.$t('entities.subcategory'),
+              value: _.get(n.detailData, 'detail.category.appSubcategory', '-')
+            },
+            {
+              name: 'appRisk',
+              label: this.$t('entities.riskLevel'),
+              value: _.get(n.detailData, 'detail.category.appRisk', '-')
+            },
+            {
+              name: 'appTechnology',
+              label: this.$t('overall.technology'),
+              value: _.get(n.detailData, 'detail.category.appTechnology', '-')
+            },
+            {
+              name: 'appLongname',
+              label: this.$t('overall.appFullName'),
+              value: _.get(n.detailData, 'detail.category.appLongname', '-')
+            },
+            {
+              name: 'appDescription',
+              label: this.$t('config.dataSource.description'),
+              value: _.get(n.detailData, 'detail.category.appDescription', '-')
+            }
+          ]
+
+          this.relationList = [
+            {
+              icon: 'cn-icon cn-icon-resolve-ip',
+              name: 'ip',
+              label: this.$t('entities.graph.resolveIp'),
+              value: _.get(n.relatedEntityCount, 'ip.current', '0') || 0,
+              total: _.get(n.relatedEntityCount, 'ip.total', '0') || 0
+            },
+            {
+              icon: 'cn-icon cn-icon-subdomain',
+              name: 'domain',
+              label: this.$t('entity.graph.resolveDomain'),
+              value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
+              total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
+            }
+          ]
+        }
+      }
     }
   }
 }

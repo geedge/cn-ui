@@ -11,7 +11,6 @@ $font-size: 12px;
     flex-direction: column;
 
     .entity-graph-type {
-      font-family: NotoSansSChineseRegular;
       font-size: 12px;
       color: #717171;
       font-weight: 400;
@@ -33,10 +32,13 @@ $font-size: 12px;
 
       .graph-basic-info-name {
         padding-right: 10px;
-        font-family: Helvetica-Bold;
+        width: 260px;
         font-size: 20px;
         color: #353636;
         font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .graph-basic-info-icon {
@@ -197,7 +199,6 @@ $font-size: 12px;
 }
 
 .graph-basic-info__block-title {
-  font-family: NotoSansHans-Medium;
   font-size: 13px;
   color: #353636;
   font-weight: 600;

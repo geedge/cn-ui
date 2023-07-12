@@ -66,6 +66,7 @@
 <script>
 import { riskLevelMapping } from '@/utils/constants'
 import Loading from '@/components/common/Loading'
+import { scrollToTop } from '@/utils/tools'
 export default {
   name: 'AppList',
   props: {
@@ -110,6 +111,11 @@ export default {
         this.$emit('expandList', this.entity.sourceName, this.entity.nodeId)
       }
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      scrollToTop()
+    })
   }
 }
 </script>
