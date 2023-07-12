@@ -53,6 +53,9 @@ export default {
   methods: {
     cleanParams () {
       toRaw(this.codeMirror).setValue('')
+      const routeQuery = this.$route.query
+      delete routeQuery.q
+      this.reloadUrl(routeQuery, 'cleanOldParams')
     },
     initCodeMirror () {
       this.codeMirror = CodeMirror.fromTextArea(this.$refs.textSearch, {

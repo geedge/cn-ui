@@ -164,6 +164,18 @@ export default {
       } else {
         this.metaList.splice(index - 1, 2)
       }
+
+      if (this.metaList.length > 0) {
+        const parser = new Parser(this.columnList)
+        const errorList = parser.validateMeta(this.metaList)
+        if (_.isEmpty(errorList)) {
+          this.reloadUrl({ q: parser.parseMeta(this.metaList).q })
+        }
+      } else {
+        const routeQuery = this.$route.query
+        delete routeQuery.q
+        this.reloadUrl(routeQuery, 'cleanOldParams')
+      }
     },
     // 选择搜索条件的事件
     selectColumn (value, meta) {
