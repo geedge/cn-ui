@@ -38,7 +38,7 @@
             <loading :loading="loadingCount" style="width: 240px"></loading>
             <span>{{ summaryCount.total }}&nbsp;</span>results，IP
             <span>{{ summaryCount.ipCount }}</span>，Domain
-            <span>{{ summaryCount.fqdnCount }}</span>，APP
+            <span>{{ summaryCount.domainCount }}</span>，APP
             <span>{{ summaryCount.appCount }}</span>
           </div>
 
@@ -378,7 +378,7 @@ export default {
       timer: null, // 初始化标志的延时器，需要销毁
       summaryCount: {
         total: 0,
-        fqdnCount: 0,
+        domainCount: 0,
         ipCount: 0,
         appCount: 0
       },
@@ -736,11 +736,11 @@ export default {
         if (response.code === 200) {
           this.summaryCount = response.data
         } else {
-          this.summaryCount = { total: 0, fqdnCount: 0, ipCount: 0, appCount: 0 }
+          this.summaryCount = { total: 0, domainCount: 0, ipCount: 0, appCount: 0 }
         }
       }).catch(e => {
         console.log(e)
-        this.summaryCount = { total: 0, fqdnCount: 0, ipCount: 0, appCount: 0 }
+        this.summaryCount = { total: 0, domainCount: 0, ipCount: 0, appCount: 0 }
       }).finally(() => {
         this.loadingCount = false
       })
