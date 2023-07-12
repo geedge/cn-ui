@@ -817,7 +817,10 @@
         .form-select {
           width: 100%;
 
-          .el-input__inner {
+          .disable .el-input__inner {
+            background-color: #F5F8FA;
+          }
+          .enable .el-input__inner {
             background-color: #F5F8FA;
           }
         }
