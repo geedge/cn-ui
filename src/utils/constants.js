@@ -105,6 +105,8 @@ export const entityDetailTabsName = {
   performanceEvent: 'performanceEvent'
 }
 
+export const entityDetailRelatedEntitiesShowSize = 100
+
 export const echartsFontSize = {
   legendFirstFontSize: 12, // <1920
   legendSecondFontSize: 14, // >=1920 && <2560

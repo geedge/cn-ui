@@ -64,6 +64,18 @@ export default {
     detail: Boolean
   },
   data () {
+    const validateName = (rule, value, callback) => {
+      let validate = true
+      const reg = /^[a-zA-Z0-9\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
+      validate = reg.test(value)
+      if (value.length < 2) {
+        callback(new Error(this.$t('validate.atLeastTwo')))
+      } else if (!validate) {
+        callback(new Error(this.$t('validate.name')))
+      } else {
+        callback()
+      }
+    }
     return {
       editRole: {},
       url: api.role,
@@ -71,7 +83,7 @@ export default {
       rules: { // 表单校验规则
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { pattern: /^[a-zA-Z0-9]{2,64}$/, message: this.$t('validate.atLeastTwo') } // 目前仅对长度要求在2-64之间，后续有需求再添加
+          { validator: validateName, trigger: 'change' }
         ]
       },
       menus: [],
