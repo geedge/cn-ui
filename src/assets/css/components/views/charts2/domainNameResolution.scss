@@ -35,6 +35,13 @@
 
     .more{
       margin-bottom:20px;
+      .button {
+        color:#909399;
+        cursor: pointer;
+      }
+      .tip {
+        color:red;
+      }
     }
     .type-content {
       margin-bottom:0px;
