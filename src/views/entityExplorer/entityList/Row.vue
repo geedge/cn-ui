@@ -143,7 +143,7 @@
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
-          <detail-overview :entity="entityData" :time-filter="timeFilter"/>
+          <detail-overview :entity="entityData" :time-filter="timeFilter" @reloadEntity="getEntity" />
         </div>
       </el-collapse-transition>
     </div>
@@ -286,6 +286,9 @@ export default {
     /* 设为折叠状态 */
     collapse () {
       this.isCollapse = true
+    },
+    getEntity (data) {
+      this.entityData = { ...data }
     }
   }
 }

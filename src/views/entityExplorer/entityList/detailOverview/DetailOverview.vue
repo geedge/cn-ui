@@ -1,13 +1,13 @@
 <template>
   <div class="entity-detail-overview">
     <template v-if="entity.entityType === 'ip'">
-      <ip-overview :entity="entity" :time-filter="timeFilter"></ip-overview>
+      <ip-overview :entity="entity" :time-filter="timeFilter" @reloadEntity="getEntity"></ip-overview>
     </template>
     <template v-else-if="entity.entityType === 'domain'">
-      <domain-overview :entity="entity" :time-filter="timeFilter"></domain-overview>
+      <domain-overview :entity="entity" :time-filter="timeFilter" @reloadEntity="getEntity"></domain-overview>
     </template>
     <template v-else-if="entity.entityType === 'app'">
-      <app-overview :entity="entity" :time-filter="timeFilter"></app-overview>
+      <app-overview :entity="entity" :time-filter="timeFilter" @reloadEntity="getEntity"></app-overview>
     </template>
   </div>
 </template>
@@ -28,6 +28,11 @@ export default {
     'domain-overview': Domain,
     'app-overview': App,
     'ip-overview': Ip
+  },
+  methods: {
+    getEntity (data) {
+      this.$emit('reloadEntity', data)
+    }
   }
 }
 </script>

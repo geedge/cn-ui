@@ -156,6 +156,7 @@ export default {
           this.sentChart.setOption(this.chartOptionSent)
           this.receivedChart.setOption(this.chartOptionReceived)
           this.loadingTraffic = false
+          this.$emit('reloadEntity', this.entityData)
         } else {
           this.loadingTraffic = false
         }
