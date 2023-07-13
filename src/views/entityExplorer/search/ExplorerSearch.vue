@@ -67,7 +67,8 @@ export default {
   data () {
     return {
       columnList: columnList,
-      operatorList: ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
+      // operatorList: ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
+      operatorList: ['=', 'IN'],
       connectionList: [
         {
           value: 'AND',
