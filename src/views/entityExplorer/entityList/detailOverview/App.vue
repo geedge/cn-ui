@@ -45,7 +45,7 @@
         <div class="row__contents">
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.sent')}}：
-              {{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+              {{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
@@ -54,7 +54,7 @@
           </div>
           <div class="row__content row__content-accept">
             <div class="row__charts-msg">{{$t('overall.received')}}：
-              {{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ')}}ps
+              {{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
@@ -320,10 +320,9 @@ export default {
     dateFormatByAppearance,
     getQueryParams () {
       return {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        resource: this.entity.entityValue,
-        appName: this.entity.entityValue
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime),
+        resource: this.entity.entityValue
       }
     },
     getPerformanceQueryParams () {

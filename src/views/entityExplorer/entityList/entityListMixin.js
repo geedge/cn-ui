@@ -153,8 +153,8 @@ export default {
     },
     getQueryParams () {
       return {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime),
         resource: this.entityType
       }
     },

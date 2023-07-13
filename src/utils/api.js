@@ -264,9 +264,7 @@ export const api = {
       ipRelatedDomain: apiVersion + '/entity/graph/relation/ip/relate/domains',
       ipRelatedApp: apiVersion + '/entity/graph/relation/ip/relate/apps',
       appRelatedIp: apiVersion + '/entity/graph/relation/app/relate/ips',
-      appRelatedDomain: apiVersion + '/entity/graph/relation/app/relate/domains',
-      basicInfo: apiVersion + '/entity/graph/relation/basic',
-      tags: apiVersion + '/entity/graph/relation/kb/intelligence/tag'
+      appRelatedDomain: apiVersion + '/entity/graph/relation/app/relate/domains'
     },
     entityList: {
       list: apiVersion + '/entity/explorer/query/list', // 实体列表
