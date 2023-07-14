@@ -78,6 +78,7 @@ export default {
       })
     },
     httpError (e) {
+      this.$emit('checkTag', entityDetailTabsName.openPort, 0)
       this.isNoData = false
       this.showError = true
       this.errorMsg = this.errorMsgHandler(e)

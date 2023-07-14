@@ -165,6 +165,8 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
+        } else {
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
 
         // ip相关，显示app，domain
@@ -184,6 +186,8 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
+        } else {
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
 
         // domain相关，显示app，ip，domain
@@ -217,9 +221,12 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res2)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length + res2.data.result.length)
+        } else {
+          this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
       }).catch(e => {
         console.log(e)
+        this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         this.showError0 = true
         this.showError1 = true
         this.showError2 = true

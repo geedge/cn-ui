@@ -122,6 +122,7 @@ export default {
       this.isNoData = false
       this.showError = true
       this.errorMsg = this.errorMsgHandler(e)
+      this.$emit('checkTag', entityDetailTabsName.performanceEvent, 0)
     }
   }
 }

@@ -138,15 +138,19 @@ export default {
               })
             })
             this.$emit('checkTag', entityDetailTabsName.informationAggregation, this.informationAggregationList.length)
+          } else {
+            this.$emit('checkTag', entityDetailTabsName.informationAggregation, 0)
           }
         } else {
           this.showError = true
           this.errorMsg = this.errorMsgHandler(res)
+          this.$emit('checkTag', entityDetailTabsName.informationAggregation, 0)
         }
       }).catch(e => {
         console.error(e)
         this.showError = true
         this.errorMsg = this.errorMsgHandler(e)
+        this.$emit('checkTag', entityDetailTabsName.informationAggregation, 0)
       }).finally(() => {
         if (this.informationAggregationList.length > 0) {
           this.isNoData = false
