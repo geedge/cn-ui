@@ -209,7 +209,7 @@ export default {
     },
     iconClass () {
       let className
-      switch (this.entity.entityType) {
+      switch (this.entity.type) {
         case ('ip'): {
           className = 'cn-icon cn-icon-ip2'
           break
