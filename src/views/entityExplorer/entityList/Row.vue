@@ -51,7 +51,7 @@
                   <span class="row-item-value">{{ entityData.category ? entityData.category.group : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-credit"></i>
+                  <i class="cn-icon cn-icon-credit-rating"></i>
                   <span class="row-item-label">{{ $t('entities.reputationLevel') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">{{ entityData.category ? entityData.category.reputationLevel : '-' }}</span>
                 </div>
