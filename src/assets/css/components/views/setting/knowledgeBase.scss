@@ -682,8 +682,9 @@
     }
 
     .el-collapse {
-      width: 655px;
+      width: 855px;
       margin-left: 5px;
+      padding-right: 200px;
       border: none;
 
       .el-collapse-item.upload-collapse {
@@ -721,6 +722,7 @@
         .el-collapse-item__wrap {
           padding-left: 35px;
           border: none;
+          overflow: visible;
         }
         .el-collapse-item__content {
           position: relative;
@@ -872,6 +874,22 @@
 
       &.imported-table-box--error {
         border-color: $--color-danger;
+      }
+      .entity-format-tip {
+        position: absolute;
+        left: 100%;
+        padding-left: 10px;
+        width: 200px;
+        color: #353636;
+
+        div {
+          display: flex;
+        }
+        span {
+          padding-right: 10px;
+
+          color: #909399;
+        }
       }
       .imported-table {
         padding: 0 12px;
