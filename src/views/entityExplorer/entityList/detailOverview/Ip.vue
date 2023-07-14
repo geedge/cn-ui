@@ -456,7 +456,7 @@ export default {
     return {
       chart: {
         params: {
-          url: '/interface/entity/detail/ip/trafficMap?startTime={{startTime}}&endTime={{endTime}}&country={{country}}&ip={{ip}}',
+          url: `${api.entity.entityList.ipTrafficMap}?resource={{resource}}&country={{country}}`,
           unitType: 'number',
           valueColumn: 'sessions'
         },

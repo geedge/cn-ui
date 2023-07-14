@@ -389,7 +389,7 @@ export default {
     return {
       chart: {
         params: {
-          url: '/interface/entity/detail/domain/trafficMap?startTime={{startTime}}&endTime={{endTime}}&country={{country}}&domain={{domain}}',
+          url: `${api.entity.entityList.domainTrafficMap}?resource={{resource}}&country={{country}}`,
           unitType: 'number',
           valueColumn: 'sessions'
         },
