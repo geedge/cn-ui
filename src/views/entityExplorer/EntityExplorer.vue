@@ -65,16 +65,10 @@
               <loading :loading="loadingApp"></loading>
               <span class="overview-left-loading-span">{{ numberWithCommas(entityAppTotal) }}</span>
             </span>
-            <span class="overview-left-span">APP</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
-              <i class="cn-icon cn-icon-increase"></i>
-              <div class="right-label">New</div>
-              <div class="right-label-loading">
-                <loading :loading="loadingAppNew" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityAppNew) }}</div>
-              </div>
+              APP
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
@@ -93,16 +87,10 @@
               <loading :loading="loadingDomain"></loading>
               <span class="overview-left-loading-span">{{ numberWithCommas(entityDomainTotal) }}</span>
             </span>
-            <span class="overview-left-span">DOMAIN</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
-              <i class="cn-icon cn-icon-increase"></i>
-              <div class="right-label">New</div>
-              <div class="right-label-loading">
-                <loading :loading="loadingDomainNew" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityDomainNew) }}</div>
-              </div>
+              DOMAIN
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
@@ -121,16 +109,10 @@
               <loading :loading="loadingIp"></loading>
               <span class="overview-left-loading-span">{{ numberWithCommas(entityIpTotal) }}</span>
             </span>
-            <span class="overview-left-span">IP</span>
           </div>
           <div class="overview-right">
             <div class="right-row">
-              <i class="cn-icon cn-icon-increase"></i>
-              <div class="right-label">New</div>
-              <div class="right-label-loading">
-                <loading :loading="loadingIpNew" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityIpNew) }}</div>
-              </div>
+              IP
             </div>
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
