@@ -814,14 +814,18 @@
           padding-left: 8px;
         }
 
-        .form-select {
+        .form-select__disable {
           width: 100%;
 
-          .disable .el-input__inner {
+          .el-input__inner {
             background-color: #F5F8FA;
           }
-          .enable .el-input__inner {
-            background-color: #F5F8FA;
+        }
+        .form-select__enable {
+          width: 100%;
+
+          .el-input__inner {
+            background-color: white !important;
           }
         }
       }

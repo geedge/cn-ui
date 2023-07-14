@@ -20,7 +20,7 @@
             </el-form-item>
             <el-form-item :label="$t('overall.type')" prop="source">
               <el-select v-model="editObject.source"
-                         class="form-select"
+                         :class="(!!editObject.knowledgeId || (uploaded && !importedDataNoData)) ? 'form-select__disable' : 'form-select__enable'"
                          placeholder=" "
                          popper-class="form-select-popper"
                          :disabled="!!editObject.knowledgeId || (uploaded && !importedDataNoData)"
@@ -315,9 +315,9 @@ export default {
             callback(new Error())
           }
         } else if (formal.indexOf('-') !== -1) {
-          let split2 = formal.split('-')
-          let startIp = split2[0].replace(/\s+/g, '')
-          let endIp = split2[1].replace(/\s+/g, '')
+          const split2 = formal.split('-')
+          const startIp = split2[0].replace(/\s+/g, '')
+          const endIp = split2[1].replace(/\s+/g, '')
           if (regular.ipv4Range.test(startIp) && regular.ipv4Range.test(endIp)) {
             // ipv4对比大小
             if (!(regular.compareIP4(startIp) <= regular.compareIP4(endIp))) {

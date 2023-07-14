@@ -15,7 +15,7 @@
             </div>
           </div>
           <div class="more" >
-            <span class="button" :style="{'opacity': relatedAppList.length > showRelatedAppListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedAppListInfo,relatedAppList)">{{ $t('overall.more') }} > &nbsp;&nbsp; </span> <span class="tip"> {{ $t('overall.moreTip') }} </span>
+            <span class="button" :style="{'opacity': relatedAppList.length > showRelatedAppListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedAppListInfo,relatedAppList)">{{ $t('overall.more') }} > &nbsp;&nbsp; </span>
           </div>
         </template>
         <div class="type-error-content" v-else>
@@ -35,7 +35,7 @@
             </div>
           </div>
           <div class="more" >
-            <span class="button" :style="{'opacity': relatedIpList.length > showRelatedIpListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedIpListInfo,relatedIpList)">{{ $t('overall.more') }} > &nbsp;&nbsp; </span> <span class="tip"> {{ $t('overall.moreTip') }} </span>
+            <span class="button" :style="{'opacity': relatedIpList.length > showRelatedIpListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedIpListInfo,relatedIpList)">{{ $t('overall.more') }} > &nbsp;&nbsp; </span>
           </div>
         </template>
         <div class="type-error-content" v-else>
@@ -55,7 +55,7 @@
             </div>
           </div>
           <div class="more" >
-            <span class="button" :style="{'opacity': relatedDomainList.length > showRelatedDomainListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedDomainListInfo,relatedDomainList)">{{ $t('overall.more') }} > &nbsp;&nbsp; </span> <span class="tip"> {{ $t('overall.moreTip') }} </span>
+            <span class="button" :style="{'opacity': relatedDomainList.length > showRelatedDomainListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedDomainListInfo,relatedDomainList)">{{ $t('overall.more') }} > &nbsp;&nbsp; </span>
           </div>
         </template>
         <div class="type-error-content" v-else>
