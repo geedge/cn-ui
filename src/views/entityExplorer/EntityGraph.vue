@@ -57,6 +57,7 @@ import { api } from '@/utils/api'
 import axios from 'axios'
 import G6, { Algorithm } from '@antv/g6'
 import { entityDetailTags } from '@/utils/constants'
+import { ElMessage } from 'element-plus'
 
 export default {
   name: 'EntityRelationship',
@@ -102,6 +103,7 @@ export default {
     async init () {
       const _this = this
       const tooltip = this.buildTooltip() // tooltip组件
+      // const toolbar = this.buildToolbar() // 工具栏组装件
       this.chartOption.plugins = [tooltip]
       this.graph = new G6.Graph(this.chartOption)
       const rootNode = await this.generateRootNode()
@@ -112,7 +114,7 @@ export default {
       const rootEdges = this.generateEdges(rootNode)
       const secondEdges = this.generateEdges(secondLevelNodes)
       this.graphData.edges = [...rootEdges, ...secondEdges]
-      console.info(this.graphData)
+      // console.info(this.graphData)
       this.graph.data(this.graphData)
       this.graph.render()
       this.graph.on('node:dragstart', function (e) {
@@ -206,7 +208,7 @@ export default {
                     n.label = _this.$t('entities.subdomain') + `(${n.data.count})`
                   } else {
                     n.data.count = relatedEntityCount.domainCount
-                    n.label = _this.$t('entity.graph.resolveDomain') + `(${n.data.count})`
+                    n.label = _this.$t('entity.graph.resolvedDomain') + `(${n.data.count})`
                   }
                   break
                 }
@@ -260,7 +262,7 @@ export default {
                 node.label = _this.$t('entities.subdomain') + `(${node.data.count})`
               } else {
                 node.data.count = queryRelatedEntityCount.domainCount
-                node.label = _this.$t('entity.graph.resolveDomain') + `(${node.data.count})`
+                node.label = _this.$t('entity.graph.resolvedDomain') + `(${node.data.count})`
               }
               break
             }
@@ -317,7 +319,7 @@ export default {
                     n.label = _this.$t('entities.subdomain') + `(${n.data.count})`
                   } else {
                     n.data.count = relatedEntityCount.domainCount
-                    n.label = _this.$t('entity.graph.resolveDomain') + `(${n.data.count})`
+                    n.label = _this.$t('entity.graph.resolvedDomain') + `(${n.data.count})`
                   }
                   break
                 }
@@ -378,7 +380,7 @@ export default {
 
             // TODO 高亮
           } else {
-            // TODO 提示无法拓展
+            this.$message.error(this.$t('entities.graph.expandedLevelMaxLimit'))
           }
           _this.addNodes(entityNodes)
           _this.addEdges(edges)
@@ -610,7 +612,11 @@ export default {
         case 'ip': {
           width = 24
           height = 22
-          label = this.$t('entities.graph.resolveIp')
+          if (node.data.type === 'app') {
+            label = this.$t('entities.tab.relatedIp')
+          } else if (node.data.type === 'ip') {
+            label = this.$t('entities.graph.resolveIp')
+          }
           break
         }
         case 'subdomain': {
@@ -622,7 +628,11 @@ export default {
         case 'domain': {
           width = 24
           height = 24
-          label = this.$t('entity.graph.resolveDomain')
+          if (node.data.type === 'app') {
+            label = this.$t('entities.relatedDomain')
+          } else if (node.data.type === 'ip') {
+            label = this.$t('entities.graph.resolvedDomain')
+          }
           break
         }
         case 'app': {
@@ -698,7 +708,7 @@ export default {
         const domainNode = this.generatePrimaryNode({
           id: 'domain-1',
           parentId: rootNode.id,
-          label: this.$t('entity.graph.resolveDomain'),
+          label: this.$t('entity.graph.resolvedDomain'),
           x: 260,
           y: -150,
           data: {
@@ -1130,7 +1140,7 @@ export default {
               }
               case 'domain': {
                 iconClass = 'cn-icon cn-icon-subdomain'
-                title = _this.$t('entity.graph.resolveDomain')
+                title = _this.$t('entity.graph.resolvedDomain')
                 break
               }
               case 'app': {
@@ -1142,8 +1152,8 @@ export default {
             return `<div class="primary-node-tooltip">
               <div class="tooltip__header"><i class="${iconClass}"></i><span class="tooltip__title">${title}</span></div>
               <div class="tooltip__content">
-                <span>${_this.$t('entity.graph.associatedQuantity')}:&nbsp;${node.data.count || 0}</span>
-                <span>${_this.$t('entity.graph.expandedEntityQuantity')}:&nbsp;${node.data.loaded ? node.data.loaded.length : 0}</span>
+                <span>${_this.$t('entity.graph.associatedCount')}:&nbsp;${node.data.count || 0}</span>
+                <span>${_this.$t('entity.graph.expandedEntityCount')}:&nbsp;${node.data.loaded ? node.data.loaded.length : 0}</span>
               </div>
             </div>`
           } else if (node.nodeType === 'entity' || node.nodeType === 'root') {
@@ -1180,28 +1190,57 @@ export default {
         }
       })
     },
+    buildToolbar () {
+      const tc = document.createElement('div')
+      tc.id = 'toolbarContainer'
+      tc.className = 'graph-toolbar'
+      document.body.appendChild(tc)
+      const toolbar = new G6.ToolBar({
+        container: tc,
+        className: 'toolbar__tools',
+        getContent: () => {
+          return `<ul>
+            <li code='zoomOut'><i class="cn-icon cn-icon-zoom-in"></i></li>
+            <li code='zoomIn'><i class="cn-icon cn-icon-zoom-out"></i></li>
+            <li code='undo'><i class="cn-icon cn-icon-next-step"></i></li>
+            <li code='redo'><i class="cn-icon cn-icon-pre-step"></i></li>
+            <li code='autoZoom'><i class="cn-icon cn-icon-auto-zoom"></i></li>
+          </ul>`
+        },
+        handleClick: (code, graph) => {
+          console.info(code)
+          toolbar.handleDefaultOperator(code)
+        }
+      })
+      return toolbar
+    },
     async expandList (sourceNodeId, nodeId) {
-      this.entity.loading = true
       const sourceNode = this.graphData.nodes.find(n => n.id === sourceNodeId)
       const node = this.graphData.nodes.find(n => n.id === nodeId)
       if (node && sourceNode) {
+        console.info(node)
         if (node.data.childNodes && node.data.childNodes.length < 50) {
-          const queryEntityNodes = await this.generateHalfLevelNodes(node)
-          const relatedEntityCount = await this.queryRelatedEntityCount(sourceNode.data.type, sourceNodeId)
-          // 赋值总数和已拓展数。entity node可从其childNodes取到已拓展数
-          this.entity = {
-            ...this.entity,
-            relatedEntityCount: this.handleRelatedEntityCount(sourceNode, relatedEntityCount),
-            listData: node.data.loaded,
-            loading: false
-          }
-          sourceNode.data.relatedEntityCount = this.entity.relatedEntityCount
+          if (node.data.childNodes.length >= node.data.count) {
+            this.$message.error(this.$t('entities.graph.allEntitiesExpanded'))
+          } else {
+            this.entity.loading = true
+            const queryEntityNodes = await this.generateHalfLevelNodes(node)
+            const relatedEntityCount = await this.queryRelatedEntityCount(sourceNode.data.type, sourceNodeId)
+            // 赋值总数和已拓展数。entity node可从其childNodes取到已拓展数
+            this.entity = {
+              ...this.entity,
+              relatedEntityCount: this.handleRelatedEntityCount(sourceNode, relatedEntityCount),
+              listData: node.data.loaded,
+              loading: false
+            }
+            sourceNode.data.relatedEntityCount = this.entity.relatedEntityCount
 
-          this.addNodes(queryEntityNodes)
-          this.addEdges(this.generateEdges(node, queryEntityNodes))
-          this.graph.changeData(this.graphData)
+            this.addNodes(queryEntityNodes)
+            this.addEdges(this.generateEdges(node, queryEntityNodes))
+            this.graph.changeData(this.graphData)
+          }
         } else {
-          // TODO 提示已达50上限
+          this.$message.error(this.$t('entities.graph.expandedNumberMaxLimit'))
         }
       }
     },
@@ -1255,7 +1294,7 @@ export default {
             edges.push(...this.generateEdges(primaryNode))
             // TODO 高亮
           } else {
-            // TODO 提示无法拓展
+            this.$message.error(this.$t('entities.graph.expandedLevelMaxLimit'))
           }
           this.addNodes(entityNodes)
           this.addEdges(edges)
@@ -1294,6 +1333,29 @@ export default {
 }
 </script>
 <style lang="scss">
+.graph-toolbar {
+  position: fixed;
+  top: 100px;
+  left: 0;
+
+  .toolbar__tools {
+    display: flex;
+    padding: 0 10px;
+
+    li {
+      display: flex;
+      justify-content: center;
+      width: 32px;
+      margin-right: 4px;
+      cursor: pointer;
+
+      i {
+        color: #575757;
+        font-size: 18px;
+      }
+    }
+  }
+}
 .entity-graph {
   display: flex;
 

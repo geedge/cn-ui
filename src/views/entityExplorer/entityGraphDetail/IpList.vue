@@ -5,10 +5,10 @@
       <div>
         <div class="graph-list-header-title">
           <i class="cn-icon cn-icon-resolve-ip graph-list-header-icon"></i>
-          <span>{{ $t('entities.graph.resolveIp') }}</span>
+          <span>{{ entity.sourceType === 'domain' ? $t('entities.graph.resolveIp') : $t('entities.tab.relatedIp') }}</span>
         </div>
         <div class="graph-list-header-number">
-          {{ $t('entity.graph.associatedQuantity') }}:&nbsp;<span>{{entity.count}}</span>
+          {{ $t('entity.graph.associatedCount') }}:&nbsp;<span>{{entity.count}}</span>
         </div>
       </div>
 
@@ -27,7 +27,7 @@
         <div class="digital-certificate-header padding-b-16">
           <div class="digital-certificate-header__icon graph-header__icon"></div>
           <div class="graph-list-content-header ">
-            {{ $t('entity.graph.expandedEntityQuantity') }}:&nbsp;&nbsp;
+            {{ $t('entity.graph.expandedEntityCount') }}:&nbsp;&nbsp;
             <span>{{ entity.listData ? entity.listData.length : 0 }}</span>
           </div>
         </div>

@@ -153,7 +153,7 @@
   </div>
 
   <!--标签-->
-  <div v-if="entity.tags" class="digital-certificate graph-basic-info__block">
+  <div v-if="entity.tags && entity.tags.length > 1" class="digital-certificate graph-basic-info__block">
     <div class="digital-certificate-header padding-b-10">
       <div class="digital-certificate-header__icon graph-header__icon"></div>
       <div class="graph-basic-info__block-title">
@@ -473,14 +473,14 @@ export default {
             {
               icon: 'cn-icon cn-icon-resolve-ip',
               name: 'ip',
-              label: this.$t('entities.graph.resolveIp'),
+              label: this.$t('entities.tab.relatedIp'),
               value: _.get(n.relatedEntityCount, 'ip.current', '0') || 0,
               total: _.get(n.relatedEntityCount, 'ip.total', '0') || 0
             },
             {
               icon: 'cn-icon cn-icon-subdomain',
               name: 'domain',
-              label: this.$t('entity.graph.resolveDomain'),
+              label: this.$t('entities.relatedDomain'),
               value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
               total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
             }

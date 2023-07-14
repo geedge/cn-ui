@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1688009911333') format('woff2'),
-       url('iconfont.woff?t=1688009911333') format('woff'),
-       url('iconfont.ttf?t=1688009911333') format('truetype');
+  src: url('iconfont.woff2?t=1689317280458') format('woff2'),
+       url('iconfont.woff?t=1689317280458') format('woff'),
+       url('iconfont.ttf?t=1689317280458') format('truetype');
 }
 
 .cn-icon {
@@ -11,6 +11,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-add-knowledge-base:before {
+  content: "\e802";
+}
+
+.cn-icon-update-knowledge-base:before {
+  content: "\e803";
+}
+
+.cn-icon-zoom-out:before {
+  content: "\e7fd";
+}
+
+.cn-icon-to-default:before {
+  content: "\e7fe";
+}
+
+.cn-icon-reset:before {
+  content: "\e7ff";
+}
+
+.cn-icon-next-step:before {
+  content: "\e800";
+}
+
+.cn-icon-pre-step:before {
+  content: "\e801";
+}
+
+.cn-icon-zoom-in:before {
+  content: "\e7f";
 }
 
 .cn-icon-expand-continue:before {

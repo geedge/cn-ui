@@ -5,10 +5,10 @@
       <div>
         <div class="graph-list-header-title">
           <i class="graph-list-header-icon cn-icon cn-icon-subdomain"></i>
-          <span>{{ entity.isSubdomain ? $t('entities.subdomain') : $t('entity.graph.resolveDomain') }}</span>
+          <span>{{ entity.isSubdomain ? $t('entities.subdomain') : (entity.sourceType === 'ip' ? $t('entity.graph.resolveDomain') : $t('entities.relatedDomain')) }}</span>
         </div>
         <div class="graph-list-header-number">
-          {{ $t('entity.graph.associatedQuantity') }}:&nbsp;<span>{{entity.count}}</span>
+          {{ $t('entity.graph.associatedCount') }}:&nbsp;<span>{{entity.count}}</span>
         </div>
       </div>
 
@@ -25,7 +25,7 @@
         <div class="digital-certificate-header padding-b-12">
           <div class="digital-certificate-header__icon graph-header__icon"></div>
           <div class="graph-list-content-header ">
-            {{ $t('entity.graph.expandedEntityQuantity') }}:&nbsp;&nbsp;
+            {{ $t('entity.graph.expandedEntityCount') }}:&nbsp;&nbsp;
             <span>{{ entity.listData ? entity.listData.length : 0 }}</span>
           </div>
         </div>
@@ -103,9 +103,7 @@ export default {
     },
     expandList () {
       // 继续拓展ip列表，传递信息，调用接口
-      if (!this.expandBtnDisable) {
-        this.$emit('expandList', this.entity.sourceName, this.entity.nodeId)
-      }
+      this.$emit('expandList', this.entity.sourceName, this.entity.nodeId)
     }
   },
   mounted () {
