@@ -10,7 +10,8 @@ export default {
     return {
       isNoData: false,
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      entityDetailRelatedEntitiesShowSize: entityDetailRelatedEntitiesShowSize
     }
   },
   emits: ['toggleLoading'],

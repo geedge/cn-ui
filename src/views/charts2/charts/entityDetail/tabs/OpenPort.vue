@@ -10,9 +10,12 @@
           <span class="type-title-word">{{ $t('entities.tab.currentDevelopmentPortsAndServices') }}</span>({{ openPortList.length }})
         </div>
         <div class="type-content">
-          <div v-for="(openPort, index) in openPortList" :key="index" class="data-item">
+          <div v-for="(openPort, index) in openPortList.slice(0,showOpenPortListInfo.num)" :key="index" class="data-item">
             {{ openPort.port }}/{{ openPort.l7Protocol }}
           </div>
+        </div>
+        <div class="more" v-if="openPortList.length > entityDetailRelatedEntitiesShowSize">
+          <span class="button" :style="{'opacity': openPortList.length > showOpenPortListInfo.num ? 1 : 0.6}"  @click="showMore(showOpenPortListInfo,openPortList)">{{ $t('overall.more') }} > </span>
         </div>
       </div>
     </div>
@@ -34,6 +37,9 @@ export default {
   data () {
     return {
       openPortList: [],
+      showOpenPortListInfo: {
+        num: 0
+      },
       showError: false,
       errorMsg: '',
       initFlag: false // 初始化标识，请求接口之后再显示，避免标题初始化会闪一下
@@ -65,6 +71,7 @@ export default {
           this.showError = false
           if (!this.isNoData) {
             this.openPortList = res.data.result
+            this.handleShowDataNum(this.showOpenPortListInfo, this.openPortList)
           }
         } else {
           this.httpError(res)

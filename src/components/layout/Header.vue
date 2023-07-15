@@ -224,6 +224,13 @@ export default {
         callback()
       }
     }
+    const validateFiveLength = (rule, value, callback) => {
+      if (value.length < 5) {
+        callback(new Error(this.$t('validate.atLeastFive')))
+      } else {
+        callback()
+      }
+    }
     return {
       username: localStorage.getItem(storageKey.username),
       language: localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : 'en',
@@ -244,11 +251,17 @@ export default {
           required: true,
           message: this.$t('validate.required'),
           trigger: 'blur'
+        }, {
+          validator: validateFiveLength,
+          trigger: 'change'
         }],
         newPwd2: [{
           required: true,
           message: this.$t('validate.required'),
           trigger: 'blur'
+        }, {
+          validator: validateFiveLength,
+          trigger: 'change'
         }, {
           validator: passwordComparison,
           trigger: 'blur'

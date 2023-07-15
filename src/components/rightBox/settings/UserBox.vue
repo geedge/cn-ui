@@ -144,6 +144,18 @@ export default {
         callback()
       }
     }
+    const validateUserName = (rule, value, callback) => {
+      let validate = true
+      const reg = /^[a-zA-Z0-9_]{2,64}$/
+      validate = reg.test(value)
+      if (value.length < 2) {
+        callback(new Error(this.$t('validate.atLeastTwo')))
+      } else if (!validate) {
+        callback(new Error(this.$t('validate.userName')))
+      } else {
+        callback()
+      }
+    }
     return {
       url: api.user,
       loginName: localStorage.getItem(storageKey.username),
@@ -154,7 +166,7 @@ export default {
         ],
         username: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { pattern: /^[a-zA-Z0-9_]{2,64}$/, message: this.$t('validate.atLeastTwo') }
+          { validator: validateUserName, trigger: 'change' }
         ],
         pin: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
@@ -229,7 +241,7 @@ export default {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg)
+                this.$message.error(res.msg || res.message)
               }
             })
           } else {
@@ -239,7 +251,7 @@ export default {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg)
+                this.$message.error(res.msg || res.message)
               }
             })
           }

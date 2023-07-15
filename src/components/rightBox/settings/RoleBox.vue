@@ -186,7 +186,7 @@ export default {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg)
+                this.$message.error(res.msg || res.message)
               }
             })
           } else {
@@ -196,7 +196,7 @@ export default {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg)
+                this.$message.error(res.msg || res.message)
               }
             })
           }

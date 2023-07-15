@@ -14,7 +14,7 @@
               {{ entity.appName ? entity.appName : entity }}
             </div>
           </div>
-          <div class="more" v-if="relatedAppList.length > 0">
+          <div class="more" v-if="relatedAppList.length > entityDetailRelatedEntitiesShowSize">
             <span class="button" :style="{'opacity': relatedAppList.length > showRelatedAppListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedAppListInfo,relatedAppList)">{{ $t('overall.more') }} > </span>
           </div>
         </template>
@@ -34,7 +34,7 @@
               {{ entity.ip ? entity.ip : entity }}
             </div>
           </div>
-          <div class="more" v-if="relatedIpList.length > 0">
+          <div class="more" v-if="relatedIpList.length > entityDetailRelatedEntitiesShowSize">
             <span class="button" :style="{'opacity': relatedIpList.length > showRelatedIpListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedIpListInfo,relatedIpList)">{{ $t('overall.more') }} > </span>
           </div>
         </template>
@@ -54,7 +54,7 @@
               {{ entity.domain ? entity.domain : entity }}
             </div>
           </div>
-          <div class="more"  v-if="relatedDomainList.length > 0">
+          <div class="more"  v-if="relatedDomainList.length > entityDetailRelatedEntitiesShowSize">
             <span class="button" :style="{'opacity': relatedDomainList.length > showRelatedDomainListInfo.num ? 1 : 0.6}"  @click="showMore(showRelatedDomainListInfo,relatedDomainList)">{{ $t('overall.more') }} > </span>
           </div>
         </template>
