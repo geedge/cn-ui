@@ -221,8 +221,6 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res2)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length + res2.data.result.length)
-        } else {
-          this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
       }).catch(e => {
         console.log(e)
