@@ -480,7 +480,7 @@ export default {
             {
               icon: 'cn-icon cn-icon-subdomain',
               name: 'domain',
-              label: this.$t('entities.relatedDomain'),
+              label: this.$t('entities.graph.relatedDomain'),
               value: _.get(n.relatedEntityCount, 'domain.current', '0') || 0,
               total: _.get(n.relatedEntityCount, 'domain.total', '0') || 0
             }

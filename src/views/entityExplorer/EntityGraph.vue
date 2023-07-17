@@ -629,7 +629,7 @@ export default {
           width = 24
           height = 24
           if (node.data.type === 'app') {
-            label = this.$t('entities.relatedDomain')
+            label = this.$t('entities.graph.relatedDomain')
           } else if (node.data.type === 'ip') {
             label = this.$t('entities.graph.resolvedDomain')
           }
@@ -696,7 +696,7 @@ export default {
         const ipNode = this.generatePrimaryNode({
           id: 'ip-1',
           parentId: rootNode.id,
-          label: this.$t('entities.graph.resolveIp'),
+          label: this.$t(rootNode.data.type === 'app' ? 'entities.tab.relatedIp' : 'entities.graph.resolveIp'),
           x: 0,
           y: 300,
           data: {
@@ -708,7 +708,7 @@ export default {
         const domainNode = this.generatePrimaryNode({
           id: 'domain-1',
           parentId: rootNode.id,
-          label: this.$t('entity.graph.resolveDomain'),
+          label: this.$t(rootNode.data.type === 'app' ? 'entities.graph.relatedDomain' : 'entity.graph.resolveDomain'),
           x: 260,
           y: -150,
           data: {
@@ -1269,7 +1269,7 @@ export default {
         switch (expandType) {
           case 'ip': {
             count = _.get(currentNode.data, 'relatedEntityCount.ip.total', 0)
-            label = `${this.$t('entities.graph.resolveIp')}(${count})`
+            label = `${this.$t(currentNode.data.type === 'app' ? 'entities.tab.relatedIp' : 'entities.graph.resolveIp')}(${count})`
             break
           }
           case 'domain': {
@@ -1279,7 +1279,7 @@ export default {
               isSubdomain = true
             } else {
               count = _.get(currentNode.data, 'relatedEntityCount.domain.total', 0)
-              label = `${this.$t('entity.graph.resolveDomain')}(${count})`
+              label = `${this.$t(currentNode.data.type === 'app' ? 'entities.graph.relatedDomain' : 'entity.graph.resolveDomain')}(${count})`
             }
             break
           }
