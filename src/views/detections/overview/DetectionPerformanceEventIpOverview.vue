@@ -236,7 +236,7 @@ export default {
         path: '/entityDetail',
         query: {
           entityType: type,
-          name: name
+          entityName: name
         }
       })
       window.open(href, '_blank')
