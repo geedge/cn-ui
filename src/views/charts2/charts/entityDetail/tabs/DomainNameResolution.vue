@@ -71,7 +71,6 @@
 import axios from 'axios'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
-import { getSecond } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 import { entityDetailTabsName } from '@/utils/constants'
 
@@ -112,9 +111,9 @@ export default {
   methods: {
     initData () {
       const params = {
-        resource: this.entity.entityName,
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        resource: this.entity.entityName
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime)
       }
       if (this.entity.entityType === 'app') {
         const ipsOfApp = axios.get(api.entity.domainNameResolutionAboutIpsOfApp, { params: params })
