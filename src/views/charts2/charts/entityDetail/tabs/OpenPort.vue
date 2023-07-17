@@ -25,7 +25,6 @@
 import axios from 'axios'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { api } from '@/utils/api'
-import { getSecond } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 import { entityDetailTabsName } from '@/utils/constants'
 
@@ -56,9 +55,9 @@ export default {
   methods: {
     initData () {
       const params = {
-        resource: this.entity.entityName,
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        resource: this.entity.entityName
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime)
       }
 
       this.toggleLoading(true)

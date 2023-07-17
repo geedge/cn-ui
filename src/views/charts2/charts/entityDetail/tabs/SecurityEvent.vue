@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { getSecond, dateFormatByAppearance } from '@/utils/date-util'
+import { dateFormatByAppearance } from '@/utils/date-util'
 import { eventSeverityColor, entityDetailTabsName } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
@@ -117,9 +117,9 @@ export default {
     dateFormatByAppearance,
     initData () {
       const params = {
-        resource: this.entityName,
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        resource: this.entityName
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime)
       }
 
       this.toggleLoading(true)

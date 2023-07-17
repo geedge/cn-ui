@@ -38,7 +38,6 @@ import OpenPort from '@/views/charts2/charts/entityDetail/tabs/OpenPort'
 import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/DigitalCertificate'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { useRoute } from 'vue-router'
-import { getSecond } from '@/utils/date-util'
 import axios from 'axios'
 import { api } from '@/utils/api'
 
@@ -109,9 +108,9 @@ export default {
   methods: {
     initData () {
       const params = {
-        resource: this.entity.entityName,
-        startTime: getSecond(this.oneDayTimeFilter.startTime),
-        endTime: getSecond(this.oneDayTimeFilter.endTime)
+        resource: this.entity.entityName
+        // startTime: getSecond(this.oneDayTimeFilter.startTime),
+        // endTime: getSecond(this.oneDayTimeFilter.endTime)
       }
 
       const url = this.getUrlByEntityType(this.entity.entityType)
