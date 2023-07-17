@@ -708,7 +708,7 @@ export default {
         const domainNode = this.generatePrimaryNode({
           id: 'domain-1',
           parentId: rootNode.id,
-          label: this.$t('entity.graph.resolvedDomain'),
+          label: this.$t('entity.graph.resolveDomain'),
           x: 260,
           y: -150,
           data: {
@@ -1140,7 +1140,7 @@ export default {
               }
               case 'domain': {
                 iconClass = 'cn-icon cn-icon-subdomain'
-                title = _this.$t('entity.graph.resolvedDomain')
+                title = _this.$t('entity.graph.resolveDomain')
                 break
               }
               case 'app': {
@@ -1246,12 +1246,13 @@ export default {
     },
     async expandDetailList (expandType, currentName) {
       const currentNode = this.graphData.nodes.find(n => n.id === currentName)
+      console.info(currentNode)
       // 如果存在primary node，直接拓展
       const _primaryNode = currentNode.data.childNodes ? currentNode.data.childNodes.find(n => n.data.type === expandType) : null
       if (_primaryNode) {
         await this.expandList(currentName, _primaryNode.id)
       } else {
-        // 如果是temp node，删掉，新增primary node，再拓展
+        // 如果存在temp node，删掉。新增primary node，再拓展
         const tempNode = this.graphData.nodes.find(n => n.nodeType === 'temp' && n.data.sourceName === currentName && n.data.type === expandType)
         if (tempNode) {
           // 先清除此temp node和temp edge
@@ -1261,45 +1262,70 @@ export default {
           this.graphData.edges = this.graphData.edges.filter(e => {
             return e.target !== tempNode.id
           })
-
-          const primaryNode = this.generatePrimaryNode({
-            id: `${tempNode.data.type}-${tempNode.data.sourceName}`,
-            label: tempNode.label + `(${tempNode.data.count})`,
-            data: {
-              sourceName: tempNode.data.sourceName,
-              sourceType: tempNode.data.sourceType,
-              type: tempNode.data.type,
-              isSubdomain: tempNode.data.isSubdomain || false,
-              count: tempNode.data.count
-            }
-          })
-          // 新node放入source node的childNodes中
-          if (!currentNode.data.childNodes) {
-            currentNode.data.childNodes = []
-          }
-          currentNode.data.childNodes.push(primaryNode)
-          const edge = this.generateEdges(currentNode, primaryNode)
-          this.addNodes([primaryNode])
-          this.addEdges(edge)
-          // 判断primary层级，若大于等于5，则不继续拓展entity node，并给用户提示。否则拓展entity node
-          const entityNodes = []
-          const edges = []
-          const level = this.getNodeLevel(primaryNode.id)
-          if (level < 9) {
-            this.entity.loading = true
-            const queryEntityNodes = await this.generateHalfLevelNodes(primaryNode)
-            this.entity.loading = false
-            this.updateRelatedCount(currentNode, [primaryNode])
-            entityNodes.push(...queryEntityNodes)
-            edges.push(...this.generateEdges(primaryNode))
-            // TODO 高亮
-          } else {
-            this.$message.error(this.$t('entities.graph.expandedLevelMaxLimit'))
-          }
-          this.addNodes(entityNodes)
-          this.addEdges(edges)
-          this.graph.changeData(this.graphData)
         }
+        let label = ''
+        let isSubdomain = false
+        let count = 0
+        switch (expandType) {
+          case 'ip': {
+            count = _.get(currentNode.data, 'relatedEntityCount.ip.total', 0)
+            label = `${this.$t('entities.graph.resolveIp')}(${count})`
+            break
+          }
+          case 'domain': {
+            if (currentNode.data.type === 'domain') {
+              count = _.get(currentNode.data, 'relatedEntityCount.subdomain.total', 0)
+              label = `${this.$t('entities.subdomain')}(${count})`
+              isSubdomain = true
+            } else {
+              count = _.get(currentNode.data, 'relatedEntityCount.domain.total', 0)
+              label = `${this.$t('entity.graph.resolveDomain')}(${count})`
+            }
+            break
+          }
+          case 'app': {
+            count = _.get(currentNode.data, 'relatedEntityCount.app.total', 0)
+            label = `${this.$t('entities.tab.relatedApp')}(${count})`
+            break
+          }
+        }
+        const primaryNode = this.generatePrimaryNode({
+          id: `${expandType}-${currentNode.id}`,
+          label: label,
+          data: {
+            sourceName: currentNode.id,
+            sourceType: currentNode.data.type,
+            type: expandType,
+            isSubdomain: isSubdomain,
+            count: count
+          }
+        })
+        // 新node放入source node的childNodes中
+        if (!currentNode.data.childNodes) {
+          currentNode.data.childNodes = []
+        }
+        currentNode.data.childNodes.push(primaryNode)
+        const edge = this.generateEdges(currentNode, primaryNode)
+        this.addNodes([primaryNode])
+        this.addEdges(edge)
+        // 判断primary层级，若大于等于5，则不继续拓展entity node，并给用户提示。否则拓展entity node
+        const entityNodes = []
+        const edges = []
+        const level = this.getNodeLevel(primaryNode.id)
+        if (level < 9) {
+          this.entity.loading = true
+          const queryEntityNodes = await this.generateHalfLevelNodes(primaryNode)
+          this.entity.loading = false
+          this.updateRelatedCount(currentNode, [primaryNode])
+          entityNodes.push(...queryEntityNodes)
+          edges.push(...this.generateEdges(primaryNode))
+          // TODO 高亮
+        } else {
+          this.$message.error(this.$t('entities.graph.expandedLevelMaxLimit'))
+        }
+        this.addNodes(entityNodes)
+        this.addEdges(edges)
+        this.graph.changeData(this.graphData)
       }
     }
   },
