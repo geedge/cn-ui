@@ -253,8 +253,11 @@ export default {
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
       const { startTime, endTime } = getNowTime(60)
-      timeFilter.value.startTime = startTime
-      timeFilter.value.endTime = endTime
+      timeFilter.value.startTime = getSecond(startTime)
+      timeFilter.value.endTime = getSecond(endTime)
+      // 如果没有时间参数，就将参数写入url
+      const newUrl = urlParamsHandler(window.location.href, useRoute().query, { startTime: timeFilter.value.startTime, endTime: timeFilter.value.endTime, range: dateRangeValue })
+      overwriteUrl(newUrl)
     } else {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)

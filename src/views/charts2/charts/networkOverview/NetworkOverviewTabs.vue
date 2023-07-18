@@ -220,6 +220,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
 import axios from 'axios'
 import indexedDBUtils from '@/indexedDB'
+import {useRoute} from 'vue-router'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -1131,6 +1132,13 @@ export default {
           5.设置panel名称，表格维度类型：如ip，domain等(即查询参数中的type)
       * */
     async handleTabValue (columnName, columnValue) {
+      // 如果是非自定义的时间范围，就更新startTime和endTime
+      if (this.timeFilter.dateRangeValue !== -1) {
+        const endTime = window.$dayJs.tz().valueOf()
+        const startTime = endTime - this.timeFilter.dateRangeValue * 60 * 1000
+        const newUrl = urlParamsHandler(window.location.href, this.$route.query, { startTime: getSecond(startTime), endTime: getSecond(endTime), range: this.timeFilter.dateRangeValue })
+        overwriteUrl(newUrl)
+      }
       // 下钻前保存当前路由状态
       this.beforeRouterPush()
       const clickTab = this.getTabByName(columnName)// 下钻后，显示的下钻tab对应的drilldownTabs
