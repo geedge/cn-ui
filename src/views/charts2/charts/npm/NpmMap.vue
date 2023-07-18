@@ -195,8 +195,8 @@ export default {
       }
     },
     loadMarkerData (imageSeries, data) {
-      data = data.filter(d => d.score || d.score === 0)
-      imageSeries.data = data.map(r => ({
+      const _data = data.filter(d => d.score || d.score === 0)
+      imageSeries.data = _data.map(r => ({
         score: r.score,
         name: r.province || r.country,
         throughput: valueToRangeValue(r.throughBitsRate, unitTypes.bps).join(' '),
@@ -304,14 +304,17 @@ export default {
           if (!this.countryImageSeries) {
             this.countryImageSeries = this.imageSeriesFactory('score', this.countrySeries)
           }
-          this.countrySeries.show()
-          this.countryImageSeries.show()
           this.countrySeries.geodata = geoData
           this.polygonSeries.hide()
           this.worldImageSeries.hide()
-          this.$nextTick(() => {
+          this.countrySeries.show()
+          this.countryImageSeries.show()
+
+          await this.$nextTick(() => {
             this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
           })
+        } else {
+          this.$message.warning(this.$t('tip.noDetailMap'))
         }
       }
     }
@@ -327,10 +330,8 @@ export default {
     },
     async location (n) {
       this.$store.commit('setNpmLocationCountry', n)
-      if (n) {
-        const countryId = countryNameIdMapping[n]
-        await this.drill(countryId)
-      } else {
+      if (!n) {
+        this.countryImageSeries.data = [{}]
         this.polygonSeries.show()
         this.worldImageSeries.show()
         this.countrySeries.hide()
