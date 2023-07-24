@@ -417,8 +417,8 @@ export default {
       })
     },
     queryRelated () {
-      this.getRelatedServerDataOne(this.relatedServerDomainUrl)
-      this.getRelatedServerDataTwo(this.relatedServerAppUrl)
+      this.getRelatedServerDataOne(this.relatedServerAppUrl)
+      this.getRelatedServerDataTwo(this.relatedServerDomainUrl)
     },
     getOpenPort () {
       const params = {
