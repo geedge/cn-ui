@@ -8,6 +8,23 @@
       <chart-no-data v-if="isNoData" test-id="noData"></chart-no-data>
       <div class="npm-event-pies" v-show="!isNoData">
         <div class="chart-drawing" id="chart"></div>
+        <div class="npm-event-pie-legends">
+          <div class="npm-event-pie-legend">
+            <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('overall.type') }}</div>
+            <template v-for="(legend, index) in chartData" :key="index">
+              <div class="npm-event-pie-legend-type">
+                <div :style="`width: 9px;height: 9px;background-color: ${legend.color};margin-right: 5px;`"></div>
+                <div class="npm-event-pie-legend-type-severity" :test-id="`testNode${index}`">{{legend.name}}</div>
+              </div>
+            </template>
+          </div>
+          <div class="npm-event-pie-legend">
+            <div class="npm-event-pie-legend-title" v-if="chartData.length > 0">{{ $t('network.total') }}</div>
+            <template v-for="(legend, index) in chartData" :key="index">
+              <div class="npm-event-pie-legend-total" :test-id="`total${index}`">{{legend.value}}</div>
+            </template>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -23,6 +40,7 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
+import { chartColor5 } from '@/utils/constants'
 
 export default {
   name: 'NpmEventsByType',
@@ -56,13 +74,35 @@ export default {
   },
   methods: {
     init () {
+      const _this = this
       const dom = document.getElementById('chart')
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = pieChartOption3
       this.chartOption.series[0].data = this.chartData
+      console.log('查看数据', this.chartData)
+      console.log('查看option', this.chartOption)
       this.chartOption.series[0].label = {
-        show: false
+        show: true,
+        position: 'center',
+        fontFamily: 'NotoSansHans-Medium',
+        fontSize: 20,
+        fontWeight: 500,
+        formatter: function () {
+          let num = 0
+          _this.chartData.forEach(t => {
+            num += t.value
+          })
+          return num
+        }
       }
+      this.myChart.on('mouseover', function () {
+        _this.chartOption.series[0].label.show = false
+        _this.myChart.setOption(_this.chartOption)
+      })
+      this.myChart.on('mouseout', function () {
+        _this.chartOption.series[0].label.show = true
+        _this.myChart.setOption(_this.chartOption)
+      })
       this.myChart.setOption(this.chartOption)
     },
     eventsByTypeData () {
@@ -92,6 +132,9 @@ export default {
           this.chartData = arrData.sort((a, b) => { return b.value - a.value })
           this.$nextTick(() => {
             if (this.chartData.length > 0) {
+              this.chartData.forEach((t, i) => {
+                t.color = chartColor5[i]
+              })
               if (!this.isUnitTesting) {
                 this.init()
               }

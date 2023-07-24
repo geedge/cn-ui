@@ -31,25 +31,25 @@ function axiosPostAndMounted (data) {
 }
 
 describe('views/charts2/charts/npm/NpmEventsByType.vue测试', () => {
-  // test('类型分类事件统计信息： npm events 类型分类事件图 ', async () => {
-  //   axiosPostAndMounted()
-  //
-  //   await new Promise(resolve => setTimeout(() => {
-  //     // type
-  //     const testNode0 = wrapper.get('[test-id="testNode0"]')
-  //     const testNode1 = wrapper.get('[test-id="testNode1"]')
-  //
-  //     expect(testNode0.text()).toEqual('dns error')
-  //     expect(testNode1.text()).toEqual('http error')
-  //
-  //     // total
-  //     const total0 = wrapper.get('[test-id="total0"]')
-  //     const total1 = wrapper.get('[test-id="total1"]')
-  //     expect(total0.text()).toEqual('151')
-  //     expect(total1.text()).toEqual('32')
-  //     resolve()
-  //   }, 200))
-  // })
+  test('类型分类事件统计信息： npm events 类型分类事件图 ', async () => {
+    axiosPostAndMounted()
+
+    await new Promise(resolve => setTimeout(() => {
+      // type
+      const testNode0 = wrapper.get('[test-id="testNode0"]')
+      const testNode1 = wrapper.get('[test-id="testNode1"]')
+
+      expect(testNode0.text()).toEqual('dns error')
+      expect(testNode1.text()).toEqual('http error')
+
+      // total
+      const total0 = wrapper.get('[test-id="total0"]')
+      const total1 = wrapper.get('[test-id="total1"]')
+      expect(total0.text()).toEqual('151')
+      expect(total1.text()).toEqual('32')
+      resolve()
+    }, 200))
+  })
   test('类型分类事件统计信息： npm events 类型分类事件图无数据 ', async () => {
     axiosPostAndMounted(mockData.empty.data)
 
@@ -59,19 +59,19 @@ describe('views/charts2/charts/npm/NpmEventsByType.vue测试', () => {
       resolve()
     }, 200))
   })
-  // test('类型分类事件统计信息： npm events 类型分类事件图无Http Error类型 ', async () => {
-  //   const data = JSON.parse(JSON.stringify(mockData.common.data))
-  //   data.data.data.result = data.data.data.result.filter(item => item.eventType !== 'http error')
-  //   axiosPostAndMounted(data)
-  //
-  //   await new Promise(resolve => setTimeout(() => {
-  //     const testNode0 = wrapper.get('[test-id="testNode0"]')
-  //     expect(testNode0.text()).toEqual('dns error')
-  //
-  //     // total
-  //     const total0 = wrapper.get('[test-id="total0"]')
-  //     expect(total0.text()).toEqual('151')
-  //     resolve()
-  //   }, 200))
-  // })
+  test('类型分类事件统计信息： npm events 类型分类事件图无Http Error类型 ', async () => {
+    const data = JSON.parse(JSON.stringify(mockData.common.data))
+    data.data.data.result = data.data.data.result.filter(item => item.eventType !== 'http error')
+    axiosPostAndMounted(data)
+
+    await new Promise(resolve => setTimeout(() => {
+      const testNode0 = wrapper.get('[test-id="testNode0"]')
+      expect(testNode0.text()).toEqual('dns error')
+
+      // total
+      const total0 = wrapper.get('[test-id="total0"]')
+      expect(total0.text()).toEqual('151')
+      resolve()
+    }, 200))
+  })
 })
