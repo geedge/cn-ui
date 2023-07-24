@@ -48,7 +48,7 @@ export const pieChartOption1 = {
           value = t.value
         }
       })
-      name = name.length > 9 ? name.substr(0, 9) + '...' : name
+      name = name.length > 10 ? name.substr(0, 11) + '...' : name
       return ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
     }
   },
@@ -106,7 +106,7 @@ export const pieChartOption2 = {
           value = t.value
         }
       })
-      name = name.length > 9 ? name.substr(0, 9) + '...' : name
+      name = name.length > 10 ? name.substr(0, 10) + '...' : name
       return ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
     }
   },
