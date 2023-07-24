@@ -138,7 +138,7 @@ export const pieChartOption3 = {
       avoidLabelOverlap: false,
       emphasis: {
         label: {
-          show: true,
+          show: false,
           fontSize: 20,
           fontWeight: 500,
           fontFamily: 'NotoSansHans-Medium',
