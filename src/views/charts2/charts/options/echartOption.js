@@ -130,8 +130,46 @@ export const pieChartOption2 = {
 }
 export const pieChartOption3 = {
   color: chartColor5,
+  legend: {
+    orient: 'vertical',
+    top: '25%',
+    left: '50%',
+    itemGap: 4,
+    itemWidth: 15,
+    itemHeight: 7,
+    textStyle: {
+      fontFamily: 'SimHei',
+      rich: {
+        a: {
+          width: 60,
+          align: 'left',
+          fontWeight: 'bold'
+        },
+        b: {
+          align: 'left',
+          fontSize: 12,
+          color: '#575757'
+        }
+      }
+    },
+    tooltip: {
+      show: true
+    },
+    formatter: function (name) {
+      const data = pieChartOption3.series[0].data
+      let value
+      data.forEach(t => {
+        if (t.name === name) {
+          value = t.value
+        }
+      })
+      name = name.length > 9 ? name.substr(0, 9) + '...' : name
+      return ['{a|' + ' ' + value + '}' + '{b|' + name + '}']
+    }
+  },
   series: [
     {
+      right: '50%',
       name: 'Access From',
       type: 'pie',
       radius: ['40%', '50%'],
