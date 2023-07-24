@@ -79,8 +79,6 @@ export default {
       !this.myChart && (this.myChart = echarts.init(dom))
       this.chartOption = pieChartOption3
       this.chartOption.series[0].data = this.chartData
-      console.log('查看数据', this.chartData)
-      console.log('查看option', this.chartOption)
       this.chartOption.series[0].label = {
         show: true,
         position: 'center',
