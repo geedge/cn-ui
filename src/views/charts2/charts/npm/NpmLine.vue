@@ -93,7 +93,8 @@ export default {
       country: this.$store.state.panel.npmLocationCountry,
       // province: '',
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      sizes: [3, 4, 6, 8, 9, 10]
     }
   },
   watch: {
@@ -185,7 +186,12 @@ export default {
             smooth: true,
             showSymbol: false,
             emphasis: {
-              focus: 'series'
+              itemStyle: {
+                borderColor: t.color,
+                borderWidth: 2,
+                shadowColor: t.color,
+                shadowBlur: t.positioning ? this.sizes[t.positioning] + 2 : 0
+              }
             },
             name: t.legend ? t.legend : this.$t(chartData.i18n) || chartData.name,
             stack: this.chartData.params.isStack ? 'network.total' : '',
