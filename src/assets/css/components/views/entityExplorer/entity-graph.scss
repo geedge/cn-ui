@@ -1,0 +1,248 @@
+.graph-toolbar {
+  position: fixed;
+  top: 100px;
+  left: 0;
+
+  .toolbar__tools {
+    display: flex;
+    padding: 0 10px;
+
+    li {
+      display: flex;
+      justify-content: center;
+      width: 32px;
+      margin-right: 4px;
+      cursor: pointer;
+
+      i {
+        color: #575757;
+        font-size: 18px;
+      }
+    }
+  }
+}
+.entity-graph {
+  display: flex;
+
+  .entity-graph__chart {
+    width: 100%;
+
+    .graph-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: transparent !important;
+      transition: linear all .2s;
+
+      .graph-node__text {
+        width: 120px;
+        font-size: 12px;
+        color: #353636;
+      }
+
+      &.graph-node--root {
+        padding-top: 18px;
+        width: 82px;
+        height: 82px;
+        border: 5px solid !important;
+        // 覆盖自带的node点击效果
+        &.rel-node-checked {
+          box-shadow: none;
+          animation: none;
+        }
+        &.graph-node--ip {
+          border-color: #CBD9BB !important;
+          box-shadow: 0 0 0 8px rgba(126,159,84,0.14);
+          i {
+            color: #7E9F54;
+          }
+        }
+        &.graph-node--domain {
+          border-color: #AFDEED !important;
+          box-shadow: 0 0 0 8px rgba(56,172,210,0.14);
+          i {
+            color: #38ACD2;
+          }
+        }
+        &.graph-node--app {
+          border-color: #F5DAA3 !important;
+          box-shadow: 0 0 0 8px rgba(229,162,25,0.14);
+          i {
+            color: #E5A219;
+          }
+        }
+        i {
+          font-size: 36px;
+        }
+        .graph-node__text {
+          padding-top: 30px;
+        }
+      }
+
+      &.graph-node--primary {
+        padding-top: 20px;
+        width: 66px;
+        height: 66px;
+        border: 1px solid #A7B0B9 !important;
+        box-shadow: none;
+
+        // 覆盖自带的node点击效果
+        &.rel-node-checked {
+          box-shadow: 0 0 0 5px rgba(151,151,151,0.21);
+          animation: none;
+          border-color: #778391 !important;
+        }
+        i {
+          font-size: 24px;
+          color: #778391;
+        }
+        .graph-node__text {
+          padding-top: 24px;
+        }
+      }
+
+      &.graph-node--entity {
+        width: 21px;
+        height: 21px;
+        justify-content: center;
+        border: none !important;
+
+        &.graph-node--ip {
+          i {
+            color: #7E9F54;
+          }
+        }
+        &.graph-node--domain {
+          i {
+            color: #38ACD2;
+          }
+        }
+        &.graph-node--app {
+          i {
+            color: #E5A219;
+          }
+        }
+        i {
+          font-size: 21px;
+        }
+      }
+    }
+  }
+
+  .entity-graph__right-box {
+    & > div {
+      left: unset !important;
+      right: 0 !important;
+    }
+    .entity-graph__detail {
+      height: calc(100% - 100px) !important;
+      top: 100px !important;
+      // border-left: 1px solid #E2E5EC;
+      overflow: auto;
+      padding: 20px;
+    }
+  }
+
+  .g6-component-tooltip {
+    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
+
+    .primary-node-tooltip {
+      padding: 5px;
+
+      .tooltip__header {
+        display: flex;
+        align-items: center;
+
+        i {
+          color: #717171;
+          font-size: 14px;
+        }
+        .tooltip__title {
+          padding-left: 6px;
+          font-size: 15px;
+          line-height: 15px;
+          color: #111;
+        }
+      }
+      .tooltip__content {
+        padding-top: 10px;
+        color: #222;
+        font-size: 12px;
+
+        span:first-of-type {
+          padding-right: 20px;
+        }
+      }
+    }
+    .entity-node-tooltip {
+      width: 300px;
+      padding: 5px;
+
+      .tooltip__header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .tooltip__title {
+          font-size: 15px;
+          line-height: 15px;
+          color: #111;
+        }
+      }
+
+      .tooltip__content {
+        display: flex;
+        flex-direction: column;
+
+        .content-header {
+          display: flex;
+          align-items: center;
+
+          .header-icon {
+            width: 3px !important;
+            height: 12px !important;
+            background: #38ACD2;
+            border-radius: 1px;
+            margin-right: 6px;
+          }
+        }
+        .content-tag-list {
+          display: flex;
+          align-items: flex-start;
+          flex-wrap: wrap;
+
+          .entity-tag {
+            margin: 10px 9px 10px 0;
+            padding: 0 8px;
+            height: 20px;
+            font-size: 12px;
+            border: 1px solid;
+            border-radius: 2px;
+
+            $normal-color: #778391;
+            $normal-light-color: #F7F8F9;
+            $negative-color: #E26154;
+            $negative-light-color: #FEF6F5;
+            $positive-color: #749F4D;
+            $positive-light-color: #F7FAF5;
+            &.entity-tag--level-two-normal {
+              border-color: $normal-color;
+              color: $normal-color;
+              background-color: $normal-light-color;
+            }
+            &.entity-tag--level-two-negative {
+              border-color: $negative-color;
+              color: $negative-color;
+              background-color: $negative-light-color;
+            }
+            &.entity-tag--level-two-positive {
+              border-color: $positive-color;
+              color: $positive-color;
+              background-color: $positive-light-color;
+            }
+          }
+        }
+      }
+    }
+  }
+}

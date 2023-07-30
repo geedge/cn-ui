@@ -15,6 +15,7 @@
 @import 'views/entityExplorer/search/explorer-search';
 @import 'views/entityExplorer/entity-filter';
 @import 'views/entityExplorer/entity-detail';
+@import 'views/entityExplorer/entity-graph';
 @import 'views/entityExplorer/entityList/entity-list';
 @import './views/entityExplorer/entityList/card';
 @import './views/entityExplorer/entityList/row';
@@ -86,5 +87,5 @@
 @import 'views/charts2/digitalCertificate';
 @import 'views/charts2/entityDetailBasicInfo';
 
-@import "views/charts2/graphRightListBlock";
-@import "views/charts2/graphRightDetailBlock";
+@import "views/entityExplorer/graphRightListBlock";
+@import "views/entityExplorer/graphRightDetailBlock";

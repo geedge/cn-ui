@@ -29,7 +29,7 @@ const routes = [
       },
       {
         path: '/entityGraph',
-        component: () => import('@/views/entityExplorer/EntityGraph')
+        component: () => import('@/views/entityExplorer/EntityGraph2')
       },
       {
         path: '/detection',
