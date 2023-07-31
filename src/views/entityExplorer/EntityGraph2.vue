@@ -643,6 +643,9 @@ export default {
           })
           cleanTempNodesAndTempEdges()
           _this.graph.layout()
+          // 手动高亮listNode
+          const _listNode = _this.graph.findById(listNode.id)
+          _this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() }) // 手动触发rootNode的点击事件
         }
 
         node.setState('mySelected', true)
@@ -844,7 +847,7 @@ export default {
       const model = node.getModel()
       const sourceNode = this.graph.findById(model.sourceNode.id)
       const sourceModel = sourceNode.getModel()
-      const expandType = sourceModel.myData.entityType
+      const expandType = model.myData.entityType
       if (sourceModel.myData.relatedEntity[expandType].list.length < 50) {
         const entities = await queryRelatedEntity(sourceModel, expandType)
         sourceModel.myData.relatedEntity[expandType].list.push(...entities.list)
@@ -875,15 +878,31 @@ export default {
           nodeModel.myData.relatedEntity[expandType].list.push(...entities.list)
           const neighbors = node.getNeighbors('target')
           const listNode = neighbors.find(n => n.getModel().myData.entityType === expandType)
+          let listNodeModel = listNode.getModel()
+          // 如果listNode是tempNode，移除，并新建listNode
+          if (listNodeModel.type === nodeType.tempNode) {
+            // 移除tempNode和tempEdge
+            const tempEdges = listNode.getInEdges()
+            tempEdges.forEach(edge => {
+              this.graph.removeItem(edge)
+            })
+            this.graph.removeItem(listNode)
+
+            listNodeModel = new Node(nodeType.listNode, `${nodeModel.id}__${expandType}-list`, { entityType: expandType, x: listNodeModel.x, y: listNodeModel.y }, nodeModel)
+            const edge = new Edge(nodeModel, listNodeModel)
+            this.graph.addItem('node', listNodeModel)
+            this.graph.addItem('edge', edge)
+            this.graph.setItemState(this.graph.findById(edge.id), 'mySelected', true)
+          }
           entities.list.forEach(entity => {
             const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
               entityType: expandType,
               entityName: entity.vertex,
-              x: listNode.getModel().x + Math.random() * 500 - 250,
-              y: listNode.getModel().y + Math.random() * 500 - 250
-            }, listNode.getModel())
+              x: listNodeModel.x + Math.random() * 500 - 250,
+              y: listNodeModel.y + Math.random() * 500 - 250
+            }, listNodeModel)
             this.graph.addItem('node', entityNodeModel)
-            this.graph.addItem('edge', new Edge(listNode.getModel(), entityNodeModel))
+            this.graph.addItem('edge', new Edge(listNodeModel, entityNodeModel))
             this.graph.layout()
           })
           this.rightBox.node = _.cloneDeep(nodeModel)
