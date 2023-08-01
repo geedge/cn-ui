@@ -27,7 +27,7 @@
         <div class="digital-certificate-header padding-b-16">
           <div class="digital-certificate-header__icon graph-header__icon"></div>
           <div class="graph-list-content-header ">
-            {{ $t('entity.graph.expandedEntityCount') }}:&nbsp;&nbsp;
+            {{ $t('entity.graph.expandedEntityCount') }}:&nbsp
             <span>{{$_.get(node, 'sourceNode.myData.relatedEntity.' + $_.get(node, 'myData.entityType') + '.list', []).length}}</span>
           </div>
         </div>

@@ -665,7 +665,7 @@ export default {
               _this.rightBox.loading = false
             }
           } else {
-            // TODO 提示大于5层
+            this.$message.warning(this.$t('tip.maxExpandDepth'))
           }
           _this.addItems(nodes, edges)
           _this.cleanTempNodesAndTempEdges()
@@ -783,7 +783,6 @@ export default {
       return info.length
     },
     onCloseBlock () {
-      // todo 关闭右侧graph面板
       this.rightBox.mode = ''
       this.rightBox.show = false
     },
@@ -966,7 +965,7 @@ export default {
           this.rightBox.loading = false
         }
       } else {
-        // TODO 提示超过50
+        this.$message.warning(this.$t('tip.maxExpandCount'))
       }
     },
     async expandDetailList (nodeId, expandType) {
@@ -1021,7 +1020,7 @@ export default {
             this.rightBox.loading = false
           }
         } else {
-          // TODO 提示超过50
+          this.$message.warning(this.$t('tip.maxExpandCount'))
         }
       }
     },
