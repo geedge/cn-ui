@@ -219,6 +219,7 @@ export default {
           this.chartOption = _.cloneDeep(trafficLineChartOption)
           const chartOption = this.chartOption.series[0]
 
+          echartsData = echartsData.reverse()
           this.chartOption.series = echartsData.map((t) => {
             // 根据参数转换y轴单位
             this.chartOption.yAxis[0].axisLabel.formatter = (value) => {

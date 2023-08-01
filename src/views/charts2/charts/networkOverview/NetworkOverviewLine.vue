@@ -205,6 +205,9 @@ export default {
         const _this = this
         this.chartOption = stackedLineChartOption
         const chartOption = this.chartOption.series[0]
+        // 1、堆叠图从下往上堆叠图形，数组倒序操作，目的让堆叠图图形按数组一样从上往下展示
+        // 2、tooltip会跟着倒序操作，数据展示相反，tooltip处再将数组倒序回来
+        echartsData = echartsData.reverse()
         this.chartOption.series = echartsData.map((t, i) => {
           return {
             ...chartOption,

@@ -253,6 +253,7 @@ export default {
         const _this = this
         this.chartOption = stackedLineChartOption
         const chartOption = this.chartOption.series[0]
+        echartsData = echartsData.reverse()
         this.chartOption.series = echartsData.map((t, i) => {
           return {
             ...chartOption,

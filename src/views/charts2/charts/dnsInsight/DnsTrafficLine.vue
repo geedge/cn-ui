@@ -201,6 +201,7 @@ export default {
         if (echartsData.length > 0) {
           this.chartOption = stackedLineChartOption
           const chartOption = this.chartOption.series[0]
+          echartsData = echartsData.reverse()
           this.chartOption.series = echartsData.map((t, i) => {
             return {
               ...chartOption,

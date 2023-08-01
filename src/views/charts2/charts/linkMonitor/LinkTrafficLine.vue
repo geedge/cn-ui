@@ -203,6 +203,7 @@ export default {
         this.chartOption = linkTrafficLineChartOption
         const chartOption = this.chartOption.series[0]
 
+        echartsData = echartsData.reverse()
         this.chartOption.series = echartsData.map((t, i) => {
           return {
             ...chartOption,

@@ -461,6 +461,9 @@ export function categoryBarTooltipFormatter (params, type) {
 }
 
 export function stackedLineTooltipFormatter (params) {
+  // 堆叠图tooltip倒叙操作
+  params = params.reverse()
+
   let str = '<div>'
   params.forEach((item, i) => {
     const tData = item.data[0]
