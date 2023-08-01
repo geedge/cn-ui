@@ -181,7 +181,7 @@ export default {
         if (e.response && e.response.message) {
           this.$message.error(e.response.message)
         } else {
-          this.$message.error('Something went wrong...')
+          this.$message.error(this.$t('tip.somethingWentWrong'))
         }
       }).finally(() => {
         this.blockOperation.save = false

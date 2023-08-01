@@ -18,6 +18,13 @@
         color: #575757;
         font-size: 18px;
       }
+
+      &.toolbar--unactivated {
+        cursor: default;
+        i {
+          opacity: .4;
+        }
+      }
     }
   }
 }

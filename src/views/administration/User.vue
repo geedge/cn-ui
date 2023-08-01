@@ -126,16 +126,12 @@ export default {
           if (response.message) {
             this.$message.error(response.message)
           } else {
-            this.$message.error('Something went wrong...')
+            this.$message.error(this.$t('tip.somethingWentWrong'))
           }
         }
       }).finally(() => {
         this.toggleLoading(false)
-        if (!this.tableData || this.tableData.length === 0) {
-          this.isNoData = true
-        } else {
-          this.isNoData = false
-        }
+        this.isNoData = !this.tableData || this.tableData.length === 0
       })
     }
   },

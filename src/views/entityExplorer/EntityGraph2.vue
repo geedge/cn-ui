@@ -50,6 +50,7 @@ export default {
   },
   data () {
     return {
+      debounceFunc: null,
       chartOption: {
         container: 'entityGraph',
         layout: {
@@ -64,6 +65,8 @@ export default {
           nodeStrength: (d) => {
             if (d.type === nodeType.rootNode || d.type === nodeType.listNode) {
               return -100
+            } else if (d.type === nodeType.tempNode) {
+              return -300
             }
             return -10
           },
@@ -77,7 +80,13 @@ export default {
         modes: {
           default: ['drag-canvas', 'drag-nodes', 'click-select', 'zoom-canvas']
         }
-      }
+      },
+      /* 自己实现stack操作 */
+      stackData: {
+        undo: [], // 后退
+        redo: [] // 前进
+      },
+      initialData: null // 初始化数据，用于重置
     }
   },
   methods: {
@@ -85,19 +94,26 @@ export default {
       this.registerElements() // 注册自定义node
       const tooltip = this.buildTooltip() // tooltip组件
       const toolbar = this.buildToolbar() // 工具栏组装件
-      this.chartOption.plugins = [tooltip] // 注册组件
+      this.chartOption.plugins = [tooltip, toolbar] // 注册组件
       this.graph = new G6.Graph(this.chartOption)
-      const initialData = await this.generateInitialData()// 初始化数据
-      this.graph.data(initialData)
-      this.graph.render()
-      const rootNode = this.graph.findById(this.entity.entityName)
-      this.bindEvents() // 绑定事件
-      this.graph.emit('node:click', { item: rootNode, target: rootNode.getKeyShape() }) // 手动触发rootNode的点击事件
+      try {
+        const initialData = await this.generateInitialData() // 备份初始数据
+        this.initialData = _.cloneDeep(initialData) // 初始化数据
+        this.graph.data(initialData)
+        this.graph.render()
+        const rootNode = this.graph.findById(this.entity.entityName)
+        this.bindEvents() // 绑定事件
+        this.graph.emit('node:click', { item: rootNode, target: rootNode.getKeyShape() }) // 手动触发rootNode的点击事件
+      } catch (e) {
+        this.$message.error(this.errorMsgHandler(e))
+      } finally {
+        this.rightBox.loading = false
+      }
     },
     registerElements () {
       const _this = this
       G6.registerNode(
-        'rootNode',
+        nodeType.rootNode,
         {
           draw (cfg, group) {
             group.addShape('circle', {
@@ -214,7 +230,7 @@ export default {
         'single-node'
       )
       G6.registerNode(
-        'listNode',
+        nodeType.listNode,
         {
           draw (cfg, group) {
             group.addShape('circle', {
@@ -324,7 +340,7 @@ export default {
         'single-node'
       )
       G6.registerNode(
-        'entityNode',
+        nodeType.entityNode,
         {
           draw (cfg, group) {
             group.addShape('circle', {
@@ -382,14 +398,14 @@ export default {
         'single-node'
       )
       G6.registerNode(
-        'tempNode',
+        nodeType.tempNode,
         {
           draw (cfg, group) {
             group.addShape('text', {
               attrs: {
                 text: cfg.label,
                 x: 0,
-                y: 25,
+                y: 22,
                 fontSize: 12,
                 textAlign: 'center',
                 textBaseline: 'middle',
@@ -534,7 +550,7 @@ export default {
         }
       }
       function getIconUrl (entityType, colored, isRoot) {
-        let suffix = ''
+        let suffix
         if (entityType === 'domain' && isRoot) {
           suffix = '-colored2'
         } else {
@@ -560,45 +576,54 @@ export default {
         const node = e.item
         const nodeModel = node.get('model')
         if (nodeModel.type !== 'tempNode') {
-          cleanTempNodesAndTempEdges()
+          node.setState('mySelected', true)
+          _this.cleanTempNodesAndTempEdges()
           // 点击entityNode，查询数据，并根据数据生成tempNode
           if (nodeModel.type === nodeType.entityNode) {
-            _this.rightBox.mode = 'detail'
-            // 若已查过数据，不重复查询
-            if (!nodeModel.myData.relatedEntity) {
-              await nodeModel.queryDetailData()
-            }
-            let change = false
-            Object.keys(nodeModel.myData.relatedEntity).forEach(k => {
-              if (nodeModel.myData.relatedEntity[k].total) {
-                // 若已有同级同类型的listNode，不生成此tempNode
-                const neighbors = _this.graph.getNeighbors(nodeModel.id, 'target')
-                const hasListNode = neighbors.some(b => b.get('model').myData.entityType === k)
-                if (!hasListNode) {
-                  change = true
-                  const tempNode = new Node(
-                    nodeType.tempNode,
-                    `${nodeModel.id}__${k}__temp`,
-                    {
-                      entityType: k,
-                      // TODO k2-k1=1+k1k2
-                      ...generateTempNodeCoordinate(nodeModel.sourceNode, e)
-                    },
-                    nodeModel
-                  )
-                  const tempEdge = new Edge(nodeModel, tempNode, 'temp')
-                  _this.graph.addItem('node', tempNode)
-                  _this.graph.addItem('edge', tempEdge)
-                }
+            _this.rightBox.loading = true
+            try {
+              // 若已查过数据，不重复查询
+              if (!nodeModel.myData.relatedEntity) {
+                await nodeModel.queryDetailData()
               }
-            })
-            change && _this.graph.layout()
+              let change = false
+              Object.keys(nodeModel.myData.relatedEntity).forEach(k => {
+                if (nodeModel.myData.relatedEntity[k].total) {
+                  // 若已有同级同类型的listNode，不生成此tempNode
+                  const neighbors = _this.graph.getNeighbors(nodeModel.id, 'target')
+                  const hasListNode = neighbors.some(b => b.get('model').myData.entityType === k)
+                  if (!hasListNode) {
+                    change = true
+                    const tempNode = new Node(
+                      nodeType.tempNode,
+                      `${nodeModel.id}__${k}__temp`,
+                      {
+                        entityType: k,
+                        ...generateTempNodeCoordinate(nodeModel.sourceNode, e)
+                      },
+                      nodeModel
+                    )
+                    const tempEdge = new Edge(nodeModel, tempNode, 'temp')
+                    _this.graph.addItem('node', tempNode)
+                    _this.graph.addItem('edge', tempEdge)
+                  }
+                }
+              })
+              change && _this.graph.layout()
+              _this.rightBox.node = _.cloneDeep(nodeModel)
+              _this.rightBox.mode = 'detail'
+            } catch (e) {
+              _this.$message.error(_this.errorMsgHandler(e))
+            } finally {
+              _this.rightBox.loading = false
+            }
           } else if (nodeModel.type === nodeType.listNode) {
+            _this.rightBox.node = _.cloneDeep(nodeModel)
             _this.rightBox.mode = 'list'
           } else if (nodeModel.type === nodeType.rootNode) {
+            _this.rightBox.node = _.cloneDeep(nodeModel)
             _this.rightBox.mode = 'detail'
           }
-          _this.rightBox.node = _.cloneDeep(nodeModel)
         } else {
           // 点击tempNode，根据source生成listNode和entityNode以及对应的edge。查完entityNode的接口再删除临时node和edge。
           // 若已达第六层，则只生成listNode，不再展开entityNode
@@ -620,35 +645,35 @@ export default {
           // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
           const level = _this.getNodeLevel(listNode.sourceNode.id)
           if (level < 10) {
-            const entities = await queryRelatedEntity(nodeModel.sourceNode, listNode.myData.entityType)
-            nodeModel.sourceNode.myData.relatedEntity[listNode.myData.entityType].list.push(...entities.list)
-            entities.list.forEach(entity => {
-              const entityNode = new Node(nodeType.entityNode, entity.vertex, {
-                entityType: listNode.myData.entityType,
-                entityName: entity.vertex,
-                x: e.x + Math.random() * 100 - 50,
-                y: e.y + Math.random() * 100 - 50
-              }, listNode)
-              nodes.push(entityNode)
-              edges.push(new Edge(listNode, entityNode))
-            })
+            _this.rightBox.loading = true
+            try {
+              const entities = await queryRelatedEntity(nodeModel.sourceNode, listNode.myData.entityType)
+              nodeModel.sourceNode.myData.relatedEntity[listNode.myData.entityType].list.push(...entities.list)
+              entities.list.forEach(entity => {
+                const entityNode = new Node(nodeType.entityNode, entity.vertex, {
+                  entityType: listNode.myData.entityType,
+                  entityName: entity.vertex,
+                  x: e.x + Math.random() * 100 - 50,
+                  y: e.y + Math.random() * 100 - 50
+                }, listNode)
+                nodes.push(entityNode)
+                edges.push(new Edge(listNode, entityNode))
+              })
+            } catch (e) {
+              _this.$message.error(_this.errorMsgHandler(e))
+            } finally {
+              _this.rightBox.loading = false
+            }
           } else {
             // TODO 提示大于5层
           }
-          nodes.forEach(n => {
-            _this.graph.addItem('node', n)
-          })
-          edges.forEach(edge => {
-            _this.graph.addItem('edge', edge)
-          })
-          cleanTempNodesAndTempEdges()
+          _this.addItems(nodes, edges)
+          _this.cleanTempNodesAndTempEdges()
           _this.graph.layout()
           // 手动高亮listNode
           const _listNode = _this.graph.findById(listNode.id)
-          _this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() }) // 手动触发rootNode的点击事件
+          _this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() })
         }
-
-        node.setState('mySelected', true)
       })
       this.graph.on('node:mouseenter', function (e) {
         e.item.setState('hover', true)
@@ -661,17 +686,6 @@ export default {
         model.fx = e.x
         model.fy = e.y
       }
-      function cleanTempNodesAndTempEdges () {
-        // 清除现有tempNode和tempEdge
-        const tempNodes = _this.graph.findAll('node', node => node.get('model').type === nodeType.tempNode)
-        tempNodes.forEach(n => {
-          _this.graph.removeItem(n, false)
-        })
-        const tempEdges = _this.graph.findAll('edge', edge => edge.get('model').isTemp)
-        tempEdges.forEach(n => {
-          _this.graph.removeItem(n, false)
-        })
-      }
       function generateTempNodeCoordinate (sourceNode, event) {
         const sx = sourceNode.x
         const sy = sourceNode.y
@@ -682,6 +696,37 @@ export default {
           y: cy + cy - sy + Math.random() * 30 - 15
         }
       }
+    },
+    addItems (nodes = [], edges = [], stack = true) {
+      // 过滤掉已经存在的node
+      const _nodes = nodes.filter(n => {
+        return !this.graph.findById(n.id)
+      })
+      _nodes.forEach(n => {
+        this.graph.addItem('node', n)
+      })
+      edges.forEach(e => {
+        this.graph.addItem('edge', e)
+      })
+      if (stack) {
+        this.stackData.undo.push({ nodes: _nodes, edges })
+      }
+    },
+    setItemsStata (models = [], stateName, state) {
+      models.forEach(m => {
+        this.graph.setItemState(this.graph.findById(m.id), stateName, state)
+      })
+    },
+    cleanTempNodesAndTempEdges () {
+      // 清除现有tempNode和tempEdge
+      const tempNodes = this.graph.findAll('node', node => node.get('model').type === nodeType.tempNode)
+      tempNodes.forEach(n => {
+        this.graph.removeItem(n)
+      })
+      const tempEdges = this.graph.findAll('edge', edge => edge.get('model').isTemp)
+      tempEdges.forEach(n => {
+        this.graph.removeItem(n)
+      })
     },
     async generateInitialData () {
       const nodes = []
@@ -829,15 +874,59 @@ export default {
         className: 'toolbar__tools',
         getContent: () => {
           return `<ul>
-            <li code='zoomOut'><i class="cn-icon cn-icon-zoom-in"></i></li>
-            <li code='zoomIn'><i class="cn-icon cn-icon-zoom-out"></i></li>
-            <li code='undo'><i class="cn-icon cn-icon-next-step"></i></li>
-            <li code='redo'><i class="cn-icon cn-icon-pre-step"></i></li>
-            <li code='autoZoom'><i class="cn-icon cn-icon-auto-zoom"></i></li>
+            <li code='zoomOut'><i class="cn-icon cn-icon-zoom-out"></i></li>
+            <li code='zoomIn'><i class="cn-icon cn-icon-zoom-in"></i></li>
+            <li code='autoZoom'><i class="cn-icon cn-icon-reset"></i></li>
+            <li code='undo' id="preStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-pre-step"></i></li>
+            <li code='redo' id="nextStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-next-step"></i></li>
+            <li code='toDefault'><i class="cn-icon cn-icon-to-default"></i></li>
           </ul>`
         },
         handleClick: (code, graph) => {
-          toolbar.handleDefaultOperator(code)
+          if (code === 'undo') {
+            const data = this.stackData.undo.pop()
+            data.nodes.forEach(n => {
+              if (n.type === nodeType.listNode) {
+                const listNode = this.graph.findById(n.id)
+                const listNodeEdges = listNode.getEdges()
+                listNodeEdges.forEach(e => {
+                  e.setState('mySelected', false)
+                })
+                listNode.setState('mySelected', false)
+              }
+              this.graph.removeItem(n.id)
+            })
+            data.edges.forEach(e => {
+              this.graph.removeItem(e.id)
+            })
+            this.stackData.redo.push(data)
+            this.cleanTempNodesAndTempEdges()
+            this.graph.layout()
+            this.onCloseBlock()
+          } else if (code === 'redo') {
+            const data = this.stackData.redo.pop()
+            this.addItems(data.nodes, data.edges, false)
+            this.stackData.undo.push(data)
+            this.cleanTempNodesAndTempEdges()
+            this.graph.layout()
+            this.onCloseBlock()
+          } else if (code === 'autoZoom') {
+            this.graph.zoomTo(1)
+            this.graph.fitCenter()
+          } else if (code === 'zoomOut') {
+            const { x, y } = this.graph.getViewPortCenterPoint()
+            this.graph.zoomTo(this.graph.getZoom() + 0.2, { x, y })
+          } else if (code === 'zoomIn') {
+            const { x, y } = this.graph.getViewPortCenterPoint()
+            const currentZoom = this.graph.getZoom()
+            this.graph.zoomTo(currentZoom - 0.2, { x, y })
+          } else {
+            this.graph.clear()
+            this.graph.data(this.initialData)
+            this.graph.render()
+            const rootNode = this.graph.findById(this.entity.entityName)
+            this.graph.emit('node:click', { item: rootNode, target: rootNode.getKeyShape() }) // 手动触发rootNode的点击事件
+          }
         }
       })
       return toolbar
@@ -849,22 +938,33 @@ export default {
       const sourceModel = sourceNode.getModel()
       const expandType = model.myData.entityType
       if (sourceModel.myData.relatedEntity[expandType].list.length < 50) {
-        const entities = await queryRelatedEntity(sourceModel, expandType)
-        sourceModel.myData.relatedEntity[expandType].list.push(...entities.list)
-        entities.list.forEach(entity => {
-          const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
-            entityType: expandType,
-            entityName: entity.vertex,
-            x: model.x + Math.random() * 500 - 250,
-            y: model.y + Math.random() * 500 - 250
-          }, model)
-          this.graph.addItem('node', entityNodeModel)
-          const edge = new Edge(model, entityNodeModel)
-          this.graph.addItem('edge', edge)
+        this.rightBox.loading = true
+        try {
+          const entities = await queryRelatedEntity(sourceModel, expandType)
+          sourceModel.myData.relatedEntity[expandType].list.push(...entities.list)
+          const entityNodeModels = []
+          const edgeModels = []
+          entities.list.forEach(entity => {
+            const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
+              entityType: expandType,
+              entityName: entity.vertex,
+              x: model.x + Math.random() * 500 - 250,
+              y: model.y + Math.random() * 500 - 250
+            }, model)
+            entityNodeModels.push(entityNodeModel)
+
+            const edge = new Edge(model, entityNodeModel)
+            edgeModels.push(edge)
+          })
+          this.addItems(entityNodeModels, edgeModels)
+          this.setItemsStata(edgeModels, 'mySelected', true)
           this.graph.layout()
-          this.graph.setItemState(this.graph.findById(edge.id), 'mySelected', true)
-        })
-        this.rightBox.node = _.cloneDeep(model)
+          this.rightBox.node = _.cloneDeep(model)
+        } catch (e) {
+          this.$message.error(this.errorMsgHandler(e))
+        } finally {
+          this.rightBox.loading = false
+        }
       } else {
         // TODO 提示超过50
       }
@@ -874,40 +974,78 @@ export default {
       if (node) {
         const nodeModel = node.getModel()
         if (nodeModel.myData.relatedEntity[expandType].list.length < 50) {
-          const entities = await queryRelatedEntity(nodeModel, expandType)
-          nodeModel.myData.relatedEntity[expandType].list.push(...entities.list)
-          const neighbors = node.getNeighbors('target')
-          const listNode = neighbors.find(n => n.getModel().myData.entityType === expandType)
-          let listNodeModel = listNode.getModel()
-          // 如果listNode是tempNode，移除，并新建listNode
-          if (listNodeModel.type === nodeType.tempNode) {
-            // 移除tempNode和tempEdge
-            const tempEdges = listNode.getInEdges()
-            tempEdges.forEach(edge => {
-              this.graph.removeItem(edge)
-            })
-            this.graph.removeItem(listNode)
+          const toAddNodeModels = []
+          const toAddEdgeModels = []
 
-            listNodeModel = new Node(nodeType.listNode, `${nodeModel.id}__${expandType}-list`, { entityType: expandType, x: listNodeModel.x, y: listNodeModel.y }, nodeModel)
-            const edge = new Edge(nodeModel, listNodeModel)
-            this.graph.addItem('node', listNodeModel)
-            this.graph.addItem('edge', edge)
-            this.graph.setItemState(this.graph.findById(edge.id), 'mySelected', true)
-          }
-          entities.list.forEach(entity => {
-            const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
-              entityType: expandType,
-              entityName: entity.vertex,
-              x: listNodeModel.x + Math.random() * 500 - 250,
-              y: listNodeModel.y + Math.random() * 500 - 250
-            }, listNodeModel)
-            this.graph.addItem('node', entityNodeModel)
-            this.graph.addItem('edge', new Edge(listNodeModel, entityNodeModel))
+          this.rightBox.loading = true
+          try {
+            const entities = await queryRelatedEntity(nodeModel, expandType)
+            nodeModel.myData.relatedEntity[expandType].list.push(...entities.list)
+            const neighbors = node.getNeighbors('target')
+            const listNode = neighbors.find(n => n.getModel().myData.entityType === expandType)
+            let listNodeModel = listNode.getModel()
+            let listEdgeModel
+            // 如果listNode是tempNode，移除，并新建listNode
+            if (listNodeModel.type === nodeType.tempNode) {
+              // 移除tempNode和tempEdge
+              const tempEdges = listNode.getInEdges()
+              tempEdges.forEach(edge => {
+                this.graph.removeItem(edge)
+              })
+              this.graph.removeItem(listNode)
+
+              listNodeModel = new Node(nodeType.listNode, `${nodeModel.id}__${expandType}-list`, { entityType: expandType, x: listNodeModel.x, y: listNodeModel.y }, nodeModel)
+              listEdgeModel = new Edge(nodeModel, listNodeModel)
+              toAddNodeModels.push(listNodeModel)
+              toAddEdgeModels.push(listEdgeModel)
+            }
+            entities.list.forEach(entity => {
+              const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
+                entityType: expandType,
+                entityName: entity.vertex,
+                x: listNodeModel.x + Math.random() * 500 - 250,
+                y: listNodeModel.y + Math.random() * 500 - 250
+              }, listNodeModel)
+              toAddNodeModels.push(entityNodeModel)
+              toAddEdgeModels.push(new Edge(listNodeModel, entityNodeModel))
+            })
+            this.addItems(toAddNodeModels, toAddEdgeModels)
+            if (listEdgeModel) {
+              this.graph.setItemState(this.graph.findById(listEdgeModel.id), 'mySelected', true)
+            }
             this.graph.layout()
-          })
-          this.rightBox.node = _.cloneDeep(nodeModel)
+            this.rightBox.node = _.cloneDeep(nodeModel)
+          } catch (e) {
+            this.$message.error(this.errorMsgHandler(e))
+          } finally {
+            this.rightBox.loading = false
+          }
         } else {
           // TODO 提示超过50
+        }
+      }
+    },
+    resize () {
+      const container = document.getElementById('entityGraph')
+      this.graph.changeSize(container.offsetWidth, container.offsetHeight)
+    }
+  },
+  watch: {
+    stackData: {
+      deep: true,
+      handler (n) {
+        if (n) {
+          if (n.undo.length > 0) {
+            document.getElementById('preStep').classList.remove('toolbar--unactivated')
+            console.info(n, document.getElementById('preStep').classList)
+          } else {
+            document.getElementById('preStep').classList.add('toolbar--unactivated')
+          }
+          if (n.redo.length > 0) {
+            document.getElementById('nextStep').classList.remove('toolbar--unactivated')
+          } else {
+            document.getElementById('nextStep').classList.add('toolbar--unactivated')
+          }
         }
       }
     }
@@ -916,6 +1054,11 @@ export default {
     if (this.entity.entityType && this.entity.entityName) {
       await this.init()
     }
+    this.debounceFunc = this.$_.debounce(this.resize, 300)
+    window.addEventListener('resize', this.debounceFunc)
+  },
+  unmounted () {
+    window.removeEventListener('resize', this.debounceFunc)
   },
   setup () {
     const route = useRoute()
@@ -931,7 +1074,7 @@ export default {
       mode: 'detail', // list | detail
       show: true,
       node: null,
-      loading: false
+      loading: true
     })
     return {
       entity,

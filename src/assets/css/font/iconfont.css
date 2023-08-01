@@ -1,8 +1,8 @@
 @font-face {
   font-family: "cn-icon"; /* Project id 2614877 */
-  src: url('iconfont.woff2?t=1689317280458') format('woff2'),
-       url('iconfont.woff?t=1689317280458') format('woff'),
-       url('iconfont.ttf?t=1689317280458') format('truetype');
+  src: url('iconfont.woff2?t=1690879635451') format('woff2'),
+       url('iconfont.woff?t=1690879635451') format('woff'),
+       url('iconfont.ttf?t=1690879635451') format('truetype');
 }
 
 .cn-icon {
@@ -13,36 +13,36 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.cn-icon-next-step:before {
+  content: "\e7fd";
+}
+
+.cn-icon-zoom-out:before {
+  content: "\e808";
+}
+
+.cn-icon-reset:before {
+  content: "\e809";
+}
+
+.cn-icon-to-default:before {
+  content: "\e805";
+}
+
+.cn-icon-pre-step:before {
+  content: "\e806";
+}
+
+.cn-icon-zoom-in:before {
+  content: "\e807";
+}
+
 .cn-icon-add-knowledge-base:before {
   content: "\e802";
 }
 
 .cn-icon-update-knowledge-base:before {
   content: "\e803";
-}
-
-.cn-icon-zoom-out:before {
-  content: "\e7fd";
-}
-
-.cn-icon-to-default:before {
-  content: "\e7fe";
-}
-
-.cn-icon-reset:before {
-  content: "\e7ff";
-}
-
-.cn-icon-next-step:before {
-  content: "\e800";
-}
-
-.cn-icon-pre-step:before {
-  content: "\e801";
-}
-
-.cn-icon-zoom-in:before {
-  content: "\e7f";
 }
 
 .cn-icon-expand-continue:before {
@@ -321,7 +321,7 @@
   content: "\e7ab";
 }
 
-.cn-icon-serach:before {
+.cn-icon-search:before {
   content: "\e7ac";
 }
 

@@ -315,7 +315,7 @@ export default {
         if (e.response.data && e.response.data.message) {
           this.$message.error(e.response.data.message)
         } else {
-          this.$message.error('Something went wrong...')
+          this.$message.error(this.$t('tip.somethingWentWrong'))
         }
       })
     },
@@ -402,7 +402,7 @@ export default {
           if (e.response.data && e.response.data.message) {
             this.$message.error(e.response.data.message)
           } else {
-            this.$message.error('Something went wrong...')
+            this.$message.error(this.$t('tip.somethingWentWrong'))
           }
         }).finally(() => {
           this.toggleLoading(false)

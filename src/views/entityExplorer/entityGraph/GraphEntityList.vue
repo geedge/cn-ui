@@ -114,6 +114,9 @@ export default {
   props: {
     node: {
       type: Object
+    },
+    loading: {
+      type: Boolean
     }
   },
   components: {
