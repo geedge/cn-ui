@@ -195,7 +195,7 @@ export default {
                 shadowBlur: t.positioning ? this.sizes[t.positioning] + 2 : 0
               }
             },
-            name: t.invertTab ? t.legend : this.$t(chartData.i18n),
+            name: t.invertTab ? t.legend : this.$t(chartData.i18n) || chartData.name,
             stack: this.chartData.params.isStack ? (t.legend === this.$t('network.total') ? '' : 'network.total') : '',
             lineStyle: {
               width: 1
