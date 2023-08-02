@@ -182,7 +182,6 @@ export default {
         data = data.reverse()
 
         this.chartOption.series = data.map((t, i) => {
-          console.info(t)
           return {
             type: 'line',
             symbol: 'circle',
@@ -196,7 +195,7 @@ export default {
                 shadowBlur: t.positioning ? this.sizes[t.positioning] + 2 : 0
               }
             },
-            name: t.legend ? t.legend : this.$t(chartData.i18n) || chartData.name,
+            name: t.invertTab ? t.legend : this.$t(chartData.i18n),
             stack: this.chartData.params.isStack ? (t.legend === this.$t('network.total') ? '' : 'network.total') : '',
             lineStyle: {
               width: 1
