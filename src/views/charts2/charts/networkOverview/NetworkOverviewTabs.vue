@@ -28,7 +28,7 @@
                   :class="tableClass"
                   height="100%"
                   empty-text=" "
-                  @sort-change="((column) => {sortChange(column,tab.prop)})"
+                  @sort-change="((col) => {sortChange(col,tab.prop)})"
                   :key="index"
           >
             <template v-for="(item, index) in customTableTitles">
@@ -887,7 +887,7 @@ export default {
         arr.sort((a, b) => {
           const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
           const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
-          if ((_.isNumber(str1)) || str1 === '') {
+          if (!_.isNaN(Number(str1)) || str1 === '') {
             return str2 - str1
           } else {
             let aObj = a[column.prop] ? a[column.prop] : a[index]
@@ -927,7 +927,7 @@ export default {
         arr.sort((a, b) => {
           const str1 = Array.isArray(a[column.prop]) ? a[column.prop][0] : a[column.prop]
           const str2 = Array.isArray(b[column.prop]) ? b[column.prop][0] : b[column.prop]
-          if ((_.isNumber(str1)) || str1 === '') {
+          if (!_.isNaN(Number(str1)) || str1 === '') {
             return str1 - str2
           } else {
             let aObj = a[column.prop] ? a[column.prop] : a[index]
