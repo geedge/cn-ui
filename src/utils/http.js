@@ -13,6 +13,17 @@ axios.interceptors.request.use(config => {
     arr.push(c)
     store.commit('setHttpCancel', arr)
   })
+  // 登录超时，将参数q的+变为空格
+  if (config.params && config.params.q && config.params.q.length > 0) {
+    let q = config.params.q
+    if (q.indexOf('+') > -1) {
+      for (let i = 0; i < q.length; i++) {
+        if (q[i] === '+') {
+          q = q.replace('+', ' ')
+        }
+      }
+    }
+  }
 
   config.cancelToken = cancelToken
   if (token) {
