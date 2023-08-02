@@ -12,82 +12,67 @@
           :size="400"
           :with-header="false"
           destroy-on-close>
-        <ip-list
-            v-if="rightBox.mode === 'ipList'"
-            :entity="entity"
+        <graph-entity-list
+            v-if="rightBox.mode === 'list'"
+            :node="rightBox.node"
+            :loading="rightBox.loading"
             @expandList="expandList"
             @closeBlock="onCloseBlock"
-            @mouseenter="onMouseenter"
-            @expandDetail="onExpandDetail">
-        </ip-list>
-        <domain-list
-            v-else-if="rightBox.mode === 'domainList'"
-            :entity="entity"
-            @expandList="expandList"
-            @mouseenter="onMouseenter"
-            @closeBlock="onCloseBlock">
-        </domain-list>
-        <app-list
-            v-else-if="rightBox.mode === 'appList'"
-            :entity="entity"
-            @expandList="expandList"
-            @mouseenter="onMouseenter"
-            @closeBlock="onCloseBlock">
-        </app-list>
-        <graph-detail
-            v-else-if="rightBox.mode === 'appDetail' || rightBox.mode === 'ipDetail' || rightBox.mode === 'domainDetail'"
-            :entity="entity"
+        >
+        </graph-entity-list>
+        <graph-entity-detail
+            v-else-if="rightBox.mode === 'detail'"
+            :node="rightBox.node"
+            :loading="rightBox.loading"
             @expandDetailList="expandDetailList"
-            @closeBlock="onCloseBlock">
-        </graph-detail>
+            @closeBlock="onCloseBlock"
+        >
+        </graph-entity-detail>
       </el-drawer>
     </div>
   </div>
 </template>
 
 <script>
-import IpList from '@/views/entityExplorer/entityGraphDetail/IpList'
-import GraphDetail from '@/views/entityExplorer/entityGraphDetail/GraphDetail'
-import DomainList from '@/views/entityExplorer/entityGraphDetail/DomainList'
-import AppList from '@/views/entityExplorer/entityGraphDetail/AppList'
+import GraphEntityList from '@/views/entityExplorer/entityGraph/GraphEntityList'
+import GraphEntityDetail from '@/views/entityExplorer/entityGraph/GraphEntityDetail'
 import { useRoute } from 'vue-router'
 import { ref, shallowRef } from 'vue'
 import _ from 'lodash'
-import { api } from '@/utils/api'
-import axios from 'axios'
 import G6, { Algorithm } from '@antv/g6'
-import { entityDetailTags } from '@/utils/constants'
-import { ElMessage } from 'element-plus'
+import Node, { nodeType, queryRelatedEntity } from './entityGraph/node'
+import Edge from './entityGraph/edge'
 
 export default {
   name: 'EntityRelationship',
   components: {
-    IpList,
-    GraphDetail,
-    DomainList,
-    AppList
+    GraphEntityList,
+    GraphEntityDetail
   },
   data () {
     return {
+      debounceFunc: null,
       chartOption: {
         container: 'entityGraph',
         layout: {
           type: 'force',
           preventOverlap: true,
           linkDistance: (d) => {
-            if (d.target.nodeType && d.target.nodeType === 'primary') {
+            if (d.target.type === nodeType.rootNode || d.target.type === nodeType.listNode) {
               return 200
             }
             return 80
           },
           nodeStrength: (d) => {
-            if (d.nodeType && d.nodeType === 'primary') {
+            if (d.type === nodeType.rootNode || d.type === nodeType.listNode) {
               return -100
+            } else if (d.type === nodeType.tempNode) {
+              return -300
             }
             return -10
           },
           edgeStrength: (d) => {
-            if (d.target.nodeType && d.target.nodeType === 'primary') {
+            if (d.target.type === nodeType.rootNode || d.target.type === nodeType.listNode) {
               return 0.1
             }
             return 0.7
@@ -96,1030 +81,738 @@ export default {
         modes: {
           default: ['drag-canvas', 'drag-nodes', 'click-select', 'zoom-canvas']
         }
-      }
+      },
+      /* 自己实现stack操作 */
+      stackData: {
+        undo: [], // 后退
+        redo: [] // 前进
+      },
+      initialData: null // 初始化数据，用于重置
     }
   },
   methods: {
     async init () {
-      const _this = this
+      this.registerElements() // 注册自定义node
       const tooltip = this.buildTooltip() // tooltip组件
-      // const toolbar = this.buildToolbar() // 工具栏组装件
-      this.chartOption.plugins = [tooltip]
+      const toolbar = this.buildToolbar() // 工具栏组装件
+      this.chartOption.plugins = [tooltip, toolbar] // 注册组件
       this.graph = new G6.Graph(this.chartOption)
-      const rootNode = await this.generateRootNode()
-      const secondLevelNodes = await this.generateSecondLevelNodes(rootNode)
-      const secondHalfLevelNodes = await this.generateHalfLevelNodes(secondLevelNodes)
-      this.updateRelatedCount(rootNode, rootNode.data.childNodes)
-      this.graphData.nodes = [rootNode, ...secondLevelNodes, ...secondHalfLevelNodes]
-      const rootEdges = this.generateEdges(rootNode)
-      const secondEdges = this.generateEdges(secondLevelNodes)
-      this.graphData.edges = [...rootEdges, ...secondEdges]
-      // console.info(this.graphData)
-      this.graph.data(this.graphData)
-      this.graph.render()
-      this.graph.on('node:dragstart', function (e) {
+      try {
+        const initialData = await this.generateInitialData() // 备份初始数据
+        this.initialData = _.cloneDeep(initialData) // 初始化数据
+        this.graph.data(initialData)
+        this.graph.render()
+        const rootNode = this.graph.findById(this.entity.entityName)
+        this.bindEvents() // 绑定事件
+        this.graph.emit('node:click', { item: rootNode, target: rootNode.getKeyShape() }) // 手动触发rootNode的点击事件
+      } catch (e) {
+        this.$message.error(this.errorMsgHandler(e))
+      } finally {
+        this.rightBox.loading = false
+      }
+    },
+    registerElements () {
+      const _this = this
+      G6.registerNode(
+        nodeType.rootNode,
+        {
+          draw (cfg, group) {
+            group.addShape('circle', {
+              name: 'rootSelectedShadow',
+              attrs: {
+                r: 25, // selected时38.5
+                fill: getRootNodeStyle(cfg.myData.entityType).selectedShadowColor
+              }
+            })
+            group.addShape('circle', {
+              name: 'rootShadow',
+              attrs: {
+                r: 31.5,
+                fill: getRootNodeStyle(cfg.myData.entityType).shadowColor
+              }
+            })
+            const node = group.addShape('circle', {
+              name: 'rootInner',
+              attrs: {
+                r: 26,
+                fx: cfg.fx,
+                fy: cfg.fy,
+                fill: '#FFFFFF',
+                stroke: getRootNodeStyle(cfg.myData.entityType).borderColor,
+                lineWidth: 1
+              }
+            })
+            group.addShape('image', {
+              attrs: {
+                x: -getRootNodeStyle(cfg.myData.entityType).iconWidth / 2,
+                y: -getRootNodeStyle(cfg.myData.entityType).iconHeight / 2,
+                height: getRootNodeStyle(cfg.myData.entityType).iconHeight,
+                width: getRootNodeStyle(cfg.myData.entityType).iconWidth,
+                img: getIconUrl(cfg.myData.entityType, true, true)
+              },
+              name: 'rootIcon',
+              draggable: true
+            })
+            // 为label建一个box，避免鼠标事件中断
+            group.addShape('rect', {
+              name: 'rootLabelBox',
+              attrs: {
+                width: 64,
+                height: 40,
+                x: -32,
+                y: 10,
+                fill: 'transparent'
+              }
+            })
+            group.addShape('text', {
+              attrs: {
+                text: cfg.label,
+                x: 0,
+                y: 42,
+                fontSize: 12,
+                textAlign: 'center',
+                textBaseline: 'middle',
+                fill: '#353636'
+              },
+              name: 'rootLabel'
+            })
+            return node
+          },
+          setState (name, value, node) {
+            const group = node.getContainer()
+            const model = node.getModel()
+            const selectedShadowShape = group.get('children')[0]
+            const shadowShape = group.get('children')[1]
+            if (name === 'hover') {
+              // 鼠标悬浮时，若不处于selected状态，才继续处理
+              if (!node.hasState('mySelected')) {
+                // hover时，加深shadow的颜色
+                if (value) {
+                  shadowShape.attr('fill', getRootNodeStyle(model.myData.entityType).hoveredShadowColor)
+                } else {
+                  shadowShape.attr('fill', getRootNodeStyle(model.myData.entityType).shadowColor)
+                }
+              }
+            } else if (name === 'mySelected') {
+              // select事件，取消自身hover状态，取消其他node和edge的高亮状态，高亮自身和自身相关的edge
+              node.setState('hover', false)
+              // 变更样式
+              if (value) {
+                // 取消其他高亮
+                const nodes = _this.graph.getNodes()
+                const edges = _this.graph.getEdges()
+                nodes.forEach(n => {
+                  if (n.getModel().id !== node.getModel().id) {
+                    n.setState('mySelected', false)
+                  }
+                })
+                edges.forEach(n => {
+                  n.setState('mySelected', false)
+                })
+                // 高亮自身
+                shadowShape.attr('fill', getRootNodeStyle(model.myData.entityType).hoveredShadowColor)
+                selectedShadowShape.attr('r', 38.5)
+                // 高亮自身相关的edge
+                const aboutEdges = node.getEdges()
+                aboutEdges.forEach(n => {
+                  n.setState('mySelected', true)
+                })
+              } else {
+                shadowShape.attr('fill', getRootNodeStyle(model.myData.entityType).shadowColor)
+                selectedShadowShape.attr('r', 25)
+              }
+            }
+          }
+        },
+        'single-node'
+      )
+      G6.registerNode(
+        nodeType.listNode,
+        {
+          draw (cfg, group) {
+            group.addShape('circle', {
+              name: 'listShadow',
+              attrs: {
+                r: 20, // selected时26.5
+                x: 0,
+                y: 0,
+                fill: getListNodeStyle(cfg.myData.entityType).hoveredShadowColor
+              }
+            })
+            const node = group.addShape('circle', {
+              name: 'listInner',
+              attrs: {
+                r: 21,
+                fx: cfg.fx,
+                fy: cfg.fy,
+                fill: '#FFFFFF',
+                stroke: getListNodeStyle(cfg.myData.entityType).borderColor,
+                lineWidth: 1
+              }
+            })
+            group.addShape('image', {
+              attrs: {
+                x: -getListNodeStyle(cfg.myData.entityType).iconWidth / 2,
+                y: -getListNodeStyle(cfg.myData.entityType).iconHeight / 2,
+                height: getListNodeStyle(cfg.myData.entityType).iconHeight,
+                width: getListNodeStyle(cfg.myData.entityType).iconWidth,
+                img: getIconUrl(cfg.myData.entityType, false, false)
+              },
+              name: 'listIcon',
+              draggable: true
+            })
+            // 为label建一个box，避免鼠标事件中断
+            group.addShape('rect', {
+              name: 'rootLabelBox',
+              attrs: {
+                width: 46,
+                height: 30,
+                x: -23,
+                y: 12,
+                fill: 'transparent'
+              }
+            })
+            group.addShape('text', {
+              attrs: {
+                text: cfg.label,
+                x: 0,
+                y: 34,
+                fontSize: 12,
+                textAlign: 'center',
+                textBaseline: 'middle',
+                fill: '#353636'
+              },
+              name: 'listLabel'
+            })
+            return node
+          },
+          setState (name, value, node) {
+            const group = node.getContainer()
+            const model = node.getModel()
+            const shadowShape = group.get('children')[0]
+            const innerShape = group.get('children')[1]
+            if (name === 'hover') {
+              // 鼠标悬浮时，若不处于selected状态，才继续处理
+              if (!node.hasState('mySelected')) {
+                // hover时，出现shadow
+                shadowShape.attr('fill', getListNodeStyle(model.myData.entityType).hoveredShadowColor)
+                if (value) {
+                  shadowShape.attr('r', 26.5)
+                } else {
+                  shadowShape.attr('r', 20)
+                }
+              }
+            } else if (name === 'mySelected') {
+              // select事件，取消自身hover状态，取消其他node和edge的高亮状态，高亮自身和自身相关的edge
+              node.setState('hover', false)
+              if (value) {
+                // 取消其他高亮
+                const nodes = _this.graph.getNodes()
+                const edges = _this.graph.getEdges()
+                nodes.forEach(n => {
+                  if (n.getModel().id !== node.getModel().id) {
+                    n.setState('mySelected', false)
+                  }
+                })
+                edges.forEach(n => {
+                  n.setState('mySelected', false)
+                })
+                // 高亮自身
+                shadowShape.attr('fill', getListNodeStyle(model.myData.entityType).selectedShadowColor)
+                shadowShape.attr('r', 26.5)
+                innerShape.attr('stroke', getListNodeStyle(model.myData.entityType).selectedBorderColor)
+                // 高亮自身相关的edge
+                const aboutEdges = node.getEdges()
+                aboutEdges.forEach(n => {
+                  n.setState('mySelected', true)
+                })
+              } else {
+                shadowShape.attr('fill', getListNodeStyle(model.myData.entityType).hoveredShadowColor)
+                shadowShape.attr('r', 20)
+                innerShape.attr('stroke', getListNodeStyle(model.myData.entityType).borderColor)
+              }
+            }
+          }
+        },
+        'single-node'
+      )
+      G6.registerNode(
+        nodeType.entityNode,
+        {
+          draw (cfg, group) {
+            group.addShape('circle', {
+              name: 'entityShadow',
+              attrs: {
+                r: 18,
+                x: 0,
+                y: 0,
+                fill: 'transparent'
+              }
+            })
+            return group.addShape('image', {
+              attrs: {
+                x: -getEntityNodeStyle(cfg.myData.entityType).iconWidth / 2,
+                y: -getEntityNodeStyle(cfg.myData.entityType).iconHeight / 2,
+                height: getEntityNodeStyle(cfg.myData.entityType).iconHeight,
+                width: getEntityNodeStyle(cfg.myData.entityType).iconWidth,
+                img: getIconUrl(cfg.myData.entityType, true, false)
+              },
+              name: 'entityIcon'
+            })
+          },
+          setState (name, value, node) {
+            const group = node.getContainer()
+            const model = node.getModel()
+            const shadowShape = group.get('children')[0]
+            if (name === 'mySelected') {
+              // select事件，取消自身hover状态，取消其他node和edge的高亮状态，高亮自身和自身相关的edge
+              node.setState('hover', false)
+              if (value) {
+                // 取消其他高亮
+                const nodes = _this.graph.getNodes()
+                const edges = _this.graph.getEdges()
+                nodes.forEach(n => {
+                  if (n.getModel().id !== node.getModel().id) {
+                    n.setState('mySelected', false)
+                  }
+                })
+                edges.forEach(n => {
+                  n.setState('mySelected', false)
+                })
+                // 高亮自身
+                shadowShape.attr('fill', getEntityNodeStyle(model.myData.entityType).selectedShadowColor)
+                // 高亮自身相关的edge
+                const aboutEdges = node.getEdges()
+                aboutEdges.forEach(n => {
+                  n.setState('mySelected', true)
+                })
+              } else {
+                shadowShape.attr('fill', 'transparent')
+              }
+            }
+          }
+        },
+        'single-node'
+      )
+      G6.registerNode(
+        nodeType.tempNode,
+        {
+          draw (cfg, group) {
+            group.addShape('text', {
+              attrs: {
+                text: cfg.label,
+                x: 0,
+                y: 22,
+                fontSize: 12,
+                textAlign: 'center',
+                textBaseline: 'middle',
+                fill: '#353636',
+                opacity: 0.7
+              },
+              name: 'tempLabel'
+            })
+            return group.addShape('image', {
+              attrs: {
+                x: -getListNodeStyle(cfg.myData.entityType).iconWidth / 2,
+                y: -getListNodeStyle(cfg.myData.entityType).iconHeight / 2,
+                height: getListNodeStyle(cfg.myData.entityType).iconHeight,
+                width: getListNodeStyle(cfg.myData.entityType).iconWidth,
+                img: getIconUrl(cfg.myData.entityType, false, false),
+                opacity: 0.7
+              },
+              name: 'tempIcon'
+            })
+          },
+          setState (name, value, node) {
+            // 重写setState，避免鼠标事件导致重新加载图片
+          }
+        },
+        'single-node'
+      )
+      function getRootNodeStyle (entityType) {
+        switch (entityType) {
+          case 'ip': {
+            return {
+              iconWidth: 26,
+              iconHeight: 23,
+              borderColor: 'rgba(126,159,84,1)',
+              shadowColor: 'rgba(126,159,84,0.21)',
+              hoveredShadowColor: 'rgba(126,159,84,0.36)',
+              selectedShadowColor: 'rgba(126,159,84,0.1)'
+            }
+          }
+          case 'domain': {
+            return {
+              iconWidth: 28,
+              iconHeight: 24,
+              borderColor: 'rgba(56,172,210,1)',
+              shadowColor: 'rgba(56,172,210,0.21)',
+              hoveredShadowColor: 'rgba(56,172,210,0.36)',
+              selectedShadowColor: 'rgba(56,172,210,0.1)'
+            }
+          }
+          case 'app': {
+            return {
+              iconWidth: 24,
+              iconHeight: 26,
+              borderColor: 'rgba(229,162,25,1)',
+              shadowColor: 'rgba(229,162,25,0.21)',
+              hoveredShadowColor: 'rgba(229,162,25,0.36)',
+              selectedShadowColor: 'rgba(229,162,25,0.1)'
+            }
+          }
+        }
+        return {
+          iconWidth: 26,
+          iconHeight: 23,
+          borderColor: 'rgba(126,159,84,1)',
+          shadowColor: 'rgba(126,159,84,0.21)',
+          hoveredShadowColor: 'rgba(126,159,84,0.36)',
+          selectedShadowColor: 'rgba(126,159,84,0.1)'
+        }
+      }
+      function getListNodeStyle (entityType) {
+        switch (entityType) {
+          case 'ip': {
+            return {
+              iconWidth: 24,
+              iconHeight: 21,
+              borderColor: 'rgba(119,131,145,0.6)',
+              selectedBorderColor: 'rgba(126,159,84,1)',
+              hoveredShadowColor: 'rgba(151,151,151,0.21)',
+              selectedShadowColor: 'rgba(126,159,84,0.21)'
+            }
+          }
+          case 'domain': {
+            return {
+              iconWidth: 24,
+              iconHeight: 24,
+              borderColor: 'rgba(119,131,145,0.6)',
+              selectedBorderColor: 'rgba(56,172,210,1)',
+              hoveredShadowColor: 'rgba(151,151,151,0.21)',
+              selectedShadowColor: 'rgba(56,172,210,0.21)'
+            }
+          }
+          case 'app': {
+            return {
+              iconWidth: 22,
+              iconHeight: 24,
+              borderColor: 'rgba(119,131,145,0.6)',
+              selectedBorderColor: 'rgba(229,162,25,1)',
+              hoveredShadowColor: 'rgba(151,151,151,0.21)',
+              selectedShadowColor: 'rgba(229,162,25,0.21)'
+            }
+          }
+        }
+        return {
+          iconWidth: 24,
+          iconHeight: 21,
+          borderColor: 'rgba(119,131,145,0.6)',
+          selectedBorderColor: 'rgba(126,159,84,1)',
+          hoveredShadowColor: 'rgba(151,151,151,0.21)',
+          selectedShadowColor: 'rgba(126,159,84,0.21)'
+        }
+      }
+      function getEntityNodeStyle (entityType) {
+        switch (entityType) {
+          case 'ip': {
+            return {
+              iconWidth: 22,
+              iconHeight: 20,
+              selectedShadowColor: 'rgba(126,159,84,0.1)'
+            }
+          }
+          case 'domain': {
+            return {
+              iconWidth: 22,
+              iconHeight: 22,
+              selectedShadowColor: 'rgba(56,172,210,0.1)'
+            }
+          }
+          case 'app': {
+            return {
+              iconWidth: 21,
+              iconHeight: 24,
+              selectedShadowColor: 'rgba(229,162,25,0.1)'
+            }
+          }
+        }
+        return {
+          iconWidth: 22,
+          iconHeight: 20,
+          borderColor: 'rgba(119,131,145,1)',
+          selectedBorderColor: 'rgba(126,159,84,1)',
+          hoveredShadowColor: 'rgba(151,151,151,0.21)',
+          selectedShadowColor: 'rgba(126,159,84,0.1)'
+        }
+      }
+      function getIconUrl (entityType, colored, isRoot) {
+        let suffix
+        if (entityType === 'domain' && isRoot) {
+          suffix = '-colored2'
+        } else {
+          suffix = colored ? '-colored' : ''
+        }
+        return require(`@/assets/img/entity-symbol2/${entityType}${suffix}.svg`)
+      }
+    },
+    bindEvents () {
+      const _this = this
+      this.graph.on('node:dragstart', (e) => {
         _this.graph.layout()
-        refreshDragedNodePosition(e)
+        refreshDraggedNodePosition(e)
       })
       this.graph.on('node:drag', function (e) {
-        refreshDragedNodePosition(e)
+        refreshDraggedNodePosition(e)
       })
       this.graph.on('node:dragend', function (e) {
         e.item.get('model').fx = null
         e.item.get('model').fy = null
       })
       this.graph.on('node:click', async function (e) {
-        const node = e.item.get('model')
-        // 点击后，若不是临时节点，且右侧没弹框，就弹出弹框。若是临时节点，在另一处逻辑中处理
-        if (!node.data.isTemp) {
-          if (node.nodeType && (node.nodeType === 'root' || node.nodeType === 'entity')) {
-            _this.rightBox.mode = `${node.data.type || _this.entity.entityType}Detail`
-          } else if (node.nodeType && node.nodeType === 'primary') {
-            _this.rightBox.mode = `${node.data.type}List`
-          }
-          if (!_this.rightBox.show) {
-            _this.rightBox.show = true
-          }
-        }
-        // 先清除所有temp node和temp edge
-        // 若是primary node，在弹框中显示相关list数据，且高亮node和target=node的edge
-        // 若是entity node，查数量，生成temp edge关联的、除已有的primary node外的temp node。并在弹框中显示detail，且高亮node和target=node的edge
-        /* 若是temp node，增加primary node，并高亮此node.
-        *  然后判断primary node的level，若小于5，查询其关联的entity node并渲染，并高亮target=node和source=node的edge。
-        * 若等于5，不渲染下级node并提示用户。
-        * */
-        let change = false // 图数据是否有变更，需要刷新
-        // 清除temp node和temp edge
-        const toDeleteTempNodeIds = []
-        const toDeleteTempEdgeIds = []
-        _this.graphData.nodes = _this.graphData.nodes.filter(n => {
-          if (n.data && !n.data.isTemp) {
-            return true
-          }
-          toDeleteTempNodeIds.push(n.id)
-          // change = true
-          return false
-        })
-        _this.graphData.edges = _this.graphData.edges.filter(e => {
-          if (e.data && !e.data.isTemp) {
-            return true
-          }
-          toDeleteTempEdgeIds.push(e.id)
-          // change = true
-          return false
-        })
-        toDeleteTempNodeIds.forEach(n => {
-          _this.graph.removeItem(n)
-        })
-        toDeleteTempEdgeIds.forEach(n => {
-          _this.graph.removeItem(n)
-        })
-
-        if (node.nodeType === 'root') { // 点击了root
-          _this.entity = {
-            entityName: node.id,
-            entityType: _this.entity.entityType,
-            name: node.id,
-            tags: node.data.tags,
-            type: node.data.type,
-            detailData: node.data.data,
-            relatedEntityCount: node.data.relatedEntityCount,
-            isSubdomain: node.data.isSubdomain || false,
-            loading: false
-          }
-          /* const relatedEntityCount = await _this.queryRelatedEntityCount(_this.entity.entityType, node.id)
-          _this.entity = {
-            ..._this.entity,
-            relatedEntityCount: _this.handleRelatedEntityCount(node, relatedEntityCount),
-            loading: false
-          }
-          // 更新childNodes的label的数值
-          if (node.data.childNodes) {
-            node.data.childNodes.forEach(n => {
-              switch (n.data.type) {
-                case 'ip': {
-                  n.data.count = relatedEntityCount.ipCount
-                  n.label = _this.$t('entities.graph.resolveIp') + `(${n.data.count})`
-                  break
-                }
-                case 'domain': {
-                  if (n.data.isSubdomain) {
-                    n.data.count = relatedEntityCount.subDomainCount
-                    n.label = _this.$t('entities.subdomain') + `(${n.data.count})`
-                  } else {
-                    n.data.count = relatedEntityCount.domainCount
-                    n.label = _this.$t('entity.graph.resolvedDomain') + `(${n.data.count})`
+        const node = e.item
+        const nodeModel = node.get('model')
+        if (nodeModel.type !== 'tempNode') {
+          _this.rightBox.show = true
+          node.setState('mySelected', true)
+          _this.cleanTempNodesAndTempEdges()
+          // 点击entityNode，查询数据，并根据数据生成tempNode
+          if (nodeModel.type === nodeType.entityNode) {
+            _this.rightBox.loading = true
+            try {
+              // 若已查过数据，不重复查询
+              if (!nodeModel.myData.relatedEntity) {
+                await nodeModel.queryDetailData()
+              }
+              let change = false
+              Object.keys(nodeModel.myData.relatedEntity).forEach(k => {
+                if (nodeModel.myData.relatedEntity[k].total) {
+                  // 若已有同级同类型的listNode，不生成此tempNode
+                  const neighbors = _this.graph.getNeighbors(nodeModel.id, 'target')
+                  const hasListNode = neighbors.some(b => b.get('model').myData.entityType === k)
+                  if (!hasListNode) {
+                    change = true
+                    const tempNode = new Node(
+                      nodeType.tempNode,
+                      `${nodeModel.id}__${k}__temp`,
+                      {
+                        entityType: k,
+                        ...generateTempNodeCoordinate(nodeModel.sourceNode, e)
+                      },
+                      nodeModel
+                    )
+                    const tempEdge = new Edge(nodeModel, tempNode, 'temp')
+                    _this.graph.addItem('node', tempNode)
+                    _this.graph.addItem('edge', tempEdge)
                   }
-                  break
                 }
-                case 'app': {
-                  n.data.count = relatedEntityCount.appCount
-                  n.label = _this.$t('entities.tab.relatedApp') + `(${n.data.count})`
-                  break
-                }
-              }
-              _this.graph.refreshItem(n.id)
-            })
-          } */
-        } else if (node.nodeType === 'primary') { // 点击了primary
-          _this.entity = {
-            entityType: _this.entity.entityType,
-            entityName: _this.entity.entityName,
-            listData: node.data.loaded,
-            count: node.data.count,
-            isSubdomain: node.data.isSubdomain || false,
-            sourceType: node.data.sourceType,
-            sourceName: node.data.sourceName,
-            type: node.data.type,
-            nodeId: node.id,
-            loading: false
-          }
-          /* _this.entity.loading = true
-          const queryRelatedEntityCount = await _this.queryRelatedEntityCount(node.data.sourceType, node.data.sourceName)
-          const sourceNode = _this.graphData.nodes.find(n => n.id === node.data.sourceName)
-          _this.handleRelatedEntityCount(sourceNode, queryRelatedEntityCount)
-          _this.entity = {
-            entityType: _this.entity.entityType,
-            entityName: _this.entity.entityName,
-            listData: node.data.loaded,
-            count: node.data.count,
-            isSubdomain: node.data.isSubdomain || false,
-            sourceType: node.data.sourceType,
-            sourceName: node.data.sourceName,
-            type: node.data.type,
-            nodeId: node.id,
-            loading: false
-          }
-          switch (node.data.type) {
-            case 'ip': {
-              node.data.count = queryRelatedEntityCount.ipCount
-              node.label = _this.$t('entities.graph.resolveIp') + `(${node.data.count})`
-              break
+              })
+              change && _this.graph.layout()
+              _this.rightBox.node = _.cloneDeep(nodeModel)
+              _this.rightBox.mode = 'detail'
+            } catch (e) {
+              _this.$message.error(_this.errorMsgHandler(e))
+            } finally {
+              _this.rightBox.loading = false
             }
-            case 'domain': {
-              if (node.data.isSubdomain) {
-                node.data.count = queryRelatedEntityCount.subDomainCount
-                node.label = _this.$t('entities.subdomain') + `(${node.data.count})`
-              } else {
-                node.data.count = queryRelatedEntityCount.domainCount
-                node.label = _this.$t('entity.graph.resolvedDomain') + `(${node.data.count})`
-              }
-              break
-            }
-            case 'app': {
-              node.data.count = queryRelatedEntityCount.appCount
-              node.label = _this.$t('entities.tab.relatedApp') + `(${node.data.count})`
-              break
-            }
+          } else if (nodeModel.type === nodeType.listNode) {
+            _this.rightBox.node = _.cloneDeep(nodeModel)
+            _this.rightBox.mode = 'list'
+          } else if (nodeModel.type === nodeType.rootNode) {
+            _this.rightBox.node = _.cloneDeep(nodeModel)
+            _this.rightBox.mode = 'detail'
           }
-          _this.graph.refreshItem(node.id) */
-          // TODO 高亮
-        } else if (node.nodeType === 'entity') {
-          // 点击节点时，看是否已查询过related count，已查过则不再查
-          if (!node.data.childNodes) {
-            _this.entity.loading = true
-            const relatedEntityCount = await _this.queryRelatedEntityCount(node.data.type, node.id)
-            node.data.relatedEntityCount = _this.handleRelatedEntityCount(node, relatedEntityCount)
-          }
-          _this.entity = {
-            entityType: _this.entity.entityType,
-            entityName: _this.entity.entityName,
-            relatedEntityCount: node.data.relatedEntityCount,
-            detailData: node.data.data,
-            type: node.data.type,
-            isSubdomain: false,
-            name: node.id,
-            loading: false
-          }
-          /* _this.entity.loading = true
-          const relatedEntityCount = await _this.queryRelatedEntityCount(node.data.type, node.id)
-          // 赋值总数和已拓展数。entity node可从其childNodes取到已拓展数
-          _this.entity = {
-            entityType: _this.entity.entityType,
-            entityName: _this.entity.entityName,
-            relatedEntityCount: _this.handleRelatedEntityCount(node, relatedEntityCount),
-            detailData: node.data.data,
-            type: node.data.type,
-            isSubdomain: false,
-            name: node.id,
-            loading: false
-          }
-          // 更新childNodes的label的数值
-          if (node.data.childNodes) {
-            node.data.childNodes.forEach(n => {
-              switch (n.data.type) {
-                case 'ip': {
-                  n.data.count = relatedEntityCount.ipCount
-                  n.label = _this.$t('entities.graph.resolveIp') + `(${n.data.count})`
-                  break
-                }
-                case 'domain': {
-                  if (n.data.isSubdomain) {
-                    n.data.count = relatedEntityCount.subDomainCount
-                    n.label = _this.$t('entities.subdomain') + `(${n.data.count})`
-                  } else {
-                    n.data.count = relatedEntityCount.domainCount
-                    n.label = _this.$t('entity.graph.resolvedDomain') + `(${n.data.count})`
-                  }
-                  break
-                }
-                case 'app': {
-                  n.data.count = relatedEntityCount.appCount
-                  n.label = _this.$t('entities.tab.relatedApp') + `(${n.data.count})`
-                  break
-                }
-              }
-              _this.graph.refreshItem(n.id)
-            })
-          } */
-          const { tempNodes, tempEdges } = _this.generateTempNodesAndEdges(node, node.data.relatedEntityCount)
-          if (tempNodes.length > 0) {
-            change = true
-            _this.addNodes(tempNodes)
-          }
-          if (tempEdges.length > 0) {
-            change = true
-            _this.addEdges(tempEdges)
-          }
-          // TODO 高亮
-        } else if (node.nodeType === 'temp') {
-          change = true
-          // 根据temp node生成primary node
-          const primaryNode = _this.generatePrimaryNode({
-            id: `${node.data.type}-${node.data.sourceName}`,
-            label: node.label + `(${node.data.count})`,
-            data: {
-              sourceName: node.data.sourceName,
-              sourceType: node.data.sourceType,
-              type: node.data.type,
-              isSubdomain: node.data.isSubdomain || false,
-              count: node.data.count
-            }
-          })
-          const sourceNode = _this.graphData.nodes.find(n => n.id === node.data.sourceName)
-          // 新node放入source node的childNodes中
-          if (!sourceNode.data.childNodes) {
-            sourceNode.data.childNodes = []
-          }
-          sourceNode.data.childNodes.push(primaryNode)
-          _this.addNodes([primaryNode])
-
-          const edge = _this.generateEdges(sourceNode, primaryNode)
-          _this.addEdges(edge)
-          // 判断primary层级，若大于等于5，则不继续拓展entity node，并给用户提示。否则拓展entity node
-          const level = _this.getNodeLevel(primaryNode.id)
-          const entityNodes = []
+        } else {
+          // 点击tempNode，根据source生成listNode和entityNode以及对应的edge。查完entityNode的接口再删除临时node和edge。
+          // 若已达第六层，则只生成listNode，不再展开entityNode
+          const nodes = []
           const edges = []
-          if (level < 9) {
-            _this.entity.loading = true
-            const queryEntityNodes = await _this.generateHalfLevelNodes(primaryNode)
-            _this.entity.loading = false
-            _this.updateRelatedCount(sourceNode, [primaryNode])
-            entityNodes.push(...queryEntityNodes)
-            edges.push(..._this.generateEdges(primaryNode))
+          const listNode = new Node(
+            nodeType.listNode,
+            `${nodeModel.sourceNode.id}__${nodeModel.myData.entityType}-list`,
+            {
+              entityType: nodeModel.myData.entityType,
+              x: nodeModel.x,
+              y: nodeModel.y
+            },
+            nodeModel.sourceNode
+          )
+          nodes.push(listNode)
+          edges.push(new Edge(nodeModel.sourceNode, listNode))
 
-            // TODO 高亮
+          // 判断listNode的sourceNode层级，若大于等于10（即第6层listNode），则不继续拓展entity node，并给用户提示。否则拓展entity node
+          const level = _this.getNodeLevel(listNode.sourceNode.id)
+          if (level < 10) {
+            _this.rightBox.loading = true
+            try {
+              const entities = await queryRelatedEntity(nodeModel.sourceNode, listNode.myData.entityType)
+              nodeModel.sourceNode.myData.relatedEntity[listNode.myData.entityType].list.push(...entities.list)
+              entities.list.forEach(entity => {
+                const entityNode = new Node(nodeType.entityNode, entity.vertex, {
+                  entityType: listNode.myData.entityType,
+                  entityName: entity.vertex,
+                  x: e.x + Math.random() * 100 - 50,
+                  y: e.y + Math.random() * 100 - 50
+                }, listNode)
+                nodes.push(entityNode)
+                edges.push(new Edge(listNode, entityNode))
+              })
+            } catch (e) {
+              _this.$message.error(_this.errorMsgHandler(e))
+            } finally {
+              _this.rightBox.loading = false
+            }
           } else {
-            this.$message.error(this.$t('entities.graph.expandedLevelMaxLimit'))
+            this.$message.warning(this.$t('tip.maxExpandDepth'))
           }
-          _this.addNodes(entityNodes)
-          _this.addEdges(edges)
-        }
-        if (change) {
-          _this.graph.changeData(_this.graphData)
+          _this.addItems(nodes, edges)
+          _this.cleanTempNodesAndTempEdges()
+          _this.graph.layout()
+          // 手动高亮listNode
+          const _listNode = _this.graph.findById(listNode.id)
+          _this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() })
         }
       })
-      function refreshDragedNodePosition (e) {
+      this.graph.on('node:mouseenter', function (e) {
+        e.item.setState('hover', true)
+      })
+      this.graph.on('node:mouseleave', function (e) {
+        e.item.setState('hover', false)
+      })
+      function refreshDraggedNodePosition (e) {
         const model = e.item.get('model')
         model.fx = e.x
         model.fy = e.y
       }
-    },
-    generateIconUrl (entityType, colored, isRoot) {
-      let subfix = ''
-      if (entityType === 'domain' && isRoot) {
-        subfix = '-colored2'
-      } else {
-        subfix = colored ? '-colored' : ''
-      }
-      return require(`@/assets/img/entity-symbol2/${entityType}${subfix}.svg`)
-    },
-    async generateRootNode () {
-      const basicInfo = await this.queryEntityBasicInfo(this.entity.entityType, this.entity.entityName)
-      const tags = await this.queryTags(this.entity.entityType, this.entity.entityName)
-      let _tags = []
-      Object.keys(tags).forEach(k => {
-        if (k !== 'userDefinedTags' && tags[k]) {
-          Object.keys(tags[k]).forEach(k2 => {
-            const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
-            if (find) {
-              _tags.push({ key: k2, value: this.tagValueHandler(k, k2, tags[k][k2]), type: find.type })
-            }
-          })
-        }
-      })
-      if (_.isArray(tags.userDefinedTags)) {
-        _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
-      }
-      this.entity = {
-        ...this.entity,
-        detailData: {
-          vertex: this.entity.entityName,
-          detail: basicInfo
-        },
-        tags: _tags,
-        type: this.entity.entityType,
-        name: this.entity.entityName
-      }
-
-      let borderColor = ''
-      let shadowColor = ''
-      let width = 0
-      let height = 0
-      switch (this.entity.entityType) {
-        case 'ip': {
-          borderColor = '#CBD9BB'
-          shadowColor = 'rgba(126,159,84,0.14)'
-          width = 30
-          height = 27
-          break
-        }
-        case 'domain': {
-          borderColor = '#AFDEED'
-          shadowColor = 'rgba(56,172,210,0.14)'
-          width = 30
-          height = 25
-          break
-        }
-        case 'app': {
-          borderColor = '#F5DAA3'
-          shadowColor = 'rgba(229,162,25,0.14)'
-          width = 25
-          height = 30
-          break
-        }
-      }
-      return {
-        isRoot: true,
-        type: 'circle',
-        id: this.entity.entityName,
-        label: this.entity.entityName,
-        nodeType: 'root',
-        size: 52,
-        x: 0,
-        y: 0,
-        icon: {
-          show: true,
-          img: this.generateIconUrl(this.entity.entityType, true, true),
-          width,
-          height
-        },
-        style: {
-          fill: 'white',
-          stroke: borderColor,
-          lineWidth: 5
-        },
-        labelCfg: {
-          position: 'bottom',
-          offset: 10,
-          style: {
-            fill: '#353636',
-            fontSize: 12
-          }
-        },
-        data: {
-          type: this.entity.entityType,
-          name: this.entity.entityName,
-          data: {
-            vertex: this.entity.entityName,
-            detail: basicInfo
-          },
-          tags: _tags
+      function generateTempNodeCoordinate (sourceNode, event) {
+        const sx = sourceNode.x
+        const sy = sourceNode.y
+        const cx = event.x
+        const cy = event.y
+        return {
+          x: cx + cx - sx + Math.random() * 30 - 15,
+          y: cy + cy - sy + Math.random() * 30 - 15
         }
       }
     },
-    generatePrimaryNode (props) {
-      let width = 0
-      let height = 0
-      switch (props.data.type) {
-        case 'ip': {
-          width = 22
-          height = 20
-          break
-        }
-        case 'domain': {
-          width = 24
-          height = 24
-          break
-        }
-        case 'app': {
-          width = 20
-          height = 24
-          break
-        }
-      }
-      return {
-        ...props,
-        type: 'circle',
-        size: 42,
-        nodeType: 'primary',
-        icon: {
-          show: true,
-          img: this.generateIconUrl(props.data.type, false),
-          width,
-          height
-        },
-        style: {
-          fill: 'white',
-          stroke: '#A7B0B9',
-          lineWidth: 1
-        },
-        labelCfg: {
-          position: 'bottom',
-          offset: 10,
-          style: {
-            fill: '#353636',
-            fontSize: 12
-          }
-        }
-      }
-    },
-    async generateEntityNode (nodeData, data) {
-      const tags = await this.queryTags(nodeData.type, data.vertex)
-      let _tags = []
-      Object.keys(tags).forEach(k => {
-        if (k !== 'userDefinedTags' && tags[k]) {
-          Object.keys(tags[k]).forEach(k2 => {
-            const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
-            if (find) {
-              _tags.push({ key: k2, value: this.tagValueHandler(k, k2, tags[k][k2]), type: find.type })
-            }
-          })
-        }
-      })
-      if (_.isArray(tags.userDefinedTags)) {
-        _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
-      }
-      let width = 0
-      let height = 0
-      switch (nodeData.type) {
-        case 'ip': {
-          width = 20
-          height = 18
-          break
-        }
-        case 'domain': {
-          width = 20
-          height = 20
-          break
-        }
-        case 'app': {
-          width = 17
-          height = 20
-          break
-        }
-      }
-      return {
-        id: data.vertex,
-        type: 'circle',
-        size: 28,
-        nodeType: 'entity',
-        icon: {
-          show: true,
-          img: this.generateIconUrl(nodeData.type, true),
-          width,
-          height
-        },
-        style: {
-          fill: 'transparent',
-          stroke: 'transparent',
-          lineWidth: 0
-        },
-        data: {
-          type: nodeData.type,
-          isSubdomain: nodeData.isSubdomain || false,
-          name: data.vertex,
-          data,
-          tags: _tags
-        }
-      }
-    },
-    generateTempNode (entityType, node, isSubdomain) {
-      let width = 0
-      let height = 0
-      let label = ''
-      switch (entityType) {
-        case 'ip': {
-          width = 24
-          height = 22
-          if (node.data.type === 'app') {
-            label = this.$t('entities.tab.relatedIp')
-          } else if (node.data.type === 'ip') {
-            label = this.$t('entities.graph.resolveIp')
-          }
-          break
-        }
-        case 'subdomain': {
-          width = 24
-          height = 24
-          label = this.$t('entities.subdomain')
-          break
-        }
-        case 'domain': {
-          width = 24
-          height = 24
-          if (node.data.type === 'app') {
-            label = this.$t('entities.graph.relatedDomain')
-          } else if (node.data.type === 'ip') {
-            label = this.$t('entities.graph.resolvedDomain')
-          }
-          break
-        }
-        case 'app': {
-          width = 20
-          height = 24
-          label = this.$t('entities.tab.relatedApp')
-          break
-        }
-      }
-      return {
-        id: `${node.id}-${entityType}-temp`,
-        parentId: node.id,
-        label,
-        type: 'circle',
-        size: 28,
-        nodeType: 'temp',
-        icon: {
-          show: true,
-          img: this.generateIconUrl(entityType, false),
-          width,
-          height
-        },
-        style: {
-          fill: 'transparent',
-          stroke: 'transparent',
-          lineWidth: 0
-        },
-        labelCfg: {
-          position: 'bottom',
-          offset: 10,
-          style: {
-            fill: '#353636',
-            fontSize: 12
-          }
-        },
-        data: {
-          type: entityType,
-          isSubdomain: isSubdomain || false,
-          isTemp: true,
-          sourceType: node.data.type,
-          sourceName: node.id
-        }
-      }
-    },
-    hasChildNodeByType (node, type) {
-      if (node.data && node.data.childNodes) {
-        return node.data.childNodes.some(n => n.data.type === type)
-      }
-      return false
-    },
-    async generateSecondLevelNodes (rootNode) {
-      /*
-      * 2级及以上的整数层节点，先查数量，大于0的才展示
-      * TODO 优化：与generatePrimaryNode合并
-      * */
-      const relatedEntityCount = await this.queryRelatedEntityCount(this.entity.entityType, this.entity.entityName)
-      const nodes = []
-      if (relatedEntityCount) {
-        this.entity.relatedEntityCount = this.handleRelatedEntityCount(rootNode, relatedEntityCount)
-        rootNode.data.relatedEntityCount = this.entity.relatedEntityCount
-        const ipNode = this.generatePrimaryNode({
-          id: 'ip-1',
-          parentId: rootNode.id,
-          label: this.$t(rootNode.data.type === 'app' ? 'entities.tab.relatedIp' : 'entities.graph.resolveIp'),
-          x: 0,
-          y: 300,
-          data: {
-            sourceName: this.entity.entityName,
-            sourceType: this.entity.entityType,
-            type: 'ip'
-          }
-        })
-        const domainNode = this.generatePrimaryNode({
-          id: 'domain-1',
-          parentId: rootNode.id,
-          label: this.$t(rootNode.data.type === 'app' ? 'entities.graph.relatedDomain' : 'entity.graph.resolveDomain'),
-          x: 260,
-          y: -150,
-          data: {
-            sourceName: this.entity.entityName,
-            sourceType: this.entity.entityType,
-            type: 'domain'
-          }
-        })
-        const subdomainNode = this.generatePrimaryNode({
-          id: 'domain-1',
-          parentId: rootNode.id,
-          label: this.$t('entities.subdomain'),
-          x: 260,
-          y: -150,
-          data: {
-            sourceName: this.entity.entityName,
-            sourceType: this.entity.entityType,
-            type: 'domain',
-            isSubdomain: true
-          }
-        })
-        const appNode = this.generatePrimaryNode({
-          id: 'app-1',
-          parentId: rootNode.id,
-          label: this.$t('entities.tab.relatedApp'),
-          x: -260,
-          y: -150,
-          data: {
-            sourceName: this.entity.entityName,
-            sourceType: this.entity.entityType,
-            type: 'app'
-          }
-        })
-        switch (this.entity.entityType) {
-          case 'ip': {
-            if (relatedEntityCount.domainCount) {
-              domainNode.data.count = relatedEntityCount.domainCount
-              domainNode.label += `(${relatedEntityCount.domainCount})`
-              nodes.push(domainNode)
-            }
-            if (relatedEntityCount.appCount) {
-              appNode.data.count = relatedEntityCount.appCount
-              appNode.label += `(${relatedEntityCount.appCount})`
-              nodes.push(appNode)
-            }
-            break
-          }
-          case 'domain': {
-            if (relatedEntityCount.ipCount) {
-              ipNode.data.count = relatedEntityCount.ipCount
-              ipNode.label += `(${relatedEntityCount.ipCount})`
-              nodes.push(ipNode)
-            }
-            if (relatedEntityCount.subDomainCount) {
-              subdomainNode.data.count = relatedEntityCount.subDomainCount
-              subdomainNode.label += `(${relatedEntityCount.subDomainCount})`
-              nodes.push(subdomainNode)
-            }
-            if (relatedEntityCount.appCount) {
-              appNode.data.count = relatedEntityCount.appCount
-              appNode.label += `(${relatedEntityCount.appCount})`
-              nodes.push(appNode)
-            }
-            break
-          }
-          case 'app': {
-            if (relatedEntityCount.ipCount) {
-              ipNode.data.count = relatedEntityCount.ipCount
-              ipNode.label += `(${relatedEntityCount.ipCount})`
-              nodes.push(ipNode)
-            }
-            if (relatedEntityCount.domainCount) {
-              domainNode.data.count = relatedEntityCount.domainCount
-              domainNode.label += `(${relatedEntityCount.domainCount})`
-              nodes.push(domainNode)
-            }
-            break
-          }
-        }
-        rootNode.data.childNodes = nodes
-      }
-      return nodes
-    },
-    // nodes: primary nodes
-    async generateHalfLevelNodes (nodes) {
-      const nodeArr = []
-      if (_.isArray(nodes)) {
-        nodeArr.push(...nodes)
-      } else {
-        nodeArr.push(nodes)
-      }
-      const newNodes = []
-
-      for (const node of nodeArr) {
-        const newNodes2 = []
-        const pageNo = node.data.loaded ? node.data.loaded.length / 10 + 1 : 1
-        const data = await this.queryRelatedEntity(node.data.sourceType, node.data.sourceName, node.data.type, pageNo)
-        if (data) {
-          // 生成节点
-          for (const d of data.list) {
-            newNodes2.push(await this.generateEntityNode(node.data, d))
-          }
-          // 更新源节点的已拓展数和列表
-          this.handleLoaded(node, data, newNodes2)
-          newNodes.push(...newNodes2)
-        }
-      }
-      return newNodes
-    },
-    async queryEntityBasicInfo (entityType, entityName) {
-      const response = await axios.get(`${api.entity.entityGraph.basicInfo}/${entityType}?resource=${entityName}`).catch(e => {
-        console.error(e)
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
-      })
-      if (response.data && response.data.code === 200) {
-        return response.data.data
-      } else {
-        console.error(response)
-        this.entity.loading = false
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(response)
-        return {}
-      }
-    },
-    async queryTags (entityType, entityName) {
-      const response = await axios.get(`${api.entity.entityGraph.tags}/${entityType}?resource=${entityName}`).catch(e => {
-        console.error(e)
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
-      })
-      if (response.data && response.data.code === 200) {
-        return response.data.data
-      } else {
-        console.error(response)
-        this.entity.loading = false
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(response)
-        return []
-      }
-    },
-    async queryRelatedEntityCount (entityType, entityName) {
-      const response = await axios.get(`${api.entity.entityGraph.relatedEntityCount}/${entityType}?resource=${entityName}`).catch(e => {
-        console.error(e)
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
-      })
-      if (response.data && response.data.code === 200) {
-        return response.data.data
-      } else {
-        console.error(response)
-        this.entity.loading = false
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(response)
-        return null
-      }
-    },
-    async queryRelatedEntity (sourceType, sourceName, type, pageNo) {
-      if (sourceType === type) {
-        // 若源type和关联type都是domain，说明关联type是subdomain
-        type = 'subdomain'
-      }
-      let url = `${api.entity.entityGraph[`${sourceType}Related${_.upperFirst(type)}`]}?resource=${sourceName}&pageSize=10`
-      if (pageNo) {
-        url += `&pageNo=${pageNo}`
-      }
-      const response = await axios.get(url).catch(e => {
-        console.error(e)
-        this.entity.loading = false
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
-      })
-      if (response.data && response.data.code === 200) {
-        return response.data.data
-      } else {
-        console.error(response)
-        this.showError = true
-        this.entity.loading = false
-        this.errorMsg = this.errorMsgHandler(response)
-        return null
-      }
-    },
-    /*
-    * 若只有一个参数，则取参数的childNodes集合作为line终点；
-    * 若有两个参数，则以第一个参数作为line起点，第二个参数作为终点
-    * */
-    generateEdges (source, target) {
-      const edges = []
-
-      const sourceArr = []
-      if (!source.length) {
-        sourceArr.push(source)
-      } else {
-        sourceArr.push(...source)
-      }
-      sourceArr.forEach(s => {
-        if (!target) {
-          if (s.data && s.data.childNodes) {
-            const edges2 = []
-            s.data.childNodes.forEach(c => {
-              edges2.push({
-                id: `${s.id}-${c.id}`,
-                source: s.id,
-                target: c.id,
-                style: {
-                  stroke: '#BEBEBE',
-                  endArrow: {
-                    path: G6.Arrow.triangle(5, 5)
-                  }
-                },
-                data: {}
-              })
-            })
-            s.edges = edges2
-            edges.push(...edges2)
-          }
-        } else {
-          const edges2 = []
-          const targetArr = []
-          if (!target.length) {
-            targetArr.push(target)
-          } else {
-            targetArr.push(...target)
-          }
-          targetArr.forEach(c => {
-            edges2.push({
-              id: `${s.id}-${c.id}`,
-              source: s.id,
-              target: c.id,
-              style: {
-                stroke: '#BEBEBE',
-                endArrow: {
-                  path: G6.Arrow.triangle(5, 5)
-                }
-              },
-              data: {}
-            })
-          })
-          s.edges = edges2
-          edges.push(...edges2)
-        }
-      })
-      return edges
-    },
-    generateTempNodesAndEdges (node, relatedEntityCount) {
-      // 根据parent node和其childNodes，生成temp node和temp edge
-      const tempNodes = []
-      const tempEdges = []
-      switch (node.data.type) {
-        case 'ip': {
-          if (relatedEntityCount.domain.total && !this.hasChildNodeByType(node, 'domain')) {
-            const tempNode = this.generateTempNode('domain', node)
-            tempNode.data.count = relatedEntityCount.domain.total
-            const tempEdge = this.generateTempEdge(node, tempNode)
-            tempNodes.push(tempNode)
-            tempEdges.push(tempEdge)
-          }
-          if (relatedEntityCount.app.total && !this.hasChildNodeByType(node, 'app')) {
-            const tempNode = this.generateTempNode('app', node)
-            tempNode.data.count = relatedEntityCount.app.total
-            const tempEdge = this.generateTempEdge(node, tempNode)
-            tempNodes.push(tempNode)
-            tempEdges.push(tempEdge)
-          }
-          break
-        }
-        case 'domain': {
-          if (relatedEntityCount.ip.total && !this.hasChildNodeByType(node, 'ip')) {
-            const tempNode = this.generateTempNode('ip', node)
-            tempNode.data.count = relatedEntityCount.ip.total
-            const tempEdge = this.generateTempEdge(node, tempNode)
-            tempNodes.push(tempNode)
-            tempEdges.push(tempEdge)
-          }
-          if (relatedEntityCount.subDomain.total && !this.hasChildNodeByType(node, 'domain')) {
-            const tempNode = this.generateTempNode('domain', node, true)
-            tempNode.data.count = relatedEntityCount.subDomain.total
-            const tempEdge = this.generateTempEdge(node, tempNode)
-            tempNodes.push(tempNode)
-            tempEdges.push(tempEdge)
-          }
-          if (relatedEntityCount.app.total && !this.hasChildNodeByType(node, 'app')) {
-            const tempNode = this.generateTempNode('app', node)
-            tempNode.data.count = relatedEntityCount.app.total
-            const tempEdge = this.generateTempEdge(node, tempNode)
-            tempNodes.push(tempNode)
-            tempEdges.push(tempEdge)
-          }
-          break
-        }
-        case 'app': {
-          if (relatedEntityCount.ip.total && !this.hasChildNodeByType(node, 'ip')) {
-            const tempNode = this.generateTempNode('ip', node)
-            tempNode.data.count = relatedEntityCount.ip.total
-            const tempEdge = this.generateTempEdge(node, tempNode)
-            tempNodes.push(tempNode)
-            tempEdges.push(tempEdge)
-          }
-          if (relatedEntityCount.domain.total && !this.hasChildNodeByType(node, 'domain')) {
-            const tempNode = this.generateTempNode('domain', node)
-            tempNode.data.count = relatedEntityCount.domain.total
-            const tempEdge = this.generateTempEdge(node, tempNode)
-            tempNodes.push(tempNode)
-            tempEdges.push(tempEdge)
-          }
-          break
-        }
-      }
-      return { tempNodes, tempEdges }
-    },
-    generateTempEdge (node, tempNode) {
-      return {
-        id: `${node.id}-${tempNode.id}`,
-        source: node.id,
-        target: tempNode.id,
-        style: {
-          stroke: '#DDD',
-          lineDash: [3, 2],
-          endArrow: {
-            path: G6.Arrow.triangle(5, 5)
-          },
-          data: {
-            isTemp: true
-          }
-        }
-      }
-    },
-    handleLoaded (node, data, childNodes) {
-      if (!node.data.loaded) {
-        node.data.loaded = []
-      }
-      node.data.loaded.push(...data.list)
-
-      if (!node.data.childNodes) {
-        node.data.childNodes = []
-      }
-      node.data.childNodes.push(...childNodes)
-    },
-    handleRelatedEntityCount (node, relatedEntityTotalCount) {
-      const relatedEntityCount = {
-        ip: { total: relatedEntityTotalCount.ipCount, current: null },
-        domain: { total: relatedEntityTotalCount.domainCount, current: null },
-        subDomain: { total: relatedEntityTotalCount.subDomainCount, current: null },
-        app: { total: relatedEntityTotalCount.appCount, current: null }
-      }
-      if (node.data.childNodes) {
-        node.data.childNodes.forEach(n => {
-          switch (n.data.type) {
-            case 'ip': {
-              relatedEntityCount.ip.current = n.data.loaded ? n.data.loaded.length : 0
-              n.data.count = relatedEntityTotalCount.ipCount
-              break
-            }
-            case 'domain': {
-              if (n.data.isSubdomain) {
-                relatedEntityCount.subDomain.current = n.data.loaded ? n.data.loaded.length : 0
-                n.data.count = relatedEntityTotalCount.subDomainCount
-              } else {
-                relatedEntityCount.domain.current = n.data.loaded ? n.data.loaded.length : 0
-                n.data.count = relatedEntityTotalCount.domainCount
-              }
-              break
-            }
-            case 'app': {
-              relatedEntityCount.app.current = n.data.loaded ? n.data.loaded.length : 0
-              n.data.count = relatedEntityTotalCount.appCount
-              break
-            }
-          }
-        })
-      }
-      return relatedEntityCount
-    },
-    addNodes (nodes) {
+    addItems (nodes = [], edges = [], stack = true) {
+      // 过滤掉已经存在的node
       const _nodes = nodes.filter(n => {
-        return !this.graphData.nodes.some(n2 => n2.id === n.id)
+        return !this.graph.findById(n.id)
       })
-      this.graphData.nodes.push(..._nodes)
+      _nodes.forEach(n => {
+        this.graph.addItem('node', n)
+      })
+      edges.forEach(e => {
+        this.graph.addItem('edge', e)
+      })
+      if (stack) {
+        this.stackData.undo.push({ nodes: _nodes, edges })
+      }
     },
-    addEdges (edges) {
-      const _edges = edges.filter(e => {
-        return !this.graphData.edges.some(e2 => e2.source === e.source && e2.target === e.target)
+    setItemsStata (models = [], stateName, state) {
+      models.forEach(m => {
+        this.graph.setItemState(this.graph.findById(m.id), stateName, state)
       })
-      this.graphData.edges.push(..._edges)
     },
-    updateRelatedCount (node, childNodes) {
-      childNodes.forEach(c => {
-        this.entity.relatedEntityCount[c.data.isSubdomain ? 'subDomain' : c.data.type].current = c.data.loaded.length
+    cleanTempNodesAndTempEdges () {
+      // 清除现有tempNode和tempEdge
+      const tempNodes = this.graph.findAll('node', node => node.get('model').type === nodeType.tempNode)
+      tempNodes.forEach(n => {
+        this.graph.removeItem(n)
       })
+      const tempEdges = this.graph.findAll('edge', edge => edge.get('model').isTemp)
+      tempEdges.forEach(n => {
+        this.graph.removeItem(n)
+      })
+    },
+    async generateInitialData () {
+      const nodes = []
+      const edges = []
+      // 生成rootNode，并查询相关数据
+      const { offsetWidth, offsetHeight } = document.getElementById('entityGraph')
+      const coordinate = {
+        rootNode: {
+          fx: offsetWidth * 0.4,
+          fy: offsetHeight * 0.3 - 20
+        }
+      }
+      coordinate.ipListNode = {
+        fx: coordinate.rootNode.fx + 200,
+        fy: coordinate.rootNode.fy
+      }
+      coordinate.domainListNode = {
+        fx: coordinate.rootNode.fx + 100,
+        fy: coordinate.rootNode.fy + 173
+      }
+      coordinate.appListNode = {
+        fx: coordinate.rootNode.fx - 100,
+        fy: coordinate.rootNode.fy + 173
+      }
+      const rootNode = new Node(nodeType.rootNode, this.entity.entityName, {
+        entityType: this.entity.entityType,
+        entityName: this.entity.entityName,
+        /*x: coordinate.rootNode.fx,
+        y: coordinate.rootNode.fy*/
+      })
+      await rootNode.queryDetailData()
+      nodes.push(rootNode)
+
+      // 生成listNode和entityNode及edge
+      if (rootNode.myData.relatedEntity) {
+        // listNode
+        const listNodes = []
+        const keys = Object.keys(rootNode.myData.relatedEntity)
+        keys.forEach(k => {
+          if (rootNode.myData.relatedEntity[k].total) {
+            const listNode = new Node(
+              nodeType.listNode,
+              `${rootNode.id}__${k}-list`,
+              {
+                entityType: k,
+                /*x: coordinate[`${k}ListNode`].fx,
+                y: coordinate[`${k}ListNode`].fy*/
+              },
+              rootNode
+            )
+            listNodes.push(listNode)
+            edges.push(new Edge(rootNode, listNode))
+          }
+        })
+        // entityNode
+        const entityNodes = []
+        for (const node of listNodes) {
+          const entities = await queryRelatedEntity(rootNode, node.myData.entityType)
+          rootNode.myData.relatedEntity[node.myData.entityType].list = entities.list
+          entities.list.forEach(entity => {
+            const entityNode = new Node(
+              nodeType.entityNode,
+              entity.vertex,
+              {
+                entityType: node.myData.entityType,
+                entityName: entity.vertex
+              },
+              node
+            )
+            entityNodes.push(entityNode)
+            edges.push(new Edge(node, entityNode))
+          })
+        }
+        nodes.push(...listNodes, ...entityNodes)
+      }
+      return {
+        nodes: nodes,
+        edges: edges
+      }
     },
     getNodeLevel (id) {
       const { findShortestPath } = Algorithm
-      const info = findShortestPath(this.graphData, this.entity.entityName, id)
+      const info = findShortestPath(this.graph.save(), this.entity.entityName, id)
       return info.length
     },
     onCloseBlock () {
-      // todo 关闭右侧graph面板
       this.rightBox.mode = ''
       this.rightBox.show = false
-    },
-    onExpandDetail (mode) {
-      this.rightBox.mode = mode
-    },
-    onExpand (val) {
-      // todo 调用接口，拓展关系
-    },
-    onMouseenter (val) {
-      // todo 鼠标移动过graph列表名称时，graph图的分支图形会变大一点
-      if (!val.isTrusted) {
-        // 鼠标移动反馈
-      }
     },
     buildTooltip () {
       const _this = this
@@ -1129,35 +822,43 @@ export default {
         itemTypes: ['node'],
         getContent (e) {
           const node = e.item.getModel()
-          if (node.nodeType === 'primary') {
+          if (node.type === nodeType.listNode) {
             let iconClass = ''
             let title = ''
-            switch (node.data.type) {
+            let total = 0
+            let loadedCount = 0
+            switch (node.myData.entityType) {
               case 'ip': {
                 iconClass = 'cn-icon cn-icon-resolve-ip'
                 title = _this.$t('entities.graph.resolveIp')
+                total = _.get(node.sourceNode.myData, 'relatedEntity.ip.total', 0)
+                loadedCount = _.get(node.sourceNode.myData, 'relatedEntity.ip.list', []).length
                 break
               }
               case 'domain': {
                 iconClass = 'cn-icon cn-icon-subdomain'
-                title = _this.$t('entity.graph.resolveDomain')
+                title = node.isSubdomain() ? _this.$t('entities.subdomain') : _this.$t('entity.graph.resolveDomain')
+                total = _.get(node.sourceNode.myData, 'relatedEntity.domain.total', 0)
+                loadedCount = _.get(node.sourceNode.myData, 'relatedEntity.domain.list', []).length
                 break
               }
               case 'app': {
                 iconClass = 'cn-icon cn-icon-app-name'
                 title = _this.$t('entities.tab.relatedApp')
+                total = _.get(node.sourceNode.myData, 'relatedEntity.app.total', 0)
+                loadedCount = _.get(node.sourceNode.myData, 'relatedEntity.app.list', []).length
                 break
               }
             }
             return `<div class="primary-node-tooltip">
               <div class="tooltip__header"><i class="${iconClass}"></i><span class="tooltip__title">${title}</span></div>
               <div class="tooltip__content">
-                <span>${_this.$t('entity.graph.associatedCount')}:&nbsp;${node.data.count || 0}</span>
-                <span>${_this.$t('entity.graph.expandedEntityCount')}:&nbsp;${node.data.loaded ? node.data.loaded.length : 0}</span>
+                <span>${_this.$t('entity.graph.associatedCount')}:&nbsp;${total}</span>
+                <span>${_this.$t('entity.graph.expandedEntityCount')}:&nbsp;${loadedCount}</span>
               </div>
             </div>`
-          } else if (node.nodeType === 'entity' || node.nodeType === 'root') {
-            if (node.data && node.data.tags && node.data.tags.length > 0) {
+          } else if (node.type === nodeType.entityNode || node.type === nodeType.rootNode) {
+            if (node.myData && node.myData.tags && node.myData.tags.length > 0) {
               return `<div class="entity-node-tooltip">
                 <div class="tooltip__header">
                   <span class="tooltip__title">${node.id}</span>
@@ -1167,13 +868,13 @@ export default {
                     <div class="header-icon"></div>
                     <span>${_this.$t('entity.graph.tags')}</span>
                   </div>
-                  <div class="content-tag-list">${generateTagHTML(node.data.tags)}</div>
+                  <div class="content-tag-list">${generateTagHTML(node.myData.tags)}</div>
                 </div>
               </div>`
             } else {
               return `<div style="padding: 0 6px; font-size: 15px; line-height: 15px; color: #111;">${node.id}</div>`
             }
-          } else if (node.nodeType === 'temp') {
+          } else if (node.type === nodeType.tempNode) {
             return node.label
           }
           function generateTagHTML (tags) {
@@ -1200,132 +901,179 @@ export default {
         className: 'toolbar__tools',
         getContent: () => {
           return `<ul>
-            <li code='zoomOut'><i class="cn-icon cn-icon-zoom-in"></i></li>
-            <li code='zoomIn'><i class="cn-icon cn-icon-zoom-out"></i></li>
-            <li code='undo'><i class="cn-icon cn-icon-next-step"></i></li>
-            <li code='redo'><i class="cn-icon cn-icon-pre-step"></i></li>
-            <li code='autoZoom'><i class="cn-icon cn-icon-auto-zoom"></i></li>
+            <li code='zoomOut'><i class="cn-icon cn-icon-zoom-out"></i></li>
+            <li code='zoomIn'><i class="cn-icon cn-icon-zoom-in"></i></li>
+            <li code='autoZoom'><i class="cn-icon cn-icon-reset"></i></li>
+            <li code='undo' id="preStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-pre-step"></i></li>
+            <li code='redo' id="nextStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-next-step"></i></li>
+            <li code='toDefault'><i class="cn-icon cn-icon-to-default"></i></li>
           </ul>`
         },
         handleClick: (code, graph) => {
-          console.info(code)
-          toolbar.handleDefaultOperator(code)
+          if (code === 'undo') {
+            const data = this.stackData.undo.pop()
+            data.nodes.forEach(n => {
+              if (n.type === nodeType.listNode) {
+                const listNode = this.graph.findById(n.id)
+                const listNodeEdges = listNode.getEdges()
+                listNodeEdges.forEach(e => {
+                  e.setState('mySelected', false)
+                })
+                listNode.setState('mySelected', false)
+              }
+              this.graph.removeItem(n.id)
+            })
+            data.edges.forEach(e => {
+              this.graph.removeItem(e.id)
+            })
+            this.stackData.redo.push(data)
+            this.cleanTempNodesAndTempEdges()
+            this.graph.layout()
+            this.onCloseBlock()
+          } else if (code === 'redo') {
+            const data = this.stackData.redo.pop()
+            this.addItems(data.nodes, data.edges, false)
+            this.stackData.undo.push(data)
+            this.cleanTempNodesAndTempEdges()
+            this.graph.layout()
+            this.onCloseBlock()
+          } else if (code === 'autoZoom') {
+            this.graph.zoomTo(1)
+            this.graph.fitCenter()
+          } else if (code === 'zoomOut') {
+            const { x, y } = this.graph.getViewPortCenterPoint()
+            this.graph.zoomTo(this.graph.getZoom() + 0.2, { x, y })
+          } else if (code === 'zoomIn') {
+            const { x, y } = this.graph.getViewPortCenterPoint()
+            const currentZoom = this.graph.getZoom()
+            this.graph.zoomTo(currentZoom - 0.2, { x, y })
+          } else {
+            this.graph.clear()
+            this.graph.data(this.initialData)
+            this.graph.render()
+            const rootNode = this.graph.findById(this.entity.entityName)
+            this.graph.emit('node:click', { item: rootNode, target: rootNode.getKeyShape() }) // 手动触发rootNode的点击事件
+          }
         }
       })
       return toolbar
     },
-    async expandList (sourceNodeId, nodeId) {
-      const sourceNode = this.graphData.nodes.find(n => n.id === sourceNodeId)
-      const node = this.graphData.nodes.find(n => n.id === nodeId)
-      if (node && sourceNode) {
-        console.info(node)
-        if (node.data.childNodes && node.data.childNodes.length < 50) {
-          if (node.data.childNodes.length >= node.data.count) {
-            this.$message.error(this.$t('entities.graph.allEntitiesExpanded'))
-          } else {
-            this.entity.loading = true
-            const queryEntityNodes = await this.generateHalfLevelNodes(node)
-            const relatedEntityCount = await this.queryRelatedEntityCount(sourceNode.data.type, sourceNodeId)
-            // 赋值总数和已拓展数。entity node可从其childNodes取到已拓展数
-            this.entity = {
-              ...this.entity,
-              relatedEntityCount: this.handleRelatedEntityCount(sourceNode, relatedEntityCount),
-              listData: node.data.loaded,
-              loading: false
-            }
-            sourceNode.data.relatedEntityCount = this.entity.relatedEntityCount
+    async expandList (nodeId) {
+      const node = this.graph.findById(nodeId)
+      const model = node.getModel()
+      const sourceNode = this.graph.findById(model.sourceNode.id)
+      const sourceModel = sourceNode.getModel()
+      const expandType = model.myData.entityType
+      if (sourceModel.myData.relatedEntity[expandType].list.length < 50) {
+        this.rightBox.loading = true
+        try {
+          const entities = await queryRelatedEntity(sourceModel, expandType)
+          sourceModel.myData.relatedEntity[expandType].list.push(...entities.list)
+          const entityNodeModels = []
+          const edgeModels = []
+          entities.list.forEach(entity => {
+            const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
+              entityType: expandType,
+              entityName: entity.vertex,
+              x: model.x + Math.random() * 500 - 250,
+              y: model.y + Math.random() * 500 - 250
+            }, model)
+            entityNodeModels.push(entityNodeModel)
 
-            this.addNodes(queryEntityNodes)
-            this.addEdges(this.generateEdges(node, queryEntityNodes))
-            this.graph.changeData(this.graphData)
+            const edge = new Edge(model, entityNodeModel)
+            edgeModels.push(edge)
+          })
+          this.addItems(entityNodeModels, edgeModels)
+          this.setItemsStata(edgeModels, 'mySelected', true)
+          this.graph.layout()
+          this.rightBox.node = _.cloneDeep(model)
+        } catch (e) {
+          this.$message.error(this.errorMsgHandler(e))
+        } finally {
+          this.rightBox.loading = false
+        }
+      } else {
+        this.$message.warning(this.$t('tip.maxExpandCount'))
+      }
+    },
+    async expandDetailList (nodeId, expandType) {
+      const node = this.graph.findById(nodeId)
+      if (node) {
+        const nodeModel = node.getModel()
+        if (nodeModel.myData.relatedEntity[expandType].list.length < 50) {
+          const toAddNodeModels = []
+          const toAddEdgeModels = []
+
+          this.rightBox.loading = true
+          try {
+            const entities = await queryRelatedEntity(nodeModel, expandType)
+            nodeModel.myData.relatedEntity[expandType].list.push(...entities.list)
+            const neighbors = node.getNeighbors('target')
+            const listNode = neighbors.find(n => n.getModel().myData.entityType === expandType)
+            let listNodeModel = listNode.getModel()
+            let listEdgeModel
+            // 如果listNode是tempNode，移除，并新建listNode
+            if (listNodeModel.type === nodeType.tempNode) {
+              // 移除tempNode和tempEdge
+              const tempEdges = listNode.getInEdges()
+              tempEdges.forEach(edge => {
+                this.graph.removeItem(edge)
+              })
+              this.graph.removeItem(listNode)
+
+              listNodeModel = new Node(nodeType.listNode, `${nodeModel.id}__${expandType}-list`, { entityType: expandType, x: listNodeModel.x, y: listNodeModel.y }, nodeModel)
+              listEdgeModel = new Edge(nodeModel, listNodeModel)
+              toAddNodeModels.push(listNodeModel)
+              toAddEdgeModels.push(listEdgeModel)
+            }
+            entities.list.forEach(entity => {
+              const entityNodeModel = new Node(nodeType.entityNode, entity.vertex, {
+                entityType: expandType,
+                entityName: entity.vertex,
+                x: listNodeModel.x + Math.random() * 500 - 250,
+                y: listNodeModel.y + Math.random() * 500 - 250
+              }, listNodeModel)
+              toAddNodeModels.push(entityNodeModel)
+              toAddEdgeModels.push(new Edge(listNodeModel, entityNodeModel))
+            })
+            this.addItems(toAddNodeModels, toAddEdgeModels)
+            if (listEdgeModel) {
+              this.graph.setItemState(this.graph.findById(listEdgeModel.id), 'mySelected', true)
+            }
+            this.graph.layout()
+            this.rightBox.node = _.cloneDeep(nodeModel)
+          } catch (e) {
+            this.$message.error(this.errorMsgHandler(e))
+          } finally {
+            this.rightBox.loading = false
           }
         } else {
-          this.$message.error(this.$t('entities.graph.expandedNumberMaxLimit'))
+          this.$message.warning(this.$t('tip.maxExpandCount'))
         }
       }
     },
-    async expandDetailList (expandType, currentName) {
-      const currentNode = this.graphData.nodes.find(n => n.id === currentName)
-      console.info(currentNode)
-      // 如果存在primary node，直接拓展
-      const _primaryNode = currentNode.data.childNodes ? currentNode.data.childNodes.find(n => n.data.type === expandType) : null
-      if (_primaryNode) {
-        await this.expandList(currentName, _primaryNode.id)
-      } else {
-        // 如果存在temp node，删掉。新增primary node，再拓展
-        const tempNode = this.graphData.nodes.find(n => n.nodeType === 'temp' && n.data.sourceName === currentName && n.data.type === expandType)
-        if (tempNode) {
-          // 先清除此temp node和temp edge
-          this.graphData.nodes = this.graphData.nodes.filter(n => {
-            return n.id !== tempNode.id
-          })
-          this.graphData.edges = this.graphData.edges.filter(e => {
-            return e.target !== tempNode.id
-          })
-        }
-        let label = ''
-        let isSubdomain = false
-        let count = 0
-        switch (expandType) {
-          case 'ip': {
-            count = _.get(currentNode.data, 'relatedEntityCount.ip.total', 0)
-            label = `${this.$t(currentNode.data.type === 'app' ? 'entities.tab.relatedIp' : 'entities.graph.resolveIp')}(${count})`
-            break
+    resize () {
+      const container = document.getElementById('entityGraph')
+      this.graph.changeSize(container.offsetWidth, container.offsetHeight)
+    }
+  },
+  watch: {
+    stackData: {
+      deep: true,
+      handler (n) {
+        if (n) {
+          if (n.undo.length > 0) {
+            document.getElementById('preStep').classList.remove('toolbar--unactivated')
+            console.info(n, document.getElementById('preStep').classList)
+          } else {
+            document.getElementById('preStep').classList.add('toolbar--unactivated')
           }
-          case 'domain': {
-            if (currentNode.data.type === 'domain') {
-              count = _.get(currentNode.data, 'relatedEntityCount.subdomain.total', 0)
-              label = `${this.$t('entities.subdomain')}(${count})`
-              isSubdomain = true
-            } else {
-              count = _.get(currentNode.data, 'relatedEntityCount.domain.total', 0)
-              label = `${this.$t(currentNode.data.type === 'app' ? 'entities.graph.relatedDomain' : 'entity.graph.resolveDomain')}(${count})`
-            }
-            break
-          }
-          case 'app': {
-            count = _.get(currentNode.data, 'relatedEntityCount.app.total', 0)
-            label = `${this.$t('entities.tab.relatedApp')}(${count})`
-            break
+          if (n.redo.length > 0) {
+            document.getElementById('nextStep').classList.remove('toolbar--unactivated')
+          } else {
+            document.getElementById('nextStep').classList.add('toolbar--unactivated')
           }
         }
-        const primaryNode = this.generatePrimaryNode({
-          id: `${expandType}-${currentNode.id}`,
-          label: label,
-          data: {
-            sourceName: currentNode.id,
-            sourceType: currentNode.data.type,
-            type: expandType,
-            isSubdomain: isSubdomain,
-            count: count
-          }
-        })
-        // 新node放入source node的childNodes中
-        if (!currentNode.data.childNodes) {
-          currentNode.data.childNodes = []
-        }
-        currentNode.data.childNodes.push(primaryNode)
-        const edge = this.generateEdges(currentNode, primaryNode)
-        this.addNodes([primaryNode])
-        this.addEdges(edge)
-        // 判断primary层级，若大于等于5，则不继续拓展entity node，并给用户提示。否则拓展entity node
-        const entityNodes = []
-        const edges = []
-        const level = this.getNodeLevel(primaryNode.id)
-        if (level < 9) {
-          this.entity.loading = true
-          const queryEntityNodes = await this.generateHalfLevelNodes(primaryNode)
-          this.entity.loading = false
-          this.updateRelatedCount(currentNode, [primaryNode])
-          entityNodes.push(...queryEntityNodes)
-          edges.push(...this.generateEdges(primaryNode))
-          // TODO 高亮
-        } else {
-          this.$message.error(this.$t('entities.graph.expandedLevelMaxLimit'))
-        }
-        this.addNodes(entityNodes)
-        this.addEdges(edges)
-        this.graph.changeData(this.graphData)
       }
     }
   },
@@ -1333,24 +1081,30 @@ export default {
     if (this.entity.entityType && this.entity.entityName) {
       await this.init()
     }
+    this.debounceFunc = this.$_.debounce(this.resize, 300)
+    window.addEventListener('resize', this.debounceFunc)
+  },
+  unmounted () {
+    window.removeEventListener('resize', this.debounceFunc)
+    this.graph.destroy()
   },
   setup () {
     const route = useRoute()
     const { entityType, entityName } = route.query
-    const entity = ref({
+    const entity = {
       entityType,
       entityName
-    })
+    }
+    // 关系图
     const graph = shallowRef(null)
-    const rightBox = ref({
-      mode: `${entityType}Detail`, // ipList, ipDetail, domainList, domainDetail, appList, appDetail
-      show: true
-    })
 
-    // echarts关系图的节点和连线
-    const graphData = shallowRef({})
+    const rightBox = ref({
+      mode: 'detail', // list | detail
+      show: true,
+      node: null,
+      loading: true
+    })
     return {
-      graphData,
       entity,
       rightBox,
       graph
@@ -1358,253 +1112,3 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.graph-toolbar {
-  position: fixed;
-  top: 100px;
-  left: 0;
-
-  .toolbar__tools {
-    display: flex;
-    padding: 0 10px;
-
-    li {
-      display: flex;
-      justify-content: center;
-      width: 32px;
-      margin-right: 4px;
-      cursor: pointer;
-
-      i {
-        color: #575757;
-        font-size: 18px;
-      }
-    }
-  }
-}
-.entity-graph {
-  display: flex;
-
-  .entity-graph__chart {
-    width: 100%;
-
-    .graph-node {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-color: transparent !important;
-      transition: linear all .2s;
-
-      .graph-node__text {
-        width: 120px;
-        font-size: 12px;
-        color: #353636;
-      }
-
-      &.graph-node--root {
-        padding-top: 18px;
-        width: 82px;
-        height: 82px;
-        border: 5px solid !important;
-        // 覆盖自带的node点击效果
-        &.rel-node-checked {
-          box-shadow: none;
-          animation: none;
-        }
-        &.graph-node--ip {
-          border-color: #CBD9BB !important;
-          box-shadow: 0 0 0 8px rgba(126,159,84,0.14);
-          i {
-            color: #7E9F54;
-          }
-        }
-        &.graph-node--domain {
-          border-color: #AFDEED !important;
-          box-shadow: 0 0 0 8px rgba(56,172,210,0.14);
-          i {
-            color: #38ACD2;
-          }
-        }
-        &.graph-node--app {
-          border-color: #F5DAA3 !important;
-          box-shadow: 0 0 0 8px rgba(229,162,25,0.14);
-          i {
-            color: #E5A219;
-          }
-        }
-        i {
-          font-size: 36px;
-        }
-        .graph-node__text {
-          padding-top: 30px;
-        }
-      }
-
-      &.graph-node--primary {
-        padding-top: 20px;
-        width: 66px;
-        height: 66px;
-        border: 1px solid #A7B0B9 !important;
-        box-shadow: none;
-
-        // 覆盖自带的node点击效果
-        &.rel-node-checked {
-          box-shadow: 0 0 0 5px rgba(151,151,151,0.21);
-          animation: none;
-          border-color: #778391 !important;
-        }
-        i {
-          font-size: 24px;
-          color: #778391;
-        }
-        .graph-node__text {
-          padding-top: 24px;
-        }
-      }
-
-      &.graph-node--entity {
-        width: 21px;
-        height: 21px;
-        justify-content: center;
-        border: none !important;
-
-        &.graph-node--ip {
-          i {
-            color: #7E9F54;
-          }
-        }
-        &.graph-node--domain {
-          i {
-            color: #38ACD2;
-          }
-        }
-        &.graph-node--app {
-          i {
-            color: #E5A219;
-          }
-        }
-        i {
-          font-size: 21px;
-        }
-      }
-    }
-  }
-
-  .entity-graph__right-box {
-    & > div {
-      left: unset !important;
-      right: 0 !important;
-    }
-    .entity-graph__detail {
-      height: calc(100% - 100px) !important;
-      top: 100px !important;
-      // border-left: 1px solid #E2E5EC;
-      overflow: auto;
-      padding: 20px;
-    }
-  }
-
-  .g6-component-tooltip {
-    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
-
-    .primary-node-tooltip {
-      padding: 5px;
-
-      .tooltip__header {
-        display: flex;
-        align-items: center;
-
-        i {
-          color: #717171;
-          font-size: 14px;
-        }
-        .tooltip__title {
-          padding-left: 6px;
-          font-size: 15px;
-          line-height: 15px;
-          color: #111;
-        }
-      }
-      .tooltip__content {
-        padding-top: 10px;
-        color: #222;
-        font-size: 12px;
-
-        span:first-of-type {
-          padding-right: 20px;
-        }
-      }
-    }
-    .entity-node-tooltip {
-      width: 300px;
-      padding: 5px;
-
-      .tooltip__header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-
-        .tooltip__title {
-          font-size: 15px;
-          line-height: 15px;
-          color: #111;
-        }
-      }
-
-      .tooltip__content {
-        display: flex;
-        flex-direction: column;
-
-        .content-header {
-          display: flex;
-          align-items: center;
-
-          .header-icon {
-            width: 3px !important;
-            height: 12px !important;
-            background: #38ACD2;
-            border-radius: 1px;
-            margin-right: 6px;
-          }
-        }
-        .content-tag-list {
-          display: flex;
-          align-items: flex-start;
-          flex-wrap: wrap;
-
-          .entity-tag {
-            margin: 10px 0;
-            padding: 0 8px;
-            height: 20px;
-            font-size: 12px;
-            border: 1px solid;
-            border-radius: 2px;
-
-            $normal-color: #778391;
-            $normal-light-color: #F7F8F9;
-            $negative-color: #E26154;
-            $negative-light-color: #FEF6F5;
-            $positive-color: #749F4D;
-            $positive-light-color: #F7FAF5;
-            &.entity-tag--level-two-normal {
-              border-color: $normal-color;
-              color: $normal-color;
-              background-color: $normal-light-color;
-            }
-            &.entity-tag--level-two-negative {
-              border-color: $negative-color;
-              color: $negative-color;
-              background-color: $negative-light-color;
-            }
-            &.entity-tag--level-two-positive {
-              border-color: $positive-color;
-              color: $positive-color;
-              background-color: $positive-light-color;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-</style>

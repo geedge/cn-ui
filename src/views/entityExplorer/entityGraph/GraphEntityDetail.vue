@@ -124,14 +124,6 @@ export default {
     }
   },
   computed: {
-    appRisk () {
-      return function (level) {
-        const m = riskLevelMapping.find(mapping => {
-          return mapping.value == level
-        })
-        return (m && m.name) || level
-      }
-    },
     iconClass () {
       let className
       switch (_.get(this.node, 'myData.entityType', '')) {
@@ -230,6 +222,12 @@ export default {
       this.showError = true
       this.errorMsg = this.errorMsgHandler(e)
     },
+    appRisk (level) {
+      const m = riskLevelMapping.find(mapping => {
+        return mapping.value == level
+      })
+      return (m && m.name) || level
+    },
     location (detailData) {
       let location = ''
       if (detailData) {
@@ -292,12 +290,12 @@ export default {
             {
               name: 'categoryName',
               label: this.$t('entities.category'),
-              value: _.get(n.myData, 'basicInfo.category.name', '-')
+              value: _.get(n.myData, 'basicInfo.category.categoryName', '-')
             },
             {
               name: 'categoryGroup',
               label: this.$t('entities.group'),
-              value: _.get(n.myData, 'basicInfo.category.group', '-')
+              value: _.get(n.myData, 'basicInfo.category.categoryGroup', '-')
             },
             {
               name: 'reputationLevel',
@@ -365,32 +363,32 @@ export default {
             {
               name: 'appCategory',
               label: this.$t('entities.category'),
-              value: _.get(n.myData, 'detail.category.appCategory', '-')
+              value: _.get(n.myData, 'basicInfo.category.appCategory', '-')
             },
             {
               name: 'appSubcategory',
               label: this.$t('entities.subcategory'),
-              value: _.get(n.myData, 'detail.category.appSubcategory', '-')
+              value: _.get(n.myData, 'basicInfo.category.appSubcategory', '-')
             },
             {
               name: 'appRisk',
               label: this.$t('entities.riskLevel'),
-              value: _.get(n.myData, 'detail.category.appRisk', '-')
+              value: this.appRisk(_.get(n.myData, 'basicInfo.category.appRisk', '-'))
             },
             {
               name: 'appTechnology',
               label: this.$t('overall.technology'),
-              value: _.get(n.myData, 'detail.category.appTechnology', '-')
+              value: _.get(n.myData, 'basicInfo.category.appTechnology', '-')
             },
             {
               name: 'appLongname',
               label: this.$t('overall.appFullName'),
-              value: _.get(n.myData, 'detail.category.appLongname', '-')
+              value: _.get(n.myData, 'basicInfo.category.appLongname', '-')
             },
             {
               name: 'appDescription',
               label: this.$t('config.dataSource.description'),
-              value: _.get(n.myData, 'detail.category.appDescription', '-')
+              value: _.get(n.myData, 'basicInfo.category.appDescription', '-')
             }
           ]
 

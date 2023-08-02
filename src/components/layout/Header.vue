@@ -391,7 +391,9 @@ export default {
         this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
       }
     }
-    this.initDropdownList()
+    if (this.$route.path.indexOf('panel') > -1) {
+      await this.initDropdownList()
+    }
   },
   setup () {
     const { query } = useRoute()
@@ -433,6 +435,23 @@ export default {
           value: entityDetailMenu.i18n ? this.$t(entityDetailMenu.i18n) : entityDetailMenu.name,
           route: entityDetailMenu.route,
           type: entityDetailMenu.type
+        })
+        return true
+      } else if (this.route === '/entityGraph') {
+        const entityMenu = menus.find(m => m.route === '/entityExplorer')
+        const entityGraphMenu = menus.find(m => m.route === '/entityGraph')
+        console.info(entityGraphMenu)
+        breadcrumb.push({
+          code: entityMenu.code,
+          value: entityMenu.i18n ? this.$t(entityMenu.i18n) : entityMenu.name,
+          route: entityMenu.route,
+          type: entityMenu.type
+        })
+        breadcrumb.push({
+          code: entityGraphMenu.code,
+          value: entityGraphMenu.i18n ? this.$t(entityGraphMenu.i18n) : entityGraphMenu.name,
+          route: entityGraphMenu.route,
+          type: entityGraphMenu.type
         })
         return true
       }
