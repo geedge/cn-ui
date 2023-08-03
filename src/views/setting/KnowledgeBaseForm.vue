@@ -136,7 +136,7 @@
                       <span v-else>{{ d.tagValue }}</span>
                     </td>
                     <td class="imported-data-msg" :title="d.msg">
-                      <i :class="d.isValid === 1 ? 'el-icon-success' : (d.isValid === 0 ? 'el-icon-error' : '')"></i>&nbsp;&nbsp;{{(d.isValid === 1 && (d.msg==='' || !d.msg) )? 'success': d.msg }}
+                      <i :class="d.isValid === 1 ? 'el-icon-success' : (d.isValid === 0 ? 'el-icon-error' : '')"></i>&nbsp;&nbsp;{{(d.isValid === 1 && (d.msg==='' || !d.msg) )? $t('overall.success'): d.msg }}
                     </td>
                     <!--返回和保存按钮:修改记录-->
                     <td v-if="backEditFlag && !addEditFlag && editIndex === i" class="imported-data-btn">
@@ -214,7 +214,7 @@
 import { useRoute } from 'vue-router'
 import { nextTick, reactive, ref } from 'vue'
 import _ from 'lodash'
-import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight } from '@/utils/constants'
+import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight, knowledgeCategoryValue } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
@@ -490,7 +490,7 @@ export default {
       isPreviewChange: false,
       isClick: false,
       pageNoForTable: 1,
-      listMode: 'list',
+      dataType: 'builtInList',
       status: 1,
       oldItemIds: [],
       oldTagItem: {}
@@ -545,6 +545,15 @@ export default {
         this.importedType = this.editObject.source
         const originalImportedData = _.cloneDeep(response.data.data)
         this.importedDataNoData = originalImportedData.length === 0
+        if (originalImportedData.length > 0) {
+          originalImportedData.forEach(data => {
+            if (data.isValid === 1) {
+              data.msg = this.$t('overall.success')
+            } else if (data.isValid === 0) {
+              data.msg = this.$t('validate.wrongFormat')
+            }
+          })
+        }
         this.originalImportInfo = {
           total: originalImportedData.length,
           succeeded: originalImportedData.filter(d => d.isValid === 1).length,
@@ -765,21 +774,21 @@ export default {
           customClass: 'del-model'
         }).then(() => {
           this.$router.push({
-            path: '/knowledgeBase',
+            path: '/knowledgeBase/userDefinedLibrary',
             query: {
               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
               t: +new Date(),
-              listMode: this.listMode
+              dataType: this.dataType
             }
           })
         }).catch(() => {})
       } else {
         this.$router.push({
-          path: '/knowledgeBase',
+          path: '/knowledgeBase/userDefinedLibrary',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
             t: +new Date(),
-            listMode: this.listMode
+            dataType: this.dataType
           }
         })
       }
@@ -816,7 +825,7 @@ export default {
                     const userId = localStorage.getItem(storageKey.userId)
                     const postData = {
                       name: this.editObject.name,
-                      category: 'user_defined',
+                      category: knowledgeCategoryValue.userDefined,
                       source: this.editObject.source,
                       description: this.editObject.description,
                       status: this.editObject.status,
@@ -840,11 +849,11 @@ export default {
                             message: this.$t('tip.saveSuccess')
                           })
                           this.$router.push({
-                            path: '/knowledgeBase',
+                            path: '/knowledgeBase/userDefinedLibrary',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
                               t: +new Date(),
-                              listMode: this.listMode
+                              dataType: this.dataType
                             }
                           })
                         } else {
@@ -869,11 +878,11 @@ export default {
                             message: this.$t('tip.saveSuccess')
                           })
                           this.$router.push({
-                            path: '/knowledgeBase',
+                            path: '/knowledgeBase/userDefinedLibrary',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
                               t: +new Date(),
-                              listMode: this.listMode
+                              dataType: this.dataType
                             }
                           })
                         } else {
@@ -1095,7 +1104,7 @@ export default {
         if (valid) {
           this.editTagErrorTip = ''
           this.showImportedData[index].isValid = 1
-          this.showImportedData[index].msg = 'success'
+          this.showImportedData[index].msg = this.$t('overall.success')
         } else {
           this.showImportedData[index].isValid = 0
         }
@@ -1151,9 +1160,9 @@ export default {
   },
   mounted () {
     const pageNo = this.$router.currentRoute.value.query.pageNoForTable
-    const listMode = this.$router.currentRoute.value.query.listMode
+    const dataType = this.$router.currentRoute.value.query.dataType
     this.pageNoForTable = pageNo || 1
-    this.listMode = listMode || 'list'
+    this.dataType = dataType || 'builtInList'
     const div = document.getElementsByClassName('el-upload-dragger')[0]
     const self = this
     div.addEventListener('click', function (event) {
@@ -1192,11 +1201,11 @@ export default {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
-          path: '/knowledgeBase',
+          path: '/knowledgeBase/userDefinedLibrary',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
             t: +new Date(),
-            listMode: this.listMode
+            dataType: this.dataType
           }
         })
       })
