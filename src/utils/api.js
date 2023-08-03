@@ -40,6 +40,7 @@ export const api = {
   knowledgeBaseList: BASE_CONFIG.apiVersion + '/knowledgeBase/list',
   knowledgeBaseEnable: BASE_CONFIG.apiVersion + '/knowledgeBase/status',
   knowledgeBaseStatistics: BASE_CONFIG.apiVersion + '/knowledgeBase/statistics',
+  updateKnowledgeUrl: BASE_CONFIG.apiVersion + '/knowledgeBase/audit/log',
 
   // 报告相关
   reportJob: '/report/job',

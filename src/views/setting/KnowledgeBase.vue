@@ -1,15 +1,39 @@
 <template>
-  <div style="height: 100%;overflow:auto;" class="knowledge-base">
-    <div class="top-title">
-      {{$t('overall.knowledgeBase')}}
-    </div>
-    <div class="knowledge-base__content" >
-      <div class="left-filter" style="">
-          <knowledge-filter ref="knowledgeFilter"
-                            :keyWord="keyWord"
-                  @reload="reload"
-                  @clearList="clearList"></knowledge-filter>
+  <div class="knowledge-base">
+    <div class="knowledge-base__top">
+      <div class="top-title">
+        {{$t('overall.knowledgeBase')}}
       </div>
+      <div class="builtIn-to-user-defined" v-if="dataType === 'builtInList'">
+        <button :title="$t('knowledgeBase.userDefinedLibrary')" class="top-tool-btn--user_defined_library"
+                @click="changeToUserDefinedList">
+          <i class="cn-icon-add-knowledge-base cn-icon" ></i>
+          <span>{{$t('knowledgeBase.userDefinedLibrary')}}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 内置库列表 -->
+    <div class="knowledge-base-built-in__content" v-if="dataType === 'builtInList'">
+      <div class="list-card" >
+        <div class="list-mode__card" >
+          <loading :loading="loading"></loading>
+          <knowledge-base-table-for-card
+                  ref="dataTableCard"
+                  :api="url"
+                  :isNoData="isNoData"
+                  :table-data="tableData"
+                  :is-selected-status="isSelectedStatus"
+                  @delete="toDelete"
+                  @checkboxStatusChange="checkboxStatusChange"
+                  @reload="getBuiltInData"
+                  @toggleLoading="toggleLoading"
+          ></knowledge-base-table-for-card>
+        </div>
+      </div>
+    </div>
+    <!-- 用户自定义列表 -->
+    <div class="knowledge-base-user-defined__content" v-else-if="dataType === 'userDefinedList'">
       <div class="right-list-card" >
         <div class="top-tools" >
           <div class="top-tools__left">
@@ -19,13 +43,7 @@
               <i class="cn-icon-xinjian cn-icon"></i>
               <span>{{$t('overall.create')}}</span>
             </button>
-            <button v-if="listMode === 'block'" id="knowledge-base-select" :title="$t('knowledgeBase.select')" class="top-tool-btn margin-r-10"
-                    style="width:72px;"
-                    @click="toSelect">
-              <i class="cn-icon-select cn-icon" ></i>
-              <span>{{$t('overall.select')}}</span>
-            </button>
-            <button v-if="listMode === 'list'" id="knowledge-base-edit" :title="$t('knowledgeBase.editKnowledgeBase')" class="top-tool-btn margin-r-10"  :disabled="disableEdit"
+            <button id="knowledge-base-edit" :title="$t('knowledgeBase.editKnowledgeBase')" class="top-tool-btn margin-r-10"  :disabled="disableEdit"
                     style="width:72px;"
                     @click="editSelectRecord">
               <i class="cn-icon-edit cn-icon" ></i>
@@ -37,62 +55,33 @@
               <i class="cn-icon-delete cn-icon"></i>
               <span>{{$t('overall.delete')}}</span>
             </button>
-            <div class="top-tool-search margin-l-10" style="">
+            <div class="top-tool-search margin-l-10" >
               <el-input v-model="keyWord"  size="small" @keyup.enter="onSearch"></el-input>
               <button class="top-tool-btn  top-tool-btn--search" style="border-radius: 0 2px 2px 0 !important;" @click="onSearch">
                 <i class="el-icon-search"></i>
               </button>
             </div>
           </div>
-          <div class="top-tools__right" >
-            <el-button-group size="mini">
-              <el-button size="mini" @click="modeChange('list')" :class="{'active': listMode === 'list'}"><i class="cn-icon cn-icon-list"></i></el-button>
-              <el-button size="mini" @click="modeChange('block')" :class="{'active': listMode === 'block'}"><i class="cn-icon cn-icon-blocks"></i></el-button>
-            </el-button-group>
-          </div>
         </div>
-        <!-- 列表式 -->
-        <template v-if="listMode === 'list'">
-          <div class="list-mode__row" style="position:relative;">
-            <loading :loading="loading"></loading>
-            <knowledge-base-table-for-row
-                    ref="dataTable"
-                    height="100%"
-                    :api="url"
-                    :isNoData="isNoData"
-                    :custom-table-title="tools.customTableTitle"
-                    :table-data="tableData"
-                    :is-selected-status="isSelectedStatus"
-                    :all-count="18"
-                    @delete="toDelete"
-                    @selectionChange="selectionChange"
-                    @edit="edit"
-                    @orderBy="tableDataSort"
-                    @reload="reloadRowList"
-                    @toggleLoading="toggleLoading"
-            ></knowledge-base-table-for-row>
-          </div>
-        </template>
-        <!-- 卡片式 -->
-        <template v-else-if="listMode === 'block'">
-          <div class="list-mode__card" style="position:relative;">
-            <loading :loading="loading"></loading>
-            <knowledge-base-table-for-card
-                    ref="dataTableCard"
-                    :api="url"
-                    :isNoData="isNoData"
-                    :custom-table-title="tools.customTableTitle"
-                    :table-data="tableData"
-                    :is-selected-status="isSelectedStatus"
-                    :all-count="18"
-                    @delete="toDelete"
-                    @checkboxStatusChange="checkboxStatusChange"
-                    @reload="reloadRowList"
-                    @toggleLoading="toggleLoading"
-            ></knowledge-base-table-for-card>
-          </div>
-        </template>
-        <div class="knowledge-pagination" style="">
+        <div class="list-mode__row" style="position:relative;">
+          <loading :loading="loading"></loading>
+          <knowledge-base-table-for-row
+                  ref="dataTable"
+                  height="100%"
+                  :api="url"
+                  :isNoData="isNoData"
+                  :custom-table-title="tools.customTableTitle"
+                  :table-data="tableData"
+                  :is-selected-status="isSelectedStatus"
+                  @delete="toDelete"
+                  @selectionChange="selectionChange"
+                  @edit="edit"
+                  @orderBy="tableDataSort"
+                  @reload="reloadRowList"
+                  @toggleLoading="toggleLoading"
+          ></knowledge-base-table-for-row>
+        </div>
+        <div class="knowledge-pagination" >
           <pagination ref="pagination" :page-obj="pageObj" :table-id="tableId" @pageNo='pageNo' @pageSize='pageSize'></pagination>
         </div>
       </div>
@@ -111,20 +100,18 @@
               height="156px"
               width="100%"
               class="dialog-table"
-              :row-style="rowStyle"
               cell-style="padding:4px 0px;font-size: 12px;color: #353636;font-weight: 400;"
-              header-cell-style="padding:4px 0px;background: #F5F8FA;font-size: 12px;color: #353636;font-weight: 500;"
-              :header-row-style="tableHeaderRowStyle">
+              header-cell-style="padding:4px 0px;background: #F5F8FA;font-size: 12px;color: #353636;font-weight: 500;">
       <el-table-column
               :resizable="false"
               align="center"
               type="selection"
               width="50">
       </el-table-column>
-      <el-table-column property="knowledgeId" label="ID" width="50"></el-table-column>
+      <el-table-column property="knowledgeId" label="ID" width="150"></el-table-column>
       <el-table-column property="name" label="Name"></el-table-column>
-      <el-table-column property="category" label="Category" width="100" :formatter = "categoryFormat"></el-table-column>
-      <el-table-column property="source" label="Source" width="110" :formatter = "sourceFormat"></el-table-column>
+    <!--  <el-table-column property="category" label="Category" width="100" :formatter = "categoryFormat"></el-table-column>
+      <el-table-column property="source" label="Source" width="110" :formatter = "sourceFormat"></el-table-column> -->
     </el-table>
     <template #footer>
         <span class="dialog-footer">
@@ -139,17 +126,16 @@ import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTableForCard from '@/components/table/setting/knowledgeBaseTableForCard'
 import KnowledgeBaseTableForRow from '@/components/table/setting/KnowledgeBaseTableForRow'
 import { api } from '@/utils/api'
+import { get } from '@/utils/http'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
-import { knowledgeBaseCategory, knowledgeBaseSource } from '@/utils/constants'
+import { knowledgeBaseCategory, knowledgeBaseSource, knowledgeCategoryValue } from '@/utils/constants'
 import axios from 'axios'
-import KnowledgeFilter from '@/views/setting/KnowledgeFilter'
 
 export default {
   name: 'knowledgeBase',
   components: {
     KnowledgeBaseTableForCard,
-    KnowledgeBaseTableForRow,
-    KnowledgeFilter
+    KnowledgeBaseTableForRow
   },
   mixins: [dataListMixin],
   data () {
@@ -165,7 +151,7 @@ export default {
       showConfirmDialog: false,
       delItemList: [],
       secondBatchDeleteObjs: [],
-      listMode: 'list' // 列表的模式，list|block
+      dataType: 'builtInList' // userDefinedList|builtInList
     }
   },
   watch: {
@@ -176,13 +162,15 @@ export default {
         ...this.filterParams,
         name: this.keyWord
       }
+      if (this.dataType === 'userDefinedList') {
+        params.category = knowledgeCategoryValue.userDefined
+      }
       this.clearList()
       this.search(params)
-      this.$refs.knowledgeFilter.reloadFilter(this.checkedCategoryIds, this.checkedStatusIds)
     },
     reloadRowList () {
+      this.searchLabel.category = knowledgeCategoryValue.userDefined
       this.getTableData()
-      this.$refs.knowledgeFilter.reloadFilter()
     },
     categoryFormat (row, column) {
       const category = row.category
@@ -257,11 +245,22 @@ export default {
           ids.push(item.knowledgeId)
         })
       }
+      let hasReference = false
+      let referenceKnowledge = null
+      this.batchDeleteObjs.forEach(item => {
+        if (item.reference && item.reference.length > 0) {
+          hasReference = true
+          referenceKnowledge = item
+        }
+      })
+
       if (ids.length === 0) {
         this.$alert(this.$t('tip.pleaseSelect'), {
           confirmButtonText: this.$t('tip.yes'),
           type: 'warning'
         }).catch(() => {})
+      } else if (hasReference) {
+        this.$message.error(this.$t('knowledgeBase.deleteReferenceObjects', { name: referenceKnowledge.name }))
       } else {
         this.toggleLoading(true)
         axios.delete(this.url + '?knowledgeIds=' + ids).then(response => {
@@ -271,11 +270,11 @@ export default {
             this.secondBatchDeleteObjs.forEach((item) => {
               this.$refs.delDataTable.toggleRowSelection(item, false)
             })
-            this.$refs.knowledgeFilter.reloadFilter()
             this.secondBatchDeleteObjs = []
             this.batchDeleteObjs = []
-            delete this.searchLabel.category
+            // delete this.searchLabel.category
             delete this.searchLabel.source
+            this.searchLabel.category = knowledgeCategoryValue.userDefined
             this.getTableData()
           } else {
             this.$message.error(response.data.message)
@@ -291,14 +290,6 @@ export default {
           }
         })
       }
-    },
-    tableHeaderRowStyle ({ row, rowIndex }) {
-      // if (rowIndex === 0) {
-      // return 'font-weight: 500;font-size: 14px;'
-      // }
-    },
-    rowStyle ({ row, rowIndex }) {
-      // return 'height:32px !important;'//font-size: 14px;color: #666666;font-weight: 400;
     },
     submit () {
       this.delBatchKnowledge()
@@ -358,6 +349,16 @@ export default {
         this.jumpToEditPage(this.batchDeleteObjs[0].knowledgeId)
       }
     },
+    changeToUserDefinedList () {
+      this.dataType = 'userDefinedList'
+      this.$router.push({
+        path: '/knowledgeBase/userDefinedLibrary',
+        query: {
+          t: +new Date(),
+          dataType: 'userDefinedList'
+        }
+      })
+    },
     toDelete (data) {
       if (data && data.knowledgeId) {
         this.secondBatchDeleteObjs = []
@@ -372,12 +373,12 @@ export default {
       this.isSelectedStatus = false
       this.batchDeleteObjs = []
       this.secondBatchDeleteObjs = []
-      this.listMode = mode
+      this.dataType = mode
       if (this.$refs.dataTableCard) {
         this.$refs.dataTableCard.clearSelect()
       }
       const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, { listMode: mode })
+      const newUrl = urlParamsHandler(window.location.href, query, { dataType: mode })
       overwriteUrl(newUrl)
     },
     del (row) {
@@ -391,8 +392,9 @@ export default {
           if (response.data.code === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
-            delete this.searchLabel.category
+            // delete this.searchLabel.category
             delete this.searchLabel.source
+            this.searchLabel.category = knowledgeCategoryValue.userDefined
             this.getTableData()
           } else {
             this.$message.error(response.data.message)
@@ -412,29 +414,64 @@ export default {
     jumpToEditPage (id) {
       const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
-        path: '/knowledgeBase/edit',
+        path: '/knowledgeBase/userDefinedLibrary/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,
           id: id,
-          listMode: this.listMode
+          dataType: this.dataType
         }
       })
     },
     jumpToCreatePage () {
       this.$router.push({
-        path: '/knowledgeBase/create',
+        path: '/knowledgeBase/userDefinedLibrary/create',
         query: {
           t: +new Date(),
-          listMode: this.listMode
+          dataType: this.dataType
         }
+      })
+    },
+    getBuiltInData () {
+      this.isNoData = false
+      this.toggleLoading(true)
+      const params = {
+        category: knowledgeCategoryValue.aiTagging + ',' + knowledgeCategoryValue.webSketch,
+        pageSize: -1
+      }
+      get(this.listUrl, params).then(response => {
+        if (response.code === 200) {
+          this.tableData = response.data.list
+          if (!this.tableData || this.tableData.length === 0) {
+            this.isNoData = true
+          } else {
+            this.isNoData = false
+          }
+        } else {
+          console.error(response)
+          this.isNoData = true
+          if (response.message) {
+            this.$message.error(response.message)
+          } else {
+            this.$message.error(this.$t('tip.somethingWentWrong'))
+          }
+        }
+      }).catch(() => {
+        this.isNoData = true
+      }).finally(() => {
+        this.toggleLoading(false)
       })
     }
   },
   mounted () {
-    const curMode = this.$router.currentRoute.value.query.listMode
-    this.listMode = curMode || 'list'
+    const curMode = this.$router.currentRoute.value.query.dataType
+    this.dataType = curMode || 'builtInList'
     this.filterParams = {}
+    if (this.dataType === 'builtInList') {
+      this.getBuiltInData()
+    } else if (this.dataType === 'userDefinedList') {
+      this.searchLabel.category = knowledgeCategoryValue.userDefined
+    }
   },
   computed: {
   }
