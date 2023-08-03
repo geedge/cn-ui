@@ -1300,3 +1300,17 @@ export function numberWithCommas (num) {
     return num
   }
 }
+
+/**
+ * 根据状态编码0，1转化为Disabled，Enabled
+ * @param status
+ * @returns {string}
+ */
+export function switchStatus (status) {
+  switch (status) {
+    case 0:
+      return 'Disabled'
+    case 1:
+      return 'Enabled'
+  }
+}

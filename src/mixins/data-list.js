@@ -118,29 +118,68 @@ export default {
       if (this.listUrl) {
         listUrl = this.listUrl
       }
-      get(listUrl, this.searchLabel).then(response => {
-        if (response.code === 200) {
-          this.tableData = response.data.list
-          this.pageObj.total = response.data.total
-          if (!this.tableData || this.tableData.length === 0) {
-            this.isNoData = true
-          } else {
-            this.isNoData = false
+      // todo 此段是为了避免mock没开启，打开detection界面报错提示，后续再开发detection时删除
+      if (listUrl === api.detection.list) {
+        const list = []
+        for (let i = 0; i < 20; i++) {
+          const obj = {
+            ruleId: 100000 + i,
+            ruleType: 'indicator_match',
+            status: 1,
+            name: 'name123',
+            category: 'Security Event',
+            eventType: 'C&C',
+            description: 'Built-in darkweb IoC',
+            ruleConfig: {
+              knowledge: {
+                name: 'VPN Server IP',
+                category: 'user_defined'
+              }
+            }
           }
-        } else {
-          console.error(response)
-          this.isNoData = true
-          if (response.message) {
-            this.$message.error(response.message)
+          if (i % 2 === 0) {
+            obj.ruleType = 'threshold'
+            obj.ruleConfig = {
+              dimensions: 'Destination IP/CIDR'
+            }
+            obj.description = 'abuse.ch is providing community driven threat intelligence on \n' +
+              'cyber threats. It is the home of a couple of projects that are \n' +
+              'helping internet service providers and network operators protect …'
           } else {
-            this.$message.error(this.$t('tip.somethingWentWrong'))
+            obj.status = 0
           }
+          list.push(obj)
         }
-      }).catch(() => {
-        this.isNoData = true
-      }).finally(() => {
-        this.toggleLoading(false)
-      })
+
+        this.tableData = list
+        this.pageObj.total = list.length
+        this.loading = false
+      } else {
+        get(listUrl, this.searchLabel).then(response => {
+          if (response.code === 200) {
+            this.tableData = response.data.list
+            this.pageObj.total = response.data.total
+            if (!this.tableData || this.tableData.length === 0) {
+              this.isNoData = true
+            } else {
+              this.isNoData = false
+            }
+          } else {
+            console.error(response)
+            this.isNoData = true
+            if (response.message) {
+              this.$message.error(response.message)
+            } else {
+              this.$message.error(this.$t('tip.somethingWentWrong'))
+            }
+          }
+        }).catch(() => {
+          this.isNoData = true
+        }).finally(() => {
+          this.toggleLoading(false)
+          this.loading = false
+        })
+      }
     },
     del (row) {
       this.$confirm(this.$t('tip.confirmDelete'), {
@@ -396,7 +435,7 @@ export default {
     tableData: {
       deep: true,
       handler (n) {
-        if (n.length === 0 && this.pageObj.pageNo > 1) {
+        if (n && n.length === 0 && this.pageObj.pageNo > 1) {
           this.pageNo(this.pageObj.pageNo - 1)
         }
         // TODO 不是删除时回到顶部

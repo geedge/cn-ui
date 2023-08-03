@@ -136,6 +136,16 @@ export const api = {
       dnsErrorMetric: '/interface/detection/performance/detail/overview/metric/dnsError',
       httpErrorMetric: '/interface/detection/performance/detail/overview/metric/httpError',
       highDnsResponseTimeMetric: '/interface/detection/performance/detail/overview/metric/highDnsResponseTime'
+    },
+    list: apiVersion + '/rule/detection/list', // 检测规则列表
+    detail: apiVersion + '/rule/detection', // 检测规则详情
+    delete: apiVersion + '/rule', // 检测规则删除
+    // 获取单位列表，如source、type、metric等
+    statistics: apiVersion + '/detection/statistics',
+    // 规则新建模块
+    create: {
+      topKeys: apiVersion + '/detection/topKeys', // topKeys列表
+      create: apiVersion + '/rule/detection/create' // todo 规则新建编辑，此api为模拟，后续需要修改
     }
   },
   // Dashboard
