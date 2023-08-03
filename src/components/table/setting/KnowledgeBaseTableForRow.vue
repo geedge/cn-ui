@@ -18,7 +18,7 @@
           width="55">
       </el-table-column>
       <el-table-column
-          v-for="(item, index) in customTableTitles"
+          v-for="(item, index) in tableTitle"
           :key="`col-${index}`"
           :fixed="item.fixed"
           :label="item.label"
@@ -52,6 +52,29 @@
           <template v-else-if="item.prop === 'source'">
             <span class="type-tag">{{tagSourceText(scope.row[item.prop])}}</span>
           </template>
+          <template v-else-if="item.prop === 'reference'" >
+            <templage v-if="scope.row[item.prop] && scope.row[item.prop].length > 2" >
+              <el-popover placement="right-end" trigger="hover" :show-arrow="false" offset="0" ref="referenceMoreInfo"
+                          hide-after="0" >
+                <template #reference>
+                  <div class="reference-tag__show">
+                    <div class="reference-tag__group">
+                      <span class="reference-tag" v-for="(refer, index) in scope.row[item.prop].slice(0,2)" >{{refer}}</span>
+                    </div>
+                    <div class="reference-more">+{{scope.row[item.prop].length - 2}} more</div>
+                  </div>
+                </template>
+                <div class="reference-tag__tip">
+                  <span class="reference-tag" v-for="(refer, index) in scope.row[item.prop].slice(2)" >{{refer}}</span>
+                </div>
+              </el-popover>
+            </templage>
+            <template v-else>
+              <template v-for="(refer, index) in scope.row[item.prop]">
+                <div class="type-tag">{{refer}}</div>
+              </template>
+            </template>
+          </template>
           <template v-else-if="item.prop === 'opTime' || item.prop === 'ctime'">
             <template v-if="scope.row[item.prop]">
               {{dateFormatByAppearance(scope.row[item.prop])}}
@@ -70,17 +93,6 @@
           </template>
           <template v-else-if="item.prop === 'description'">
             <span class="list-desc" :title="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
-          </template>
-          <template v-else-if="item.prop === 'status'">
-            <el-switch class="card-enable"
-                       v-model="scope.row.status"
-                       active-color="#38ACD2"
-                       inactive-color="#C0CEDB"
-                       :active-value="1"
-                       :inactive-value="0"
-                       @change="changeStatus($event,scope.row.knowledgeId)"
-            >
-            </el-switch>
           </template>
           <span v-else>{{scope.row[item.prop] || '-'}}</span>
         </template>
@@ -112,23 +124,24 @@ export default {
           label: 'ID',
           prop: 'knowledgeId',
           show: true,
-          width: 60,
+          width: 100,
           sortable: 'custom'
         }, {
-          label: this.$t('config.roles.name'),
+          label: this.$t('overall.name'),
           prop: 'name',
           minWidth: 100,
+          width: 150,
           show: true,
           sortable: 'custom'
         }, {
-          label: this.$t('overall.category'),
-          prop: 'category',
-          width: 100,
-          show: true
-        }, {
-          label: this.$t('overall.source'),
+          label: this.$t('overall.type'),
           prop: 'source',
           width: 130,
+          show: true
+        }, {
+          label: this.$t('knowledge.reference'),
+          prop: 'reference',
+          width: 180,
           show: true
         }, {
           label: this.$t('overall.remark'),
@@ -136,6 +149,7 @@ export default {
           minWidth: 150,
           show: true
         },
+        /*
         {
           label: this.$t('overall.createdBy'),
           prop: 'opUser',
@@ -151,20 +165,32 @@ export default {
           label: this.$t('overall.updatedBy'),
           prop: 'uuser',
           show: false
-        },
+        }, */
         {
           label: this.$t('overall.updateTime'),
           prop: 'opTime',
           show: true,
+          width: 150,
           sortable: 'custom'
-        },
-        {
-          label: this.$t('knowledge.status'),
-          prop: 'status',
-          show: true,
-          minWidth: 40
         }
       ]
+    }
+  },
+  watch: {
+    tableData: {
+      handler (n) {
+        if (this.tableData && this.tableData.length > 0) {
+          this.tableData.forEach(item => {
+            item.reference = []
+
+            if (item.refRule && item.refRule.length > 0) {
+              item.refRule.forEach(ref => {
+                item.reference.push(ref.name)
+              })
+            }
+          })
+        }
+      }
     }
   },
   computed: {

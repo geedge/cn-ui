@@ -107,10 +107,10 @@ export default {
       } else if (isClearType) {
         this.searchLabel.type = ''// 换新接口需要修改的属性名称
       }
+      this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
-      this.searchLabel = { ...this.searchLabel, ...this.pageObj }
       this.isNoData = false
       this.toggleLoading(true)
       delete this.searchLabel.total
@@ -442,7 +442,7 @@ export default {
       }
     }
     this.tools.customTableTitle = localStorageTableTitle
-    if (localStorageTableTitle && (localStorageTableTitle.length > this.$refs.dataTable.tableTitle.length)) {
+    if (localStorageTableTitle && this.$refs.dataTable && this.$refs.dataTable.tableTitle && (localStorageTableTitle.length > this.$refs.dataTable.tableTitle.length)) {
       const arr = localStorageTableTitle.splice(this.$refs.dataTable.tableTitle.length, localStorageTableTitle.length)
       this.tools.customTableTitle = this.tools.customTableTitle.concat(arr)
     }
