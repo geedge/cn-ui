@@ -351,6 +351,9 @@ export default {
   computed: {
     ipLocationRegion () {
       return function (entityData) {
+        if (!entityData) {
+          return '-'
+        }
         let result = ''
         if (entityData.country) {
           result += `${entityData.country},`
