@@ -1,4 +1,4 @@
-import { chartTableOrderOptionsMapping, storageKey } from '@/utils/constants'
+import { chartTableOrderOptionsMapping, storageKey,knowledgeCategoryValue } from '@/utils/constants'
 import { getWidthByLanguage } from '@/utils/tools'
 import { put, patch } from '@/utils/http'
 import { api } from '@/utils/api'
@@ -39,13 +39,6 @@ export default {
             this.$refs.dataTable.doLayout()
           }
         }, 200)
-      }
-    },
-    tableData: {
-      handler (n) {
-        if (this.tableData && this.tableData.length > 0) {
-          // this.isInit = false
-        }
       }
     }
   },
