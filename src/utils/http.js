@@ -23,6 +23,7 @@ axios.interceptors.request.use(config => {
         }
       }
     }
+    config.params.q = q
   }
 
   config.cancelToken = cancelToken
