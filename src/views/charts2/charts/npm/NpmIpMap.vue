@@ -118,7 +118,7 @@ export default {
               res2.forEach((r, i) => {
                 if (r.code === 200) {
                   mapData.forEach(t => {
-                    t[keyPre[i] + 'Score'] = r.data.result.find(d => d.country === t.country)
+                    t[keyPre[i] + 'Score'] = r.data.result.find(d => d.country === t.country && d.province === t.province)
                   })
                 } else {
                   this.showError = true
