@@ -109,7 +109,7 @@
 <script>
 import { switchStatus, toUpperCaseByString } from '@/utils/tools'
 import { eventSeverityColor } from '@/utils/constants'
-import axios from '_axios@0.21.4@axios'
+import axios from 'axios'
 import { api } from '@/utils/api'
 
 export default {
