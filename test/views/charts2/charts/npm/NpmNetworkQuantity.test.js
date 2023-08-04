@@ -119,7 +119,7 @@ describe('views/charts2/charts/npm/NpmNetworkQuantity.vue测试', () => {
 
       expect(p95Node0.text()).toEqual('P95:445 ms')
       expect(p95Node1.text()).toEqual('P95:2.95 s')
-      expect(p95Node2.text()).toEqual('P95:0 ms')
+      expect(p95Node2.text()).toEqual('P95:<1 ms')
       expect(p95Node3.text()).toEqual('P95:3.46 %')
       expect(p95Node4.text()).toEqual('P95:10.47 %')
 
@@ -131,7 +131,7 @@ describe('views/charts2/charts/npm/NpmNetworkQuantity.vue测试', () => {
 
       expect(p99Node0.text()).toEqual('P99:601 ms')
       expect(p99Node1.text()).toEqual('P99:4.62 s')
-      expect(p99Node2.text()).toEqual('P99:0 ms')
+      expect(p99Node2.text()).toEqual('P99:<1 ms')
       expect(p99Node3.text()).toEqual('P99:13.72 %')
       expect(p99Node4.text()).toEqual('P99:18.30 %')
       resolve()
@@ -195,7 +195,7 @@ describe('views/charts2/charts/npm/NpmNetworkQuantity.vue测试', () => {
 
       expect(p95Node0.text()).toEqual('P95:160 ms')
       expect(p95Node1.text()).toEqual('P95:266 ms')
-      expect(p95Node2.text()).toEqual('P95:0 ms')
+      expect(p95Node2.text()).toEqual('P95:<1 ms')
       expect(p95Node3.text()).toEqual('P95:2.23 %')
       expect(p95Node4.text()).toEqual('P95:6.60 %')
 
@@ -207,7 +207,7 @@ describe('views/charts2/charts/npm/NpmNetworkQuantity.vue测试', () => {
 
       expect(p99Node0.text()).toEqual('P99:789 ms')
       expect(p99Node1.text()).toEqual('P99:2.09 s')
-      expect(p99Node2.text()).toEqual('P99:0 ms')
+      expect(p99Node2.text()).toEqual('P99:<1 ms')
       expect(p99Node3.text()).toEqual('P99:21.87 %')
       expect(p99Node4.text()).toEqual('P99:9.26 %')
       resolve()
@@ -341,7 +341,7 @@ describe('views/charts2/charts/npm/NpmNetworkQuantity.vue测试', () => {
       const p95Node3 = wrapper.get('[test-id="singleValueP953"]')
       const p95Node4 = wrapper.get('[test-id="singleValueP954"]')
 
-      expect(p95Node0.text()).toEqual('P95:0 ms')
+      expect(p95Node0.text()).toEqual('P95:<1 ms')
       expect(p95Node1.text()).toEqual('P95:4.92 m')
       expect(p95Node2.text()).toEqual('P95:10.00 s')
       expect(p95Node3.text()).toEqual('P95:3.46 %')
@@ -353,7 +353,7 @@ describe('views/charts2/charts/npm/NpmNetworkQuantity.vue测试', () => {
       const p99Node3 = wrapper.get('[test-id="singleValueP993"]')
       const p99Node4 = wrapper.get('[test-id="singleValueP994"]')
 
-      expect(p99Node0.text()).toEqual('P99:0 ms')
+      expect(p99Node0.text()).toEqual('P99:<1 ms')
       expect(p99Node1.text()).toEqual('P99:7.70 m')
       expect(p99Node2.text()).toEqual('P99:10.00 s')
       expect(p99Node3.text()).toEqual('P99:13.72 %')

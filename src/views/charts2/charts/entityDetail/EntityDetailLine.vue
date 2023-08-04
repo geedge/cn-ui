@@ -22,10 +22,10 @@
                 </div>
                 <div class="line-value-unit" :test-id="`tabContent${index}`">
                   <span class="line-value-unit-number">
-                    {{ getTabUnit(item.analysis.avg) }}
+                    {{ valueToRangeValue(item.analysis.avg, unitTypes.number)[0] }}
                   </span>
                   <span class="line-value-unit-number2">
-                    <span>{{ unitConvert(item.analysis.avg, unitTypes.number)[1] }}</span>
+                    <span>{{ valueToRangeValue(item.analysis.avg, unitTypes.number)[1] }}</span>
                     <span v-if="item.unitType">{{ item.unitType }}</span>
                   </span>
                 </div>
@@ -88,7 +88,7 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import * as echarts from 'echarts'
 import { stackedLineChartOption } from '@/views/charts2/charts/options/echartOption'
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { unitTypes, chartColor3, chartColor4 } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
@@ -153,6 +153,7 @@ export default {
       tabsTemplate: dataForNetworkOverviewLine.tabsTemplate,
       tabs: [],
       unitConvert,
+      valueToRangeValue,
       unitTypes,
       chartDateObject: [],
       timer: null,
@@ -627,14 +628,6 @@ export default {
       } else {
         this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
       }
-    },
-    // 对lineTab进行转换
-    getTabUnit (avg) {
-      let number = unitConvert(avg, unitTypes.number)[0]
-      if (number !== '-' && JSON.parse(number) > 0 && JSON.parse(number) < 1) {
-        number = '<1'
-      }
-      return number
     }
   },
   mounted () {
@@ -664,6 +657,7 @@ export default {
     }
     // 检测时发现该方法占用较大内存，且未被释放
     this.unitConvert = null
+    this.valueToRangeValue = null
     myChart = null
   }
 }

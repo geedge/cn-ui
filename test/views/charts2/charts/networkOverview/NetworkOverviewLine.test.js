@@ -62,7 +62,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewLine.vue测试', (
       expect(titleNode0.text()).toEqual('network.total')
       expect(titleNode1.text()).toEqual('network.outbound')
       expect(titleNode2.text()).toEqual('network.other')
-      expect(textNode0.text()).toEqual('0bps')
+      expect(textNode0.text()).toEqual('<0.01bps')
       expect(textNode1.text()).toEqual('95.23Ebps')
       expect(textNode2.text()).toEqual('0.01bps')
       resolve()

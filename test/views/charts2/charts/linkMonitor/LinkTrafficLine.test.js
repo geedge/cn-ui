@@ -165,9 +165,9 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
     const textNode2 = await wrapper.get('[test-id="tabContent2"]')
 
     await new Promise(resolve => setTimeout(() => {
-      expect(textNode0.text()).toEqual('0bps')
-      expect(textNode1.text()).toEqual('0bps')
-      expect(textNode2.text()).toEqual('0bps')
+      expect(textNode0.text()).toEqual('<0.01bps')
+      expect(textNode1.text()).toEqual('<0.01bps')
+      expect(textNode2.text()).toEqual('<0.01bps')
       resolve()
     }, 200))
   })
