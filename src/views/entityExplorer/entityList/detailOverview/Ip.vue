@@ -4,7 +4,16 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.location')}}</div>
-        <div class="row__content">{{ipLocationRegion(entity.location)}}</div>
+        <div class="row__content">
+          <div v-if="entity.location" style="display: flex">
+            <div v-if="entity.location.country">
+              <img v-if="entity.location.country===countryNameIdMapping.Unknown || !countryNameIdMapping[entity.location.country]" src="../../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+              <img v-else :src="require(`../../../../../public/images/flag/${countryNameIdMapping[entity.location.country]}.png`)" class="filter-country-flag" >
+            </div>
+            {{ipLocationRegion(entity.location)}}
+          </div>
+          <div v-else>-</div>
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">ASN</div>
@@ -248,6 +257,7 @@ import relatedServer from '@/mixins/relatedServer'
 import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
+import { countryNameIdMapping } from '@/utils/constants'
 
 export default {
   name: 'Ip',
@@ -345,7 +355,8 @@ export default {
       loadingAlert: false,
       loadingSecurityEvents: false,
       loadingMap: false,
-      openPort: '-'
+      openPort: '-',
+      countryNameIdMapping
     }
   },
   computed: {

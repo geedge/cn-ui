@@ -15,11 +15,11 @@
 
             <div class="filter__body-item" v-for="(data, i) in item.data" :key="i" @click="filter(data.label, data)">
               <div class="filter__body-item-left">
-                <!--当前无更好方案匹配国旗，后续解决-->
-                <!--<div v-if="data.flag">-->
-                <!--  <img :src="require(`../../../public/images/flag/${data.flag}.svg`)" class="filter-country-flag"/>-->
-                <!--</div>-->
-                <div class="filter__body-item-left-index">{{ i+1 }}</div>
+                <div v-if="data.flag">
+                  <img v-if="data.flag===countryNameIdMapping.Unknown || !countryNameIdMapping[data.flag]" src="../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+                  <img v-else :src="require(`../../../public/images/flag/${countryNameIdMapping[data.flag]}.png`)" class="filter-country-flag"/>
+                </div>
+                <div v-else class="filter__body-item-left-index">{{ i+1 }}</div>
                 <div class="filter__body-item-left-label">
                   <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
                     <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">{{ data.label }}</span>
@@ -42,6 +42,7 @@
 <script>
 import Loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
+import { countryNameIdMapping } from '@/utils/constants'
 export default {
   name: 'EntityFilter',
   components: { ChartNoData, Loading },
@@ -65,7 +66,8 @@ export default {
   },
   data () {
     return {
-      disabledLabel: true
+      disabledLabel: true,
+      countryNameIdMapping
     }
   },
   methods: {
