@@ -50,10 +50,10 @@
                     <div class="data-total" >
                       <div class="data-value" :test-id="`data-value-${item.prop}${scope.row.index}`">
                         <template v-if="showUnit && item.unit">
-                          {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], item.unit).join(' ') : '-'):'' }}
+                          {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? valueToRangeValue(scope.row[item.prop][0], item.unit).join(' ') : '-'):'' }}
                         </template>
                         <template v-else>
-                          {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? unitConvert(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
+                          {{scope.row[item.prop]?((scope.row[item.prop][0]||scope.row[item.prop][0]===0)? valueToRangeValue(scope.row[item.prop][0], unitTypes.number).join(' ') : '-'):'' }}
                         </template>
                       </div>
                       <div class="data-trend" :test-id="`data-trend-all-${item.prop}${scope.row.index}`">
@@ -116,10 +116,10 @@
                   </template>
                   <template v-else>
                     <template v-if="showUnit && item.unit">
-                      {{(scope.row[item.prop]  || scope.row[item.prop]===0) ? unitConvert(scope.row[item.prop], item.unit).join(' ') : '-'}}
+                      {{(scope.row[item.prop]  || scope.row[item.prop]===0) ? valueToRangeValue(scope.row[item.prop], item.unit).join(' ') : '-'}}
                     </template>
                     <template v-else>
-                      {{(scope.row[item.prop] || scope.row[item.prop]===0)? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
+                      {{(scope.row[item.prop] || scope.row[item.prop]===0)? valueToRangeValue(scope.row[item.prop], unitTypes.number).join(' ') : '-'}}
                     </template>
                   </template>
                 </template>
@@ -213,7 +213,7 @@ import {
   commonErrorTip
 } from '@/utils/constants'
 import { get } from '@/utils/http'
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combineDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
@@ -231,6 +231,7 @@ export default {
       orderBy: 'totalBytes',
       tab: 'ip',
       unitConvert,
+      valueToRangeValue,
       unitTypes,
       networkTable,
       isNoData: false,
@@ -1993,7 +1994,8 @@ export default {
   },
   beforeUnmount () {
     // 以下元素，检测到内存并未释放
-
+    this.unitConvert = null
+    this.valueToRangeValue = null
   },
   unmounted () {
     this.isNoData = false

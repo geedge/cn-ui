@@ -6,7 +6,7 @@ import {
   chartColor6,
   unitTypes
 } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { axisFormatter } from '@/views/charts/charts/tools'
 import { xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
 

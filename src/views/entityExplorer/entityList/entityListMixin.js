@@ -5,7 +5,7 @@ import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import { shallowRef } from 'vue'
 
 export default {
@@ -20,7 +20,7 @@ export default {
       trafficUrl: '',
       chartOption: null,
       unitTypes,
-      unitConvert,
+      valueToRangeValue,
       echartsArray: []
     }
   },

@@ -8,10 +8,10 @@
 
       <div class="single-value__content" >
         <div class="single-value__content-number" v-if="index ===0 || index ===1 || index ===2" :test-id="`singleValueContent${index}`">
-          {{ unitConvert(npm.Avg, unitTypes.time).join(' ') }}
+          {{ valueToRangeValue(npm.Avg, unitTypes.time).join(' ') }}
         </div>
         <div class="single-value__content-number" v-else :test-id="`singleValueContent${index}`">
-          {{unitConvert(npm.Avg, unitTypes.percent).join(' ')}}
+          {{valueToRangeValue(npm.Avg, unitTypes.percent).join(' ')}}
         </div>
         <div v-if="npm.value > 0" class="single-value__content-trend single-value__content-trend-red" >
           <i class="cn-icon-rise1 cn-icon" :test-id="`singleValueTrendIcon${index}`"></i>&nbsp;
@@ -36,17 +36,17 @@
       <div class="single-value__circle">
         <div class="single-value__circle-p95" :test-id="`singleValueP95${index}`">
         <span v-if="index ===0 || index ===1 || index ===2">
-          P95:{{ unitConvert(npm.P95, unitTypes.time).join(' ') }}</span>
+          P95:{{ valueToRangeValue(npm.P95, unitTypes.time).join(' ') }}</span>
           <span v-else>
-          P95:{{ unitConvert(npm.P95, unitTypes.percent).join(' ') }}
+          P95:{{ valueToRangeValue(npm.P95, unitTypes.percent).join(' ') }}
         </span>
         </div>
         <div class="single-value__circle-p99" :test-id="`singleValueP99${index}`">
         <span v-if="index ===0 || index ===1 || index ===2">
-          P99:{{ unitConvert(npm.P99, unitTypes.time).join(' ') }}
+          P99:{{ valueToRangeValue(npm.P99, unitTypes.time).join(' ') }}
         </span>
           <span v-else>
-          P99:{{ unitConvert(npm.P99, unitTypes.percent).join(' ') }}
+          P99:{{ valueToRangeValue(npm.P99, unitTypes.percent).join(' ') }}
         </span>
         </div>
       </div>
@@ -63,7 +63,7 @@ import { getChainRatio, getQueryByFlag2, getQueryByType } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import axios from 'axios'
 import { dataForNpmNetworkQuantity } from '@/utils/static-data'
 export default {
@@ -88,6 +88,7 @@ export default {
     return {
       unitTypes,
       unitConvert,
+      valueToRangeValue,
       npmNetworkName: dataForNpmNetworkQuantity.npmNetworkName,
       npmNetworkCycleData: [],
       npmNetworkLastCycleData: [],
@@ -347,6 +348,7 @@ export default {
     clearTimeout(this.timer1)
     clearTimeout(this.timer2)
     this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>

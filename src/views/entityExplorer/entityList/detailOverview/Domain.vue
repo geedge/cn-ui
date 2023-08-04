@@ -39,13 +39,13 @@
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
         <div class="row__content">
-          {{unitConvert(entityData.max, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.max, unitTypes.byte).join(' ') + '/s' : '-'}}
+          {{valueToRangeValue(entityData.max, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.max, unitTypes.byte).join(' ') + '/s' : '-'}}
         </div>
       </div>
       <div class="overview__row">
-        <div class="row__label row__label--width130">{{$t('overall.mean')}}</div>
+        <div class="row__label row__label--width130">{{$t('overall.average')}}</div>
         <div class="row__content">
-          {{unitConvert(entityData.avg, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.avg, unitTypes.byte).join(' ') + '/s' : '-'}}
+          {{valueToRangeValue(entityData.avg, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.avg, unitTypes.byte).join(' ') + '/s' : '-'}}
         </div>
       </div>
       <div class="overview__row">
@@ -53,7 +53,7 @@
         <div class="row__contents">
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.sent')}}：
-              {{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+              {{valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
@@ -62,7 +62,7 @@
           </div>
           <div class="row__content row__content-accept">
             <div class="row__charts-msg">{{$t('overall.received')}}：
-              {{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+              {{valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
@@ -216,7 +216,7 @@
 import { api } from '@/utils/api'
 import entityDetailMixin from './entityDetailMixin'
 import { unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
@@ -397,7 +397,7 @@ export default {
       },
       entityCopy,
       unitTypes,
-      unitConvert,
+      valueToRangeValue,
       entityData
     }
   }

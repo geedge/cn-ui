@@ -3,7 +3,6 @@ import { get } from '@/utils/http'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { riskLevelMapping, unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
 import { shallowRef, markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
 import { sortBy, reverseSortBy, computeScore } from '@/utils/tools'
@@ -498,8 +497,7 @@ export default {
   },
   setup () {
     return {
-      unitTypes,
-      unitConvert
+      unitTypes
     }
   },
   mounted () {
