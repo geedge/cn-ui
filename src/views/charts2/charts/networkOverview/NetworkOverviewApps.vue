@@ -21,7 +21,7 @@
           <div class="app-card__body">
             <div class="app-card__body-content">
               <div class="app-card__body-content-value">
-                <div class="app-card__body-content-number" :test-id="`rate${index}`">{{unitConvert(app.rate, unitTypes.number).join(' ')}}</div>
+                <div class="app-card__body-content-number" :test-id="`rate${index}`">{{valueToRangeValue(app.rate, unitTypes.number).join(' ')}}</div>
                 <div class="app-card__body-content-percent red" v-if="app.value > 0" :test-id="`percent${index}`">
                   <span v-if="app.value <= 5">
                     +{{unitConvert(app.value, unitTypes.percent).join('')}}
@@ -39,8 +39,8 @@
             </div>
             <div class="app-card__body-previous">
               <div>Total</div>
-              <div v-if="metric === 'Bits/s'" :test-id="`total${index}`">{{unitConvert(app.total, unitTypes.byte).join(' ')}}</div>
-              <div v-else :test-id="`total${index}`">{{unitConvert(app.total, unitTypes.number).join(' ')}}</div>
+              <div v-if="metric === 'Bits/s'" :test-id="`total${index}`">{{valueToRangeValue(app.total, unitTypes.byte).join(' ')}}</div>
+              <div v-else :test-id="`total${index}`">{{valueToRangeValue(app.total, unitTypes.number).join(' ')}}</div>
             </div>
           </div>
           <div class="chart__drawing" v-show="!isNoData" :id="`chart-${app.name}-${app.type}`"></div>
@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { storageKey, unitTypes, networkTable, operationType, curTabState } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
@@ -149,6 +149,8 @@ export default {
       appData: [],
       // 假数据
       appTempData: [],
+      valueToRangeValue,
+      unitConvert,
       unitTypes,
       timer: null,
       showAddApp: false,
@@ -207,7 +209,6 @@ export default {
     }
   },
   methods: {
-    unitConvert,
     clickOutSide () {
       this.appData.forEach(t => {
         t.moreOptions = false
@@ -732,6 +733,7 @@ export default {
       echarts.dispose(this.myChart)
     }
     this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>

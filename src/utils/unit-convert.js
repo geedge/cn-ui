@@ -141,7 +141,10 @@ export function getUnitType (column) {
 
 /* 单位转换，返回转换后的[value, unit]，type=time时若value<1ms，返回<1ms，type=percent时若value<0.01%，返回<0.01% */
 export function valueToRangeValue (value, unitType) {
-  const values = unitConvert(Number(value), unitType)
+  const values = unitConvert(value, unitType)
+  if (values[0] === '-') {
+    return values
+  }
   if (values[0] || values[0] === 0) {
     switch (unitType) {
       case unitTypes.time: {
@@ -165,6 +168,12 @@ export function valueToRangeValue (value, unitType) {
       case unitTypes.qps: {
         if (values[0] < 0.01) {
           return ['<0.01', 'qps']
+        }
+        break
+      }
+      case unitTypes.number: {
+        if (values[0] < 0.01) {
+          return ['<0.01', '']
         }
         break
       }

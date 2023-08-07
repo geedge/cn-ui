@@ -4,7 +4,16 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.location')}}</div>
-        <div class="row__content">{{ipLocationRegion(entity.location)}}</div>
+        <div class="row__content">
+          <div v-if="entity.location" style="display: flex">
+            <div v-if="entity.location.country">
+              <img v-if="entity.location.country===countryNameIdMapping.Unknown || !countryNameIdMapping[entity.location.country]" src="../../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+              <img v-else :src="require(`../../../../../public/images/flag/${countryNameIdMapping[entity.location.country]}.png`)" class="filter-country-flag" >
+            </div>
+            {{ipLocationRegion(entity.location)}}
+          </div>
+          <div v-else>-</div>
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">ASN</div>
@@ -44,7 +53,7 @@
         <div class="row__label row__label--width130">{{$t('overall.dnsServerInfo.queryRate')}}</div>
         <div class="row__contents">
           <div class="row__content">
-            <div class="row__charts-msg">{{unitConvert(entityData.queryRate, unitTypes.byte).join(' ')}}ps</div>
+            <div class="row__charts-msg">{{valueToRangeValue(entityData.queryRate, unitTypes.byte).join(' ')}}ps</div>
             <!-- 曲线-->
             <div class="row__content-loading">
               <loading :loading="!loadingDns && loading" size="small"></loading>
@@ -62,21 +71,21 @@
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
         <div class="row__content">
-          {{unitConvert(entityData.max, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.max, unitTypes.byte).join(' ') + '/s' : '-'}}
+          {{valueToRangeValue(entityData.max, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.max, unitTypes.byte).join(' ') + '/s' : '-'}}
         </div>
       </div>
       <div class="overview__row">
-        <div class="row__label row__label--width130">{{$t('overall.mean')}}</div>
+        <div class="row__label row__label--width130">{{$t('overall.average')}}</div>
         <div class="row__content">
-          {{unitConvert(entityData.avg, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.avg, unitTypes.byte).join(' ') + '/s' : '-'}}
+          {{valueToRangeValue(entityData.avg, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.avg, unitTypes.byte).join(' ') + '/s' : '-'}}
         </div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.throughput')}}</div>
         <div class="row__contents">
           <div class="row__content">
-            <div class="row__charts-msg">{{$t('overall.sent')}}：
-              {{unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+            <div class="row__charts-msg">{{$t('overall.sent')}}:
+              {{valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
@@ -84,8 +93,8 @@
             </div>
           </div>
           <div class="row__content row__content-accept">
-            <div class="row__charts-msg">{{$t('overall.received')}}：
-              {{unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') !== '- ' ? unitConvert(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+            <div class="row__charts-msg">{{$t('overall.received')}}:
+              {{valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
@@ -101,7 +110,7 @@
             <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
             <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
             <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
-            Score:{{score}}
+            Score:&nbsp;{{score}}
           </div>
 
           <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
@@ -240,7 +249,7 @@
 import entityDetailMixin from './entityDetailMixin'
 import { api } from '@/utils/api'
 import { unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
@@ -248,6 +257,7 @@ import relatedServer from '@/mixins/relatedServer'
 import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
+import { countryNameIdMapping } from '@/utils/constants'
 
 export default {
   name: 'Ip',
@@ -345,12 +355,16 @@ export default {
       loadingAlert: false,
       loadingSecurityEvents: false,
       loadingMap: false,
-      openPort: '-'
+      openPort: '-',
+      countryNameIdMapping
     }
   },
   computed: {
     ipLocationRegion () {
       return function (entityData) {
+        if (!entityData) {
+          return '-'
+        }
         let result = ''
         if (entityData.country) {
           result += `${entityData.country},`
@@ -465,7 +479,7 @@ export default {
       },
       entityCopy,
       unitTypes,
-      unitConvert
+      valueToRangeValue
     }
   }
 }

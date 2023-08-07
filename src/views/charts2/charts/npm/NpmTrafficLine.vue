@@ -116,6 +116,8 @@ export default {
 
       if (this.queryCondition.indexOf(' OR ') > -1) {
         condition = this.queryCondition.split(/["|'](.*?)["|']/)
+      } else if (this.queryCondition.indexOf('+OR+') > -1) {
+        condition = this.queryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
       } else {
         condition = this.queryCondition
       }

@@ -88,11 +88,16 @@
     color: #353636;
     font-weight: 400;
   }
-  .explorer-container {
+  .explorer-container, .explorer-container-new {
     display: flex;
     overflow: visible; /*overflow: hidden;*/
     height: calc(100% - 120px);
     position: relative;
+  }
+  .explorer-container-new {
+    height: calc(100% - 62px);
+    flex-direction: column;
+    width: calc(100% - 340px);
   }
   .explorer-foot {
     display: flex;

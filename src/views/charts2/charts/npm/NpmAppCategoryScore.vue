@@ -36,7 +36,7 @@
                 <span class="data-total-category-value" @click="drillDownData(scope.row.i18n)">{{$t(scope.row.i18n)}}</span>
               </template>
               <template v-else-if="item.prop === 'total'">
-                <div class="data-total-value">{{unitConvert(scope.row.totalPacketsRate, unitTypes.bps).join(' ')}}</div>
+                <div class="data-total-value">{{valueToRangeValue(scope.row.totalPacketsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.bytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
@@ -59,7 +59,7 @@
                 </div>
               </template>
               <template v-else-if="item.prop === 'outbound'">
-                <div class="data-total-value">{{unitConvert(scope.row.outboundPacketsRate, unitTypes.bps).join(' ')}}</div>
+                <div class="data-total-value">{{valueToRangeValue(scope.row.outboundPacketsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.outboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
@@ -82,7 +82,7 @@
                 </div>
               </template>
               <template v-else-if="item.prop === 'inbound'">
-                <div class="data-total-value" :test-id="`inbound-packet-${scope.row.appSubcategory}`">{{unitConvert(scope.row.inboundPacketsRate, unitTypes.bps).join(' ')}}</div>
+                <div class="data-total-value" :test-id="`inbound-packet-${scope.row.appSubcategory}`">{{valueToRangeValue(scope.row.inboundPacketsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
@@ -135,7 +135,7 @@
 
 <script>
 import { unitTypes, npmCategoryInfoMapping, networkTable, operationType, npmCategoryToAppCategoryMap, curTabState } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { computeScore, getChainRatio, getUserDrilldownTableConfig, overwriteUrl, urlParamsHandler } from '@/utils/tools'
@@ -149,6 +149,7 @@ export default {
   data () {
     return {
       unitConvert,
+      valueToRangeValue,
       unitTypes,
       colorPatchData: [
         { letter: '' },
@@ -379,6 +380,7 @@ export default {
   },
   beforeUnmount () {
     this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>

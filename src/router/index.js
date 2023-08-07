@@ -96,6 +96,18 @@ const routes = [
         name: 'Chart',
         path: '/chart',
         component: () => import('@/views/administration/Chart')
+      },
+      {
+        path: '/detectionsNew',
+        component: () => import('@/views/detectionsNew/Index')
+      },
+      {
+        path: '/detection/policies',
+        component: () => import('@/views/detectionsNew/Index')
+      },
+      {
+        path: '/detection/policies/create',
+        component: () => import('@/views/detectionsNew/DetectionForm')
       }
     ]
   }

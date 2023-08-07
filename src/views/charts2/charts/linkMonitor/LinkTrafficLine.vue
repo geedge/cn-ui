@@ -26,9 +26,9 @@
                <div class="tabs-name">{{$t(item.name)}}</div>
              </div>
              <div class="line-value-unit" :test-id="`tabContent${index}`">
-               <span class="line-value-unit-number">{{unitConvert(item.analysis.avg, unitTypes.number)[0]}}</span>
+               <span class="line-value-unit-number">{{valueToRangeValue(item.analysis.avg, unitTypes.number)[0]}}</span>
                <span class="line-value-unit-number2">
-                 <span>{{unitConvert(item.analysis.avg, unitTypes.number)[1]}}</span>
+                 <span>{{valueToRangeValue(item.analysis.avg, unitTypes.number)[1]}}</span>
                  <span v-if="item.unitType">{{item.unitType}}</span>
                </span>
              </div>
@@ -67,7 +67,7 @@ import ChartNoData from '@/views/charts/charts/ChartNoData'
 import Loading from '@/components/common/Loading'
 import { useRoute } from 'vue-router'
 import { ref, shallowRef } from 'vue'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import { chartColor3, chartColor4, unitTypes } from '@/utils/constants'
 import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
@@ -107,7 +107,7 @@ export default {
     return {
       options: dataForLinkTrafficLine.options,
       tabs: dataForLinkTrafficLine.tabs,
-      unitConvert,
+      valueToRangeValue,
       unitTypes,
       chartDateObject: [],
       timer: null,
@@ -457,7 +457,7 @@ export default {
       echarts.dispose(this.myChart)
     }
     this.chartOption = null
-    this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>

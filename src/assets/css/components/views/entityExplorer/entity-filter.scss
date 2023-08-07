@@ -56,11 +56,6 @@
         color: #353636;
         font-weight: 400;
 
-        .filter-country-flag {
-          width: 18px;
-          height: 12px;
-        }
-
         .filter__body-item-left-index {
           width: 16px;
           height: 16px;
@@ -98,4 +93,10 @@
       }
     }
   }
+}
+
+.filter-country-flag {
+  width: 18px;
+  height: 12px;
+  margin-right: 6px;
 }

@@ -25,7 +25,7 @@
           :time-filter="timeFilter"
           @filter="filter"
       ></entity-filter>
-      <div class="explorer-container" style="height: calc(100% - 62px);flex-direction: column;width: 100%;">
+      <div class="explorer-container explorer-container-new">
         <explorer-search
             ref="search"
             :class="{'explorer-search--show-list': showList}"
@@ -662,9 +662,9 @@ export default {
           if (item.code === 200 && item.data.list) {
             this.newFilterData[index].data = []
             item.data.list.forEach(item => {
-              const obj = { label: item.value, flag: '011-china', topColumn: 'Country', value: item.uniqueEntities }
+              const obj = { label: item.value, topColumn: 'Country', value: item.uniqueEntities }
               if (index === 0) {
-                obj.flag = item.uniqueEntities // 接口字段名称为'China'，目前svg名称为'011-china'，后续再指定方案调整
+                obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
               }
               if (index === 1) {
                 obj.topColumn = 'City'

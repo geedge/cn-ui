@@ -420,7 +420,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewApps.vue测试', (
       expect(testrate0.text()).toEqual('31.33 G')
       expect(testrate1.text()).toEqual('84.59 T')
       expect(testrate2.text()).toEqual('500.75 K')
-      expect(testrate3.text()).toEqual('0')
+      expect(testrate3.text()).toEqual('<0.01')
       expect(testrate4.text()).toEqual('-')
 
       const testPercent0 = wrapper.get('[test-id="percent0"]')

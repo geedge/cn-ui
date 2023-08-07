@@ -20,9 +20,9 @@
                 <div class="tabs-name" :test-id="`tabTitle${index}`">{{ $t(item.name) }}</div>
               </div>
               <div class="line-value-unit" :test-id="`tabContent${index}`">
-                <span class="line-value-unit-number">{{ unitConvert(item.analysis.avg, unitTypes.number)[0] }}</span>
+                <span class="line-value-unit-number">{{ valueToRangeValue(item.analysis.avg, unitTypes.number)[0] }}</span>
                 <span class="line-value-unit-number2">
-                <span>{{ unitConvert(item.analysis.avg, unitTypes.number)[1] }}</span>
+                <span>{{ valueToRangeValue(item.analysis.avg, unitTypes.number)[1] }}</span>
                 <span v-if="item.unitType">{{ item.unitType }}</span>
               </span>
               </div>
@@ -58,7 +58,7 @@
 <script>
 import * as echarts from 'echarts'
 import { stackedLineChartOption } from '@/views/charts2/charts/options/echartOption'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import { unitTypes, chartColor3, chartColor4 } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
@@ -107,7 +107,7 @@ export default {
       options2: dataForNetworkOverviewLine.options2,
       tabsTemplate: dataForNetworkOverviewLine.tabsTemplate,
       tabs: [],
-      unitConvert,
+      valueToRangeValue,
       unitTypes,
       chartDateObject: [],
       timer: null,
@@ -254,7 +254,7 @@ export default {
               symbol: 'none',
               label: {
                 formatter (params) {
-                  const arr = unitConvert(params.value, unitTypes.number).join('')
+                  const arr = valueToRangeValue(params.value, unitTypes.number).join('')
                   return _this.lineRefer + '(' + arr + echartsData[0].unitType + ')'
                 },
                 position: 'insideStartTop',
@@ -576,7 +576,7 @@ export default {
       echarts.dispose(this.myChart)
     }
     // 检测时发现该方法占用较大内存，且未被释放
-    this.unitConvert = null
+    this.valueToRangeValue = null
     myChart = null
   }
 }

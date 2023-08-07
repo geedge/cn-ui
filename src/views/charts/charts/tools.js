@@ -485,7 +485,7 @@ export function stackedLineTooltipFormatter (params) {
   str += '<div class="cn-chart-tooltip">'
   params.forEach((item, i) => {
     str += `<span class="cn-chart-tooltip-value cn-chart-tooltip__color">
-        ${unitConvert(item.data[1], item.value[2]).join(' ')}
+        ${valueToRangeValue(item.data[1], item.value[2]).join(' ')}
     </span>`
   })
   str += '</div>'
@@ -510,7 +510,7 @@ export function appStackedLineTooltipFormatter (params) {
     </span>`
     str += '</span>'
     str += `<span class="cn-chart-tooltip-value cn-chart-tooltip__color">
-        ${unitConvert(item.data[1], item.value[2]).join(' ')}
+        ${valueToRangeValue(item.data[1], item.value[2]).join(' ')}
     </span>`
     str += '</div>'
   })

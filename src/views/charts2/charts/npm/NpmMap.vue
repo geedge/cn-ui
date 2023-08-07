@@ -50,7 +50,7 @@ import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { computeScore, getGeoData } from '@/utils/tools'
-import { storageKey, unitTypes, countryNameIdMapping } from '@/utils/constants'
+import { storageKey, unitTypes } from '@/utils/constants'
 import locationOptions from '@/views/charts2/charts/locationOptions'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
@@ -58,7 +58,6 @@ import { api } from '@/utils/api'
 import axios from 'axios'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
-// import { Rectangle3D } from '@amcharts/amcharts4/.internal/core/elements/3d/Rectangle3D'
 import ChartError from '@/components/common/Error'
 export default {
   name: 'NpmMap',
@@ -141,7 +140,7 @@ export default {
                 res2.forEach((r, i) => {
                   if (r.code === 200) {
                     mapData.forEach(t => {
-                      const find = r.data.result.find(d => d.country === t.country)
+                      const find = r.data.result.find(d => d.country === t.country && t.province === d.province)
                       t[keyPre[i] + 'Score'] = find
                     })
                   } else {

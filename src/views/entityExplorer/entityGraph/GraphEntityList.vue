@@ -39,8 +39,11 @@
               <div class="graph-list-item-block">
                 <div class="graph-list-item padding-b-4">
                   <div class="graph-list-item-label">{{ $t('overall.location') }}:</div>
-                  <div class="graph-list-item-value graph-list-item-value1" style="display: flex;align-items: center;">
-                    <!--                  <img :src="require(`../../../../public/images/flag/${item.flag}.svg`)" class="graph-list-country-flag"/>-->
+                  <div class="graph-list-item-value graph-list-item-value1" style="display: flex;align-items: center;line-height: 14px;">
+                    <div style="line-height: 10px">
+                      <img v-if="getCountry(item.detail)===countryNameIdMapping.Unknown || !countryNameIdMapping[getCountry(item.detail)]" src="../../../../public/images/flag/Unknown.svg" class="graph-list-country-flag">
+                      <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[getCountry(item.detail)]}.png`)" class="graph-list-country-flag" >
+                    </div>
                     <span>{{ $_.get(item.detail, 'location.city', '-') }}</span>
                   </div>
                 </div>
@@ -105,7 +108,7 @@
 
 <script>
 import Loading from '@/components/common/Loading'
-import { riskLevelMapping } from '@/utils/constants'
+import { riskLevelMapping, countryNameIdMapping } from '@/utils/constants'
 import { scrollToTop } from '@/utils/tools'
 import _ from 'lodash'
 
@@ -117,6 +120,11 @@ export default {
     },
     loading: {
       type: Boolean
+    }
+  },
+  data () {
+    return {
+      countryNameIdMapping
     }
   },
   components: {
@@ -181,6 +189,9 @@ export default {
     expandList () {
       // 继续拓展ip列表，传递信息，调用接口
       this.$emit('expandList', _.get(this.node, 'id'))
+    },
+    getCountry (detail) {
+      return this.$_.get(detail, 'location.country') || 'Unknown'
     }
   },
   mounted () {
