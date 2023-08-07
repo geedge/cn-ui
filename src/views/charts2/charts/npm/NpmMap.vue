@@ -59,6 +59,7 @@ import axios from 'axios'
 import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
+import _ from 'lodash'
 export default {
   name: 'NpmMap',
   components: { ChartError },
@@ -123,7 +124,7 @@ export default {
         }
         axios.get(api.npm.location.map, { params: params }).then(response => {
           if (response.data.code === 200) {
-            const res = response.data.data.result
+            const res = _.get(response, 'data.data.result', []).filter(r => r.country !== 'Unknown')
             if (res.length > 0) {
               // 计算分数
               this.showError = false
