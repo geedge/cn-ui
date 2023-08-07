@@ -89,7 +89,6 @@ import DetectionTable from '@/views/detectionsNew/DetectionTable'
 import { api } from '@/utils/api'
 import dataListMixin from '@/mixins/data-list'
 import DetectionDrawer from '@/views/detectionsNew/DetectionDrawer'
-import axios from 'axios'
 
 export default {
   name: 'Index',

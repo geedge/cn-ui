@@ -221,7 +221,7 @@ import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
-import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
+import { dateFormatByAppearance, getMillisecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import { ref } from 'vue'
 
