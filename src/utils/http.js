@@ -17,11 +17,7 @@ axios.interceptors.request.use(config => {
   if (config.params && config.params.q && config.params.q.length > 0) {
     let q = config.params.q
     if (q.indexOf('+') > -1) {
-      for (let i = 0; i < q.length; i++) {
-        if (q[i] === '+') {
-          q = q.replace('+', ' ')
-        }
-      }
+      q = q.replace(/\+/g, ' ')
     }
     config.params.q = q
   }
