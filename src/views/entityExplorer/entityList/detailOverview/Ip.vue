@@ -248,7 +248,7 @@
 <script>
 import entityDetailMixin from './entityDetailMixin'
 import { api } from '@/utils/api'
-import { unitTypes } from '@/utils/constants'
+import { unitTypes, countryNameIdMapping } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
@@ -257,7 +257,6 @@ import relatedServer from '@/mixins/relatedServer'
 import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
-import { countryNameIdMapping } from '@/utils/constants'
 
 export default {
   name: 'Ip',
