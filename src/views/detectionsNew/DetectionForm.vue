@@ -101,7 +101,6 @@ import GeneralSettings from '@/components/table/detection/GeneralSettings'
 import RuleDefinition from '@/components/table/detection/RuleDefinition'
 import { get } from '@/utils/http'
 import { api } from '@/utils/api'
-import axios from 'axios'
 
 export default {
   name: 'DetectionForm',
@@ -191,7 +190,6 @@ export default {
     },
     /** 创建policy */
     createPolicy () {
-      const self = this
       const settingLen = Object.keys(this.settingObj).length
       const ruleLen = Object.keys(this.ruleObj).length
 
