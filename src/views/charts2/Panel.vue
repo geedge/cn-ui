@@ -251,7 +251,8 @@ export default {
     const showEntityDetail = ref(false)
 
     if (fourthPanel) {
-      const tab = query.networkOverviewBeforeTab
+      // networkOverviewBeforeTab是dashboard点击下钻标识，dimensionType是详情页到下钻页标识
+      const tab = query.networkOverviewBeforeTab || query.dimensionType
       const value = query.fourthMenu
       const ipList = ['ip', 'clientIp', 'serverIp', 'dnsServer', 'a', 'aaaa']
       const appList = ['appLabel']
