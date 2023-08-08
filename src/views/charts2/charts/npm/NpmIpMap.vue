@@ -133,9 +133,33 @@ export default {
                   tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
                   pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
                 }
-                t.score = computeScore(data)
-                if (t.score === '-') {
-                  t.score = ''
+                t.tooltip = {}
+                t.tooltip.data = {
+                  establishLatencyMs: valueToRangeValue(data.establishLatencyMs, unitTypes.time).join(' '),
+                  httpResponseLatency: valueToRangeValue(data.httpResponseLatency, unitTypes.time).join(' '),
+                  sslConLatency: valueToRangeValue(data.sslConLatency, unitTypes.time).join(' '),
+                  tcpLostlenPercent: valueToRangeValue(data.tcpLostlenPercent, unitTypes.percent).join(' '),
+                  pktRetransPercent: valueToRangeValue(data.pktRetransPercent, unitTypes.percent).join(' ')
+                }
+                t.tooltip.data.score = computeScore(data)
+                if (t.tooltip.data.score === '-') {
+                  t.tooltip.data.score = ''
+                }
+                t.tooltip.data.total = valueToRangeValue(t.totalBitsRate, unitTypes.bps).join(' ')
+                t.tooltip.data.inbound = valueToRangeValue(t.inboundBitsRate, unitTypes.bps).join(' ')
+                t.tooltip.data.outbound = valueToRangeValue(t.outboundBitsRate, unitTypes.bps).join(' ')
+                t.tooltip.text = {
+                  traffic: this.$t('overall.traffic'),
+                  total: this.$t('network.total'),
+                  inbound: this.$t('network.inbound'),
+                  outbound: this.$t('network.outbound'),
+                  performance: this.$t('linkMonitor.performance'),
+                  score: this.$t('network.score'),
+                  tcpLostlenPercent: this.$t('networkAppPerformance.packetLoss'),
+                  pktRetransPercent: this.$t('networkAppPerformance.packetRetrans'),
+                  establishLatencyMs: this.$t('networkAppPerformance.tcpConnectionEstablishLatency'),
+                  httpResponseLatency: this.$t('networkAppPerformance.httpResponseLatency'),
+                  sslConLatency: this.$t('networkAppPerformance.sslResponseLatency')
                 }
               })
               this.loadMarkerData(imageSeries, mapData)
@@ -157,14 +181,14 @@ export default {
       }
     },
     loadMarkerData (imageSeries, data) {
-      data = data.filter(d => d.score || d.score === 0)
-      imageSeries.data = data.map(r => ({
-        score: r.score,
+      const _data = data.filter(d => d.tooltip.data.score || d.tooltip.data.score === 0)
+      imageSeries.data = _data.map(r => ({
+        ...r,
+        score: r.tooltip.data.score,
         name: r.province || r.country,
-        throughput: valueToRangeValue(r.throughBitsRate, unitTypes.bps).join(' '),
         id: r.serverId,
-        color: this.scoreColor(r.score),
-        border: this.scoreColor(r.score)
+        color: this.scoreColor(r.tooltip.data.score),
+        border: this.scoreColor(r.tooltip.data.score)
       }))
     },
     scoreColor (score) {
@@ -179,15 +203,46 @@ export default {
     generatePolygonTooltipHTML () {
       const html = `
         <div class="map-tooltip" style="padding-bottom: 10px;">
-          <div class="map-tooltip__title">{name}</div>
+          <div class="map-tooltip__title"><img src="/images/flag/{id}.png" class="filter-country-flag"/>{name}</div>
           <div class="map-tooltip__content">
+            <div class="content-title">{tooltip.text.traffic}</div>
             <div class="content-row">
-              <div class="row__label">Score</div>
-              <div class="row__value">{score}</div>
+              <div class="row__label">{tooltip.text.total}</div>
+              <div class="row__value">{tooltip.data.total}</div>
             </div>
             <div class="content-row">
-              <div class="row__label">Throughput</div>
-              <div class="row__value">{throughput}</div>
+              <div class="row__label">{tooltip.text.inbound}</div>
+              <div class="row__value">{tooltip.data.inbound}</div>
+            </div>
+            <div class="content-row">
+              <div class="row__label">{tooltip.text.outbound}</div>
+              <div class="row__value">{tooltip.data.outbound}</div>
+            </div>
+            <div class="content-title">{tooltip.text.performance}</div>
+            <div class="content-row content-row--score">
+              <span style="background-color: {color}"></span>
+              <div class="row__label">{tooltip.text.score}</div>
+              <div class="row__value">{tooltip.data.score}</div>
+            </div>
+            <div class="content-row">
+              <div class="row__label">{tooltip.text.tcpLostlenPercent}</div>
+              <div class="row__value">{tooltip.data.tcpLostlenPercent}</div>
+            </div>
+            <div class="content-row">
+              <div class="row__label">{tooltip.text.pktRetransPercent}</div>
+              <div class="row__value">{tooltip.data.pktRetransPercent}</div>
+            </div>
+            <div class="content-row">
+              <div class="row__label">{tooltip.text.establishLatencyMs}</div>
+              <div class="row__value">{tooltip.data.establishLatencyMs}</div>
+            </div>
+            <div class="content-row">
+              <div class="row__label">{tooltip.text.httpResponseLatency}</div>
+              <div class="row__value">{tooltip.data.httpResponseLatency}</div>
+            </div>
+            <div class="content-row">
+              <div class="row__label">{tooltip.text.sslConLatency}</div>
+              <div class="row__value">{tooltip.data.sslConLatency}</div>
             </div>
           </div>
         </div>`
