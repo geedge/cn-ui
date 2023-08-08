@@ -33,6 +33,11 @@
         height: 40px;
         max-width: unset;
       }
+
+      .explorer-search__input__border {
+        border: 1px #DEDEDE solid;
+        height: 43px;
+      }
     }
     .search-symbol-inline {
       display: flex;
