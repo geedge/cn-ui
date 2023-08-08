@@ -477,4 +477,7 @@ export default {
 .my-popper-class .el-popper__arrow {
   display: none;
 }
+.el-popover.my-popper-class {
+  padding: 8px 4px 0 12px !important;
+}
 </style>
