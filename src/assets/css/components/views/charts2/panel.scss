@@ -55,6 +55,19 @@
         align-items: center;
         justify-content: center;
       }
+
+      .panel-show-detail {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        margin-left: 6px;
+
+        i {
+          font-size: 22px;
+          cursor: pointer;
+          color: #626262;
+        }
+      }
     }
     .panel__tools {
       display: flex;
@@ -103,4 +116,14 @@
       }
     }
   }
+}
+
+.panel-tooltip {
+  height: 28px !important;
+  padding: 6px 10px 8px 10px !important;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.3);
+  font-family: NotoSansSChineseRegular;
+  font-size: 12px;
+  color: #353636;
+  font-weight: 400;
 }

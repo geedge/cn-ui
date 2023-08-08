@@ -7,7 +7,18 @@
           <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
           <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
           Score:{{score}}
-        </div>
+          </div>
+          <div v-if="showEntityDetail" class="panel-show-detail">
+            <el-tooltip
+                effect="light"
+                trigger="hover"
+                :content="$t('entity.jumpToEntityDetails')"
+                placement="right"
+                popper-class="panel-tooltip"
+            >
+              <i class="cn-icon cn-icon-jump-to" @click="jumpEntityDetail"></i>
+            </el-tooltip>
+          </div>
       </div>
       <div class="panel__tools">
         <el-select
@@ -235,7 +246,28 @@ export default {
 
     const thirdPanel = query.thirdPanel
     const fourthPanel = query.fourthPanel
+    const entityType = ref('')
+    const entityValue = ref('')
+    const showEntityDetail = ref(false)
+
     if (fourthPanel) {
+      const tab = query.networkOverviewBeforeTab
+      const value = query.fourthMenu
+      const ipList = ['ip', 'clientIp', 'serverIp', 'dnsServer', 'a', 'aaaa']
+      const appList = ['appLabel']
+      const domainList = ['sslSni'] // domain暂定，先加入snis
+
+      if (ipList.indexOf(tab) > -1) {
+        entityType.value = 'ip'
+        showEntityDetail.value = true
+      } else if (appList.indexOf(tab) > -1) {
+        entityType.value = 'app'
+        showEntityDetail.value = true
+      } else if (domainList.indexOf(tab) > -1) {
+        entityType.value = 'domain'
+        showEntityDetail.value = true
+      }
+      entityValue.value = value
       panelType = Number(fourthPanel)
     } else if (thirdPanel) {
       panelType = Number(thirdPanel)
@@ -284,7 +316,10 @@ export default {
       queryCondition,
       dimensionType,
       tabOperationType,
-      networkOverviewBeforeTab
+      networkOverviewBeforeTab,
+      showEntityDetail,
+      entityType,
+      entityValue
     }
   },
   methods: {
@@ -423,6 +458,16 @@ export default {
           }
         })
       }
+    },
+    jumpEntityDetail () {
+      const { href } = this.$router.resolve({
+        path: '/entityDetail',
+        query: {
+          entityType: this.entityType,
+          entityName: this.entityValue
+        }
+      })
+      window.open(href, '_blank')
     }
   },
   /**
