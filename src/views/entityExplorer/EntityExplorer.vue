@@ -845,7 +845,7 @@ export default {
             this.$message.error(handleErrorTip(errorList[0]))
           }
         } else {
-          this.$message.error('无效的查询字段靓仔' + keyInfo.key)
+          this.$message.error(this.$t('tip.invalidQueryField') + keyInfo.key)
         }
       } else {
         this.search({ q: '', str: '', metaList: [] })
