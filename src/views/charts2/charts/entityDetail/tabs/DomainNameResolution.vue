@@ -164,7 +164,7 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
-        } else {
+        } else if (this.entity.entityType === 'app') {
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
 
@@ -185,7 +185,7 @@ export default {
             this.errorMsg2 = this.errorMsgHandler(res1)
           }
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length)
-        } else {
+        } else if (this.entity.entityType === 'ip') {
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         }
 
