@@ -39,10 +39,10 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { post, get } from '@/utils/http'
+import { get } from '@/utils/http'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import { storageKey } from '@/utils/constants'
+import { storageKey, defaultLang } from '@/utils/constants'
 import { api } from '@/utils/api'
 import dayjs from 'dayjs'
 import _ from 'lodash'
@@ -73,17 +73,18 @@ export default {
       axios.post(api.login, { username: this.username, pin: this.pin }).then(
         res => {
           if (res.data.code === 200) {
-            if (!_.isEmpty(res.data.data.lang)) {
-              localStorage.setItem(storageKey.language, res.data.data.lang)
+            if (!_.isEmpty(res.data.data.user.lang)) {
+              localStorage.setItem(storageKey.language, res.data.data.user.lang)
             }
-            if (!_.isEmpty(res.data.data.theme)) {
-              localStorage.setItem(storageKey.theme, res.data.data.theme)
+            if (!_.isEmpty(res.data.data.user.theme)) {
+              localStorage.setItem(storageKey.theme, res.data.data.user.theme)
             }
             res.loginSuccessPath = this.$route.query.redirect
             this.loginSuccess(res)
             localStorage.setItem(storageKey.username, this.username)
-            localStorage.setItem(storageKey.userId, res.data.data.user ? res.data.data.user.userId : res.data.data.userId)
+            localStorage.setItem(storageKey.userId, res.data.data.user.userId)
             localStorage.setItem(storageKey.token, res.data.data.token)
+            this.$i18n.locale = localStorage.getItem(storageKey.language)
           } else if (res.data.code === 518005) {
             this.$message.error(this.$t('Incorrect username or password'))
             this.loading = false
@@ -110,7 +111,7 @@ export default {
     },
     appearanceOut (data) {
       if (_.isEmpty(localStorage.getItem(storageKey.language))) {
-        localStorage.setItem(storageKey.language, data.lang || 'zh')
+        localStorage.setItem(storageKey.language, data.lang || defaultLang)
       }
       if (_.isEmpty(localStorage.getItem(storageKey.theme))) {
         localStorage.setItem(storageKey.theme, data.theme || 'light')

@@ -22,9 +22,7 @@ router.beforeEach(async (to, from, next) => {
   }
   if (localStorage.getItem(storageKey.token)) {
     // 加载i18n
-    if (!localStorage.getItem(storageKey.i18n)) {
-      await loadI18n()
-    }
+    await loadI18n()
     // 加载权限
     if (permissionWhiteList.indexOf(to.path) !== -1) {
       next()

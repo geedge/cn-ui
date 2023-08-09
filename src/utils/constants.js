@@ -1,5 +1,5 @@
 export const defaultPageSize = 20
-
+export const defaultLang = 'en'
 // indexedDB库名
 export const dbName = 'cn-db'
 // indexedDB表名
@@ -16,7 +16,6 @@ export const dbGalaxySettingTableColumnCustomizeConfig = 'cn-table-column-custom
 export const storageKey = {
   iso36112Capital: 'cn-iso3611-2-capital',
   iso36112WorldLow: 'cn-iso3611-2-world-low',
-  i18n: 'cn-i18n',
   s3Enable: 'cn-s3-enable',
   languages: 'cn-languages',
   language: 'cn-language',

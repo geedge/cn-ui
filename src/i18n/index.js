@@ -2,15 +2,9 @@ import { createI18n } from 'vue-i18n/index'
 import { storageKey } from '@/utils/constants'
 import { getI18n } from '@/utils/api'
 import store from '@/store'
-// import cn from './cn'
-// import en from './en'
 
 const i18n = createI18n({
   locale: localStorage.getItem(storageKey.language) || 'en'
-  /* messages: {
-    cn: cn,
-    en: en
-  } */
 })
 export async function loadI18n () {
   if (!store.state.i18n) {
