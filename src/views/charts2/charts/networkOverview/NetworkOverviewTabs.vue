@@ -360,9 +360,9 @@ export default {
         console.error(e)
         this.showError = true
         this.errorMsg = this.errorMsgHandler(e)
+        this.toggleLoading(false)
       }).finally(() => {
         this.changeUrlTabState()
-        this.toggleLoading(false)
       })
     },
     sortable (title) {
