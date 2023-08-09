@@ -100,7 +100,7 @@ import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import Parser, { stringInQuot } from '@/components/advancedSearch/meta/parser'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { comparedEntityKey, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'TagMode',
   props: {
@@ -435,8 +435,9 @@ export default {
   mounted () {
     const vm = this
     // 如果地址栏包含参数q，则匹配出metaList到搜索栏回显使用
-    const { q } = this.$route.query
+    let { q } = this.$route.query
     if (q) {
+      q = comparedEntityKey(q).key
       const parser = new Parser(this.columnList)
       this.metaList = parser.parseStr(q).metaList
     }

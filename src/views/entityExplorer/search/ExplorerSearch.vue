@@ -110,7 +110,7 @@ export default {
         }
         localStorage.setItem(storageKey.entitySearchHistory, JSON.stringify(arr))
       }
-      this.$emit('search', { q, metaList })
+      this.$emit('search', { str, q, metaList })
     },
     addParams (params) {
       this.$refs.search.addParams(params)

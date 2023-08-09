@@ -141,7 +141,7 @@ import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
 import Loading from '@/components/common/Loading'
-import { overwriteUrl, urlParamsHandler, numberWithCommas } from '@/utils/tools'
+import { overwriteUrl, urlParamsHandler, numberWithCommas, comparedEntityKey } from '@/utils/tools'
 import Parser from '@/components/advancedSearch/meta/parser'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import { columnList } from '@/utils/static-data'
@@ -442,7 +442,7 @@ export default {
 
       this.reloadUrl({
         listMode: this.listMode,
-        q: q,
+        q: param.str,
         mode: mode,
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -455,7 +455,7 @@ export default {
           path: '/entityExplorer',
           query: {
             listMode: this.listMode,
-            q: q,
+            q: param.str,
             mode: mode,
             startTime: getSecond(this.timeFilter.startTime),
             endTime: getSecond(this.timeFilter.endTime),
@@ -836,11 +836,16 @@ export default {
           }
         }
         const parser = new Parser(columnList)
-        const errorList = parser.validateStr(str)
-        if (_.isEmpty(errorList)) {
-          this.search(parser.parseStr(str))
+        const keyInfo = comparedEntityKey(str)
+        if (keyInfo.isKey) {
+          const errorList = parser.validateStr(keyInfo.key)
+          if (_.isEmpty(errorList)) {
+            this.search({ ...parser.parseStr(keyInfo.key), str: str })
+          } else {
+            this.$message.error(handleErrorTip(errorList[0]))
+          }
         } else {
-          this.$message.error(handleErrorTip(errorList[0]))
+          this.$message.error('无效的查询字段靓仔' + keyInfo.key)
         }
       } else {
         this.search({ q: '', str: '', metaList: [] })

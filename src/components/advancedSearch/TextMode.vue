@@ -36,7 +36,7 @@ import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { comparedEntityKey, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 
 export default {
   name: 'TextMode',
@@ -73,11 +73,16 @@ export default {
       const str = this.codeMirror.getValue().trim()
       if (str) {
         const parser = new Parser(this.columnList)
-        const errorList = parser.validateStr(str)
-        if (_.isEmpty(errorList)) {
-          this.$emit('search', parser.parseStr(str))
+        const keyInfo = comparedEntityKey(str)
+        if (keyInfo.isKey) {
+          const errorList = parser.validateStr(keyInfo.key)
+          if (_.isEmpty(errorList)) {
+            this.$emit('search', { ...parser.parseStr(keyInfo.key), str: str })
+          } else {
+            this.$message.error(handleErrorTip(errorList[0]))
+          }
         } else {
-          this.$message.error(handleErrorTip(errorList[0]))
+          this.$message.error(this.$t('tip.invalidQueryField') + keyInfo.key)
         }
       } else {
         this.$emit('search', { q: '', str: '', metaList: [] })
@@ -87,8 +92,9 @@ export default {
       this.codeMirror.focus()
     },
     changeMode () {
-      const str = this.codeMirror.getValue().trim()
+      let str = this.codeMirror.getValue().trim()
       if (str) {
+        str = comparedEntityKey(str).key
         const parser = new Parser(this.columnList)
         const errorList = parser.validateStr(str)
         if (_.isEmpty(errorList)) {

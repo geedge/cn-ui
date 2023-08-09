@@ -6,6 +6,7 @@ import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
 import indexedDBUtils from '@/indexedDB'
+import { columnList } from '@/utils/static-data'
 
 export const tableSort = {
   // 是否需要排序
@@ -1312,5 +1313,55 @@ export function switchStatus (status) {
       return 'Disabled'
     case 1:
       return 'Enabled'
+  }
+}
+/**
+ * 将key与columnList的label都进行转小写进行对比
+ * 如果一致，返回columnList的label，不一致则返回false，并弹窗提示
+ * @param q
+ */
+export function comparedEntityKey (q) {
+  if (q && q.indexOf('=') > -1) {
+    if (q.indexOf('AND') > -1) {
+      const arr = q.split(' AND ')
+      let newQ = ''
+      let errorQ = ''
+      const returnObj = {
+        key: '',
+        isKey: true
+      }
+
+      arr.forEach(item => {
+        const key = item.substring(0, item.indexOf('='))
+        const obj = columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
+        if (obj) {
+          newQ += obj.label + item.substring(item.indexOf('='), item.length) + ' AND '
+        } else {
+          errorQ += '[' + key + ']' + '、'
+          returnObj.isKey = false
+        }
+      })
+      newQ = newQ.substring(0, newQ.length - 5)
+      returnObj.key = newQ
+      if (!returnObj.isKey) {
+        errorQ = errorQ.substring(0, errorQ.length - 1)
+        returnObj.key = errorQ
+      }
+
+      return returnObj
+    } else {
+      const key = q.substring(0, q.indexOf('='))
+      const obj = columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
+      if (obj) {
+        return { key: obj.label + q.substring(q.indexOf('='), q.length), isKey: true }
+      } else {
+        return { key: '[' + key + ']', isKey: false }
+      }
+    }
+  } else {
+    return {
+      key: q,
+      isKey: false
+    }
   }
 }
