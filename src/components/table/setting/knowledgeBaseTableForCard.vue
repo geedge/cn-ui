@@ -2,40 +2,43 @@
   <template v-if="!isNoData">
     <div class="card-type-title" v-if="aiTaggingList.length > 0">{{$t('knowledgeBase.intelligenceLearning')}}</div>
     <el-checkbox-group v-model="checkList" >
-      <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in aiTaggingList" :key="data.knowledgeId" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
-        <div class="card-content">
-          <div class="card-operate">
-            <el-switch v-model="data.status"
-                       class="card-enable"
-                       active-color="#38ACD2"
-                       inactive-color="#C0CEDB"
-                       :active-value="1"
-                       :inactive-value="0"
-                       @change="changeStatus($event,data.knowledgeId)"
-            >
-            </el-switch>
+      <div class="card-box" v-for="data in aiTaggingList" :key="data.knowledgeId">
+        <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
+          <div class="card-content">
+            <div class="card-operate">
+              <el-switch v-model="data.status"
+                         class="card-enable"
+                         active-color="#38ACD2"
+                         inactive-color="#C0CEDB"
+                         :active-value="1"
+                         :inactive-value="0"
+                         @change="changeStatus($event,data.knowledgeId)"
+              >
+              </el-switch>
+            </div>
+            <div class="card-icon">
+              <i class="cn-icon-add-knowledge-base cn-icon" ></i>
+            </div>
+            <div class="card-title">
+              <div class="card-title-name" :title="data.name">{{data.name}}</div>
+            </div>
+            <div class="card-desc" :title="data.description">{{data.description?data.description:'—'}}</div>
           </div>
-          <div class="card-icon">
-            <i class="cn-icon-add-knowledge-base cn-icon" ></i>
+          <div class="card-operate__footer">
+            <button v-if="data.showUpdate"
+                    :title="$t('overall.update')" class="top-tool-btn--update"
+                    @click="jumpToUpdatePage(data,true)">
+              <i class="cn-icon-update-knowledge-base cn-icon"></i>
+              <span>{{$t('overall.update')}}</span>
+            </button>
           </div>
-          <div class="card-title">
-            <div class="card-title-name" :title="data.name">{{data.name}}</div>
-          </div>
-          <div class="card-desc" :title="data.description">{{data.description?data.description:'—'}}</div>
-        </div>
-        <div class="card-operate__footer">
-          <button v-if="data.showUpdate"
-                  :title="$t('overall.update')" class="top-tool-btn--update"
-                  @click="jumpToUpdatePage(data,true)">
-            <i class="cn-icon-update-knowledge-base cn-icon"></i>
-            <span>{{$t('overall.update')}}</span>
-          </button>
         </div>
       </div>
     </el-checkbox-group>
     <div class="card-type-title" style="margin-top:4px;"  v-if="websketchList.length > 0">{{$t('knowledgeBase.websketchIntegration')}}</div>
     <el-checkbox-group v-model="checkList" >
-      <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" v-for="data in websketchList" :key="data.knowledgeId" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
+      <div class="card-box" v-for="data in websketchList" :key="data.knowledgeId">
+        <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
         <div class="card-content">
           <div class="card-icon">
             <i class="cn-icon-add-knowledge-base cn-icon" ></i>
@@ -53,10 +56,11 @@
           </button>
         </div>
       </div>
+      </div>
     </el-checkbox-group>
   </template>
 
-  <div class="table-no-data" v-else="isNoData">
+  <div class="table-no-data" v-else>
     <div class="table-no-data__title">{{ $t('npm.noData') }}</div>
   </div>
 
