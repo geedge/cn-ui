@@ -6,7 +6,72 @@ import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
 import indexedDBUtils from '@/indexedDB'
-import { columnList } from '@/utils/static-data'
+
+// columnList从'@/utils/static-data'引入的话，会导致国际化i18n出错
+const columnList = [
+  {
+    name: 'ip',
+    type: 'string',
+    label: 'IP',
+    doc: {
+      constraints: {
+        type: 'ip',
+        operator_functions: '=,in'
+      }
+    }
+  },
+  {
+    name: 'fqdn',
+    type: 'string',
+    label: 'Domain',
+    doc: {
+      constraints: {
+        type: 'domain',
+        operator_functions: '=,in'
+      }
+    }
+  },
+  {
+    name: 'app_name',
+    type: 'string',
+    label: 'App',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
+  },
+  {
+    name: 'region',
+    type: 'string',
+    label: 'City',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
+  },
+  {
+    name: 'country',
+    type: 'string',
+    label: 'Country',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
+  },
+  {
+    name: 'asn',
+    type: 'string',
+    label: 'ASN',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
+  }
+]
 
 export const tableSort = {
   // 是否需要排序
