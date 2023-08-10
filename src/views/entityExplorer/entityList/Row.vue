@@ -136,12 +136,12 @@
               <!--score分数-->
               <div class="basic-info__item" style="display: flex;align-items: center;">
                 <i class="cn-icon cn-icon-Score"></i>
-                <div style="position: relative;">
-                  <div class="row-item-label" v-if="!loadingNetworkQuality">
-                    <span class="row-item-label">{{ $t('network.score') }}&nbsp;:&nbsp;&nbsp;</span>
-                    <span class="row-item-value">{{ score }}</span>
-                  </div>
-                  <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
+                <div class="row-item-label">
+                  <span class="row-item-label">{{ $t('network.score') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value" style="position: relative;">
+                    <span v-if="!loadingNetworkQuality">{{ score }}</span>
+                    <loading :loading="loadingNetworkQuality" size="small"></loading>
+                  </span>
                 </div>
               </div>
 
