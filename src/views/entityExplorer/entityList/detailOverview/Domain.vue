@@ -140,7 +140,7 @@
   </div>
 
   <div class="overview-item">
-    <div class="overview__title">{{$t('overall.alert')}}</div>
+    <div class="overview__title">{{$t('overall.performanceEvents')}}</div>
     <div class="overview__content overview__content-loading">
       <loading :loading="loadingAlert" size="small" inner-style="left: 10rem"></loading>
       <div class="overview__row" v-if="performanceData.length === 0">

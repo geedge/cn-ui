@@ -7,6 +7,7 @@ import { riskLevelMapping, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { shallowRef } from 'vue'
+import { computeScore } from '@/utils/tools'
 
 export default {
   props: {
@@ -21,7 +22,14 @@ export default {
       chartOption: null,
       unitTypes,
       valueToRangeValue,
-      echartsArray: []
+      echartsArray: [],
+      loadingNetworkQuality: false,
+      score: '-', // 网络质量评分
+      scoreUrl: '', // 网络质量评分url
+      eventNum: 0, // 性能事件和安全事件数量之和
+      loadingEvent: false, // event的loading
+      performanceEventUrl: '', // 性能事件接口url
+      securityEventUrl: '' // 安全事件接口url
     }
   },
   computed: {
@@ -244,24 +252,64 @@ export default {
       if (this.entity.entityType) {
         switch (this.entity.entityType) {
           case 'ip': {
-            // this.trafficUrl = api.entityIpDetailTraffic
+            this.scoreUrl = api.entity.entityList.ipPerformance
             this.trafficUrl = api.entity.entityList.ipThroughput
+            this.securityEventUrl = api.entity.entityList.ipSecurity
+            this.performanceEventUrl = api.entity.entityList.ipEventPerformance
             break
           }
           case 'domain': {
-            // this.trafficUrl = api.entityDomainDetailTraffic
+            this.scoreUrl = api.entity.entityList.domainPerformance
             this.trafficUrl = api.entity.entityList.domainThroughput
+            this.securityEventUrl = api.entity.entityList.domainSecurity
+            this.performanceEventUrl = api.entity.entityList.domainEventPerformance
             break
           }
           case 'app': {
-            // this.trafficUrl = api.entityAppDetailTraffic
+            this.scoreUrl = api.entity.entityList.appPerformance
             this.trafficUrl = api.entity.entityList.appThroughput
+            this.securityEventUrl = api.entity.entityList.appSecurity
+            this.performanceEventUrl = api.entity.entityList.appEventPerformance
             break
           }
           default:
             break
         }
       }
+    },
+    /** 获取网络评分 */
+    queryNetworkQuantity () {
+      this.loadingNetworkQuality = true
+
+      get(this.scoreUrl, this.getQueryParams()).then(response => {
+        if (response.code === 200) {
+          const data = {
+            establishLatencyMs: response.data.result.establishLatencyValue || null,
+            httpResponseLatency: response.data.result.httpResponseLatencyValue || null,
+            sslConLatency: response.data.result.sslConLatencyValue || null,
+            tcpLostlenPercent: response.data.result.sequenceGapLossPercentValue || null,
+            pktRetransPercent: response.data.result.pktRetransPercentValue || null
+          }
+          this.score = computeScore(data)
+        }
+      }).finally(() => {
+        this.loadingNetworkQuality = false
+      })
+    },
+    /** 获取事件数量 */
+    queryEventNum () {
+      this.loadingEvent = true
+      const performance = get(this.performanceEventUrl, this.getQueryParams())
+      const security = get(this.securityEventUrl, this.getQueryParams())
+      this.eventNum = 0
+
+      Promise.all([performance, security]).then(response => {
+        this.eventNum = response[0].data.result.length + response[1].data.result.length
+      }).catch(e => {
+        this.eventNum = 0
+      }).finally(() => {
+        this.loadingEvent = false
+      })
     }
   },
   watch: {
@@ -283,6 +331,8 @@ export default {
       this.querySecurity()
       this.queryEntityDetailTraffic()
       this.queryPerformance()
+      this.queryNetworkQuantity()
+      this.queryEventNum()
     })
   },
   beforeUnmount () {

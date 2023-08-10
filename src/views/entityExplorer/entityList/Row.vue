@@ -132,6 +132,32 @@
                   </div>
                 </div>
               </div>
+
+              <!--score分数-->
+              <div class="basic-info__item" style="display: flex;align-items: center;">
+                <i class="cn-icon cn-icon-Score"></i>
+                <div style="position: relative;">
+                  <div class="row-item-label" v-if="!loadingNetworkQuality">
+                    <span class="row-item-label">{{ $t('network.score') }}&nbsp;:&nbsp;&nbsp;</span>
+                    <span class="row-item-value">{{ score }}</span>
+                  </div>
+                  <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
+                </div>
+              </div>
+
+              <!--事件数量，即Performance和security事件总和-->
+              <div class="basic-info__item" style="position: relative">
+                <div v-if="eventNum>0 && !loadingEvent" style="display: flex;align-items: center;">
+                  <i class="cn-icon cn-icon-Event1"></i>
+                  <div class="row-item-label">
+                    <span class="row-item-label">{{ $t('dnsInsight.event') }}&nbsp;:&nbsp;&nbsp;</span>
+                    <span class="row-item-value">{{ eventNum }}</span>
+                  </div>
+                </div>
+
+                <loading :loading="loadingEvent" size="small" style="width: 90px"></loading>
+              </div>
+
             </div>
           </div>
         </div>
@@ -176,7 +202,8 @@ export default {
     return {
       loading: false,
       isCollapse: true, // 是否是折叠状态
-      levelTwoTags: []
+      levelTwoTags: [],
+      loadingNetworkQuality: false // 分数的loading
     }
   },
   computed: {
