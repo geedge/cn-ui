@@ -6,27 +6,36 @@
         <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
           <div class="card-content">
             <div class="card-operate">
-              <el-switch v-model="data.status"
-                         class="card-enable"
-                         active-color="#38ACD2"
-                         inactive-color="#C0CEDB"
-                         :active-value="1"
-                         :inactive-value="0"
-                         @change="changeStatus($event,data.knowledgeId)"
+              <el-tooltip
+                  effect="light"
+                  trigger="hover"
+                  :content="$t('tip.notAvailableYet')"
+                  placement="right"
+                  popper-class="panel-tooltip"
               >
-              </el-switch>
+                <el-switch v-model="data.status"
+                           class="card-enable"
+                           active-color="#38ACD2"
+                           inactive-color="#C0CEDB"
+                           :disabled="true"
+                           :active-value="1"
+                           :inactive-value="0"
+                           @change="changeStatus($event,data.knowledgeId)"
+                >
+                </el-switch>
+              </el-tooltip>
             </div>
             <div class="card-icon">
-              <i class="cn-icon-add-knowledge-base cn-icon" ></i>
+              <img :src="data.iconUrl"/>
             </div>
             <div class="card-title">
-              <div class="card-title-name" :title="data.name">{{data.name}}</div>
+              <div class="card-title-name" :title="data.label">{{data.label}}</div>
             </div>
             <div class="card-desc" :title="data.description">{{data.description?data.description:'—'}}</div>
           </div>
           <div class="card-operate__footer">
             <button v-if="data.showUpdate"
-                    :title="$t('overall.update')" class="top-tool-btn--update"
+                    class="top-tool-btn--update"
                     @click="jumpToUpdatePage(data,true)">
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{$t('overall.update')}}</span>
@@ -41,12 +50,12 @@
         <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
         <div class="card-content">
           <div class="card-icon">
-            <i class="cn-icon-add-knowledge-base cn-icon" ></i>
+            <img :src="data.iconUrl"/>
           </div>
           <div class="card-title">
-            <div class="card-title-name" :title="data.name">{{data.name}}</div>
+            <div class="card-title-name" :title="data.label">{{data.label}}</div>
           </div>
-          <div class="card-desc" :title="data.description">{{data.description?data.description:'—'}}</div>
+          <div class="card-desc" :title="data.description?data.description:'—'">{{data.description?data.description:'—'}}</div>
         </div>
         <div class="card-operate__footer">
           <button v-if="data.showUpdate" :title="$t('overall.update')" class="top-tool-btn--update"
@@ -70,12 +79,12 @@
                :before-close="handleClose">
       <div class="knowledge-update__top" >
         <div class="update-left__icon">
-          <i class="cn-icon-add-knowledge-base cn-icon" ></i>
+          <img :src="updateKnowledge.iconUrl"/>
         </div>
         <div class="update-right">
           <div class="knowledge-enable">
             <div class="update-title">
-              <div class="card-title-name" :title="updateKnowledge.name">{{updateKnowledge.name}}</div>
+              <div class="card-title-name" :title="updateKnowledge.label">{{updateKnowledge.label}}</div>
             </div>
             <el-switch v-model="updateKnowledge.status"
                        v-if="showEnable"
@@ -124,7 +133,7 @@
             <!--name-->
             <el-form-item :label="$t('overall.name')" prop="name">
               <el-input class="form-input" maxlength="64" placeholder="" disabled show-word-limit
-                        size="mini" type="text" v-model="updateObject.name" @blur="tagNameBlur"></el-input>
+                        size="mini" type="text" v-model="updateObject.label"></el-input>
             </el-form-item>
             <el-form-item :label="$t('knowledge.upload')" prop="file">
               <el-upload :action="`${baseUrl}${apiVersion}/knowledgeBase/items/batch`"
@@ -179,9 +188,10 @@
 
 <script>
 import table from '@/mixins/table'
-import { knowledgeCategoryValue, storageKey } from '@/utils/constants'
+import { knowledgeCategoryValue, storageKey, builtInKnowledgeBaseBasicInfo } from '@/utils/constants'
 import { ref } from 'vue'
-import { updateKnowledgeUrl } from '@/utils/api'
+import { api } from '@/utils/api'
+import axios from 'axios'
 export default {
   name: 'knowledgeBaseTableForCard',
   mixins: [table],
@@ -206,8 +216,7 @@ export default {
       updateKnowledge: {},
       showEnable: false,
       updateHistoryList: [],
-      updateObject: {},
-      updateKnowledgeUrl: updateKnowledgeUrl
+      updateObject: {}
     }
   },
   setup () {
@@ -304,6 +313,9 @@ export default {
       this.showAddUpdateDialog = false
     },
     jumpToUpdatePage (data, showEnable) {
+      axios.get(api.knowledgeBaseLog + '/' + data.knowledgeId, { params: { pageSize: 999 } }).then(res => {
+
+      })
       this.updateKnowledge = data
       this.showEnable = showEnable
       this.showUpdate()
@@ -311,6 +323,7 @@ export default {
     uploadRecord () {
       this.showAddUpdateDialog = true
       this.updateObject.name = this.updateKnowledge.name
+      this.updateObject.label = this.updateKnowledge.label
       this.updateObject.version = ''
     },
     clearSelect () {
@@ -326,14 +339,14 @@ export default {
     mouseenter (card) {
       this.tableData.forEach(t => {
         if (t.knowledgeId === card.knowledgeId) {
-          t.showUpdate = true
+          card.showUpdate = true
         }
       })
     },
     mouseleave (card) {
       this.tableData.forEach(t => {
         if (t.knowledgeId === card.knowledgeId) {
-          t.showUpdate = false
+          card.showUpdate = false
         }
       })
     },
@@ -362,10 +375,17 @@ export default {
           this.websketchList = []
           this.tableData.forEach(item => {
             item.showUpdate = false
-            if (item.category === knowledgeCategoryValue.aiTagging) {
-              this.aiTaggingList.push(item)
-            } else if (item.category === knowledgeCategoryValue.webSketch) {
-              this.websketchList.push(item)
+            const basicInfo = builtInKnowledgeBaseBasicInfo.find(bi => bi.knowledgeId === item.knowledgeId)
+            if (basicInfo) {
+              item = {
+                ...item,
+                ...basicInfo
+              }
+              if (item.category === knowledgeCategoryValue.aiTagging) {
+                this.aiTaggingList.push(item)
+              } else if (item.category === knowledgeCategoryValue.webSketch) {
+                this.websketchList.push(item)
+              }
             }
           })
         }
@@ -390,18 +410,6 @@ export default {
         this.websketchList.push(item)
       }
     })
-
-    const update = {
-      opTime: '2023-07-26 16:27:55',
-      opUser: 'admin',
-      version: 'v2.8',
-      description: ' It can\'t be identified by the payload signature.'
-    }
-    this.updateHistoryList.push(update)
-    this.updateHistoryList.push(update)
-    this.updateHistoryList.push(update)
-    this.updateHistoryList.push(update)
-    this.updateHistoryList.push(update)
   },
   computed: {
     uploadParams () {

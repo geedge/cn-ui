@@ -1726,6 +1726,59 @@ export const performanceMetricMapping = {
   'high dns response time': 'DNS Response Latency'
 }
 
+export const builtInKnowledgeBaseBasicInfo = [
+  {
+    knowledgeId: 10,
+    label: 'Psiphon3 VPN',
+    iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png'
+  },
+  {
+    knowledgeId: 5,
+    label: 'FQDN Category',
+    iconUrl: 'images/knowledge-base-logo/fqdn.png'
+  },
+  {
+    knowledgeId: 6,
+    label: 'FQDN Whois',
+    iconUrl: 'images/knowledge-base-logo/fqdn-whois.png'
+  },
+  {
+    knowledgeId: 2,
+    label: 'IP ASN',
+    iconUrl: 'images/knowledge-base-logo/ip-asn.png'
+  },
+  {
+    knowledgeId: 3,
+    label: 'DNS Server Info',
+    iconUrl: 'images/knowledge-base-logo/dns-server-info.png'
+  },
+  {
+    knowledgeId: 9,
+    label: 'APP Category',
+    iconUrl: 'images/knowledge-base-logo/app-category.png'
+  },
+  {
+    knowledgeId: 7,
+    label: 'Indicators of Compromise',
+    iconUrl: 'images/knowledge-base-logo/indicators-of-compromise.png'
+  },
+  {
+    knowledgeId: 4,
+    label: 'ICP',
+    iconUrl: 'images/knowledge-base-logo/icp.png'
+  },
+  {
+    knowledgeId: 1,
+    label: 'IP Location',
+    iconUrl: 'images/knowledge-base-logo/ip-location.png'
+  },
+  {
+    knowledgeId: 8,
+    label: 'Anonymity',
+    iconUrl: 'images/knowledge-base-logo/anonymity.png'
+  }
+]
+
 export const chartColor = ['#5370C6', '#90CC74', '#FAC858', '#EE6666',
   '#73BFDE', '#3BA172', '#FC8452', '#9960B4',
   '#E97CCC', '#FEA69E', '#0F8AB2', '#57CBAC',
