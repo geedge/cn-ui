@@ -964,6 +964,9 @@ export default {
       const sourceNode = this.graph.findById(model.sourceNode.id)
       const sourceModel = sourceNode.getModel()
       const expandType = model.myData.entityType
+      if (sourceModel.myData.relatedEntity[expandType].list.length >= sourceModel.myData.relatedEntity[expandType].total) {
+        return
+      }
       if (sourceModel.myData.relatedEntity[expandType].list.length < 50) {
         this.rightBox.loading = true
         try {
@@ -1000,6 +1003,9 @@ export default {
       const node = this.graph.findById(nodeId)
       if (node) {
         const nodeModel = node.getModel()
+        if (nodeModel.myData.relatedEntity[expandType].list.length >= nodeModel.myData.relatedEntity[expandType].total) {
+          return
+        }
         if (nodeModel.myData.relatedEntity[expandType].list.length < 50) {
           const toAddNodeModels = []
           const toAddEdgeModels = []
