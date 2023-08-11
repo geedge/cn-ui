@@ -18,7 +18,7 @@
     <div class="search__suffix-close" @click="cleanParams">
       <i class="el-icon-error"></i>
     </div>
-    <div class="search__suffix new-search__suffix" @click="search">
+    <div class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
       <i class="el-icon-search"></i>
     </div>
   </div>
@@ -42,7 +42,8 @@ export default {
   name: 'TextMode',
   props: {
     columnList: Array,
-    str: String
+    str: String,
+    showList: Boolean
   },
   data () {
     return {
@@ -229,5 +230,9 @@ export default {
     color: #fff !important;
     margin-top: 9px !important;
   }
+}
+.entity-explorer-search {
+  color: #3976CB;
+  margin-top: -2px;
 }
 </style>

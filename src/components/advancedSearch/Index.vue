@@ -7,6 +7,7 @@
         ref="textMode"
         :column-list="columnList"
         :str="str"
+        :show-list="showList"
         @changeMode="changeMode"
         @search="search"
     ></text-mode>
@@ -17,6 +18,7 @@
         :operator-list="showOperatorList"
         :connection-list="showConnectionList"
         :convert-meta-list="metaList"
+        :show-list="showList"
         @changeMode="changeMode"
         @search="search"
     ></tag-mode>
@@ -49,6 +51,9 @@ export default {
     fullText: {
       type: Boolean,
       default: true
+    },
+    showList: {
+      type: Boolean
     },
     // 条件字段列表
     columnList: {

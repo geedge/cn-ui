@@ -134,9 +134,10 @@
           display: inline-block;
           position: relative;
           .overview-left-loading-span {
-            font-size: 30px;
-            color: #333333;
-            font-weight: bold;
+            font-family: NotoSansHans-Medium;
+            font-size: 18px;
+            color: #575757;
+            font-weight: 500;
           }
           .chart__loading i.el-icon-loading {
             top: calc(50% - 12px);
@@ -152,6 +153,7 @@
         .right-row {
           display: flex;
           height: 18px;
+          line-height: 18px;
           align-items: center;
           color: #666666;
 
@@ -174,15 +176,41 @@
             color: #333333;
             font-weight: bold;
           }
+          .right-value-block {
+            font-family: NotoSansHans-Medium;
+            font-size: 14px;
+            color: #353636;
+            font-weight: 600;
+
+            .last-hour {
+              font-family: NotoSansSChineseRegular;
+              font-size: 12px;
+              color: #717171;
+              font-weight: 400;
+            }
+          }
           i {
             padding-right: 4px;
-            font-size: 18px;
+            font-size: 19px;
           }
           .cn-icon-increase {
             color: #23BF9A;
           }
           .cn-icon-active {
-            color: #0091FF;
+            color: #35ADDA;
+          }
+          .entity-explorer-total__icon {
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            padding-left: 3px;
+            background-color: #04A6AB;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 4px;
+            margin-left: 1px;
           }
         }
       }
