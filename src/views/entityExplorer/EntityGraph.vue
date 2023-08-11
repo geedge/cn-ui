@@ -87,6 +87,7 @@ export default {
         undo: [], // 后退
         redo: [] // 前进
       },
+      center: {},
       initialData: null // 初始化数据，用于重置
     }
   },
@@ -102,6 +103,10 @@ export default {
         this.initialData = _.cloneDeep(initialData) // 初始化数据
         this.graph.data(initialData)
         this.graph.render()
+        await this.$nextTick(() => {
+          const { x, y } = this.graph.getViewPortCenterPoint()
+          this.center = { x, y }
+        })
         const rootNode = this.graph.findById(this.entity.entityName)
         this.bindEvents() // 绑定事件
         this.graph.emit('node:click', { item: rootNode, target: rootNode.getKeyShape() }) // 手动触发rootNode的点击事件
@@ -941,12 +946,10 @@ export default {
             this.graph.zoomTo(1)
             this.graph.fitCenter()
           } else if (code === 'zoomOut') {
-            const { x, y } = this.graph.getViewPortCenterPoint()
-            this.graph.zoomTo(this.graph.getZoom() + 0.2, { x, y })
+            this.graph.zoomTo(this.graph.getZoom() + 0.2, this.center)
           } else if (code === 'zoomIn') {
-            const { x, y } = this.graph.getViewPortCenterPoint()
             const currentZoom = this.graph.getZoom()
-            this.graph.zoomTo(currentZoom - 0.2, { x, y })
+            this.graph.zoomTo(currentZoom - 0.2, this.center)
           } else {
             this.graph.clear()
             this.graph.data(this.initialData)
