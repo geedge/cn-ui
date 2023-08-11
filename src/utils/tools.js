@@ -1360,10 +1360,10 @@ export function toUpperCaseByString (str) {
  * @returns {string}
  */
 export function numberWithCommas (num) {
-  if (typeof num === 'number') {
+  if (num) {
     return num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
   } else {
-    return num
+    return '-'
   }
 }
 

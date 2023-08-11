@@ -63,19 +63,28 @@
           <div class="overview-left">
             <span class="overview-left-loading">
               <loading :loading="loadingApp"></loading>
-              <span class="overview-left-loading-span">{{ numberWithCommas(entityAppTotal) }}</span>
+              <span class="overview-left-loading-span">APP</span>
             </span>
           </div>
           <div class="overview-right">
-            <div class="right-row">
-              APP
-            </div>
-            <div class="right-row">
-              <i class="cn-icon cn-icon-active"></i>
-              <div class="right-label">Active</div>
+            <div class="right-row margin-b-6">
+              <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
+              <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingAppActive" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityAppActive) }}</div>
+                <div class="right-value">{{ numberWithCommas(entityAppTotal) }}</div>
+              </div>
+            </div>
+
+            <div class="right-row">
+              <i class="cn-icon cn-icon-active"></i>
+              <div class="right-label">{{ $t('entity.active') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingAppActive" size="small"></loading>
+                <div class="right-value-block">
+                  <span class="margin-r-6">{{ numberWithCommas(entityAppActive) }}</span>
+                  <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -85,19 +94,28 @@
           <div class="overview-left">
             <span class="overview-left-loading">
               <loading :loading="loadingDomain"></loading>
-              <span class="overview-left-loading-span">{{ numberWithCommas(entityDomainTotal) }}</span>
+              <span class="overview-left-loading-span">Domain</span>
             </span>
           </div>
           <div class="overview-right">
-            <div class="right-row">
-              DOMAIN
+            <div class="right-row margin-b-6">
+              <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
+              <div class="right-label">{{ $t('network.total') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingAppActive" size="small"></loading>
+                <div class="right-value">{{ numberWithCommas(entityDomainTotal) }}</div>
+              </div>
             </div>
+
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
-              <div class="right-label">Active</div>
+              <div class="right-label">{{ $t('entity.active') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingDomainActive" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityDomainActive) }}</div>
+                <div class="right-value-block">
+                  <span class="margin-r-6">{{ numberWithCommas(entityDomainActive) }}</span>
+                  <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -107,19 +125,28 @@
           <div class="overview-left">
             <span class="overview-left-loading">
               <loading :loading="loadingIp"></loading>
-              <span class="overview-left-loading-span">{{ numberWithCommas(entityIpTotal) }}</span>
+              <span class="overview-left-loading-span">IP</span>
             </span>
           </div>
           <div class="overview-right">
-            <div class="right-row">
-              IP
+            <div class="right-row margin-b-6">
+              <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
+              <div class="right-label">{{ $t('network.total') }}</div>
+              <div class="right-label-loading">
+                <loading :loading="loadingAppActive" size="small"></loading>
+                <div class="right-value">{{ numberWithCommas(entityIpTotal) }}</div>
+              </div>
             </div>
+
             <div class="right-row">
               <i class="cn-icon cn-icon-active"></i>
-              <div class="right-label">Active</div>
+              <div class="right-label">{{ $t('entity.active') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingIpActive" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityIpActive) }}</div>
+                <div class="right-value-block">
+                  <span class="margin-r-6">{{ numberWithCommas(entityIpActive) }}</span>
+                  <span class="last-hour">{{ $t('entity.inLastHour') }}</span>
+                </div>
               </div>
             </div>
           </div>

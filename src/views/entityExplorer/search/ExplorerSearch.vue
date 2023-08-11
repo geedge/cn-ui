@@ -10,6 +10,7 @@
           :connection-list="connectionList"
           :default-mode="defaultMode"
           :full-text="true"
+          :show-list="showList"
           :class="{'advanced-search--show-list': showList}"
           @search="search"
         ></advanced-search>

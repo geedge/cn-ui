@@ -88,7 +88,7 @@
           </template>
         </el-popover>
       </div>
-      <div class="search__suffix new-search__suffix" @click="search">
+      <div class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
         <i class="el-icon-search"></i>
       </div>
     </div>
@@ -107,7 +107,8 @@ export default {
     columnList: Array,
     operatorList: Array,
     connectionList: Array,
-    convertMetaList: Array
+    convertMetaList: Array,
+    showList: Boolean
   },
   data () {
     return {
