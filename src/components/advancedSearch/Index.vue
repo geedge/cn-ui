@@ -1,6 +1,8 @@
 <template>
   <div
       class="advanced-search"
+      @mouseenter="showCloseIcon = true"
+      @mouseleave="showCloseIcon = false"
   >
     <text-mode
         v-if="searchMode === 'text'"
@@ -10,6 +12,7 @@
         :show-list="showList"
         @changeMode="changeMode"
         @search="search"
+        :show-close-icon="showCloseIcon"
     ></text-mode>
     <tag-mode
         v-if="searchMode === 'tag'"
@@ -41,7 +44,8 @@ export default {
   data () {
     return {
       str: null,
-      metaList: null
+      metaList: null,
+      showCloseIcon: false
     }
   },
   props: {

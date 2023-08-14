@@ -11,11 +11,11 @@
           :content="$t('entity.switchToAdvancedSearch')"
       >
         <template #reference>
-          <i class="cn-icon cn-icon-filter" @click="changeMode"></i>
+          <i class="cn-icon cn-icon-filter margin-r-12" @click="changeMode"></i>
         </template>
       </el-popover>
     </div>
-    <div class="search__suffix-close" @click="cleanParams">
+    <div v-show="isCloseIcon" class="search__suffix-close" @click="cleanParams">
       <i class="el-icon-error"></i>
     </div>
     <div class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
@@ -43,11 +43,14 @@ export default {
   props: {
     columnList: Array,
     str: String,
-    showList: Boolean
+    showList: Boolean,
+    showCloseIcon: Boolean
   },
   data () {
     return {
-      codeMirror: null
+      codeMirror: null,
+      isCloseIcon: this.showCloseIcon,
+      isEdit: false
     }
   },
   emits: ['changeMode', 'search'],
@@ -68,6 +71,24 @@ export default {
       })
       this.codeMirror.setOption('extraKeys', {
         Enter: (cm) => {}
+      })
+      const str = this.codeMirror.getValue().trim()
+      this.codeMirror.on('focus', () => {
+        if (str !== '') {
+          this.isEdit = true
+          this.isCloseIcon = true
+        }
+      })
+      this.codeMirror.on('blur', () => {
+        const timer = setTimeout(() => {
+          this.isEdit = false
+          this.isCloseIcon = false
+          clearTimeout(timer)
+        }, 200)
+      })
+      this.codeMirror.on('update', () => {
+        this.isEdit = true
+        this.isCloseIcon = true
       })
     },
     search () {
@@ -180,6 +201,14 @@ export default {
           })
         }
       }
+    },
+    showCloseIcon (n) {
+      if (!this.isEdit) {
+        const str = this.codeMirror.getValue().trim()
+        if (str !== '') {
+          this.isCloseIcon = n
+        }
+      }
     }
   },
   mounted () {
@@ -197,6 +226,8 @@ export default {
         }
       }
       toRaw(this.codeMirror).setValue(q)
+    } else {
+      this.isCloseIcon = false
     }
 
     const vm = this
@@ -209,10 +240,14 @@ export default {
 
 <style lang="scss">
 .search__suffix-close {
+  height: 40px;
+  line-height: 40px;
+  margin-top: -9px;
+
   .el-icon-error {
     font-size: 17px;
     color: #C4C4C4;
-    margin: 0 12px;
+    margin-right: 12px;
     cursor: pointer;
   }
 }
@@ -234,5 +269,8 @@ export default {
 .entity-explorer-search {
   color: #3976CB;
   margin-top: -2px;
+}
+.margin-r-12 {
+  margin-right: 12px;
 }
 </style>
