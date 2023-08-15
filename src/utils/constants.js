@@ -1730,52 +1730,62 @@ export const builtInKnowledgeBaseBasicInfo = [
   {
     knowledgeId: 10,
     label: 'Psiphon3 VPN',
-    iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png'
+    iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png',
+    desc: 'Psiphon3 is a circumvention software for Windows and other platforms that provides uncensored access to Internet content.'
   },
   {
     knowledgeId: 5,
-    label: 'FQDN Category',
-    iconUrl: 'images/knowledge-base-logo/fqdn.png'
+    label: 'Domain Category',
+    iconUrl: 'images/knowledge-base-logo/fqdn.png',
+    desc: 'Domain category provides basic information including categories, providers, reputation score.'
   },
   {
     knowledgeId: 6,
-    label: 'FQDN Whois',
-    iconUrl: 'images/knowledge-base-logo/fqdn-whois.png'
+    label: 'Domain Whois',
+    iconUrl: 'images/knowledge-base-logo/fqdn-whois.png',
+    desc: 'Domain whois contains registration and ownership information for domain names. It includes details like domain registrar, registrant, creation/expiry dates, and contact information.'
   },
   {
     knowledgeId: 2,
     label: 'IP ASN',
-    iconUrl: 'images/knowledge-base-logo/ip-asn.png'
+    iconUrl: 'images/knowledge-base-logo/ip-asn.png',
+    desc: 'ASN Database associates IP addresses with their corresponding Autonomous System Numbers, which are unique identifiers assigned to internet networks. This database helps identify the network and its owner, facilitating network analysis and monitoring tasks.'
   },
   {
     knowledgeId: 3,
     label: 'DNS Server Info',
-    iconUrl: 'images/knowledge-base-logo/dns-server-info.png'
+    iconUrl: 'images/knowledge-base-logo/dns-server-info.png',
+    desc: 'A DNS Server Info stores information about Domain Name System (DNS) servers. It includes details such as IP addresses, host names, locations, software name, operation system, and roles of the servers.'
   },
   {
     knowledgeId: 9,
     label: 'APP Category',
-    iconUrl: 'images/knowledge-base-logo/app-category.png'
+    iconUrl: 'images/knowledge-base-logo/app-category.png',
+    desc: 'APP category provides basic information for over 3000 popular applications, including their categories and service providers.'
   },
   {
     knowledgeId: 7,
     label: 'Indicators of Compromise',
-    iconUrl: 'images/knowledge-base-logo/indicators-of-compromise.png'
+    iconUrl: 'images/knowledge-base-logo/indicators-of-compromise.png',
+    desc: 'Indicator of Compromise (IoC) refers to forensic artifacts, such as unusual network traffic or malicious files, indicating a security breach or cyberattack.'
   },
   {
     knowledgeId: 4,
     label: 'ICP',
-    iconUrl: 'images/knowledge-base-logo/icp.png'
+    iconUrl: 'images/knowledge-base-logo/icp.png',
+    desc: 'ICP (Internet Content Provider) license is a permit issued by Chinese authorities, mandatory for websites to legally operate and publish content within mainland China.'
   },
   {
     knowledgeId: 1,
     label: 'IP Location',
-    iconUrl: 'images/knowledge-base-logo/ip-location.png'
+    iconUrl: 'images/knowledge-base-logo/ip-location.png',
+    desc: 'IP location Database is a repository containing geographical data associated with IP addresses, such as country, city, ISP, organization, latitude, longitude, and other relevant details.'
   },
   {
     knowledgeId: 8,
     label: 'Anonymity',
-    iconUrl: 'images/knowledge-base-logo/anonymity.png'
+    iconUrl: 'images/knowledge-base-logo/anonymity.png',
+    desc: 'Communication system that conceals users\' identities and activities to protect privacy and prevent tracking or surveillance. This database provides lists of Tor nodes, I2P nodes, obfs4, etc.'
   }
 ]
 

@@ -9,7 +9,7 @@
               <el-tooltip
                   effect="light"
                   trigger="hover"
-                  :content="$t('tip.notAvailableYet')"
+                  :content="$t('tip.notAvailable')"
                   placement="right"
                   popper-class="panel-tooltip"
               >
@@ -31,7 +31,7 @@
             <div class="card-title">
               <div class="card-title-name" :title="data.label">{{data.label}}</div>
             </div>
-            <div class="card-desc" :title="data.description">{{data.description?data.description:'—'}}</div>
+            <div class="card-desc" :title="data.desc">{{data.desc ? data.desc : '—'}}</div>
           </div>
           <div class="card-operate__footer">
             <button v-if="data.showUpdate"
@@ -55,7 +55,7 @@
           <div class="card-title">
             <div class="card-title-name" :title="data.label">{{data.label}}</div>
           </div>
-          <div class="card-desc" :title="data.description?data.description:'—'">{{data.description?data.description:'—'}}</div>
+          <div class="card-desc" :title="data.desc ? data.desc:'—'">{{data.desc ? data.desc : '—'}}</div>
         </div>
         <div class="card-operate__footer">
           <button v-if="data.showUpdate" :title="$t('overall.update')" class="top-tool-btn--update"
@@ -75,26 +75,35 @@
 
   <div class="center-dialog">
     <el-dialog v-model="showUpdateDialog"
-               custom-class="update-knowledge"
-               :before-close="handleClose">
+               :custom-class="showAddUpdateDialog ? 'update-knowledge update-knowledge--upload' : 'update-knowledge'"
+               :after-close="handleClose">
       <div class="knowledge-update__top" >
         <div class="update-left__icon">
-          <img :src="updateKnowledge.iconUrl"/>
+          <img width="60" height="60" :src="updateKnowledge.iconUrl"/>
         </div>
         <div class="update-right">
           <div class="knowledge-enable">
             <div class="update-title">
               <div class="card-title-name" :title="updateKnowledge.label">{{updateKnowledge.label}}</div>
             </div>
-            <el-switch v-model="updateKnowledge.status"
-                       v-if="showEnable"
-                       active-color="#38ACD2"
-                       inactive-color="#C0CEDB"
-                       :active-value="1"
-                       :inactive-value="0"
-                       @change="changeStatus($event,updateKnowledge.knowledgeId)"
+            <el-tooltip
+                effect="light"
+                trigger="hover"
+                v-if="showEnable"
+                :content="$t('tip.notAvailable')"
+                placement="right"
+                popper-class="panel-tooltip"
             >
-            </el-switch>
+              <el-switch v-model="updateKnowledge.status"
+                         active-color="#38ACD2"
+                         inactive-color="#C0CEDB"
+                         :disabled="true"
+                         :active-value="1"
+                         :inactive-value="0"
+                         @change="changeStatus($event,updateKnowledge.knowledgeId)"
+              >
+              </el-switch>
+            </el-tooltip>
           </div>
           <div class="knowledge-desc" :title="updateKnowledge.description">{{updateKnowledge.description?updateKnowledge.description:'—'}}</div>
         </div>
@@ -106,7 +115,7 @@
           </div>
           <div class="update-operate">
             <button :title="$t('overall.update')" class="top-tool-btn--update"
-                    @click="uploadRecord()">
+                    @click="uploadRecord">
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{$t('overall.update')}}</span>
             </button>
@@ -116,19 +125,24 @@
                   border
                   :data="updateHistoryList"
                   @selection-change="secondSelectionChange"
-                  max-height="653px"
                   width="100%"
+                  height="calc(100% - 125px)"
                   class="update-dialog__table"
                   cell-style="padding:6px 0px;font-size: 12px;color: #353636;font-weight: 400;line-height: 20px;border-right:none;"
                   header-cell-style="padding:8px 0px;font-size: 12px;color: #353636;font-weight: 500;border-right:none;">
-          <el-table-column property="opTime" label="Update time" width="150" ></el-table-column>
-          <el-table-column property="opUser" label="Operating user" width="150" ></el-table-column>
-          <el-table-column property="version" label="Version information" width="150"  ></el-table-column>
-          <el-table-column property="description" label="Description"></el-table-column>
+          <el-table-column prop="opTime" label="Update time" width="150" ></el-table-column>
+          <el-table-column prop="user" label="Operating user" width="150" >
+            <template #default="scope" :column="item">
+              <span>{{$_.get(scope.row, 'user.name', '-')}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="commitVersion" label="Version information" width="150"  ></el-table-column>
+          <el-table-column prop="description" label="Description"></el-table-column>
         </el-table>
       </template>
       <template v-if="showAddUpdateDialog">
-        <div class="update-knowledge-form"  >
+        <div class="update-knowledge-form">
+          <loading :loading="uploadLoading"></loading>
           <el-form :model="updateObject" label-position="top" ref="form" :rules="rules">
             <!--name-->
             <el-form-item :label="$t('overall.name')" prop="name">
@@ -144,10 +158,10 @@
                          :on-change="fileChange"
                          :on-success="uploadSuccess"
                          :before-upload="beforeUpload"
-                         :on-progress="onUpload"
                          :on-error="uploadError"
                          :class="uploadErrorTip ? 'el-upload--error' : ''"
                          :accept="fileTypeLimit"
+                         :auto-upload="false"
                          ref="knowledgeUpload"
                          id="knowledgeUpload"
               >
@@ -157,7 +171,7 @@
 
             <el-form-item :label="$t('knowledge.version')" prop="version">
               <el-input class="form-input" maxlength="64" placeholder="" disabled show-word-limit
-                        size="mini" type="text" v-model="updateObject.version" @blur="tagNameBlur"></el-input>
+                        size="mini" type="text" v-model="currentVersion"></el-input>
             </el-form-item>
             <el-form-item :label="$t('overall.remark')" prop="description" class="knowledge-remark">
               <el-input  maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" resize='none'
@@ -188,6 +202,7 @@
 
 <script>
 import table from '@/mixins/table'
+import Loading from '@/components/common/Loading'
 import { knowledgeCategoryValue, storageKey, builtInKnowledgeBaseBasicInfo } from '@/utils/constants'
 import { ref } from 'vue'
 import { api } from '@/utils/api'
@@ -204,6 +219,9 @@ export default {
       type: Boolean
     }
   },
+  components: {
+    Loading
+  },
   data () {
     return {
       tableTitle: [],
@@ -216,7 +234,9 @@ export default {
       updateKnowledge: {},
       showEnable: false,
       updateHistoryList: [],
-      updateObject: {}
+      updateObject: {},
+      currentVersion: 0,
+      uploadLoading: false
     }
   },
   setup () {
@@ -238,45 +258,32 @@ export default {
       this.fileList = fileList.slice(-1)
     },
     uploadError () {
+      this.uploadLoading = false
       this.$message.error(this.$t('tip.uploadFailed', { msg: 'error' }))
     },
     uploadSuccess (response) {
-      const uploadFile = this.fileList ? this.fileList[0] : null
-      let fileName = uploadFile ? uploadFile.name : ''
-      fileName = fileName.substring(0, fileName.indexOf('.'))
-      this.updateObject.version = fileName.length >= 8 ? fileName.substring(fileName.length - 8) : fileName
+      this.uploadLoading = false
       this.uploaded = response.code === 200
       if (response.code === 200) {
-
+        this.$message.success(this.$t('tip.success'))
+        this.showAddUpdateDialog = false
+        axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: { pageSize: 999 } }).then(res => {
+          this.updateHistoryList = res.data.data.list
+          this.currentVersion = this.updateHistoryList[0].commitVersion + 1
+        })
       } else {
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
       }
     },
     beforeUpload (file) {
-
-    },
-    onUpload () {
-
-    },
-    updateKnowledgeBase () {
-      axios.post(this.updateKnowledgeUrl + '?knowledgeIds=' + ids).then(response => {
-        if (response.data.code === 200) {
-          this.$message({ duration: 2000, type: 'success', message: this.$t('tip.success') })
-          // 重新查询历史记录
-        } else {
-          this.$message.error(response.data.message)
-        }
-      }).finally(() => {
-
-      })
+      this.uploadLoading = true
+      this.showConfirmDialog = false
     },
     submitConfirm () {
       this.showConfirmDialog = true
     },
     submit () {
-      // this.updateKnowledgeBase()//更新列表数据
-      this.showConfirmDialog = false
-      this.showAddUpdateDialog = false
+      this.$refs.knowledgeUpload.submit()
     },
     clickCard (data, event) {
       if (data.isSelected) { // 原来为选中，当前点击后未选中
@@ -301,6 +308,7 @@ export default {
     handleClose () {
       this.showUpdateDialog = false
       this.showAddUpdateDialog = false
+      this.uploadLoading = false
     },
     handleConfirmClose () {
       this.showConfirmDialog = false
@@ -314,17 +322,18 @@ export default {
     },
     jumpToUpdatePage (data, showEnable) {
       axios.get(api.knowledgeBaseLog + '/' + data.knowledgeId, { params: { pageSize: 999 } }).then(res => {
-
+        this.updateKnowledge = data
+        this.updateHistoryList = res.data.data.list
+        this.currentVersion = this.updateHistoryList[0].commitVersion + 1
+        this.showEnable = showEnable
+        this.showUpdate()
       })
-      this.updateKnowledge = data
-      this.showEnable = showEnable
-      this.showUpdate()
     },
     uploadRecord () {
       this.showAddUpdateDialog = true
       this.updateObject.name = this.updateKnowledge.name
       this.updateObject.label = this.updateKnowledge.label
-      this.updateObject.version = ''
+      this.updateObject.description = ''
     },
     clearSelect () {
       this.$nextTick(() => {
@@ -415,7 +424,8 @@ export default {
     uploadParams () {
       return {
         knowledgeId: this.updateKnowledge.knowledgeId,
-        action: 'update'
+        action: 'update',
+        description: this.updateObject.description
       }
     }
   }

@@ -37,7 +37,7 @@
           </el-form-item>
           <!--value-->
           <el-form-item :label="$t('config.i18n.value')" label-width="200px" prop="value">
-            <el-input id="account-input-value" v-model="editObject.value"  maxlength="64" placeholder=""
+            <el-input id="account-input-value" v-model="editObject.value"  maxlength="256" placeholder=""
                       show-word-limit size="small"></el-input>
           </el-form-item>
         </el-form>
