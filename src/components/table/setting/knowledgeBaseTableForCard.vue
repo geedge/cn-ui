@@ -105,7 +105,7 @@
               </el-switch>
             </el-tooltip>
           </div>
-          <div class="knowledge-desc" :title="updateKnowledge.description">{{updateKnowledge.description?updateKnowledge.description:'—'}}</div>
+          <div class="knowledge-desc" :title="updateKnowledge.desc">{{updateKnowledge.desc ? updateKnowledge.desc : '—'}}</div>
         </div>
       </div>
       <template v-if="!showAddUpdateDialog">
