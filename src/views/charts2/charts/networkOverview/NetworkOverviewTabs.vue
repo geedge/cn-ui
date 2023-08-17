@@ -112,6 +112,7 @@
                       <div v-else-if="scope.row.score <= 6" class="data-score data-score-green" :test-id="`score-${scope.row.index}`">
                         {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                       </div>
+                      <div v-else-if="scope.row.score === '-'">-</div>
                     </div>
                   </template>
                   <template v-else>
@@ -744,7 +745,7 @@ export default {
                         if (Object.keys(item.scoreGroup).length >= 5) {
                           item.score = computeScore(item.scoreGroup)
                           if (!_.isNumber(item.score)) {
-                            item.score = 0
+                            item.score = '-'
                           }
                         }
                       })
