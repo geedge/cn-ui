@@ -7,7 +7,7 @@
  */
 // 如有使用this的
 import i18n from '@/i18n'
-import { unitTypes } from '@/utils/constants'
+import { storageKey, unitTypes } from '@/utils/constants'
 const _this = i18n.global
 _this.$t = _this.t
 
@@ -270,7 +270,7 @@ export const dataForNpmNetworkQuantity = {
     { name: 'overall.packetRetrans' }
   ]
 }
-export const columnList = [
+export const columnList1 = [
   {
     name: 'ip',
     type: 'string',
@@ -334,14 +334,20 @@ export const columnList = [
     }
   }
 ]
+
+let schemaEntityExplore = localStorage.getItem(storageKey.schemaEntityExplore)
+// todo enityMetadata字段后续可能会改
+schemaEntityExplore = schemaEntityExplore ? JSON.parse(schemaEntityExplore).enityMetadata : columnList1
+export const columnList = schemaEntityExplore
+
 export const operatorList = ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE']
 export const connectionList = [
   {
     value: 'AND',
     label: 'AND'
-  },
-  {
-    value: 'OR',
-    label: 'OR'
   }
+  // {
+  //   value: 'OR',
+  //   label: 'OR'
+  // }
 ]

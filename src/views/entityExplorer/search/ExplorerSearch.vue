@@ -74,11 +74,11 @@ export default {
         {
           value: 'AND',
           label: 'AND'
-        },
-        {
-          value: 'OR',
-          label: 'OR'
         }
+        // {
+        //   value: 'OR',
+        //   label: 'OR'
+        // }
       ],
       showHistory: false,
       history: []

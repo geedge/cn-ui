@@ -254,9 +254,9 @@ export default {
       // networkOverviewBeforeTab是dashboard点击下钻标识，dimensionType是详情页到下钻页标识
       const tab = query.networkOverviewBeforeTab || query.dimensionType
       const value = query.fourthMenu
-      const ipList = ['ip', 'clientIp', 'serverIp', 'dnsServer', 'a', 'aaaa']
+      const ipList = ['ip', 'clientIp', 'serverIp', 'a', 'aaaa']
       const appList = ['appLabel']
-      const domainList = ['sslSni'] // domain暂定，先加入snis
+      const domainList = ['sslSni', 'domain']
 
       if (ipList.indexOf(tab) > -1) {
         entityType.value = 'ip'

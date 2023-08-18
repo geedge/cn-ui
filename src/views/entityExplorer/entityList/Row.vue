@@ -30,7 +30,7 @@
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
-                  <span class="row-item-label">{{ $t('overall.region') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-label">{{ $t('overall.city') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">{{ entityData.location ? ipLocationRegion(entityData.location) : '-' }}</span>
                 </div>
                 <div class="basic-info__item">

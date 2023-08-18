@@ -43,7 +43,8 @@ export const storageKey = {
   drillDownTableConfig: 'drilldownTableConfig',
   userCustomizationConfig: 'userCustomizationConfig',
   linkInfo: 'cn-link-info',
-  history: 'cn-history'
+  history: 'cn-history',
+  schemaEntityExplore: 'schema_entity_explore'
 }
 export const largeCountryList = ['CN', 'US', 'RU', 'AU', 'CA', 'KZ', 'IN', 'BR']
 

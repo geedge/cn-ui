@@ -8,7 +8,7 @@ import router from '@/router'
 import indexedDBUtils from '@/indexedDB'
 
 // columnList从'@/utils/static-data'引入的话，会导致国际化i18n出错
-const columnList = [
+const columnList1 = [
   {
     name: 'ip',
     type: 'string',
@@ -72,6 +72,10 @@ const columnList = [
     }
   }
 ]
+let schemaEntityExplore = localStorage.getItem(storageKey.schemaEntityExplore)
+// todo enityMetadata字段后续可能会改
+schemaEntityExplore = schemaEntityExplore ? JSON.parse(schemaEntityExplore).enityMetadata : columnList1
+export const columnList = schemaEntityExplore
 
 export const tableSort = {
   // 是否需要排序
@@ -1387,6 +1391,10 @@ export function switchStatus (status) {
  */
 export function comparedEntityKey (q) {
   if (q && q.indexOf('=') > -1) {
+    // =周围有空格，则去除空格
+    const regex = /\ = | =|= /g
+    q = q.replace(regex, '=')
+
     if (q.indexOf('AND') > -1) {
       const arr = q.split(' AND ')
       let newQ = ''
@@ -1414,6 +1422,11 @@ export function comparedEntityKey (q) {
       }
 
       return returnObj
+    } else if (q.indexOf('LIKE') > -1) {
+      return {
+        key: q,
+        isKey: true
+      }
     } else {
       const key = q.substring(0, q.indexOf('='))
       const obj = columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
@@ -1423,10 +1436,60 @@ export function comparedEntityKey (q) {
         return { key: '[' + key + ']', isKey: false }
       }
     }
+  } else if (q && q.indexOf(' IN ') > -1) {
+    return {
+      key: q,
+      isKey: true
+    }
   } else {
     return {
       key: q,
       isKey: false
+    }
+  }
+}
+
+/**
+ * 将模糊查询传过来的str转换为对应的实体类型，不满足ip和domain格式的当成app
+ * @param str
+ * @returns {string}
+ */
+export const handleEntityTypeByStr = (str) => {
+  if (str) {
+    const regex = /^["']|["']$/
+    // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
+    console.log('模糊查询', str, regex.test(str))
+    if (regex.test(str)) {
+      str = str.replace(/^['"]+|['"]+$/g, '')
+    }
+    console.log('模糊查询222', str, str.trim())
+
+    const arr = ['IP'.toLowerCase(), 'Domain'.toLowerCase(), 'App'.toLowerCase(), 'City'.toLowerCase(), 'Country'.toLowerCase(), 'ASN'.toLowerCase()]
+    let newStr = JSON.parse(JSON.stringify(str.toLowerCase()))
+    // 将str中的IP、Domain等替换为数组arr中的元素
+    for (let i = 0; i < arr.length; i++) {
+      newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
+    }
+    // 检查str字段在arr中是否出现
+    const result = arr.some(item => newStr.includes(item))
+    if (result) {
+      return str
+    }
+
+    // ipv4校验
+    const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+    // ipv6校验
+    const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
+    // domain校验
+    const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+
+    console.log('ip校验', regexIPv4.test(str), regexIPv6.test(str))
+    if (regexIPv4.test(str) || regexIPv6.test(str)) {
+      return `IP='${str}'`
+    } else if (reg.test(str)) {
+      return `Domain LIKE '%${str}'`
+    } else {
+      return `App LIKE '%${str}'%`
     }
   }
 }

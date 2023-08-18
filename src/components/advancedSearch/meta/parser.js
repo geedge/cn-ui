@@ -348,8 +348,10 @@ export default class Parser {
                 }
               }
             }
-          } else if (['o', 'a'].indexOf(s.toLowerCase()) > -1) {
+          // } else if (['o', 'a'].indexOf(s.toLowerCase()) > -1) {
+          } else if (['a'].indexOf(s.toLowerCase()) > -1) {
             // 前一位是否是空格，否则视为普通字符串
+            // 处理连接符为or的情况
             if (s.toLowerCase() === 'o') {
               if (strArr[i + 1] && strArr[i + 1].toLowerCase() === 'r' && strArr[i + 2] && strArr[i + 2] === ' ') {
                 token = new Token(types.connection, 'OR')
@@ -762,4 +764,66 @@ export function stringInQuot (value) {
 // IN和LIKE前后加空格
 export function handleOperatorSpace (operator) {
   return ['IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(operator) > -1 ? ` ${operator} ` : operator
+}
+
+/**
+ * 将metaList转为字符串
+ * @param metaList
+ * @returns {string|*}
+ */
+export function handleMetaListToStr (metaList) {
+  // 长度为1时，即模糊搜索，例如搜索框值为1.1.1.1，则直接返回1.1.1.1
+  if (metaList && metaList.length === 1) {
+    return metaList[0].column.label
+  } else if (metaList && metaList.length > 1) {
+    // 此为按语法搜索，将metaList转为字符串
+    const newMetaList = []
+    // 去除metaList的AND项
+    metaList.forEach(item => {
+      if (item.value !== 'AND') {
+        newMetaList.push(item)
+      }
+    })
+
+    const newObj = combineLabel(newMetaList)
+    const lastObj = {}
+    for (const i in newObj) {
+      if (newObj[i].indexOf('(') > -1) {
+        // 原来为IN ()格式的直接保留
+        lastObj[i] = `${i} IN ${newObj[i]}`
+      } else if (newObj[i].indexOf(',') > -1) {
+        // 格式为IP: '1.1.1.1,2.2.2.2'的，改成IP: "'1.1.1.1','2.2.2.2'"，然后再（）括号包裹
+        let str = newObj[i]
+        str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
+        lastObj[i] = `${i} IN (${str})`
+      } else {
+        // 单独存在的,直接保留
+        lastObj[i] = `${i} = ${newObj[i]}`
+      }
+    }
+
+    let str = ''
+    for (const i in lastObj) {
+      str += lastObj[i] + ' AND '
+    }
+    str = str.slice(0, -5)
+
+    return str
+  }
+}
+
+/**
+ * 将相同属性的label组合到一起，即IP='1.1.1.1' AND IP='2.2.2.2'组合成IP: '1.1.1.1,2.2.2.2'
+ * @param list
+ * @returns {*}
+ */
+const combineLabel = (list) => {
+  return list.reduce((acc, cur) => {
+    if (acc[cur.column.label]) {
+      acc[cur.column.label] += `,${cur.value.label}`
+    } else {
+      acc[cur.column.label] = cur.value.label
+    }
+    return acc
+  }, {})
 }

@@ -13,11 +13,11 @@ export const defaultConnectionList = [
   {
     value: 'AND',
     label: 'AND'
-  },
-  {
-    value: 'OR',
-    label: 'OR'
   }
+  // {
+  //   value: 'OR',
+  //   label: 'OR'
+  // }
 ]
 export default class Meta {
   // meta元数据有两种，一是condition，表示字段、操作符、值的组合，二是connection，是condition之间的连接符，AND | OR

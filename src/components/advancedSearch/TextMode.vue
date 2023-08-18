@@ -36,7 +36,7 @@ import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
-import { comparedEntityKey, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { comparedEntityKey, handleEntityTypeByStr, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 
 export default {
   name: 'TextMode',
@@ -57,6 +57,8 @@ export default {
   methods: {
     cleanParams () {
       toRaw(this.codeMirror).setValue('')
+      this.isEdit = false
+      this.isCloseIcon = false
       const routeQuery = this.$route.query
       delete routeQuery.q
       this.reloadUrl(routeQuery, 'cleanOldParams')
@@ -72,9 +74,8 @@ export default {
       this.codeMirror.setOption('extraKeys', {
         Enter: (cm) => {}
       })
-      const str = this.codeMirror.getValue().trim()
       this.codeMirror.on('focus', () => {
-        if (str !== '') {
+        if (this.codeMirror.getValue().trim() !== '') {
           this.isEdit = true
           this.isCloseIcon = true
         }
@@ -95,7 +96,7 @@ export default {
       const str = this.codeMirror.getValue().trim()
       if (str) {
         const parser = new Parser(this.columnList)
-        const keyInfo = comparedEntityKey(str)
+        const keyInfo = comparedEntityKey(handleEntityTypeByStr(str))
         if (keyInfo.isKey) {
           const errorList = parser.validateStr(keyInfo.key)
           if (_.isEmpty(errorList)) {
@@ -104,7 +105,7 @@ export default {
             this.$message.error(handleErrorTip(errorList[0]))
           }
         } else {
-          this.$message.error(this.$t('tip.invalidQueryField') + keyInfo.key)
+          this.$message.error(this.$t('tip.invalidQueryField') + ' ' + keyInfo.key)
         }
       } else {
         this.$emit('search', { q: '', str: '', metaList: [] })

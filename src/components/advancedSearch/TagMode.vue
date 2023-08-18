@@ -54,22 +54,22 @@
       <!-- 条件连接符 -->
       <template v-else-if="meta.meta === connection">
         <div class="connection__value">
-          <div v-show="meta.isEditing">
-            <el-select
-                :placeholder="meta.value"
-                v-model="meta.value"
-                size="mini"
-                @change="(value) => selectConnection(value, meta)"
-            >
-              <el-option
-                  v-for="(connection, index) in connectionList"
-                  :key="index"
-                  :label="connection.label"
-                  :value="connection.value"
-              ></el-option>
-            </el-select>
-          </div>
-          <span v-show="!meta.isEditing" @click="connectionClick(meta)">{{meta.value}}</span>
+<!--          <div v-show="meta.isEditing">-->
+<!--            <el-select-->
+<!--                :placeholder="meta.value"-->
+<!--                v-model="meta.value"-->
+<!--                size="mini"-->
+<!--                @change="(value) => selectConnection(value, meta)"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                  v-for="(connection, index) in connectionList"-->
+<!--                  :key="index"-->
+<!--                  :label="connection.label"-->
+<!--                  :value="connection.value"-->
+<!--              ></el-option>-->
+<!--            </el-select>-->
+<!--          </div>-->
+          <span v-show="!meta.isEditing">{{meta.value}}</span>
         </div>
       </template>
     </div>
@@ -79,7 +79,6 @@
         <el-popover
             popper-class="my-popper-class"
             placement="top"
-            :popper-style="{border: '1px red solid'}"
             trigger="hover"
             :content="$t('entity.switchToBasicSearch')"
         >
@@ -87,6 +86,9 @@
             <i class="cn-icon cn-icon-search-normal" @click="changeMode"></i>
           </template>
         </el-popover>
+      </div>
+      <div v-show="metaList.length>0" class="search__suffix-close" @click="cleanMetaList">
+        <i class="el-icon-error"></i>
       </div>
       <div class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
         <i class="el-icon-search"></i>
@@ -99,8 +101,8 @@
 import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
-import Parser, { stringInQuot } from '@/components/advancedSearch/meta/parser'
-import { comparedEntityKey, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import Parser, { handleMetaListToStr, stringInQuot } from '@/components/advancedSearch/meta/parser'
+import { comparedEntityKey, handleEntityTypeByStr, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'TagMode',
   props: {
@@ -329,7 +331,9 @@ export default {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
         if (_.isEmpty(errorList)) {
-          this.$emit('search', parser.parseMeta(this.metaList))
+          const str = handleMetaListToStr(this.metaList)
+          const keyInfo = comparedEntityKey(handleEntityTypeByStr(str))
+          this.$emit('search', { ...parser.parseStr(keyInfo.key), str: str })
         } else {
           this.$message.error(handleErrorTip(errorList[0]))
         }
@@ -431,6 +435,9 @@ export default {
         newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
       }
       overwriteUrl(newUrl)
+    },
+    cleanMetaList () {
+      this.metaList = []
     }
   },
   mounted () {

@@ -168,7 +168,13 @@ import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
 import _ from 'lodash'
 import Loading from '@/components/common/Loading'
-import { overwriteUrl, urlParamsHandler, numberWithCommas, comparedEntityKey } from '@/utils/tools'
+import {
+  overwriteUrl,
+  urlParamsHandler,
+  numberWithCommas,
+  comparedEntityKey,
+  handleEntityTypeByStr
+} from '@/utils/tools'
 import Parser from '@/components/advancedSearch/meta/parser'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import { columnList } from '@/utils/static-data'
@@ -863,7 +869,7 @@ export default {
           }
         }
         const parser = new Parser(columnList)
-        const keyInfo = comparedEntityKey(str)
+        const keyInfo = comparedEntityKey(handleEntityTypeByStr(str))
         if (keyInfo.isKey) {
           const errorList = parser.validateStr(keyInfo.key)
           if (_.isEmpty(errorList)) {
@@ -872,7 +878,7 @@ export default {
             this.$message.error(handleErrorTip(errorList[0]))
           }
         } else {
-          this.$message.error(this.$t('tip.invalidQueryField') + keyInfo.key)
+          this.$message.error(this.$t('tip.invalidQueryField') + ' ' + keyInfo.key)
         }
       } else {
         this.search({ q: '', str: '', metaList: [] })
