@@ -1384,11 +1384,15 @@ export function switchStatus (status) {
   }
 }
 /**
- * 将key与columnList的label都进行转小写进行对比
- * 如果一致，返回columnList的label，不一致则返回false，并弹窗提示
- * @param q
+ * 将str传过来的值进行columnList规范化
+ * 步骤：将key与columnList的label都进行转小写进行对比
+ *      如果一致，返回columnList的label，不一致则返回false，并弹窗提示
+ * @param str
  */
-export function comparedEntityKey (q) {
+export function comparedEntityKey (str) {
+  let q = JSON.parse(JSON.stringify(str))
+  q = q.replace(/ and /g, ' AND ').replace(/ in /g, ' IN ')
+
   if (q && q.indexOf('=') > -1) {
     // =周围有空格，则去除空格
     const regex = /\ = | =|= /g
@@ -1404,12 +1408,17 @@ export function comparedEntityKey (q) {
       }
 
       arr.forEach(item => {
-        const key = item.substring(0, item.indexOf('='))
-        const obj = columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
-        if (obj) {
-          newQ += obj.label + item.substring(item.indexOf('='), item.length) + ' AND '
+        // 判断是否包含=或者in
+        const keyEqual = item.substring(0, item.indexOf('='))
+        const keyIn = item.substring(0, item.indexOf(' IN '))
+        const objEqual = columnList.find(t => t.label.toLowerCase() === keyEqual.toLowerCase())
+        const objIn = columnList.find(t => t.label.toLowerCase() === keyIn.toLowerCase())
+        if (objEqual) {
+          newQ += objEqual.label + item.substring(item.indexOf('='), item.length) + ' AND '
+        } else if (objIn) {
+          newQ += objIn.label + item.substring(item.indexOf(' IN '), item.length) + ' AND '
         } else {
-          errorQ += '[' + key + ']' + '、'
+          errorQ += '[' + keyEqual + ']' + '、'
           returnObj.isKey = false
         }
       })
@@ -1418,6 +1427,8 @@ export function comparedEntityKey (q) {
       if (!returnObj.isKey) {
         errorQ = errorQ.substring(0, errorQ.length - 1)
         returnObj.key = errorQ
+      } else {
+        returnObj.key = handleStrToUniteStr(newQ)
       }
 
       return returnObj
@@ -1435,7 +1446,7 @@ export function comparedEntityKey (q) {
         return { key: '[' + key + ']', isKey: false }
       }
     }
-  } else if (q && q.indexOf(' IN ') > -1) {
+  } else if (q && (q.indexOf(' IN ') > -1 || q.indexOf(' LIKE ') > -1)) {
     return {
       key: q,
       isKey: true
@@ -1455,24 +1466,26 @@ export function comparedEntityKey (q) {
  */
 export const handleEntityTypeByStr = (str) => {
   if (str) {
-    const regex = /^["']|["']$/
-    // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
-    console.log('模糊查询', str, regex.test(str))
-    if (regex.test(str)) {
-      str = str.replace(/^['"]+|['"]+$/g, '')
-    }
-    console.log('模糊查询222', str, str.trim())
-
-    const arr = ['IP'.toLowerCase(), 'Domain'.toLowerCase(), 'App'.toLowerCase(), 'City'.toLowerCase(), 'Country'.toLowerCase(), 'ASN'.toLowerCase()]
+    const arr = []
+    // 如果出现columnList中的字段，如IP\Domain\App\Country等，则不进行模糊搜索，将str返回出去
+    columnList.forEach(item => {
+      arr.push(item.label.toLowerCase())
+    })
     let newStr = JSON.parse(JSON.stringify(str.toLowerCase()))
     // 将str中的IP、Domain等替换为数组arr中的元素
     for (let i = 0; i < arr.length; i++) {
       newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
     }
-    // 检查str字段在arr中是否出现
+    // 检查str字段在arr中是否出现,true为出现过
     const result = arr.some(item => newStr.includes(item))
     if (result) {
       return str
+    } else {
+      const regex = /^["']|["']$/
+      // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
+      if (regex.test(str)) {
+        str = str.replace(/^['"]+|['"]+$/g, '')
+      }
     }
 
     // ipv4校验
@@ -1482,7 +1495,6 @@ export const handleEntityTypeByStr = (str) => {
     // domain校验
     const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
 
-    console.log('ip校验', regexIPv4.test(str), regexIPv6.test(str))
     if (regexIPv4.test(str) || regexIPv6.test(str)) {
       return `IP='${str}'`
     } else if (reg.test(str)) {
@@ -1491,4 +1503,68 @@ export const handleEntityTypeByStr = (str) => {
       return `App LIKE '%${str}%'`
     }
   }
+}
+/**
+ * 将字符串的同属性字段合并在一起
+ * @param str
+ * @returns {string}
+ */
+const handleStrToUniteStr = (str) => {
+  // 若str = "IP='1.1.1.1' AND Domain IN ('baidu.com','jd.com') AND IP='2.2.2.2'"
+  // 则将转换为 str = "IP IN ('1.1.1.1','2.2.2.2') AND Domain IN ('baidu.com','jd.com')"
+  const arr = str.split(' AND ')
+  const newArr = []
+
+  // 仿造成metaList形式如 [{ label: 'IP', value: '1.1.1.1' } ... ]
+  // 从而根据label判断是否是同一属性，如是IP的话，则将value进行拼接，然后再使用in ()包裹
+  arr.forEach(item => {
+    if (item.indexOf('=') > -1) {
+      const label = item.substring(0, item.indexOf('='))
+      const value = item.substring(item.indexOf('=') + 1)
+      // 去除单引号
+      newArr.push({ label: label, value: value.replace(/^'|'$/g, '') })
+    } else if (item.indexOf(' IN ') > -1) {
+      const label = item.substring(0, item.indexOf(' IN '))
+      let value = item.substring(item.indexOf(' IN ') + 4) // 去除（）
+      value = value.replace(/[\(\)]/g, '')
+      newArr.push({ label: label, value: value })
+    }
+  })
+
+  const newObj = combineLabel1(newArr)
+  const lastObj = {}
+  for (const i in newObj) {
+    if (newObj[i].indexOf('(') > -1) {
+      // 原来为IN ()格式的直接保留
+      lastObj[i] = `${i} IN ${newObj[i]}`
+    } else if (newObj[i].indexOf(',') > -1) {
+      let str = newObj[i]
+      str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
+      lastObj[i] = `${i} IN (${str})`
+    } else {
+      // 单独存在的,直接保留
+      lastObj[i] = `${i} = '${newObj[i]}'`
+    }
+  }
+
+  let str1 = ''
+  for (const i in lastObj) {
+    str1 += lastObj[i] + ' AND '
+  }
+  str1 = str1.slice(0, -5)
+
+  return str1
+}
+/**
+ * 根据label判断是否是同一属性，是的话，则将value进行拼接，否则按原形式返回
+  */
+const combineLabel1 = (list) => {
+  return list.reduce((acc, cur) => {
+    if (acc[cur.label]) {
+      acc[cur.label] += `,${cur.value}`
+    } else {
+      acc[cur.label] = cur.value
+    }
+    return acc
+  }, {})
 }

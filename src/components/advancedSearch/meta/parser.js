@@ -773,8 +773,27 @@ export function handleOperatorSpace (operator) {
  */
 export function handleMetaListToStr (metaList) {
   // 长度为1时，即模糊搜索，例如搜索框值为1.1.1.1，则直接返回1.1.1.1
+  // 如果为IP='1.1.1.1'的情况，则从metaList拼接成IP='1.1.1.1'返回出去
   if (metaList && metaList.length === 1) {
-    return metaList[0].column.label
+    const arr = ['IP'.toLowerCase(), 'Domain'.toLowerCase(), 'App'.toLowerCase(), 'City'.toLowerCase(), 'Country'.toLowerCase(), 'ASN'.toLowerCase()]
+    let label = metaList[0].column.label
+    let newStr = JSON.parse(JSON.stringify(label.toLowerCase()))
+    // 将str中的IP、Domain等替换为数组arr中的元素
+    for (let i = 0; i < arr.length; i++) {
+      newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
+    }
+    // 检查str字段在arr中是否出现,true为出现过
+    const result = arr.some(item => newStr.includes(item))
+    if (result) {
+      return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+    } else {
+      const regex = /^["']|["']$/
+      // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
+      if (regex.test(label)) {
+        label = label.replace(/^['"]+|['"]+$/g, '')
+      }
+      return label
+    }
   } else if (metaList && metaList.length > 1) {
     // 此为按语法搜索，将metaList转为字符串
     const newMetaList = []
@@ -798,7 +817,7 @@ export function handleMetaListToStr (metaList) {
         lastObj[i] = `${i} IN (${str})`
       } else {
         // 单独存在的,直接保留
-        lastObj[i] = `${i} = ${newObj[i]}`
+        lastObj[i] = `${i} = '${newObj[i]}'`
       }
     }
 

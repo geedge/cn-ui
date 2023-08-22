@@ -332,8 +332,8 @@ export default {
         const errorList = parser.validateMeta(this.metaList)
         if (_.isEmpty(errorList)) {
           const str = handleMetaListToStr(this.metaList)
-          const keyInfo = comparedEntityKey(handleEntityTypeByStr(str))
-          this.$emit('search', { ...parser.parseStr(keyInfo.key), str: str })
+          const key = handleEntityTypeByStr(str)
+          this.$emit('search', { ...parser.parseStr(key), str: str })
         } else {
           this.$message.error(handleErrorTip(errorList[0]))
         }
