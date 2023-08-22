@@ -336,8 +336,7 @@ export const columnList1 = [
 ]
 
 let schemaEntityExplore = localStorage.getItem(storageKey.schemaEntityExplore)
-// todo enityMetadata字段后续可能会改
-schemaEntityExplore = schemaEntityExplore ? JSON.parse(schemaEntityExplore).enityMetadata : columnList1
+schemaEntityExplore = schemaEntityExplore ? JSON.parse(schemaEntityExplore).entityMetadata.searchColumns : columnList1
 export const columnList = schemaEntityExplore
 
 export const operatorList = ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE']

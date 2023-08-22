@@ -22,7 +22,12 @@
                 <div v-else class="filter__body-item-left-index">{{ i+1 }}</div>
                 <div class="filter__body-item-left-label">
                   <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
-                    <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">{{ data.label }}</span>
+                    <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
+                      <span v-if="item.title==='Top Ports'">
+                        {{ data.port }}/{{ data.l7Protocol }}
+                      </span>
+                      <span v-else>{{ data.label }}</span>
+                    </span>
                   </el-tooltip>
                 </div>
               </div>

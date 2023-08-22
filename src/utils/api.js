@@ -304,8 +304,13 @@ export const api = {
       appTrafficMap: apiVersion + '/entity/explorer/detail/traffic/map/app', // app流量地图
       summaryCount: apiVersion + '/entity/explorer/query/summaryCount', // 实体基数统计
       aggCountry: apiVersion + '/entity/explorer/top/aggCountry', // 国家实体基数统计
-      aggAsn: apiVersion + '/entity/explorer/top/aggAsn', // ASN实体基数统计
+      aggIPAsn: apiVersion + '/entity/explorer/top/agg-ip-asn', // ASN实体基数统计
       aggCity: apiVersion + '/entity/explorer/top/aggCity', // 城市实体基数统计
+      aggIPIsp: apiVersion + '/entity/explorer/top/agg-ip-isp', // ip-iap实体基数统计
+      aggPort: apiVersion + '/entity/explorer/top/aggPort', // 端口实体基数统计
+      aggDomain: apiVersion + '/entity/explorer/top/aggDomain', // 域名类别实体基数统计
+      aggAppCategory: apiVersion + '/entity/explorer/top/aggAppCategory', // app类别实体基数统计
+      aggTag: apiVersion + '/entity/explorer/top/aggTag', // 标签实体基数统计
       domainSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // domain安全事件详情
       ipSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // ip安全事件详情
       appSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // app安全事件详情

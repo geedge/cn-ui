@@ -73,9 +73,8 @@ const columnList1 = [
   }
 ]
 let schemaEntityExplore = localStorage.getItem(storageKey.schemaEntityExplore)
-// todo enityMetadata字段后续可能会改
-schemaEntityExplore = schemaEntityExplore ? JSON.parse(schemaEntityExplore).enityMetadata : columnList1
-export const columnList = schemaEntityExplore
+schemaEntityExplore = schemaEntityExplore ? JSON.parse(schemaEntityExplore).entityMetadata.searchColumns : columnList1
+const columnList = schemaEntityExplore
 
 export const tableSort = {
   // 是否需要排序
@@ -1489,7 +1488,7 @@ export const handleEntityTypeByStr = (str) => {
     } else if (reg.test(str)) {
       return `Domain LIKE '%${str}'`
     } else {
-      return `App LIKE '%${str}'%`
+      return `App LIKE '%${str}%'`
     }
   }
 }

@@ -353,18 +353,57 @@ export default {
         {
           icon: 'cn-icon cn-icon-registration-country',
           title: 'Top Countries',
+          topColumn: 'Country',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-city',
           title: 'Top Cities',
+          topColumn: 'City',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-as',
           title: 'Top ASNs',
+          topColumn: 'ASN',
+          totalCount: 0,
+          data: []
+        },
+        {
+          icon: 'cn-icon cn-icon-operator',
+          title: 'Top ISPs',
+          topColumn: 'ISP',
+          totalCount: 0,
+          data: []
+        },
+        {
+          icon: 'cn-icon cn-icon-open-port',
+          title: 'Top Ports',
+          topColumn: 'DR.Port',
+          topColumn1: 'DR.L7Protocol',
+          totalCount: 0,
+          data: []
+        },
+        {
+          icon: 'cn-icon cn-icon-FQDN',
+          title: 'Top FQDN Categories',
+          topColumn: 'DomainCategoryName',
+          totalCount: 0,
+          data: []
+        },
+        {
+          icon: 'cn-icon cn-icon-category2',
+          title: 'Top App Categories',
+          topColumn: 'AppCategory',
+          totalCount: 0,
+          data: []
+        },
+        {
+          icon: 'cn-icon cn-icon-tag1',
+          title: 'Top Tags',
+          topColumn: 'Tags',
           totalCount: 0,
           data: []
         }
@@ -605,12 +644,28 @@ export default {
     },
     /* filter组件内点击后查询 */
     filter (name, topData) {
-      const params = {
-        column: topData.topColumn,
-        operator: '=',
-        value: name
+      if (topData.topColumn === 'DR.Port') {
+        const params = [
+          {
+            column: topData.topColumn,
+            operator: '=',
+            value: topData.port
+          },
+          {
+            column: topData.topColumn1,
+            operator: '=',
+            value: topData.l7Protocol
+          }
+        ]
+        this.$refs.search.addParams(params)
+      } else {
+        const params = {
+          column: topData.topColumn,
+          operator: '=',
+          value: name
+        }
+        this.$refs.search.addParams([params])
       }
-      this.$refs.search.addParams([params])
       this.$nextTick(() => {
         this.emitter.emit('advanced-search')
       })
@@ -688,22 +743,34 @@ export default {
       this.loadingLeft = true
       const aggCountry = get(api.entity.entityList.aggCountry, queryParams)
       const aggCity = get(api.entity.entityList.aggCity, queryParams)
-      const aggAsn = get(api.entity.entityList.aggAsn, queryParams)
+      const aggIPAsn = get(api.entity.entityList.aggIPAsn, queryParams)
+      const aggIPIsp = get(api.entity.entityList.aggIPIsp, queryParams)
+      const aggPort = get(api.entity.entityList.aggPort, queryParams)
+      const aggDomain = get(api.entity.entityList.aggDomain, queryParams)
+      const aggAppCategory = get(api.entity.entityList.aggAppCategory, queryParams)
+      const aggTag = get(api.entity.entityList.aggTag, queryParams)
 
-      Promise.all([aggCountry, aggCity, aggAsn]).then(response => {
+      Promise.all([aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]).then(response => {
         response.forEach((item, index) => {
           if (item.code === 200 && item.data.list) {
             this.newFilterData[index].data = []
             item.data.list.forEach(item => {
-              const obj = { label: item.value, topColumn: 'Country', value: item.uniqueEntities }
+              let obj = {
+                label: item.value,
+                topColumn: this.newFilterData[index].topColumn,
+                value: item.uniqueEntities
+              }
               if (index === 0) {
                 obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
               }
-              if (index === 1) {
-                obj.topColumn = 'City'
-              }
-              if (index === 2) {
-                obj.topColumn = 'ASN'
+              if (index === 4) {
+                obj = {
+                  topColumn: this.newFilterData[index].topColumn,
+                  topColumn1: this.newFilterData[index].topColumn1,
+                  port: item.port,
+                  l7Protocol: item.l7Protocol,
+                  value: item.uniqueEntities
+                }
               }
               this.newFilterData[index].data.push(obj)
             })
