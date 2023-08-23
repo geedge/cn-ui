@@ -308,7 +308,7 @@ export const api = {
       aggCity: apiVersion + '/entity/explorer/top/aggCity', // 城市实体基数统计
       aggIPIsp: apiVersion + '/entity/explorer/top/agg-ip-isp', // ip-iap实体基数统计
       aggPort: apiVersion + '/entity/explorer/top/aggPort', // 端口实体基数统计
-      aggDomain: apiVersion + '/entity/explorer/top/aggDomain', // 域名类别实体基数统计
+      aggDomain: apiVersion + '/entity/explorer/top/aggDomainCategory', // 域名类别实体基数统计
       aggAppCategory: apiVersion + '/entity/explorer/top/aggAppCategory', // app类别实体基数统计
       aggTag: apiVersion + '/entity/explorer/top/aggTag', // 标签实体基数统计
       domainSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // domain安全事件详情
