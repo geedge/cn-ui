@@ -62,7 +62,6 @@
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <loading :loading="loadingApp"></loading>
               <span class="overview-left-loading-span">APP</span>
             </span>
           </div>
@@ -93,7 +92,6 @@
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <loading :loading="loadingDomain"></loading>
               <span class="overview-left-loading-span">Domain</span>
             </span>
           </div>
@@ -124,7 +122,6 @@
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <loading :loading="loadingIp"></loading>
               <span class="overview-left-loading-span">IP</span>
             </span>
           </div>

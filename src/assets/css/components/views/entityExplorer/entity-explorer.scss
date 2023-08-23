@@ -159,6 +159,9 @@
 
           .right-label-loading {
             position: relative;
+            .chart__loading {
+              width: auto;
+            }
             .chart__loading i.el-icon-loading {
               padding: 0;
               top: calc(50% - 8px);
