@@ -7,18 +7,18 @@
              :class="showCustomizeTabs?'cn-chart__tabs':'tab-hide cn-chart__tabs cn-chart__tabs-hide-tab'"
              @tab-click="handleClick"
     >
-      <template v-for="(tab,index) in list">
+      <template v-for="(tab,tabIndex) in list">
         <el-tab-pane  v-if="tab.checked"
                       :name="tab.label"
                       :key="tab.label"
-                      :ref="`chart-tab-${index}`"
+                      :ref="`chart-tab-${tabIndex}`"
                       class="tab-pane"
-        ><!-- key原来设置的值为index，导致自定义拖拽时，选中tab下方的蓝色线不随着拖拽移动，key修改为label后，此问题消失 -->
+        ><!-- key原来设置的值为tabIndex，导致自定义拖拽时，选中tab下方的蓝色线不随着拖拽移动，key修改为label后，此问题消失 -->
           <template #label>
             {{$t(tab.label)}}
           </template>
           <el-table
-                  :id="`tabTable_${index}`"
+                  :id="`tabTable_${tabIndex}`"
                   :ref="`dataTable_${tab.prop}`"
                   :data="tableData.slice(0,showRecordNum)"
                   border
@@ -29,20 +29,98 @@
                   height="100%"
                   empty-text=" "
                   @sort-change="((col) => {sortChange(col,tab.prop)})"
-                  :key="index"
+                  :key="tabIndex"
           >
             <template v-for="(item, index) in customTableTitles">
               <el-table-column
                       v-if="item.checked"
-                      :sortable="item.showError ? false : sortable(item)"
+                      :sortable="item.showError ? false : (item.columnType === 'dillDown' ? false :sortable(item))"
                       align="center"
                       :prop="item.prop"
                       class="data-column"
                       :ref="item.prop"
                       :key="index"
+                      :width="searchColumnWidth(item.columnType)"
               >
                 <template #header >
-                  <span class="data-column__span" >{{$t(item.label)}}</span>
+                  <div class="title-search" v-if="item.columnType === 'dillDown'" @mouseenter="showSearch" @mouseleave="hideSearch"  >
+                    <span class="data-column__span title-search__span"  >{{$t(item.label)}}</span>
+                    <el-popover placement="bottom-start"
+                                :ref="`tabSearchPopover${item.prop}`"
+                                :show-arrow="false"
+                                :append-to-body="true"
+                                :hide-after="0"
+                                :show-after="0"
+                                popper-class="tab-search__popper"
+                                @show="showTabSearchPopover(item.prop,tab.prop)"
+                                @hide="hideTabSearchPopover(item.prop)"
+                                trigger="manual"
+
+                                v-model:visible="showPopoverGroup[tab.prop]"
+                    >
+                      <template #reference>
+                        <div>
+                          <div class="tab-search-button" id="tabSearchButton"  v-show="showSearchButton"
+                               @click="showPopoverGroup[tab.prop]=!showPopoverGroup[tab.prop]">
+                            <i class="el-icon-search" style="color:#575757;" ></i>
+                          </div>
+                          <div class="tab-search-input" v-show="showSearchInput">
+                            <el-input :id="`tabSearchValue${tab.prop}`"
+                                      name="tabSearchValue"
+                                      size="mini"
+                                      readonly
+                                      prefix-icon="cn-icon cn-icon-search"
+                                      @click="showListPopover(item.prop,tab.prop)"
+                            >
+                              <template v-if="curTabProp === 'qtype'">
+                                <span>{{ dnsQtypeMapData.get(item.value)}}</span>
+                              </template>
+                              <template v-else-if="curTabProp === 'rcode'">
+                                <span>{{ dnsRcodeMapData.get(item.value)}}</span>
+                              </template>
+                              <template v-else>
+                                <span>{{ item.value }}&&</span>
+                              </template>
+                              <template v-slot:suffix >
+                                <i class="cn-icon cn-icon-close search-input-close" @click="closeSearchInput(tab.prop)"></i>
+                              </template>
+                            </el-input>
+                          </div>
+                        </div>
+                      </template>
+                      <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
+                        <div class="search-input">
+                          <el-input :placeholder="`${$t('networkOverview.search')} ${$t(item.label)}`"
+                                    size="mini"
+                                    v-model="dropDownValue"
+                                    @input="dropDownSearch(tab.prop)"></el-input>
+                        </div>
+                        <ul class="select-dropdown" id="tabSearchSelectDropdown" @scroll="scrollList(tab.prop)">
+                          <li v-for="item in tabSearchColumnValueListShow" title='' :key="item" :id="`${item}${tab.prop}`"
+                              class="select-dropdown__item" @click="changeValue(item,tab.prop)">
+                            <template v-if="curTabProp === 'qtype'">
+                              <span>{{ dnsQtypeMapData.get(item) }}</span>
+                            </template>
+                            <template v-else-if="curTabProp === 'rcode'">
+                              <span>{{ dnsRcodeMapData.get(item) }}</span>
+                            </template>
+                            <template v-else>
+                              <span>{{ item }}</span>
+                            </template>
+                          </li>
+                        </ul>
+                      </el-row>
+                    </el-popover>
+                  </div>
+                  <div v-else>
+                    <div class="title-unit"  v-if="tableType === 'networkOverview'">
+                      <span class="data-column__span" >{{$t(item.label)}}</span>
+                      <span class="unit__span"  >{{metric}}</span>
+                    </div>
+                    <div v-else>
+                      <span class="data-column__span" >{{$t(item.label)}}</span>
+                    </div>
+                  </div>
                   <chart-error v-if="item.showError" tooltip :content="item.errorMsg" width="300"  />
                 </template>
                 <template  #default="scope" :column="item">
@@ -139,6 +217,7 @@
     </el-tabs>
     <div class="tab-search" >
       <el-popover placement="bottom-end"
+                  ref="searchCustomizePopover"
                   :width="240"
                   :show-arrow="false"
                   :append-to-body="true"
@@ -221,7 +300,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
 import axios from 'axios'
 import indexedDBUtils from '@/indexedDB'
-import {useRoute} from 'vue-router'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -279,7 +358,16 @@ export default {
       showUnit: false,
       fromRoute: fromRoute,
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      curPageNum: 1,
+      showSearchButton: false, // 搜索按钮是否显示
+      showSearchInput: false, // 搜索输入框是否显示
+      showSearchList: false, // 下拉列表是否显示
+      showPopover: false, // 下拉列表是否显示
+      dropDownValue: '',
+      tabSearchColumnValueListShow: [],
+      curTabProp: '',
+      showPopoverGroup: []
     }
   },
   props: {
@@ -293,21 +381,7 @@ export default {
   watch: {
     timeFilter: {
       handler (n) {
-        const curTab = this.getCurTab()
-        let queryParams = {
-          orderBy: this.orderBy,
-          limit: networkDefaultLimit,
-          type: curTab.prop
-        }
-        const condition = this.getQueryCondition()
-        if (condition) {
-          queryParams = {
-            orderBy: this.orderBy,
-            limit: networkDefaultLimit,
-            type: curTab.prop,
-            q: condition
-          }
-        }
+        const queryParams = this.getQueryParams()
         this.changeUrlTabState()
         this.getChartData(queryParams)
       }
@@ -335,6 +409,32 @@ export default {
     rowClassName ({ row, rowIndex }) {
       // 把每一行的索引放进row
       row.index = rowIndex
+    },
+    getQueryParams () {
+      const curTab = this.getCurTab()
+      let queryParams = {
+        orderBy: this.orderBy,
+        limit: networkDefaultLimit,
+        type: curTab.prop
+      }
+      const condition = this.getQueryCondition()
+      if (condition) {
+        queryParams = {
+          orderBy: this.orderBy,
+          limit: networkDefaultLimit,
+          type: curTab.prop,
+          q: condition
+        }
+      }
+      const tabProp = curTab ? curTab.prop : ''
+      const currentSearchValue = document.getElementById('tabSearchValue' + tabProp).value
+      if (currentSearchValue && currentSearchValue !== '') {
+        queryParams = {
+          ...queryParams,
+          params: "'" + currentSearchValue + "'" // 查询条件
+        }
+      }
+      return queryParams
     },
     /* 参数 extraParams 额外请求参数 */
     getChartData (extraParams = {}) {
@@ -370,6 +470,169 @@ export default {
       const excludeName = ['queriesFromIE']
       return excludeName.indexOf(title.name) > -1 ? false : 'custom'
     },
+    searchColumnWidth (columnType) {
+      if (columnType === 'dillDown') {
+        return '217px'
+      } else {
+        
+      }
+    },
+    async initDropdownList (tabProp) {
+      // 是否需要dns的qtype和rcode的数据字典
+      const curTab = this.getCurTab()
+      this.curTabProp = curTab ? curTab.prop : ''
+      const currentValue = document.getElementById('tabSearchValue' + tabProp) ? document.getElementById('tabSearchValue' + tabProp).value : ''
+      const columnName = curTab ? curTab.label : ''
+      let type = 'ip'
+      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
+      if (curTableInCode && curTableInCode.tabList) {
+        const curTab = curTableInCode.tabList.find(item => item.label === columnName)
+        if (curTab) {
+          type = curTab.prop
+        }
+      }
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        limit: 10 * this.curPageNum++,
+        type: type,
+        name: this.dropDownValue ? this.dropDownValue : ''
+      }
+      // 有的界面刷新时没有drilldownList接口地址，会报404
+      if (!curTableInCode.url.drilldownList) {
+        return true
+      }
+      get(curTableInCode.url.drilldownList, params).then(async response => {
+        if (response.code === 200) {
+          this.tabSearchColumnValueListShow = response.data.result
+          if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+            if (this.dnsQtypeMapData.size === 0) {
+              this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
+            }
+            if (this.dnsRcodeMapData.size === 0) {
+              this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
+            }
+          }
+          this.$nextTick(() => {
+            this.tabSearchColumnValueListShow.forEach(item => {
+              const selectedDom = document.getElementById(item + tabProp)
+              if (selectedDom) {
+                let itemName = item
+                if (this.curTabProp === 'qtype') {
+                  itemName = this.dnsQtypeMapData.get(item)
+                } else if (this.curTabProp === 'rcode') {
+                  itemName = this.dnsRcodeMapData.get(item)
+                }
+                if (itemName === currentValue) {
+                  selectedDom.style.cssText = 'color:#0091ff;font-weight: bold;'
+                } else {
+                  selectedDom.style.cssText = ''
+                }
+              }
+            })
+          })
+        }
+      })
+    },
+    showTabSearchPopover (prop, tabProp) {
+      const curIndex = this.list.findIndex(item => item.checked && (item.prop === prop))
+      const curTabIndex = this.list.findIndex(item => item.checked && (item.prop === tabProp))
+      if (curIndex === curTabIndex) {
+        this.tabSearchColumnValueListShow.splice(0, this.tabSearchColumnValueListShow.length)
+        this.curPageNum = 1
+        this.showSearchList = true
+        this.dropDownValue = ''
+        this.initDropdownList(tabProp)
+      }
+    },
+    hideTabSearchPopover () {
+      this.showSearchButton = false
+      this.showSearchList = false
+    },
+    closeSearchInput (tabProp) {
+      this.showSearchInput = false
+      this.showSearchButton = false
+      const currentValue = document.getElementById('tabSearchValue' + tabProp).value
+      // 清空记录选中样式
+      this.tabSearchColumnValueListShow.forEach(item => {
+        const selectedDom = document.getElementById(item + tabProp)
+        if (selectedDom) {
+          const itemName = item
+          if (itemName === currentValue) {
+            selectedDom.style.cssText = ''
+          }
+        }
+      })
+      document.getElementById('tabSearchValue' + tabProp).value = ''
+      this.showPopover = false
+      this.showPopoverGroup[tabProp] = false
+
+      // 重新请求数据
+      const queryParams = this.getQueryParams()
+      this.getChartData(queryParams)
+    },
+    showListPopover (prop, tabProp) {
+      this.showSearchButton = false
+      this.showPopoverGroup[tabProp] = true
+    },
+    dropDownSearch (tabProp) {
+      this.curPageNum = 1
+      this.initDropdownList(tabProp)
+    },
+    scrollList (tabProp) {
+      const obj = document.getElementById('tabSearchSelectDropdown')
+      if (obj.scrollTop + obj.clientHeight === obj.scrollHeight) {
+        this.initDropdownList(tabProp)
+      }
+    },
+    changeValue (value, tabProp) {
+      // 设置面包屑显示的内容及hover时的title
+      const curTab = this.getCurTab()
+      this.curTabProp = curTab ? curTab.prop : ''
+      let valName = value
+      if (this.curTabProp === 'qtype') {
+        valName = this.dnsQtypeMapData.get(value)
+      } else if (this.curTabProp === 'rcode') {
+        valName = this.dnsRcodeMapData.get(value)
+      }
+      this.showSearchButton = false
+      this.showPopover = false
+      this.showPopoverGroup[tabProp] = false
+      this.$nextTick(() => {
+        this.showSearchInput = true
+        document.getElementById('tabSearchValue' + tabProp).value = valName
+      })
+      // this.jump(this.route, columnName, value, operationType.fourthMenu)
+
+      let queryParams = {
+        orderBy: this.orderBy,
+        limit: networkDefaultLimit,
+        type: curTab.prop,
+        params: "'" + value + "'" // 查询条件
+      }
+      const condition = this.getQueryCondition()
+      if (condition) {
+        queryParams = {
+          orderBy: this.orderBy,
+          limit: networkDefaultLimit,
+          type: curTab.prop,
+          params: "'" + value + "'", // 查询条件
+          q: condition
+        }
+      }
+      this.getChartData(queryParams)// 加上查询条件
+    },
+    showSearch () {
+      if (!this.showSearchInput) {
+        this.showSearchButton = true
+      }
+    },
+    hideSearch () {
+      if (!this.showSearchList) {
+        this.showSearchButton = false
+      }
+    },
     // 切换metric：bit、packet、session
     changeMetric () {
       this.tableData = []
@@ -398,6 +661,14 @@ export default {
           limit: networkDefaultLimit,
           type: curTab.prop,
           q: condition
+        }
+      }
+      const tabProp = curTab ? curTab.prop : ''
+      const currentSearchValue = document.getElementById('tabSearchValue' + tabProp).value
+      if (currentSearchValue && currentSearchValue !== '') {
+        queryParams = {
+          ...queryParams,
+          params: "'" + currentSearchValue + "'" // 查询条件
         }
       }
       this.changeUrlTabState()
@@ -1093,6 +1364,7 @@ export default {
       this.urlChangeParams[this.curTabState.networkOverviewBeforeTab] = tab.prop
     },
     setQueryCondition (tab, value) {
+      let conditions = ''
       value = handleSpecialValue(value)// value.replaceAll("'", "\\\\'")
       const queryCondition = []
       if (tab.prop === 'protocolPort') {
@@ -1101,7 +1373,8 @@ export default {
           queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
           queryCondition.push('common_server_port=' + valueGroup[1])
         }
-        this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
+        conditions = queryCondition.join(' AND ')
+        this.urlChangeParams[this.curTabState.queryCondition] = conditions
       } else {
         if (tab.queryCondition) {
           tab.queryCondition.forEach(item => {
@@ -1114,7 +1387,8 @@ export default {
             })
           }
         }
-        this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
+        conditions = queryCondition.join(' OR ')
+        this.urlChangeParams[this.curTabState.queryCondition] = conditions
       }
     },
     getFirstCheckedTab () {
@@ -1347,8 +1621,39 @@ export default {
       this.tableSortTab = ''
       this.urlChangeParams = this.$_.omit(this.urlChangeParams, [this.curTabState.tableSortColumn, this.curTabState.tableSortType, this.curTabState.tableSortTab])
     },
+    initSearchInfo () {
+      // 切换tab的时候，需要清除之前tab选中的记录的样式和值
+      if (this.curTabProp) {
+        const currentValue = document.getElementById('tabSearchValue' + this.curTabProp).value
+        // 清空记录选中样式
+        this.tabSearchColumnValueListShow.forEach(item => {
+          const selectedDom = document.getElementById(item + this.curTabProp)
+          if (selectedDom) {
+            selectedDom.style.cssText = ''
+          }
+        })
+        document.getElementById('tabSearchValue' + this.curTabProp).value = ''
+      }
+
+      this.curPageNum = 1
+      this.showSearchButton = false, // 搜索按钮是否显示
+      this.showSearchInput = false, // 搜索输入框是否显示
+      this.showSearchList = false, // 下拉列表是否显示
+      this.showPopover = false// 下拉列表是否显示
+      this.dropDownValue = ''
+      this.tabSearchColumnValueListShow = []
+      this.curTabProp = ''
+      this.showPopoverGroup = []
+      this.list.forEach(item => {
+        // if(item.checked){
+        this.showPopoverGroup.push(false)
+        // }
+      })
+    },
     // 切换tab
     handleClick (tab) {
+      // 初始化搜索功能相关内容
+      this.initSearchInfo()
       this.tableData = []
       this.tableDataBackup = []
       this.setShowNum(10)
@@ -1546,6 +1851,7 @@ export default {
           }
         })
       }
+      // this.curTabProp = curTab ? curTab.prop : ''
       return curTab
     },
     combineTabList (tabList, isDrillDown) {
@@ -1988,6 +2294,7 @@ export default {
         }
       }
     }
+    this.initSearchInfo()
     await this.saveUserLocalConfig()
     this.getChartData()
   },
