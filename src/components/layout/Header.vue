@@ -75,7 +75,7 @@
                 </template>
                 <el-row type="flex" justify="center" style="width: fit-content;flex-direction: column;">
                   <div class="search-input">
-                    <el-input placeholder="Filter options"
+                    <el-input :placeholder="$t('filter.options')"
                               size="mini"
                               v-model="dropDownValue"
                               @input="dropDownSearch"></el-input>
