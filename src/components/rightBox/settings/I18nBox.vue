@@ -56,7 +56,7 @@
 
 <script>
 import rightBoxMixin from '@/mixins/right-box'
-import { get, post, put } from '@/utils/http'
+import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
 
@@ -84,8 +84,6 @@ export default {
       langData: []
     }
   },
-  setup () {
-  },
   mounted () {
     this.getLangData()
   },
@@ -106,23 +104,23 @@ export default {
       this.$refs.i18nForm.validate((valid) => {
         if (valid) {
           if (this.editObject.id) {
-            put(this.url, this.editObject).then(res => {
+            axios.put(this.url, this.editObject).then(res => {
               this.blockOperation.save = false
-              if (res.code === 200) {
+              if (res.status === 200) {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg || res.message)
+                this.$message.error(res.data.message)
               }
             })
           } else {
-            post(this.url, this.editObject).then(res => {
+            axios.post(this.url, this.editObject).then(res => {
               this.blockOperation.save = false
-              if (res.code === 200) {
+              if (res.status === 200) {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg || res.message)
+                this.$message.error(res.data.message)
               }
             })
           }
@@ -133,9 +131,9 @@ export default {
       })
     },
     getLangData () {
-      get(api.dict, { type: 'lang', pageSize: -1 }).then(response => {
-        if (response.code === 200) {
-          this.langData = response.data.list
+      axios.get(api.dict, { params: { type: 'lang', pageSize: -1 } }).then(response => {
+        if (response.status === 200) {
+          this.langData = response.data.data.list
         }
       })
     }

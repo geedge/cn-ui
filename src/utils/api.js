@@ -3,7 +3,6 @@
  * @date 2021/6/11
  * @description 1.定义api；2.定义通用查询方法，函数名应为 获取详情getItem、获取列表getItemList。例如getUser、getUserList
 */
-import { get, post } from '@/utils/http'
 import axios from 'axios'
 import { sortByOrderNum } from '@/permission'
 import { storageKey } from '@/utils/constants'
@@ -36,12 +35,12 @@ export const api = {
   // galaxyProxy
   galaxyProxy: '/galaxy/setting',
   // 知识库
-  knowledgeBase: BASE_CONFIG.apiVersion + '/knowledgeBase',
-  knowledgeBaseList: BASE_CONFIG.apiVersion + '/knowledgeBase/list',
-  knowledgeBaseEnable: BASE_CONFIG.apiVersion + '/knowledgeBase/status',
-  knowledgeBaseStatistics: BASE_CONFIG.apiVersion + '/knowledgeBase/statistics',
-  updateKnowledgeUrl: BASE_CONFIG.apiVersion + '/knowledgeBase/items/batch',
-  knowledgeBaseLog: BASE_CONFIG.apiVersion + '/knowledgeBase/audit/log',
+  knowledgeBase: apiVersion + '/knowledgeBase',
+  knowledgeBaseList: apiVersion + '/knowledgeBase/list',
+  knowledgeBaseEnable: apiVersion + '/knowledgeBase/status',
+  knowledgeBaseStatistics: apiVersion + '/knowledgeBase/statistics',
+  updateKnowledgeUrl: apiVersion + '/knowledgeBase/items/batch',
+  knowledgeBaseLog: apiVersion + '/knowledgeBase/audit/log',
 
   // 报告相关
   reportJob: '/report/job',
@@ -366,11 +365,11 @@ function handleResult (response) {
 export async function getData (url, params = {}, isQueryList) {
   const request = new Promise((resolve, reject) => {
     try {
-      get(url, params).then(response => {
-        if (response.code === 200) {
-          resolve(handleResult(response))
+      axios.get(url, { params }).then(response => {
+        if (response.status === 200) {
+          resolve(handleResult(response.data))
         } else {
-          reject(response)
+          reject(response.data)
         }
       })
     } catch (e) {
@@ -384,9 +383,9 @@ export async function getData (url, params = {}, isQueryList) {
 
 export async function getPermission () {
   const request = new Promise(resolve => {
-    post(api.permission, { token: localStorage.getItem(storageKey.token) }).then(response => {
+    axios.post(api.permission, { token: localStorage.getItem(storageKey.token) }).then(response => {
       resolve({
-        menuList: sortByOrderNum(response.data.menus),
+        menuList: sortByOrderNum(response.data.data.menus),
         buttonList: response.data.buttons,
         roleList: response.data.roles
       })
@@ -400,9 +399,9 @@ export async function getI18n () {
   const langs = dictData.map(d => d.value).join(',')
   localStorage.setItem(storageKey.languages, langs)
   const request = new Promise(resolve => {
-    get(api.i18nLang, { l: langs }).then(response => {
-      response.data.cn = response.data.zh
-      resolve(response.data)
+    axios.get(api.i18nLang, { params: { l: langs } }).then(response => {
+      response.data.data.cn = response.data.data.zh
+      resolve(response.data.data)
     })
   })
   return await request

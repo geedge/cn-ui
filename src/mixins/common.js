@@ -8,6 +8,7 @@ export default {
       blockOperation: {
         save: false,
         import: false,
+        duplicate: false,
         delete: false,
         refresh: false,
         query: false

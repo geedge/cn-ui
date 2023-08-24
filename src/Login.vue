@@ -39,7 +39,6 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { get } from '@/utils/http'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import { storageKey, defaultLang } from '@/utils/constants'
@@ -72,7 +71,7 @@ export default {
       this.loading = true
       axios.post(api.login, { username: this.username, pin: this.pin }).then(
         res => {
-          if (res.data.code === 200) {
+          if (res.status === 200) {
             if (!_.isEmpty(res.data.data.user.lang)) {
               localStorage.setItem(storageKey.language, res.data.data.user.lang)
             }
@@ -103,9 +102,9 @@ export default {
       })
     },
     queryAppearance () {
-      get(api.appearance).then(res => {
-        if (res.code === 200) {
-          this.appearanceOut(res.data)
+      axios.get(api.appearance).then(res => {
+        if (res.status === 200) {
+          this.appearanceOut(res.data.data)
         }
       })
     },

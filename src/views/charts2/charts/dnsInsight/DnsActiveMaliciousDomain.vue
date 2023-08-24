@@ -61,7 +61,7 @@
 <script>
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import chartMixin from '@/views/charts2/chart-mixin'
 
 export default {
@@ -121,8 +121,9 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       this.toggleLoading(true)
-      get(api.dnsInsight.activeMaliciousDomain, params).then(res => {
-        if (res.code === 200) {
+      axios.get(api.dnsInsight.activeMaliciousDomain, { params: params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
           this.tableData = res.data.result
         } else {

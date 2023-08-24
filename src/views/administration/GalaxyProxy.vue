@@ -94,7 +94,7 @@ import galaxyProxyBox from '@/components/rightBox/settings/GalaxyProxyBox'
 import galaxyProxyTable from '@/components/table/administration/GalaxyProxyTable'
 import dataListMixin from '@/mixins/data-list'
 import { api } from '@/utils/api'
-import { get, put } from '@/utils/http'
+import axios from 'axios'
 import TopToolMoreOptions from '@/components/common/popBox/TopToolMoreOptions'
 import galaxyProxyDebug from '@/components/setting/GalaxyProxyDebug'
 
@@ -121,9 +121,9 @@ export default {
   },
   methods: {
     edit (u) {
-      get(`${this.url}/${u.id}`).then(response => {
-        if (response.code === 200) {
-          const editObject = response.data
+      axios.get(`${this.url}/${u.id}`).then(response => {
+        if (response.status === 200) {
+          const editObject = response.data.data
           editObject.targetHeader || (editObject.targetHeader = '')
           editObject.preHandle || (editObject.preHandle = '')
           editObject.postHandle || (editObject.postHandle = '')
@@ -143,11 +143,11 @@ export default {
       this.debug(false, u)
     },
     clearCache () {
-      put(`${this.url}/clearCache`).then(response => {
-        if (response.code === 200) {
+      axios.put(`${this.url}/clearCache`).then(response => {
+        if (response.status === 200) {
           this.$message({ duration: 2000, type: 'success', message: this.$t('tip.success') })
         } else {
-          this.$message.error(response.msg || response.message)
+          this.$message.error(response.data.message)
         }
       }).catch(() => {
         this.$message.error(this.$t('tip.unknownError'))

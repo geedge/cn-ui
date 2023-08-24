@@ -6,7 +6,7 @@
 <script>
 import { storageKey } from '@/utils/constants'
 import router from '@/router'
-import { post } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 const dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc')
@@ -48,13 +48,11 @@ export default {
         if (localStorage.getItem(storageKey.token) !== null) {
           // 刚进入会请求失败，故采用延时，请求成功清除延时器，避免内存泄漏
           const timer = setTimeout(() => {
-            post(api.permissions, { token: localStorage.getItem(storageKey.token) }).then(res => {
-              if (res.code === 200) {
-                router.push({
-                  path: '/panel/networkOverview'
-                })
-                clearTimeout(timer)
-              }
+            axios.post(api.permissions, { token: localStorage.getItem(storageKey.token) }).then(res => {
+              router.push({
+                path: '/panel/networkOverview'
+              })
+              clearTimeout(timer)
             })
           }, 10)
         }

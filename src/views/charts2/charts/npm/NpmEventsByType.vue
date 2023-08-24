@@ -109,9 +109,9 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       this.toggleLoading(true)
-      axios.get(api.npm.events.recentEvents, { params: params }).then(res => {
-        res = res.data
-        if (res.code === 200) {
+      axios.get(api.npm.events.recentEvents, { params: params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
           const arrData = []

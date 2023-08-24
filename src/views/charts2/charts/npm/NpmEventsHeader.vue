@@ -46,9 +46,9 @@ export default {
         type: this.type
       }
       this.toggleLoading(true)
-      axios.get(api.npm.events.list, { params: params }).then(res => {
-        res = res.data
-        if (res.code === 200) {
+      axios.get(api.npm.events.list, { params: params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
           this.showError = false
           if (res.data.result.length === 0) {
             this.chartData.forEach(d => { d.count = '-' })

@@ -66,7 +66,7 @@ import dataListMixin from '@/mixins/data-list'
 import userTable from '@/components/table/administration/UserTable'
 import userBox from '@/components/rightBox/settings/UserBox'
 import { api } from '@/utils/api'
-import { get } from '@/utils/http'
+import axios from 'axios'
 
 export default {
   name: 'User',
@@ -113,18 +113,18 @@ export default {
       if (this.listUrl) {
         listUrl = this.listUrl
       }
-      get(listUrl, this.searchLabel).then(response => {
-        if (response.code === 200) {
-          for (let i = 0; i < response.data.list.length; i++) {
-            response.data.list[i].status = response.data.list[i].status + ''
+      axios.get(listUrl, { params: this.searchLabel }).then(response => {
+        if (response.status === 200) {
+          for (let i = 0; i < response.data.data.list.length; i++) {
+            response.data.data.list[i].status = response.data.data.list[i].status + ''
           }
-          this.tableData = response.data.list
-          this.pageObj.total = response.data.total
+          this.tableData = response.data.data.list
+          this.pageObj.total = response.data.data.total
         } else {
-          console.error(response)
+          console.error(response.data)
           this.isNoData = true
-          if (response.message) {
-            this.$message.error(response.message)
+          if (response.data.message) {
+            this.$message.error(response.data.message)
           } else {
             this.$message.error(this.$t('tip.somethingWentWrong'))
           }

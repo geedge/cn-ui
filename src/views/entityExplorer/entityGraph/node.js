@@ -108,7 +108,7 @@ export default class Node {
       console.error(e)
       throw e
     })
-    if (response.data && response.data.code === 200) {
+    if (response.data && response.status === 200) {
       return response.data.data
     } else {
       console.error(response)
@@ -121,7 +121,7 @@ export default class Node {
       console.error(e)
       throw e
     })
-    if (response.data && response.data.code === 200) {
+    if (response.data && response.status === 200) {
       return response.data.data
     } else {
       console.error(response)
@@ -134,7 +134,7 @@ export default class Node {
       console.error(e)
       throw e
     })
-    if (response.data && response.data.code === 200) {
+    if (response.data && response.status === 200) {
       return response.data.data
     } else {
       console.error(response)
@@ -173,7 +173,7 @@ export async function queryRelatedEntity (node, targetEntityType) {
     console.error(e)
     throw e
   })
-  if (response.data && response.data.code === 200) {
+  if (response.data && response.status === 200) {
     return response.data.data
   } else {
     console.error(response)

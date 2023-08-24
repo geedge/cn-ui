@@ -1,7 +1,7 @@
-import { chartTableOrderOptionsMapping, storageKey,knowledgeCategoryValue } from '@/utils/constants'
+import { chartTableOrderOptionsMapping, storageKey, knowledgeCategoryValue } from '@/utils/constants'
 import { getWidthByLanguage } from '@/utils/tools'
-import { put, patch } from '@/utils/http'
 import { api } from '@/utils/api'
+import axios from 'axios'
 export default {
   props: {
     tableData: {
@@ -107,13 +107,14 @@ export default {
     },
     changeStatus (status, id) {
       if (id) {
-        patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: status }] }).then(response => {
-          if (response.code === 200) {
+        axios.patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: status }] }).then(response => {
+          console.info(response)
+          if (response.status === 200) {
             this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
           } else {
             console.error(response)
-            if (response.message) {
-              this.$message.error(response.message)
+            if (response.data.message) {
+              this.$message.error(response.data.message)
             } else {
               this.$message.error(this.$t('tip.somethingWentWrong'))
             }
@@ -123,11 +124,7 @@ export default {
       }
     },
     selectable (row, rowIndex) {
-      if (row.isBuiltIn === 1) {
-        return false
-      } else {
-        return true
-      }
+      return row.isBuiltIn !== 1
     },
     tableOperation ([command, row]) {
       switch (command) {

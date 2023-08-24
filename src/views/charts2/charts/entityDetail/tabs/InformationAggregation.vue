@@ -110,7 +110,7 @@ export default {
       this.informationAggregationList = []
       axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`).then(response => {
         const res = response.data
-        if (res.code === 200) {
+        if (response.status === 200) {
           // this.isNoData = res.data.result.length === 0
           this.showError = false
           if (res.data.result.length > 0) {

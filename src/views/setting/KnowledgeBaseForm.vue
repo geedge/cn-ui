@@ -241,7 +241,7 @@ export default {
       if (!this.editObject.knowledgeId) {
         this.$refs.form.clearValidate('type')
         const response = await this.getKnowledgeBaseList()
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           const find = response.data.data.list.find(d => d.name === value && d.source === this.editObject.source)
           if (find) {
             validate = false
@@ -256,7 +256,7 @@ export default {
       if (!this.editObject.knowledgeId) {
         this.$refs.form.clearValidate('name')
         const response = await this.getKnowledgeBaseList()
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           const find = response.data.data.list.find(d => d.name === this.editObject.name && d.source === value)
           if (find) {
             validate = false
@@ -537,46 +537,46 @@ export default {
       return originalImportedData
     },
     uploadSuccess (response) {
-      this.uploaded = response.code === 200
-      if (response.code === 200) {
-        // 上传成功后去掉upload和preview的错误提示
-        this.uploadErrorTip = ''
-        this.previewErrorTip = ''
-        this.importedType = this.editObject.source
-        const originalImportedData = _.cloneDeep(response.data.data)
-        this.importedDataNoData = originalImportedData.length === 0
-        if (originalImportedData.length > 0) {
-          originalImportedData.forEach(data => {
-            if (data.isValid === 1) {
-              data.msg = this.$t('overall.success')
-            } else if (data.isValid === 0) {
-              data.msg = this.$t('validate.wrongFormat')
-            }
-          })
-        }
-        this.originalImportInfo = {
-          total: originalImportedData.length,
-          succeeded: originalImportedData.filter(d => d.isValid === 1).length,
-          failed: originalImportedData.filter(d => d.isValid !== 1).length
-        }
-        this.isLoad = false
-        originalImportedData.sort((a, b) => b.isValid - a.isValid)
-        this.importedData = this.handleSpeticalTypeData(originalImportedData)
-        this.addItemList = _.cloneDeep(this.importedData).filter(item => { return item.isValid === 1 })
-        this.updateItemList = []
-        this.deleteItemIds = this.oldItemIds
+      this.uploaded = true
+      // if (response.code === 200) {
+      // 上传成功后去掉upload和preview的错误提示
+      this.uploadErrorTip = ''
+      this.previewErrorTip = ''
+      this.importedType = this.editObject.source
+      const originalImportedData = _.cloneDeep(response.data.data)
+      this.importedDataNoData = originalImportedData.length === 0
+      if (originalImportedData.length > 0) {
+        originalImportedData.forEach(data => {
+          if (data.isValid === 1) {
+            data.msg = this.$t('overall.success')
+          } else if (data.isValid === 0) {
+            data.msg = this.$t('validate.wrongFormat')
+          }
+        })
+      }
+      this.originalImportInfo = {
+        total: originalImportedData.length,
+        succeeded: originalImportedData.filter(d => d.isValid === 1).length,
+        failed: originalImportedData.filter(d => d.isValid !== 1).length
+      }
+      this.isLoad = false
+      originalImportedData.sort((a, b) => b.isValid - a.isValid)
+      this.importedData = this.handleSpeticalTypeData(originalImportedData)
+      this.addItemList = _.cloneDeep(this.importedData).filter(item => { return item.isValid === 1 })
+      this.updateItemList = []
+      this.deleteItemIds = this.oldItemIds
 
-        this.handleShowImportedData()
-        this.addEditFlag = false
-        this.editTagErrorTip = ''
-        this.editIndex = -1
-        this.isPreviewChange = true
-        this.stepHeights[2] = itemListHeight.hasData
-        this.stepHeightConstant.third = itemListHeight.hasData
-      } else {
+      this.handleShowImportedData()
+      this.addEditFlag = false
+      this.editTagErrorTip = ''
+      this.editIndex = -1
+      this.isPreviewChange = true
+      this.stepHeights[2] = itemListHeight.hasData
+      this.stepHeightConstant.third = itemListHeight.hasData
+      /* } else {
         this.uploadLoading = false
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
-      }
+      } */
     },
     onRemove (files) {
       if (files && files.status === 'success') {
@@ -842,7 +842,7 @@ export default {
                     if (!this.editObject.knowledgeId) {
                       postData.addItemList = this.addItemList
                       axios.post(this.url, postData).then(response => {
-                        if (response.data.code === 200) {
+                        if (response.status === 200) {
                           this.$message({
                             duration: 2000,
                             type: 'success',
@@ -871,7 +871,7 @@ export default {
                       postData.deleteItemIds = this.deleteItemIds
                       postData.knowledgeId = this.editObject.knowledgeId
                       axios.put(this.url, postData).then(response => {
-                        if (response.data.code === 200) {
+                        if (response.status === 200) {
                           this.$message({
                             duration: 2000,
                             type: 'success',
@@ -1176,7 +1176,7 @@ export default {
       this.stepHeightConstant.third = itemListHeight.hasData// 修改的时候一直是478
       this.isLoad = true
       axios.get(`${api.knowledgeBase}/${this.knowledgeBaseId}`, { params: { pageSize: -1 } }).then(response => {
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           if (!response.data.data) {
             throw new Error('No data found, id: ' + this.knowledgeBaseId)
           }

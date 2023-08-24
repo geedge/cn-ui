@@ -18,8 +18,8 @@
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import axios from 'axios'
 import { drillDownPanelTypeMapping } from '@/utils/constants'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { ref } from 'vue'
@@ -78,9 +78,9 @@ export default {
           endTime: getSecond(this.timeFilter.endTime),
           ip: condition[1]
         }
-        get(api.npm.overview.relatedSessions, params).then(res => {
-          if (res.code === 200) {
-            self.sessionData = res.data.result
+        axios.get(api.npm.overview.relatedSessions, { params: params }).then(res => {
+          if (res.status === 200) {
+            self.sessionData = res.data.data.result
             self.clientSessions = self.sessionData.clientSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
             self.serverSessions = self.sessionData.serverSessions / (self.sessionData.clientSessions * 1 + self.sessionData.serverSessions * 1)
           }

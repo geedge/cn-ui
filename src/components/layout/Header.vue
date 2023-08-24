@@ -188,7 +188,7 @@
 </template>
 
 <script>
-import { get, put } from '@/utils/http'
+import axios from 'axios'
 import {
   curTabState,
   entityType,
@@ -494,7 +494,7 @@ export default {
     logout () {
       sessionStorage.removeItem(storageKey.tokenExpireCurrentPath)
       localStorage.removeItem(storageKey.token)
-      get(api.logout)
+      axios.get(api.logout)
     },
     refreshLang () {
       this.language = localStorage.getItem(storageKey.language)
@@ -537,9 +537,9 @@ export default {
       if (!curTableInCode.url.drilldownList) {
         return true
       }
-      get(curTableInCode.url.drilldownList, params).then(async response => {
-        if (response.code === 200) {
-          this.breadcrumbColumnValueListShow = response.data.result
+      axios.get(curTableInCode.url.drilldownList, { params }).then(async response => {
+        if (response.status === 200) {
+          this.breadcrumbColumnValueListShow = response.data.data.result
           if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
             if (this.dnsQtypeMapData.size === 0) {
               this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
@@ -628,17 +628,17 @@ export default {
     submit () {
       this.$refs.changePassForm.validate((valid) => {
         if (valid) {
-          put(api.pin, {
+          axios.put(api.pin, {
             oldPin: this.changePassForm.oldPwd,
             newPin: this.changePassForm.newPwd
           }).then(res => {
-            if (res.code === 200) {
-              this.$message.success('Success')
+            if (res.status === 200) {
+              this.$message.success(this.$t('tip.success'))
               this.showChangePin = false
-            } else if (res.code === 518005) {
-              this.$message.error('密码错误')
+            } else if (res.data.code === 518005) {
+              this.$message.error(this.$t('tip.incorrectPassword'))
             } else {
-              this.$message.error(res.message)
+              this.$message.error(res.data.message)
             }
           }).catch(e => {
             console.error(e)

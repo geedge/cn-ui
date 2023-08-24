@@ -40,7 +40,7 @@
       <button id="asset-edit-cancel" v-cancel="{object: editRole, func: esc}" class="footer__btn footer__btn--light">
         <span>{{$t('overall.cancel')}}</span>
       </button>
-      <button id="asset-edit-save" :class="{'footer__btn--disabled': prevent_opt.save}" :disabled="prevent_opt.save" class="footer__btn" @click="save">
+      <button id="asset-edit-save" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
         <span>{{$t('overall.save')}}</span>
       </button>
     </div>
@@ -49,8 +49,9 @@
 
 <script>
 import rightBoxMixin from '@/mixins/right-box'
-import { get, post, put } from '@/utils/http'
 import { api } from '@/utils/api'
+import axios from 'axios'
+import _ from 'lodash'
 
 export default {
   name: 'userBox',
@@ -117,7 +118,7 @@ export default {
     },
     /* 关闭弹框 */
     esc (refresh) {
-      this.prevent_opt.save = false
+      this.blockOperation.save = false
       this.$emit('close', refresh)
     },
     getMenus: function () {
@@ -125,19 +126,19 @@ export default {
       return new Promise(resolve => {
         self.menus = []
         if (self.editRole.id) {
-          get(api.menu + self.editRole.id).then(response => {
-            if (response.code === 200) {
-              self.menus = response.data.menus
-              self.selectedIds = response.data.selectedIds
+          axios.get(api.menu + self.editRole.id).then(response => {
+            if (response.status === 200) {
+              self.menus = _.get(response, 'data.data.menus', [])
+              self.selectedIds = _.get(response, 'data.data.selectedIds', [])
             } else {
-              self.$message.error('load menu faild')
+              self.$message.error('load menu failed')
             }
             resolve()
           })
         } else {
-          get(api.sysMenu).then(response => {
-            if (response.code === 200) {
-              self.menus = response.data.list
+          axios.get(api.sysMenu).then(response => {
+            if (response.status === 200) {
+              self.menus = _.get(response, 'data.data.list', [])
             } else {
               self.$message.error('load menu faild')
             }
@@ -174,34 +175,34 @@ export default {
       }
     },
     save () {
-      if (this.prevent_opt.save) { return }
-      this.prevent_opt.save = true
+      if (this.blockOperation.save) { return }
+      this.blockOperation.save = true
 
       this.$refs.roleForm.validate((valid) => {
         if (valid) {
           if (this.editRole.id) {
-            put(this.url, this.editRole).then(res => {
-              this.prevent_opt.save = false
-              if (res.code === 200) {
+            axios.put(this.url, this.editRole).then(res => {
+              this.blockOperation.save = false
+              if (res.status === 200) {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg || res.message)
+                this.$message.error(res.data.msg || res.data.message)
               }
             })
           } else {
-            post(this.url, this.editRole).then(res => {
-              this.prevent_opt.save = false
-              if (res.code === 200) {
+            axios.post(this.url, this.editRole).then(res => {
+              this.blockOperation.save = false
+              if (res.status === 200) {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg || res.message)
+                this.$message.error(res.data.msg || res.data.message)
               }
             })
           }
         } else {
-          this.prevent_opt.save = false
+          this.blockOperation.save = false
           return false
         }
       })

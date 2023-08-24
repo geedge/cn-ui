@@ -134,9 +134,9 @@ export default {
         url = this.switchUrl(this.chart.params.index)
 
         if (url) {
-          axios.get(url, { params: params }).then(res => {
-            res = res.data
-            if (res.code === 200) {
+          axios.get(url, { params: params }).then(response => {
+            const res = response.data
+            if (response.status === 200) {
               this.showError = false
               this.isNoData = res.data.result.length === 0
 

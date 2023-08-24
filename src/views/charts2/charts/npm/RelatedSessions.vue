@@ -34,8 +34,8 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import axios from 'axios'
 import { getSecond } from '@/utils/date-util'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
@@ -81,8 +81,9 @@ export default {
       const divRed = document.getElementById('red')
       const divGray = document.getElementById('gray')
 
-      get(api.npm.overview.relatedSessions, params).then(res => {
-        if (res.code === 200) {
+      axios.get(api.npm.overview.relatedSessions, { params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
           this.showError = false
           this.isNoData = false
 

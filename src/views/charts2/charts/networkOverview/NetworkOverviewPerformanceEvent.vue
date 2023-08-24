@@ -74,7 +74,7 @@ export default {
         this.chartOption = pieChartOption1
         this.loading1 = true
         axios.get(api.netWorkOverview.eventSeverity, { params: params }).then(res => {
-          if (res.data.code === 200) {
+          if (res.status === 200) {
             this.showError1 = false
             if (res.data.data.result.length === 0) {
               this.isNoData = true
@@ -115,7 +115,7 @@ export default {
         this.chartOption2 = pieChartOption2
         this.loading2 = true
         axios.get(api.netWorkOverview.eventType, { params: params }).then(res => {
-          if (res.data.code === 200) {
+          if (res.status === 200) {
             this.showError2 = false
 
             if (res.data.data.result.length === 0) {

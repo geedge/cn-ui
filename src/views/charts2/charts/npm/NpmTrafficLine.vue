@@ -156,9 +156,9 @@ export default {
 
       this.toggleLoading(true)
       if (params.type && params.q) {
-        axios.get(api.npm.overview.trafficGraph, { params: params }).then(res => {
-          res = res.data
-          if (res.code === 200) {
+        axios.get(api.npm.overview.trafficGraph, { params: params }).then(response => {
+          const res = response.data
+          if (response.status === 200) {
             this.showError = false
             this.isNoData = res.data.result.length === 0
             if (this.isNoData) {
@@ -185,7 +185,7 @@ export default {
         const npmLineData = []
         Promise.all([totalNetworkAnalysis, totalTrafficAnalysis, totalHttpResponseDelay, totalSslConDelay]).then(res => {
           res.forEach(item => {
-            if (item.data.code === 200) {
+            if (item.status === 200) {
               npmLineData.push(...item.data.data.result)
             } else {
               this.httpError(res)

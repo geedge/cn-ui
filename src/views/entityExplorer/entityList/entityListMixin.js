@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
@@ -123,9 +123,9 @@ export default {
         }
         default: break
       }
-      get(url, queryParams).then(response => {
-        if (response.code === 200) {
-          this.entityData.securityCount = response.data.result ? response.data.result.length : 0
+      axios.get(url, { params: queryParams }).then(response => {
+        if (response.status === 200) {
+          this.entityData.securityCount = response.data.data.result ? response.data.data.result.length : 0
         }
       })
     },
@@ -153,9 +153,9 @@ export default {
         }
         default: break
       }
-      get(url, queryParams).then(response => {
-        if (response.code === 200) {
-          this.entityData.performanceCount = response.data.result ? response.data.result.length : 0
+      axios.get(url, { params: queryParams }).then(response => {
+        if (response.status === 200) {
+          this.entityData.performanceCount = response.data.data.result ? response.data.data.result.length : 0
         }
       })
     },
@@ -168,11 +168,11 @@ export default {
     },
     queryEntityDetailTraffic () {
       this.loading = true
-      get(this.trafficUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200 && response.data.result && response.data.result.length > 0) {
+      axios.get(this.trafficUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200 && response.data.data.result && response.data.data.result.length > 0) {
           let sentSeries
           let receivedSeries
-          response.data.result.forEach(t => {
+          response.data.data.result.forEach(t => {
             if (t.legend === 'bytesRate') {
               this.entityData.max = t.aggregation.max
               this.entityData.avg = t.aggregation.avg
@@ -281,14 +281,14 @@ export default {
     queryNetworkQuantity () {
       this.loadingNetworkQuality = true
 
-      get(this.scoreUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
+      axios.get(this.scoreUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
           const data = {
-            establishLatencyMs: response.data.result.establishLatencyValue || null,
-            httpResponseLatency: response.data.result.httpResponseLatencyValue || null,
-            sslConLatency: response.data.result.sslConLatencyValue || null,
-            tcpLostlenPercent: response.data.result.sequenceGapLossPercentValue || null,
-            pktRetransPercent: response.data.result.pktRetransPercentValue || null
+            establishLatencyMs: response.data.data.result.establishLatencyValue || null,
+            httpResponseLatency: response.data.data.result.httpResponseLatencyValue || null,
+            sslConLatency: response.data.data.result.sslConLatencyValue || null,
+            tcpLostlenPercent: response.data.data.result.sequenceGapLossPercentValue || null,
+            pktRetransPercent: response.data.data.result.pktRetransPercentValue || null
           }
           this.score = computeScore(data)
         }
@@ -299,12 +299,12 @@ export default {
     /** 获取事件数量 */
     queryEventNum () {
       this.loadingEvent = true
-      const performance = get(this.performanceEventUrl, this.getQueryParams())
-      const security = get(this.securityEventUrl, this.getQueryParams())
+      const performance = axios.get(this.performanceEventUrl, { params: this.getQueryParams() })
+      const security = axios.get(this.securityEventUrl, { params: this.getQueryParams() })
       this.eventNum = 0
 
       Promise.all([performance, security]).then(response => {
-        this.eventNum = response[0].data.result.length + response[1].data.result.length
+        this.eventNum = response[0].data.data.result.length + response[1].data.data.result.length
       }).catch(e => {
         this.eventNum = 0
       }).finally(() => {

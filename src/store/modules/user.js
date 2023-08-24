@@ -1,10 +1,11 @@
-import { get, post } from '@/utils/http'
+import {get} from '@/utils/http'
+import axios from 'axios'
 import router from '@/router'
-import { sortByOrderNum, getWelcomeMenu } from '@/permission'
-import { ElMessage } from 'element-plus' // dependent on utc plugin
-import { storageKey, dbDrilldownTableConfig } from '@/utils/constants'
-import { getConfigVersion } from '@/utils/tools'
-import { api } from '@/utils/api'
+import {getWelcomeMenu, sortByOrderNum} from '@/permission'
+import {ElMessage} from 'element-plus' // dependent on utc plugin
+import {dbDrilldownTableConfig, storageKey} from '@/utils/constants'
+import {getConfigVersion} from '@/utils/tools'
+import {api} from '@/utils/api'
 import indexedDBUtils from '@/indexedDB'
 
 const user = {
@@ -58,7 +59,8 @@ const user = {
   },
   actions: {
     loginSuccess (store, res) {
-      post(api.permissions, { token: res.data.token }).then(res2 => {
+      axios.post(api.permissions, { token: res.data.token }).then(response => {
+        const res2 = response.data
         const menuList = sortByOrderNum(res2.data.menus)
         store.commit('setMenuList', menuList)
         store.commit('setButtonList', res2.data.buttons)
@@ -73,8 +75,7 @@ const user = {
             tempArr.forEach(t => {
               const firstEqualIndex = t.indexOf('=')
               const key = t.substring(0, firstEqualIndex)
-              const value = t.substring(firstEqualIndex + 1)
-              query[key] = value
+              query[key] = t.substring(firstEqualIndex + 1)
             })
           }
           router.push({
@@ -95,8 +96,9 @@ const user = {
           }
         }
       })
-      get(api.config, { ckey: 'drill_down_table_config' }).then(async res => {
-        if (res.code === 200 && res.page.list && res.page.list.length > 0) {
+      axios.get(api.config, { params: { ckey: 'drill_down_table_config' } }).then(async response => {
+        const res = response.data
+        if (response.status === 200 && res.page.list && res.page.list.length > 0) {
           // 从接口返回整体配置，再读取用户缓存，将对应条目覆盖，作为使用的配置
           const defaultConfigs = JSON.parse(res.page.list[0].cvalue)
           await indexedDBUtils.selectTable(dbDrilldownTableConfig).put({
@@ -111,13 +113,15 @@ const user = {
           }
         }
       })
-      get(api.config, { ckey: 'link_info' }).then(res => {
-        if (res.code === 200 && res.page.list && res.page.list.length > 0) {
+      axios.get(api.config, { params: { ckey: 'link_info' } }).then(response => {
+        const res = response.data
+        if (response.status === 200 && res.page.list && res.page.list.length > 0) {
           localStorage.setItem(storageKey.linkInfo, res.page.list[0].cvalue)
         }
       })
-      get(api.config, { ckey: 'schema_entity_explore' }).then(res => {
-        if (res.code === 200 && res.page.list && res.page.list.length > 0) {
+      axios.get(api.config, { params: { ckey: 'schema_entity_explore' } }).then(response => {
+        const res = response.data
+        if (response.status === 200 && res.page.list && res.page.list.length > 0) {
           localStorage.setItem(storageKey.schemaEntityExplore, res.page.list[0].cvalue)
         }
       })

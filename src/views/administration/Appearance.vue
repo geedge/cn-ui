@@ -116,7 +116,7 @@ export default {
       })
 
       axios.get(api.timezone).then(response => {
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           this.timezoneList = response.data.data
           if (this.timezoneList && this.timezoneList.length > 0) {
             this.timezoneList.forEach(mapData => {
@@ -153,7 +153,7 @@ export default {
       })
 
       axios.get(this.url, { pageSize: -1 }).then(response => {
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           this.appearanceObject = response.data.data
         }
       })
@@ -162,7 +162,7 @@ export default {
       if (this.blockOperation.save) { return }
       this.blockOperation.save = true
       axios.put(this.url, this.appearanceObject).then(response => {
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
           if (this.appearanceObject.date_format !== localStorage.getItem(storageKey.dateFormat)) {
             localStorage.setItem(storageKey.dateFormat, this.appearanceObject.date_format)

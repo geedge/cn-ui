@@ -124,11 +124,11 @@ export default {
         }
         axios.get(api.npm.location.map, { params: params }).then(response => {
           if (response.data.code === 200) {
-            const res = _.get(response, 'data.data.result', []).filter(r => r.country !== 'Unknown')
+            const res = _.get(response, 'data.data.result', []).filter(r => r.countryRegion !== 'Unknown')
             if (res.length > 0) {
               // 计算分数
               this.showError = false
-              params.country = params.country ? `'${params.country}'` : ''
+              params.countryRegion = params.countryRegion ? `'${params.countryRegion}'` : ''
               const tcpRequest = get(api.npm.location.mapTcp, params)
               const httpRequest = get(api.npm.location.mapHttp, params)
               const sslRequest = get(api.npm.location.mapSsl, params)
@@ -141,7 +141,7 @@ export default {
                 res2.forEach((r, i) => {
                   if (r.code === 200) {
                     mapData.forEach(t => {
-                      const find = r.data.result.find(d => d.country === t.country && t.province === d.province)
+                      const find = r.data.result.find(d => d.countryRegion === t.countryRegion && t.superAdminArea === d.superAdminArea)
                       t[keyPre[i] + 'Score'] = find
                     })
                   } else {
@@ -165,8 +165,8 @@ export default {
                     pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
                   }
                   t.tooltip = {}
-                  t.tooltip.width = t.province ? 0 : 18
-                  t.tooltip.marginRight = t.province ? 0 : 6
+                  t.tooltip.width = t.superAdminArea ? 0 : 18
+                  t.tooltip.marginRight = t.superAdminArea ? 0 : 6
                   t.tooltip.data = {
                     establishLatencyMs: valueToRangeValue(data.establishLatencyMs, unitTypes.time).join(' '),
                     httpResponseLatency: valueToRangeValue(data.httpResponseLatency, unitTypes.time).join(' '),
@@ -225,7 +225,7 @@ export default {
       imageSeries.data = _data.map(r => ({
         ...r,
         score: r.tooltip.data.score,
-        name: r.province || r.country,
+        name: r.superAdminArea || r.countryRegion,
         id: r.serverId,
         color: this.scoreColor(r.tooltip.data.score),
         border: this.scoreColor(r.tooltip.data.score)

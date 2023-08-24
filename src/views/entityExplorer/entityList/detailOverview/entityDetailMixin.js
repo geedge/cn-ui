@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import * as echarts from 'echarts'
 import { entityListLineOption } from '@/views/charts/charts/chart-options'
 import { riskLevelMapping, unitTypes } from '@/utils/constants'
@@ -101,9 +101,9 @@ export default {
       this.sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}`))
       this.receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}`))
       this.loadingTraffic = true
-      get(this.trafficUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200 && response.data.result && response.data.result.length > 0) {
-          response.data.result.forEach(t => {
+      axios.get(this.trafficUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200 && response.data.data.result && response.data.data.result.length > 0) {
+          response.data.data.result.forEach(t => {
             if (t.legend === 'bytesRate') {
               this.entityData.max = t.aggregation.max
               this.entityData.avg = t.aggregation.avg
@@ -190,14 +190,16 @@ export default {
           }
 
           if (url) {
-            get(url, {
-              ...this.getPerformanceQueryParams(),
-              startTime: searchStartTime,
-              endTime: searchEndTime,
-              eventType: item.eventType
-            }).then((response) => {
-              if (response.code === 200) {
-                const metricDataList = response.data.result[0] && response.data.result[0].values
+            axios.get(url, {
+              params: {
+                ...this.getPerformanceQueryParams(),
+                startTime: searchStartTime,
+                endTime: searchEndTime,
+                eventType: item.eventType
+              }
+            }).then(response => {
+              if (response.status === 200) {
+                const metricDataList = response.data.data.result[0] && response.data.data.result[0].values
                 this.$nextTick(() => {
                   if (metricDataList && metricDataList.length > 0) {
                     metricDataList.sort(reverseSortBy(0))// 将返回的数据按时间降序排序，方便找到实线和虚线的交点
@@ -244,9 +246,9 @@ export default {
       }
     },
     queryEntityDetailRelation () {
-      get(this.relationUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.handleRelationData(response.data.result)
+      axios.get(this.relationUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
+          this.handleRelationData(response.data.data.result)
         }
       })
     },
@@ -254,35 +256,35 @@ export default {
     queryEntityDetailNetworkQuantity () {
       this.loadingNetworkQuality = true
       if (this.networkQuantityUrl) {
-        get(this.networkQuantityUrl, this.getQueryParams()).then(response => {
-          if (response.code === 200) {
+        axios.get(this.networkQuantityUrl, { params: this.getQueryParams() }).then(response => {
+          if (response.status === 200) {
             const data = {
-              establishLatencyMs: response.data.result.establishLatencyValue || null,
-              httpResponseLatency: response.data.result.httpResponseLatencyValue || null,
-              sslConLatency: response.data.result.sslConLatencyValue || null,
-              tcpLostlenPercent: response.data.result.sequenceGapLossPercentValue || null,
-              pktRetransPercent: response.data.result.pktRetransPercentValue || null
+              establishLatencyMs: response.data.data.result.establishLatencyValue || null,
+              httpResponseLatency: response.data.data.result.httpResponseLatencyValue || null,
+              sslConLatency: response.data.data.result.sslConLatencyValue || null,
+              tcpLostlenPercent: response.data.data.result.sequenceGapLossPercentValue || null,
+              pktRetransPercent: response.data.data.result.pktRetransPercentValue || null
             }
             this.score = computeScore(data)
-            this.entityData.establishLatencyValue = response.data.result.establishLatencyValue
-            this.entityData.establishLatencyP50 = response.data.result.establishLatencyP50
-            this.entityData.establishLatencyP90 = response.data.result.establishLatencyP90
+            this.entityData.establishLatencyValue = response.data.data.result.establishLatencyValue
+            this.entityData.establishLatencyP50 = response.data.data.result.establishLatencyP50
+            this.entityData.establishLatencyP90 = response.data.data.result.establishLatencyP90
 
-            this.entityData.httpResponseLantencyValue = response.data.result.httpResponseLantencyValue
-            this.entityData.httpResponseLantencyP50 = response.data.result.httpResponseLantencyP50
-            this.entityData.httpResponseLantencyP90 = response.data.result.httpResponseLantencyP90
+            this.entityData.httpResponseLantencyValue = response.data.data.result.httpResponseLantencyValue
+            this.entityData.httpResponseLantencyP50 = response.data.data.result.httpResponseLantencyP50
+            this.entityData.httpResponseLantencyP90 = response.data.data.result.httpResponseLantencyP90
 
-            this.entityData.sslConLatencyValue = response.data.result.sslConLatencyValue
-            this.entityData.sslConLatencyP50 = response.data.result.sslConLatencyP50
-            this.entityData.sslConLatencyP90 = response.data.result.sslConLatencyP90
+            this.entityData.sslConLatencyValue = response.data.data.result.sslConLatencyValue
+            this.entityData.sslConLatencyP50 = response.data.data.result.sslConLatencyP50
+            this.entityData.sslConLatencyP90 = response.data.data.result.sslConLatencyP90
 
-            this.entityData.sequenceGapLossPercentValue = response.data.result.sequenceGapLossPercentValue
-            this.entityData.sequenceGapLossPercentP50 = response.data.result.sequenceGapLossPercentP50
-            this.entityData.sequenceGapLossPercentP90 = response.data.result.sequenceGapLossPercentP90
+            this.entityData.sequenceGapLossPercentValue = response.data.data.result.sequenceGapLossPercentValue
+            this.entityData.sequenceGapLossPercentP50 = response.data.data.result.sequenceGapLossPercentP50
+            this.entityData.sequenceGapLossPercentP90 = response.data.data.result.sequenceGapLossPercentP90
 
-            this.entityData.pktRetransPercentValue = response.data.result.pktRetransPercentValue
-            this.entityData.pktRetransPercentP50 = response.data.result.pktRetransPercentP50
-            this.entityData.pktRetransPercentP90 = response.data.result.pktRetransPercentP90
+            this.entityData.pktRetransPercentValue = response.data.data.result.pktRetransPercentValue
+            this.entityData.pktRetransPercentP50 = response.data.data.result.pktRetransPercentP50
+            this.entityData.pktRetransPercentP90 = response.data.data.result.pktRetransPercentP90
 
             const establishLatency = {
               value: this.entityData.establishLatencyValue,
@@ -323,17 +325,17 @@ export default {
     queryEntityDetailLinkInUrl () {
       this.loadingIn = true
       if (this.linkInUrl) {
-        get(this.linkInUrl, this.getQueryParams()).then(response => {
-          if (response.code === 200) {
-            if (!this.$_.isEmpty(response.data.result)) {
+        axios.get(this.linkInUrl, { params: this.getQueryParams() }).then(response => {
+          if (response.status === 200) {
+            if (!this.$_.isEmpty(response.data.data.result)) {
               let sum = 0
-              response.data.result.forEach(r => {
+              response.data.data.result.forEach(r => {
                 sum += parseFloat(r.bytes)
               })
-              const sorted = response.data.result.sort((r1, r2) => {
+              const sorted = response.data.data.result.sort((r1, r2) => {
                 return parseFloat(r2.bytes) - parseFloat(r1.bytes)
               })
-              const sortedId = response.data.result.sort((r1, r2) => {
+              const sortedId = response.data.data.result.sort((r1, r2) => {
                 return parseFloat(r2.commonIngressLinkId) - parseFloat(r1.commonIngressLinkId)
               })
               const max = parseFloat(sorted[0].bytes)
@@ -350,17 +352,17 @@ export default {
     queryEntityDetailLinkOutUrl () {
       this.loadingOut = true
       if (this.linkOutUrl) {
-        get(this.linkOutUrl, this.getQueryParams()).then(response => {
-          if (response.code === 200) {
-            if (!this.$_.isEmpty(response.data.result)) {
+        axios.get(this.linkOutUrl, { params: this.getQueryParams() }).then(response => {
+          if (response.status === 200) {
+            if (!this.$_.isEmpty(response.data.data.result)) {
               let sum = 0
-              response.data.result.forEach(r => {
+              response.data.data.result.forEach(r => {
                 sum += parseFloat(r.bytes)
               })
-              const sorted = response.data.result.sort((r1, r2) => {
+              const sorted = response.data.data.result.sort((r1, r2) => {
                 return parseFloat(r2.bytes) - parseFloat(r1.bytes)
               })
-              const sortedId = response.data.result.sort((r1, r2) => {
+              const sortedId = response.data.data.result.sort((r1, r2) => {
                 return parseFloat(r2.commonEgressLinkId) - parseFloat(r1.commonEgressLinkId)
               })
               const max = parseFloat(sorted[0].bytes)
@@ -376,10 +378,10 @@ export default {
 
     queryEntityDetailPerformance () {
       this.loadingAlert = true
-      get(this.performanceUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.entityData.performanceNum = response.data.result.length
-          this.performanceData = response.data.result
+      axios.get(this.performanceUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
+          this.entityData.performanceNum = response.data.data.result.length
+          this.performanceData = response.data.data.result
           this.entityData.performanceList = this.getTargetPageData(1, this.showMore.performancePageSize, this.performanceData)
         }
         this.loadingAlert = false
@@ -388,10 +390,10 @@ export default {
 
     queryEntityDetailSecurity () {
       this.loadingSecurityEvents = true
-      get(this.securityUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.entityData.securityNum = response.data.result.length
-          this.securityData = response.data.result
+      axios.get(this.securityUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
+          this.entityData.securityNum = response.data.data.result.length
+          this.securityData = response.data.data.result
           this.entityData.securityList = this.getTargetPageData(1, this.showMore.securityPageSize, this.securityData)
         }
         this.loadingSecurityEvents = false
@@ -399,16 +401,8 @@ export default {
     },
 
     performanceShowMore (num) {
-      // const startIndex = this.showMore.performancePageSize
       this.showMore.performancePageSize += num
       this.entityData.performanceList = this.getTargetPageData(this.showMore.pageNo, this.showMore.performancePageSize, this.performanceData)
-      // this.$nextTick(() => {
-      //   setTimeout(() => lltext
-      //     if (this.entityData.performanceList && this.entityData.performanceList.length > 0) {
-      //       this.queryEntityDetailPerformanceChart(this.entityData.performanceList.slice(startIndex, this.entityData.performanceList.length), startIndex)
-      //     }
-      //   }, 200)
-      // })
     },
 
     securityShowMore (num) {
@@ -421,15 +415,15 @@ export default {
     },
 
     queryDnsServerInfo () {
-      get(this.entityDetectionsIpUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.entityData.dnsServerRole = response.data.result.dnsServerRole
-          this.entityData.dnsServerOrg = response.data.result.dnsServerOrg
-          this.entityData.dnsServerSoftware = response.data.result.dnsServerSoftware
-          this.entityData.dnsServerOs = response.data.result.dnsServerOs
-          this.entityData.dohSupport = response.data.result.dohSupport
-          this.entityData.dotSupport = response.data.result.dotSupport
-          this.entityData.dnssecSupport = response.data.result.dnssecSupport
+      axios.get(this.entityDetectionsIpUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
+          this.entityData.dnsServerRole = response.data.data.result.dnsServerRole
+          this.entityData.dnsServerOrg = response.data.data.result.dnsServerOrg
+          this.entityData.dnsServerSoftware = response.data.data.result.dnsServerSoftware
+          this.entityData.dnsServerOs = response.data.data.result.dnsServerOs
+          this.entityData.dohSupport = response.data.data.result.dohSupport
+          this.entityData.dotSupport = response.data.data.result.dotSupport
+          this.entityData.dnssecSupport = response.data.data.result.dnssecSupport
         }
         if (this.entityData.dnsServerRole) {
           this.loadingDns = false
@@ -440,9 +434,9 @@ export default {
     queryDnsServerInfoRate () {
       this.loading = true
       this.detectionChart = echarts.init(document.getElementById(`entityDnsServerInfo${this.entityName}`))
-      get(this.entityDetectionsIpQueryRateUrl, this.getQueryParams()).then(response => {
-        if (response.code === 200 && response.data.result && response.data.result.length > 0) {
-          response.data.result.forEach(t => {
+      axios.get(this.entityDetectionsIpQueryRateUrl, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200 && response.data.data.result && response.data.data.result.length > 0) {
+          response.data.data.result.forEach(t => {
             this.entityData.queryRate = _.nth(t.values, -3)[1]
             this.chartDetectionQueryRate = {
               ...this.chartOption,

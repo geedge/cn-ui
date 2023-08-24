@@ -66,7 +66,7 @@ import dataListMixin from '@/mixins/data-list'
 import rolesTable from '@/components/table/administration/RoleTable'
 import roleBox from '@/components/rightBox/settings/RoleBox'
 import { api } from '@/utils/api'
-import { get } from '@/utils/http'
+import axios from 'axios'
 
 export default {
   name: 'roles',
@@ -100,9 +100,9 @@ export default {
           type: 'warning'
         }).catch(() => {})
       } else {
-        get(`${this.url}`, { ids: this.batchDeleteObjs[0].id }).then(response => {
-          if (response.code === 200) {
-            this.object = response.data.list[0]
+        axios.get(`${this.url}`, { params: { ids: this.batchDeleteObjs[0].id } }).then(response => {
+          if (response.status === 200) {
+            this.object = response.data.data.list[0]
             this.rightBox.show = true
           }
         })

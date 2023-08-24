@@ -126,7 +126,6 @@ import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTableForCard from '@/components/table/setting/knowledgeBaseTableForCard'
 import KnowledgeBaseTableForRow from '@/components/table/setting/KnowledgeBaseTableForRow'
 import { api } from '@/utils/api'
-import { get } from '@/utils/http'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { knowledgeBaseCategory, knowledgeBaseSource, knowledgeCategoryValue } from '@/utils/constants'
 import axios from 'axios'
@@ -264,7 +263,7 @@ export default {
       } else {
         this.toggleLoading(true)
         axios.delete(this.url + '?knowledgeIds=' + ids).then(response => {
-          if (response.data.code === 200) {
+          if (response.status === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
             this.secondBatchDeleteObjs.forEach((item) => {
@@ -297,7 +296,7 @@ export default {
     },
     edit (u) {
       axios.get(`${this.url}/${u.id}`).then(response => {
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           this.object = response.data.data.list[0]
           console.info(this.object)
         }
@@ -389,7 +388,7 @@ export default {
       }).then(() => {
         this.toggleLoading(true)
         axios.delete(this.url + '?knowledgeIds=' + row.id).then(response => {
-          if (response.data.code === 200) {
+          if (response.status === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
             // delete this.searchLabel.category
@@ -439,19 +438,15 @@ export default {
         category: knowledgeCategoryValue.aiTagging + ',' + knowledgeCategoryValue.webSketch,
         pageSize: -1
       }
-      get(this.listUrl, params).then(response => {
-        if (response.code === 200) {
-          this.tableData = response.data.list
-          if (!this.tableData || this.tableData.length === 0) {
-            this.isNoData = true
-          } else {
-            this.isNoData = false
-          }
+      axios.get(this.listUrl, { params }).then(response => {
+        if (response.status === 200) {
+          this.tableData = response.data.data.list
+          this.isNoData = !this.tableData || this.tableData.length === 0
         } else {
-          console.error(response)
+          console.error(response.data)
           this.isNoData = true
-          if (response.message) {
-            this.$message.error(response.message)
+          if (response.data.message) {
+            this.$message.error(response.data.message)
           } else {
             this.$message.error(this.$t('tip.somethingWentWrong'))
           }

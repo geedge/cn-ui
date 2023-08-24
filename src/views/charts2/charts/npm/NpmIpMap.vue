@@ -38,9 +38,7 @@ export default {
     return {
       myChart: null,
       polygonSeries: null,
-      countrySeries: null,
       worldImageSeries: null,
-      countryImageSeries: null,
       // Server | Client
       trafficDirection: 'Server',
       curTabState: curTabState,
@@ -104,7 +102,7 @@ export default {
           if (res && res.length > 0) {
             const subParams = {
               ...params,
-              params: res.map(r => `'${r.country}'`).join(',')
+              params: res.map(r => `'${r.countryRegion}'`).join(',')
             }
             // 计算分数
             const tcpRequest = get(api.npm.overview.mapTcp, subParams)
@@ -118,7 +116,7 @@ export default {
               res2.forEach((r, i) => {
                 if (r.code === 200) {
                   mapData.forEach(t => {
-                    t[keyPre[i] + 'Score'] = r.data.result.find(d => d.country === t.country && d.province === t.province)
+                    t[keyPre[i] + 'Score'] = r.data.result.find(d => d.countryRegion === t.countryRegion && d.superAdminArea === t.superAdminArea)
                   })
                 } else {
                   this.showError = true
@@ -134,8 +132,8 @@ export default {
                   pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
                 }
                 t.tooltip = {}
-                t.tooltip.width = t.province ? 0 : 18
-                t.tooltip.marginRight = t.province ? 0 : 6
+                t.tooltip.width = t.superAdminArea ? 0 : 18
+                t.tooltip.marginRight = t.superAdminArea ? 0 : 6
                 t.tooltip.data = {
                   establishLatencyMs: valueToRangeValue(data.establishLatencyMs, unitTypes.time).join(' '),
                   httpResponseLatency: valueToRangeValue(data.httpResponseLatency, unitTypes.time).join(' '),
@@ -187,7 +185,7 @@ export default {
       imageSeries.data = _data.map(r => ({
         ...r,
         score: r.tooltip.data.score,
-        name: r.province || r.country,
+        name: r.superAdminArea || r.countryRegion,
         id: r.serverId,
         color: this.scoreColor(r.tooltip.data.score),
         border: this.scoreColor(r.tooltip.data.score)
@@ -317,9 +315,7 @@ export default {
   },
   beforeUnmount () {
     this.polygonSeries = null
-    this.countrySeries = null
     this.worldImageSeries = null
-    this.countryImageSeries = null
     this.myChart && this.myChart.dispose()
     this.myChart = null
   }

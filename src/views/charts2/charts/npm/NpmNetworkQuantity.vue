@@ -156,9 +156,9 @@ export default {
       if (condition || type) {
         params.type = params.type || type
         this.toggleLoading(true)
-        axios.get(url, { params: params }).then(res => {
-          res = res.data
-          if (res.code === 200) {
+        axios.get(url, { params: params }).then(response => {
+          const res = response.data
+          if (response.status === 200) {
             this.npmNetworkCycleData = res.data.result
           }
           this.npmNetworkLastCycleQuery(url, params)
@@ -178,7 +178,7 @@ export default {
           // 传给子组件SingleValue，再进行error处理，注：error处理不在此处处理
           this.npmNetworkCycleData = []
           res.forEach(t => {
-            if (t.data.code === 200) {
+            if (t.status === 200) {
               this.npmNetworkCycleData.push(t.data.data.result)
             } else {
               this.npmNetworkCycleData.push(t.data)
@@ -211,9 +211,9 @@ export default {
       if ((params.type && params.q) || (param && param.type)) {
         params.type = params.type || param.type
         this.toggleLoading(true)
-        axios.get(url, { params: params }).then(res => {
-          res = res.data
-          if (res.code === 200) {
+        axios.get(url, { params: params }).then(response => {
+          const res = response.data
+          if (response.status === 200) {
             this.npmNetworkLastCycleData = res.data.result
           } else {
             this.npmNetworkLastCycleData = [res]
@@ -240,7 +240,7 @@ export default {
           // 状态为200的，赋值接口数据，不为200的保留报错提示message，
           // 传给子组件SingleValue，再进行error处理，注：error处理不在此处处理
           res.forEach(t => {
-            if (t.data.code === 200) {
+            if (t.status === 200) {
               this.npmNetworkLastCycleData.push(t.data.data.result)
             } else {
               this.npmNetworkLastCycleData.push(t.data)

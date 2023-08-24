@@ -159,7 +159,7 @@ import ExplorerSearch from '@/views/entityExplorer/search/ExplorerSearch'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
 import { entityType, defaultPageSize, riskLevelMapping } from '@/utils/constants'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
 import { ref } from 'vue'
@@ -675,8 +675,9 @@ export default {
         endTime: getSecond(params.endTime)
       }
       this.loadingLeft = true
-      get(api.entityFilter, queryParams).then(response => {
-        if (response.code === 200 && response.data && response.data.result) {
+      axios.get(api.entityFilter, { params: queryParams }).then(res => {
+        const response = res.data
+        if (res.status === 200 && response.data && response.data.result) {
           switch (params.entityType) {
             case 'ip': {
               this.filterData[0].data.forEach(d => {
@@ -738,20 +739,20 @@ export default {
         resource: params.q || ''
       }
       this.loadingLeft = true
-      const aggCountry = get(api.entity.entityList.aggCountry, queryParams)
-      const aggCity = get(api.entity.entityList.aggCity, queryParams)
-      const aggIPAsn = get(api.entity.entityList.aggIPAsn, queryParams)
-      const aggIPIsp = get(api.entity.entityList.aggIPIsp, queryParams)
-      const aggPort = get(api.entity.entityList.aggPort, queryParams)
-      const aggDomain = get(api.entity.entityList.aggDomain, queryParams)
-      const aggAppCategory = get(api.entity.entityList.aggAppCategory, queryParams)
-      const aggTag = get(api.entity.entityList.aggTag, queryParams)
+      const aggCountry = axios.get(api.entity.entityList.aggCountry, { params: queryParams })
+      const aggCity = axios.get(api.entity.entityList.aggCity, { params: queryParams })
+      const aggIPAsn = axios.get(api.entity.entityList.aggIPAsn, { params: queryParams })
+      const aggIPIsp = axios.get(api.entity.entityList.aggIPIsp, { params: queryParams })
+      const aggPort = axios.get(api.entity.entityList.aggPort, { params: queryParams })
+      const aggDomain = axios.get(api.entity.entityList.aggDomain, { params: queryParams })
+      const aggAppCategory = axios.get(api.entity.entityList.aggAppCategory, { params: queryParams })
+      const aggTag = axios.get(api.entity.entityList.aggTag, { params: queryParams })
 
       Promise.all([aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]).then(response => {
         response.forEach((item, index) => {
-          if (item.code === 200 && item.data.list) {
+          if (item.status === 200 && item.data.data.list) {
             this.newFilterData[index].data = []
-            item.data.list.forEach(item => {
+            item.data.data.list.forEach(item => {
               let obj = {
                 label: item.value,
                 topColumn: this.newFilterData[index].topColumn,
@@ -789,15 +790,15 @@ export default {
         // endTime: getSecond(params.endTime),
         resource: params.q || ''
       }
-      get(api.entity.entityList.list, queryParams).then(response => {
-        if (response.code === 200) {
+      axios.get(api.entity.entityList.list, { params: queryParams }).then(response => {
+        if (response.status === 200) {
           this.listData = []
           this.$nextTick(() => {
-            this.listData = response.data.list
-            this.pageObj.total = response.data.total
+            this.listData = response.data.data.list
+            this.pageObj.total = response.data.data.total
           })
         } else {
-          this.$message.error(response.message)
+          this.$message.error(response.data.message)
         }
       }).finally(() => {
         this.listLoading = false
@@ -811,9 +812,9 @@ export default {
         // endTime: getSecond(params.endTime),
         resource: params.q || '' // 目前版本搜索不支持实体名称搜索，下版本改进
       }
-      get(api.entity.entityList.summaryCount, queryParams).then(response => {
-        if (response.code === 200) {
-          this.summaryCount = response.data
+      axios.get(api.entity.entityList.summaryCount, { params: queryParams }).then(response => {
+        if (response.status === 200) {
+          this.summaryCount = response.data.data
         } else {
           this.summaryCount = { total: 0, domainCount: 0, ipCount: 0, appCount: 0 }
         }
@@ -831,9 +832,9 @@ export default {
         startTime: getSecond(params.startTime),
         endTime: getSecond(params.endTime)
       }
-      get(api.entityListTotal, queryParams).then(response => {
-        if (response.code === 200) {
-          this.pageObj.total = response.data.result
+      axios.get(api.entityListTotal, { params: queryParams }).then(response => {
+        if (response.status === 200) {
+          this.pageObj.total = response.data.data.result
         }
       })
     },
@@ -857,33 +858,33 @@ export default {
       this.loadingDomainActive = true
       this.loadingIpActive = true
 
-      get(api.entity.entityList.entityActive).then(response => {
-        if (response.code === 200) {
-          this.entityDomainTotal = response.data.domainCount
-          this.entityIpTotal = response.data.ipCount
-          this.entityAppTotal = response.data.appCount
+      axios.get(api.entity.entityList.entityActive).then(response => {
+        if (response.status === 200) {
+          this.entityDomainTotal = response.data.data.domainCount
+          this.entityIpTotal = response.data.data.ipCount
+          this.entityAppTotal = response.data.data.appCount
         }
         this.loadingDomain = false
         this.loadingIp = false
         this.loadingApp = false
       })
       // New
-      get(api.entity.entityList.entityNew).then(response => {
-        if (response.code === 200) {
-          this.entityDomainNew = response.data.domainCount
-          this.entityIpNew = response.data.ipCount
-          this.entityAppNew = response.data.appCount
+      axios.get(api.entity.entityList.entityNew).then(response => {
+        if (response.status === 200) {
+          this.entityDomainNew = response.data.data.domainCount
+          this.entityIpNew = response.data.data.ipCount
+          this.entityAppNew = response.data.data.appCount
         }
         this.loadingDomainNew = false
         this.loadingIpNew = false
         this.loadingAppNew = false
       })
       // Active
-      get(api.entity.entityList.entityActive).then(response => {
-        if (response.code === 200) {
-          this.entityDomainActive = response.data.domainCount
-          this.entityIpActive = response.data.ipCount
-          this.entityAppActive = response.data.appCount
+      axios.get(api.entity.entityList.entityActive).then(response => {
+        if (response.status === 200) {
+          this.entityDomainActive = response.data.data.domainCount
+          this.entityIpActive = response.data.data.ipCount
+          this.entityAppActive = response.data.data.appCount
         }
         this.loadingDomainActive = false
         this.loadingIpActive = false

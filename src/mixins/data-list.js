@@ -1,6 +1,6 @@
 import { tableSort } from '@/utils/tools'
 import { defaultPageSize, fromRoute, position, storageKey, dbTableColumnCustomizeConfigPre } from '@/utils/constants'
-import { get, del } from '@/utils/http'
+import _ from 'lodash'
 import { ref } from 'vue'
 import pagination from '@/components/common/Pagination'
 import axios from 'axios'
@@ -90,16 +90,8 @@ export default {
           this.batchDeleteObjs.push(obj)
         }
       })
-      if (this.batchDeleteObjs.length == 1) {
-        this.disableEdit = false
-      } else {
-        this.disableEdit = true
-      }
-      if (this.batchDeleteObjs.length >= 1) {
-        this.disableDelete = false
-      } else {
-        this.disableDelete = true
-      }
+      this.disableEdit = this.batchDeleteObjs.length !== 1
+      this.disableDelete = this.batchDeleteObjs.length < 1
     },
     getTableData (params, isAll, isClearType) {
       if (isAll) {
@@ -155,20 +147,16 @@ export default {
         this.pageObj.total = list.length
         this.loading = false
       } else {
-        get(listUrl, this.searchLabel).then(response => {
-          if (response.code === 200) {
-            this.tableData = response.data.list
-            this.pageObj.total = response.data.total
-            if (!this.tableData || this.tableData.length === 0) {
-              this.isNoData = true
-            } else {
-              this.isNoData = false
-            }
+        axios.get(listUrl, { params: this.searchLabel }).then(response => {
+          if (response.status === 200) {
+            this.tableData = _.get(response, 'data.data.list', [])
+            this.pageObj.total = _.get(response, 'data.data.total', 0)
+            this.isNoData = !this.tableData || this.tableData.length === 0
           } else {
             console.error(response)
             this.isNoData = true
-            if (response.message) {
-              this.$message.error(response.message)
+            if (response.data.message) {
+              this.$message.error(response.data.message)
             } else {
               this.$message.error(this.$t('tip.somethingWentWrong'))
             }
@@ -187,18 +175,16 @@ export default {
         cancelButtonText: this.$t('tip.no'),
         type: 'warning'
       }).then(() => {
-        del(this.url + '?ids=' + row.id).then(response => {
-          if (response.code === 200) {
+        axios.delete(this.url + '?ids=' + row.id).then(response => {
+          if (response.status === 200) {
             this.delFlag = true
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
             this.getTableData()
           } else {
-            this.$message.error(response.msg)
+            this.$message.error(response.data.message)
           }
         })
       }).catch(e => {})
-    },
-    delSelectionChange () {
     },
     delBatch () {
       const ids = []
@@ -220,7 +206,7 @@ export default {
         }).then(() => {
           this.toggleLoading(true)
           axios.delete(this.url + '?ids=' + ids).then(response => {
-            if (response.data.code === 200) {
+            if (response.status === 200) {
               this.delFlag = true
               this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
               this.getTableData()
@@ -230,14 +216,13 @@ export default {
           }).finally(() => {
             this.toggleLoading(false)
           })
-        }).catch(() => {})
-          .finally(() => {
-            if (this.isSelectedStatus != undefined) {
-              this.isSelectedStatus = false
-              this.disableDelete = true
-              this.batchDeleteObjs = []
-            }
-          })
+        }).finally(() => {
+          if (this.isSelectedStatus !== undefined) {
+            this.isSelectedStatus = false
+            this.disableDelete = true
+            this.batchDeleteObjs = []
+          }
+        })
       }
     },
     newObject () {
@@ -272,9 +257,9 @@ export default {
       }
     },
     edit (u) {
-      get(`${this.url}/${u.id}`).then(response => {
-        if (response.code === 200) {
-          this.object = response.data
+      axios.get(`${this.url}/${u.id}`).then(response => {
+        if (response.status === 200) {
+          this.object = response.data.data
           this.rightBox.show = true
         }
       })
@@ -286,9 +271,9 @@ export default {
           type: 'warning'
         }).catch(() => {})
       } else {
-        get(`${this.url}/${this.batchDeleteObjs[0].id}`).then(response => {
-          if (response.code === 200) {
-            this.object = response.data
+        axios.get(`${this.url}/${this.batchDeleteObjs[0].id}`).then(response => {
+          if (response.status === 200) {
+            this.object = response.data.data
             this.rightBox.show = true
           }
         })
@@ -328,8 +313,8 @@ export default {
       if (!localStorage.getItem(storageKey.token)) {
         return window.location.replace('/')
       }
-      get(api.reportTemp).then(res => {
-        if (res.code === 200) {
+      axios.get(api.reportTemp).then(res => {
+        if (res.status === 200) {
           axios.get(url, { responseType: 'blob', params: params }).then(res => {
             if (window.navigator.msSaveOrOpenBlob) {
               // 兼容ie11

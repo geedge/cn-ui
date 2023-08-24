@@ -1,4 +1,4 @@
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { getTextRect } from '@/utils/tools'
 export default {
   data () {
@@ -17,11 +17,11 @@ export default {
     // 请求数据 relationshipUrlOne => 路由 refOne => ref
     getRelatedServerDataOne (relationshipUrlOne, refOne) {
       this.loadingRelationshipOne = true
-      get(relationshipUrlOne, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
+      axios.get(relationshipUrlOne, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
           const relationshipDataOne = []
-          if (response.data.result.length > 0) {
-            response.data.result.forEach(item => {
+          if (response.data.data.result.length > 0) {
+            response.data.data.result.forEach(item => {
               relationshipDataOne.push({ value: item, show: true })
             })
           }
@@ -33,11 +33,11 @@ export default {
     },
     getRelatedServerDataTwo (relationshipUrlTow, refTow) {
       this.loadingRelationshipTwo = true
-      get(relationshipUrlTow, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
+      axios.get(relationshipUrlTow, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
           const relationshipDataTwo = []
-          if (response.data.result.length > 0) {
-            response.data.result.forEach(item => {
+          if (response.data.data.result.length > 0) {
+            response.data.data.result.forEach(item => {
               relationshipDataTwo.push({ value: item, show: true })
             })
           }

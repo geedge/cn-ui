@@ -99,8 +99,9 @@
 <script>
 import GeneralSettings from '@/components/table/detection/GeneralSettings'
 import RuleDefinition from '@/components/table/detection/RuleDefinition'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import axios from 'axios'
+import _ from 'lodash'
 
 export default {
   name: 'DetectionForm',
@@ -160,11 +161,11 @@ export default {
   methods: {
     /** 获取下拉列表数据 */
     getStatistics () {
-      get(api.detection.statistics, { pageSize: -1 }).then(response => {
-        if (response.code === 200) {
-          this.intervalList = response.data.intervalList || []
+      axios.get(api.detection.statistics, { pageSize: -1 }).then(response => {
+        if (response.status === 200) {
+          this.intervalList = _.get(response, 'data.data.intervalList', [])
         } else {
-          console.error(response)
+          console.error(response.data)
         }
       }).finally(() => {
       })

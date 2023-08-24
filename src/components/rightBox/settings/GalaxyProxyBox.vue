@@ -8,7 +8,7 @@
     </div>
     <div class="right-box__container">
       <div class="container__form">
-        <el-form ref="userForm" :model="editObject" :rules="rules" label-position="top" label-width="120px">
+        <el-form ref="form" :model="editObject" :rules="rules" label-position="top" label-width="120px">
           <!--name-->
           <el-form-item :label="$t('overall.name')" prop="name">
             <el-input id="proxy-name" v-model="editObject.name"
