@@ -73,7 +73,7 @@
 
 <script>
 import table from '@/mixins/table'
-import { put } from '@/utils/http'
+import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 
 export default {
@@ -147,12 +147,12 @@ export default {
       // if (!user.id){
       //   return
       // }
-      put('sys/user', user).then(response => {
-        if (response.code === 200) {
+      axios.put('sys/user', user).then(response => {
+        if (response.status === 200) {
           // this.rightBox.show = false
           this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
         } else {
-          this.$message.error(response.msg)
+          this.$message.error(response.data.message)
         }
         this.$emit('reload')
       })

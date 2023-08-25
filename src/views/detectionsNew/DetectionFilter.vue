@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 
 export default {
@@ -88,31 +88,31 @@ export default {
       if (params) {
         searchParams = { ...searchParams, ...params }
       }
-      get(this.url, searchParams).then(response => {
-        if (response.code === 200) {
-          if (response.data.statusList) {
+      axios.get(this.url, { params: searchParams }).then(response => {
+        if (response.status === 200) {
+          if (response.data.data.statusList) {
             this.statusList = []
-            response.data.statusList.forEach(item => {
+            response.data.data.statusList.forEach(item => {
               this.statusList.push({ status: item.status, label: this.switchStatus(item.status) })
               this.checkStatus.push(item.status)
             })
           }
 
-          this.categoryList = response.data.categoryList
-          if (response.data.categoryList) {
-            response.data.categoryList.forEach(item => {
+          this.categoryList = response.data.data.categoryList
+          if (response.data.data.categoryList) {
+            response.data.data.categoryList.forEach(item => {
               this.checkCategory.push(item.value)
             })
           }
 
-          this.typeList = response.data.typeList
-          if (response.data.typeList) {
-            response.data.typeList.forEach(item => {
+          this.typeList = response.data.data.typeList
+          if (response.data.data.typeList) {
+            response.data.data.typeList.forEach(item => {
               this.checkType.push(item.value)
             })
           }
         } else {
-          console.error(response)
+          console.error(response.data)
         }
       }).finally(() => {
         // this.initTypeData()

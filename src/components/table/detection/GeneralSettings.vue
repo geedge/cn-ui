@@ -107,7 +107,7 @@
 <script>
 import { detectionRuleType } from '@/utils/constants'
 import { switchStatus } from '@/utils/tools'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 
 export default {
@@ -158,12 +158,12 @@ export default {
   methods: {
     switchStatus,
     initData () {
-      get(api.detection.statistics, { pageSize: -1 }).then(response => {
-        if (response.code === 200) {
-          this.categoryList = response.data.categoryList || []
-          this.typeList = response.data.typeList || []
+      axios.get(api.detection.statistics, { params: { pageSize: -1 } }).then(response => {
+        if (response.status === 200) {
+          this.categoryList = response.data.data.categoryList || []
+          this.typeList = response.data.data.typeList || []
         } else {
-          console.error(response)
+          console.error(response.data)
         }
       }).finally(() => {
       })

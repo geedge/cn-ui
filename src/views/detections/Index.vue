@@ -135,7 +135,7 @@ import {
   pieForSeverity
 } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { extensionEchartY, reverseSortBy } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
@@ -610,13 +610,13 @@ export default {
         pageSize: this.pageObj.pageSize,
         pageNo: this.pageObj.pageNo
       }
-      get(api.detection[this.pageType].listBasic, params).then(response => {
-        if (response.code === 200) {
-          this.listData = response.data.result
+      axios.get(api.detection[this.pageType].listBasic, { params }).then(response => {
+        if (response.status === 200) {
+          this.listData = response.data.data.result
         } else {
           this.listData = []
-          console.error(response.message)
-          this.$message.error(response.message)
+          console.error(response.data.message)
+          this.$message.error(response.data.message)
         }
       })
       getData(api.detection[this.pageType].listCount, params).then(data => {

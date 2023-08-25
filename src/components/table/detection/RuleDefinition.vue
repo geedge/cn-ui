@@ -213,7 +213,7 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import HistoryTopKeys from '@/components/table/detection/HistoryTopKeys'
 import { eventSeverityColor, detectionRuleType } from '@/utils/constants'
@@ -341,15 +341,15 @@ export default {
   },
   methods: {
     initData () {
-      get(api.detection.statistics, { pageSize: -1 }).then(response => {
-        if (response.code === 200) {
-          this.sourceList = response.data.sourceList || []
-          this.levelList = response.data.levelList || []
-          this.conditionList = response.data.conditionList || []
-          this.metricList = response.data.metricList || []
-          this.libraryList = response.data.libraryList || []
+      axios.get(api.detection.statistics, { params: { pageSize: -1 } }).then(response => {
+        if (response.status === 200) {
+          this.sourceList = response.data.data.sourceList || []
+          this.levelList = response.data.data.levelList || []
+          this.conditionList = response.data.data.conditionList || []
+          this.metricList = response.data.data.metricList || []
+          this.libraryList = response.data.data.libraryList || []
         } else {
-          console.error(response)
+          console.error(response.data)
         }
       }).finally(() => {
       })

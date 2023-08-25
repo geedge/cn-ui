@@ -126,7 +126,7 @@ export default {
         side: this.side
       }
 
-      params.country = n || ''
+      params.countryRegion = n || ''
 
       this.toggleLoading(true)
       let url

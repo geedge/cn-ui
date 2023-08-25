@@ -276,7 +276,7 @@ import rightBoxMixin from '@/mixins/right-box'
 import { storageKey, report } from '@/utils/constants'
 import { api } from '@/utils/api'
 import _ from 'lodash'
-import { get, post, put } from '@/utils/http'
+import axios from 'axios'
 import { dateFormat, getMillisecond } from '@/utils/date-util'
 import { ref, getCurrentInstance } from 'vue'
 import i18n from '@/i18n'
@@ -527,11 +527,11 @@ export default {
       if (_.isArray(this.editObject.categoryParams) && !_.isEmpty(this.editObject.categoryParams)) {
         this.editObject.categoryParams.forEach(param => {
           if (!this.paramsOptions.some(p => p.key === param.key)) {
-            get(api.dict, { type: param.key, pageSize: -1 }).then(response => {
-              if (response.code === 200) {
+            axios.get(api.dict, { params: { type: param.key, pageSize: -1 } }).then(response => {
+              if (response.status === 200) {
                 this.paramsOptions.push({
                   key: param.key,
-                  options: response.data.list.map(d => d.value)
+                  options: response.data.data.list.map(d => d.value)
                 })
               }
             })
@@ -627,23 +627,23 @@ export default {
           if (this.validateScheduleConfig(copyObject)) {
             copyObject.config = JSON.stringify(copyObject.config)
             if (copyObject.id) {
-              put(this.url, copyObject).then(res => {
+              axios.put(this.url, copyObject).then(res => {
                 this.blockOperation.save = false
-                if (res.code === 200) {
+                if (res.status === 200) {
                   this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                   this.esc(true)
                 } else {
-                  this.$message.error(res.msg)
+                  this.$message.error(res.data.message)
                 }
               })
             } else {
-              post(this.url, copyObject).then(res => {
+              axios.post(this.url, copyObject).then(res => {
                 this.blockOperation.save = false
-                if (res.code === 200) {
+                if (res.status === 200) {
                   this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                   this.esc(true)
                 } else {
-                  this.$message.error(res.msg)
+                  this.$message.error(res.data.message)
                 }
               })
             }

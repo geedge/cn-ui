@@ -14,7 +14,7 @@
 
 <script>
 import { shallowRef } from 'vue'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import chartMixin from '@/views/charts2/chart-mixin'
 import dnsEventChartByPie from './DnsEventChartByPie'
@@ -62,8 +62,8 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       this.toggleLoading(true)
-      get(api.dnsInsight.eventChart, params).then(res => {
-        const data = res.data.result
+      axios.get(api.dnsInsight.eventChart, { params }).then(res => {
+        const data = res.data.data.result
         this.pieData = []
 
         if (data !== undefined && data.length > 0) {

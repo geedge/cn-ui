@@ -252,7 +252,6 @@ import { unitTypes, countryNameIdMapping } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
-import { get } from '@/utils/http'
 import relatedServer from '@/mixins/relatedServer'
 import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
@@ -422,9 +421,9 @@ export default {
     },
     chartGetMap () {
       this.loadingMap = true
-      get((this.trafficUrlMap), this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.chartData = response.data.result
+      axios.get(this.trafficUrlMap, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
+          this.chartData = response.data.data.result
         }
         this.loadingMap = false
       })
@@ -441,7 +440,7 @@ export default {
       }
 
       axios.get(api.entity.entityList.ipRelatedPort, { params: params }).then(res => {
-        if (res.data.code === 200 && res.data.data.result.length) {
+        if (res.status === 200 && res.data.data.result.length) {
           this.openPort = ''
           res.data.data.result.forEach(item => {
             this.openPort += item.port + '/' + item.l7Protocol + ','
@@ -485,11 +484,6 @@ export default {
 </script>
 
 <style lang="scss">
-//.type-content {
-//  margin-bottom:15px;
-//  display:flex;
-//  flex-flow: row wrap;
-//  width:100%;
   .data-item {
     display: flex;
     justify-content: center;

@@ -63,7 +63,7 @@
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 import { dateFormatByAppearance } from '@/utils/date-util'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import Loading from '@/components/common/Loading'
 import ChartError from '@/components/common/Error'
@@ -127,15 +127,15 @@ export default {
         params.param = data
       }
 
-      get(api.detection.create.topKeys, params).then(res => {
+      axios.get(api.detection.create.topKeys, { params }).then(res => {
         this.tableTotal = 0
         this.tableData = []
 
-        if (res.code === 200) {
-          this.tableTotal = res.data.total
-          this.tableData = res.data.list
+        if (res.status === 200) {
+          this.tableTotal = res.data.data.total
+          this.tableData = res.data.data.list
         } else {
-          this.httpError(res)
+          this.httpError(res.data)
         }
       }).catch(err => {
         this.httpError(err)

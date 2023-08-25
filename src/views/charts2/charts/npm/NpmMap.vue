@@ -56,10 +56,10 @@ import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 import axios from 'axios'
-import { get } from '@/utils/http'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
 import _ from 'lodash'
+
 export default {
   name: 'NpmMap',
   components: { ChartError },
@@ -120,7 +120,7 @@ export default {
           startTime: getSecond(this.timeFilter.startTime),
           endTime: getSecond(this.timeFilter.endTime),
           side: this.trafficDirection.toLowerCase(),
-          country: this.location
+          countryRegion: this.location
         }
         axios.get(api.npm.location.map, { params: params }).then(response => {
           if (response.data.code === 200) {
@@ -129,24 +129,23 @@ export default {
               // 计算分数
               this.showError = false
               params.countryRegion = params.countryRegion ? `'${params.countryRegion}'` : ''
-              const tcpRequest = get(api.npm.location.mapTcp, params)
-              const httpRequest = get(api.npm.location.mapHttp, params)
-              const sslRequest = get(api.npm.location.mapSsl, params)
-              const tcpLostRequest = get(api.npm.location.mapPacketLoss, params)
-              const packetRetransRequest = get(api.npm.location.mapPacketRetrans, params)
+              const tcpRequest = axios.get(api.npm.location.mapTcp, { params })
+              const httpRequest = axios.get(api.npm.location.mapHttp, { params })
+              const sslRequest = axios.get(api.npm.location.mapSsl, { params })
+              const tcpLostRequest = axios.get(api.npm.location.mapPacketLoss, { params })
+              const packetRetransRequest = axios.get(api.npm.location.mapPacketRetrans, { params })
               Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
                 const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
                 const mapData = res
                 let msg = ''
                 res2.forEach((r, i) => {
-                  if (r.code === 200) {
+                  if (r.status === 200) {
                     mapData.forEach(t => {
-                      const find = r.data.result.find(d => d.countryRegion === t.countryRegion && t.superAdminArea === d.superAdminArea)
-                      t[keyPre[i] + 'Score'] = find
+                      t[keyPre[i] + 'Score'] = r.data.data.result.find(d => d.countryRegion === t.countryRegion && t.superAdminArea === d.superAdminArea)
                     })
                   } else {
                     this.showError = true
-                    msg = msg + ',' + r.message
+                    msg = msg + ',' + r.data.message
                     if (msg.indexOf(',') === 0) {
                       msg = msg.substring(1, msg.length)
                     }

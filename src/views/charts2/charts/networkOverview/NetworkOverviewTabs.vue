@@ -292,15 +292,13 @@ import {
   drillDownPanelTypeMapping,
   commonErrorTip
 } from '@/utils/constants'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combineDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
-import axios from 'axios'
 import indexedDBUtils from '@/indexedDB'
-import { useRoute } from 'vue-router'
 
 export default {
   name: 'NetworkOverviewTabs',
@@ -473,8 +471,6 @@ export default {
     searchColumnWidth (columnType) {
       if (columnType === 'dillDown') {
         return '217px'
-      } else {
-        
       }
     },
     async initDropdownList (tabProp) {
@@ -503,9 +499,9 @@ export default {
       if (!curTableInCode.url.drilldownList) {
         return true
       }
-      get(curTableInCode.url.drilldownList, params).then(async response => {
-        if (response.code === 200) {
-          this.tabSearchColumnValueListShow = response.data.result
+      axios.get(curTableInCode.url.drilldownList, { params }).then(async response => {
+        if (response.status === 200) {
+          this.tabSearchColumnValueListShow = response.data.data.result
           if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
             if (this.dnsQtypeMapData.size === 0) {
               this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
@@ -1624,7 +1620,7 @@ export default {
     initSearchInfo () {
       // 切换tab的时候，需要清除之前tab选中的记录的样式和值
       if (this.curTabProp) {
-        const currentValue = document.getElementById('tabSearchValue' + this.curTabProp).value
+        // const currentValue = document.getElementById('tabSearchValue' + this.curTabProp).value
         // 清空记录选中样式
         this.tabSearchColumnValueListShow.forEach(item => {
           const selectedDom = document.getElementById(item + this.curTabProp)
@@ -1636,9 +1632,9 @@ export default {
       }
 
       this.curPageNum = 1
-      this.showSearchButton = false, // 搜索按钮是否显示
-      this.showSearchInput = false, // 搜索输入框是否显示
-      this.showSearchList = false, // 下拉列表是否显示
+      this.showSearchButton = false // 搜索按钮是否显示
+      this.showSearchInput = false // 搜索输入框是否显示
+      this.showSearchList = false // 下拉列表是否显示
       this.showPopover = false// 下拉列表是否显示
       this.dropDownValue = ''
       this.tabSearchColumnValueListShow = []

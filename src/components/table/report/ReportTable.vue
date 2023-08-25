@@ -210,7 +210,7 @@
 <script>
 import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
-import { del, get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { storageKey, report } from '@/utils/constants'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
@@ -624,10 +624,10 @@ export default {
     dropDownQueryChange (param) {
       this.loadingDown = true
       this.downDataList = []
-      get(api.reportJob, param).then(res => {
-        if (res.code === 200) {
-          this.downDataList = res.data.list
-          this.pageObj.total = res.data.total
+      axios.get(api.reportJob, { params: param }).then(res => {
+        if (res.status === 200) {
+          this.downDataList = res.data.data.list
+          this.pageObj.total = res.data.data.total
           this.$nextTick(() => {
             this.$refs.dataTable.doLayout()
           })
@@ -640,10 +640,10 @@ export default {
       })
     },
     dataConversionProcessing (param) {
-      get(api.reportJob, param).then(res => {
-        if (res.code === 200) {
-          this.downDataList = res.data.list
-          this.pageObj.total = res.data.total
+      axios.get(api.reportJob, { params: param }).then(res => {
+        if (res.status === 200) {
+          this.downDataList = res.data.data.list
+          this.pageObj.total = res.data.data.total
         }
       })
     },
@@ -653,8 +653,8 @@ export default {
         cancelButtonText: this.$t('tip.no'),
         type: 'warning'
       }).then(() => {
-        del(api.reportJob + '?ids=' + row.id).then(response => {
-          if (response.code === 200) {
+        axios.delete(api.reportJob + '?ids=' + row.id).then(response => {
+          if (response.status === 200) {
             this.delFlag = true
             this.$message({
               duration: 2000,
@@ -664,7 +664,7 @@ export default {
             this.dropDownQueryChange({ tempId: props.row.id })
             this.$emit('reload')
           } else {
-            this.$message.error(response.msg)
+            this.$message.error(response.data.message)
           }
         })
       }).catch(() => {})

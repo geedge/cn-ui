@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
+import axios from 'axios'
 import ReportTable from '@/components/table/report/ReportTable'
 import cnDataList from '@/components/table/CnDataList'
 import dataListMixin from '@/mixins/data-list'
@@ -220,9 +220,9 @@ export default {
   methods: {
     queryGetTempData () {
       this.builtinLeftLoading = true
-      get(api.reportCategory, { pageSize: 999 }).then(res => {
-        if (res.code === 200) {
-          this.builtinReportLeftMenu = res.data.list.map(c => {
+      axios.get(api.reportCategory, { params: { pageSize: 999 } }).then(res => {
+        if (res.status === 200) {
+          this.builtinReportLeftMenu = res.data.data.list.map(c => {
             return {
               ...c,
               config: c.config ? JSON.parse(c.config) : {}
@@ -265,27 +265,20 @@ export default {
       }
 
       if (!this.isInit) {
-        get(listUrl, this.searchLabel).then(response => {
-          // this.tools.loading = false
-          // this.builtinRightLoading = false
-          // this.loading = false
-          if (response.code === 200) {
-            for (let i = 0; i < response.data.list.length; i++) {
-              response.data.list[i].status = response.data.list[i].status + ''
+        axios.get(listUrl, { params: this.searchLabel }).then(response => {
+          if (response.status === 200) {
+            for (let i = 0; i < response.data.data.list.length; i++) {
+              response.data.data.list[i].status = response.data.data.list[i].status + ''
             }
             this.$nextTick(() => {
-              this.tableData = response.data.list.map(item => {
+              this.tableData = response.data.data.list.map(item => {
                 return {
                   ...item,
                   config: item.config ? JSON.parse(item.config) : {}
                 }
               })
-              this.pageObj.total = response.data.total
-              if (!this.tableData || this.tableData.length === 0) {
-                this.isNoData = true
-              } else {
-                this.isNoData = false
-              }
+              this.pageObj.total = response.data.data.total
+              this.isNoData = !this.tableData || this.tableData.length === 0;
             })
             // TODO 回到顶部
           } else {

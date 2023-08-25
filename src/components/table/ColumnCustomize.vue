@@ -60,7 +60,6 @@
 <script>
 import indexedDBUtils from '@/indexedDB'
 import { storageKey, dbTableColumnCustomizeConfigPre } from '@/utils/constants'
-import { get } from '@/utils/http'
 export default {
   props: {
     customTableTitle: Array, // 自定义的title

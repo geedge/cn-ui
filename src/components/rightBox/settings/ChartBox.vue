@@ -132,7 +132,7 @@
 
 <script>
 import rightBoxMixin from '@/mixins/right-box'
-import { get, post, put } from '@/utils/http'
+import axios from 'axios'
 import { panelTypeAndRouteMapping, storageKey } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { VAceEditor } from 'vue3-ace-editor'
@@ -370,23 +370,23 @@ export default {
       this.$refs.chartForm.validate((valid) => {
         if (valid) {
           if (this.editObject.id) {
-            put(this.url, this.editObject).then(res => {
+            axios.put(this.url, this.editObject).then(res => {
               this.blockOperation.save = false
-              if (res.code === 200) {
+              if (res.status === 200) {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg || res.message)
+                this.$message.error(res.data.message)
               }
             })
           } else {
-            post(this.url, this.editObject).then(res => {
+            axios.post(this.url, this.editObject).then(res => {
               this.blockOperation.save = false
-              if (res.code === 200) {
+              if (res.status === 200) {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
                 this.esc(true)
               } else {
-                this.$message.error(res.msg || res.message)
+                this.$message.error(res.data.message)
               }
             })
           }

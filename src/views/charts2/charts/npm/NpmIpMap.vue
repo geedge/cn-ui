@@ -17,7 +17,7 @@ import { curTabState, storageKey, unitTypes } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
 import { api, getData } from '@/utils/api'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import ChartError from '@/components/common/Error'
@@ -105,18 +105,18 @@ export default {
               params: res.map(r => `'${r.countryRegion}'`).join(',')
             }
             // 计算分数
-            const tcpRequest = get(api.npm.overview.mapTcp, subParams)
-            const httpRequest = get(api.npm.overview.mapHttp, subParams)
-            const sslRequest = get(api.npm.overview.mapSsl, subParams)
-            const tcpLostRequest = get(api.npm.overview.mapPacketLoss, subParams)
-            const packetRetransRequest = get(api.npm.overview.mapPacketRetrans, subParams)
+            const tcpRequest = axios.get(api.npm.overview.mapTcp, { params: subParams })
+            const httpRequest = axios.get(api.npm.overview.mapHttp, { params: subParams })
+            const sslRequest = axios.get(api.npm.overview.mapSsl, { params: subParams })
+            const tcpLostRequest = axios.get(api.npm.overview.mapPacketLoss, { params: subParams })
+            const packetRetransRequest = axios.get(api.npm.overview.mapPacketRetrans, { params: subParams })
             Promise.all([tcpRequest, httpRequest, sslRequest, tcpLostRequest, packetRetransRequest]).then(res2 => {
               const keyPre = ['tcp', 'http', 'ssl', 'tcpLost', 'packetRetrans']
               const mapData = res
               res2.forEach((r, i) => {
-                if (r.code === 200) {
+                if (r.status === 200) {
                   mapData.forEach(t => {
-                    t[keyPre[i] + 'Score'] = r.data.result.find(d => d.countryRegion === t.countryRegion && d.superAdminArea === t.superAdminArea)
+                    t[keyPre[i] + 'Score'] = r.data.data.result.find(d => d.countryRegion === t.countryRegion && d.superAdminArea === t.superAdminArea)
                   })
                 } else {
                   this.showError = true

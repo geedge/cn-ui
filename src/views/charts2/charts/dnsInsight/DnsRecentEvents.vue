@@ -110,7 +110,7 @@
 <script>
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
@@ -206,10 +206,10 @@ export default {
         severity: this.tableSeverity
       }
       this.toggleLoading(true)
-      get(api.dnsInsight.recentEvents, params).then(res => {
-        if (res.code === 200) {
-          this.isNoData = res.data.result.length === 0
-          this.tableData = res.data.result
+      axios.get(api.dnsInsight.recentEvents, { params }).then(res => {
+        if (res.status === 200) {
+          this.isNoData = res.data.data.result.length === 0
+          this.tableData = res.data.data.result
           this.tableData.forEach((t, index) => {
             if (index > 5) {
               t.type = 'Security Event'

@@ -215,7 +215,7 @@ import { unitTypes } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import relatedServer from '@/mixins/relatedServer'
 import { dateFormatByAppearance, getMillisecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
@@ -336,9 +336,9 @@ export default {
     },
     chartGetMap () {
       this.loadingMap = true
-      get((this.trafficUrlMap), this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.chartData = response.data.result
+      axios.get(this.trafficUrlMap, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
+          this.chartData = response.data.data.result
         }
         this.loadingMap = false
       })

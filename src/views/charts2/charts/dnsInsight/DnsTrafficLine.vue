@@ -73,8 +73,8 @@ import { unitTypes, chartColor3, chartColor4 } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import _ from 'lodash'
-import { get } from '@/utils/http'
 import { api } from '@/utils/api'
+import axios from 'axios'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
@@ -165,20 +165,20 @@ export default {
 
       const url = this.queryCondition ? api.dnsInsight.drilldownTrafficAnalysis : api.dnsInsight.totalTrafficAnalysis
 
-      get(url, params).then((res) => {
-        if (res.code === 200) {
+      axios.get(url, { params }).then(res => {
+        if (res.status === 200) {
           this.showError = false
-          this.isNoData = res.data.result.length === 0
+          this.isNoData = res.data.data.result.length === 0
           if (this.isNoData) {
             this.lineTab = ''
             this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
           } else {
-            this.initData(res.data.result, val, active, show)
+            this.initData(res.data.data.result, val, active, show)
           }
         } else {
           this.isNoData = false
           this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
+          this.errorMsg = this.errorMsgHandler(res.data)
         }
       }).catch(e => {
         console.error(e)

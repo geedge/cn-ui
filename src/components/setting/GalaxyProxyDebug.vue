@@ -100,9 +100,8 @@
 </template>
 
 <script>
-import { ref, defineComponent } from 'vue'
 import { api } from '@/utils/api'
-import { get, getForDebug, postForDebug } from '@/utils/http'
+import { getForDebug, postForDebug } from '@/utils/http'
 import axios from 'axios'
 import { VAceEditor } from 'vue3-ace-editor'
 import 'ace-builds/src-noconflict/mode-javascript'
@@ -234,9 +233,9 @@ export default {
     },
 
     async getGalaxyProxyData (value) {
-      await get(api.galaxyProxy + '?pageSize=-1').then(response => {
-        if (response.code === 200) {
-          this.galaxyProxyData = response.data.list
+      await axios.get(api.galaxyProxy + '?pageSize=-1').then(response => {
+        if (response.status === 200) {
+          this.galaxyProxyData = response.data.data.list
         }
       })
     },

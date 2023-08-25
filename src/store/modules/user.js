@@ -1,11 +1,10 @@
-import {get} from '@/utils/http'
 import axios from 'axios'
 import router from '@/router'
-import {getWelcomeMenu, sortByOrderNum} from '@/permission'
-import {ElMessage} from 'element-plus' // dependent on utc plugin
-import {dbDrilldownTableConfig, storageKey} from '@/utils/constants'
-import {getConfigVersion} from '@/utils/tools'
-import {api} from '@/utils/api'
+import { getWelcomeMenu, sortByOrderNum } from '@/permission'
+import { ElMessage } from 'element-plus' // dependent on utc plugin
+import { dbDrilldownTableConfig, storageKey } from '@/utils/constants'
+import { getConfigVersion } from '@/utils/tools'
+import { api } from '@/utils/api'
 import indexedDBUtils from '@/indexedDB'
 
 const user = {

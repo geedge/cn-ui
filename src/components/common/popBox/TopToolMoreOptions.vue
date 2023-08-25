@@ -43,7 +43,7 @@
             <button :id="id+'-json-import-template'" class="el-button el-button--default el-button--small" @click="downloadTemplate">
               <span>{{$t('overall.template')}}</span>
             </button>
-            <button  :id="id+'-json-import-add'" :class="{'cn-btn-disabled':prevent_opt.import}" :disabled="prevent_opt.import" class="cn-btn el-button el-button--default el-button--small" @click="importJson">
+            <button  :id="id+'-json-import-add'" :class="{'cn-btn-disabled':blockOperation.import}" :disabled="blockOperation.import" class="cn-btn el-button el-button--default el-button--small" @click="importJson">
               <span>{{$t('overall.import')}}</span>
             </button>
             <button :id="id+'-json-import-esc'" class="el-button el-button--default el-button--small" @click="closeDialog">
@@ -58,7 +58,6 @@
 
 <script>
 import axios from 'axios'
-import { post } from '@/utils/http'
 import { storageKey } from '@/utils/constants'
 
 export default {
@@ -103,20 +102,20 @@ export default {
     },
     importJson () {
       if (this.importFile && this.importFile.raw) {
-        this.prevent_opt.import = true
+        this.blockOperation.import = true
         const form = new FormData()
         form.append('file', this.importFile.raw)
         if (this.paramsType) {
           form.append('type', this.paramsType)
         }
         form.append('language', localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : 'en')
-        post(this.importUrl, form, { 'Content-Type': 'multipart/form-data' }).then(response => {
-          if (response.code == 200 && response.msg == 'success') {
+        axios.post(this.importUrl, form, { 'Content-Type': 'multipart/form-data' }).then(response => {
+          if (response.status === 200 && response.data.msg === 'success') {
             this.$message({ duration: 2000, type: 'success', message: this.$t('tip.importSuccess') })
           } else {
             this.$message.error(response.msg)
           }
-          this.prevent_opt.import = false
+          this.blockOperation.import = false
         })
       } else {
         this.$message.error(this.$t('tip.noImportFile'))

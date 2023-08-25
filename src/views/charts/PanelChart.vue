@@ -88,7 +88,7 @@ import { tableTitleMapping, legendMapping } from '@/views/charts/charts/chart-ta
 import { replaceUrlPlaceholder } from '@/utils/tools'
 import { getNowTime, getSecond } from '@/utils/date-util'
 
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { ref } from 'vue'
 import _ from 'lodash'
 
@@ -215,17 +215,17 @@ export default {
         }
 
         if (requestUrl) {
-          get(replaceUrlPlaceholder(requestUrl, this.queryParams)).then(response => {
-            if (response.code === 200) {
-              if (Array.isArray(response.data.result)) {
-                response.data.result.forEach(item => {
+          axios.get(replaceUrlPlaceholder(requestUrl, { params: this.queryParams })).then(response => {
+            if (response.status === 200) {
+              if (Array.isArray(response.data.data.result)) {
+                response.data.data.result.forEach(item => {
                   if (item.legend && legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${item.legend}`]) {
                     item.legend = this.$t(legendMapping[`${this.entity && this.entity.ip ? 'ip_' : ''}${item.legend}`])
                   }
                 })
               }
-              this.chartData = response.data.result
-              this.resultType = response.data.resultType
+              this.chartData = response.data.data.result
+              this.resultType = response.data.data.resultType
               if (isEchartsWithStatistics(this.chartInfo.type)) {
                 const newArr = []
                 _.forEach(this.chartData, function (value, key) {
@@ -244,19 +244,18 @@ export default {
                 })
               }
               if (this.isTable) {
-                this.table.tableData = response.data.result
+                this.table.tableData = response.data.data.result
                 this.table.tableColumns = chartParams.columns
-                // this.table.tableColumns = this.getTableTitle(response.data.result)
                 this.table.currentPageData = this.getTargetPageData(1, this.table.pageSize, this.table.tableData)
               } else if (this.isSingleValue) {
                 if (chartParams && chartParams.dataKey) {
-                  if (response.data.result && (response.data.result[chartParams.dataKey] || response.data.result[chartParams.dataKey] === 0)) {
-                    this.chartData = response.data.result[chartParams.dataKey]
-                  } else if (response.data.result && (response.data.result[chartParams.dataKey + 'Value'] || response.data.result[chartParams.dataKey + 'Value'] === 0)) {
+                  if (response.data.data.result && (response.data.data.result[chartParams.dataKey] || response.data.data.result[chartParams.dataKey] === 0)) {
+                    this.chartData = response.data.data.result[chartParams.dataKey]
+                  } else if (response.data.data.result && (response.data.data.result[chartParams.dataKey + 'Value'] || response.data.data.result[chartParams.dataKey + 'Value'] === 0)) {
                     this.chartData = {
-                      value: response.data.result[chartParams.dataKey + 'Value'],
-                      p50: response.data.result[chartParams.dataKey + 'P50'],
-                      p90: response.data.result[chartParams.dataKey + 'P90']
+                      value: response.data.data.result[chartParams.dataKey + 'Value'],
+                      p50: response.data.data.result[chartParams.dataKey + 'P50'],
+                      p90: response.data.data.result[chartParams.dataKey + 'P90']
                     }
                   } else {
                     this.chartData = null
@@ -267,7 +266,7 @@ export default {
             } else {
               this.isError = true
               this.noData = true
-              this.errorInfo = response.msg || response.message || 'Unknown'
+              this.errorInfo = response.data.message || 'Unknown'
             }
           }).finally(() => {
             if (this.needTimeout && this.firstRender) {

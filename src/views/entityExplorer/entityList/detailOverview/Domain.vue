@@ -219,7 +219,7 @@ import { unitTypes } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import relatedServer from '@/mixins/relatedServer'
 import { dateFormatByAppearance, getMillisecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
@@ -341,26 +341,26 @@ export default {
     },
     chartGetMap () {
       this.loadingMap = true
-      get(this.trafficUrlMap, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
-          this.chartData = response.data.result
+      axios.get(this.trafficUrlMap, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
+          this.chartData = response.data.data.result
         }
         this.loadingMap = false
       })
     },
     getBasicProperties () {
-      get(this.basicProperties, this.getQueryParams()).then(response => {
-        if (response.code === 200) {
+      axios.get(this.basicProperties, { params: this.getQueryParams() }).then(response => {
+        if (response.status === 200) {
           this.entityData = {
             ...this.entityData,
-            domainCategory: response.data.result.domainCategory,
-            domainCategoryGroup: response.data.result.domainCategoryGroup,
-            domainDescription: response.data.result.domainDescription,
-            domainReputationScore: response.data.result.domainReputationScore,
-            domainWhoisAddress: response.data.result.domainWhoisAddress,
-            domainWhoisOrg: response.data.result.domainWhoisOrg,
-            domainIcpCompanyName: response.data.result.domainIcpCompanyName,
-            domainIcpSiteLicense: response.data.result.domainIcpSiteLicense
+            domainCategory: response.data.data.result.domainCategory,
+            domainCategoryGroup: response.data.data.result.domainCategoryGroup,
+            domainDescription: response.data.data.result.domainDescription,
+            domainReputationScore: response.data.data.result.domainReputationScore,
+            domainWhoisAddress: response.data.data.result.domainWhoisAddress,
+            domainWhoisOrg: response.data.data.result.domainWhoisOrg,
+            domainIcpCompanyName: response.data.data.result.domainIcpCompanyName,
+            domainIcpSiteLicense: response.data.data.result.domainIcpSiteLicense
           }
         }
       })

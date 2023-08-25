@@ -81,7 +81,7 @@ import { getTypeCategory } from '@/views/charts/charts/tools'
 import { urlParamsHandler, overwriteUrl, getDnsMapData, computeScore } from '@/utils/tools'
 import ChartList from '@/views/charts2/ChartList'
 import { useStore } from 'vuex'
-import { get } from '@/utils/http'
+import axios from 'axios'
 
 export default {
   name: 'Panel',
@@ -446,14 +446,14 @@ export default {
       }
       if ((type && condition) || type) {
         params.type = params.type || type
-        get(url, params).then(res => {
-          if (res.code === 200) {
+        axios.get(url, { params }).then(res => {
+          if (res.status === 200) {
             const data = {
-              establishLatencyMs: res.data.result.establishLatencyMsAvg || null,
-              httpResponseLatency: res.data.result.httpResponseLatencyAvg || null,
-              sslConLatency: res.data.result.sslConLatencyAvg || null,
-              tcpLostlenPercent: res.data.result.tcpLostlenPercentAvg || null,
-              pktRetransPercent: res.data.result.pktRetransPercentAvg || null
+              establishLatencyMs: res.data.data.result.establishLatencyMsAvg || null,
+              httpResponseLatency: res.data.data.result.httpResponseLatencyAvg || null,
+              sslConLatency: res.data.data.result.sslConLatencyAvg || null,
+              tcpLostlenPercent: res.data.data.result.tcpLostlenPercentAvg || null,
+              pktRetransPercent: res.data.data.result.pktRetransPercentAvg || null
             }
             this.score = computeScore(data)
           }

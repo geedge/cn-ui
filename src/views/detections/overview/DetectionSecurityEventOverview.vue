@@ -268,7 +268,7 @@
 </template>
 
 <script>
-import { get } from '@/utils/http'
+import axios from 'axios'
 import { api } from '@/utils/api'
 import { getMillisecond } from '@/utils/date-util'
 import { eventSeverityColor, unitTypes } from '@/utils/constants'
@@ -338,15 +338,17 @@ export default {
     queryBasic () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detection.securityEvent.overviewBasic, {
-            eventId: this.detection.eventId,
-            startTime: this.detection.startTime,
-            endTime: this.detection.endTime
+          axios.get(api.detection.securityEvent.overviewBasic, {
+            params: {
+              eventId: this.detection.eventId,
+              startTime: this.detection.startTime,
+              endTime: this.detection.endTime
+            }
           }).then((response) => {
-            if (response.code === 200) {
-              resolve(response.data.result[0])
+            if (response.status === 200) {
+              resolve(response.data.data.result[0])
             } else {
-              reject(response)
+              reject(response.data)
             }
           })
         } catch (e) {
@@ -357,15 +359,17 @@ export default {
     queryEvent () {
       return new Promise((resolve, reject) => {
         try {
-          get(api.detection.securityEvent.overviewEvent, {
-            startTime: this.detection.startTime,
-            offenderIp: this.detection.offenderIp,
-            victimIp: this.detection.victimIp
+          axios.get(api.detection.securityEvent.overviewEvent, {
+            params: {
+              startTime: this.detection.startTime,
+              offenderIp: this.detection.offenderIp,
+              victimIp: this.detection.victimIp
+            }
           }).then((response) => {
-            if (response.code === 200) {
-              resolve(response.data.result)
+            if (response.status === 200) {
+              resolve(response.data.data.result)
             } else {
-              reject(response)
+              reject(response.data)
             }
           })
         } catch (e) {

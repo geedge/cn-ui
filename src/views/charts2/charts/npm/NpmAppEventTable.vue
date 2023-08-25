@@ -68,7 +68,7 @@
 <script>
 import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
 
@@ -150,19 +150,19 @@ export default {
         limit: 10,
         type: this.metric
       }
-      get(api.npm.events.dimensionEvents, params).then(res => {
-        if (res.code === 200) {
+      axios.get(api.npm.events.dimensionEvents, { params }).then(res => {
+        if (res.status === 200) {
           this.showError = false
-          if (!res.data.result || res.data.result.length === 0) {
+          if (!res.data.data.result || res.data.data.result.length === 0) {
             this.isNoData = true
           }
-          this.tableData = res.data.result
+          this.tableData = res.data.data.result
         } else {
           this.isNoData = false
           this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
+          this.errorMsg = this.errorMsgHandler(res.data)
         }
-      }).catch((e) => {
+      }).catch(e => {
         this.isNoData = false
         this.showError = true
         this.errorMsg = this.errorMsgHandler(e)

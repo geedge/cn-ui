@@ -125,7 +125,6 @@ import { storageKey, unitTypes, networkTable, operationType, curTabState } from 
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
-import { put } from '@/utils/http'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import { getSecond } from '@/utils/date-util'
@@ -565,8 +564,8 @@ export default {
     // 保存变更，并且在增、删app后，根据当前app数量更改整体高度
     saveChart (toSaveChart) {
       return new Promise(resolve => {
-        put(api.chart, toSaveChart).then(res => {
-          if (res.code === 200) {
+        axios.put(api.chart, toSaveChart).then(res => {
+          if (res.status === 200) {
             this.emitter.emit('reloadChartList')
             resolve()
           }

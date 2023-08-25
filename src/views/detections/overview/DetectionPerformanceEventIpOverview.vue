@@ -84,7 +84,7 @@
 import { api, getData } from '@/utils/api'
 import { unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
-import { get } from '@/utils/http'
+import axios from 'axios'
 import * as echarts from 'echarts'
 import { markRaw } from 'vue'
 import { metricOption } from '@/views/detections/options/detectionOptions'
@@ -198,16 +198,18 @@ export default {
             url = api.detection.performanceEvent.highDnsResponseTimeMetric
           }
           if (url) {
-            get(url, {
-              serverIp: this.detection.serverIp,
-              startTime: this.searchStartTime,
-              endTime: this.searchEndTime,
-              eventType: this.detection.eventType
+            axios.get(url, {
+              params: {
+                serverIp: this.detection.serverIp,
+                startTime: this.searchStartTime,
+                endTime: this.searchEndTime,
+                eventType: this.detection.eventType
+              }
             }).then((response) => {
-              if (response.code === 200) {
-                resolve(response.data.result[0])
+              if (response.status === 200) {
+                resolve(response.data.data.result[0])
               } else {
-                reject(response)
+                reject(response.data)
               }
             })
           } else {
