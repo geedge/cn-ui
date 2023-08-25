@@ -2,6 +2,7 @@ import Meta, { connection, condition, columnType } from './meta'
 import Token, { types } from './token'
 import ParserError, { errorTypes, errorDesc } from '@/components/advancedSearch/meta/error'
 import _ from 'lodash'
+import { columnList } from '@/utils/static-data'
 
 const strReg = {
   all: /^[\da-zA-Z\s.'><!=-_(),%]$/,
@@ -94,6 +95,9 @@ export default class Parser {
           } else if (meta.column.type === columnType.string) {
             if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
               str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
+            } else if (meta.operator.value.toLowerCase().indexOf('has') > -1) {
+              // 操作符为has时，has函数需要提前，格式为has(label,value)
+              str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
             } else {
               str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
             }
@@ -141,6 +145,9 @@ export default class Parser {
         } else if (meta.column.type === columnType.string) {
           if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
             str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
+          } else if (meta.operator.value.toLowerCase().indexOf('has') > -1) {
+            // 操作符为has时，has函数需要提前，格式为has(label,value)
+            str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
           } else {
             str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
           }
@@ -582,6 +589,11 @@ export default class Parser {
                   if (prevToken.type === types.connection && [types.commonOperator, types.letterOperator].indexOf(nextToken.type) > -1) {
                     meta.column.type = columnType.string
                     meta.column.label = token.value
+                  } else if (token.value.toLowerCase().indexOf('has(') > -1) {
+                    meta.column.type = columnType.string
+                    // 目前token.value为has(Tag，但避免以后使用has函数的实体不限于Tag，故截取has(后的内容
+                    meta.column.label = token.value.substring(4)
+                    meta.operator.value = 'has'
                   } else {
                     isColumn = false
                   }
@@ -589,6 +601,11 @@ export default class Parser {
                   if ([types.commonOperator, types.letterOperator].indexOf(nextToken.type) > -1) {
                     meta.column.type = columnType.string
                     meta.column.label = token.value
+                  } else if (token.value.toLowerCase().indexOf('has(') > -1) {
+                    meta.column.type = columnType.string
+                    // 目前token.value为has(Tag，但避免以后使用has函数的实体不限于Tag，故截取has(后的内容
+                    meta.column.label = token.value.substring(4)
+                    meta.operator.value = 'has'
                   } else {
                     isColumn = false
                   }
@@ -775,7 +792,10 @@ export function handleMetaListToStr (metaList) {
   // 长度为1时，即模糊搜索，例如搜索框值为1.1.1.1，则直接返回1.1.1.1
   // 如果为IP='1.1.1.1'的情况，则从metaList拼接成IP='1.1.1.1'返回出去
   if (metaList && metaList.length === 1) {
-    const arr = ['IP'.toLowerCase(), 'Domain'.toLowerCase(), 'App'.toLowerCase(), 'City'.toLowerCase(), 'Country'.toLowerCase(), 'ASN'.toLowerCase()]
+    const arr = []
+    columnList.forEach(item => {
+      arr.push(item.label.toLowerCase())
+    })
     let label = metaList[0].column.label
     let newStr = JSON.parse(JSON.stringify(label.toLowerCase()))
     // 将str中的IP、Domain等替换为数组arr中的元素
@@ -785,7 +805,11 @@ export function handleMetaListToStr (metaList) {
     // 检查str字段在arr中是否出现,true为出现过
     const result = arr.some(item => newStr.includes(item))
     if (result) {
-      return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+      if (metaList[0].operator.value.toLowerCase() === 'has') {
+        return `${metaList[0].operator.value}(${metaList[0].column.label},'${metaList[0].value.label}')`
+      } else {
+        return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+      }
     } else {
       const regex = /^["']|["']$/
       // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
@@ -797,10 +821,15 @@ export function handleMetaListToStr (metaList) {
   } else if (metaList && metaList.length > 1) {
     // 此为按语法搜索，将metaList转为字符串
     const newMetaList = []
+    let hasStr = ''
     // 去除metaList的AND项
     metaList.forEach(item => {
       if (item.value !== 'AND') {
-        newMetaList.push(item)
+        if (item.column.label.toLowerCase() === 'tag') {
+          hasStr += `${item.operator.value}(${item.column.label},'${item.value.value}') AND `
+        } else {
+          newMetaList.push(item)
+        }
       }
     })
 
@@ -815,6 +844,9 @@ export function handleMetaListToStr (metaList) {
         let str = newObj[i]
         str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
         lastObj[i] = `${i} IN (${str})`
+      } else if (i.toLowerCase() === 'tag') {
+        // lastObj[i] = `${i} = '${newObj[i]}'`
+        lastObj[i] = `has(${i},'${newObj[i]}')`
       } else {
         // 单独存在的,直接保留
         lastObj[i] = `${i} = '${newObj[i]}'`
@@ -825,7 +857,7 @@ export function handleMetaListToStr (metaList) {
     for (const i in lastObj) {
       str += lastObj[i] + ' AND '
     }
-    str = str.slice(0, -5)
+    str = str.slice(0, -5) + ' ' + hasStr.slice(0, -5)
 
     return str
   }

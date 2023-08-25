@@ -6,7 +6,6 @@
         <advanced-search
           ref="search"
           :column-list="columnList"
-          :operator-list="operatorList"
           :connection-list="connectionList"
           :default-mode="defaultMode"
           :full-text="true"
@@ -68,8 +67,6 @@ export default {
   data () {
     return {
       columnList: columnList,
-      // operatorList: ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE'],
-      operatorList: ['=', 'IN'],
       connectionList: [
         {
           value: 'AND',

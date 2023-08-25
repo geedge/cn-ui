@@ -29,10 +29,13 @@
               ></el-option>
             </el-select>
           </div>
-          <span v-show="!meta.column.isEditing" @click="columnClick(meta)">{{meta.column.label}}</span>
+          <span v-if="!meta.column.isEditing && meta.operator.value !== 'has'" @click="columnClick(meta)">{{meta.column.label}}</span>
+          <!--操作符是has时，has需前置-->
+          <span v-else class="condition__operator">{{ meta.operator.value.toUpperCase() }}</span>
         </div>
         <!-- 已选操作符显示 -->
-        <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show">{{meta.operator.value}}</div>
+        <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show && meta.operator.value !== 'has'">{{meta.operator.value}}</div>
+        <div v-if="meta.operator.value === 'has'" class="condition__operator" style="color: #000C18">({{meta.column.label}},</div>
         <!-- 值 -->
         <div class="condition__value">
           <div v-if="meta.value.isEditing">
@@ -41,6 +44,8 @@
           </div>
           <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
         </div>
+        <div v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
+
         <!-- 操作符选择器 -->
         <div class="condition__operation-select" v-if="meta.operator.show && meta.operator.isEditing">
           <div
@@ -107,7 +112,6 @@ export default {
   name: 'TagMode',
   props: {
     columnList: Array,
-    operatorList: Array,
     connectionList: Array,
     convertMetaList: Array,
     showList: Boolean
@@ -116,7 +120,8 @@ export default {
     return {
       condition,
       connection,
-      metaList: []
+      metaList: [],
+      operatorList: [] // 操作符列表，根据所选columnList的label来确定，一般为=,IN，tags操作符为has
     }
   },
   emits: ['changeMode', 'search'],
@@ -225,6 +230,9 @@ export default {
             this.metaList.splice(index, 1)
           }
         }
+        // 根据所选label在columnList中匹配label来确定操作符，一般为=,IN，tags操作符为has
+        const obj = this.columnList.find(t => t.label === meta.column.label)
+        this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
       }, 200)
     },
     connectionClick (meta) {

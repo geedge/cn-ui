@@ -18,7 +18,6 @@
         v-if="searchMode === 'tag'"
         ref="tagMode"
         :column-list="columnList"
-        :operator-list="showOperatorList"
         :connection-list="showConnectionList"
         :convert-meta-list="metaList"
         :show-list="showList"
@@ -31,7 +30,7 @@
 <script>
 import TagMode from '@/components/advancedSearch/TagMode'
 import TextMode from '@/components/advancedSearch/TextMode'
-import { defaultOperatorList, defaultConnectionList } from '@/components/advancedSearch/meta/meta'
+import { defaultConnectionList } from '@/components/advancedSearch/meta/meta'
 import _ from 'lodash'
 import { ref } from 'vue'
 import Parser from '@/components/advancedSearch/meta/parser'
@@ -64,8 +63,6 @@ export default {
       type: Array,
       required: true
     },
-    // 操作符列表
-    operatorList: Array,
     // 连接符列表
     connectionList: Array
   },
@@ -133,12 +130,10 @@ export default {
         }
       }
     }
-    // 如果参数中的operatorList、connectionList为空，使用默认值
-    const showOperatorList = _.isEmpty(props.operatorList) ? defaultOperatorList : [...props.operatorList]
+    // 如果参数中的connectionList为空，使用默认值
     const showConnectionList = _.isEmpty(props.connectionList) ? defaultConnectionList : [...props.connectionList]
     return {
       searchMode,
-      showOperatorList,
       showConnectionList
     }
   }

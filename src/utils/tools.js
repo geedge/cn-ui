@@ -1411,12 +1411,22 @@ export function comparedEntityKey (str) {
         // 判断是否包含=或者in
         const keyEqual = item.substring(0, item.indexOf('='))
         const keyIn = item.substring(0, item.indexOf(' IN '))
+
+        let keyHas // 目前只有Tag操作符为has函数，避免以后会增加其他实体使用has，故不单独将has作为tag使用
+        let objHas
+        if (item.toLowerCase().indexOf('has(') > -1) {
+          keyHas = item.match(/[()]([^,]+)/)[1] // 例：has(Tag,'111'),截取Tag
+          objHas = columnList.find(t => t.label.toLowerCase() === keyHas.toLowerCase())
+        }
+
         const objEqual = columnList.find(t => t.label.toLowerCase() === keyEqual.toLowerCase())
         const objIn = columnList.find(t => t.label.toLowerCase() === keyIn.toLowerCase())
         if (objEqual) {
           newQ += objEqual.label + item.substring(item.indexOf('='), item.length) + ' AND '
         } else if (objIn) {
           newQ += objIn.label + item.substring(item.indexOf(' IN '), item.length) + ' AND '
+        } else if (objHas) {
+          newQ += item.substring(item.indexOf(' has'), item.length) + ' AND '
         } else {
           errorQ += '[' + keyEqual + ']' + '、'
           returnObj.isKey = false
@@ -1447,6 +1457,11 @@ export function comparedEntityKey (str) {
       }
     }
   } else if (q && (q.indexOf(' IN ') > -1 || q.indexOf(' LIKE ') > -1)) {
+    return {
+      key: q,
+      isKey: true
+    }
+  } else if (q && (q.indexOf('has(') > -1)) {
     return {
       key: q,
       isKey: true
@@ -1513,47 +1528,70 @@ const handleStrToUniteStr = (str) => {
   // 若str = "IP='1.1.1.1' AND Domain IN ('baidu.com','jd.com') AND IP='2.2.2.2'"
   // 则将转换为 str = "IP IN ('1.1.1.1','2.2.2.2') AND Domain IN ('baidu.com','jd.com')"
   const arr = str.split(' AND ')
-  const newArr = []
+  const repeatArr = [] // 判断label是否重复的数组
 
-  // 仿造成metaList形式如 [{ label: 'IP', value: '1.1.1.1' } ... ]
-  // 从而根据label判断是否是同一属性，如是IP的话，则将value进行拼接，然后再使用in ()包裹
+  // 如果字符串不存在相同字段，则直接返回str，如IP = '1' AND has(Tag,'1')
   arr.forEach(item => {
     if (item.indexOf('=') > -1) {
       const label = item.substring(0, item.indexOf('='))
-      const value = item.substring(item.indexOf('=') + 1)
-      // 去除单引号
-      newArr.push({ label: label, value: value.replace(/^'|'$/g, '') })
+      repeatArr.push(label)
     } else if (item.indexOf(' IN ') > -1) {
       const label = item.substring(0, item.indexOf(' IN '))
-      let value = item.substring(item.indexOf(' IN ') + 4) // 去除（）
-      value = value.replace(/[\(\)]/g, '')
-      newArr.push({ label: label, value: value })
+      repeatArr.push(label)
     }
   })
 
-  const newObj = combineLabel1(newArr)
-  const lastObj = {}
-  for (const i in newObj) {
-    if (newObj[i].indexOf('(') > -1) {
-      // 原来为IN ()格式的直接保留
-      lastObj[i] = `${i} IN ${newObj[i]}`
-    } else if (newObj[i].indexOf(',') > -1) {
-      let str = newObj[i]
-      str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
-      lastObj[i] = `${i} IN (${str})`
-    } else {
-      // 单独存在的,直接保留
-      lastObj[i] = `${i} = '${newObj[i]}'`
+  const set = new Set(repeatArr)
+  if (set.size === repeatArr.length) {
+    return str
+  } else {
+    const hasArr = [] // has函数的操作不必合并在一起，继续用and连接，单独放一边
+    const commonArr = [] // 普通连接符数组，如连接符为=、in等，
+
+    // 仿造成metaList形式如 [{ label: 'IP', value: '1.1.1.1' } ... ]
+    // 从而根据label判断是否是同一属性，如是IP的话，则将value进行拼接，然后再使用in ()包裹
+    arr.forEach(item => {
+      if (item.indexOf('=') > -1) {
+        const label = item.substring(0, item.indexOf('='))
+        const value = item.substring(item.indexOf('=') + 1)
+        // 去除单引号
+        commonArr.push({ label: label, value: value.replace(/^'|'$/g, '') })
+      } else if (item.indexOf(' IN ') > -1) {
+        const label = item.substring(0, item.indexOf(' IN '))
+        let value = item.substring(item.indexOf(' IN ') + 4) // 去除（）
+        value = value.replace(/[\(\)]/g, '')
+        commonArr.push({ label: label, value: value })
+      } else if (item.toLowerCase().indexOf('has(') > -1) {
+        hasArr.push(item)
+      }
+    })
+
+    const commonObj = combineLabel1(commonArr)
+    const lastObj = {}
+    for (const i in commonObj) {
+      if (commonObj[i].indexOf('(') > -1) {
+        // 原来为IN ()格式的直接保留
+        lastObj[i] = `${i} IN ${commonObj[i]}`
+      } else if (commonObj[i].indexOf(',') > -1) {
+        let str = commonObj[i]
+        str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
+        lastObj[i] = `${i} IN (${str})`
+      } else {
+        // 单独存在的,直接保留
+        lastObj[i] = `${i} = '${commonObj[i]}'`
+      }
     }
-  }
 
-  let str1 = ''
-  for (const i in lastObj) {
-    str1 += lastObj[i] + ' AND '
-  }
-  str1 = str1.slice(0, -5)
+    let lastStr = ''
+    for (const i in lastObj) {
+      lastStr += lastObj[i] + ' AND '
+    }
+    lastStr = lastStr.slice(0, -5)
+    const hasStr = hasArr.join(' AND ')
+    lastStr = lastStr + ' ' + hasStr
 
-  return str1
+    return lastStr
+  }
 }
 /**
  * 根据label判断是否是同一属性，是的话，则将value进行拼接，否则按原形式返回

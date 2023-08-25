@@ -386,8 +386,8 @@ export async function getPermission () {
     axios.post(api.permission, { token: localStorage.getItem(storageKey.token) }).then(response => {
       resolve({
         menuList: sortByOrderNum(response.data.data.menus),
-        buttonList: response.data.buttons,
-        roleList: response.data.roles
+        buttonList: response.data.data.buttons,
+        roleList: response.data.data.roles
       })
     })
   })
