@@ -3,6 +3,8 @@ import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import mockData from './mockData/InformationAggregation'
 import ElementPlus from 'element-plus'
+import common from '@/mixins/common'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 let wrapper = null
 const mockGet = mockData.common
@@ -35,7 +37,8 @@ function axiosPostAndMounted (data) {
     propsData: {
       entity,
       timeFilter
-    }
+    },
+    mixins: [common, chartMixin]
   })
 }
 

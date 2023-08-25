@@ -2,6 +2,8 @@ import NpmEventsHeader from '@/views/charts2/charts/npm/NpmEventsHeader'
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import { mockData } from './mockData/NpmEventsHeader'
+import common from '@/mixins/common'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 // 模拟数据
 const chartData = mockData.common.data
@@ -23,7 +25,8 @@ function axiosPostAndMounted (data) {
   wrapper = mount(NpmEventsHeader, {
     propsData: {
       type
-    }
+    },
+    mixins: [common, chartMixin]
   })
 }
 

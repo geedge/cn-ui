@@ -354,9 +354,9 @@ export async function getDictList (params) {
   return await getData(api.dict, params, true)
 }
 function handleResult (response) {
-  if (response.data.list || response.data.result) {
+  if (response.data && (response.data.list || response.data.result)) {
     return response.data.list || response.data.result
-  } else if (response.data.result === 0) {
+  } else if (response.data && response.data.result === 0) {
     return response.data.result
   } else {
     return response.data
@@ -382,13 +382,17 @@ export async function getData (url, params = {}, isQueryList) {
 }
 
 export async function getPermission () {
-  const request = new Promise(resolve => {
+  const request = new Promise((resolve, reject) => {
     axios.post(api.permission, { token: localStorage.getItem(storageKey.token) }).then(response => {
-      resolve({
-        menuList: sortByOrderNum(response.data.data.menus),
-        buttonList: response.data.data.buttons,
-        roleList: response.data.data.roles
-      })
+      if (response.status === 200) {
+        resolve({
+          menuList: sortByOrderNum(response.data.data.menus),
+          buttonList: response.data.data.buttons,
+          roleList: response.data.data.roles
+        })
+      } else {
+        reject(response.data)
+      }
     })
   })
   return await request
@@ -396,15 +400,18 @@ export async function getPermission () {
 
 export async function getI18n () {
   const dictData = await getDictList({ type: 'lang' })
-  const langs = dictData.map(d => d.value).join(',')
-  localStorage.setItem(storageKey.languages, langs)
-  const request = new Promise(resolve => {
-    axios.get(api.i18nLang, { params: { l: langs } }).then(response => {
-      response.data.data.cn = response.data.data.zh
-      resolve(response.data.data)
+  if (dictData) {
+    const langs = dictData.map(d => d.value).join(',')
+    localStorage.setItem(storageKey.languages, langs)
+    const request = new Promise(resolve => {
+      axios.get(api.i18nLang, { params: { l: langs } }).then(response => {
+        response.data.data.cn = response.data.data.zh
+        resolve(response.data.data)
+      })
     })
-  })
-  return await request
+    return await request
+  }
+  return null
 }
 
 /* 获得原始的3611-2 json字符串数据 */

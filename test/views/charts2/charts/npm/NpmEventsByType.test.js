@@ -2,6 +2,7 @@ import NpmEventsByType from '@/views/charts2/charts/npm/NpmEventsByType'
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import { mockData } from './mockData/NpmEventsByType'
+import common from '@/mixins/common'
 
 const mockGet = mockData.common.data
 let wrapper = null
@@ -26,7 +27,8 @@ function axiosPostAndMounted (data) {
   wrapper = mount(NpmEventsByType, {
     propsData: {
       timeFilter
-    }
+    },
+    mixins: [common]
   })
 }
 

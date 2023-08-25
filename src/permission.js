@@ -10,7 +10,7 @@ const loginWhiteList = ['/login', '/'] // 免登陆白名单
 const permissionWhiteList = [...loginWhiteList] // 权限白名单
 
 router.beforeEach(async (to, from, next) => {
-  if (to.path.indexOf('/login') == -1) {
+  if (to.path.indexOf('/login') === -1) {
     sessionStorage.setItem(storageKey.tokenExpireCurrentPath, decodeURIComponent(to.fullPath))
   }
   // 加载iso-3166-2资源
