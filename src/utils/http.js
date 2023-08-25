@@ -69,6 +69,13 @@ axios.interceptors.response.use(
     return response
   },
   error => {
+    if (licenceErrorCode.indexOf(error.response.data.code) !== -1) {
+      localStorage.removeItem(storageKey.token)
+      window.location.href = '/'
+    } else if (accountErrorCode.indexOf(error.response.data.code) !== -1) {
+      localStorage.removeItem(storageKey.token)
+      window.location.href = '/'
+    }
     return Promise.reject(error)
   }
 )

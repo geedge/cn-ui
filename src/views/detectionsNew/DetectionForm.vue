@@ -206,7 +206,7 @@ export default {
             })
 
             // axios.post('api', formObj).then(response => {
-            //   if (response.data.code === 200) {
+            //   if (response.status === 200) {
             //     this.$message({
             //       duration: 2000,
             //       type: 'success',

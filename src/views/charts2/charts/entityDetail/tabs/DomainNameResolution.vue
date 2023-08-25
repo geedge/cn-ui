@@ -142,13 +142,13 @@ export default {
       Promise.all([data1, data2, data3]).then(res => {
         const res0 = res[0].data
         const res1 = res[1].data
-        if (res0.code === 200 && res1.code === 200) {
+        if (res[0].status === 200 && res[1].status === 200) {
           this.isNoData = res0.data.result.length === 0 && res1.data.result.length === 0
         }
 
         // app相关，显示ip、domain
         if (this.entity.entityType === 'app' && !this.isNoData) {
-          if (res0.code === 200) {
+          if (res[0].status === 200) {
             this.relatedIpList = res0.data.result
             this.handleShowDataNum(this.showRelatedIpListInfo, this.relatedIpList)
           } else {
@@ -156,7 +156,7 @@ export default {
             this.errorMsg1 = this.errorMsgHandler(res0)
           }
 
-          if (res1.code === 200) {
+          if (res[1].status === 200) {
             this.relatedDomainList = res1.data.result
             this.handleShowDataNum(this.showRelatedDomainListInfo, this.relatedDomainList)
           } else {
@@ -170,14 +170,14 @@ export default {
 
         // ip相关，显示app，domain
         if (this.entity.entityType === 'ip' && !this.isNoData) {
-          if (res0.code === 200) {
+          if (res[0].status === 200) {
             this.relatedAppList = res0.data.result
             this.handleShowDataNum(this.showRelatedAppListInfo, this.relatedAppList)
           } else {
             this.showError0 = true
             this.errorMsg0 = this.errorMsgHandler(res0)
           }
-          if (res1.code === 200) {
+          if (res[1].status === 200) {
             this.relatedDomainList = res1.data.result
             this.handleShowDataNum(this.showRelatedDomainListInfo, this.relatedDomainList)
           } else {
@@ -192,11 +192,11 @@ export default {
         // domain相关，显示app，ip，domain
         if (this.entity.entityType === 'domain') {
           const res2 = res[2].data
-          if (res0.code === 200 && res1.code === 200 && res2.code === 200) {
+          if (res[0].status === 200 && res[1].status === 200 && res[2].status === 200) {
             this.isNoData = res0.data.result.length === 0 && res1.data.result.length === 0 && res2.data.result.length === 0
           }
 
-          if (res0.code === 200) {
+          if (res[0].status === 200) {
             this.relatedAppList = res0.data.result
             this.handleShowDataNum(this.showRelatedAppListInfo, this.relatedAppList)
           } else {
@@ -204,7 +204,7 @@ export default {
             this.errorMsg0 = this.errorMsgHandler(res0)
           }
 
-          if (res1.code === 200) {
+          if (res[1].status === 200) {
             this.relatedIpList = res1.data.result
             this.handleShowDataNum(this.showRelatedIpListInfo, this.relatedIpList)
           } else {
@@ -212,7 +212,7 @@ export default {
             this.errorMsg1 = this.errorMsgHandler(res1)
           }
 
-          if (res2.code === 200) {
+          if (res[2].status === 200) {
             this.relatedDomainList = res2.data.result
             this.handleShowDataNum(this.showRelatedDomainListInfo, this.relatedDomainList)
           } else {
@@ -222,7 +222,7 @@ export default {
           this.$emit('checkTag', entityDetailTabsName.relatedEntity, res0.data.result.length + res1.data.result.length + res2.data.result.length)
         }
       }).catch(e => {
-        console.log(e)
+        console.error(e)
         this.$emit('checkTag', entityDetailTabsName.relatedEntity, 0)
         this.showError0 = true
         this.showError1 = true

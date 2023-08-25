@@ -126,7 +126,7 @@ export default {
       axios.get(`${api.entity.security}/${this.entityType}`, { params: params }).then(response => {
         const res = response.data
 
-        if (res.code === 200) {
+        if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
           this.$emit('checkTag', entityDetailTabsName.securityEvent, res.data.result.length)
           this.showError = false

@@ -397,9 +397,9 @@ export default {
       })
     },
     async getChartData (value) {
-      await get(api.chart, { panelId: value }).then(response => {
-        if (response.code === 200) {
-          this.chartData = response.data.list
+      await axios.get(api.chart, { params: { panelId: value } }).then(response => {
+        if (response.status === 200) {
+          this.chartData = response.data.data.list
         }
       })
     }

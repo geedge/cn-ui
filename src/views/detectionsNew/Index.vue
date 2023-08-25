@@ -208,7 +208,7 @@ export default {
         // todo 调用接口删除
         // this.toggleLoading(true)
         // axios.delete(api.detection.delete + '?ruleIds=' + ids).then(response => {
-        //   if (response.data.code === 200) {
+        //   if (response.status === 200) {
         //     this.delFlag = true
         //     this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
         //     this.secondBatchDeleteObjs.forEach((item) => {

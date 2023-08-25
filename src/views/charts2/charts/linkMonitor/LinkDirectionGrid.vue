@@ -69,11 +69,11 @@ export default {
       this.toggleLoading(true)
 
       Promise.all([dataRequest, nextHopRequest]).then(response => {
-        if (response[0] && response[1]) {
+        if (response[0].status === 200 && response[1].status === 200) {
           const res = []
           res[0] = response[0].data
           res[1] = response[1].data
-          if (res[0].code === 200) {
+          if (response[0].status === 200) {
             this.isLinkShowError = false
             // 链路流量数据
             const linkData = res[0].data.result
@@ -147,7 +147,7 @@ export default {
             this.linkErrorMsg = this.errorMsgHandler(res[0])
           }
 
-          if (res[1].code === 200) {
+          if (response[1].status === 200) {
             this.isNextShowError = false
 
             // 链路下一跳信息

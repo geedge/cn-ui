@@ -64,7 +64,7 @@ export default {
       const url = this.getUrlByEntityType(this.entity.entityType)
       axios.get(url, { params: params }).then(response => {
         const res = response.data
-        if (res.code === 200) {
+        if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
           this.$emit('checkTag', entityDetailTabsName.openPort, res.data.result.length)
           this.showError = false

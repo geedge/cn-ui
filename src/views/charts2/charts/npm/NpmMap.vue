@@ -123,7 +123,7 @@ export default {
           countryRegion: this.location
         }
         axios.get(api.npm.location.map, { params: params }).then(response => {
-          if (response.data.code === 200) {
+          if (response.status === 200) {
             const res = _.get(response, 'data.data.result', []).filter(r => r.countryRegion !== 'Unknown')
             if (res.length > 0) {
               // 计算分数

@@ -67,9 +67,9 @@ export default {
         endTime: this.timeFilter && this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : ''
       }
       this.toggleLoading(true)
-      axios.get(api.netWorkOverview.ddosEventAnalysis, { params: params }).then(res => {
-        res = res.data
-        if (res.code === 200) {
+      axios.get(api.netWorkOverview.ddosEventAnalysis, { params: params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
           this.ddosData = res.data.result[0]

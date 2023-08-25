@@ -198,7 +198,7 @@ export default {
       const lastCycleTrafficRequest = axios.get(api.npm.overview.appTrafficAnalysis, { params: { ...params, cycle: 1 } })
       this.toggleLoading(true)
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
-        if (res[0].data.code === 200 && res[1].data.code === 200) {
+        if (res[0].status === 200 && res[1].status === 200) {
           this.showError = false
           this.errorMsg = ''
           const prevData = res[1].data.data.result
@@ -234,7 +234,7 @@ export default {
               let msg = ''
 
               res.forEach((r, i) => {
-                if (r.data.code === 200) {
+                if (r.status === 200) {
                   tableData.forEach(t => {
                     t[keyPre[i] + 'Score'] = r.data.data.result.find(d => d.appSubcategory === t.appSubcategory)
                   })
@@ -273,7 +273,7 @@ export default {
           this.toggleLoading(false)
           this.showError = true
           this.errorMsg = ''
-          let msg = res[0].message + ', ' + res[1].message
+          let msg = res[0].data.message + ', ' + res[1].data.message
           if (msg.indexOf(',') === 0) {
             msg = msg.substring(1, msg.length)
           }
