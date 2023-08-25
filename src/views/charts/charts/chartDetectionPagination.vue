@@ -12,7 +12,7 @@
     >
       <span>/&nbsp;{{totalPage}}</span>
     </el-pagination>
-  </div>  
+  </div>
 </template>
 
 <script>

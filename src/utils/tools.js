@@ -1586,9 +1586,12 @@ const handleStrToUniteStr = (str) => {
     for (const i in lastObj) {
       lastStr += lastObj[i] + ' AND '
     }
-    lastStr = lastStr.slice(0, -5)
     const hasStr = hasArr.join(' AND ')
-    lastStr = lastStr + ' ' + hasStr
+    if (hasStr !== '') {
+      lastStr = lastStr + hasStr
+    } else {
+      lastStr = lastStr.slice(0, -5)
+    }
 
     return lastStr
   }

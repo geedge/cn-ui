@@ -857,7 +857,11 @@ export function handleMetaListToStr (metaList) {
     for (const i in lastObj) {
       str += lastObj[i] + ' AND '
     }
-    str = str.slice(0, -5) + ' ' + hasStr.slice(0, -5)
+    if (hasStr !== '') {
+      str = str + hasStr.slice(0, -5)
+    } else {
+      str = str.slice(0, -5)
+    }
 
     return str
   }
