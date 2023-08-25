@@ -6,7 +6,6 @@ const CancelToken = axios.CancelToken
 
 axios.interceptors.request.use(config => {
   const token = localStorage.getItem(storageKey.token)
-
   // 添加http请求终止方法
   const arr = []
   const cancelToken = new CancelToken(function executor (c) {
@@ -63,11 +62,9 @@ axios.interceptors.response.use(
     if (licenceErrorCode.indexOf(response.data.code) !== -1) {
       localStorage.removeItem(storageKey.token)
       window.location.href = '/'
-    } else if (response.status === 200) {
-      if (accountErrorCode.indexOf(response.data.code) !== -1) {
-        localStorage.removeItem(storageKey.token)
-        window.location.href = '/'
-      }
+    } else if (accountErrorCode.indexOf(response.data.code) !== -1) {
+      localStorage.removeItem(storageKey.token)
+      window.location.href = '/'
     }
     return response
   },
