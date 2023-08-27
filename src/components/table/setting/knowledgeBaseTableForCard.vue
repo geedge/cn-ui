@@ -263,17 +263,18 @@ export default {
     },
     uploadSuccess (response) {
       this.uploadLoading = false
-      this.uploaded = response.code === 200
-      if (response.code === 200) {
-        this.$message.success(this.$t('tip.success'))
-        this.showAddUpdateDialog = false
-        axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: { pageSize: 999 } }).then(res => {
-          this.updateHistoryList = res.data.data.list
-          this.currentVersion = this.updateHistoryList[0].commitVersion + 1
-        })
-      } else {
+      this.uploaded = true
+      /* this.uploaded = response.code === 200
+      if (response.code === 200) { */
+      this.$message.success(this.$t('tip.success'))
+      this.showAddUpdateDialog = false
+      axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: { pageSize: 999 } }).then(res => {
+        this.updateHistoryList = res.data.data.list
+        this.currentVersion = this.updateHistoryList[0].commitVersion + 1
+      })
+      /* } else {
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
-      }
+      } */
     },
     beforeUpload (file) {
       this.uploadLoading = true

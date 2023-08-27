@@ -444,7 +444,7 @@ export default {
       }
       const requestUrl = this.getCurUrl()
       axios.get(requestUrl, { params: queryParams }).then(response => {
-        if (response.data.code === 200) {
+        if (response.status === 200) {
           this.showError = false
           this.errorMsg = ''
           this.chartData = response.data.data.result
@@ -926,7 +926,7 @@ export default {
         this.customTableTitles.forEach(tableColumn => {
           if (tableColumn.columnType === tableColumnType.chainRatio && tableColumn.isInMainUrl && tableDataTmp && tableDataTmp.length > 0) {
             axios.get(self.gerCycleUrl(), { params: queryParams }).then(response => {
-              if (response.data.code === 200) {
+              if (response.status === 200) {
                 tableColumn.showError = false
                 tableColumn.errorMsg = ''
                 cycleTotalList = response.data.data.result
@@ -992,7 +992,7 @@ export default {
               this.customTableTitles.forEach(tableColumn => {
                 if (tableColumn.columnType === tableColumnType.chainRatio && !tableColumn.isInMainUrl) {
                   axios.get(self.gerColumnUrl(tableColumn), { params: queryParams }).then(response => {
-                    if (response.data.code === 200) {
+                    if (response.status === 200) {
                       if (!tableColumn.showError) {
                         tableColumn.showError = false
                         tableColumn.errorMsg = ''
@@ -1032,7 +1032,7 @@ export default {
                         cycle: tableColumn.cycle
                       }
                       axios.get(self.gerColumnUrl(tableColumn), { params: queryCycleParams }).then(response => {
-                        if (response.data.code === 200) {
+                        if (response.status === 200) {
                           if (!tableColumn.showError) {
                             tableColumn.showError = false
                             tableColumn.errorMsg = ''

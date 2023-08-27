@@ -112,9 +112,9 @@ export default {
         url = n === 0 ? api.linkMonitor.quadrupleIngressAnalysis : api.linkMonitor.quadrupleEgressAnalysis
       }
       this.toggleLoading(true)
-      axios.get(url, { params: params }).then(res => {
-        res = res.data
-        if (res.code === 200) {
+      axios.get(url, { params }).then(response => {
+        const res = response.data
+        if (response.status === 200) {
           this.showError = false
           if (n === 0) {
             this.ingress = res.data.result.length === 0

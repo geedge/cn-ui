@@ -155,7 +155,7 @@ export default {
       ]
 
       axios.get(`${api.detection.detail}/${this.drawerInfo.ruleId}`).then(res => {
-        if (res.data.code === 200) {
+        if (res.status === 200) {
           this.detailData = res.data.data
         }
       }).catch(err => {

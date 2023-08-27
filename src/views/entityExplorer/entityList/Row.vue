@@ -276,7 +276,7 @@ export default {
       }
       axios.get(`${url}?resource=${this.entity.entityValue}`).then(responese => {
         const res = responese.data
-        if (res.code === 200) {
+        if (responese.status === 200) {
           Object.keys(res.data).forEach(k => {
             if (k !== 'userDefinedTags' && res.data[k]) {
               Object.keys(res.data[k]).forEach(k2 => {

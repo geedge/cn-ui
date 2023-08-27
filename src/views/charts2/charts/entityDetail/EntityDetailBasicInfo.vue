@@ -108,7 +108,7 @@ export default {
         let basicInfoError = ''
         if (tagData) {
           const res = tagData.data
-          if (res.code === 200) {
+          if (tagData.status === 200) {
             Object.keys(res.data).forEach(k => {
               if (k !== 'userDefinedTags' && res.data[k]) {
                 Object.keys(res.data[k]).forEach(k2 => {
@@ -132,7 +132,7 @@ export default {
         }
         if (basicInfoData) {
           const res = basicInfoData.data
-          if (res.code === 200) {
+          if (basicInfoData.status === 200) {
             switch (this.entity.entityType) {
               case 'ip': {
                 if (res.data.asn) {

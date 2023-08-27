@@ -263,7 +263,7 @@ export default {
             }
           })
         }
-        if (res[0].data.code === 200 && res[1].data.code === 200) {
+        if (res[0].status === 200 && res[1].status === 200) {
           this.showError = false
           const prevData = res[0].data.data.result
           const data = res[1].data.data.result
@@ -468,9 +468,9 @@ export default {
       }
       if (parseFloat(this.appTypeTab) === 0) {
         params.type = 'overviewProvide'
-        axios.get(api.dict, { params: params }).then(res => {
-          res = res.data
-          if (res.code === 200 && res.data.list) {
+        axios.get(api.dict, { params: params }).then(response => {
+          const res = response.data
+          if (response.status === 200 && res.data.list) {
             res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'provider' && pd.name === l.value))
             this.pageObj.pages = res.data.pages
             res.data.list.forEach(t => {
@@ -494,9 +494,9 @@ export default {
         })
       } else if (parseFloat(this.appTypeTab) === 1) {
         params.type = 'overviewApp'
-        axios.get(api.dict, { params: params }).then(res => {
-          res = res.data
-          if (res.code === 200) {
+        axios.get(api.dict, { params: params }).then(response => {
+          const res = response.data
+          if (response.status === 200) {
             res.data.list = res.data.list.filter(l => !this.appData.some(pd => pd.type === 'app' && pd.name === l.value))
             this.pageObj.pages = res.data.pages
             res.data.list.forEach(t => {

@@ -192,7 +192,7 @@ export default {
           const res = []
           res[0] = response[0].data
           res[1] = response[1].data
-          if (res[0].code === 200) {
+          if (response[0].status === 200) {
             this.showError1 = false
 
             const linkData = res[0].data.result
@@ -252,7 +252,7 @@ export default {
             this.errorMsg1 = this.errorMsgHandler(res[0])
           }
 
-          if (res[1].code === 200) {
+          if (response[1].status === 200) {
             this.showError2 = false
 
             const nextHopData = res[1].data.result

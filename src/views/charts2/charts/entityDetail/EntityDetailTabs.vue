@@ -120,7 +120,7 @@ export default {
       const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: params })
 
       Promise.all([informationAggregation, openPort, security, performance]).then(response => {
-        if (response[0].data.code === 200) {
+        if (response[0].status === 200) {
           const list = []
           response[0].data.data.result.forEach(r => {
             Object.keys(r).forEach(k => {
@@ -148,13 +148,13 @@ export default {
 
           this.initSetTag(entityDetailTabsName.informationAggregation, list.length)
         }
-        if (response[1].data.code === 200) {
+        if (response[1].status === 200) {
           this.initSetTag(entityDetailTabsName.openPort, response[1].data.data.result.length)
         }
-        if (response[2].data.code === 200) {
+        if (response[2].status === 200) {
           this.initSetTag(entityDetailTabsName.securityEvent, response[2].data.data.result.length)
         }
-        if (response[3].data.code === 200) {
+        if (response[3].status === 200) {
           this.initSetTag(entityDetailTabsName.performanceEvent, response[3].data.data.result.length)
         }
       })
@@ -186,22 +186,22 @@ export default {
 
         switch (this.entity.entityType) {
           case 'ip': {
-            const len1 = res0.code === 200 ? res0.data.result.length : 0
-            const len2 = res1.code === 200 ? res1.data.result.length : 0
+            const len1 = res[0].status === 200 ? res0.data.result.length : 0
+            const len2 = res[1].status === 200 ? res1.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
             break
           }
           case 'domain': {
             const res2 = res[2].data
-            const len1 = res0.code === 200 ? res0.data.result.length : 0
-            const len2 = res1.code === 200 ? res1.data.result.length : 0
-            const len3 = res2.code === 200 ? res2.data.result.length : 0
+            const len1 = res[0].status === 200 ? res0.data.result.length : 0
+            const len2 = res[1].status === 200 ? res1.data.result.length : 0
+            const len3 = res[2].status === 200 ? res2.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2 + len3)
             break
           }
           case 'app': {
-            const len1 = res0.code === 200 ? res0.data.result.length : 0
-            const len2 = res1.code === 200 ? res1.data.result.length : 0
+            const len1 = res[0].status === 200 ? res0.data.result.length : 0
+            const len2 = res[1].status === 200 ? res1.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
             break
           }
