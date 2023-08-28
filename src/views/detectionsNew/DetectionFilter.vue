@@ -1,14 +1,14 @@
 <template>
   <div>
-    <div class="detection-filter-title">
+    <div class="new-detection-filter-title">
       {{ $t('detections.filters') }}
     </div>
-    <div class="detection-filter-content">
+    <div class="new-detection-filter-content">
       <div>
-        <div class="filter-content-title">{{ $t('overall.status') }}</div>
-        <div class="filter-content-content">
+        <div class="new-filter-content-title">{{ $t('overall.status') }}</div>
+        <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkStatus" @change="onChangeCategory" style="display: flex;flex-direction: column">
-            <el-checkbox v-for="item in statusList" :key="item.label" class="filter-content-checkbox" :label="item.status">
+            <el-checkbox v-for="item in statusList" :key="item.label" class="new-filter-content-checkbox" :label="item.status">
               <div>{{ item.label }}</div>
             </el-checkbox>
           </el-checkbox-group>
@@ -16,10 +16,10 @@
       </div>
 
       <div>
-        <div class="filter-content-title">{{ $t('overall.category') }}</div>
-        <div class="filter-content-content">
+        <div class="new-filter-content-title">{{ $t('overall.category') }}</div>
+        <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkCategory" @change="onChangeCategory">
-            <el-checkbox v-for="item in categoryList" :key="item.value" class="filter-content-checkbox" :label="item.value">
+            <el-checkbox v-for="item in categoryList" :key="item.value" class="new-filter-content-checkbox" :label="item.value">
               {{ item.label }}
             </el-checkbox>
           </el-checkbox-group>
@@ -27,10 +27,10 @@
       </div>
 
       <div>
-        <div class="filter-content-title">{{ $t('overall.type') }}</div>
-        <div class="filter-content-content">
+        <div class="new-filter-content-title">{{ $t('overall.type') }}</div>
+        <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkType" @change="onChangeCategory" style="display: flex;flex-direction: column">
-            <el-checkbox v-for="item in typeList" :key="item.value" class="filter-content-checkbox" :label="item.value">
+            <el-checkbox v-for="item in typeList" :key="item.value" class="new-filter-content-checkbox" :label="item.value">
               {{ item.label }}
             </el-checkbox>
           </el-checkbox-group>
@@ -141,75 +141,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.detection-filter-title {
-  height: 32px;
-  line-height: 32px;
-  background: #F7F7F7;
-  padding: 0 20px;
-  box-shadow: 0 1px 0 0 rgba(226, 229, 236, 1);
-  border-radius: 4px 4px 0 0;
-}
-.detection-filter-content {
-  padding: 20px;
-
-  .filter-content-title {
-    font-family: NotoSansHans-Medium;
-    font-size: 14px;
-    line-height: 14px;
-    margin-bottom: 10px;
-    color: #353636;
-    font-weight: 500;
-  }
-  .filter-content-content {
-    display: flex;
-    flex-direction: column;
-
-    .filter-content-checkbox {
-      line-height: 16px;
-      margin-bottom: 10px;
-      font-family: NotoSansSChineseRegular;
-      font-size: 14px;
-      color: #353636;
-      font-weight: 400;
-
-      .el-checkbox__inner {
-        width: 16px !important;
-        height: 16px !important;
-        text-align: center !important;
-        line-height: 16px !important;
-      }
-
-      .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-        border-color: #38ACD2;
-        background: #38ACD2;
-        border-radius: 2px;
-      }
-      .el-checkbox__input.is-indeterminate .el-checkbox__inner:before {
-        background: #FFFFFF;
-        border-radius: 1px;
-      }
-      .el-checkbox__input.is-checked {
-        .el-checkbox__inner {
-          border-color: #38ACD2;
-          background: #38ACD2;
-          border-radius: 2px;
-        }
-      }
-      .el-checkbox__input.is-focus {
-        .el-checkbox__inner {
-          border-color: #38ACD2;
-        }
-      }
-
-      .el-checkbox__label {
-        font-family: NotoSansSChineseRegular;
-        font-size: 14px;
-        color: #353636;
-        font-weight: 400;
-      }
-    }
-  }
-}
-</style>
