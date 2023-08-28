@@ -74,34 +74,36 @@ export default {
   },
   methods: {
     init () {
-      const _this = this
-      const dom = document.getElementById('chart')
-      !this.myChart && (this.myChart = echarts.init(dom))
-      this.chartOption = pieChartOption3
-      this.chartOption.series[0].data = this.chartData
-      this.chartOption.series[0].label = {
-        show: true,
-        position: 'center',
-        fontFamily: 'NotoSansHans-Medium',
-        fontSize: 20,
-        fontWeight: 500,
-        formatter: function () {
-          let num = 0
-          _this.chartData.forEach(t => {
-            num += t.value
-          })
-          return num
+      if (!this.isUnitTesting) {
+        const _this = this
+        const dom = document.getElementById('chart')
+        !this.myChart && (this.myChart = echarts.init(dom))
+        this.chartOption = pieChartOption3
+        this.chartOption.series[0].data = this.chartData
+        this.chartOption.series[0].label = {
+          show: true,
+          position: 'center',
+          fontFamily: 'NotoSansHans-Medium',
+          fontSize: 20,
+          fontWeight: 500,
+          formatter: function () {
+            let num = 0
+            _this.chartData.forEach(t => {
+              num += t.value
+            })
+            return num
+          }
         }
+        this.myChart.on('mouseover', function () {
+          _this.chartOption.series[0].label.show = false
+          _this.myChart.setOption(_this.chartOption)
+        })
+        this.myChart.on('mouseout', function () {
+          _this.chartOption.series[0].label.show = true
+          _this.myChart.setOption(_this.chartOption)
+        })
+        this.myChart.setOption(this.chartOption)
       }
-      this.myChart.on('mouseover', function () {
-        _this.chartOption.series[0].label.show = false
-        _this.myChart.setOption(_this.chartOption)
-      })
-      this.myChart.on('mouseout', function () {
-        _this.chartOption.series[0].label.show = true
-        _this.myChart.setOption(_this.chartOption)
-      })
-      this.myChart.setOption(this.chartOption)
     },
     eventsByTypeData () {
       const params = {

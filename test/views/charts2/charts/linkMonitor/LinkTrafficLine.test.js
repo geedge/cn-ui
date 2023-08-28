@@ -3,6 +3,8 @@ import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import { mockData } from './MockData/LinkTrafficLine'
 import { linkInfoData } from './MockData/LinkBlock'
+import common from '@/mixins/common'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 const mockGet = mockData.common.data1
 const mockGet1 = mockData.common.data2
@@ -47,7 +49,13 @@ function axiosPostAndMounted (query, data1, data2) {
   wrapper = mount(LinkTrafficLine, {
     propsData: {
       timeFilter
-    }
+    },
+    data () {
+      return {
+        isUnitTesting: true
+      }
+    },
+    mixins: [common, chartMixin]
   })
 }
 

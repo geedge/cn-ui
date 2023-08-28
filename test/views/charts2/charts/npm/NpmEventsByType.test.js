@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import { mockData } from './mockData/NpmEventsByType'
 import common from '@/mixins/common'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 const mockGet = mockData.common.data
 let wrapper = null
@@ -28,7 +29,12 @@ function axiosPostAndMounted (data) {
     propsData: {
       timeFilter
     },
-    mixins: [common]
+    data () {
+      return {
+        isUnitTesting: true
+      }
+    },
+    mixins: [common, chartMixin]
   })
 }
 

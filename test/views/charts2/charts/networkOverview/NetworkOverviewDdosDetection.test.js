@@ -1,6 +1,8 @@
 import NetworkOverviewDdosDetection from '@/views/charts2/charts/networkOverview/NetworkOverviewDdosDetection'
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
+import common from '@/mixins/common'
+import chartMixin from '@/views/charts2/chart-mixin'
 import { mockData } from './mockData/NetworkOverviewDdosDetection'
 
 const mockGet = mockData.common
@@ -25,7 +27,8 @@ function axiosPostAndMounted (data) {
   wrapper = mount(NetworkOverviewDdosDetection, {
     propsData: {
       timeFilter
-    }
+    },
+    mixins: [common, chartMixin]
   })
 }
 

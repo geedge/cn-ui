@@ -2,6 +2,8 @@ import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEven
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import mockData from './mockData/SecurityEvent'
+import chartMixin from '@/views/charts2/chart-mixin'
+import common from '@/mixins/common'
 
 const timeFilter = {
   dateRangeValue: -1,
@@ -28,7 +30,8 @@ describe('views/charts2/charts/entityDetail/tabs/SecurityEvent.vue测试', () =>
       propsData: {
         entity,
         timeFilter
-      }
+      },
+      mixins: [chartMixin, common]
     })
     // 延迟等待渲染。使用wrapper.vm.$nextTick有时不管用（例如组件中使用了setTimeout的时候）
     await new Promise(resolve => setTimeout(async () => {
@@ -63,7 +66,8 @@ describe('views/charts2/charts/entityDetail/tabs/SecurityEvent.vue测试', () =>
       propsData: {
         entity,
         timeFilter
-      }
+      },
+      mixins: [chartMixin, common]
     })
     // 延迟等待渲染。使用wrapper.vm.$nextTick有时不管用（例如组件中使用了setTimeout的时候）
     await new Promise(resolve => setTimeout(async () => {

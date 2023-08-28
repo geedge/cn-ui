@@ -3,7 +3,8 @@ import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import ElementPlus from 'element-plus'
 import { mockData } from './mockData/NetworkOverviewApps'
-
+import common from '@/mixins/common'
+import chartMixin from '@/views/charts2/chart-mixin'
 const chart = mockData.common.chart
 
 const linkInfo = 5
@@ -49,7 +50,13 @@ function axiosPostAndMounted (Metric, flag, data) {
     },
     global: {
       plugins: [ElementPlus]
-    }
+    },
+    data () {
+      return {
+        isUnitTesting: true
+      }
+    },
+    mixins: [common, chartMixin]
   })
 }
 

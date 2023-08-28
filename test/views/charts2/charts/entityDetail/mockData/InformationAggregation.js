@@ -1,8 +1,8 @@
 const mockData = {
   // 空
   empty: {
+    status: 200,
     data: {
-      status: 200,
       code: 200,
       data: {
         resultType: 'object',
@@ -13,8 +13,8 @@ const mockData = {
   bytes: {
     // 边界
     boundary: {
+      status: 200,
       data: {
-        status: 200,
         code: 200,
         data: {
           resultType: 'object',
@@ -26,8 +26,8 @@ const mockData = {
   },
   // 正常数据
   common: {
+    status: 200,
     data: {
-      status: 200,
       code: 200,
       data: {
         resultType: 'object',

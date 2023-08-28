@@ -260,9 +260,9 @@ export default {
                 }
                 t.score = computeScore(data)
               })
-              this.tableData = tableData
+              // this.tableData = tableData
               // todo 当前版本，voip没数据，暂时隐藏，后续记得删除该段
-              this.tableData = this.tableData.filter(item => item.appSubcategory !== 'voip-video')
+              this.tableData = tableData.filter(item => item.appSubcategory !== 'voip-video')
             }).finally(() => {
               this.toggleLoading(false)
             })

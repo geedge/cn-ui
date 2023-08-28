@@ -1,6 +1,7 @@
 export const mockData = {
   common: {
     data1: {
+      status: 200,
       data: {
         status: 200,
         code: 200,
@@ -115,6 +116,7 @@ export const mockData = {
       }
     },
     data2: {
+      status: 200,
       data: {
         status: 200,
         code: 200,
@@ -180,6 +182,7 @@ export const mockData = {
   },
   empty: {
     data1: {
+      status: 200,
       data: {
         status: 200,
         code: 200,
@@ -191,6 +194,7 @@ export const mockData = {
       }
     },
     data2: {
+      status: 200,
       data: {
         status: 200,
         code: 200,
@@ -205,6 +209,7 @@ export const mockData = {
   boundary: {
     large: {
       data1: {
+        status: 200,
         data: {
           status: 200,
           code: 200,
@@ -275,6 +280,7 @@ export const mockData = {
         }
       },
       data2: {
+        status: 200,
         data: {
           status: 200,
           code: 200,
@@ -296,6 +302,7 @@ export const mockData = {
     },
     zero: {
       data1: {
+        status: 200,
         data: {
           status: 200,
           code: 200,
@@ -366,6 +373,7 @@ export const mockData = {
         }
       },
       data2: {
+        status: 200,
         data: {
           status: 200,
           code: 200,

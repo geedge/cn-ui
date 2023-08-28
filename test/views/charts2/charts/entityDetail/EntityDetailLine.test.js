@@ -2,6 +2,8 @@ import EntityDetailLine from '@/views/charts2/charts/entityDetail/EntityDetailLi
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
 import mockData from './mockData/EntityDetailLine'
+import common from '@/mixins/common'
+import chartMixin from '@/views/charts2/chart-mixin'
 
 const timeFilter = {
   dateRangeValue: -1,
@@ -47,7 +49,13 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
         entity,
         timeFilter,
         chart
-      }
+      },
+      data () {
+        return {
+          isUnitTesting: true
+        }
+      },
+      mixins: [common, chartMixin]
     })
     // 延迟等待渲染。使用wrapper.vm.$nextTick有时不管用（例如组件中使用了setTimeout的时候）
     await new Promise(resolve => setTimeout(async () => {
@@ -74,7 +82,13 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
         entity,
         timeFilter,
         chart
-      }
+      },
+      data () {
+        return {
+          isUnitTesting: true
+        }
+      },
+      mixins: [common, chartMixin]
     })
     // 延迟等待渲染。使用wrapper.vm.$nextTick有时不管用（例如组件中使用了setTimeout的时候）
     await new Promise(resolve => setTimeout(async () => {
@@ -104,7 +118,13 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
         entity,
         timeFilter,
         chart
-      }
+      },
+      data () {
+        return {
+          isUnitTesting: true
+        }
+      },
+      mixins: [common, chartMixin]
     })
 
     // 延迟等待渲染。使用wrapper.vm.$nextTick有时不管用（例如组件中使用了setTimeout的时候）
@@ -135,7 +155,13 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
         timeFilter,
         chart,
         metric: 'Packets/s'
-      }
+      },
+      data () {
+        return {
+          isUnitTesting: true
+        }
+      },
+      mixins: [common, chartMixin]
     })
 
     await new Promise(resolve => setTimeout(async () => {
@@ -160,7 +186,13 @@ describe('views/charts2/charts/entityDetail/EntityDetailLine.vue测试', () => {
         timeFilter,
         chart,
         metric: 'Sessions/s'
-      }
+      },
+      data () {
+        return {
+          isUnitTesting: true
+        }
+      },
+      mixins: [common, chartMixin]
     })
 
     await new Promise(resolve => setTimeout(async () => {

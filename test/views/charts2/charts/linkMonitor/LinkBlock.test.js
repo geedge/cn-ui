@@ -1,7 +1,9 @@
 import linkBlock from '@/views/charts2/charts/linkMonitor/LinkBlock'
 import { mount } from '@vue/test-utils'
 import axios from 'axios'
+import chartMixin from '@/views/charts2/chart-mixin'
 import { mockData, linkInfoData } from './MockData/LinkBlock'
+import common from '@/mixins/common'
 
 const mockGet1 = mockData.common.data1
 const mockGet2 = mockData.common.data2
@@ -42,7 +44,8 @@ function axiosPostAndMounted (list1, list2) {
   wrapper = mount(linkBlock, {
     propsData: {
       timeFilter
-    }
+    },
+    mixins: [common, chartMixin]
   })
 }
 
