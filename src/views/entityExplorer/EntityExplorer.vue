@@ -158,7 +158,7 @@
 import ExplorerSearch from '@/views/entityExplorer/search/ExplorerSearch'
 import EntityFilter from '@/views/entityExplorer/EntityFilter'
 import EntityList from '@/views/entityExplorer/entityList/EntityList'
-import { entityType, defaultPageSize, riskLevelMapping } from '@/utils/constants'
+import { defaultPageSize, riskLevelMapping } from '@/utils/constants'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -209,198 +209,61 @@ export default {
         pageSize: defaultPageSize,
         total: 0
       },
-      filterData: [
-        {
-          type: 'ip',
-          title: entityType.ip,
-          totalCount: 0,
-          data: [
-            {
-              label: this.$t('overall.country'),
-              column: 'countryDistinctCount',
-              topColumn: 'Country', // top弹框查询字段
-              icon: 'cn-icon cn-icon-country',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('overall.city'),
-              column: 'cityDistinctCount',
-              topColumn: 'City', // top弹框查询字段
-              icon: 'cn-icon cn-icon-city',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('entities.asn'),
-              column: 'asnDistinctCount',
-              topColumn: 'ASN', // top弹框查询字段
-              icon: 'cn-icon cn-icon-cloud',
-              showTopTen: false,
-              value: 0
-            }
-          ]
-        },
-        {
-          type: 'app',
-          title: entityType.app,
-          totalCount: 0,
-          data: [
-            {
-              label: this.$t('entities.category'),
-              column: 'categoryDistinctCount',
-              topColumn: 'app_category', // top弹框查询字段
-              icon: 'cn-icon cn-icon-category',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('entities.subcategory'),
-              column: 'subcategoryDistinctCount',
-              topColumn: 'app_subcategory', // top弹框查询字段
-              icon: 'cn-icon cn-icon-sub-category',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('entities.risk'),
-              column: 'riskDistinctCount',
-              topColumn: 'app_risk', // top弹框查询字段
-              icon: 'cn-icon cn-icon-risk',
-              showTopTen: false,
-              value: 0
-            }
-          ]
-        },
-        {
-          type: 'domain',
-          title: entityType.domain,
-          totalCount: 0,
-          data: [
-            {
-              label: this.$t('entities.domainDetail.categoryGroup'),
-              column: 'categoryGroupDistinctCount',
-              topColumn: 'domain_category_group', // top弹框查询字段
-              icon: 'cn-icon cn-icon-category',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('entities.category'),
-              column: 'categoryDistinctCount',
-              topColumn: 'domain_category', // top弹框查询字段
-              icon: 'cn-icon cn-icon-sub-category',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('entities.reputationLevel'),
-              column: 'reputationLevelDistinctCount',
-              topColumn: 'domain_reputation_level', // top弹框查询字段
-              icon: 'cn-icon cn-icon-credit',
-              showTopTen: false,
-              value: 0
-            }
-          ]
-        },
-        {
-          type: 'dns',
-          title: this.$t('dns.dnsServer'),
-          totalCount: 0,
-          osTotalCount: 0,
-          orgTotalCount: 0,
-          softwareTotalCount: 0,
-          data: [
-            {
-              label: this.$t('overall.dnsServerInfo.role'),
-              column: 'dnsServerRoleCount',
-              topColumn: 'dns_server_role',
-              icon: 'cn-icon cn-icon-role',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('dns.managementOrganization'),
-              column: 'dnsServerOrgCount',
-              topColumn: 'dns_server_org',
-              icon: 'cn-icon cn-icon-org',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('overall.dnsServerInfo.software'),
-              column: 'dnsServerSoftwareCount',
-              topColumn: 'dns_server_software',
-              icon: 'cn-icon cn-icon-software',
-              showTopTen: false,
-              value: 0
-            },
-            {
-              label: this.$t('overall.dnsServerInfo.system'),
-              column: 'dnsServerOsCount',
-              topColumn: 'dns_server_os',
-              icon: 'cn-icon cn-icon-os',
-              showTopTen: false,
-              value: 0
-            }
-          ]
-        }
-      ],
       newFilterData: [
         {
           icon: 'cn-icon cn-icon-registration-country',
           title: 'Top Countries',
-          topColumn: 'Country',
+          topColumn: 'ip.country',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-city',
           title: 'Top Cities',
-          topColumn: 'City',
+          topColumn: 'ip.city',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-as',
           title: 'Top ASNs',
-          topColumn: 'ASN',
+          topColumn: 'ip.asn',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-operator',
           title: 'Top ISPs',
-          topColumn: 'ISP',
+          topColumn: 'ip.isp',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-open-port',
           title: 'Top Ports',
-          topColumn: 'DR.Port',
-          topColumn1: 'DR.L7Protocol',
+          topColumn: 'ip.port',
+          topColumn1: 'ip.protocol',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-FQDN',
           title: 'Top FQDN Categories',
-          topColumn: 'DomainCategoryName',
+          topColumn: 'domain.category',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-category2',
           title: 'Top App Categories',
-          topColumn: 'AppCategory',
+          topColumn: 'app.category',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-tag1',
           title: 'Top Tags',
-          topColumn: 'Tags',
+          topColumn: 'tag',
           totalCount: 0,
           data: []
         }
@@ -408,7 +271,6 @@ export default {
       listData: [],
       q: '',
       metaList: [],
-      limitFilterType: true, // 是否限定了filter的类型
       listLoading: false,
       // 实体详情搜索页面 底部列表
       loadingApp: false,
@@ -542,54 +404,13 @@ export default {
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
       if (q) {
-        // entity_type处理，不查其他两种entity_type对应的左侧筛选
-        const entityTypeMeta = metaList.find(meta => {
-          return meta.column && meta.column.name === 'entity_type'
-        })
-        if (entityTypeMeta && entityTypeMeta.operator.value === '=') {
-          let entityType = ''
-          this.limitFilterType = false
-          if (entityTypeMeta.value.value.toLowerCase() === 'ip') {
-            this.limitFilterType = true
-            entityType = 'ip'
-          } else if (entityTypeMeta.value.value.toLowerCase() === 'domain') {
-            this.limitFilterType = true
-            entityType = 'domain'
-          } else if (entityTypeMeta.value.value.toLowerCase() === 'app') {
-            this.limitFilterType = true
-            entityType = 'app'
-          } else {
-            this.limitFilterType = false
-          }
-          // this.queryFilter({ entityType: entityType, q: this.q, ...this.timeFilter })
-          // if (entityType === 'ip') {
-          //   this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
-          // }
-          this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          // this.queryListTotal({ q: this.q, ...this.timeFilter })
-        } else {
-          this.limitFilterType = false
-          // this.queryFilter({ entityType: 'ip', q: this.q, ...this.timeFilter })
-          // this.queryFilter({ entityType: 'domain', q: this.q, ...this.timeFilter })
-          // this.queryFilter({ entityType: 'app', q: this.q, ...this.timeFilter })
-          // this.queryFilter({ entityType: 'dns', q: this.q, ...this.timeFilter })
-          this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
-          // this.queryListTotal({ q: this.q, ...this.timeFilter })
-        }
+        this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
+        this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
+        this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
       } else {
-        this.limitFilterType = false
-        // this.queryFilter({ entityType: 'ip', ...this.timeFilter })
-        // this.queryFilter({ entityType: 'app', ...this.timeFilter })
-        // this.queryFilter({ entityType: 'domain', ...this.timeFilter })
-        // this.queryFilter({ entityType: 'dns', ...this.timeFilter })
         this.queryFilterNew({ ...this.pageObj, ...this.timeFilter })
         this.queryList({ ...this.pageObj, ...this.timeFilter })
         this.queryCount({ ...this.pageObj, ...this.timeFilter })
-        // this.queryListTotal({ ...this.timeFilter })
 
         // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
         if (!this.initFlag) {
@@ -641,7 +462,7 @@ export default {
     },
     /* filter组件内点击后查询 */
     filter (name, topData) {
-      if (topData.topColumn === 'DR.Port') {
+      if (topData.topColumn === 'ip.port') {
         const params = [
           {
             column: topData.topColumn,
@@ -665,70 +486,6 @@ export default {
       }
       this.$nextTick(() => {
         this.emitter.emit('advanced-search')
-      })
-    },
-    /* 查询filter数据 */
-    queryFilter (params) {
-      const queryParams = {
-        ...params,
-        startTime: getSecond(params.startTime),
-        endTime: getSecond(params.endTime)
-      }
-      this.loadingLeft = true
-      axios.get(api.entityFilter, { params: queryParams }).then(res => {
-        const response = res.data
-        if (res.status === 200 && response.data && response.data.result) {
-          switch (params.entityType) {
-            case 'ip': {
-              this.filterData[0].data.forEach(d => {
-                d.value = response.data.result[d.column] || 0
-              })
-              this.filterData[0].totalCount = response.data.result.count
-              if (this.limitFilterType) {
-                this.cleanFilterData(1)
-                this.cleanFilterData(2)
-              }
-              break
-            }
-            case 'app': {
-              this.filterData[1].data.forEach(d => {
-                d.value = response.data.result[d.column] || 0
-              })
-              this.filterData[1].totalCount = response.data.result.count
-              if (this.limitFilterType) {
-                this.cleanFilterData(0)
-                this.cleanFilterData(2)
-                this.cleanFilterData(3)
-              }
-              break
-            }
-            case 'domain': {
-              this.filterData[2].data.forEach(d => {
-                d.value = response.data.result[d.column] || 0
-              })
-              this.filterData[2].totalCount = response.data.result.count
-              if (this.limitFilterType) {
-                this.cleanFilterData(0)
-                this.cleanFilterData(1)
-                this.cleanFilterData(3)
-              }
-              break
-            }
-            case 'dns': {
-              this.filterData[3].data.forEach(d => {
-                d.value = response.data.result[d.column] || 0
-              })
-              this.filterData[3].totalCount = response.data.result.count
-              this.filterData[3].osTotalCount = response.data.result.osTotalCount
-              this.filterData[3].orgTotalCount = response.data.result.orgTotalCount
-              this.filterData[3].softwareTotalCount = response.data.result.softwareTotalCount
-              break
-            }
-          }
-          this.loadingLeft = false
-        } else {
-          this.loadingLeft = false
-        }
       })
     },
     /** 新版查询filter数据 */
@@ -890,12 +647,6 @@ export default {
         this.loadingIpActive = false
         this.loadingAppActive = false
       })
-    },
-    cleanFilterData (index) {
-      this.filterData[index].data.forEach(d => {
-        d.value = 0
-      })
-      this.filterData[index].totalCount = 0
     },
     setListMode (mode) {
       this.listMode = mode
