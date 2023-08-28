@@ -70,7 +70,7 @@
               <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
-                <loading :loading="loadingAppActive" size="small"></loading>
+                <loading :loading="loadingApp" size="small"></loading>
                 <div class="right-value">{{ numberWithCommas(entityAppTotal) }}</div>
               </div>
             </div>
@@ -100,7 +100,7 @@
               <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
-                <loading :loading="loadingAppActive" size="small"></loading>
+                <loading :loading="loadingDomain" size="small"></loading>
                 <div class="right-value">{{ numberWithCommas(entityDomainTotal) }}</div>
               </div>
             </div>
@@ -130,7 +130,7 @@
               <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
-                <loading :loading="loadingAppActive" size="small"></loading>
+                <loading :loading="loadingIp" size="small"></loading>
                 <div class="right-value">{{ numberWithCommas(entityIpTotal) }}</div>
               </div>
             </div>
@@ -276,10 +276,6 @@ export default {
       loadingApp: false,
       loadingDomain: false,
       loadingIp: false,
-      // New
-      loadingAppNew: false,
-      loadingDomainNew: false,
-      loadingIpNew: false,
       // Active
       loadingAppActive: false,
       loadingDomainActive: false,
@@ -606,16 +602,12 @@ export default {
       this.loadingApp = true
       this.loadingDomain = true
       this.loadingIp = true
-      // New
-      this.loadingAppNew = true
-      this.loadingDomainNew = true
-      this.loadingIpNew = true
       // Active
       this.loadingAppActive = true
       this.loadingDomainActive = true
       this.loadingIpActive = true
 
-      axios.get(api.entity.entityList.entityActive).then(response => {
+      axios.get(api.entity.entityList.entityTotal).then(response => {
         if (response.status === 200) {
           this.entityDomainTotal = response.data.data.domainCount
           this.entityIpTotal = response.data.data.ipCount
@@ -624,17 +616,6 @@ export default {
         this.loadingDomain = false
         this.loadingIp = false
         this.loadingApp = false
-      })
-      // New
-      axios.get(api.entity.entityList.entityNew).then(response => {
-        if (response.status === 200) {
-          this.entityDomainNew = response.data.data.domainCount
-          this.entityIpNew = response.data.data.ipCount
-          this.entityAppNew = response.data.data.appCount
-        }
-        this.loadingDomainNew = false
-        this.loadingIpNew = false
-        this.loadingAppNew = false
       })
       // Active
       axios.get(api.entity.entityList.entityActive).then(response => {
