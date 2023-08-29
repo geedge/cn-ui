@@ -105,29 +105,29 @@ export default {
       if (this.queryCondition) {
         const condition = this.queryCondition.toLowerCase().split(' or ')
         if (condition.length > 1) {
-          // params.egressParam = true
-          params.egressParam = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
-          params.ingressParam = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
+          // params.outParam = true
+          params.outParam = condition.find(c => c.indexOf('common_out_link_id') > -1 || c.indexOf('out_link_direction') > -1)
+          params.inParam = condition.find(c => c.indexOf('common_in_link_id') > -1 || c.indexOf('in_link_direction') > -1)
           let bandwidthAll = 0
-          let ingressLinkId = null
-          let egressLinkId = null
+          let inLinkId = null
+          let outLinkId = null
           let linkDirection = null
-          const egressParamSplit = params.egressParam.split('=')
-          const ingressParamSplit = params.ingressParam.split('=')
-          if (egressParamSplit[0] && (egressParamSplit[0].trim() === 'common_egress_link_id')) {
-            egressLinkId = egressParamSplit[1].trim()
-          } else if (egressParamSplit[0].trim() === 'egress_link_direction') {
-            linkDirection = egressParamSplit[1].trim()
+          const outParamSplit = params.outParam.split('=')
+          const inParamSplit = params.inParam.split('=')
+          if (outParamSplit[0] && (outParamSplit[0].trim() === 'common_out_link_id')) {
+            outLinkId = outParamSplit[1].trim()
+          } else if (outParamSplit[0].trim() === 'out_link_direction') {
+            linkDirection = outParamSplit[1].trim()
           }
-          if (ingressParamSplit[0] && (ingressParamSplit[0].trim() === 'common_ingress_link_id')) {
-            ingressLinkId = ingressParamSplit[1].trim()
+          if (inParamSplit[0] && (inParamSplit[0].trim() === 'common_in_link_id')) {
+            inLinkId = inParamSplit[1].trim()
           }
-          if (egressLinkId && ingressLinkId) {
+          if (outLinkId && inLinkId) {
             this.cnLinkInfo.forEach(e => {
-              if (ingressLinkId === e.originalLinkId) {
+              if (inLinkId === e.originalLinkId) {
                 bandwidthAll += e.bandwidth
               }
-              if (egressLinkId === e.originalLinkId) {
+              if (outLinkId === e.originalLinkId) {
                 bandwidthAll += e.bandwidth
               }
             })

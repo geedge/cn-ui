@@ -39,13 +39,13 @@
                     <svg class="icon item-popover-up" aria-hidden="true">
                       <use xlink:href="#cn-icon-egress"></use>
                     </svg>
-                    {{ convertValue(item.egressUsage) }}
+                    {{ convertValue(item.outUsage) }}
                   </div>
                   <div :test-id="`linkBlockIngressUsage${index}`">
                     <svg class="icon item-popover-down" aria-hidden="true">
                       <use xlink:href="#cn-icon-ingress"></use>
                     </svg>
-                    {{ convertValue(item.ingressUsage) }}
+                    {{ convertValue(item.inUsage) }}
                   </div>
                 </div>
               </div>
@@ -92,13 +92,13 @@
                     <svg class="icon item-popover-up" aria-hidden="true">
                       <use xlink:href="#cn-icon-egress"></use>
                     </svg>
-                    {{ convertValue(item.egressUsage) }}
+                    {{ convertValue(item.outUsage) }}
                   </div>
                   <div :test-id="`nextHopIngressUsage${index}`">
                     <svg class="icon item-popover-down" aria-hidden="true">
                       <use xlink:href="#cn-icon-ingress"></use>
                     </svg>
-                    {{ convertValue(item.ingressUsage) }}
+                    {{ convertValue(item.inUsage) }}
                   </div>
                 </div>
               </div>
@@ -207,11 +207,11 @@ export default {
                   if (hit) {
                     hit.outBitsRate += d.outBitsRate
                     hit.inBitsRate += d.inBitsRate
-                    if (info.direction === 'egress') {
-                      hit.egressBandwidth = info.bandwidth
+                    if (info.direction === 'out') {
+                      hit.outBandwidth = info.bandwidth
                       hit.outLinkId = d.linkId
-                    } else if (info.direction === 'ingress') {
-                      hit.ingressBandwidth = info.bandwidth
+                    } else if (info.direction === 'in') {
+                      hit.inBandwidth = info.bandwidth
                       hit.inLinkId = d.linkId
                     }
                   } else {
@@ -220,11 +220,11 @@ export default {
                       outBitsRate: d.outBitsRate,
                       inBitsRate: d.inBitsRate
                     }
-                    if (info.direction === 'egress') {
-                      hit.egressBandwidth = info.bandwidth
+                    if (info.direction === 'out') {
+                      hit.outBandwidth = info.bandwidth
                       hit.outLinkId = d.linkId
-                    } else if (info.direction === 'ingress') {
-                      hit.ingressBandwidth = info.bandwidth
+                    } else if (info.direction === 'in') {
+                      hit.inBandwidth = info.bandwidth
                       hit.inLinkId = d.linkId
                     }
                     data.push(hit)
@@ -240,9 +240,9 @@ export default {
               const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
               sorted.forEach((s, i) => {
                 s.color = linkColors[i]
-                s.egressUsage = this.computeUsage(s.outBitsRate, s.egressBandwidth)
-                s.ingressUsage = this.computeUsage(s.inBitsRate, s.ingressBandwidth)
-                s.popoverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
+                s.outUsage = this.computeUsage(s.outBitsRate, s.outBandwidth)
+                s.inUsage = this.computeUsage(s.inBitsRate, s.inBandwidth)
+                s.popoverWidth = this.computePopoverWidth(s.outUsage, s.inUsage)
               })
               this.linkData = sorted
             }
@@ -298,12 +298,12 @@ export default {
                 })
 
                 // 上行使用情况计算
-                const egressUsage = this.computeUsage(s.outBitsRate, sum)
+                const outUsage = this.computeUsage(s.outBitsRate, sum)
                 // 下行使用情况计算
-                const ingressUsage = this.computeUsage(s.inBitsRate, sum)
-                s.egressUsage = egressUsage
-                s.ingressUsage = ingressUsage
-                s.popoverWidth = this.computePopoverWidth(egressUsage, ingressUsage)
+                const inUsage = this.computeUsage(s.inBitsRate, sum)
+                s.outUsage = outUsage
+                s.inUsage = inUsage
+                s.popoverWidth = this.computePopoverWidth(outUsage, inUsage)
               })
 
               this.nextHopData = nextHopSorted
@@ -340,27 +340,27 @@ export default {
      * 计算popover弹窗的宽度
      * 最小宽度为252px，百分比每大一位，popover弹窗宽度增加7px
      */
-    computePopoverWidth (egress, ingress) {
+    computePopoverWidth (out, _in) {
       let width = 252
       let length = 0
 
       // 将上下行乘100保留2位转换，即10.00为5位，100.00为6位，popover弹窗宽度就增加7px
       // 最小宽度为252px，最少位数为上下行相加为8位
-      let egressUsage = ''
-      let ingressUsage = ''
+      let outUsage = ''
+      let inUsage = ''
 
-      if (egress < 0.0001 && egress !== 0) {
-        egressUsage = '< 0.01%'
+      if (out < 0.0001 && out !== 0) {
+        outUsage = '< 0.01%'
       } else {
-        egressUsage = JSON.stringify(parseFloat((egress * 100).toFixed(2)))
+        outUsage = JSON.stringify(parseFloat((out * 100).toFixed(2)))
       }
-      if (ingress < 0.0001 && ingress !== 0) {
-        ingressUsage = '< 0.01%'
+      if (_in < 0.0001 && _in !== 0) {
+        inUsage = '< 0.01%'
       } else {
-        ingressUsage = JSON.stringify(parseFloat((ingress * 100).toFixed(2)))
+        inUsage = JSON.stringify(parseFloat((_in * 100).toFixed(2)))
       }
 
-      length = egressUsage.length + ingressUsage.length
+      length = outUsage.length + inUsage.length
 
       if (length > 8) {
         width = 252 + (length - 8) * 7
@@ -381,7 +381,7 @@ export default {
       })
     },
     drillNextHop (item) {
-      const queryCondition = `egress_link_direction = '${item.linkDirection}' or ingress_link_direction = '${item.linkDirection}'`
+      const queryCondition = `out_link_direction = '${item.linkDirection}' or in_link_direction = '${item.linkDirection}'`
       this.$router.push({
         query: {
           ...this.$route.query,

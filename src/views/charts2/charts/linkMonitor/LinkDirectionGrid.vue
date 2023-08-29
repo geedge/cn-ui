@@ -1,7 +1,7 @@
 <template>
   <div class="link-direction-grid">
     <!--左侧链路出入口-->
-    <popover-content :title="$t('linkMonitor.egressLink') + ' & ' + $t('linkMonitor.ingressLink')" :isNoData="isLinkNoData" :gridData="linkGridData" :showError="isLinkShowError" :content="linkErrorMsg" style="width: 900px;"/>
+    <popover-content :title="$t('linkMonitor.outLink') + ' & ' + $t('linkMonitor.inLink')" :isNoData="isLinkNoData" :gridData="linkGridData" :showError="isLinkShowError" :content="linkErrorMsg" style="width: 900px;"/>
 
     <!--右侧链路下一跳-->
     <popover-content :title="$t('linkMonitor.nextHopInternetOfGrid')" :isNoData="isNextNoData" :gridData="nextGridData" :showError="isNextShowError" :content="nextErrorMsg" />
@@ -77,13 +77,13 @@ export default {
             this.isLinkShowError = false
             // 链路流量数据
             const linkData = res[0].data.result
-            // 接口数据乱序，根据入链路id（ingressLinkId）大小排序之后，
-            // 再根据同ingressLinkId下的egressLinkId进行排序
+            // 接口数据乱序，根据入链路id（inLinkId）大小排序之后，
+            // 再根据同inLinkId下的outLinkId进行排序
             linkData.sort((a, b) => {
-              if (a.ingressLinkId !== b.ingressLinkId) {
-                return a.ingressLinkId - b.ingressLinkId
+              if (a.inLinkId !== b.inLinkId) {
+                return a.inLinkId - b.inLinkId
               }
-              return a.egressLinkId - b.egressLinkId
+              return a.outLinkId - b.outLinkId
             })
 
             this.isLinkNoData = linkData.length === 0
@@ -91,18 +91,18 @@ export default {
               // 链路流量数据
               const linkGridData = []
               linkData.forEach(d => {
-                const ingressLink = linkInfo.find(l => l.originalLinkId === d.ingressLinkId)
-                const egressLink = linkInfo.find(l => l.originalLinkId === d.egressLinkId)
-                if (ingressLink && egressLink) {
-                  const data = linkGridData.find(g => g.linkId === ingressLink.linkId)
+                const inLink = linkInfo.find(l => l.originalLinkId === d.inLinkId)
+                const outLink = linkInfo.find(l => l.originalLinkId === d.outLinkId)
+                if (inLink && outLink) {
+                  const data = linkGridData.find(g => g.linkId === inLink.linkId)
 
                   // 上行使用情况计算
-                  const egressUsage = this.computeUsage(d.egressBitsRate, egressLink.bandwidth)
+                  const outUsage = this.computeUsage(d.outBitsRate, outLink.bandwidth)
                   // 下行使用情况计算
-                  const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressLink.bandwidth)
+                  const inUsage = this.computeUsage(d.inBitsRate, inLink.bandwidth)
                   // 宽带使用超过90%，赋红点
 
-                  d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
+                  d.usageMore90 = outUsage >= 0.9 || inUsage >= 0.9
                   // 计算npm分数
                   // 分数低于3分，赋红点
                   d.score = this.localComputeScore(d)
@@ -110,27 +110,27 @@ export default {
                   d.scoreLow3 = d.score < 3 || d.score === '-'
 
                   if (data) {
-                    const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
+                    const existedEgressLink = data.out.find(e => e.linkId === outLink.linkId)
                     if (!existedEgressLink) {
-                      data.egress.push({
-                        linkId: egressLink.linkId,
-                        egressUsage: egressUsage,
-                        ingressUsage: ingressUsage,
-                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      data.out.push({
+                        linkId: outLink.linkId,
+                        outUsage: outUsage,
+                        inUsage: inUsage,
+                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
+                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
                         totalBitsRate: d.totalBitsRate,
                         ...d
                       })
                     }
                   } else {
                     linkGridData.push({
-                      linkId: ingressLink.linkId,
-                      egress: [{
-                        linkId: egressLink.linkId,
-                        egressUsage: egressUsage,
-                        ingressUsage: ingressUsage,
-                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      linkId: inLink.linkId,
+                      out: [{
+                        linkId: outLink.linkId,
+                        outUsage: outUsage,
+                        inUsage: inUsage,
+                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
+                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
                         totalBitsRate: d.totalBitsRate,
                         ...d
                       }]
@@ -154,10 +154,10 @@ export default {
             const nextLinkData = res[1].data.result
             // 接口数据乱序，根据入方向排序，再根据同个入方向下的出方向进行排序
             nextLinkData.sort((a, b) => {
-              if (a.ingressLinkDirection !== b.ingressLinkDirection) {
-                return a.ingressLinkDirection.localeCompare(b.ingressLinkDirection, 'zh')
+              if (a.inLinkDirection !== b.inLinkDirection) {
+                return a.inLinkDirection.localeCompare(b.inLinkDirection, 'zh')
               }
-              return a.egressLinkDirection.localeCompare(b.egressLinkDirection, 'zh')
+              return a.outLinkDirection.localeCompare(b.outLinkDirection, 'zh')
             })
 
             this.isNextNoData = nextLinkData.length === 0
@@ -166,30 +166,30 @@ export default {
               const nextGridData = []
 
               nextLinkData.forEach(d => {
-                const ingressLink = linkInfo.find(l => l.nextHop === d.ingressLinkDirection && l.direction === 'ingress')
-                const egressLink = linkInfo.find(l => l.nextHop === d.egressLinkDirection && l.direction === 'egress')
+                const inLink = linkInfo.find(l => l.nextHop === d.inLinkDirection && l.direction === 'in')
+                const outLink = linkInfo.find(l => l.nextHop === d.outLinkDirection && l.direction === 'out')
 
-                if (ingressLink && egressLink) {
-                  const data = nextGridData.find(g => g.linkId === ingressLink.linkId)
+                if (inLink && outLink) {
+                  const data = nextGridData.find(g => g.linkId === inLink.linkId)
 
-                  let egressBanwidth = 0
-                  let ingressBanwidth = 0
+                  let outBandwidth = 0
+                  let inBandwidth = 0
                   linkInfo.forEach((item) => {
-                    if (item.nextHop === d.egressLinkDirection && item.direction === 'egress') {
-                      egressBanwidth += item.bandwidth
+                    if (item.nextHop === d.outLinkDirection && item.direction === 'out') {
+                      outBandwidth += item.bandwidth
                     }
-                    if (item.nextHop === d.ingressLinkDirection && item.direction === 'ingress') {
-                      ingressBanwidth += item.bandwidth
+                    if (item.nextHop === d.inLinkDirection && item.direction === 'in') {
+                      inBandwidth += item.bandwidth
                     }
                   })
 
                   // 上行使用情况计算
-                  const egressUsage = this.computeUsage(d.egressBitsRate, egressBanwidth)
+                  const outUsage = this.computeUsage(d.outBitsRate, outBandwidth)
                   // 下行使用情况计算
-                  const ingressUsage = this.computeUsage(d.ingressBitsRate, ingressBanwidth)
+                  const inUsage = this.computeUsage(d.inBitsRate, inBandwidth)
                   // 宽带使用超过90%，赋红点
 
-                  d.usageMore90 = egressUsage >= 0.9 || ingressUsage >= 0.9
+                  d.usageMore90 = outUsage >= 0.9 || inUsage >= 0.9
                   // 计算npm分数
                   // 分数低于3分，赋红点
                   d.score = this.localComputeScore(d)
@@ -197,30 +197,30 @@ export default {
                   d.scoreLow3 = d.score < 3 || d.score === '-'
 
                   if (data) {
-                    const existedEgressLink = data.egress.find(e => e.linkId === egressLink.linkId)
+                    const existedEgressLink = data.out.find(e => e.linkId === outLink.linkId)
                     if (!existedEgressLink) {
-                      data.egress.push({
-                        linkId: egressLink.linkId,
-                        nextHop: egressLink.nextHop,
-                        egressUsage: egressUsage,
-                        ingressUsage: ingressUsage,
-                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      data.out.push({
+                        linkId: outLink.linkId,
+                        nextHop: outLink.nextHop,
+                        outUsage: outUsage,
+                        inUsage: inUsage,
+                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
+                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
                         totalBitsRate: d.totalBitsRate,
                         ...d
                       })
                     }
                   } else {
                     nextGridData.push({
-                      linkId: ingressLink.linkId,
-                      nextHop: ingressLink.nextHop,
-                      egress: [{
-                        linkId: egressLink.linkId,
-                        nextHop: ingressLink.nextHop,
-                        egressUsage: egressUsage,
-                        ingressUsage: ingressUsage,
-                        popoverWidth: this.computeWidth(egressUsage, ingressUsage, 'popover'),
-                        valueWidth: this.computeWidth(egressUsage, ingressUsage, 'value'),
+                      linkId: inLink.linkId,
+                      nextHop: inLink.nextHop,
+                      out: [{
+                        linkId: outLink.linkId,
+                        nextHop: inLink.nextHop,
+                        outUsage: outUsage,
+                        inUsage: inUsage,
+                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
+                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
                         totalBitsRate: d.totalBitsRate,
                         ...d
                       }]
@@ -270,25 +270,25 @@ export default {
      * 计算popover弹窗和右侧数据模块的宽度
      * 弹窗最小宽度为360px，右侧数据最小宽度为75px，右侧数据每大一位，popover弹窗宽度增加7px
      */
-    computeWidth (egress, ingress, flag) {
+    computeWidth (out, _in, flag) {
       let width = 0
       let length = 0
 
-      let egressUsage = ''
-      let ingressUsage = ''
+      let outUsage = ''
+      let inUsage = ''
 
-      if (egress < 0.0001 && egress !== 0) {
-        egressUsage = '<0.01%'
+      if (out < 0.0001 && out !== 0) {
+        outUsage = '<0.01%'
       } else {
-        egressUsage = JSON.stringify(parseFloat((egress * 100).toFixed(2)))
+        outUsage = JSON.stringify(parseFloat((out * 100).toFixed(2)))
       }
-      if (ingress < 0.0001 && ingress !== 0) {
-        ingressUsage = '<0.01%'
+      if (_in < 0.0001 && _in !== 0) {
+        inUsage = '<0.01%'
       } else {
-        ingressUsage = JSON.stringify(parseFloat((ingress * 100).toFixed(2)))
+        inUsage = JSON.stringify(parseFloat((_in * 100).toFixed(2)))
       }
 
-      length = egressUsage.length + ingressUsage.length - 1
+      length = outUsage.length + inUsage.length - 1
 
       if (flag === 'popover') {
         width = 360 + length * 7

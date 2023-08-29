@@ -101,10 +101,10 @@ export default {
         const condition = this.queryCondition.toLowerCase().split(' or ')
         if (condition.length > 1) {
           if (n === 0) {
-            params.q = condition.find(c => c.indexOf('common_ingress_link_id') > -1 || c.indexOf('ingress_link_direction') > -1)
+            params.q = condition.find(c => c.indexOf('common_in_link_id') > -1 || c.indexOf('in_link_direction') > -1)
             url = api.linkMonitor.drilldownQuadrupleIngressAnalysis // 入口
           } else {
-            params.q = condition.find(c => c.indexOf('common_egress_link_id') > -1 || c.indexOf('egress_link_direction') > -1)
+            params.q = condition.find(c => c.indexOf('common_out_link_id') > -1 || c.indexOf('out_link_direction') > -1)
             url = api.linkMonitor.drilldownQquadrupleEgressAnalysis // 出口
           }
         }
@@ -140,11 +140,11 @@ export default {
       if (tab === 0) {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (t.commonIngressLinkId === e.originalLinkId) {
+            if (t.commonInLinkId === e.originalLinkId) {
               t.linkId = e.linkId
               t.linkDirection = e.nextHop
               t.bandwidth = e.bandwidth
-              t.value = parseInt(t.ingressBitsRate)
+              t.value = parseInt(t.inBitsRate)
               t.external = `e_${t.externalLocation}`
               t.internal = `i_${t.internalLocation}`
             }
@@ -153,11 +153,11 @@ export default {
       } else {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (t.commonEgressLinkId === e.originalLinkId) {
+            if (t.commonOutLinkId === e.originalLinkId) {
               t.linkId = e.linkId
               t.bandwidth = e.bandwidth
               t.linkDirection = e.nextHop
-              t.value = parseInt(t.egressBitsRate)
+              t.value = parseInt(t.outBitsRate)
               t.external = `e_${t.externalLocation}`
               t.internal = `i_${t.internalLocation}`
             }
