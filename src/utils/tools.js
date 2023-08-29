@@ -1398,7 +1398,7 @@ export function comparedEntityKey (str) {
     const regex = /\ = | =|= /g
     q = q.replace(regex, '=')
 
-    if (q.indexOf('AND') > -1) {
+    if (q.indexOf('AND') > -1 && checkStrIncludeAnd(q)) {
       const arr = q.split(' AND ')
       let newQ = ''
       let errorQ = ''
@@ -1449,6 +1449,7 @@ export function comparedEntityKey (str) {
       }
     } else {
       const key = q.substring(0, q.indexOf('='))
+      q = q.replace(/ AND /g, ' and ')
       const obj = columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
       if (obj) {
         return { key: obj.label + q.substring(q.indexOf('='), q.length), isKey: true }
@@ -1511,11 +1512,15 @@ export const handleEntityTypeByStr = (str) => {
     const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
 
     if (regexIPv4.test(str) || regexIPv6.test(str)) {
-      return `IP='${str}'`
+      const obj = columnList.find(t => t.label.toLowerCase() === 'ip')
+      return `${obj.label}='${str}'`
     } else if (reg.test(str)) {
-      return `Domain LIKE '%${str}'`
+      // 只写作domain即可，schema字段更改几次，避免后续再更改，直接拿columnList的label进行替换
+      const obj = columnList.find(t => t.label.toLowerCase() === 'domain')
+      return `${obj.label} LIKE '%${str}'`
     } else {
-      return `App LIKE '%${str}%'`
+      const obj = columnList.find(t => t.label.toLowerCase() === 'app')
+      return `${obj.label} LIKE '%${str}%'`
     }
   }
 }
@@ -1608,4 +1613,29 @@ const combineLabel1 = (list) => {
     }
     return acc
   }, {})
+}
+/**
+ * 检测传过来的字符串是否包含and，
+ * 例如 app='Computer and Internet'这种情况，需要单独甄别
+ * @param str
+ */
+const checkStrIncludeAnd = (str) => {
+  const arr = str.split(' AND ')
+  let label = ''
+
+  arr.forEach((item, index) => {
+    // and前后的语句，前面一段不需要甄别，因为前一段可能是app='Computer，但后一段肯定不属于columnList
+    // 如果后面一段属于columnList的关键字，整段字符串具有and的连接效果
+    if (index % 2 !== 0) {
+      if (item.indexOf('=') > -1) {
+        label = item.substring(0, item.indexOf('='))
+      } else if (item.toLowerCase().indexOf(' in ') > -1) {
+        label = item.substring(0, item.toLowerCase().indexOf(' in '))
+      } else if (item.indexOf('has(') > -1) {
+        label = item.substring(4, item.indexOf(','))
+      }
+    }
+  })
+
+  return columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
 }
