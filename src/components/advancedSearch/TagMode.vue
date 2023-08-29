@@ -31,7 +31,7 @@
           </div>
           <span v-if="!meta.column.isEditing && meta.operator.value !== 'has'" @click="columnClick(meta)">{{meta.column.label}}</span>
           <!--操作符是has时，has需前置-->
-          <span v-else class="condition__operator">{{ meta.operator.value.toUpperCase() }}</span>
+          <span v-else class="condition__operator">{{ meta.operator.value }}</span>
         </div>
         <!-- 已选操作符显示 -->
         <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show && meta.operator.value !== 'has'">{{meta.operator.value}}</div>
@@ -44,7 +44,7 @@
           </div>
           <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
         </div>
-        <div v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
+        <div class="condition__value" v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
 
         <!-- 操作符选择器 -->
         <div class="condition__operation-select" v-if="meta.operator.show && meta.operator.isEditing">
@@ -446,6 +446,9 @@ export default {
     },
     cleanMetaList () {
       this.metaList = []
+      const routeQuery = this.$route.query
+      delete routeQuery.q
+      this.reloadUrl(routeQuery, 'cleanOldParams')
     }
   },
   mounted () {

@@ -1411,6 +1411,7 @@ export function comparedEntityKey (str) {
         // 判断是否包含=或者in
         const keyEqual = item.substring(0, item.indexOf('='))
         const keyIn = item.substring(0, item.indexOf(' IN '))
+        const keyLike = item.substring(0, item.indexOf(' LIKE '))
 
         let keyHas // 目前只有Tag操作符为has函数，避免以后会增加其他实体使用has，故不单独将has作为tag使用
         let objHas
@@ -1421,10 +1422,13 @@ export function comparedEntityKey (str) {
 
         const objEqual = columnList.find(t => t.label.toLowerCase() === keyEqual.toLowerCase())
         const objIn = columnList.find(t => t.label.toLowerCase() === keyIn.toLowerCase())
+        const objLike = columnList.find(t => t.label.toLowerCase() === keyLike.toLowerCase())
         if (objEqual) {
           newQ += objEqual.label + item.substring(item.indexOf('='), item.length) + ' AND '
         } else if (objIn) {
           newQ += objIn.label + item.substring(item.indexOf(' IN '), item.length) + ' AND '
+        } else if (objLike) {
+          newQ += objLike.label + item.substring(item.indexOf(' LIKE '), item.length) + ' AND '
         } else if (objHas) {
           newQ += item.substring(item.indexOf(' has'), item.length) + ' AND '
         } else {
@@ -1494,9 +1498,51 @@ export const handleEntityTypeByStr = (str) => {
     }
     // 检查str字段在arr中是否出现,true为出现过
     const result = arr.some(item => newStr.includes(item))
-    if (result) {
+    if (newStr.indexOf(' and ') > -1) {
+      // 将单引号包裹的and拿出来放到数组tempList里，原来的单引号包裹内容用temp即'it is test keyword{键值}'代替
+      // 再将字符串用and转换为数组，遍历数组，发现值为temp的，获取键值，根据键值获取tempList的值组合起来，
+      // 最后将键值删除，后续再多次测试验证
+      const tempList = []
+      const regex = /'([^']*?)'/g
+      let match
+
+      // 将单引号包裹的and内容集合起来
+      while ((match = regex.exec(str)) !== null) {
+        if (match[1].includes('and')) {
+          tempList.push(match[1])
+        }
+      }
+
+      // 将单引号包裹的and内容用特殊值代替
+      tempList.forEach((item, index) => {
+        const regex = new RegExp(item, 'g')
+        str = str.replace(regex, `it is test keyword${index}`)
+      })
+
+      const noAndList = str.split(' and ')
+      noAndList.forEach((item, index) => {
+        // 发现插入的特殊值，获取键值，根据键值替换成原来内容，删除键值
+        if (item.indexOf('it is test keyword') > -1) {
+          const regex = /\d+/g
+          const result1 = item.match(regex)
+          noAndList[index] = noAndList[index].replace(result1[0], '')
+          noAndList[index] = noAndList[index].replace('it is test keyword', tempList[result1[0]])
+        }
+      })
+
+      const newArr = noAndList
+      newArr.forEach((item, index) => {
+        if (!arr.some(ite => item.includes(ite))) {
+          // item = checkFormatByStr(item)
+          newArr[index] = checkFormatByStr(item)
+        }
+      })
+
+      str = newArr.join(' and ')
       return str
-    } else {
+    } else if (result) {
+      return str
+    } else if (!result) {
       const regex = /^["']|["']$/
       // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
       if (regex.test(str)) {
@@ -1504,24 +1550,49 @@ export const handleEntityTypeByStr = (str) => {
       }
     }
 
-    // ipv4校验
-    const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-    // ipv6校验
-    const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
-    // domain校验
-    const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+    return checkFormatByStr(str)
+  }
+}
+/**
+ * 校验字符串格式，如ip、domain、app
+ */
+const checkFormatByStr = (str) => {
+  // ipv4校验
+  const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+  // ipv6校验
+  const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
+  // domain校验
+  const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
 
-    if (regexIPv4.test(str) || regexIPv6.test(str)) {
-      const obj = columnList.find(t => t.label.toLowerCase() === 'ip')
-      return `${obj.label}='${str}'`
-    } else if (reg.test(str)) {
-      // 只写作domain即可，schema字段更改几次，避免后续再更改，直接拿columnList的label进行替换
-      const obj = columnList.find(t => t.label.toLowerCase() === 'domain')
-      return `${obj.label} LIKE '%${str}'`
-    } else {
-      const obj = columnList.find(t => t.label.toLowerCase() === 'app')
-      return `${obj.label} LIKE '%${str}%'`
-    }
+  if (regexIPv4.test(str) || regexIPv6.test(str)) {
+    const obj = columnList.find(t => t.label.toLowerCase() === 'ip')
+    return `${obj.label}='${str}'`
+  } else if (reg.test(str)) {
+    // 只写作domain即可，schema字段更改几次，避免后续再更改，直接拿columnList的label进行替换
+    const obj = columnList.find(t => t.label.toLowerCase() === 'domain')
+    return `${obj.label} LIKE '%${str}'`
+  } else {
+    const obj = columnList.find(t => t.label.toLowerCase() === 'app')
+    return `${obj.label} LIKE '%${str}%'`
+  }
+}
+export const getEntityTypeByValue = (str) => {
+  // ipv4校验
+  const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+  // ipv6校验
+  const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
+  // domain校验
+  const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+
+  if (regexIPv4.test(str) || regexIPv6.test(str)) {
+    const obj = columnList.find(t => t.label.toLowerCase() === 'ip')
+    return obj.label
+  } else if (reg.test(str)) {
+    const obj = columnList.find(t => t.label.toLowerCase() === 'domain')
+    return obj.label
+  } else {
+    const obj = columnList.find(t => t.label.toLowerCase() === 'app')
+    return obj.label
   }
 }
 /**
@@ -1620,7 +1691,7 @@ const combineLabel1 = (list) => {
  * @param str
  */
 const checkStrIncludeAnd = (str) => {
-  const arr = str.split(' AND ')
+  const arr = str.split(' and ')
   let label = ''
 
   arr.forEach((item, index) => {

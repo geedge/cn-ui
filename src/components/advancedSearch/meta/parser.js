@@ -3,6 +3,7 @@ import Token, { types } from './token'
 import ParserError, { errorTypes, errorDesc } from '@/components/advancedSearch/meta/error'
 import _ from 'lodash'
 import { columnList } from '@/utils/static-data'
+import { getEntityTypeByValue } from '@/utils/tools'
 
 const strReg = {
   all: /^[\da-zA-Z\s.'><!=-_(),%]$/,
@@ -789,6 +790,16 @@ export function handleOperatorSpace (operator) {
  * @returns {string|*}
  */
 export function handleMetaListToStr (metaList) {
+  // 将模糊搜索的值，转换为对应类型，如1.1.1.1，则添加操作符，类型等，以便于后面的操作
+  metaList.forEach(item => {
+    if (item.column.type === 'fullText') {
+      item.operator.value = '='
+      item.value.value = item.column.label
+      item.value.label = item.column.label
+      item.column.label = getEntityTypeByValue(item.column.label)
+      item.column.type = 'string'
+    }
+  })
   // 长度为1时，即模糊搜索，例如搜索框值为1.1.1.1，则直接返回1.1.1.1
   // 如果为IP='1.1.1.1'的情况，则从metaList拼接成IP='1.1.1.1'返回出去
   if (metaList && metaList.length === 1) {
