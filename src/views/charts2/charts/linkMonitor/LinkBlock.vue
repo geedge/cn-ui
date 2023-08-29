@@ -209,10 +209,10 @@ export default {
                     hit.inBitsRate += d.inBitsRate
                     if (info.direction === 'egress') {
                       hit.egressBandwidth = info.bandwidth
-                      hit.egressLinkId = d.linkId
+                      hit.outLinkId = d.linkId
                     } else if (info.direction === 'ingress') {
                       hit.ingressBandwidth = info.bandwidth
-                      hit.ingressLinkId = d.linkId
+                      hit.inLinkId = d.linkId
                     }
                   } else {
                     const hit = {
@@ -222,10 +222,10 @@ export default {
                     }
                     if (info.direction === 'egress') {
                       hit.egressBandwidth = info.bandwidth
-                      hit.egressLinkId = d.linkId
+                      hit.outLinkId = d.linkId
                     } else if (info.direction === 'ingress') {
                       hit.ingressBandwidth = info.bandwidth
-                      hit.ingressLinkId = d.linkId
+                      hit.inLinkId = d.linkId
                     }
                     data.push(hit)
                   }
@@ -368,7 +368,7 @@ export default {
       return width
     },
     drillLinkId (item) {
-      const queryCondition = `common_egress_link_id = ${item.egressLinkId} or common_ingress_link_id = ${item.ingressLinkId}`
+      const queryCondition = `common_out_link_id = ${item.outLinkId} or common_in_link_id = ${item.inLinkId}`
       this.$router.push({
         query: {
           ...this.$route.query,
