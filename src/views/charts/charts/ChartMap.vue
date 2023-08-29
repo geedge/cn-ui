@@ -223,10 +223,10 @@ export default {
           this.countrySeries = shallowRef(this.polygonSeriesFactory())
           this.countrySeries.geodata = geoData
           this.polygonSeries.hide()
-          const country = ev.target.dataItem.dataContext.serverCountry
-          const queryParams = { ...this.queryParams, country }
+          const countryRegion = ev.target.dataItem.dataContext.serverCountryRegion
+          const queryParams = { ...this.queryParams, countryRegion }
           const chartData = await getData(replaceUrlPlaceholder(this.chartInfo.params.url, queryParams))
-          this.loadAm4ChartMap(this.countrySeries, null, country, chartData)
+          this.loadAm4ChartMap(this.countrySeries, null, countryRegion, chartData)
         }
       }
     },
@@ -291,7 +291,7 @@ export default {
 
       return imageSeries
     },
-    loadAm4ChartMap (polygonSeries, imageSeries, country, chartData) {
+    loadAm4ChartMap (polygonSeries, imageSeries, countryRegion, chartData) {
       // chartData不为空是下钻
       if (chartData) {
         this.$emit('showLoading', true)
@@ -307,7 +307,7 @@ export default {
           }
         })
 
-        this.showMapBackButton = !!country
+        this.showMapBackButton = !!countryRegion
         const chartParams = this.chartInfo.params
         const data = chartData || this.chartData
         if (data && this.isMapBlock) {
@@ -315,7 +315,7 @@ export default {
             return {
               ...this.convertMapData(r),
               id: r.serverId,
-              serverCountry: r.serverCountry,
+              serverCountryRegion: r.serverCountryRegion,
               value: r[chartParams.valueColumn]
             }
           })
