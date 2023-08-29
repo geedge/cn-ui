@@ -7,16 +7,16 @@
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('network.total')}}</div>
         <div class="link-traffic-list-center-value" v-if="lineData && lineData.analysis" test-id="line-tabContent">
-          <span>{{unitConvert(lineData.analysis.avg, unitTypes.number)[0]}}</span>
+          <span>{{valueToRangeValue(lineData.analysis.avg, unitTypes.number)[0]}}</span>
           <span>
-            <span>{{unitConvert(lineData.analysis.avg, unitTypes.number)[1]}}</span>
+            <span>{{valueToRangeValue(lineData.analysis.avg, unitTypes.number)[1]}}</span>
             <span v-if="lineData.unitType">{{lineData.unitType}}</span>
           </span>
         </div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('linkMonitor.bandwidthUsage')}}</div>
-        <div class="link-traffic-list-center-value" v-if="lineData && lineData.analysis && bandWidth" test-id="line-percent">{{unitConvert(lineData.analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
+        <div class="link-traffic-list-center-value" v-if="lineData && lineData.analysis && bandWidth" test-id="line-percent">{{valueToRangeValue(lineData.analysis.avg / bandWidth, unitTypes.percent).join('')}}</div>
         <div class="link-traffic-list-center-value" v-else>-</div>
       </div>
       <div class="link-traffic-list-center">
@@ -25,23 +25,23 @@
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.tcpConnectionEstablishLatency')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-tcp">{{unitConvert(Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-tcp">{{valueToRangeValue(Math.floor(linkTrafficListData.establishLatencyMs), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.httpResponse')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-http">{{unitConvert(Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-http">{{valueToRangeValue(Math.floor(linkTrafficListData.httpResponseLatency), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.sslResponseLatency')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-ssl">{{unitConvert(Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-ssl">{{valueToRangeValue(Math.floor(linkTrafficListData.sslConLatency), unitTypes.time).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('networkAppPerformance.packetLoss')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-packetLoss">{{unitConvert(linkTrafficListData.tcpLostlenPercent, unitTypes.percent).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-packetLoss">{{valueToRangeValue(linkTrafficListData.tcpLostlenPercent, unitTypes.percent).join('')}}</div>
       </div>
       <div class="link-traffic-list-center">
         <div class="link-traffic-list-center-label">{{$t('overall.packetRetrans')}}</div>
-        <div class="link-traffic-list-center-value" test-id="line-packetRetrans">{{unitConvert(linkTrafficListData.pktRetransPercent, unitTypes.percent).join('')}}</div>
+        <div class="link-traffic-list-center-value" test-id="line-packetRetrans">{{valueToRangeValue(linkTrafficListData.pktRetransPercent, unitTypes.percent).join('')}}</div>
       </div>
     </div>
   </div>
@@ -50,7 +50,7 @@
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
 import { storageKey, unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -79,7 +79,7 @@ export default {
   data () {
     return {
       unitTypes,
-      unitConvert,
+      valueToRangeValue,
       timer: null,
       linkTrafficListData: {},
       cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo)),
@@ -173,7 +173,7 @@ export default {
     this.linkTrafficData()
   },
   beforeUnmount () {
-    this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>
