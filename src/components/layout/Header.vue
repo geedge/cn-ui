@@ -303,7 +303,7 @@ export default {
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
     },
     otherMenu () {
-      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'chart', 'I18N', 'entityDetail', 'temp', 'entityGraph'].indexOf(menu.code) === -1)
+      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'chart', 'I18N', 'entityDetail', 'temp', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
 
       /* function excludeButton (menu) {
         for (let i = 0; i < menu.length; i++) {
@@ -451,6 +451,22 @@ export default {
           value: entityGraphMenu.i18n ? this.$t(entityGraphMenu.i18n) : entityGraphMenu.name,
           route: entityGraphMenu.route,
           type: entityGraphMenu.type
+        })
+        return true
+      } else if (this.route === '/detectionsNew') {
+        const detectionMenu = menus.find(m => m.route === '/detection')
+        const policyMenu = menus.find(m => m.route === '/detectionsNew')
+        breadcrumb.push({
+          code: detectionMenu.code,
+          value: detectionMenu.i18n ? this.$t(detectionMenu.i18n) : detectionMenu.name,
+          route: detectionMenu.route,
+          type: detectionMenu.type
+        })
+        breadcrumb.push({
+          code: policyMenu.code,
+          value: policyMenu.i18n ? this.$t(policyMenu.i18n) : policyMenu.name,
+          route: policyMenu.route,
+          type: policyMenu.type
         })
         return true
       }
