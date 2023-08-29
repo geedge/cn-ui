@@ -20,7 +20,7 @@
           <span v-if="row.nextHop">{{ row.nextHop }}</span>
           <span v-else>{{ row.linkId }}</span>
         </div>
-        <div v-for="(item, index3) in row.egress" :key="index3">
+        <div v-for="(item, index3) in row.out" :key="index3">
 
           <el-popover :width="item.popoverWidth" placement="right" trigger="hover">
             <template #reference>
@@ -39,7 +39,7 @@
                 <svg class="icon item-popover-header-icon" aria-hidden="true">
                   <use xlink:href="#cn-icon-arrow-right2"></use>
                 </svg>
-                <span v-if="row.nextHop" :test-id="`toNextHop${index3+1}`">{{ item.egressLinkDirection }}</span>
+                <span v-if="row.nextHop" :test-id="`toNextHop${index3+1}`">{{ item.outLinkDirection }}</span>
                 <span v-else :test-id="`toLinkId${index3+1}`">{{ item.linkId }}</span>
               </div>
 
@@ -59,13 +59,13 @@
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
                           </svg>
-                          {{ convertValue(item.egressUsage) }}
+                          {{ convertValue(item.outUsage) }}
                         </div>
                         <div :test-id="`ingressUsage${gridData.length}-${index2+1}-${index3+1}`">
                           <svg class="icon item-popover-down" aria-hidden="true">
                             <use xlink:href="#cn-icon-ingress"></use>
                           </svg>
-                          {{ convertValue(item.ingressUsage) }}
+                          {{ convertValue(item.inUsage) }}
                         </div>
                       </div>
                     </div>
