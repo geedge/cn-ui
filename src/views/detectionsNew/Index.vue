@@ -3,7 +3,7 @@
     <div class="detection-title">
       <span>{{ $t('overall.detections') }}</span>
       <span class="detection-title-label">
-        60 Polices created(200 max） | 32 polices enabled(100 max)
+        60 polices created(200 max) | 32 polices enabled(100 max)
       </span>
     </div>
 
