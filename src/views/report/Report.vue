@@ -278,7 +278,7 @@ export default {
                 }
               })
               this.pageObj.total = response.data.data.total
-              this.isNoData = !this.tableData || this.tableData.length === 0;
+              this.isNoData = !this.tableData || this.tableData.length === 0
             })
             // TODO 回到顶部
           } else {

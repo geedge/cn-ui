@@ -733,7 +733,7 @@ export const networkOverviewTabList = [
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
-  },{
+  }, {
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
@@ -741,7 +741,7 @@ export const networkOverviewTabList = [
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
-  },{
+  }, {
     label: 'network.regions',
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
@@ -945,7 +945,7 @@ export const networkAppPerformanceTabList = [
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewDomain
-  },{
+  }, {
     label: 'network.secondLevelDomains',
     prop: 'domainSld',
     queryCycleTotalProp: 'domainSld',
@@ -1164,7 +1164,7 @@ export const linkMonitorTabList = [
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
-  },{
+  }, {
     label: 'network.secondLevelDomains',
     prop: 'domainSld',
     queryCycleTotalProp: 'domainSld',
@@ -1172,7 +1172,7 @@ export const linkMonitorTabList = [
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
-  },  {
+  }, {
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
@@ -1228,7 +1228,7 @@ export const linkMonitorTabList = [
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
-  },{
+  }, {
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',

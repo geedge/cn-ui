@@ -205,8 +205,8 @@ export default {
                 if (info) {
                   const hit = data.find(d => d.linkId === info.linkId)
                   if (hit) {
-                    hit.egressBitsRate += d.egressBitsRate
-                    hit.ingressBitsRate += d.ingressBitsRate
+                    hit.outBitsRate += d.outBitsRate
+                    hit.inBitsRate += d.inBitsRate
                     if (info.direction === 'egress') {
                       hit.egressBandwidth = info.bandwidth
                       hit.egressLinkId = d.linkId
@@ -217,8 +217,8 @@ export default {
                   } else {
                     const hit = {
                       linkId: info.linkId,
-                      egressBitsRate: d.egressBitsRate,
-                      ingressBitsRate: d.ingressBitsRate
+                      outBitsRate: d.outBitsRate,
+                      inBitsRate: d.inBitsRate
                     }
                     if (info.direction === 'egress') {
                       hit.egressBandwidth = info.bandwidth
@@ -232,16 +232,16 @@ export default {
                 }
               })
               this.linkNoData = data.length === 0
-              data.forEach((item) => {
-                item.totalBitsRate = item.egressBitsRate + item.ingressBitsRate
+              data.forEach(item => {
+                item.totalBitsRate = item.outBitsRate + item.inBitsRate
               })
 
               const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
               const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
               sorted.forEach((s, i) => {
                 s.color = linkColors[i]
-                s.egressUsage = this.computeUsage(s.egressBitsRate, s.egressBandwidth)
-                s.ingressUsage = this.computeUsage(s.ingressBitsRate, s.ingressBandwidth)
+                s.egressUsage = this.computeUsage(s.outBitsRate, s.egressBandwidth)
+                s.ingressUsage = this.computeUsage(s.inBitsRate, s.ingressBandwidth)
                 s.popoverWidth = this.computePopoverWidth(s.egressUsage, s.ingressUsage)
               })
               this.linkData = sorted
@@ -260,9 +260,9 @@ export default {
             if (!this.nextHopNoData) {
               let directionArr = []
               nextHopData.forEach((item) => {
-                if (item.egressLinkDirection !== '' && item.ingressLinkDirection !== '') {
-                  directionArr.push(item.egressLinkDirection)
-                  directionArr.push(item.ingressLinkDirection)
+                if (item.outLinkDirection !== '' && item.inLinkDirection !== '') {
+                  directionArr.push(item.outLinkDirection)
+                  directionArr.push(item.inLinkDirection)
                 }
               })
               directionArr = Array.from(new Set(directionArr))
@@ -270,15 +270,15 @@ export default {
               const newNextHopData = []
               this.nextHopNoData = directionArr.length === 0
               directionArr.forEach((item1) => {
-                const newObj = { egressBitsRate: 0, ingressBitsRate: 0, totalBitsRate: 0, linkDirection: item1 }
+                const newObj = { outBitsRate: 0, inBitsRate: 0, totalBitsRate: 0, linkDirection: item1 }
                 nextHopData.forEach((item2) => {
-                  if (item1 === item2.egressLinkDirection) {
-                    newObj.egressBitsRate += item2.egressBitsRate
-                    newObj.totalBitsRate += item2.egressBitsRate
+                  if (item1 === item2.outLinkDirection) {
+                    newObj.outBitsRate += item2.outBitsRate
+                    newObj.totalBitsRate += item2.outBitsRate
                   }
-                  if (item1 === item2.ingressLinkDirection) {
-                    newObj.ingressBitsRate += item2.ingressBitsRate
-                    newObj.totalBitsRate += item2.ingressBitsRate
+                  if (item1 === item2.inLinkDirection) {
+                    newObj.inBitsRate += item2.inBitsRate
+                    newObj.totalBitsRate += item2.inBitsRate
                   }
                 })
                 newNextHopData.push(newObj)
@@ -298,9 +298,9 @@ export default {
                 })
 
                 // 上行使用情况计算
-                const egressUsage = this.computeUsage(s.egressBitsRate, sum)
+                const egressUsage = this.computeUsage(s.outBitsRate, sum)
                 // 下行使用情况计算
-                const ingressUsage = this.computeUsage(s.ingressBitsRate, sum)
+                const ingressUsage = this.computeUsage(s.inBitsRate, sum)
                 s.egressUsage = egressUsage
                 s.ingressUsage = ingressUsage
                 s.popoverWidth = this.computePopoverWidth(egressUsage, ingressUsage)

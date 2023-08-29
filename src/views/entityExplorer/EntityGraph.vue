@@ -756,9 +756,9 @@ export default {
       }
       const rootNode = new Node(nodeType.rootNode, this.entity.entityName, {
         entityType: this.entity.entityType,
-        entityName: this.entity.entityName,
-        /*x: coordinate.rootNode.fx,
-        y: coordinate.rootNode.fy*/
+        entityName: this.entity.entityName
+        /* x: coordinate.rootNode.fx,
+        y: coordinate.rootNode.fy */
       })
       await rootNode.queryDetailData()
       nodes.push(rootNode)
@@ -774,9 +774,9 @@ export default {
               nodeType.listNode,
               `${rootNode.id}__${k}-list`,
               {
-                entityType: k,
-                /*x: coordinate[`${k}ListNode`].fx,
-                y: coordinate[`${k}ListNode`].fy*/
+                entityType: k
+                /* x: coordinate[`${k}ListNode`].fx,
+                y: coordinate[`${k}ListNode`].fy */
               },
               rootNode
             )
