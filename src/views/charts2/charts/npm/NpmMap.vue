@@ -242,7 +242,7 @@ export default {
     generatePolygonTooltipHTML () {
       const html = `
         <div class="map-tooltip" style="padding-bottom: 10px;">
-          <div class="map-tooltip__title"><img src="/images/flag/{id}.png" style="width: {tooltip.width}px;height: 12px;margin-right: {tooltip.marginRight}px;"/>{name}</div>
+          <div class="map-tooltip__title"><img src="/images/flag/{id}.png" style="width: {tooltip.width}px;height: 12px;margin-right: {tooltip.marginRight}px;border: 1px solid #E8E8E8;"/>{name}</div>
           <div class="map-tooltip__content">
             <div class="content-title">{tooltip.text.traffic}</div>
             <div class="content-row">
