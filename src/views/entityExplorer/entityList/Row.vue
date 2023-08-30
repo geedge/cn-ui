@@ -43,12 +43,12 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.category ? entityData.category.name : '-' }}</span>
+                  <span class="row-item-value">{{ entityData.category ? entityData.category.categoryGroup : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category"></i>
                   <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.category ? entityData.category.group : '-' }}</span>
+                  <span class="row-item-value">{{ entityData.category ? entityData.category.categoryName : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-credit-rating"></i>

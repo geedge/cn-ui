@@ -405,9 +405,10 @@ export default {
     dateFormatByAppearance,
     getQueryParams () {
       return {
-        // startTime: getSecond(this.timeFilter.startTime),
-        // endTime: getSecond(this.timeFilter.endTime),
-        resource: this.entity.entityValue
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        resource: this.entity.entityValue,
+        ip: this.entity.entityValue
       }
     },
     getPerformanceQueryParams () {
