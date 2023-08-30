@@ -4,31 +4,31 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.category')}}</div>
-        <div class="row__content">{{entityData.category ? entityData.category.categoryName : '-'}}</div>
+        <div class="row__content">{{$_.get(entityData, 'category.categoryName', '-')}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.domainDetail.categoryGroup')}}</div>
-        <div class="row__content">{{entityData.category ? entityData.category.categoryGroup : '-'}}</div>
+        <div class="row__content">{{$_.get(entityData, 'category.categoryGroup', '-')}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.reputationLevel')}}</div>
-        <div class="row__content">{{entityData.category ? entityData.category.reputationLevel : '-'}}</div>
+        <div class="row__content">{{$_.get(entityData, 'category.reputationLevel', '-')}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.registration')}}</div>
-        <div class="row__content">{{entityData.whois ? entityData.whois.registrantCountry : '-'}}</div>
+        <div class="row__content">{{$_.get(entityData, 'whois.registrantCountry', '-')}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.org')}}</div>
-        <div class="row__content">{{entityData.whois ? entityData.whois.registrantOrg : '-'}}</div>
+        <div class="row__content">{{$_.get(entityData, 'whois.registrantOrg', '-')}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.icpCompanyName')}}</div>
-        <div class="row__content">{{entityData.icp ? entityData.icp.icpCompanyName : '-'}}</div>
+        <div class="row__content">{{$_.get(entityData, 'icp.icpCompanyName', '-')}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.icpLicense')}}</div>
-        <div class="row__content">{{entityData.icp ? entityData.icp.icpSiteLicense : '-'}}</div>
+        <div class="row__content">{{$_.get(entityData, 'icp.icpSiteLicense', '-')}}</div>
       </div>
     </div>
   </div>
@@ -72,18 +72,20 @@
         </div>
       </div>
 
-<!--      <div class="overview__row">-->
-<!--        <div class="row__label row__label&#45;&#45;width130">{{$t('entities.networkQualityRating')}}</div>-->
-<!--        <div style="position: relative;">-->
-<!--          <div class="entity-score" v-if="!loadingNetworkQuality">-->
-<!--            <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>-->
-<!--            <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>-->
-<!--            <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>-->
-<!--            Score:{{score}}-->
-<!--          </div>-->
-<!--          <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="overview__row">
+        <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
+        <div style="position: relative;">
+          <div class="entity-score" v-if="!loadingNetworkQuality">
+            <div v-if="score !== '-'">
+              <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
+              <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
+              <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
+            </div>
+            {{score}}
+          </div>
+          <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
+        </div>
+      </div>
     </div>
   </div>
 
