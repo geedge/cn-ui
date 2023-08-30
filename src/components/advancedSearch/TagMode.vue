@@ -456,7 +456,7 @@ export default {
     // 如果地址栏包含参数q，则匹配出metaList到搜索栏回显使用
     let { q } = this.$route.query
     if (q) {
-      q = comparedEntityKey(q).key
+      q = comparedEntityKey(handleEntityTypeByStr(q)).key
       const parser = new Parser(this.columnList)
       this.metaList = parser.parseStr(q).metaList
     }

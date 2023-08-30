@@ -117,7 +117,7 @@ export default {
     changeMode () {
       let str = this.codeMirror.getValue().trim()
       if (str) {
-        str = comparedEntityKey(str).key
+        str = comparedEntityKey(handleEntityTypeByStr(str)).key
         const parser = new Parser(this.columnList)
         const errorList = parser.validateStr(str)
         if (_.isEmpty(errorList)) {

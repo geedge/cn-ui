@@ -1446,7 +1446,7 @@ export function comparedEntityKey (str) {
       }
 
       return returnObj
-    } else if (q.indexOf('LIKE') > -1) {
+    } else if (q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1) {
       return {
         key: q,
         isKey: true
@@ -1461,7 +1461,7 @@ export function comparedEntityKey (str) {
         return { key: '[' + key + ']', isKey: false }
       }
     }
-  } else if (q && (q.indexOf(' IN ') > -1 || q.indexOf(' LIKE ') > -1)) {
+  } else if (q && (q.indexOf(' IN ') > -1 || q.indexOf(' in ') > -1 || q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1)) {
     return {
       key: q,
       isKey: true
@@ -1507,7 +1507,7 @@ export const handleEntityTypeByStr = (str) => {
       let match
 
       // 将单引号包裹的and内容集合起来
-      while ((match = regex.exec(str)) !== null) {
+      while ((match = regex.exec(newStr)) !== null) {
         if (match[1].includes('and')) {
           tempList.push(match[1])
         }
@@ -1516,10 +1516,10 @@ export const handleEntityTypeByStr = (str) => {
       // 将单引号包裹的and内容用特殊值代替
       tempList.forEach((item, index) => {
         const regex = new RegExp(item, 'g')
-        str = str.replace(regex, `it is test keyword${index}`)
+        newStr = newStr.replace(regex, `it is test keyword${index}`)
       })
 
-      const noAndList = str.split(' and ')
+      const noAndList = newStr.split(' and ')
       noAndList.forEach((item, index) => {
         // 发现插入的特殊值，获取键值，根据键值替换成原来内容，删除键值
         if (item.indexOf('it is test keyword') > -1) {
@@ -1538,8 +1538,8 @@ export const handleEntityTypeByStr = (str) => {
         }
       })
 
-      str = newArr.join(' and ')
-      return str
+      newStr = newArr.join(' and ')
+      return newStr
     } else if (result) {
       return str
     } else if (!result) {

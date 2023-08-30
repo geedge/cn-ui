@@ -792,7 +792,7 @@ export function handleOperatorSpace (operator) {
 export function handleMetaListToStr (metaList) {
   // 将模糊搜索的值，转换为对应类型，如1.1.1.1，则添加操作符，类型等，以便于后面的操作
   metaList.forEach(item => {
-    if (item.column.type === 'fullText') {
+    if (item.column && item.column.type === 'fullText') {
       item.operator.value = '='
       item.value.value = item.column.label
       item.value.label = item.column.label
