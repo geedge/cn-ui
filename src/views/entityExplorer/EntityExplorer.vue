@@ -67,7 +67,7 @@
           </div>
           <div class="overview-right">
             <div class="right-row margin-b-6">
-              <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
+              <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingApp" size="small"></loading>
@@ -97,7 +97,7 @@
           </div>
           <div class="overview-right">
             <div class="right-row margin-b-6">
-              <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
+              <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingDomain" size="small"></loading>
@@ -127,7 +127,7 @@
           </div>
           <div class="overview-right">
             <div class="right-row margin-b-6">
-              <i class="cn-icon cn-icon-_zhanbi entity-explorer-total__icon"></i>
+              <i class="cn-icon cn-icon-proportion entity-explorer-total__icon"></i>
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingIp" size="small"></loading>

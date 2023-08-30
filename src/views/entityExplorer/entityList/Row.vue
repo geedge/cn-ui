@@ -41,12 +41,12 @@
               </template>
               <template v-else-if="entityData.entityType === 'domain'">
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-sub-category"></i>
+                  <i class="cn-icon cn-icon-category-group"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">{{ entityData.category ? entityData.category.categoryGroup : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-category"></i>
+                  <i class="cn-icon cn-icon-sub-category"></i>
                   <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">{{ entityData.category ? entityData.category.categoryName : '-' }}</span>
                 </div>
@@ -58,17 +58,17 @@
               </template>
               <template v-else-if="entityData.entityType === 'app'">
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-id"></i>
+                  <i class="cn-icon cn-icon-category2"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">{{ entityData.category ? entityData.category.appCategory : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-category"></i>
+                  <i class="cn-icon cn-icon-sub-category"></i>
                   <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">{{ entityData.category ? entityData.category.appSubcategory : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
-                  <i class="cn-icon cn-icon-sub-category"></i>
+                  <i class="cn-icon cn-icon-credit-rating"></i>
                   <span class="row-item-label">{{ $t('entities.risk') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">{{ entityData.category ? appRisk(entityData.category.appRisk) : '-' }}</span>
                 </div>
