@@ -83,7 +83,7 @@ describe('views/charts2/charts/linkMonitor/LinkDirectionGrid.vue测试', () => {
       expect(score1053.text()).toBe('6')
       expect(tcp1053.text()).toBe('83ms')
       expect(http1053.text()).toBe('107ms')
-      expect(ssl1053.text()).toBe('0ms')
+      expect(ssl1053.text()).toBe('<1ms')
       expect(packetLoss1053.text()).toBe('0.38%')
       expect(packetRetrans1053.text()).toBe('0.91%')
 
@@ -118,7 +118,7 @@ describe('views/charts2/charts/linkMonitor/LinkDirectionGrid.vue测试', () => {
       expect(score331.text()).toBe('5')
       expect(tcp331.text()).toBe('89ms')
       expect(http331.text()).toBe('151ms')
-      expect(ssl331.text()).toBe('0ms')
+      expect(ssl331.text()).toBe('<1ms')
       expect(packetLoss331.text()).toBe('0.53%')
       expect(packetRetrans331.text()).toBe('2.24%')
       resolve()
