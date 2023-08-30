@@ -74,7 +74,7 @@
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
                       <div :test-id="`totalBitsRate${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
-                        {{ unitConvert(item.totalBitsRate, unitTypes.bps).join('') }}
+                        {{ valueToRangeValue(item.totalBitsRate, unitTypes.bps).join('') }}
                       </div>
                     </div>
                   </div>
@@ -99,35 +99,35 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[0].name) }}</div>
                       <div :test-id="`tcp${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
-                        {{ unitConvert(item.establishLatencyMs, unitTypes.time).join('') }}
+                        {{ valueToRangeValue(item.establishLatencyMs, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[1].name) }}</div>
                       <div :test-id="`http${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{'width': item.valueWidth + 'px'}">
-                        {{ unitConvert(item.httpResponseLatency, unitTypes.time).join('') }}
+                        {{ valueToRangeValue(item.httpResponseLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[2].name) }}</div>
                       <div :test-id="`ssl${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
-                        {{ unitConvert(item.sslConLatency, unitTypes.time).join('') }}
+                        {{ valueToRangeValue(item.sslConLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[3].name) }}</div>
                       <div :test-id="`packetLoss${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
-                        {{ unitConvert(item.tcpLostlenPercent, unitTypes.percent).join('') }}
+                        {{ valueToRangeValue(item.tcpLostlenPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[4].name) }}</div>
                       <div :test-id="`packetRetrans${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
-                        {{ unitConvert(item.pktRetransPercent, unitTypes.percent).join('') }}
+                        {{ valueToRangeValue(item.pktRetransPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
                   </div>
@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import ChartError from '@/components/common/Error'
@@ -164,7 +164,7 @@ export default {
   },
   data () {
     return {
-      unitConvert,
+      valueToRangeValue,
       unitTypes,
       npmNetworkName: [
         { name: 'networkAppPerformance.tcpConnectionEstablishLatency' },
@@ -186,7 +186,7 @@ export default {
       if (value < 0.0001 && value !== 0) {
         newValue = '< 0.01%'
       } else {
-        newValue = unitConvert(value, unitTypes.percent).join('')
+        newValue = valueToRangeValue(value, unitTypes.percent).join('')
       }
 
       return newValue
