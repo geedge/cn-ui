@@ -135,8 +135,8 @@ describe('views/charts2/charts/linkMonitor/LinkDirectionGrid.vue测试', () => {
     list1.data.data.result[43].pktRetransPercent = null
 
     // 修改下一跳的流量占比为100%，使得网格颜色为前红后绿
-    list2.data.data.result[6].egressBitsRate = 0
-    list2.data.data.result[6].ingressBitsRate = 100000000000
+    list2.data.data.result[6].outBitsRate = 0
+    list2.data.data.result[6].inBitsRate = 100000000000
     axiosPostAndMounted(list1, list2)
 
     const wrapper = mount(LinkDirectionGrid, {

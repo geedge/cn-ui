@@ -17,9 +17,9 @@ const timeFilter = {
 
 const linkInfo = JSON.stringify(linkInfoData)
 
-const query1 = { t: '1675395023486', thirdPanel: '15', thirdMenu: 'Link ID: Hundredgige10', panelName: 'Link ID: Hundredgige10', queryCondition: 'common_egress_link_id = 1792 or common_ingress_link_id = 1793', curTab: 'ip', startTime: 1675391498, endTime: 1675395098, range: 60 }
-const query2 = { t: '1675409029937', thirdPanel: '15', thirdMenu: 'Link ID: Hundredgige10', panelName: 'Link ID: Hundredgige10', queryCondition: 'common_egress_link_id = 2816 or common_ingress_link_id = 2817', curTab: 'ip', startTime: 1675388605, endTime: 1675410205, range: 360, lineMetric: 'Bits/s' }
-const query3 = { t: '1675409029937', thirdPanel: '15', thirdMenu: 'Link ID: Hundredgige10', panelName: 'Link ID: Hundredgige10', queryCondition: 'common_egress_link_id = 2816 or common_ingress_link_id = 2817', curTab: 'ip', startTime: 1675388605, endTime: 1675410205, range: 360, lineMetric: 'Packets/s' }
+const query1 = { t: '1675395023486', thirdPanel: '15', thirdMenu: 'Link ID: Hundredgige10', panelName: 'Link ID: Hundredgige10', queryCondition: 'common_out_link_id = 1792 or common_in_link_id = 1793', curTab: 'ip', startTime: 1675391498, endTime: 1675395098, range: 60 }
+const query2 = { t: '1675409029937', thirdPanel: '15', thirdMenu: 'Link ID: Hundredgige10', panelName: 'Link ID: Hundredgige10', queryCondition: 'common_out_link_id = 2816 or common_in_link_id = 2817', curTab: 'ip', startTime: 1675388605, endTime: 1675410205, range: 360, lineMetric: 'Bits/s' }
+const query3 = { t: '1675409029937', thirdPanel: '15', thirdMenu: 'Link ID: Hundredgige10', panelName: 'Link ID: Hundredgige10', queryCondition: 'common_out_link_id = 2816 or common_in_link_id = 2817', curTab: 'ip', startTime: 1675388605, endTime: 1675410205, range: 360, lineMetric: 'Packets/s' }
 
 let wrapper = null
 /**
@@ -73,11 +73,11 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
       const textNode7 = wrapper.get('[test-id="line-packetRetrans"]')
 
       expect(textNode0.text()).toEqual('756.87Kbps')
-      expect(textNode1.text()).toEqual('0%')
+      expect(textNode1.text()).toEqual('<0.01%')
       expect(textNode2.text()).toEqual('5')
       expect(textNode3.text()).toEqual('92ms')
       expect(textNode4.text()).toEqual('154ms')
-      expect(textNode5.text()).toEqual('0ms')
+      expect(textNode5.text()).toEqual('<1ms')
       expect(textNode6.text()).toEqual('0.69%')
       expect(textNode7.text()).toEqual('1.65%')
       resolve()
