@@ -55,22 +55,21 @@
                                 @show="showTabSearchPopover(item.prop,tab.prop)"
                                 @hide="hideTabSearchPopover(item.prop)"
                                 trigger="manual"
-
                                 v-model:visible="showPopoverGroup[tab.prop]"
                     >
                       <template #reference>
-                        <div>
-                          <div class="tab-search-button" id="tabSearchButton"  v-show="showSearchButton"
-                               @click="showPopoverGroup[tab.prop]=!showPopoverGroup[tab.prop]">
+                        <div :ref="`tabSearchRef${tab.prop}`">
+                          <div class="tab-search-button" :id="`tabSearchButton${tab.prop}`" v-show="showSearchButton"
+                               @click="handlePopoverShow(item.prop,tab.prop)">
                             <i class="el-icon-search" style="color:#575757;" ></i>
                           </div>
-                          <div class="tab-search-input" v-show="showSearchInput">
+                          <div class="tab-search-input"  v-show="showSearchInput">
                             <el-input :id="`tabSearchValue${tab.prop}`"
                                       name="tabSearchValue"
                                       size="mini"
                                       readonly
                                       prefix-icon="cn-icon cn-icon-search"
-                                      @click="showListPopover(item.prop,tab.prop)"
+                                      @click="showListPopover(item.prop)"
                             >
                               <template v-if="curTabProp === 'qtype'">
                                 <span>{{ dnsQtypeMapData.get(item.value)}}</span>
@@ -82,7 +81,7 @@
                                 <span>{{ item.value }}&&</span>
                               </template>
                               <template v-slot:suffix >
-                                <i class="cn-icon cn-icon-close search-input-close" @click="closeSearchInput(tab.prop)"></i>
+                                <i class="cn-icon cn-icon-close search-input-close" @click="closeSearchInput(item.prop)"></i>
                               </template>
                             </el-input>
                           </div>
@@ -93,11 +92,11 @@
                           <el-input :placeholder="`${$t('networkOverview.search')} ${$t(item.label)}`"
                                     size="mini"
                                     v-model="dropDownValue"
-                                    @input="dropDownSearch(tab.prop)"></el-input>
+                                    @input="dropDownSearch(item.prop)"></el-input>
                         </div>
-                        <ul class="select-dropdown" id="tabSearchSelectDropdown" @scroll="scrollList(tab.prop)">
+                        <ul class="select-dropdown" id="tabSearchSelectDropdown" @scroll="scrollList(item.prop)">
                           <li v-for="item in tabSearchColumnValueListShow" title='' :key="item" :id="`${item}${tab.prop}`"
-                              class="select-dropdown__item" @click="changeValue(item,tab.prop)">
+                              class="select-dropdown__item" @click="changeValue(item)">
                             <template v-if="curTabProp === 'qtype'">
                               <span>{{ dnsQtypeMapData.get(item) }}</span>
                             </template>
@@ -531,6 +530,9 @@ export default {
         }
       })
     },
+    handlePopoverShow (prop, tabProp) {
+      this.showPopoverGroup[prop] = !this.showPopoverGroup[prop]
+    },
     showTabSearchPopover (prop, tabProp) {
       const curIndex = this.list.findIndex(item => item.checked && (item.prop === prop))
       const curTabIndex = this.list.findIndex(item => item.checked && (item.prop === tabProp))
@@ -540,19 +542,25 @@ export default {
         this.showSearchList = true
         this.dropDownValue = ''
         this.initDropdownList(tabProp)
+      } else {
+        this.tabSearchColumnValueListShow.splice(0, this.tabSearchColumnValueListShow.length)
+        this.curPageNum = 1
+        this.showSearchList = true
+        this.dropDownValue = ''
+        this.initDropdownList(prop)
       }
     },
     hideTabSearchPopover () {
       this.showSearchButton = false
       this.showSearchList = false
     },
-    closeSearchInput (tabProp) {
+    closeSearchInput (prop) {
       this.showSearchInput = false
       this.showSearchButton = false
-      const currentValue = document.getElementById('tabSearchValue' + tabProp).value
+      const currentValue = document.getElementById('tabSearchValue' + prop).value
       // 清空记录选中样式
       this.tabSearchColumnValueListShow.forEach(item => {
-        const selectedDom = document.getElementById(item + tabProp)
+        const selectedDom = document.getElementById(item + prop)
         if (selectedDom) {
           const itemName = item
           if (itemName === currentValue) {
@@ -560,29 +568,29 @@ export default {
           }
         }
       })
-      document.getElementById('tabSearchValue' + tabProp).value = ''
+      document.getElementById('tabSearchValue' + prop).value = ''
       this.showPopover = false
-      this.showPopoverGroup[tabProp] = false
+      this.showPopoverGroup[prop] = false
 
       // 重新请求数据
       const queryParams = this.getQueryParams()
       this.getChartData(queryParams)
     },
-    showListPopover (prop, tabProp) {
+    showListPopover (prop) {
       this.showSearchButton = false
-      this.showPopoverGroup[tabProp] = true
+      this.showPopoverGroup[prop] = true
     },
-    dropDownSearch (tabProp) {
+    dropDownSearch (prop) {
       this.curPageNum = 1
-      this.initDropdownList(tabProp)
+      this.initDropdownList(prop)
     },
-    scrollList (tabProp) {
+    scrollList (prop) {
       const obj = document.getElementById('tabSearchSelectDropdown')
       if (obj.scrollTop + obj.clientHeight === obj.scrollHeight) {
-        this.initDropdownList(tabProp)
+        this.initDropdownList(prop)
       }
     },
-    changeValue (value, tabProp) {
+    changeValue (value) {
       // 设置面包屑显示的内容及hover时的title
       const curTab = this.getCurTab()
       this.curTabProp = curTab ? curTab.prop : ''
@@ -594,10 +602,10 @@ export default {
       }
       this.showSearchButton = false
       this.showPopover = false
-      this.showPopoverGroup[tabProp] = false
+      this.showPopoverGroup[this.curTabProp] = false
       this.$nextTick(() => {
         this.showSearchInput = true
-        document.getElementById('tabSearchValue' + tabProp).value = valName
+        document.getElementById('tabSearchValue' + this.curTabProp).value = valName
       })
       // this.jump(this.route, columnName, value, operationType.fourthMenu)
 
@@ -709,6 +717,10 @@ export default {
     },
     initState () {
       let curTab = this.getCurTab()
+      if (this.isThirdMenu()) {
+        const tabLabel = this.getUrlParam(this.curTabState.thirdMenu, '')
+        curTab = this.list.find(item => item.label === tabLabel)
+      }
       if (curTab) { // 显示当前tab
         const realTab = this.list.find(item => item.name === curTab.name)
         if (realTab) {
@@ -1641,9 +1653,7 @@ export default {
       this.curTabProp = ''
       this.showPopoverGroup = []
       this.list.forEach(item => {
-        // if(item.checked){
-        this.showPopoverGroup.push(false)
-        // }
+        this.showPopoverGroup[item.prop] = false
       })
     },
     // 切换tab
@@ -1843,7 +1853,6 @@ export default {
         this.list.forEach(item => {
           if (item.name === curTab.name) {
             // item.checked = true
-            // this.showTab(curTab)
           }
         })
       }

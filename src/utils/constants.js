@@ -687,9 +687,9 @@ export const networkOverviewTabList = [
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.countries',
-    prop: 'country',
+    prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
-    dillDownProp: ['client_country', 'server_country'],
+    dillDownProp: ['client_country_region', 'server_country_region'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -745,15 +745,15 @@ export const networkOverviewTabList = [
     label: 'network.regions',
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
-    dillDownProp: ['client_super_admin_area', 'server_super_admin_area'],
+    dillDownProp: ['client_super_admin_area', 'server_super_admin_ area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.cities',
-    prop: 'city',
+    prop: 'adminArea',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['client_region', 'server_region'],
+    dillDownProp: ['client_admin_area', 'server_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -815,49 +815,49 @@ export const networkOverviewTabList = [
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.clientCountries',
-    prop: 'clientCountry',
+    prop: 'clientCountryRegion',
     queryCycleTotalProp: 'clientCountries',
-    dillDownProp: ['client_country'],
+    dillDownProp: ['client_country_region'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.serverCountries',
-    prop: 'serverCountry',
+    prop: 'serverCountryRegion',
     queryCycleTotalProp: 'serverCountries',
-    dillDownProp: ['server_country'],
+    dillDownProp: ['server_country_region'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.clientProvinces',
-    prop: 'clientProvince',
+    prop: 'clientSuperAdminArea',
     queryCycleTotalProp: 'clientProvinces',
-    dillDownProp: ['client_province'],
+    dillDownProp: ['client_super_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.serverProvinces',
-    prop: 'serverProvince',
+    prop: 'serverSuperAdminArea',
     queryCycleTotalProp: 'serverProvinces',
-    dillDownProp: ['server_province'],
+    dillDownProp: ['server_super_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.clientCities',
-    prop: 'clientCity',
+    prop: 'clientAdminArea',
     queryCycleTotalProp: 'clientCities',
-    dillDownProp: ['client_region'],
+    dillDownProp: ['client_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
   }, {
     label: 'network.serverCities',
-    prop: 'serverCity',
+    prop: 'serverAdminArea',
     queryCycleTotalProp: 'serverCities',
-    dillDownProp: ['server_region'],
+    dillDownProp: ['server_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -907,9 +907,9 @@ export const networkAppPerformanceTabList = [
     panelId: drillDownPanelTypeMapping.npmOverviewIp// 下钻后展示的panelId
   }, {
     label: 'network.countries',
-    prop: 'country',
+    prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
-    dillDownProp: ['client_country', 'server_country'],
+    dillDownProp: ['client_country_region', 'server_country_region'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -965,15 +965,15 @@ export const networkAppPerformanceTabList = [
     label: 'network.regions',
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
-    dillDownProp: ['client_super_admin_area', 'server_super_admin_area'],
+    dillDownProp: ['client_super_admin_area', 'server_super_admin_ area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.cities',
-    prop: 'city',
+    prop: 'adminArea',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['client_region', 'server_region'],
+    dillDownProp: ['client_admin_area', 'server_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1035,49 +1035,49 @@ export const networkAppPerformanceTabList = [
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.clientCountries',
-    prop: 'clientCountry',
+    prop: 'clientCountryRegion',
     queryCycleTotalProp: 'clientCountries',
-    dillDownProp: ['client_country'],
+    dillDownProp: ['client_country_region'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.serverCountries',
-    prop: 'serverCountry',
+    prop: 'serverCountryRegion',
     queryCycleTotalProp: 'serverCountries',
-    dillDownProp: ['server_country'],
+    dillDownProp: ['server_country_region'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.clientProvinces',
-    prop: 'clientProvince',
+    prop: 'clientSuperAdminArea',
     queryCycleTotalProp: 'clientProvinces',
-    dillDownProp: ['client_province'],
+    dillDownProp: ['client_super_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.serverProvinces',
-    prop: 'serverProvince',
+    prop: 'serverSuperAdminArea',
     queryCycleTotalProp: 'serverProvinces',
-    dillDownProp: ['server_province'],
+    dillDownProp: ['server_super_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.clientCities',
-    prop: 'clientCity',
+    prop: 'clientAdminArea',
     queryCycleTotalProp: 'clientCities',
-    dillDownProp: ['client_region'],
+    dillDownProp: ['client_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }, {
     label: 'network.serverCities',
-    prop: 'serverCity',
+    prop: 'serverAdminArea',
     queryCycleTotalProp: 'serverCities',
-    dillDownProp: ['server_region'],
+    dillDownProp: ['server_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1126,9 +1126,9 @@ export const linkMonitorTabList = [
     panelId: drillDownPanelTypeMapping.linkMonitor// 下钻后展示的panelId
   }, {
     label: 'network.countries',
-    prop: 'country',
+    prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
-    dillDownProp: ['client_country', 'server_country'],
+    dillDownProp: ['client_country_region', ' server_country_region'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1190,9 +1190,9 @@ export const linkMonitorTabList = [
     panelId: drillDownPanelTypeMapping.linkMonitor
   }, {
     label: 'network.cities',
-    prop: 'city',
+    prop: 'adminArea',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['client_region', 'server_region'],
+    dillDownProp: ['client_admin_area', 'server_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1254,49 +1254,49 @@ export const linkMonitorTabList = [
     panelId: drillDownPanelTypeMapping.linkMonitor
   }, {
     label: 'network.clientCountries',
-    prop: 'clientCountry',
+    prop: 'clientCountryRegion',
     queryCycleTotalProp: 'clientCountries',
-    dillDownProp: ['client_country'],
+    dillDownProp: ['client_country_region'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
   }, {
     label: 'network.serverCountries',
-    prop: 'serverCountry',
+    prop: 'serverCountryRegion',
     queryCycleTotalProp: 'serverCountries',
-    dillDownProp: ['server_country'],
+    dillDownProp: ['server_country_region'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
   }, {
     label: 'network.clientProvinces',
-    prop: 'clientProvince',
+    prop: 'clientSuperAdminArea',
     queryCycleTotalProp: 'clientProvinces',
-    dillDownProp: ['client_province'],
+    dillDownProp: ['client_super_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
   }, {
     label: 'network.serverProvinces',
-    prop: 'serverProvince',
+    prop: 'serverSuperAdminArea',
     queryCycleTotalProp: 'serverProvinces',
-    dillDownProp: ['server_province'],
+    dillDownProp: ['server_super_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
   }, {
     label: 'network.clientCities',
-    prop: 'clientCity',
+    prop: 'clientAdminArea',
     queryCycleTotalProp: 'clientCities',
-    dillDownProp: ['client_region'],
+    dillDownProp: ['client_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
   }, {
     label: 'network.serverCities',
-    prop: 'serverCity',
+    prop: 'serverAdminArea',
     queryCycleTotalProp: 'serverCities',
-    dillDownProp: ['server_region'],
+    dillDownProp: ['server_admin_area'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1346,18 +1346,18 @@ export const dnsServiceInsightsTabList = [
   },
   {
     label: 'network.countries',
-    prop: 'country',
+    prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
-    dillDownProp: ['server_country'],
+    dillDownProp: ['server_country_region'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
   },
   {
     label: 'network.cities',
-    prop: 'city',
+    prop: 'adminArea',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['server_region'],
+    dillDownProp: ['server_admin_area'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu

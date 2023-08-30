@@ -81,7 +81,8 @@ export default {
             res.loginSuccessPath = this.$route.query.redirect
             this.loginSuccess(res)
             localStorage.setItem(storageKey.username, this.username)
-            localStorage.setItem(storageKey.userId, res.data.data.user.userId)
+            // localStorage.setItem(storageKey.userId, res.data.data.user.userId)
+            localStorage.setItem(storageKey.userId, res.data.data.user.id)
             localStorage.setItem(storageKey.token, res.data.data.token)
             this.$i18n.locale = localStorage.getItem(storageKey.language)
           } else if (res.data.code === 518005) {
