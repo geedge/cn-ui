@@ -265,7 +265,7 @@ export default {
               tcpLostlenPercent: response.data.data.result.sequenceGapLossPercentValue || null,
               pktRetransPercent: response.data.data.result.pktRetransPercentValue || null
             }
-            this.score = computeScore(data)
+            // this.score = computeScore(data)
             this.entityData.establishLatencyValue = response.data.data.result.establishLatencyValue
             this.entityData.establishLatencyP50 = response.data.data.result.establishLatencyP50
             this.entityData.establishLatencyP90 = response.data.data.result.establishLatencyP90

@@ -155,7 +155,7 @@
                   </div>
                 </div>
 
-                <loading :loading="loadingEvent" size="small" style="width: 90px"></loading>
+<!--                <loading :loading="loadingEvent" size="small" style="width: 90px"></loading>-->
               </div>
 
             </div>

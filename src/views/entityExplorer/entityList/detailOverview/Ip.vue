@@ -103,19 +103,18 @@
           </div>
         </div>
       </div>
-      <div class="overview__row">
-        <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
-        <div style="position: relative;">
-          <div class="entity-score" v-if="!loadingNetworkQuality">
-            <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
-            <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
-            <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
-            Score:&nbsp;{{score}}
-          </div>
-
-          <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
-        </div>
-      </div>
+<!--      <div class="overview__row">-->
+<!--        <div class="row__label row__label&#45;&#45;width130">{{$t('entities.networkQualityRating')}}</div>-->
+<!--        <div style="position: relative;">-->
+<!--          <div class="entity-score" v-if="!loadingNetworkQuality">-->
+<!--            <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>-->
+<!--            <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>-->
+<!--            <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>-->
+<!--            Score:&nbsp;{{score}}-->
+<!--          </div>-->
+<!--          <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
   </div>
 
