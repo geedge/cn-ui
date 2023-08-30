@@ -1491,7 +1491,8 @@ export const handleEntityTypeByStr = (str) => {
     columnList.forEach(item => {
       arr.push(item.label.toLowerCase())
     })
-    let newStr = JSON.parse(JSON.stringify(str.toLowerCase()))
+    // 因为手动输入时可能会输入and，所以将操作符的AND转换为and，统一处理
+    let newStr = str.replace(/ AND /g, ' and ')
     // 将str中的IP、Domain等替换为数组arr中的元素
     for (let i = 0; i < arr.length; i++) {
       newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
