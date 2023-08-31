@@ -99,66 +99,6 @@ export default {
       })
       window.open(href, '_blank')
     },
-    querySecurity () {
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
-      }
-      let url
-      switch (this.entityData.entityType) {
-        case ('ip'): {
-          url = api.entityIpDetailSecurity
-          queryParams.ip = this.entityName
-          break
-        }
-        case ('domain'): {
-          url = api.entityDomainDetailSecurity
-          queryParams.domain = this.entityName
-          break
-        }
-        case ('app'): {
-          url = api.entityAppDetailSecurity
-          queryParams.appName = this.entityName
-          break
-        }
-        default: break
-      }
-      axios.get(url, { params: queryParams }).then(response => {
-        if (response.status === 200) {
-          this.entityData.securityCount = response.data.data.result ? response.data.data.result.length : 0
-        }
-      })
-    },
-    queryPerformance () {
-      const queryParams = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
-      }
-      let url
-      switch (this.entityData.entityType) {
-        case ('ip'): {
-          url = api.entityIpDetailPerformance
-          queryParams.ip = this.entityName
-          break
-        }
-        case ('domain'): {
-          url = api.entityDomainDetailPerformance
-          queryParams.domain = this.entityName
-          break
-        }
-        case ('app'): {
-          url = api.entityAppDetailPerformance
-          queryParams.appName = this.entityName
-          break
-        }
-        default: break
-      }
-      axios.get(url, { params: queryParams }).then(response => {
-        if (response.status === 200) {
-          this.entityData.performanceCount = response.data.data.result ? response.data.data.result.length : 0
-        }
-      })
-    },
     getQueryParams () {
       return {
         // startTime: getSecond(this.timeFilter.startTime),
@@ -324,13 +264,10 @@ export default {
     this.debounceFunc = this.$_.debounce(this.resize, 200)
     window.addEventListener('resize', this.debounceFunc)
     this.chartOption = _.cloneDeep(entityListLineOption)
-    // this.entityData = _.cloneDeep(this.entity)
     this.entityData = { ...this.entityData, ...this.entity }
     this.initUrl()
     setTimeout(() => {
-      this.querySecurity()
       this.queryEntityDetailTraffic()
-      this.queryPerformance()
       this.queryNetworkQuantity()
       this.queryEventNum()
     })
