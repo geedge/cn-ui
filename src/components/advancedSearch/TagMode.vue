@@ -44,7 +44,7 @@
           </div>
           <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
         </div>
-        <div class="condition__value" v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
+        <div class="condition__value" style="margin-left: -5px;" v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
 
         <!-- 操作符选择器 -->
         <div class="condition__operation-select" v-if="meta.operator.show && meta.operator.isEditing">
@@ -371,7 +371,7 @@ export default {
           return value
         }
       } else {
-        let newValue = column.type === columnType.string ? stringInQuot(value) : value
+        let newValue = (column.type.items ? column.type.items : column.type) === columnType.string ? stringInQuot(value) : value
         if (flag) {
           newValue = newValue.slice(1)
           newValue = newValue.slice(0, newValue.length - 1)
@@ -388,9 +388,9 @@ export default {
         })
         const meta = new Meta()
         meta.column.label = param.column
-        meta.column.type = column ? column.type : columnType.string
+        meta.column.type = column ? (column.type.items ? column.type.items : column.type) : columnType.string
         meta.column.label = column ? column.label : param.column
-        meta.operator.value = '='
+        meta.operator.value = param.operator
         meta.operator.show = true
         meta.value.value = this.handleValue(param.value, column, column.operator, 'noQuotes')
         meta.value.show = true

@@ -794,6 +794,7 @@ export function handleMetaListToStr (metaList) {
   metaList.forEach(item => {
     if (item.column && item.column.type === 'fullText') {
       item.operator.value = '='
+      item.operator.show = true
       item.value.value = item.column.label
       item.value.label = item.column.label
       item.column.label = getEntityTypeByValue(item.column.label)

@@ -472,6 +472,13 @@ export default {
           }
         ]
         this.$refs.search.addParams(params)
+      } else if (topData.topColumn === 'tag') {
+        const params = {
+          column: topData.topColumn,
+          operator: 'has',
+          value: name
+        }
+        this.$refs.search.addParams([params])
       } else {
         const params = {
           column: topData.topColumn,
