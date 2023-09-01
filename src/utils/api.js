@@ -157,6 +157,7 @@ export const api = {
   // networkOverview
   netWorkOverview: {
     totalTrafficAnalysis: '/interface/overview/totalTrafficAnalysis',
+    drilldownTrafficAnalysis: '/interface/overview/trafficAnalysis',
     eventSeverity: '/interface/overview/eventSeverity',
     eventType: '/interface/overview/eventType',
     ddosEventAnalysis: '/interface/overview/ddosEventAnalysis',

@@ -166,12 +166,18 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
 
+      let url
       if (this.queryCondition) {
         params.q = this.queryCondition
+        const { query } = this.$route
+        params.type = query.dimensionType
+        url = api.netWorkOverview.drilldownTrafficAnalysis
+      } else {
+        url = api.netWorkOverview.totalTrafficAnalysis
       }
 
       this.toggleLoading(true)
-      axios.get(api.netWorkOverview.totalTrafficAnalysis, { params: params }).then(response => {
+      axios.get(url, { params: params }).then(response => {
         const res = response.data
 
         if (response.status === 200) {
