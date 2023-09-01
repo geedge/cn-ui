@@ -1391,14 +1391,13 @@ export function switchStatus (status) {
  */
 export function comparedEntityKey (str) {
   let q = JSON.parse(JSON.stringify(str))
-  q = q.replace(/ and /g, ' AND ').replace(/ in /g, ' IN ')
-
   if (q && q.indexOf('=') > -1) {
     // =周围有空格，则去除空格
     const regex = /\ = | =|= /g
     q = q.replace(regex, '=')
 
     if (q.indexOf('AND') > -1 && checkStrIncludeAnd(q)) {
+      q = q.replace(/ and /g, ' AND ').replace(/ in /g, ' IN ')
       const arr = q.split(' AND ')
       let newQ = ''
       let errorQ = ''
@@ -1451,6 +1450,11 @@ export function comparedEntityKey (str) {
         key: q,
         isKey: true
       }
+    } else if (q.indexOf(' IN ') > -1 || q.indexOf(' in ') > -1) {
+      return {
+        key: q,
+        isKey: true
+      }
     } else {
       const key = q.substring(0, q.indexOf('='))
       q = q.replace(/ AND /g, ' and ')
@@ -1491,6 +1495,7 @@ export const handleEntityTypeByStr = (str) => {
     columnList.forEach(item => {
       arr.push(item.label.toLowerCase())
     })
+
     // 因为手动输入时可能会输入and，所以将操作符的AND转换为and，统一处理
     let newStr = str.replace(/ AND /g, ' and ')
     // 将str中的IP、Domain等替换为数组arr中的元素
@@ -1520,7 +1525,8 @@ export const handleEntityTypeByStr = (str) => {
         newStr = newStr.replace(regex, `it is test keyword${index}`)
       })
 
-      const noAndList = newStr.split(' and ')
+      newStr = newStr.replace(/ and /g, ' AND ')
+      const noAndList = newStr.split(' AND ')
       noAndList.forEach((item, index) => {
         // 发现插入的特殊值，获取键值，根据键值替换成原来内容，删除键值
         if (item.indexOf('it is test keyword') > -1) {
@@ -1534,12 +1540,11 @@ export const handleEntityTypeByStr = (str) => {
       const newArr = noAndList
       newArr.forEach((item, index) => {
         if (!arr.some(ite => item.includes(ite))) {
-          // item = checkFormatByStr(item)
           newArr[index] = checkFormatByStr(item)
         }
       })
 
-      newStr = newArr.join(' and ')
+      newStr = newArr.join(' AND ')
       return newStr
     } else if (result) {
       return str

@@ -40,7 +40,13 @@
         <div class="condition__value">
           <div v-if="meta.value.isEditing">
             <!--避免blur事件和keyup.enter重复执行-->
-            <el-input v-model="meta.value.value" size="mini" @blur="valueBlur(meta)" ref="valueInput" @keyup.enter="valueBlur(meta)"></el-input>
+            <el-input
+                ref="valueInput"
+                v-model="meta.value.value"
+                size="mini"
+                @blur="valueBlur(meta)"
+                @focus="valueFocus(meta)"
+                @keyup.enter="valueBlur(meta)"></el-input>
           </div>
           <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
         </div>
@@ -107,7 +113,13 @@ import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import Parser, { handleMetaListToStr, stringInQuot } from '@/components/advancedSearch/meta/parser'
-import { comparedEntityKey, handleEntityTypeByStr, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import {
+  comparedEntityKey,
+  getEntityTypeByValue,
+  handleEntityTypeByStr,
+  overwriteUrl,
+  urlParamsHandler
+} from '@/utils/tools'
 export default {
   name: 'TagMode',
   props: {
@@ -233,6 +245,16 @@ export default {
         // 根据所选label在columnList中匹配label来确定操作符，一般为=,IN，tags操作符为has
         const obj = this.columnList.find(t => t.label === meta.column.label)
         this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
+
+        // 用户模糊搜索，则自动匹配实体类型和结构
+        if (meta.column.type === columnType.fullText) {
+          meta.operator.value = '='
+          meta.operator.show = true
+          meta.value.value = `'${meta.column.label}'`
+          meta.value.label = `'${meta.column.label}'`
+          meta.column.label = getEntityTypeByValue(meta.column.label)
+          meta.column.type = 'string'
+        }
       }, 200)
     },
     connectionClick (meta) {
@@ -267,7 +289,7 @@ export default {
     operatorClick (meta) {
       meta.operator.isEditing = true
     },
-    valueBlur (meta) {
+    valueFocus (meta) {
       if (meta.column.type === columnType.array) {
         let valueArr = []
         if (!_.isArray(meta.value.value)) {
@@ -311,6 +333,61 @@ export default {
             str = str.replace(/'/g, "''")
           }
           meta.value.value = str
+        }
+        meta.value.label = meta.value.value // label是显示，value是实际值
+      }
+    },
+    valueBlur (meta) {
+      if (meta.column.type === columnType.array) {
+        let valueArr = []
+        if (!_.isArray(meta.value.value)) {
+          let value = meta.value.value.trim().replace(/"/g, "'")
+          if (value.indexOf('(') === 0 && value.indexOf(')') === value.length - 1) {
+            value = value.substring(1, value.length)
+            value = value.substring(0, value.length - 1)
+          }
+          valueArr = value.split(',')
+        } else {
+          valueArr = meta.value.value
+        }
+        meta.value.value = valueArr.map(v => {
+          let str = v.trim().replace(/"/g, "'")
+          if (str[0] === "'" && str[str.length - 1] === "'") {
+            str = str.substring(1, str.length)
+            str = str.substring(0, str.length - 1)
+          }
+          // 如果此时参数为xi'an，处理为xi''an，后一个条件避免若参数为xi''an,则不处理
+          if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
+            str = str.replace(/'/g, "''")
+          }
+          return str
+        })
+        let label = '('
+        meta.value.value.forEach(v => {
+          label += `'${v}',`
+        })
+        label = label.substring(0, label.length - 1)
+        label += ')'
+        meta.value.label = label
+      } else {
+        if (!_.isNumber(meta.value.value) && meta.value.value !== '') {
+          // 判断是否被单引号包裹
+          const regex = /^'[^']*'$/
+          const isWrapped = regex.test(meta.value.value)
+
+          let str = meta.value.value.trim().replace(/"/g, "'")
+          if (str[0] === "'" && str[str.length - 1] === "'") {
+            str = str.substring(1, str.length)
+            str = str.substring(0, str.length - 1)
+          }
+          // 如果此时参数为xi'an，处理为xi''an，后一个条件避免若参数为xi''an,则不处理
+          if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
+            str = str.replace(/'/g, "''")
+          }
+          // meta.value.value = str
+          if (!isWrapped) {
+            meta.value.value = `'${str}'`
+          }
         }
         meta.value.label = meta.value.value // label是显示，value是实际值
       }
@@ -392,7 +469,7 @@ export default {
         meta.column.label = column ? column.label : param.column
         meta.operator.value = param.operator
         meta.operator.show = true
-        meta.value.value = this.handleValue(param.value, column, column.operator, 'noQuotes')
+        meta.value.value = this.handleValue(param.value, column, column.operator)
         meta.value.show = true
         meta.value.label = meta.value.value
         this.addCondition(meta)

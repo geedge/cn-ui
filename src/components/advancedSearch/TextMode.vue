@@ -144,14 +144,18 @@ export default {
           return value
         }
       } else {
-        return column.type === columnType.string ? stringInQuot(value) : value
+        return (column.type.items ? column.type.items : column.type) === columnType.string ? stringInQuot(value) : value
       }
     },
     addParams (params) {
       let current = this.codeMirror.getValue()
       params.forEach(param => {
         const column = this.columnList.find(c => c.label === param.column)
-        current = `${current ? current + ' AND ' : ''}${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`
+        if (param.operator === 'has') {
+          current = `${current ? current + ' AND ' : ''}${param.operator}(${param.column},${this.handleValue(param.value, column, param.operator)})`
+        } else {
+          current = `${current ? current + ' AND ' : ''}${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`
+        }
       })
       toRaw(this.codeMirror).setValue(current.trim())
     },

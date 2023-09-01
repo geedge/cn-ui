@@ -1,6 +1,6 @@
-import Meta, { connection, condition, columnType } from './meta'
+import Meta, { columnType, condition, connection } from './meta'
 import Token, { types } from './token'
-import ParserError, { errorTypes, errorDesc } from '@/components/advancedSearch/meta/error'
+import ParserError, { errorDesc, errorTypes } from '@/components/advancedSearch/meta/error'
 import _ from 'lodash'
 import { columnList } from '@/utils/static-data'
 import { getEntityTypeByValue } from '@/utils/tools'
@@ -97,10 +97,22 @@ export default class Parser {
             if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
               str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
             } else if (meta.operator.value.toLowerCase().indexOf('has') > -1) {
-              // 操作符为has时，has函数需要提前，格式为has(label,value)
-              str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
+              const isWrapped = isSingleQuoteWrapping(meta.value.value)
+              // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
+              if (isWrapped) {
+                // 操作符为has时，has函数需要提前，格式为has(label,value)
+                str += `${meta.operator.value}(${meta.column.label},${meta.value.value}) `
+              } else {
+                str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
+              }
             } else {
-              str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
+              const isWrapped = isSingleQuoteWrapping(meta.value.value)
+              // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
+              if (isWrapped || meta.value.value.indexOf("''") > -1) {
+                str += `${meta.column.label}${meta.operator.value}${meta.value.value} `
+              } else {
+                str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
+              }
             }
           } else if (meta.column.type === columnType.number) {
             if (_.isNumber(Number(meta.value.value))) {
@@ -147,10 +159,21 @@ export default class Parser {
           if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
             str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
           } else if (meta.operator.value.toLowerCase().indexOf('has') > -1) {
-            // 操作符为has时，has函数需要提前，格式为has(label,value)
-            str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
+            const isWrapped = isSingleQuoteWrapping(meta.value.value)
+            if (isWrapped) {
+              // 操作符为has时，has函数需要提前，格式为has(label,value)
+              str += `${meta.operator.value}(${meta.column.label},${meta.value.value}) `
+            } else {
+              str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
+            }
           } else {
-            str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
+            const isWrapped = isSingleQuoteWrapping(meta.value.value)
+            if (isWrapped || meta.value.value.indexOf("''") > -1) {
+              // 如xi''an这种情况，不需要再添加单引号
+              str += `${meta.column.label}${meta.operator.value}${meta.value.value} `
+            } else {
+              str += `${meta.column.label}${meta.operator.value}'${meta.value.value}' `
+            }
           }
         } else if (meta.column.type === columnType.number) {
           if (_.isNumber(Number(meta.value.value))) {
@@ -577,7 +600,8 @@ export default class Parser {
             // 前面是连接符或操作符或空后面是连接符或空，或在单引号内，是value
             if (isInApostrophe) {
               if (meta.column.label) {
-                meta.value.value = token.value
+                // meta.value.value = token.value
+                meta.value.value = isSingleQuoteWrapping(token.value) ? token.value : `'${token.value}'`
                 meta.column.type = columnType.string
               } else {
                 meta.column.type = columnType.fullText
@@ -747,6 +771,12 @@ export default class Parser {
                 } else {
                   meta.value.label = '()'
                 }
+              } else if (meta.column.type === columnType.string) {
+                if (meta.value.value.indexOf("''") > -1) {
+                  meta.value.label = meta.value.value
+                } else {
+                  meta.value.label = isSingleQuoteWrapping(meta.value.value) ? meta.value.value : `'${meta.value.value}'`
+                }
               } else {
                 meta.value.label = meta.value.value
               }
@@ -819,8 +849,21 @@ export function handleMetaListToStr (metaList) {
     if (result) {
       if (metaList[0].operator.value.toLowerCase() === 'has') {
         return `${metaList[0].operator.value}(${metaList[0].column.label},'${metaList[0].value.label}')`
-      } else {
+      } else if (metaList[0].value.label.indexOf('(') > -1) {
+        // 避免如IN后面带()的，不添加单引号
         return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+      } else if (metaList[0].value.label.indexOf("''") > -1) {
+        // 如xi''an这种情况，直接返回
+        return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+      } else {
+        const isWrapped = isSingleQuoteWrapping(metaList[0].value.label)
+        // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
+        if (isWrapped) {
+          // 操作符为has时，has函数需要提前，格式为has(label,value)
+          return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+        } else {
+          return `${metaList[0].column.label} ${metaList[0].operator.value} '${metaList[0].value.label}'`
+        }
       }
     } else {
       const regex = /^["']|["']$/
@@ -838,7 +881,7 @@ export function handleMetaListToStr (metaList) {
     metaList.forEach(item => {
       if (item.value !== 'AND') {
         if (item.column.label.toLowerCase() === 'tag') {
-          hasStr += `${item.operator.value}(${item.column.label},'${item.value.value}') AND `
+          hasStr += `${item.operator.value}(${item.column.label},${item.value.value}) AND `
         } else {
           newMetaList.push(item)
         }
@@ -858,10 +901,16 @@ export function handleMetaListToStr (metaList) {
         lastObj[i] = `${i} IN (${str})`
       } else if (i.toLowerCase() === 'tag') {
         // lastObj[i] = `${i} = '${newObj[i]}'`
-        lastObj[i] = `has(${i},'${newObj[i]}')`
+        lastObj[i] = `has(${i},${newObj[i]})`
       } else {
-        // 单独存在的,直接保留
-        lastObj[i] = `${i} = '${newObj[i]}'`
+        const isWrapped = isSingleQuoteWrapping(newObj[i])
+        // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
+        if (isWrapped || newObj[i].indexOf("''") > -1) {
+          // 操作符为has时，has函数需要提前，格式为has(label,value)
+          lastObj[i] = `${i} = ${newObj[i]}`
+        } else {
+          lastObj[i] = `${i} = '${newObj[i]}'`
+        }
       }
     }
 
@@ -893,4 +942,11 @@ const combineLabel = (list) => {
     }
     return acc
   }, {})
+}
+/**
+ * 判断字符串是否为单引号包裹
+ */
+const isSingleQuoteWrapping = (str) => {
+  const regex = /^'[^']*'$/
+  return regex.test(str)
 }
