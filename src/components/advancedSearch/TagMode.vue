@@ -115,7 +115,6 @@ import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import Parser, { handleMetaListToStr, stringInQuot } from '@/components/advancedSearch/meta/parser'
 import {
   comparedEntityKey,
-  getEntityTypeByValue,
   handleEntityTypeByStr,
   overwriteUrl,
   urlParamsHandler
@@ -245,16 +244,6 @@ export default {
         // 根据所选label在columnList中匹配label来确定操作符，一般为=,IN，tags操作符为has
         const obj = this.columnList.find(t => t.label === meta.column.label)
         this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
-
-        // 用户模糊搜索，则自动匹配实体类型和结构
-        if (meta.column.type === columnType.fullText) {
-          meta.operator.value = '='
-          meta.operator.show = true
-          meta.value.value = `'${meta.column.label}'`
-          meta.value.label = `'${meta.column.label}'`
-          meta.column.label = getEntityTypeByValue(meta.column.label)
-          meta.column.type = 'string'
-        }
       }, 200)
     },
     connectionClick (meta) {

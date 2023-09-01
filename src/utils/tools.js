@@ -1503,7 +1503,7 @@ export const handleEntityTypeByStr = (str) => {
       newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
     }
     // 检查str字段在arr中是否出现,true为出现过
-    const result = arr.some(item => newStr.includes(item))
+    const result = arr.some(item => newStr.toLowerCase().includes(item))
     if (newStr.indexOf(' and ') > -1) {
       // 将单引号包裹的and拿出来放到数组tempList里，原来的单引号包裹内容用temp即'it is test keyword{键值}'代替
       // 再将字符串用and转换为数组，遍历数组，发现值为temp的，获取键值，根据键值获取tempList的值组合起来，
@@ -1547,6 +1547,12 @@ export const handleEntityTypeByStr = (str) => {
       newStr = newArr.join(' AND ')
       return newStr
     } else if (result) {
+      // 不区分大小写，用columnList里的label
+      arr.forEach(item => {
+        if (str.toLowerCase().indexOf(item.toLowerCase()) > -1) {
+          str = str.replace(new RegExp(item, 'gi'), item)
+        }
+      })
       return str
     } else if (!result) {
       const regex = /^["']|["']$/
