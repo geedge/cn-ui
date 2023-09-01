@@ -65,9 +65,9 @@ export const dataForNpmTrafficLine = {
     { name: _this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
   ],
   metricOptions: [
-    { value: 'Bits/s', label: 'Bits/s' },
+    /* { value: 'Bits/s', label: 'Bits/s' },
     { value: 'Packets/s', label: 'Packets/s' },
-    { value: 'Sessions/s', label: 'Sessions/s' },
+    { value: 'Sessions/s', label: 'Sessions/s' }, */
     { value: 'establishLatencyMs', label: _this.$t('networkAppPerformance.tcpConnectionEstablishLatency') },
     { value: 'httpResponseLatency', label: _this.$t('networkAppPerformance.httpResponse') },
     { value: 'sslConLatency', label: _this.$t('networkAppPerformance.sslResponseLatency') },

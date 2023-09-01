@@ -62,7 +62,7 @@ export default {
   },
   setup () {
     const { query } = useRoute()
-    const metricFilter = ref(query.lineMetric || 'Bits/s')
+    const metricFilter = ref(query.lineMetric || 'establishLatencyMs')
     const queryCondition = ref(query.queryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
     const tabIndex = ref(query.tabIndex || 0)
