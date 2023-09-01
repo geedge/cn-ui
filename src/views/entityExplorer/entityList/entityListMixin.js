@@ -8,6 +8,7 @@ import { getSecond } from '@/utils/date-util'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { shallowRef } from 'vue'
 import { computeScore } from '@/utils/tools'
+import i18n from '@/i18n'
 
 export default {
   props: {
@@ -121,7 +122,7 @@ export default {
             } else if (t.legend === 'bytesSentRate') {
               this.entityData.bytesSentRate = _.nth(t.values, -3)[1]
               sentSeries = {
-                name: this.$t('entities.sentThroughput'),
+                name: i18n.global.t('entities.sentThroughput'),
                 type: 'line',
                 legendHoverLink: false,
                 itemStyle: {
@@ -136,7 +137,7 @@ export default {
             } else if (t.legend === 'bytesReceivedRate') {
               this.entityData.bytesReceivedRate = t.aggregation.last
               receivedSeries = {
-                name: this.$t('entities.receivedThroughput'),
+                name: i18n.global.t('entities.receivedThroughput'),
                 type: 'line',
                 legendHoverLink: false,
                 itemStyle: {

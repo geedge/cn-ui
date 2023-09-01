@@ -4,31 +4,31 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.category')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'category.categoryName', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'category.categoryName', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.domainDetail.categoryGroup')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'category.categoryGroup', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'category.categoryGroup', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.reputationLevel')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'category.reputationLevel', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'category.reputationLevel', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.registration')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'whois.registrantCountry', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'whois.registrantCountry', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.org')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'whois.registrantOrg', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'whois.registrantOrg', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.icpCompanyName')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'icp.icpCompanyName', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'icp.icpCompanyName', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.icpLicense')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'icp.icpSiteLicense', '-')}}</div>
+        <div class="row__content">{{$_.get(entityData, 'icp.icpSiteLicense', '-') || '-'}}</div>
       </div>
     </div>
   </div>

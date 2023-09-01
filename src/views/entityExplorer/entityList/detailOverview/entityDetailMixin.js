@@ -8,6 +8,7 @@ import { metricOption } from '@/views/detections/options/detectionOptions'
 import { sortBy, reverseSortBy, computeScore } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
+import i18n from '@/i18n'
 
 export default {
   props: {
@@ -115,7 +116,7 @@ export default {
                 ...this.chartOption,
                 series: [
                   {
-                    name: this.$t('entities.sentThroughput'),
+                    name: i18n.global.t('entities.sentThroughput'),
                     type: 'line',
                     legendHoverLink: false,
                     itemStyle: {
@@ -135,7 +136,7 @@ export default {
                 ...this.chartOption,
                 series: [
                   {
-                    name: this.$t('entities.receivedThroughput'),
+                    name: i18n.global.t('entities.receivedThroughput'),
                     type: 'line',
                     legendHoverLink: false,
                     itemStyle: {
@@ -322,60 +323,6 @@ export default {
       }
     },
 
-    queryEntityDetailLinkInUrl () {
-      this.loadingIn = true
-      if (this.linkInUrl) {
-        axios.get(this.linkInUrl, { params: this.getQueryParams() }).then(response => {
-          if (response.status === 200) {
-            if (!this.$_.isEmpty(response.data.data.result)) {
-              let sum = 0
-              response.data.data.result.forEach(r => {
-                sum += parseFloat(r.bytes)
-              })
-              const sorted = response.data.data.result.sort((r1, r2) => {
-                return parseFloat(r2.bytes) - parseFloat(r1.bytes)
-              })
-              const sortedId = response.data.data.result.sort((r1, r2) => {
-                return parseFloat(r2.commonIngressLinkId) - parseFloat(r1.commonIngressLinkId)
-              })
-              const max = parseFloat(sorted[0].bytes)
-              const maxId = parseFloat(sortedId[0].commonIngressLinkId)
-              this.entityData.linkInPercent = (parseFloat(max / sum)).toFixed(2)
-              this.entityData.linkInId = maxId
-            }
-          }
-          this.loadingIn = false
-        })
-      }
-    },
-
-    queryEntityDetailLinkOutUrl () {
-      this.loadingOut = true
-      if (this.linkOutUrl) {
-        axios.get(this.linkOutUrl, { params: this.getQueryParams() }).then(response => {
-          if (response.status === 200) {
-            if (!this.$_.isEmpty(response.data.data.result)) {
-              let sum = 0
-              response.data.data.result.forEach(r => {
-                sum += parseFloat(r.bytes)
-              })
-              const sorted = response.data.data.result.sort((r1, r2) => {
-                return parseFloat(r2.bytes) - parseFloat(r1.bytes)
-              })
-              const sortedId = response.data.data.result.sort((r1, r2) => {
-                return parseFloat(r2.commonEgressLinkId) - parseFloat(r1.commonEgressLinkId)
-              })
-              const max = parseFloat(sorted[0].bytes)
-              const maxId = parseFloat(sortedId[0].commonEgressLinkId)
-              this.entityData.linkOutPercent = (parseFloat(max / sum)).toFixed(2)
-              this.entityData.linkOutId = maxId
-            }
-          }
-          this.loadingOut = false
-        })
-      }
-    },
-
     queryEntityDetailPerformance () {
       this.loadingAlert = true
       axios.get(this.performanceUrl, { params: this.getQueryParams() }).then(response => {
@@ -442,7 +389,7 @@ export default {
               ...this.chartOption,
               series: [
                 {
-                  name: this.$t('entities.sentThroughput'),
+                  name: i18n.global.t('entities.sentThroughput'),
                   type: 'line',
                   legendHoverLink: false,
                   itemStyle: {
@@ -469,8 +416,6 @@ export default {
       this.queryEntityDetailPerformance()
       this.queryEntityDetailSecurity()
       this.queryEntityDetailNetworkQuantity()
-      this.queryEntityDetailLinkOutUrl()
-      this.queryEntityDetailLinkInUrl()
       if (this.entity.entityType === 'ip') {
         if (!this.entityData.dnsServerRole) {
           this.loadingDns = true

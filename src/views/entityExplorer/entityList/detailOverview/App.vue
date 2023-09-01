@@ -4,23 +4,23 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">APP ID</div>
-        <div class="row__content">{{$_.get(entity, 'category.appId', '-')}}</div>
+        <div class="row__content">{{$_.get(entity, 'category.appId', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.category')}}</div>
-        <div class="row__content">{{$_.get(entity, 'category.appCategory', '-')}}</div>
+        <div class="row__content">{{$_.get(entity, 'category.appCategory', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.subcategory')}}</div>
-        <div class="row__content">{{$_.get(entity, 'category.appSubcategory', '-')}}</div>
+        <div class="row__content">{{$_.get(entity, 'category.appSubcategory', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.riskLevel')}}</div>
-        <div class="row__content">{{appRisk(parseInt(entity.category.appRisk)) || '-'}}</div>
+        <div class="row__content">{{$_.get(entity, 'category.appRisk') ? appRisk(parseInt(entity.category.appRisk)) : '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.remark')}}</div>
-        <div class="row__content">{{$_.get(entity, 'category.appDescription', '-')}}</div>
+        <div class="row__content">{{$_.get(entity, 'category.appDescription', '-') || '-'}}</div>
       </div>
     </div>
   </div>

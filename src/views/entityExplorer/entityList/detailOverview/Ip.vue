@@ -17,7 +17,7 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">ASN</div>
-        <div class="row__content">{{$_.get(entity, 'asn.asn', '-')}}</div>
+        <div class="row__content">{{$_.get(entity, 'asn.asn', '-') || '-'}}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.openPort')}}</div>
