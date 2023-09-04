@@ -257,9 +257,15 @@ export default {
     fileChange (files, fileList) {
       this.fileList = fileList.slice(-1)
     },
-    uploadError () {
+    uploadError (error) {
+      let errorMsg
+      if (error.message) {
+        errorMsg = JSON.parse(error.message).message
+      } else {
+        errorMsg = 'error'
+      }
       this.uploadLoading = false
-      this.$message.error(this.$t('tip.uploadFailed', { msg: 'error' }))
+      this.$message.error(this.$t('tip.uploadFailed', { msg: errorMsg }))
     },
     uploadSuccess (response) {
       this.uploadLoading = false
