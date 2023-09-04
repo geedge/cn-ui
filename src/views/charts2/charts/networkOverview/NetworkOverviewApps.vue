@@ -37,6 +37,7 @@
                 <div v-else-if="app.value === '-' || app.value === 0" class="app-card__body-content-percent">+0.00%</div>
               </div>
             </div>
+            <div class="app-card__body-unit">{{this.metric}}</div>
             <div class="app-card__body-previous">
               <div>Total</div>
               <div v-if="metric === 'Bits/s'" :test-id="`total${index}`">{{valueToRangeValue(app.total, unitTypes.byte).join(' ')}}</div>
@@ -144,7 +145,6 @@ export default {
   mixins: [chartMixin],
   data () {
     return {
-      testData: '测试值',
       appData: [],
       // 假数据
       appTempData: [],

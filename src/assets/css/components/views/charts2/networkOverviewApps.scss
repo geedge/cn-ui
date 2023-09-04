@@ -88,7 +88,7 @@
       .app-card-title {
         display: flex;
         padding: 0 12px;
-        margin-top: 10px;
+        margin-top: 6px;
         justify-content: space-between;
         .app-card-title-name {
           span {
@@ -150,7 +150,7 @@
       }
       .app-card__body-content {
         display: flex;
-        margin-bottom: 6px;
+        margin-bottom: 0;
         .app-card__body-content-value {
           display: flex;
           .app-card__body-content-number {
@@ -183,6 +183,12 @@
           color: #fff;
           background-color: rgb(126, 159, 84);
         }
+      }
+      .app-card__body-unit {
+        margin-top: -2px;
+        margin-bottom: 2px;
+        font-size: 12px;
+        color: #778391;
       }
       .app-card__body-previous {
         display: flex;
