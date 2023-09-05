@@ -80,7 +80,7 @@
                   <span class="row-item-label">{{ $t('entities.sentThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">
                     {{
-                      valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') !=='- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'
+                      valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') !=='- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'
                     }}
                   </span>
                   <!-- 曲线-->
@@ -110,7 +110,7 @@
                   <i class="cn-icon cn-icon-fall"></i>
                   <span class="row-item-label">{{ $t('entities.receivedThroughput') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value">
-                    {{ valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-' }}
+                    {{ valueToRangeValue(entityData.bytesReceivedRate, unitTypes.bps).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesReceivedRate, unitTypes.bps).join(' ') : '-' }}
                   </span>
                   <div class="item-box-loading">
                     <loading :loading="loading" size="small"></loading>

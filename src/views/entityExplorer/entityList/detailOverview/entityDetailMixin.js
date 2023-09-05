@@ -111,7 +111,7 @@ export default {
               this.entityData.p50 = t.aggregation.p50
               this.entityData.p90 = t.aggregation.p90
             } else if (t.legend === 'bytesSentRate') {
-              this.entityData.bytesSentRate = _.nth(t.values, -3)[1]
+              this.entityData.bytesSentRate = t.aggregation.avg
               this.chartOptionSent = {
                 ...this.chartOption,
                 series: [
@@ -131,7 +131,7 @@ export default {
                 ]
               }
             } else if (t.legend === 'bytesReceivedRate') {
-              this.entityData.bytesReceivedRate = t.aggregation.last
+              this.entityData.bytesReceivedRate = t.aggregation.avg
               this.chartOptionReceived = {
                 ...this.chartOption,
                 series: [

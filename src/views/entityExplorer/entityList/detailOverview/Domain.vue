@@ -39,13 +39,13 @@
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.peak')}}</div>
         <div class="row__content">
-          {{valueToRangeValue(entityData.max, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.max, unitTypes.byte).join(' ') + '/s' : '-'}}
+          {{valueToRangeValue(entityData.max, unitTypes.bps).join(' ') !== '- ' ? valueToRangeValue(entityData.max, unitTypes.bps).join(' ') : '-'}}
         </div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.average')}}</div>
         <div class="row__content">
-          {{valueToRangeValue(entityData.avg, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.avg, unitTypes.byte).join(' ') + '/s' : '-'}}
+          {{valueToRangeValue(entityData.avg, unitTypes.bps).join(' ') !== '- ' ? valueToRangeValue(entityData.avg, unitTypes.bps).join(' ') : '-'}}
         </div>
       </div>
       <div class="overview__row">
@@ -53,7 +53,7 @@
         <div class="row__contents">
           <div class="row__content">
             <div class="row__charts-msg">{{$t('overall.sent')}}：
-              {{valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+              {{valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesSentRate, unitTypes.bps).join(' ') : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
@@ -62,7 +62,7 @@
           </div>
           <div class="row__content row__content-accept">
             <div class="row__charts-msg">{{$t('overall.received')}}：
-              {{valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesReceivedRate, unitTypes.byte).join(' ') + 'ps' : '-'}}
+              {{valueToRangeValue(entityData.bytesReceivedRate, unitTypes.bps).join(' ') !== '- ' ? valueToRangeValue(entityData.bytesReceivedRate, unitTypes.bps).join(' ') : '-'}}
             </div>
             <!-- 曲线-->
             <div class="row__content-loading">
