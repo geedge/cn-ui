@@ -40,6 +40,7 @@ import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import _ from 'lodash'
+import i18n from '@/i18n'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import {
@@ -241,7 +242,7 @@ export default {
                 color: chartColor3[t.positioning],
                 width: 1
               },
-              stack: t.name !== this.$t('network.total') ? this.$t('network.total') : '',
+              stack: t.name !== i18n.global.t('network.total') ? i18n.global.t('network.total') : '',
               emphasis: {
                 itemStyle: {
                   borderColor: chartColor4[t.positioning],

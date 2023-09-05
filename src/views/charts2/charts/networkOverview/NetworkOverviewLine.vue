@@ -89,6 +89,7 @@ export default {
     const { query } = useRoute()
     const lineRefer = ref(query.lineRefer || 'Average')
     const lineTab = ref(query.lineTab || '')
+    const fourthMenu = ref(query.fourthMenu || '')
     const lineQueryCondition = ref(query.lineQueryCondition || '')
     const lineThirdDimensionQueryCondition = ref(query.lineThirdDimensionQueryCondition || '')
     const tabOperationType = ref(query.tabOperationType)
@@ -96,6 +97,7 @@ export default {
     return {
       lineRefer,
       lineTab,
+      fourthMenu,
       lineQueryCondition,
       lineThirdDimensionQueryCondition,
       tabOperationType,
@@ -169,12 +171,12 @@ export default {
       }
 
       let url
-      if (this.lineQueryCondition) {
+      if (this.lineQueryCondition && this.fourthMenu) {
         params.q = this.lineQueryCondition
         const { query } = this.$route
         params.type = query.dimensionType
         url = api.netWorkOverview.drilldownTrafficAnalysis
-      } if (this.lineThirdDimensionQueryCondition) {
+      } else if (this.lineThirdDimensionQueryCondition) {
         params.q = this.lineThirdDimensionQueryCondition
         const { query } = this.$route
         params.type = query.dimensionType
