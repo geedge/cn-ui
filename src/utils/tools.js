@@ -1399,53 +1399,42 @@ export function comparedEntityKey (str) {
     const regex = /\ = | =|= /g
     q = q.replace(regex, '=')
 
-    if (q.indexOf('AND') > -1 && checkStrIncludeAnd(q)) {
-      q = q.replace(/ and /g, ' AND ').replace(/ in /g, ' IN ')
-      const arr = q.split(' AND ')
-      let newQ = ''
-      let errorQ = ''
-      const returnObj = {
-        key: '',
-        isKey: true
+    if (q.indexOf(' AND ') > -1 || q.indexOf(' and ') > -1) {
+      if (checkStrIncludeAnd(q)) {
+        q = q.replace(/ and /g, ' AND ')
       }
-
+      const arr = q.split(' AND ')
+      const returnObj = { key: '', isKey: false }
       arr.forEach(item => {
-        // 判断是否包含=或者in
-        const keyEqual = item.substring(0, item.indexOf('='))
-        const keyIn = item.substring(0, item.indexOf(' IN '))
-        const keyLike = item.substring(0, item.indexOf(' LIKE '))
-
-        let keyHas // 目前只有Tag操作符为has函数，避免以后会增加其他实体使用has，故不单独将has作为tag使用
-        let objHas
-        if (item.toLowerCase().indexOf('has(') > -1) {
-          keyHas = item.match(/[()]([^,]+)/)[1] // 例：has(Tag,'111'),截取Tag
-          objHas = columnList.find(t => t.label.toLowerCase() === keyHas.toLowerCase())
+        let label = ''
+        let key = ''
+        if (item.indexOf('=') > -1) {
+          label = item.substring(0, item.indexOf('='))
+          key = '='
+        } else if (item.toLowerCase().indexOf(' like ') > -1) {
+          label = item.substring(0, item.toLowerCase().indexOf(' like '))
+          key = 'like'
+        } else if (item.toLowerCase().indexOf(' in ') > -1) {
+          label = item.substring(0, item.toLowerCase().indexOf(' in '))
+          key = 'in'
+        } else if (item.toLowerCase().indexOf('has(') > -1) {
+          label = item.substring(item.toLowerCase().indexOf('(') + 1, item.indexOf(','))
+          key = 'has'
         }
 
-        const objEqual = columnList.find(t => t.label.toLowerCase() === keyEqual.toLowerCase())
-        const objIn = columnList.find(t => t.label.toLowerCase() === keyIn.toLowerCase())
-        const objLike = columnList.find(t => t.label.toLowerCase() === keyLike.toLowerCase())
-        if (objEqual) {
-          newQ += objEqual.label + item.substring(item.indexOf('='), item.length) + ' AND '
-        } else if (objIn) {
-          newQ += objIn.label + item.substring(item.indexOf(' IN '), item.length) + ' AND '
-        } else if (objLike) {
-          newQ += objLike.label + item.substring(item.indexOf(' LIKE '), item.length) + ' AND '
-        } else if (objHas) {
-          newQ += item.substring(item.indexOf(' has'), item.length) + ' AND '
+        const obj = columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
+        if (obj) {
+          if (key === 'has') {
+            returnObj.key += 'has(' + obj.label + item.substring(item.indexOf(','), item.length) + ' AND '
+          } else {
+            returnObj.key += obj.label + ' ' + item.substring(item.toLowerCase().indexOf(key.toLowerCase()), item.length) + ' AND '
+          }
+          returnObj.isKey = true
         } else {
-          errorQ += '[' + keyEqual + ']' + '、'
-          returnObj.isKey = false
+          return { key: '[' + key + ']', isKey: false }
         }
       })
-      newQ = newQ.substring(0, newQ.length - 5)
-      returnObj.key = newQ
-      if (!returnObj.isKey) {
-        errorQ = errorQ.substring(0, errorQ.length - 1)
-        returnObj.key = errorQ
-      } else {
-        returnObj.key = handleStrToUniteStr(newQ)
-      }
+      returnObj.key = returnObj.key.substring(0, returnObj.key.length - 5)
 
       return returnObj
     } else if (q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1) {
@@ -1460,7 +1449,6 @@ export function comparedEntityKey (str) {
       }
     } else {
       const key = q.substring(0, q.indexOf('='))
-      q = q.replace(/ AND /g, ' and ')
       const obj = columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
       if (obj) {
         return { key: obj.label + q.substring(q.indexOf('='), q.length), isKey: true }
@@ -1548,6 +1536,7 @@ export const handleEntityTypeByStr = (str) => {
       })
 
       newStr = newArr.join(' AND ')
+      newStr = handleStrToUniteStr(newStr)
       return newStr
     } else if (result) {
       // 不区分大小写，用columnList里的label
@@ -1572,6 +1561,17 @@ export const handleEntityTypeByStr = (str) => {
  * 校验字符串格式，如ip、domain、app
  */
 const checkFormatByStr = (str) => {
+  if (str[0] === "'" && str[str.length - 1] === "'") {
+    str = str.substring(1, str.length)
+    str = str.substring(0, str.length - 1)
+  }
+  if (str[0] === '%' && str[str.length - 1] === '%') {
+    str = str.substring(1, str.length)
+    str = str.substring(0, str.length - 1)
+  }
+  if (str[0] === '%' && str[str.length - 1] !== '%') {
+    str = str.substring(1, str.length)
+  }
   // ipv4校验
   const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   // ipv6校验
@@ -1592,6 +1592,10 @@ const checkFormatByStr = (str) => {
   }
 }
 export const getEntityTypeByValue = (str) => {
+  if (str[0] === "'" && str[str.length - 1] === "'") {
+    str = str.substring(1, str.length)
+    str = str.substring(0, str.length - 1)
+  }
   // ipv4校验
   const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   // ipv6校验
@@ -1663,10 +1667,16 @@ const handleStrToUniteStr = (str) => {
       if (commonObj[i].indexOf('(') > -1) {
         // 原来为IN ()格式的直接保留
         lastObj[i] = `${i} IN ${commonObj[i]}`
+        if (commonObj[i].indexOf('),') > -1) {
+          // 此时为ip；"('1.1.1.1','2.2.2.2'), '3.3.3.3'",in后面还有同类型数据，也放到in里
+          lastObj[i] = lastObj[i].replace('),', ',') + ')'
+        }
       } else if (commonObj[i].indexOf(',') > -1) {
         let str = commonObj[i]
         str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
         lastObj[i] = `${i} IN (${str})`
+      } else if (i.toLowerCase() === 'tag') {
+        lastObj[i] = `has(${i},${commonObj[i]})`
       } else {
         // 单独存在的,直接保留
         lastObj[i] = `${i} = '${commonObj[i]}'`
@@ -1706,7 +1716,10 @@ const combineLabel1 = (list) => {
  * @param str
  */
 const checkStrIncludeAnd = (str) => {
-  const arr = str.split(' and ')
+  let arr = []
+  if (str.indexOf(' and ')) {
+    arr = str.split(' and ')
+  }
   let label = ''
 
   arr.forEach((item, index) => {

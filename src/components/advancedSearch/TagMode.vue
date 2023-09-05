@@ -9,7 +9,7 @@
         <!-- 删除按钮 -->
         <div class="condition__delete" @click="removeCondition(index)"><i class="el-icon-error"></i></div>
         <!-- 字段选择 -->
-        <div class="condition__column">
+        <div v-if="meta.column.show" class="condition__column">
           <div v-show="meta.column.isEditing">
             <el-select
                 allow-create
@@ -29,12 +29,14 @@
               ></el-option>
             </el-select>
           </div>
-          <span v-if="!meta.column.isEditing && meta.operator.value !== 'has'" @click="columnClick(meta)">{{meta.column.label}}</span>
+          <span v-if="!meta.column.isEditing && meta.operator.value !== 'has'" @click="columnClick(meta)">
+            <span v-if="meta.column.show">{{meta.column.label}}</span>
+          </span>
           <!--操作符是has时，has需前置-->
-          <span v-else class="condition__operator">{{ meta.operator.value }}</span>
+          <span v-if="!meta.column.isEditing && meta.operator.value === 'has'" class="condition__operator">{{ meta.operator.value }}</span>
         </div>
         <!-- 已选操作符显示 -->
-        <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show && meta.operator.value !== 'has'">{{meta.operator.value}}</div>
+        <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show && meta.operator.value !== 'has'">{{meta.operator.value}}00</div>
         <div v-if="meta.operator.value === 'has'" class="condition__operator" style="color: #000C18">({{meta.column.label}},</div>
         <!-- 值 -->
         <div class="condition__value">
@@ -48,7 +50,9 @@
                 @focus="valueFocus(meta)"
                 @keyup.enter="valueBlur(meta)"></el-input>
           </div>
-          <span v-else @click="valueClick(meta)">{{meta.value.label}}</span>
+          <div v-if="!meta.value.isEditing && meta.value.label" @click="valueClick(meta)" style="padding-right: 6px;">
+            {{ changeLabel(meta.value.label) }}
+          </div>
         </div>
         <div class="condition__value" style="margin-left: -5px;" v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
 
@@ -114,7 +118,7 @@ import _ from 'lodash'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import Parser, { handleMetaListToStr, stringInQuot } from '@/components/advancedSearch/meta/parser'
 import {
-  comparedEntityKey,
+  getEntityTypeByValue,
   handleEntityTypeByStr,
   overwriteUrl,
   urlParamsHandler
@@ -188,7 +192,7 @@ export default {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
         if (_.isEmpty(errorList)) {
-          this.reloadUrl({ q: parser.parseMeta(this.metaList).q })
+          this.reloadUrl({ q: encodeURI(parser.parseMeta(this.metaList).q) })
         }
       } else {
         const routeQuery = this.$route.query
@@ -244,6 +248,26 @@ export default {
         // 根据所选label在columnList中匹配label来确定操作符，一般为=,IN，tags操作符为has
         const obj = this.columnList.find(t => t.label === meta.column.label)
         this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
+        if (meta.column && meta.column.type === 'fullText') {
+          meta.operator.value = '='
+          meta.column.show = false
+          meta.operator.show = false
+          const label = JSON.parse(JSON.stringify(meta.column.label))
+          meta.column.label = getEntityTypeByValue(meta.column.label)
+          meta.value.value = label
+          meta.value.label = label
+
+          if (meta.column.label === 'domain') {
+            meta.operator.value = 'like'
+            meta.value.value = `%${this.delSingleQuote(label)}`
+            meta.value.label = `${this.delSingleQuote(label)}`
+          } else if (meta.column.label === 'app') {
+            meta.operator.value = 'like'
+            meta.value.value = `%${this.delSingleQuote(label)}%`
+            meta.value.label = `${this.delSingleQuote(label)}`
+          }
+          meta.column.type = 'string'
+        }
       }, 200)
     },
     connectionClick (meta) {
@@ -321,6 +345,12 @@ export default {
           if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
             str = str.replace(/'/g, "''")
           }
+          if (str[0] === '%') {
+            str = str.substring(1, str.length)
+          }
+          if (str[str.length - 1] === '%') {
+            str = str.substring(0, str.length - 1)
+          }
           meta.value.value = str
         }
         meta.value.label = meta.value.value // label是显示，value是实际值
@@ -373,7 +403,25 @@ export default {
           if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
             str = str.replace(/'/g, "''")
           }
-          // meta.value.value = str
+
+          // domain和app选择like时，添加%
+          if (meta.operator.value.toLowerCase() === 'like') {
+            if (meta.column.label.toLowerCase() === 'domain') {
+              if (str[0] === '%') {
+                str = str.substring(1, str.length)
+              }
+              str = `%${str}`
+            }
+
+            if (meta.column.label.toLowerCase() === 'app') {
+              if (str[0] === '%' && str[str.length - 1] === '%') {
+                str = str.substring(1, str.length)
+                str = str.substring(0, str.length - 1)
+              }
+              str = `%${str}%`
+            }
+          }
+
           if (!isWrapped) {
             meta.value.value = `'${str}'`
           }
@@ -405,9 +453,9 @@ export default {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
         if (_.isEmpty(errorList)) {
-          const str = handleMetaListToStr(this.metaList)
-          const key = handleEntityTypeByStr(str)
-          this.$emit('search', { ...parser.parseStr(key), str: str })
+          const strObj = handleMetaListToStr(this.metaList)
+          const key = handleEntityTypeByStr(strObj.str)
+          this.$emit('search', { ...parser.parseStr(key), str: strObj.str2 })
         } else {
           this.$message.error(handleErrorTip(errorList[0]))
         }
@@ -420,7 +468,7 @@ export default {
       const errorList = parser.validateMeta(this.metaList)
       if (_.isEmpty(errorList)) {
         this.reloadUrl({ mode: 'text' })
-        this.$emit('changeMode', 'text', parser.parseMeta(this.metaList))
+        this.$emit('changeMode', 'text', handleMetaListToStr(this.metaList).str2)
       } else {
         this.reloadUrl({ mode: 'text' })
         this.$emit('changeMode', 'text', { metaList: [], str: '' })
@@ -515,6 +563,34 @@ export default {
       const routeQuery = this.$route.query
       delete routeQuery.q
       this.reloadUrl(routeQuery, 'cleanOldParams')
+    },
+    isSingleQuoteWrapping (str) {
+      const regex = /^'[^']*'$/
+      return regex.test(str)
+    },
+    delSingleQuote (str) {
+      if (str[0] === "'" && str[str.length - 1] === "'") {
+        str = str.substring(1, str.length)
+        str = str.substring(0, str.length - 1)
+      }
+      return str
+    },
+    changeLabel (label) {
+      // 用户输入'baidu'，实际搜索的值为app like '%baidu%'
+      // 此时展示的值为'%baidu%'，为展示用户输入的值，则将添加的%删除
+      let str = JSON.parse(JSON.stringify(label))
+      if (str[0] === "'" && str[str.length - 1] === "'") {
+        str = str.substring(1, str.length)
+        str = str.substring(0, str.length - 1)
+      }
+      if (str[0] === '%') {
+        str = str.substring(1, str.length)
+      }
+      if (str[str.length - 1] === '%') {
+        str = str.substring(0, str.length - 1)
+      }
+
+      return `'${str}'`
     }
   },
   mounted () {
@@ -522,8 +598,10 @@ export default {
     // 如果地址栏包含参数q，则匹配出metaList到搜索栏回显使用
     let { q } = this.$route.query
     if (q) {
-      q = comparedEntityKey(handleEntityTypeByStr(q)).key
       const parser = new Parser(this.columnList)
+      if (q.indexOf('%20') > -1) {
+        q = decodeURI(q)
+      }
       this.metaList = parser.parseStr(q).metaList
     }
 
@@ -538,6 +616,29 @@ export default {
       handler (n) {
         if (!_.isEmpty(n)) {
           this.metaList = n
+          // 从text模式的模糊搜索转换过来时，需要添加属性
+          this.metaList.forEach(item => {
+            if (item.column && item.column.type === 'fullText') {
+              item.operator.value = '='
+              item.column.show = false
+              item.operator.show = false
+              const label = JSON.parse(JSON.stringify(item.column.label))
+              item.column.label = getEntityTypeByValue(item.column.label)
+              item.value.value = label
+              item.value.label = label
+
+              if (item.column.label === 'domain') {
+                item.operator.value = 'like'
+                item.value.value = `%${this.delSingleQuote(label)}`
+                item.value.label = `%${this.delSingleQuote(label)}`
+              } else if (item.column.label === 'app') {
+                item.operator.value = 'like'
+                item.value.value = `%${this.delSingleQuote(label)}%`
+                item.value.label = `%${this.delSingleQuote(label)}%`
+              }
+              item.column.type = 'string'
+            }
+          })
         }
       }
     }

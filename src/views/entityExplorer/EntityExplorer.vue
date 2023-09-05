@@ -369,7 +369,7 @@ export default {
 
       this.reloadUrl({
         listMode: this.listMode,
-        q: param.str || '',
+        q: encodeURI(param.str) || '',
         mode: mode,
         pageNo: this.pageObj.pageNo,
         pageSize: this.pageObj.pageSize
@@ -381,7 +381,7 @@ export default {
           path: '/entityExplorer',
           query: {
             listMode: this.listMode,
-            q: param.str || '',
+            q: encodeURI(param.str) || '',
             mode: mode,
             range: this.timeFilter.dateRangeValue,
             pageNo: this.pageObj.pageNo,

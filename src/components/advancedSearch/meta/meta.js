@@ -46,7 +46,8 @@ export default class Meta {
       name: '',
       type: '', // fullText | string | long ...
       label: '',
-      isEditing: false
+      isEditing: false,
+      show: true
     }
     this.operator = {
       value: '',

@@ -115,9 +115,8 @@ export default {
       this.codeMirror.focus()
     },
     changeMode () {
-      let str = this.codeMirror.getValue().trim()
+      const str = this.codeMirror.getValue().trim()
       if (str) {
-        str = comparedEntityKey(handleEntityTypeByStr(str)).key
         const parser = new Parser(this.columnList)
         const errorList = parser.validateStr(str)
         if (_.isEmpty(errorList)) {
@@ -221,6 +220,9 @@ export default {
     let { q } = this.$route.query
     this.initCodeMirror()
     if (q) {
+      if (q.indexOf('%20') > -1) {
+        q = decodeURI(q)
+      }
       // 为避免地址栏任意输入导致全查询的q带QUERY，解析时不识别导致的语法错误
       // 如地址栏输入116.178.222.171，此时的q很长，刷新界面时需要把q里的116.178.222.171拿出来进行搜索
       if (q.indexOf('QUERY') > -1) {
