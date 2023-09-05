@@ -260,59 +260,59 @@ export default {
         axios.get(this.networkQuantityUrl, { params: this.getQueryParams() }).then(response => {
           if (response.status === 200) {
             const data = {
-              establishLatencyMs: response.data.data.result.establishLatencyValue || null,
-              httpResponseLatency: response.data.data.result.httpResponseLatencyValue || null,
-              sslConLatency: response.data.data.result.sslConLatencyValue || null,
-              tcpLostlenPercent: response.data.data.result.sequenceGapLossPercentValue || null,
-              pktRetransPercent: response.data.data.result.pktRetransPercentValue || null
+              establishLatencyMs: response.data.data.result.establishLatencyMsAvg || null,
+              httpResponseLatency: response.data.data.result.httpResponseLatencyAvg || null,
+              sslConLatency: response.data.data.result.sslConLatencyAvg || null,
+              tcpLostlenPercent: response.data.data.result.tcpLostlenPercentAvg || null,
+              pktRetransPercent: response.data.data.result.pktRetransPercentAvg || null
             }
             this.score = computeScore(data)
-            this.entityData.establishLatencyValue = response.data.data.result.establishLatencyValue
+            this.entityData.establishLatencyMsAvg = response.data.data.result.establishLatencyMsAvg
             this.entityData.establishLatencyP50 = response.data.data.result.establishLatencyP50
             this.entityData.establishLatencyP90 = response.data.data.result.establishLatencyP90
 
-            this.entityData.httpResponseLantencyValue = response.data.data.result.httpResponseLantencyValue
+            this.entityData.httpResponseLatencyAvg = response.data.data.result.httpResponseLatencyAvg
             this.entityData.httpResponseLantencyP50 = response.data.data.result.httpResponseLantencyP50
             this.entityData.httpResponseLantencyP90 = response.data.data.result.httpResponseLantencyP90
 
-            this.entityData.sslConLatencyValue = response.data.data.result.sslConLatencyValue
+            this.entityData.sslConLatencyAvg = response.data.data.result.sslConLatencyAvg
             this.entityData.sslConLatencyP50 = response.data.data.result.sslConLatencyP50
             this.entityData.sslConLatencyP90 = response.data.data.result.sslConLatencyP90
 
-            this.entityData.sequenceGapLossPercentValue = response.data.data.result.sequenceGapLossPercentValue
-            this.entityData.sequenceGapLossPercentP50 = response.data.data.result.sequenceGapLossPercentP50
-            this.entityData.sequenceGapLossPercentP90 = response.data.data.result.sequenceGapLossPercentP90
+            this.entityData.tcpLostlenPercentAvg = response.data.data.result.tcpLostlenPercentAvg
+            this.entityData.tcpLostlenPercentP50 = response.data.data.result.tcpLostlenPercentP50
+            this.entityData.tcpLostlenPercentP90 = response.data.data.result.tcpLostlenPercentP90
 
-            this.entityData.pktRetransPercentValue = response.data.data.result.pktRetransPercentValue
+            this.entityData.pktRetransPercentAvg = response.data.data.result.pktRetransPercentAvg
             this.entityData.pktRetransPercentP50 = response.data.data.result.pktRetransPercentP50
             this.entityData.pktRetransPercentP90 = response.data.data.result.pktRetransPercentP90
 
             const establishLatency = {
-              value: this.entityData.establishLatencyValue,
+              value: this.entityData.establishLatencyMsAvg,
               p50: this.entityData.establishLatencyP50,
               p90: this.entityData.establishLatencyP90
             }
             this.singleValues.chartDatas.splice(0, 1, establishLatency)
             const httpResponseLatency = {
-              value: this.entityData.httpResponseLantencyValue,
+              value: this.entityData.httpResponseLatencyAvg,
               p50: this.entityData.httpResponseLantencyP50,
               p90: this.entityData.httpResponseLantencyP90
             }
             this.singleValues.chartDatas.splice(1, 1, httpResponseLatency)
             const sslConLatency = {
-              value: this.entityData.sslConLatencyValue,
+              value: this.entityData.sslConLatencyAvg,
               p50: this.entityData.sslConLatencyP50,
               p90: this.entityData.sslConLatencyP90
             }
             this.singleValues.chartDatas.splice(2, 1, sslConLatency)
             const sequenceGapLoss = {
-              value: this.entityData.sequenceGapLossPercentValue,
+              value: this.entityData.tcpLostlenPercentAvg,
               p50: this.entityData.sequenceGapLossPercentP50,
               p90: this.entityData.sequenceGapLossPercentP90
             }
             this.singleValues.chartDatas.splice(3, 1, sequenceGapLoss)
             const pktRetransPercent = {
-              value: this.entityData.pktRetransPercentValue,
+              value: this.entityData.pktRetransPercentAvg,
               p50: this.entityData.pktRetransPercentP50,
               p90: this.entityData.pktRetransPercentP90
             }
