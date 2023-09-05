@@ -89,13 +89,15 @@ export default {
     const { query } = useRoute()
     const lineRefer = ref(query.lineRefer || 'Average')
     const lineTab = ref(query.lineTab || '')
-    const queryCondition = ref(query.queryCondition || '')
+    const lineQueryCondition = ref(query.lineQueryCondition || '')
+    const lineThirdDimensionQueryCondition = ref(query.lineThirdDimensionQueryCondition || '')
     const tabOperationType = ref(query.tabOperationType)
     const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab)
     return {
       lineRefer,
       lineTab,
-      queryCondition,
+      lineQueryCondition,
+      lineThirdDimensionQueryCondition,
       tabOperationType,
       networkOverviewBeforeTab,
       myChart: shallowRef(null)
@@ -167,8 +169,13 @@ export default {
       }
 
       let url
-      if (this.queryCondition) {
-        params.q = this.queryCondition
+      if (this.lineQueryCondition) {
+        params.q = this.lineQueryCondition
+        const { query } = this.$route
+        params.type = query.dimensionType
+        url = api.netWorkOverview.drilldownTrafficAnalysis
+      } if (this.lineThirdDimensionQueryCondition) {
+        params.q = this.lineThirdDimensionQueryCondition
         const { query } = this.$route
         params.type = query.dimensionType
         url = api.netWorkOverview.drilldownTrafficAnalysis

@@ -628,11 +628,19 @@ export default {
           }
           // console.log(queryCondition.join(' AND '))
           this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
+          this.urlChangeParams[this.curTabState.lineQueryCondition] = queryCondition.join(' AND ')
         } else {
           searchProps.forEach(item => {
             queryCondition.push(item + '=\'' + handleSpecialValue(value) + '\'')
           })
           this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
+          const lineQueryCondition = []
+          if (curTab.lineQueryCondition) {
+            curTab.lineQueryCondition.forEach(item => {
+              lineQueryCondition.push(item.replaceAll('$param', value))
+            })
+            this.urlChangeParams[this.curTabState.lineQueryCondition] = lineQueryCondition.join(' OR ')
+          }
         }
       }
       this.changeUrlTabState()
@@ -700,7 +708,7 @@ export default {
         }
       }
     },
-    jump (route, columnName, columnValue, opeType) {
+    async jump (route, columnName, columnValue, opeType) {
       if (route === '/panel/linkMonitor' && opeType === 3) {
         return true
       }
@@ -719,6 +727,9 @@ export default {
         this.$store.commit('setNetworkOverviewTabList', [])
       }
       // 清空网络概况的特殊面包屑
+      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
+      const curTab = await getDefaultCurTab(tableType, metric, columnName)
       this.$store.getters.menuList.forEach(menu => {
         if (!this.$_.isEmpty(menu.children)) {
           menu.children.forEach(child => {
@@ -740,16 +751,19 @@ export default {
                 this.urlChangeParams[this.curTabState.thirdMenu] = columnName
                 this.urlChangeParams[this.curTabState.fourthMenu] = ''
                 this.urlChangeParams[this.curTabState.panelName] = columnName
-                const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
-                const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
-                const curTab = getDefaultCurTab(tableType, metric, columnName)
+                if (curTab.thirdDimensionQueryCondition) {
+                  this.urlChangeParams[this.curTabState.thirdDimensionQueryCondition] = curTab.thirdDimensionQueryCondition.join(' OR ')
+                }
+                if (curTab.lineThirdDimensionQueryCondition) {
+                  this.urlChangeParams[this.curTabState.lineThirdDimensionQueryCondition] = curTab.lineThirdDimensionQueryCondition.join(' OR ')
+                }
                 this.urlChangeParams[this.curTabState.curTab] = curTab.prop
                 this.urlChangeParams[this.curTabState.dimensionType] = curTab ? curTab.prop : ''
-                this.$_.omit(this.urlChangeParams, [this.curTabState.queryCondition, this.curTabState.networkOverviewBeforeTab])
+                this.$_.omit(this.urlChangeParams, [this.curTabState.queryCondition, this.curTabState.networkOverviewBeforeTab, this.curTabState.lineQueryCondition])
               } else {
                 child.columnName = ''
                 child.columnValue = ''
-                this.$_.omit(this.urlChangeParams, [this.curTabState.thirdPanel, this.curTabState.fourthPanel, this.curTabState.thirdMenu, this.curTabState.fourthMenu, this.curTabState.dimensionType, this.curTabState.panelName, this.curTabState.curTab, this.curTabState.queryCondition, this.curTabState.networkOverviewBeforeTab])
+                this.$_.omit(this.urlChangeParams, [this.curTabState.thirdPanel, this.curTabState.fourthPanel, this.curTabState.thirdMenu, this.curTabState.fourthMenu, this.curTabState.dimensionType, this.curTabState.panelName, this.curTabState.curTab, this.curTabState.queryCondition, this.curTabState.networkOverviewBeforeTab,, this.curTabState.lineThirdDimensionQueryCondition,, this.curTabState.thirdDimensionQueryCondition])
               }
             }
           })

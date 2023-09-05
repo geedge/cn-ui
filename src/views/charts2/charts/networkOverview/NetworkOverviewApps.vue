@@ -339,6 +339,15 @@ export default {
         })
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
 
+        const curTab = tabGroup[0]
+        if (curTab.lineQueryCondition) {
+          const lineQueryCondition = []
+          curTab.lineQueryCondition.forEach(item => {
+            lineQueryCondition.push(item.replaceAll('$param', value))
+          })
+          this.urlChangeParams[this.curTabState.lineQueryCondition] = lineQueryCondition.join(' OR ')
+        }
+
         this.$store.getters.menuList.forEach(menu => {
           if (this.$_.isEmpty(menu.children) && menu.route) {
             if (this.$route.path === menu.route) {

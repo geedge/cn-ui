@@ -980,6 +980,9 @@ export function combineTabList (tableType, list, commonTabList) {
     const tabInCode = listInCode ? listInCode.find(item => item.label === tab.label) : {}
     tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
     tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
+    tab.thirdDimensionQueryCondition = tabInCode ? tabInCode.thirdDimensionQueryCondition : []
+    tab.lineQueryCondition = tabInCode ? tabInCode.lineQueryCondition : []
+    tab.lineThirdDimensionQueryCondition = tabInCode ? tabInCode.lineThirdDimensionQueryCondition : []
   })
 }
 /*

@@ -1383,6 +1383,7 @@ export default {
         }
         conditions = queryCondition.join(' AND ')
         this.urlChangeParams[this.curTabState.queryCondition] = conditions
+        this.urlChangeParams[this.curTabState.lineQueryCondition] = conditions
       } else {
         if (tab.queryCondition) {
           tab.queryCondition.forEach(item => {
@@ -1397,6 +1398,13 @@ export default {
         }
         conditions = queryCondition.join(' OR ')
         this.urlChangeParams[this.curTabState.queryCondition] = conditions
+        if (tab.lineQueryCondition) {
+          const lineQueryCondition = []
+          tab.lineQueryCondition.forEach(item => {
+            lineQueryCondition.push(item.replaceAll('$param', value))
+          })
+          this.urlChangeParams[this.curTabState.lineQueryCondition] = lineQueryCondition.join(' OR ')
+        }
       }
     },
     getFirstCheckedTab () {
@@ -1555,6 +1563,7 @@ export default {
           queryCondition.push('common_server_port=' + valueGroup[1])
         }
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
+        this.urlChangeParams[this.curTabState.lineQueryCondition] = queryCondition.join(' AND ')
       } else {
         if (curTab.queryCondition) {
           curTab.queryCondition.forEach(item => {
@@ -1567,8 +1576,14 @@ export default {
             })
           }
         }
-
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
+      }
+      const lineQueryCondition = []
+      if (curTab.lineQueryCondition) {
+        curTab.lineQueryCondition.forEach(item => {
+          lineQueryCondition.push(item.replaceAll('$param', value))
+        })
+        this.urlChangeParams[this.curTabState.lineQueryCondition] = lineQueryCondition.join(' OR ')
       }
     },
     async metricChange () {
@@ -1800,7 +1815,6 @@ export default {
       }
     },
     getQueryCondition () {
-      const queryCondition = this.getUrlParam('queryCondition')
       const fourthPanel = this.getUrlParam('fourthPanel', -1, true)
       const dimensionType = this.getUrlParam('dimensionType', '')
       const fourthMenu = this.getUrlParam('fourthMenu', '')
@@ -1815,8 +1829,15 @@ export default {
           }
         }
       }
-
-      return queryCondition
+      const queryCondition = this.getUrlParam('queryCondition')
+      const thirdDimensionQueryCondition = this.getUrlParam('thirdDimensionQueryCondition')
+      if (queryCondition) {
+        return queryCondition
+      } else if (thirdDimensionQueryCondition) {
+        return thirdDimensionQueryCondition
+      } else {
+        return null
+      }
     },
     getUrlParam (param, defaultValue, isNumber) {
       if (isNumber) {
@@ -1880,6 +1901,9 @@ export default {
         tab.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
         tab.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
         tab.queryCondition = tabInCode ? tabInCode.queryCondition : []
+        tab.thirdDimensionQueryCondition = tabInCode ? tabInCode.thirdDimensionQueryCondition : []
+        tab.lineQueryCondition = tabInCode ? tabInCode.lineQueryCondition : []
+        tab.lineThirdDimensionQueryCondition = tabInCode ? tabInCode.lineThirdDimensionQueryCondition : []
       })
       // 设置drilldownTabs：未下钻状态设置，已下钻状态无需设置
       // let thirdMenu = this.getUrlParam(this.curTabState.thirdMenu, '')
@@ -1909,6 +1933,9 @@ export default {
               drilldownTabWithAllInfo.queryCycleTotalProp = tabInCode ? tabInCode.queryCycleTotalProp : null
               drilldownTabWithAllInfo.dillDownProp = tabInCode ? tabInCode.dillDownProp : []
               drilldownTabWithAllInfo.queryCondition = tabInCode ? tabInCode.queryCondition : []
+              drilldownTabWithAllInfo.thirdDimensionQueryCondition = tabInCode ? tabInCode.thirdDimensionQueryCondition : []
+              drilldownTabWithAllInfo.lineQueryCondition = tabInCode ? tabInCode.lineQueryCondition : []
+              drilldownTabWithAllInfo.lineThirdDimensionQueryCondition = tabInCode ? tabInCode.lineThirdDimensionQueryCondition : []
               drilldownTabFull.push(drilldownTabWithAllInfo)
             }
           }
