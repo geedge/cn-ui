@@ -454,8 +454,11 @@ export default {
         const errorList = parser.validateMeta(this.metaList)
         if (_.isEmpty(errorList)) {
           const strObj = handleMetaListToStr(this.metaList)
-          const key = handleEntityTypeByStr(strObj.str)
-          this.$emit('search', { ...parser.parseStr(key), str: strObj.str2 })
+          const str = strObj.str ? strObj.str : strObj
+          const str2 = strObj.str2 ? strObj.str2 : strObj
+          // str为将metaList转成字符串的值，str2为地址栏展示的值
+          const key = handleEntityTypeByStr(str)
+          this.$emit('search', { ...parser.parseStr(key), str: str2 })
         } else {
           this.$message.error(handleErrorTip(errorList[0]))
         }

@@ -202,13 +202,13 @@ export default {
       entityIpNew: '-',
       entityIpActive: '-',
 
-      pageObj: {
-        pageNo: 1,
-        // 是否重置pageNo，在执行新搜索时是true
-        resetPageNo: true,
-        pageSize: defaultPageSize,
-        total: 0
-      },
+      // pageObj: {
+      //   pageNo: 1,
+      //   // 是否重置pageNo，在执行新搜索时是true
+      //   resetPageNo: true,
+      //   pageSize: defaultPageSize,
+      //   total: 0
+      // },
       newFilterData: [
         {
           icon: 'cn-icon cn-icon-registration-country',
@@ -283,7 +283,7 @@ export default {
 
       // 实体详情列表页面 左侧筛选条件
       loadingLeft: false,
-      initFlag: false, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
+      initFlag: true, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
       timer: null, // 初始化标志的延时器，需要销毁
       summaryCount: {
         total: 0,
@@ -366,10 +366,15 @@ export default {
 
       // 在非列表模式下选择tag模式，在地址栏输入内容时将mode添加到地址栏
       const mode = this.$route.query.mode || 'text'
+      if (this.pageObj.resetPageNo && !this.initFlag) {
+        this.pageObj.pageNo = 1
+      } else {
+        this.pageObj.resetPageNo = true
+      }
 
       this.reloadUrl({
         listMode: this.listMode,
-        q: encodeURI(param.str) || '',
+        q: param.str ? encodeURI(param.str) : '',
         mode: mode,
         pageNo: this.pageObj.pageNo,
         pageSize: this.pageObj.pageSize
@@ -381,7 +386,7 @@ export default {
           path: '/entityExplorer',
           query: {
             listMode: this.listMode,
-            q: encodeURI(param.str) || '',
+            q: param.str ? encodeURI(param.str) : '',
             mode: mode,
             range: this.timeFilter.dateRangeValue,
             pageNo: this.pageObj.pageNo,
@@ -391,11 +396,6 @@ export default {
         this.showList = true
         // 跳转页面，则不执行搜索功能
         return true
-      }
-      if (this.pageObj.resetPageNo) {
-        this.pageObj.pageNo = 1
-      } else {
-        this.pageObj.resetPageNo = true
       }
       // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
       if (q) {
@@ -408,9 +408,9 @@ export default {
         this.queryCount({ ...this.pageObj, ...this.timeFilter })
 
         // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
-        if (!this.initFlag) {
+        if (this.initFlag) {
           this.timer = setTimeout(() => {
-            this.initFlag = true
+            this.initFlag = false
           }, 1000)
         }
       }
@@ -418,22 +418,18 @@ export default {
     pageSize (val) {
       this.pageObj.pageSize = val
       if (this.initFlag) {
-        this.search({ metaList: this.metaList, q: this.q })
-      } else {
         if (val !== 20) {
           this.search({ metaList: this.metaList, q: this.q })
         }
+      } else {
+        this.search({ metaList: this.metaList, q: this.q })
       }
     },
     pageNo (val) {
-      this.pageObj.pageNo = val
-      this.pageObj.resetPageNo = false
-      if (this.initFlag) {
+      if (!this.initFlag) {
+        this.pageObj.pageNo = val
+        this.pageObj.resetPageNo = false
         this.search({ metaList: this.metaList, q: this.q })
-      } else {
-        if (val !== 1) {
-          this.search({ metaList: this.metaList, q: this.q })
-        }
       }
     },
     // 点击上一页箭头
@@ -721,8 +717,16 @@ export default {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
+    const pageObj = ref({
+      pageNo: query.pageNo ? parseInt(query.pageNo) : 1,
+      // 是否重置pageNo，在执行新搜索时是true
+      resetPageNo: true,
+      pageSize: query.pageSize ? parseInt(query.pageSize) : defaultPageSize,
+      total: 0
+    })
     return {
-      timeFilter
+      timeFilter,
+      pageObj
     }
   },
   beforeUnmount () {
