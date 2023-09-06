@@ -91,9 +91,11 @@ export default {
     const lineMetric = ref(query.lineMetric || 'Queries/s')
     const lineRefer = ref(query.lineRefer || 'Average')
     const lineTab = ref(query.lineTab || '')
-    const queryCondition = ref(query.queryCondition || '')
+    const lineQueryCondition = ref(query.lineQueryCondition || '')
+    const dimensionType = ref(query.dimensionType || '')
     return {
-      queryCondition,
+      lineQueryCondition,
+      dimensionType,
       lineMetric,
       lineRefer,
       lineTab,
@@ -152,18 +154,21 @@ export default {
       if (!val) {
         val = this.lineMetric
       }
+
+      const type = this.dimensionType
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        endTime: getSecond(this.timeFilter.endTime),
+        type: type
       }
 
-      if (this.queryCondition) {
-        params.q = this.queryCondition
+      if (this.lineQueryCondition) {
+        params.q = this.lineQueryCondition
       }
 
       this.toggleLoading(true)
 
-      const url = this.queryCondition ? api.dnsInsight.drilldownTrafficAnalysis : api.dnsInsight.totalTrafficAnalysis
+      const url = this.lineQueryCondition ? api.dnsInsight.drilldownTrafficAnalysis : api.dnsInsight.totalTrafficAnalysis
 
       axios.get(url, { params }).then(res => {
         if (res.status === 200) {

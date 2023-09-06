@@ -540,6 +540,8 @@ export default {
         const curTab = curTableInCode.tabList.find(item => item.label === columnName)
         if (curTab) {
           type = curTab.prop
+        } else {
+          type = curTableInCode.tabList[0].prop
         }
       }
       const params = {
@@ -719,6 +721,7 @@ export default {
         this.urlChangeParams[this.curTabState.tabOperationType] = opeType
         if (opeType === 3) {
           this.urlChangeParams.queryCondition = ''
+          this.urlChangeParams.lineQueryCondition = ''
         }
       } else {
         this.urlChangeParams[this.curTabState.tabOperationType] = operationType.mainMenu
@@ -763,7 +766,7 @@ export default {
               } else {
                 child.columnName = ''
                 child.columnValue = ''
-                this.$_.omit(this.urlChangeParams, [this.curTabState.thirdPanel, this.curTabState.fourthPanel, this.curTabState.thirdMenu, this.curTabState.fourthMenu, this.curTabState.dimensionType, this.curTabState.panelName, this.curTabState.curTab, this.curTabState.queryCondition, this.curTabState.networkOverviewBeforeTab,, this.curTabState.lineThirdDimensionQueryCondition,, this.curTabState.thirdDimensionQueryCondition])
+                this.$_.omit(this.urlChangeParams, [this.curTabState.thirdPanel, this.curTabState.fourthPanel, this.curTabState.thirdMenu, this.curTabState.fourthMenu, this.curTabState.dimensionType, this.curTabState.panelName, this.curTabState.curTab, this.curTabState.queryCondition, this.curTabState.lineQueryCondition, this.curTabState.networkOverviewBeforeTab,, this.curTabState.lineThirdDimensionQueryCondition,, this.curTabState.thirdDimensionQueryCondition])
               }
             }
           })

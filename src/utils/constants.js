@@ -685,7 +685,7 @@ export const networkOverviewTabList = [
     prop: 'ip',
     queryCycleTotalProp: 'ips',
     dillDownProp: ['common_client_ip', 'common_server_ip'], // 下钻表格：查询条件q（dillDownProp里条件之间都是OR的关系）,或者queryCondition属性，queryCondition: ['ip = \'$param\' AND side = \'server\''],
-    thirdDimensionQueryCondition: ['notEmpty(common_client_ip) OR notEmpty(common_server_ip)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['ip = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(ip)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -696,7 +696,7 @@ export const networkOverviewTabList = [
     prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
     dillDownProp: ['client_country_region', 'server_country_region'],
-    thirdDimensionQueryCondition: ['notEmpty(client_country_region) OR notEmpty(server_country_region)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['country_region = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(country_region)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -707,7 +707,7 @@ export const networkOverviewTabList = [
     prop: 'asn',
     queryCycleTotalProp: 'asns',
     dillDownProp: ['client_asn', 'server_asn'],
-    thirdDimensionQueryCondition: ['notEmpty(client_asn) OR notEmpty(server_asn)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['asn = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(asn)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -718,7 +718,7 @@ export const networkOverviewTabList = [
     prop: 'appLabel',
     queryCycleTotalProp: 'applications',
     dillDownProp: ['common_app_label'],
-    thirdDimensionQueryCondition: ['notEmpty(common_app_label)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['common_app_label = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(common_app_label)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -729,7 +729,7 @@ export const networkOverviewTabList = [
     prop: 'appCompany',
     queryCycleTotalProp: 'providers',
     dillDownProp: ['app_company'],
-    thirdDimensionQueryCondition: ['notEmpty(app_company)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['app_company = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(app_company)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -740,7 +740,7 @@ export const networkOverviewTabList = [
     prop: 'domain',
     queryCycleTotalProp: 'domains',
     dillDownProp: ['domain'],
-    thirdDimensionQueryCondition: ['notEmpty(domain)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['domain = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(domain)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -751,7 +751,7 @@ export const networkOverviewTabList = [
     prop: 'domainSld',
     queryCycleTotalProp: 'domainSld',
     dillDownProp: ['domain_sld'],
-    thirdDimensionQueryCondition: ['notEmpty(domain_sld)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['domain_sld = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(domain_sld)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -762,7 +762,7 @@ export const networkOverviewTabList = [
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
     dillDownProp: ['common_l7_protocol'],
-    thirdDimensionQueryCondition: ['notEmpty(common_l7_protocol)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['common_l7_protocol = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(common_l7_protocol)'], // 曲线图：第三级维度查询条件q
     checked: true,
@@ -773,7 +773,7 @@ export const networkOverviewTabList = [
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
     dillDownProp: ['client_super_admin_area', 'server_super_admin_ area'],
-    thirdDimensionQueryCondition: ['notEmpty(client_super_admin_area) OR notEmpty(server_super_admin_area)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['super_admin_area = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(super_admin_area)'], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -784,7 +784,7 @@ export const networkOverviewTabList = [
     prop: 'adminArea',
     queryCycleTotalProp: 'cities',
     dillDownProp: ['client_admin_area', 'server_admin_area'],
-    thirdDimensionQueryCondition: ['notEmpty(client_admin_area) OR notEmpty(server_admin_area)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['admin_area = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(admin_area)'], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -795,7 +795,7 @@ export const networkOverviewTabList = [
     prop: 'isp',
     queryCycleTotalProp: 'isps',
     dillDownProp: ['client_isp', 'server_isp'],
-    thirdDimensionQueryCondition: ['notEmpty(client_isp) OR notEmpty(server_isp)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['isp = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(isp)'], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -806,7 +806,7 @@ export const networkOverviewTabList = [
     prop: 'appSubcategory',
     queryCycleTotalProp: 'applicationCategories',
     dillDownProp: ['app_subcategory'],
-    thirdDimensionQueryCondition: ['notEmpty(app_subcategory)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['app_subcategory = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(app_subcategory)'], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -817,7 +817,7 @@ export const networkOverviewTabList = [
     prop: 'domainCategoryName',
     queryCycleTotalProp: 'domainCategories',
     dillDownProp: ['domain_category_name'],
-    thirdDimensionQueryCondition: ['notEmpty(domain_category_name)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['domain_category_name = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(domain_category_name)'], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -828,7 +828,7 @@ export const networkOverviewTabList = [
     prop: 'httpHost',
     queryCycleTotalProp: 'hosts',
     dillDownProp: ['http_host'],
-    thirdDimensionQueryCondition: ['notEmpty(http_host)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['http_host = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(http_host)'], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -838,8 +838,8 @@ export const networkOverviewTabList = [
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',
-    dillDownProp: ['common_l7_protocol', 'common_server_port '],
-    thirdDimensionQueryCondition: ['notEmpty(common_l7_protocol)'], // 下钻表格：第三级维度查询条件q
+    dillDownProp: ['common_l7_protocol', 'common_server_port'],
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['common_l7_protocol = \'$protocol_param\' AND common_server_port = $port_param'], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(common_l7_protocol)'], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -850,7 +850,7 @@ export const networkOverviewTabList = [
     prop: 'clientIp',
     queryCycleTotalProp: 'clientIps',
     dillDownProp: ['common_client_ip'],
-    thirdDimensionQueryCondition: ['notEmpty(common_client_ip)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['ip = \'$param\' and side = \'client\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(ip) and side = \'client\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -861,7 +861,7 @@ export const networkOverviewTabList = [
     prop: 'serverIp',
     queryCycleTotalProp: 'serverIps',
     dillDownProp: ['common_server_ip'],
-    thirdDimensionQueryCondition: ['notEmpty(common_server_ip)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['ip = \'$param\' and side = \'server\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(ip) and side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -872,7 +872,7 @@ export const networkOverviewTabList = [
     prop: 'clientCountryRegion',
     queryCycleTotalProp: 'clientCountries',
     dillDownProp: ['client_country_region'],
-    thirdDimensionQueryCondition: ['notEmpty(client_country_region)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['country_region = \'$param\' and side = \'client\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(country_region) and side = \'client\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -883,7 +883,7 @@ export const networkOverviewTabList = [
     prop: 'serverCountryRegion',
     queryCycleTotalProp: 'serverCountries',
     dillDownProp: ['server_country_region'],
-    thirdDimensionQueryCondition: ['notEmpty(server_country_region)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['country_region = \'$param\' and side = \'server\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(country_region) and side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -894,7 +894,7 @@ export const networkOverviewTabList = [
     prop: 'clientSuperAdminArea',
     queryCycleTotalProp: 'clientProvinces',
     dillDownProp: ['client_super_admin_area'],
-    thirdDimensionQueryCondition: ['notEmpty(client_super_admin_area)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['super_admin_area = \'$param\' and side = \'client\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(super_admin_area) and side = \'client\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -905,7 +905,7 @@ export const networkOverviewTabList = [
     prop: 'serverSuperAdminArea',
     queryCycleTotalProp: 'serverProvinces',
     dillDownProp: ['server_super_admin_area'],
-    thirdDimensionQueryCondition: ['notEmpty(server_super_admin_area)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['super_admin_area = \'$param\' and side = \'server\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(super_admin_area) and side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -916,7 +916,7 @@ export const networkOverviewTabList = [
     prop: 'clientAdminArea',
     queryCycleTotalProp: 'clientCities',
     dillDownProp: ['client_admin_area'],
-    thirdDimensionQueryCondition: ['notEmpty(client_admin_area)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['admin_area = \'$param\' and side = \'client\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(admin_area) and side = \'client\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -927,7 +927,7 @@ export const networkOverviewTabList = [
     prop: 'serverAdminArea',
     queryCycleTotalProp: 'serverCities',
     dillDownProp: ['server_admin_area'],
-    thirdDimensionQueryCondition: ['notEmpty(server_admin_area)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['admin_area = \'$param\' and side = \'server\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(admin_area) and side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -938,7 +938,7 @@ export const networkOverviewTabList = [
     prop: 'clientIsp',
     queryCycleTotalProp: 'clientIsps',
     dillDownProp: ['client_isp'],
-    thirdDimensionQueryCondition: ['notEmpty(client_isp)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['isp = \'$param\' and side = \'client\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(isp) and side = \'client\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -949,7 +949,7 @@ export const networkOverviewTabList = [
     prop: 'serverIsp',
     queryCycleTotalProp: 'serverIsps',
     dillDownProp: ['server_isp'],
-    thirdDimensionQueryCondition: ['notEmpty(server_isp)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['isp = \'$param\' and side = \'server\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(isp) and side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -960,7 +960,7 @@ export const networkOverviewTabList = [
     prop: 'clientAsn',
     queryCycleTotalProp: 'clientAsns',
     dillDownProp: ['client_asn'],
-    thirdDimensionQueryCondition: ['notEmpty(client_asn)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['asn = \'$param\' and side = \'client\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(asn) and side = \'client\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -971,7 +971,7 @@ export const networkOverviewTabList = [
     prop: 'serverAsn',
     queryCycleTotalProp: 'serverAsns',
     dillDownProp: ['server_asn'],
-    thirdDimensionQueryCondition: ['notEmpty(server_asn)'], // 下钻表格：第三级维度查询条件q
+    thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['asn = \'$param\' and side = \'server\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(asn) and side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
@@ -985,7 +985,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.ips', // tab名称对应的il8n
     prop: 'ip', // 接口返回数据中，tab第一列对应的属性名
     queryCycleTotalProp: 'ips', // SQL中查询不同纬度的列名称
-    dillDownProp: ['common_client_ip', 'common_server_ip'], // 下钻时，传递的查询条件，即接口的q参数
+    dillDownProp: ['ip'], // 下钻时，传递的查询条件，即接口的q参数
+    lineQueryCondition: ['ip = \'$param\''], // 曲线图：查询条件q
     checked: true, // 自定义设置中，是否默认选中
     disabled: false, // 自定义设置中，是否可操作（选中或取消选中）
     panelId: drillDownPanelTypeMapping.npmOverviewIp// 下钻后展示的panelId
@@ -993,7 +994,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.countries',
     prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
-    dillDownProp: ['client_country_region', 'server_country_region'],
+    dillDownProp: ['country_region'],
+    lineQueryCondition: ['country_region = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1001,7 +1003,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.asns',
     prop: 'asn',
     queryCycleTotalProp: 'asns',
-    dillDownProp: ['client_asn', 'server_asn'],
+    dillDownProp: ['asn'],
+    lineQueryCondition: ['asn = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1010,6 +1013,7 @@ export const networkAppPerformanceTabList = [
     prop: 'appLabel',
     queryCycleTotalProp: 'applications',
     dillDownProp: ['common_app_label'],
+    lineQueryCondition: ['common_app_label = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewApp
@@ -1018,6 +1022,7 @@ export const networkAppPerformanceTabList = [
     prop: 'appCompany',
     queryCycleTotalProp: 'providers',
     dillDownProp: ['app_company'],
+    lineQueryCondition: ['app_company = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1026,6 +1031,7 @@ export const networkAppPerformanceTabList = [
     prop: 'domain',
     queryCycleTotalProp: 'domains',
     dillDownProp: ['domain'],
+    lineQueryCondition: ['domain = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewDomain
@@ -1034,6 +1040,7 @@ export const networkAppPerformanceTabList = [
     prop: 'domainSld',
     queryCycleTotalProp: 'domainSld',
     dillDownProp: ['domain_sld'],
+    lineQueryCondition: ['domain_sld = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewDomain
@@ -1041,7 +1048,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
-    dillDownProp: ['common_l7_protocol'],
+    dillDownProp: ['l7_protocol'],
+    lineQueryCondition: ['l7_protocol = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1049,7 +1057,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.regions',
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
-    dillDownProp: ['client_super_admin_area', 'server_super_admin_ area'],
+    dillDownProp: ['super_admin_area'],
+    lineQueryCondition: ['super_admin_area = \'$param\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1057,7 +1066,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.cities',
     prop: 'adminArea',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['client_admin_area', 'server_admin_area'],
+    dillDownProp: ['admin_area'],
+    lineQueryCondition: ['admin_area = \'$param\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1065,7 +1075,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.isps',
     prop: 'isp',
     queryCycleTotalProp: 'isps',
-    dillDownProp: ['client_isp', 'server_isp'],
+    dillDownProp: ['isp'],
+    lineQueryCondition: ['isp = \'$param\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1074,6 +1085,7 @@ export const networkAppPerformanceTabList = [
     prop: 'appSubcategory',
     queryCycleTotalProp: 'applicationCategories',
     dillDownProp: ['app_subcategory'],
+    lineQueryCondition: ['app_subcategory = \'$param\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1082,6 +1094,7 @@ export const networkAppPerformanceTabList = [
     prop: 'domainCategoryName',
     queryCycleTotalProp: 'domainCategories',
     dillDownProp: ['domain_category_name'],
+    lineQueryCondition: ['domain_category_name = \'$param\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1090,6 +1103,7 @@ export const networkAppPerformanceTabList = [
     prop: 'httpHost',
     queryCycleTotalProp: 'hosts',
     dillDownProp: ['http_host'],
+    lineQueryCondition: ['http_host = \'$param\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1097,7 +1111,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',
-    dillDownProp: ['common_l7_protocol', 'common_server_port '],
+    dillDownProp: ['common_l7_protocol', 'common_server_port'],
+    lineQueryCondition: ['common_l7_protocol = \'$protocol_param\' AND common_server_port = $port_param'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1105,8 +1120,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.clientIps',
     prop: 'clientIp',
     queryCycleTotalProp: 'clientIps',
-    dillDownProp: ['common_client_ip'],
-    queryCondition: ['ip = \'$param\' AND side = \'client\''],
+    dillDownProp: ['client_ip'],
+    lineQueryCondition: ['ip = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1114,8 +1129,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.serverIps',
     prop: 'serverIp',
     queryCycleTotalProp: 'serverIps',
-    dillDownProp: ['common_server_ip'],
-    queryCondition: ['ip = \'$param\' AND side = \'server\''],
+    dillDownProp: ['server_ip'],
+    lineQueryCondition: ['ip = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1124,7 +1139,7 @@ export const networkAppPerformanceTabList = [
     prop: 'clientCountryRegion',
     queryCycleTotalProp: 'clientCountries',
     dillDownProp: ['client_country_region'],
-    queryCondition: ['country_region = \'$param\' AND side = \'client\''],
+    lineQueryCondition: ['country_region = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1133,7 +1148,7 @@ export const networkAppPerformanceTabList = [
     prop: 'serverCountryRegion',
     queryCycleTotalProp: 'serverCountries',
     dillDownProp: ['server_country_region'],
-    queryCondition: ['country_region = \'$param\' AND side = \'server\''],
+    lineQueryCondition: ['country_region = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1142,7 +1157,7 @@ export const networkAppPerformanceTabList = [
     prop: 'clientSuperAdminArea',
     queryCycleTotalProp: 'clientProvinces',
     dillDownProp: ['client_super_admin_area'],
-    queryCondition: ['super_admin_area = \'$param\' AND side = \'client\''],
+    lineQueryCondition: ['super_admin_area = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1151,7 +1166,7 @@ export const networkAppPerformanceTabList = [
     prop: 'serverSuperAdminArea',
     queryCycleTotalProp: 'serverProvinces',
     dillDownProp: ['server_super_admin_area'],
-    queryCondition: ['super_admin_area = \'$param\' AND side = \'server\''],
+    lineQueryCondition: ['super_admin_area = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1160,7 +1175,7 @@ export const networkAppPerformanceTabList = [
     prop: 'clientAdminArea',
     queryCycleTotalProp: 'clientCities',
     dillDownProp: ['client_admin_area'],
-    queryCondition: ['admin_area = \'$param\' AND side = \'client\''],
+    lineQueryCondition: ['admin_area = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1169,7 +1184,7 @@ export const networkAppPerformanceTabList = [
     prop: 'serverAdminArea',
     queryCycleTotalProp: 'serverCities',
     dillDownProp: ['server_admin_area'],
-    queryCondition: ['admin_area = \'$param\' AND side = \'server\''],
+    lineQueryCondition: ['admin_area = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1178,7 +1193,7 @@ export const networkAppPerformanceTabList = [
     prop: 'clientIsp',
     queryCycleTotalProp: 'clientIsps',
     dillDownProp: ['client_isp'],
-    queryCondition: ['isp = \'$param\' AND side = \'client\''],
+    lineQueryCondition: ['isp = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1187,7 +1202,7 @@ export const networkAppPerformanceTabList = [
     prop: 'serverIsp',
     queryCycleTotalProp: 'serverIsps',
     dillDownProp: ['server_isp'],
-    queryCondition: ['isp = \'$param\' AND side = \'server\''],
+    lineQueryCondition: ['isp = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1196,7 +1211,7 @@ export const networkAppPerformanceTabList = [
     prop: 'clientAsn',
     queryCycleTotalProp: 'clientAsns',
     dillDownProp: ['client_asn'],
-    queryCondition: ['asn = \'$param\' AND side = \'client\''],
+    lineQueryCondition: ['asn = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1205,7 +1220,7 @@ export const networkAppPerformanceTabList = [
     prop: 'serverAsn',
     queryCycleTotalProp: 'serverAsns',
     dillDownProp: ['server_asn'],
-    queryCondition: ['asn = \'$param\' AND side = \'server\''],
+    lineQueryCondition: ['asn = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1328,7 +1343,7 @@ export const linkMonitorTabList = [
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',
-    dillDownProp: ['common_l7_protocol', 'common_server_port '],
+    dillDownProp: ['common_l7_protocol', 'common_server_port'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1436,6 +1451,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'dnsServer', // 接口返回数据中，tab第一列对应的属性名
     queryCycleTotalProp: 'dnsServer', // SQL中查询不同纬度的列名称
     dillDownProp: ['common_server_ip'], // 下钻时，传递的查询条件，即接口的q参数
+    lineQueryCondition: ['server_ip = \'$param\''], // 曲线图：查询条件q
     checked: true, // 自定义设置中，是否默认选中
     disabled: false, // 自定义设置中，是否可操作（选中或取消选中）
     panelId: drillDownPanelTypeMapping.dnsFourthMenu// 下钻后展示的panelId
@@ -1445,6 +1461,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
     dillDownProp: ['server_country_region'],
+    lineQueryCondition: ['server_country_region = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1454,6 +1471,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'adminArea',
     queryCycleTotalProp: 'cities',
     dillDownProp: ['server_admin_area'],
+    lineQueryCondition: ['server_admin_area = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1463,6 +1481,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'dnsServerIsp',
     queryCycleTotalProp: 'isps',
     dillDownProp: ['server_isp'],
+    lineQueryCondition: ['server_isp = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1473,6 +1492,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'roles',
     dillDownProp: ['dns_server_role'],
     queryCondition: ['has(dns_server_role,\'$param\')'],
+    lineQueryCondition: ['arrayJoin(server_role) = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1482,6 +1502,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'qname',
     queryCycleTotalProp: 'qnames',
     dillDownProp: ['dns_qname'],
+    lineQueryCondition: ['qname = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1492,6 +1513,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'slds',
     dillDownProp: ['dns_qname'],
     queryCondition: ['cutToFirstSignificantSubdomain(dns_qname) = \'$param\''],
+    lineQueryCondition: ['qname_sld = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1502,6 +1524,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'tlds',
     dillDownProp: ['dns_qname'],
     queryCondition: [' topLevelDomain(dns_qname) = \'$param\''],
+    lineQueryCondition: ['qname_tld = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1512,6 +1535,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'qtypes',
     dillDownProp: ['dns_qtype'],
     queryCondition: ['dns_qtype = $param'],
+    lineQueryCondition: ['qtype = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1522,6 +1546,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'rcodes',
     dillDownProp: ['dns_rcode'],
     queryCondition: ['dns_rcode = $param'],
+    lineQueryCondition: ['rcode = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1532,6 +1557,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'a',
     dillDownProp: ['rr_a'],
     queryCondition: ['notEmpty(dns_rr) AND has(JSONExtractArrayRaw(JSON_QUERY(\'$.rr[*].type\', dns_rr) ), \'1\') AND arrayJoin(tupleElement(tupleElement(JSONExtract(dns_rr,\'Tuple(rr Nested(name String, type UInt32, a String))\'), \'rr\'), \'a\')) = \'$param\''],
+    lineQueryCondition: ['rr_a = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1542,6 +1568,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'aaaa',
     dillDownProp: ['rr_aaaa'],
     queryCondition: ['notEmpty(dns_rr) and has(JSONExtractArrayRaw(JSON_QUERY(\'$.rr[*].type\', dns_rr) ), \'28\') AND arrayJoin(tupleElement(tupleElement(JSONExtract(dns_rr,\'Tuple(rr Nested(name String, type UInt32, aaaa String))\'), \'rr\'), \'aaaa\')) = \'$param\''],
+    lineQueryCondition: ['rr_aaaa = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1552,6 +1579,7 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'cnames',
     dillDownProp: ['rr_cname'],
     queryCondition: ['notEmpty(dns_rr) and has(JSONExtractArrayRaw(JSON_QUERY(\'$.rr[*].type\', dns_rr) ), \'5\') AND arrayJoin(tupleElement(tupleElement(JSONExtract(dns_rr,\'Tuple(rr Nested(name String, type UInt32, cname String))\'), \'rr\'), \'cname\')) = \'$param\''],
+    lineQueryCondition: ['rr_cname = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu

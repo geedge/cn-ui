@@ -64,12 +64,12 @@ export default {
   setup () {
     const { query } = useRoute()
     const metricFilter = ref(query.lineMetric || 'establishLatencyMs')
-    const queryCondition = ref(query.queryCondition || '')
+    const lineQueryCondition = ref(query.lineQueryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
     const tabIndex = ref(query.tabIndex || 0)
     return {
       metricFilter,
-      queryCondition,
+      lineQueryCondition,
       dimensionType,
       tabIndex,
       myChart: shallowRef(null)
@@ -113,14 +113,14 @@ export default {
         val = this.metricFilter
       }
       let condition = ''
-      let type = this.dimensionType
+      const type = this.dimensionType
 
-      if (this.queryCondition.indexOf(' OR ') > -1) {
-        condition = this.queryCondition.split(/["|'](.*?)["|']/)
-      } else if (this.queryCondition.indexOf('+OR+') > -1) {
-        condition = this.queryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
+      if (this.lineQueryCondition.indexOf(' OR ') > -1) {
+        condition = this.lineQueryCondition.split(/["|'](.*?)["|']/)
+      } else if (this.lineQueryCondition.indexOf('+OR+') > -1) {
+        condition = this.lineQueryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
       } else {
-        condition = this.queryCondition
+        condition = this.lineQueryCondition
       }
 
       if (parseFloat(this.tabIndex) === 0) {
@@ -128,31 +128,16 @@ export default {
       } else if (parseFloat(this.tabIndex) === 1) {
         this.side = 'server'
       }
-
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        endTime: getSecond(this.timeFilter.endTime),
+        type: type
       }
 
-      // 此处过滤入参，再进行精简便降低可读性了，故暂时保留，若之后有更好处理方法则进行替换
-      if (type) {
-        if (type === 'clientIp' || type === 'serverIp') {
-          if (parseFloat(this.tabIndex) === 0) {
-            type = 'clientIp'
-          } else if (parseFloat(this.tabIndex) === 1) {
-            type = 'serverIp'
-          }
-          params.q = `ip='${condition.split(/'(.*?)'/)[1]}'`
-        }
-        params.type = type
-      }
-
-      if (condition && (typeof condition !== 'object') && type) {
-        params.q = getQueryByType(type, condition)
-      } else if (condition.length > 1 && type && type === 'ip') {
-        params.q = `${type}='${condition[1]}' and side='${this.side}'`
-      } else if (condition.length > 1 && type && type !== 'ip') {
-        params.q = getQueryByFlag2(type, condition)
+      if (type === 'ip') {
+        params.q = `${condition} and side='${this.side}'`
+      } else {
+        params.q = condition
       }
 
       this.toggleLoading(true)

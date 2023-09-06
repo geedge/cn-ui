@@ -120,7 +120,7 @@ export default {
       } else {
         condition = this.queryCondition
       }
-      let type = this.dimensionType || this.networkOverviewBeforeTab
+      const type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
@@ -133,19 +133,10 @@ export default {
         this.side = 'server'
       }
 
-      if (condition && (typeof condition !== 'object') && type) { // 判断 condition 不为空并且不为对象 type 不为空
-        if (type === 'clientIp' || type === 'serverIp') { // type  = clientIp || serverIp
-          if (parseFloat(this.tabIndex) === 0) { // npm 下钻 tabIndex 为 0
-            type = 'clientIp'
-          } else if (parseFloat(this.tabIndex) === 1) { // npm 下钻 tabIndex 为 1
-            type = 'serverIp'
-          }
-        }
-        params.q = getQueryByType(type, condition)
-      } else if (condition.length > 1 && type && type === 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type为ip
-        params.q = `${type}='${condition[1]}' and side='${this.side}'` // 拼接字段作为参数
-      } else if (condition.length > 1 && type && type !== 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type不为ip
-        params.q = getQueryByFlag2(type, condition)
+      if (type === 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type为ip
+        params.q = `${condition} and side='${this.side}'`
+      } else {
+        params.q = condition
       }
       params.type = type
 
