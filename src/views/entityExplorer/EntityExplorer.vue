@@ -364,6 +364,14 @@ export default {
         this.metaList = []
       }
 
+      // 参数q，避免切换页码时，地址栏参数q为空
+      let urlQ = ''
+      if (param.str) {
+        urlQ = encodeURI(param.str)
+      } else if (this.q) {
+        urlQ = encodeURI(this.q)
+      }
+
       // 在非列表模式下选择tag模式，在地址栏输入内容时将mode添加到地址栏
       const mode = this.$route.query.mode || 'text'
       if (this.pageObj.resetPageNo && !this.initFlag) {
@@ -374,7 +382,7 @@ export default {
 
       this.reloadUrl({
         listMode: this.listMode,
-        q: param.str ? encodeURI(param.str) : '',
+        q: urlQ,
         mode: mode,
         pageNo: this.pageObj.pageNo,
         pageSize: this.pageObj.pageSize
@@ -386,7 +394,7 @@ export default {
           path: '/entityExplorer',
           query: {
             listMode: this.listMode,
-            q: param.str ? encodeURI(param.str) : '',
+            q: urlQ,
             mode: mode,
             range: this.timeFilter.dateRangeValue,
             pageNo: this.pageObj.pageNo,
@@ -397,22 +405,16 @@ export default {
         // 跳转页面，则不执行搜索功能
         return true
       }
-      // 带参数时，只查询对应类型的entity；不带参数时，3种entity都查
-      if (q) {
-        this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
-        this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
-        this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
-      } else {
-        this.queryFilterNew({ ...this.pageObj, ...this.timeFilter })
-        this.queryList({ ...this.pageObj, ...this.timeFilter })
-        this.queryCount({ ...this.pageObj, ...this.timeFilter })
 
-        // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
-        if (this.initFlag) {
-          this.timer = setTimeout(() => {
-            this.initFlag = false
-          }, 1000)
-        }
+      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
+
+      // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
+      if (this.initFlag) {
+        this.timer = setTimeout(() => {
+          this.initFlag = false
+        }, 1000)
       }
     },
     pageSize (val) {
@@ -565,7 +567,7 @@ export default {
       const queryParams = {
         // startTime: getSecond(params.startTime),
         // endTime: getSecond(params.endTime),
-        resource: params.q || '' // 目前版本搜索不支持实体名称搜索，下版本改进
+        resource: params.q || ''
       }
       axios.get(api.entity.entityList.summaryCount, { params: queryParams }).then(response => {
         if (response.status === 200) {
@@ -686,11 +688,14 @@ export default {
   },
   mounted () {
     this.getEntityIndexData()
-    const { q, listMode } = this.$route.query
+    let { q, listMode } = this.$route.query
 
     // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
     if (listMode) {
       this.showList = true
+      if (q.indexOf('%20') > -1) {
+        q = decodeURI(q)
+      }
       this.initSearch(q)
       this.listMode = listMode
     }

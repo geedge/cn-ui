@@ -471,7 +471,9 @@ export default {
       const errorList = parser.validateMeta(this.metaList)
       if (_.isEmpty(errorList)) {
         this.reloadUrl({ mode: 'text' })
-        this.$emit('changeMode', 'text', handleMetaListToStr(this.metaList).str2)
+        const strObj = handleMetaListToStr(this.metaList)
+        const str2 = strObj.str2 ? strObj.str2 : strObj
+        this.$emit('changeMode', 'text', str2)
       } else {
         this.reloadUrl({ mode: 'text' })
         this.$emit('changeMode', 'text', { metaList: [], str: '' })
