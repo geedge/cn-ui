@@ -36,7 +36,7 @@
           <span v-if="!meta.column.isEditing && meta.operator.value === 'has'" class="condition__operator">{{ meta.operator.value }}</span>
         </div>
         <!-- 已选操作符显示 -->
-        <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show && meta.operator.value !== 'has'">{{meta.operator.value}}00</div>
+        <div class="condition__operator" @click="operatorClick(meta)" v-if="meta.operator.show && meta.operator.value !== 'has'">{{meta.operator.value}}</div>
         <div v-if="meta.operator.value === 'has'" class="condition__operator" style="color: #000C18">({{meta.column.label}},</div>
         <!-- 值 -->
         <div class="condition__value">
