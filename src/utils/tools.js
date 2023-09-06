@@ -859,7 +859,7 @@ export function computeScore (data) {
   const scoreArr = []
   let num = 0
   Object.keys(data).forEach(t => {
-    if (!data[t]) {
+    if (!data[t] && data[t] !== 0) {
       num += 1
     }
     if (t === 'establishLatencyMs' || t === 'tcpLostlenPercent' || t === 'pktRetransPercent') {

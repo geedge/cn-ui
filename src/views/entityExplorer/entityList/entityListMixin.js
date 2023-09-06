@@ -225,11 +225,11 @@ export default {
       axios.get(this.scoreUrl, { params: this.getQueryParams() }).then(response => {
         if (response.status === 200) {
           const data = {
-            establishLatencyMs: response.data.data.result.establishLatencyMsAvg || null,
-            httpResponseLatency: response.data.data.result.httpResponseLatencyAvg || null,
-            sslConLatency: response.data.data.result.sslConLatencyAvg || null,
-            tcpLostlenPercent: response.data.data.result.tcpLostlenPercentAvg || null,
-            pktRetransPercent: response.data.data.result.pktRetransPercentAvg || null
+            establishLatencyMs: _.get(response, 'data.data.result.establishLatencyMsAvg', null),
+            httpResponseLatency: _.get(response, 'data.data.result.httpResponseLatencyAvg', null),
+            sslConLatency: _.get(response, 'data.data.result.sslConLatencyAvg', null),
+            tcpLostlenPercent: _.get(response, 'data.data.result.tcpLostlenPercentAvg', null),
+            pktRetransPercent: _.get(response, 'data.data.result.pktRetransPercentAvg', null)
           }
           this.score = computeScore(data)
         }

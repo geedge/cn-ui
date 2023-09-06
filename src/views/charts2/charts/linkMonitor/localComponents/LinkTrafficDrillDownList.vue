@@ -59,6 +59,7 @@ import { computeScore } from '@/utils/tools'
 import Loading from '@/components/common/Loading'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
+import _ from 'lodash'
 export default {
   name: 'linkTrafficList',
   mixins: [chartMixin],
@@ -148,11 +149,11 @@ export default {
           this.showError = false
           this.isNoData = res.data.result.length === 0
           const data = {
-            establishLatencyMs: res.data.result[0].establishLatencyMs || null,
-            httpResponseLatency: res.data.result[0].httpResponseLatency || null,
-            sslConLatency: res.data.result[0].sslConLatency || null,
-            tcpLostlenPercent: res.data.result[0].tcpLostlenPercent || null,
-            pktRetransPercent: res.data.result[0].pktRetransPercent || null
+            establishLatencyMs: _.get(res.data.result[0], 'establishLatencyMs', null),
+            httpResponseLatency: _.get(res.data.result[0], 'httpResponseLatency', null),
+            sslConLatency: _.get(res.data.result[0], 'sslConLatency', null),
+            tcpLostlenPercent: _.get(res.data.result[0], 'tcpLostlenPercent', null),
+            pktRetransPercent: _.get(res.data.result[0], 'pktRetransPercent', null)
           }
           this.linkTrafficListData = res.data.result[0]
           this.linkTrafficListData.npmScore = computeScore(data)

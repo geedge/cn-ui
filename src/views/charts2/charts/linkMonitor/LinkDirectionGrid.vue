@@ -16,6 +16,7 @@ import { storageKey } from '@/utils/constants'
 import PopoverContent from './LinkDirectionGrid/PopoverContent'
 import { computeScore } from '@/utils/tools'
 import axios from 'axios'
+import _ from 'lodash'
 
 export default {
   name: 'LinkDirectionGrid',
@@ -257,11 +258,11 @@ export default {
     localComputeScore (data) {
       let score = 0
       const dataScore = {
-        establishLatencyMs: data.establishLatencyMs || null,
-        httpResponseLatency: data.httpResponseLatency || null,
-        sslConLatency: data.sslConLatency || null,
-        tcpLostlenPercent: data.tcpLostlenPercent || null,
-        pktRetransPercent: data.pktRetransPercent || null
+        establishLatencyMs: _.get(data, 'establishLatencyMs', null),
+        httpResponseLatency: _.get(data, 'httpResponseLatency', null),
+        sslConLatency: _.get(data, 'sslConLatency', null),
+        tcpLostlenPercent: _.get(data, 'tcpLostlenPercent', null),
+        pktRetransPercent: _.get(data, 'pktRetransPercent', null)
       }
       score = computeScore(dataScore)
       return score

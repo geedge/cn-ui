@@ -82,6 +82,7 @@ import { urlParamsHandler, overwriteUrl, getDnsMapData, computeScore } from '@/u
 import ChartList from '@/views/charts2/ChartList'
 import { useStore } from 'vuex'
 import axios from 'axios'
+import _ from 'lodash'
 
 export default {
   name: 'Panel',
@@ -449,11 +450,11 @@ export default {
         axios.get(url, { params }).then(res => {
           if (res.status === 200) {
             const data = {
-              establishLatencyMs: res.data.data.result.establishLatencyMsAvg || null,
-              httpResponseLatency: res.data.data.result.httpResponseLatencyAvg || null,
-              sslConLatency: res.data.data.result.sslConLatencyAvg || null,
-              tcpLostlenPercent: res.data.data.result.tcpLostlenPercentAvg || null,
-              pktRetransPercent: res.data.data.result.pktRetransPercentAvg || null
+              establishLatencyMs: _.get(res, 'data.data.result.establishLatencyMsAvg', null),
+              httpResponseLatency: _.get(res, 'data.data.result.httpResponseLatencyAvg', null),
+              sslConLatency: _.get(res, 'data.data.result.sslConLatencyAvg', null),
+              tcpLostlenPercent: _.get(res, 'data.data.result.tcpLostlenPercentAvg', null),
+              pktRetransPercent: _.get(res, 'data.data.result.pktRetransPercentAvg', null)
             }
             this.score = computeScore(data)
           }
