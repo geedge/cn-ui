@@ -148,15 +148,20 @@ export default {
         if (response.status === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
-          const data = {
-            establishLatencyMs: _.get(res.data.result[0], 'establishLatencyMs', null),
-            httpResponseLatency: _.get(res.data.result[0], 'httpResponseLatency', null),
-            sslConLatency: _.get(res.data.result[0], 'sslConLatency', null),
-            tcpLostlenPercent: _.get(res.data.result[0], 'tcpLostlenPercent', null),
-            pktRetransPercent: _.get(res.data.result[0], 'pktRetransPercent', null)
+          if (this.isNoData) {
+            this.linkTrafficListData = {}
+            this.linkTrafficListData.npmScore = '-'
+          } else {
+            const data = {
+              establishLatencyMs: _.get(res.data.result[0], 'establishLatencyMs', null),
+              httpResponseLatency: _.get(res.data.result[0], 'httpResponseLatency', null),
+              sslConLatency: _.get(res.data.result[0], 'sslConLatency', null),
+              tcpLostlenPercent: _.get(res.data.result[0], 'tcpLostlenPercent', null),
+              pktRetransPercent: _.get(res.data.result[0], 'pktRetransPercent', null)
+            }
+            this.linkTrafficListData = res.data.result[0]
+            this.linkTrafficListData.npmScore = computeScore(data)
           }
-          this.linkTrafficListData = res.data.result[0]
-          this.linkTrafficListData.npmScore = computeScore(data)
         } else {
           this.showError = true
           this.errorMsg = res.message

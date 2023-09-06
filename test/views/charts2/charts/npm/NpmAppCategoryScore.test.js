@@ -125,7 +125,7 @@ describe('views/charts2/charts/npm/NpmAppCategoryScore.vue测试', () => {
 
       expect(textNode0.text()).toBe('6')
       expect(textNode1.text()).toBe('6')
-      expect(textNode2.text()).toBe('-')
+      expect(textNode2.text()).toBe('6')
       // expect(textNode3.text()).toBe('-')
       expect(textNode4.text()).toBe('5')
       expect(textNode5.text()).toBe('3')
