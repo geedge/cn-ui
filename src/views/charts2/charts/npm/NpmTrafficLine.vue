@@ -48,8 +48,7 @@ import {
   getLineIndexUnit,
   getLineIndexUnit2,
   overwriteUrl,
-  urlParamsHandler,
-  getQueryByType, getQueryByFlag2
+  urlParamsHandler
 } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
 import { dataForNpmTrafficLine } from '@/utils/static-data'

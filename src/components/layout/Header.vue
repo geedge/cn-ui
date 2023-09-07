@@ -766,7 +766,7 @@ export default {
               } else {
                 child.columnName = ''
                 child.columnValue = ''
-                this.$_.omit(this.urlChangeParams, [this.curTabState.thirdPanel, this.curTabState.fourthPanel, this.curTabState.thirdMenu, this.curTabState.fourthMenu, this.curTabState.dimensionType, this.curTabState.panelName, this.curTabState.curTab, this.curTabState.queryCondition, this.curTabState.lineQueryCondition, this.curTabState.networkOverviewBeforeTab,, this.curTabState.lineThirdDimensionQueryCondition,, this.curTabState.thirdDimensionQueryCondition])
+                this.$_.omit(this.urlChangeParams, [this.curTabState.thirdPanel, this.curTabState.fourthPanel, this.curTabState.thirdMenu, this.curTabState.fourthMenu, this.curTabState.dimensionType, this.curTabState.panelName, this.curTabState.curTab, this.curTabState.queryCondition, this.curTabState.lineQueryCondition, this.curTabState.networkOverviewBeforeTab, this.curTabState.lineThirdDimensionQueryCondition, this.curTabState.thirdDimensionQueryCondition])
               }
             }
           })
