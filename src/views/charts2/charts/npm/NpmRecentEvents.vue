@@ -114,11 +114,13 @@ export default {
         if (response.status === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
-          res.data.result.forEach(e => {
-            if (e.startTime) {
-              e.startTime = dateFormatByAppearance(e.startTime)
-            }
-          })
+          if (!this.isNoData) {
+            res.data.result.forEach(e => {
+              if (e.startTime) {
+                e.startTime = dateFormatByAppearance(e.startTime)
+              }
+            })
+          }
           this.tableData = res.data.result
         } else {
           this.httpError(res)

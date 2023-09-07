@@ -467,13 +467,18 @@ export default {
       }
     },
     changeMode () {
-      const parser = new Parser(this.columnList)
-      const errorList = parser.validateMeta(this.metaList)
-      if (_.isEmpty(errorList)) {
-        this.reloadUrl({ mode: 'text' })
-        const strObj = handleMetaListToStr(this.metaList)
-        const str2 = strObj.str2 ? strObj.str2 : strObj
-        this.$emit('changeMode', 'text', str2)
+      if (this.metaList.length > 0) {
+        const parser = new Parser(this.columnList)
+        const errorList = parser.validateMeta(this.metaList)
+        if (_.isEmpty(errorList)) {
+          this.reloadUrl({ mode: 'text' })
+          const strObj = handleMetaListToStr(this.metaList)
+          const str2 = strObj.str2 ? strObj.str2 : strObj
+          this.$emit('changeMode', 'text', str2)
+        } else {
+          this.reloadUrl({ mode: 'text' })
+          this.$emit('changeMode', 'text', { metaList: [], str: '' })
+        }
       } else {
         this.reloadUrl({ mode: 'text' })
         this.$emit('changeMode', 'text', { metaList: [], str: '' })

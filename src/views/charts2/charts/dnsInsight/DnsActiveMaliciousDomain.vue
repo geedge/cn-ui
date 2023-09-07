@@ -23,7 +23,7 @@
                     <span class="data-column-ips">{{ $t(scope.row[item.prop]) }}</span>
                   </template>
                   <!--超过3个ip就省略号显示，移动鼠标block块展示，并换行-->
-                  <pre style="max-height: 152px;margin: 0px -10px -15px 0;overflow: scroll;"><span style="height: 24px;line-height: 24px;color: #046ECA;">{{scope.row[item.prop].replace(/,/g, '\n')}}</span></pre>
+                  <pre style="max-height: 152px;margin: 0 -10px -15px 0;overflow: scroll;"><span style="height: 24px;line-height: 24px;color: #046ECA;">{{scope.row[item.prop].replace(/,/g, '\n')}}</span></pre>
                 </el-popover>
                 <span v-else class="data-column-ips">{{ $t(scope.row[item.prop]) }}</span>
               </template>
@@ -103,7 +103,9 @@ export default {
   watch: {
     timeFilter: {
       handler (n) {
-        this.initData()
+        if (n) {
+          this.initData()
+        }
       }
     }
   },
@@ -128,6 +130,7 @@ export default {
           this.tableData = res.data.result
         } else {
           this.isNoData = true
+          this.tableData = []
         }
       }).finally(() => {
         this.toggleLoading(false)
