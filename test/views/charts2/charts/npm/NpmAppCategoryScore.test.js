@@ -155,7 +155,7 @@ describe('views/charts2/charts/npm/NpmAppCategoryScore.vue测试', () => {
       resolve()
     }, 200))
   })
-  test('NpmAppCategoryScore测试Inound列无数据', async () => {
+  test('NpmAppCategoryScore测试Inbound列无数据', async () => {
     const data1 = mockData.boundary.zero.data1
 
     // 调用axios请求，并加载实例

@@ -403,6 +403,9 @@ export const trafficLineChartOption = {
     throttleType: 'debounce',
     transformable: false
   },
+  toolbox: {
+    show: false
+  },
   grid: {
     top: '21%',
     left: '2%',
