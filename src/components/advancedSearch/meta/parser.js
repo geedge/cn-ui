@@ -137,7 +137,9 @@ export default class Parser {
       }
     }
     if (str) {
-      str = str.substring(0, str.length - 1)
+      if (str[str.length - 1] === ',') {
+        str = str.substring(0, str.length - 1)
+      }
       this.str = str
       this.parseMetaToQ(metaList)
     }
@@ -200,7 +202,10 @@ export default class Parser {
         }
       }
     }
-    str = str.substring(0, str.length - 1)
+
+    if (str[str.length - 1] === ',') {
+      str = str.substring(0, str.length - 1)
+    }
     this.q = str
   }
 
@@ -848,14 +853,15 @@ export function handleMetaListToStr (metaList) {
       item.column.label = getEntityTypeByValue(item.column.label)
       item.value.value = label
       item.value.label = label
+      const isWrapped = isSingleQuoteWrapping(label)
       if (item.column.label === 'domain') {
         item.operator.value = 'like'
-        item.value.value = `%${delSingleQuote(label)}`
-        item.value.label = `%${delSingleQuote(label)}`
+        item.value.value = isWrapped ? `'%${delSingleQuote(label)}'` : `%${delSingleQuote(label)}`
+        item.value.label = isWrapped ? `'%${delSingleQuote(label)}'` : `%${delSingleQuote(label)}`
       } else if (item.column.label === 'app') {
         item.operator.value = 'like'
-        item.value.value = `%${delSingleQuote(label)}%`
-        item.value.label = `%${delSingleQuote(label)}%`
+        item.value.value = isWrapped ? `'%${delSingleQuote(label)}%'` : `%${delSingleQuote(label)}%`
+        item.value.label = isWrapped ? `'%${delSingleQuote(label)}%'` : `%${delSingleQuote(label)}%`
       }
       item.column.type = 'string'
     }
@@ -891,6 +897,21 @@ export function handleMetaListToStr (metaList) {
       } else if (metaList[0].value.label.indexOf("''") > -1) {
         // 如xi''an这种情况，直接返回
         return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+      } else if (!metaList[0].column.show) {
+        // 即模糊搜索
+        const isWrapped = isSingleQuoteWrapping(metaList[0].value.label)
+        if (isWrapped) {
+          // 操作符为has时，has函数需要提前，格式为has(label,value)
+          return {
+            str: `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`,
+            str2: `'${delPercent(delSingleQuote(metaList[0].value.label))}'`
+          }
+        } else {
+          return {
+            str: `${metaList[0].column.label} ${metaList[0].operator.value} '${metaList[0].value.label}'`,
+            str2: delPercent(metaList[0].value.label)
+          }
+        }
       } else {
         const isWrapped = isSingleQuoteWrapping(metaList[0].value.label)
         // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
@@ -922,7 +943,8 @@ export function handleMetaListToStr (metaList) {
           hasStr += `${item.operator.value}(${item.column.label},${item.value.value}) AND `
         } else if (!item.column.show && item.operator.value.toLowerCase() === 'like') {
           fullTextStr += `${item.column.label} ${item.operator.value} ${item.value.value} AND `
-          fullTextStr2 += `'${delPercent(delSingleQuote(item.value.value))}' AND `
+          const isWrapped = isSingleQuoteWrapping(item.value.value)
+          fullTextStr2 += isWrapped ? `'${delPercent(delSingleQuote(item.value.value))}' AND ` : `${delPercent(delSingleQuote(item.value.value))} AND `
         } else {
           newMetaList.push(item)
         }

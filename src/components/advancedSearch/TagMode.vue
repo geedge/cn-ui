@@ -51,7 +51,7 @@
                 @keyup.enter="valueBlur(meta)"></el-input>
           </div>
           <div v-if="!meta.value.isEditing && meta.value.label" @click="valueClick(meta)" style="padding-right: 6px;">
-            {{ changeLabel(meta.value.label) }}
+            {{ changeLabel(meta.value.label, meta.column.type) }}
           </div>
         </div>
         <div class="condition__value" style="margin-left: -5px;" v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
@@ -474,7 +474,7 @@ export default {
           this.reloadUrl({ mode: 'text' })
           const strObj = handleMetaListToStr(this.metaList)
           const str2 = strObj.str2 ? strObj.str2 : strObj
-          this.$emit('changeMode', 'text', str2)
+          this.$emit('changeMode', 'text', { str: str2 })
         } else {
           this.reloadUrl({ mode: 'text' })
           this.$emit('changeMode', 'text', { metaList: [], str: '' })
@@ -585,7 +585,7 @@ export default {
       }
       return str
     },
-    changeLabel (label) {
+    changeLabel (label, type) {
       // 用户输入'baidu'，实际搜索的值为app like '%baidu%'
       // 此时展示的值为'%baidu%'，为展示用户输入的值，则将添加的%删除
       let str = JSON.parse(JSON.stringify(label))
@@ -600,14 +600,18 @@ export default {
         str = str.substring(0, str.length - 1)
       }
 
-      return `'${str}'`
+      if (type === 'string') {
+        return `'${str}'`
+      } else {
+        return str
+      }
     }
   },
   mounted () {
     const vm = this
     // 如果地址栏包含参数q，则匹配出metaList到搜索栏回显使用
     let { q } = this.$route.query
-    if (q) {
+    if (q && !this.convertMetaList) {
       const parser = new Parser(this.columnList)
       if (q.indexOf('%20') > -1) {
         q = decodeURI(q)
@@ -637,14 +641,15 @@ export default {
               item.value.value = label
               item.value.label = label
 
+              const isWrapped = this.isSingleQuoteWrapping(label)
               if (item.column.label === 'domain') {
                 item.operator.value = 'like'
-                item.value.value = `%${this.delSingleQuote(label)}`
-                item.value.label = `%${this.delSingleQuote(label)}`
+                item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
+                item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
               } else if (item.column.label === 'app') {
                 item.operator.value = 'like'
-                item.value.value = `%${this.delSingleQuote(label)}%`
-                item.value.label = `%${this.delSingleQuote(label)}%`
+                item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
+                item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
               }
               item.column.type = 'string'
             }

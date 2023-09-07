@@ -219,6 +219,9 @@ export default {
     // 如果地址栏包含参数q，则将参数q回显到搜索栏内
     let { q } = this.$route.query
     this.initCodeMirror()
+    if (this.str) {
+      toRaw(this.codeMirror).setValue(this.str)
+    }
     if (q) {
       if (q.indexOf('%20') > -1) {
         q = decodeURI(q)
