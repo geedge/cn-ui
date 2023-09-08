@@ -50,7 +50,7 @@
                 @focus="valueFocus(meta)"
                 @keyup.enter="valueBlur(meta)"></el-input>
           </div>
-          <div v-if="!meta.value.isEditing && meta.value.label" @click="valueClick(meta)" style="padding-right: 6px;">
+          <div v-if="!meta.value.isEditing && meta.value.label" @click="valueClick(meta)">
             {{ changeLabel(meta.value.label, meta.column.type) }}
           </div>
         </div>
