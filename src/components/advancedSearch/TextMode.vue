@@ -36,7 +36,7 @@ import { toRaw } from 'vue'
 import _ from 'lodash'
 import { columnType } from '@/components/advancedSearch/meta/meta'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
-import { comparedEntityKey, handleEntityTypeByStr, overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 
 export default {
   name: 'TextMode',
@@ -96,7 +96,7 @@ export default {
       const str = this.codeMirror.getValue().trim()
       if (str) {
         const parser = new Parser(this.columnList)
-        const keyInfo = comparedEntityKey(handleEntityTypeByStr(str))
+        const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str))
         if (keyInfo.isKey) {
           const errorList = parser.validateStr(keyInfo.key)
           if (_.isEmpty(errorList)) {

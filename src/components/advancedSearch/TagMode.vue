@@ -116,13 +116,8 @@
 import Meta, { connection, condition, columnType } from './meta/meta'
 import _ from 'lodash'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
-import Parser, { handleMetaListToStr, stringInQuot } from '@/components/advancedSearch/meta/parser'
-import {
-  getEntityTypeByValue,
-  handleEntityTypeByStr,
-  overwriteUrl,
-  urlParamsHandler
-} from '@/utils/tools'
+import Parser, { stringInQuot } from '@/components/advancedSearch/meta/parser'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 export default {
   name: 'TagMode',
   props: {
@@ -236,6 +231,7 @@ export default {
     },
     columnBlur (meta, index) {
       setTimeout(() => {
+        const parser = new Parser(this.columnList)
         meta.column.label = meta.column.label.replace(/"/g, '')
         meta.column.isEditing = false
         if (meta.isEmpty()) {
@@ -253,7 +249,7 @@ export default {
           meta.column.show = false
           meta.operator.show = false
           const label = JSON.parse(JSON.stringify(meta.column.label))
-          meta.column.label = getEntityTypeByValue(meta.column.label)
+          meta.column.label = parser.getEntityTypeByValue(meta.column.label)
           meta.value.value = label
           meta.value.label = label
 
@@ -453,11 +449,11 @@ export default {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
         if (_.isEmpty(errorList)) {
-          const strObj = handleMetaListToStr(this.metaList)
+          const strObj = parser.handleMetaListToStr(this.metaList)
           const str = strObj.str ? strObj.str : strObj
           const str2 = strObj.str2 ? strObj.str2 : strObj
           // str为将metaList转成字符串的值，str2为地址栏展示的值
-          const key = handleEntityTypeByStr(str)
+          const key = parser.handleEntityTypeByStr(str)
           this.$emit('search', { ...parser.parseStr(key), str: str2 })
         } else {
           this.$message.error(handleErrorTip(errorList[0]))
@@ -472,7 +468,7 @@ export default {
         const errorList = parser.validateMeta(this.metaList)
         if (_.isEmpty(errorList)) {
           this.reloadUrl({ mode: 'text' })
-          const strObj = handleMetaListToStr(this.metaList)
+          const strObj = parser.handleMetaListToStr(this.metaList)
           const str2 = strObj.str2 ? strObj.str2 : strObj
           this.$emit('changeMode', 'text', { str: str2 })
         } else {
@@ -631,13 +627,14 @@ export default {
         if (!_.isEmpty(n)) {
           this.metaList = n
           // 从text模式的模糊搜索转换过来时，需要添加属性
+          const parser = new Parser(this.columnList)
           this.metaList.forEach(item => {
             if (item.column && item.column.type === 'fullText') {
               item.operator.value = '='
               item.column.show = false
               item.operator.show = false
               const label = JSON.parse(JSON.stringify(item.column.label))
-              item.column.label = getEntityTypeByValue(item.column.label)
+              item.column.label = parser.getEntityTypeByValue(item.column.label)
               item.value.value = label
               item.value.label = label
 

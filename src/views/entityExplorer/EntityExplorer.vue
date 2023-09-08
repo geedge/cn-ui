@@ -168,9 +168,7 @@ import Loading from '@/components/common/Loading'
 import {
   overwriteUrl,
   urlParamsHandler,
-  numberWithCommas,
-  comparedEntityKey,
-  handleEntityTypeByStr
+  numberWithCommas
 } from '@/utils/tools'
 import Parser from '@/components/advancedSearch/meta/parser'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
@@ -670,7 +668,7 @@ export default {
           }
         }
         const parser = new Parser(columnList)
-        const keyInfo = comparedEntityKey(handleEntityTypeByStr(str))
+        const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str))
         if (keyInfo.isKey) {
           const errorList = parser.validateStr(keyInfo.key)
           if (_.isEmpty(errorList)) {

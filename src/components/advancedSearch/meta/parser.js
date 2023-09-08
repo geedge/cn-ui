@@ -2,8 +2,8 @@ import Meta, { columnType, condition, connection } from './meta'
 import Token, { types } from './token'
 import ParserError, { errorDesc, errorTypes } from '@/components/advancedSearch/meta/error'
 import _ from 'lodash'
-import { columnList } from '@/utils/static-data'
-import { comparedEntityKey, getEntityTypeByValue, handleEntityTypeByStr } from '@/utils/tools'
+import { ElMessage } from '_element-plus@1.0.2-beta.71@element-plus'
+import i18n from '@/i18n'
 
 const strReg = {
   all: /^[\da-zA-Z\s.'><!=-_(),%]$/,
@@ -82,7 +82,7 @@ export default class Parser {
           str += `${meta.value.toUpperCase()} `
         } else if (meta.meta === condition) {
           if (meta.column.type === columnType.fullText) {
-            str += isSingleQuoteWrapping(meta.column.label) ? `${meta.column.label} ` : `'${meta.column.label}' `
+            str += this.isSingleQuoteWrapping(meta.column.label) ? `${meta.column.label} ` : `'${meta.column.label}' `
           } else if (meta.column.type === columnType.array) {
             str += `${meta.column.label} ${meta.operator.value} (`
             meta.value.value.forEach((s, j) => {
@@ -96,10 +96,10 @@ export default class Parser {
           } else if (meta.column.type === columnType.string) {
             // 此处show为false，即tag模式下模糊搜索的值，str不进行转换，q会进行转换，str用于回显
             if (!meta.column.show) {
-              str += isSingleQuoteWrapping(meta.value.value) ? `${meta.value.value} ` : `'${meta.value.value}' `
+              str += this.isSingleQuoteWrapping(meta.value.value) ? `${meta.value.value} ` : `'${meta.value.value}' `
             } else {
               if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
-                const isWrapped = isSingleQuoteWrapping(meta.value.value)
+                const isWrapped = this.isSingleQuoteWrapping(meta.value.value)
                 if (isWrapped || meta.value.value.indexOf("''") > -1) {
                   // 如xi''an这种情况，不需要再添加单引号
                   str += `${meta.column.label} ${meta.operator.value} ${meta.value.value} `
@@ -107,7 +107,7 @@ export default class Parser {
                   str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
                 }
               } else if (meta.operator.value.toLowerCase().indexOf('has') > -1) {
-                const isWrapped = isSingleQuoteWrapping(meta.value.value)
+                const isWrapped = this.isSingleQuoteWrapping(meta.value.value)
                 // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
                 if (isWrapped) {
                   // 操作符为has时，has函数需要提前，格式为has(label,value)
@@ -116,7 +116,7 @@ export default class Parser {
                   str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
                 }
               } else {
-                const isWrapped = isSingleQuoteWrapping(meta.value.value)
+                const isWrapped = this.isSingleQuoteWrapping(meta.value.value)
                 // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
                 if (isWrapped || meta.value.value.indexOf("''") > -1) {
                   str += `${meta.column.label}${meta.operator.value}${meta.value.value} `
@@ -137,7 +137,7 @@ export default class Parser {
       }
     }
     if (str) {
-      if (str[str.length - 1] === ',') {
+      if (str[str.length - 1] === ',' || str[str.length - 1] === ' ') {
         str = str.substring(0, str.length - 1)
       }
       this.str = str
@@ -158,7 +158,7 @@ export default class Parser {
           //   str += `${column.label}:${meta.column.label} `
           // })
           // str += "') "
-          str = comparedEntityKey(handleEntityTypeByStr(meta.column.label)).key
+          str = this.comparedEntityKey(this.handleEntityTypeByStr(meta.column.label)).key
         } else if (meta.column.type === columnType.array) {
           str += `${meta.column.label} ${meta.operator.value} (`
           meta.value.value.forEach((s, j) => {
@@ -171,7 +171,7 @@ export default class Parser {
           str += ') '
         } else if (meta.column.type === columnType.string) {
           if (meta.operator.value.toLowerCase().indexOf('like') > -1 || meta.operator.value.toLowerCase().indexOf('in') > -1) {
-            const isWrapped = isSingleQuoteWrapping(meta.value.value)
+            const isWrapped = this.isSingleQuoteWrapping(meta.value.value)
             if (isWrapped || meta.value.value.indexOf("''") > -1) {
               // 如xi''an这种情况，不需要再添加单引号
               str += `${meta.column.label} ${meta.operator.value} ${meta.value.value} `
@@ -179,7 +179,7 @@ export default class Parser {
               str += `${meta.column.label} ${meta.operator.value} '${meta.value.value}' `
             }
           } else if (meta.operator.value.toLowerCase().indexOf('has') > -1) {
-            const isWrapped = isSingleQuoteWrapping(meta.value.value)
+            const isWrapped = this.isSingleQuoteWrapping(meta.value.value)
             if (isWrapped) {
               // 操作符为has时，has函数需要提前，格式为has(label,value)
               str += `${meta.operator.value}(${meta.column.label},${meta.value.value}) `
@@ -187,7 +187,7 @@ export default class Parser {
               str += `${meta.operator.value}(${meta.column.label},'${meta.value.value}') `
             }
           } else {
-            const isWrapped = isSingleQuoteWrapping(meta.value.value)
+            const isWrapped = this.isSingleQuoteWrapping(meta.value.value)
             if (isWrapped || meta.value.value.indexOf("''") > -1) {
               // 如xi''an这种情况，不需要再添加单引号
               str += `${meta.column.label}${meta.operator.value}${meta.value.value} `
@@ -203,7 +203,7 @@ export default class Parser {
       }
     }
 
-    if (str[str.length - 1] === ',') {
+    if (str[str.length - 1] === ',' || str[str.length - 1] === ' ') {
       str = str.substring(0, str.length - 1)
     }
     this.q = str
@@ -624,11 +624,11 @@ export default class Parser {
             if (isInApostrophe) {
               if (meta.column.label) {
                 // meta.value.value = token.value
-                meta.value.value = isSingleQuoteWrapping(token.value) ? token.value : `'${token.value}'`
+                meta.value.value = this.isSingleQuoteWrapping(token.value) ? token.value : `'${token.value}'`
                 meta.column.type = columnType.string
               } else {
                 meta.column.type = columnType.fullText
-                meta.column.label = isSingleQuoteWrapping(token.value) ? token.value : `'${token.value}'`
+                meta.column.label = this.isSingleQuoteWrapping(token.value) ? token.value : `'${token.value}'`
               }
             } else {
               let isColumn = true
@@ -798,7 +798,7 @@ export default class Parser {
                 if (meta.value.value.indexOf("''") > -1) {
                   meta.value.label = meta.value.value
                 } else {
-                  meta.value.label = isSingleQuoteWrapping(meta.value.value) ? meta.value.value : `'${meta.value.value}'`
+                  meta.value.label = this.isSingleQuoteWrapping(meta.value.value) ? meta.value.value : `'${meta.value.value}'`
                 }
               } else {
                 meta.value.label = meta.value.value
@@ -820,6 +820,619 @@ export default class Parser {
       errorList
     }
   }
+
+  /**
+   * 将metaList转为字符串
+   * @param metaList
+   * @returns {string|*}
+   */
+  handleMetaListToStr (metaList) {
+    // 将模糊搜索的值，转换为对应类型，如1.1.1.1，则添加操作符，类型等，以便于后面的操作
+    metaList.forEach(item => {
+      if (item.column && item.column.type === 'fullText') {
+        item.operator.value = '='
+        item.operator.show = false
+        item.column.show = false
+        const label = JSON.parse(JSON.stringify(item.column.label))
+        item.column.label = this.getEntityTypeByValue(item.column.label)
+        item.value.value = label
+        item.value.label = label
+        const isWrapped = this.isSingleQuoteWrapping(label)
+        if (item.column.label === 'domain') {
+          item.operator.value = 'like'
+          item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
+          item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
+        } else if (item.column.label === 'app') {
+          item.operator.value = 'like'
+          item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
+          item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
+        }
+        item.column.type = 'string'
+      }
+    })
+    // 长度为1时，即模糊搜索，例如搜索框值为1.1.1.1，则直接返回1.1.1.1
+    // 如果为IP='1.1.1.1'的情况，则从metaList拼接成IP='1.1.1.1'返回出去
+    if (metaList && metaList.length === 1) {
+      const arr = []
+      this.columnList.forEach(item => {
+        arr.push(item.label.toLowerCase())
+      })
+      let label = metaList[0].column.label
+      let newStr = JSON.parse(JSON.stringify(label.toLowerCase()))
+      // 将str中的IP、Domain等替换为数组arr中的元素
+      for (let i = 0; i < arr.length; i++) {
+        newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
+      }
+      // 检查str字段在arr中是否出现,true为出现过
+      const result = arr.some(item => newStr.includes(item))
+      if (result) {
+        if (metaList[0].operator.value.toLowerCase() === 'has') {
+          const isWrapped = this.isSingleQuoteWrapping(metaList[0].value.label)
+          // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
+          if (isWrapped) {
+            // 操作符为has时，has函数需要提前，格式为has(label,value)
+            return `${metaList[0].operator.value}(${metaList[0].column.label},${metaList[0].value.label})`
+          } else {
+            return `${metaList[0].operator.value}(${metaList[0].column.label},'${metaList[0].value.label}')`
+          }
+        } else if (metaList[0].value.label.indexOf('(') > -1) {
+          // 避免如IN后面带()的，不添加单引号
+          return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+        } else if (metaList[0].value.label.indexOf("''") > -1) {
+          // 如xi''an这种情况，直接返回
+          return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+        } else if (!metaList[0].column.show) {
+          // 即模糊搜索
+          const isWrapped = this.isSingleQuoteWrapping(metaList[0].value.label)
+          if (isWrapped) {
+            // 操作符为has时，has函数需要提前，格式为has(label,value)
+            return {
+              str: `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`,
+              str2: `'${this.delPercent(this.delSingleQuote(metaList[0].value.label))}'`
+            }
+          } else {
+            return {
+              str: `${metaList[0].column.label} ${metaList[0].operator.value} '${metaList[0].value.label}'`,
+              str2: this.delPercent(metaList[0].value.label)
+            }
+          }
+        } else {
+          const isWrapped = this.isSingleQuoteWrapping(metaList[0].value.label)
+          // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
+          if (isWrapped) {
+            // 操作符为has时，has函数需要提前，格式为has(label,value)
+            return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
+          } else {
+            return `${metaList[0].column.label} ${metaList[0].operator.value} '${metaList[0].value.label}'`
+          }
+        }
+      } else {
+        const regex = /^["']|["']$/
+        // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
+        if (regex.test(label)) {
+          label = label.replace(/^['"]+|['"]+$/g, '')
+        }
+        return label
+      }
+    } else if (metaList && metaList.length > 1) {
+      // 此为按语法搜索，将metaList转为字符串
+      const newMetaList = []
+      let hasStr = ''
+      let fullTextStr = ''
+      let fullTextStr2 = ''
+      // 去除metaList的AND项
+      metaList.forEach(item => {
+        if (item.value !== 'AND') {
+          if (item.column.label.toLowerCase() === 'tag') {
+            hasStr += `${item.operator.value}(${item.column.label},${item.value.value}) AND `
+          } else if (!item.column.show && item.operator.value.toLowerCase() === 'like') {
+            fullTextStr += `${item.column.label} ${item.operator.value} ${item.value.value} AND `
+            const isWrapped = this.isSingleQuoteWrapping(item.value.value)
+            fullTextStr2 += isWrapped ? `'${this.delPercent(this.delSingleQuote(item.value.value))}' AND ` : `${this.delPercent(this.delSingleQuote(item.value.value))} AND `
+          } else {
+            newMetaList.push(item)
+          }
+        }
+      })
+
+      const newObj = this.combineLabel(newMetaList) // 合并相同的label
+      const lastObj = this.mergeSameEntityType(newObj) // 合并相同的实体类型，用in包裹
+      let str = ''
+
+      for (const i in lastObj) {
+        str += lastObj[i] + ' AND '
+      }
+      if (hasStr !== '') {
+        str = str + hasStr
+      }
+      let str2 = str
+      if (fullTextStr !== '') {
+        str = str + fullTextStr
+        str2 = str2 + fullTextStr2
+      }
+      str = str.slice(0, -5)
+      str2 = str2.slice(0, -5)
+
+      return { str: str, str2: str2 }
+    }
+  }
+
+  /**
+   * 将相同属性的label组合到一起，即IP='1.1.1.1' AND IP='2.2.2.2'组合成IP: '1.1.1.1,2.2.2.2'
+   * @param list
+   * @returns {*}
+   */
+  combineLabel (list) {
+    return list.reduce((acc, cur) => {
+      if (acc[cur.column.label]) {
+        acc[cur.column.label] += `,${cur.value.label}`
+      } else {
+        acc[cur.column.label] = cur.value.label
+      }
+      return acc
+    }, {})
+  }
+
+  /**
+   * 判断字符串是否为单引号包裹
+   */
+  isSingleQuoteWrapping (str) {
+    const regex = /^'[^']*'$/
+    return regex.test(str)
+  }
+
+  /**
+   * 合并相同的实体类型，转为in包裹的数据
+   * @param obj
+   * @returns {{}}
+   */
+  mergeSameEntityType (obj) {
+    const lastObj = {}
+    if (obj) {
+      for (const i in obj) {
+        if (obj[i].indexOf('(') > -1) {
+          // 原来为IN ()格式的直接保留
+          lastObj[i] = `${i} IN ${obj[i]}`
+          if (obj[i].indexOf('),') > -1) {
+            // 此时为ip；"('1.1.1.1','2.2.2.2'), '3.3.3.3'",in后面还有同类型数据，也放到in里
+            lastObj[i] = lastObj[i].replace('),', ',') + ')'
+          }
+        } else if (obj[i].indexOf(',') > -1) {
+          // 格式为IP: '1.1.1.1,2.2.2.2'的，改成IP: "'1.1.1.1','2.2.2.2'"，然后再（）括号包裹
+          let str = obj[i]
+          str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
+          lastObj[i] = `${i} IN (${str})`
+        } else if (i.toLowerCase() === 'tag') {
+          lastObj[i] = `has(${i},${obj[i]})`
+        } else {
+          const isWrapped = this.isSingleQuoteWrapping(obj[i])
+          // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
+          if (isWrapped || obj[i].indexOf("''") > -1) {
+            // 操作符为has时，has函数需要提前，格式为has(label,value)
+            lastObj[i] = `${i} = ${obj[i]}`
+          } else {
+            lastObj[i] = `${i} = '${obj[i]}'`
+          }
+        }
+      }
+    }
+    return lastObj
+  }
+
+  delSingleQuote (str) {
+    if (str) {
+      if (str[0] === "'" && str[str.length - 1] === "'") {
+        str = str.substring(1, str.length)
+        str = str.substring(0, str.length - 1)
+      }
+    }
+
+    return str
+  }
+
+  delPercent (str) {
+    if (str) {
+      if (str[0] === '%') {
+        str = str.substring(1, str.length)
+      }
+      if (str[str.length - 1] === '%') {
+        str = str.substring(0, str.length - 1)
+      }
+    }
+
+    return str
+  }
+
+  /**
+   * 将str传过来的值进行columnList规范化
+   * 步骤：将key与columnList的label都进行转小写进行对比
+   *      如果一致，返回columnList的label，不一致则返回false，并弹窗提示
+   * @param str
+   */
+  comparedEntityKey (str) {
+    let q = JSON.parse(JSON.stringify(str))
+    if (q && q.indexOf('=') > -1) {
+      // =周围有空格，则去除空格
+      const regex = /\ = | =|= /g
+      q = q.replace(regex, '=')
+
+      if (q.indexOf(' AND ') > -1 || q.indexOf(' and ') > -1) {
+        if (this.checkStrIncludeAnd(q)) {
+          q = q.replace(/ and /g, ' AND ')
+        }
+        const arr = q.split(' AND ')
+        const returnObj = { key: '', isKey: false }
+        arr.forEach(item => {
+          let label = ''
+          let key = ''
+          if (item.indexOf('=') > -1) {
+            label = item.substring(0, item.indexOf('='))
+            key = '='
+          } else if (item.toLowerCase().indexOf(' like ') > -1) {
+            label = item.substring(0, item.toLowerCase().indexOf(' like '))
+            key = 'like'
+          } else if (item.toLowerCase().indexOf(' in ') > -1) {
+            label = item.substring(0, item.toLowerCase().indexOf(' in '))
+            key = 'in'
+          } else if (item.toLowerCase().indexOf('has(') > -1) {
+            label = item.substring(item.toLowerCase().indexOf('(') + 1, item.indexOf(','))
+            key = 'has'
+          }
+
+          const obj = this.columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
+          if (obj) {
+            if (key === 'has') {
+              returnObj.key += 'has(' + obj.label + item.substring(item.indexOf(','), item.length) + ' AND '
+            } else {
+              returnObj.key += obj.label + ' ' + item.substring(item.toLowerCase().indexOf(key.toLowerCase()), item.length) + ' AND '
+            }
+            returnObj.isKey = true
+          } else {
+            return { key: '[' + key + ']', isKey: false }
+          }
+        })
+        returnObj.key = returnObj.key.substring(0, returnObj.key.length - 5)
+
+        return returnObj
+      } else if (q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1) {
+        return {
+          key: q,
+          isKey: true
+        }
+      } else if (q.indexOf(' IN ') > -1 || q.indexOf(' in ') > -1) {
+        return {
+          key: q,
+          isKey: true
+        }
+      } else {
+        const key = q.substring(0, q.indexOf('='))
+        const obj = this.columnList.find(t => t.label.toLowerCase() === key.toLowerCase())
+        if (obj) {
+          return { key: obj.label + q.substring(q.indexOf('='), q.length), isKey: true }
+        } else {
+          return { key: '[' + key + ']', isKey: false }
+        }
+      }
+    } else if (q && (q.indexOf(' IN ') > -1 || q.indexOf(' in ') > -1 || q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1)) {
+      return {
+        key: q,
+        isKey: true
+      }
+    } else if (q && (q.indexOf('has(') > -1)) {
+      return {
+        key: q,
+        isKey: true
+      }
+    } else {
+      return {
+        key: q,
+        isKey: false
+      }
+    }
+  }
+
+  /**
+   * 将模糊查询传过来的str转换为对应的实体类型，不满足ip和domain格式的当成app
+   * @param str
+   * @returns {string}
+   */
+  handleEntityTypeByStr (str) {
+    if (str) {
+      const arr = []
+      // 如果出现this.columnList中的字段，如IP\Domain\App\Country等，则不进行模糊搜索，将str返回出去
+      this.columnList.forEach(item => {
+        arr.push(item.label.toLowerCase())
+      })
+
+      // 因为手动输入时可能会输入and，所以将操作符的AND转换为and，统一处理
+      let newStr = str.replace(/ AND /g, ' and ')
+      // 将str中的IP、Domain等替换为数组arr中的元素
+      for (let i = 0; i < arr.length; i++) {
+        newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
+      }
+      // 检查str字段在arr中是否出现,true为出现过
+      const result = arr.some(item => newStr.toLowerCase().includes(item))
+      if (newStr.indexOf(' and ') > -1) {
+        // 将单引号包裹的and拿出来放到数组tempList里，原来的单引号包裹内容用temp即'it is test keyword{键值}'代替
+        // 再将字符串用and转换为数组，遍历数组，发现值为temp的，获取键值，根据键值获取tempList的值组合起来，
+        // 最后将键值删除，后续再多次测试验证
+        const tempList = []
+        const regex = /'([^']*?)'/g
+        let match
+
+        // 将单引号包裹的and内容集合起来
+        while ((match = regex.exec(newStr)) !== null) {
+          if (match[1].includes('and')) {
+            tempList.push(match[1])
+          }
+        }
+
+        // 将单引号包裹的and内容用特殊值代替
+        tempList.forEach((item, index) => {
+          const regex = new RegExp(item, 'g')
+          newStr = newStr.replace(regex, `it is test keyword${index}`)
+        })
+
+        newStr = newStr.replace(/ and /g, ' AND ')
+        const noAndList = newStr.split(' AND ')
+        noAndList.forEach((item, index) => {
+          // 发现插入的特殊值，获取键值，根据键值替换成原来内容，删除键值
+          if (item.indexOf('it is test keyword') > -1) {
+            const regex = /\d+/g
+            const result1 = item.match(regex)
+            noAndList[index] = noAndList[index].replace(result1[0], '')
+            noAndList[index] = noAndList[index].replace('it is test keyword', tempList[result1[0]])
+          }
+        })
+
+        const newArr = noAndList
+        newArr.forEach((item, index) => {
+          if (!arr.some(ite => item.includes(ite))) {
+            newArr[index] = this.checkFormatByStr(item, 'list')
+          }
+        })
+
+        newStr = newArr.join(' AND ')
+        newStr = this.handleStrToUniteStr(newStr)
+        return newStr
+      } else if (result) {
+        // 不区分大小写，用this.columnList里的label
+        arr.forEach(item => {
+          if (str.toLowerCase().indexOf(item.toLowerCase()) > -1) {
+            str = str.replace(new RegExp(item, 'gi'), item)
+          }
+        })
+        return str
+      } else if (!result) {
+        const regex = /^["']|["']$/
+        // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
+        if (regex.test(str)) {
+          str = str.replace(/^['"]+|['"]+$/g, '')
+        }
+      }
+
+      return this.checkFormatByStr(str)
+    }
+  }
+
+  /**
+   * 校验字符串格式，如ip、domain、app
+   */
+  checkFormatByStr (str, flag) {
+    if (str[0] === "'" && str[str.length - 1] === "'") {
+      str = str.substring(1, str.length)
+      str = str.substring(0, str.length - 1)
+    }
+    if (str[0] === '%' && str[str.length - 1] === '%') {
+      str = str.substring(1, str.length)
+      str = str.substring(0, str.length - 1)
+    }
+    if (str[0] === '%' && str[str.length - 1] !== '%') {
+      str = str.substring(1, str.length)
+    }
+    // ipv4校验
+    const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+    // ipv6校验
+    const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
+    // domain校验
+    const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+
+    if (regexIPv4.test(str) || regexIPv6.test(str)) {
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip')
+      if (obj) {
+        return `${obj.label}='${str}'`
+      } else {
+        if (flag) {
+          ElMessage.error(i18n.global.t('entity.fullTextSearchIsNotSupported'))
+        }
+        return str
+      }
+    } else if (reg.test(str)) {
+      // 只写作domain即可，schema字段更改几次，避免后续再更改，直接拿this.columnList的label进行替换
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain')
+      if (obj) {
+        return `${obj.label} LIKE '%${str}'`
+      } else {
+        if (flag) {
+          ElMessage.error(i18n.global.t('entity.fullTextSearchIsNotSupported'))
+        }
+        return str
+      }
+    } else {
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'app')
+      if (obj) {
+        return `${obj.label} LIKE '%${str}%'`
+      } else {
+        if (flag) {
+          ElMessage.error(i18n.global.t('entity.fullTextSearchIsNotSupported'))
+        }
+        return str
+      }
+    }
+  }
+
+  getEntityTypeByValue (str) {
+    if (str[0] === "'" && str[str.length - 1] === "'") {
+      str = str.substring(1, str.length)
+      str = str.substring(0, str.length - 1)
+    }
+    // ipv4校验
+    const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+    // ipv6校验
+    const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
+    // domain校验
+    const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+
+    if (regexIPv4.test(str) || regexIPv6.test(str)) {
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip')
+      if (obj) {
+        return obj.label
+      } else {
+        return str
+      }
+    } else if (reg.test(str)) {
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain')
+      if (obj) {
+        return obj.label
+      } else {
+        return str
+      }
+    } else {
+      const obj = this.columnList.find(t => t.label.toLowerCase() === 'app')
+      if (obj) {
+        return obj.label
+      } else {
+        return str
+      }
+    }
+  }
+
+  /**
+   * 将字符串的同属性字段合并在一起
+   * @param str
+   * @returns {string}
+   */
+  handleStrToUniteStr (str) {
+    // 若str = "IP='1.1.1.1' AND Domain IN ('baidu.com','jd.com') AND IP='2.2.2.2'"
+    // 则将转换为 str = "IP IN ('1.1.1.1','2.2.2.2') AND Domain IN ('baidu.com','jd.com')"
+    const arr = str.split(' AND ')
+    const repeatArr = [] // 判断label是否重复的数组
+
+    // 如果字符串不存在相同字段，则直接返回str，如IP = '1' AND has(Tag,'1')
+    arr.forEach(item => {
+      if (item.indexOf('=') > -1) {
+        const label = item.substring(0, item.indexOf('='))
+        repeatArr.push(label)
+      } else if (item.indexOf(' IN ') > -1) {
+        const label = item.substring(0, item.indexOf(' IN '))
+        repeatArr.push(label)
+      }
+    })
+
+    const set = new Set(repeatArr)
+    if (set.size === repeatArr.length) {
+      return str
+    } else {
+      const hasArr = [] // has函数的操作不必合并在一起，继续用and连接，单独放一边
+      const commonArr = [] // 普通连接符数组，如连接符为=、in等，
+
+      // 仿造成metaList形式如 [{ label: 'IP', value: '1.1.1.1' } ... ]
+      // 从而根据label判断是否是同一属性，如是IP的话，则将value进行拼接，然后再使用in ()包裹
+      arr.forEach(item => {
+        if (item.indexOf('=') > -1) {
+          const label = item.substring(0, item.indexOf('='))
+          const value = item.substring(item.indexOf('=') + 1)
+          // 去除单引号
+          commonArr.push({ label: label, value: value })
+        } else if (item.indexOf(' IN ') > -1) {
+          const label = item.substring(0, item.indexOf(' IN '))
+          let value = item.substring(item.indexOf(' IN ') + 4) // 去除（）
+          value = value.replace(/[\(\)]/g, '')
+          commonArr.push({ label: label, value: value })
+        } else if (item.toLowerCase().indexOf('has(') > -1) {
+          hasArr.push(item)
+        }
+      })
+
+      const commonObj = this.combineLabel1(commonArr)
+      const lastObj = {}
+      for (const i in commonObj) {
+        if (commonObj[i].indexOf('(') > -1) {
+          // 原来为IN ()格式的直接保留
+          lastObj[i] = `${i} IN ${commonObj[i]}`
+          if (commonObj[i].indexOf('),') > -1) {
+            // 此时为ip；"('1.1.1.1','2.2.2.2'), '3.3.3.3'",in后面还有同类型数据，也放到in里
+            lastObj[i] = lastObj[i].replace('),', ',') + ')'
+          }
+        } else if (commonObj[i].indexOf(',') > -1) {
+          let str = commonObj[i]
+          str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
+          lastObj[i] = `${i} IN (${str})`
+        } else if (i.toLowerCase() === 'tag') {
+          lastObj[i] = `has(${i},${commonObj[i]})`
+        } else {
+          // 单独存在的,直接保留
+          lastObj[i] = `${i} = '${commonObj[i]}'`
+        }
+      }
+
+      let lastStr = ''
+      for (const i in lastObj) {
+        lastStr += lastObj[i] + ' AND '
+      }
+      const hasStr = hasArr.join(' AND ')
+      if (hasStr !== '') {
+        lastStr = lastStr + hasStr
+      } else {
+        lastStr = lastStr.slice(0, -5)
+      }
+
+      return lastStr
+    }
+  }
+
+  /**
+   * 根据label判断是否是同一属性，是的话，则将value进行拼接，否则按原形式返回
+   */
+  combineLabel1 (list) {
+    return list.reduce((acc, cur) => {
+      if (acc[cur.label]) {
+        acc[cur.label] += `,${cur.value}`
+      } else {
+        acc[cur.label] = cur.value
+      }
+      return acc
+    }, {})
+  }
+
+  /**
+   * 检测传过来的字符串是否包含and，
+   * 例如 app='Computer and Internet'这种情况，需要单独甄别
+   * @param str
+   */
+  checkStrIncludeAnd (str) {
+    let arr = []
+    if (str.indexOf(' and ')) {
+      arr = str.split(' and ')
+    }
+    let label = ''
+
+    arr.forEach((item, index) => {
+      // and前后的语句，前面一段不需要甄别，因为前一段可能是app='Computer，但后一段肯定不属于this.columnList
+      // 如果后面一段属于this.columnList的关键字，整段字符串具有and的连接效果
+      if (index % 2 !== 0) {
+        if (item.indexOf('=') > -1) {
+          label = item.substring(0, item.indexOf('='))
+        } else if (item.toLowerCase().indexOf(' in ') > -1) {
+          label = item.substring(0, item.toLowerCase().indexOf(' in '))
+        } else if (item.indexOf('has(') > -1) {
+          label = item.substring(4, item.indexOf(','))
+        }
+      }
+    })
+
+    return this.columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
+  }
 }
 
 // 使用单引号包裹
@@ -835,222 +1448,4 @@ export function stringInQuot (value) {
 // IN和LIKE前后加空格
 export function handleOperatorSpace (operator) {
   return ['IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(operator) > -1 ? ` ${operator} ` : operator
-}
-
-/**
- * 将metaList转为字符串
- * @param metaList
- * @returns {string|*}
- */
-export function handleMetaListToStr (metaList) {
-  // 将模糊搜索的值，转换为对应类型，如1.1.1.1，则添加操作符，类型等，以便于后面的操作
-  metaList.forEach(item => {
-    if (item.column && item.column.type === 'fullText') {
-      item.operator.value = '='
-      item.operator.show = false
-      item.column.show = false
-      const label = JSON.parse(JSON.stringify(item.column.label))
-      item.column.label = getEntityTypeByValue(item.column.label)
-      item.value.value = label
-      item.value.label = label
-      const isWrapped = isSingleQuoteWrapping(label)
-      if (item.column.label === 'domain') {
-        item.operator.value = 'like'
-        item.value.value = isWrapped ? `'%${delSingleQuote(label)}'` : `%${delSingleQuote(label)}`
-        item.value.label = isWrapped ? `'%${delSingleQuote(label)}'` : `%${delSingleQuote(label)}`
-      } else if (item.column.label === 'app') {
-        item.operator.value = 'like'
-        item.value.value = isWrapped ? `'%${delSingleQuote(label)}%'` : `%${delSingleQuote(label)}%`
-        item.value.label = isWrapped ? `'%${delSingleQuote(label)}%'` : `%${delSingleQuote(label)}%`
-      }
-      item.column.type = 'string'
-    }
-  })
-  // 长度为1时，即模糊搜索，例如搜索框值为1.1.1.1，则直接返回1.1.1.1
-  // 如果为IP='1.1.1.1'的情况，则从metaList拼接成IP='1.1.1.1'返回出去
-  if (metaList && metaList.length === 1) {
-    const arr = []
-    columnList.forEach(item => {
-      arr.push(item.label.toLowerCase())
-    })
-    let label = metaList[0].column.label
-    let newStr = JSON.parse(JSON.stringify(label.toLowerCase()))
-    // 将str中的IP、Domain等替换为数组arr中的元素
-    for (let i = 0; i < arr.length; i++) {
-      newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
-    }
-    // 检查str字段在arr中是否出现,true为出现过
-    const result = arr.some(item => newStr.includes(item))
-    if (result) {
-      if (metaList[0].operator.value.toLowerCase() === 'has') {
-        const isWrapped = isSingleQuoteWrapping(metaList[0].value.label)
-        // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
-        if (isWrapped) {
-          // 操作符为has时，has函数需要提前，格式为has(label,value)
-          return `${metaList[0].operator.value}(${metaList[0].column.label},${metaList[0].value.label})`
-        } else {
-          return `${metaList[0].operator.value}(${metaList[0].column.label},'${metaList[0].value.label}')`
-        }
-      } else if (metaList[0].value.label.indexOf('(') > -1) {
-        // 避免如IN后面带()的，不添加单引号
-        return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
-      } else if (metaList[0].value.label.indexOf("''") > -1) {
-        // 如xi''an这种情况，直接返回
-        return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
-      } else if (!metaList[0].column.show) {
-        // 即模糊搜索
-        const isWrapped = isSingleQuoteWrapping(metaList[0].value.label)
-        if (isWrapped) {
-          // 操作符为has时，has函数需要提前，格式为has(label,value)
-          return {
-            str: `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`,
-            str2: `'${delPercent(delSingleQuote(metaList[0].value.label))}'`
-          }
-        } else {
-          return {
-            str: `${metaList[0].column.label} ${metaList[0].operator.value} '${metaList[0].value.label}'`,
-            str2: delPercent(metaList[0].value.label)
-          }
-        }
-      } else {
-        const isWrapped = isSingleQuoteWrapping(metaList[0].value.label)
-        // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
-        if (isWrapped) {
-          // 操作符为has时，has函数需要提前，格式为has(label,value)
-          return `${metaList[0].column.label} ${metaList[0].operator.value} ${metaList[0].value.label}`
-        } else {
-          return `${metaList[0].column.label} ${metaList[0].operator.value} '${metaList[0].value.label}'`
-        }
-      }
-    } else {
-      const regex = /^["']|["']$/
-      // 去除两侧引号，如'1.1.1.1',避免校验时被当作app
-      if (regex.test(label)) {
-        label = label.replace(/^['"]+|['"]+$/g, '')
-      }
-      return label
-    }
-  } else if (metaList && metaList.length > 1) {
-    // 此为按语法搜索，将metaList转为字符串
-    const newMetaList = []
-    let hasStr = ''
-    let fullTextStr = ''
-    let fullTextStr2 = ''
-    // 去除metaList的AND项
-    metaList.forEach(item => {
-      if (item.value !== 'AND') {
-        if (item.column.label.toLowerCase() === 'tag') {
-          hasStr += `${item.operator.value}(${item.column.label},${item.value.value}) AND `
-        } else if (!item.column.show && item.operator.value.toLowerCase() === 'like') {
-          fullTextStr += `${item.column.label} ${item.operator.value} ${item.value.value} AND `
-          const isWrapped = isSingleQuoteWrapping(item.value.value)
-          fullTextStr2 += isWrapped ? `'${delPercent(delSingleQuote(item.value.value))}' AND ` : `${delPercent(delSingleQuote(item.value.value))} AND `
-        } else {
-          newMetaList.push(item)
-        }
-      }
-    })
-
-    const newObj = combineLabel(newMetaList) // 合并相同的label
-    const lastObj = mergeSameEntityType(newObj) // 合并相同的实体类型，用in包裹
-    let str = ''
-
-    for (const i in lastObj) {
-      str += lastObj[i] + ' AND '
-    }
-    if (hasStr !== '') {
-      str = str + hasStr
-    }
-    let str2 = str
-    if (fullTextStr !== '') {
-      str = str + fullTextStr
-      str2 = str2 + fullTextStr2
-    }
-    str = str.slice(0, -5)
-    str2 = str2.slice(0, -5)
-
-    return { str: str, str2: str2 }
-  }
-}
-
-/**
- * 将相同属性的label组合到一起，即IP='1.1.1.1' AND IP='2.2.2.2'组合成IP: '1.1.1.1,2.2.2.2'
- * @param list
- * @returns {*}
- */
-const combineLabel = (list) => {
-  return list.reduce((acc, cur) => {
-    if (acc[cur.column.label]) {
-      acc[cur.column.label] += `,${cur.value.label}`
-    } else {
-      acc[cur.column.label] = cur.value.label
-    }
-    return acc
-  }, {})
-}
-/**
- * 判断字符串是否为单引号包裹
- */
-const isSingleQuoteWrapping = (str) => {
-  const regex = /^'[^']*'$/
-  return regex.test(str)
-}
-/**
- * 合并相同的实体类型，转为in包裹的数据
- * @param obj
- * @returns {{}}
- */
-const mergeSameEntityType = (obj) => {
-  const lastObj = {}
-  if (obj) {
-    for (const i in obj) {
-      if (obj[i].indexOf('(') > -1) {
-        // 原来为IN ()格式的直接保留
-        lastObj[i] = `${i} IN ${obj[i]}`
-        if (obj[i].indexOf('),') > -1) {
-          // 此时为ip；"('1.1.1.1','2.2.2.2'), '3.3.3.3'",in后面还有同类型数据，也放到in里
-          lastObj[i] = lastObj[i].replace('),', ',') + ')'
-        }
-      } else if (obj[i].indexOf(',') > -1) {
-        // 格式为IP: '1.1.1.1,2.2.2.2'的，改成IP: "'1.1.1.1','2.2.2.2'"，然后再（）括号包裹
-        let str = obj[i]
-        str = str.replace(/(\d+\.\d+\.\d+\.\d+),(\d+\.\d+\.\d+\.\d+)/g, "'$1','$2'")
-        lastObj[i] = `${i} IN (${str})`
-      } else if (i.toLowerCase() === 'tag') {
-        lastObj[i] = `has(${i},${obj[i]})`
-      } else {
-        const isWrapped = isSingleQuoteWrapping(obj[i])
-        // 如果值被单引号包裹，则不需要再添加单引号包裹，true为单引号包裹
-        if (isWrapped || obj[i].indexOf("''") > -1) {
-          // 操作符为has时，has函数需要提前，格式为has(label,value)
-          lastObj[i] = `${i} = ${obj[i]}`
-        } else {
-          lastObj[i] = `${i} = '${obj[i]}'`
-        }
-      }
-    }
-  }
-  return lastObj
-}
-const delSingleQuote = (str) => {
-  if (str) {
-    if (str[0] === "'" && str[str.length - 1] === "'") {
-      str = str.substring(1, str.length)
-      str = str.substring(0, str.length - 1)
-    }
-  }
-
-  return str
-}
-const delPercent = (str) => {
-  if (str) {
-    if (str[0] === '%') {
-      str = str.substring(1, str.length)
-    }
-    if (str[str.length - 1] === '%') {
-      str = str.substring(0, str.length - 1)
-    }
-  }
-
-  return str
 }
