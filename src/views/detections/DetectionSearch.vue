@@ -37,59 +37,125 @@ export default {
           {
             name: 'event_severity',
             type: 'string',
-            label: 'Event severity'
+            // label: 'Event severity',
+            label: 'event_severity',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'security_type',
             type: 'string',
-            label: 'Security type'
+            // label: 'Security type',
+            label: 'security_type',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'victim_ip',
             type: 'string',
-            label: 'Victim IP'
+            // label: 'Victim IP'
+            label: 'victim_ip',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'victim_location_country',
             type: 'string',
-            label: 'Victim location'
+            // label: 'Victim location'
+            label: 'victim_location_country',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'offender_ip',
             type: 'string',
-            label: 'Offender IP'
+            // label: 'Offender IP'
+            label: 'offender_ip',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'offender_location_country',
             type: 'string',
-            label: 'Offender location'
+            // label: 'Offender location'
+            label: 'offender_location_country',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           }
         ],
         performanceEvent: [
           {
             name: 'event_severity',
             type: 'string',
-            label: 'Event severity'
+            // label: 'Event severity'
+            label: 'event_severity',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'event_type',
             type: 'string',
-            label: 'Event type'
+            // label: 'Event type'
+            label: 'event_type',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'app_name',
             type: 'string',
-            label: 'APP name'
+            // label: 'APP name'
+            label: 'app_name',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'domain',
             type: 'string',
-            label: 'Domain'
+            // label: 'Domain'
+            label: 'domain',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           },
           {
             name: 'server_ip',
             type: 'string',
-            label: 'IP'
+            // label: 'IP'
+            label: 'server_ip',
+            doc: {
+              constraints: {
+                operator_functions: '=,in'
+              }
+            }
           }
         ]
       },
