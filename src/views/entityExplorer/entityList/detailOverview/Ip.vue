@@ -137,7 +137,7 @@
           <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
 
           <div v-if="relationshipShowOne">
-            <el-popover placement="right-end" trigger="click" show-arrow="false" offset="20">
+            <el-popover popper-class="entity-detail__popover" tabindex="1" class="test-popover" placement="right-end" trigger="click" show-arrow="false" offset="20">
               <template #reference>
                 <div class="data-item show-more-related">...</div>
               </template>
@@ -160,7 +160,7 @@
           <div v-if="relationshipDataTwo.length===0 && !loadingRelationshipTwo">-</div>
 
           <div v-if="relationshipShowTwo">
-            <el-popover class="entity-expand-detail" placement="right-end" trigger="click" show-arrow="false" offset="20">
+            <el-popover popper-class="entity-detail__popover" class="entity-expand-detail" placement="right-end" trigger="click" show-arrow="false" offset="20">
               <template #reference>
                 <div class="data-item show-more-related">...</div>
               </template>
@@ -576,13 +576,5 @@ export default {
     padding: 0 2px;
     font-weight: 500;
   }
-}
-.el-popper {
-  min-width: 90px !important;
-  width: auto !important;
-  max-width: 300px !important;
-  max-height: 180px !important;
-  overflow: scroll !important;
-  line-height: 24px !important;
 }
 </style>

@@ -321,3 +321,12 @@
   display: flex;
   align-items: center;
 }
+
+.entity-detail__popover.el-popper {
+  min-width: 90px !important;
+  width: auto !important;
+  max-width: 300px !important;
+  max-height: 180px !important;
+  overflow: scroll !important;
+  line-height: 24px !important;
+}
