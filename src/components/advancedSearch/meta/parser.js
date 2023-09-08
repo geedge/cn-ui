@@ -2,7 +2,7 @@ import Meta, { columnType, condition, connection } from './meta'
 import Token, { types } from './token'
 import ParserError, { errorDesc, errorTypes } from '@/components/advancedSearch/meta/error'
 import _ from 'lodash'
-import { ElMessage } from '_element-plus@1.0.2-beta.71@element-plus'
+import { ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 
 const strReg = {
