@@ -1798,7 +1798,7 @@ export default {
       this.activeCustomize = tab.paneName
     },
     tableCellStyle ({ row, column, rowIndex, columnIndex }) {
-      let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;height:41px !important;'
+      let style = 'border-right:0px;font-size:12px;padding:7px 0 !important;border-bottom: 1px solid #ECECEC;height:39px !important;'
       if (rowIndex === this.tableData.length - 1) {
         // style = style + 'border-bottom:0px !important;'
       }
@@ -1809,7 +1809,7 @@ export default {
     },
     tableHeaderCellStyle ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
-        return 'text-align:left;border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
+        return 'text-align:left;border-right:0px;font-size:12px;font-weight:500;padding:5px 0 !important;border-bottom: 1px solid #E2E5EC;'
       } else {
         return 'border-right:0px;font-size:12px;font-weight:500;padding:4px 0 !important;border-bottom: 1px solid #E2E5EC;'
       }

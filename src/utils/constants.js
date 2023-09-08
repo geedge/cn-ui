@@ -772,7 +772,7 @@ export const networkOverviewTabList = [
     label: 'network.regions',
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
-    dillDownProp: ['client_super_admin_area', 'server_super_admin_ area'],
+    dillDownProp: ['client_super_admin_area', 'server_super_admin_area'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['super_admin_area = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(super_admin_area)'], // 曲线图：第三级维度查询条件q
@@ -994,7 +994,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.countries',
     prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
-    dillDownProp: ['country_region'],
+    dillDownProp: ['client_country_region','server_country_region'],
     lineQueryCondition: ['country_region = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
@@ -1003,7 +1003,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.asns',
     prop: 'asn',
     queryCycleTotalProp: 'asns',
-    dillDownProp: ['asn'],
+    dillDownProp: ['client_asn','server_asn'],
     lineQueryCondition: ['asn = \'$param\''],
     checked: true,
     disabled: false,
@@ -1048,7 +1048,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
-    dillDownProp: ['l7_protocol'],
+    dillDownProp: ['common_l7_protocol'],
     lineQueryCondition: ['l7_protocol = \'$param\''],
     checked: true,
     disabled: false,
@@ -1057,7 +1057,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.regions',
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
-    dillDownProp: ['super_admin_area'],
+    dillDownProp: ['client_super_admin_area','server_super_admin_area'],
     lineQueryCondition: ['super_admin_area = \'$param\''],
     checked: false,
     disabled: false,
@@ -1066,7 +1066,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.cities',
     prop: 'adminArea',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['admin_area'],
+    dillDownProp: ['client_admin_area','server_admin_area'],
     lineQueryCondition: ['admin_area = \'$param\''],
     checked: false,
     disabled: false,
@@ -1075,7 +1075,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.isps',
     prop: 'isp',
     queryCycleTotalProp: 'isps',
-    dillDownProp: ['isp'],
+    dillDownProp: ['client_isp','server_isp'],
     lineQueryCondition: ['isp = \'$param\''],
     checked: false,
     disabled: false,
@@ -1120,7 +1120,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.clientIps',
     prop: 'clientIp',
     queryCycleTotalProp: 'clientIps',
-    dillDownProp: ['client_ip'],
+    dillDownProp: ['common_client_ip'],
     lineQueryCondition: ['ip = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
@@ -1129,7 +1129,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.serverIps',
     prop: 'serverIp',
     queryCycleTotalProp: 'serverIps',
-    dillDownProp: ['server_ip'],
+    dillDownProp: ['common_server_ip'],
     lineQueryCondition: ['ip = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
@@ -1226,6 +1226,7 @@ export const networkAppPerformanceTabList = [
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
   }
 ]
+
 export const linkMonitorTabList = [
   {
     label: 'network.ips', // tab名称对应的il8n
@@ -1445,6 +1446,7 @@ export const linkMonitorTabList = [
     panelId: drillDownPanelTypeMapping.linkMonitor
   }
 ]
+
 export const dnsServiceInsightsTabList = [
   {
     label: 'dns.dnsServer', // tab名称对应的il8n
@@ -1462,6 +1464,16 @@ export const dnsServiceInsightsTabList = [
     queryCycleTotalProp: 'countries',
     dillDownProp: ['server_country_region'],
     lineQueryCondition: ['server_country_region = \'$param\''], // 曲线图：查询条件q
+    checked: true,
+    disabled: false,
+    panelId: drillDownPanelTypeMapping.dnsFourthMenu
+  },
+  {
+    label: 'network.regions',
+    prop: 'superAdminArea',
+    queryCycleTotalProp: 'regions',
+    dillDownProp: ['server_super_admin_area'],
+    lineQueryCondition: ['server_super_admin_area = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.dnsFourthMenu
@@ -1491,7 +1503,7 @@ export const dnsServiceInsightsTabList = [
     prop: 'dnsServerRole',
     queryCycleTotalProp: 'roles',
     dillDownProp: ['dns_server_role'],
-    queryCondition: ['has(dns_server_role,\'$param\')'],
+    queryCondition: ['has(server_ip_tags,\'$param\')'],
     lineQueryCondition: ['arrayJoin(server_role) = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,

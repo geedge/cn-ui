@@ -133,7 +133,7 @@ export default {
         type: type
       }
 
-      if (type === 'ip') {
+      if (type === 'ip' || type === 'clientIp' || type === 'serverIp') {
         params.q = `${condition} and side='${this.side}'`
       } else {
         params.q = condition

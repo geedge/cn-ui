@@ -71,13 +71,13 @@ export default {
   mixins: [chartMixin],
   setup () {
     const { query } = useRoute()
-    const queryCondition = ref(query.queryCondition || '')
+    const lineQueryCondition = ref(query.lineQueryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
     const tabIndex = ref(query.tabIndex || 0)
     const tabOperationType = ref(query.tabOperationType)
     const networkOverviewBeforeTab = ref(query.networkOverviewBeforeTab || '')
     return {
-      queryCondition,
+      lineQueryCondition,
       dimensionType,
       tabIndex,
       tabOperationType,
@@ -113,12 +113,12 @@ export default {
     npmNetworkCycleQuery () {
       let condition = ''
       let url = ''
-      if (this.queryCondition && this.queryCondition.indexOf(' OR ') > -1) {
-        condition = this.queryCondition.split(/["|'](.*?)["|']/)
-      } else if (this.queryCondition.indexOf('+OR+') > -1) {
-        condition = this.queryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
+      if (this.lineQueryCondition && this.lineQueryCondition.indexOf(' OR ') > -1) {
+        condition = this.lineQueryCondition.split(/["|'](.*?)["|']/)
+      } else if (this.lineQueryCondition.indexOf('+OR+') > -1) {
+        condition = this.lineQueryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
       } else {
-        condition = this.queryCondition
+        condition = this.lineQueryCondition
       }
       const type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
@@ -133,7 +133,7 @@ export default {
         this.side = 'server'
       }
 
-      if (type === 'ip') { // condition 为数组时数组长度不为 0 | type 不为空 | type为ip
+      if (type === 'ip' || type === 'clientIp' || type === 'serverIp') { // condition 为数组时数组长度不为 0 | type 不为空 | type为ip
         params.q = `${condition} and side='${this.side}'`
       } else {
         params.q = condition
