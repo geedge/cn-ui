@@ -233,6 +233,9 @@ export const linkTrafficLineChartOption = {
     throttleType: 'debounce',
     transformable: false
   },
+  toolbox: {
+    show: false
+  },
   grid: {
     top: '12%',
     left: '2%',
