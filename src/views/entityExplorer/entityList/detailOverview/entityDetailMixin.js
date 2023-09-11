@@ -443,7 +443,6 @@ export default {
         this.$nextTick(() => {
           const dom = document.getElementById('related-app-more')
           const dom1 = document.getElementById('showRelatedApp')
-          console.log('bottom', dom.offsetTop, dom1.offsetHeight)
           dom1.style.cssText = `top: ${dom.offsetTop - dom1.offsetHeight + 30}px;left: ${dom.offsetLeft + 62}px`
           function showBlock () {
             // 改变数据 在body上绑定事件, 让数据变成false, 阻止点击'...'时候冒泡到body上,所以用stop,
