@@ -46,7 +46,9 @@ export default {
       performanceChartList: [],
       loadingPerformance: [],
       score: '-', // 网络质量评分
-      performanceMetricEndTimeInterval: 3600 // 服务质量事件指标的结束时间与开始时间的秒间隔
+      performanceMetricEndTimeInterval: 3600, // 服务质量事件指标的结束时间与开始时间的秒间隔
+      isShowMoreApp: false, // related App 展示更多时
+      isShowMoreDomain: false // related Domain 展示更多时
     }
   },
   computed: {
@@ -432,6 +434,45 @@ export default {
 
     resize () {
       this.echartsArray.forEach(item => { item.value.resize() })
+    },
+    showMoreApp () {
+      const vm = this
+      this.isShowMoreApp = !this.isShowMoreApp
+      this.isShowMoreDomain = false
+      if (this.isShowMoreApp) {
+        this.$nextTick(() => {
+          const dom = document.getElementById('related-app-more')
+          const dom1 = document.getElementById('showRelatedApp')
+          console.log('bottom', dom.offsetTop, dom1.offsetHeight)
+          dom1.style.cssText = `top: ${dom.offsetTop - dom1.offsetHeight + 30}px;left: ${dom.offsetLeft + 62}px`
+          function showBlock () {
+            // 改变数据 在body上绑定事件, 让数据变成false, 阻止点击'...'时候冒泡到body上,所以用stop,
+            vm.isShowMoreApp = false
+            // 消失后,为了性能,取消body这个事件
+            document.body.removeEventListener('click', showBlock)
+          }
+          document.body.addEventListener('click', showBlock)
+        })
+      }
+    },
+    showMoreDomain () {
+      const vm = this
+      this.isShowMoreDomain = !this.isShowMoreDomain
+      this.isShowMoreApp = false
+      if (this.isShowMoreDomain) {
+        this.$nextTick(() => {
+          const dom = document.getElementById('related-domain-more')
+          const dom1 = document.getElementById('showRelatedDomain')
+          dom1.style.cssText = `top: ${dom.offsetTop - dom1.offsetHeight + 30}px;left: ${dom.offsetLeft + 62}px`
+          function showBlock () {
+            // 改变数据 在body上绑定事件, 让数据变成false, 阻止点击'...'时候冒泡到body上,所以用stop,
+            vm.isShowMoreDomain = false
+            // 消失后,为了性能,取消body这个事件
+            document.body.removeEventListener('click', showBlock)
+          }
+          document.body.addEventListener('click', showBlock)
+        })
+      }
     }
   },
   setup () {

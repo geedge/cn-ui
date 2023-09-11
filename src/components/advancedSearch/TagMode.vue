@@ -657,26 +657,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-.new-search__suffix {
-  width: 41px;
-  height: 41px;
-  line-height: 41px;
-  background: #38ACD2;
-  text-align: center;
-  margin-top: -10px;
-  margin-right: -10px;
-
-  .el-icon-search {
-    color: #fff !important;
-    margin-top: 9px !important;
-  }
-}
-.my-popper-class .el-popper__arrow {
-  display: none;
-}
-.el-popover.my-popper-class {
-  padding: 8px 4px 0 12px !important;
-}
-</style>

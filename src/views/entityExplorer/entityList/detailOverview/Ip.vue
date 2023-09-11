@@ -137,12 +137,10 @@
           <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
 
           <div v-if="relationshipShowOne">
-            <el-popover popper-class="entity-detail__popover" tabindex="1" class="test-popover" placement="right-end" trigger="click" show-arrow="false" offset="20">
-              <template #reference>
-                <div class="data-item show-more-related">...</div>
-              </template>
+            <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp" style="position: relative">...</div>
+            <div v-if="isShowMoreApp" class="app-popover_block" id="showRelatedApp">
               <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">{{item.value}}</div>
-            </el-popover>
+            </div>
           </div>
         </div>
       </div>
@@ -160,12 +158,10 @@
           <div v-if="relationshipDataTwo.length===0 && !loadingRelationshipTwo">-</div>
 
           <div v-if="relationshipShowTwo">
-            <el-popover popper-class="entity-detail__popover" class="entity-expand-detail" placement="right-end" trigger="click" show-arrow="false" offset="20">
-              <template #reference>
-                <div class="data-item show-more-related">...</div>
-              </template>
+            <div class="data-item show-more-related" id="related-domain-more" @click.stop="showMoreDomain" style="position: relative">...</div>
+            <div v-if="isShowMoreDomain" class="domain-popover_block" id="showRelatedDomain">
               <div v-for="(item, index) in relationshipDataTwo" :key="index">{{item.value}}</div>
-            </el-popover>
+            </div>
           </div>
         </div>
       </div>
@@ -484,97 +480,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-  .data-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(119,131,145,0.06);
-    border: 1px solid rgba(119,131,145,0.36);
-    border-radius: 2px;
-    height:28px;
-    padding:8px 15px;
-    margin-right:10px;
-    //margin-bottom:15px;
-    font-size: 12px;
-    color: #353636;
-    font-weight: 400;
-    white-space: nowrap;
-  }
-.show-more-related {
-  height: 28px;
-  line-height: 28px;
-  padding-bottom: 12px;
-  cursor: pointer;
-}
-//}
-.entity-score {
-  .circle-icon {
-    border-radius: 3px;
-    width: 6px;
-    height: 6px;
-    margin-right: 4px;
-  }
-  .data-score-red {
-    background: #E26154;
-  }
-  .data-score-yellow {
-    background: #E5A219;
-  }
-  .data-score-green {
-    background: #749F4D;
-  }
-  height:24px;
-  font-size: 14px;
-  color: #046ECA;
-  font-weight: 500;
-  display:flex;
-  align-items: center;
-  justify-content: center;
-}
-.cn-detection__header {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  padding-bottom: 3px;
-  color: #333333;
-  align-items: center;
-  font-size: 12px;
-
-  i {
-    color: #7b8fa2;
-    margin-right: 5px;
-    font-size: 18px;
-  }
-
-  .line {
-    color: #da5656;
-    margin-left: 12px;
-    font-size: xx-small;
-    font-weight: bold;
-  }
-
-  .circle {
-    width: 10px;
-    height: 10px;
-    border: 2px solid #da5656;
-    border-radius: 10px;
-    margin-top: 4px;
-    margin-right: 12px;
-  }
-
-  .domain {
-    background: #EFF2F5;
-    border-radius: 2px;
-    font-size: 14px;
-    color: #333333;
-    letter-spacing: 0;
-    line-height: 14px;
-    margin-left: 5px;
-    font-style: italic;
-    padding: 0 2px;
-    font-weight: 500;
-  }
-}
-</style>

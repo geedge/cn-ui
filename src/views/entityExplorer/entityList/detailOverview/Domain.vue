@@ -106,12 +106,10 @@
           <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
 
           <div v-if="relationshipShowOne">
-            <el-popover popper-class="entity-detail__popover" placement="right-end" trigger="click" show-arrow="false" offset="20">
-              <template #reference>
-                <div class="data-item show-more-related">...</div>
-              </template>
-              <div v-for="(item, index) in relationshipDataOne" :key="index">{{item.value}}</div>
-            </el-popover>
+            <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp" style="position: relative">...</div>
+            <div v-if="isShowMoreApp" class="app-popover_block" id="showRelatedApp">
+              <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">{{item.value}}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -128,12 +126,10 @@
           <div v-if="relationshipDataTwo.length===0 && !loadingRelationshipTwo">-</div>
 
           <div v-if="relationshipShowTwo">
-            <el-popover popper-class="entity-detail__popover" class="entity-expand-detail" placement="right-end" trigger="click" show-arrow="false" offset="20">
-              <template #reference>
-                <div class="data-item show-more-related">...</div>
-              </template>
+            <div class="data-item show-more-related" id="related-domain-more" @click.stop="showMoreDomain" style="position: relative">...</div>
+            <div v-if="isShowMoreDomain" class="domain-popover_block" id="showRelatedDomain">
               <div v-for="(item, index) in relationshipDataTwo" :key="index">{{item.value}}</div>
-            </el-popover>
+            </div>
           </div>
         </div>
       </div>
