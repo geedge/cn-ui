@@ -374,9 +374,9 @@ export default {
   },
   mounted () {
     this.queryParams = this.getQueryParams()
-    this.chartGetMap()
     this.$nextTick(() => {
       setTimeout(() => {
+        this.chartGetMap()
         this.getBasicProperties()
         this.queryRelated()
       }, 250)

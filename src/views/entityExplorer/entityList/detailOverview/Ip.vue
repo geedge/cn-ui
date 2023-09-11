@@ -454,10 +454,10 @@ export default {
   },
   mounted () {
     this.queryParams = this.getQueryParams()
-    this.chartGetMap()
-    this.getOpenPort()
     this.$nextTick(() => {
       setTimeout(() => {
+        this.chartGetMap()
+        this.getOpenPort()
         this.queryRelated()
       }, 250)
     })
