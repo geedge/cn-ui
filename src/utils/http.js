@@ -70,10 +70,10 @@ axios.interceptors.response.use(
   },
   error => {
     try {
-      if (licenceErrorCode.indexOf(error.response.data.code) !== -1) {
+      if (error.response && licenceErrorCode.indexOf(error.response.data.code) !== -1) {
         localStorage.removeItem(storageKey.token)
         window.location.href = '/'
-      } else if (accountErrorCode.indexOf(error.response.data.code) !== -1) {
+      } else if (error.response && accountErrorCode.indexOf(error.response.data.code) !== -1) {
         localStorage.removeItem(storageKey.token)
         window.location.href = '/'
       }
