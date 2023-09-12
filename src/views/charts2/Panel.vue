@@ -126,7 +126,7 @@ export default {
     // }
     timeFilter: {
       handler () {
-        if (this.$route.path === '/panel/networkAppPerformance' && (this.queryCondition || this.networkOverviewBeforeTab)) {
+        if (this.$route.path === '/panel/networkAppPerformance' && (this.lineQueryCondition || this.networkOverviewBeforeTab)) {
           this.scoreCalculation()
         }
       }
@@ -212,7 +212,7 @@ export default {
         return chart
       })
     })
-    if (this.$route.path === '/panel/networkAppPerformance' && (this.queryCondition || this.networkOverviewBeforeTab)) {
+    if (this.$route.path === '/panel/networkAppPerformance' && (this.lineQueryCondition || this.networkOverviewBeforeTab)) {
       this.scoreCalculation()
     }
   },
@@ -303,7 +303,7 @@ export default {
 
     const metric = ref(query.metric || 'Bits/s')
 
-    const queryCondition = ref(query.queryCondition || '')
+    const lineQueryCondition = ref(query.lineQueryCondition || '')
     const dimensionType = ref(query.dimensionType || '')
     // 三级菜单判断
     const tabOperationType = ref(query.tabOperationType)
@@ -315,7 +315,7 @@ export default {
       showScore,
       metric,
       path,
-      queryCondition,
+      lineQueryCondition,
       dimensionType,
       tabOperationType,
       networkOverviewBeforeTab,
@@ -399,12 +399,12 @@ export default {
     scoreCalculation () {
       let condition = ''
       let url = ''
-      if (this.queryCondition.indexOf(' OR ') > -1) {
-        condition = this.queryCondition.split(/["|'](.*?)["|']/)
-      } else if (this.queryCondition.indexOf('+OR+') > -1) {
-        condition = this.queryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
+      if (this.lineQueryCondition.indexOf(' OR ') > -1) {
+        condition = this.lineQueryCondition.split(/["|'](.*?)["|']/)
+      } else if (this.lineQueryCondition.indexOf('+OR+') > -1) {
+        condition = this.lineQueryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
       } else {
-        condition = this.queryCondition
+        condition = this.lineQueryCondition
       }
       const type = this.dimensionType || this.networkOverviewBeforeTab
       const params = {
@@ -431,9 +431,6 @@ export default {
       } else if (condition.length > 1 && type && type !== 'ip') {
         if (type === 'country' || type === 'asn' || type === 'province' || type === 'city' || type === 'isp') {
           params.q = `${type}='${condition[1]}'`
-          params.type = type
-        } else if (type === 'idcRenter') {
-          params.q = `idc_renter='${condition[1]}'`
           params.type = type
         } else {
           params.q = `${condition[0]}'${condition[1]}'`
