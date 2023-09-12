@@ -53,6 +53,7 @@ export const fromRoute = {
   trafficSummary: 'trafficSummary',
   networkAppPerformance: 'networkAppPerformance',
   dnsServiceInsights: 'dnsServiceInsights',
+  linkMonitor: 'linkMonitor',
   user: 'user',
   galaxyProxy: 'galaxyProxy',
   chart: 'chart',
@@ -278,7 +279,8 @@ export const networkOverviewSearchUrl = {
   cycleUrl: '/interface/overview/dimensionCycleTrafficAnalysis',
   drilldownCurUrl: '/interface/overview/drilldown/dimensionTrafficAnalysis',
   drilldownCycleUrl: '/interface/overview/drilldown/dimensionCycleTrafficAnalysis',
-  drilldownList: '/interface/overview/drilldown/list'
+  drilldownList: '/interface/overview/drilldown/list',
+  relationTabDrilldownList: '/interface/overview/tab/relation/tab/list'
 }
 // npm:接口url（主URL）
 export const npmSearchUrl = {
@@ -286,14 +288,16 @@ export const npmSearchUrl = {
   cycleUrl: '/interface/application/performance/overview/dimensionCycleTrafficAnalysis',
   drilldownCurUrl: '/interface/application/performance/overview/drilldown/dimensionTrafficAnalysis',
   drilldownCycleUrl: '/interface/application/performance/overview/drilldown/dimensionCycleTrafficAnalysis',
-  drilldownList: '/interface/overview/drilldown/list'
+  drilldownList: '/interface/application/performance/overview/drilldown/list',
+  relationTabDrilldownList: '/interface/application/performance/overview/tab/relation/tab/list'
 }
 export const linkMonitorUrl = {
   curUrl: '/interface/link/overview/drilldown/dimension/analysis',
   cycleUrl: '/interface/link/overview/drilldown/dimension/cycleAnalysis',
   drilldownCurUrl: '/interface/link/overview/drilldown/dimension/analysis',
   drilldownCycleUrl: '/interface/link/overview/drilldown/dimension/cycleAnalysis',
-  drilldownList: ''
+  drilldownList: '/interface/link/overview/tab/relation/tab/list',
+  relationTabDrilldownList: '/interface/link/overview/tab/relation/tab/list'
 }
 // dns:接口url（主URL）
 export const dnsSearchUrl = {
@@ -301,7 +305,8 @@ export const dnsSearchUrl = {
   cycleUrl: '/interface/dns/overview/dimensionCycleAnalysis',
   drilldownCurUrl: '/interface/dns/overview/drilldown/dimensionAnalysis',
   drilldownCycleUrl: '/interface/dns/overview/drilldown/dimensionCycleAnalysis',
-  drilldownList: '/interface/dns/overview/drilldown/list'
+  drilldownList: '/interface/dns/overview/drilldown/list',
+  relationTabDrilldownList: '/interface/dns/overview/tab/relation/tab/list'
 }
 
 export const cycle = {

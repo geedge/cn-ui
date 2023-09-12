@@ -94,7 +94,7 @@
                                     v-model="dropDownValue"
                                     @input="dropDownSearch(item.prop)"></el-input>
                         </div>
-                        <ul class="select-dropdown" id="tabSearchSelectDropdown" @scroll="scrollList(item.prop)">
+                        <ul class="select-dropdown" :id="`tabSearchSelectDropdown${tab.prop}`" @scroll="scrollList(item.prop,tab.prop)">
                           <li v-for="item in tabSearchColumnValueListShow" title='' :key="item" :id="`${item}${tab.prop}`"
                               class="select-dropdown__item" @click="changeValue(item)">
                             <template v-if="curTabProp === 'qtype'">
@@ -487,18 +487,29 @@ export default {
           type = curTab.prop
         }
       }
-      const params = {
+      let params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
         limit: 10 * this.curPageNum++,
         type: type,
         name: this.dropDownValue ? this.dropDownValue : ''
       }
+      let url = curTableInCode.url.drilldownList
+      if(this.isDrilldown() || this.tableType === fromRoute.linkMonitor){
+        url = curTableInCode.url.relationTabDrilldownList
+        const condition = this.getQueryCondition()
+        if (condition) {
+          params = {
+            ...params,
+            q: condition
+          }
+        }
+      }
       // 有的界面刷新时没有drilldownList接口地址，会报404
-      if (!curTableInCode.url.drilldownList) {
+      if (!url) {
         return true
       }
-      axios.get(curTableInCode.url.drilldownList, { params }).then(async response => {
+      axios.get(url, { params }).then(async response => {
         if (response.status === 200) {
           this.tabSearchColumnValueListShow = response.data.data.result
           if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
@@ -584,9 +595,9 @@ export default {
       this.curPageNum = 1
       this.initDropdownList(prop)
     },
-    scrollList (prop) {
-      const obj = document.getElementById('tabSearchSelectDropdown')
-      if (obj.scrollTop + obj.clientHeight === obj.scrollHeight) {
+    scrollList (prop,tabProp) {
+      const obj = document.getElementById('tabSearchSelectDropdown'+tabProp)
+      if ((obj.scrollTop + obj.clientHeight === obj.scrollHeight) && obj.scrollHeight !== 0) {
         this.initDropdownList(prop)
       }
     },
