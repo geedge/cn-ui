@@ -14,10 +14,10 @@
           @search="search"
         ></advanced-search>
       </div>
-      <div class="search-symbol-inline" v-if="showList">
-        <i class="cn-icon cn-icon-help"></i>
-      </div>
-      <div v-else class="explorer-search__foot" v-ele-click-outside="esc">
+<!--      <div class="search-symbol-inline" v-if="showList">-->
+<!--        <i class="cn-icon cn-icon-help"></i>-->
+<!--      </div>-->
+      <div v-if="!showList" class="explorer-search__foot" v-ele-click-outside="esc">
         <div class="foot__item" @click="triggerHistory">
           <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': showHistory }" style="padding-right: 5px;"></i>
           <span>{{$t('search.searchHistory')}}</span>
