@@ -33,7 +33,7 @@
             <div class="data-total">
               <template v-if="item.prop === 'category'">
                 <span class="data-total-category-icon"><i :class="scope.row.icon"></i></span>
-                <span class="data-total-category-value" @click="drillDownData(scope.row.i18n)">{{$t(scope.row.i18n)}}</span>
+                <span class="data-total-category-value">{{$t(scope.row.i18n)}}</span>
               </template>
               <template v-else-if="item.prop === 'total'">
                 <div class="data-total-value">{{valueToRangeValue(scope.row.totalPacketsRate, unitTypes.bps).join(' ')}}</div>
