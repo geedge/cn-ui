@@ -267,12 +267,12 @@ export default {
     }
     switch (props.entity.entityType) {
       case 'ip': {
-        const queryCondition = `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`
         const networkOverviewAnalysisItemCopy = _.cloneDeep(networkOverviewAnalysisItem)
         networkOverviewAnalysisItemCopy.url = resolvePath({
           path: networkOverviewAnalysisItemCopy.path,
           query: {
-            queryCondition: queryCondition,
+            queryCondition: `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`,
+            lineQueryCondition: `ip='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'network.ips',
             dimensionType: 'ip',
@@ -285,7 +285,8 @@ export default {
         npmAnalysisItemCopy.url = resolvePath({
           path: npmAnalysisItemCopy.path,
           query: {
-            queryCondition: queryCondition,
+            queryCondition: `ip='${props.entity.entityName}'`,
+            lineQueryCondition: `ip='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'network.ips',
             dimensionType: 'ip',
@@ -298,7 +299,8 @@ export default {
         dnsAnalysisItemCopy.url = resolvePath({
           path: dnsAnalysisItem.path,
           query: {
-            queryCondition: queryCondition,
+            queryCondition: `common_server_ip='${props.entity.entityName}'`,
+            lineQueryCondition: `server_ip='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'dns.dnsServer',
             dimensionType: 'dnsServer',
@@ -318,6 +320,7 @@ export default {
           path: networkOverviewAnalysisItemCopy.path,
           query: {
             queryCondition: `domain='${props.entity.entityName}'`,
+            lineQueryCondition: `domain='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'network.domains',
             dimensionType: 'domain',
@@ -331,6 +334,7 @@ export default {
           path: npmAnalysisItemCopy.path,
           query: {
             queryCondition: `domain='${props.entity.entityName}'`,
+            lineQueryCondition: `domain='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'network.domains',
             dimensionType: 'domain',
@@ -344,6 +348,7 @@ export default {
           path: dnsAnalysisItem.path,
           query: {
             queryCondition: `dns_qname='${props.entity.entityName}'`,
+            lineQueryCondition: `qname='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'QNames',
             dimensionType: 'qname',
@@ -364,6 +369,7 @@ export default {
           path: networkOverviewAnalysisItemCopy.path,
           query: {
             queryCondition: queryCondition,
+            lineQueryCondition: queryCondition,
             panelName: props.entity.entityName,
             thirdMenu: 'network.applications',
             dimensionType: 'appLabel',
@@ -377,6 +383,7 @@ export default {
           path: npmAnalysisItemCopy.path,
           query: {
             queryCondition: queryCondition,
+            lineQueryCondition: queryCondition,
             panelName: props.entity.entityName,
             thirdMenu: 'network.applications',
             dimensionType: 'appLabel',
