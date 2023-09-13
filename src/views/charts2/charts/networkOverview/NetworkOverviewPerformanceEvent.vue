@@ -65,7 +65,7 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      const dom = document.getElementById('chart1')
+      /*const dom = document.getElementById('chart1')
       const dom2 = document.getElementById('chart2')
       if (dom) {
         if (!this.myChart) {
@@ -145,7 +145,12 @@ export default {
         }).finally(() => {
           this.loading2 = false
         })
-      }
+      }*/
+      this.loading1 = false
+      this.loading2 = false
+      this.isNoData = true
+      this.isNoData2 = true
+      this.toggleLoading(false)
     },
     routerJump () {
       const params = {

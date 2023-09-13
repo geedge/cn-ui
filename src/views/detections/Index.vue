@@ -610,7 +610,7 @@ export default {
         pageSize: this.pageObj.pageSize,
         pageNo: this.pageObj.pageNo
       }
-      axios.get(api.detection[this.pageType].listBasic, { params }).then(response => {
+      /*axios.get(api.detection[this.pageType].listBasic, { params }).then(response => {
         if (response.status === 200) {
           this.listData = response.data.data.result
         } else {
@@ -623,7 +623,7 @@ export default {
         this.pageObj.total = data
       }).catch(error => {
         console.log(error)
-      })
+      })*/
     },
     timeRefreshChange () {
       this.initNoData()

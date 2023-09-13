@@ -66,7 +66,7 @@ export default {
         startTime: this.timeFilter && this.timeFilter.startTime ? getSecond(this.timeFilter.startTime) : '',
         endTime: this.timeFilter && this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : ''
       }
-      this.toggleLoading(true)
+      /*this.toggleLoading(true)
       axios.get(api.netWorkOverview.ddosEventAnalysis, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -85,7 +85,8 @@ export default {
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
-      })
+      })*/
+      this.toggleLoading(false)
     }
   },
   mounted () {
