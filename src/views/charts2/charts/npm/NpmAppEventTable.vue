@@ -150,7 +150,7 @@ export default {
         limit: 10,
         type: this.metric
       }
-      axios.get(api.npm.events.dimensionEvents, { params }).then(res => {
+      /*axios.get(api.npm.events.dimensionEvents, { params }).then(res => {
         if (res.status === 200) {
           this.showError = false
           if (!res.data.data.result || res.data.data.result.length === 0) {
@@ -168,7 +168,9 @@ export default {
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
-      })
+      })*/
+      this.isNoData = true
+      this.toggleLoading(false)
     },
     changeMetric () {
       this.init()

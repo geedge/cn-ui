@@ -110,7 +110,7 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      this.toggleLoading(true)
+      /*this.toggleLoading(true)
       axios.get(api.npm.events.recentEvents, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -151,7 +151,9 @@ export default {
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
-      })
+      })*/
+      this.isNoData = true
+      this.toggleLoading(false)
     },
     resize () {
       this.myChart.resize()

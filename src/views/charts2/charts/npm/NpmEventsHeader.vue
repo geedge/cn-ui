@@ -45,7 +45,7 @@ export default {
         endTime: this.timeFilter && this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : '',
         type: this.type
       }
-      this.toggleLoading(true)
+      /*this.toggleLoading(true)
       axios.get(api.npm.events.list, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -69,7 +69,8 @@ export default {
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
-      })
+      })*/
+      this.toggleLoading(false)
     }
   },
   mounted () {

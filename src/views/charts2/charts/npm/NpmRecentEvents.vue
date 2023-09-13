@@ -108,7 +108,7 @@ export default {
         url = api.npm.events.recentEvents
       }
 
-      this.toggleLoading(true)
+      /*this.toggleLoading(true)
       axios.get(url, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -129,7 +129,9 @@ export default {
         this.httpError(e)
       }).finally(() => {
         this.toggleLoading(false)
-      })
+      })*/
+      this.isNoData = true
+      this.toggleLoading(false)
     },
     /**
      * 只要实体名称
