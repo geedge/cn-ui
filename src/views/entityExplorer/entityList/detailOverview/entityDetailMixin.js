@@ -415,8 +415,8 @@ export default {
 
     queryEntityDetail () {
       this.queryEntityDetailTraffic()
-      this.queryEntityDetailPerformance()
-      this.queryEntityDetailSecurity()
+      // this.queryEntityDetailPerformance()
+      // this.queryEntityDetailSecurity()
       this.queryEntityDetailNetworkQuantity()
       if (this.entity.entityType === 'ip') {
         if (!this.entityData.dnsServerRole) {

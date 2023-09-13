@@ -270,7 +270,7 @@ export default {
     setTimeout(() => {
       this.queryEntityDetailTraffic()
       this.queryNetworkQuantity()
-      this.queryEventNum()
+      // this.queryEventNum()
     })
   },
   beforeUnmount () {

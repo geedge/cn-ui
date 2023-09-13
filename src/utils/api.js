@@ -312,8 +312,8 @@ export const api = {
       aggAppCategory: apiVersion + '/entity/explorer/top/aggAppCategory', // app类别实体基数统计
       aggTag: apiVersion + '/entity/explorer/top/aggTag', // 标签实体基数统计
       domainSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // domain安全事件详情
-      ipSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // ip安全事件详情
-      appSecurity: apiVersion + '/entity/explorer/detail/event/security/domain', // app安全事件详情
+      ipSecurity: apiVersion + '/entity/explorer/detail/event/security/ip', // ip安全事件详情
+      appSecurity: apiVersion + '/entity/explorer/detail/event/security/app', // app安全事件详情
       domainEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/domain', // domain服务质量详情
       ipEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/ip', // ip服务质量详情
       appEventPerformance: apiVersion + '/entity/explorer/detail/event/performance/app', // app服务质量详情
