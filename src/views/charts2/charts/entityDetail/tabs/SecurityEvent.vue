@@ -109,7 +109,14 @@ export default {
     }
   },
   mounted () {
-    this.initData()
+    // this.initData()
+    this.isNoData = true
+    this.$emit('checkTag', entityDetailTabsName.securityEvent, 0)
+    this.toggleLoading(true)
+    const timer = setTimeout(() => {
+      this.toggleLoading(false)
+      clearInterval(timer)
+    }, 200)
   },
   methods: {
     unitConvert,

@@ -84,7 +84,7 @@ export default {
       { name: entityDetailTabsName.relatedEntity, label: i18n.global.t('entities.relatedEntity'), icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
       { name: entityDetailTabsName.openPort, label: i18n.global.t('entities.openPort'), icon: 'cn-icon cn-icon-open-port', tag: 0 },
       // { name: entityDetailTabsName.digitalCertificate, label: i18n.global.t('entities.digitalCertificate'), icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
-      { name: entityDetailTabsName.securityEvent, label: i18n.global.t('overall.securityEvent'), icon: 'cn-icon cn-icon-security-event', tag: 30 },
+      { name: entityDetailTabsName.securityEvent, label: i18n.global.t('overall.securityEvent'), icon: 'cn-icon cn-icon-security-event', tag: 0 },
       { name: entityDetailTabsName.performanceEvent, label: i18n.global.t('overall.performanceEvent'), icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ])
     if (entityType !== 'app') {
@@ -116,10 +116,10 @@ export default {
       const url = this.getUrlByEntityType(this.entity.entityType)
       const informationAggregation = axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`, { params: params })
       const openPort = axios.get(url, { params: params })
-      const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: params })
-      const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: params })
+      // const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: params })
+      // const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: params })
 
-      Promise.all([informationAggregation, openPort, security, performance]).then(response => {
+      Promise.all([informationAggregation, openPort]).then(response => {
         if (response[0].status === 200) {
           const list = []
           response[0].data.data.result.forEach(r => {
@@ -152,10 +152,12 @@ export default {
           this.initSetTag(entityDetailTabsName.openPort, response[1].data.data.result.length)
         }
         if (response[2].status === 200) {
-          this.initSetTag(entityDetailTabsName.securityEvent, response[2].data.data.result.length)
+          // this.initSetTag(entityDetailTabsName.securityEvent, response[2].data.data.result.length)
+          this.initSetTag(entityDetailTabsName.securityEvent, 0)
         }
         if (response[3].status === 200) {
-          this.initSetTag(entityDetailTabsName.performanceEvent, response[3].data.data.result.length)
+          // this.initSetTag(entityDetailTabsName.performanceEvent, response[3].data.data.result.length)
+          this.initSetTag(entityDetailTabsName.performanceEvent, 0)
         }
       })
 

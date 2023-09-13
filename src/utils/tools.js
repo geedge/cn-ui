@@ -1300,7 +1300,7 @@ export function numberWithCommas (num) {
   if (num) {
     return num.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')
   } else {
-    return '-'
+    return (num === '0' || num === 0) ? num : '-'
   }
 }
 

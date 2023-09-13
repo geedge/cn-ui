@@ -23,7 +23,7 @@ function getRgb (str) {
 }
 
 describe('views/charts2/charts/entityDetail/tabs/SecurityEvent.vue测试', () => {
-  test('实体详情tabs-安全事件：信息展示，severity严重程度与色块验证', async () => {
+  /* test('实体详情tabs-安全事件：信息展示，severity严重程度与色块验证', async () => {
     init()
     axios.get.mockResolvedValue(mockData.common)
     const wrapper = mount(SecurityEvent, {
@@ -58,7 +58,7 @@ describe('views/charts2/charts/entityDetail/tabs/SecurityEvent.vue测试', () =>
       expect(victimIp3.text()).toEqual('116.178.217.93')
       resolve()
     }, 200))
-  })
+  }) */
   test('实体详情tabs-安全事件：请求无数据', async () => {
     init()
     axios.get.mockResolvedValue(mockData.empty)
