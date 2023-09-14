@@ -223,7 +223,7 @@ export default {
       toRaw(this.codeMirror).setValue(this.str)
     }
     if (q) {
-      if (q.indexOf('%20') > -1) {
+      if (q.indexOf('%') > -1) {
         q = decodeURI(q)
       }
       // 为避免地址栏任意输入导致全查询的q带QUERY，解析时不识别导致的语法错误

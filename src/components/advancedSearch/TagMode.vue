@@ -609,7 +609,7 @@ export default {
     let { q } = this.$route.query
     if (q && !this.convertMetaList) {
       const parser = new Parser(this.columnList)
-      if (q.indexOf('%20') > -1) {
+      if (q.indexOf('%') > -1) {
         q = decodeURI(q)
       }
       this.metaList = parser.parseStr(q).metaList

@@ -532,7 +532,7 @@ export default {
           }
         })
       }).catch(e => {
-        // e
+        this.$message.error(e.response.data.message)
       }).finally(() => {
         this.loadingLeft = false
       })
@@ -693,7 +693,7 @@ export default {
     // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
     if (listMode) {
       this.showList = true
-      if (q && q.indexOf('%20') > -1) {
+      if (q && q.indexOf('%') > -1) {
         q = decodeURI(q)
       }
       this.initSearch(q)
