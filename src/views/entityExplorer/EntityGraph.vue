@@ -906,12 +906,12 @@ export default {
         className: 'toolbar__tools',
         getContent: () => {
           return `<ul>
-            <li code='zoomOut'><i class="cn-icon cn-icon-zoom-out"></i></li>
-            <li code='zoomIn'><i class="cn-icon cn-icon-zoom-in"></i></li>
-            <li code='autoZoom'><i class="cn-icon cn-icon-reset"></i></li>
-            <li code='undo' id="preStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-pre-step"></i></li>
-            <li code='redo' id="nextStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-next-step"></i></li>
-            <li code='toDefault'><i class="cn-icon cn-icon-to-default"></i></li>
+            <li code='zoomOut' title="${this.$t('overall.zoomOut')}"><i class="cn-icon cn-icon-zoom-out"></i></li>
+            <li code='zoomIn' title="${this.$t('overall.zoomIn')}"><i class="cn-icon cn-icon-zoom-in"></i></li>
+            <li code='autoZoom' title="${this.$t('overall.autoZoom')}"><i class="cn-icon cn-icon-reset"></i></li>
+            <li code='undo' title="${this.$t('overall.preStep')}" id="preStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-pre-step"></i></li>
+            <li code='redo' title="${this.$t('overall.nextStep')}" id="nextStep" class="toolbar--unactivated"><i class="cn-icon cn-icon-next-step"></i></li>
+            <li code='toDefault' title="${this.$t('overall.reset')}"><i class="cn-icon cn-icon-to-default"></i></li>
           </ul>`
         },
         handleClick: (code, graph) => {
