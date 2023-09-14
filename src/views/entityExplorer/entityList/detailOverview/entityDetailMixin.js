@@ -127,7 +127,7 @@ export default {
                       }
                     },
                     color: '#69b072',
-                    data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                    data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.bps]),
                     showSymbol: false
                   }
                 ]
@@ -147,7 +147,7 @@ export default {
                       }
                     },
                     color: '#7899c6',
-                    data: t.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                    data: t.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.bps]),
                     showSymbol: false
                   }
                 ]
@@ -400,7 +400,7 @@ export default {
                     }
                   },
                   color: '#69b072',
-                  data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                  data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.bps]),
                   showSymbol: false
                 }
               ]
@@ -418,7 +418,7 @@ export default {
       // this.queryEntityDetailPerformance()
       // this.queryEntityDetailSecurity()
       this.queryEntityDetailNetworkQuantity()
-      if (this.entity.entityType === 'ip') {
+      /*if (this.entity.entityType === 'ip') {
         if (!this.entityData.dnsServerRole) {
           this.loadingDns = true
         }
@@ -429,7 +429,7 @@ export default {
             this.queryDnsServerInfoRate()
           }, 200)
         })
-      }
+      }*/
     },
 
     resize () {

@@ -131,7 +131,7 @@ export default {
                   }
                 },
                 color: '#69b072',
-                data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.bps]),
                 showSymbol: false
               }
             } else if (t.legend === 'bytesReceivedRate') {
@@ -146,7 +146,7 @@ export default {
                   }
                 },
                 color: '#7899c6',
-                data: t.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.byte]),
+                data: t.values.map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.bps]),
                 showSymbol: false
               }
             }
