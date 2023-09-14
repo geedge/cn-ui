@@ -139,7 +139,9 @@
           <div v-if="relationshipShowOne">
             <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp" style="position: relative">...</div>
             <div v-if="isShowMoreApp" class="app-popover_block" id="showRelatedApp">
-              <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">{{item.value}}</div>
+              <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">
+                <span v-if="!item.show">{{item.value}}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -160,7 +162,9 @@
           <div v-if="relationshipShowTwo">
             <div class="data-item show-more-related" id="related-domain-more" @click.stop="showMoreDomain" style="position: relative">...</div>
             <div v-if="isShowMoreDomain" class="domain-popover_block" id="showRelatedDomain">
-              <div v-for="(item, index) in relationshipDataTwo" :key="index">{{item.value}}</div>
+              <div v-for="(item, index) in relationshipDataTwo" :key="index">
+                <span v-if="!item.show">{{item.value}}</span>
+              </div>
             </div>
           </div>
         </div>
