@@ -282,7 +282,7 @@ export default {
     // 初始化顶部大柱状图
     initEventSeverityTrendData (params) {
       this.loading = true
-      getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
+      /* getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
           const dataMap = new Map()
@@ -354,7 +354,11 @@ export default {
         this.$nextTick(() => {
           this.loading = false
         })
-      })
+      }) */
+      const timer = setTimeout(() => {
+        this.loading = false
+        clearTimeout(timer)
+      }, 150)
     },
 
     // 初始化左侧事件严重等级和小饼图
@@ -610,7 +614,7 @@ export default {
         pageSize: this.pageObj.pageSize,
         pageNo: this.pageObj.pageNo
       }
-      /*axios.get(api.detection[this.pageType].listBasic, { params }).then(response => {
+      /* axios.get(api.detection[this.pageType].listBasic, { params }).then(response => {
         if (response.status === 200) {
           this.listData = response.data.data.result
         } else {
@@ -623,7 +627,7 @@ export default {
         this.pageObj.total = data
       }).catch(error => {
         console.log(error)
-      })*/
+      }) */
     },
     timeRefreshChange () {
       this.initNoData()
@@ -685,16 +689,16 @@ export default {
         q: this.q
       }
       this.initEventSeverityTrendData(params)
-      this.initEventSeverityData(params)
+      // this.initEventSeverityData(params)
       if (this.pageType === detectionPageType.securityEvent) {
-        this.initOffenderIpData(params)
-        this.initOffenderLocationData(params)
-        this.initVictimIpData(params)
-        this.initVictimLocationData(params)
-        this.initSecurityTypeData(params)
+        // this.initOffenderIpData(params)
+        // this.initOffenderLocationData(params)
+        // this.initVictimIpData(params)
+        // this.initVictimLocationData(params)
+        // this.initSecurityTypeData(params)
       } else if (this.pageType === detectionPageType.performanceEvent) {
-        this.initActiveEntity(params)
-        this.initEventTypeData(params)
+        // this.initActiveEntity(params)
+        // this.initEventTypeData(params)
       }
     },
     pageSize (val) {
