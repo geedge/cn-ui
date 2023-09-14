@@ -25,6 +25,7 @@ export const storageKey = {
   timezoneLocalOffset: 'cn-timezone-local-offset',
   token: 'cn-token',
   username: 'cn-username',
+  nickName: 'cn-nick-name',
   userId: 'cn-userId',
   sysName: 'cn-sys-name',
   sysLogo: 'cn-sys-logo',

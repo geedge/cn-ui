@@ -26,7 +26,7 @@
           </template>
         </el-dropdown>
         <el-dropdown>
-          <div class='login-user header-menu--item'>{{ username }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
+          <div class='login-user header-menu--item'>{{ nickName }}&nbsp;<i class="cn-icon cn-icon-arrow-down"></i></div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>
@@ -233,6 +233,7 @@ export default {
     }
     return {
       username: localStorage.getItem(storageKey.username),
+      nickName: localStorage.getItem(storageKey.nickName),
       language: localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : 'en',
       showChangePin: false,
       from: '', // entity类型
