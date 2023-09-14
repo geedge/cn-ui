@@ -151,14 +151,14 @@ export default {
         if (response[1].status === 200) {
           this.initSetTag(entityDetailTabsName.openPort, response[1].data.data.result.length)
         }
-        if (response[2].status === 200) {
-          // this.initSetTag(entityDetailTabsName.securityEvent, response[2].data.data.result.length)
-          this.initSetTag(entityDetailTabsName.securityEvent, 0)
-        }
-        if (response[3].status === 200) {
-          // this.initSetTag(entityDetailTabsName.performanceEvent, response[3].data.data.result.length)
-          this.initSetTag(entityDetailTabsName.performanceEvent, 0)
-        }
+        // if (response[2].status === 200) {
+        //   this.initSetTag(entityDetailTabsName.securityEvent, response[2].data.data.result.length)
+        // }
+        // if (response[3].status === 200) {
+        //   this.initSetTag(entityDetailTabsName.performanceEvent, response[3].data.data.result.length)
+        // }
+        this.initSetTag(entityDetailTabsName.securityEvent, 0)
+        this.initSetTag(entityDetailTabsName.performanceEvent, 0)
       })
 
       // 域名解析
