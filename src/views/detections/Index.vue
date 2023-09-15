@@ -357,6 +357,10 @@ export default {
       }) */
       const timer = setTimeout(() => {
         this.loading = false
+        this.isEventSeverityNoData = true
+        this.isStatisticsCategoryNoData = true
+        this.isStatisticsSeverityNoData = true
+        this.isStatisticsActiveAttackNoData = true
         clearTimeout(timer)
       }, 150)
     },
@@ -688,6 +692,7 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         q: this.q
       }
+      this.listData = []
       this.initEventSeverityTrendData(params)
       // this.initEventSeverityData(params)
       if (this.pageType === detectionPageType.securityEvent) {
