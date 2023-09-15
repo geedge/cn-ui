@@ -58,11 +58,11 @@
               <div class="graph-list-item-block">
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.category')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.name', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryName', '-') }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.group')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.group', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryGroup', '-') }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.registration')}}:</div>
