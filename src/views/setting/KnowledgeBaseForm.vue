@@ -114,7 +114,7 @@
                 <table class="imported-table" v-if="!importedDataNoData">
                   <tr>
                     <th style="width: 230px">{{ importedTableFirstColumn }}</th>
-                    <th >Label</th>
+                    <th>{{$t('overall.tag')}}</th>
                     <th style="width: 200px">{{ $t('overall.tip') }}</th>
                     <th style="width: 50px"></th>
                   </tr>
