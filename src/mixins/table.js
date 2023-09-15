@@ -108,7 +108,6 @@ export default {
     changeStatus (status, id) {
       if (id) {
         axios.patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: id, status: status }] }).then(response => {
-          console.info(response)
           if (response.status === 200) {
             this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
           } else {

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { storageKey } from '@/utils/constants'
 import store from '@/store'
+import _ from 'lodash'
 
 const CancelToken = axios.CancelToken
 
@@ -59,23 +60,18 @@ axios.interceptors.request.use(
 )
 axios.interceptors.response.use(
   response => {
-    if (licenceErrorCode.indexOf(response.data.code) !== -1) {
-      localStorage.removeItem(storageKey.token)
-      window.location.href = '/'
-    } else if (accountErrorCode.indexOf(response.data.code) !== -1) {
-      localStorage.removeItem(storageKey.token)
-      window.location.href = '/'
-    }
     return response
   },
   error => {
     try {
-      if (error.response && licenceErrorCode.indexOf(error.response.data.code) !== -1) {
-        localStorage.removeItem(storageKey.token)
-        window.location.href = '/'
-      } else if (error.response && accountErrorCode.indexOf(error.response.data.code) !== -1) {
-        localStorage.removeItem(storageKey.token)
-        window.location.href = '/'
+      if (_.get(error, 'response.config.url') !== '/sys/login') {
+        if (error.response && licenceErrorCode.indexOf(error.response.data.code) !== -1) {
+          localStorage.removeItem(storageKey.token)
+          window.location.href = '/'
+        } else if (error.response && accountErrorCode.indexOf(error.response.data.code) !== -1) {
+          localStorage.removeItem(storageKey.token)
+          window.location.href = '/'
+        }
       }
     } catch (e) {
       console.error(e)

@@ -298,7 +298,6 @@ export default {
       axios.get(`${this.url}/${u.id}`).then(response => {
         if (response.status === 200) {
           this.object = response.data.data.list[0]
-          console.info(this.object)
         }
       }).catch(e => {
         console.error(e)

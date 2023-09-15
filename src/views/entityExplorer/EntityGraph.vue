@@ -1073,7 +1073,6 @@ export default {
         if (n) {
           if (n.undo.length > 0) {
             document.getElementById('preStep').classList.remove('toolbar--unactivated')
-            console.info(n, document.getElementById('preStep').classList)
           } else {
             document.getElementById('preStep').classList.add('toolbar--unactivated')
           }

@@ -86,21 +86,17 @@ export default {
             localStorage.setItem(storageKey.userId, res.data.data.user.id)
             localStorage.setItem(storageKey.token, res.data.data.token)
             this.$i18n.locale = localStorage.getItem(storageKey.language)
-          } else if (res.data.code === 518005) {
-            this.$message.error(this.$t('Incorrect username or password'))
-            this.loading = false
-            this.blockOperation.query = false
-          } else {
-            this.$message.error('Unknown error')
-            this.loading = false
-            this.blockOperation.query = false
           }
         }
       ).catch(e => {
         console.error(e)
         this.loading = false
         this.blockOperation.query = false
-        this.$message.error(this.errorMsgHandler(e))
+        if (_.get(e, 'response.data.code', 0) === 518005) {
+          this.$message.error(this.$t('Incorrect username or password'))
+        } else {
+          this.$message.error(this.errorMsgHandler(e))
+        }
       })
     },
     queryAppearance () {

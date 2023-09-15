@@ -266,8 +266,13 @@ export default {
               }
             }).catch((err) => {
               this.blockOperation.save = false
-              let errMsg = err.response ? err.response : (err.message ? err.message : err.toString())
-              this.$message.error(_.get(errMsg, 'data.message', []))
+              if (_.get(err, 'response.data.code') === 511036) {
+                // TODO 改成国际化
+                this.$message.error('This login name is already in use')
+              } else {
+                const errMsg = err.response ? err.response : (err.message ? err.message : err.toString())
+                this.$message.error(_.get(errMsg, 'data.message', []))
+              }
             })
           }
         } else {
