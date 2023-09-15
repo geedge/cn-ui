@@ -50,7 +50,7 @@
 
                 <div class="graph-list-item">
                   <div class="graph-list-item-label">ASN:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'asn.asn', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'asn.asn', '-') || '-' }}</div>
                 </div>
               </div>
             </template>
@@ -58,19 +58,19 @@
               <div class="graph-list-item-block">
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.category')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryName', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryName', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.group')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryGroup', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryGroup', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.registration')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'whois.registrantCountry', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'whois.registrantCountry', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.registry')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'whois.registrantOrg', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'whois.registrantOrg', '-') || '-' }}</div>
                 </div>
               </div>
             </template>
@@ -78,23 +78,23 @@
               <div class="graph-list-item-block">
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">APP ID:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appId', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appId', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.category')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appCategory', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appCategory', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.subcategory')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appSubcategory', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appSubcategory', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('entities.riskLevel')}}:</div>
-                  <div class="graph-list-item-value">{{ appRisk($_.get(item.detail, 'category.appRisk', '-')) }}</div>
+                  <div class="graph-list-item-value">{{ appRisk($_.get(item.detail, 'category.appRisk', '-')) || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
                   <div class="graph-list-item-label__app">{{$t('config.dataSource.description')}}:</div>
-                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appDescription', '-') }}</div>
+                  <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.appDescription', '-') || '-' }}</div>
                 </div>
               </div>
             </template>
