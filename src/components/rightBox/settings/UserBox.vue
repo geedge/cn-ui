@@ -124,7 +124,14 @@ export default {
   name: 'UserBox',
   mixins: [rightBoxMixin],
   data () {
-    const validatePin = (rule, value, callback) => { // 确认密码的二次校验
+    const validatePin = (rule, value, callback) => { // 确认密码
+      if (value.length < 5) {
+        callback(new Error(this.$t('validate.atLeastFive')))
+      } else {
+        callback()
+      }
+    }
+    const validateConfirmPin = (rule, value, callback) => { // 确认密码的二次校验
       if (value === '' && this.editObject.pin) {
         callback(new Error(this.$t('config.user.confirmPin')))
       } else if (value !== this.editObject.pin) {
@@ -147,7 +154,7 @@ export default {
     }
     const validateUserName = (rule, value, callback) => {
       let validate = true
-      const reg = /^[a-zA-Z0-9_]{2,64}$/
+      const reg = /^[a-zA-Z0-9_\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
       validate = reg.test(value)
       if (value.length < 2) {
         callback(new Error(this.$t('validate.atLeastTwo')))
@@ -171,12 +178,12 @@ export default {
         ],
         pin: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { pattern: /^[a-zA-Z0-9]{5,64}$/, message: this.$t('validate.atLeastFive') }
+          { validator: validatePin, trigger: 'blur' }
         ],
         pinChange: [
-          { validator: validatePin, trigger: 'blur' },
           { required: true, message: this.$t('validate.required') },
-          { pattern: /^[a-zA-Z0-9]{5,64}$/, message: this.$t('validate.atLeastFive') }
+          { validator: validatePin, trigger: 'blur' },
+          { validator: validateConfirmPin, trigger: 'blur' }
         ],
         roleIds: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
@@ -194,7 +201,7 @@ export default {
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         pinChange: [
-          { validator: validatePin, trigger: 'blur' },
+          { validator: validateConfirmPin, trigger: 'blur' },
           { pattern: /^[a-zA-Z0-9]{5,64}$/, message: this.$t('validate.atLeastFive') }
         ],
         roleIds: [
@@ -243,6 +250,10 @@ export default {
               } else {
                 this.$message.error(res.data.msg || res.data.message)
               }
+            }).catch(err => {
+              this.blockOperation.save = false
+              let errMsg = err.response ? err.response : (err.message ? err.message : err.toString())
+              this.$message.error(_.get(errMsg, 'data.message', []))
             })
           } else {
             axios.post(this.url, this.editObject).then(res => {
@@ -253,6 +264,10 @@ export default {
               } else {
                 this.$message.error(res.data.msg || res.data.message)
               }
+            }).catch((err) => {
+              this.blockOperation.save = false
+              let errMsg = err.response ? err.response : (err.message ? err.message : err.toString())
+              this.$message.error(_.get(errMsg, 'data.message', []))
             })
           }
         } else {
