@@ -183,6 +183,9 @@ export default {
           } else {
             this.$message.error(response.data.message)
           }
+        }).catch(e => {
+          // 表格内无删除，只是顶部工具栏有
+          this.$message.error(e.response.data.message)
         })
       }).catch(e => {})
     },
@@ -213,6 +216,8 @@ export default {
             } else {
               this.$message.error(response.data.message)
             }
+          }).catch(e => {
+            this.$message.error(e.response.data.message)
           }).finally(() => {
             this.toggleLoading(false)
           })
