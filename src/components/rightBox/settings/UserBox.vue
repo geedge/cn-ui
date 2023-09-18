@@ -142,11 +142,14 @@ export default {
     }
     const validateName = (rule, value, callback) => {
       let validate = true
-      const reg = /^[a-zA-Z0-9\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
+      // const reg = /^[a-zA-Z0-9\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
+      const reg = /^[\u4E00-\u9FA5\a-zA-Z0-9\u3040-\u309F\u0800-\u4e00\u0400-\u04FF\u2000-\u206F\s]{2,64}$/
+      const emptyFlag = value[0] === ' ' || value[value.length - 1] === ' '
       validate = reg.test(value)
       if (value.length < 2) {
         callback(new Error(this.$t('validate.atLeastTwo')))
-      } else if (!validate) {
+      } else if (!validate || value.trim() === '' || emptyFlag) {
+        // 除满足中英日俄、数字空格外，不能全为空格，前后也不可为空格
         callback(new Error(this.$t('validate.name')))
       } else {
         callback()
@@ -154,7 +157,9 @@ export default {
     }
     const validateUserName = (rule, value, callback) => {
       let validate = true
-      const reg = /^[a-zA-Z0-9_\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
+      // const reg = /^[a-zA-Z0-9_\u4e00-\u9fa5\u30a1-\u30f6\u3041-\u3093\uFF00-\uFFFF\u4e00-\u9fa5\u0400-\u04FF\s]{2,64}$/
+      // 校验，只允许中、英、数字和下划线
+      const reg = /^[\u4e00-\u9fa5_a-zA-Z0-9]{2,64}$/
       validate = reg.test(value)
       if (value.length < 2) {
         callback(new Error(this.$t('validate.atLeastTwo')))
@@ -170,11 +175,11 @@ export default {
       rules: { // 表单校验规则
         name: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: validateName, trigger: 'change' }
+          { validator: validateName, trigger: 'blur' }
         ],
         username: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: validateUserName, trigger: 'change' }
+          { validator: validateUserName, trigger: 'blur' }
         ],
         pin: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
