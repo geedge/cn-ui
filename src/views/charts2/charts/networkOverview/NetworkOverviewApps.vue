@@ -237,6 +237,8 @@ export default {
         prevRequest = axios.get(api.netWorkOverview.applicationCycleTrafficTotal, { params: params })
         request = axios.get(api.netWorkOverview.applicationTrafficAnalysis, { params: params })
         this.handleData(prevRequest, request, 'app')
+      } else {
+        this.toggleLoading(false)
       }
       if (providerCards.length > 0) {
         params = {
@@ -249,6 +251,8 @@ export default {
         prevRequest = axios.get(api.netWorkOverview.appCompanyCycleTrafficTotal, { params: params })
         request = axios.get(api.netWorkOverview.appCompanyTrafficAnalysis, { params: params })
         this.handleData(prevRequest, request, 'provider')
+      } else {
+        this.toggleLoading(false)
       }
     },
     handleData (prevRequest, request, _t) {
