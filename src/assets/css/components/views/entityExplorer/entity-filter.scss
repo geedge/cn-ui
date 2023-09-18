@@ -29,17 +29,11 @@
   }
 
   .filter__body {
-    width: calc(100% - 40px);
-    margin: 0 20px;
-
-    .filter-hr {
-      width: calc(100% + 20px);
-      margin-left: -10px;
-      margin-top: 10px;
-      height: 1px;
-      background: #EFF2F5;
-      //background: #000;
-    }
+    width: calc(100% - 30px);
+    margin: 0 10px 0 20px;
+    max-height: 265px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 
     .filter__body-item {
       height: 26px;
@@ -90,6 +84,7 @@
         font-size: 12px;
         color: #717171;
         font-weight: 400;
+        margin-right: 10px;
       }
     }
   }
@@ -100,4 +95,22 @@
   height: 12px;
   margin-right: 6px;
   border: 1px solid #E8E8E8;
+}
+
+.filter-show-more {
+  cursor: pointer;
+  height: 26px;
+  line-height: 26px;
+  margin-left: 20px;
+  color: #046ECA;
+  user-select: none; // 禁止文本选中
+}
+
+.filter-hr {
+  width: calc(100% - 40px);
+  margin-left: 20px;
+  margin-top: 6px;
+  height: 1px;
+  background: #EFF2F5;
+  //background: #000;
 }

@@ -506,28 +506,33 @@ export default {
       Promise.all([aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]).then(response => {
         response.forEach((item1, index) => {
           if (item1.status === 200 && item1.data.data.list) {
+            if (item1.data.data.list.length >= 5) {
+              this.newFilterData[index].showNum = 5
+            } else {
+              this.newFilterData[index].showNum = item1.data.data.list.length
+            }
             this.newFilterData[index].data = []
             item1.data.data.list.forEach((item, i) => {
-              if (i < 5) {
-                let obj = {
-                  label: item.value,
-                  topColumn: this.newFilterData[index].topColumn,
-                  value: item.uniqueEntities
-                }
-                if (index === 0) {
-                  obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
-                }
-                if (index === 4) {
-                  obj = {
-                    topColumn: this.newFilterData[index].topColumn,
-                    topColumn1: this.newFilterData[index].topColumn1,
-                    port: item.port,
-                    l7Protocol: item.l7Protocol,
-                    value: item.uniqueEntities
-                  }
-                }
-                this.newFilterData[index].data.push(obj)
+              let obj = {
+                label: item.value,
+                topColumn: this.newFilterData[index].topColumn,
+                value: item.uniqueEntities,
+                showNum: 5
               }
+              if (index === 0) {
+                obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
+              }
+              if (index === 4) {
+                obj = {
+                  topColumn: this.newFilterData[index].topColumn,
+                  topColumn1: this.newFilterData[index].topColumn1,
+                  port: item.port,
+                  l7Protocol: item.l7Protocol,
+                  value: item.uniqueEntities,
+                  showNum: 5
+                }
+              }
+              this.newFilterData[index].data.push(obj)
             })
           }
         })
