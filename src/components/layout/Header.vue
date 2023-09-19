@@ -124,7 +124,7 @@
         :with-header="false"
         :show-close="false"
     >
-      <div class="cn-menu__left">
+      <div class="cn-menu__left" v-if="otherMenu">
         <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jump(menu.route,'','',0)">
           <i :class="menu.icon"></i>
           <span>{{ $t(menu.i18n || menu.name) }}</span>
@@ -134,7 +134,7 @@
       <div class="cn-menu__middle">
         <div class="middle-menus middle-menus--network-analytics">
           <div class="middle-menus__header">{{ $t('overall.networkAnalytics') }}</div>
-          <div class="middle-menus__body">
+          <div class="middle-menus__body" v-if="networkAnalyticsMenu && networkAnalyticsMenu.children">
             <div style="width: 260px;">
               <template v-for="(menu, index) in networkAnalyticsMenu.children" :key="index">
                 <div class="middle-menu" v-if="index < 5" @click="jump(menu.route,'','',2)">
