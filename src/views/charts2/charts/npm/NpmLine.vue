@@ -114,7 +114,7 @@ export default {
     },
     timeFilter: {
       handler () {
-        this.init()
+        this.init(this.country)
       }
     }
   },
