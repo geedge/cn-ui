@@ -10,6 +10,7 @@ const strReg = {
   key: /^(?![\d])[\da-zA-Z\s.'-_]$/,
   value: /^[\da-zA-Z\s.'-_%]$/
 }
+const operatorList = ['=', ' in ', ' IN ', ' like ', ' LIKE ', ' HAS(', ' has(']
 
 export default class Parser {
   constructor (columnList) {
@@ -1061,7 +1062,7 @@ export default class Parser {
           q = q.replace(/ and /g, ' AND ')
         }
         const arr = q.split(' AND ')
-        const returnObj = { key: '', isKey: false }
+        const returnObj = { key: '', isKey: true }
         arr.forEach(item => {
           let label = ''
           let key = ''
@@ -1077,21 +1078,30 @@ export default class Parser {
           } else if (item.toLowerCase().indexOf('has(') > -1) {
             label = item.substring(item.toLowerCase().indexOf('(') + 1, item.indexOf(','))
             key = 'has'
+          } else if (this.columnList.some(ite => ite.label.toLowerCase() === item.toLowerCase())) {
+            label = 'item'
+            key = item
           }
 
           const obj = this.columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
-          if (obj) {
+          if (obj && returnObj.isKey) {
+            returnObj.isKey = true
             if (key === 'has') {
               returnObj.key += 'has(' + obj.label + item.substring(item.indexOf(','), item.length) + ' AND '
             } else {
               returnObj.key += obj.label + ' ' + item.substring(item.toLowerCase().indexOf(key.toLowerCase()), item.length) + ' AND '
             }
-            returnObj.isKey = true
-          } else {
-            return { key: '[' + key + ']', isKey: false }
+          } else if (returnObj.isKey) {
+            returnObj.key = '[' + key + ']'
+            if (key === item) {
+              returnObj.key = key
+            }
+            returnObj.isKey = false
           }
         })
-        returnObj.key = returnObj.key.substring(0, returnObj.key.length - 5)
+        if (returnObj.isKey) {
+          returnObj.key = returnObj.key.substring(0, returnObj.key.length - 5)
+        }
 
         return returnObj
       } else if (q.indexOf(' LIKE ') > -1 || q.indexOf(' like ') > -1) {
@@ -1190,6 +1200,9 @@ export default class Parser {
           if (!arr.some(ite => item.includes(ite))) {
             newArr[index] = this.checkFormatByStr(item, 'list')
           }
+          if (arr.some(ite => item.includes(ite)) && !operatorList.some(ite => item.includes(ite)) && !arr.some(ite => item.toLowerCase() === ite.toLowerCase())) {
+            newArr[index] = this.checkFormatByStr(item, 'list')
+          }
         })
 
         newStr = newArr.join(' AND ')
@@ -1200,6 +1213,9 @@ export default class Parser {
         arr.forEach(item => {
           if (str.toLowerCase().indexOf(item.toLowerCase()) > -1) {
             str = str.replace(new RegExp(item, 'gi'), item)
+            if (!operatorList.some(ite => str.includes(ite)) && str.toLowerCase() !== item.toLowerCase()) {
+              str = this.checkFormatByStr(str)
+            }
           }
         })
         return str
