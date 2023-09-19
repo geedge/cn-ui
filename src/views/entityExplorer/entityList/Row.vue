@@ -10,10 +10,10 @@
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
       <div class="cn-entity__row">
         <!--标签-->
-        <div class="cn-entity__header" style="display: flex;align-items: center">
+        <div class="cn-entity__header" style="display: flex;">
           <span class="cn-entity__header-title">{{ entityData.entityValue || 'Unknown' }}</span>
-          <span class="entity-detail" style="display: flex;margin-left: 6px;margin-top: 1px;">
-            <span v-for="(item, index) in levelTwoTags" :key="index" class="entity-tag entity-tag--small margin-r-10" :class="`entity-tag--level-two-${item.type}`">
+          <span class="entity-detail" style="display: flex;margin-left: 6px;margin-top: 1px;flex-wrap: wrap;margin-bottom: -10px;">
+            <span v-for="(item, index) in levelTwoTags" :key="index" class="entity-tag entity-tag--small margin-r-10 margin-b-10" :class="`entity-tag--level-two-${item.type}`">
               {{ item.value }}
             </span>
           </span>
