@@ -94,6 +94,16 @@
           <template v-else-if="item.prop === 'description'">
             <span class="list-desc" :title="scope.row[item.prop]">{{scope.row[item.prop]}}</span>
           </template>
+          <template v-else-if="item.prop === 'status'">
+            <el-switch v-model="scope.row.status"
+                       active-color="#38ACD2"
+                       inactive-color="#C0CEDB"
+                       :active-value="1"
+                       :inactive-value="0"
+                       @change="changeStatus($event,scope.row.knowledgeId)"
+            >
+            </el-switch>
+          </template>
           <span v-else>{{scope.row[item.prop] || '-'}}</span>
         </template>
       </el-table-column>
@@ -172,6 +182,12 @@ export default {
           show: true,
           width: 150,
           sortable: 'custom'
+        },
+        {
+          label: this.$t('knowledge.status'),
+          prop: 'status',
+          show: true,
+          width: 80
         }
       ]
     }
