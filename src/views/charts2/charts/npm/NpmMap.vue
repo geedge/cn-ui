@@ -50,7 +50,7 @@ import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { computeScore, getGeoData } from '@/utils/tools'
-import { storageKey, unitTypes } from '@/utils/constants'
+import { countryNameIdMapping, storageKey, unitTypes } from '@/utils/constants'
 import locationOptions from '@/views/charts2/charts/locationOptions'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
@@ -393,6 +393,9 @@ export default {
         this.countrySeries.hide()
         this.countryImageSeries.hide()
         this.myChart.zoomToGeoPoint(this.myChart.homeGeoPoint, this.myChart.homeZoomLevel, true)
+      } else {
+        const countryId = countryNameIdMapping[n]
+        await this.drill(countryId)
       }
     },
     timeFilter: {
