@@ -348,7 +348,7 @@ export default {
 
       return imageSeries
     },
-    async drill (countryId) {
+    async drill (countryId, num) {
       if (countryId) {
         const targetMapObject = this.polygonSeries.getPolygonById(countryId)
         targetMapObject.series.chart.zoomToMapObject(targetMapObject)
@@ -369,9 +369,13 @@ export default {
           await this.$nextTick(() => {
             this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
           })
+        } else if (num < 2) {
+          // 多次测试，最多2次查询不到数据
+          await this.drill(countryId, 0)
         } else {
           this.$message.warning(this.$t('tip.noDetailMap'))
         }
+        num++
       }
     }
   },
