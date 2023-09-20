@@ -254,7 +254,7 @@ import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import relatedServer from '@/mixins/relatedServer'
-import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
+import { dateFormatByAppearance, getMillisecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 
@@ -406,10 +406,7 @@ export default {
     dateFormatByAppearance,
     getQueryParams () {
       return {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        resource: this.entity.entityValue,
-        ip: this.entity.entityValue
+        resource: this.entity.entityValue
       }
     },
     getPerformanceQueryParams () {
@@ -436,8 +433,8 @@ export default {
     },
     getOpenPort () {
       const params = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
+        // startTime: getSecond(this.timeFilter.startTime),
+        // endTime: getSecond(this.timeFilter.endTime),
         resource: this.entity.entityValue
       }
 

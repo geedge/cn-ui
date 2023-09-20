@@ -217,7 +217,7 @@ import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import axios from 'axios'
 import relatedServer from '@/mixins/relatedServer'
-import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
+import { dateFormatByAppearance, getMillisecond } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import { ref } from 'vue'
 
@@ -320,10 +320,7 @@ export default {
     dateFormatByAppearance,
     getQueryParams () {
       return {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        resource: this.entity.entityValue,
-        appName: this.entity.entityValue
+        resource: this.entity.entityValue
       }
     },
     getPerformanceQueryParams () {

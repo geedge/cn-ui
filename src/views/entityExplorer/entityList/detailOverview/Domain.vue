@@ -326,9 +326,13 @@ export default {
     dateFormatByAppearance,
     getQueryParams () {
       return {
+        resource: this.entity.entityValue
+      }
+    },
+    getQueryParamsWithTime () {
+      return {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        resource: this.entity.entityValue,
         domain: this.entity.entityValue
       }
     },
@@ -351,7 +355,7 @@ export default {
       })
     },
     getBasicProperties () {
-      axios.get(this.basicProperties, { params: this.getQueryParams() }).then(response => {
+      axios.get(this.basicProperties, { params: this.getQueryParamsWithTime() }).then(response => {
         if (response.status === 200) {
           this.entityData = {
             ...this.entityData,
@@ -377,7 +381,7 @@ export default {
     this.$nextTick(() => {
       setTimeout(() => {
         this.chartGetMap()
-        this.getBasicProperties()
+        // this.getBasicProperties()
         this.queryRelated()
       }, 250)
     })
