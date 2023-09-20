@@ -83,7 +83,7 @@ export default {
           label: this.$t('config.operationlog.id'),
           prop: 'id',
           show: true,
-          width: 100
+          minWidth: 100
         }, {
           label: this.$t('config.operationlog.username'),
           prop: 'username',
@@ -133,13 +133,13 @@ export default {
           label: this.$t('config.operationlog.params'),
           prop: 'params',
           show: false,
-          width: 150
+          minWidth: 150
         },
         {
           label: this.$t('config.operationlog.response'),
           prop: 'response',
           show: false,
-          width: 150
+          minWidth: 150
         }
       ]
     }

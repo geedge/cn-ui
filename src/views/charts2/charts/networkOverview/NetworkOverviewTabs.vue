@@ -29,7 +29,7 @@
                   height="100%"
                   empty-text=" "
                   @sort-change="((col) => {sortChange(col,tab.prop)})"
-                  :key="tabIndex"
+                  :key="`tabTable_${tabIndex}`"
           >
             <template v-for="(item, index) in customTableTitles">
               <el-table-column
@@ -39,7 +39,7 @@
                       :prop="item.prop"
                       class="data-column"
                       :ref="item.prop"
-                      :key="index"
+                      :key="`column_${index}`"
                       :width="searchColumnWidth(item.columnType)"
               >
                 <template #header >
@@ -468,8 +468,14 @@ export default {
       return excludeName.indexOf(title.name) > -1 ? false : 'custom'
     },
     searchColumnWidth (columnType) {
+      let checkedGroup = this.customTableTitles.filter(item => item.checked)
+      let checkedNum = checkedGroup.length
       if (columnType === 'dillDown') {
-        return '217px'
+        if(checkedNum === 1){
+          return 'auto'
+        }else if(checkedNum > 1){
+          return '217px'
+        }
       }
     },
     async initDropdownList (tabProp) {

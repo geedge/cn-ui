@@ -64,6 +64,12 @@
         .data-click:hover{
           cursor: pointer;
         }
+        .el-table__header {
+          width:100%;
+        }
+        .el-table__body {
+          width:100%;
+        }
       }
       .dns-in-ex {
         display: flex;
@@ -103,8 +109,12 @@
         .data-click:hover{
           cursor: pointer;
         }
+        .el-table__header {
+          width:100%;
+        }
         .el-table__body {
           height:100%;
+          width:100%;
         }
       }
       .tab-table__no-bottom {

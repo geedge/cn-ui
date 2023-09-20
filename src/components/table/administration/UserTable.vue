@@ -93,7 +93,7 @@ export default {
           label: 'ID',
           prop: 'id',
           show: true,
-          width: 100,
+          minWidth: 100,
           sortable: 'custom'
         }, {
           label: this.$t('config.user.name'),
@@ -104,12 +104,12 @@ export default {
           label: this.$t('config.user.username'),
           prop: 'username',
           show: true,
-          width: 150
+          minWidth: 150
         }, {
           label: this.$t('config.user.roles'),
           prop: 'roles',
           show: true,
-          width: 150
+          minWidth: 150
         }, {
           label: 'E-mail',
           prop: 'email',
@@ -119,22 +119,22 @@ export default {
           label: this.$t('config.user.lastLoginTime'),
           prop: 'lastLoginTime',
           show: true,
-          width: 200
+          minWidth: 200
         }, {
           label: this.$t('config.user.lastLoginIp'),
           prop: 'lastLoginIp',
           show: true,
-          width: 150
+          minWidth: 150
         }, {
           label: this.$t('config.user.source'),
           prop: 'source',
           show: true,
-          width: 150
+          minWidth: 150
         }, {
           label: this.$t('config.user.enable'),
           prop: 'status',
           show: true,
-          width: 100
+          minWidth: 100
         }
       ]
     }
