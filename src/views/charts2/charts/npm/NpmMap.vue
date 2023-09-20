@@ -369,13 +369,16 @@ export default {
           await this.$nextTick(() => {
             this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
           })
-        } else if (num < 2) {
+        } else if (!num || num < 3) {
           // 多次测试，最多2次查询不到数据
-          await this.drill(countryId, 0)
+          if (!num) {
+            num = 0
+          }
+          num++
+          await this.drill(countryId, num)
         } else {
           this.$message.warning(this.$t('tip.noDetailMap'))
         }
-        num++
       }
     }
   },
