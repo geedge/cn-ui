@@ -21,7 +21,7 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.openPort')}}</div>
-        <div class="row__content">{{ openPort }}</div>
+        <div class="row__content" style="word-break: break-word;">{{ openPort }}</div>
       </div>
     </div>
   </div>
