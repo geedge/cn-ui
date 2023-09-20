@@ -431,7 +431,7 @@ export default {
     uploadParams () {
       return {
         knowledgeId: this.updateKnowledge.knowledgeId,
-        action: 'update',
+        action: 'overwrite',
         description: this.updateObject.description
       }
     }
