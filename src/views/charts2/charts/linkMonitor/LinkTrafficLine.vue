@@ -364,7 +364,8 @@ export default {
           if (item.type === val) {
             lineData = Object.keys(item).map(t => {
               return {
-                ...item[t]
+                ...item[t],
+                label: t
               }
             })
           }
@@ -376,14 +377,17 @@ export default {
       this.legendInit(lineData, active, show, unit, tabs)
     },
     legendInit (data, active, show, type, linkData) {
-      data.forEach((d, i) => {
-        linkData[i].data = d.values
-        linkData[i].analysis = d.analysis
+      data.forEach(d => {
+        const obj = linkData.find(item => d.label.includes(item.label))
+        if (obj) {
+          obj.data = d.values
+          obj.analysis = d.analysis
+        }
       })
       let num = 0
       linkData.forEach(e => {
         e.unitType = type
-        if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
+        if (parseFloat(e.analysis.avg) === 0 || isNaN(parseFloat(e.analysis.avg))) {
           e.show = false
           num += 1
         } else {

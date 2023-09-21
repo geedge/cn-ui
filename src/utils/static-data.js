@@ -167,9 +167,9 @@ export const dataForLinkTrafficLine = {
     }
   ],
   tabs: [
-    { analysis: {}, name: 'network.total', class: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
-    { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
-    { analysis: {}, name: 'linkMonitor.egress', class: 'egress', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
+    { analysis: {}, name: 'network.total', class: 'total', label: 'total', show: true, invertTab: true, positioning: 0, data: [], unitType: '' },
+    { analysis: {}, name: 'linkMonitor.ingress', class: 'ingress', label: 'in', show: true, invertTab: true, positioning: 1, data: [], unitType: '' },
+    { analysis: {}, name: 'linkMonitor.egress', class: 'egress', label: 'out', show: true, invertTab: true, positioning: 2, data: [], unitType: '' }
   ]
 }
 

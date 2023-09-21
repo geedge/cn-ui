@@ -72,8 +72,8 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
       const textNode6 = wrapper.get('[test-id="line-packetLoss"]')
       const textNode7 = wrapper.get('[test-id="line-packetRetrans"]')
 
-      expect(textNode0.text()).toEqual('756.87Kbps')
-      expect(textNode1.text()).toEqual('<0.01%')
+      expect(textNode0.text()).toEqual('10.58Mbps')
+      expect(textNode1.text()).toEqual('0.01%')
       expect(textNode2.text()).toEqual('5')
       expect(textNode3.text()).toEqual('92ms')
       expect(textNode4.text()).toEqual('154ms')
@@ -95,8 +95,8 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
     const textNode2 = await wrapper.get('[test-id="tabContent2"]')
 
     await new Promise(resolve => setTimeout(() => {
-      expect(textNode0.text()).toEqual('756.87Kbps')
-      expect(textNode1.text()).toEqual('10.58Mbps')
+      expect(textNode0.text()).toEqual('10.58Mbps')
+      expect(textNode1.text()).toEqual('756.87Kbps')
       expect(textNode2.text()).toEqual('9.82Mbps')
       resolve()
     }, 200))
@@ -108,9 +108,9 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
     const textNode2 = await wrapper.get('[test-id="tabContent2"]')
 
     await new Promise(resolve => setTimeout(() => {
-      expect(textNode0.text()).toEqual('72.72packets/s')
-      expect(textNode1.text()).toEqual('904.03packets/s')
-      expect(textNode2.text()).toEqual('976.75packets/s')
+      expect(textNode0.text()).toEqual('976.75packets/s')
+      expect(textNode1.text()).toEqual('72.72packets/s')
+      expect(textNode2.text()).toEqual('904.03packets/s')
       resolve()
     }, 200))
   })
@@ -129,8 +129,8 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
       const textNode6 = wrapper.get('[test-id="line-packetLoss"]')
       const textNode7 = wrapper.get('[test-id="line-packetRetrans"]')
 
-      expect(textNode0.text()).toEqual('75.69Tbps')
-      expect(textNode1.text()).toEqual('37843.52%')
+      expect(textNode0.text()).toEqual('10.58Mbps')
+      expect(textNode1.text()).toEqual('0.01%')
       expect(textNode2.text()).toEqual('1')
       expect(textNode3.text()).toEqual('9.29s')
       expect(textNode4.text()).toEqual('154ms')
@@ -159,9 +159,9 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
     const textNode2 = await wrapper.get('[test-id="tabContent2"]')
 
     await new Promise(resolve => setTimeout(() => {
-      expect(textNode0.text()).toEqual('727.20Mpackets/s')
-      expect(textNode1.text()).toEqual('904.03Gpackets/s')
-      expect(textNode2.text()).toEqual('976.75Gpackets/s')
+      expect(textNode0.text()).toEqual('976.75Gpackets/s')
+      expect(textNode1.text()).toEqual('727.20Mpackets/s')
+      expect(textNode2.text()).toEqual('904.03Gpackets/s')
       resolve()
     }, 200))
   })
