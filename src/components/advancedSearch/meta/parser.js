@@ -10,7 +10,7 @@ const strReg = {
   key: /^(?![\d])[\da-zA-Z\s.'-_]$/,
   value: /^[\da-zA-Z\s.'-_%]$/
 }
-const operatorList = ['=', ' in ', ' IN ', ' like ', ' LIKE ', ' HAS(', ' has(']
+const operatorList = ['=', ' in ', ' IN ', ' like ', ' LIKE ', 'HAS(', 'has(']
 
 export default class Parser {
   constructor (columnList) {
