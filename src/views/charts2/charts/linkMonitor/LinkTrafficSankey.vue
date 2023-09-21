@@ -3,22 +3,22 @@
     <el-tabs v-model="tab">
       <el-tab-pane :label="$t('linkMonitor.ingress')" name="0">
         <chart-error v-if="showError" :content="errorMsg"></chart-error>
-        <chart-no-data v-if="ingress"></chart-no-data>
+        <chart-no-data v-if="ingressNoData"></chart-no-data>
         <div v-if="parseInt(tab) === 0 && !showError" class="chart-drawing" id="link-traffic-sankey-0"></div>
       </el-tab-pane>
       <el-tab-pane :label="$t('linkMonitor.egress')" name="1">
         <chart-error v-if="showError" :content="errorMsg"></chart-error>
-        <chart-no-data v-if="egress"></chart-no-data>
+        <chart-no-data v-if="egressNoData"></chart-no-data>
         <div v-if="parseInt(tab) === 1 && !showError" class="chart-drawing" id="link-traffic-sankey-1"></div>
       </el-tab-pane>
     </el-tabs>
-    <template v-if="parseInt(tab) === 0 && !ingress">
+    <template v-if="parseInt(tab) === 0 && !ingressNoData">
       <div class="sankey__label" style="left: 5%;">External Locations</div>
       <div class="sankey__label" style="left: 35%;">Next-Hop Internets</div>
       <div class="sankey__label" style="left: 63%;">Links</div>
       <div class="sankey__label" style="right: 9%; transform: translateX(50%)">Internal Locations</div>
     </template>
-    <template v-else-if="parseInt(tab) === 1 && !egress">
+    <template v-else-if="parseInt(tab) === 1 && !egressNoData">
       <div class="sankey__label" style="left: 5%;">Internal Locations</div>
       <div class="sankey__label" style="left: 33.2%;">Links</div>
       <div class="sankey__label" style="left: 64.5%;">Next-Hop Internets</div>
@@ -41,6 +41,7 @@ import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
 import { storageKey, unitTypes } from '@/utils/constants'
 import ChartError from '@/components/common/Error'
+import _ from 'lodash'
 
 export default {
   name: 'LinksTrafficSankey',
@@ -63,13 +64,14 @@ export default {
   data () {
     return {
       timer: null,
-      ingress: false,
-      egress: false,
+      ingressNoData: false,
+      egressNoData: false,
       unitConvert,
       unitTypes,
       cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo)),
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      chartOption: null
     }
   },
   watch: {
@@ -116,20 +118,32 @@ export default {
         const res = response.data
         if (response.status === 200) {
           this.showError = false
-          if (n === 0) {
-            this.ingress = res.data.result.length === 0
+          let noData
+          if (res.data.result.length === 0) {
+            noData = true
           } else {
-            this.egress = res.data.result.length === 0
+            if (n === 0) {
+              noData = !res.data.result.some(d => d.inBitsRate > 0)
+            } else {
+              noData = !res.data.result.some(d => d.outBitsRate > 0)
+            }
           }
-          this.dataProcessing(res.data.result, parseInt(n))
+          if (n === 0) {
+            this.ingressNoData = noData
+          } else {
+            this.egressNoData = noData
+          }
+          if (!noData) {
+            this.dataProcessing(res.data.result, parseInt(n))
+          }
         } else {
           this.showError = true
           this.errorMsg = this.errorMsgHandler(res)
         }
       }).catch(e => {
         console.error(e)
-        this.egress = false
-        this.ingress = false
+        this.egressNoData = false
+        this.ingressNoData = false
         this.showError = true
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
@@ -144,7 +158,7 @@ export default {
               t.linkId = e.linkId
               t.linkDirection = e.nextHop
               t.bandwidth = e.bandwidth
-              t.value = parseInt(t.inBitsRate)
+              t.value = _.round(Number(t.inBitsRate), 2)
               t.external = `e_${t.externalLocation}`
               t.internal = `i_${t.internalLocation}`
             }
@@ -157,7 +171,7 @@ export default {
               t.linkId = e.linkId
               t.bandwidth = e.bandwidth
               t.linkDirection = e.nextHop
-              t.value = parseInt(t.outBitsRate)
+              t.value = _.round(Number(t.outBitsRate), 2)
               t.external = `e_${t.externalLocation}`
               t.internal = `i_${t.internalLocation}`
             }
@@ -448,12 +462,9 @@ export default {
     }
   },
   mounted () {
-    this.myChart = null
-    this.myChart2 = null
-    this.chartOption = null
     this.timer = setTimeout(() => {
       this.linkTrafficSankeyDataRequest(this.tab)
-    }, 100)
+    }, 200)
     window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {
