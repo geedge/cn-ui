@@ -421,7 +421,8 @@ export default {
           if (item.type === val) {
             lineData = Object.keys(item).map(t => {
               return {
-                ...item[t]
+                ...item[t],
+                label: t
               }
             })
           }
@@ -451,16 +452,19 @@ export default {
       }
     },
     legendInit (data, active, show, type, dnsData) {
-      data.forEach((d, i) => {
-        dnsData[i].data = d.values
-        dnsData[i].analysis = d.analysis
+      data.forEach(d => {
+        const obj = dnsData.find(item => d.label.includes(item.class))
+        if (obj) {
+          obj.data = d.values
+          obj.analysis = d.analysis
+        }
       })
 
       let num = 0
 
       dnsData.forEach(e => {
         e.unitType = type
-        if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
+        if (parseFloat(e.analysis.avg) === 0 || isNaN(parseFloat(e.analysis.avg))) {
           e.show = false
           num += 1
         } else {
