@@ -174,10 +174,6 @@ export default {
             localStorage.setItem(storageKey.timezoneOffset, window.$dayJs.tz().utcOffset() / 60)
             localStorage.setItem(storageKey.timezoneLocalOffset, dayjs().utcOffset() / 60)
           }
-          if (this.appearanceObject.lang !== localStorage.getItem(storageKey.language)) {
-            localStorage.setItem(storageKey.language, this.appearanceObject.lang)
-          }
-          window.location.reload()
         } else {
           this.$message.error(response.message)
         }
