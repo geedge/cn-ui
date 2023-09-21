@@ -114,12 +114,12 @@ export default {
           let sentSeries
           let receivedSeries
           response.data.data.result.forEach(t => {
-            if (t.legend === 'bytesRate') {
+            if (t.legend === 'rate') {
               this.entityData.max = t.aggregation.max
               this.entityData.avg = t.aggregation.avg
               this.entityData.p50 = t.aggregation.p50
               this.entityData.p90 = t.aggregation.p90
-            } else if (t.legend === 'bytesSentRate') {
+            } else if (t.legend === 'sentRate') {
               this.entityData.bytesSentRate = t.aggregation.avg
               sentSeries = {
                 name: i18n.global.t('entities.sentThroughput'),
@@ -134,7 +134,7 @@ export default {
                 data: _.dropRight(t.values, 2).map(v => [Number(v[0]) * 1000, Number(v[1]), unitTypes.bps]),
                 showSymbol: false
               }
-            } else if (t.legend === 'bytesReceivedRate') {
+            } else if (t.legend === 'receivedRate') {
               this.entityData.bytesReceivedRate = t.aggregation.avg
               receivedSeries = {
                 name: i18n.global.t('entities.receivedThroughput'),

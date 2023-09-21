@@ -107,12 +107,12 @@ export default {
       axios.get(this.trafficUrl, { params: this.getQueryParams() }).then(response => {
         if (response.status === 200 && response.data.data.result && response.data.data.result.length > 0) {
           response.data.data.result.forEach(t => {
-            if (t.legend === 'bytesRate') {
+            if (t.legend === 'rate') {
               this.entityData.max = t.aggregation.max
               this.entityData.avg = t.aggregation.avg
               this.entityData.p50 = t.aggregation.p50
               this.entityData.p90 = t.aggregation.p90
-            } else if (t.legend === 'bytesSentRate') {
+            } else if (t.legend === 'sentRate') {
               this.entityData.bytesSentRate = t.aggregation.avg
               this.chartOptionSent = {
                 ...this.chartOption,
@@ -132,7 +132,7 @@ export default {
                   }
                 ]
               }
-            } else if (t.legend === 'bytesReceivedRate') {
+            } else if (t.legend === 'receivedRate') {
               this.entityData.bytesReceivedRate = t.aggregation.avg
               this.chartOptionReceived = {
                 ...this.chartOption,
