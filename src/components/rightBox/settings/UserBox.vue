@@ -251,13 +251,20 @@ export default {
               this.blockOperation.save = false
               if (res.status === 200) {
                 this.$message({ duration: 2000, type: 'success', message: this.$t('tip.saveSuccess') })
+                if (this.editObject.lang && this.editObject.id == localStorage.getItem(storageKey.userId)) {
+                  const currentLang = localStorage.getItem(storageKey.language)
+                  if (currentLang !== this.editObject.lang) {
+                    localStorage.setItem(storageKey.language, this.editObject.lang)
+                    window.location.reload()
+                  }
+                }
                 this.esc(true)
               } else {
                 this.$message.error(res.data.msg || res.data.message)
               }
             }).catch(err => {
               this.blockOperation.save = false
-              let errMsg = err.response ? err.response : (err.message ? err.message : err.toString())
+              const errMsg = err.response ? err.response : (err.message ? err.message : err.toString())
               this.$message.error(_.get(errMsg, 'data.message', []))
             })
           } else {
