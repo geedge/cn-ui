@@ -693,7 +693,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['common_client_ip', 'common_server_ip'], // 下钻表格：查询条件q（dillDownProp里条件之间都是OR的关系）,或者queryCondition属性，queryCondition: ['ip = \'$param\' AND side = \'server\''],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['ip = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(ip)'], // 曲线图：第三级维度查询条件q
+    lineThirdDimensionQueryCondition: ['side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -704,7 +704,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_country_region', 'server_country_region'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['country_region = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(country_region)'], // 曲线图：第三级维度查询条件q
+    lineThirdDimensionQueryCondition: ['side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -715,7 +715,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_asn', 'server_asn'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['asn = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(asn)'], // 曲线图：第三级维度查询条件q
+    lineThirdDimensionQueryCondition: ['side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -781,7 +781,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_super_admin_area', 'server_super_admin_area'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['super_admin_area = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(super_admin_area)'], // 曲线图：第三级维度查询条件q
+    lineThirdDimensionQueryCondition: ['side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -792,7 +792,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_admin_area', 'server_admin_area'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['admin_area = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(admin_area)'], // 曲线图：第三级维度查询条件q
+    lineThirdDimensionQueryCondition: ['side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -803,7 +803,7 @@ export const networkOverviewTabList = [
     dillDownProp: ['client_isp', 'server_isp'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['isp = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(isp)'], // 曲线图：第三级维度查询条件q
+    lineThirdDimensionQueryCondition: ['side = \'server\''], // 曲线图：第三级维度查询条件q
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
