@@ -405,6 +405,22 @@ export default {
         }
       })
       this.tabs = linkData
+      // 如果三者avg都为0时，至少保证total显示
+      const ingressObj = linkData.find(d => d.name === 'linkMonitor.ingress')
+      const egressObj = linkData.find(d => d.name === 'linkMonitor.egress')
+      let ingressAvg = 0
+      let egressAvg = 0
+      if (ingressObj) {
+        ingressAvg = parseFloat(ingressObj.analysis.avg) || 0
+      }
+      if (egressObj) {
+        egressAvg = parseFloat(egressObj.analysis.avg) || 0
+      }
+      if ((ingressAvg + egressAvg) === 0) {
+        const totalObj = linkData.find(d => d.name === 'network.total')
+        totalObj.show = true
+      }
+
       if (num === 3) {
         linkData[0].invertTab = false
         this.lineTab = 'total'

@@ -483,6 +483,22 @@ export default {
       })
 
       this.tabs = dnsData
+      // 如果三者avg都为0时，至少保证total显示
+      const ingressObj = dnsData.find(d => d.name === 'network.inbound')
+      const egressObj = dnsData.find(d => d.name === 'network.outbound')
+      let ingressAvg = 0
+      let egressAvg = 0
+      if (ingressObj) {
+        ingressAvg = parseFloat(ingressObj.analysis.avg) || 0
+      }
+      if (egressObj) {
+        egressAvg = parseFloat(egressObj.analysis.avg) || 0
+      }
+      if ((ingressAvg + egressAvg) === 0) {
+        const totalObj = dnsData.find(d => d.name === 'network.total')
+        totalObj.show = true
+      }
+
       if (num === 3) {
         dnsData[0].invertTab = false
         this.lineTab = 'total'
