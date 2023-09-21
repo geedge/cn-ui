@@ -209,10 +209,8 @@ export default {
                     hit.inBitsRate += d.inBitsRate
                     if (info.direction === 'out') {
                       hit.outBandwidth = info.bandwidth
-                      hit.outLinkId = d.linkId
                     } else if (info.direction === 'in') {
                       hit.inBandwidth = info.bandwidth
-                      hit.inLinkId = d.linkId
                     }
                   } else {
                     const hit = {
@@ -222,10 +220,8 @@ export default {
                     }
                     if (info.direction === 'out') {
                       hit.outBandwidth = info.bandwidth
-                      hit.outLinkId = d.linkId
                     } else if (info.direction === 'in') {
                       hit.inBandwidth = info.bandwidth
-                      hit.inLinkId = d.linkId
                     }
                     data.push(hit)
                   }
@@ -234,6 +230,13 @@ export default {
               this.linkNoData = data.length === 0
               data.forEach(item => {
                 item.totalBitsRate = item.outBitsRate + item.inBitsRate
+                linkInfo.filter(info => info.linkId === item.linkId).forEach(info => {
+                  if (info.direction === 'out') {
+                    item.outLinkId = info.originalLinkId
+                  } else if (info.direction === 'in') {
+                    item.inLinkId = info.originalLinkId
+                  }
+                })
               })
 
               const sorted = data.sort((a, b) => b.totalBitsRate - a.totalBitsRate)
