@@ -210,35 +210,35 @@ export default {
       newFilterData: [
         {
           icon: 'cn-icon cn-icon-registration-country',
-          title: 'Top Countries',
+          title: this.$t('entity.topCountries'),
           topColumn: 'ip.country',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-city',
-          title: 'Top Cities',
+          title: this.$t('entity.topCities'),
           topColumn: 'ip.city',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-as',
-          title: 'Top ASNs',
+          title: this.$t('entity.topASNs'),
           topColumn: 'ip.asn',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-operator',
-          title: 'Top ISPs',
+          title: this.$t('entity.topISPs'),
           topColumn: 'ip.isp',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-open-port',
-          title: 'Top Ports',
+          title: this.$t('entity.topPorts'),
           topColumn: 'ip.port',
           topColumn1: 'ip.protocol',
           totalCount: 0,
@@ -246,21 +246,21 @@ export default {
         },
         {
           icon: 'cn-icon cn-icon-FQDN',
-          title: 'Top FQDN Categories',
+          title: this.$t('entity.topFQDNCategories'),
           topColumn: 'domain.category',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-category2',
-          title: 'Top App Categories',
+          title: this.$t('entity.topAppCategories'),
           topColumn: 'app.category',
           totalCount: 0,
           data: []
         },
         {
           icon: 'cn-icon cn-icon-tag1',
-          title: 'Top Tags',
+          title: this.$t('entity.topTags'),
           topColumn: 'tag',
           totalCount: 0,
           data: []

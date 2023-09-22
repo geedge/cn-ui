@@ -97,13 +97,18 @@
   border: 1px solid #E8E8E8;
 }
 
-.filter-show-more {
+.filter-show-more, .filter-no-show-more {
   cursor: pointer;
   height: 26px;
   line-height: 26px;
   margin-left: 20px;
   color: #046ECA;
   user-select: none; // 禁止文本选中
+  font-size: 12px;
+}
+.filter-no-show-more {
+  cursor: not-allowed;
+  color: rgba(16, 16, 16, 0.3);
 }
 
 .filter-hr {

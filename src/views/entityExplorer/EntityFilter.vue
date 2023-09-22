@@ -26,7 +26,7 @@
                 <div class="filter__body-item-left-label">
                   <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
                     <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
-                      <span v-if="item.title==='Top Ports'">
+                      <span v-if="item.topColumn==='ip.port'">
                         {{ data.port }}/{{ data.l7Protocol }}
                       </span>
                       <span v-else>{{ data.label }}</span>
@@ -37,7 +37,8 @@
               <div class="filter__body-item-right">{{ data.value }}</div>
             </div>
           </div>
-          <div @click="showMoreFilter(item, index)" class="filter-show-more">
+          <div @click="showMoreFilter(item, index)"
+               :class="item.showNum === item.data.length ? 'filter-no-show-more' : 'filter-show-more'">
             {{ $t('entity.showMore') }}
           </div>
           <div class="filter-hr"></div>
