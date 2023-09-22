@@ -126,7 +126,7 @@
                   :data="updateHistoryList"
                   @selection-change="secondSelectionChange"
                   width="100%"
-                  max-height="653px"
+                  max-height="400px"
                   class="update-dialog__table"
                   cell-style="padding:6px 0px;font-size: 12px;color: #353636;font-weight: 400;line-height: 20px;border-right:none;"
                   header-cell-style="padding:8px 0px;font-size: 12px;color: #353636;font-weight: 500;border-right:none;">
