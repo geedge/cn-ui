@@ -1645,12 +1645,13 @@ height:300px !important;
   flex-direction: column;
   padding-bottom:0 !important;
   width: 1080px !important;
-  height: calc(100% - 240px);
+  height: fit-content;
   overflow: hidden;
   &.update-knowledge--upload {
     height: auto;
   }
   .el-dialog__body {
+    height: calc(100% - 32px);
     overflow: hidden;
   }
   .knowledge-update__top {
@@ -1788,9 +1789,11 @@ height:300px !important;
     .update-dialog__table {
       border-bottom: none;
       border-radius: 0.28571rem;
-
       .el-table--border th, .el-table--border td {
         border-right: none;
+      }
+      .el-table__body-wrapper {
+        height:100%;
       }
     }
     .update-knowledge-form {
