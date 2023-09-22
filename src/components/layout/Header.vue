@@ -131,7 +131,7 @@
           <i class="cn-icon cn-icon-right"></i>
         </div>
       </div>
-      <div class="cn-menu__middle">
+      <div class="cn-menu__middle" >
         <div class="middle-menus middle-menus--network-analytics">
           <div class="middle-menus__header">{{ $t('overall.networkAnalytics') }}</div>
           <div class="middle-menus__body" v-if="networkAnalyticsMenu && networkAnalyticsMenu.children">
@@ -392,7 +392,8 @@ export default {
         this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
       }
     }
-    if (this.$route.path.indexOf('panel') > -1) {
+    let path = this.$route.path;
+    if (path.indexOf('panel') > -1 && path.indexOf('linkMonitor') === -1) {
       await this.initDropdownList()
     }
   },
