@@ -56,6 +56,7 @@ import { ref } from 'vue'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
 import { dataForNpmRecentEvents } from '@/utils/static-data'
+import { beforeRouterPush } from '@/utils/tools'
 
 export default {
   name: 'NpmRecentEvents',
@@ -108,7 +109,7 @@ export default {
         url = api.npm.events.recentEvents
       }
 
-      /*this.toggleLoading(true)
+      /* this.toggleLoading(true)
       axios.get(url, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -129,7 +130,7 @@ export default {
         this.httpError(e)
       }).finally(() => {
         this.toggleLoading(false)
-      })*/
+      }) */
       this.isNoData = true
       this.toggleLoading(false)
     },
@@ -144,7 +145,7 @@ export default {
       return name
     },
     jumpPage (item) {
-      this.beforeRouterPush()
+      beforeRouterPush()
       this.$router.push({
         path: '/detection/performanceEvent',
         query: {
@@ -152,36 +153,6 @@ export default {
           eventId: item.eventId
         }
       })
-    },
-    /**
-     * 在路由跳转前，即下钻前将路由数据保存起来，确保回退和前进保留当时状态
-     */
-    beforeRouterPush () {
-      const currentRouter = this.$_.cloneDeep(this.$route.query)
-      const historyList = this.$_.cloneDeep(this.$store.getters.getRouterHistoryList)
-
-      const tempObj = {
-        t: currentRouter.t,
-        query: currentRouter,
-        path: this.$_.cloneDeep(this.$route.path),
-        params: this.$_.cloneDeep(this.$route.params)
-      }
-      if (historyList.length > 0) {
-        let flag = true
-        historyList.forEach((item, index) => {
-          if (item.t === currentRouter.t) {
-            historyList[index] = tempObj
-            flag = false
-          }
-          if (!flag) {
-            return true
-          }
-        })
-        if (flag) historyList.push(tempObj)
-      } else {
-        historyList.push(tempObj)
-      }
-      this.$store.commit('setRouterHistoryList', historyList)
     },
     httpError (res) {
       this.isNoData = false

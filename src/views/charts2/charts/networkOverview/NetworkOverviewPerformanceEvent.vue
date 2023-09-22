@@ -32,7 +32,7 @@ import { getSecond } from '@/utils/date-util'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
-import { getIndexByEventSeverity } from '@/utils/tools'
+import { getIndexByEventSeverity, beforeRouterPush } from '@/utils/tools'
 export default {
   name: 'NetworkOverviewPerformanceEvent',
   setup () {
@@ -65,7 +65,7 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-      /*const dom = document.getElementById('chart1')
+      /* const dom = document.getElementById('chart1')
       const dom2 = document.getElementById('chart2')
       if (dom) {
         if (!this.myChart) {
@@ -145,7 +145,7 @@ export default {
         }).finally(() => {
           this.loading2 = false
         })
-      }*/
+      } */
       this.loading1 = false
       this.loading2 = false
       this.isNoData = true
@@ -153,6 +153,7 @@ export default {
       this.toggleLoading(false)
     },
     routerJump () {
+      beforeRouterPush()
       const params = {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime,

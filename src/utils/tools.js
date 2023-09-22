@@ -5,6 +5,7 @@ import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, n
 import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
+import store from '@/store'
 import indexedDBUtils from '@/indexedDB'
 
 export const tableSort = {
@@ -1316,4 +1317,35 @@ export function switchStatus (status) {
     case 1:
       return 'Enabled'
   }
+}
+
+/**
+ * 在路由跳转前，即下钻前将路由数据保存起来，确保回退和前进保留当时状态
+ */
+export function beforeRouterPush () {
+  const currentRouter = _.cloneDeep(router.currentRoute.value.query)
+  const historyList = _.cloneDeep(store.getters.getRouterHistoryList)
+
+  const tempObj = {
+    t: currentRouter.t,
+    query: currentRouter,
+    path: _.cloneDeep(router.currentRoute.value.path),
+    params: _.cloneDeep(router.currentRoute.value.params)
+  }
+  if (historyList.length > 0) {
+    let flag = true
+    historyList.forEach((item, index) => {
+      if (item.t === currentRouter.t) {
+        historyList[index] = tempObj
+        flag = false
+      }
+      if (!flag) {
+        return true
+      }
+    })
+    if (flag) historyList.push(tempObj)
+  } else {
+    historyList.push(tempObj)
+  }
+  store.commit('setRouterHistoryList', historyList)
 }

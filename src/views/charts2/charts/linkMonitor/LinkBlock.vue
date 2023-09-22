@@ -116,7 +116,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { api } from '@/utils/api'
-import { colorGradientCalculation } from '@/utils/tools'
+import { colorGradientCalculation, beforeRouterPush } from '@/utils/tools'
 import unitConvert from '@/utils/unit-convert'
 import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/constants'
 import { getSecond } from '@/utils/date-util'
@@ -372,6 +372,7 @@ export default {
     },
     drillLinkId (item) {
       const queryCondition = `common_out_link_id = ${item.outLinkId} or common_in_link_id = ${item.inLinkId}`
+      beforeRouterPush()
       this.$router.push({
         query: {
           ...this.$route.query,

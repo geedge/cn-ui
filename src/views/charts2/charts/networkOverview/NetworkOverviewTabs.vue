@@ -293,7 +293,7 @@ import {
 } from '@/utils/constants'
 import axios from 'axios'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combineDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion } from '@/utils/tools'
+import { getChainRatio, computeScore, urlParamsHandler, overwriteUrl, readDrilldownTableConfigByUser, combineDrilldownTableWithUserConfig, getDnsMapData, handleSpecialValue, getConfigVersion, beforeRouterPush } from '@/utils/tools'
 import { getSecond } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import _ from 'lodash'
@@ -1449,7 +1449,7 @@ export default {
         overwriteUrl(newUrl)
       }
       // 下钻前保存当前路由状态
-      this.beforeRouterPush()
+      beforeRouterPush()
       const clickTab = this.getTabByName(columnName)// 下钻后，显示的下钻tab对应的drilldownTabs
       const tabLable = clickTab.label
       const tabName = clickTab.name
@@ -1538,36 +1538,6 @@ export default {
           t: +new Date()
         }
       })
-    },
-    /**
-       * 在路由跳转前，即下钻前将路由数据保存起来，确保回退和前进保留当时状态
-       */
-    beforeRouterPush () {
-      const currentRouter = this.$_.cloneDeep(this.$route.query)
-      const historyList = this.$_.cloneDeep(this.$store.getters.getRouterHistoryList)
-
-      const tempObj = {
-        t: currentRouter.t,
-        query: currentRouter,
-        path: this.$_.cloneDeep(this.$route.path),
-        params: this.$_.cloneDeep(this.$route.params)
-      }
-      if (historyList.length > 0) {
-        let flag = true
-        historyList.forEach((item, index) => {
-          if (item.t === currentRouter.t) {
-            historyList[index] = tempObj
-            flag = false
-          }
-          if (!flag) {
-            return true
-          }
-        })
-        if (flag) historyList.push(tempObj)
-      } else {
-        historyList.push(tempObj)
-      }
-      this.$store.commit('setRouterHistoryList', historyList)
     },
     handleSearchParams (columnValue) {
       columnValue = handleSpecialValue(columnValue)// columnValue.replaceAll("'", "\\\\'")
