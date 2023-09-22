@@ -22,7 +22,7 @@
         </div>
         <div v-for="(item, index3) in row.out" :key="index3">
 
-          <el-popover :width="item.popoverWidth" placement="right" trigger="hover">
+          <el-popover :width="437" placement="right" trigger="hover">
             <template #reference>
               <div class="data-item data-item__hover">
                 <div :test-id="`usagePoint${gridData.length}-${index2+1}-${index3+1}`" :class="item.usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
@@ -54,7 +54,7 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.bandwidthUsage') }}</div>
 
-                      <div class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                      <div class="block-content-item-value">
                         <div :test-id="`egressUsage${gridData.length}-${index2+1}-${index3+1}`" style="margin-left: -10px">
                           <svg class="icon item-popover-up" aria-hidden="true">
                             <use xlink:href="#cn-icon-egress"></use>
@@ -73,7 +73,7 @@
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.linkBlock.total') }}</div>
 
-                      <div :test-id="`totalBitsRate${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                      <div :test-id="`totalBitsRate${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value">
                         {{ valueToRangeValue(item.totalBitsRate, unitTypes.bps).join('') }}
                       </div>
                     </div>
@@ -91,42 +91,42 @@
                   <div class="item-popover-block-content">
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t('linkMonitor.npmScore1') }}</div>
-                      <div :test-id="`score${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                      <div :test-id="`score${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value">
                         {{ item.score }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[0].name) }}</div>
-                      <div :test-id="`tcp${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                      <div :test-id="`tcp${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value">
                         {{ valueToRangeValue(item.establishLatencyMs, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[1].name) }}</div>
-                      <div :test-id="`http${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{'width': item.valueWidth + 'px'}">
+                      <div :test-id="`http${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value">
                         {{ valueToRangeValue(item.httpResponseLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[2].name) }}</div>
-                      <div :test-id="`ssl${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                      <div :test-id="`ssl${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value">
                         {{ valueToRangeValue(item.sslConLatency, unitTypes.time).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[3].name) }}</div>
-                      <div :test-id="`packetLoss${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                      <div :test-id="`packetLoss${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value">
                         {{ valueToRangeValue(item.tcpLostlenPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
 
                     <div class="block-content-item">
                       <div class="block-content-item-name">{{ $t(npmNetworkName[4].name) }}</div>
-                      <div :test-id="`packetRetrans${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value" :style="{width: item.valueWidth + 'px'}">
+                      <div :test-id="`packetRetrans${gridData.length}-${index2+1}-${index3+1}`" class="block-content-item-value">
                         {{ valueToRangeValue(item.pktRetransPercent, unitTypes.percent).join('') }}
                       </div>
                     </div>
