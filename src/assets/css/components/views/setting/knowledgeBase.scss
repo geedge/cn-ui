@@ -1645,7 +1645,7 @@ height:300px !important;
   flex-direction: column;
   padding-bottom:0 !important;
   width: 1080px !important;
-  height: 600px;
+  height: 75vh;
   overflow: hidden;
   &.update-knowledge--upload {
     height: auto;
@@ -1789,11 +1789,14 @@ height:300px !important;
     .update-dialog__table {
       border-bottom: none;
       border-radius: 0.28571rem;
+      max-height:calc(75vh - 190px);
       .el-table--border th, .el-table--border td {
         border-right: none;
       }
       .el-table__body-wrapper {
-        height:100%;
+        height:fit-content;
+        max-height: calc(75vh - 230px);
+        overflow-y: auto;
       }
     }
     .update-knowledge-form {
