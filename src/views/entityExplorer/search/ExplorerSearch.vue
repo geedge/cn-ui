@@ -98,7 +98,12 @@ export default {
         const newItem = { str, date: this.dateFormatByAppearance(new Date()) }
         if (!_.isEmpty(oldHistory)) {
           const oldArr = JSON.parse(oldHistory)
-          oldArr.unshift(newItem)
+          const obj = oldArr.find(d => d.str === str)
+          if (obj) {
+            oldArr[0].date = this.dateFormatByAppearance(new Date())
+          } else {
+            oldArr.unshift(newItem)
+          }
           arr = [...oldArr]
           if (arr.length > 30) {
             arr = arr.slice(0, 30)
