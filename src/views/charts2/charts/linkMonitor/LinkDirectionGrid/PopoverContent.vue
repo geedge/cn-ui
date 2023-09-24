@@ -7,8 +7,8 @@
     <chart-error class="link-block-error" v-if="showError" :content="content"/>
 
     <div class="data-grid" v-show="!isNoData && !showError">
-      <div class="egress-row">
-        <div class="egress-id" v-for="(item, index) in gridData" :key="index">
+      <div class="egress-row" v-if="gridData[0]">
+        <div class="egress-id" v-for="(item, index) in gridData[0].out" :key="index">
           <!--兼容下一跳情况-->
           <span v-if="item.nextHop">{{ item.nextHop }}</span>
           <span v-else>{{ item.linkId }}</span>
@@ -22,7 +22,7 @@
         </div>
         <div v-for="(item, index3) in row.out" :key="index3">
 
-          <el-popover :width="437" placement="right" trigger="hover">
+          <el-popover v-if="!item.noData" :width="437" placement="right" trigger="hover">
             <template #reference>
               <div class="data-item data-item__hover">
                 <div :test-id="`usagePoint${gridData.length}-${index2+1}-${index3+1}`" :class="item.usageMore90 ? 'data-item__point-red':'data-item__point'"></div>
@@ -135,6 +135,9 @@
               </div>
             </template>
           </el-popover>
+          <div v-else>
+            <div class="data-item-no-data data-item__hover"></div>
+          </div>
 
         </div>
       </div>

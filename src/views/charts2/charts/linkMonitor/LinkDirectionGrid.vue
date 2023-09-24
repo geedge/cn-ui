@@ -91,12 +91,23 @@ export default {
             if (!this.isLinkNoData) {
               // 链路流量数据
               const linkGridData = []
+              // 默认构造10*10矩阵，根据行列键值进行填充，最后再删除空行空列
+              linkInfo.forEach(link => {
+                if (link.direction === 'in') {
+                  const outList = []
+                  linkInfo.forEach(link1 => {
+                    if (link1.direction === 'out') {
+                      outList.push({ linkId: link1.linkId, noData: true })
+                    }
+                  })
+                  linkGridData.push({ linkId: link.linkId, out: outList })
+                }
+              })
+
               linkData.forEach(d => {
                 const inLink = linkInfo.find(l => l.originalLinkId === d.inLinkId)
                 const outLink = linkInfo.find(l => l.originalLinkId === d.outLinkId)
                 if (inLink && outLink) {
-                  const data = linkGridData.find(g => g.linkId === inLink.linkId)
-
                   // 上行使用情况计算
                   const outUsage = this.computeUsage(d.outBitsRate, outLink.bandwidth)
                   // 下行使用情况计算
@@ -110,35 +121,51 @@ export default {
 
                   d.scoreLow3 = d.score < 3 || d.score === '-'
 
-                  if (data) {
-                    const existedEgressLink = data.out.find(e => e.linkId === outLink.linkId)
-                    if (!existedEgressLink) {
-                      data.out.push({
-                        linkId: outLink.linkId,
-                        outUsage: outUsage,
-                        inUsage: inUsage,
-                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
-                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
-                        totalBitsRate: d.totalBitsRate,
-                        ...d
-                      })
-                    }
-                  } else {
-                    linkGridData.push({
-                      linkId: inLink.linkId,
-                      out: [{
-                        linkId: outLink.linkId,
-                        outUsage: outUsage,
-                        inUsage: inUsage,
-                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
-                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
-                        totalBitsRate: d.totalBitsRate,
-                        ...d
-                      }]
-                    })
+                  const xAxis = inLink.linkId.split('Hundredgige').pop() - 1
+                  const yAxis = outLink.linkId.split('Hundredgige').pop() - 1
+                  linkGridData[xAxis].out[yAxis] = {
+                    noData: false,
+                    linkId: outLink.linkId,
+                    outUsage: outUsage,
+                    inUsage: inUsage,
+                    popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
+                    valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
+                    totalBitsRate: d.totalBitsRate,
+                    ...d
                   }
                 }
               })
+
+              // 一行如果无数据，则删除该行，默认10*10矩阵
+              linkGridData.forEach((item, index) => {
+                let tempList = []
+                tempList = item.out.filter(l => l.noData)
+                // 如果该行数据都为空，则删除该行
+                if (tempList.length === item.out.length) {
+                  linkGridData.splice(index, 1)
+                }
+              })
+
+              const rowIndex = 0
+              // 一列如果无数据，则删除该列，默认10*10矩阵
+              handleRowNodata(rowIndex)
+              function handleRowNodata (index) {
+                const rowList = []
+                linkGridData.forEach(item => {
+                  if (item.out[index].noData) {
+                    rowList.push(item.out[index].noData)
+                  }
+                })
+
+                if (rowList.length === linkGridData.length) {
+                  linkGridData.forEach(item => {
+                    item.out.splice(index, 1)
+                  })
+                  handleRowNodata(index)
+                } else if (index < (linkGridData[0].out.length - 1)) {
+                  handleRowNodata(index + 1)
+                }
+              }
               this.isLinkNoData = linkGridData.length === 0
               this.linkGridData = linkGridData
             }
@@ -164,14 +191,28 @@ export default {
             this.isNextNoData = nextLinkData.length === 0
             if (!this.isNextNoData) {
               // 链路下一跳数据
-              const nextGridData = []
+              let nextGridData = []
+              const nextGridTemplate = [
+                { linkId: 'Hundredgige2', nextHop: '太原', out: [] },
+                { linkId: 'Hundredgige1', nextHop: '西安', out: [] },
+                { linkId: 'Hundredgige4', nextHop: '西宁', out: [] }
+              ]
+              nextGridData = JSON.parse(JSON.stringify(nextGridTemplate))
+              nextGridData.forEach(link => {
+                link.out = JSON.parse(JSON.stringify(nextGridTemplate))
+                link.out.forEach(link1 => {
+                  link1.noData = true
+                  link1.coordinate = `${link.linkId}-${link1.linkId}`
+                  delete link1.out
+                })
+              })
 
               nextLinkData.forEach(d => {
                 const inLink = linkInfo.find(l => l.nextHop === d.inLinkDirection && l.direction === 'in')
                 const outLink = linkInfo.find(l => l.nextHop === d.outLinkDirection && l.direction === 'out')
 
                 if (inLink && outLink) {
-                  const data = nextGridData.find(g => g.linkId === inLink.linkId)
+                  // const data = nextGridData.find(g => g.linkId === inLink.linkId)
 
                   let outBandwidth = 0
                   let inBandwidth = 0
@@ -197,38 +238,58 @@ export default {
 
                   d.scoreLow3 = d.score < 3 || d.score === '-'
 
-                  if (data) {
-                    const existedEgressLink = data.out.find(e => e.linkId === outLink.linkId)
-                    if (!existedEgressLink) {
-                      data.out.push({
-                        linkId: outLink.linkId,
-                        nextHop: outLink.nextHop,
-                        outUsage: outUsage,
-                        inUsage: inUsage,
-                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
-                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
-                        totalBitsRate: d.totalBitsRate,
-                        ...d
-                      })
-                    }
-                  } else {
-                    nextGridData.push({
-                      linkId: inLink.linkId,
-                      nextHop: inLink.nextHop,
-                      out: [{
-                        linkId: outLink.linkId,
-                        nextHop: inLink.nextHop,
-                        outUsage: outUsage,
-                        inUsage: inUsage,
-                        popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
-                        valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
-                        totalBitsRate: d.totalBitsRate,
-                        ...d
-                      }]
+                  const xAxis = inLink.linkId
+                  const yAxis = outLink.linkId
+                  nextGridData.forEach((link, index) => {
+                    link.out.forEach((link1, index1) => {
+                      if (link1.coordinate === (xAxis + '-' + yAxis)) {
+                        nextGridData[index].out[index1] = {
+                          coordinate: link1.coordinate,
+                          noData: false,
+                          linkId: outLink.linkId,
+                          nextHop: outLink.nextHop,
+                          outUsage: outUsage,
+                          inUsage: inUsage,
+                          popoverWidth: this.computeWidth(outUsage, inUsage, 'popover'),
+                          valueWidth: this.computeWidth(outUsage, inUsage, 'value'),
+                          totalBitsRate: d.totalBitsRate,
+                          ...d
+                        }
+                      }
                     })
-                  }
+                  })
                 }
               })
+              // 一行如果无数据，则删除该行，默认3*3矩阵
+              nextGridData.forEach((item, index) => {
+                let tempList = []
+                tempList = item.out.filter(l => l.noData)
+                // 如果该行数据都为空，则删除该行
+                if (tempList.length === item.out.length) {
+                  nextGridData.splice(index, 1)
+                }
+              })
+
+              const rowIndex = 0
+              // 一列如果无数据，则删除该列，默认3*3矩阵
+              handleRowNodata(rowIndex)
+              function handleRowNodata (index) {
+                const rowList = []
+                nextGridData.forEach(item => {
+                  if (item.out[index].noData) {
+                    rowList.push(item.out[index].noData)
+                  }
+                })
+
+                if (rowList.length === nextGridData.length) {
+                  nextGridData.forEach(item => {
+                    item.out.splice(index, 1)
+                  })
+                  handleRowNodata(index)
+                } else if (index < (nextGridData[0].out.length - 1)) {
+                  handleRowNodata(index + 1)
+                }
+              }
               this.isNextNoData = nextGridData.length === 0
               this.nextGridData = nextGridData
             }
