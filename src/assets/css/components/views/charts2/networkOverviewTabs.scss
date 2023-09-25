@@ -65,10 +65,10 @@
           cursor: pointer;
         }
         .el-table__header {
-          width:100%;
+          width:100% !important;
         }
         .el-table__body {
-          width:100%;
+          width:100% !important;
         }
       }
       .dns-in-ex {
@@ -110,11 +110,11 @@
           cursor: pointer;
         }
         .el-table__header {
-          width:100%;
+          width:100% !important;
         }
         .el-table__body {
           height:100%;
-          width:100%;
+          width:100% !important;
         }
       }
       .tab-table__no-bottom {
