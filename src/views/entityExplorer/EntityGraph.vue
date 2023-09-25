@@ -85,7 +85,9 @@ export default {
       /* 自己实现stack操作 */
       stackData: {
         undo: [], // 后退
-        redo: [] // 前进
+        justUndo: false, // 是否刚后退了
+        redo: [], // 前进
+        justRedo: false // 是否刚前进了
       },
       center: {},
       initialData: null // 初始化数据，用于重置
@@ -676,6 +678,15 @@ export default {
           // 手动高亮listNode
           const _listNode = _this.graph.findById(listNode.id)
           _this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() })
+          console.info(_this.stackData)
+          if (_this.stackData.justUndo) {
+            _this.stackData.justUndo = false
+            _this.stackData.redo = []
+          }
+          if (_this.stackData.justRedo) {
+            _this.stackData.justRedo = false
+            _this.stackData.redo = []
+          }
         }
       })
       this.graph.on('node:mouseenter', function (e) {
@@ -917,6 +928,7 @@ export default {
         handleClick: (code, graph) => {
           if (code === 'undo') {
             const data = this.stackData.undo.pop()
+            this.stackData.justUndo = true
             data.nodes.forEach(n => {
               if (n.type === nodeType.listNode) {
                 const listNode = this.graph.findById(n.id)
@@ -932,13 +944,20 @@ export default {
               this.graph.removeItem(e.id)
             })
             this.stackData.redo.push(data)
+            if (this.stackData.justRedo) {
+              this.stackData.justRedo = false
+            }
             this.cleanTempNodesAndTempEdges()
             this.graph.layout()
             this.onCloseBlock()
           } else if (code === 'redo') {
             const data = this.stackData.redo.pop()
-            this.addItems(data.nodes, data.edges, false)
-            this.stackData.undo.push(data)
+            this.stackData.justRedo = true
+            this.addItems(data.nodes, data.edges)
+            // this.stackData.undo.push(data)
+            if (this.stackData.justUndo) {
+              this.stackData.justUndo = false
+            }
             this.cleanTempNodesAndTempEdges()
             this.graph.layout()
             this.onCloseBlock()
@@ -954,6 +973,12 @@ export default {
             this.graph.clear()
             this.graph.data(this.initialData)
             this.graph.render()
+            this.stackData = {
+              undo: [],
+              redo: [],
+              justUndo: false,
+              justRedo: false
+            }
             const rootNode = this.graph.findById(this.entity.entityName)
             this.graph.emit('node:click', { item: rootNode, target: rootNode.getKeyShape() }) // 手动触发rootNode的点击事件
           }
