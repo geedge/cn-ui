@@ -112,6 +112,9 @@ export default {
               } else {
                 this.$message.error(res.data.message)
               }
+            }).catch(e => {
+              this.blockOperation.save = false
+              this.$message.error(this.errorMsgHandler(e))
             })
           } else {
             axios.post(this.url, this.editObject).then(res => {
@@ -122,6 +125,9 @@ export default {
               } else {
                 this.$message.error(res.data.message)
               }
+            }).catch(e => {
+              this.blockOperation.save = false
+              this.$message.error(this.errorMsgHandler(e))
             })
           }
         } else {
