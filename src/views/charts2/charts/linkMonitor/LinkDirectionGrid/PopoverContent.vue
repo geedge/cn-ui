@@ -136,7 +136,7 @@
             </template>
           </el-popover>
           <div v-else>
-            <div class="data-item-no-data data-item__hover"></div>
+            <div class="data-item-no-data"></div>
           </div>
 
         </div>

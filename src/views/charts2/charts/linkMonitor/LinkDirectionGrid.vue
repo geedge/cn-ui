@@ -137,11 +137,11 @@ export default {
               })
 
               // 一行如果无数据，则删除该行，默认10*10矩阵
-              const rowIndex1 = 0
-              this.handleXRowNoData(linkGridData, rowIndex1)
+              const rowXIndex = 0
+              this.handleXRowNoData(linkGridData, rowXIndex)
               // 一列如果无数据，则删除该列，默认10*10矩阵
-              const rowIndex = 0
-              this.handleYRowNoData(linkGridData, rowIndex)
+              const rowYIndex = 0
+              this.handleYRowNoData(linkGridData, rowYIndex)
               this.isLinkNoData = linkGridData.length === 0
               this.linkGridData = linkGridData
             }
@@ -238,11 +238,11 @@ export default {
               })
 
               // 一行如果无数据，则删除该行，默认3*3矩阵
-              const rowIndex1 = 0
-              this.handleXRowNoData(nextGridData, rowIndex1)
+              const rowXIndex = 0
+              this.handleXRowNoData(nextGridData, rowXIndex)
               // 一列如果无数据，则删除该列，默认3*3矩阵
-              const rowIndex = 0
-              this.handleYRowNoData(nextGridData, rowIndex)
+              const rowYIndex = 0
+              this.handleYRowNoData(nextGridData, rowYIndex)
 
               this.isNextNoData = nextGridData.length === 0
               this.nextGridData = nextGridData
@@ -315,7 +315,7 @@ export default {
       return width
     },
     /**
-     * 删除重复行
+     * 删除空行
      * @param data
      * @param index
      */
@@ -337,7 +337,7 @@ export default {
       }
     },
     /**
-     * 删除重复列
+     * 删除空列
      * @param data
      * @param index
      */
