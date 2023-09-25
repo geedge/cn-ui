@@ -137,35 +137,11 @@ export default {
               })
 
               // 一行如果无数据，则删除该行，默认10*10矩阵
-              linkGridData.forEach((item, index) => {
-                let tempList = []
-                tempList = item.out.filter(l => l.noData)
-                // 如果该行数据都为空，则删除该行
-                if (tempList.length === item.out.length) {
-                  linkGridData.splice(index, 1)
-                }
-              })
-
-              const rowIndex = 0
+              const rowIndex1 = 0
+              this.handleXRowNoData(linkGridData, rowIndex1)
               // 一列如果无数据，则删除该列，默认10*10矩阵
-              handleRowNodata(rowIndex)
-              function handleRowNodata (index) {
-                const rowList = []
-                linkGridData.forEach(item => {
-                  if (item.out[index].noData) {
-                    rowList.push(item.out[index].noData)
-                  }
-                })
-
-                if (rowList.length === linkGridData.length) {
-                  linkGridData.forEach(item => {
-                    item.out.splice(index, 1)
-                  })
-                  handleRowNodata(index)
-                } else if (index < (linkGridData[0].out.length - 1)) {
-                  handleRowNodata(index + 1)
-                }
-              }
+              const rowIndex = 0
+              this.handleYRowNoData(linkGridData, rowIndex)
               this.isLinkNoData = linkGridData.length === 0
               this.linkGridData = linkGridData
             }
@@ -260,36 +236,14 @@ export default {
                   })
                 }
               })
+
               // 一行如果无数据，则删除该行，默认3*3矩阵
-              nextGridData.forEach((item, index) => {
-                let tempList = []
-                tempList = item.out.filter(l => l.noData)
-                // 如果该行数据都为空，则删除该行
-                if (tempList.length === item.out.length) {
-                  nextGridData.splice(index, 1)
-                }
-              })
-
-              const rowIndex = 0
+              const rowIndex1 = 0
+              this.handleXRowNoData(nextGridData, rowIndex1)
               // 一列如果无数据，则删除该列，默认3*3矩阵
-              handleRowNodata(rowIndex)
-              function handleRowNodata (index) {
-                const rowList = []
-                nextGridData.forEach(item => {
-                  if (item.out[index].noData) {
-                    rowList.push(item.out[index].noData)
-                  }
-                })
+              const rowIndex = 0
+              this.handleYRowNoData(nextGridData, rowIndex)
 
-                if (rowList.length === nextGridData.length) {
-                  nextGridData.forEach(item => {
-                    item.out.splice(index, 1)
-                  })
-                  handleRowNodata(index)
-                } else if (index < (nextGridData[0].out.length - 1)) {
-                  handleRowNodata(index + 1)
-                }
-              }
               this.isNextNoData = nextGridData.length === 0
               this.nextGridData = nextGridData
             }
@@ -359,6 +313,54 @@ export default {
       }
 
       return width
+    },
+    /**
+     * 删除重复行
+     * @param data
+     * @param index
+     */
+    handleXRowNoData (data, index) {
+      if (data) {
+        const item = data[index]
+        let tempList = []
+        if (item) {
+          tempList = item.out.filter(l => l.noData)
+          // 如果该行数据都为空，则删除该行
+          if (tempList.length === item.out.length) {
+            data.splice(index, 1)
+            this.handleXRowNoData(data, index)
+          } else if (index < (data.length - 2)) {
+            index = index + 1
+            this.handleXRowNoData(data, index)
+          }
+        }
+      }
+    },
+    /**
+     * 删除重复列
+     * @param data
+     * @param index
+     */
+    handleYRowNoData (data, index) {
+      const rowList = []
+      if (data) {
+        data.forEach(item => {
+          if (item.out[index]) {
+            if (item.out[index].noData) {
+              rowList.push(item.out[index].noData)
+            }
+          }
+        })
+
+        if (rowList.length === data.length) {
+          data.forEach(item => {
+            item.out.splice(index, 1)
+          })
+          this.handleYRowNoData(data, index)
+        } else if (index < (data[0].out.length - 1)) {
+          this.handleYRowNoData(data, index + 1)
+        }
+      }
     }
   }
 }
