@@ -394,11 +394,17 @@ export default {
     async location (n) {
       this.$store.commit('setNpmLocationCountry', n)
       if (!n) {
-        this.countryImageSeries.data = [{}]
+        if (this.countryImageSeries) {
+          this.countryImageSeries.data = [{}]
+        }
         this.polygonSeries.show()
         this.worldImageSeries.show()
-        this.countrySeries.hide()
-        this.countryImageSeries.hide()
+        if (this.countrySeries) {
+          this.countrySeries.hide()
+        }
+        if (this.countryImageSeries) {
+          this.countryImageSeries.hide()
+        }
         this.myChart.zoomToGeoPoint(this.myChart.homeGeoPoint, this.myChart.homeZoomLevel, true)
       } else {
         const countryId = countryNameIdMapping[n]
