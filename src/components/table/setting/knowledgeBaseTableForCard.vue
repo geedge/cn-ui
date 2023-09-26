@@ -202,10 +202,12 @@
 <script>
 import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
-import { knowledgeCategoryValue, storageKey, builtInKnowledgeBaseBasicInfo } from '@/utils/constants'
+import { knowledgeCategoryValue, unitTypes, storageKey, builtInKnowledgeBaseBasicInfo } from '@/utils/constants'
 import { ref } from 'vue'
 import { api } from '@/utils/api'
 import axios from 'axios'
+import _ from 'lodash'
+import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'knowledgeBaseTableForCard',
   mixins: [table],
@@ -249,12 +251,24 @@ export default {
       },
       uploadErrorTip,
       fileTypeLimit: '.csv',
-      fileList: ref([])
+      fileList: ref([]),
+      uploadFileSizeLimit: 100 * 1024 * 1024
     }
   },
   methods: {
-    fileChange (files, fileList) {
-      this.fileList = fileList.slice(-1)
+    fileChange (file, fileList) {
+      console.info(!_.endsWith(file.name, '.csv'))
+      console.info(file.size > this.uploadFileSizeLimit)
+      // 判断后缀，仅支持.csv
+      if (!_.endsWith(file.name, '.csv')) {
+        this.fileList = []
+        this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
+      } else if (file.size > this.uploadFileSizeLimit) { // 判断文件大小
+        this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
+        this.fileList = []
+      } else {
+        this.fileList = fileList.slice(-1)
+      }
     },
     uploadError (error) {
       let errorMsg
