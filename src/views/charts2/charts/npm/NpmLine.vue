@@ -178,8 +178,8 @@ export default {
         }
         this.chartOption = npmLineChartOption
         this.chartOption.color = this.chartData.params.color
-        this.chartOption.color = this.chartOption.color.reverse()
-        data = data.reverse()
+        // this.chartOption.color = this.chartOption.color.reverse()
+        // data = data.reverse()
 
         this.chartOption.series = data.map((t, i) => {
           return {
@@ -226,7 +226,7 @@ export default {
               }
             })
           })
-          return stackedLineTooltipFormatter(params)
+          return stackedLineTooltipFormatter(params.reverse())
         }
 
         this.myChartArray.push(this.myChart)
