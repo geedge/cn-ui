@@ -4,12 +4,12 @@
       <el-tab-pane :label="$t('linkMonitor.ingress')" name="0">
         <chart-error v-if="showError" :content="errorMsg"></chart-error>
         <chart-no-data v-if="ingressNoData"></chart-no-data>
-        <div v-if="parseInt(tab) === 0 && !showError" class="chart-drawing" id="link-traffic-sankey-0"></div>
+        <div v-if="parseInt(tab) === 0 && !showError && !ingressNoData" class="chart-drawing" id="link-traffic-sankey-0"></div>
       </el-tab-pane>
       <el-tab-pane :label="$t('linkMonitor.egress')" name="1">
         <chart-error v-if="showError" :content="errorMsg"></chart-error>
         <chart-no-data v-if="egressNoData"></chart-no-data>
-        <div v-if="parseInt(tab) === 1 && !showError" class="chart-drawing" id="link-traffic-sankey-1"></div>
+        <div v-if="parseInt(tab) === 1 && !showError && !egressNoData" class="chart-drawing" id="link-traffic-sankey-1"></div>
       </el-tab-pane>
     </el-tabs>
     <template v-if="parseInt(tab) === 0 && !ingressNoData">
@@ -38,7 +38,7 @@ import { api } from '@/utils/api'
 import { getSecond } from '@/utils/date-util'
 import { useRoute } from 'vue-router'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import { storageKey, unitTypes } from '@/utils/constants'
 import ChartError from '@/components/common/Error'
 import _ from 'lodash'
@@ -66,7 +66,7 @@ export default {
       timer: null,
       ingressNoData: false,
       egressNoData: false,
-      unitConvert,
+      valueToRangeValue,
       unitTypes,
       cnLinkInfo: JSON.parse(localStorage.getItem(storageKey.linkInfo)),
       showError: false,
@@ -121,12 +121,24 @@ export default {
           let noData
           if (res.data.result.length === 0) {
             noData = true
+          }
+          // 增加一个drawXxx属性，用来处理有数据但太小被算成0的情况。
+          if (n === 0) {
+            res.data.result.forEach(d => {
+              if (d.inBitsRate === 0) {
+                d.drawInBitsRate = 0.01
+              } else {
+                d.drawInBitsRate = d.inBitsRate
+              }
+            })
           } else {
-            if (n === 0) {
-              noData = !res.data.result.some(d => d.inBitsRate > 0)
-            } else {
-              noData = !res.data.result.some(d => d.outBitsRate > 0)
-            }
+            res.data.result.forEach(d => {
+              if (d.outBitsRate === 0) {
+                d.drawOutBitsRate = 0.01
+              } else {
+                d.drawOutBitsRate = d.outBitsRate
+              }
+            })
           }
           if (n === 0) {
             this.ingressNoData = noData
@@ -158,7 +170,8 @@ export default {
               t.linkId = e.linkId
               t.linkDirection = e.nextHop
               t.bandwidth = e.bandwidth
-              t.value = _.round(Number(t.inBitsRate), 2)
+              t.originalValue = _.round(Number(t.inBitsRate), 2)
+              t.value = _.round(Number(t.drawInBitsRate), 2)
               t.external = `e_${t.externalLocation}`
               t.internal = `i_${t.internalLocation}`
             }
@@ -171,7 +184,8 @@ export default {
               t.linkId = e.linkId
               t.bandwidth = e.bandwidth
               t.linkDirection = e.nextHop
-              t.value = _.round(Number(t.outBitsRate), 2)
+              t.originalValue = _.round(Number(t.outBitsRate), 2)
+              t.value = _.round(Number(t.drawOutBitsRate), 2)
               t.external = `e_${t.externalLocation}`
               t.internal = `i_${t.internalLocation}`
             }
@@ -179,7 +193,6 @@ export default {
         })
       }
       result = result.filter(r => r.externalLocation && r.internalLocation)
-
       const data = []
       const links = []
       const data0 = []
@@ -201,7 +214,7 @@ export default {
           if (existLink0) {
             existLink0.value += r.value
           } else {
-            links0.push({ source: r.internal, target: r.linkId, tooltip0: r.internalLocation, tooltip1: r.linkId, value: r.value, depth: 0, bandwidth: r.bandwidth })
+            links0.push({ source: r.internal, target: r.linkId, tooltip0: r.internalLocation, tooltip1: r.linkId, value: r.value, originalValue: r.originalValue, depth: 0, bandwidth: r.bandwidth })
           }
           const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.internal)
           if (existLinkAnalyze0) {
@@ -217,7 +230,7 @@ export default {
           if (existLink1) {
             existLink1.value += r.value
           } else {
-            links1.push({ source: r.linkId, target: r.linkDirection, tooltip0: r.linkId, tooltip1: r.linkDirection, value: r.value, depth: 1, bandwidth: r.bandwidth })
+            links1.push({ source: r.linkId, target: r.linkDirection, tooltip0: r.linkId, tooltip1: r.linkDirection, value: r.value, originalValue: r.originalValue, depth: 1, bandwidth: r.bandwidth })
           }
           // 第三列
           if (!data2.some(d => d.name === r.linkDirection)) {
@@ -227,7 +240,7 @@ export default {
           if (existLink2) {
             existLink2.value += r.value
           } else {
-            links2.push({ source: r.linkDirection, target: r.external, tooltip0: r.linkDirection, tooltip1: r.externalLocation, value: r.value, depth: 2 })
+            links2.push({ source: r.linkDirection, target: r.external, tooltip0: r.linkDirection, tooltip1: r.externalLocation, value: r.value, originalValue: r.originalValue, depth: 2 })
           }
           const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.external)
           if (existLinkAnalyze2) {
@@ -250,7 +263,7 @@ export default {
           if (existLink0) {
             existLink0.value += r.value
           } else {
-            links0.push({ source: r.external, target: r.linkDirection, tooltip0: r.externalLocation, tooltip1: r.linkDirection, value: r.value, depth: 0 })
+            links0.push({ source: r.external, target: r.linkDirection, tooltip0: r.externalLocation, tooltip1: r.linkDirection, value: r.value, originalValue: r.originalValue, depth: 0 })
           }
           const existLinkAnalyze0 = linksAnalyze0.find(l => l.name === r.external)
           if (existLinkAnalyze0) {
@@ -266,7 +279,7 @@ export default {
           if (existLink1) {
             existLink1.value += r.value
           } else {
-            links1.push({ source: r.linkDirection, target: r.linkId, tooltip0: r.linkDirection, tooltip1: r.linkId, value: r.value, depth: 1, bandwidth: r.bandwidth })
+            links1.push({ source: r.linkDirection, target: r.linkId, tooltip0: r.linkDirection, tooltip1: r.linkId, value: r.value, depth: 1, originalValue: r.originalValue, bandwidth: r.bandwidth })
           }
           // 第三列
           if (!data2.some(d => d.name === r.linkId)) {
@@ -276,7 +289,7 @@ export default {
           if (existLink2) {
             existLink2.value += r.value
           } else {
-            links2.push({ source: r.linkId, target: r.internal, tooltip0: r.linkId, tooltip1: r.internalLocation, value: r.value, depth: 2, bandwidth: r.bandwidth })
+            links2.push({ source: r.linkId, target: r.internal, tooltip0: r.linkId, tooltip1: r.internalLocation, value: r.value, depth: 2, originalValue: r.originalValue, bandwidth: r.bandwidth })
           }
           const existLinkAnalyze2 = linksAnalyze2.find(l => l.name === r.internal)
           if (existLinkAnalyze2) {
@@ -417,7 +430,7 @@ export default {
       this.chartOption.tooltip.formatter = function (param) {
         if (param.data.name) return ''
         const data = `${param.data.tooltip0} > ${param.data.tooltip1}`
-        const value = param.data.bandwidth ? unitConvert((param.data.value / param.data.bandwidth), unitTypes.percent)[0] : ''
+        const value = param.data.bandwidth ? valueToRangeValue((param.data.originalValue / param.data.bandwidth), unitTypes.percent).join(' ') : ''
         let html = `
             <div class="traffic-sankey">
               <div class="traffic-sankey-row-header">
@@ -431,9 +444,9 @@ export default {
         }
         html += `</div>
                 <div class="traffic-sankey__tooltip-right">
-                  <div class="traffic-sankey__row-value">${unitConvert(param.value, unitTypes.bps).join(' ')}</div>`
+                  <div class="traffic-sankey__row-value">${valueToRangeValue(param.data.originalValue, unitTypes.bps).join(' ')}</div>`
         if (value || value === 0) {
-          html += `<div class="traffic-sankey__row-value">${value < 0.01 ? '< 0.01 %' : value + ' %'}</div>`
+          html += `<div class="traffic-sankey__row-value">${value}</div>`
         }
         html += `</div>
               </div>
@@ -475,7 +488,7 @@ export default {
     this.chartOption = null
 
     this.cnLinkInfo = null
-    this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>
