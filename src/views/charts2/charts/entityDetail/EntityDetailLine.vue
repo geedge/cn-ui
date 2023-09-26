@@ -481,8 +481,24 @@ export default {
     },
     initData (data, val, active, show, n) {
       let lineData = []
+      const newData = [] // 接口数据的新构造排序数据
+      if (data && data.length > 0) {
+        data.forEach(item => {
+          const obj = {}
+          // 模板数据，按此进行排序
+          const templateList = ['type', 'total', 'inbound', 'outbound', 'internal', 'through', 'other']
+          for (const key in templateList) {
+            const code = Object.keys(item).find(d => d.indexOf(templateList[key]) > -1)
+            if (code) {
+              obj[code] = _.clone(item[code])
+            }
+          }
+          newData.push(obj)
+        })
+      }
+
       if (data !== undefined && data.length > 0) {
-        data.forEach((item) => {
+        newData.forEach((item) => {
           item.type = getLineType(item.type)
           if (item.type === val) {
             lineData = Object.keys(item).map(t => {
