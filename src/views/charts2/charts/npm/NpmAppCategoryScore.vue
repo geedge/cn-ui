@@ -33,7 +33,7 @@
             <div class="data-total">
               <template v-if="item.prop === 'category'">
                 <span class="data-total-category-icon"><i :class="scope.row.icon"></i></span>
-                <span class="data-total-category-value">{{$t(scope.row.i18n)}}</span>
+                <span class="data-total-category-value" @click="drillDownData(scope.row.i18n)">{{$t(scope.row.i18n)}}</span>
               </template>
               <template v-else-if="item.prop === 'total'">
                 <div class="data-total-value">{{valueToRangeValue(scope.row.totalBitsRate, unitTypes.bps).join(' ')}}</div>
@@ -260,9 +260,7 @@ export default {
                 }
                 t.score = computeScore(data)
               })
-              // this.tableData = tableData
-              // todo 当前版本，voip没数据，暂时隐藏，后续记得删除该段
-              this.tableData = tableData.filter(item => item.appSubcategory !== 'voip-video')
+              this.tableData = tableData
             }).finally(() => {
               this.toggleLoading(false)
             })
