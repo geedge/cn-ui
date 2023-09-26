@@ -4,6 +4,7 @@ import axios from 'axios'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { mockData, linkInfoData } from './MockData/LinkBlock'
 import common from '@/mixins/common'
+import ElementPlus from 'element-plus'
 
 const mockGet1 = mockData.common.data1
 const mockGet2 = mockData.common.data2
@@ -21,7 +22,7 @@ var wrapper = null
  * 进行axios请求，并挂载vue实例
  *
  */
-function axiosPostAndMounted (list1, list2) {
+function axiosPostAndMounted (list1, list2, loadEle) {
   require('vue-router').useRoute.mockReturnValue({ query: {} })
 
   const data1 = list1 || mockGet1
@@ -44,6 +45,9 @@ function axiosPostAndMounted (list1, list2) {
   wrapper = mount(linkBlock, {
     propsData: {
       timeFilter
+    },
+    global: {
+      plugins: loadEle ? [ElementPlus] : []
     },
     mixins: [common, chartMixin]
   })
@@ -160,6 +164,23 @@ describe('views/charts2/charts/linkMonitor/LinkBlock.vue测试', () => {
       expect(nextHopIngressUsage0.text()).toBe('100.00%')
       expect(nextHopIngressUsage1.text()).toBe('100.00%')
       expect(nextHopIngressUsage2.text()).toBe('100.00%')
+      resolve()
+    }, 200))
+  })
+  test('链路几个数据的值相等，下一跳只有一个数据时，色块颜色是否是蓝色rgb(64,83,126)', async () => {
+    const list1 = mockData.equalValue.data1
+    const list2 = mockData.equalValue.data2
+
+    axiosPostAndMounted(list1, list2, true)
+
+    await new Promise(resolve => setTimeout(() => {
+      const linkBlock0 = wrapper.get('[test-id="linkBlock0"]')
+      const linkBlock1 = wrapper.get('[test-id="linkBlock1"]')
+      const nextHopBlock0 = wrapper.get('[test-id="nextHopBlock0"]')
+
+      expect(linkBlock0.attributes('style')).toBe('background-color: rgb(64, 83, 126);')
+      expect(linkBlock1.attributes('style')).toBe('background-color: rgb(64, 83, 126);')
+      expect(nextHopBlock0.attributes('style')).toBe('background-color: rgb(64, 83, 126);')
       resolve()
     }, 200))
   })

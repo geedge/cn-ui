@@ -1080,9 +1080,16 @@ export function colorGradientCalculation (startColor, endColor, values) {
   const gDiff = endRgbArr[1] - startRgbArr[1]
   const bDiff = endRgbArr[2] - startRgbArr[2]
   const valueDiff = values[0] - values[values.length - 1]
-  values.forEach((v, i) => {
-    colors.push(`rgb(${startRgbArr[0] + Math.floor(rDiff * (valueDiff - diff(v)) / valueDiff)},${startRgbArr[1] + Math.floor(gDiff * (valueDiff - diff(v)) / valueDiff)},${startRgbArr[2] + Math.floor(bDiff * (valueDiff - diff(v)) / valueDiff)})`)
-  })
+  if (valueDiff > 0) {
+    values.forEach((v, i) => {
+      colors.push(`rgb(${startRgbArr[0] + Math.floor(rDiff * (valueDiff - diff(v)) / valueDiff)},${startRgbArr[1] + Math.floor(gDiff * (valueDiff - diff(v)) / valueDiff)},${startRgbArr[2] + Math.floor(bDiff * (valueDiff - diff(v)) / valueDiff)})`)
+    })
+  } else {
+    values.forEach((v, i) => {
+      colors.push('rgb(64,83,126)')
+    })
+  }
+
   function diff (v) {
     return v - values[values.length - 1]
   }

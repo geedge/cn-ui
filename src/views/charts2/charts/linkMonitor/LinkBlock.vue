@@ -19,7 +19,7 @@
           <template #reference>
             <div class="block-list__block" :key="index" @click="drillLinkId(item)">
               <span class="block-hex">
-                <span class="block-hex-in" :style="`background-color: ${item.color}`"></span>
+                <span class="block-hex-in" :test-id="`linkBlock${index}`" :style="`background-color: ${item.color}`"></span>
               </span>
             </div>
           </template>
@@ -72,7 +72,7 @@
           <template #reference>
             <div class="block-list__block" :key="index" @click="drillNextHop(item)">
               <span class="block-hex">
-                <span class="block-hex-in" :style="`background-color: ${item.color}`"></span>
+                <span class="block-hex-in" :test-id="`nextHopBlock${index}`" :style="`background-color: ${item.color}`"></span>
               </span>
             </div>
           </template>

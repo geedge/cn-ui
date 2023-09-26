@@ -238,6 +238,50 @@ export const mockData = {
         msg: 'OK'
       }
     }
+  },
+  equalValue: {
+    data1: {
+      "status": 200,
+      data: {
+        "data": {
+          "resultType": "table",
+          "result": [
+            {
+              "linkId": "1025",
+              "outBytes": "0",
+              "outBitsRate": 0.0,
+              "inBytes": "104870932",
+              "inBitsRate": 38841.12
+            },
+            {
+              "linkId": "512",
+              "outBytes": "104870932",
+              "outBitsRate": 38841.12,
+              "inBytes": "0",
+              "inBitsRate": 0.0
+            }
+          ]
+        }
+      }
+    },
+    data2: {
+      "status": 200,
+      "data": {
+        "data": {
+          "resultType": "table",
+          "result": [
+            {
+              "outLinkDirection": "太原",
+              "inLinkDirection": "西宁",
+              "outBytes": "104870932",
+              "outBitsRate": 38841.12,
+              "inBytes": "104870932",
+              "inBitsRate": 38841.12
+            }
+          ]
+        }
+      }
+    }
   }
 }
 
