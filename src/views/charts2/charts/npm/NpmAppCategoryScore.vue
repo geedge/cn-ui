@@ -36,7 +36,7 @@
                 <span class="data-total-category-value">{{$t(scope.row.i18n)}}</span>
               </template>
               <template v-else-if="item.prop === 'total'">
-                <div class="data-total-value">{{valueToRangeValue(scope.row.totalPacketsRate, unitTypes.bps).join(' ')}}</div>
+                <div class="data-total-value">{{valueToRangeValue(scope.row.totalBitsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.bytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
@@ -59,7 +59,7 @@
                 </div>
               </template>
               <template v-else-if="item.prop === 'outbound'">
-                <div class="data-total-value">{{valueToRangeValue(scope.row.outboundPacketsRate, unitTypes.bps).join(' ')}}</div>
+                <div class="data-total-value">{{valueToRangeValue(scope.row.outboundBitsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.outboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
@@ -82,7 +82,7 @@
                 </div>
               </template>
               <template v-else-if="item.prop === 'inbound'">
-                <div class="data-total-value" :test-id="`inbound-packet-${scope.row.appSubcategory}`">{{valueToRangeValue(scope.row.inboundPacketsRate, unitTypes.bps).join(' ')}}</div>
+                <div class="data-total-value" :test-id="`inbound-packet-${scope.row.appSubcategory}`">{{valueToRangeValue(scope.row.inboundBitsRate, unitTypes.bps).join(' ')}}</div>
                 <div class="data-trend">
                   <div v-if="scope.row.inboundBytesRateChainRatio > 0" class="data-total-trend data-total-trend-red">
                     <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
