@@ -26,7 +26,7 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-country"></i>
                   <span class="row-item-label">{{ $t('overall.country') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.location ? entityData.location.country : '-' }}</span>
+                  <span class="row-item-value">{{ $_.get(entityData, 'location.country', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
@@ -36,36 +36,36 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-cloud"></i>
                   <span class="row-item-label">{{ $t('entities.asn') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.asn ? entityData.asn.asn : '-' }}</span>
+                  <span class="row-item-value">{{ $_.get(entityData, 'asn.asn', '-') || '-' }}</span>
                 </div>
               </template>
               <template v-else-if="entityData.entityType === 'domain'">
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category-group"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.category ? entityData.category.categoryGroup : '-' }}</span>
+                  <span class="row-item-value">{{ $_.get(entityData, 'category.categoryGroup', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
                   <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.category ? entityData.category.categoryName : '-' }}</span>
+                  <span class="row-item-value">{{ $_.get(entityData, 'category.categoryName', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-credit-rating"></i>
                   <span class="row-item-label">{{ $t('entities.reputationLevel') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.category ? entityData.category.reputationLevel : '-' }}</span>
+                  <span class="row-item-value">{{ $_.get(entityData, 'category.reputationLevel', '-') || '-' }}</span>
                 </div>
               </template>
               <template v-else-if="entityData.entityType === 'app'">
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category2"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.category ? entityData.category.appCategory : '-' }}</span>
+                  <span class="row-item-value">{{ $_.get(entityData, 'category.appCategory', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
                   <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.category ? entityData.category.appSubcategory : '-' }}</span>
+                  <span class="row-item-value">{{ $_.get(entityData, 'category.appSubcategory', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-credit-rating"></i>
