@@ -232,8 +232,12 @@ export default {
     }
   },
   mounted () {
-    this.initData()
-    this.initTagsData()
+    setTimeout(() => {
+      this.initData()
+    }, 1000)
+    setTimeout(() => {
+      this.initTagsData()
+    })
   },
   methods: {
     initData () {

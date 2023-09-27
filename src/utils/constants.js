@@ -1862,10 +1862,10 @@ export const chartColor4 = ['#E5F6F6', '#F2F6EE', '#EBF7FC', '#FCF4EB', '#9FBC1D
 export const chartColor5 = ['#E26154', '#E7B34E', '#88AF65']
 
 export const chartColor6 = ['#E99F67', '#D9C74B']
-
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',
   [storageKey.iso36112WorldLow]: 'worldChinaLow',
+  XK: 'kosovoLow',
   IE: 'irelandLow',
   MM: 'myanmarLow',
   TZ: 'tanzaniaLow',
