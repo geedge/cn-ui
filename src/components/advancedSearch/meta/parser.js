@@ -919,6 +919,7 @@ export default class Parser {
       // 此为按语法搜索，将metaList转为字符串
       const newMetaList = []
       let hasStr = ''
+      let likeStr = ''
       let fullTextStr = ''
       let fullTextStr2 = ''
       // 去除metaList的AND项
@@ -930,6 +931,8 @@ export default class Parser {
             fullTextStr += `${item.column.label} ${item.operator.value} ${item.value.value} AND `
             const isWrapped = this.isSingleQuoteWrapping(item.value.value)
             fullTextStr2 += isWrapped ? `'${this.delPercent(this.delSingleQuote(item.value.value))}' AND ` : `${this.delPercent(this.delSingleQuote(item.value.value))} AND `
+          } else if (item.column.show && item.operator.value.toLowerCase() === 'like') {
+            likeStr += `${item.column.label} ${item.operator.value} ${item.value.value} AND `
           } else {
             newMetaList.push(item)
           }
@@ -945,6 +948,9 @@ export default class Parser {
       }
       if (hasStr !== '') {
         str = str + hasStr
+      }
+      if (likeStr !== '') {
+        str = str + likeStr
       }
       let str2 = str
       if (fullTextStr !== '') {

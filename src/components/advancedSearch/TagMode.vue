@@ -51,7 +51,8 @@
                 @keyup.enter="valueBlur(meta)"></el-input>
           </div>
           <div v-if="!meta.value.isEditing && meta.value.label" @click="valueClick(meta)">
-            {{ changeLabel(meta.value.label, meta.column.type) }}
+<!--            {{ changeLabel(meta.value.label, meta.column.type) }}-->
+            {{ meta.value.label }}
           </div>
         </div>
         <div class="condition__value" style="margin-left: -5px;" v-if="meta.operator.show && meta.operator.value === 'has'">)</div>
@@ -253,15 +254,15 @@ export default {
           meta.value.value = label
           meta.value.label = label
 
-          if (meta.column.label === 'domain') {
-            meta.operator.value = 'like'
-            meta.value.value = `%${this.delSingleQuote(label)}`
-            meta.value.label = `${this.delSingleQuote(label)}`
-          } else if (meta.column.label === 'app') {
-            meta.operator.value = 'like'
-            meta.value.value = `%${this.delSingleQuote(label)}%`
-            meta.value.label = `${this.delSingleQuote(label)}`
-          }
+          // if (meta.column.label === 'domain') {
+          //   meta.operator.value = 'like'
+          //   meta.value.value = `%${this.delSingleQuote(label)}`
+          //   meta.value.label = `${this.delSingleQuote(label)}`
+          // } else if (meta.column.label === 'app') {
+          //   meta.operator.value = 'like'
+          //   meta.value.value = `%${this.delSingleQuote(label)}%`
+          //   meta.value.label = `${this.delSingleQuote(label)}`
+          // }
           meta.column.type = 'string'
         }
       }, 200)
@@ -341,12 +342,12 @@ export default {
           if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
             str = str.replace(/'/g, "''")
           }
-          if (str[0] === '%') {
-            str = str.substring(1, str.length)
-          }
-          if (str[str.length - 1] === '%') {
-            str = str.substring(0, str.length - 1)
-          }
+          // if (str[0] === '%') {
+          //   str = str.substring(1, str.length)
+          // }
+          // if (str[str.length - 1] === '%') {
+          //   str = str.substring(0, str.length - 1)
+          // }
           meta.value.value = str
         }
         meta.value.label = meta.value.value // label是显示，value是实际值
@@ -400,23 +401,23 @@ export default {
             str = str.replace(/'/g, "''")
           }
 
-          // domain和app选择like时，添加%
-          if (meta.operator.value.toLowerCase() === 'like') {
-            if (meta.column.label.toLowerCase() === 'domain') {
-              if (str[0] === '%') {
-                str = str.substring(1, str.length)
-              }
-              str = `%${str}`
-            }
-
-            if (meta.column.label.toLowerCase() === 'app') {
-              if (str[0] === '%' && str[str.length - 1] === '%') {
-                str = str.substring(1, str.length)
-                str = str.substring(0, str.length - 1)
-              }
-              str = `%${str}%`
-            }
-          }
+          // // domain和app选择like时，添加%
+          // if (meta.operator.value.toLowerCase() === 'like') {
+          //   if (meta.column.label.toLowerCase() === 'domain') {
+          //     if (str[0] === '%') {
+          //       str = str.substring(1, str.length)
+          //     }
+          //     str = `%${str}`
+          //   }
+          //
+          //   if (meta.column.label.toLowerCase() === 'app') {
+          //     if (str[0] === '%' && str[str.length - 1] === '%') {
+          //       str = str.substring(1, str.length)
+          //       str = str.substring(0, str.length - 1)
+          //     }
+          //     str = `%${str}%`
+          //   }
+          // }
 
           if (!isWrapped) {
             meta.value.value = `'${str}'`
