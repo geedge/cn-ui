@@ -698,7 +698,8 @@ export default {
     // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
     if (listMode) {
       this.showList = true
-      if (q && q.indexOf('%') > -1) {
+      // %位置为0是输入中文时能解码，%20，25%分别是空格和%的情况
+      if (q && (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1)) {
         q = decodeURI(q)
       }
       this.initSearch(q)

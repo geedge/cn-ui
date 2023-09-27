@@ -298,6 +298,10 @@ export default {
     },
     operatorClick (meta) {
       meta.operator.isEditing = true
+      if (!this.operatorList.length) {
+        const obj = this.columnList.find(t => t.label === meta.column.label)
+        this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
+      }
     },
     valueFocus (meta) {
       if (meta.column.type === columnType.array) {
@@ -333,24 +337,24 @@ export default {
         meta.value.label = label
       } else {
         if (!_.isNumber(meta.value.value)) {
-          let str = meta.value.value.trim().replace(/"/g, "'")
-          if (str[0] === "'" && str[str.length - 1] === "'") {
-            str = str.substring(1, str.length)
-            str = str.substring(0, str.length - 1)
-          }
-          // 如果此时参数为xi'an，处理为xi''an，后一个条件避免若参数为xi''an,则不处理
-          if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
-            str = str.replace(/'/g, "''")
-          }
+          // let str = meta.value.value.trim().replace(/"/g, "'")
+          // if (str[0] === "'" && str[str.length - 1] === "'") {
+          //   str = str.substring(1, str.length)
+          //   str = str.substring(0, str.length - 1)
+          // }
+          // // 如果此时参数为xi'an，处理为xi''an，后一个条件避免若参数为xi''an,则不处理
+          // if (str.indexOf("'") > -1 && str.indexOf("''") === -1) {
+          //   str = str.replace(/'/g, "''")
+          // }
           // if (str[0] === '%') {
           //   str = str.substring(1, str.length)
           // }
           // if (str[str.length - 1] === '%') {
           //   str = str.substring(0, str.length - 1)
           // }
-          meta.value.value = str
+          // meta.value.value = str
         }
-        meta.value.label = meta.value.value // label是显示，value是实际值
+        // meta.value.label = meta.value.value // label是显示，value是实际值
       }
     },
     valueBlur (meta) {
@@ -401,26 +405,34 @@ export default {
             str = str.replace(/'/g, "''")
           }
 
-          // // domain和app选择like时，添加%
-          // if (meta.operator.value.toLowerCase() === 'like') {
-          //   if (meta.column.label.toLowerCase() === 'domain') {
-          //     if (str[0] === '%') {
-          //       str = str.substring(1, str.length)
-          //     }
-          //     str = `%${str}`
-          //   }
-          //
-          //   if (meta.column.label.toLowerCase() === 'app') {
-          //     if (str[0] === '%' && str[str.length - 1] === '%') {
-          //       str = str.substring(1, str.length)
-          //       str = str.substring(0, str.length - 1)
-          //     }
-          //     str = `%${str}%`
-          //   }
-          // }
+          // domain和app选择like时，添加%
+          if (meta.operator.value.toLowerCase() === 'like') {
+            if (meta.column.label.toLowerCase() === 'domain') {
+              if (meta.value.label1) {
+                if (str[0] !== '%') {
+                  meta.value.label1 = `%${str}`
+                } else {
+                  meta.value.label1 = `${str}`
+                }
+              }
+            }
 
-          if (!isWrapped) {
+            if (meta.column.label.toLowerCase() === 'app') {
+              if (meta.value.label1) {
+                if (str[0] !== '%' && str[str.length - 1] !== '%') {
+                  meta.value.label1 = `%${str}%`
+                } else {
+                  meta.value.label1 = `${str}`
+                }
+              }
+            }
+          }
+
+          if (isWrapped) {
             meta.value.value = `'${str}'`
+            if (meta.value.label1) {
+              meta.value.label1 = `'${meta.value.label1}'`
+            }
           }
         }
         meta.value.label = meta.value.value // label是显示，value是实际值
@@ -610,7 +622,7 @@ export default {
     let { q } = this.$route.query
     if (q && !this.convertMetaList) {
       const parser = new Parser(this.columnList)
-      if (q.indexOf('%') > -1) {
+      if (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1) {
         q = decodeURI(q)
       }
       this.metaList = parser.parseStr(q).metaList
@@ -642,12 +654,14 @@ export default {
               const isWrapped = this.isSingleQuoteWrapping(label)
               if (item.column.label === 'domain') {
                 item.operator.value = 'like'
-                item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
-                item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
+                item.value.value = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+                item.value.label = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+                item.value.label1 = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
               } else if (item.column.label === 'app') {
                 item.operator.value = 'like'
-                item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
-                item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
+                item.value.value = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+                item.value.label = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+                item.value.label1 = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
               }
               item.column.type = 'string'
             }

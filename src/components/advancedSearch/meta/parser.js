@@ -841,12 +841,14 @@ export default class Parser {
         const isWrapped = this.isSingleQuoteWrapping(label)
         if (item.column.label === 'domain') {
           item.operator.value = 'like'
-          item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
-          item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
+          item.value.value = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+          item.value.label = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+          item.value.label1 = isWrapped ? `'%${this.delSingleQuote(label)}'` : `%${this.delSingleQuote(label)}`
         } else if (item.column.label === 'app') {
           item.operator.value = 'like'
-          item.value.value = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
-          item.value.label = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
+          item.value.value = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+          item.value.label = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
+          item.value.label1 = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
         }
         item.column.type = 'string'
       }
@@ -928,7 +930,11 @@ export default class Parser {
           if (item.column.label.toLowerCase() === 'tag') {
             hasStr += `${item.operator.value}(${item.column.label},${item.value.value}) AND `
           } else if (!item.column.show && item.operator.value.toLowerCase() === 'like') {
-            fullTextStr += `${item.column.label} ${item.operator.value} ${item.value.value} AND `
+            if (item.value.label1) {
+              fullTextStr += `${item.column.label} ${item.operator.value} ${item.value.label1} AND `
+            } else {
+              fullTextStr += `${item.column.label} ${item.operator.value} ${item.value.value} AND `
+            }
             const isWrapped = this.isSingleQuoteWrapping(item.value.value)
             fullTextStr2 += isWrapped ? `'${this.delPercent(this.delSingleQuote(item.value.value))}' AND ` : `${this.delPercent(this.delSingleQuote(item.value.value))} AND `
           } else if (item.column.show && item.operator.value.toLowerCase() === 'like') {
