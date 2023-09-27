@@ -544,7 +544,7 @@ export default {
       const self = this
       tabs.forEach(e => {
         e.unitType = type
-        if (e.name !== 'network.total' && parseFloat(e.analysis.avg) === 0) {
+        if (e.name !== 'network.total' && parseFloat(e.analysis.max) === 0) {
           e.show = false
           num += 1
         } else {
@@ -554,7 +554,7 @@ export default {
           }
         }
         if (self.lineTab === e.class) {
-          if (parseFloat(e.analysis.avg) <= 0) {
+          if (parseFloat(e.analysis.max) <= 0) {
             self.lineTab = ''
             self.lineRefer = ''
             self.init()

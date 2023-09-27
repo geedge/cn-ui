@@ -387,7 +387,7 @@ export default {
       let num = 0
       linkData.forEach(e => {
         e.unitType = type
-        if (parseFloat(e.analysis.avg) === 0 || isNaN(parseFloat(e.analysis.avg))) {
+        if (parseFloat(e.analysis.max) === 0 || isNaN(parseFloat(e.analysis.max))) {
           e.show = false
           num += 1
         } else {
@@ -397,7 +397,7 @@ export default {
           }
         }
         if (this.lineTab === e.class) {
-          if (parseFloat(e.analysis.avg) <= 0) {
+          if (parseFloat(e.analysis.max) <= 0) {
             this.lineTab = ''
             this.lineRefer = ''
             this.init()
@@ -411,10 +411,10 @@ export default {
       let ingressAvg = 0
       let egressAvg = 0
       if (ingressObj) {
-        ingressAvg = parseFloat(ingressObj.analysis.avg) || 0
+        ingressAvg = parseFloat(ingressObj.analysis.max) || 0
       }
       if (egressObj) {
-        egressAvg = parseFloat(egressObj.analysis.avg) || 0
+        egressAvg = parseFloat(egressObj.analysis.max) || 0
       }
       if ((ingressAvg + egressAvg) === 0) {
         const totalObj = linkData.find(d => d.name === 'network.total')
