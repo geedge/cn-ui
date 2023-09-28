@@ -258,7 +258,7 @@ export default {
       }
       axios.get(`${url}?resource=${this.entity.entityValue}`).then(response => {
         this.$nextTick(() => {
-          this.entityData = { ...response.data.data, ...this.entity }
+          this.entityData = { ...this.entityData, ...response.data.data, ...this.entity }
         })
       })
     },
