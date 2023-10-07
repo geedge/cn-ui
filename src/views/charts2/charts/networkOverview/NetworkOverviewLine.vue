@@ -479,7 +479,7 @@ export default {
       lineData.splice(0, 1)
       // TODO 下面的逻辑是判断total曲线的尾部数据，从尾往前数0值的个数，若个数大于0，所有曲线都从尾部去掉相同数量的点，最多4个
       const totalData = lineData[0]
-      if (totalData.values.length > 4) {
+      if (_.get(totalData, 'values', []).length > 4) {
         let count = 0
         for (let i = totalData.values.length - 1; i >= totalData.values.length - 4; i--) {
           if (totalData.values[i].length > 1 && totalData.values[i][1] === 0) {
