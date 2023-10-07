@@ -680,7 +680,6 @@ export default class Parser {
                     break
                   }
                 } else {
-                  console.log('后面是连接符或空', prevToken, token, nextToken)
                   // 前面是连接符或操作符或空后面是连接符或空
                   // 后面是连接符或空
                   if (!nextToken || nextToken.type === types.connection) {
