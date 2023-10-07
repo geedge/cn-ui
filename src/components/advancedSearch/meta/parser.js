@@ -527,7 +527,9 @@ export default class Parser {
       }
       // 在单引号里，又在括号里，则遇到逗号、右括号就报错
       if (isInBracket && isInApostrophe) {
-        if ([',', ')'].indexOf(strArr[j]) > -1) {
+        // if ([',', ')'].indexOf(strArr[j]) > -1) {
+        // 目前有ip in ('1.1.1.1,2.2.2.2')该情况，后续待验证
+        if ([')'].indexOf(strArr[j]) > -1) {
           errorList.push(new ParserError(j, errorTypes.syntaxError, errorDesc.syntaxError.unclosedApostrophe))
           break
         }
@@ -678,6 +680,7 @@ export default class Parser {
                     break
                   }
                 } else {
+                  console.log('后面是连接符或空', prevToken, token, nextToken)
                   // 前面是连接符或操作符或空后面是连接符或空
                   // 后面是连接符或空
                   if (!nextToken || nextToken.type === types.connection) {
@@ -708,6 +711,13 @@ export default class Parser {
                     } else {
                       meta.column.label = token.value
                       meta.column.type = columnType.fullText
+                    }
+                  } else if (nextToken.type === types.rightBracket) {
+                    // 此处操作为ip='1,2' and has(tag,'222')中 ,'222')的情况
+                    if (prevToken) {
+                      if (prevToken.type === types.comma && token.type === types.commonStr && nextToken.type === types.rightBracket) {
+                        meta.value.value = token.value
+                      }
                     }
                   } else {
                     errorList.push(new ParserError(token.end, errorTypes.syntaxError, errorDesc.syntaxError.unexpectedString))
