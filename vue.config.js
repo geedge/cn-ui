@@ -3,6 +3,7 @@ function resolve (dir) {
   return path.join(__dirname, dir)
 }
 module.exports = {
+  transpileDependencies: ['/@intlify'],
   css: {
     /* loaderOptions: {
       // scss变量全局应用
