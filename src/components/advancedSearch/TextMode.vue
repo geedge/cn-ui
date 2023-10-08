@@ -225,6 +225,11 @@ export default {
     if (q) {
       if (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1) {
         q = decodeURI(q)
+      } else {
+        const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
+        if (q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+          q = decodeURI(q)
+        }
       }
       // 为避免地址栏任意输入导致全查询的q带QUERY，解析时不识别导致的语法错误
       // 如地址栏输入116.178.222.171，此时的q很长，刷新界面时需要把q里的116.178.222.171拿出来进行搜索
