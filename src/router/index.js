@@ -93,11 +93,6 @@ const routes = [
         component: () => import('@/views/administration/I18n')
       },
       {
-        name: 'Chart',
-        path: '/chart',
-        component: () => import('@/views/administration/Chart')
-      },
-      {
         path: '/detectionsNew',
         component: () => import('@/views/detectionsNew/Index')
       },

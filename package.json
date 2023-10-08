@@ -80,8 +80,7 @@
     "jest": "^26.0.0",
     "ts-jest": "^26.4.4",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "vue-jest": "^5.0.0-alpha.10",
-    "vue3-ace-editor": "^2.0.2"
+    "vue-jest": "^5.0.0-alpha.10"
   },
   "browserslist": [
     "> 1%",
