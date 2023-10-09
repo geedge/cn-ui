@@ -104,6 +104,11 @@
             >
             </el-switch>
           </template>
+          <template v-else-if="item.prop === 'color'">
+            <div class="knowledge-color">
+              <span class="knowledge-color__icon" :class="colorName(scope.row[item.prop])"></span> <span>{{colorText(scope.row[item.prop])}}</span>
+            </div>
+          </template>
           <span v-else>{{scope.row[item.prop] || '-'}}</span>
         </template>
       </el-table-column>
@@ -117,7 +122,7 @@
 
 <script>
 import table from '@/mixins/table'
-import { knowledgeBaseCategory, knowledgeBaseSource } from '@/utils/constants'
+import { knowledgeBaseCategory, knowledgeBaseSource, knowledgeBaseColor } from '@/utils/constants'
 export default {
   name: 'KnowledgeBaseTableForRow',
   props: {
@@ -151,6 +156,11 @@ export default {
         }, {
           label: this.$t('knowledge.reference'),
           prop: 'reference',
+          width: 180,
+          show: true
+        }, {
+          label: this.$t('overall.color'),
+          prop: 'color',
           width: 180,
           show: true
         }, {
@@ -189,7 +199,8 @@ export default {
           show: true,
           width: 80
         }
-      ]
+      ],
+      knowledgeBaseColor
     }
   },
   watch: {
@@ -220,6 +231,18 @@ export default {
       return function (type) {
         const t = knowledgeBaseSource.find(t => t.value === type)
         return t ? t.name : ''
+      }
+    },
+    colorText () {
+      return function (color) {
+        const t = knowledgeBaseColor.find(t => t.value === color)
+        return t ? t.label : knowledgeBaseColor[0].label
+      }
+    },
+    colorName () {
+      return function (color) {
+        const t = knowledgeBaseColor.find(t => t.value === color)
+        return t ? t.name : knowledgeBaseColor[0].name
       }
     }
   }

@@ -338,6 +338,25 @@ export const knowledgeBaseType = [
   }
 ]
 
+export const knowledgeBaseColor = [
+  {
+    label: 'Info',
+    value: 'rgb(119,131,145)',
+    name: 'info'
+  },
+  {
+    label: 'Benign',
+    value: 'rgb(116,159,77)',
+    name: 'benign'
+  },
+  {
+    label: 'Malicious',
+    value: 'rgb(226,97,84)',
+    name: 'malicious'
+  }
+
+]
+
 export const knowledgeBaseCategory = [
   {
     name: 'WebSketch',
@@ -1000,7 +1019,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.countries',
     prop: 'countryRegion',
     queryCycleTotalProp: 'countries',
-    dillDownProp: ['client_country_region','server_country_region'],
+    dillDownProp: ['client_country_region', 'server_country_region'],
     lineQueryCondition: ['country_region = \'$param\''], // 曲线图：查询条件q
     checked: true,
     disabled: false,
@@ -1009,7 +1028,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.asns',
     prop: 'asn',
     queryCycleTotalProp: 'asns',
-    dillDownProp: ['client_asn','server_asn'],
+    dillDownProp: ['client_asn', 'server_asn'],
     lineQueryCondition: ['asn = \'$param\''],
     checked: true,
     disabled: false,
@@ -1063,7 +1082,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.regions',
     prop: 'superAdminArea',
     queryCycleTotalProp: 'regions',
-    dillDownProp: ['client_super_admin_area','server_super_admin_area'],
+    dillDownProp: ['client_super_admin_area', 'server_super_admin_area'],
     lineQueryCondition: ['super_admin_area = \'$param\''],
     checked: false,
     disabled: false,
@@ -1072,7 +1091,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.cities',
     prop: 'adminArea',
     queryCycleTotalProp: 'cities',
-    dillDownProp: ['client_admin_area','server_admin_area'],
+    dillDownProp: ['client_admin_area', 'server_admin_area'],
     lineQueryCondition: ['admin_area = \'$param\''],
     checked: false,
     disabled: false,
@@ -1081,7 +1100,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.isps',
     prop: 'isp',
     queryCycleTotalProp: 'isps',
-    dillDownProp: ['client_isp','server_isp'],
+    dillDownProp: ['client_isp', 'server_isp'],
     lineQueryCondition: ['isp = \'$param\''],
     checked: false,
     disabled: false,

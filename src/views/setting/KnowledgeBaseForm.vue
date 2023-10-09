@@ -31,6 +31,28 @@
                 </template>
               </el-select>
             </el-form-item>
+            <el-form-item :label="$t('overall.color')" prop="color">
+              <el-select v-model="editObject.colorLabel"
+                         class="form-select__enable"
+                         placeholder=" "
+                         popper-class="form-select-popper"
+                         size="mini"
+                         @change="changeColor"
+              >
+                <template #prefix>
+                  <div class="knowledge-color">
+                    <span class="knowledge-color__icon info" :class="editObject.colorName"></span>
+                  </div>
+                </template>
+                <template v-for="color in knowledgeBaseColor" :key="color.name">
+                  <el-option  :value="color.label" >
+                    <div class="knowledge-color">
+                      <span class="knowledge-color__icon" :class="color.name"></span> <span>{{color.label}}</span>
+                    </div>
+                  </el-option>
+                </template>
+              </el-select>
+            </el-form-item>
             <el-form-item :label="$t('overall.remark')" prop="description">
               <el-input maxlength="255" show-word-limit :rows="4" size='mini' type="textarea" resize='none'
                         v-model="editObject.description" id="role-box-input-remark"/>
@@ -214,7 +236,7 @@
 import { useRoute } from 'vue-router'
 import { nextTick, reactive, ref } from 'vue'
 import _ from 'lodash'
-import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight, knowledgeCategoryValue } from '@/utils/constants'
+import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight, knowledgeCategoryValue, knowledgeBaseColor } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
@@ -497,6 +519,11 @@ export default {
     }
   },
   methods: {
+    changeColor (label) {
+      const curColorObj = knowledgeBaseColor.find(item => item.label === this.editObject.colorLabel)
+      this.editObject.color = curColorObj.value
+      this.editObject.colorName = curColorObj.name
+    },
     tagNameBlur () {
       if (!this.tagNameFirstBlur) {
         this.$refs.form.validate(valid => {
@@ -832,6 +859,7 @@ export default {
                     const postData = {
                       name: this.editObject.name,
                       category: knowledgeCategoryValue.userDefined,
+                      color: this.editObject.color,
                       source: this.editObject.source,
                       description: this.editObject.description,
                       status: this.editObject.status,
@@ -1187,6 +1215,16 @@ export default {
             throw new Error('No data found, id: ' + this.knowledgeBaseId)
           }
           this.editObject = response.data.data
+          if (response.data.data.color) {
+            const curColorObj = knowledgeBaseColor.find(item => item.value === response.data.data.color)
+            this.editObject.color = curColorObj.value
+            this.editObject.colorName = curColorObj.name
+            this.editObject.colorLabel = curColorObj.label
+          } else {
+            this.editObject.color = knowledgeBaseColor[0].value
+            this.editObject.colorName = knowledgeBaseColor[0].name
+            this.editObject.colorLabel = knowledgeBaseColor[0].label
+          }
           this.importedData = this.handleSpeticalTypeData(this.editObject.itemList)
           this.importedData.forEach(item => {
             this.oldItemIds.push(item.id)
@@ -1283,7 +1321,10 @@ export default {
       source: 'cn_ip_tag_user_defined',
       description: '',
       updateTime: '',
-      status: 1
+      status: 1,
+      color: knowledgeBaseColor[0].value,
+      colorLabel: knowledgeBaseColor[0].label,
+      colorName: knowledgeBaseColor[0].name
     }
     /* 将组织后的数据还原拉平 */
     const revertImportedData = (data) => {
@@ -1366,6 +1407,7 @@ export default {
       stepHeightConstant,
       stepHeights,
       knowledgeBaseType,
+      knowledgeBaseColor,
       importedData,
       showImportedData,
       addItemList,

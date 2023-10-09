@@ -392,7 +392,7 @@ export default {
         this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
       }
     }
-    let path = this.$route.path;
+    const path = this.$route.path
     if (path.indexOf('panel') > -1 && path.indexOf('linkMonitor') === -1) {
       await this.initDropdownList()
     }

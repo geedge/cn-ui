@@ -471,9 +471,9 @@ export default {
       let checkedGroup = this.customTableTitles.filter(item => item.checked)
       let checkedNum = checkedGroup.length
       if (columnType === 'dillDown') {
-        if(checkedNum === 1){
+        if (checkedNum === 1) {
           return 'auto'
-        }else if(checkedNum > 1){
+        } else if (checkedNum > 1) {
           return '217px'
         }
       }
@@ -501,7 +501,7 @@ export default {
         name: this.dropDownValue ? this.dropDownValue : ''
       }
       let url = curTableInCode.url.drilldownList
-      if(this.isDrilldown() || this.tableType === fromRoute.linkMonitor){
+      if (this.isDrilldown() || this.tableType === fromRoute.linkMonitor) {
         url = curTableInCode.url.relationTabDrilldownList
         const condition = this.getQueryCondition()
         if (condition) {
@@ -601,8 +601,8 @@ export default {
       this.curPageNum = 1
       this.initDropdownList(prop)
     },
-    scrollList (prop,tabProp) {
-      const obj = document.getElementById('tabSearchSelectDropdown'+tabProp)
+    scrollList (prop, tabProp) {
+      const obj = document.getElementById('tabSearchSelectDropdown' + tabProp)
       if ((obj.scrollTop + obj.clientHeight === obj.scrollHeight) && obj.scrollHeight !== 0) {
         this.initDropdownList(prop)
       }

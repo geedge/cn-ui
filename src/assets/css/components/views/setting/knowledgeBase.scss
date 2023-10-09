@@ -1156,7 +1156,6 @@ height: 100%;
   .el-form {
     margin-top: 20px;
     width: 620px;
-
     label {
       padding-bottom: 6px;
       font-size: 14px;
@@ -1191,6 +1190,7 @@ height: 100%;
 
         .el-input__inner {
           background-color: white !important;
+          padding-left: 22px !important;
         }
       }
     }
@@ -1871,4 +1871,25 @@ height:300px !important;
       }
     }
   }
+}
+.knowledge-color {
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  .knowledge-color__icon {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right:6px;
+    margin-left:2px;
+  }
+}
+.info {
+  background-color:rgb(119,131,145)
+}
+.benign {
+  background-color:rgb(116,159,77)
+}
+.malicious {
+  background-color:rgb(226,97,84)
 }
