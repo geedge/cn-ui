@@ -1217,9 +1217,9 @@ export default {
           this.editObject = response.data.data
           if (response.data.data.color) {
             const curColorObj = knowledgeBaseColor.find(item => item.value === response.data.data.color)
-            this.editObject.color = curColorObj.value
-            this.editObject.colorName = curColorObj.name
-            this.editObject.colorLabel = curColorObj.label
+            this.editObject.color = curColorObj ? curColorObj.value : knowledgeBaseColor[0].value
+            this.editObject.colorName = curColorObj ? curColorObj.name : knowledgeBaseColor[0].name
+            this.editObject.colorLabel = curColorObj ? curColorObj.label : knowledgeBaseColor[0].label
           } else {
             this.editObject.color = knowledgeBaseColor[0].value
             this.editObject.colorName = knowledgeBaseColor[0].name
