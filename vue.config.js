@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
@@ -16,6 +17,9 @@ module.exports = {
   chainWebpack: (config) => {
     config.resolve.alias // 路径别名
       .set('@', resolve('./src'))
+    config.plugin('webpack.DefinePlugin').use(new webpack.DefinePlugin({
+      __INTLIFY_PROD_DEVTOOLS__: JSON.stringify(false)
+    }))
   },
   lintOnSave: true,
   devServer: {

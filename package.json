@@ -67,7 +67,7 @@
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/component-compiler-utils": "^3.2.0",
     "@vue/test-utils": "^2.2.7",
-    "@vue/server-renderer": "3.2.27",
+    "@vue/server-renderer": "~3.3.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.0.0",
     "compression-webpack-plugin": "^8.0.1",
