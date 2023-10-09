@@ -458,9 +458,21 @@ export default {
         }
         this.$store.commit('setRangeEchartsData', rangeObj)
       }
+    },
+    initI18n () {
+      dataForNpmTrafficLine.tabs.forEach(item => {
+        item.name = this.$t(item.name)
+      })
+      dataForNpmTrafficLine.npmQuantity.forEach(item => {
+        item.name = this.$t(item.name)
+      })
+      dataForNpmTrafficLine.metricOptions.forEach(item => {
+        item.label = this.$t(item.label)
+      })
     }
   },
   mounted () {
+    this.initI18n()
     if (this.chart) {
       this.chartData = _.cloneDeep(this.chart)
     }

@@ -324,9 +324,15 @@ export default {
         case 5:
           return api.npm.location.packetsRetrains
       }
+    },
+    initI18n () {
+      dataForNpmLine.chartOptionLineData.forEach(item => {
+        item.legend = this.$t(item.legend)
+      })
     }
   },
   mounted () {
+    this.initI18n()
     if (this.chart) {
       this.chartData = _.cloneDeep(this.chart)
     }
