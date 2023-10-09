@@ -15,42 +15,42 @@ _this.$t = _this.t
 export const dataForNpmTrafficLine = {
   tabs: [
     {
-      name: _this.$t('network.total'),
+      name: 'network.total',
       show: true,
       positioning: 0,
       data: [],
       unitType: 'number'
     },
     {
-      name: _this.$t('network.inbound'),
+      name: 'network.inbound',
       show: true,
       positioning: 1,
       data: [],
       unitType: 'number'
     },
     {
-      name: _this.$t('network.outbound'),
+      name: 'network.outbound',
       show: true,
       positioning: 2,
       data: [],
       unitType: 'number'
     },
     {
-      name: _this.$t('network.internal'),
+      name: 'network.internal',
       show: true,
       positioning: 3,
       data: [],
       unitType: 'number'
     },
     {
-      name: _this.$t('network.through'),
+      name: 'network.through',
       show: true,
       positioning: 4,
       data: [],
       unitType: 'number'
     },
     {
-      name: _this.$t('network.other'),
+      name: 'network.other',
       show: true,
       positioning: 5,
       data: [],
@@ -58,21 +58,21 @@ export const dataForNpmTrafficLine = {
     }
   ],
   npmQuantity: [
-    { name: _this.$t('networkAppPerformance.tcpConnectionEstablishLatency'), show: true, positioning: 0, data: [], unitType: unitTypes.time, index: 0 },
-    { name: _this.$t('networkAppPerformance.httpResponse'), show: true, positioning: 0, data: [], unitType: unitTypes.time, index: 1 },
-    { name: _this.$t('networkAppPerformance.sslResponseLatency'), show: true, positioning: 0, data: [], unitType: unitTypes.time, index: 2 },
-    { name: _this.$t('networkAppPerformance.packetLoss'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 3 },
-    { name: _this.$t('overall.packetRetrans'), show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
+    { name: 'networkAppPerformance.tcpConnectionEstablishLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time, index: 0 },
+    { name: 'networkAppPerformance.httpResponse', show: true, positioning: 0, data: [], unitType: unitTypes.time, index: 1 },
+    { name: 'networkAppPerformance.sslResponseLatency', show: true, positioning: 0, data: [], unitType: unitTypes.time, index: 2 },
+    { name: 'networkAppPerformance.packetLoss', show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 3 },
+    { name: 'overall.packetRetrans', show: true, positioning: 0, data: [], unitType: unitTypes.percent, index: 4 }
   ],
   metricOptions: [
     /* { value: 'Bits/s', label: 'Bits/s' },
     { value: 'Packets/s', label: 'Packets/s' },
     { value: 'Sessions/s', label: 'Sessions/s' }, */
-    { value: 'establishLatencyMs', label: _this.$t('networkAppPerformance.tcpConnectionEstablishLatency') },
-    { value: 'httpResponseLatency', label: _this.$t('networkAppPerformance.httpResponse') },
-    { value: 'sslConLatency', label: _this.$t('networkAppPerformance.sslResponseLatency') },
-    { value: 'tcpLostlenPercent', label: _this.$t('networkAppPerformance.packetLoss') },
-    { value: 'pktRetransPercent', label: _this.$t('overall.packetRetrans') }
+    { value: 'establishLatencyMs', label: 'networkAppPerformance.tcpConnectionEstablishLatency' },
+    { value: 'httpResponseLatency', label: 'networkAppPerformance.httpResponse' },
+    { value: 'sslConLatency', label: 'networkAppPerformance.sslResponseLatency' },
+    { value: 'tcpLostlenPercent', label: 'networkAppPerformance.packetLoss' },
+    { value: 'pktRetransPercent', label: 'overall.packetRetrans' }
   ]
 }
 
@@ -175,9 +175,9 @@ export const dataForLinkTrafficLine = {
 
 export const dataForNpmLine = {
   chartOptionLineData: [
-    { legend: _this.$t('network.total'), index: 0, invertTab: true, show: false, color: '#749F4D' },
-    { legend: _this.$t('network.inbound'), index: 1, invertTab: true, show: false, color: '#98709B' },
-    { legend: _this.$t('network.outbound'), index: 2, invertTab: true, show: false, color: '#E5A219' }
+    { legend: 'network.total', index: 0, invertTab: true, show: false, color: '#749F4D' },
+    { legend: 'network.inbound', index: 1, invertTab: true, show: false, color: '#98709B' },
+    { legend: 'network.outbound', index: 2, invertTab: true, show: false, color: '#E5A219' }
   ],
   npmLineColor: [
     { legend: '', color: '#749F4D' },
