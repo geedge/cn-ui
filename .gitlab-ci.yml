@@ -39,9 +39,9 @@ build_project:
   stage: build_project
   script:
     - echo "npm install ..."
-    - cnpm install --save-dev --unsafe-perm
+    - npm install --save-dev --unsafe-perm
     - echo "npm run build"
-    - cnpm run build
+    - npm run build
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     when: on_success
