@@ -702,6 +702,11 @@ export default {
       if (q && (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1)) {
         q = decodeURI(q)
       }
+      // %位置不为0，即内容包含非英文时
+      const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
+      if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+        q = decodeURI(q)
+      }
       this.initSearch(q)
       this.listMode = listMode
     }

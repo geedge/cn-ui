@@ -624,6 +624,11 @@ export default {
       const parser = new Parser(this.columnList)
       if (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1) {
         q = decodeURI(q)
+      } else {
+        const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
+        if (q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+          q = decodeURI(q)
+        }
       }
       this.metaList = parser.parseStr(q).metaList
     }
