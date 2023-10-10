@@ -802,22 +802,22 @@ export function computeScore (data) {
     if (t === 'establishLatencyMs' || t === 'httpResponseLatency' || t === 'sslConLatency') {
       if (!data[t] && data[t] !== 0) {
         score = 1
-      } else if (data[t] <= 50) {
+      } else if (data[t] <= 100) {
         score = 1
-      } else if (data[t] > 200) {
+      } else if (data[t] > 1000) {
         score = 0
       } else {
-        score = (data[t] - 200) / (50 - 200)
+        score = (data[t] - 1000) / (100 - 1000)
       }
     } else if (t === 'tcpLostlenPercent' || t === 'pktRetransPercent') {
       if (!data[t] && data[t] !== 0) {
         score = 1
-      } else if (data[t] <= 0.01) {
+      } else if (data[t] <= 0.001) {
         score = 1
       } else if (data[t] > 0.05) {
         score = 0
       } else {
-        score = (data[t] - 0.05) / (0.01 - 0.05)
+        score = (data[t] - 0.05) / (0.001 - 0.05)
       }
     }
     scoreArr.push(score * k)
