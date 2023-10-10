@@ -6,10 +6,10 @@ import { ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 
 const strReg = {
-  // 需要不限制语言，正则过滤中英日语出错实现语言都通过。留个记录观察，后续校验
-  all: /^[\da-zA-Z\u4E00-\u9FA5\u0800-\u4e00\s.'><!=-_(),%]$/,
+  // 需要不限制语言，正则过滤中英日俄语出错实现语言都通过。留个记录观察，后续校验
+  all: /^[\da-zA-Z\u4E00-\u9FA5\u3040-\u309F\u0800-\u4e00\u0400-\u04FF\u2000-\u206F\s.'><!=-_(),%]$/,
   key: /^(?![\d])[\da-zA-Z\s.'-_]$/,
-  value: /^[\da-zA-Z\u4E00-\u9FA5\u0800-\u4e00\s.'-_%]$/
+  value: /^[\da-zA-Z\u4E00-\u9FA5\u3040-\u309F\u0800-\u4e00\u0400-\u04FF\u2000-\u206F\s.'-_%]$/
 }
 const operatorList = ['=', ' in ', ' IN ', ' like ', ' LIKE ', 'HAS(', 'has(']
 
