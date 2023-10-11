@@ -100,7 +100,7 @@ export default {
       }
       let url = ''
       if (this.queryCondition) {
-        const condition = this.queryCondition.toLowerCase().split(' or ')
+        const condition = this.queryCondition.split(' or ')
         if (condition.length > 1) {
           if (n === 0) {
             params.q = condition.find(c => c.indexOf('common_in_link_id') > -1 || c.indexOf('in_link_direction') > -1)
