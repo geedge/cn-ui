@@ -122,7 +122,7 @@ import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/consta
 import { getSecond } from '@/utils/date-util'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
-import { analysis, nextHopAnalysis } from './test-data'
+// import { analysis, nextHopAnalysis } from './test-data'
 
 export default {
   name: 'LinkBlock',

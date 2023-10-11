@@ -17,7 +17,7 @@ import PopoverContent from './LinkDirectionGrid/PopoverContent'
 import { computeScore } from '@/utils/tools'
 import axios from 'axios'
 import _ from 'lodash'
-import { bigramAnalysis, bigramNextHopAnalysis } from './test-data'
+// import { bigramAnalysis, bigramNextHopAnalysis } from './test-data'
 
 export default {
   name: 'LinkDirectionGrid',
@@ -75,8 +75,8 @@ export default {
           const res = []
           res[0] = response[0].data
           res[1] = response[1].data
-          res[0] = bigramAnalysis.data
-          res[1] = bigramNextHopAnalysis.data
+          /*res[0] = bigramAnalysis.data
+          res[1] = bigramNextHopAnalysis.data*/
           if (response[0].status === 200) {
             this.isLinkShowError = false
             // 链路流量数据
