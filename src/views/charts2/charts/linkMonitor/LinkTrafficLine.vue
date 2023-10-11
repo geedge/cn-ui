@@ -168,6 +168,9 @@ export default {
         if (response.status === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
+          if (!active) {
+            this.tabs = dataForLinkTrafficLine.tabs
+          }
           if (this.isNoData) {
             this.lineTab = ''
             this.tabs = dataForLinkTrafficLine.tabs
@@ -400,10 +403,15 @@ export default {
           if (parseFloat(e.analysis.max) <= 0) {
             this.lineTab = ''
             this.lineRefer = ''
-            this.init()
+            // this.init() // 暂时注掉，后续观察
           }
         }
       })
+      const emptyData = linkData.filter(d => parseFloat(d.analysis.max) === 0)
+      this.isNoData = emptyData.length === linkData.length
+      if (this.isNoData) {
+        return true
+      }
       this.tabs = linkData
       // 如果三者avg都为0时，至少保证total显示
       const ingressObj = linkData.find(d => d.name === 'linkMonitor.ingress')

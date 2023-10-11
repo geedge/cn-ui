@@ -174,6 +174,9 @@ export default {
         if (res.status === 200) {
           this.showError = false
           this.isNoData = res.data.data.result.length === 0
+          if (!active) {
+            this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
+          }
           if (this.isNoData) {
             this.lineTab = ''
             this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
@@ -445,6 +448,7 @@ export default {
           this.legendSelectChange(e, 0)
         })
         this.tabs = tabs
+        this.lineRefer = 'Average'
         this.echartsInit(this.tabs, true)
       } else {
         const unit = 'bps'
@@ -477,10 +481,15 @@ export default {
           if (parseFloat(e.analysis.max) <= 0) {
             this.lineTab = ''
             this.lineRefer = ''
-            this.init()
+            // this.init() // 后续多关注
           }
         }
       })
+      const emptyData = dnsData.filter(d => parseFloat(d.analysis.max) === 0)
+      this.isNoData = emptyData.length === dnsData.length
+      if (this.isNoData) {
+        return true
+      }
 
       this.tabs = dnsData
       // 如果三者avg都为0时，至少保证total显示

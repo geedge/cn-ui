@@ -226,6 +226,9 @@ export default {
         if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
           this.showError = false
+          if (!active) {
+            this.tabs = _.cloneDeep(this.tabsTemplate)
+          }
           if (this.isNoData) {
             this.lineTab = ''
             this.tabs = _.cloneDeep(this.tabsTemplate)
@@ -545,6 +548,7 @@ export default {
         })
         this.tabs = tabs
         this.$nextTick(() => {
+          this.lineRefer = 'Average'
           this.echartsInit(this.tabs, true)
         })
       } else {
@@ -575,10 +579,15 @@ export default {
           if (parseFloat(e.analysis.max) <= 0) {
             self.lineTab = ''
             self.lineRefer = ''
-            self.init()
+            // self.init() // 后续多测试关注
           }
         }
       })
+      const emptyData = tabs.filter(d => parseFloat(d.analysis.max) === 0)
+      this.isNoData = emptyData.length === tabs.length
+      if (this.isNoData) {
+        return true
+      }
       this.tabs = tabs
       if (num === 5) {
         tabs[0].invertTab = false

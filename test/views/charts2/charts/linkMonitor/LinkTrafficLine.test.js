@@ -167,15 +167,16 @@ describe('views/charts2/charts/linkMonitor/LinkTrafficLine.vue测试', () => {
   })
   test('Metric=Bits/s：数值为0', async () => {
     const data = mockData.boundary.zero.data1
+    // 三个max都为0，则显示nodata，tab显示'-'
     axiosPostAndMounted(query2, data)
     const textNode0 = await wrapper.get('[test-id="tabContent0"]')
     const textNode1 = await wrapper.get('[test-id="tabContent1"]')
     const textNode2 = await wrapper.get('[test-id="tabContent2"]')
 
     await new Promise(resolve => setTimeout(() => {
-      expect(textNode0.text()).toEqual('<0.01bps')
-      expect(textNode1.text()).toEqual('<0.01bps')
-      expect(textNode2.text()).toEqual('<0.01bps')
+      expect(textNode0.text()).toEqual('-')
+      expect(textNode1.text()).toEqual('-')
+      expect(textNode2.text()).toEqual('-')
       resolve()
     }, 200))
   })
