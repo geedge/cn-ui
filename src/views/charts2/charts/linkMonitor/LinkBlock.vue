@@ -122,6 +122,7 @@ import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/consta
 import { getSecond } from '@/utils/date-util'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
+import { analysis, nextHopAnalysis } from './test-data'
 
 export default {
   name: 'LinkBlock',
@@ -192,6 +193,8 @@ export default {
           const res = []
           res[0] = response[0].data
           res[1] = response[1].data
+          /*res[0] = analysis.data
+          res[1] = nextHopAnalysis.data*/
           if (response[0].status === 200) {
             this.showError1 = false
 
@@ -211,6 +214,9 @@ export default {
                       hit.outBandwidth = info.bandwidth
                     } else if (info.direction === 'in') {
                       hit.inBandwidth = info.bandwidth
+                    } else if (info.direction === '2') {
+                      hit.outBandwidth = info.bandwidth
+                      hit.inBandwidth = info.bandwidth
                     }
                   } else {
                     const hit = {
@@ -221,6 +227,9 @@ export default {
                     if (info.direction === 'out') {
                       hit.outBandwidth = info.bandwidth
                     } else if (info.direction === 'in') {
+                      hit.inBandwidth = info.bandwidth
+                    } else if (info.direction === '2') {
+                      hit.outBandwidth = info.bandwidth
                       hit.inBandwidth = info.bandwidth
                     }
                     data.push(hit)
@@ -234,6 +243,9 @@ export default {
                   if (info.direction === 'out') {
                     item.outLinkId = info.originalLinkId
                   } else if (info.direction === 'in') {
+                    item.inLinkId = info.originalLinkId
+                  } else if (info.direction === '2') {
+                    item.outLinkId = info.originalLinkId
                     item.inLinkId = info.originalLinkId
                   }
                 })
@@ -355,12 +367,12 @@ export default {
       if (out < 0.0001 && out !== 0) {
         outUsage = '< 0.01%'
       } else {
-        outUsage = JSON.stringify(parseFloat((out * 100).toFixed(2)))
+        outUsage = JSON.stringify(parseFloat(out * 100).toFixed(2))
       }
       if (_in < 0.0001 && _in !== 0) {
         inUsage = '< 0.01%'
       } else {
-        inUsage = JSON.stringify(parseFloat((_in * 100).toFixed(2)))
+        inUsage = JSON.stringify(parseFloat(_in * 100).toFixed(2))
       }
 
       length = outUsage.length + inUsage.length

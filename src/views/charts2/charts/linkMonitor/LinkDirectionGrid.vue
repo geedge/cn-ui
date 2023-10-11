@@ -17,6 +17,7 @@ import PopoverContent from './LinkDirectionGrid/PopoverContent'
 import { computeScore } from '@/utils/tools'
 import axios from 'axios'
 import _ from 'lodash'
+import { bigramAnalysis, bigramNextHopAnalysis } from './test-data'
 
 export default {
   name: 'LinkDirectionGrid',
@@ -74,6 +75,8 @@ export default {
           const res = []
           res[0] = response[0].data
           res[1] = response[1].data
+          res[0] = bigramAnalysis.data
+          res[1] = bigramNextHopAnalysis.data
           if (response[0].status === 200) {
             this.isLinkShowError = false
             // 链路流量数据
@@ -101,6 +104,12 @@ export default {
                     }
                   })
                   linkGridData.push({ linkId: link.linkId, out: outList })
+                } else if (link.direction === '2') {
+                  const outList = []
+                  linkInfo.forEach(link1 => {
+                    outList.push({ linkId: link1.linkId, noData: true })
+                  })
+                  linkGridData.push({ linkId: link.linkId, out: outList })
                 }
               })
 
@@ -121,8 +130,11 @@ export default {
 
                   d.scoreLow3 = d.score < 3 || d.score === '-'
 
-                  const xAxis = inLink.linkId.split('Hundredgige').pop() - 1
-                  const yAxis = outLink.linkId.split('Hundredgige').pop() - 1
+                  /*const xAxis = inLink.linkId.split('Hundredgige').pop() - 1
+                  const yAxis = outLink.linkId.split('Hundredgige').pop() - 1*/
+                  const xAxis = inLink.linkId.split('UFONE-RWP-GI-LANPHY-100G-').pop() - 1
+                  const yAxis = outLink.linkId.split('UFONE-RWP-GI-LANPHY-100G-').pop() - 1
+
                   linkGridData[xAxis].out[yAxis] = {
                     noData: false,
                     linkId: outLink.linkId,
@@ -166,9 +178,30 @@ export default {
 
             this.isNextNoData = nextLinkData.length === 0
             if (!this.isNextNoData) {
+              const inLinkDirections = []
+              const outLinkDirections = []
+              nextLinkData.forEach(l => {
+                if (inLinkDirections.indexOf(l.inLinkDirection) === -1) {
+                  inLinkDirections.push(l.inLinkDirection)
+                }
+                if (outLinkDirections.indexOf(l.outLinkDirection) === -1) {
+                  outLinkDirections.push(l.outLinkDirection)
+                }
+              })
+              inLinkDirections.sort()
+              outLinkDirections.sort()
               // 链路下一跳数据
-              let nextGridData = []
-              const nextGridTemplate = [
+              const nextGridData = inLinkDirections.map(inLink => ({ nextHop: inLink }))
+              nextGridData.forEach((link, index) => {
+                link.out = outLinkDirections.map((outLink, index1) => {
+                  return {
+                    coordinate: `${index}-${index1}`,
+                    noData: true,
+                    nextHop: outLink
+                  }
+                })
+              })
+              /*const nextGridTemplate = [
                 { linkId: 'Hundredgige2', nextHop: '太原', out: [] },
                 { linkId: 'Hundredgige1', nextHop: '西安', out: [] },
                 { linkId: 'Hundredgige4', nextHop: '西宁', out: [] }
@@ -181,11 +214,11 @@ export default {
                   link1.coordinate = `${link.linkId}-${link1.linkId}`
                   delete link1.out
                 })
-              })
+              })*/
 
               nextLinkData.forEach(d => {
-                const inLink = linkInfo.find(l => l.nextHop === d.inLinkDirection && l.direction === 'in')
-                const outLink = linkInfo.find(l => l.nextHop === d.outLinkDirection && l.direction === 'out')
+                const inLink = linkInfo.find(l => l.nextHop === d.inLinkDirection && (l.direction === 'in' || l.direction === '2'))
+                const outLink = linkInfo.find(l => l.nextHop === d.outLinkDirection && (l.direction === 'out' || l.direction === '2'))
 
                 if (inLink && outLink) {
                   // const data = nextGridData.find(g => g.linkId === inLink.linkId)
@@ -193,10 +226,10 @@ export default {
                   let outBandwidth = 0
                   let inBandwidth = 0
                   linkInfo.forEach((item) => {
-                    if (item.nextHop === d.outLinkDirection && item.direction === 'out') {
+                    if (item.nextHop === d.outLinkDirection && (item.direction === 'out' || item.direction === '2')) {
                       outBandwidth += item.bandwidth
                     }
-                    if (item.nextHop === d.inLinkDirection && item.direction === 'in') {
+                    if (item.nextHop === d.inLinkDirection && (item.direction === 'in' || item.direction === '2')) {
                       inBandwidth += item.bandwidth
                     }
                   })
@@ -214,15 +247,15 @@ export default {
 
                   d.scoreLow3 = d.score < 3 || d.score === '-'
 
-                  const xAxis = inLink.linkId
-                  const yAxis = outLink.linkId
+                  const xAxis = inLinkDirections.indexOf(d.inLinkDirection)
+                  const yAxis = outLinkDirections.indexOf(d.outLinkDirection)
                   nextGridData.forEach((link, index) => {
                     link.out.forEach((link1, index1) => {
                       if (link1.coordinate === (xAxis + '-' + yAxis)) {
                         nextGridData[index].out[index1] = {
                           coordinate: link1.coordinate,
                           noData: false,
-                          linkId: outLink.linkId,
+                          // linkId: outLink.linkId,
                           nextHop: outLink.nextHop,
                           outUsage: outUsage,
                           inUsage: inUsage,
