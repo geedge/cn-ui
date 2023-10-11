@@ -149,11 +149,11 @@ export default {
               })
 
               // 一行如果无数据，则删除该行，默认10*10矩阵
-              const rowXIndex = 0
-              this.handleXRowNoData(linkGridData, rowXIndex)
+              // const rowXIndex = 0
+              // this.handleXRowNoData(linkGridData, rowXIndex)
               // 一列如果无数据，则删除该列，默认10*10矩阵
-              const rowYIndex = 0
-              this.handleYRowNoData(linkGridData, rowYIndex)
+              // const rowYIndex = 0
+              // this.handleYRowNoData(linkGridData, rowYIndex)
               this.isLinkNoData = linkGridData.length === 0
               this.linkGridData = linkGridData
             }
