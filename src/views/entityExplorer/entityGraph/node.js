@@ -2,7 +2,7 @@ import _ from 'lodash'
 import i18n from '@/i18n'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import { entityDefaultColor, entityDetailTags, psiphon3IpType } from '@/utils/constants'
 
 export default class Node {
   /*
@@ -91,7 +91,7 @@ export default class Node {
       }
     })
     if (_.isArray(tags.userDefinedTags)) {
-      _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
+      _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
     }
     this.myData.tags = _tags
 

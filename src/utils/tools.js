@@ -1356,3 +1356,18 @@ export function beforeRouterPush () {
   }
   store.commit('setRouterHistoryList', historyList)
 }
+
+/**
+ * 配置tag颜色，此为接口返回的颜色字段，color为rgb格式
+ * @param color
+ * @returns {string}
+ */
+export function getTagColor (color) {
+  if (color) {
+    let backgroundColor = ''
+    if (color.indexOf('rgb(') > -1) {
+      backgroundColor = color.replace('rgb(', 'rgba(').replace(')', ',0.06)')
+    }
+    return `color: ${color};border-color: ${color};background-color: ${backgroundColor};`
+  }
+}

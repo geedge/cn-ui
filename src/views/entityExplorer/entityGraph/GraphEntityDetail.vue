@@ -86,7 +86,7 @@
     <div class="entity-detail graph-basic-info__block-content">
       <div class="graph-tag-list">
         <div v-for="ic in $_.get(node, 'myData.tags', [])" :key="ic.value">
-          <div class="entity-tag graph-tag-item" :class="`entity-tag--level-two-${ic.type}`">
+          <div class="entity-tag graph-tag-item" :class="`entity-tag--level-two-${ic.type}`" :style="getTagColor(ic.color)">
             <span>{{ic.value}}</span>
           </div>
         </div>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { copySelectionText, selectElementText } from '@/utils/tools'
+import { copySelectionText, selectElementText, getTagColor } from '@/utils/tools'
 import { entityType, riskLevelMapping } from '@/utils/constants'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { dateFormatByAppearance } from '@/utils/date-util'
@@ -174,6 +174,7 @@ export default {
     }
   },
   methods: {
+    getTagColor,
     /** 复制实体名称 */
     copyEntityName () {
       selectElementText(document.getElementById('entityName'))

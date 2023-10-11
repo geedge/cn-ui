@@ -13,7 +13,11 @@
         <div class="cn-entity__header" style="display: flex;">
           <span class="cn-entity__header-title">{{ entityData.entityValue || 'Unknown' }}</span>
           <span class="entity-detail" style="display: flex;margin-left: 6px;margin-top: 1px;flex-wrap: wrap;margin-bottom: -10px;">
-            <span v-for="(item, index) in levelTwoTags" :key="index" class="entity-tag entity-tag--small margin-r-10 margin-b-10" :class="`entity-tag--level-two-${item.type}`">
+            <span v-for="(item, index) in levelTwoTags"
+                  :key="index"
+                  class="entity-tag entity-tag--small margin-r-10 margin-b-10"
+                  :class="`entity-tag--level-two-${item.type}`"
+                  :style="getTagColor(item.color)">
               {{ item.value }}
             </span>
           </span>
@@ -183,8 +187,9 @@ import relatedServer from '@/mixins/relatedServer'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import { entityDefaultColor, entityDetailTags, psiphon3IpType } from '@/utils/constants'
 import _ from 'lodash'
+import { getTagColor } from '@/utils/tools'
 
 export default {
   name: 'Row',
@@ -240,6 +245,7 @@ export default {
     })
   },
   methods: {
+    getTagColor,
     initData () {
       let url = ''
       switch (this.entity.entityType) {
@@ -292,7 +298,7 @@ export default {
             }
           })
           if (_.isArray(res.data.userDefinedTags)) {
-            this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
+            this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
           }
           this.hideTagArea = _.isEmpty(this.levelTwoTags)
         }

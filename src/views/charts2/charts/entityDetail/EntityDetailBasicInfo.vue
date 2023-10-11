@@ -32,7 +32,13 @@
       </el-popover>
     </div>
     <div class="entity-tags" v-if="!hideTagArea">
-      <div v-for="tag in levelTwoTags" :key="tag.value" class="entity-tag" :class="`entity-tag--level-two-${tag.type}`">{{tag.value}}</div>
+      <div v-for="tag in levelTwoTags"
+           :key="tag.value"
+           class="entity-tag"
+           :class="`entity-tag--level-two-${tag.type}`"
+           :style="getTagColor(tag.color)">
+        {{tag.value}}
+      </div>
     </div>
 <!--    分割线-->
     <div class="dividing-line"></div>
@@ -55,9 +61,10 @@ import {
   entityType,
   entityDetailTags,
   psiphon3IpType,
-  riskLevelMapping
+  riskLevelMapping,
+  entityDefaultColor
 } from '@/utils/constants'
-import { selectElementText, copySelectionText } from '@/utils/tools'
+import { selectElementText, copySelectionText, getTagColor } from '@/utils/tools'
 import { ref } from 'vue'
 import i18n from '@/i18n'
 import { useRouter } from 'vue-router'
@@ -84,6 +91,7 @@ export default {
     }
   },
   methods: {
+    getTagColor,
     tagValueHandler (k, k2, value) {
       if (k === 'psiphon3Ip') {
         if (k2 === 'type') {
@@ -120,7 +128,7 @@ export default {
               }
             })
             if (_.isArray(res.data.userDefinedTags)) {
-              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, type: 'normal' })))
+              this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
             }
             this.hideTagArea = _.isEmpty(this.levelTwoTags)
             this.$nextTick(() => {

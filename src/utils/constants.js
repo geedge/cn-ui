@@ -2489,6 +2489,7 @@ export const entityDetailTags = {
     }
   ]
 }
+export const entityDefaultColor = 'rgb(119,131,145)'
 // 赛风3IP的type字段字典
 export const psiphon3IpType = [
   {
