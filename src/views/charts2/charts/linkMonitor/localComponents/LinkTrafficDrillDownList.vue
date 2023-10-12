@@ -104,7 +104,7 @@ export default {
         endTime: getSecond(this.timeFilter.endTime)
       }
       if (this.queryCondition) {
-        const condition = this.queryCondition.toLowerCase().split(' or ')
+        const condition = this.queryCondition.split(' or ')
         if (condition.length > 1) {
           // params.outParam = true
           params.outParam = condition.find(c => c.indexOf('common_out_link_id') > -1 || c.indexOf('out_link_direction') > -1)

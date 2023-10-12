@@ -355,12 +355,12 @@ export default {
       if (out < 0.0001 && out !== 0) {
         outUsage = '< 0.01%'
       } else {
-        outUsage = JSON.stringify(parseFloat((out * 100).toFixed(2)))
+        outUsage = JSON.stringify(parseFloat(out * 100).toFixed(2))
       }
       if (_in < 0.0001 && _in !== 0) {
         inUsage = '< 0.01%'
       } else {
-        inUsage = JSON.stringify(parseFloat((_in * 100).toFixed(2)))
+        inUsage = JSON.stringify(parseFloat(_in * 100).toFixed(2))
       }
 
       length = outUsage.length + inUsage.length
