@@ -185,6 +185,7 @@ export const stackedLineChartOption = {
     {
       type: 'time',
       splitNumber: 8,
+      minInterval: 60000,
       axisLabel: {
         formatter: xAxisTimeFormatter,
         rich: xAxisTimeRich
