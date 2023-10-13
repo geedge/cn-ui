@@ -25,7 +25,7 @@
           :popper-append-to-body="false"
       >
         <template #prefix><i class="cn-icon cn-icon-location" style="color: #575757;"></i></template>
-        <el-option v-for="(country, index) in locationOptions" :key="index" :value="country.value">{{country.label}}</el-option>
+        <el-option v-for="country in showLocationOptions" :key="country" :value="country">{{country}}</el-option>
       </el-select>
     </div>
     <div class="map-legend">
@@ -50,8 +50,7 @@ import { shallowRef } from 'vue'
 import * as am4Core from '@amcharts/amcharts4/core'
 import * as am4Maps from '@amcharts/amcharts4/maps'
 import { computeScore, getGeoData } from '@/utils/tools'
-import { countryNameIdMapping, storageKey, unitTypes } from '@/utils/constants'
-import locationOptions from '@/views/charts2/charts/locationOptions'
+import { countryNameIdMapping, storageKey, unitTypes, iso36112 } from '@/utils/constants'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
@@ -65,7 +64,7 @@ export default {
   components: { ChartError },
   data () {
     return {
-      locationOptions,
+      showLocationOptions: [],
       myChart: null,
       polygonSeries: null,
       countrySeries: null,
@@ -228,6 +227,13 @@ export default {
         color: this.scoreColor(r.tooltip.data.score),
         border: this.scoreColor(r.tooltip.data.score)
       }))
+      if (!this.location) {
+        this.filterLocationOptions(_data)
+      }
+    },
+    filterLocationOptions (data) {
+      const showLocationOptions = Object.keys(countryNameIdMapping).filter(c => data.some(d => d.countryRegion === c))
+      this.showLocationOptions = Array.from(new Set(showLocationOptions))
     },
     scoreColor (score) {
       if (score >= 0 && score <= 2) {
@@ -352,30 +358,34 @@ export default {
       if (countryId) {
         const targetMapObject = this.polygonSeries.getPolygonById(countryId)
         targetMapObject.series.chart.zoomToMapObject(targetMapObject)
-        const geoData = await getGeoData(countryId)
-        if (geoData) {
-          if (!this.countrySeries) {
-            this.countrySeries = this.polygonSeriesFactory()
-          }
-          if (!this.countryImageSeries) {
-            this.countryImageSeries = this.imageSeriesFactory('score', this.countrySeries)
-          }
-          this.countrySeries.geodata = geoData
-          this.polygonSeries.hide()
-          this.worldImageSeries.hide()
-          this.countrySeries.show()
-          this.countryImageSeries.show()
+        if (iso36112[countryId]) {
+          const geoData = await getGeoData(countryId)
+          if (geoData) {
+            if (!this.countrySeries) {
+              this.countrySeries = this.polygonSeriesFactory()
+            }
+            if (!this.countryImageSeries) {
+              this.countryImageSeries = this.imageSeriesFactory('score', this.countrySeries)
+            }
+            this.countrySeries.geodata = geoData
+            this.polygonSeries.hide()
+            this.worldImageSeries.hide()
+            this.countrySeries.show()
+            this.countryImageSeries.show()
 
-          await this.$nextTick(() => {
-            this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
-          })
-        } else if (!num || num < 3) {
-          // 多次测试，最多2次查询不到数据
-          if (!num) {
-            num = 0
+            await this.$nextTick(() => {
+              this.loadAm4ChartMap(this.countrySeries, this.countryImageSeries)
+            })
+          } else if (!num || num < 3) {
+            // 多次测试，最多2次查询不到数据
+            if (!num) {
+              num = 0
+            }
+            num++
+            await this.drill(countryId, num)
+          } else {
+            this.$message.warning(this.$t('tip.noDetailMap'))
           }
-          num++
-          await this.drill(countryId, num)
         } else {
           this.$message.warning(this.$t('tip.noDetailMap'))
         }
