@@ -804,10 +804,10 @@ export default {
           }
         })
       }
-      if (route === this.route) {
+      /* if (route === this.route) {
         this.refresh()
         return
-      }
+      } */
       if (route) {
         this.$router.push({
           path: route,

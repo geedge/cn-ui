@@ -21,7 +21,7 @@
     .entity-list--list {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      height: auto;
       /*overflow: visible;/*overflow: auto;*/
 
       .cn-entity__shadow {

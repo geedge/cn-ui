@@ -58,12 +58,23 @@ export default {
    */
   setup (props) {
     const { query } = useRoute()
-    const pageSize = ref(defaultPageSize)
+    // pageSize取值顺序：1.url；2.缓存；3.pageObj；4.默认值
+    const urlPageSize = parseInt(query.pageSize)
+    const cachePageSize = parseInt(localStorage.getItem(storageKey.pageSize + '-' + localStorage.getItem(storageKey.username) + '-' + props.tableId))
+    const pageObjPageSize = props.pageObj.pageSize
+    const pageSize = ref(urlPageSize || cachePageSize || pageObjPageSize || defaultPageSize)
     const currentPageNo = ref(props.storePageNoOnUrl ? (query.pageNo || (props.pageObj.pageNo || 1)) : (props.pageObj.pageNo || 1))
     return {
       pageSize,
       currentPageNo
     }
+  },
+  mounted () {
+    if (this.postPageSizes && this.postPageSizes.length > 0) {
+      this.resetPageSizes()
+    }
+    this.currentPageNo = parseInt(this.currentPageNo)
+    this.current(this.currentPageNo)
   },
   data () {
     return {
@@ -147,6 +158,7 @@ export default {
     size (val) {
       // eslint-disable-next-line vue/no-mutating-props
       // this.pageObj.pageNo = 1
+      this.$emit('scrollbarToTop')
       this.$emit('pageSize', val)
       this.backgroundColor()
 
@@ -163,11 +175,12 @@ export default {
             wrap.scrollTop = 0
           }
         })
+        this.$emit('scrollbarToTop')
       })
     },
     resetPageSizes: function () {
       if (this.postPageSizes) {
-        this.pageSizes = this.postPageSizes.map((item) => {
+        this.pageSizes = this.postPageSizes.map(item => {
           return {
             label: item + this.$t('pageSize'),
             value: item
@@ -182,20 +195,6 @@ export default {
       //   // const element = this.list[i]
       // }
     }
-  },
-  mounted () {
-    if (this.postPageSizes && this.postPageSizes.length > 0) {
-      this.pageSize = this.postPageSizes[0]
-      this.resetPageSizes()
-    } else {
-      const pageSize = localStorage.getItem(storageKey.pageSize + '-' + localStorage.getItem(storageKey.username) + '-' + this.tableId)
-      if (pageSize != 'undefined' && pageSize != null) {
-        this.pageSize = parseInt(pageSize)
-      }
-    }
-
-    this.currentPageNo = parseInt(this.currentPageNo)
-    this.current(this.currentPageNo)
   },
   watch: {
     postPageSizes: {

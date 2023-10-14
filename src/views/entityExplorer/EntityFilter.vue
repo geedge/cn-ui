@@ -2,51 +2,49 @@
   <div class="entity-filter-case" style="position: relative">
     <div class="filter-case__header">{{ $t('entities.filter1') }}</div>
 
-    <div v-if="filterDataLength>0">
+    <div v-if="filterDataLength > 0">
       <div class="entity-filter" v-for="(item, index) in myFilterData" :key="index">
-        <div v-if="item.data.length>0">
-          <div class="filter__header">
-            <i :class="item.icon"></i>
-            {{ item.title }}
-          </div>
-
-          <div class="filter__body" style="position: relative">
-            <loading :loading="loadingLeft" style="top: -5px;"></loading>
-
-            <div class="filter__body-item"
-                 v-for="(data, i) in item.data.slice(0, item.showNum)"
-                 :key="i"
-                 @click="filter(data.label, data)">
-              <div class="filter__body-item-left">
-                <div v-if="data.flag">
-                  <img v-if="data.flag===countryNameIdMapping.Unknown || !countryNameIdMapping[data.flag]" src="../../../public/images/flag/Unknown.svg" class="filter-country-flag">
-                  <img v-else :src="require(`../../../public/images/flag/${countryNameIdMapping[data.flag]}.png`)" class="filter-country-flag"/>
-                </div>
-                <div v-else class="filter__body-item-left-index">{{ i+1 }}</div>
-                <div class="filter__body-item-left-label">
-                  <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
-                    <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
-                      <span v-if="item.topColumn==='ip.port'">
-                        {{ data.port }}/{{ data.l7Protocol }}
-                      </span>
-                      <span v-else>{{ data.label }}</span>
-                    </span>
-                  </el-tooltip>
-                </div>
-              </div>
-              <div class="filter__body-item-right">{{ data.value }}</div>
-            </div>
-          </div>
-          <div @click="showMoreFilter(item, index)"
-               :class="item.showNum === item.data.length ? 'filter-no-show-more' : 'filter-show-more'">
-            {{ $t('entity.showMore') }}
-          </div>
-          <div class="filter-hr"></div>
+        <div class="filter__header">
+          <i :class="item.icon"></i>
+          {{ item.title }}
         </div>
+
+        <div class="filter__body" style="position: relative">
+          <loading :loading="item.loading" style="top: -5px;"></loading>
+
+          <div class="filter__body-item"
+               v-for="(data, i) in item.data.slice(0, item.showNum)"
+               :key="i"
+               @click="filter(data.label, data)">
+            <div class="filter__body-item-left">
+              <div v-if="data.flag">
+                <img v-if="data.flag===countryNameIdMapping.Unknown || !countryNameIdMapping[data.flag]" src="../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+                <img v-else :src="require(`../../../public/images/flag/${countryNameIdMapping[data.flag]}.png`)" class="filter-country-flag"/>
+              </div>
+              <div v-else class="filter__body-item-left-index">{{ i+1 }}</div>
+              <div class="filter__body-item-left-label">
+                <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
+                  <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
+                    <span v-if="item.topColumn==='ip.port'">
+                      {{ data.port }}/{{ data.l7Protocol }}
+                    </span>
+                    <span v-else>{{ data.label }}</span>
+                  </span>
+                </el-tooltip>
+              </div>
+            </div>
+            <div class="filter__body-item-right">{{ data.value }}</div>
+          </div>
+        </div>
+        <div @click="showMoreFilter(item, index)"
+             :class="item.showNum >= item.data.length || item.data.length <= 5 ? 'filter-no-show-more' : 'filter-show-more'">
+          {{ $t('entity.showMore') }}
+        </div>
+        <div class="filter-hr"></div>
       </div>
     </div>
+    <loading v-else-if="isFirstLoad" :loading="isFirstLoad"></loading>
     <chart-no-data v-else style="padding-top: 40px"></chart-no-data>
-
   </div>
 </template>
 
@@ -54,6 +52,7 @@
 import Loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { countryNameIdMapping } from '@/utils/constants'
+import _ from 'lodash'
 export default {
   name: 'EntityFilter',
   components: { ChartNoData, Loading },
@@ -73,6 +72,9 @@ export default {
       })
 
       return length
+    },
+    isFirstLoad () {
+      return this.myFilterData.some(d => d.firstLoad)
     }
   },
   data () {
@@ -84,6 +86,14 @@ export default {
   },
   mounted () {
     this.myFilterData = this.filterData
+  },
+  watch: {
+    filterData: {
+      deep: true,
+      handler (n) {
+        this.myFilterData = _.cloneDeep(n)
+      }
+    }
   },
   methods: {
     /**
@@ -103,17 +113,14 @@ export default {
       this.$emit('filter', name, data)
     },
     showMoreFilter (item, index) {
-      if ((item.data.length - item.showNum) >= 5) {
+      this.myFilterData[index].showNum = item.data.length
+      /*if ((item.data.length - item.showNum) >= 5) {
         item.shouNum += 5
         this.myFilterData[index].showNum += 5
       } else {
         this.myFilterData[index].showNum += (item.data.length - item.showNum)
-      }
+      }*/
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

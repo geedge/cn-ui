@@ -185,7 +185,6 @@ export default {
   },
   data () {
     return {
-      showList: false,
       listMode: 'list', // entity列表的模式，list|block
 
       entityAppTotal: '-',
@@ -213,28 +212,36 @@ export default {
           title: this.$t('entity.topCountries'),
           topColumn: 'ip.country',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-city',
           title: this.$t('entity.topCities'),
           topColumn: 'ip.city',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-as',
           title: this.$t('entity.topASNs'),
           topColumn: 'ip.asn',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-operator',
           title: this.$t('entity.topISPs'),
           topColumn: 'ip.isp',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-open-port',
@@ -242,28 +249,36 @@ export default {
           topColumn: 'ip.port',
           topColumn1: 'ip.protocol',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-FQDN',
           title: this.$t('entity.topFQDNCategories'),
           topColumn: 'domain.category',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-category2',
           title: this.$t('entity.topAppCategories'),
           topColumn: 'app.category',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-tag1',
           title: this.$t('entity.topTags'),
           topColumn: 'tag',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         }
       ],
       listData: [],
@@ -396,16 +411,17 @@ export default {
             mode: mode,
             range: this.timeFilter.dateRangeValue,
             pageNo: this.pageObj.pageNo,
-            pageSize: this.pageObj.pageSize
+            pageSize: this.pageObj.pageSize,
+            showList: true
           }
         })
-        this.showList = true
+        // this.showList = true
         // 跳转页面，则不执行搜索功能
         return true
       }
 
-      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
 
       // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
@@ -489,8 +505,8 @@ export default {
     /** 新版查询filter数据 */
     queryFilterNew (params) {
       const queryParams = {
-        // startTime: getSecond(params.startTime),
-        // endTime: getSecond(params.endTime),
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime),
         resource: params.q || ''
       }
       this.loadingLeft = true
@@ -502,8 +518,48 @@ export default {
       const aggDomain = axios.get(api.entity.entityList.aggDomain, { params: queryParams })
       const aggAppCategory = axios.get(api.entity.entityList.aggAppCategory, { params: queryParams })
       const aggTag = axios.get(api.entity.entityList.aggTag, { params: queryParams })
-
-      Promise.all([aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]).then(response => {
+      const requests = [aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]
+      requests.forEach((req, index) => {
+        this.newFilterData[index].loading = true
+        req.then(response => {
+          if (response.status === 200 && response.data.data.list) {
+            if (response.data.data.list.length >= 5) {
+              this.newFilterData[index].showNum = 5
+            } else {
+              this.newFilterData[index].showNum = response.data.data.list.length
+            }
+            this.newFilterData[index].data = []
+            response.data.data.list.forEach((item, i) => {
+              let obj = {
+                label: item.value,
+                topColumn: this.newFilterData[index].topColumn,
+                value: item.uniqueEntities,
+                showNum: 5
+              }
+              if (index === 0) {
+                obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
+              }
+              if (index === 4) {
+                obj = {
+                  topColumn: this.newFilterData[index].topColumn,
+                  topColumn1: this.newFilterData[index].topColumn1,
+                  port: item.port,
+                  l7Protocol: item.l7Protocol,
+                  value: item.uniqueEntities,
+                  showNum: 5
+                }
+              }
+              this.newFilterData[index].data.push(obj)
+            })
+          }
+        }).catch(e => {
+          this.$message.error(e.response.data.message)
+        }).finally(() => {
+          this.newFilterData[index].loading = false
+          this.newFilterData[index].firstLoad = false
+        })
+      })
+      /*Promise.all([aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]).then(response => {
         response.forEach((item1, index) => {
           if (item1.status === 200 && item1.data.data.list) {
             if (item1.data.data.list.length >= 5) {
@@ -540,7 +596,7 @@ export default {
         this.$message.error(e.response.data.message)
       }).finally(() => {
         this.loadingLeft = false
-      })
+      })*/
     },
     /** 实体列表查询 */
     queryList (params) {
@@ -548,8 +604,8 @@ export default {
       const queryParams = {
         pageSize: params.pageSize,
         pageNo: params.pageNo,
-        // startTime: getSecond(params.startTime),
-        // endTime: getSecond(params.endTime),
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime),
         resource: params.q || ''
       }
       axios.get(api.entity.entityList.list, { params: queryParams }).then(response => {
@@ -570,8 +626,8 @@ export default {
     queryCount (params) {
       this.loadingCount = true
       const queryParams = {
-        // startTime: getSecond(params.startTime),
-        // endTime: getSecond(params.endTime),
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime),
         resource: params.q || ''
       }
       axios.get(api.entity.entityList.summaryCount, { params: queryParams }).then(response => {
@@ -692,23 +748,25 @@ export default {
     }
   },
   mounted () {
-    this.getEntityIndexData()
-    let { q, listMode } = this.$route.query
+    if (!this.showList) {
+      this.getEntityIndexData()
+    } else {
+      let { q, listMode } = this.$route.query
 
-    // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
-    if (listMode) {
-      this.showList = true
-      // %位置为0是输入中文时能解码，%20，25%分别是空格和%的情况
-      if (q && (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1)) {
-        q = decodeURI(q)
+      // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
+      if (listMode) {
+        // %位置为0是输入中文时能解码，%20，25%分别是空格和%的情况
+        if (q && (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1)) {
+          q = decodeURI(q)
+        }
+        // %位置不为0，即内容包含非英文时
+        const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
+        if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+          q = decodeURI(q)
+        }
+        this.initSearch(q)
+        this.listMode = listMode
       }
-      // %位置不为0，即内容包含非英文时
-      const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
-      if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
-        q = decodeURI(q)
-      }
-      this.initSearch(q)
-      this.listMode = listMode
     }
   },
   watch: {
@@ -722,11 +780,12 @@ export default {
     const rangeParam = query.range
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
+    const showList = ref(Boolean(query.showList))
     // 若url携带了，使用携带的值，否则使用默认值。
-    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
+    const dateRangeValue = rangeParam ? parseInt(query.range) : 60 * 24
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
-      const { startTime, endTime } = getNowTime(60)
+      const { startTime, endTime } = getNowTime(60 * 24)
       timeFilter.value.startTime = startTime
       timeFilter.value.endTime = endTime
     } else {
@@ -737,12 +796,13 @@ export default {
       pageNo: query.pageNo ? parseInt(query.pageNo) : 1,
       // 是否重置pageNo，在执行新搜索时是true
       resetPageNo: true,
-      pageSize: query.pageSize ? parseInt(query.pageSize) : defaultPageSize,
+      pageSize: query.pageSize ? parseInt(query.pageSize) : 10, // TODO 23-10-14 默认暂时改为10
       total: 0
     })
     return {
       timeFilter,
-      pageObj
+      pageObj,
+      showList
     }
   },
   beforeUnmount () {

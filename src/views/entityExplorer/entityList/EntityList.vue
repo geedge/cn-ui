@@ -38,11 +38,13 @@
         <Pagination
                 ref="pagination"
                 :page-obj="pageObj"
+                :post-page-sizes="[10, 20, 50]"
                 @pageNo='pageNo'
                 @pageSize='pageSize'
                 @size-change="pageSize"
                 @prev-click="prev"
                 @next-click="next"
+                @scrollbarToTop="scrollbarToTop"
         >
         </Pagination>
       </div>
@@ -124,6 +126,10 @@ export default {
         const container = document.getElementById('cnContainer')
         container.scrollTop += e.deltaY / 2
       }
+    },
+    scrollbarToTop () {
+      const container = document.getElementById('cnContainer')
+      container.scrollTop = 0
     }
   },
   mounted () {
