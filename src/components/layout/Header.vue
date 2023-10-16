@@ -786,6 +786,7 @@ export default {
             t: +new Date()
           }
         })
+        return
       } else if (opeType === 3) {
         this.$router.push({
           query: {
@@ -794,6 +795,7 @@ export default {
             t: +new Date()
           }
         })
+        return
       } else if (opeType !== 4) {
         this.$router.push({
           query: {
@@ -803,11 +805,12 @@ export default {
             t: +new Date()
           }
         })
-      }
-      if (route === this.route) {
-        this.refresh()
         return
       }
+      /* if (route === this.route) {
+        this.refresh()
+        return
+      } */
       if (route) {
         this.$router.push({
           path: route,

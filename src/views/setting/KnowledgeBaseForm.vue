@@ -1379,7 +1379,7 @@ export default {
     // 步骤条控制
     const stepHeightConstant = {
       collapse: 58,
-      first: 333,
+      first: 404,
       second: 284,
       third: itemListHeight.noData
     }
