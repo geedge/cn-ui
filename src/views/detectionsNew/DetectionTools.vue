@@ -11,14 +11,16 @@
         <span>{{ $t('overall.create') }}</span>
       </button>
 
-      <!--      <button-->
-      <!--          id="knowledge-base-edit"-->
-      <!--          :title="$t('knowledgeBase.editKnowledgeBase')"-->
-      <!--          class="top-tool-btn margin-r-10"-->
-      <!--          style="width:72px;">-->
-      <!--        <i class="cn-icon-edit cn-icon" ></i>-->
-      <!--        <span>{{$t('overall.edit')}}</span>-->
-      <!--      </button>-->
+      <button
+          :disabled="disableEdit"
+          id="knowledge-base-edit"
+          :title="$t('knowledgeBase.editKnowledgeBase')"
+          class="top-tool-btn margin-r-10"
+          @click="onEdit"
+          style="width:72px;">
+        <i class="cn-icon-edit cn-icon" ></i>
+        <span>{{$t('overall.edit')}}</span>
+      </button>
 
       <button
           :disabled="disableDelete"
@@ -51,6 +53,10 @@ export default {
     disableDelete: {
       type: Boolean,
       default: true
+    },
+    disableEdit: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -64,6 +70,9 @@ export default {
     },
     onCreate () {
       this.$emit('create')
+    },
+    onEdit () {
+      this.$emit('edit')
     },
     onDelete (data) {
       this.$emit('delete', data)

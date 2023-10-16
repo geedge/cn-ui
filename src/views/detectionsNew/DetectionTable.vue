@@ -50,7 +50,7 @@
         </template>
         <template v-else-if="item.prop === 'status'">
           <div :class="`detection-tag-status${scope.row[item.prop]}`">
-            {{ switchStatus(scope.row[item.prop]) }}
+            {{ $t(switchStatus(scope.row[item.prop])) }}
           </div>
         </template>
         <template v-else-if="item.prop === 'description'">
@@ -151,9 +151,9 @@ export default {
         if (n) {
           n.forEach(t => {
             if (t.ruleType === 'indicator_match') {
-              t.library = t.ruleConfig.knowledge.name
+              t.library = t.ruleConfigObj.knowledgeBase.name
             } else if (t.ruleType === 'threshold') {
-              t.dimensions = t.ruleConfig.dimensions
+              t.dimensions = t.ruleConfigObj.dimensions
             }
           })
         }

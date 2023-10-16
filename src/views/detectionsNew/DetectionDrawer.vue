@@ -3,62 +3,62 @@
     <div class="drawer-basic">
       <div class="drawer-basic-header">
         <div class="drawer-basic-id">ID: {{ drawerInfo.ruleId }}</div>
-        <div :class="`detection-tag-status${detailData.status}`">
-          {{ switchStatus(detailData.status) }}
+        <div :class="`detection-tag-status${drawerInfo.status}`">
+          {{ $t(switchStatus(drawerInfo.status)) }}
         </div>
       </div>
 
       <div class="drawer-basic-function">
-        <div class="detection-drawer-title">Name</div>
+        <div class="detection-drawer-title">{{ $t('overall.name') }}</div>
         <div class="basic-function-value">{{ detailData.name }}</div>
       </div>
 
       <div class="drawer-basic-function">
-        <div class="detection-drawer-title">Type</div>
+        <div class="detection-drawer-title">{{ $t('overall.type') }}</div>
         <div class="basic-function-value">{{ detailData.eventType }}</div>
       </div>
 
       <div class="drawer-basic-description">
-        <div class="detection-drawer-title">Description</div>
+        <div class="detection-drawer-title">{{ $t('config.dataSet.description') }}</div>
         <div class="basic-description-value">{{ detailData.description }}</div>
       </div>
     </div>
 
     <div class="detection-drawer-collapse">
       <el-collapse v-model="activeRule">
-        <el-collapse-item title="Rule Definitcm" name="rule">
+        <el-collapse-item :title="$t('detection.ruleDefinition')" name="rule">
           <div class="drawer-collapse-content">
 
             <div class="drawer-basic-function">
-              <div class="detection-drawer-title">Source</div>
+              <div class="detection-drawer-title">{{ $t('config.user.source') }}</div>
               <div class="basic-function-value">{{ detailData.category }}</div>
             </div>
 
             <div v-if="detailData.ruleType==='indicator_match'">
               <div class="drawer-basic-function">
-                <div class="detection-drawer-title">Library</div>
-                <span class="basic-function-value">{{ detailData.library }}</span>
+                <div class="detection-drawer-title">{{ $t('detection.library') }}</div>
+                <span class="basic-function-value">{{ detailData.ruleConfigObj.knowledgeBase.name }}</span>
               </div>
 
               <div class="drawer-basic-function">
-                <div class="detection-drawer-title">Level</div>
+                <div class="detection-drawer-title">{{ $t('detection.level') }}</div>
                 <div class="detection-drawer-title">
-                  <div class="detection__icon" :style="`background-color: ${eventSeverityColor['critical']}`"></div>
-                  <div class="basic-function-value">Critical</div>
+                  <div class="detection__icon" :style="`background-color: ${eventSeverityColor[detailData.ruleConfigObj.level]}`"></div>
+                  <div class="basic-function-value">{{ detailData.ruleConfigObj.level }}</div>
                 </div>
               </div>
             </div>
 
             <div v-else>
               <div class="drawer-basic-function">
-                <div class="detection-drawer-title">Dimensions</div>
+                <div class="detection-drawer-title">{{ $t('detection.create.dimensions') }}</div>
                 <span class="detection-tag-blue">{{ detailData.dimensions }}</span>
               </div>
 
               <div class="drawer-basic-function">
-                <div class="detection-drawer-title">Filters</div>
-                <span class="detection-tag-blue">source</span>
-                <span style="margin: 0 6px;">equal</span><span>19890</span>
+                <div class="detection-drawer-title">{{ $t('detections.filters') }}</div>
+                <span class="detection-tag-blue">Source Port</span>
+                <span style="margin: 0 6px;">{{ $t('detections.equal') }}</span><span>19890</span>
               </div>
 
               <div class="drawer-basic-function" v-for="item in severityList" :key="item.severity"
@@ -67,7 +67,7 @@
                   <div class="detection__icon" :style="`background-color: ${eventSeverityColor[item.severity]}`"></div>
                   <div>{{ toUpperCaseByString(item.severity) }}</div>
                 </div>
-                <div class="detection-drawer-title">Conditions</div>
+                <div class="detection-drawer-title">{{ $t('detections.conditions') }}</div>
                 <div>
                   <div class="detection-tag-gray margin-r-10">> 60 Kpackets/s</div>
                   <div class="detection-tag-gray">> 50 Unique Src IPs</div>
@@ -81,22 +81,25 @@
 
     <div class="detection-drawer-collapse" style="margin: 20px 0">
       <el-collapse v-model="activeTrigger">
-        <el-collapse-item title="Trigger" name="trigger">
+        <el-collapse-item :title="$t('detection.create.trigger')" name="trigger">
           <div class="drawer-collapse-content">
             <div class="drawer-collapse-trigger">
               Triggered when conditions occur at least
-              <span style="color: #046ECA" v-if="detailData.trigger">
-                {{ detailData.trigger.atLeast }} time
+              <span style="color: #046ECA">
+                {{ $_.get(detailData, 'ruleTriggerObj.atLeast', '-') || '-' }} time
               </span> in
-              <span style="color: #046ECA" v-if="detailData.trigger">
-                <!--todo 此处返回的是PT5M，具体时间处理根据后续字段来看-->
-                {{ getNumberFromStr(detailData.trigger.interval) }} minutes
+              <span style="color: #046ECA">
+                {{ getNumberFromStr($_.get(detailData, 'ruleTriggerObj.interval', '0')) || '-' }}
+                {{ $_.get(detailData, 'ruleTriggerObj.intervalVal', '-') || '-' }}
               </span>
             </div>
 
             <div class="drawer-basic-function">
-              <div class="detection-drawer-title">Evaluation Frequency</div>
-              <div class="basic-function-value" v-if="detailData.trigger">{{ getNumberFromStr(detailData.trigger.resetInterval) }} minutes</div>
+              <div class="detection-drawer-title">{{ $t('detection.evaluationFrequency') }}</div>
+              <div class="drawer-trigger-minutes">
+                {{ getNumberFromStr($_.get(detailData, 'ruleTriggerObj.resetInterval', '0')) || '-' }}
+                {{ $_.get(detailData, 'ruleTriggerObj.intervalVal', '-') || '-' }}
+              </div>
             </div>
           </div>
         </el-collapse-item>
@@ -156,7 +159,8 @@ export default {
 
       axios.get(`${api.detection.detail}/${this.drawerInfo.ruleId}`).then(res => {
         if (res.status === 200) {
-          this.detailData = res.data.data
+          const data = res.data.data
+          this.detailData = data
         }
       }).catch(err => {
         console.error(err)

@@ -7,7 +7,7 @@ if (openMock) {
     const list = []
     for (let i = 0; i < 20; i++) {
       const obj = {
-        ruleId: 100000 + i,
+        ruleId: 163 + i,
         ruleType: 'indicator_match',
         status: 1,
         name: 'name123',
@@ -50,51 +50,17 @@ if (openMock) {
   Mock.mock(new RegExp(urlAndVersion + '/detection/statistics.*'), 'get', function (requestObj) {
     const data = {
       statusList: [
-        { status: 1 },
-        { status: 0 }
+        { status: 1, count: 34 },
+        { status: 0, count: 28 }
       ],
       categoryList: [
-        { value: 'security', label: 'Security Event' },
-        { value: 'performance', label: 'Performance Event' },
-        { value: 'regulatory_risk', label: 'Regulatory Risk Event' }
+        { name: 'Security Event', count: 32 },
+        { name: 'Performance Event', count: 28 }
       ],
-      typeList: [
-        { value: 'c&c', label: 'C&C' },
-        { value: 'ddos', label: 'DDos' },
-        { value: 'lateral_movement', label: 'Lateral movement' },
-        { value: 'brute_force', label: 'Brute force' }
-      ],
-      sourceList: [
-        { value: 'ip_metric', label: 'IP metric' },
-        { value: 'performance_event', label: 'performance event' }
-      ],
-      levelList: [
-        { value: 'critical', label: 'Critical' },
-        { value: 'high', label: 'High' },
-        { value: 'medium', label: 'Medium' },
-        { value: 'low', label: 'Low' },
-        { value: 'info', label: 'Info' }
-      ],
-      metricList: [
-        { value: 'tcp_lostlen_ratio', label: 'Bits/second' },
-        { value: 's2c_byte_retrans_ratio', label: 'Packets/second' },
-        { value: 's2c_byte_retrans_ratio1', label: 'Sessions/second' }
-      ],
-      conditionList: [
-        { value: 'than', label: 'Greater Than' },
-        { value: 'less', label: 'Greater Less' },
-        { value: 'equal', label: 'Greater Equal' }
-      ],
-      libraryList: [
-        { value: 'library name2', knowledgeId: '101', label: 'Library name' },
-        { value: 'library name1', knowledgeId: '102', label: 'Library name1' },
-        { value: 'library name2', knowledgeId: '103', label: 'Library name2' }
-      ],
-      intervalList: [
-        { value: 'minutes', label: 'minutes' },
-        { value: 'hours', label: 'hours' },
-        { value: 'days', label: 'days' },
-        { value: 'weeks', label: 'weeks' }
+      eventTypeList: [
+        { name: 'DDos', count: 15 },
+        { name: 'Lateral movement', count: 17 },
+        { name: 'Brute force', count: 12 }
       ]
     }
 
@@ -129,28 +95,50 @@ if (openMock) {
     const ruleId = getLastValue(requestObj.url)
     const data = {
       name: 'name123',
-      category: 'Security Event',
+      category: 'security_event',
       ruleType: 'indicator_match',
       eventType: 'C&C',
       description: 'Built-in darkweb IoC',
       status: 1,
       ruleConfig: {
         dataSource: 'VPN Server IP',
-        knowledgeId: 10,
-        level: 10
+        knowledgeBase: {
+          knowledgeId: 10,
+          name: 'cn_ioc_darkweb',
+          category: 'websketch',
+          source: 'cn_ioc_darkweb'
+        },
+        level: 'critical'
       },
-      trigger: {
+      ruleConfigObj: {
+        dataSource: 'VPN Server IP',
+        knowledgeBase: {
+          knowledgeId: '101',
+          name: 'cn_ioc_darkweb',
+          category: 'websketch',
+          source: 'cn_ioc_darkweb'
+        },
+        level: 'critical'
+      },
+      ruleTrigger: {
+        atLeast: 1,
+        interval: 'PT5M',
+        resetInterval: 'PT10M'
+      },
+      ruleTriggerObj: {
         atLeast: 1,
         interval: 'PT5M',
         resetInterval: 'PT10M'
       }
     }
+    data.ruleConfig = JSON.stringify(data.ruleConfig)
+    data.trigger = JSON.stringify(data.trigger)
 
     if (ruleId % 2 === 0) {
       data.ruleType = 'threshold'
-      data.status = 1
-    } else {
       data.status = 0
+    } else {
+      data.status = 1
     }
 
     return {

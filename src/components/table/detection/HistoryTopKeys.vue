@@ -9,8 +9,7 @@
       <div class="key-search">
         <el-input v-model="searchKey" @keyup.enter="onSearch" size="mini" placeholder="Search for">
           <template #prefix>
-            <!--todo 该图标名称错误，已在iconfont修改，后续记得改过来-->
-            <i class="cn-icon cn-icon-serach key-search-icon"></i>
+            <i class="cn-icon cn-icon-search key-search-icon"></i>
           </template>
         </el-input>
 
@@ -24,7 +23,7 @@
       <div class="key-table">
         <loading :loading="loading"></loading>
 
-        <el-table :data="tableData" style="width: 100%" @row-click="rowClick">
+        <el-table :data="tableData" style="width: 100%" :row-class-name="tableRowClassName" @row-click="rowClick">
           <el-table-column
               v-for="(item, index) in tableTitle"
               :key="`col-${index}`"
@@ -73,6 +72,9 @@ export default {
     showDrawer: {
       type: Boolean,
       default: false
+    },
+    delKeyId: {
+      type: String
     }
   },
   components: {
@@ -116,6 +118,16 @@ export default {
     this.myDrawer = this.showDrawer
     this.getTopKeysData()
   },
+  watch: {
+    delKeyId (newVal) {
+      if (newVal) {
+        const obj = this.tableData.find(d => d.keyId === newVal)
+        if (obj) {
+          obj.filterKey = false
+        }
+      }
+    }
+  },
   methods: {
     unitConvert,
     dateFormatByAppearance,
@@ -150,6 +162,7 @@ export default {
     },
     /** 单击topKeys弹窗某一项 */
     rowClick (data) {
+      data.filterKey = true
       this.$emit('keyRowClick', data)
     },
     onRefresh () {
@@ -161,6 +174,11 @@ export default {
     httpError (e) {
       this.showError = true
       this.errorMsg = this.errorMsgHandler(e)
+    },
+    tableRowClassName (row) {
+      if (row.row.filterKey) {
+        return 'key-click-row'
+      }
     }
   }
 }
@@ -230,5 +248,9 @@ export default {
     color: #666666;
     margin-left: 4px;
   }
+}
+
+.el-table .key-click-row {
+  background: #F5F7FA !important;
 }
 </style>

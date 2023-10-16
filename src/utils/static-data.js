@@ -350,3 +350,53 @@ export const connectionList = [
   //   label: 'OR'
   // }
 ]
+
+export const detectionUnitList = {
+  statusList: [
+    { status: 1 },
+    { status: 0 }
+  ],
+  categoryList: [
+    { value: 'security_event', label: 'Security Event' },
+    { value: 'performance_event', label: 'Performance Event' }
+  ],
+  eventTypeList: [
+    { value: 'ddos', label: 'DDos' },
+    { value: 'lateral_movement', label: 'Lateral movement' },
+    { value: 'brute_force', label: 'Brute force' }
+  ],
+  sourceList: [
+    { value: 'session_record', label: 'session_record' }
+  ],
+  levelList: [
+    { value: 'critical', label: 'Critical' },
+    { value: 'high', label: 'High' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'low', label: 'Low' },
+    { value: 'info', label: 'Info' }
+  ],
+  metricList: [
+    { value: 'tcp_lostlen_ratio', label: 'Bits/second' },
+    { value: 's2c_byte_retrans_ratio', label: 'Packets/second' },
+    { value: 's2c_byte_retrans_ratio1', label: 'Sessions/second' }
+  ],
+  conditionList: [
+    { value: 'than', label: 'Greater Than' },
+    { value: 'less', label: 'Greater Less' },
+    { value: 'equal', label: 'Greater Equal' }
+  ],
+  libraryList: [
+    { value: 'library name', knowledgeId: 7, label: 'Library name' },
+    { value: 'library name1', knowledgeId: 8, label: 'Library name1' },
+    { value: 'library name2', knowledgeId: 9, label: 'Library name2' }
+  ],
+  intervalList: [
+    { value: 'year', label: 'years' },
+    { value: 'months', label: 'months' },
+    { value: 'weeks', label: 'weeks' },
+    { value: 'days', label: 'days' },
+    { value: 'hours', label: 'hours' },
+    { value: 'minutes', label: 'minutes' },
+    { value: 'seconds', label: 'seconds' }
+  ]
+}

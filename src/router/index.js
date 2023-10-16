@@ -103,6 +103,10 @@ const routes = [
       {
         path: '/detection/policies/create',
         component: () => import('@/views/detectionsNew/DetectionForm')
+      },
+      {
+        path: '/detection/policies/edit',
+        component: () => import('@/views/detectionsNew/DetectionForm')
       }
     ]
   }

@@ -4,7 +4,7 @@
       <div>
         <el-form ref="form" :model="thresholdRuleObj" label-position="top" :rules="rules">
           <!--source-->
-          <el-form-item label="Source" prop="dataSource" class="form-setting__block margin-b-20">
+          <el-form-item :label="$t('config.user.source')" prop="dataSource" class="form-setting__block margin-b-20">
             <el-select v-model="thresholdRuleObj.dataSource" placeholder=" " size="mini" class="form-setting__select">
               <el-option
                   v-for="item in sourceList"
@@ -18,7 +18,7 @@
 
         <!--Dimensions-->
         <div class="form-setting__block margin-b-20">
-          <div class="block-title">Dimensions</div>
+          <div class="block-title">{{ $t('detection.create.dimensions') }}</div>
           <div class="block-dimension">
             <div class="block-dimension-tag" v-for="(ite, ind) in dimensionList" :key="ind">{{ ite.label }}</div>
           </div>
@@ -52,7 +52,7 @@
                   size="mini"
                   oninput="value=value.replace(/[^\d]/g,'')"
                   v-model="item.value"></el-input>
-              <i class="cn-icon cn-icon-close" @click="delFilterItem(index)"></i>
+              <i class="cn-icon cn-icon-close" @click="delFilterItem(index, item)"></i>
             </div>
 
             <div style="height: 10px;"></div>
@@ -65,7 +65,7 @@
 
         <!--Condition模块-->
         <div class="form-setting__block margin-b-20">
-          <div class="block-title">Condition</div>
+          <div class="block-title">{{ $t('detection.create.condition') }}</div>
 
           <el-form ref="form2" :model="thresholdRuleObj" label-position="top">
           <div class="definition-condition-block" v-for="(item, index) in thresholdRuleObj.conditionData" :key="index">
@@ -97,7 +97,7 @@
                           v-for="item in metricList"
                           :key="item.label"
                           :label="item.label"
-                          :value="item.value"
+                          :value="item.label"
                       />
                     </el-select>
                   </el-form-item>
@@ -144,7 +144,7 @@
           </el-form>
 
           <div class="condition-add" @click="addCondition">
-            <i class="cn-icon cn-icon-add"></i>Add Condition
+            <i class="cn-icon cn-icon-add"></i>{{ $t('detection.create.addCondition') }}
           </div>
         </div>
       </div>
@@ -154,6 +154,7 @@
         <history-top-keys
             v-if="showDrawer"
             :showDrawer="showDrawer"
+            :delKeyId="delKeyId"
             @closeDrawer="onCloseDrawer"
             @keyRowClick="getRowClick"
         ></history-top-keys>
@@ -163,7 +164,7 @@
     <div v-if="mySettingObj.ruleType===detectionRuleType.indicator">
       <el-form ref="form" :model="indicatorRuleObj" label-position="top" :rules="rules">
         <!--Source-->
-        <el-form-item label="Source" prop="dataSource" class="form-setting__block margin-b-20">
+        <el-form-item :label="$t('config.user.source')" prop="dataSource" class="form-setting__block margin-b-20">
           <el-select v-model="indicatorRuleObj.dataSource" class="form-setting__select" placeholder=" " size="mini">
             <el-option
                 v-for="item in sourceList"
@@ -175,13 +176,13 @@
         </el-form-item>
 
         <!--Library-->
-        <el-form-item label="Library" prop="knowledgeId" class="form-setting__block margin-b-20">
-          <el-select v-model="indicatorRuleObj.knowledgeId" class="form-setting__select" placeholder=" " size="mini">
+        <el-form-item :label="$t('detection.library')" prop="knowledgeId" class="form-setting__block margin-b-20">
+          <el-select v-model="indicatorRuleObj.name" class="form-setting__select" placeholder=" " size="mini">
             <el-option
                 v-for="item in libraryList"
-                :key="item.knowledgeId"
-                :label="item.label"
-                :value="item.knowledgeId"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
             />
           </el-select>
         </el-form-item>
@@ -207,21 +208,26 @@
     </div>
 
     <div class="form-setting__btn">
-      <el-button @click="onContinue">Continue</el-button>
+      <el-button @click="onContinue">{{ $t('detection.create.continue') }}</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import { api } from '@/utils/api'
 import HistoryTopKeys from '@/components/table/detection/HistoryTopKeys'
 import { eventSeverityColor, detectionRuleType } from '@/utils/constants'
+import { detectionUnitList } from '@/utils/static-data'
+import axios from '_axios@0.21.4@axios'
+import _ from 'lodash'
+import { api } from '@/utils/api'
 
 export default {
   name: 'RuleDefinition',
   props: {
     settingObj: {
+      type: Object
+    },
+    editObj: {
       type: Object
     }
   },
@@ -232,9 +238,24 @@ export default {
     settingObj: {
       immediate: true,
       deep: true,
-      handler (newVal, oldVal) {
+      handler (newVal) {
         if (!newVal.editFlag && newVal.saveFlag) {
           this.mySettingObj = JSON.parse(JSON.stringify(newVal))
+        }
+      }
+    },
+    editObj: {
+      immediate: true,
+      deep: true,
+      handler (newVal) {
+        if (newVal) {
+          if (newVal.ruleType === detectionRuleType.indicator) {
+            this.indicatorRuleObj = this.$_.cloneDeep(newVal.ruleConfigObj)
+            this.indicatorRuleObj.knowledgeId = newVal.ruleConfigObj.knowledgeBase.knowledgeId
+          }
+          if (newVal.ruleType === detectionRuleType.threshold) {
+            this.thresholdRuleObj = this.$_.cloneDeep(newVal.ruleConfigObj)
+          }
         }
       }
     }
@@ -244,7 +265,7 @@ export default {
       eventSeverityColor,
       detectionRuleType,
       mySettingObj: {
-        ruleType: detectionRuleType.threshold
+        ruleType: detectionRuleType.indicator
       },
       dimensionList: [], // Dimensions数据
       // ruleType为Indicator时表单数据
@@ -327,7 +348,8 @@ export default {
         than: '>',
         less: '<',
         equal: '='
-      }
+      },
+      delKeyId: '' // 删除的keyId
     }
   },
   mounted () {
@@ -341,18 +363,28 @@ export default {
   },
   methods: {
     initData () {
-      axios.get(api.detection.statistics, { params: { pageSize: -1 } }).then(response => {
-        if (response.status === 200) {
-          this.sourceList = response.data.data.sourceList || []
-          this.levelList = response.data.data.levelList || []
-          this.conditionList = response.data.data.conditionList || []
-          this.metricList = response.data.data.metricList || []
-          this.libraryList = response.data.data.libraryList || []
-        } else {
-          console.error(response.data)
-        }
-      }).finally(() => {
-      })
+      this.sourceList = detectionUnitList.sourceList || []
+      this.levelList = detectionUnitList.levelList || []
+      // threshold模式还没确定，所以数据暂时静态数据，后续根据需要修改
+      this.conditionList = detectionUnitList.conditionList || []
+      this.metricList = detectionUnitList.metricList || []
+
+      if (this.mySettingObj.ruleType === this.detectionRuleType.indicator) {
+        axios.get(api.knowledgeBaseList, { params: this.searchLabel }).then(response => {
+          if (response.status === 200) {
+            this.libraryList = _.get(response, 'data.data.list', [])
+          } else {
+            this.libraryList = []
+            if (response.data.message) {
+              this.$message.error(response.data.message)
+            } else {
+              this.$message.error(this.$t('tip.somethingWentWrong'))
+            }
+          }
+        }).catch(() => {
+          this.libraryList = []
+        })
+      }
     },
     /** 单击History Top Keys列表某行，filter添加数据 */
     getRowClick (data) {
@@ -364,6 +396,7 @@ export default {
     },
     /** filter模块点击add按钮 */
     addFilter (data) {
+      this.delKeyId = ''
       this.showFilter = true
       if (this.selectList.length === 0) {
         this.getFilterList()
@@ -445,7 +478,8 @@ export default {
       ]
     },
     /** 删除filter某一项 */
-    delFilterItem (i) {
+    delFilterItem (i, item) {
+      this.delKeyId = item.keyId
       this.thresholdRuleObj.filterList.splice(i, 1)
     },
     /** 点击继续，展开第三步 */

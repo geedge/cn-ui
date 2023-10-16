@@ -110,64 +110,26 @@ export default {
       if (this.listUrl) {
         listUrl = this.listUrl
       }
-      // todo 此段是为了避免mock没开启，打开detection界面报错提示，后续再开发detection时删除
-      if (listUrl === api.detection.list) {
-        const list = []
-        for (let i = 0; i < 20; i++) {
-          const obj = {
-            ruleId: 100000 + i,
-            ruleType: 'indicator_match',
-            status: 1,
-            name: 'name123',
-            category: 'Security Event',
-            eventType: 'C&C',
-            description: 'Built-in darkweb IoC',
-            ruleConfig: {
-              knowledge: {
-                name: 'VPN Server IP',
-                category: 'user_defined'
-              }
-            }
-          }
-          if (i % 2 === 0) {
-            obj.ruleType = 'threshold'
-            obj.ruleConfig = {
-              dimensions: 'Destination IP/CIDR'
-            }
-            obj.description = 'abuse.ch is providing community driven threat intelligence on \n' +
-              'cyber threats. It is the home of a couple of projects that are \n' +
-              'helping internet service providers and network operators protect …'
-          } else {
-            obj.status = 0
-          }
-          list.push(obj)
-        }
-
-        this.tableData = list
-        this.pageObj.total = list.length
-        this.loading = false
-      } else {
-        axios.get(listUrl, { params: this.searchLabel }).then(response => {
-          if (response.status === 200) {
-            this.tableData = _.get(response, 'data.data.list', [])
-            this.pageObj.total = _.get(response, 'data.data.total', 0)
-            this.isNoData = !this.tableData || this.tableData.length === 0
-          } else {
-            console.error(response)
-            this.isNoData = true
-            if (response.data.message) {
-              this.$message.error(response.data.message)
-            } else {
-              this.$message.error(this.$t('tip.somethingWentWrong'))
-            }
-          }
-        }).catch(() => {
+      axios.get(listUrl, { params: this.searchLabel }).then(response => {
+        if (response.status === 200) {
+          this.tableData = _.get(response, 'data.data.list', [])
+          this.pageObj.total = _.get(response, 'data.data.total', 0)
+          this.isNoData = !this.tableData || this.tableData.length === 0
+        } else {
+          console.error(response)
           this.isNoData = true
-        }).finally(() => {
-          this.toggleLoading(false)
-          this.loading = false
-        })
-      }
+          if (response.data.message) {
+            this.$message.error(response.data.message)
+          } else {
+            this.$message.error(this.$t('tip.somethingWentWrong'))
+          }
+        }
+      }).catch(() => {
+        this.isNoData = true
+      }).finally(() => {
+        this.toggleLoading(false)
+        this.loading = false
+      })
     },
     del (row) {
       this.$confirm(this.$t('tip.confirmDelete'), {
@@ -400,10 +362,23 @@ export default {
       this.searchLabel.orderBy = orderBy
       this.getTableData()
     },
-    search (params) {
+    search (params, flag, list) {
       this.pageObj.pageNo = 1
-      delete this.searchLabel.category
-      delete this.searchLabel.source
+      if (flag !== 'detection') {
+        delete this.searchLabel.category
+        delete this.searchLabel.source
+      }
+      if (list && list.length > 0) {
+        if (list.indexOf('status') > -1) {
+          delete this.searchLabel.status
+        }
+        if (list.indexOf('category') > -1) {
+          delete this.searchLabel.category
+        }
+        if (list.indexOf('eventType') > -1) {
+          delete this.searchLabel.eventType
+        }
+      }
       this.getTableData(params)
     },
     getTimeString () {

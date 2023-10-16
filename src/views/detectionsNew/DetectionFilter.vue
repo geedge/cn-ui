@@ -8,8 +8,8 @@
         <div class="new-filter-content-title">{{ $t('overall.status') }}</div>
         <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkStatus" @change="onChangeCategory" style="display: flex;flex-direction: column">
-            <el-checkbox v-for="item in statusList" :key="item.label" class="new-filter-content-checkbox" :label="item.status">
-              <div>{{ item.label }}</div>
+            <el-checkbox v-for="item in statusList" :key="item.name" class="new-filter-content-checkbox" :label="item.status">
+              <div>{{ item.name }}</div>
             </el-checkbox>
           </el-checkbox-group>
         </div>
@@ -19,8 +19,8 @@
         <div class="new-filter-content-title">{{ $t('overall.category') }}</div>
         <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkCategory" @change="onChangeCategory">
-            <el-checkbox v-for="item in categoryList" :key="item.value" class="new-filter-content-checkbox" :label="item.value">
-              {{ item.label }}
+            <el-checkbox v-for="item in categoryList" :key="item.name" class="new-filter-content-checkbox" :label="item.name">
+              {{ item.name }}
             </el-checkbox>
           </el-checkbox-group>
         </div>
@@ -29,9 +29,9 @@
       <div>
         <div class="new-filter-content-title">{{ $t('overall.type') }}</div>
         <div class="new-filter-content-content">
-          <el-checkbox-group v-model="checkType" @change="onChangeCategory" style="display: flex;flex-direction: column">
-            <el-checkbox v-for="item in typeList" :key="item.value" class="new-filter-content-checkbox" :label="item.value">
-              {{ item.label }}
+          <el-checkbox-group v-model="checkEventType" @change="onChangeCategory" style="display: flex;flex-direction: column">
+            <el-checkbox v-for="item in eventTypeList" :key="item.name" class="new-filter-content-checkbox" :label="item.name">
+              {{ item.name }}
             </el-checkbox>
           </el-checkbox-group>
         </div>
@@ -43,100 +43,76 @@
 <script>
 import axios from 'axios'
 import { api } from '@/utils/api'
+import { switchStatus } from '@/utils/tools'
 
 export default {
   name: 'DetectionFilter',
   data () {
     return {
-      statusList: [],
-      categoryList: [],
-      typeList: [],
-      checkStatus: [],
-      checkCategory: [],
-      checkType: [],
-      url: api.detection.statistics
+      statusList: [], // 状态列表数据
+      categoryList: [], // 类别列表
+      eventTypeList: [], // 事件类型列表
+      checkStatus: [], // checkbox选择的状态列表
+      checkCategory: [], // checkbox选择的类别
+      checkEventType: [], // checkbox选择的事件类型
+      policyTotal: 0, // 策略总条数，与筛选条件无关
+      policyEnabledNum: 0 // 策略中状态为enabled的数量
     }
   },
   mounted () {
-    // 开发时删除---start
-    this.statusList = [
-      { status: 1, label: 'Enabled' },
-      { status: 0, label: 'Disabled' }
-    ]
-    this.checkStatus = [0, 1]
-    this.categoryList = [
-      { value: 'security', label: 'Security Event' },
-      { value: 'performance', label: 'Performance Event' },
-      { value: 'regulatory_risk', label: 'Regulatory Risk Event' }
-    ]
-    this.checkCategory = ['security', 'performance', 'regulatory_risk']
-    this.typeList = [
-      { value: 'c&c', label: 'C&C' },
-      { value: 'ddos', label: 'DDos' },
-      { value: 'lateral_movement', label: 'Lateral movement' },
-      { value: 'brute_force', label: 'Brute force' }
-    ]
-    this.checkType = ['c&c', 'ddos', 'lateral_movement', 'brute_force']
-    // 开发时删除---end
-
-    // todo 暂时禁用，后续再开发时解禁
-    // this.getFilterData()
+    this.getFilterData()
   },
   methods: {
-    getFilterData (params) {
-      let searchParams = { pageSize: -1 }
-      if (params) {
-        searchParams = { ...searchParams, ...params }
-      }
-      axios.get(this.url, { params: searchParams }).then(response => {
+    getFilterData () {
+      axios.get(api.detection.statistics).then(response => {
         if (response.status === 200) {
-          if (response.data.data.statusList) {
+          const data = response.data.data
+          if (data.statusList) {
+            data.statusList.forEach(item => {
+              this.policyTotal += item.count
+              if (item.status === 1) {
+                this.policyEnabledNum = item.count
+              }
+              this.statusList.push({ status: item.status, name: this.$t(switchStatus(item.status)) })
+            })
+            this.$emit('policyTotal', this.policyTotal, this.policyEnabledNum)
+          } else {
             this.statusList = []
-            response.data.data.statusList.forEach(item => {
-              this.statusList.push({ status: item.status, label: this.switchStatus(item.status) })
-              this.checkStatus.push(item.status)
-            })
           }
 
-          this.categoryList = response.data.data.categoryList
-          if (response.data.data.categoryList) {
-            response.data.data.categoryList.forEach(item => {
-              this.checkCategory.push(item.value)
-            })
+          if (data.categoryList) {
+            this.categoryList = data.categoryList
+          } else {
+            this.categoryList = []
           }
 
-          this.typeList = response.data.data.typeList
-          if (response.data.data.typeList) {
-            response.data.data.typeList.forEach(item => {
-              this.checkType.push(item.value)
-            })
+          if (data.eventTypeList) {
+            this.eventTypeList = data.eventTypeList
+          } else {
+            this.eventTypeList = []
           }
         } else {
           console.error(response.data)
         }
-      }).finally(() => {
-        // this.initTypeData()
-        // this.initStatusData()
-        // const self = this
-        // this.$nextTick(() => {
-        //   if (self.$refs.knowledgeTreeTypeFilter) {
-        //     self.$refs.knowledgeTreeTypeFilter.setCheckedKeys(this.defaultCheckedCategory)
-        //   }
-        //   if (self.$refs.knowledgeTreeStatusFilter) {
-        //     self.$refs.knowledgeTreeStatusFilter.setCheckedKeys(this.defaultCheckedStatus)
-        //   }
-        // })
+      }).catch((e) => {
+        console.error(e)
+        this.statusList = []
+        this.categoryList = []
+        this.eventTypeList = []
       })
     },
-    onChangeCategory (data) {
-      // todo 暂时禁用，后续再开发时解禁
-      // 根据选择的值，构造不同入参，传给列表页，调用查询列表接口
-    },
-    switchStatus (status) {
-      switch (status) {
-        case 0: return 'Disabled'
-        case 1: return 'Enabled'
+    onChangeCategory () {
+      const obj = {}
+      if (this.checkStatus.length > 0) {
+        obj.status = this.checkStatus.join(',')
       }
+      if (this.checkCategory.length > 0) {
+        obj.category = this.checkCategory.join(',')
+      }
+      if (this.checkEventType.length > 0) {
+        obj.eventType = this.checkEventType.join(',')
+      }
+      this.$emit('filterParams', obj)
     }
   }
 }

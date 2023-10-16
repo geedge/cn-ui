@@ -2479,8 +2479,8 @@ export const psiphon3IpType = [
 ]
 // detection新增页的第一步，选择mode
 export const detectionRuleType = {
-  indicator: 'Indicator Match',
-  threshold: 'Threshold'
+  indicator: 'indicator_match',
+  threshold: 'threshold'
 }
 
 // 顶级域名列表

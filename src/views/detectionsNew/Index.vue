@@ -1,22 +1,24 @@
 <template>
   <div class="detection">
     <div class="detection-title">
-      <span>{{ $t('overall.detections') }}</span>
+      <span>{{ $t('overall.policies') }}</span>
       <span class="detection-title-label">
-        60 polices created(200 max) | 32 polices enabled(100 max)
+        {{ policyTotal }} {{ $t('detection.policesCreated') }} | {{ policyEnabledNum }} {{ $t('detection.policesEnabled') }}
       </span>
     </div>
 
     <div class="detection-content">
       <div class="detection-filter">
-        <detection-filter></detection-filter>
+        <detection-filter @filterParams="getFilterParams" @policyTotal="getPolicyTotal" />
       </div>
 
       <div class="detection-block">
         <detection-tools
             @delete="toDelete"
             @create="onCreate"
+            @edit="onEdit"
             @search="onSearch"
+            :disableEdit="disableEdit"
             :disableDelete="disableDelete"/>
 
         <div class="detection-table" style="position: relative">
@@ -32,7 +34,6 @@
               :all-count="18"
               @selectionChange="selectionChange"
               @reload="reloadRowList"
-              @toggleLoading="toggleLoading"
               @rowDoubleClick="onRowDoubleClick"
           ></detection-table>
         </div>
@@ -61,10 +62,8 @@
               cell-style="padding:4px 0px;font-size: 12px;color: #353636;font-weight: 400;"
               header-cell-style="padding:4px 0px;background: #F5F8FA;font-size: 12px;color: #353636;font-weight: 500;">
       <el-table-column :resizable="false" align="center" type="selection" width="50"></el-table-column>
-      <el-table-column property="ruleId" label="ID" width="70"></el-table-column>
+      <el-table-column property="ruleId" label="ID" width="150"></el-table-column>
       <el-table-column property="name" label="Name"></el-table-column>
-      <el-table-column property="category" label="Category" width="100" :formatter="categoryFormat"></el-table-column>
-      <el-table-column property="function" label="Function" width="110" :formatter="sourceFormat"></el-table-column>
     </el-table>
     <template #footer>
         <span class="dialog-footer">
@@ -89,6 +88,7 @@ import DetectionTable from '@/views/detectionsNew/DetectionTable'
 import { api } from '@/utils/api'
 import dataListMixin from '@/mixins/data-list'
 import DetectionDrawer from '@/views/detectionsNew/DetectionDrawer'
+import axios from 'axios'
 
 export default {
   name: 'Index',
@@ -101,8 +101,8 @@ export default {
   mixins: [dataListMixin],
   data () {
     return {
-      // url: api.detection.list,
-      url: api.knowledgeBase,
+      url: api.detection.list,
+      // url: api.knowledgeBase,
       listUrl: api.detection.list,
       tableId: 'detectionTable',
       isNoData: false,
@@ -110,42 +110,52 @@ export default {
       isSelectedStatus: false,
       batchDeleteObjs: [], // 待删除列表
       secondBatchDeleteObjs: [],
+      disableEdit: true,
       disableDelete: true,
       showConfirmDialog: false,
       delItemList: [],
       showDrawer: false,
-      drawerInfo: {}
+      drawerInfo: {},
+      filterParams: {},
+      policyTotal: 0,
+      policyEnabledNum: 0
     }
   },
   methods: {
-    onSearch () {
-      // todo 暂时禁用，后续再开发时解禁
-      // const params = {
-      //   ...this.filterParams,
-      //   name: this.keyWord
-      // }
-      // this.clearList()
-      // this.search(params)
-      // this.$refs.knowledgeFilter.reloadFilter(this.checkedCategoryIds, this.checkedStatusIds)
+    onSearch (keyWord) {
+      this.filterParams = {
+        ...this.filterParams,
+        name: keyWord
+      }
+      this.search(this.filterParams, 'detection')
     },
     toDelete (data) {
-      // todo 暂时禁用，后续再开发时解禁
-      // if (data && data.ruleId) {
-      //   this.secondBatchDeleteObjs = []
-      //   this.batchDeleteObjs = []
-      //   this.secondBatchDeleteObjs.push(data)
-      //   this.batchDeleteObjs.push(data)
-      // }
-      // this.showDelDialog()
+      if (data && data.ruleId) {
+        this.secondBatchDeleteObjs = []
+        this.batchDeleteObjs = []
+        this.secondBatchDeleteObjs.push(data)
+        this.batchDeleteObjs.push(data)
+      }
+      this.showDelDialog()
     },
     onCreate () {
-      // todo 暂时禁用，后续再开发时解禁
-      // this.$router.push({
-      //   path: '/detection/policies/create',
-      //   query: {
-      //     t: +new Date()
-      //   }
-      // })
+      this.$router.push({
+        path: '/detection/policies/create',
+        query: {
+          t: +new Date()
+        }
+      })
+    },
+    onEdit () {
+      const pageNo = this.$router.currentRoute.value.query.pageNo
+      this.$router.push({
+        path: '/detection/policies/edit',
+        query: {
+          t: +new Date(),
+          pageNoForTable: pageNo || 1,
+          id: this.batchDeleteObjs[0].ruleId
+        }
+      })
     },
     selectionChange (objs) {
       this.batchDeleteObjs = []
@@ -161,8 +171,6 @@ export default {
     reloadRowList () {
       this.getTableData()
     },
-    toggleLoading () {
-    },
     showDelDialog () {
       this.showConfirmDialog = true
       this.$nextTick(() => {
@@ -176,16 +184,6 @@ export default {
     },
     secondSelectionChange (objs) {
       this.secondBatchDeleteObjs = objs
-    },
-    categoryFormat (row, column) {
-      // const category = row.category
-      // const t = knowledgeBaseCategory.find(t => t.value === category)
-      // return t ? t.name : category
-    },
-    sourceFormat (row, column) {
-      // const source = row.source
-      // const t = knowledgeBaseSource.find(t => t.value === source)
-      // return t ? t.name : source
     },
     submit () {
       this.delBatchDetection()
@@ -206,39 +204,64 @@ export default {
         })
       } else {
         // todo 调用接口删除
-        // this.toggleLoading(true)
-        // axios.delete(api.detection.delete + '?ruleIds=' + ids).then(response => {
-        //   if (response.status === 200) {
-        //     this.delFlag = true
-        //     this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
-        //     this.secondBatchDeleteObjs.forEach((item) => {
-        //       this.$refs.delDataTable.toggleRowSelection(item, false)
-        //     })
-        //     this.$refs.knowledgeFilter.reloadFilter()
-        //     this.secondBatchDeleteObjs = []
-        //     this.batchDeleteObjs = []
-        //     delete this.searchLabel.category
-        //     delete this.searchLabel.source
-        //     this.getTableData()
-        //   } else {
-        //     this.$message.error(response.data.message)
-        //   }
-        // }).finally(() => {
-        //   this.toggleLoading(false)
-        //   if (this.isSelectedStatus != undefined) {
-        //     this.isSelectedStatus = false
-        //     this.disableDelete = true
-        //     this.secondBatchDeleteObjs = []
-        //     this.batchDeleteObjs = []
-        //     this.showConfirmDialog = false
-        //   }
-        // })
+        this.toggleLoading(true)
+        axios.delete(api.detection.delete + '?ruleIds=' + ids).then(response => {
+          if (response.status === 200) {
+            this.delFlag = true
+            this.$message({ duration: 2000, type: 'success', message: this.$t('tip.deleteSuccess') })
+            this.secondBatchDeleteObjs.forEach((item) => {
+              this.$refs.delDataTable.toggleRowSelection(item, false)
+            })
+            this.secondBatchDeleteObjs = []
+            this.batchDeleteObjs = []
+            delete this.searchLabel.category
+            delete this.searchLabel.source
+            this.getTableData()
+          } else {
+            this.$message.error(response.data.message)
+          }
+        }).finally(() => {
+          this.toggleLoading(false)
+          if (this.isSelectedStatus) {
+            this.isSelectedStatus = false
+            this.disableDelete = true
+            this.secondBatchDeleteObjs = []
+            this.batchDeleteObjs = []
+            this.showConfirmDialog = false
+          }
+        })
       }
     },
     onRowDoubleClick (data) {
-      // todo 暂时禁用，后续再开发时解禁
-      // this.showDrawer = true
-      // this.drawerInfo = data
+      this.showDrawer = true
+      this.drawerInfo = data
+    },
+    getFilterParams (params) {
+      const delList = []
+      if (params.status) {
+        this.filterParams.status = params.status
+      } else {
+        delete this.filterParams.status
+        delList.push('status')
+      }
+      if (params.category) {
+        this.filterParams.category = params.category
+      } else {
+        delete this.filterParams.category
+        delList.push('category')
+      }
+      if (params.eventType) {
+        this.filterParams.eventType = params.eventType
+      } else {
+        delete this.filterParams.eventType
+        delList.push('eventType')
+      }
+
+      this.search(this.filterParams, 'detection', delList)
+    },
+    getPolicyTotal (total, enabledNum) {
+      this.policyTotal = total
+      this.policyEnabledNum = enabledNum
     }
   }
 }

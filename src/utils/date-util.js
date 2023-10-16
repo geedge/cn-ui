@@ -137,3 +137,73 @@ export const xAxisTimeRich = {
     fontWeight: 'bold'
   }
 }
+
+function switchDateTypeByStr (str) {
+  switch (str) {
+    case 'Y':
+      return 'years'
+    case 'M':
+      return 'months'
+    case 'W':
+      return 'weeks'
+    case 'D':
+      return 'days'
+    case 'H':
+      return 'hours'
+    case 'm':
+      return 'minutes'
+    case 'S':
+      return 'seconds'
+  }
+}
+
+function switchValueByDateType (str) {
+  switch (str) {
+    case 'years':
+      return 'Y'
+    case 'months':
+      return 'M'
+    case 'weeks':
+      return 'W'
+    case 'days':
+      return 'D'
+    case 'hours':
+      return 'H'
+    case 'minutes':
+      return 'm'
+    case 'seconds':
+      return 'S'
+  }
+}
+
+export function getTimeByDurations (str) {
+  if (str && str.indexOf('P') === 0) {
+    const obj = {
+      type: '',
+      value: ''
+    }
+    for (let i = 1; i < str.length; i++) {
+      const item = str[i]
+      // P5M表示持续5个月，PT5M持续5分钟，T是位于时间分量之前的时间指示符，即T之前是年月周日，T之后是时分秒
+      if (isNaN(item) && item !== 'T') {
+        if (item === 'M' && i < str.indexOf('T')) {
+          obj.type = switchDateTypeByStr('m')
+        } else {
+          obj.type = switchDateTypeByStr(item)
+        }
+      } else if (!isNaN(item)) {
+        obj.value += item
+      }
+    }
+
+    return obj
+  }
+}
+
+export function getDurationsTimeByType (number, type) {
+  let T = ''
+  if (['hours', 'minutes', 'seconds'].indexOf(type) > -1) {
+    T = 'T'
+  }
+  return `P${T}${number}${switchValueByDateType(type)}`
+}

@@ -1320,9 +1320,9 @@ export function numberWithCommas (num) {
 export function switchStatus (status) {
   switch (status) {
     case 0:
-      return 'Disabled'
+      return 'detection.create.disabled'
     case 1:
-      return 'Enabled'
+      return 'detection.create.enabled'
   }
 }
 

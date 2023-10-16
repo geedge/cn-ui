@@ -1,8 +1,9 @@
 <template>
   <div class="detection-form">
+    <loading :loading="myLoading"></loading>
 
     <div class="detection-form-header">
-      Create Alert Policies
+      {{ $t('detection.createEventPolicies') }}
     </div>
 
     <!--第一步：General Settings-->
@@ -13,11 +14,11 @@
             <template #title>
               <div class="form-collapse-header">
                 <div :class="activeNames[0]==='1' ? 'form-collapse-header-no-active' : 'form-collapse-header-no'">1</div>
-                <div class="form-collapse-header-title">General Settings</div>
+                <div class="form-collapse-header-title">{{ $t('detection.create.generalSettings') }}</div>
               </div>
             </template>
             <div class="form-collapse-content">
-              <general-settings ref="form" @setSettingForm="getFormSetting" />
+              <general-settings ref="form" :editObj="editObj" @setSettingForm="getFormSetting" />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -30,11 +31,11 @@
             <template #title>
               <div class="form-collapse-header">
                 <div :class="activeNames[0]==='2' ? 'form-collapse-header-no-active' : 'form-collapse-header-no'">2</div>
-                <div class="form-collapse-header-title">Rule Definition</div>
+                <div class="form-collapse-header-title">{{ $t('detection.create.ruleDefinition') }}</div>
               </div>
             </template>
             <div class="form-collapse-content">
-              <rule-definition :settingObj="settingObj" @setRuleObj="getRuleObj" />
+              <rule-definition :settingObj="settingObj" :editObj="editObj" @setRuleObj="getRuleObj" />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -47,7 +48,7 @@
             <template #title>
               <div class="form-collapse-header">
                 <div :class="activeNames[0]==='3' ? 'form-collapse-header-no-active' : 'form-collapse-header-no'">3</div>
-                <div class="form-collapse-header-title">Trigger</div>
+                <div class="form-collapse-header-title">{{ $t('detection.create.trigger') }}</div>
               </div>
             </template>
 
@@ -78,15 +79,18 @@
 
                 <div class="trigger-block-item">
                   <div>With the counter resetting after no activity for</div>
-                  <el-form-item prop="minute">
-                    <el-input size="mini" v-model="triggerObj.minute" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                  <el-form-item prop="resetInterval">
+                    <el-input size="mini" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
-                  <div>minutes</div>
+                  <div>{{ triggerObj.intervalVal }}</div>
                 </div>
               </el-form>
 
               <div class="form-setting__btn1">
-                <el-button @click="createPolicy">Create & enable rule</el-button>
+                <div class="btn1">
+                  <el-button @click="createPolicy">{{ $t('overall.create') }}</el-button>
+                </div>
+                <el-button @click="createPolicy('enabled')">{{ $t('overall.create') }} & {{ $t('detection.create.enablePolicy') }}</el-button>
               </div>
             </div>
           </el-collapse-item>
@@ -101,23 +105,17 @@ import GeneralSettings from '@/components/table/detection/GeneralSettings'
 import RuleDefinition from '@/components/table/detection/RuleDefinition'
 import { api } from '@/utils/api'
 import axios from 'axios'
-import _ from 'lodash'
+import { useRoute } from 'vue-router'
+import { detectionUnitList } from '@/utils/static-data'
+import { ref } from 'vue'
+import { getDurationsTimeByType, getTimeByDurations } from '@/utils/date-util'
+import Loading from '@/components/common/Loading'
 
 export default {
   name: 'DetectionForm',
   data () {
     return {
       activeNames: ['1'],
-      settingObj: {}, // General Settings，即第一步的form表单信息
-      ruleObj: {}, // 第二步的form表单信息
-      // 第三步的form表单信息
-      triggerObj: {
-        atLeast: '',
-        interval: '',
-        intervalVal: '',
-        minute: '',
-        finishFlag: false
-      },
       rules: {
         atLeast: [
           {
@@ -130,7 +128,7 @@ export default {
           {
             required: true,
             message: this.$t('validate.required'),
-            trigger: 'change'
+            trigger: 'blur'
           }
         ],
         intervalVal: [
@@ -140,7 +138,7 @@ export default {
             trigger: 'change'
           }
         ],
-        minute: [
+        resetInterval: [
           {
             required: true,
             message: this.$t('validate.required'),
@@ -148,27 +146,80 @@ export default {
           }
         ]
       },
-      intervalList: []
+      intervalList: detectionUnitList.intervalList || [],
+      editObj: {}
     }
   },
   components: {
     GeneralSettings,
-    RuleDefinition
+    RuleDefinition,
+    Loading
   },
   mounted () {
-    this.getStatistics()
+    this.getDetailInfo()
+  },
+  setup () {
+    const { query } = useRoute()
+    const ruleId = ref(query.id || '')
+    const pageNoForTable = ref(query.pageNoForTable || 1)
+    const myLoading = ref(!!ruleId.value)
+    // General Settings，即第一步的form表单信息
+    const settingObj = ref({})
+    // 第二步的form表单信息
+    const ruleObj = ref({})
+    // 第三步的form表单信息
+    const triggerObj = ref({
+      atLeast: '',
+      interval: '',
+      intervalVal: '',
+      resetInterval: '',
+      finishFlag: false
+    })
+
+    return {
+      ruleId,
+      myLoading,
+      pageNoForTable,
+      settingObj,
+      ruleObj,
+      triggerObj
+    }
   },
   methods: {
-    /** 获取下拉列表数据 */
-    getStatistics () {
-      axios.get(api.detection.statistics, { pageSize: -1 }).then(response => {
-        if (response.status === 200) {
-          this.intervalList = _.get(response, 'data.data.intervalList', [])
-        } else {
-          console.error(response.data)
-        }
-      }).finally(() => {
-      })
+    /** 编辑时获取详情 */
+    getDetailInfo () {
+      if (this.ruleId) {
+        axios.get(`${api.detection.detail}/${this.ruleId}`).then(response => {
+          if (response.status === 200) {
+            if (!response.data.data) {
+              throw new Error('No data found, id: ' + this.ruleId)
+            }
+            this.myLoading = false
+            this.editObj = { ...response.data.data, ruleId: this.ruleId }
+            this.settingObj = this.$_.cloneDeep(this.editObj)
+            this.settingObj.editFlag = false
+            this.settingObj.saveFlag = true
+            this.ruleObj = this.$_.cloneDeep(this.editObj.ruleConfigObj)
+            this.triggerObj = this.$_.cloneDeep(this.editObj.ruleTriggerObj)
+            this.triggerObj.intervalVal = getTimeByDurations(this.triggerObj.interval).type
+            this.triggerObj.interval = getTimeByDurations(this.triggerObj.interval).value
+            this.triggerObj.resetInterval = getTimeByDurations(this.triggerObj.resetInterval).value
+            this.activeNames = ['1', '2', '3']
+          } else {
+            console.error(response.data)
+          }
+        }).catch(e => {
+          console.error(e)
+          this.$message.error(this.errorMsgHandler(e))
+          this.$router.push({
+            path: '/detection/policies',
+            query: {
+              pageNo: this.pageNoForTable ? Number(this.pageNoForTable) : 1,
+              t: +new Date()
+            }
+          })
+        })
+      }
     },
     /** 获取General Settings折叠板form数据 */
     getFormSetting (data) {
@@ -190,7 +241,7 @@ export default {
       })
     },
     /** 创建policy */
-    createPolicy () {
+    createPolicy (flag) {
       const settingLen = Object.keys(this.settingObj).length
       const ruleLen = Object.keys(this.ruleObj).length
 
@@ -198,36 +249,73 @@ export default {
         this.$refs.form3.validate(valid => {
           if (valid) {
             // 最终提交form
-            // const formObj = { ...this.settingObj, ...this.ruleObj, ...this.triggerObj }
-            this.$message({
-              duration: 2000,
-              type: 'success',
-              message: this.$t('tip.saveSuccess')
-            })
+            const formObj = this.$_.cloneDeep({ ...this.settingObj, ruleConfig: JSON.stringify(this.ruleObj), ruleTrigger: this.triggerObj })
+            if (flag) {
+              formObj.status = 1
+            }
+            // 将时间转为参数所需，如5分钟转为PT5
+            formObj.ruleTrigger.resetInterval = getDurationsTimeByType(formObj.ruleTrigger.resetInterval, formObj.ruleTrigger.intervalVal)
+            formObj.ruleTrigger.interval = getDurationsTimeByType(formObj.ruleTrigger.interval, formObj.ruleTrigger.intervalVal)
+            formObj.ruleTrigger = JSON.stringify(formObj.ruleTrigger)
+            // 删除多余参数
+            delete formObj.ruleConfigObj
+            delete formObj.ruleTriggerObj
+            delete formObj.editFlag
+            delete formObj.saveFlag
 
-            // axios.post('api', formObj).then(response => {
-            //   if (response.status === 200) {
-            //     this.$message({
-            //       duration: 2000,
-            //       type: 'success',
-            //       message: this.$t('tip.saveSuccess')
-            //     })
-            //
-            //     this.$router.push({
-            //       path: '/detectionNew',
-            //       query: {
-            //         t: +new Date()
-            //       }
-            //     })
-            //   } else {
-            //     this.$message.error(this.errorMsgHandler(response))
-            //   }
-            // }).catch(e => {
-            //   console.error(e)
-            //   this.$message.error(this.errorMsgHandler(e))
-            // }).finally(() => {
-            //   //
-            // })
+            if (!this.ruleId) {
+              // post调用是新增，put是编辑
+              this.myLoading = true
+              axios.post(api.detection.create.create, formObj).then(response => {
+                if (response.status === 200) {
+                  this.$message({
+                    duration: 2000,
+                    type: 'success',
+                    message: this.$t('tip.saveSuccess')
+                  })
+
+                  this.$router.push({
+                    path: '/detectionsNew',
+                    query: {
+                      t: +new Date()
+                    }
+                  })
+                } else {
+                  this.$message.error(this.errorMsgHandler(response))
+                }
+              }).catch(e => {
+                console.error(e)
+                this.$message.error(this.errorMsgHandler(e))
+              }).finally(() => {
+                this.myLoading = false
+              })
+            } else {
+              this.myLoading = true
+              axios.put(api.detection.create.create, formObj).then(response => {
+                if (response.status === 200) {
+                  this.$message({
+                    duration: 2000,
+                    type: 'success',
+                    message: this.$t('tip.saveSuccess')
+                  })
+
+                  this.$router.push({
+                    path: '/detectionsNew',
+                    query: {
+                      pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
+                      t: +new Date()
+                    }
+                  })
+                } else {
+                  this.$message.error(this.errorMsgHandler(response))
+                }
+              }).catch(e => {
+                console.error(e)
+                this.$message.error(this.errorMsgHandler(e))
+              }).finally(() => {
+                this.myLoading = false
+              })
+            }
           }
         })
       } else if (settingLen === 0) {
