@@ -217,7 +217,7 @@
 import HistoryTopKeys from '@/components/table/detection/HistoryTopKeys'
 import { eventSeverityColor, detectionRuleType } from '@/utils/constants'
 import { detectionUnitList } from '@/utils/static-data'
-import axios from '_axios@0.21.4@axios'
+import axios from 'axios'
 import _ from 'lodash'
 import { api } from '@/utils/api'
 

@@ -331,7 +331,7 @@ export default {
       list.forEach(t => {
         this.activeNames.push(t)
       })
-      this.$message.error('请确保信息填写完整')
+      this.$message.error(this.$t('detection.create.informationFilled'))
     }
   }
 }

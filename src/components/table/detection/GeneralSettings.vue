@@ -112,7 +112,7 @@
 import { detectionRuleType } from '@/utils/constants'
 import { switchStatus } from '@/utils/tools'
 import { detectionUnitList } from '@/utils/static-data'
-import axios from '_axios@0.21.4@axios'
+import axios from 'axios'
 import { api } from '@/utils/api'
 
 export default {
