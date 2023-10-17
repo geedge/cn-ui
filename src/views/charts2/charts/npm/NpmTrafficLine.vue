@@ -8,7 +8,7 @@
           <el-select
               size="mini"
               v-model="metricFilter"
-              placeholder=""
+              placeholder=" "
               popper-class="common-select"
               :popper-append-to-body="false"
               @change="metricChange"

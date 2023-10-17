@@ -42,6 +42,7 @@
              <el-select
                  size="mini"
                  v-model="lineMetric"
+                 placeholder=" "
                  popper-class="common-select"
                  :popper-append-to-body="false"
                  @change="metricSelectChange"

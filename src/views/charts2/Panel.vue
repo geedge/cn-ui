@@ -24,7 +24,7 @@
         <el-select
             size="mini"
             v-model="metric"
-            placeholder=""
+            placeholder=" "
             popper-class="common-select"
             v-if="showMetric"
             :popper-append-to-body="false"

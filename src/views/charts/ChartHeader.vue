@@ -58,7 +58,7 @@
             size="mini"
             v-model="table.limit"
             class="option__select select-topn"
-            placeholder=""
+            placeholder=" "
             popper-class="option-popper"
             @change="tableLimitChange"
           >
@@ -125,7 +125,7 @@
             size="mini"
             v-model="copyOrderPieTable"
             class="option__select select-column"
-            placeholder=""
+            placeholder=" "
             popper-class="option-popper"
             @change="orderPieTableChange"
           >

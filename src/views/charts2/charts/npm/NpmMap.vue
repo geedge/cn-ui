@@ -9,6 +9,7 @@
           v-model="trafficDirection"
           class="map-select map-select__direction"
           popper-class="map-select-down"
+          placeholder=" "
           :popper-append-to-body="false"
       >
         <el-option value="Server">Server</el-option>
