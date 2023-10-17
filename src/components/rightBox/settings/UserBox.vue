@@ -45,7 +45,7 @@
                        class="right-box__select"
                        clearable
                        collapse-tags
-                       placeholder=""
+                       placeholder=" "
                        popper-class="right-box-select-dropdown prevent-clickoutside"
                        size="small"
                        @change="()=>{ this.$forceUpdate() }">
@@ -61,7 +61,7 @@
                        class="right-box__select"
                        clearable
                        collapse-tags
-                       placeholder=""
+                       placeholder=" "
                        popper-class="right-box-select-dropdown prevent-clickoutside"
                        size="small">
               <template v-for="lang in langData" :key="lang.value">
@@ -76,7 +76,7 @@
                        class="right-box__select"
                        clearable
                        collapse-tags
-                       placeholder=""
+                       placeholder=" "
                        popper-class="right-box-select-dropdown prevent-clickoutside"
                        size="small">
               <template v-for="theme in themeData" :key="theme.value">

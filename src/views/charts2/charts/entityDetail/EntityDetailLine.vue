@@ -50,7 +50,7 @@
               <el-select
                   size="mini"
                   v-model="metric"
-                  placeholder=""
+                  placeholder=" "
                   popper-class="common-select"
                   :popper-append-to-body="false"
                   @change="metricChange"
@@ -66,6 +66,7 @@
                   size="mini"
                   v-model="lineRefer"
                   :disabled="!lineTab"
+                  placeholder=" "
                   popper-class="common-select"
                   :popper-append-to-body="false"
                   @change="referenceSelectChange"
