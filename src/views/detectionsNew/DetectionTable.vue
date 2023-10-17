@@ -77,6 +77,7 @@
 import table from '@/mixins/table'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import { switchStatus } from '@/utils/tools'
+import _ from 'lodash'
 
 export default {
   name: 'DetectionTable',
@@ -151,7 +152,7 @@ export default {
         if (n) {
           n.forEach(t => {
             if (t.ruleType === 'indicator_match') {
-              t.library = t.ruleConfigObj.knowledgeBase.name
+              t.library = _.get(t, 'ruleConfigObj.knowledgeBase.name', '-')
             } else if (t.ruleType === 'threshold') {
               t.dimensions = t.ruleConfigObj.dimensions
             }

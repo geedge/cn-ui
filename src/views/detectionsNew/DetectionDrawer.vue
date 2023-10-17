@@ -10,17 +10,17 @@
 
       <div class="drawer-basic-function">
         <div class="detection-drawer-title">{{ $t('overall.name') }}</div>
-        <div class="basic-function-value">{{ detailData.name }}</div>
+        <div class="basic-function-value">{{ $_.get(detailData, 'name', '-') || '-'}}</div>
       </div>
 
       <div class="drawer-basic-function">
         <div class="detection-drawer-title">{{ $t('overall.type') }}</div>
-        <div class="basic-function-value">{{ detailData.eventType }}</div>
+        <div class="basic-function-value">{{ $_.get(detailData, 'eventType', '-') || '-'}}</div>
       </div>
 
       <div class="drawer-basic-description">
         <div class="detection-drawer-title">{{ $t('config.dataSet.description') }}</div>
-        <div class="basic-description-value">{{ detailData.description }}</div>
+        <div class="basic-description-value">{{ $_.get(detailData, 'description', '-') || '-' }}</div>
       </div>
     </div>
 
@@ -31,20 +31,20 @@
 
             <div class="drawer-basic-function">
               <div class="detection-drawer-title">{{ $t('config.user.source') }}</div>
-              <div class="basic-function-value">{{ detailData.category }}</div>
+              <div class="basic-function-value">{{ $_.get(detailData, 'category', '-') || '-' }}</div>
             </div>
 
             <div v-if="detailData.ruleType==='indicator_match'">
               <div class="drawer-basic-function">
                 <div class="detection-drawer-title">{{ $t('detection.library') }}</div>
-                <span class="basic-function-value">{{ detailData.ruleConfigObj.knowledgeBase.name }}</span>
+                <span class="basic-function-value">{{ $_.get(detailData, 'ruleConfigObj.knowledgeBase.name', '-') || '-' }}</span>
               </div>
 
               <div class="drawer-basic-function">
                 <div class="detection-drawer-title">{{ $t('detection.level') }}</div>
                 <div class="detection-drawer-title">
                   <div class="detection__icon" :style="`background-color: ${eventSeverityColor[detailData.ruleConfigObj.level]}`"></div>
-                  <div class="basic-function-value">{{ detailData.ruleConfigObj.level }}</div>
+                  <div class="basic-function-value">{{ $_.get(detailData, 'ruleConfigObj.level', '-') || '-' }}</div>
                 </div>
               </div>
             </div>
