@@ -2452,6 +2452,10 @@ export const entityDetailTags = {
     {
       name: 'type',
       type: 'negative'
+    },
+    {
+      name: 'dnsServerRole',
+      type: 'normal'
     }
   ],
   app: [
