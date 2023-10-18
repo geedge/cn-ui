@@ -60,7 +60,7 @@ import {
   drillDownPanelTypeMapping,
   entityType,
   entityDetailTags,
-  psiphon3IpType,
+  tagValueLabelMapping,
   riskLevelMapping,
   entityDefaultColor
 } from '@/utils/constants'
@@ -92,16 +92,9 @@ export default {
   },
   methods: {
     getTagColor,
-    tagValueHandler (k, k2, value) {
-      if (k === 'psiphon3Ip') {
-        if (k2 === 'type') {
-          const find = psiphon3IpType.find(t => t.value === value)
-          if (find) {
-            return find.name
-          }
-        }
-      }
-      return value
+    tagValueHandler (value) {
+      const find = tagValueLabelMapping.find(t => t.value === value)
+      return find ? find.name : value
     },
     getData () {
       this.toggleLoading(true)
@@ -122,7 +115,7 @@ export default {
                 Object.keys(res.data[k]).forEach(k2 => {
                   const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
                   if (find) {
-                    this.levelTwoTags.push({ key: k2, value: this.tagValueHandler(k, k2, res.data[k][k2]), type: find.type })
+                    this.levelTwoTags.push({ key: k2, value: this.tagValueHandler(res.data[k][k2]), type: find.type })
                   }
                 })
               }

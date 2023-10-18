@@ -40,6 +40,7 @@ import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { api } from '@/utils/api'
+import {tagValueLabelMapping} from '../../../../utils/constants'
 
 export default {
   name: 'EntityDetailTabs',
@@ -136,7 +137,7 @@ export default {
                 Object.keys(r[k]).forEach(k2 => {
                   const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
                   if (find) {
-                    aggregation.intelligenceContent.push({ key: k2, value: this.tagValueHandler(k, k2, r[k][k2]), type: find.type })
+                    aggregation.intelligenceContent.push({ key: k2, value: this.tagValueHandler(r[k][k2]), type: find.type })
                   }
                 })
               }
@@ -251,16 +252,9 @@ export default {
         case 'app': return api.entity.openPortOfApp
       }
     },
-    tagValueHandler (k, k2, value) {
-      if (k === 'psiphon3Ip') {
-        if (k2 === 'type') {
-          const find = psiphon3IpType.find(t => t.value === value)
-          if (find) {
-            return find.name
-          }
-        }
-      }
-      return value
+    tagValueHandler (value) {
+      const find = tagValueLabelMapping.find(t => t.value === value)
+      return find ? find.name : value
     }
   },
   beforeUnmount () {
