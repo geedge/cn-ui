@@ -88,7 +88,7 @@
 
               <div class="form-setting__btn1">
                 <div class="btn1">
-                  <el-button @click="createPolicy">{{ $t('overall.create') }}</el-button>
+                  <el-button @click="createPolicy('')">{{ $t('overall.create') }}</el-button>
                 </div>
                 <el-button @click="createPolicy('enabled')">{{ $t('overall.create') }} & {{ $t('detection.create.enablePolicy') }}</el-button>
               </div>
@@ -256,6 +256,7 @@ export default {
             // 将时间转为参数所需，如5分钟转为PT5
             formObj.ruleTrigger.resetInterval = getDurationsTimeByType(formObj.ruleTrigger.resetInterval, formObj.ruleTrigger.intervalVal)
             formObj.ruleTrigger.interval = getDurationsTimeByType(formObj.ruleTrigger.interval, formObj.ruleTrigger.intervalVal)
+            formObj.ruleTrigger.atLeast = parseInt(formObj.ruleTrigger.atLeast)
             formObj.ruleTrigger = JSON.stringify(formObj.ruleTrigger)
             // 删除多余参数
             delete formObj.ruleConfigObj

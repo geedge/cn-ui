@@ -154,7 +154,7 @@ export default {
             if (t.ruleType === 'indicator_match') {
               t.library = _.get(t, 'ruleConfigObj.knowledgeBase.name', '-')
             } else if (t.ruleType === 'threshold') {
-              t.dimensions = t.ruleConfigObj.dimensions
+              t.dimensions = _.get(t, 'ruleConfigObj.dimensions', '-')
             }
           })
         }

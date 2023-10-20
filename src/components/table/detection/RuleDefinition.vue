@@ -177,12 +177,12 @@
 
         <!--Library-->
         <el-form-item :label="$t('detection.library')" prop="knowledgeId" class="form-setting__block margin-b-20">
-          <el-select v-model="indicatorRuleObj.name" class="form-setting__select" placeholder=" " size="mini">
+          <el-select v-model="indicatorRuleObj.knowledgeId" class="form-setting__select" placeholder=" " size="mini">
             <el-option
                 v-for="item in libraryList"
-                :key="item.name"
+                :key="item.knowledgeId"
                 :label="item.name"
-                :value="item.name"
+                :value="item.knowledgeId"
             />
           </el-select>
         </el-form-item>
