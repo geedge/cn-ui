@@ -1234,7 +1234,8 @@ export default class Parser {
         // 不区分大小写，用this.columnList里的label
         arr.forEach(item => {
           if (str.toLowerCase().indexOf(item.toLowerCase()) > -1) {
-            str = str.replace(new RegExp(item, 'gi'), item)
+            // todo 记录一下此处取消了转小写转换，后续搜索验证
+            // str = str.replace(new RegExp(item, 'gi'), item)
             if (!operatorList.some(ite => str.includes(ite)) && str.toLowerCase() !== item.toLowerCase()) {
               str = this.checkFormatByStr(str)
             }

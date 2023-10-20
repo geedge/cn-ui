@@ -60,12 +60,13 @@
         font-weight: 400;
       }
 
-      .row__content {
+      .row__content, .row__content1 {
         display: flex;
         //color: #3976CB;
         color: #046ECA;
         font-weight: 500;
         font-size: 14px;
+        align-items: center;
 
         &.row__content--link {
           font-style: italic;
@@ -86,6 +87,17 @@
         .row__content--span {
           font-style: italic;
           color: #1890FF;
+        }
+
+        .row__content__icon {
+          font-size: 14px;
+          margin-right: 5px;
+          color: #1890FF;
+        }
+
+        .row__content__svg {
+          font-size: 14px;
+          margin-right: 7px;
         }
       }
     }
@@ -215,12 +227,19 @@
     }
   }
 }
-.row__tag {
+.row__tag, .row__tag__level {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0 4px;
   //color: white;
+}
+.row__tag__level {
+  height: 16px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #fff;
+  border-radius: 2px;
 }
 
 .performance-event-remark {

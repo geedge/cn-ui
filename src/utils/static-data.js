@@ -334,10 +334,90 @@ export const columnList1 = [
     }
   }
 ]
+const securityEvent = [
+  {
+    name: 'event_type',
+    type: 'string',
+    label: 'event_type',
+    doc: {
+      constraints: {
+        operator_functions: '=,in,like'
+      }
+    }
+  },
+  {
+    name: 'event_name',
+    type: 'string',
+    label: 'event_name',
+    doc: {
+      constraints: {
+        operator_functions: '=,in,like'
+      }
+    }
+  },
+  {
+    name: 'severity',
+    type: 'string',
+    label: 'severity',
+    doc: {
+      constraints: {
+        operator_functions: '=,in,like'
+      }
+    }
+  },
+  {
+    name: 'offender_ip',
+    type: 'string',
+    label: 'offender Ip',
+    doc: {
+      constraints: {
+        operator_functions: '=,in,like'
+      }
+    }
+  },
+  {
+    name: 'victim_ip',
+    type: 'string',
+    label: 'victim Ip',
+    doc: {
+      constraints: {
+        operator_functions: '=,in,like'
+      }
+    }
+  },
+  {
+    name: 'domain',
+    type: 'string',
+    label: 'domain',
+    doc: {
+      constraints: {
+        operator_functions: '=,in,like'
+      }
+    }
+  },
+  {
+    name: 'app',
+    type: 'string',
+    label: 'app',
+    doc: {
+      constraints: {
+        operator_functions: '=,in,like'
+      }
+    }
+  }
+]
 
-let schemaEntityExplore = localStorage.getItem(storageKey.schemaEntityExplore)
-schemaEntityExplore = schemaEntityExplore ? JSON.parse(schemaEntityExplore).entityMetadata.searchColumns : columnList1
+const schema = localStorage.getItem(storageKey.schemaEntityExplore)
+const schemaEntityExplore = schema ? JSON.parse(schema).entityMetadata.searchColumns : columnList1
 export const columnList = schemaEntityExplore
+
+let securityEventMetadata = securityEvent
+if (schema) {
+  if (JSON.parse(schema).securityEventMetadata) {
+    securityEventMetadata = JSON.parse(schema).securityEventMetadata.searchColumns
+  }
+}
+export const schemaDetectionSecurity = securityEventMetadata
 
 export const operatorList = ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE']
 export const connectionList = [

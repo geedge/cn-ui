@@ -5,16 +5,16 @@
         <advanced-search
             ref="search"
             :column-list="columnList[pageType]"
-            :operator-list="operatorList"
             :connection-list="connectionList"
-            :full-text="false"
             class="advanced-search--show-list"
+            :full-text="true"
+            :show-list="showList"
             @search="search"
         ></advanced-search>
       </div>
-      <div class="search-symbol-inline">
-        <i class="cn-icon cn-icon-help"></i>
-      </div>
+<!--      <div class="search-symbol-inline">-->
+<!--        <i class="cn-icon cn-icon-help"></i>-->
+<!--      </div>-->
     </div>
   </div>
 </template>
@@ -22,6 +22,7 @@
 <script>
 import AdvancedSearch from '@/components/advancedSearch/Index'
 import { humpToLine } from '@/utils/tools'
+import { schemaDetectionSecurity } from '@/utils/static-data'
 export default {
   name: 'DetectionSearch',
   props: {
@@ -33,91 +34,13 @@ export default {
   data () {
     return {
       columnList: {
-        securityEvent: [
-          {
-            name: 'event_severity',
-            type: 'string',
-            // label: 'Event severity',
-            label: 'event_severity',
-            doc: {
-              constraints: {
-                operator_functions: '=,in'
-              }
-            }
-          },
-          {
-            name: 'security_type',
-            type: 'string',
-            // label: 'Security type',
-            label: 'security_type',
-            doc: {
-              constraints: {
-                operator_functions: '=,in'
-              }
-            }
-          },
-          {
-            name: 'victim_ip',
-            type: 'string',
-            // label: 'Victim IP'
-            label: 'victim_ip',
-            doc: {
-              constraints: {
-                operator_functions: '=,in'
-              }
-            }
-          },
-          {
-            name: 'victim_location_country',
-            type: 'string',
-            // label: 'Victim location'
-            label: 'victim_location_country',
-            doc: {
-              constraints: {
-                operator_functions: '=,in'
-              }
-            }
-          },
-          {
-            name: 'offender_ip',
-            type: 'string',
-            // label: 'Offender IP'
-            label: 'offender_ip',
-            doc: {
-              constraints: {
-                operator_functions: '=,in'
-              }
-            }
-          },
-          {
-            name: 'offender_location_country',
-            type: 'string',
-            // label: 'Offender location'
-            label: 'offender_location_country',
-            doc: {
-              constraints: {
-                operator_functions: '=,in'
-              }
-            }
-          }
-        ],
+        securityEvent: schemaDetectionSecurity,
         performanceEvent: [
           {
             name: 'event_severity',
             type: 'string',
             // label: 'Event severity'
             label: 'event_severity',
-            doc: {
-              constraints: {
-                operator_functions: '=,in'
-              }
-            }
-          },
-          {
-            name: 'event_type',
-            type: 'string',
-            // label: 'Event type'
-            label: 'event_type',
             doc: {
               constraints: {
                 operator_functions: '=,in'
@@ -169,7 +92,8 @@ export default {
           value: 'OR',
           label: 'OR'
         }
-      ]
+      ],
+      showList: true
     }
   },
   emits: ['search'],

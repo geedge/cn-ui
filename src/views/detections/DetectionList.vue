@@ -3,12 +3,12 @@
     <loading :loading="loading"></loading>
     <div class="detection-list__content">
       <div class="detection-list--list">
-        <div class="no-data" v-if="noData">{{ $t('npm.noData') }}</div>
+        <div class="no-data" v-if="myListData.length===0">{{ $t('npm.noData') }}</div>
         <div v-if="!isCollapse" @click="collapse" class="cn-detection__shadow new-cn-detection__shadow"></div>
         <detection-row
             style="margin-bottom: 10px"
             class="detection-border"
-            v-for="(data, index) in listData"
+            v-for="(data, index) in myListData"
             :detection="data"
             :page-type="pageType"
             :timeFilter="timeFilter"
@@ -26,6 +26,8 @@
 <script>
 import DetectionRow from '@/views/detections/DetectionRow'
 import Loading from '@/components/common/Loading'
+import axios from 'axios'
+import { api } from '@/utils/api'
 export default {
   name: 'DetectionList',
   components: {
@@ -49,7 +51,8 @@ export default {
       collapseIndex: 0,
       tableId: 'detectionList',
       listDataCopy: [],
-      noData: false
+      noData: true,
+      myListData: [] // listData的克隆，避免因为修改listData里的malWareName而触发watch监听
     }
   },
   mounted () {
@@ -60,6 +63,23 @@ export default {
     window.removeEventListener('mousewheel', this.handleScroll)
   },
   methods: {
+    initData () {
+      this.myListData = []
+      this.listData.forEach((item, i) => {
+        this.myListData.push(this.$_.cloneDeep(item))
+        if (item.eventInfoObj) {
+          axios.get(`${api.detection.securityEvent.detail}/${item.eventInfoObj.ioc_type}/resource=${item.eventInfoObj.ioc_value}`).then(res => {
+            if (res.status === 200) {
+              this.myListData[i].malwareName = res.data.data.malware.malwareName
+            } else {
+              this.myListData[i].malwareName = '-'
+            }
+          }).catch(e => {
+            this.myListData[i].malwareName = '-'
+          })
+        }
+      })
+    },
     switchCollapse (isCollapse, index) {
       this.isCollapse = isCollapse
       this.collapseIndex = index
@@ -84,6 +104,7 @@ export default {
   },
   watch: {
     listData: {
+      immediate: true,
       deep: true,
       handler (n) {
         if (!n || n.length === 0) {
@@ -93,6 +114,7 @@ export default {
         } else {
           clearTimeout(this.timeout)
           this.noData = false
+          this.initData()
         }
       }
     }

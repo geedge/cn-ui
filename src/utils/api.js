@@ -123,7 +123,20 @@ export const api = {
       listBasic: '/interface/detection/security/list/basic',
       listCount: '/interface/detection/security/list/count',
       overviewBasic: '/interface/detection/security/detail/overview/basic',
-      overviewEvent: '/interface/detection/security/detail/overview/event'
+      overviewEvent: '/interface/detection/security/detail/overview/event',
+      securityList: apiVersion + '/detection/security/list', // 安全事件列表
+      timeDistribution: apiVersion + '/detection/security/severity/timedistribution', // 事件严重等级分布(顶部柱状图)
+      severityStatistics: apiVersion + '/detection/security/severity/statistics', // 事件严重等级统计(左侧filter事件严重等级和饼图)
+      statusStatistics: apiVersion + '/detection/security/status/statistics', // 事件状态统计
+      eventTypeStatistics: apiVersion + '/detection/security/event-type/statistics', // 事件类型统计
+      offenderIpStatistics: apiVersion + '/detection/security/offender-ip/statistics', // 攻击者IP统计
+      victimIpStatistics: apiVersion + '/detection/security/victim-ip/statistics', // 受害者IP统计
+      relationEvent: apiVersion + '/detection/security/ip/relation/event', // IP相关近期事件
+      securityCount: apiVersion + '/detection/security/count', // 安全事件总数
+      detail: apiVersion + '/detection/security/entity/detail', // 安全事件实体详情，后面得加上实体类型
+      ipDetail: apiVersion + '/detection/security/entity/detail/ip', // 安全事件实体详情ip响应
+      domainDetail: apiVersion + '/detection/security/entity/detail/domain', // 安全事件实体详情domain响应
+      appDetail: apiVersion + '/detection/security/entity/detail/app' // 安全事件实体详情app响应
     },
     performanceEvent: {
       eventSeverityTrend: '/interface/detection/performance/filter/severityTrend',

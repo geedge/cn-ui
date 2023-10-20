@@ -54,39 +54,36 @@
           <div class="detection__list-statistics detection-border">
             <div class="statistics__severity">
               <div class="chart-header">
-                <div class="chart-header__title">{{$t('detection.severity')}}</div>
+                <div class="chart-header__title">{{$t('detections.severity')}}</div>
               </div>
               <template v-if="isStatisticsSeverityNoData">
                 <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
               </template>
               <template v-else>
-                <div class="chart-content" :id="`eventSeverityPie${pageType}`">
-                </div>
+                <div class="chart-content" :id="`eventSeverityPie${pageType}`"></div>
               </template>
 
             </div>
             <div class="statistics__category">
               <div class="chart-header">
-                <div class="chart-header__title">{{$t('detection.categoryProportion')}}</div>
+                <div class="chart-header__title">{{$t('detections.eventType')}}</div>
               </div>
               <template v-if="isStatisticsCategoryNoData">
                 <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
               </template>
               <template v-else>
-                <div class="chart-content" :id="`detectionCategoryPer${pageType}`">
-                </div>
+                <div class="chart-content" :id="`detectionCategoryPer${pageType}`"></div>
               </template>
             </div>
             <div class="statistics__active-attack">
               <div class="chart-header">
-                <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeAttacker') : $t('detections.activeEntity')}}</div>
+                <div class="chart-header__title">{{pageType === detectionPageType.securityEvent ? $t('detection.activeOffender') : $t('detections.activeEntity')}}</div>
               </div>
               <template v-if="isStatisticsActiveAttackNoData">
                 <div class="no-data chart-content" >{{ $t('npm.noData') }}</div>
               </template>
               <template v-else>
-                <div class="chart-content" style="padding-left: 5px;" :id="`detectionActiveAttacker${pageType}`">
-                </div>
+                <div class="chart-content" style="padding-left: 5px;" :id="`detectionActiveAttacker${pageType}`"></div>
               </template>
             </div>
           </div>
@@ -136,7 +133,7 @@ import {
 } from '@/views/detections/options/detectionOptions'
 import { api, getData } from '@/utils/api'
 import axios from 'axios'
-import { extensionEchartY, reverseSortBy } from '@/utils/tools'
+import { extensionEchartY, reverseSortBy, switchStatus } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
@@ -160,18 +157,18 @@ export default {
           i18n: 'entities.securityEvents',
           path: '/detection/securityEvent',
           icon: 'cn-icon cn-icon-a-SecurityEvent'
-        },
+        }
         // {
         //   i18n: 'entities.regulatoryRiskEvents',
         //   path: '/detection/securityEvent',
         //   icon: 'cn-icon cn-icon-a-RegulatoryRiskEvent',
         //   disable: true
         // },
-        {
-          i18n: 'overall.performanceEvents',
-          path: '/detection/performanceEvent',
-          icon: 'cn-icon cn-icon-a-PerformanceEvent'
-        }
+        // {
+        //   i18n: 'overall.performanceEvents',
+        //   path: '/detection/performanceEvent',
+        //   icon: 'cn-icon cn-icon-a-PerformanceEvent'
+        // }
       ],
       chartInit: [],
       pageObj: {
@@ -185,61 +182,73 @@ export default {
       filterData: {
         securityEvent: [
           {
-            title: this.$t('detections.eventSeverity'),
-            column: 'eventSeverity',
+            title: this.$t('overall.status'),
+            column: '',
+            topColumn: '', // todo schema暂无标识
             collapse: false,
             value: [], // value之间是or的关系
             data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
           },
           {
-            title: this.$t('detections.securityType'),
-            column: 'securityType',
+            title: this.$t('detections.severity'),
+            column: 'severity',
+            topColumn: 'severity',
+            collapse: false,
+            value: [], // value之间是or的关系
+            data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
+          },
+          {
+            title: this.$t('detections.eventType'),
+            column: 'event_type',
+            topColumn: 'event_type',
             collapse: false,
             value: [],
             data: [] // 从接口动态获取
           },
           {
             title: this.$t('detections.victimIp'),
-            column: 'victimIp',
+            column: 'victim_ip',
+            topColumn: 'victim_ip',
             collapse: false,
             value: [],
             showMore: true,
             showIndex: 9,
             data: [] // 从接口动态获取
           },
-          {
-            title: this.$t('detections.victimLocation'),
-            column: 'victimLocationCountry',
-            collapse: false,
-            value: [],
-            showMore: false,
-            showIndex: 9,
-            data: [
-              {
-                label: 'China',
-                value: 'china',
-                count: 50
-              }
-            ] // 从接口动态获取
-          },
+          // {
+          //   title: this.$t('detections.victimLocation'),
+          //   column: 'victimLocationCountry',
+          //   collapse: false,
+          //   value: [],
+          //   showMore: false,
+          //   showIndex: 9,
+          //   data: [
+          //     {
+          //       label: 'China',
+          //       value: 'china',
+          //       count: 50
+          //     }
+          //   ] // 从接口动态获取
+          // },
           {
             title: this.$t('detections.offenderIp'),
-            column: 'offenderIp',
-            collapse: false,
-            value: [],
-            showMore: false,
-            showIndex: 9,
-            data: [] // 从接口动态获取
-          },
-          {
-            title: this.$t('detections.offenderLocation'),
-            column: 'offenderLocationCountry',
+            column: 'offender_ip',
+            topColumn: 'offender_ip',
             collapse: false,
             value: [],
             showMore: false,
             showIndex: 9,
             data: [] // 从接口动态获取
           }
+          // {
+          //   title: this.$t('detections.offenderLocation'),
+          //   column: 'offenderLocationCountry',
+          //   collapse: false,
+          //   value: [],
+          //   showMore: false,
+          //   showIndex: 9,
+          //   data: [] // 从接口动态获取
+          // }
         ],
         performanceEvent: [
           {
@@ -275,24 +284,31 @@ export default {
       isStatisticsCategoryNoData: false,
       isStatisticsActiveAttackNoData: false,
       loading: false,
-      oldActiveEntitySearchValue: ''
+      oldActiveEntitySearchValue: '',
+      initFlag: true // 初始化标识，初始化时保证mounted执行
     }
   },
   methods: {
-    // 初始化顶部大柱状图
+    initStatusData (params) {
+      getData(api.detection[this.pageType].statusStatistics, params).then(data => {
+        this.filterData[this.pageType][0].data = data.map(r => ({ label: this.$t(switchStatus(r.status)), value: r.status, count: r.count }))
+      })
+    },
+    /** 初始化顶部大柱状图 */
     initEventSeverityTrendData (params) {
       this.loading = true
-      /* getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
+      // getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
+      getData(api.detection[this.pageType].timeDistribution, params).then(data => {
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
           const dataMap = new Map()
           data.forEach(item => {
-            if (item.eventSeverity) {
-              if (!dataMap.has(item.eventSeverity)) {
+            if (item.severity) {
+              if (!dataMap.has(item.severity)) {
                 const count = [[toTime(item.statTime), item.count]]
-                dataMap.set(item.eventSeverity, count)
+                dataMap.set(item.severity, count)
               } else {
-                dataMap.get(item.eventSeverity).push([toTime(item.statTime), item.count])
+                dataMap.get(item.severity).push([toTime(item.statTime), item.count])
               }
             }
           })
@@ -354,26 +370,18 @@ export default {
         this.$nextTick(() => {
           this.loading = false
         })
-      }) */
-      const timer = setTimeout(() => {
-        this.loading = false
-        this.isEventSeverityNoData = true
-        this.isStatisticsCategoryNoData = true
-        this.isStatisticsSeverityNoData = true
-        this.isStatisticsActiveAttackNoData = true
-        clearTimeout(timer)
-      }, 150)
+      })
     },
-
-    // 初始化左侧事件严重等级和小饼图
+    /** 初始化左侧事件严重等级和第一个小饼图 */
     initEventSeverityData (params) {
-      getData(api.detection[this.pageType].eventSeverity, params).then(data => {
+      // getData(api.detection[this.pageType].eventSeverity, params).then(data => {
+      getData(api.detection[this.pageType].severityStatistics, params).then(data => {
         this.statisticsSeverityData = data
         if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][0].data = data.map(r => ({ label: r.eventSeverity, value: r.eventSeverity, count: r.count }))
+          this.filterData[this.pageType][1].data = data.map(r => ({ label: r.severity, value: r.severity, count: r.count }))
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
           eventSeverityOption.series[0].data = data.map(d => {
-            return { value: d.count, name: d.eventSeverity, itemStyle: { color: getSeverityColor(d.eventSeverity) } }
+            return { value: d.count, name: d.severity, itemStyle: { color: getSeverityColor(d.severity) } }
           })
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)
@@ -401,7 +409,7 @@ export default {
       getData(api.detection[this.pageType].eventType, params).then(data => {
         this.statisticsCategoryData = data
         if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][1].data = data.map(r => ({
+          this.filterData[this.pageType][2].data = data.map(r => ({
             label: r.eventType,
             value: r.eventType,
             count: r.count
@@ -429,13 +437,15 @@ export default {
         console.log(error)
       })
     },
+    /** 第二个饼图和左侧filter的eventType */
     initSecurityTypeData (params) {
-      getData(api.detection[this.pageType].securityType, params).then(data => {
+      // getData(api.detection[this.pageType].securityType, params).then(data => {
+      getData(api.detection[this.pageType].eventTypeStatistics, params).then(data => {
         this.statisticsCategoryData = data
         if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][1].data = data.map(r => ({
-            label: r.securityType,
-            value: r.securityType,
+          this.filterData[this.pageType][2].data = data.map(r => ({
+            label: r.eventType,
+            value: r.eventType,
             count: r.count
           }))
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
@@ -447,7 +457,7 @@ export default {
           this.chartInit.push(shallowRef(detectionChart))
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
-            return { value: d.count, name: d.securityType, itemStyle: { color: getAttackColor(d.securityType) } }
+            return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
           })
           detectionChart.setOption(securityTypeOption)
 
@@ -461,8 +471,10 @@ export default {
         console.log(error)
       })
     },
+    /** 横向柱状图和左侧filter的offenderIp */
     initOffenderIpData (params) {
-      getData(api.detection[this.pageType].offenderIp, params).then(data => {
+      // getData(api.detection[this.pageType].offenderIp, params).then(data => {
+      getData(api.detection[this.pageType].offenderIpStatistics, params).then(data => {
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][4].data = data.map(r => ({
@@ -501,11 +513,12 @@ export default {
     },
 
     initVictimIpData (params) {
-      getData(api.detection[this.pageType].victimIp, params).then(data => {
-        this.filterData[this.pageType][2].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
-        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][2].data)
-        this.filterData[this.pageType][2].showMore = showMore
-        this.filterData[this.pageType][2].showIndex = showIndex
+      // getData(api.detection[this.pageType].victimIp, params).then(data => {
+      getData(api.detection[this.pageType].victimIpStatistics, params).then(data => {
+        this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
+        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
+        this.filterData[this.pageType][3].showMore = showMore
+        this.filterData[this.pageType][3].showIndex = showIndex
       }).catch(error => {
         console.log(error)
       })
@@ -610,15 +623,15 @@ export default {
         showIndex: 9
       }
     },
-    queryList () {
+    queryList (q) {
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        q: this.q,
+        resource: q,
         pageSize: this.pageObj.pageSize,
         pageNo: this.pageObj.pageNo
       }
-      /* axios.get(api.detection[this.pageType].listBasic, { params }).then(response => {
+      axios.get(api.detection[this.pageType].securityList, { params }).then(response => {
         if (response.status === 200) {
           this.listData = response.data.data.result
         } else {
@@ -627,11 +640,12 @@ export default {
           this.$message.error(response.data.message)
         }
       })
-      getData(api.detection[this.pageType].listCount, params).then(data => {
+      // getData(api.detection[this.pageType].listCount, params).then(data => {
+      getData(api.detection[this.pageType].securityCount, params).then(data => {
         this.pageObj.total = data
       }).catch(error => {
         console.log(error)
-      }) */
+      })
     },
     timeRefreshChange () {
       this.initNoData()
@@ -674,8 +688,15 @@ export default {
       } else {
         this.pageObj.resetPageNo = true
       }
-      this.queryFilter()
-      this.queryList()
+      // 参数q，避免切换页码时，地址栏参数q为空
+      let urlQ = ''
+      if (param.str) {
+        urlQ = encodeURI(param.str)
+      } else if (this.q) {
+        urlQ = encodeURI(this.q)
+      }
+      this.queryFilter(urlQ)
+      this.queryList(urlQ)
     },
     resetFilterData () {
       this.filterData.securityEvent.forEach(d => {
@@ -685,22 +706,23 @@ export default {
         d.data = []
       })
     },
-    queryFilter () {
+    queryFilter (q) {
       this.resetFilterData()
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime),
-        q: this.q
+        resource: q
       }
       this.listData = []
+      this.initStatusData(params)
       this.initEventSeverityTrendData(params)
-      // this.initEventSeverityData(params)
+      this.initEventSeverityData(params)
       if (this.pageType === detectionPageType.securityEvent) {
-        // this.initOffenderIpData(params)
+        this.initOffenderIpData(params)
         // this.initOffenderLocationData(params)
-        // this.initVictimIpData(params)
+        this.initVictimIpData(params)
         // this.initVictimLocationData(params)
-        // this.initSecurityTypeData(params)
+        this.initSecurityTypeData(params)
       } else if (this.pageType === detectionPageType.performanceEvent) {
         // this.initActiveEntity(params)
         // this.initEventTypeData(params)
@@ -713,7 +735,11 @@ export default {
     pageNo (val) {
       this.pageObj.pageNo = val || 1
       this.pageObj.resetPageNo = false
-      this.search(this.metaList, this.q)
+      // 初始化时，mounted和pageNo都会调用列表接口，且pageNo先执行，
+      // 初始化保证mounted执行，后续pageNo变动则不影响接口调用
+      if (!this.initFlag) {
+        this.search(this.metaList, this.q)
+      }
     },
     // 点击上一页箭头
     prev () {
@@ -748,6 +774,7 @@ export default {
   },
   mounted () {
     this.queryFilter()
+    this.initFlag = false
     this.queryList()
     this.debounceFunc = this.$_.debounce(this.resize, 300)
     window.addEventListener('resize', this.debounceFunc)

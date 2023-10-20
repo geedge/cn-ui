@@ -9,14 +9,15 @@
       </div>
     </div>
     <div class="cn-detection__case">
-      <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[detection.eventSecurity]}`"></div>
+      <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[detection.severity]}`"></div>
       <div class="cn-detection__row">
         <div class="cn-detection__header" v-if="pageType === detectionPageType.securityEvent">
           <span
               class="detection-event-severity-color-block"
               :style="`background-color: ${eventSeverityColor[detection.eventSeverity]}`">
           </span>
-          <span class="detection-event-severity-block">{{ detection.securityType || '-' }}</span>
+<!--          <span class="detection-event-severity-block">{{ detection.securityType || '-' }}</span>-->
+          <span class="detection-event-severity-block">{{ detection.eventType || '-' }}</span>
           <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp || '-'}}
           <div v-if="detection.domain" class="domain">{{detection.domain}}</div>
           <span class="line">-------</span>
@@ -30,31 +31,31 @@
         <div class="cn-detection__body">
           <div class="body__basic-info">
             <div class="basic-info">
-              <div class="basic-info__item" v-if="detection.eventSecurity">
+              <div class="basic-info__item" v-if="detection.severity">
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detection.list.security')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.eventSecurity || '-'}}</span>
+                <span>{{detection.severity || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.eventSeverity">
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detections.severity')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventSeverity || '-'}}</span>
               </div>
-              <div class="basic-info__item" v-if="detection.eventType">
-                <i class="cn-icon cn-icon-event-type"></i>
-                <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.eventType || '-'}}</span>
-              </div>
-              <div class="basic-info__item" v-if="detection.malwareName">
+<!--              <div class="basic-info__item" v-if="detection.eventType">-->
+<!--                <i class="cn-icon cn-icon-event-type"></i>-->
+<!--                <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>-->
+<!--                <span>{{detection.eventType || '-'}}</span>-->
+<!--              </div>-->
+              <div class="basic-info__item" v-if="detection.eventName">
                 <i class="cn-icon cn-icon-trojan"></i>
                 <span>{{$t('detection.list.malwareName')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.malwareName || '-'}}</span>
+                <span>{{ $_.get(detection, 'malwareName', '-') || '-' }}</span>
               </div>
-              <div class="basic-info__item" v-if="detection.cryptominingPool">
-                <i class="cn-icon cn-icon-mining-pool"></i>
-                <span>{{$t('detection.list.cryptominingPool')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.cryptominingPool || '-'}}</span>
-              </div>
+<!--              <div class="basic-info__item" v-if="detection.cryptominingPool">-->
+<!--                <i class="cn-icon cn-icon-mining-pool"></i>-->
+<!--                <span>{{$t('detection.list.cryptominingPool')}}&nbsp;:&nbsp;&nbsp;</span>-->
+<!--                <span>{{detection.cryptominingPool || '-'}}</span>-->
+<!--              </div>-->
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
                 <span>{{$t('detection.list.startTime')}}&nbsp;:&nbsp;&nbsp;</span>
@@ -63,9 +64,11 @@
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-duration"></i>
                 <span>{{$t('overall.duration')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span style="display: inline-block;height: 6px;width: 6px;border-radius: 50%;margin-right: 8px;"
-                      :style="pointColor(detection)"></span>
-                <span>{{unitConvert(detection.durationMs, 'time', null, null, 0).join(' ') || '-'}}</span>
+                <span>
+                  {{ detection.matchTimes || '-'}} {{ $t('detection.list.times') }} /
+                  {{unitConvert(detection.durationS, 'time', 's', null, 0).join(' ') || '-'}}
+                </span>
+                <div v-if="parseInt(detection.status)===0" class="margin-l-10 detection-row-active">Active</div>
               </div>
             </div>
           </div>
@@ -108,7 +111,7 @@
 
 <script>
 import { eventSeverityColor, detectionPageType, entityType } from '@/utils/constants'
-import { getMillisecond } from '@/utils/date-util'
+import { getMillisecond, dateFormatByAppearance } from '@/utils/date-util'
 import unitConvert from '@/utils/unit-convert'
 import DetectionSecurityEventOverview from '@/views/detections/overview/DetectionSecurityEventOverview'
 import DetectionPerformanceEventIpOverview from '@/views/detections/overview/DetectionPerformanceEventIpOverview'
@@ -177,6 +180,7 @@ export default {
   methods: {
     unitConvert,
     getMillisecond,
+    dateFormatByAppearance,
     /* 切换折叠状态 */
     switchCollapse () {
       this.isCollapse = !this.isCollapse
@@ -235,3 +239,17 @@ export default {
   }
 }
 </script>
+
+<style>
+.detection-row-active {
+  height: 20px;
+  line-height: 20px;
+  padding: 0 7px;
+  background: #E9EFE1;
+  border-radius: 2px;
+  font-family: NotoSansHans-Medium;
+  font-size: 12px;
+  color: #7E9F54;
+  font-weight: 500;
+}
+</style>
