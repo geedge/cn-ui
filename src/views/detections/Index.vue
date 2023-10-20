@@ -633,7 +633,11 @@ export default {
       }
       axios.get(api.detection[this.pageType].securityList, { params }).then(response => {
         if (response.status === 200) {
-          this.listData = response.data.data.result
+          const data = response.data.data.result
+          data.forEach(item => {
+            item.eventInfoObj = JSON.parse(item.eventInfo)
+          })
+          this.listData = data
         } else {
           this.listData = []
           console.error(response.data.message)
@@ -690,7 +694,7 @@ export default {
       }
       // 参数q，避免切换页码时，地址栏参数q为空
       let urlQ = ''
-      if (param.str) {
+      if (param && param.str) {
         urlQ = encodeURI(param.str)
       } else if (this.q) {
         urlQ = encodeURI(this.q)
