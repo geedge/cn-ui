@@ -20,6 +20,7 @@
         <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
         <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
         <open-port v-else-if="tab.name === entityDetailTabsName.openPort && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter" @checkTag="setTag"></open-port>
+        <behavior-pattern v-else-if="tab.name === entityDetailTabsName.behaviorPattern && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter" @checkTag="setTag"></behavior-pattern>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -34,19 +35,21 @@ import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/Inf
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'
 import SecurityEvent from '@/views/charts2/charts/entityDetail/tabs/SecurityEvent'
 import PerformanceEvent from '@/views/charts2/charts/entityDetail/tabs/PerformanceEvent'
+import BehaviorPattern from '@/views/charts2/charts/entityDetail/tabs/BehaviorPattern'
 import OpenPort from '@/views/charts2/charts/entityDetail/tabs/OpenPort'
 import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/DigitalCertificate'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import {tagValueLabelMapping} from '../../../../utils/constants'
+import { tagValueLabelMapping } from '../../../../utils/constants'
 
 export default {
   name: 'EntityDetailTabs',
   mixins: [chartMixin],
   components: {
     PerformanceEvent,
+    BehaviorPattern,
     SecurityEvent,
     InformationAggregation,
     DomainNameResolution,
@@ -90,6 +93,9 @@ export default {
     ])
     if (entityType !== 'app') {
       tabs.unshift({ name: entityDetailTabsName.informationAggregation, label: i18n.global.t('entities.informationAggregation'), icon: 'cn-icon cn-icon-information-aggregation', tag: 0 })
+    }
+    if (entityType === 'ip') {
+      tabs.push({ name: entityDetailTabsName.behaviorPattern, label: i18n.global.t('entities.behaviorPattern'), icon: 'cn-icon cn-icon-behavior', tag: 0 })
     }
     const activeTab = ref(tabs[0].name)
 

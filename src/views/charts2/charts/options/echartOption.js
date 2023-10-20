@@ -4,6 +4,7 @@ import {
   chartColor3,
   chartColor5,
   chartColor6,
+  chartColorForBehaviorPattern,
   unitTypes
 } from '@/utils/constants'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
@@ -154,6 +155,111 @@ export const pieChartOption3 = {
       data: []
     }
   ]
+}
+
+export const pieChartOption4 = {
+  color: chartColorForBehaviorPattern,
+  polar: {
+    radius: [30, '150%'],
+    center: ['50%', '99.9%']// 为了显示出来半圆底部左侧的边
+  },
+  radiusAxis: {
+    min: 0,
+    axisLine: {
+      show: true,
+      lineStyle: {
+        color: '#d3d3d3',
+        type: 'dashed'
+      }
+    },
+    axisTick: {
+      show: false
+    },
+    axisLabel: {
+      show: false
+    },
+    splitLine: {
+      show: true,
+      lineStyle: {
+        color: '#d3d3d3',
+        type: 'dashed'
+      }
+    }
+  },
+  angleAxis: {
+    type: 'category',
+    data: [], // 'a', 'b', 'c', 'd','aa', 'ab', 'ac', 'ad','a', 'b', 'c', 'd','aa', 'ab', 'ac', 'ad'
+    startAngle: 180,
+    // splitNumber: 30,
+    axisLine: {
+      show: false
+    },
+    axisLabel: {
+      show: true,
+      // alignWithLabel:true,//可以保证刻度线和标签对齐
+      interval: 0, // 强制显示所有标签
+      // hideOverlap:true//从 v5.2.0 开始支持
+      formatter: function (params, index) {
+        if (index === 7) {
+          return params + '\n'
+        } else if (index === 8) {
+          return '\n' + params
+        } else if (index === 15) {
+          return params + '\n'
+        } else {
+          return params
+        }
+      }
+    },
+    axisTick: {
+      show: false,
+      alignWithLabel: true,
+      interval: 0,
+      length: 5
+    },
+    splitLine: {
+      show: true,
+      lineStyle: {
+        color: ['#e2e5ec'],
+        type: 'dashed'
+      }
+    }
+  },
+  tooltip: {
+    show: true,
+    formatter: function (item) {
+      let str = '<div style="display:flex;flex-direction: row;align-items: center;">'
+      str += '<div style="width: 8px;\n' +
+            '            height: 8px;\n' +
+            '            margin: 3px 8px 0 0;\n' +
+            '            border-radius: 1px;;background:'
+      str += item.color
+      str += ';"></div>'
+      str += item.name + ': ' + unitConvert(item.value, unitTypes.number).join('')
+      str += '</div>'
+      str += '</div>'
+      return str
+    }
+  },
+  series: [{
+    type: 'bar',
+    data: [], // 8,7,6,5,4,3,2,1,0,0,0,0,0,0,0,0
+    coordinateSystem: 'polar',
+    axisTick: {
+      show: false
+    },
+    itemStyle: {
+      color: function (params) {
+        return chartColorForBehaviorPattern[params.dataIndex]
+      }
+    },
+    label: {
+      show: false,
+      position: 'middle',
+      formatter: '{b}: {c}'
+    }
+  }],
+  animation: false
 }
 
 export const stackedLineChartOption = {

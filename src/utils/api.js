@@ -261,6 +261,7 @@ export const api = {
     throughput: apiVersion + '/entity/detail/traffic/throughput',
     security: apiVersion + '/entity/detail/event/security',
     performance: apiVersion + '/entity/detail/event/performance',
+    behaviorPattern: apiVersion + '/entity/detail/behavior/ip',
     // 域名解析：ip相关app、domain
     domainNameResolutionAboutAppsOfIp: apiVersion + '/entity/detail/ip/relate/apps',
     domainNameResolutionAboutDomainsOfIp: apiVersion + '/entity/detail/ip/relate/domains',
