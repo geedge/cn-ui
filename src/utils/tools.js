@@ -790,7 +790,6 @@ export function computeScore (data, scoreBase) {
   let totalScore = 0
   const scoreArr = []
   let num = 0
-  console.info(data, scoreBase)
   Object.keys(data).forEach(t => {
     if (!data[t] && data[t] !== 0) {
       num += 1

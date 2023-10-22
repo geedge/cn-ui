@@ -108,7 +108,6 @@ export default {
       immediate: true,
       deep: true,
       handler (n) {
-        console.info(n)
         if (!n || n.length === 0) {
           this.timeout = setTimeout(() => {
             this.noData = true

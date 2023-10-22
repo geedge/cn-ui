@@ -641,7 +641,6 @@ export default {
       axios.get(api.detection[this.pageType].securityList, { params }).then(response => {
         if (response.status === 200) {
           const data = response.data.data.result
-          console.info(data)
           if (data.length > 0) {
             data.forEach(item => {
               item.eventInfoObj = JSON.parse(item.eventInfo)
