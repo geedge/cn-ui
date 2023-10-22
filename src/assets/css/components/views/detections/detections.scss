@@ -4,6 +4,18 @@
   width: 100%;
   margin-bottom: 10px;
 }
+.detections {
+  .entity__pagination{
+    bottom: 9px;
+    height: 40px;
+    width: 100%;
+  }
+  .detections__container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+}
 .detection__list {
   display: flex;
   flex-direction: column;

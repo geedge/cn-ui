@@ -66,9 +66,9 @@
                 <span>{{$t('overall.duration')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>
                   {{ detection.matchTimes || '-'}} {{ $t('detection.list.times') }} /
-                  {{unitConvert(detection.durationS, 'time', 's', null, 0).join(' ') || '-'}}
+                  {{unitConvert(parseInt(detection.durationS), 'time', 's', null, 0).join(' ') || '-'}}
                 </span>
-                <div v-if="parseInt(detection.status)===0" class="margin-l-10 detection-row-active">Active</div>
+                <div v-if="parseInt(detection.status) === 0" class="margin-l-10 detection-row-active">{{$t('detections.active')}}</div>
               </div>
             </div>
           </div>

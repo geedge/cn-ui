@@ -1,8 +1,7 @@
 <template>
   <div class="detection-filter-case">
-    <div class="no-data" v-if="isNoData">{{ $t('npm.noData') }}</div>
-
     <div class="new-detection-filter-title">{{$t('detections.filters')}}</div>
+    <div class="no-data" v-if="isNoData">{{ $t('npm.noData') }}</div>
     <template v-for="(filter, index) in filterData" :key="index">
       <div class="detection-filter" v-show="filter.data.length > 0">
         <div class="filter__header" @click="filter.collapse = !filter.collapse">

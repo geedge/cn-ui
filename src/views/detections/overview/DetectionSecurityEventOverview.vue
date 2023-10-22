@@ -299,48 +299,40 @@ export default {
       // 根据detection的eventInfo对象的ioc_type进行判断，若为domain，malware信息从domain详情中获取，并填充domain信息
       // 若ioc_type为ip，则调用ip接口，填充malware信息
       // 最后调用app，填充app信息。经上获取完整实体详情则最少需要调用4次接口
-      const offenderIPDetail = axios.get(`${api.detection.securityEvent.ipDetail}/resource=${this.detection.offenderIp}`)
-      const victimIPDetail = axios.get(`${api.detection.securityEvent.ipDetail}/resource=${this.detection.victimIp}`)
-      let ipDetail
-      let domainDetail
-      let promiseList = []
-      const appDetail = axios.get(`${api.detection.securityEvent.appDetail}/resource=${this.detection.app}`)
-      if (this.detection.eventInfoObj.ioc_type.toLowerCase() === 'domain') {
-        domainDetail = axios.get(`${api.detection.securityEvent.domainDetail}/resource=${this.detection.eventInfoObj.ioc_value}`)
-        promiseList = [offenderIPDetail, victimIPDetail, domainDetail, appDetail]
-      }
-      if (this.detection.eventInfoObj.ioc_type.toLowerCase() === 'ip') {
-        ipDetail = axios.get(`${api.detection.securityEvent.ipDetail}/resource=${this.detection.eventInfoObj.ioc_value}`)
-        domainDetail = axios.get(`${api.detection.securityEvent.domainDetail}/resource=${this.detection.domain}`)
-        promiseList = [offenderIPDetail, victimIPDetail, domainDetail, appDetail, ipDetail]
-      }
-
-      Promise.all(promiseList).then((responses) => {
-        responses.forEach((res, i) => {
+      if (this.detection.offenderIp) {
+        axios.get(`${api.detection.securityEvent.ipDetail}?resource=${this.detection.offenderIp}`).then(res => {
           if (res.status === 200) {
-            if (i === 0) {
-              this.basicInfo.offenderInfo = res.data.data
+            this.basicInfo.offenderInfo = res.data.data
+            if (this.$_.get(this.detection, 'eventInfoObj.ioc_type', '').toLowerCase() === 'ip') {
+              this.basicInfo.malwareInfo = res.data.data.malware
             }
-            if (i === 1) {
-              this.basicInfo.victimInfo = res.data.data
-            }
-            if (i === 2) {
-              this.basicInfo.domainInfo = res.data.data
-            }
-            if (i === 3) {
-              this.basicInfo.appInfo = res.data.data
-            }
-            if (i === 4) {
-              this.basicInfo.malwareInfo = res.data.data.malwareInfo
-            }
-          } else {
-            console.error(res)
           }
         })
-        if (this.detection.eventInfoObj.ioc_type.toLowerCase() === 'domain') {
-          this.basicInfo.malwareInfo = this.basicInfo.domainInfo.malware || {}
-        }
-      })
+      }
+      if (this.detection.victimIp) {
+        axios.get(`${api.detection.securityEvent.ipDetail}?resource=${this.detection.victimIp}`).then(res => {
+          if (res.status === 200) {
+            this.basicInfo.victimInfo = res.data.data
+          }
+        })
+      }
+      if (this.detection.domain) {
+        axios.get(`${api.detection.securityEvent.domainDetail}?resource=${this.detection.domain}`).then(res => {
+          if (res.status === 200) {
+            this.basicInfo.domainInfo = res.data.data
+            if (this.$_.get(this.detection, 'eventInfoObj.ioc_type', '').toLowerCase() === 'domain') {
+              this.basicInfo.malwareInfo = res.data.data.malware
+            }
+          }
+        })
+      }
+      if (this.detection.app) {
+        axios.get(`${api.detection.securityEvent.appDetail}?resource=${this.detection.app}`).then(res => {
+          if (res.status === 200) {
+            this.basicInfo.appInfo = res.data.data
+          }
+        })
+      }
     },
     queryEvent () {
       axios.get(api.detection.securityEvent.relationEvent, {

@@ -1,5 +1,5 @@
 <template>
-  <div class="entity-explorer entity-explorer--show-list">
+  <div class="entity-explorer entity-explorer--show-list detections">
     <!-- 顶部工具栏，在列表页显示 -->
     <div class="explorer-top-tools explorer-detection-top-tools">
       <div class="explorer-top-tools-title">{{$t('overall.detections')}}</div>
@@ -33,7 +33,7 @@
         @search="search"
     ></detection-search>
     <!-- 内容区 -->
-    <div class="explorer-container" style="height: calc(100% - 20px);flex-direction: column">
+    <div class="detections__container">
       <loading :loading="loading"></loading>
       <template v-if="isEventSeverityNoData">
          <div class="no-data detection__event-severity-bar" >{{ $t('npm.noData') }}</div>
@@ -121,7 +121,7 @@ import DetectionFilter from '@/views/detections/DetectionFilter'
 import DetectionList from '@/views/detections/DetectionList'
 import Pagination from '@/components/common/Pagination'
 import { defaultPageSize, detectionPageType } from '@/utils/constants'
-import { getNowTime, getSecond, toTime } from '@/utils/date-util'
+import { getNowTime, getSecond, getMillisecond } from '@/utils/date-util'
 import { ref, shallowRef } from 'vue'
 import * as echarts from 'echarts'
 import {
@@ -131,12 +131,13 @@ import {
   multipleBarOption,
   pieForSeverity
 } from '@/views/detections/options/detectionOptions'
-import { api, getData } from '@/utils/api'
+import { api } from '@/utils/api'
 import axios from 'axios'
-import { extensionEchartY, reverseSortBy, switchStatus } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, extensionEchartY, reverseSortBy } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
+import { useStore } from 'vuex'
 
 export default {
   name: 'Index',
@@ -199,7 +200,7 @@ export default {
           },
           {
             title: this.$t('detections.eventType'),
-            column: 'event_type',
+            column: 'eventType',
             topColumn: 'event_type',
             collapse: false,
             value: [],
@@ -207,7 +208,7 @@ export default {
           },
           {
             title: this.$t('detections.victimIp'),
-            column: 'victim_ip',
+            column: 'victimIP',
             topColumn: 'victim_ip',
             collapse: false,
             value: [],
@@ -232,7 +233,7 @@ export default {
           // },
           {
             title: this.$t('detections.offenderIp'),
-            column: 'offender_ip',
+            column: 'offenderIP',
             topColumn: 'offender_ip',
             collapse: false,
             value: [],
@@ -290,25 +291,40 @@ export default {
   },
   methods: {
     initStatusData (params) {
-      getData(api.detection[this.pageType].statusStatistics, params).then(data => {
-        this.filterData[this.pageType][0].data = data.map(r => ({ label: this.$t(switchStatus(r.status)), value: r.status, count: r.count }))
+      axios.get(api.detection[this.pageType].statusStatistics, { params }).then(res => {
+        if (res.status === 200) {
+          const data = res.data.data.result
+          this.filterData[this.pageType][0].data = data.map(r => {
+            let label = ''
+            if (r.status === '0') {
+              label = this.$t('detections.active')
+            } else if (r.status === '1') {
+              label = this.$t('detections.ended')
+            }
+            return { label, value: r.status, count: r.count }
+          })
+        }
+      }).catch(e => {
+        console.error(e)
+        this.filterData[this.pageType][0].data = []
+        this.errorMsgHandler(e)
       })
     },
     /** 初始化顶部大柱状图 */
     initEventSeverityTrendData (params) {
       this.loading = true
-      // getData(api.detection[this.pageType].eventSeverityTrend, params).then(data => {
-      getData(api.detection[this.pageType].timeDistribution, params).then(data => {
+      axios.get(api.detection[this.pageType].timeDistribution, { params }).then(res => {
+        const data = res.data.data.result
         this.eventSeverityData = data
         if (!this.$_.isEmpty(data)) {
           const dataMap = new Map()
           data.forEach(item => {
             if (item.severity) {
               if (!dataMap.has(item.severity)) {
-                const count = [[toTime(item.statTime), item.count]]
+                const count = [[getMillisecond(parseFloat(item.statTime)), item.count]]
                 dataMap.set(item.severity, count)
               } else {
-                dataMap.get(item.severity).push([toTime(item.statTime), item.count])
+                dataMap.get(item.severity).push([getMillisecond(parseFloat(item.statTime)), item.count])
               }
             }
           })
@@ -347,12 +363,6 @@ export default {
             serie.data = seriesData
           })
 
-          // eventSeverityTrendOption.xAxis.data = dataMap.get('info').map(v => rTime(v[0]))
-
-          eventSeverityTrendOption.xAxis = [{
-            type: 'time',
-            splitNumber: 8
-          }]
           let detectionChart = echarts.getInstanceByDom(chartDom)
           if (detectionChart) {
             echarts.dispose(detectionChart)
@@ -364,8 +374,9 @@ export default {
         } else {
           // this.isEventSeverityNoData = true
         }
-      }).catch(error => {
-        console.log(error)
+      }).catch(e => {
+        console.error(e)
+        this.errorMsgHandler(e)
       }).finally(() => {
         this.$nextTick(() => {
           this.loading = false
@@ -374,8 +385,8 @@ export default {
     },
     /** 初始化左侧事件严重等级和第一个小饼图 */
     initEventSeverityData (params) {
-      // getData(api.detection[this.pageType].eventSeverity, params).then(data => {
-      getData(api.detection[this.pageType].severityStatistics, params).then(data => {
+      axios.get(api.detection[this.pageType].severityStatistics, { params }).then(res => {
+        const data = res.data.data.result
         this.statisticsSeverityData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][1].data = data.map(r => ({ label: r.severity, value: r.severity, count: r.count }))
@@ -401,12 +412,15 @@ export default {
             }
           })
         }
-      }).catch(error => {
-        console.log(error)
+      }).catch(e => {
+        console.error(e)
+        this.filterData[this.pageType][1].data = []
+        this.errorMsgHandler(e)
       })
     },
     initEventTypeData (params) {
-      getData(api.detection[this.pageType].eventType, params).then(data => {
+      axios.get(api.detection[this.pageType].eventType, { params }).then(res => {
+        const data = res.data.data.result
         this.statisticsCategoryData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][2].data = data.map(r => ({
@@ -433,14 +447,16 @@ export default {
             vm.filterData.performanceEvent[1].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[1].value, e.data.name)
           })
         }
-      }).catch(error => {
-        console.log(error)
+      }).catch(e => {
+        console.error(e)
+        this.filterData[this.pageType][2].data = []
+        this.errorMsgHandler(e)
       })
     },
     /** 第二个饼图和左侧filter的eventType */
     initSecurityTypeData (params) {
-      // getData(api.detection[this.pageType].securityType, params).then(data => {
-      getData(api.detection[this.pageType].eventTypeStatistics, params).then(data => {
+      axios.get(api.detection[this.pageType].eventTypeStatistics, { params }).then(res => {
+        const data = res.data.data.result
         this.statisticsCategoryData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][2].data = data.map(r => ({
@@ -467,14 +483,16 @@ export default {
             vm.filterData.securityEvent[1].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[1].value, e.data.name)
           })
         }
-      }).catch(error => {
-        console.log(error)
+      }).catch(e => {
+        console.error(e)
+        this.filterData[this.pageType][2].data = []
+        this.errorMsgHandler(e)
       })
     },
     /** 横向柱状图和左侧filter的offenderIp */
     initOffenderIpData (params) {
-      // getData(api.detection[this.pageType].offenderIp, params).then(data => {
-      getData(api.detection[this.pageType].offenderIpStatistics, params).then(data => {
+      axios.get(api.detection[this.pageType].offenderIpStatistics, { params }).then(res => {
+        let data = res.data.data.result
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][4].data = data.map(r => ({
@@ -507,44 +525,33 @@ export default {
             vm.filterData.securityEvent[4].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[4].value, e.data[1])
           })
         }
-      }).catch(error => {
-        console.log(error)
+      }).catch(e => {
+        console.error(e)
+        this.filterData[this.pageType][4].data = []
+        this.filterData[this.pageType][4].showMore = false
+        this.filterData[this.pageType][4].showIndex = 9
+        this.errorMsgHandler(e)
       })
     },
 
     initVictimIpData (params) {
-      // getData(api.detection[this.pageType].victimIp, params).then(data => {
-      getData(api.detection[this.pageType].victimIpStatistics, params).then(data => {
+      axios.get(api.detection[this.pageType].victimIpStatistics, { params }).then(res => {
+        const data = res.data.data.result
         this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
         this.filterData[this.pageType][3].showMore = showMore
         this.filterData[this.pageType][3].showIndex = showIndex
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    initVictimLocationData (params) {
-      getData(api.detection[this.pageType].victimLocation, params).then(data => {
-        this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimLocationCountry, value: r.victimLocationCountry, count: r.count }))
-        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
-        this.filterData[this.pageType][3].showMore = showMore
-        this.filterData[this.pageType][3].showIndex = showIndex
-      }).catch(error => {
-        console.log(error)
-      })
-    },
-    initOffenderLocationData (params) {
-      getData(api.detection[this.pageType].offenderLocation, params).then(data => {
-        this.filterData[this.pageType][5].data = data.map(r => ({ label: r.offenderLocationCountry, value: r.offenderLocationCountry, count: r.count }))
-        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][5].data)
-        this.filterData[this.pageType][5].showMore = showMore
-        this.filterData[this.pageType][5].showIndex = showIndex
-      }).catch(error => {
-        console.log(error)
+      }).catch(e => {
+        console.error(e)
+        this.filterData[this.pageType][3].data = []
+        this.filterData[this.pageType][3].showMore = false
+        this.filterData[this.pageType][3].showIndex = 9
+        this.errorMsgHandler(e)
       })
     },
     initActiveEntity (params) {
-      getData(api.detection[this.pageType].activeEntity, params).then(data => {
+      axios.get(api.detection[this.pageType].activeEntity, { params }).then(res => {
+        let data = res.data.data.result
         this.statisticsActiveAttackData = data
         if (!this.$_.isEmpty(data)) {
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
@@ -604,7 +611,7 @@ export default {
           })
         }
       }).catch(error => {
-        console.log(error)
+        console.error(error)
       })
     },
     triggerFilterDataValue (array, value) {
@@ -634,28 +641,39 @@ export default {
       axios.get(api.detection[this.pageType].securityList, { params }).then(response => {
         if (response.status === 200) {
           const data = response.data.data.result
-          data.forEach(item => {
-            item.eventInfoObj = JSON.parse(item.eventInfo)
-          })
-          this.listData = data
+          console.info(data)
+          if (data.length > 0) {
+            data.forEach(item => {
+              item.eventInfoObj = JSON.parse(item.eventInfo)
+              item.startTime = parseFloat(item.startTime)
+            })
+            this.listData = data
+          } else {
+            this.listData = []
+          }
         } else {
           this.listData = []
           console.error(response.data.message)
           this.$message.error(response.data.message)
         }
       })
-      // getData(api.detection[this.pageType].listCount, params).then(data => {
-      getData(api.detection[this.pageType].securityCount, params).then(data => {
-        this.pageObj.total = data
+      axios.get(api.detection[this.pageType].securityCount, { params }).then(data => {
+        this.pageObj.total = parseInt(data)
       }).catch(error => {
-        console.log(error)
+        console.error(error)
       })
     },
     timeRefreshChange () {
-      this.initNoData()
-      if (!this.$refs.dateTimeRange.isCustom) {
-        const value = this.timeFilter.dateRangeValue
-        this.$refs.dateTimeRange.quickChange(value)
+      // 不是自选时间
+      if (this.$refs.dateTimeRange) {
+        if (!this.$refs.dateTimeRange.isCustom) {
+          const value = this.timeFilter.dateRangeValue
+          this.$refs.dateTimeRange.quickChange(value)
+        } else {
+          this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
+        }
+      } else {
+        this.timeFilter = JSON.parse(JSON.stringify(this.timeFilter))
       }
     },
     initNoData () {
@@ -664,9 +682,16 @@ export default {
       this.isStatisticsCategoryNoData = false
       this.isStatisticsActiveAttackNoData = false
     },
-    reload (s, e, v) {
+    reload (startTime, endTime, dateRangeValue) {
       this.initNoData()
-      this.dateTimeRangeChange(s, e, v)
+      this.dateTimeRangeChange(startTime, endTime, dateRangeValue)
+      const { query } = this.$route
+      const newUrl = urlParamsHandler(window.location.href, query, {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime,
+        range: dateRangeValue.value
+      })
+      overwriteUrl(newUrl)
     },
     // methods
     dateTimeRangeChange (s, e, v) {
@@ -723,9 +748,7 @@ export default {
       this.initEventSeverityData(params)
       if (this.pageType === detectionPageType.securityEvent) {
         this.initOffenderIpData(params)
-        // this.initOffenderLocationData(params)
         this.initVictimIpData(params)
-        // this.initVictimLocationData(params)
         this.initSecurityTypeData(params)
       } else if (this.pageType === detectionPageType.performanceEvent) {
         // this.initActiveEntity(params)
@@ -902,12 +925,37 @@ export default {
     window.removeEventListener('resize', this.debounceFunc)
   },
   setup () {
-    const { params } = useRoute()
-    const pageType = params.typeName
-    const dateRangeValue = 60
-    const { startTime, endTime } = getNowTime(dateRangeValue)
-    const timeFilter = ref({ startTime, endTime, dateRangeValue })
+    const store = useStore()
+    let { params, query, path } = useRoute()
+    // 获取路由跳转过的历史状态，赋值给当前界面，起到保留状态的作用，如浏览器的回退前进等
+    const routerObj = store.getters.getRouterHistoryList.find(item => item.t === query.t)
+    if (routerObj) {
+      params = routerObj.params
+      query = routerObj.query
+      path = routerObj.path
 
+      // 如果当前界面之前载入过，获取状态后更新地址栏，以便后续的赋值操作
+      const newUrl = urlParamsHandler(window.location.href, useRoute().query, query)
+      overwriteUrl(newUrl)
+    }
+    const pageType = params.typeName
+    // 获取url携带的range、startTime、endTime
+    const rangeParam = query.range
+    const startTimeParam = query.startTime
+    const endTimeParam = query.endTime
+    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
+    const timeFilter = ref({ dateRangeValue })
+    if (!startTimeParam || !endTimeParam) {
+      const { startTime, endTime } = getNowTime(60)
+      timeFilter.value.startTime = getSecond(startTime)
+      timeFilter.value.endTime = getSecond(endTime)
+      // 如果没有时间参数，就将参数写入url
+      const newUrl = urlParamsHandler(window.location.href, useRoute().query, { startTime: timeFilter.value.startTime, endTime: timeFilter.value.endTime, range: dateRangeValue })
+      overwriteUrl(newUrl)
+    } else {
+      timeFilter.value.startTime = parseInt(startTimeParam)
+      timeFilter.value.endTime = parseInt(endTimeParam)
+    }
     return {
       timeFilter,
       pageType

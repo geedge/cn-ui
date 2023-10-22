@@ -68,13 +68,14 @@ export default {
       this.listData.forEach((item, i) => {
         this.myListData.push(this.$_.cloneDeep(item))
         if (item.eventInfoObj) {
-          axios.get(`${api.detection.securityEvent.detail}/${item.eventInfoObj.ioc_type}/resource=${item.eventInfoObj.ioc_value}`).then(res => {
+          axios.get(`${api.detection.securityEvent.detail}/${item.eventInfoObj.ioc_type}?resource=${item.eventInfoObj.ioc_value}`).then(res => {
             if (res.status === 200) {
-              this.myListData[i].malwareName = res.data.data.malware.malwareName
+              this.myListData[i].malwareName = (this.$_.get(res, 'data.data.malware.malwareName', '-')) || '-'
             } else {
               this.myListData[i].malwareName = '-'
             }
           }).catch(e => {
+            console.error(e)
             this.myListData[i].malwareName = '-'
           })
         }
@@ -107,9 +108,11 @@ export default {
       immediate: true,
       deep: true,
       handler (n) {
+        console.info(n)
         if (!n || n.length === 0) {
           this.timeout = setTimeout(() => {
             this.noData = true
+            this.myListData = []
           }, 500)
         } else {
           clearTimeout(this.timeout)

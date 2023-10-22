@@ -4,7 +4,7 @@ import {
 } from '@/views/charts/charts/tools'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
-import { dateFormatByAppearance } from '@/utils/date-util'
+import { dateFormatByAppearance, xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
 import { unitTypes } from '@/utils/constants'
 
 const severitySeriesIndexMappings = [
@@ -67,8 +67,8 @@ export const multipleBarOption = {
     source: [
     ]
   },
-  xAxis: {
-    type: 'category',
+  xAxis: [{
+    type: 'time',
     axisTick: { show: false },
     axisLine: {
       show: true,
@@ -77,13 +77,16 @@ export const multipleBarOption = {
       }
     },
     axisLabel: {
+      formatter: xAxisTimeFormatter,
+      rich: xAxisTimeRich,
       color: '#737373',
       interval: 'auto'
     },
+    splitNumber: 8,
     splitLine: {
       show: false
     }
-  },
+  }],
   yAxis: {
     axisTick: { show: false },
     axisLine: {
