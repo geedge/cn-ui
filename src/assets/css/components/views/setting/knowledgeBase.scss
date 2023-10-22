@@ -1550,33 +1550,69 @@ height:300px !important;
   }
 }
 }
-.update-knowledge-tip {
-  display:flex;
+.confirm-knowledge-switch {
+  display: flex;
   flex-direction: column;
-  padding-bottom: 0 !important;
-  width: 480px !important;
-  .el-dialog__header{
+
+  .el-dialog__header {
     display: flex;
     flex-direction: row;
-    border-bottom:1px solid #eee;
-    height:42px;
-    min-height:42px;
+    border-bottom: 1px solid #eee;
+    height: 42px;
+    min-height: 42px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 14px;
     background: #F7F7F7;
-    box-shadow: 0 1px 0 0 rgba(53,54,54,0.08);
-    padding-left:20px;
-    padding-top:14px;
-    padding-bottom:14px;
+
     .el-dialog__headerbtn {
       display: flex !important;
       flex-direction: row-reverse;
       justify-content: center;
       align-items: center;
-      font-size: 10px;
-      line-height: 10px;
       padding-right: 5px !important;
+      top: 16px;
+      right: 10px;
       i {
-        width:10px;
-        height:10px;
+        font-size: 12px;
+      }
+    }
+    .el-dialog__title {
+      font-size: 14px !important;
+      color: #353636;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+  }
+}
+.update-knowledge-tip, .confirm-knowledge-switch {
+  display:flex;
+  flex-direction: column;
+  padding-bottom: 0 !important;
+
+  .el-dialog__header{
+    display: flex;
+    flex-direction: row;
+    border-bottom:1px solid #eee;
+    height: 42px;
+    min-height:42px;
+    background: #F7F7F7;
+    box-shadow: 0 1px 0 0 rgba(53,54,54,0.08);
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 14px;
+
+    .el-dialog__headerbtn {
+      display: flex !important;
+      flex-direction: row-reverse;
+      justify-content: center;
+      align-items: center;
+      padding-right: 5px !important;
+      top: 16px;
+      right: 10px;
+
+      i {
+        font-size: 12px;
       }
     }
     .el-dialog__title {
@@ -1593,14 +1629,9 @@ height:300px !important;
     color: #353636;
     letter-spacing: 0;
     line-height: 22px;
-    font-weight: 400;
-    padding-top:8px;
-    padding-right:20px;
-    padding-left:20px;
-    .dialog-message {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
+    padding-top:12px;
+    padding-right: 20px;
+    padding-left: 20px;
   }
   .el-dialog__footer {
     height:52px;

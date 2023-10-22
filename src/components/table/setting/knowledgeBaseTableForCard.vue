@@ -3,27 +3,18 @@
     <div class="card-type-title" v-if="aiTaggingList.length > 0">{{$t('knowledgeBase.intelligenceLearning')}}</div>
     <el-checkbox-group v-model="checkList" >
       <div class="card-box" v-for="data in aiTaggingList" :key="data.knowledgeId">
-        <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
+        <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)" @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
           <div class="card-content">
             <div class="card-operate">
-              <el-tooltip
-                  effect="light"
-                  trigger="hover"
-                  :content="$t('tip.notAvailable')"
-                  placement="right"
-                  popper-class="panel-tooltip"
+              <el-switch v-model="data.status"
+                         class="card-enable"
+                         active-color="#38ACD2"
+                         inactive-color="#C0CEDB"
+                         :active-value="1"
+                         :inactive-value="0"
+                         :before-change="(knowledgeId) => confirmSwitchLearning(data.knowledgeId)"
               >
-                <el-switch v-model="data.status"
-                           class="card-enable"
-                           active-color="#38ACD2"
-                           inactive-color="#C0CEDB"
-                           :disabled="true"
-                           :active-value="1"
-                           :inactive-value="0"
-                           @change="changeStatus($event,data.knowledgeId)"
-                >
-                </el-switch>
-              </el-tooltip>
+              </el-switch>
             </div>
             <div class="card-icon">
               <img :src="data.iconUrl"/>
@@ -86,24 +77,14 @@
             <div class="update-title">
               <div class="card-title-name" :title="updateKnowledge.label">{{updateKnowledge.label}}</div>
             </div>
-            <el-tooltip
-                effect="light"
-                trigger="hover"
-                v-if="showEnable"
-                :content="$t('tip.notAvailable')"
-                placement="right"
-                popper-class="panel-tooltip"
+            <el-switch v-model="updateKnowledge.status"
+                       active-color="#38ACD2"
+                       inactive-color="#C0CEDB"
+                       :active-value="1"
+                       :inactive-value="0"
+                       :before-change="(knowledgeId) => confirmSwitchLearning(updateKnowledge.knowledgeId)"
             >
-              <el-switch v-model="updateKnowledge.status"
-                         active-color="#38ACD2"
-                         inactive-color="#C0CEDB"
-                         :disabled="true"
-                         :active-value="1"
-                         :inactive-value="0"
-                         @change="changeStatus($event,updateKnowledge.knowledgeId)"
-              >
-              </el-switch>
-            </el-tooltip>
+            </el-switch>
           </div>
           <div class="knowledge-desc" :title="updateKnowledge.desc">{{updateKnowledge.desc ? updateKnowledge.desc : '—'}}</div>
         </div>
@@ -187,12 +168,27 @@
     <el-dialog v-model="showConfirmDialog"
                :title="$t('overall.tips')"
                custom-class="update-knowledge-tip"
+               :width="480"
                :before-close="handleConfirmClose">
       <div class="dialog-message">{{$t('knowledge.updateTips')}}</div>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="showConfirmDialog = false">{{ $t('overall.cancel') }}</el-button>
           <el-button type="primary" @click="submit">{{ $t('tip.confirm') }}</el-button>
+        </span>
+      </template>
+    </el-dialog>
+    <el-dialog
+        v-model="showConfirmSwitch"
+        :width="330"
+        custom-class="confirm-knowledge-switch"
+        :title="$t('overall.hint')"
+    >
+      <div class="dialog-message">{{ confirmSwitchLearningTip }}</div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="showConfirmSwitch = false">{{ $t('overall.cancel') }}</el-button>
+          <el-button type="primary" @click="switchLearning">OK</el-button>
         </span>
       </template>
     </el-dialog>
@@ -237,7 +233,9 @@ export default {
       updateHistoryList: [],
       updateObject: {},
       currentVersion: 0,
-      uploadLoading: false
+      uploadLoading: false,
+      showConfirmSwitch: false,
+      switchKnowledgeId: ''
     }
   },
   setup () {
@@ -364,18 +362,10 @@ export default {
       })
     },
     mouseenter (card) {
-      this.tableData.forEach(t => {
-        if (t.knowledgeId === card.knowledgeId) {
-          card.showUpdate = true
-        }
-      })
+      card.showUpdate = true
     },
     mouseleave (card) {
-      this.tableData.forEach(t => {
-        if (t.knowledgeId === card.knowledgeId) {
-          card.showUpdate = false
-        }
-      })
+      card.showUpdate = false
     },
     del (data) {
       this.$emit('delete', data)
@@ -391,6 +381,29 @@ export default {
           id: id,
           dataType: dataType
         }
+      })
+    },
+    confirmSwitchLearning (id) {
+      this.showConfirmSwitch = true
+      this.switchKnowledgeId = id
+      return false
+    },
+    switchLearning () {
+      const hint = this.aiTaggingList.find(d => d.knowledgeId === this.switchKnowledgeId)
+      const toStatus = hint.status === 0 ? 1 : 0
+      axios.patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: this.switchKnowledgeId, status: toStatus }] }).then(res => {
+        if (res.status === 200) {
+          hint.status = toStatus
+          this.$message.success(this.$t('tip.success'))
+        } else {
+          console.error(res.message)
+          this.errorMsgHandler(res)
+        }
+      }).catch(e => {
+        console.error(e)
+        this.errorMsgHandler(e)
+      }).finally(() => {
+        this.showConfirmSwitch = false
       })
     }
   },
@@ -445,6 +458,20 @@ export default {
         action: 'overwrite',
         description: this.updateObject.description
       }
+    },
+    confirmSwitchLearningTip () {
+      let tip = ''
+      if (this.switchKnowledgeId) {
+        const find = this.aiTaggingList.find(item => item.knowledgeId === this.switchKnowledgeId)
+        if (find) {
+          if (find.status === 0) {
+            tip = this.$t('tip.confirmEnablePsiphon3') + '?'
+          } else if (find.status === 1) {
+            tip = this.$t('tip.confirmDisablePsiphon3') + '?'
+          }
+        }
+      }
+      return tip
     }
   }
 }
