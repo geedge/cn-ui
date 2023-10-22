@@ -75,14 +75,21 @@ export default {
       trafficDirection: 'Server',
       location: '',
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      scoreDataState: false
     }
   },
   mixins: [chartMixin],
+  computed: {
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
+    }
+  },
   methods: {
     async initMap () {
       // 初始化插件
       this.toggleLoading(true)
+      this.scoreDataState = false // 重置评分数据状态
       const geoData = await getGeoData(storageKey.iso36112WorldLow)
       const chart = am4Core.create('npmMap', am4Maps.MapChart)
       chart.geodata = geoData
@@ -101,14 +108,13 @@ export default {
       this.worldImageSeries.mapImages.template.events.on('hit', async ev => {
         this.$store.commit('setNpmLocationCountry', ev.target.dataItem.dataContext.name)
         this.location = ev.target.dataItem.dataContext.name
-        const countryId = ev.target.dataItem.dataContext.id
         ev.target.isHover = false
-        await this.drill(countryId)
       })
     },
     loadAm4ChartMap (polygonSeries, imageSeries) {
       try {
         this.toggleLoading(true)
+        this.scoreDataState = false // 重置评分数据状态
         // 清除legend
         this.myChart.children.each((s, i) => {
           if (s && s.className !== 'Container') {
@@ -172,10 +178,11 @@ export default {
                     tcpLostlenPercent: valueToRangeValue(data.tcpLostlenPercent, unitTypes.percent).join(' '),
                     pktRetransPercent: valueToRangeValue(data.pktRetransPercent, unitTypes.percent).join(' ')
                   }
-                  t.tooltip.data.score = computeScore(data)
+                  t.performanceData = data
+                  /* t.tooltip.data.score = computeScore(data)
                   if (t.tooltip.data.score === '-') {
                     t.tooltip.data.score = ''
-                  }
+                  } */
                   t.tooltip.data.total = valueToRangeValue(t.totalBitsRate, unitTypes.bps).join(' ')
                   t.tooltip.data.inbound = valueToRangeValue(t.inboundBitsRate, unitTypes.bps).join(' ')
                   t.tooltip.data.outbound = valueToRangeValue(t.outboundBitsRate, unitTypes.bps).join(' ')
@@ -193,6 +200,7 @@ export default {
                     sslConLatency: this.$t('networkAppPerformance.sslResponseLatency')
                   }
                 })
+                this.scoreDataState = true
                 this.loadMarkerData(imageSeries, mapData)
               }).catch(e => {
                 this.showError = true
@@ -219,17 +227,13 @@ export default {
       }
     },
     loadMarkerData (imageSeries, data) {
-      const _data = data.filter(d => d.tooltip.data.score || d.tooltip.data.score === 0)
-      imageSeries.data = _data.map(r => ({
+      imageSeries.data = data.map(r => ({
         ...r,
-        score: r.tooltip.data.score,
         name: r.superAdminArea || r.countryRegion,
-        id: r.serverId,
-        color: this.scoreColor(r.tooltip.data.score),
-        border: this.scoreColor(r.tooltip.data.score)
+        id: r.serverId
       }))
       if (!this.location) {
-        this.filterLocationOptions(_data)
+        this.filterLocationOptions(data)
       }
     },
     filterLocationOptions (data) {
@@ -391,6 +395,23 @@ export default {
           this.$message.warning(this.$t('tip.noDetailMap'))
         }
       }
+    },
+    handleScoreData () {
+      const imageSeries = this.location ? this.countryImageSeries : this.worldImageSeries
+      imageSeries.data = imageSeries.data.map(d => {
+        let score = computeScore(d.performanceData, this.$store.getters.getScoreBase)
+        if (score === '-') {
+          score = ''
+        }
+        d.tooltip.data.score = score
+        return {
+          ...d,
+          score,
+          color: this.scoreColor(score),
+          border: this.scoreColor(score)
+        }
+      })
+      // this.myChart.invalidateData()
     }
   },
   watch: {
@@ -429,6 +450,16 @@ export default {
         } else {
           this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
         }
+      }
+    },
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData()
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData()
       }
     }
   },

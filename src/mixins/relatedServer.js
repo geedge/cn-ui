@@ -96,5 +96,41 @@ export default {
       this.relationshipShowMoreTwo = false
       this.relationshipShowMoreOne = false
     }
+  },
+  computed: {
+    scoreDot () {
+      const dots = []
+      if (this.score === '-') {
+        for (let i = 0; i < 6; i++) {
+          dots.push({
+            class: 'score-dot'
+          })
+        }
+      } else {
+        for (let i = 0; i < 6; i++) {
+          if (i < this.score) {
+            dots.push({
+              class: `score-dot ${handleClass(this.score)}`
+            })
+          } else {
+            dots.push({
+              class: 'score-dot'
+            })
+          }
+        }
+      }
+      return dots
+
+      function handleClass (score) {
+        if (score <= 2) {
+          return 'score-dot--red'
+        } else if (score <= 4) {
+          return 'score-dot--yellow'
+        } else if (score <= 6) {
+          return 'score-dot--green'
+        }
+        return ''
+      }
+    }
   }
 }

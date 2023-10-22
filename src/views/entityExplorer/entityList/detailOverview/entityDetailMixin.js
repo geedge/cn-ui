@@ -48,7 +48,9 @@ export default {
       score: '-', // 网络质量评分
       performanceMetricEndTimeInterval: 3600, // 服务质量事件指标的结束时间与开始时间的秒间隔
       isShowMoreApp: false, // related App 展示更多时
-      isShowMoreDomain: false // related Domain 展示更多时
+      isShowMoreDomain: false, // related Domain 展示更多时
+      scoreDataState: false, // 性能数据加载情况，true 表示加载完成
+      performanceScoreData: {} // 用来计算评分的性能数据
     }
   },
   computed: {
@@ -91,6 +93,21 @@ export default {
             break
         }
         return className
+      }
+    },
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
+    }
+  },
+  watch: {
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData()
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData()
       }
     }
   },
@@ -258,17 +275,18 @@ export default {
 
     queryEntityDetailNetworkQuantity () {
       this.loadingNetworkQuality = true
+      this.performanceScoreData = {}
+      this.scoreDataState = false
       if (this.networkQuantityUrl) {
         axios.get(this.networkQuantityUrl, { params: this.getQueryParams() }).then(response => {
           if (response.status === 200) {
-            const data = {
+            this.performanceScoreData = {
               establishLatencyMs: response.data.data.result.establishLatencyMsAvg || null,
               httpResponseLatency: response.data.data.result.httpResponseLatencyAvg || null,
               sslConLatency: response.data.data.result.sslConLatencyAvg || null,
               tcpLostlenPercent: response.data.data.result.tcpLostlenPercentAvg || null,
               pktRetransPercent: response.data.data.result.pktRetransPercentAvg || null
             }
-            this.score = computeScore(data)
             this.entityData.establishLatencyMsAvg = response.data.data.result.establishLatencyMsAvg
             this.entityData.establishLatencyP50 = response.data.data.result.establishLatencyP50
             this.entityData.establishLatencyP90 = response.data.data.result.establishLatencyP90
@@ -321,6 +339,8 @@ export default {
             this.singleValues.chartDatas.splice(4, 1, pktRetransPercent)
           }
           this.loadingNetworkQuality = false
+        }).finally(() => {
+          this.scoreDataState = true
         })
       }
     },
@@ -472,6 +492,9 @@ export default {
           document.body.addEventListener('click', showBlock)
         })
       }
+    },
+    handleScoreData () {
+      this.score = computeScore(this.performanceScoreData, this.$store.getters.getScoreBase)
     }
   },
   setup () {

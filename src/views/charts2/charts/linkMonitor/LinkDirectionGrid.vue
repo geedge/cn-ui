@@ -30,7 +30,8 @@ export default {
       isLinkShowError: false, // 显示左侧链路报错标识
       linkErrorMsg: '', // 左侧链路的报错信息
       isNextShowError: false, // 显示右侧下一跳报错标识
-      nextErrorMsg: '' // 右侧下一跳的报错信息
+      nextErrorMsg: '', // 右侧下一跳的报错信息
+      scoreDataState: false // 评分数据是否加载完成
     }
   },
   components: {
@@ -41,6 +42,23 @@ export default {
       handler () {
         this.init()
       }
+    },
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData(this.linkGridData)
+        this.handleScoreData(this.nextGridData)
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData(this.linkGridData)
+        this.handleScoreData(this.nextGridData)
+      }
+    }
+  },
+  computed: {
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
     }
   },
   mounted () {
@@ -48,6 +66,7 @@ export default {
   },
   methods: {
     init () {
+      this.scoreDataState = false
       // 链路基本信息
       let linkInfo = localStorage.getItem(storageKey.linkInfo)
       linkInfo = JSON.parse(linkInfo)
@@ -117,9 +136,9 @@ export default {
                   d.usageMore90 = outUsage >= 0.9 || inUsage >= 0.9
                   // 计算npm分数
                   // 分数低于3分，赋红点
-                  d.score = this.localComputeScore(d)
+                  // d.score = this.localComputeScore(d)
 
-                  d.scoreLow3 = d.score < 3 || d.score === '-'
+                  // d.scoreLow3 = d.score < 3 || d.score === '-'
 
                   const xAxis = inLink.linkId.split('Hundredgige').pop() - 1
                   const yAxis = outLink.linkId.split('Hundredgige').pop() - 1
@@ -210,9 +229,9 @@ export default {
                   d.usageMore90 = outUsage >= 0.9 || inUsage >= 0.9
                   // 计算npm分数
                   // 分数低于3分，赋红点
-                  d.score = this.localComputeScore(d)
+                  // d.score = this.localComputeScore(d)
 
-                  d.scoreLow3 = d.score < 3 || d.score === '-'
+                  // d.scoreLow3 = d.score < 3 || d.score === '-'
 
                   const xAxis = inLink.linkId
                   const yAxis = outLink.linkId
@@ -254,6 +273,7 @@ export default {
           }
         }
       }).finally(() => {
+        this.scoreDataState = true
         this.toggleLoading(false)
       })
     },
@@ -281,6 +301,23 @@ export default {
       }
       score = computeScore(dataScore)
       return score
+    },
+    handleScoreData (data) {
+      data.forEach(d => {
+        if (d.out) {
+          d.out.forEach(t => {
+            const data = {
+              establishLatencyMs: t.establishLatencyMs,
+              httpResponseLatency: t.httpResponseLatency,
+              sslConLatency: t.sslConLatency,
+              tcpLostlenPercent: t.tcpLostlenPercent,
+              pktRetransPercent: t.pktRetransPercent
+            }
+            t.score = computeScore(data, this.$store.getters.getScoreBase)
+            t.scoreLow3 = t.score < 3 || t.score === '-'
+          })
+        }
+      })
     },
     /**
      * 计算popover弹窗和右侧数据模块的宽度

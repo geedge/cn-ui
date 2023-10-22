@@ -678,7 +678,6 @@ export default {
           // 手动高亮listNode
           const _listNode = _this.graph.findById(listNode.id)
           _this.graph.emit('node:click', { item: _listNode, target: _listNode.getKeyShape() })
-          console.info(_this.stackData)
           if (_this.stackData.justUndo) {
             _this.stackData.justUndo = false
             _this.stackData.redo = []

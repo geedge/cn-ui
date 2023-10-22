@@ -76,12 +76,8 @@
         <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
         <div style="position: relative;">
           <div class="entity-score" v-if="!loadingNetworkQuality">
-            <div v-if="score !== '-'">
-              <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
-              <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
-              <div class="circle-icon"  v-else-if="score <= 6" :class="{'data-score-green': score <= 6}" ></div>
-            </div>
-            {{score}}
+            <span v-for="(dot, i) in scoreDot" :key="i" :class="dot.class"></span>
+            <span style="padding-left: 4px;">{{score}}</span>
           </div>
           <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
         </div>

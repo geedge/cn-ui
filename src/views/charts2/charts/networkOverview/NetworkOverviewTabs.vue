@@ -379,12 +379,25 @@ export default {
     timeFilter: {
       handler (n) {
         const queryParams = this.getQueryParams()
-        this.changeUrlTabState()
         this.getChartData(queryParams)
+        this.changeUrlTabState()
       }
     },
     metric (n) {
       this.changeMetric()
+    },
+    scoreBaseState (n) {
+      if (n && Object.keys(_.get(this.tableData, '[0].scoreGroup', {})).length >= 5) {
+        this.handleScoreData()
+      }
+    },
+    tableData: {
+      deep: true,
+      handler (n) {
+        if (Object.keys(_.get(n, '[0].scoreGroup', {})).length >= 5 && this.scoreBaseState) {
+          this.handleScoreData()
+        }
+      }
     }
   },
   computed: {
@@ -399,6 +412,9 @@ export default {
         className = 'tab-table tab-table__no-bottom'
       }
       return className
+    },
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
     }
   },
   mixins: [chartMixin],
@@ -468,8 +484,8 @@ export default {
       return excludeName.indexOf(title.name) > -1 ? false : 'custom'
     },
     searchColumnWidth (columnType) {
-      let checkedGroup = this.customTableTitles.filter(item => item.checked)
-      let checkedNum = checkedGroup.length
+      const checkedGroup = this.customTableTitles.filter(item => item.checked)
+      const checkedNum = checkedGroup.length
       if (columnType === 'dillDown') {
         if (checkedNum === 1) {
           return 'auto'
@@ -1038,12 +1054,12 @@ export default {
                         } else {
                           item.scoreGroup[self.columnNameGroup[tableColumn.prop]] = 0
                         }
-                        if (Object.keys(item.scoreGroup).length >= 5) {
+                        /* if (Object.keys(item.scoreGroup).length >= 5) {
                           item.score = computeScore(item.scoreGroup)
                           if (!_.isNumber(item.score)) {
                             item.score = '-'
                           }
-                        }
+                        } */
                       })
                     } else {
                       tableColumn.showError = true
@@ -2223,6 +2239,18 @@ export default {
         this.orderBy = 'sessions'
         this.metricUnit = 'sessions'
       }
+    },
+    handleScoreData () {
+      this.tableData.forEach(t => {
+        const data = {
+          establishLatencyMs: t.scoreGroup ? t.scoreGroup.establishLatencyMs : null,
+          httpResponseLatency: t.scoreGroup ? t.scoreGroup.httpResponseLatency : null,
+          sslConLatency: t.scoreGroup ? t.scoreGroup.sslConLatency : null,
+          tcpLostlenPercent: t.scoreGroup ? t.scoreGroup.tcpLostlenPercent : null,
+          pktRetransPercent: t.scoreGroup ? t.scoreGroup.pktRetransPercent : null
+        }
+        t.score = computeScore(data, this.$store.getters.getScoreBase)
+      })
     }
   },
   async mounted () {

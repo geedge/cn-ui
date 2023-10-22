@@ -43,14 +43,30 @@ export default {
       trafficDirection: 'Server',
       curTabState: curTabState,
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      scoreDataState: false
     }
   },
   mixins: [chartMixin],
+  computed: {
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
+    }
+  },
   watch: {
     timeFilter: {
       handler () {
         this.loadAm4ChartMap(this.polygonSeries, this.worldImageSeries)
+      }
+    },
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData()
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData()
       }
     }
   },
@@ -58,6 +74,7 @@ export default {
     async initMap () {
       // 初始化插件
       this.toggleLoading(true)
+      this.scoreDataState = false // 重置评分数据状态
       const geoData = await getGeoData(storageKey.iso36112WorldLow)
       const chart = am4Core.create('npmDrillDownMap', am4Maps.MapChart)
       chart.geodata = geoData
@@ -81,6 +98,7 @@ export default {
         // 清除数据
         // polygonSeries.data.splice(0)
         this.toggleLoading(true)
+        this.scoreDataState = false // 重置评分数据状态
         // 清除legend
         this.myChart.children.each((s, i) => {
           if (s && s.className !== 'Container') {
@@ -140,10 +158,11 @@ export default {
                   tcpLostlenPercent: valueToRangeValue(data.tcpLostlenPercent, unitTypes.percent).join(' '),
                   pktRetransPercent: valueToRangeValue(data.pktRetransPercent, unitTypes.percent).join(' ')
                 }
-                t.tooltip.data.score = computeScore(data)
+                t.performanceData = data
+                /* t.tooltip.data.score = computeScore(data)
                 if (t.tooltip.data.score === '-') {
                   t.tooltip.data.score = ''
-                }
+                } */
                 t.tooltip.data.total = valueToRangeValue(t.totalBitsRate, unitTypes.bps).join(' ')
                 t.tooltip.data.inbound = valueToRangeValue(t.inboundBitsRate, unitTypes.bps).join(' ')
                 t.tooltip.data.outbound = valueToRangeValue(t.outboundBitsRate, unitTypes.bps).join(' ')
@@ -161,6 +180,7 @@ export default {
                   sslConLatency: this.$t('networkAppPerformance.sslResponseLatency')
                 }
               })
+              this.scoreDataState = true
               this.loadMarkerData(imageSeries, mapData)
             })
           } else {
@@ -180,14 +200,10 @@ export default {
       }
     },
     loadMarkerData (imageSeries, data) {
-      const _data = data.filter(d => d.tooltip.data.score || d.tooltip.data.score === 0)
-      imageSeries.data = _data.map(r => ({
+      imageSeries.data = data.map(r => ({
         ...r,
-        score: r.tooltip.data.score,
         name: r.superAdminArea || r.countryRegion,
-        id: r.serverId,
-        color: this.scoreColor(r.tooltip.data.score),
-        border: this.scoreColor(r.tooltip.data.score)
+        id: r.serverId
       }))
     },
     scoreColor (score) {
@@ -307,6 +323,22 @@ export default {
       })
 
       return imageSeries
+    },
+    handleScoreData () {
+      const imageSeries = this.location ? this.countryImageSeries : this.worldImageSeries
+      imageSeries.data = imageSeries.data.map(d => {
+        let score = computeScore(d.performanceData, this.$store.getters.getScoreBase)
+        if (score === '-') {
+          score = ''
+        }
+        d.tooltip.data.score = score
+        return {
+          ...d,
+          score,
+          color: this.scoreColor(score),
+          border: this.scoreColor(score)
+        }
+      })
     }
   },
   mounted () {

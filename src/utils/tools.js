@@ -784,12 +784,13 @@ export function getChainRatio (current, prev) {
   }
 }
 
-export function computeScore (data) {
+export function computeScore (data, scoreBase) {
   let score = 0
   let k = 0
   let totalScore = 0
   const scoreArr = []
   let num = 0
+  console.info(data, scoreBase)
   Object.keys(data).forEach(t => {
     if (!data[t] && data[t] !== 0) {
       num += 1
@@ -799,26 +800,14 @@ export function computeScore (data) {
     } else if (t === 'httpResponseLatency' || t === 'sslConLatency') {
       k = 0.05
     }
-    if (t === 'establishLatencyMs' || t === 'httpResponseLatency' || t === 'sslConLatency') {
-      if (!data[t] && data[t] !== 0) {
-        score = 1
-      } else if (data[t] <= 50) {
-        score = 1
-      } else if (data[t] > 200) {
-        score = 0
-      } else {
-        score = (data[t] - 200) / (50 - 200)
-      }
-    } else if (t === 'tcpLostlenPercent' || t === 'pktRetransPercent') {
-      if (!data[t] && data[t] !== 0) {
-        score = 1
-      } else if (data[t] <= 0.01) {
-        score = 1
-      } else if (data[t] > 0.05) {
-        score = 0
-      } else {
-        score = (data[t] - 0.05) / (0.01 - 0.05)
-      }
+    if (!data[t] && data[t] !== 0) {
+      score = 1
+    } else if (data[t] <= scoreBase[t].p10) {
+      score = 1
+    } else if (data[t] >= scoreBase[t].p90) {
+      score = 0
+    } else {
+      score = (data[t] - scoreBase[t].p90) / (scoreBase[t].p10 - scoreBase[t].p90)
     }
     scoreArr.push(score * k)
   })
@@ -1319,9 +1308,9 @@ export function numberWithCommas (num) {
  */
 export function switchStatus (status) {
   switch (status) {
-    case 0:
+    case '0':
       return 'detection.create.disabled'
-    case 1:
+    case '1':
       return 'detection.create.enabled'
   }
 }

@@ -349,6 +349,24 @@
       .data-score-green {
         background: #749F4D;
       }
+      .score-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #CBCBCB;
+        margin-right: 4px;
+
+        &.score-dot--red {
+          background-color: #E26154;
+        }
+        &.score-dot--yellow {
+          background-color: #E5A219;
+        }
+        &.score-dot--green {
+          background-color: #749F4D;
+        }
+      }
       height:24px;
       font-size: 14px;
       color: #046ECA;

@@ -172,7 +172,8 @@ export default {
       curTabState: curTabState,
       urlChangeParams: {},
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      scoreDataState: false // 评分数据是否加载完成
     }
   },
   components: {
@@ -185,6 +186,21 @@ export default {
       handler () {
         this.init()
       }
+    },
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData()
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData()
+      }
+    }
+  },
+  computed: {
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
     }
   },
   methods: {
@@ -197,6 +213,7 @@ export default {
       const currentTrafficRequest = axios.get(api.npm.overview.appTrafficAnalysis, { params: { ...params, cycle: 0 } })
       const lastCycleTrafficRequest = axios.get(api.npm.overview.appTrafficAnalysis, { params: { ...params, cycle: 1 } })
       this.toggleLoading(true)
+      this.scoreDataState = false
       Promise.all([currentTrafficRequest, lastCycleTrafficRequest]).then(res => {
         if (res[0].status === 200 && res[1].status === 200) {
           this.showError = false
@@ -239,6 +256,9 @@ export default {
                     t[keyPre[i] + 'Score'] = r.data.data.result.find(d => d.appSubcategory === t.appSubcategory)
                   })
                 } else {
+                  tableData.forEach(t => {
+                    t[keyPre[i] + 'Score'] = null
+                  })
                   this.showError = true
                   msg = msg + ',' + r.data.data.message
                   if (msg.indexOf(',') === 0) {
@@ -250,7 +270,7 @@ export default {
                   this.errorMsg = msg
                 }
               })
-              tableData.forEach(t => {
+              /* tableData.forEach(t => {
                 const data = {
                   establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
                   httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
@@ -259,10 +279,11 @@ export default {
                   pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
                 }
                 t.score = computeScore(data)
-              })
+              }) */
               this.tableData = tableData
             }).finally(() => {
               this.toggleLoading(false)
+              this.scoreDataState = true
             })
           } else {
             this.tableData = []
@@ -382,6 +403,18 @@ export default {
         overwriteUrl(newUrl)
       }
       this.urlChangeParams = {}
+    },
+    handleScoreData () {
+      this.tableData.forEach(t => {
+        const data = {
+          establishLatencyMs: t.tcpScore ? t.tcpScore.establishLatencyMs : null,
+          httpResponseLatency: t.httpScore ? t.httpScore.httpResponseLatency : null,
+          sslConLatency: t.sslScore ? t.sslScore.sslConLatency : null,
+          tcpLostlenPercent: t.tcpLostScore ? t.tcpLostScore.tcpLostlenPercent : null,
+          pktRetransPercent: t.packetRetransScore ? t.packetRetransScore.pktRetransPercent : null
+        }
+        t.score = computeScore(data, this.$store.getters.getScoreBase)
+      })
     }
   },
   mounted () {

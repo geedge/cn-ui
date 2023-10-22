@@ -143,7 +143,10 @@
                 <div class="row-item-label">
                   <span class="row-item-label">{{ $t('network.score') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value" style="position: relative;">
-                    <span v-if="!loadingNetworkQuality">{{ score }}</span>
+                    <template v-if="!loadingNetworkQuality && score !=='-'">
+                      <span v-for="(dot, i) in scoreDot" :key="i" :class="dot.class"></span>
+                    </template>
+                    <template v-else-if="score ==='-'"><span>-</span></template>
                     <loading :loading="loadingNetworkQuality" size="small"></loading>
                   </span>
                 </div>

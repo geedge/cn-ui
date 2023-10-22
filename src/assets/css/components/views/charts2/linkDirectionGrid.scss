@@ -128,24 +128,25 @@ $blue: #046ECA;
     }
   }
 }
+.link-statistical-dimension {
+  .row-dot {
+    margin-top: 5px;
+    margin-right: 5px;
+  }
 
-.row-dot {
-  margin-top: 5px;
-  margin-right: 5px;
-}
+  .green-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #749F4D;
+  }
 
-.green-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #749F4D;
-}
-
-.red-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #E26154;
+  .red-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #E26154;
+  }
 }
 
 .item-popover-up, .item-popover-down {

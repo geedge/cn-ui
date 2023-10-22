@@ -30,7 +30,9 @@ export default {
       eventNum: 0, // 性能事件和安全事件数量之和
       loadingEvent: false, // event的loading
       performanceEventUrl: '', // 性能事件接口url
-      securityEventUrl: '' // 安全事件接口url
+      securityEventUrl: '', // 安全事件接口url
+      performanceScoreData: {},
+      scoreDataState: false
     }
   },
   computed: {
@@ -77,6 +79,43 @@ export default {
         resource: this.entityData.entityValue
       }
       return params
+    },
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
+    },
+    scoreDot () {
+      const dots = []
+      if (this.score === '-') {
+        for (let i = 0; i < 6; i++) {
+          dots.push({
+            class: 'score-dot'
+          })
+        }
+      } else {
+        for (let i = 0; i < 6; i++) {
+          if (i < this.score) {
+            dots.push({
+              class: `score-dot ${handleClass(this.score)}`
+            })
+          } else {
+            dots.push({
+              class: 'score-dot'
+            })
+          }
+        }
+      }
+      return dots
+
+      function handleClass (score) {
+        if (score <= 2) {
+          return 'score-dot--red'
+        } else if (score <= 4) {
+          return 'score-dot--yellow'
+        } else if (score <= 6) {
+          return 'score-dot--green'
+        }
+        return ''
+      }
     }
   },
   methods: {
@@ -221,20 +260,21 @@ export default {
     /** 获取网络评分 */
     queryNetworkQuantity () {
       this.loadingNetworkQuality = true
-
+      this.performanceScoreData = {}
+      this.scoreDataState = false
       axios.get(this.scoreUrl, { params: this.getQueryParams() }).then(response => {
         if (response.status === 200) {
-          const data = {
+          this.performanceScoreData = {
             establishLatencyMs: _.get(response, 'data.data.result.establishLatencyMsAvg', null),
             httpResponseLatency: _.get(response, 'data.data.result.httpResponseLatencyAvg', null),
             sslConLatency: _.get(response, 'data.data.result.sslConLatencyAvg', null),
             tcpLostlenPercent: _.get(response, 'data.data.result.tcpLostlenPercentAvg', null),
             pktRetransPercent: _.get(response, 'data.data.result.pktRetransPercentAvg', null)
           }
-          this.score = computeScore(data)
         }
       }).finally(() => {
         this.loadingNetworkQuality = false
+        this.scoreDataState = true
       })
     },
     /** 获取事件数量 */
@@ -251,6 +291,9 @@ export default {
       }).finally(() => {
         this.loadingEvent = false
       })
+    },
+    handleScoreData () {
+      this.score = computeScore(this.performanceScoreData, this.$store.getters.getScoreBase)
     }
   },
   watch: {
@@ -258,6 +301,16 @@ export default {
       deep: true,
       handler (n) {
         this.initUrl()
+      }
+    },
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData()
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData()
       }
     }
   },

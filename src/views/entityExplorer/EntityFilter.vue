@@ -39,7 +39,7 @@
           </div>
           <div @click="showMoreFilter(item, index)"
                :class="item.showNum === item.data.length ? 'filter-no-show-more' : 'filter-show-more'">
-            {{ $t('entity.showMore') }}
+            {{ $t('overall.showMore') }}
           </div>
           <div class="filter-hr"></div>
         </div>

@@ -257,8 +257,6 @@ export default {
   },
   methods: {
     fileChange (file, fileList) {
-      console.info(!_.endsWith(file.name, '.csv'))
-      console.info(file.size > this.uploadFileSizeLimit)
       // 判断后缀，仅支持.csv
       if (!_.endsWith(file.name, '.csv')) {
         this.fileList = []

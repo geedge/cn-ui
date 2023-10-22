@@ -87,13 +87,30 @@ export default {
       bandWidth: 0,
       loading: false,
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      scoreDataState: false,
+      performanceData: {}
+    }
+  },
+  computed: {
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
     }
   },
   watch: {
     timeFilter: {
       handler (n) {
         this.linkTrafficData()
+      }
+    },
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData()
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData()
       }
     }
   },
@@ -103,6 +120,9 @@ export default {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
+      this.loading = true
+      this.performanceData = {}
+      this.scoreDataState = false
       if (this.queryCondition) {
         const condition = this.queryCondition.split(' or ')
         if (condition.length > 1) {
@@ -142,7 +162,6 @@ export default {
           this.bandWidth = bandwidthAll
         }
       }
-      this.loading = true
       axios.get(api.linkMonitor.networkAnalysis, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -152,7 +171,7 @@ export default {
             this.linkTrafficListData = {}
             this.linkTrafficListData.npmScore = '-'
           } else {
-            const data = {
+            this.performanceData = {
               establishLatencyMs: _.get(res.data.result[0], 'establishLatencyMs', null),
               httpResponseLatency: _.get(res.data.result[0], 'httpResponseLatency', null),
               sslConLatency: _.get(res.data.result[0], 'sslConLatency', null),
@@ -160,19 +179,24 @@ export default {
               pktRetransPercent: _.get(res.data.result[0], 'pktRetransPercent', null)
             }
             this.linkTrafficListData = res.data.result[0]
-            this.linkTrafficListData.npmScore = computeScore(data)
+            // this.linkTrafficListData.npmScore = computeScore(data)
           }
         } else {
           this.showError = true
           this.errorMsg = res.message
         }
       }).catch(e => {
+        console.error(e)
         this.showError = true
         this.errorMsg = e.message
         this.isNoData = false
       }).finally(() => {
         this.loading = false
+        this.scoreDataState = true
       })
+    },
+    handleScoreData () {
+      this.linkTrafficListData.npmScore = computeScore(this.performanceData, this.$store.getters.getScoreBase)
     }
   },
   mounted () {

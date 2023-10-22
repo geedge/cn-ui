@@ -104,7 +104,9 @@ export default {
       dnsRcodeMapData: [],
       dnsQtypeMapData: [],
       score: null,
-      curTabState: curTabState
+      curTabState: curTabState,
+      performanceData: {},
+      scoreDataState: false // 评分数据是否加载完成
     }
   },
   computed: {
@@ -114,21 +116,31 @@ export default {
     // 显示顶部的Metric单位选项标识
     showMetric () {
       return this.panelType === panelTypeAndRouteMapping.networkOverview || this.panelType === panelTypeAndRouteMapping.networkOverviewDrillDown
+    },
+    scoreBaseState () {
+      return this.$store.getters.scoreBaseReady
     }
   },
   watch: {
-    // npmThirdLevelMenuScore: {
-    //   deep: true,
-    //   immediate: true,
-    //   handler (n) {
-    //     this.score = n
-    //   }
-    // }
     timeFilter: {
       handler () {
-        if (this.$route.path === '/panel/networkAppPerformance' && (this.lineQueryCondition || this.networkOverviewBeforeTab)) {
-          this.scoreCalculation()
+        if (this.$route.path === '/panel/networkAppPerformance') {
+          this.$store.commit('resetScoreBase')
+          this.queryScoreBase()
+          if (this.lineQueryCondition || this.networkOverviewBeforeTab) {
+            this.scoreCalculation()
+          }
         }
+      }
+    },
+    scoreBaseState (n) {
+      if (n && this.scoreDataState) {
+        this.handleScoreData()
+      }
+    },
+    scoreDataState (n) {
+      if (n && this.scoreBaseState) {
+        this.handleScoreData()
       }
     }
   },
@@ -212,8 +224,14 @@ export default {
         return chart
       })
     })
-    if (this.$route.path === '/panel/networkAppPerformance' && (this.lineQueryCondition || this.networkOverviewBeforeTab)) {
-      this.scoreCalculation()
+    if (this.$route.path === '/panel/networkAppPerformance') {
+      if (this.lineQueryCondition || this.networkOverviewBeforeTab) {
+        this.scoreCalculation()
+      }
+    }
+    if (this.$route.path === '/panel/networkAppPerformance' || this.$route.path === '/panel/linkMonitor') {
+      this.$store.commit('resetScoreBase')
+      this.queryScoreBase()
     }
   },
   setup (props) {
@@ -396,6 +414,44 @@ export default {
       })
       overwriteUrl(newUrl)
     },
+    // 动态查询评分基准
+    queryScoreBase () {
+      const params = {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime
+      }
+      const tcp = axios.get(api.npm.overview.tcpSessionDelay, { params: params })
+      const http = axios.get(api.npm.overview.httpResponseDelay, { params: params })
+      const ssl = axios.get(api.npm.overview.sslConDelay, { params: params })
+      const tcpPercent = axios.get(api.npm.overview.tcpLostlenPercent, { params: params })
+      const packetPercent = axios.get(api.npm.overview.packetRetransPercent, { params: params })
+      Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+        const scoreBase = {}
+        res.forEach((t, i) => {
+          if (t.status === 200) {
+            if (i === 0) {
+              scoreBase.establishLatencyMsP10 = _.get(t.data, 'data.result.establishLatencyMsP10', null)
+              scoreBase.establishLatencyMsP90 = _.get(t.data, 'data.result.establishLatencyMsP90', null)
+            } else if (i === 1) {
+              scoreBase.httpResponseLatencyP10 = _.get(t.data, 'data.result.httpResponseLatencyP10', null)
+              scoreBase.httpResponseLatencyP90 = _.get(t.data, 'data.result.httpResponseLatencyP90', null)
+            } else if (i === 2) {
+              scoreBase.sslConLatencyP10 = _.get(t.data, 'data.result.sslConLatencyP10', null)
+              scoreBase.sslConLatencyP90 = _.get(t.data, 'data.result.sslConLatencyP90', null)
+            } else if (i === 3) {
+              scoreBase.tcpLostlenPercentP10 = _.get(t.data, 'data.result.tcpLostlenPercentP10', null)
+              scoreBase.tcpLostlenPercentP90 = _.get(t.data, 'data.result.tcpLostlenPercentP90', null)
+            } else if (i === 4) {
+              scoreBase.pktRetransPercentP10 = _.get(t.data, 'data.result.pktRetransPercentP10', null)
+              scoreBase.pktRetransPercentP90 = _.get(t.data, 'data.result.pktRetransPercentP90', null)
+            }
+          }
+        })
+        this.$store.commit('setScoreBase', scoreBase)
+      }).catch((e) => {
+      }).finally(() => {
+      })
+    },
     scoreCalculation () {
       let condition = ''
       let url = ''
@@ -443,18 +499,21 @@ export default {
         url = api.npm.overview.networkAnalysis
       }
       if ((type && condition) || type) {
+        this.scoreDataState = false
+        this.performanceData = {}
         params.type = params.type || type
         axios.get(url, { params }).then(res => {
           if (res.status === 200) {
-            const data = {
+            this.performanceData = {
               establishLatencyMs: _.get(res, 'data.data.result.establishLatencyMsAvg', null),
               httpResponseLatency: _.get(res, 'data.data.result.httpResponseLatencyAvg', null),
               sslConLatency: _.get(res, 'data.data.result.sslConLatencyAvg', null),
               tcpLostlenPercent: _.get(res, 'data.data.result.tcpLostlenPercentAvg', null),
               pktRetransPercent: _.get(res, 'data.data.result.pktRetransPercentAvg', null)
             }
-            this.score = computeScore(data)
           }
+        }).finally(() => {
+          this.scoreDataState = true
         })
       }
     },
@@ -467,6 +526,9 @@ export default {
         }
       })
       window.open(href, '_blank')
+    },
+    handleScoreData () {
+      this.score = computeScore(this.performanceData, this.$store.getters.getScoreBase)
     }
   },
   /**

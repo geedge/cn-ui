@@ -60,6 +60,29 @@ const panel = {
     routerHistoryList: [], // 路由跳转记录列表
     dnsQtypeMapData: [],
     dnsRcodeMapData: [],
+    scoreBase: {
+      isReady: false,
+      establishLatencyMs: {
+        p10: null,
+        p90: null
+      },
+      httpResponseLatency: {
+        p10: null,
+        p90: null
+      },
+      sslConLatency: {
+        p10: null,
+        p90: null
+      },
+      tcpLostlenPercent: {
+        p10: null,
+        p90: null
+      },
+      pktRetransPercent: {
+        p10: null,
+        p90: null
+      }
+    },
     chartTabList: null // chartTabs组件的tab状态点击列表，初始化为null方便原有逻辑计算
   },
   mutations: {
@@ -153,6 +176,56 @@ const panel = {
     setRouterHistoryList (state, list) {
       state.routerHistoryList = list
     },
+    resetScoreBase (state) {
+      state.scoreBase = {
+        isReady: false,
+        establishLatencyMs: {
+          p10: null,
+          p90: null
+        },
+        httpResponseLatency: {
+          p10: null,
+          p90: null
+        },
+        sslConLatency: {
+          p10: null,
+          p90: null
+        },
+        tcpLostlenPercent: {
+          p10: null,
+          p90: null
+        },
+        pktRetransPercent: {
+          p10: null,
+          p90: null
+        }
+      }
+    },
+    setScoreBase (state, scoreBase) {
+      state.scoreBase = {
+        isReady: true,
+        establishLatencyMs: {
+          p10: scoreBase.establishLatencyMsP10,
+          p90: scoreBase.establishLatencyMsP90
+        },
+        httpResponseLatency: {
+          p10: scoreBase.httpResponseLatencyP10,
+          p90: scoreBase.httpResponseLatencyP90
+        },
+        sslConLatency: {
+          p10: scoreBase.sslConLatencyP10,
+          p90: scoreBase.sslConLatencyP90
+        },
+        tcpLostlenPercent: {
+          p10: scoreBase.tcpLostlenPercentP10,
+          p90: scoreBase.tcpLostlenPercentP90
+        },
+        pktRetransPercent: {
+          p10: scoreBase.pktRetransPercentP10,
+          p90: scoreBase.pktRetransPercentP90
+        }
+      }
+    },
     setChartTabList (state, list) {
       state.chartTabList = list
     }
@@ -232,6 +305,12 @@ const panel = {
     },
     getChartTabList (state) {
       return state.chartTabList
+    },
+    scoreBaseReady (state) {
+      return state.scoreBase.isReady
+    },
+    getScoreBase (state) {
+      return state.scoreBase
     }
   },
   actions: {

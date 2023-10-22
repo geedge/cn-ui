@@ -17,7 +17,7 @@
         @search="search"
     ></explorer-search>
     <!-- 内容区 -->
-    <div v-if="showList" style="display: flex;flex-direction: row;">
+    <div v-if="showList" style="display: flex;flex-direction: row;padding-bottom: 20px;">
       <entity-filter
           :filter-data="newFilterData"
           :loading-left="loadingLeft"
@@ -689,6 +689,44 @@ export default {
       } else {
         this.search({ q: '', str: '', metaList: [] })
       }
+    },
+    queryScoreBase () {
+      const { startTime, endTime } = getNowTime(60 * 24)
+      const params = {
+        startTime: getSecond(startTime),
+        endTime: getSecond(endTime)
+      }
+      const tcp = axios.get(api.npm.overview.tcpSessionDelay, { params: params })
+      const http = axios.get(api.npm.overview.httpResponseDelay, { params: params })
+      const ssl = axios.get(api.npm.overview.sslConDelay, { params: params })
+      const tcpPercent = axios.get(api.npm.overview.tcpLostlenPercent, { params: params })
+      const packetPercent = axios.get(api.npm.overview.packetRetransPercent, { params: params })
+      Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
+        const scoreBase = {}
+        res.forEach((t, i) => {
+          if (t.status === 200) {
+            if (i === 0) {
+              scoreBase.establishLatencyMsP10 = _.get(t.data, 'data.result.establishLatencyMsP10', null)
+              scoreBase.establishLatencyMsP90 = _.get(t.data, 'data.result.establishLatencyMsP90', null)
+            } else if (i === 1) {
+              scoreBase.httpResponseLatencyP10 = _.get(t.data, 'data.result.httpResponseLatencyP10', null)
+              scoreBase.httpResponseLatencyP90 = _.get(t.data, 'data.result.httpResponseLatencyP90', null)
+            } else if (i === 2) {
+              scoreBase.sslConLatencyP10 = _.get(t.data, 'data.result.sslConLatencyP10', null)
+              scoreBase.sslConLatencyP90 = _.get(t.data, 'data.result.sslConLatencyP90', null)
+            } else if (i === 3) {
+              scoreBase.tcpLostlenPercentP10 = _.get(t.data, 'data.result.tcpLostlenPercentP10', null)
+              scoreBase.tcpLostlenPercentP90 = _.get(t.data, 'data.result.tcpLostlenPercentP90', null)
+            } else if (i === 4) {
+              scoreBase.pktRetransPercentP10 = _.get(t.data, 'data.result.pktRetransPercentP10', null)
+              scoreBase.pktRetransPercentP90 = _.get(t.data, 'data.result.pktRetransPercentP90', null)
+            }
+          }
+        })
+        this.$store.commit('setScoreBase', scoreBase)
+      }).catch((e) => {
+      }).finally(() => {
+      })
     }
   },
   mounted () {
@@ -709,6 +747,9 @@ export default {
       }
       this.initSearch(q)
       this.listMode = listMode
+      // 查询评分基准
+      this.$store.commit('resetScoreBase')
+      this.queryScoreBase()
     }
   },
   watch: {
