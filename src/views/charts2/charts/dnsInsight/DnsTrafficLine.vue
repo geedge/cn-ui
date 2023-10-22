@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="line-select line-header-right">
-        <div class="line-select-metric">
+<!--        <div class="line-select-metric">
           <span>{{$t('network.metric')}}:</span>
           <div class="line-select__operation">
             <el-select
@@ -41,7 +41,7 @@
               <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
-        </div>
+        </div>-->
         <div class="line-select-reference-line">
           <span>{{$t('network.referenceLine')}}:</span>
           <div class="line-select__operation">
