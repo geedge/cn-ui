@@ -38,6 +38,8 @@ export const api = {
   knowledgeBase: apiVersion + '/knowledgeBase',
   knowledgeBaseList: apiVersion + '/knowledgeBase/list',
   knowledgeBaseEnable: apiVersion + '/knowledgeBase/status',
+  knowledgeBaseLearningStart: apiVersion + '/knowledgeBase/intelligence-learning/start',
+  knowledgeBaseLearningStop: apiVersion + '/knowledgeBase/intelligence-learning/stop',
   knowledgeBaseStatistics: apiVersion + '/knowledgeBase/statistics',
   updateKnowledgeUrl: apiVersion + '/knowledgeBase/items/batch',
   knowledgeBaseLog: apiVersion + '/knowledgeBase/audit/log',

@@ -307,7 +307,7 @@ export default {
       }).catch(e => {
         console.error(e)
         this.filterData[this.pageType][0].data = []
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     /** 初始化顶部大柱状图 */
@@ -376,7 +376,7 @@ export default {
         }
       }).catch(e => {
         console.error(e)
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       }).finally(() => {
         this.$nextTick(() => {
           this.loading = false
@@ -415,7 +415,7 @@ export default {
       }).catch(e => {
         console.error(e)
         this.filterData[this.pageType][1].data = []
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     initEventTypeData (params) {
@@ -450,7 +450,7 @@ export default {
       }).catch(e => {
         console.error(e)
         this.filterData[this.pageType][2].data = []
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     /** 第二个饼图和左侧filter的eventType */
@@ -486,7 +486,7 @@ export default {
       }).catch(e => {
         console.error(e)
         this.filterData[this.pageType][2].data = []
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     /** 横向柱状图和左侧filter的offenderIp */
@@ -530,7 +530,7 @@ export default {
         this.filterData[this.pageType][4].data = []
         this.filterData[this.pageType][4].showMore = false
         this.filterData[this.pageType][4].showIndex = 9
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
 
@@ -546,7 +546,7 @@ export default {
         this.filterData[this.pageType][3].data = []
         this.filterData[this.pageType][3].showMore = false
         this.filterData[this.pageType][3].showIndex = 9
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     },
     initActiveEntity (params) {

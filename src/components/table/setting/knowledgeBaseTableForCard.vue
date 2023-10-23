@@ -391,17 +391,18 @@ export default {
     switchLearning () {
       const hint = this.aiTaggingList.find(d => d.knowledgeId === this.switchKnowledgeId)
       const toStatus = hint.status === 0 ? 1 : 0
-      axios.patch(api.knowledgeBaseEnable, { list: [{ knowledgeId: this.switchKnowledgeId, status: toStatus }] }).then(res => {
+      const url = toStatus === 0 ? api.knowledgeBaseLearningStop : api.knowledgeBaseLearningStart
+      axios.post(`${url}?knowledgeId=${hint.knowledgeId}`).then(res => {
         if (res.status === 200) {
           hint.status = toStatus
           this.$message.success(this.$t('tip.success'))
         } else {
           console.error(res.message)
-          this.errorMsgHandler(res)
+          this.$message.error(this.errorMsgHandler(res))
         }
       }).catch(e => {
         console.error(e)
-        this.errorMsgHandler(e)
+        this.$message.error(this.errorMsgHandler(e))
       }).finally(() => {
         this.showConfirmSwitch = false
       })
