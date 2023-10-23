@@ -271,7 +271,7 @@ export default {
     formatT0 () {
       const vm = this
       return function (event) {
-        const diffSeconds = this.detection.startTime - event.startTime
+        const diffSeconds = vm.detection.startTime - event.startTime
         if (diffSeconds === 0) {
           return 'T0'
         }

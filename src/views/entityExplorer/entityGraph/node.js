@@ -2,7 +2,7 @@ import _ from 'lodash'
 import i18n from '@/i18n'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDefaultColor, entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import { entityDefaultColor, entityDetailTags, tagValueLabelMapping } from '@/utils/constants'
 
 export default class Node {
   /*
@@ -145,7 +145,7 @@ export default class Node {
   tagValueHandler (k, k2, value) {
     if (k === 'psiphon3Ip') {
       if (k2 === 'type') {
-        const find = psiphon3IpType.find(t => t.value === value)
+        const find = tagValueLabelMapping.find(t => t.value === value)
         if (find) {
           return find.name
         }

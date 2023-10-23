@@ -29,7 +29,7 @@
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
 import i18n from '@/i18n'
-import { entityDetailTabsName, entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import { entityDetailTabsName, entityDetailTags } from '@/utils/constants'
 import { reactive, ref } from 'vue'
 import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/InformationAggregation'
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'

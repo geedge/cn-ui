@@ -71,7 +71,7 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDetailTabsName, entityDetailTags, psiphon3IpType } from '@/utils/constants'
+import { entityDetailTabsName, entityDetailTags, tagValueLabelMapping } from '@/utils/constants'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 
@@ -95,7 +95,7 @@ export default {
     tagValueHandler (k, k2, value) {
       if (k === 'psiphon3Ip') {
         if (k2 === 'type') {
-          const find = psiphon3IpType.find(t => t.value === value)
+          const find = tagValueLabelMapping.find(t => t.value === value)
           if (find) {
             return find.name
           }
