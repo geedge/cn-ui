@@ -3,7 +3,7 @@
     <div class="detection-title">
       <span>{{ $t('overall.policies') }}</span>
       <span class="detection-title-label">
-        {{ policyTotal }} {{ $t('detection.policesCreated') }} | {{ policyEnabledNum }} {{ $t('detection.policesEnabled') }}
+        {{ $t('detection.policesCreated', { total: policyTotal }) }}  |  {{ $t('detection.policesEnabled', { enabled: policyEnabledNum }) }}
       </span>
     </div>
 

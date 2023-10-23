@@ -1306,12 +1306,13 @@ export function numberWithCommas (num) {
  * @returns {string}
  */
 export function switchStatus (status) {
-  switch (status) {
+  switch (status + '') {
     case '0':
       return 'detection.create.disabled'
     case '1':
       return 'detection.create.enabled'
   }
+  return null
 }
 
 /**
