@@ -57,7 +57,6 @@ export default {
     }
   },
   async mounted () {
-    this.$emit('checkTag', entityDetailTabsName.behaviorPattern, 0)
     await this.initData()
     this.toggleLoading(true)
     const timer = setTimeout(() => {
@@ -80,13 +79,32 @@ export default {
         this.chartOption.angleAxis.data.push(item.name)
         this.chartOption.series[0].data.push(item.value)
       })
-      const len = this.tableData.length - 1
+      const len = this.tableData.length
+      const endIndex = len - 1
       this.tableData.forEach((item, i) => {
-        if (i !== len) {
+        if (i !== endIndex) {
           this.chartOption.angleAxis.data.push(item.name + '2')
           this.chartOption.series[0].data.push(0)
         }
       })
+      const axisLabel = this.chartOption.angleAxis.axisLabel
+      this.chartOption.angleAxis.axisLabel = {
+        ...axisLabel,
+        formatter: function (params, index) {
+          if (len > 15) {
+            if (index === 7) {
+              return params + '\n'
+            } else if (index === 8) {
+              return '\n' + params
+            }
+          }
+          if (index === endIndex) {
+            return params + '\n'
+          } else {
+            return params
+          }
+        }
+      }
 
       const self = this
       this.$nextTick(() => {
@@ -122,7 +140,7 @@ export default {
 
         if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
-          this.$emit('checkTag', entityDetailTabsName.behaviorPattern, res.data.result.length)
+
           this.showError = false
           if (!this.isNoData) {
             const data = res.data.result
@@ -132,16 +150,22 @@ export default {
               const dataObject = data[0]
               Object.keys(dataObject).forEach(key => {
                 const value = Number(dataObject[key]) ? Number(dataObject[key]) : 0
-                sum = sum + value
-                this.tableData.push({
-                  name: key,
-                  value: value
-                })
+                if (value !== 0) {
+                  sum = sum + value
+                  this.tableData.push({
+                    name: key,
+                    value: value
+                  })
+                }
               })
               this.tableData.forEach(item => {
                 item.percent = item.value / sum
               })
               this.tableData = this.tableData.sort(reverseSortBy('value'))
+              this.$emit('checkTag', entityDetailTabsName.behaviorPattern, this.tableData.length)
+              if (this.tableData.length === 0) {
+                this.isNoData = true
+              }
             }
           }
         } else {

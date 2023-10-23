@@ -178,7 +178,8 @@ export default {
       if (this.entity.entityType === 'ip') {
         const appsOfIp = axios.get(api.entity.domainNameResolutionAboutAppsOfIp, { params: params })
         const domainsOfIp = axios.get(api.entity.domainNameResolutionAboutDomainsOfIp, { params: params })
-        this.promiseData(appsOfIp, domainsOfIp)
+        const behaviorPattern = axios.get(api.entity.behaviorPattern, { params: params })
+        this.promiseData(appsOfIp, domainsOfIp, behaviorPattern)
       }
 
       if (this.entity.entityType === 'domain') {
@@ -198,6 +199,18 @@ export default {
             const len1 = res[0].status === 200 ? res0.data.result.length : 0
             const len2 = res[1].status === 200 ? res1.data.result.length : 0
             this.initSetTag(entityDetailTabsName.relatedEntity, len1 + len2)
+            const behaviorPatternData = res[2].status === 200 ? res[2].data.data.result : 0
+            let behaviorPatternLen = 0
+            if (behaviorPatternData && behaviorPatternData[0]) {
+              const dataObject = behaviorPatternData[0]
+              Object.keys(dataObject).forEach(key => {
+                const value = Number(dataObject[key]) ? Number(dataObject[key]) : 0
+                if (value !== 0) {
+                  behaviorPatternLen++
+                }
+              })
+            }
+            this.initSetTag(entityDetailTabsName.behaviorPattern, behaviorPatternLen)
             break
           }
           case 'domain': {
