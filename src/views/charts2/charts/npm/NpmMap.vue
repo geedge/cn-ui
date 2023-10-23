@@ -331,6 +331,9 @@ export default {
       imageTemplate.adapter.add('longitude', function (longitude, target) {
         const polygon = polygonSeries.getPolygonById(target.dataItem.dataContext.id)
         if (polygon) {
+          if (target.dataItem.dataContext.id === 'RU') {
+            return 90
+          }
           return polygon.visualLongitude
         }
         return longitude
