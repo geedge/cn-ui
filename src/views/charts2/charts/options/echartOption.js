@@ -161,7 +161,7 @@ export const pieChartOption4 = {
   color: chartColorForBehaviorPattern,
   polar: {
     radius: [30, '150%'],
-    center: ['50%', '99.9%']// 为了显示出来半圆底部左侧的边
+    center: ['400px', '99.9%']// 为了显示出来半圆底部左侧的边
   },
   radiusAxis: {
     min: 0,

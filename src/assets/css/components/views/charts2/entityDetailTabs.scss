@@ -91,11 +91,10 @@
       .behavior-pattern-legend {
         display:flex;
         flex-direction: column;
+        justify-content: center;
         height: 100%;
-        display: flex;
         padding:10px 18px 10px 18px;
-        width:500px;
-        display: flex;
+        width:400px;
         .behavior-pattern-legend__item {
           display:flex;
           flex-direction: row;
@@ -110,19 +109,19 @@
             border-radius: 1px;;
           }
           .legend-name {
-            width:200px;
+            width:180px;
             font-weight: 400;
           }
           .legend-value{
             display: flex;
             justify-content: left;
-            margin-left:30px;
-            width:100px;
+            margin-left:20px;
+            width:90px;
             font-weight: 500;
           }
           .legend-percent {
-            margin-left:30px;
-            width:80px;
+            margin-left:20px;
+            width:70px;
             justify-content: left;
             display: flex;
             font-weight: 500;
@@ -131,11 +130,10 @@
       }
       .behavior-pattern-chart{
         height: calc(100% - 50px);
-        width:calc(100% - 600px);
+        width:calc(100% - 400px);
         position: relative
       }
     }
-
   }
 
   .entity-detail-event-error {
