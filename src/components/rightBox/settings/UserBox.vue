@@ -70,7 +70,7 @@
             </el-select>
           </el-form-item>
           <!--theme-->
-          <el-form-item :label="$t('config.user.theme')" prop="i18n">
+<!--          <el-form-item :label="$t('config.user.theme')" prop="i18n">
             <el-select id="account-input-roleIds"
                        v-model="editObject.theme"
                        class="right-box__select"
@@ -83,7 +83,7 @@
                 <el-option :label="theme.label" :value="theme.value"></el-option>
               </template>
             </el-select>
-          </el-form-item>
+          </el-form-item>-->
           <!--enable-->
           <el-form-item :label="$t('config.user.enable')">
             <el-switch

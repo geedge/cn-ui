@@ -140,7 +140,7 @@ export default {
     },
     onCreate () {
       this.$router.push({
-        path: '/detection/policies/create',
+        path: '/detectionPolicy/create',
         query: {
           t: +new Date()
         }
@@ -149,7 +149,7 @@ export default {
     onEdit () {
       const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
-        path: '/detection/policies/edit',
+        path: '/detectionPolicy/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,

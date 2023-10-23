@@ -3,7 +3,7 @@
     <loading :loading="myLoading"></loading>
 
     <div class="detection-form-header">
-      {{ $t('detection.createEventPolicies') }}
+      {{ ruleId ? $t('detection.editEventPolicies') : $t('detection.createEventPolicies') }}
     </div>
 
     <!--第一步：General Settings-->
@@ -88,9 +88,9 @@
 
               <div class="form-setting__btn1">
                 <div class="btn1">
-                  <el-button @click="createPolicy('')">{{ $t('overall.create') }}</el-button>
+                  <el-button @click="createPolicy('')">{{ $t('overall.save') }}</el-button>
                 </div>
-                <el-button @click="createPolicy('enabled')">{{ $t('overall.create') }} & {{ $t('detection.create.enablePolicy') }}</el-button>
+                <el-button @click="createPolicy('enabled')">{{ $t('overall.save') }} & {{ $t('detection.create.enablePolicy') }}</el-button>
               </div>
             </div>
           </el-collapse-item>
@@ -212,7 +212,7 @@ export default {
           console.error(e)
           this.$message.error(this.errorMsgHandler(e))
           this.$router.push({
-            path: '/detection/policies',
+            path: '/detectionPolicy',
             query: {
               pageNo: this.pageNoForTable ? Number(this.pageNoForTable) : 1,
               t: +new Date()
@@ -276,7 +276,7 @@ export default {
                   })
 
                   this.$router.push({
-                    path: '/detectionsNew',
+                    path: '/detectionPolicy',
                     query: {
                       t: +new Date()
                     }
@@ -301,7 +301,7 @@ export default {
                   })
 
                   this.$router.push({
-                    path: '/detectionsNew',
+                    path: '/detectionPolicy',
                     query: {
                       pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
                       t: +new Date()

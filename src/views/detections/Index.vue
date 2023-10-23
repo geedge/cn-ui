@@ -791,7 +791,7 @@ export default {
     },
     jumpNewDetetion () {
       this.$router.push({
-        path: '/detectionsNew',
+        path: '/detectionPolicy',
         query: {
           t: +new Date()
         }

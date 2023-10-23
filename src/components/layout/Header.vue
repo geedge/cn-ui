@@ -99,7 +99,7 @@
             </div>
           </template>
           <template v-else-if="index===2">
-            <span v-if="route===wholeScreenRouterMapping.dns">{{ $t(item.value) }}</span>
+            <span v-if="route===wholeScreenRouterMapping.dns || !route.startsWith('/panel')">{{ $t(item.value) }}</span>
             <span v-else class="route-menu" @click="jump(route,item.value,'',3)">{{ $t(item.value) }}</span>
           </template>
           <!-- index=0和index=1的点击跳转由breadcrumb里的数据控制 -->
@@ -453,22 +453,6 @@ export default {
           value: entityGraphMenu.i18n ? this.$t(entityGraphMenu.i18n) : entityGraphMenu.name,
           route: entityGraphMenu.route,
           type: entityGraphMenu.type
-        })
-        return true
-      } else if (this.route === '/detectionsNew') {
-        const detectionMenu = menus.find(m => m.route === '/detection')
-        const policyMenu = menus.find(m => m.route === '/detectionsNew')
-        breadcrumb.push({
-          code: detectionMenu.code,
-          value: detectionMenu.i18n ? this.$t(detectionMenu.i18n) : detectionMenu.name,
-          route: detectionMenu.route,
-          type: detectionMenu.type
-        })
-        breadcrumb.push({
-          code: policyMenu.code,
-          value: policyMenu.i18n ? this.$t(policyMenu.i18n) : policyMenu.name,
-          route: policyMenu.route,
-          type: policyMenu.type
         })
         return true
       }
