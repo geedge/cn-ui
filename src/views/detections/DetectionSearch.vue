@@ -6,6 +6,7 @@
             ref="search"
             :column-list="columnList[pageType]"
             :connection-list="connectionList"
+            :default-mode="defaultMode"
             class="advanced-search--show-list"
             :full-text="true"
             :show-list="showList"
@@ -22,6 +23,8 @@
 <script>
 import AdvancedSearch from '@/components/advancedSearch/Index'
 import { schemaDetectionSecurity } from '@/utils/static-data'
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 export default {
   name: 'DetectionSearch',
   props: {
@@ -96,6 +99,14 @@ export default {
     }
   },
   emits: ['search'],
+  setup () {
+    // 根据地址栏添加mode，即text和tag模式，默认text
+    const { query } = useRoute()
+    const defaultMode = ref(query.mode || 'text')
+    return {
+      defaultMode
+    }
+  },
   methods: {
     /* search (metaList, formatSql) {
       let sql = formatSql

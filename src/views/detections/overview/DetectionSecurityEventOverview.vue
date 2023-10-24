@@ -29,7 +29,13 @@
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detections.victimLocation') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'victimInfo.location.country', '-') || '-' }}</div>
+        <div class="row__content">
+          <div v-if="$_.get(basicInfo, 'victimInfo.location.country')">
+            <img v-if="basicInfo.victimInfo.location.country===countryNameIdMapping.Unknown || !countryNameIdMapping[basicInfo.victimInfo.location.country]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[basicInfo.victimInfo.location.country]}.png`)" class="filter-country-flag" >
+          </div>
+          {{ locationRegion(basicInfo.victimInfo) }}
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detections.victimAsn') }}</div>
@@ -41,7 +47,13 @@
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detections.offenderLocation') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'offenderInfo.location.country', '-') || '-' }}</div>
+        <div class="row__content">
+          <div v-if="$_.get(basicInfo, 'offenderInfo.location.country')">
+            <img v-if="basicInfo.offenderInfo.location.country===countryNameIdMapping.Unknown || !countryNameIdMapping[basicInfo.offenderInfo.location.country]" src="../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
+            <img v-else :src="require(`../../../../public/images/flag/${countryNameIdMapping[basicInfo.offenderInfo.location.country]}.png`)" class="filter-country-flag" >
+          </div>
+          {{ locationRegion(basicInfo.offenderInfo) }}
+        </div>
       </div>
       <div class="overview__row">
         <div class="row__label">{{ $t('detections.offenderAsn') }}</div>
@@ -336,7 +348,7 @@
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { getMillisecond, dateFormatByAppearance } from '@/utils/date-util'
-import { eventSeverityColor, unitTypes, riskLevelMapping, riskLevelColor } from '@/utils/constants'
+import { eventSeverityColor, unitTypes, countryNameIdMapping, riskLevelMapping, riskLevelColor } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
 export default {
@@ -350,18 +362,19 @@ export default {
       riskLevelColor,
       basicInfo: {},
       events: [],
-      reference: 'https://attack.mitre.org'
+      reference: 'https://attack.mitre.org',
+      countryNameIdMapping
     }
   },
   computed: {
     formatT0 () {
       const vm = this
       return function (event) {
-        const diffSeconds = vm.detection.startTime - event.startTime
+        const diffSeconds = parseInt(event.diffSeconds)
         if (diffSeconds === 0) {
           return 'T0'
         }
-        const eventStartTime = event.startTime
+        const eventStartTime = parseInt(event.startTime)
         const entityStartTime = vm.detection.startTime
 
         if (_.isNumber(diffSeconds) && _.isNumber(eventStartTime) && _.isNumber(entityStartTime)) {
@@ -381,6 +394,28 @@ export default {
           return mapping.value == level
         })
         return (m && m.name) || level
+      }
+    },
+    locationRegion (info) {
+      return function (info) {
+        if (!info) {
+          return '-'
+        }
+        let result = ''
+        if (info.location.country) {
+          result += `${info.location.country},`
+        }
+        if (info.location.province) {
+          result += `${info.location.province},`
+        }
+        if (info.location.city) {
+          result += `${info.location.city},`
+        }
+        result = result.substr(0, result.length - 1)
+        if (!result) {
+          result = '-'
+        }
+        return result
       }
     }
   },
