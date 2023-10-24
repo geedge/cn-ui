@@ -3,17 +3,18 @@
     <div class="overview__left">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
-        <div class="row__content1" v-if="detection.malware">
-          <span class="row__content--link">
-            {{ $_.get(detection, 'malware.mitreAttackDescription', '-') || '-' }}
-          </span>&nbsp;
+        <div class="row__content1" v-if="detection.eventType === 'Command and Control' && detection.eventName === 'Cobalt Strike'">
+          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the  indicator of Cobalt Strike activity, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
         </div>
-        <div class="row__content1" v-if="detection.darkweb">
-          <span class="row__content--link">
-            {{ $_.get(detection, 'malware.mitreAttackDescription', '-') || '-' }}
-          </span>&nbsp;
+        <div class="row__content1" v-else-if="detection.eventType === 'Command and Control' && detection.eventName === 'Mirai'">
+          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the  indicator of Mirai attacks, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
         </div>
-        <span v-else>-</span>
+        <div class="row__content1" v-else-if="detection.eventType === 'Anonymity'">
+          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the  indicator of Tor/I2P/MTProxy/Obfs4/Snowflake/GeneralBridge, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
+        </div>
+        <div class="row__content1" v-else>
+          {{basicInfo.ruleDescription || '-'}}
+        </div>
       </div>
       <div class="overview__title">Fields</div>
       <div class="overview__row">
@@ -453,6 +454,13 @@ export default {
         axios.get(`${api.detection.securityEvent.appDetail}?resource=${this.detection.app}`).then(res => {
           if (res.status === 200) {
             this.basicInfo.appInfo = res.data.data
+          }
+        })
+      }
+      if (this.detection.ruleId) {
+        axios.get(`${api.detection.detail}/${this.detection.ruleId}`).then(res => {
+          if (res.status === 200) {
+            this.basicInfo.ruleDescription = res.data.data.description
           }
         })
       }

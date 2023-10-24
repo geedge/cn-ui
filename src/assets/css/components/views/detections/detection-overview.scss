@@ -67,6 +67,7 @@
         font-weight: 500;
         font-size: 14px;
         align-items: center;
+        flex-wrap: wrap;
 
         &.row__content--link {
           font-style: italic;
@@ -99,6 +100,10 @@
           font-size: 14px;
           margin-right: 7px;
         }
+      }
+      .row__content1 {
+        display: block;
+        padding-right: 50px;
       }
     }
   }

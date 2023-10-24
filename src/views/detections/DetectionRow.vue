@@ -16,8 +16,7 @@
               class="detection-event-severity-color-block"
               :style="`background-color: ${eventSeverityColor[detection.eventSeverity]}`">
           </span>
-<!--          <span class="detection-event-severity-block">{{ detection.securityType || '-' }}</span>-->
-          <span class="detection-event-severity-block">{{ detection.eventType || '-' }}</span>
+          <span class="detection-event-severity-block">{{ detection.eventName || '-' }}</span>
           <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp || '-'}}
           <div v-if="detection.domain" class="domain">{{detection.domain}}</div>
           <span class="line">-------</span>
@@ -40,6 +39,11 @@
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detections.severity')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventSeverity || '-'}}</span>
+              </div>
+              <div class="basic-info__item" v-if="detection.eventType">
+                <i class="cn-icon cn-icon-event-type"></i>
+                <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{detection.eventType || '-'}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.malware">
                 <i class="cn-icon cn-icon-trojan"></i>
