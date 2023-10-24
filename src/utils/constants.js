@@ -178,6 +178,13 @@ export const eventSeverityColor = {
   low: '#FFD82D',
   info: '#D1BD50'
 }
+export const riskLevelColor = {
+  5: '#D84C4C',
+  4: '#FE845D',
+  3: '#FFB65A',
+  2: '#FFD82D',
+  1: '#D1BD50'
+}
 export const eventSeverityColor1 = {
   Critical: '#D84C4C',
   High: '#FE845D',

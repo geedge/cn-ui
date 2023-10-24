@@ -41,21 +41,16 @@
                 <span>{{$t('detections.severity')}}&nbsp;:&nbsp;&nbsp;</span>
                 <span>{{detection.eventSeverity || '-'}}</span>
               </div>
-<!--              <div class="basic-info__item" v-if="detection.eventType">-->
-<!--                <i class="cn-icon cn-icon-event-type"></i>-->
-<!--                <span>{{$t('detections.eventType')}}&nbsp;:&nbsp;&nbsp;</span>-->
-<!--                <span>{{detection.eventType || '-'}}</span>-->
-<!--              </div>-->
-              <div class="basic-info__item" v-if="detection.eventName">
+              <div class="basic-info__item" v-if="detection.malware">
                 <i class="cn-icon cn-icon-trojan"></i>
                 <span>{{$t('detection.list.malwareName')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{ $_.get(detection, 'malwareName', '-') || '-' }}</span>
+                <span>{{ $_.get(detection, 'malware.malwareName', '-') || '-' }}</span>
               </div>
-<!--              <div class="basic-info__item" v-if="detection.cryptominingPool">-->
-<!--                <i class="cn-icon cn-icon-mining-pool"></i>-->
-<!--                <span>{{$t('detection.list.cryptominingPool')}}&nbsp;:&nbsp;&nbsp;</span>-->
-<!--                <span>{{detection.cryptominingPool || '-'}}</span>-->
-<!--              </div>-->
+              <div class="basic-info__item" v-if="detection.darkweb">
+                <i class="cn-icon cn-icon-trojan"></i>
+                <span>{{$t('detection.nodeType')}}&nbsp;:&nbsp;&nbsp;</span>
+                <span>{{ $_.get(detection, 'darkweb.nodeType', '-') || '-' }}</span>
+              </div>
               <div class="basic-info__item">
                 <i class="cn-icon cn-icon-time2"></i>
                 <span>{{$t('detection.list.startTime')}}&nbsp;:&nbsp;&nbsp;</span>

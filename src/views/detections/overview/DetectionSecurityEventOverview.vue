@@ -3,32 +3,17 @@
     <div class="overview__left">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
-        <div class="row__content1" v-if="basicInfo.malwareInfo">
-          <template v-if="basicInfo.malwareInfo.threatType === 'command and control'">
-            <span
-              class="row__content--link"
-              @click="goDetail('ip', detection.victimIp)">
-              {{ detection.victimIp }}
-            </span>&nbsp;
-            <span>{{$t('detection.commandAndControl')}}</span>
-            <span class="row__content--link" @click="goDetail('ip', detection.eventInfoObj.ioc_value)">
-              {{ detection.eventInfoObj.ioc_value || '-' }}
-            </span>
-          </template>
-          <template v-else>
-            <span
-                class="row__content--link"
-                @click="goDetail('ip', detection.victimIp)">
-              {{ detection.victimIp }}
-            </span>&nbsp;
-            <span>{{$t('detection.payloadAndDelivery')}}</span>
-            <span
-                class="row__content--link"
-                @click="goDetail('ip', detection.eventInfoObj.ioc_value)">
-              {{ detection.eventInfoObj.ioc_value }}
-            </span>
-          </template>
+        <div class="row__content1" v-if="detection.malware">
+          <span class="row__content--link">
+            {{ $_.get(detection, 'malware.mitreAttackDescription', '-') || '-' }}
+          </span>&nbsp;
         </div>
+        <div class="row__content1" v-if="detection.darkweb">
+          <span class="row__content--link">
+            {{ $_.get(detection, 'malware.mitreAttackDescription', '-') || '-' }}
+          </span>&nbsp;
+        </div>
+        <span v-else>-</span>
       </div>
       <div class="overview__title">Fields</div>
       <div class="overview__row">
@@ -66,85 +51,185 @@
         <div class="row__label">{{ $t('overall.domain') }}</div>
         <div class="row__content">{{ detection.domain || '-' }}</div>
       </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('entities.domainCategory') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'domainInfo.category.categoryName', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('entities.domainDetail.categoryGroup') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'domainInfo.category.categoryGroup', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('entities.reputationLevel') }}</div>
-        <div class="row__content" v-if="$_.get(basicInfo, 'domainInfo.category.reputationLevel')">
-          <div
-            class="row__tag row__tag__level"
-            :style="`background-color:${eventSeverityColor[basicInfo.domainInfo.category.reputationLevel]}`">
-            {{ basicInfo.domainInfo.category.reputationLevel }}
+      <template v-if="detection.domain">
+        <div class="overview__row">
+          <div class="row__label">{{ $t('entities.domainCategory') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'domainInfo.category.categoryName', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('entities.domainDetail.categoryGroup') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'domainInfo.category.categoryGroup', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('entities.reputationLevel') }}</div>
+          <div class="row__content" v-if="$_.get(basicInfo, 'domainInfo.category.reputationLevel')">
+            <div
+                class="row__tag row__tag__level"
+                :style="`background-color:${eventSeverityColor[basicInfo.domainInfo.category.reputationLevel]}`">
+              {{ basicInfo.domainInfo.category.reputationLevel }}
+            </div>
           </div>
+          <div class="row__content" v-else>-</div>
         </div>
-        <div class="row__content" v-else>-</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">APP</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'appInfo.category.appName', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">APP {{ $t('entities.category') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'appInfo.category.appCategory', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">APP {{ $t('entities.subcategory') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'appInfo.category.appSubcategory', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('overall.appRisk') }}</div>
-        <div class="row__content" v-if="$_.get(basicInfo, 'appInfo.category.appRisk')">
-          <div
-            class="row__tag row__tag__level"
-            :style="`background-color:${eventSeverityColor[basicInfo.appInfo.category.appRisk]}`">
-            {{ basicInfo.appInfo.category.appRisk }}
+      </template>
+      <template v-if="detection.app">
+        <div class="overview__row">
+          <div class="row__label">APP</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'appInfo.category.appName', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">APP {{ $t('entities.category') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'appInfo.category.appCategory', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">APP {{ $t('entities.subcategory') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'appInfo.category.appSubcategory', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('overall.appRisk') }}</div>
+          <div class="row__content" v-if="$_.get(basicInfo, 'appInfo.category.appRisk')">
+            <div
+                class="row__tag row__tag__level"
+                :style="`background-color:${riskLevelColor[basicInfo.appInfo.category.appRisk]}`">
+              {{ appRisk(basicInfo.appInfo.category.appRisk) || '-' }}
+            </div>
           </div>
+          <div class="row__content" v-else>-</div>
         </div>
-        <div class="row__content" v-else>-</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detections.malware') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.malwareName', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detections.malwareAlias') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.malwareAlias', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detections.malwareDescription') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackDescription', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detections.malwarePlatforms') }}</div>
-        <div class="row__content" v-if="$_.get(basicInfo, 'malwareInfo.mitreAttackPlatforms')">
-          <svg class="icon item-popover-up row__content__svg" aria-hidden="true">
-            <use xlink:href="#cn-icon-windows"></use>
-          </svg>
-          {{ basicInfo.malwareInfo.mitreAttackPlatforms }}
+      </template>
+      <template v-if="detection.malware">
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detections.malware') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.malwareName', '-') || '-' }}</div>
         </div>
-        <div class="row__content" v-else>-</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detections.malwareTechniques') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackTechniques', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detections.malwareGroups') }}</div>
-        <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackGroups', '-') || '-' }}</div>
-      </div>
-      <div class="overview__row">
-        <div class="row__label">{{ $t('detections.reference') }}</div>
-        <div class="row__content row__content--link" v-if="$_.get(basicInfo, 'malwareInfo.reference')">
-          {{ basicInfo.malwareInfo.reference }}
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detections.malwareAlias') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.malwareAlias', '-') || '-' }}</div>
         </div>
-        <div class="row__content">-</div>
-      </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detections.malwareDescription') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackDescription', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detections.malwarePlatforms') }}</div>
+          <div class="row__content" v-if="$_.get(basicInfo, 'malwareInfo.mitreAttackPlatforms')">
+            <svg class="icon item-popover-up row__content__svg" aria-hidden="true">
+              <use xlink:href="#cn-icon-windows"></use>
+            </svg>
+            {{ basicInfo.malwareInfo.mitreAttackPlatforms }}
+          </div>
+          <div class="row__content" v-else>-</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detections.malwareTechniques') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackTechniques', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detections.malwareGroups') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackGroups', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detections.reference') }}</div>
+          <div class="row__content row__content--link" v-if="$_.get(basicInfo, 'malwareInfo.reference')">
+            {{ basicInfo.malwareInfo.reference }}
+          </div>
+          <div class="row__content">-</div>
+        </div>
+      </template>
+      <template v-else-if="detection.darkweb">
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.nodeTypeLower') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'darkweb.nodeType', '-') || '-' }}</div>
+        </div>
+        <template v-if="$_.get(detection.darkweb, 'nodeType', '') === 'tor'">
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.torFingerprint') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torFingerprint', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.torFlags') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torFlags', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.torVersion') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torVersion', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">Tor ORPort</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torOrPort', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">Tor DirPort</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torDirPort', '-') || '-' }}</div>
+          </div>
+        </template>
+        <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'i2p'">
+          <div class="overview__row">
+            <div class="row__label">I2P Hash</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.i2pHash', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.i2pVersion') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.i2pVersion', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.i2pBandwidth') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.i2pBandwidth', '-') || '-' }}</div>
+          </div>
+        </template>
+        <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'mtproxy'">
+          <div class="overview__row">
+            <div class="row__label">MTProxy Secret</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.mtproxySecret', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.mtproxyPort') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.mtproxyPort', '-') || '-' }}</div>
+          </div>
+        </template>
+        <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'obfs4'">
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.obfs4Fingerprint') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4Fingerprint', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.obfs4Cert') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4Cert', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.obfs4IatMode') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4IatMode', '-') || '-' }}</div>
+          </div>
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.obfs4Port') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4Port', '-') || '-' }}</div>
+          </div>
+        </template>
+        <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'snowflake'">
+          <div class="overview__row">
+            <div class="row__label">{{ $t('detection.tor.snowflakePort') }}</div>
+            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.snowflakePort', '-') || '-' }}</div>
+          </div>
+        </template>
+      </template>
+      <template v-else>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.libraryId') }}</div>
+          <div class="row__content">{{ $_.get(detection, 'eventInfoObj.knowledge_id', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.libraryName') }}</div>
+          <div class="row__content">{{ $_.get(detection, 'eventInfoObj.name', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.iocType') }}</div>
+          <div class="row__content">{{ $_.get(detection, 'eventInfoObj.ioc_type', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.iocValue') }}</div>
+          <div class="row__content">{{ $_.get(detection, 'eventInfoObj.ioc_value', '-') || '-' }}</div>
+        </div>
+      </template>
     </div>
     <div class="overview__right">
       <div class="overview__title">{{ $t('detections.goToVictim') }}</div>
@@ -251,7 +336,7 @@
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { getMillisecond, dateFormatByAppearance } from '@/utils/date-util'
-import { eventSeverityColor, unitTypes } from '@/utils/constants'
+import { eventSeverityColor, unitTypes, riskLevelMapping, riskLevelColor } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
 export default {
@@ -262,6 +347,7 @@ export default {
   data () {
     return {
       eventSeverityColor,
+      riskLevelColor,
       basicInfo: {},
       events: [],
       reference: 'https://attack.mitre.org'
@@ -288,6 +374,14 @@ export default {
         }
         return ''
       }
+    },
+    appRisk () {
+      return function (level) {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.value == level
+        })
+        return (m && m.name) || level
+      }
     }
   },
   methods: {
@@ -303,9 +397,6 @@ export default {
         axios.get(`${api.detection.securityEvent.ipDetail}?resource=${this.detection.offenderIp}`).then(res => {
           if (res.status === 200) {
             this.basicInfo.offenderInfo = res.data.data
-            if (this.$_.get(this.detection, 'eventInfoObj.ioc_type', '').toLowerCase() === 'ip') {
-              this.basicInfo.malwareInfo = res.data.data.malware
-            }
           }
         })
       }
@@ -320,9 +411,6 @@ export default {
         axios.get(`${api.detection.securityEvent.domainDetail}?resource=${this.detection.domain}`).then(res => {
           if (res.status === 200) {
             this.basicInfo.domainInfo = res.data.data
-            if (this.$_.get(this.detection, 'eventInfoObj.ioc_type', '').toLowerCase() === 'domain') {
-              this.basicInfo.malwareInfo = res.data.data.malware
-            }
           }
         })
       }
