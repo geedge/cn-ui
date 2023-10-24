@@ -184,8 +184,8 @@ export default {
         securityEvent: [
           {
             title: this.$t('overall.status'),
-            column: '',
-            topColumn: '', // todo schema暂无标识
+            column: 'status',
+            topColumn: 'status',
             collapse: false,
             value: [], // value之间是or的关系
             data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
@@ -303,6 +303,7 @@ export default {
             }
             return { label, value: r.status, count: r.count }
           })
+          this.isCheckFilterByQ(params, 0)
         }
       }).catch(e => {
         console.error(e)
@@ -390,6 +391,7 @@ export default {
         this.statisticsSeverityData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][1].data = data.map(r => ({ label: r.severity, value: r.severity, count: r.count }))
+          this.isCheckFilterByQ(params, 1)
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
           eventSeverityOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.severity, itemStyle: { color: getSeverityColor(d.severity) } }
@@ -408,7 +410,7 @@ export default {
             if (this.pageType === 'performanceEvent') {
               vm.filterData.performanceEvent[0].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[0].value, e.data.name)
             } else if (this.pageType === 'securityEvent') {
-              vm.filterData.securityEvent[0].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[0].value, e.data.name)
+              vm.filterData.securityEvent[1].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[1].value, e.data.name)
             }
           })
         }
@@ -464,6 +466,7 @@ export default {
             value: r.eventType,
             count: r.count
           }))
+          this.isCheckFilterByQ(params, 2)
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)
           if (detectionChart) {
@@ -500,6 +503,7 @@ export default {
             value: r.offenderIp,
             count: r.count
           }))
+          this.isCheckFilterByQ(params, 4)
           const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][4].data)
           this.filterData[this.pageType][4].showMore = showMore
           this.filterData[this.pageType][4].showIndex = showIndex
@@ -538,6 +542,7 @@ export default {
       axios.get(api.detection[this.pageType].victimIpStatistics, { params }).then(res => {
         const data = res.data.data.result
         this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
+        this.isCheckFilterByQ(params, 3)
         const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
         this.filterData[this.pageType][3].showMore = showMore
         this.filterData[this.pageType][3].showIndex = showIndex
@@ -719,10 +724,21 @@ export default {
       // 参数q，避免切换页码时，地址栏参数q为空
       let urlQ = ''
       if (param && param.str) {
-        urlQ = encodeURI(param.str)
+        // urlQ = encodeURI(param.str)
+        urlQ = param.str
       } else if (this.q) {
-        urlQ = encodeURI(this.q)
+        // urlQ = encodeURI(this.q)
+        urlQ = this.q
       }
+      const mode = this.$route.query.mode || 'text'
+      const newUrl = urlParamsHandler(window.location.href, this.$route.query, {
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime,
+        range: this.dateRangeValue,
+        q: urlQ,
+        mode: mode
+      })
+      overwriteUrl(newUrl)
       this.queryFilter(urlQ)
       this.queryList(urlQ)
     },
@@ -749,8 +765,8 @@ export default {
         this.initVictimIpData(params)
         this.initSecurityTypeData(params)
       } else if (this.pageType === detectionPageType.performanceEvent) {
-        // this.initActiveEntity(params)
-        // this.initEventTypeData(params)
+        this.initActiveEntity(params)
+        this.initEventTypeData(params)
       }
     },
     pageSize (val) {
@@ -795,12 +811,43 @@ export default {
           t: +new Date()
         }
       })
+    },
+    isCheckFilterByQ (params, index) {
+      if (params.resource) {
+        let obj
+        if (index === 0) {
+          obj = this.filterData[this.pageType][index].data.find(d => params.resource.indexOf(d.value) > -1 && params.resource.indexOf('status') > -1)
+        } else {
+          obj = this.filterData[this.pageType][index].data.find(d => params.resource.indexOf(d.value) > -1)
+        }
+        if (obj) {
+          this.filterData[this.pageType][index].value = [obj.value]
+          this.filterData[this.pageType][index].flag = true
+        }
+      } else {
+        this.filterData[this.pageType][index].value = []
+        this.filterData[this.pageType][index].flag = true
+      }
     }
   },
   mounted () {
-    this.queryFilter()
+    let { q } = this.$route.query
+
+    // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
+    if (q) {
+      // %位置为0是输入中文时能解码，%20，25%分别是空格和%的情况
+      if (q && (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1)) {
+        q = decodeURI(q)
+      }
+      // %位置不为0，即内容包含非英文时
+      const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
+      if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+        q = decodeURI(q)
+      }
+    }
+    this.queryFilter(q)
     this.initFlag = false
-    this.queryList()
+    this.queryList(q)
     this.debounceFunc = this.$_.debounce(this.resize, 300)
     window.addEventListener('resize', this.debounceFunc)
   },
@@ -873,37 +920,61 @@ export default {
     'filterData.securityEvent.0.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.securityEvent[0].column, oldValue: o, newValue: n })
+        if (!this.filterData.securityEvent[0].flag) {
+          this.$refs.search.changeParams({ column: this.filterData.securityEvent[0].column, oldValue: o, newValue: n })
+        } else {
+          this.filterData.securityEvent[0].flag = false
+        }
       }
     },
     'filterData.securityEvent.1.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.securityEvent[1].column, oldValue: o, newValue: n })
+        if (!this.filterData.securityEvent[1].flag) {
+          this.$refs.search.changeParams({ column: this.filterData.securityEvent[1].column, oldValue: o, newValue: n })
+        } else {
+          this.filterData.securityEvent[1].flag = false
+        }
       }
     },
     'filterData.securityEvent.2.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.securityEvent[2].column, oldValue: o, newValue: n })
+        if (!this.filterData.securityEvent[2].flag) {
+          this.$refs.search.changeParams({ column: this.filterData.securityEvent[2].column, oldValue: o, newValue: n })
+        } else {
+          this.filterData.securityEvent[2].flag = false
+        }
       }
     },
     'filterData.securityEvent.3.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.securityEvent[3].column, oldValue: o, newValue: n })
+        if (!this.filterData.securityEvent[3].flag) {
+          this.$refs.search.changeParams({ column: this.filterData.securityEvent[3].column, oldValue: o, newValue: n })
+        } else {
+          this.filterData.securityEvent[3].flag = false
+        }
       }
     },
     'filterData.securityEvent.4.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.securityEvent[4].column, oldValue: o, newValue: n })
+        if (!this.filterData.securityEvent[4].flag) {
+          this.$refs.search.changeParams({ column: this.filterData.securityEvent[4].column, oldValue: o, newValue: n })
+        } else {
+          this.filterData.securityEvent[4].flag = false
+        }
       }
     },
     'filterData.securityEvent.5.value': {
       deep: true,
       handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.securityEvent[5].column, oldValue: o, newValue: n })
+        if (!this.filterData.securityEvent[5].flag) {
+          this.$refs.search.changeParams({ column: this.filterData.securityEvent[5].column, oldValue: o, newValue: n })
+        } else {
+          this.filterData.securityEvent[5].flag = false
+        }
       }
     },
     'filterData.performanceEvent.0.value': {

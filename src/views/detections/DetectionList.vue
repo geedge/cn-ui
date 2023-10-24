@@ -69,14 +69,16 @@ export default {
         this.myListData.push(this.$_.cloneDeep(item))
         if (item.eventInfoObj) {
           axios.get(`${api.detection.securityEvent.detail}/${item.eventInfoObj.ioc_type}?resource=${item.eventInfoObj.ioc_value}`).then(res => {
-            if (res.status === 200) {
+            if (res.status === 200 && this.myListData[i]) {
               this.myListData[i].malwareName = (this.$_.get(res, 'data.data.malware.malwareName', '-')) || '-'
-            } else {
+            } else if (this.myListData[i]) {
               this.myListData[i].malwareName = '-'
             }
           }).catch(e => {
             console.error(e)
-            this.myListData[i].malwareName = '-'
+            if (this.myListData[i]) {
+              this.myListData[i].malwareName = '-'
+            }
           })
         }
       })
@@ -116,7 +118,10 @@ export default {
         } else {
           clearTimeout(this.timeout)
           this.noData = false
-          this.initData()
+          const timer = setTimeout(() => {
+            this.initData()
+            clearTimeout(timer)
+          }, 200)
         }
       }
     }

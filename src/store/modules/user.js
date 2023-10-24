@@ -118,7 +118,7 @@ const user = {
           localStorage.setItem(storageKey.linkInfo, res.page.list[0].cvalue)
         }
       })
-      axios.get(api.config, { params: { ckey: 'schema_entity_explore' } }).then(response => {
+      axios.get(api.config, { params: { ckey: 'schema_explore' } }).then(response => {
         const res = response.data
         if (response.status === 200 && res.page.list && res.page.list.length > 0) {
           localStorage.setItem(storageKey.schemaEntityExplore, res.page.list[0].cvalue)

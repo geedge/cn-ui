@@ -1173,7 +1173,9 @@ export default class Parser {
       const arr = []
       // 如果出现this.columnList中的字段，如IP\Domain\App\Country等，则不进行模糊搜索，将str返回出去
       this.columnList.forEach(item => {
-        arr.push(item.label.toLowerCase())
+        // todo 取消了大小写校验，后续观察是否出现问题
+        // arr.push(item.label.toLowerCase())
+        arr.push(item.label)
       })
 
       // 因为手动输入时可能会输入and，所以将操作符的AND转换为and，统一处理
@@ -1183,7 +1185,9 @@ export default class Parser {
         newStr = newStr.replace(new RegExp(arr[i], 'g'), arr[i])
       }
       // 检查str字段在arr中是否出现,true为出现过
-      const result = arr.some(item => newStr.toLowerCase().includes(item))
+      // todo 取消了大小写校验，后续观察是否出现问题
+      // const result = arr.some(item => newStr.toLowerCase().includes(item))
+      const result = arr.some(item => newStr.includes(item))
       if (newStr.indexOf(' and ') > -1) {
         // 将单引号包裹的and拿出来放到数组tempList里，原来的单引号包裹内容用temp即'it is test keyword{键值}'代替
         // 再将字符串用and转换为数组，遍历数组，发现值为temp的，获取键值，根据键值获取tempList的值组合起来，
@@ -1194,7 +1198,7 @@ export default class Parser {
 
         // 将单引号包裹的and内容集合起来
         while ((match = regex.exec(newStr)) !== null) {
-          if (match[1].includes('and')) {
+          if (match[1].includes(' and ')) {
             tempList.push(match[1])
           }
         }
