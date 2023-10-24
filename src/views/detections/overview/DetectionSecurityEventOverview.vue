@@ -3,14 +3,11 @@
     <div class="overview__left">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
-        <div class="row__content1" v-if="detection.eventType === 'Command and Control' && detection.eventName === 'Cobalt Strike'">
-          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the  indicator of Cobalt Strike activity, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
+        <div class="row__content1" v-if="detection.eventType === 'Command and Control' && detection.isBuiltin === 1">
+          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}} activity, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
         </div>
-        <div class="row__content1" v-else-if="detection.eventType === 'Command and Control' && detection.eventName === 'Mirai'">
-          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the  indicator of Mirai attacks, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
-        </div>
-        <div class="row__content1" v-else-if="detection.eventType === 'Anonymity'">
-          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the  indicator of Tor/I2P/MTProxy/Obfs4/Snowflake/GeneralBridge, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
+        <div class="row__content1" v-else-if="detection.eventType === 'Anonymity' && detection.isBuiltin === 1">
+          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}}.
         </div>
         <div class="row__content1" v-else>
           {{basicInfo.ruleDescription || '-'}}

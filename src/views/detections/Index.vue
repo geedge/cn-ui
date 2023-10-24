@@ -734,7 +734,7 @@ export default {
       const newUrl = urlParamsHandler(window.location.href, this.$route.query, {
         startTime: this.timeFilter.startTime,
         endTime: this.timeFilter.endTime,
-        range: this.dateRangeValue,
+        range: this.timeFilter.dateRangeValue,
         q: urlQ,
         mode: mode
       })
