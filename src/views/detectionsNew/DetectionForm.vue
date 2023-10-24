@@ -223,22 +223,24 @@ export default {
     },
     /** 获取General Settings折叠板form数据 */
     getFormSetting (data) {
-      this.handleActiveNames('1', this.activeNames)
+      this.handleActiveNames('1', this.activeNames, data.settingNoContinue)
       this.settingObj = JSON.parse(JSON.stringify(data))
     },
     /** 获取Rule Definition折叠板form数据 */
     getRuleObj (data) {
-      this.handleActiveNames('2', this.activeNames)
+      this.handleActiveNames('2', this.activeNames, data.ruleNoContinue)
       this.ruleObj = JSON.parse(JSON.stringify(data))
     },
     /** 自动展开收起折叠板 */
-    handleActiveNames (name, arr) {
-      const list = arr
-      list.splice(list.indexOf(name), 1)
-      this.activeNames = []
-      list.forEach(t => {
-        this.activeNames.push(t)
-      })
+    handleActiveNames (name, arr, flag) {
+      if (!flag) {
+        const list = arr
+        list.splice(list.indexOf(name), 1)
+        this.activeNames = []
+        list.forEach(t => {
+          this.activeNames.push(t)
+        })
+      }
     },
     /** 创建policy */
     createPolicy (flag) {

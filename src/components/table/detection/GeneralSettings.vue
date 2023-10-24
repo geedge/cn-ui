@@ -72,7 +72,7 @@
             show-word-limit
             placeholder=""
             v-model="settingObj.name"
-            @input="changeEditFlag"
+            @blur="changeEditFlag"
             class="form-setting__input" />
       </el-form-item>
 
@@ -85,7 +85,7 @@
             v-model="settingObj.description"
             type="textarea"
             resize='none'
-            @input="changeEditFlag"
+            @blur="changeEditFlag"
             class="form-setting__textarea" />
       </div>
     </el-form>
@@ -184,6 +184,10 @@ export default {
     },
     changeEditFlag () {
       this.settingObj.editFlag = true
+      if (this.settingObj.ruleType && this.settingObj.category && this.settingObj.eventType && this.settingObj.name) {
+        this.settingObj.settingNoContinue = true
+        this.onContinue()
+      }
     },
     /** 点击继续，进行第二步 */
     onContinue () {

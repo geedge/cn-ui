@@ -165,7 +165,7 @@
       <el-form ref="form" :model="indicatorRuleObj" label-position="top" :rules="rules">
         <!--Source-->
         <el-form-item :label="$t('config.user.source')" prop="dataSource" class="form-setting__block margin-b-20">
-          <el-select v-model="indicatorRuleObj.dataSource" class="form-setting__select" placeholder=" " size="mini">
+          <el-select v-model="indicatorRuleObj.dataSource" class="form-setting__select" placeholder=" " size="mini" @change="handleParamsComplete">
             <el-option
                 v-for="item in sourceList"
                 :key="item.value"
@@ -177,7 +177,7 @@
 
         <!--Library-->
         <el-form-item :label="$t('detection.library')" prop="knowledgeId" class="form-setting__block margin-b-20">
-          <el-select v-model="indicatorRuleObj.knowledgeId" class="form-setting__select" placeholder=" " size="mini">
+          <el-select v-model="indicatorRuleObj.knowledgeId" class="form-setting__select" placeholder=" " size="mini" @change="handleParamsComplete">
             <el-option
                 v-for="item in libraryList"
                 :key="item.knowledgeId"
@@ -189,7 +189,7 @@
 
         <!--Level-->
         <el-form-item :label="$t('detection.level')" prop="level" class="form-setting__block">
-          <el-select v-model="indicatorRuleObj.level" class="condition__select form-setting__select" placeholder=" " size="mini">
+          <el-select v-model="indicatorRuleObj.level" class="condition__select form-setting__select" placeholder=" " size="mini" @change="handleParamsComplete">
             <template #prefix>
               <div
                   class="condition__select__icon"
@@ -518,6 +518,12 @@ export default {
         obj[item.level] = str
       })
       this.thresholdRuleObj.conditions = obj
+    },
+    handleParamsComplete () {
+      if (this.indicatorRuleObj.dataSource && this.indicatorRuleObj.knowledgeId && this.indicatorRuleObj.level) {
+        this.indicatorRuleObj.ruleNoContinue = true
+        this.onContinue()
+      }
     }
   }
 }
