@@ -656,8 +656,8 @@ export default {
           this.$message.error(response.data.message)
         }
       })
-      axios.get(api.detection[this.pageType].securityCount, { params }).then(data => {
-        this.pageObj.total = parseInt(data)
+      axios.get(api.detection[this.pageType].securityCount, { params }).then(res => {
+        this.pageObj.total = parseInt(this.$_.get(res, 'data.data.result', 0))
       }).catch(error => {
         console.error(error)
       })
@@ -741,7 +741,6 @@ export default {
         endTime: getSecond(this.timeFilter.endTime),
         resource: q
       }
-      this.listData = []
       this.initStatusData(params)
       this.initEventSeverityTrendData(params)
       this.initEventSeverityData(params)
