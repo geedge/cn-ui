@@ -10,7 +10,7 @@
         <div class="block-mode-right">
           <div class="block-mode-title">Indicator Match</div>
           <div class="block-mode-content">
-            Use indicators from intelligencesources to detect matchingevents and alerts.
+            Use indicators from intelligence sources to detect matching events and alerts.
           </div>
           <div :class="settingObj.ruleType===detectionRuleType.indicator?'block-mode-btn-active':'block-mode-btn'"
                @click="selectMode(detectionRuleType.indicator)">select
@@ -46,9 +46,9 @@
         <el-select :disabled="settingObj.ruleId" v-model="settingObj.category" class="form-setting__select" placeholder=" " size="mini" @change="changeEditFlag">
           <el-option
               v-for="item in categoryList"
-              :key="item.name"
-              :label="item.name"
-              :value="item.name"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           />
         </el-select>
       </el-form-item>
@@ -58,9 +58,9 @@
         <el-select v-model="settingObj.eventType" placeholder=" " size="mini" class="form-setting__select" @change="changeEditFlag">
           <el-option
               v-for="item in eventTypeList"
-              :key="item.name"
-              :label="item.name"
-              :value="item.name"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
           />
         </el-select>
       </el-form-item>
@@ -112,8 +112,6 @@
 import { detectionRuleType } from '@/utils/constants'
 import { switchStatus } from '@/utils/tools'
 import { detectionUnitList } from '@/utils/static-data'
-import axios from 'axios'
-import { api } from '@/utils/api'
 
 export default {
   name: 'GeneralSettings',
@@ -177,32 +175,8 @@ export default {
   methods: {
     switchStatus,
     initData () {
-      this.categoryList = detectionUnitList.categoryList || []
-      this.eventTypeList = detectionUnitList.eventTypeList || []
-      axios.get(api.detection.statistics).then(response => {
-        if (response.status === 200) {
-          const data = response.data.data
-          if (data.categoryList) {
-            this.categoryList = data.categoryList
-          } else {
-            this.categoryList = []
-          }
-
-          if (data.eventTypeList) {
-            this.eventTypeList = data.eventTypeList
-          } else {
-            this.eventTypeList = []
-          }
-        } else {
-          console.error(response.data)
-          this.categoryList = []
-          this.eventTypeList = []
-        }
-      }).catch((e) => {
-        console.error(e)
-        this.categoryList = []
-        this.eventTypeList = []
-      })
+      this.categoryList = detectionUnitList.categoryList
+      this.eventTypeList = detectionUnitList.eventTypeList
     },
     selectMode (ruleType) {
       this.settingObj.ruleType = ruleType

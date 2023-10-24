@@ -437,16 +437,21 @@ export const detectionUnitList = {
     { status: 0 }
   ],
   categoryList: [
-    { value: 'security_event', label: 'Security Event' },
-    { value: 'performance_event', label: 'Performance Event' }
+    { value: 'security_event', label: 'Security Event' }/* ,
+    { value: 'performance_event', label: 'Performance Event' } */
   ],
   eventTypeList: [
-    { value: 'ddos', label: 'DDos' },
-    { value: 'lateral_movement', label: 'Lateral movement' },
-    { value: 'brute_force', label: 'Brute force' }
+    { value: 'Initial Access', label: 'Initial Access' },
+    { value: 'Command and Control', label: 'Command and Control' },
+    { value: 'Credential Access', label: 'Credential Access' },
+    { value: 'Lateral Movement', label: 'Lateral Movement' },
+    { value: 'Collection', label: 'Collection' },
+    { value: 'Impact', label: 'Impact' },
+    { value: 'Anonymity', label: 'Anonymity' },
+    { value: 'Regulatory Risk', label: 'Regulatory Risk' }
   ],
   sourceList: [
-    { value: 'session_record', label: 'session_record' }
+    { value: 'session_record', label: 'Session Record' }
   ],
   levelList: [
     { value: 'critical', label: 'Critical' },

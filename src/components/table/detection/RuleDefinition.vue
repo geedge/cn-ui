@@ -370,9 +370,9 @@ export default {
       this.metricList = detectionUnitList.metricList || []
 
       if (this.mySettingObj.ruleType === this.detectionRuleType.indicator) {
-        axios.get(api.knowledgeBaseList, { params: this.searchLabel }).then(response => {
+        axios.get(api.knowledgeBaseList, { params: this.searchLabel, pageSize: -1 }).then(response => {
           if (response.status === 200) {
-            this.libraryList = _.get(response, 'data.data.list', [])
+            this.libraryList = _.get(response, 'data.data.list', []).filter(l => l.isBuiltIn === 0)
           } else {
             this.libraryList = []
             if (response.data.message) {
@@ -381,8 +381,10 @@ export default {
               this.$message.error(this.$t('tip.somethingWentWrong'))
             }
           }
-        }).catch(() => {
+        }).catch(e => {
+          console.error(e)
           this.libraryList = []
+          this.$message.error(this.errorMsgHandler(e))
         })
       }
     },
