@@ -82,12 +82,12 @@
 </template>
 
 <script>
-import DetectionFilter from '@/views/detectionsNew/DetectionFilter'
-import DetectionTools from '@/views/detectionsNew/DetectionTools'
-import DetectionTable from '@/views/detectionsNew/DetectionTable'
+import DetectionFilter from '@/views/detections/detectionPolicies/PolicyFilter'
+import DetectionTools from '@/views/detections/detectionPolicies/PolicyTools'
+import DetectionTable from '@/views/detections/detectionPolicies/PolicyTable'
 import { api } from '@/utils/api'
 import dataListMixin from '@/mixins/data-list'
-import DetectionDrawer from '@/views/detectionsNew/DetectionDrawer'
+import DetectionDrawer from '@/views/detections/detectionPolicies/PolicyDrawer'
 import axios from 'axios'
 
 export default {

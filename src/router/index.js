@@ -94,15 +94,15 @@ const routes = [
       },
       {
         path: '/detectionPolicy',
-        component: () => import('@/views/detectionsNew/Index')
+        component: () => import('@/views/detections/detectionPolicies/Index')
       },
       {
         path: '/detectionPolicy/create',
-        component: () => import('@/views/detectionsNew/DetectionForm')
+        component: () => import('@/views/detections/detectionPolicies/PolicyForm')
       },
       {
         path: '/detectionPolicy/edit',
-        component: () => import('@/views/detectionsNew/DetectionForm')
+        component: () => import('@/views/detections/detectionPolicies/PolicyForm')
       }
     ]
   }

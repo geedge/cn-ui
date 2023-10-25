@@ -173,7 +173,6 @@ export default {
     },
     isComplete (newVal) {
       if (!newVal) {
-        console.log('让我瞅瞅咋回事')
         this.onContinue()
       }
     }
