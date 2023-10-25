@@ -229,6 +229,9 @@ export default {
     },
     editObj: {
       type: Object
+    },
+    isComplete: {
+      type: Boolean
     }
   },
   components: {
@@ -257,6 +260,11 @@ export default {
             this.thresholdRuleObj = this.$_.cloneDeep(newVal.ruleConfigObj)
           }
         }
+      }
+    },
+    isComplete (newVal) {
+      if (!newVal) {
+        this.onContinue()
       }
     }
   },
@@ -374,6 +382,7 @@ export default {
           if (response.status === 200) {
             this.libraryList = _.get(response, 'data.data.list', []).filter(l => l.isBuiltIn === 0)
           } else {
+            console.error(response.data.message)
             this.libraryList = []
             if (response.data.message) {
               this.$message.error(response.data.message)
@@ -485,7 +494,10 @@ export default {
       this.thresholdRuleObj.filterList.splice(i, 1)
     },
     /** 点击继续，展开第三步 */
-    onContinue () {
+    onContinue (e) {
+      if (e) {
+        delete this.indicatorRuleObj.ruleNoContinue
+      }
       this.$refs.form.validate(valid => {
         if (valid) {
           if (this.mySettingObj.ruleType === detectionRuleType.indicator) {

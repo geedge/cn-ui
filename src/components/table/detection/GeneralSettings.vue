@@ -118,6 +118,9 @@ export default {
   props: {
     editObj: {
       type: Object
+    },
+    isComplete: {
+      type: Boolean
     }
   },
   data () {
@@ -167,6 +170,12 @@ export default {
         this.settingObj.editFlag = false
         this.settingObj.saveFlag = true
       }
+    },
+    isComplete (newVal) {
+      if (!newVal) {
+        console.log('让我瞅瞅咋回事')
+        this.onContinue()
+      }
     }
   },
   mounted () {
@@ -190,7 +199,10 @@ export default {
       }
     },
     /** 点击继续，进行第二步 */
-    onContinue () {
+    onContinue (e) {
+      if (e) {
+        delete this.settingObj.settingNoContinue
+      }
       this.$refs.form.validate(valid => {
         if (valid) {
           this.settingObj.editFlag = false

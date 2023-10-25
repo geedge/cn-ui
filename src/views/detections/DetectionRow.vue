@@ -176,6 +176,15 @@ export default {
       }
     }
   },
+  watch: {
+    isCollapse (newVal) {
+      const newQuery = this.$route.query
+      if (newVal && newQuery.eventId) {
+        delete newQuery.eventId
+        this.reloadUrl(newQuery, 'cleanOldParams')
+      }
+    }
+  },
   methods: {
     unitConvert,
     getMillisecond,

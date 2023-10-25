@@ -18,7 +18,7 @@
               </div>
             </template>
             <div class="form-collapse-content">
-              <general-settings ref="form" :editObj="editObj" @setSettingForm="getFormSetting" />
+              <general-settings ref="form" :editObj="editObj" :isComplete="isComplete" @setSettingForm="getFormSetting" />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -35,7 +35,7 @@
               </div>
             </template>
             <div class="form-collapse-content">
-              <rule-definition :settingObj="settingObj" :editObj="editObj" @setRuleObj="getRuleObj" />
+              <rule-definition :settingObj="settingObj" :editObj="editObj" :isComplete="isComplete" @setRuleObj="getRuleObj" />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -147,7 +147,8 @@ export default {
         ]
       },
       intervalList: detectionUnitList.intervalList || [],
-      editObj: {}
+      editObj: {},
+      isComplete: true // 参数完整标识，默认完整（照顾编辑模式），false即不完整
     }
   },
   components: {
@@ -236,6 +237,12 @@ export default {
       if (!flag) {
         const list = arr
         list.splice(list.indexOf(name), 1)
+        if (name === '1' && list.indexOf('2') < 0) {
+          list.push('2')
+        }
+        if (name === '2' && list.indexOf('3') < 0) {
+          list.push('3')
+        }
         this.activeNames = []
         list.forEach(t => {
           this.activeNames.push(t)
@@ -284,6 +291,7 @@ export default {
                     }
                   })
                 } else {
+                  console.error(response.data.message)
                   this.$message.error(this.errorMsgHandler(response))
                 }
               }).catch(e => {
@@ -310,6 +318,7 @@ export default {
                     }
                   })
                 } else {
+                  console.error(response.data.message)
                   this.$message.error(this.errorMsgHandler(response))
                 }
               }).catch(e => {
@@ -319,21 +328,27 @@ export default {
                 this.myLoading = false
               })
             }
+          } else {
+            this.isComplete = false
           }
         })
       } else if (settingLen === 0) {
+        this.isComplete = false
         this.handleFormError('1')
       } else if (ruleLen === 0) {
+        this.isComplete = false
         this.handleFormError('2')
       }
     },
     handleFormError (name) {
       const list = this.activeNames
-      list.push(name)
-      this.activeNames = []
-      list.forEach(t => {
-        this.activeNames.push(t)
-      })
+      if (list.indexOf(name) < 0) {
+        list.push(name)
+        this.activeNames = []
+        list.forEach(t => {
+          this.activeNames.push(t)
+        })
+      }
       this.$message.error(this.$t('detection.create.informationFilled'))
     }
   }
