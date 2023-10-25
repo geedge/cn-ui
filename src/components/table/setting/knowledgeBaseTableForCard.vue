@@ -78,6 +78,7 @@
               <div class="card-title-name" :title="updateKnowledge.label">{{updateKnowledge.label}}</div>
             </div>
             <el-switch v-model="updateKnowledge.status"
+                       v-if="showEnable"
                        active-color="#38ACD2"
                        inactive-color="#C0CEDB"
                        :active-value="1"
