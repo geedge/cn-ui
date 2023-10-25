@@ -251,7 +251,7 @@ export default {
       uploadErrorTip,
       fileTypeLimit: '.csv',
       fileList: ref([]),
-      uploadFileSizeLimit: 100 * 1024 * 1024
+      uploadFileSizeLimit: 1024 * 1024 * 1024
     }
   },
   methods: {
