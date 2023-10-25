@@ -396,7 +396,7 @@ export default {
     },
     locationRegion (info) {
       return function (info) {
-        if (!info) {
+        if (!info || !info.location) {
           return '-'
         }
         let result = ''
