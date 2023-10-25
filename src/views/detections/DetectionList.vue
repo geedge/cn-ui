@@ -67,13 +67,13 @@ export default {
       this.myListData = []
       this.listData.forEach((item, i) => {
         this.myListData.push(this.$_.cloneDeep(item))
-        if (item.eventInfoObj && item.isBuiltin === 1) {
+        if (item.eventInfoObj && item.isBuiltin == 1) {
           axios.get(`${api.detection.securityEvent.detail}/${item.eventInfoObj.ioc_type.toLowerCase()}?resource=${item.eventInfoObj.ioc_value}`).then(res => {
             if (res.status === 200) {
               if (item.eventType === 'Anonymity') {
-                item.darkweb = this.$_.get(res, 'data.data.darkweb', {}) || {}
+                this.myListData[i].darkweb = this.$_.get(res, 'data.data.darkweb', {}) || {}
               } else if (item.eventType === 'Command and Control') {
-                item.malware = this.$_.get(res, 'data.data.malware', {}) || {}
+                this.myListData[i].malware = this.$_.get(res, 'data.data.malware', {}) || {}
               }
             }
           }).catch(e => {

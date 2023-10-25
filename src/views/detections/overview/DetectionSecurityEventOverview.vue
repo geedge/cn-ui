@@ -3,10 +3,10 @@
     <div class="overview__left">
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
-        <div class="row__content1" v-if="detection.eventType === 'Command and Control' && detection.isBuiltin === 1">
+        <div class="row__content1" v-if="detection.eventType === 'Command and Control' && detection.isBuiltin == 1">
           <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}} activity, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
         </div>
-        <div class="row__content1" v-else-if="detection.eventType === 'Anonymity' && detection.isBuiltin === 1">
+        <div class="row__content1" v-else-if="detection.eventType === 'Anonymity' && detection.isBuiltin == 1">
           <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}}.
         </div>
         <div class="row__content1" v-else>
@@ -110,19 +110,19 @@
       <template v-if="detection.malware">
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.malware') }}</div>
-          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.malwareName', '-') || '-' }}</div>
+          <div class="row__content">{{ $_.get(detection, 'malware.malwareName', '-') || '-' }}</div>
         </div>
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.malwareAlias') }}</div>
-          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.malwareAlias', '-') || '-' }}</div>
+          <div class="row__content">{{ $_.get(detection, 'malware.malwareAlias', '-') || '-' }}</div>
         </div>
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.malwareDescription') }}</div>
-          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackDescription', '-') || '-' }}</div>
+          <div class="row__content">{{ $_.get(detection, 'malware.mitreAttackDescription', '-') || '-' }}</div>
         </div>
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.malwarePlatforms') }}</div>
-          <div class="row__content" v-if="$_.get(basicInfo, 'malwareInfo.mitreAttackPlatforms')">
+          <div class="row__content" v-if="$_.get(detection, 'malware.mitreAttackPlatforms')">
             <svg class="icon item-popover-up row__content__svg" aria-hidden="true">
               <use xlink:href="#cn-icon-windows"></use>
             </svg>
@@ -132,15 +132,15 @@
         </div>
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.malwareTechniques') }}</div>
-          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackTechniques', '-') || '-' }}</div>
+          <div class="row__content">{{ $_.get(detection, 'malware.mitreAttackTechniques', '-') || '-' }}</div>
         </div>
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.malwareGroups') }}</div>
-          <div class="row__content">{{ $_.get(basicInfo, 'malwareInfo.mitreAttackGroups', '-') || '-' }}</div>
+          <div class="row__content">{{ $_.get(detection, 'malware.mitreAttackGroups', '-') || '-' }}</div>
         </div>
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.reference') }}</div>
-          <div class="row__content row__content--link" v-if="$_.get(basicInfo, 'malwareInfo.reference')">
+          <div class="row__content row__content--link" v-if="$_.get(detection, 'malware.reference')">
             {{ basicInfo.malwareInfo.reference }}
           </div>
           <div class="row__content">-</div>
@@ -149,76 +149,76 @@
       <template v-else-if="detection.darkweb">
         <div class="overview__row">
           <div class="row__label">{{ $t('detection.nodeTypeLower') }}</div>
-          <div class="row__content">{{ $_.get(basicInfo, 'darkweb.nodeType', '-') || '-' }}</div>
+          <div class="row__content">{{ $_.get(detection, 'darkweb.nodeType', '-') || '-' }}</div>
         </div>
         <template v-if="$_.get(detection.darkweb, 'nodeType', '') === 'tor'">
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.torFingerprint') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torFingerprint', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.torFingerprint', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.torFlags') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torFlags', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.torFlags', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.torVersion') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torVersion', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.torVersion', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">Tor ORPort</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torOrPort', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.torOrPort', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">Tor DirPort</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.torDirPort', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.torDirPort', '-') || '-' }}</div>
           </div>
         </template>
         <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'i2p'">
           <div class="overview__row">
             <div class="row__label">I2P Hash</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.i2pHash', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.i2pHash', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.i2pVersion') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.i2pVersion', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.i2pVersion', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.i2pBandwidth') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.i2pBandwidth', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.i2pBandwidth', '-') || '-' }}</div>
           </div>
         </template>
         <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'mtproxy'">
           <div class="overview__row">
             <div class="row__label">MTProxy Secret</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.mtproxySecret', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.mtproxySecret', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.mtproxyPort') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.mtproxyPort', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.mtproxyPort', '-') || '-' }}</div>
           </div>
         </template>
         <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'obfs4'">
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.obfs4Fingerprint') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4Fingerprint', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.obfs4Fingerprint', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.obfs4Cert') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4Cert', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.obfs4Cert', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.obfs4IatMode') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4IatMode', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.obfs4IatMode', '-') || '-' }}</div>
           </div>
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.obfs4Port') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.obfs4Port', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.obfs4Port', '-') || '-' }}</div>
           </div>
         </template>
         <template v-else-if="$_.get(detection.darkweb, 'nodeType', '') === 'snowflake'">
           <div class="overview__row">
             <div class="row__label">{{ $t('detection.tor.snowflakePort') }}</div>
-            <div class="row__content">{{ $_.get(basicInfo, 'darkweb.snowflakePort', '-') || '-' }}</div>
+            <div class="row__content">{{ $_.get(detection, 'darkweb.snowflakePort', '-') || '-' }}</div>
           </div>
         </template>
       </template>
@@ -505,5 +505,6 @@ export default {
 }
 .row__content {
   width: calc(100% - 176px);
+  padding-right: 50px;
 }
 </style>
