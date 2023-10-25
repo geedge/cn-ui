@@ -1,0 +1,963 @@
+@font-face {
+  font-family: "cn-icon"; /* Project id 2614877 */
+  src: url('iconfont.woff2?t=1698229141457') format('woff2'),
+       url('iconfont.woff?t=1698229141457') format('woff'),
+       url('iconfont.ttf?t=1698229141457') format('truetype');
+}
+
+.cn-icon {
+  font-family: "cn-icon" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.cn-icon-indicator-match:before {
+  content: "\e80c";
+}
+
+.cn-icon-threshold:before {
+  content: "\e80d";
+}
+
+.cn-icon-behavior:before {
+  content: "\e61c";
+}
+
+.cn-icon-category-group:before {
+  content: "\e6c7";
+}
+
+.cn-icon-proportion:before {
+  content: "\e65a";
+}
+
+.cn-icon-tag1:before {
+  content: "\e774";
+}
+
+.cn-icon-Event1:before {
+  content: "\e80b";
+}
+
+.cn-icon-Score:before {
+  content: "\e80a";
+}
+
+.cn-icon-Intelligence:before {
+  content: "\e7ff";
+}
+
+.cn-icon-FQDN:before {
+  content: "\e800";
+}
+
+.cn-icon-Event:before {
+  content: "\e801";
+}
+
+.cn-icon-User-defined:before {
+  content: "\e804";
+}
+
+.cn-icon-jump-to:before {
+  content: "\e7fe";
+}
+
+.cn-icon-next-step:before {
+  content: "\e7fd";
+}
+
+.cn-icon-zoom-out:before {
+  content: "\e808";
+}
+
+.cn-icon-reset:before {
+  content: "\e809";
+}
+
+.cn-icon-to-default:before {
+  content: "\e805";
+}
+
+.cn-icon-pre-step:before {
+  content: "\e806";
+}
+
+.cn-icon-zoom-in:before {
+  content: "\e807";
+}
+
+.cn-icon-add-knowledge-base:before {
+  content: "\e802";
+}
+
+.cn-icon-update-knowledge-base:before {
+  content: "\e803";
+}
+
+.cn-icon-expand-continue:before {
+  content: "\e7fc";
+}
+
+.cn-icon-domain1:before {
+  content: "\e7fb";
+}
+
+.cn-icon-expand-relationship:before {
+  content: "\e7f8";
+}
+
+.cn-icon-resolve-ip:before {
+  content: "\e7f9";
+}
+
+.cn-icon-subdomain:before {
+  content: "\e7fa";
+}
+
+.cn-icon-graph:before {
+  content: "\e7f5";
+}
+
+.cn-icon-detail:before {
+  content: "\e7f6";
+}
+
+.cn-icon-tag:before {
+  content: "\e7f7";
+}
+
+.cn-icon-upload2:before {
+  content: "\e7f4";
+}
+
+.cn-icon-warn:before {
+  content: "\e7f3";
+}
+
+.cn-icon-providers:before {
+  content: "\e7f2";
+}
+
+.cn-icon-configure-policies:before {
+  content: "\e7f1";
+}
+
+.cn-icon-dns-insight:before {
+  content: "\e7ef";
+}
+
+.cn-icon-network-performance:before {
+  content: "\e7f0";
+}
+
+.cn-icon-copy:before {
+  content: "\e7ee";
+}
+
+.cn-icon-analysis:before {
+  content: "\e7ed";
+}
+
+.cn-icon-duration:before {
+  content: "\e7ec";
+}
+
+.cn-icon-select:before {
+  content: "\e7eb";
+}
+
+.cn-icon-expire-date:before {
+  content: "\e7d4";
+}
+
+.cn-icon-registry-email:before {
+  content: "\e7d5";
+}
+
+.cn-icon-geo-location:before {
+  content: "\e7d6";
+}
+
+.cn-icon-credit-rating:before {
+  content: "\e7d7";
+}
+
+.cn-icon-registration-date:before {
+  content: "\e7d8";
+}
+
+.cn-icon-app-full-name:before {
+  content: "\e7d9";
+}
+
+.cn-icon-description:before {
+  content: "\e7da";
+}
+
+.cn-icon-technology:before {
+  content: "\e7db";
+}
+
+.cn-icon-registrar:before {
+  content: "\e7dc";
+}
+
+.cn-icon-registry:before {
+  content: "\e7dd";
+}
+
+.cn-icon-operator:before {
+  content: "\e7de";
+}
+
+.cn-icon-sub-type:before {
+  content: "\e7df";
+}
+
+.cn-icon-app-name:before {
+  content: "\e7e0";
+}
+
+.cn-icon-registration-country:before {
+  content: "\e7e1";
+}
+
+.cn-icon-as:before {
+  content: "\e7e2";
+}
+
+.cn-icon-as-subnet:before {
+  content: "\e7e3";
+}
+
+.cn-icon-category2:before {
+  content: "\e7e4";
+}
+
+.cn-icon-domain-name-resolution:before {
+  content: "\e7e5";
+}
+
+.cn-icon-open-port:before {
+  content: "\e7e6";
+}
+
+.cn-icon-security-event:before {
+  content: "\e7e7";
+}
+
+.cn-icon-dns-ptr:before {
+  content: "\e7e8";
+}
+
+.cn-icon-information-aggregation:before {
+  content: "\e7e9";
+}
+
+.cn-icon-digital-certificate:before {
+  content: "\e7ea";
+}
+
+.cn-icon-save:before {
+  content: "\e7d1";
+}
+
+.cn-icon-edit1:before {
+  content: "\e7d2";
+}
+
+.cn-icon-revoke:before {
+  content: "\e7d3";
+}
+
+.cn-icon-administrations:before {
+  content: "\e7be";
+}
+
+.cn-icon-chart:before {
+  content: "\e7b8";
+}
+
+.cn-icon-user2:before {
+  content: "\e7b9";
+}
+
+.cn-icon-operation-log:before {
+  content: "\e7ba";
+}
+
+.cn-icon-role2:before {
+  content: "\e7bb";
+}
+
+.cn-icon-proxy:before {
+  content: "\e7bc";
+}
+
+.cn-icon-i18n:before {
+  content: "\e7bd";
+}
+
+.cn-icon-baocuo:before {
+  content: "\e7b7";
+}
+
+.cn-icon-a-SecurityEvent:before {
+  content: "\e7ae";
+}
+
+.cn-icon-bianji1:before {
+  content: "\e7af";
+}
+
+.cn-icon-a-PerformanceEvent:before {
+  content: "\e7b0";
+}
+
+.cn-icon-xinjian:before {
+  content: "\e7b1";
+}
+
+.cn-icon-a-RegulatoryRiskEvent:before {
+  content: "\e7b2";
+}
+
+.cn-icon-Delete1:before {
+  content: "\e7b3";
+}
+
+.cn-icon-a-EvaluatedTarget:before {
+  content: "\e7b4";
+}
+
+.cn-icon-a-GeneralSettings:before {
+  content: "\e7b5";
+}
+
+.cn-icon-Thresholds:before {
+  content: "\e7b6";
+}
+
+.cn-icon-good:before {
+  content: "\e7ad";
+}
+
+.cn-icon-events-type:before {
+  content: "\e7a5";
+}
+
+.cn-icon-events2:before {
+  content: "\e7a6";
+}
+
+.cn-icon-arrow-right2:before {
+  content: "\e7a7";
+}
+
+.cn-icon-traffic-overview:before {
+  content: "\e7a8";
+}
+
+.cn-icon-ingress:before {
+  content: "\e7a9";
+}
+
+.cn-icon-egress:before {
+  content: "\e7aa";
+}
+
+.cn-icon-close:before {
+  content: "\e7ab";
+}
+
+.cn-icon-search:before {
+  content: "\e7ac";
+}
+
+.cn-icon-setting2:before {
+  content: "\e7a4";
+}
+
+.cn-icon-xiala:before {
+  content: "\e7a3";
+}
+
+.cn-icon-Provider:before {
+  content: "\e7a1";
+}
+
+.cn-icon-APP1:before {
+  content: "\e7a2";
+}
+
+.cn-icon-social-network:before {
+  content: "\e79b";
+}
+
+.cn-icon-video:before {
+  content: "\e79c";
+}
+
+.cn-icon-voip:before {
+  content: "\e79d";
+}
+
+.cn-icon-email:before {
+  content: "\e79e";
+}
+
+.cn-icon-gaming:before {
+  content: "\e79f";
+}
+
+.cn-icon-file-sharing:before {
+  content: "\e7a0";
+}
+
+.cn-icon-location:before {
+  content: "\e798";
+}
+
+.cn-icon-events:before {
+  content: "\e799";
+}
+
+.cn-icon-overview:before {
+  content: "\e79a";
+}
+
+.cn-icon-detection1:before {
+  content: "\e792";
+}
+
+.cn-icon-entity:before {
+  content: "\e793";
+}
+
+.cn-icon-case:before {
+  content: "\e794";
+}
+
+.cn-icon-hunt:before {
+  content: "\e795";
+}
+
+.cn-icon-report1:before {
+  content: "\e796";
+}
+
+.cn-icon-knowledge-base:before {
+  content: "\e797";
+}
+
+.cn-icon-constant:before {
+  content: "\e78f";
+}
+
+.cn-icon-decline:before {
+  content: "\e790";
+}
+
+.cn-icon-rise1:before {
+  content: "\e791";
+}
+
+.cn-icon-sort:before {
+  content: "\e78c";
+}
+
+.cn-icon-a-NetworkAnalytics:before {
+  content: "\e786";
+}
+
+.cn-icon-navigation:before {
+  content: "\e787";
+}
+
+.cn-icon-up:before {
+  content: "\e788";
+}
+
+.cn-icon-left:before {
+  content: "\e789";
+}
+
+.cn-icon-a-NetworkPerformanceEvent:before {
+  content: "\e78a";
+}
+
+.cn-icon-refresh1:before {
+  content: "\e78b";
+}
+
+.cn-icon-a-DDosDetection:before {
+  content: "\e78d";
+}
+
+.cn-icon-Setting1:before {
+  content: "\e78e";
+}
+
+.cn-icon-add1:before {
+  content: "\e783";
+}
+
+.cn-icon-down:before {
+  content: "\e784";
+}
+
+.cn-icon-right:before {
+  content: "\e785";
+}
+
+.cn-icon-Data:before {
+  content: "\e782";
+}
+
+.cn-icon-a-:before {
+  content: "\e77b";
+}
+
+.cn-icon-a-1:before {
+  content: "\e781";
+}
+
+.cn-icon-bianji:before {
+  content: "\e77c";
+}
+
+.cn-icon-chuangjian:before {
+  content: "\e77d";
+}
+
+.cn-icon-shijian:before {
+  content: "\e77e";
+}
+
+.cn-icon-shijianjihua:before {
+  content: "\e77f";
+}
+
+.cn-icon-shanchu:before {
+  content: "\e780";
+}
+
+.cn-icon-a-allclear:before {
+  content: "\e779";
+}
+
+.cn-icon-org:before {
+  content: "\e770";
+}
+
+.cn-icon-role:before {
+  content: "\e771";
+}
+
+.cn-icon-os:before {
+  content: "\e772";
+}
+
+.cn-icon-software:before {
+  content: "\e773";
+}
+
+.cn-icon-report:before {
+  content: "\e76f";
+}
+
+.cn-icon-shezhi:before {
+  content: "\e76c";
+}
+
+.cn-icon-preview:before {
+  content: "\e76d";
+}
+
+.cn-icon-download2:before {
+  content: "\e76e";
+}
+
+.cn-icon-requests:before {
+  content: "\e76a";
+}
+
+.cn-icon-traffic:before {
+  content: "\e76b";
+}
+
+.cn-icon-domain2:before {
+  content: "\e767";
+}
+
+.cn-icon-ip2:before {
+  content: "\e768";
+}
+
+.cn-icon-app2:before {
+  content: "\e769";
+}
+
+.cn-icon-intercept:before {
+  content: "\e600";
+}
+
+.cn-icon-fraudulent-app:before {
+  content: "\e601";
+}
+
+.cn-icon-fraudulent-ip:before {
+  content: "\e602";
+}
+
+.cn-icon-fraudulent-domain:before {
+  content: "\e603";
+}
+
+.cn-icon-partly-cloudy:before {
+  content: "\e604";
+}
+
+.cn-icon-detection:before {
+  content: "\e766";
+}
+
+.cn-icon-filter:before {
+  content: "\e764";
+}
+
+.cn-icon-clear:before {
+  content: "\e765";
+}
+
+.cn-icon-time2:before {
+  content: "\e760";
+}
+
+.cn-icon-alert-level:before {
+  content: "\e763";
+}
+
+.cn-icon-windows:before {
+  content: "\e762";
+}
+
+.cn-icon-attacked:before {
+  content: "\e75e";
+}
+
+.cn-icon-attacker:before {
+  content: "\e75f";
+}
+
+.cn-icon-severity-level:before {
+  content: "\e75c";
+}
+
+.cn-icon-event-type:before {
+  content: "\e75d";
+}
+
+.cn-icon-trojan:before {
+  content: "\e761";
+}
+
+.cn-icon-mining-machine:before {
+  content: "\e758";
+}
+
+.cn-icon-percentage:before {
+  content: "\e759";
+}
+
+.cn-icon-mining-pool:before {
+  content: "\e75a";
+}
+
+.cn-icon-mining-traffic:before {
+  content: "\e75b";
+}
+
+.cn-icon-entity-alert:before {
+  content: "\e755";
+}
+
+.cn-icon-safe:before {
+  content: "\e756";
+}
+
+.cn-icon-city:before {
+  content: "\e757";
+}
+
+.cn-icon-search-advance:before {
+  content: "\e750";
+}
+
+.cn-icon-search-normal:before {
+  content: "\e751";
+}
+
+.cn-icon-blocks:before {
+  content: "\e752";
+}
+
+.cn-icon-list:before {
+  content: "\e753";
+}
+
+.cn-icon-help:before {
+  content: "\e754";
+}
+
+.cn-icon-active:before {
+  content: "\e74e";
+}
+
+.cn-icon-increase:before {
+  content: "\e74f";
+}
+
+.cn-icon-debug:before {
+  content: "\e606";
+}
+
+.cn-icon-override:before {
+  content: "\e68a";
+}
+
+.cn-icon-download1:before {
+  content: "\e6ab";
+}
+
+.cn-icon-upload1:before {
+  content: "\e6ac";
+}
+
+.cn-icon-position2:before {
+  content: "\e745";
+}
+
+.cn-icon-rise:before {
+  content: "\e743";
+}
+
+.cn-icon-fall:before {
+  content: "\e744";
+}
+
+.cn-icon-clear-cache:before {
+  content: "\e637";
+}
+
+.cn-icon-country:before {
+  content: "\e742";
+}
+
+.cn-icon-arrow-left-circle:before {
+  content: "\e741";
+}
+
+.cn-icon-credit:before {
+  content: "\e740";
+}
+
+.cn-icon-ip:before {
+  content: "\e73d";
+}
+
+.cn-icon-app:before {
+  content: "\e73e";
+}
+
+.cn-icon-domain:before {
+  content: "\e73f";
+}
+
+.cn-icon-cloud:before {
+  content: "\e73c";
+}
+
+.cn-icon-user:before {
+  content: "\e73a";
+}
+
+.cn-icon-pin:before {
+  content: "\e73b";
+}
+
+.cn-icon-view:before {
+  content: "\e702";
+}
+
+.cn-icon-more-arrow-down:before {
+  content: "\e739";
+}
+
+.cn-icon-edit:before {
+  content: "\e68c";
+}
+
+.cn-icon-delete:before {
+  content: "\e68f";
+}
+
+.cn-icon-more-dark:before {
+  content: "\e677";
+}
+
+.cn-icon-gear:before {
+  content: "\e694";
+}
+
+.cn-icon-add:before {
+  content: "\e738";
+}
+
+.cn-icon-arrow-up:before {
+  content: "\e732";
+}
+
+.cn-icon-arrow-down:before {
+  content: "\e737";
+}
+
+.cn-icon-arrow-left:before {
+  content: "\e735";
+}
+
+.cn-icon-arrow-right:before {
+  content: "\e736";
+}
+
+.cn-icon-id:before {
+  content: "\e734";
+}
+
+.cn-icon-position:before {
+  content: "\e72e";
+}
+
+.cn-icon-dns:before {
+  content: "\e72f";
+}
+
+.cn-icon-sub-category:before {
+  content: "\e730";
+}
+
+.cn-icon-risk:before {
+  content: "\e731";
+}
+
+.cn-icon-category:before {
+  content: "\e733";
+}
+
+.cn-icon-alert:before {
+  content: "\e72d";
+}
+
+.cn-icon-dropdown:before {
+  content: "\e724";
+}
+
+.cn-icon-download:before {
+  content: "\e725";
+}
+
+.cn-icon-check:before {
+  content: "\e726";
+}
+
+.cn-icon-refresh:before {
+  content: "\e727";
+}
+
+.cn-icon-language:before {
+  content: "\e728";
+}
+
+.cn-icon-more-light:before {
+  content: "\e729";
+}
+
+.cn-icon-style:before {
+  content: "\e72a";
+}
+
+.cn-icon-expand:before {
+  content: "\e72b";
+}
+
+.cn-icon-full-screen:before {
+  content: "\e72c";
+}
+
+.cn-icon-upload:before {
+  content: "\e71f";
+}
+
+.cn-icon-package-loss:before {
+  content: "\e720";
+}
+
+.cn-icon-http:before {
+  content: "\e721";
+}
+
+.cn-icon-time:before {
+  content: "\e722";
+}
+
+.cn-icon-ssl:before {
+  content: "\e723";
+}
+
+.cn-icon-root-domain:before {
+  content: "\e71d";
+}
+
+.cn-icon-doh-domain:before {
+  content: "\e71a";
+}
+
+.cn-icon-recursive-domain:before {
+  content: "\e71b";
+}
+
+.cn-icon-authoritative-domain:before {
+  content: "\e71c";
+}
+
+.cn-icon-top-level-domain:before {
+  content: "\e71e";
+}
+
+.cn-icon-dashboard:before {
+  content: "\e714";
+}
+
+.cn-icon-entities:before {
+  content: "\e715";
+}
+
+.cn-icon-incidents:before {
+  content: "\e716";
+}
+
+.cn-icon-artifacts-brower:before {
+  content: "\e717";
+}
+
+.cn-icon-setting:before {
+  content: "\e718";
+}
+
+.cn-icon-reports:before {
+  content: "\e719";
+}
+
