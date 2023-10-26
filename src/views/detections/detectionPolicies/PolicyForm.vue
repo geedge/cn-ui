@@ -53,7 +53,7 @@
             </template>
 
             <div class="form-collapse-content margin-t-18">
-              <el-form class="trigger-block margin-b-20" ref="form3" :model="triggerObj" :rules="rules">
+              <el-form v-if="language==='en'" class="trigger-block margin-b-20" ref="form3" :model="triggerObj" :rules="rules">
                 <div class="trigger-block-item margin-b-10">
                   <div>At least</div>
                   <el-form-item prop="atLeast">
@@ -94,6 +94,48 @@
                   </el-form-item>
                 </div>
               </el-form>
+              <el-form v-if="language==='cn'" class="trigger-block margin-b-20" ref="form3" :model="triggerObj" :rules="rules">
+                <div class="trigger-block-item margin-b-10">
+                  在
+                  <el-form-item prop="interval">
+                    <el-input size="mini" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                  </el-form-item>
+
+                  <el-form-item prop="intervalVal">
+                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="mini">
+                      <el-option
+                          v-for="item in intervalList"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                  内至少发生
+                  <el-form-item prop="atLeast">
+                    <el-input size="mini" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                  </el-form-item>
+                  次
+                </div>
+
+                <div class="trigger-block-item">
+                  若连续
+                  <el-form-item prop="resetInterval">
+                    <el-input size="mini" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                  </el-form-item>
+                  <el-form-item prop="resetIntervalVal">
+                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini">
+                      <el-option
+                          v-for="item in intervalList"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                  不活跃将重置计数
+                </div>
+              </el-form>
 
               <div class="form-setting__btn1">
                 <div class="btn1">
@@ -119,6 +161,7 @@ import { detectionUnitList } from '@/utils/static-data'
 import { ref } from 'vue'
 import { getDurationsTimeByType, getTimeByDurations } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
+import { storageKey } from '@/utils/constants'
 
 export default {
   name: 'DetectionForm',
@@ -162,9 +205,10 @@ export default {
           }
         ]
       },
-      intervalList: detectionUnitList.intervalList || [],
+      intervalList: [],
       editObj: {},
-      isComplete: true // 参数完整标识，默认完整（照顾编辑模式），false即不完整
+      isComplete: true, // 参数完整标识，默认完整（照顾编辑模式），false即不完整
+      language: 'en'
     }
   },
   components: {
@@ -173,6 +217,12 @@ export default {
     Loading
   },
   mounted () {
+    this.language = localStorage.getItem(storageKey.language) || 'en'
+    if (this.language === 'en') {
+      this.intervalList = detectionUnitList.intervalList
+    } else if (this.language === 'cn') {
+      this.intervalList = detectionUnitList.intervalListCN
+    }
     this.getDetailInfo()
   },
   setup () {
