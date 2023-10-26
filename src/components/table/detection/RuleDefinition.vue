@@ -378,7 +378,7 @@ export default {
       this.metricList = detectionUnitList.metricList || []
 
       if (this.mySettingObj.ruleType === this.detectionRuleType.indicator) {
-        axios.get(api.knowledgeBaseList, { params: this.searchLabel, pageSize: -1 }).then(response => {
+        axios.get(api.knowledgeBaseList, { params: { pageSize: -1 } }).then(response => {
           if (response.status === 200) {
             this.libraryList = _.get(response, 'data.data.list', []).filter(l => l.isBuiltIn === 0)
           } else {
