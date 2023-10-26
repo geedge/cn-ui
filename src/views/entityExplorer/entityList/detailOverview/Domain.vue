@@ -75,10 +75,11 @@
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.networkQualityRating')}}</div>
         <div style="position: relative;">
-          <div class="entity-score" v-if="!loadingNetworkQuality">
+          <div class="entity-score" v-if="!loadingNetworkQuality && score !=='-'">
             <span v-for="(dot, i) in scoreDot" :key="i" :class="dot.class"></span>
             <span style="padding-left: 4px;">{{score}}</span>
           </div>
+          <div class="entity-score" v-else>{{score}}</div>
           <loading :loading="loadingNetworkQuality" size="small" style="left: 1rem;width: 50%;"></loading>
         </div>
       </div>
