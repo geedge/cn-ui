@@ -103,8 +103,10 @@ export default {
     },
     onChangeCategory () {
       const obj = {}
-      if (this.checkStatus.length > 0) {
+      if (this.checkStatus.length === 1) {
         obj.status = this.checkStatus.join(',')
+      } else {
+        delete obj.status
       }
       if (this.checkCategory.length > 0) {
         obj.category = this.checkCategory.join(',')
