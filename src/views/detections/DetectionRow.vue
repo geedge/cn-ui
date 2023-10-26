@@ -17,11 +17,11 @@
               :style="`background-color: ${eventSeverityColor[detection.eventSeverity]}`">
           </span>
           <span class="detection-event-severity-block">{{ detection.eventName || '-' }}</span>
-          <i class="cn-icon cn-icon-attacker" ></i>{{detection.offenderIp || '-'}}
+          <i class="cn-icon cn-icon-attacker detection-list-icon" ></i>{{detection.offenderIp || '-'}}
           <div v-if="detection.domain" class="domain">{{detection.domain}}</div>
           <span class="line">-------</span>
           <span class="circle"></span>
-          <i class="cn-icon cn-icon-attacked" ></i>{{detection.victimIp || '-'}}
+          <i class="cn-icon cn-icon-attacked detection-list-icon" ></i>{{detection.victimIp || '-'}}
         </div>
         <div class="cn-detection__header" v-else-if="pageType === detectionPageType.performanceEvent">
           <div class="cn-entity__icon"><i :class="iconClass"></i></div>

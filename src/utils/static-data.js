@@ -476,9 +476,13 @@ export const detectionUnitList = {
     { value: 'library name2', knowledgeId: 9, label: 'Library name2' }
   ],
   intervalList: [
-    { value: 'days', label: 'days' },
     { value: 'hours', label: 'hours' },
     { value: 'minutes', label: 'minutes' },
     { value: 'seconds', label: 'seconds' }
+  ],
+  intervalListCN: [
+    { value: 'hours', label: '小时' },
+    { value: 'minutes', label: '分钟' },
+    { value: 'seconds', label: '秒' }
   ]
 }

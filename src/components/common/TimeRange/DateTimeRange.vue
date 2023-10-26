@@ -254,12 +254,14 @@ export default {
     const returnValue = () => {
       store.commit('setTimeFilter', { startTime: myStartTime.value, endTime: myEndTime.value, range: dateRangeValue.value })
       cancelHttp()
-      const obj = rangeHistory.value.find(d => d.start === myStartTime.value && d.end === myEndTime.value)
-      if (!obj) {
-        rangeHistory.value.unshift({
-          start: myStartTime.value,
-          end: myEndTime.value
-        })
+      if (rangeHistory.value[0]) {
+        const d = rangeHistory.value[0]
+        if (d.start !== myStartTime.value || d.end !== myEndTime.value) {
+          rangeHistory.value.unshift({
+            start: myStartTime.value,
+            end: myEndTime.value
+          })
+        }
       }
       if (!rangeHistory.value[0]) {
         rangeHistory.value.unshift({

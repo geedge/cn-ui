@@ -59,6 +59,7 @@
       width: 5px;
       height: 20px;
       border-radius: 12px;
+      margin-top: 2px;
     }
 
     .cn-detection__row {
@@ -88,6 +89,7 @@
           margin-left: 12px;
           font-size: xx-small;
           font-weight: bold;
+          margin-top: -1px;
         }
 
         .circle {
@@ -95,7 +97,7 @@
           height: 10px;
           border: 2px solid #da5656;
           border-radius: 10px;
-          margin-top: 4px;
+          margin-top: 1px;
           margin-right: 12px;
         }
 
@@ -119,10 +121,12 @@
           margin-right: 12px;
         }
         .detection-event-severity-block {
+          height: 20px;
+          line-height: 20px;
           font-size: 12px;
           color: #046EC9;
           font-weight: 500;
-          padding: 2px 10px;
+          padding: 0 10px;
           background: rgba(56,172,210,0.10);
           border: 1px solid #ADC7DB;
           box-shadow: 0 2px 4px 0 rgba(51,51,51,0.02);
@@ -261,4 +265,9 @@
   .low {
     color: #FFD82D !important;
   }
+}
+
+.detection-list-icon {
+  margin-top: 1px;
+  font-size: 16px !important;
 }
