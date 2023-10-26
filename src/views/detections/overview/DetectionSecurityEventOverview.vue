@@ -307,7 +307,7 @@
                 <span>{{ event.severity }}</span>
               </div>
               <div class="timeline__security-type">{{ event.eventType }}</div>
-              <div class="timeline__start-time">{{ dateFormatByAppearance(event.startTime) }}</div>
+              <div class="timeline__start-time">{{ dateFormatByAppearance(parseInt(event.startTime)) }}</div>
             </div>
           </div>
           <div class="row-timeline__foot">
