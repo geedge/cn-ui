@@ -82,7 +82,16 @@
                   <el-form-item prop="resetInterval">
                     <el-input size="mini" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
-                  <div>{{ triggerObj.intervalVal }}</div>
+                  <el-form-item prop="resetIntervalVal">
+                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini">
+                      <el-option
+                          v-for="item in intervalList"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
                 </div>
               </el-form>
 
@@ -144,6 +153,13 @@ export default {
             message: this.$t('validate.required'),
             trigger: 'blur'
           }
+        ],
+        resetIntervalVal: [
+          {
+            required: true,
+            message: this.$t('validate.required'),
+            trigger: 'change'
+          }
         ]
       },
       intervalList: detectionUnitList.intervalList || [],
@@ -174,6 +190,7 @@ export default {
       interval: '',
       intervalVal: '',
       resetInterval: '',
+      resetIntervalVal: '',
       finishFlag: false
     })
 
@@ -204,6 +221,7 @@ export default {
             this.triggerObj = this.$_.cloneDeep(this.editObj.ruleTriggerObj)
             this.triggerObj.intervalVal = getTimeByDurations(this.triggerObj.interval).type
             this.triggerObj.interval = getTimeByDurations(this.triggerObj.interval).value
+            this.triggerObj.resetIntervalVal = getTimeByDurations(this.triggerObj.resetInterval).type
             this.triggerObj.resetInterval = getTimeByDurations(this.triggerObj.resetInterval).value
             this.activeNames = ['1', '2', '3']
           } else {
@@ -262,8 +280,8 @@ export default {
             if (flag) {
               formObj.status = 1
             }
-            // 将时间转为参数所需，如5分钟转为PT5
-            formObj.ruleTrigger.resetInterval = getDurationsTimeByType(formObj.ruleTrigger.resetInterval, formObj.ruleTrigger.intervalVal)
+            // 将时间转为参数所需，如5分钟转为PT5M
+            formObj.ruleTrigger.resetInterval = getDurationsTimeByType(formObj.ruleTrigger.resetInterval, formObj.ruleTrigger.resetIntervalVal)
             formObj.ruleTrigger.interval = getDurationsTimeByType(formObj.ruleTrigger.interval, formObj.ruleTrigger.intervalVal)
             formObj.ruleTrigger.atLeast = parseInt(formObj.ruleTrigger.atLeast)
             formObj.ruleTrigger = JSON.stringify(formObj.ruleTrigger)

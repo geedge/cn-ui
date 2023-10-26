@@ -476,9 +476,6 @@ export const detectionUnitList = {
     { value: 'library name2', knowledgeId: 9, label: 'Library name2' }
   ],
   intervalList: [
-    { value: 'year', label: 'years' },
-    { value: 'months', label: 'months' },
-    { value: 'weeks', label: 'weeks' },
     { value: 'days', label: 'days' },
     { value: 'hours', label: 'hours' },
     { value: 'minutes', label: 'minutes' },

@@ -4,34 +4,34 @@
       <div class="block-mode">
         <!--todo 图标没有，后期换-->
         <div class="block-mode-left">
-          <i class="cn-icon cn-icon-setting2 block-mode-icon"></i>
+          <i class="cn-icon cn-icon-indicator-match block-mode-icon1"></i>
         </div>
 
-        <div class="block-mode-right">
-          <div class="block-mode-title">Indicator Match</div>
+        <div class="block-mode-right" style="position:relative;">
+          <div class="block-mode-title">{{ $t('detection.policy.indicatorMatch') }}</div>
           <div class="block-mode-content">
-            Use indicators from intelligence sources to detect matching events and alerts.
+            {{ $t('detection.policy.indicatorMatchIntroduce') }}
+            <div v-if="language==='cn'" style="color: rgba(0,0,0,0)">0</div>
           </div>
           <div :class="settingObj.ruleType===detectionRuleType.indicator?'block-mode-btn-active':'block-mode-btn'"
-               @click="selectMode(detectionRuleType.indicator)">select
+               @click="selectMode(detectionRuleType.indicator)">{{ $t('overall.select') }}
           </div>
         </div>
       </div>
 
       <div class="block-mode" style="cursor: no-drop;">
-        <!--todo 图标没有，后期换-->
         <div class="block-mode-left">
-          <i class="cn-icon cn-icon-setting2 block-mode-icon"></i>
+          <i class="cn-icon cn-icon-threshold block-mode-icon"></i>
         </div>
 
         <div class="block-mode-right">
-          <div class="block-mode-title">Threshold</div>
+          <div class="block-mode-title">{{ $t('detection.policy.threshold') }}</div>
           <div class="block-mode-content">
-            Aggregate query results to detect when number of matches exceeds threshold.
+            {{ $t('detection.policy.thresholdIntroduce') }}
           </div>
           <!--todo 当前版本暂时不可选择-->
-          <div style="cursor: no-drop;" :class="settingObj.ruleType===detectionRuleType.threshold?'block-mode-btn-active':'block-mode-btn'"
-               >select
+          <div style="cursor: no-drop;" :class="settingObj.ruleType===detectionRuleType.threshold?'block-mode-btn-active':'block-mode-btn'">
+            {{ $t('overall.select') }}
           </div>
 <!--          <div :class="settingObj.ruleType===detectionRuleType.threshold?'block-mode-btn-active':'block-mode-btn'"-->
 <!--               @click="selectMode(detectionRuleType.threshold)">select-->
@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { detectionRuleType } from '@/utils/constants'
+import { detectionRuleType, storageKey } from '@/utils/constants'
 import { switchStatus } from '@/utils/tools'
 import { detectionUnitList } from '@/utils/static-data'
 
@@ -160,7 +160,8 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      language: 'en'
     }
   },
   watch: {
@@ -183,6 +184,7 @@ export default {
   methods: {
     switchStatus,
     initData () {
+      this.language = localStorage.getItem(storageKey.language) || 'en'
       this.categoryList = detectionUnitList.categoryList
       this.eventTypeList = detectionUnitList.eventTypeList
     },

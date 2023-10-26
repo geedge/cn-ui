@@ -140,17 +140,17 @@ export const xAxisTimeRich = {
 
 function switchDateTypeByStr (str) {
   switch (str) {
-    case 'Y':
-      return 'years'
-    case 'M':
-      return 'months'
-    case 'W':
-      return 'weeks'
+    // case 'Y':
+    //   return 'years'
+    // case 'M':
+    //   return 'months'
+    // case 'W':
+    //   return 'weeks'
     case 'D':
       return 'days'
     case 'H':
       return 'hours'
-    case 'm':
+    case 'M':
       return 'minutes'
     case 'S':
       return 'seconds'
@@ -159,18 +159,18 @@ function switchDateTypeByStr (str) {
 
 function switchValueByDateType (str) {
   switch (str) {
-    case 'years':
-      return 'Y'
-    case 'months':
-      return 'M'
-    case 'weeks':
-      return 'W'
+    // case 'years':
+    //   return 'Y'
+    // case 'months':
+    //   return 'M'
+    // case 'weeks':
+    //   return 'W'
     case 'days':
       return 'D'
     case 'hours':
       return 'H'
     case 'minutes':
-      return 'm'
+      return 'M'
     case 'seconds':
       return 'S'
   }
@@ -184,13 +184,9 @@ export function getTimeByDurations (str) {
     }
     for (let i = 1; i < str.length; i++) {
       const item = str[i]
-      // P5M表示持续5个月，PT5M持续5分钟，T是位于时间分量之前的时间指示符，即T之前是年月周日，T之后是时分秒
+      // P5D表示持续5天，PT5M持续5分钟，T是位于时间分量之前的时间指示符，即T之前是年月周日，T之后是时分秒
       if (isNaN(item) && item !== 'T') {
-        if (item === 'M' && i < str.indexOf('T')) {
-          obj.type = switchDateTypeByStr('m')
-        } else {
-          obj.type = switchDateTypeByStr(item)
-        }
+        obj.type = switchDateTypeByStr(item)
       } else if (!isNaN(item)) {
         obj.value += item
       }
