@@ -126,7 +126,7 @@
             <svg class="icon item-popover-up row__content__svg" aria-hidden="true">
               <use xlink:href="#cn-icon-windows"></use>
             </svg>
-            {{ basicInfo.malwareInfo.mitreAttackPlatforms }}
+            {{ detection.malware.mitreAttackPlatforms }}
           </div>
           <div class="row__content" v-else>-</div>
         </div>
@@ -141,7 +141,7 @@
         <div class="overview__row">
           <div class="row__label">{{ $t('detections.reference') }}</div>
           <div class="row__content row__content--link" v-if="$_.get(detection, 'malware.reference')">
-            {{ basicInfo.malwareInfo.reference }}
+            {{ detection.malware.reference }}
           </div>
           <div class="row__content">-</div>
         </div>
