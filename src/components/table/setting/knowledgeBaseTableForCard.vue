@@ -78,7 +78,6 @@
               <div class="card-title-name" :title="updateKnowledge.label">{{updateKnowledge.label}}</div>
             </div>
             <el-switch v-model="updateKnowledge.status"
-                       v-if="showEnable"
                        active-color="#38ACD2"
                        inactive-color="#C0CEDB"
                        :active-value="1"
@@ -91,9 +90,33 @@
         </div>
       </div>
       <template v-if="!showAddUpdateDialog">
-        <div class="knowledge-update" >
-          <div class="update-title">
-            <div class="card-title-name">update record</div>
+        <div class="knowledge-update__tab" v-if="showEnable">
+          <el-tabs  v-model="activeTab"
+                   class="update-log-tab"
+                   @tab-click="handleClick"
+          >
+            <el-tab-pane  :label="$t('knowledgeBase.updateRecord')"
+                          name="updateRecord"
+                          key="updateRecord"
+                          ref="knowledgeUpdateRecordTab">
+            </el-tab-pane>
+            <el-tab-pane  :label="$t('knowledgeBase.learningEngineLogs')"
+                          name="intelligenceLearning"
+                          key="intelligenceLearning"
+                          ref="knowledgeIntelligenceLearningTab">
+            </el-tab-pane>
+          </el-tabs>
+          <div class="update-operate">
+            <button :title="$t('overall.update')" class="top-tool-btn--update"
+                    @click="uploadRecord">
+              <i class="cn-icon-update-knowledge-base cn-icon"></i>
+              <span>{{$t('overall.update')}}</span>
+            </button>
+          </div>
+        </div>
+        <div class="knowledge-update" v-else>
+          <div class="update-title" >
+            <div class="card-title-name">{{$t('knowledgeBase.updateRecord')}}</div>
           </div>
           <div class="update-operate">
             <button :title="$t('overall.update')" class="top-tool-btn--update"
@@ -120,6 +143,56 @@
           <el-table-column prop="commitVersion" label="Version information" width="150"  ></el-table-column>
           <el-table-column prop="description" label="Description"></el-table-column>
         </el-table>
+
+        <div class="psiphon3">
+          <div class="psiphon3-title">{{$t('knowledgeBase.psiphon3IpCount')}}</div>
+          <div class="psiphon3-bar">
+            <chart-error v-if="showErrorForPsiphon3" :content="errorMsgForPsiphon3"/>
+            <div class="bar-header" v-if="!showErrorForPsiphon3">
+              <div class="bar-header-left">
+                <div class="bar-value-active" ></div>
+                <div class="bar-value">
+                  <template v-for="(item, index) in tabs" :key="index">
+                    <div class="bar-value-tabs"
+                         :class=" {'is-active': tabType === item.class, 'mousemove-cursor': mousemoveCursor === item.class}"
+                         @mouseenter="mouseenterTab(item)"
+                         @mouseleave="mouseleaveTab(item)"
+                         @click="activeChange(item, index,true)"
+                    >
+                      <div class="bar-value-tabs-name">
+                        <div :class="item.class"></div>
+                        <div class="tabs-name" >{{ $t(item.name) }}</div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+              <div class="bar-select bar-header-right">
+                <div class="bar-select-time">
+                  <div class="bar-select__operation">
+                    <el-select
+                            size="mini"
+                            v-model="selectTime"
+                            placeholder=" "
+                            popper-class="common-select"
+                            :popper-append-to-body="false"
+                            @change="timeChange()"
+                    >
+                      <template #prefix>
+                        <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
+                      </template>
+                      <el-option v-for="item in dateRangeArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
+                    </el-select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="height: calc(100% - 24px); position: relative">
+              <chart-no-data v-if="isNoDataForPsiphon3 && !showErrorForPsiphon3"></chart-no-data>
+              <div class="chart-drawing" v-show="!isNoDataForPsiphon3 && !showErrorForPsiphon3" ref="psiphonBarChart"></div>
+            </div>
+          </div>
+        </div>
       </template>
       <template v-if="showAddUpdateDialog">
         <div class="update-knowledge-form">
@@ -199,11 +272,14 @@
 <script>
 import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
+import { getSecond } from '@/utils/date-util'
 import { knowledgeCategoryValue, unitTypes, storageKey, builtInKnowledgeBaseBasicInfo } from '@/utils/constants'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import { api } from '@/utils/api'
+import { xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
 import axios from 'axios'
 import _ from 'lodash'
+import * as echarts from 'echarts'
 import unitConvert from '@/utils/unit-convert'
 export default {
   name: 'knowledgeBaseTableForCard',
@@ -236,7 +312,60 @@ export default {
       currentVersion: 0,
       uploadLoading: false,
       showConfirmSwitch: false,
-      switchKnowledgeId: ''
+      switchKnowledgeId: '',
+      activeTab: 'updateRecord',
+      isNoDataForPsiphon3:false,
+      showErrorForPsiphon3:false,
+      errorMsgForPsiphon3: '',
+      leftOffset: 0,
+      tabType:'total',
+      mousemoveCursor:'',
+      selectTime:1440,
+      timeFilter:{},
+      tabs: [
+        {
+          name: 'knowledgeBase.total',
+          class: 'total',
+          color: '#00A7AB',
+          data: [],
+        },
+        {
+          name: 'knowledgeBase.active',
+          class: 'active',
+          color: '#7FA054',
+          data: [],
+        },
+        {
+          name: 'knowledgeBase.new',
+          class: 'new',
+          color: '#98709B',
+          data: [],
+        }
+      ],
+      dateRangeArr: [
+        { value: 1440, name: this.$t('dateTime.last1Day') },
+        { value: 2880, name: this.$t('dateTime.last2Days') },
+        { value: 10080, name: this.$t('dateTime.last7Days') },
+        { value: 21600, name: this.$t('dateTime.last15Days') },
+        { value: 43200, name: this.$t('dateTime.last30Days') },
+      ],
+      tabsTemplate:[
+        {
+          name: 'knowledgeBase.total',
+          class: 'total',
+          data: [],
+        },
+        {
+          name: 'knowledgeBase.active',
+          class: 'active',
+          data: [],
+        },
+        {
+          name: 'knowledgeBase.new',
+          class: 'new',
+          data: [],
+        }
+      ]
     }
   },
   setup () {
@@ -251,10 +380,227 @@ export default {
       uploadErrorTip,
       fileTypeLimit: '.csv',
       fileList: ref([]),
-      uploadFileSizeLimit: 1024 * 1024 * 1024
+      uploadFileSizeLimit: 1024 * 1024 * 1024,
+      myChart: shallowRef(null),
+      chartOption: shallowRef(null)
     }
   },
   methods: {
+    echartsInit(echartsData){
+      echartsData =  [
+        [1698318076,15],[1698338076,2],[1698358076,15],[1698378076,7],[1698398076,11],[1698418076,12],[1698438076,15],[1698458076,5]
+      ]
+      const _this = this
+      let curTab = this.tabs.find(item => item.class === _this.tabType)
+      this.chartOption = {
+        color:curTab.color,
+        legend: {
+          show: false
+        },
+        tooltip: {
+          show:true,
+          /*formatter: function (item) {
+
+            let str = '<div style="display:flex;flex-direction: row;align-items: center;">'
+            str += '<div style="width: 8px;\n' +
+                '            height: 8px;\n' +
+                '            margin: 3px 8px 0 0;\n' +
+                '            border-radius: 1px;;background:'
+            str += item.color
+            str += ';"></div>'
+            str += item.name + ': ' + xAxisTimeFormatter(item.data[0]) + '   ' + item.data[1]
+            str += '</div>'
+            str += '</div>'
+            return item.data[1]
+          }*/
+        },
+        grid: {
+          top: '12%',
+          left: '2%',
+          right: '2%',
+          bottom: 24,
+          containLabel: true
+        },
+        xAxis: {
+          type: 'time',
+          boundaryGap: ['1%', '3%'],
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          axisLabel: {
+            formatter: xAxisTimeFormatter,
+            rich: xAxisTimeRich,
+            interval:0
+          }
+        },
+        yAxis: {
+          type: 'value',
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#ECECEC'
+            }
+          },
+          axisLabel: {
+            margin: 20
+          }
+        },
+        series: [
+          {
+            name:curTab.class,
+            data: echartsData,
+            type: 'bar',
+            barWidth: 26
+          }
+        ]
+      }
+
+      this.$nextTick(() => {
+        if (this.myChart) {
+          this.myChart.dispose()
+        }
+        this.myChart = echarts.init(this.$refs.psiphonBarChart)
+        this.myChart.setOption(this.chartOption)
+
+        this.myChart.dispatchAction({
+          type: 'takeGlobalCursor',
+          key: 'brush',
+          brushOption: {
+            brushType: 'lineX',
+            xAxisIndex: 'all',
+            brushMode: 'single',
+            throttleType: 'debounce'
+          }
+        })
+        this.myChart.on('brushEnd', this.brushEcharts)
+      })
+    },
+    init (val, show, active, n) {
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        knowledgeId: this.updateKnowledge.knowledgeId,
+        type: this.tabType
+      }
+      let url = api.knowledgeBaseTimedistribution.replace('{{knowledgeId}}', this.updateKnowledge.knowledgeId).replace('{{type}}', this.tabType)
+      this.toggleLoading(true)
+      axios.get(url,{ params: params }).then(response => {
+        const res = response.data
+
+        if (response.status === 200) {
+          this.isNoDataForPsiphon3 = res.data.result.length === 0
+          this.showErrorForPsiphon3 = false
+          if (this.isNoDataForPsiphon3) {
+            this.tabType = ''
+            this.tabs = _.cloneDeep(this.tabsTemplate)
+          } else {
+            this.echartsInit(res.data.result)
+          }
+        } else {
+          this.httpError(res)
+        }
+      }).catch(e => {
+        console.error(e)
+        this.httpError(e)
+      }).finally(() => {
+        this.toggleLoading(false)
+        //this.echartsInit()
+      })
+    },
+    httpError (e) {
+      this.isNoDataForPsiphon3 = false
+      this.showErrorForPsiphon3 = true
+      this.errorMsgForPsiphon3 = this.errorMsgHandler(e)
+    },
+    handleActiveBar () {
+      if (document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')) {
+        const {
+          offsetLeft,
+          clientWidth,
+          clientLeft
+        } = document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')
+        const activeBar = document.querySelector('.psiphon3-bar .bar-value-active')
+        activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
+      }
+    },
+    resize () {
+      if (this.myChart) {
+        this.myChart.resize()
+      }
+    },
+    /**
+     * echarts框选
+     * @param params
+     */
+    brushEcharts (params) {
+      this.myChart.dispatchAction({
+        type: 'brush',
+        areas: [] // 删除选框
+      })
+      if (!this.mouseDownFlag) {
+        // 避免点击空白区域报错
+        if (params.areas && params.areas.length > 0) {
+          this.brushHistory.unshift({
+            startTime: _.cloneDeep(this.timeFilter.startTime) * 1000,
+            endTime: _.cloneDeep(this.timeFilter.endTime) * 1000
+          })
+
+          const rangeObj = {
+            startTime: Math.ceil(params.areas[0].coordRange[0]),
+            endTime: Math.ceil(params.areas[0].coordRange[1])
+          }
+
+          // 暂定框选最小范围为5分钟，后续可能会变动
+          if (rangeObj.endTime - rangeObj.startTime < 5 * 60 * 1000) {
+            rangeObj.startTime = rangeObj.endTime - 5 * 60 * 1000
+          }
+          this.$store.commit('setRangeEchartsData', rangeObj)
+        }
+      }
+    },
+    dispatchSelectAction (type, name) {
+      this.myChart && this.myChart.dispatchAction({
+        type: type,
+        name: name
+      })
+    },
+    legendSelectChange (item) {
+      this.dispatchSelectAction('legendSelect', item.name)
+      this.tabs.forEach((t) => {
+        if (t.name !== item.name) {
+          this.dispatchSelectAction('legendUnSelect', t.name)
+        }
+      })
+    },
+    timeChange(){
+      this.timeFilter.endTime = window.$dayJs.tz().valueOf()
+      this.timeFilter.startTime = this.timeFilter.endTime - this.selectTime.value * 60 * 1000
+      this.init()
+      this.$nextTick(() => {
+        this.handleActiveBar()
+      })
+    },
+    activeChange (item) { // isClick:代表是通过点击操作来的
+      if (this.isNoDataForPsiphon3) return
+      if(item) {
+        this.tabType = item.class
+      }
+      this.legendSelectChange(item)
+      this.init()
+    },
+    mouseenterTab (item) {
+      if (this.isNoDataForPsiphon3) return
+      this.mousemoveCursor = item.class
+      this.$nextTick(() => {
+        this.handleActiveBar()
+      })
+    },
+    mouseleaveTab () {
+      this.mousemoveCursor = ''
+    },
     fileChange (file, fileList) {
       // 判断后缀，仅支持.csv
       if (!_.endsWith(file.name, '.csv')) {
@@ -284,10 +630,7 @@ export default {
       if (response.code === 200) { */
       this.$message.success(this.$t('tip.success'))
       this.showAddUpdateDialog = false
-      axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: { pageSize: 999 } }).then(res => {
-        this.updateHistoryList = res.data.data.list
-        this.currentVersion = this.updateHistoryList[0].commitVersion + 1
-      })
+      this.getCurTabData()
       /* } else {
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
       } */
@@ -337,13 +680,14 @@ export default {
       this.showUpdateDialog = true
       this.showAddUpdateDialog = false
     },
-    jumpToUpdatePage (data, showEnable) {
-      axios.get(api.knowledgeBaseLog + '/' + data.knowledgeId, { params: { pageSize: 999 } }).then(res => {
-        this.updateKnowledge = data
-        this.updateHistoryList = res.data.data.list
-        this.currentVersion = this.updateHistoryList[0].commitVersion + 1
-        this.showEnable = showEnable
-        this.showUpdate()
+    async jumpToUpdatePage (data, showEnable) {
+      this.updateKnowledge = data
+      this.showEnable = showEnable
+      await this.getCurTabData()
+      await this.init()
+      this.showUpdate()
+      this.$nextTick(() => {
+        this.handleActiveBar()
       })
     },
     uploadRecord () {
@@ -351,6 +695,35 @@ export default {
       this.updateObject.name = this.updateKnowledge.name
       this.updateObject.label = this.updateKnowledge.label
       this.updateObject.description = ''
+    },
+    getCurTabData(){//showEnable:true 为psiphon3的知识库，false为其它知识库
+      let params = {
+        pageSize: 999
+      }
+      if(this.showEnable) {
+        if(this.activeTab === 'updateRecord'){
+          params = {
+            ...params,
+            opUser:-1
+          }
+        } else if(this.activeTab === 'intelligenceLearning'){
+          params = {
+            ...params,
+            opUser:0
+          }
+        }
+      }
+      axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: params }).then(res => {
+        this.updateHistoryList = res.data.data.list
+        if(this.updateHistoryList[0]) {
+          this.currentVersion = this.updateHistoryList[0].commitVersion + 1
+        }
+      })
+    },
+    // 切换tab
+    handleClick (tab) {
+      let activeTab = tab.panelName
+      this.getCurTabData()
     },
     clearSelect () {
       this.$nextTick(() => {
@@ -410,6 +783,19 @@ export default {
     }
   },
   watch: {
+    tabType (n) {
+      this.$nextTick(() => {
+        this.handleActiveBar()
+      })
+    },
+    timeFilter: {
+      handler () {
+        this.init()
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
+      }
+    },
     tableData: {
       handler (n) {
         if (this.tableData && this.tableData.length > 0) {
@@ -442,6 +828,10 @@ export default {
     }
   },
   mounted () {
+    this.myChart = null
+    this.chartOption = null
+    window.addEventListener('resize', this.resize)
+
     this.aiTaggingList = []
     this.websketchList = []
     this.tableData.forEach(item => {
@@ -452,6 +842,19 @@ export default {
         this.websketchList.push(item)
       }
     })
+  },
+  beforeUnmount () {
+    clearTimeout(this.timer)
+    window.removeEventListener('resize', this.resize)
+
+    let myChart = echarts.getInstanceByDom(this.$refs.psiphonBarChart)
+    if (myChart) {
+      echarts.dispose(myChart)
+    }
+    if (this.myChart) {
+      echarts.dispose(this.myChart)
+    }
+    myChart = null
   },
   computed: {
     uploadParams () {

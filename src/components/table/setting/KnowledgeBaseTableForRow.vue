@@ -122,7 +122,7 @@
 
 <script>
 import table from '@/mixins/table'
-import { knowledgeBaseCategory, knowledgeBaseSource, knowledgeBaseColor } from '@/utils/constants'
+import { knowledgeBaseCategory, knowledgeBaseSource } from '@/utils/constants'
 export default {
   name: 'KnowledgeBaseTableForRow',
   props: {
@@ -200,7 +200,23 @@ export default {
           width: 80
         }
       ],
-      knowledgeBaseColor
+      knowledgeBaseColor: [
+        {
+          label: this.$t('knowledge.info'),
+          value: 'rgb(119,131,145)',
+          name: 'info'
+        },
+        {
+          label: this.$t('knowledge.benign'),
+          value: 'rgb(116,159,77)',
+          name: 'benign'
+        },
+        {
+          label: this.$t('knowledge.malicious'),
+          value: 'rgb(226,97,84)',
+          name: 'malicious'
+        }
+      ]
     }
   },
   watch: {
@@ -235,14 +251,14 @@ export default {
     },
     colorText () {
       return function (color) {
-        const t = knowledgeBaseColor.find(t => t.value === color)
-        return t ? t.label : knowledgeBaseColor[0].label
+        const t = this.knowledgeBaseColor.find(t => t.value === color)
+        return t ? t.label : this.knowledgeBaseColor[0].label
       }
     },
     colorName () {
       return function (color) {
-        const t = knowledgeBaseColor.find(t => t.value === color)
-        return t ? t.name : knowledgeBaseColor[0].name
+        const t = this.knowledgeBaseColor.find(t => t.value === color)
+        return t ? t.name : this.knowledgeBaseColor[0].name
       }
     }
   }

@@ -43,6 +43,7 @@ export const api = {
   knowledgeBaseStatistics: apiVersion + '/knowledgeBase/statistics',
   updateKnowledgeUrl: apiVersion + '/knowledgeBase/items/batch',
   knowledgeBaseLog: apiVersion + '/knowledgeBase/audit/log',
+  knowledgeBaseTimedistribution: apiVersion + '/knowledgeBase/{{knowledgeId}}/{{type}}/timedistribution',
 
   // 报告相关
   reportJob: '/report/job',

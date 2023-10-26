@@ -1676,7 +1676,8 @@ height:300px !important;
   flex-direction: column;
   padding-bottom:0 !important;
   width: 1080px !important;
-  height: 75vh;
+  height: 90vh;
+  margin-top:5vh !important;
   overflow: hidden;
   &.update-knowledge--upload {
     height: auto;
@@ -1727,6 +1728,79 @@ height:300px !important;
         letter-spacing: 0;
         line-height: 16px;
         font-weight: 400;
+      }
+    }
+  }
+  .knowledge-update__tab {
+    position:relative;
+    .update-log-tab {
+      .el-tabs__header {
+        margin-bottom:10px;
+        .el-tabs__active-bar {
+          background-color:#046ECA;
+          height:2px;
+        }
+        .el-tabs__item {
+          font-family: NotoSansSC-Bold;
+          font-size: 14px;
+          //color: #353636;
+          font-weight: 700;
+          padding:0 16px 0 0;
+        }
+        .el-tabs__item:hover {
+          color:#353636;
+        }
+        .el-tabs__item.is-active {
+          color: #046ECA;
+        }
+        .el-tabs__nav-wrap::after {
+          height:1px;
+        }
+      }
+      .update-title {
+        line-height: 14px;
+        font-family: NotoSansSC-Bold;
+        font-size: 14px;
+        color: #353636;
+        font-weight: 700;
+      }
+    }
+    .update-operate {
+      position: absolute;
+      top: 0px;
+      display: flex;
+      align-items: center;
+      right: 0px;
+
+      height:28px;
+      flex-direction: row;
+      justify-content:center;
+      font-size: 14px;
+      font-weight: 400;
+      .top-tool-btn--update {
+        background-color: #38ACD2 !important;
+        padding-left:7px;
+        padding-right:7px;
+        color:#FFFFFF;
+        font-size: 12px;
+        font-weight: 500;
+        border: 1px solid rgba(46,136,166,0.85);
+        border-radius: 2px;
+        line-height: 28px;
+        height:28px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        i {
+          color: #FFFFFF;
+          font-size:14px !important;
+          margin-right:5px;
+        }
+      }
+      .top-tool-btn--update:hover {
+        background-color: #57B8D9 !important;
+        border-color: #2E88A6 !important;
       }
     }
   }
@@ -1820,13 +1894,14 @@ height:300px !important;
     .update-dialog__table {
       border-bottom: none;
       border-radius: 0.28571rem;
-      max-height:calc(75vh - 190px);
+      height:calc(90vh - 190px - 200px - 50px - 10px);//dialog为屏幕的90% - 表格以上内容的高度 - pishon3柱状图的高度 - 表格和柱状图之间的距离 - 底部留白的距离
+      max-height:calc(90vh - 190px - 200px - 50px - 10px);
+      //min-height:250px;
       .el-table--border th, .el-table--border td {
         border-right: none;
       }
       .el-table__body-wrapper {
-        height:fit-content;
-        max-height: calc(75vh - 230px);
+        max-height: calc(90vh - 230px - 200px - 50px - 10px);
         overflow-y: auto;
       }
     }
@@ -1902,6 +1977,155 @@ height:300px !important;
       }
     }
   }
+  .psiphon3{
+    display:flex;
+    flex-direction: column;
+    margin-top:25px;
+    .psiphon3-title {
+      font-family: NotoSansSC-Medium;
+      font-size: 12px;
+      color: #353636;
+      letter-spacing: 0;
+      line-height: 14px;
+      font-weight: 500;
+    }
+    .psiphon3-bar {
+      height: 200px;
+      width: 100%;
+      position: relative;
+      border: 1px solid #E2E5EC;
+      border-radius: 4px;
+      margin-top:10px;
+      //min-height:250px;
+      .chart-drawing {
+        height: 100%;
+        width: 100%;
+        .echarts-tooltip.echarts-tooltip-dark {
+          .cn-chart-body {
+            display: flex;
+            .cn-chart-tooltip {
+              display: flex;
+              flex-direction: column;
+              flex: 1;
+              .cn-chart-tooltip-box {
+                margin-right: 10px;
+              }
+              .cn-chart-tooltip-value.cn-chart-tooltip__color {
+                font-size: 12px;
+                color: #353636;
+                line-height: 21px;
+                font-weight: 600;
+              }
+            }
+          }
+        }
+      }
+      .bar-header {
+        display: flex;
+        justify-content: space-between;
+        //height: 73px;
+        margin-right:20px;
+        .bar-select.bar-header-right {
+          display: flex;
+          //flex: 1;
+          .bar-select__operation {
+            .el-input__inner {
+              width: 132px;
+            }
+          }
+          .bar-select-time {
+            display: flex;
+            align-items: center;
+            .bar-select__operation {
+              height: 24px;
+              margin-left: 3px;
+              box-shadow: none;
+              border-radius: 2px;
+              .cn-icon-Data {
+                color: #353636;
+              }
+              .el-input__inner {
+                padding-left: 4px;
+                line-height: 24px;
+                height: 24px;
+                font-size: 12px;
+                color: #353636;
+                font-weight: 400;
+              }
+              .el-input__suffix {
+                display: flex;
+                .el-input__suffix-inner {
+                  line-height: 24px;
+                  .el-select__caret {
+                    line-height: 24px;
+                    width: 16px;
+                    color: #353636;
+                  }
+                }
+              }
+            }
+          }
+        }
+        .bar-header-left {
+          .bar-value-active {
+            position: absolute;
+            height: 4px;
+            border-radius: 4px 0 0 0;
+            background: #046ECA;
+            top: 0;
+            z-index: 1;
+            transition: all linear .2s;
+          }
+          .bar-value {
+            font-size: 12px;
+            color: #717171;
+            font-weight: 400;
+            display: flex;
+            justify-content: center;
+            .is-active {
+              color: #353636;
+            }
+            .bar-value-tabs.mousemove-cursor {
+              border-top: 4px solid #D3D0D8;
+              z-index: 0;
+            }
+            .bar-value-tabs {
+              cursor: pointer;
+              padding: 16px 0 0 20px;
+              border-top: 4px solid transparent;
+              width:88px;
+              .bar-value-tabs-name {
+                position: relative;
+                display: flex;
+                .tabs-name {
+                  flex: 1;
+                  padding-left: 19px;
+                }
+                .total,.active,.new {
+                  width: 10px;
+                  height: 10px;
+                  border-radius: 50%;
+                  position: absolute;
+                  top: 50%;
+                  margin-top: -7px;
+                }
+                .total {
+                  background: #00A7AB;
+                }
+                .active {
+                  background: #7FA054;
+                }
+                .new {
+                  background: #98709B;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
 .knowledge-color {
   display:flex;

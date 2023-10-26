@@ -346,25 +346,6 @@ export const knowledgeBaseType = [
   }
 ]
 
-export const knowledgeBaseColor = [
-  {
-    label: 'Info',
-    value: 'rgb(119,131,145)',
-    name: 'info'
-  },
-  {
-    label: 'Benign',
-    value: 'rgb(116,159,77)',
-    name: 'benign'
-  },
-  {
-    label: 'Malicious',
-    value: 'rgb(226,97,84)',
-    name: 'malicious'
-  }
-
-]
-
 export const knowledgeBaseCategory = [
   {
     name: 'WebSketch',

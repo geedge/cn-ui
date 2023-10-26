@@ -47,7 +47,7 @@
                 <template v-for="color in knowledgeBaseColor" :key="color.name">
                   <el-option  :value="color.label" >
                     <div class="knowledge-color">
-                      <span class="knowledge-color__icon" :class="color.name"></span> <span>{{color.label}}</span>
+                      <span class="knowledge-color__icon" :class="color.name"></span> <span>{{$t(color.label)}}</span>
                     </div>
                   </el-option>
                 </template>
@@ -236,7 +236,7 @@
 import { useRoute } from 'vue-router'
 import { nextTick, reactive, ref } from 'vue'
 import _ from 'lodash'
-import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight, knowledgeCategoryValue, knowledgeBaseColor } from '@/utils/constants'
+import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight, knowledgeCategoryValue } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
@@ -515,12 +515,29 @@ export default {
       dataType: 'builtInList',
       status: 1,
       oldItemIds: [],
-      oldTagItem: {}
+      oldTagItem: {},
+      knowledgeBaseColor: [
+        {
+          label: this.$t('knowledge.info'),
+          value: 'rgb(119,131,145)',
+          name: 'info'
+        },
+        {
+          label: this.$t('knowledge.benign'),
+          value: 'rgb(116,159,77)',
+          name: 'benign'
+        },
+        {
+          label: this.$t('knowledge.malicious'),
+          value: 'rgb(226,97,84)',
+          name: 'malicious'
+        }
+      ]
     }
   },
   methods: {
     changeColor (label) {
-      const curColorObj = knowledgeBaseColor.find(item => item.label === this.editObject.colorLabel)
+      const curColorObj = this.knowledgeBaseColor.find(item => item.label === this.editObject.colorLabel)
       this.editObject.color = curColorObj.value
       this.editObject.colorName = curColorObj.name
     },
@@ -1216,14 +1233,14 @@ export default {
           }
           this.editObject = response.data.data
           if (response.data.data.color) {
-            const curColorObj = knowledgeBaseColor.find(item => item.value === response.data.data.color)
-            this.editObject.color = curColorObj ? curColorObj.value : knowledgeBaseColor[0].value
-            this.editObject.colorName = curColorObj ? curColorObj.name : knowledgeBaseColor[0].name
-            this.editObject.colorLabel = curColorObj ? curColorObj.label : knowledgeBaseColor[0].label
+            const curColorObj = this.knowledgeBaseColor.find(item => item.value === response.data.data.color)
+            this.editObject.color = curColorObj ? curColorObj.value : this.knowledgeBaseColor[0].value
+            this.editObject.colorName = curColorObj ? curColorObj.name : this.knowledgeBaseColor[0].name
+            this.editObject.colorLabel = curColorObj ? curColorObj.label : this.knowledgeBaseColor[0].label
           } else {
-            this.editObject.color = knowledgeBaseColor[0].value
-            this.editObject.colorName = knowledgeBaseColor[0].name
-            this.editObject.colorLabel = knowledgeBaseColor[0].label
+            this.editObject.color = this.knowledgeBaseColor[0].value
+            this.editObject.colorName = this.knowledgeBaseColor[0].name
+            this.editObject.colorLabel = this.knowledgeBaseColor[0].label
           }
           this.importedData = this.handleSpeticalTypeData(this.editObject.itemList)
           this.importedData.forEach(item => {
@@ -1254,6 +1271,9 @@ export default {
         })
       })
     } else {
+      this.editObject.color = this.knowledgeBaseColor[0].value
+      this.editObject.colorName = this.knowledgeBaseColor[0].name
+      this.editObject.colorLabel = this.knowledgeBaseColor[0].label
       this.stepHeightConstant.third = itemListHeight.noData// 进入新增时为250
     }
   },
@@ -1322,9 +1342,9 @@ export default {
       description: '',
       updateTime: '',
       status: 1,
-      color: knowledgeBaseColor[0].value,
-      colorLabel: knowledgeBaseColor[0].label,
-      colorName: knowledgeBaseColor[0].name
+      color: '',
+      colorLabel: '',
+      colorName: ''
     }
     /* 将组织后的数据还原拉平 */
     const revertImportedData = (data) => {
@@ -1407,7 +1427,6 @@ export default {
       stepHeightConstant,
       stepHeights,
       knowledgeBaseType,
-      knowledgeBaseColor,
       importedData,
       showImportedData,
       addItemList,
