@@ -189,7 +189,7 @@
             </div>
             <div style="height: calc(100% - 24px); position: relative">
               <chart-no-data v-if="isNoDataForPsiphon3 && !showErrorForPsiphon3"></chart-no-data>
-              <div class="chart-drawing" v-show="!isNoDataForPsiphon3 && !showErrorForPsiphon3" ref="psiphonBarChart"></div>
+              <div class="chart-drawing" v-show="!isNoDataForPsiphon3 && !showErrorForPsiphon3" id="psiphonBarChart"></div>
             </div>
           </div>
         </div>
@@ -462,7 +462,7 @@ export default {
         if (this.myChart) {
           this.myChart.dispose()
         }
-        this.myChart = echarts.init(this.$refs.psiphonBarChart)
+        this.myChart = echarts.init(document.getElementById('psiphonBarChart'))
         this.myChart.setOption(this.chartOption)
 
         this.myChart.dispatchAction({
@@ -846,15 +846,18 @@ export default {
   beforeUnmount () {
     clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
-
-    let myChart = echarts.getInstanceByDom(this.$refs.psiphonBarChart)
-    if (myChart) {
-      echarts.dispose(myChart)
+    const dom = document.getElementById('psiphonBarChart')
+    if (dom) {
+      let myChart = echarts.getInstanceByDom(document.getElementById('psiphonBarChart'))
+      if (myChart) {
+        echarts.dispose(myChart)
+      }
+      myChart = null
     }
+
     if (this.myChart) {
       echarts.dispose(this.myChart)
     }
-    myChart = null
   },
   computed: {
     uploadParams () {

@@ -250,15 +250,17 @@ export default {
       }
     },
     colorText () {
+      const vm = this
       return function (color) {
-        const t = this.knowledgeBaseColor.find(t => t.value === color)
-        return t ? t.label : this.knowledgeBaseColor[0].label
+        const t = vm.knowledgeBaseColor.find(t => t.value === color)
+        return t ? t.label : vm.knowledgeBaseColor[0].label
       }
     },
     colorName () {
+      const vm = this
       return function (color) {
-        const t = this.knowledgeBaseColor.find(t => t.value === color)
-        return t ? t.name : this.knowledgeBaseColor[0].name
+        const t = vm.knowledgeBaseColor.find(t => t.value === color)
+        return t ? t.name : vm.knowledgeBaseColor[0].name
       }
     }
   }
