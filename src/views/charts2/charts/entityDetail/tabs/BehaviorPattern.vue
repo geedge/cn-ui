@@ -13,6 +13,8 @@
           </div>
       </div>
       <div id="entityIpRoseType" class="behavior-pattern-chart"></div>
+      <div class="chart-bottom-dot__right"></div>
+      <div class="chart-bottom-dot__left"></div>
     </div>
   </div>
 </template>
@@ -77,7 +79,7 @@ export default {
         this.chartOption.series[0].data.push(item.value)
       })
       const len = this.tableData.length
-      const endIndex = len - 1
+      const endIndex = len + 1
       this.tableData.forEach((item, i) => {
         if (i !== endIndex) {
           this.chartOption.angleAxis.data.push(item.name + '2')
@@ -133,22 +135,7 @@ export default {
       }
       this.toggleLoading(true)
       await axios.get(`${api.entity.behaviorPattern}`, { params: params }).then(response => {
-        // const res = response.data
-        const res = {
-          "code": 200,
-          "msg": "ok",
-          "data": {
-            "resultType": "table",
-            "result": [
-              {
-                "asymmetric": "4",
-                "bulky": "4",
-                "cbr_streaming": "4",
-                "download": "4",
-              }
-            ]
-          }
-        }
+        const res = response.data
 
         if (response.status === 200) {
           this.isNoData = res.data.result.length === 0

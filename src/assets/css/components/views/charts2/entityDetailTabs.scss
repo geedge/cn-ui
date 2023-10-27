@@ -133,6 +133,20 @@
         width:calc(100% - 400px);
         position: relative
       }
+      .chart-bottom-dot__left {
+        position: absolute;
+        height: 0;
+        width: 195px;
+        border-bottom: 1px dashed #d3d3d3;
+        top: 319px;left: 575px;
+      }
+      .chart-bottom-dot__right {
+        position: absolute;
+        height: 0;
+        width: 195px;
+        border-bottom: 1px dashed #d3d3d3;
+        top: 319px;left: 830px;
+      }
     }
   }
 
