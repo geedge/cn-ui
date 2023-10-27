@@ -483,7 +483,7 @@ export default {
           const vm = this
           detectionChart.off('click')
           detectionChart.on('click', e => {
-            vm.filterData.securityEvent[1].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[1].value, e.data.name)
+            vm.filterData.securityEvent[2].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[2].value, e.data.name)
           })
         }
       }).catch(e => {
