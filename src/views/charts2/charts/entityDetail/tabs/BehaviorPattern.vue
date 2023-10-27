@@ -63,9 +63,6 @@ export default {
       this.toggleLoading(false)
       clearInterval(timer)
     }, 200)
-    this.$nextTick(() => {
-      this.initEcharts()
-    })
   },
   methods: {
     unitConvert,
@@ -136,7 +133,22 @@ export default {
       }
       this.toggleLoading(true)
       await axios.get(`${api.entity.behaviorPattern}`, { params: params }).then(response => {
-        const res = response.data
+        // const res = response.data
+        const res = {
+          "code": 200,
+          "msg": "ok",
+          "data": {
+            "resultType": "table",
+            "result": [
+              {
+                "asymmetric": "4",
+                "bulky": "4",
+                "cbr_streaming": "4",
+                "download": "4",
+              }
+            ]
+          }
+        }
 
         if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
@@ -166,6 +178,7 @@ export default {
               if (this.tableData.length === 0) {
                 this.isNoData = true
               }
+              this.initEcharts()
             }
           }
         } else {

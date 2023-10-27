@@ -1901,7 +1901,7 @@ height:300px !important;
         border-right: none;
       }
       .el-table__body-wrapper {
-        max-height: calc(90vh - 230px - 200px - 50px - 10px);
+        height: 100%;
         overflow-y: auto;
       }
     }
@@ -2035,7 +2035,7 @@ height:300px !important;
           }
           .bar-select-time {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             .bar-select__operation {
               height: 24px;
               margin-left: 3px;
@@ -2091,7 +2091,7 @@ height:300px !important;
             }
             .bar-value-tabs {
               cursor: pointer;
-              padding: 16px 0 0 20px;
+              padding: 10px 0 0 20px;
               border-top: 4px solid transparent;
               width:88px;
               .bar-value-tabs-name {
@@ -2106,8 +2106,7 @@ height:300px !important;
                   height: 10px;
                   border-radius: 50%;
                   position: absolute;
-                  top: 50%;
-                  margin-top: -7px;
+                  top: 6px;
                 }
                 .total {
                   background: #00A7AB;
