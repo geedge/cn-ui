@@ -57,12 +57,12 @@
                 <div class="trigger-block-item margin-b-10">
                   <div>At least</div>
                   <el-form-item prop="atLeast">
-                    <el-input size="mini" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
                   <div>times within</div>
 
-                  <el-form-item prop="interval">
-                    <el-input size="mini" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                  <el-form-item prop="interval" class="policy-form-item">
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
 
                   <el-form-item prop="intervalVal">
@@ -79,8 +79,8 @@
 
                 <div class="trigger-block-item">
                   <div>With the counter resetting after no activity for</div>
-                  <el-form-item prop="resetInterval">
-                    <el-input size="mini" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                  <el-form-item prop="resetInterval" class="policy-form-item">
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
                   <el-form-item prop="resetIntervalVal">
                     <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini">
@@ -98,7 +98,7 @@
                 <div class="trigger-block-item margin-b-10">
                   在
                   <el-form-item prop="interval">
-                    <el-input size="mini" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
 
                   <el-form-item prop="intervalVal">
@@ -113,7 +113,7 @@
                   </el-form-item>
                   内至少发生
                   <el-form-item prop="atLeast">
-                    <el-input size="mini" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
                   次
                 </div>
@@ -121,7 +121,7 @@
                 <div class="trigger-block-item">
                   若连续
                   <el-form-item prop="resetInterval">
-                    <el-input size="mini" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                   </el-form-item>
                   <el-form-item prop="resetIntervalVal">
                     <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini">
