@@ -18,28 +18,28 @@
       <div v-if="dropdownFlag" class="date-range-panel">
         <el-row class="date-range-panel-top" style="position: relative">
           <el-col :span="16" class="date-range-panel-content date-range-panel-content-left">
-            <div class="date-range-title" style="padding-left: 0">Absolute time range</div>
-            <el-date-picker
-                v-model="newDateValue"
-                ref="newDatePicker"
-                popper-class="my-date-picker"
-                style="position: absolute;top: -53px;left: -536px;"
-                :clearable="false"
-                :default-time="defaultTime"
-                :unlink-panels="true"
-                type="datetimerange"
-                @change="timeArrChange"
-            />
-            <div class="content-title">From</div>
+            <div class="date-range-title" style="padding-left: 0">{{$t('dateTime.absoluteTimeRange')}}</div>
+              <el-date-picker
+                      v-model="newDateValue"
+                      ref="newDatePicker"
+                      popper-class="my-date-picker"
+                      style="position: absolute;top: -53px;left: -536px;"
+                      :clearable="false"
+                      :default-time="defaultTime"
+                      :unlink-panels="true"
+                      type="datetimerange"
+                      @change="timeArrChange"
+              />
+            <div class="content-title">{{$t('dateTime.from')}}</div>
             <div @click="myDatePickerShow" tabindex="1" class="content-input">
               {{ dateFormatByAppearance(getMillisecond(myStartTime)) }}
             </div>
-            <div class="content-title">To</div>
+            <div class="content-title">{{$t('dateTime.to')}}</div>
             <div @click="myDatePickerShow" tabindex="2" class="content-input">
               {{ dateFormatByAppearance(getMillisecond(myEndTime)) }}
             </div>
 
-            <div class="date-range-title" style="padding-left: 0">Recently used absolute ranges</div>
+            <div class="date-range-title" style="padding-left: 0">{{$t('dateTime.recentlyUsedAbsoluteRanges')}}</div>
             <div class="date-range-history">
               <div v-for="(item, index) in rangeHistoryArr" :key="index" class="date-range-history-item"
                    @click="historyChange(item)">
@@ -53,7 +53,7 @@
               :span="8"
               class="date-range-panel-content date-range-panel-content-right"
               style="border-left: 1px solid rgba(0,0,0,0.09);">
-            <div class="date-range-title">Relatime time ranges</div>
+            <div class="date-range-title">{{$t('dateTime.relatimeTimeRanges')}}</div>
             <ul class="date-range-item">
               <li v-for="item in dateRangeArr"
                   @click="quickChange(item.value)"
@@ -105,6 +105,30 @@ export default {
     }
   },
   emits: ['change'],
+  data () {
+    return {
+      dateRangeArr: [
+        { value: 5, name: this.$t('dateTime.last5Mins') }, // 'last 5 mins'
+        { value: 15, name: this.$t('dateTime.last15Mins') },
+        { value: 30, name: this.$t('dateTime.last30Mins') },
+        { value: 60, name: this.$t('dateTime.last1Hour') }, // dateTime.last1Hour
+        { value: 180, name: this.$t('dateTime.last3Hours') },
+        { value: 360, name: this.$t('dateTime.last6Hours') },
+        { value: 720, name: this.$t('dateTime.last12Hours') },
+        { value: 1440, name: this.$t('dateTime.last1Day') }, // dateTime.last2Days
+        { value: 2880, name: this.$t('dateTime.last2Days') }
+      ]
+    }
+  },
+  computed: {
+    showDetail () {
+      let str = ''
+      if (this.dateRangeValue !== -1) {
+        str = this.dateRangeArr.find(item => item.value === this.dateRangeValue).name
+      }
+      return str
+    }
+  },
   setup (props, ctx) {
     // data
     const store = useStore()
@@ -124,24 +148,12 @@ export default {
     const rangeHistory = ref(localStorage.getItem(storageKey.dataRangeHistory) ? JSON.parse(localStorage.getItem(storageKey.dataRangeHistory)) : [])
     const dateRangeValue = props.dateRange ? ref(props.dateRange) : ref(60)
     const isCustom = ref(dateRangeValue.value === -1)
-    const dateRangeArr = [
-      { value: 5, name: 'last 5 mins' },
-      { value: 15, name: 'last 15 mins' },
-      { value: 30, name: 'last 30 mins' },
-      { value: 60, name: 'last 1 hour' },
-      { value: 180, name: 'last 3 hours' },
-      { value: 360, name: 'last 6 hours' },
-      { value: 720, name: 'last 12 hours' },
-      { value: 1440, name: 'last 1 day' },
-      { value: 2880, name: 'last 2 days' }
-    ]
     const dropdownFlag = ref(false)
     // 默认日历选择时间，即开始时间YYYY-MM-DD 00:00:00,结束时间YYYY-MM-DD 59:59:59
     const defaultTime = ref([
       new Date(2023, 1, 1, 0, 0, 0),
       new Date(2023, 1, 2, 23, 59, 59)
     ])
-
     // computed
     const utcStr = computed(() => {
       let str = 'UTC '
@@ -157,13 +169,6 @@ export default {
         str += '0' + (abs + '')
       }
       str += ':00 '
-      return str
-    })
-    const showDetail = computed(() => {
-      let str = ''
-      if (dateRangeValue.value !== -1) {
-        str = dateRangeArr.find(item => item.value === dateRangeValue.value).name
-      }
       return str
     })
     const rangeHistoryArr = rangeHistory
@@ -297,13 +302,11 @@ export default {
       utcStr,
       rangeEchartsData,
       address,
-      dateRangeArr,
       defaultTime,
       dateRangeValue,
       isCustom,
       newDateValue,
       newDatePicker,
-      showDetail,
       rangeHistory,
       rangeHistoryArr,
       getMillisecond,
