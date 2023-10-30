@@ -165,6 +165,30 @@ import { storageKey, detectionUnitList } from '@/utils/constants'
 export default {
   name: 'DetectionForm',
   data () {
+    const intervalValidator = (rule, value, callback) => {
+      const obj = this.handleIntervalByDateType(rule, value, this.triggerObj.intervalVal)
+      if (!obj.flag && obj.msg) {
+        callback(new Error(obj.msg))
+      }
+    }
+    const intervalValValidator = (rule, value) => {
+      const obj = this.handleIntervalByDateType(rule, this.triggerObj.intervalVal, value)
+      if (!obj.flag && obj.msg) {
+        this.$refs.form3.validateField('interval')
+      }
+    }
+    const resetIntervalValidator = (rule, value, callback) => {
+      const obj = this.handleIntervalByDateType(rule, value, this.triggerObj.resetIntervalVal)
+      if (!obj.flag && obj.msg) {
+        callback(new Error(obj.msg))
+      }
+    }
+    const resetIntervalValValidator = (rule, value) => {
+      const obj = this.handleIntervalByDateType(rule, this.triggerObj.resetIntervalVal, value)
+      if (!obj.flag && obj.msg) {
+        this.$refs.form3.validateField('resetInterval')
+      }
+    }
     return {
       activeNames: ['1'],
       rules: {
@@ -180,12 +204,20 @@ export default {
             required: true,
             message: this.$t('validate.required'),
             trigger: 'blur'
+          },
+          {
+            validator: intervalValidator,
+            trigger: 'blur'
           }
         ],
         intervalVal: [
           {
             required: true,
             message: this.$t('validate.required'),
+            trigger: 'change'
+          },
+          {
+            validator: intervalValValidator,
             trigger: 'change'
           }
         ],
@@ -194,12 +226,20 @@ export default {
             required: true,
             message: this.$t('validate.required'),
             trigger: 'blur'
+          },
+          {
+            validator: resetIntervalValidator,
+            trigger: 'blur'
           }
         ],
         resetIntervalVal: [
           {
             required: true,
             message: this.$t('validate.required'),
+            trigger: 'change'
+          },
+          {
+            validator: resetIntervalValValidator,
             trigger: 'change'
           }
         ]
@@ -417,6 +457,29 @@ export default {
         })
       }
       this.$message.error(this.$t('detection.create.informationFilled'))
+    },
+    handleIntervalByDateType (rule, value, type) {
+      if (value && (type === 'hours' || type === '小时')) {
+        if (parseInt(value) <= 24) {
+          return { flag: true }
+        } else {
+          return { flag: false, msg: this.$t('policy.dateTimeRangeHours') }
+        }
+      }
+      if (value && (type === 'minutes' || type === '分钟')) {
+        if (parseInt(value) <= 1440) {
+          return { flag: true }
+        } else {
+          return { flag: false, msg: this.$t('policy.dateTimeRangeMinutes') }
+        }
+      }
+      if (value && (type === 'seconds' || type === '秒')) {
+        if (parseInt(value) <= 86400) {
+          return { flag: true }
+        } else {
+          return { flag: false, msg: this.$t('policy.dateTimeRangeSeconds') }
+        }
+      }
     }
   }
 }
