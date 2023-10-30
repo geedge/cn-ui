@@ -121,6 +121,7 @@ export function xAxisTimeFormatter (value) {
     ':' +
     (date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes())
   // 如果是一天的开始
+  console.info(date, dayStart, hourStart, HHmm)
   if (date.getTime() === dayStart.getTime()) {
     return '{day|' + dateFormat(date, 'YYYY-MM-DD') + '}'
   } else if (date.getTime() === hourStart.getTime()) {
