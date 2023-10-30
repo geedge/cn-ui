@@ -207,7 +207,7 @@ export default {
         ],
         pinChange: [
           { validator: validateConfirmPin, trigger: 'blur' },
-          { pattern: /^[a-zA-Z0-9]{5,64}$/, message: this.$t('validate.atLeastFive') }
+          { validator: validatePin, trigger: 'blur' }
         ],
         roleIds: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
