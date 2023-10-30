@@ -169,24 +169,34 @@ export default {
       const obj = this.handleIntervalByDateType(rule, value, this.triggerObj.intervalVal)
       if (!obj.flag && obj.msg) {
         callback(new Error(obj.msg))
+      } else {
+        callback()
       }
     }
-    const intervalValValidator = (rule, value) => {
+    const intervalValValidator = (rule, value, callback) => {
       const obj = this.handleIntervalByDateType(rule, this.triggerObj.intervalVal, value)
       if (!obj.flag && obj.msg) {
         this.$refs.form3.validateField('interval')
+        callback()
+      } else {
+        callback()
       }
     }
     const resetIntervalValidator = (rule, value, callback) => {
       const obj = this.handleIntervalByDateType(rule, value, this.triggerObj.resetIntervalVal)
       if (!obj.flag && obj.msg) {
         callback(new Error(obj.msg))
+      } else {
+        callback()
       }
     }
-    const resetIntervalValValidator = (rule, value) => {
+    const resetIntervalValValidator = (rule, value, callback) => {
       const obj = this.handleIntervalByDateType(rule, this.triggerObj.resetIntervalVal, value)
       if (!obj.flag && obj.msg) {
         this.$refs.form3.validateField('resetInterval')
+        callback()
+      } else {
+        callback()
       }
     }
     return {
@@ -408,6 +418,7 @@ export default {
                 this.myLoading = false
               })
             } else {
+              console.log('进来')
               this.myLoading = true
               axios.put(api.detection.create.create, formObj).then(response => {
                 if (response.status === 200) {
