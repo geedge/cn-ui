@@ -59,7 +59,7 @@
           <el-option
               v-for="item in eventTypeList"
               :key="item.value"
-              :label="$t(item.label)"
+              :label="item.label"
               :value="item.value"
           />
         </el-select>
