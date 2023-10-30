@@ -20,7 +20,7 @@
         <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkCategory" @change="onChangeCategory">
             <el-checkbox v-for="item in categoryList" :key="item.name" class="new-filter-content-checkbox" :label="item.name">
-              {{ item.name }}
+              {{ item.label }}
             </el-checkbox>
           </el-checkbox-group>
         </div>
@@ -31,7 +31,7 @@
         <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkEventType" @change="onChangeCategory" style="display: flex;flex-direction: column">
             <el-checkbox v-for="item in eventTypeList" :key="item.name" class="new-filter-content-checkbox" :label="item.name">
-              {{ item.name }}
+              {{ item.label }}
             </el-checkbox>
           </el-checkbox-group>
         </div>
@@ -44,6 +44,7 @@
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { switchStatus } from '@/utils/tools'
+import { detectionUnitList } from '@/utils/constants'
 
 export default {
   name: 'DetectionFilter',
@@ -81,13 +82,25 @@ export default {
           }
 
           if (data.categoryList) {
-            this.categoryList = data.categoryList
+            this.categoryList = []
+            data.categoryList.forEach(item => {
+              const obj = detectionUnitList.categoryList.find(d => d.value === item.name)
+              if (obj) {
+                this.categoryList.push({ ...item, label: this.$t(obj.label) })
+              }
+            })
           } else {
             this.categoryList = []
           }
 
           if (data.eventTypeList) {
-            this.eventTypeList = data.eventTypeList
+            this.eventTypeList = []
+            data.eventTypeList.forEach(item => {
+              const obj = detectionUnitList.eventTypeList.find(d => d.value === item.name)
+              if (obj) {
+                this.eventTypeList.push({ ...item, label: this.$t(obj.label) })
+              }
+            })
           } else {
             this.eventTypeList = []
           }

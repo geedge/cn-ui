@@ -169,7 +169,7 @@
             <el-option
                 v-for="item in sourceList"
                 :key="item.value"
-                :label="item.label"
+                :label="$t(item.label)"
                 :value="item.value"
             />
           </el-select>
@@ -199,7 +199,7 @@
             <el-option
                 v-for="item in levelList"
                 :key="item.label"
-                :label="item.label"
+                :label="$t(item.label)"
                 :value="item.value"
             />
           </el-select>
@@ -215,8 +215,7 @@
 
 <script>
 import HistoryTopKeys from '@/components/table/detection/HistoryTopKeys'
-import { eventSeverityColor, detectionRuleType } from '@/utils/constants'
-import { detectionUnitList } from '@/utils/static-data'
+import { eventSeverityColor, detectionRuleType, detectionUnitList, securityLevel } from '@/utils/constants'
 import axios from 'axios'
 import _ from 'lodash'
 import { api } from '@/utils/api'
@@ -372,7 +371,7 @@ export default {
   methods: {
     initData () {
       this.sourceList = detectionUnitList.sourceList || []
-      this.levelList = detectionUnitList.levelList || []
+      this.levelList = securityLevel || []
       // threshold模式还没确定，所以数据暂时静态数据，后续根据需要修改
       this.conditionList = detectionUnitList.conditionList || []
       this.metricList = detectionUnitList.metricList || []

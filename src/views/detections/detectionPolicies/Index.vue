@@ -203,7 +203,6 @@ export default {
         }).catch(() => {
         })
       } else {
-        // todo 调用接口删除
         this.toggleLoading(true)
         axios.delete(api.detection.delete + '?ruleIds=' + ids).then(response => {
           if (response.status === 200) {

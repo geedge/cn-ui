@@ -47,7 +47,7 @@
           <el-option
               v-for="item in categoryList"
               :key="item.value"
-              :label="item.label"
+              :label="$t(item.label)"
               :value="item.value"
           />
         </el-select>
@@ -59,7 +59,7 @@
           <el-option
               v-for="item in eventTypeList"
               :key="item.value"
-              :label="item.label"
+              :label="$t(item.label)"
               :value="item.value"
           />
         </el-select>
@@ -109,9 +109,8 @@
 </template>
 
 <script>
-import { detectionRuleType, storageKey } from '@/utils/constants'
+import { detectionRuleType, storageKey, detectionUnitList } from '@/utils/constants'
 import { switchStatus } from '@/utils/tools'
-import { detectionUnitList } from '@/utils/static-data'
 
 export default {
   name: 'GeneralSettings',

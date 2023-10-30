@@ -221,27 +221,27 @@ export const dataForDnsTrafficLine = {
 export const dataForNpmEventsHeader = {
   chartData: [
     {
-      eventSeverity: 'critical',
+      eventSeverity: 'overall.critical',
       count: '-',
       index: 0
     },
     {
-      eventSeverity: 'high',
+      eventSeverity: 'overall.high',
       count: '-',
       index: 1
     },
     {
-      eventSeverity: 'medium',
+      eventSeverity: 'overall.medium',
       count: '-',
       index: 2
     },
     {
-      eventSeverity: 'low',
+      eventSeverity: 'overall.low',
       count: '-',
       index: 3
     },
     {
-      eventSeverity: 'info',
+      eventSeverity: 'overall.info',
       count: '-',
       index: 4
     }
@@ -430,59 +430,3 @@ export const connectionList = [
   //   label: 'OR'
   // }
 ]
-
-export const detectionUnitList = {
-  statusList: [
-    { status: 1 },
-    { status: 0 }
-  ],
-  categoryList: [
-    { value: 'security_event', label: 'Security Event' }/* ,
-    { value: 'performance_event', label: 'Performance Event' } */
-  ],
-  eventTypeList: [
-    { value: 'Initial Access', label: 'Initial Access' },
-    { value: 'Command and Control', label: 'Command and Control' },
-    { value: 'Credential Access', label: 'Credential Access' },
-    { value: 'Lateral Movement', label: 'Lateral Movement' },
-    { value: 'Collection', label: 'Collection' },
-    { value: 'Impact', label: 'Impact' },
-    { value: 'Anonymity', label: 'Anonymity' },
-    { value: 'Regulatory Risk', label: 'Regulatory Risk' }
-  ],
-  sourceList: [
-    { value: 'session_record', label: 'Session Record' }
-  ],
-  levelList: [
-    { value: 'critical', label: 'Critical' },
-    { value: 'high', label: 'High' },
-    { value: 'medium', label: 'Medium' },
-    { value: 'low', label: 'Low' },
-    { value: 'info', label: 'Info' }
-  ],
-  metricList: [
-    { value: 'tcp_lostlen_ratio', label: 'Bits/second' },
-    { value: 's2c_byte_retrans_ratio', label: 'Packets/second' },
-    { value: 's2c_byte_retrans_ratio1', label: 'Sessions/second' }
-  ],
-  conditionList: [
-    { value: 'than', label: 'Greater Than' },
-    { value: 'less', label: 'Greater Less' },
-    { value: 'equal', label: 'Greater Equal' }
-  ],
-  libraryList: [
-    { value: 'library name', knowledgeId: 7, label: 'Library name' },
-    { value: 'library name1', knowledgeId: 8, label: 'Library name1' },
-    { value: 'library name2', knowledgeId: 9, label: 'Library name2' }
-  ],
-  intervalList: [
-    { value: 'hours', label: 'hours' },
-    { value: 'minutes', label: 'minutes' },
-    { value: 'seconds', label: 'seconds' }
-  ],
-  intervalListCN: [
-    { value: 'hours', label: '小时' },
-    { value: 'minutes', label: '分钟' },
-    { value: 'seconds', label: '秒' }
-  ]
-}

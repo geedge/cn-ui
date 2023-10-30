@@ -75,8 +75,8 @@
           <div class="row__content" v-if="$_.get(basicInfo, 'domainInfo.category.reputationLevel')">
             <div
                 class="row__tag row__tag__level"
-                :style="`background-color:${eventSeverityColor[basicInfo.domainInfo.category.reputationLevel]}`">
-              {{ basicInfo.domainInfo.category.reputationLevel }}
+                :style="`background-color:${riskLevelColor1[basicInfo.domainInfo.category.reputationLevel]}`">
+              {{ reputationLevel(basicInfo.domainInfo.category.reputationLevel) || '-' }}
             </div>
           </div>
           <div class="row__content" v-else>-</div>
@@ -346,7 +346,7 @@
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { getMillisecond, dateFormatByAppearance } from '@/utils/date-util'
-import { eventSeverityColor, unitTypes, countryNameIdMapping, riskLevelMapping, riskLevelColor } from '@/utils/constants'
+import { eventSeverityColor, unitTypes, countryNameIdMapping, riskLevelMapping, riskLevelColor, riskLevelColor1 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
 export default {
@@ -358,6 +358,7 @@ export default {
     return {
       eventSeverityColor,
       riskLevelColor,
+      riskLevelColor1,
       basicInfo: {},
       events: [],
       reference: 'https://attack.mitre.org',
@@ -391,7 +392,15 @@ export default {
         const m = riskLevelMapping.find(mapping => {
           return mapping.value == level
         })
-        return (m && m.name) || level
+        return (m && this.$t(m.label)) || level
+      }
+    },
+    reputationLevel () {
+      return function (level) {
+        const m = riskLevelMapping.find(mapping => {
+          return mapping.name == level
+        })
+        return (m && this.$t(m.label)) || level
       }
     },
     locationRegion (info) {

@@ -53,6 +53,12 @@
             {{ $t(switchStatus(scope.row[item.prop])) }}
           </div>
         </template>
+        <template v-else-if="item.prop === 'category'">
+          {{ changeCategory(scope.row[item.prop]) }}
+        </template>
+        <template v-else-if="item.prop === 'eventType'">
+          {{ changeEventType(scope.row[item.prop]) }}
+        </template>
         <template v-else-if="item.prop === 'description'">
           <div style="padding-right: 20px">{{ scope.row[item.prop] }}</div>
         </template>
@@ -78,6 +84,7 @@ import table from '@/mixins/table'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import { switchStatus } from '@/utils/tools'
 import _ from 'lodash'
+import { detectionUnitList } from '@/utils/constants'
 
 export default {
   name: 'DetectionTable',
@@ -128,15 +135,13 @@ export default {
           show: true
         },
         {
-          // label: this.$t('config.user.createTime'),
-          label: 'Dimensions',
+          label: this.$t('detection.create.dimensions'),
           prop: 'dimensions',
           minWidth: 204,
           show: true
         },
         {
-          // label: this.$t('config.user.createTime'),
-          label: 'Library',
+          label: this.$t('detection.library'),
           prop: 'library',
           minWidth: 204,
           show: true
@@ -166,6 +171,26 @@ export default {
     switchStatus,
     rowDoubleClick (data) {
       this.$emit('rowDoubleClick', data)
+    },
+    changeCategory (value) {
+      if (value) {
+        const obj = detectionUnitList.categoryList.find(d => d.value === value)
+        let label = value
+        if (obj) {
+          label = this.$t(obj.label)
+        }
+        return label
+      }
+    },
+    changeEventType (value) {
+      if (value) {
+        const obj = detectionUnitList.eventTypeList.find(d => d.value === value)
+        let label = value
+        if (obj) {
+          label = this.$t(obj.label)
+        }
+        return label
+      }
     }
   }
 }

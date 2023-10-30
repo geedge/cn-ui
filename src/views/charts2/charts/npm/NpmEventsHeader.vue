@@ -3,7 +3,7 @@
   <div class="npm-header-body" v-for="(item, index) in chartData" :key=index>
     <div class="npm-header-body-severity">
       <div class="npm-header-body-severity-icon" :class="item.eventSeverity" :test-id="`icon${index}`"></div>
-      <div class="npm-header-body-severity-value" :test-id="`severity${index}`">{{item.eventSeverity}}</div>
+      <div class="npm-header-body-severity-value" :test-id="`severity${index}`">{{ $t(item.eventSeverity) }}</div>
     </div>
     <chart-error v-if="showError" tooltip :content="errorMsg" />
     <div v-else class="npm-header-body-total" :test-id="`total${index}`">{{item.count}}</div>
@@ -45,7 +45,7 @@ export default {
         endTime: this.timeFilter && this.timeFilter.endTime ? getSecond(this.timeFilter.endTime) : '',
         type: this.type
       }
-      /*this.toggleLoading(true)
+      /* this.toggleLoading(true)
       axios.get(api.npm.events.list, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -69,7 +69,7 @@ export default {
         this.errorMsg = this.errorMsgHandler(e)
       }).finally(() => {
         this.toggleLoading(false)
-      })*/
+      }) */
       this.toggleLoading(false)
     }
   },

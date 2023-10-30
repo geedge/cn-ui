@@ -31,7 +31,7 @@
 
             <div class="drawer-basic-function">
               <div class="detection-drawer-title">{{ $t('config.user.source') }}</div>
-              <div class="basic-function-value">{{ $_.get(detailData, 'category', '-') || '-' }}</div>
+              <div class="basic-function-value">{{ changeCategory(detailData.category) }}</div>
             </div>
 
             <div v-if="detailData.ruleType==='indicator_match'">
@@ -44,7 +44,7 @@
                 <div class="detection-drawer-title">{{ $t('detection.level') }}</div>
                 <div class="detection-drawer-title">
                   <div class="detection__icon" :style="`background-color: ${eventSeverityColor[detailData.ruleConfigObj.level]}`"></div>
-                  <div class="basic-function-value">{{ $_.get(detailData, 'ruleConfigObj.level', '-') || '-' }}</div>
+                  <div class="basic-function-value">{{ changeSecurityLevel(detailData.ruleConfigObj) }}</div>
                 </div>
               </div>
             </div>
@@ -82,11 +82,11 @@
     <div class="detection-drawer-collapse" style="margin: 20px 0">
       <el-collapse v-model="activeTrigger">
         <el-collapse-item :title="$t('detection.create.trigger')" name="trigger">
-          <div class="drawer-collapse-content">
+          <div class="drawer-collapse-content" v-if="language==='en'">
             <div class="drawer-collapse-trigger">
               Triggered when conditions occur at least
               <span style="color: #046ECA">
-                {{ $_.get(detailData, 'ruleTriggerObj.atLeast', '-') || '-' }} time
+                {{ atLeast }} {{ times }}
               </span> in
               <span style="color: #046ECA">
                 {{ getNumberFromStr($_.get(detailData, 'ruleTriggerObj.interval', '0')) || '-' }}
@@ -102,6 +102,26 @@
               </div>
             </div>
           </div>
+          <div class="drawer-collapse-content" v-if="language==='cn'">
+            <div class="drawer-collapse-trigger">
+              当条件为
+              <span style="color: #046ECA">
+                {{ getNumberFromStr($_.get(detailData, 'ruleTriggerObj.interval', '0')) || '-' }}
+                {{ changeValueToLabel(detailData.ruleTriggerObj) }}
+              </span>内至少出现
+              <span style="color: #046ECA">
+                {{ $_.get(detailData, 'ruleTriggerObj.atLeast', '-') || '-' }} 次
+              </span>时触发
+            </div>
+
+            <div class="drawer-basic-function">
+              <div class="detection-drawer-title">评估频率</div>
+              <div class="drawer-trigger-minutes">
+                {{ getNumberFromStr($_.get(detailData, 'ruleTriggerObj.resetInterval', '0')) || '-' }}
+                {{ changeValueToLabel(detailData.ruleTriggerObj) }}
+              </div>
+            </div>
+          </div>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -111,7 +131,7 @@
 
 <script>
 import { switchStatus, toUpperCaseByString } from '@/utils/tools'
-import { eventSeverityColor } from '@/utils/constants'
+import { detectionUnitList, eventSeverityColor, securityLevel, storageKey } from '@/utils/constants'
 import axios from 'axios'
 import { api } from '@/utils/api'
 
@@ -128,7 +148,10 @@ export default {
       activeTrigger: 'trigger',
       detailData: {},
       eventSeverityColor,
-      severityList: []
+      severityList: [],
+      language: 'en',
+      atLeast: 0,
+      times: 'time'
     }
   },
   watch: {
@@ -141,6 +164,9 @@ export default {
         }
       }
     }
+  },
+  mounted () {
+    this.language = localStorage.getItem(storageKey.language) || 'en'
   },
   methods: {
     switchStatus,
@@ -159,8 +185,13 @@ export default {
 
       axios.get(`${api.detection.detail}/${this.drawerInfo.ruleId}`).then(res => {
         if (res.status === 200) {
-          const data = res.data.data
-          this.detailData = data
+          this.detailData = res.data.data
+          this.atLeast = this.$_.get(this.detailData, 'ruleTriggerObj.atLeast', '-')
+          if (!isNaN(this.atLeast) && this.atLeast > 1) {
+            this.times = 'times'
+          } else {
+            this.times = 'time'
+          }
         }
       }).catch(err => {
         console.error(err)
@@ -168,6 +199,50 @@ export default {
     },
     getNumberFromStr (str) {
       return str.match(/\d+(\.\d+)?/g)[0]
+    },
+    changeCategory (value) {
+      if (value) {
+        const obj = detectionUnitList.categoryList.find(d => d.value === value)
+        let label = value
+        if (obj) {
+          label = this.$t(obj.label)
+        }
+        return label
+      } else {
+        return '-'
+      }
+    },
+    changeSecurityLevel (config) {
+      if (config) {
+        if (config.level) {
+          const obj = securityLevel.find(d => d.value === config.level)
+          let label = config.level
+          if (obj) {
+            label = this.$t(obj.label)
+          }
+          return label
+        } else {
+          return '-'
+        }
+      } else {
+        return '-'
+      }
+    },
+    changeValueToLabel (config) {
+      if (config) {
+        if (config.intervalVal) {
+          const obj = detectionUnitList.intervalListCN.find(d => d.value === config.intervalVal)
+          let label = config.intervalVal
+          if (obj) {
+            label = this.$t(obj.label)
+          }
+          return label
+        } else {
+          return '-'
+        }
+      } else {
+        return '-'
+      }
     }
   }
 }
