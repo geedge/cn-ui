@@ -126,7 +126,7 @@
             </button>
           </div>
         </div>
-        <div style="height: calc(90vh - 190px - 200px - 50px - 10px - 42px);margin-top: 42px; position: absolute; width: calc(100% - 60px)">
+        <div :style="{height: updateKnowledge.source === 'cn_psiphon3_ip' ? 'calc(90vh - 190px - 200px - 50px - 42px)' : 'calc(100% - 242px)',  marginTop: '42px', position: 'absolute', width: 'calc(100% - 60px)'}">
           <loading :loading="updateLogLoading"></loading>
         </div>
         <el-table ref="updateDataTable"
@@ -134,7 +134,8 @@
                   :data="updateHistoryList"
                   @selection-change="secondSelectionChange"
                   width="100%"
-                  class="update-dialog__table"
+                  :class="updateKnowledge.source === 'cn_psiphon3_ip' ? 'update-dialog__table update-dialog__table--psiphon3' : 'update-dialog__table'"
+                  :header-cell-style="{background:'#f5f7fa',color:'#353636',fontWeight: '400',fontSize: '12px',borderRight: 'none',borderBottom: 'none'}"
                   cell-style="padding:6px 0px;font-size: 12px;color: #353636;font-weight: 400;line-height: 20px;border-right:none;"
                   header-cell-style="padding:8px 0px;font-size: 12px;color: #353636;font-weight: 500;border-right:none;">
           <el-table-column prop="opTime" :label="$t('entities.tab.informationAggregation.updateTime')" width="150" ></el-table-column>
@@ -153,7 +154,7 @@
           </template>
         </el-table>
 
-        <div class="psiphon3">
+        <div class="psiphon3" v-if="updateKnowledge.source === 'cn_psiphon3_ip'">
           <div class="psiphon3-title">{{$t('knowledgeBase.psiphon3IpCount')}}</div>
           <div class="psiphon3-bar">
             <chart-error v-if="showErrorForPsiphon3" :content="errorMsgForPsiphon3"/>
@@ -576,6 +577,7 @@ export default {
       this.$message.success(this.$t('tip.success'))
       this.showAddUpdateDialog = false
       this.getCurTabData()
+      this.init()
       /* } else {
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
       } */
@@ -748,6 +750,7 @@ export default {
     },
     tableData: {
       handler (n) {
+        console.info(n)
         if (this.tableData && this.tableData.length > 0) {
           this.aiTaggingList = []
           this.websketchList = []
@@ -773,6 +776,12 @@ export default {
       handler (n) {
         if (!n) {
           this.fileList = []
+          if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+            this.init()
+          }
+        } else {
+          this.myChart && this.myChart.dispose()
+          this.myChart = null
         }
       }
     }
