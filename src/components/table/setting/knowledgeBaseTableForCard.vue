@@ -750,7 +750,6 @@ export default {
     },
     tableData: {
       handler (n) {
-        console.info(n)
         if (this.tableData && this.tableData.length > 0) {
           this.aiTaggingList = []
           this.websketchList = []
