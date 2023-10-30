@@ -56,9 +56,6 @@
         <template v-else-if="item.prop === 'category'">
           {{ changeCategory(scope.row[item.prop]) }}
         </template>
-        <template v-else-if="item.prop === 'eventType'">
-          {{ changeEventType(scope.row[item.prop]) }}
-        </template>
         <template v-else-if="item.prop === 'description'">
           <div style="padding-right: 20px">{{ scope.row[item.prop] }}</div>
         </template>
@@ -175,16 +172,6 @@ export default {
     changeCategory (value) {
       if (value) {
         const obj = detectionUnitList.categoryList.find(d => d.value === value)
-        let label = value
-        if (obj) {
-          label = this.$t(obj.label)
-        }
-        return label
-      }
-    },
-    changeEventType (value) {
-      if (value) {
-        const obj = detectionUnitList.eventTypeList.find(d => d.value === value)
         let label = value
         if (obj) {
           label = this.$t(obj.label)
