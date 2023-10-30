@@ -157,11 +157,10 @@ import RuleDefinition from '@/components/table/detection/RuleDefinition'
 import { api } from '@/utils/api'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
-import { detectionUnitList } from '@/utils/static-data'
 import { ref } from 'vue'
 import { getDurationsTimeByType, getTimeByDurations } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
-import { storageKey } from '@/utils/constants'
+import { storageKey, detectionUnitList } from '@/utils/constants'
 
 export default {
   name: 'DetectionForm',
