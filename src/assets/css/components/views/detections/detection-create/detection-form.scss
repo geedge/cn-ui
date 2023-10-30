@@ -101,6 +101,12 @@
             justify-content: flex-start;
             height: 24px;
             line-height: 24px;
+
+            .policy-form-item {
+              .el-form-item__error {
+                width: 260px;
+              }
+            }
           }
 
           .el-input--mini .el-input__inner {
