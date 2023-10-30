@@ -31,7 +31,7 @@
         <div class="new-filter-content-content">
           <el-checkbox-group v-model="checkEventType" @change="onChangeCategory" style="display: flex;flex-direction: column">
             <el-checkbox v-for="item in eventTypeList" :key="item.name" class="new-filter-content-checkbox" :label="item.name">
-              {{ item.label }}
+              {{ item.name }}
             </el-checkbox>
           </el-checkbox-group>
         </div>
@@ -94,13 +94,7 @@ export default {
           }
 
           if (data.eventTypeList) {
-            this.eventTypeList = []
-            data.eventTypeList.forEach(item => {
-              const obj = detectionUnitList.eventTypeList.find(d => d.value === item.name)
-              if (obj) {
-                this.eventTypeList.push({ ...item, label: this.$t(obj.label) })
-              }
-            })
+            this.eventTypeList = data.eventTypeList
           } else {
             this.eventTypeList = []
           }

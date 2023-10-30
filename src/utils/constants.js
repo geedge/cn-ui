@@ -2478,14 +2478,14 @@ export const detectionUnitList = {
     { value: 'performance_event', label: 'Performance Event' } */
   ],
   eventTypeList: [
-    { value: 'Initial Access', label: 'eventType.initialAccess' },
-    { value: 'Command and Control', label: 'eventType.commandAndControl' },
-    { value: 'Credential Access', label: 'eventType.credentialAccess' },
-    { value: 'Lateral Movement', label: 'eventType.lateralMovement' },
-    { value: 'Collection', label: 'eventType.collection' },
-    { value: 'Impact', label: 'eventType.impact' },
-    { value: 'Anonymity', label: 'eventType.anonymity' },
-    { value: 'Regulatory Risk', label: 'eventType.regulatoryRisk' }
+    { value: 'Initial Access', label: 'Initial Access' },
+    { value: 'Command and Control', label: 'Command and Control' },
+    { value: 'Credential Access', label: 'Credential Access' },
+    { value: 'Lateral Movement', label: 'Lateral Movement' },
+    { value: 'Collection', label: 'Collection' },
+    { value: 'Impact', label: 'Impact' },
+    { value: 'Anonymity', label: 'Anonymity' },
+    { value: 'Regulatory Risk', label: 'Regulatory Risk' }
   ],
   sourceList: [
     { value: 'session_record', label: 'overall.sessionRecord' }
@@ -2556,6 +2556,24 @@ export const sourceList = [
   {
     value: 'session_record',
     label: 'overall.sessionRecord'
+  }
+]
+
+export const durationTimeMapping = [
+  {
+    value: 'h',
+    labelEN: 'h',
+    labelCN: '小时'
+  },
+  {
+    value: 'm',
+    labelEN: 'm',
+    labelCN: '分钟'
+  },
+  {
+    value: 's',
+    labelEN: 's',
+    labelCN: '秒'
   }
 ]
 
