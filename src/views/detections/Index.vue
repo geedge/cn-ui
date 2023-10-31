@@ -172,12 +172,12 @@ export default {
         // }
       ],
       chartInit: [],
-      pageObj: {
-        pageNo: 1,
-        pageSize: defaultPageSize,
-        total: 0,
-        resetPageNo: true
-      },
+      // pageObj: {
+      //   pageNo: 1,
+      //   pageSize: defaultPageSize,
+      //   total: 0,
+      //   resetPageNo: true
+      // },
       q: '',
       detectionPageType,
       filterData: {
@@ -716,7 +716,7 @@ export default {
         this.q = ''
         this.metaList = []
       }
-      if (this.pageObj.resetPageNo) {
+      if (this.pageObj.resetPageNo && !this.initFlag) {
         this.pageObj.pageNo = 1
       } else {
         this.pageObj.resetPageNo = true
@@ -774,11 +774,11 @@ export default {
       this.search(this.metaList, this.q)
     },
     pageNo (val) {
-      this.pageObj.pageNo = val || 1
-      this.pageObj.resetPageNo = false
       // 初始化时，mounted和pageNo都会调用列表接口，且pageNo先执行，
       // 初始化保证mounted执行，后续pageNo变动则不影响接口调用
       if (!this.initFlag) {
+        this.pageObj.pageNo = val || 1
+        this.pageObj.resetPageNo = false
         this.search(this.metaList, this.q)
       }
     },
@@ -849,7 +849,11 @@ export default {
       }
     }
     this.queryFilter(q)
-    this.initFlag = false
+    if (this.initFlag) {
+      this.timer = setTimeout(() => {
+        this.initFlag = false
+      }, 1000)
+    }
     this.queryList(q)
     this.debounceFunc = this.$_.debounce(this.resize, 300)
     window.addEventListener('resize', this.debounceFunc)
@@ -1028,9 +1032,17 @@ export default {
       timeFilter.value.startTime = parseInt(startTimeParam)
       timeFilter.value.endTime = parseInt(endTimeParam)
     }
+    const pageObj = ref({
+      pageNo: query.pageNo ? parseInt(query.pageNo) : 1,
+      // 是否重置pageNo，在执行新搜索时是true
+      resetPageNo: true,
+      pageSize: query.pageSize ? parseInt(query.pageSize) : defaultPageSize,
+      total: 0
+    })
     return {
       timeFilter,
-      pageType
+      pageType,
+      pageObj
     }
   }
 }
