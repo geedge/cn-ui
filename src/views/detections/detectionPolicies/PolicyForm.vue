@@ -418,7 +418,6 @@ export default {
                 this.myLoading = false
               })
             } else {
-              console.log('进来')
               this.myLoading = true
               axios.put(api.detection.create.create, formObj).then(response => {
                 if (response.status === 200) {

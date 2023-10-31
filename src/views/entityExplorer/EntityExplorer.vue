@@ -741,7 +741,10 @@ export default {
         q = decodeURI(q)
       }
       // %位置不为0，即内容包含非英文时
-      const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
+      let str1 = ''
+      if (q) {
+        str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
+      }
       if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
         q = decodeURI(q)
       }
