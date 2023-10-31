@@ -2514,13 +2514,13 @@ export const detectionUnitList = {
   ],
   intervalList: [
     { value: 'hours', label: 'hours' },
-    { value: 'minutes', label: 'minutes' },
-    { value: 'seconds', label: 'seconds' }
+    { value: 'minutes', label: 'minutes' }
+    // { value: 'seconds', label: 'seconds' }
   ],
   intervalListCN: [
     { value: 'hours', label: '小时' },
-    { value: 'minutes', label: '分钟' },
-    { value: 'seconds', label: '秒' }
+    { value: 'minutes', label: '分钟' }
+    // { value: 'seconds', label: '秒' }
   ]
 }
 
