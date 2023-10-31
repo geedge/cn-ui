@@ -61,7 +61,7 @@
                     <div class="reference-tag__group">
                       <span class="reference-tag" v-for="(refer, index) in scope.row[item.prop].slice(0,2)" >{{refer}}</span>
                     </div>
-                    <div class="reference-more">+{{scope.row[item.prop].length - 2}} more</div>
+                    <div class="reference-more">+{{scope.row[item.prop].length - 2}} {{$t('overall.more')}}</div>
                   </div>
                 </template>
                 <div class="reference-tag__tip">
@@ -156,7 +156,7 @@ export default {
         }, {
           label: this.$t('knowledge.reference'),
           prop: 'reference',
-          width: 180,
+          width: 190,
           show: true
         }, {
           label: this.$t('overall.color'),
