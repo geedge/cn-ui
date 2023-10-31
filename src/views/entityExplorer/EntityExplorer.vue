@@ -36,8 +36,8 @@
         <div style="display: flex;flex-direction: column;height: calc(100% - 42px);">
           <div class="explorer-result" v-if="showList" style="position: relative;">
             <loading :loading="loadingCount" style="width: 240px"></loading>
-            <span>{{ summaryCount.totalCount }}&nbsp;</span>results，IP
-            <span>{{ summaryCount.ipCount }}</span>，Domain
+            <span>{{ summaryCount.totalCount }}&nbsp;</span>{{$t('overall.results')}}，IP
+            <span>{{ summaryCount.ipCount }}</span>，{{$t('overall.domain')}}
             <span>{{ summaryCount.domainCount }}</span>，APP
             <span>{{ summaryCount.appCount }}</span>
           </div>
@@ -92,7 +92,7 @@
         <div class="entity-overview">
           <div class="overview-left">
             <span class="overview-left-loading">
-              <span class="overview-left-loading-span">Domain</span>
+              <span class="overview-left-loading-span">{{$t('overall.domain')}}</span>
             </span>
           </div>
           <div class="overview-right">

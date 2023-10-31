@@ -1,7 +1,7 @@
 <template>
   <div class="entity-detail-basic-info">
     <chart-error v-if="showError" :content="errorMsg"/>
-    <div class="entity-type">{{entityType[entity.entityType]}}</div>
+    <div class="entity-type">{{entityTypeName}}</div>
     <div class="entity-basic-info">
       <div class="entity-basic-info__name">
         <span id="entityName">{{entity.entityName}}</span>
@@ -88,6 +88,29 @@ export default {
       levelTwoTags: [{ value: '安全', type: 'positive' }, { value: '工具', type: 'normal' }, { value: '恶意IP', type: 'negative' }],
       analysisPopShow: false,
       hideTagArea: false
+    }
+  },
+  computed: {
+    entityTypeName () {
+      const type = this.entity.entityType
+      let entityTypeName = '-'
+      switch (type) {
+        case ('ip'): {
+          entityTypeName = 'IP'
+          break
+        }
+        case ('domain'): {
+          entityTypeName = this.$t('overall.domain')
+          break
+        }
+        case ('app'): {
+          entityTypeName = 'APP'
+          break
+        }
+        default:
+          break
+      }
+      return entityTypeName
     }
   },
   methods: {

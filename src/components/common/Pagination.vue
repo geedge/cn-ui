@@ -1,35 +1,39 @@
 <template>
   <div class="pagination" >
-    <el-pagination
-        ref="page"
-        @size-change="size"
-        @prev-click="prev"
-        @next-click="next"
-        @current-change="current"
-        :current-page="pageObj.pageNo"
-        :page-sizes="pageSizes?pageSizes:[20, 50, 100]"
-        :page-size="Number(pageObj.pageSize)"
-        :layout="layout"
-        :total="pageObj.total"
-        v-bind="bind"
-    >
-      <el-select v-model="pageSize" :placeholder="pageSize+$t('pageSize')" size="mini"
-                 :popper-append-to-body="appendToBody" class="pagination-size-select" @change="size"
-                 :popper-class="popClass" @visible-change="popperVisible">
-        <el-option v-for="(item, index) in pageSizes" :key="index" :label="item.label" :value="item.value"></el-option>
-      </el-select>
+    <el-config-provider :locale="locale">
+      <el-pagination
+              ref="page"
+              @size-change="size"
+              @prev-click="prev"
+              @next-click="next"
+              @current-change="current"
+              :current-page="pageObj.pageNo"
+              :page-sizes="pageSizes?pageSizes:[20, 50, 100]"
+              :page-size="Number(pageObj.pageSize)"
+              :layout="layout"
+              :total="pageObj.total"
+              v-bind="bind"
+      >
+        <el-select v-model="pageSize" :placeholder="pageSize+$t('pageSize')" size="mini"
+                   :popper-append-to-body="appendToBody" class="pagination-size-select" @change="size"
+                   :popper-class="popClass" @visible-change="popperVisible">
+          <el-option v-for="(item, index) in pageSizes" :key="index" :label="item.label" :value="item.value"></el-option>
+        </el-select>
 
-    </el-pagination>
+      </el-pagination>
+    </el-config-provider>
   </div>
 </template>
 
 <script>
 import { defaultPageSize, storageKey } from '@/utils/constants'
-
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { parseInt } from 'lodash'
+import ElConfigProvider from 'element-plus'
+import cn from 'element-plus/lib/locale/lang/zh-cn'
+import en from 'element-plus/lib/locale/lang/en'
 
 export default {
   name: 'pagination',
@@ -60,9 +64,15 @@ export default {
     const { query } = useRoute()
     const pageSize = ref(defaultPageSize)
     const currentPageNo = ref(props.storePageNoOnUrl ? (query.pageNo || (props.pageObj.pageNo || 1)) : (props.pageObj.pageNo || 1))
+    const language = localStorage.getItem(storageKey.language) || 'en' // 初始未选择默认 en 英文
+    let locale = en
+    if (language === 'cn') {
+      locale = cn
+    }
     return {
       pageSize,
-      currentPageNo
+      currentPageNo,
+      locale
     }
   },
   data () {

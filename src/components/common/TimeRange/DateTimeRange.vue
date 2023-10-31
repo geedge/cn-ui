@@ -19,6 +19,7 @@
         <el-row class="date-range-panel-top" style="position: relative">
           <el-col :span="16" class="date-range-panel-content date-range-panel-content-left">
             <div class="date-range-title" style="padding-left: 0">{{$t('dateTime.absoluteTimeRange')}}</div>
+            <el-config-provider :locale="locale">
               <el-date-picker
                       v-model="newDateValue"
                       ref="newDatePicker"
@@ -30,6 +31,7 @@
                       type="datetimerange"
                       @change="timeArrChange"
               />
+            </el-config-provider>
             <div class="content-title">{{$t('dateTime.from')}}</div>
             <div @click="myDatePickerShow" tabindex="1" class="content-input">
               {{ dateFormatByAppearance(getMillisecond(myStartTime)) }}
@@ -82,6 +84,9 @@ import { ref, computed, watch, reactive } from 'vue'
 import { storageKey } from '@/utils/constants'
 import { getMillisecond, millTimestampDiffFromTz, timestampToList } from '@/utils/date-util'
 import { useStore } from 'vuex'
+import ElConfigProvider from 'element-plus'
+import cn from 'element-plus/lib/locale/lang/zh-cn'
+import en from 'element-plus/lib/locale/lang/en'
 
 export default {
   name: 'DateTimeRange',
@@ -294,6 +299,12 @@ export default {
         })
       }
     }
+    const language = localStorage.getItem(storageKey.language) || 'en' // 初始未选择默认 en 英文
+    let locale = en
+    if (language === 'cn') {
+      locale = cn
+    }
+
     return {
       myStartTime,
       myEndTime,
@@ -316,7 +327,8 @@ export default {
       timeArrChange,
       returnValue,
       quickChange,
-      historyChange
+      historyChange,
+      locale
     }
   }
 }

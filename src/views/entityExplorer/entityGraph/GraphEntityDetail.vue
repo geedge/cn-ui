@@ -5,7 +5,7 @@
       <div class="graph-detail__icon"><i :class="iconClass"></i></div>
 
       <div class="graph-detail-header">
-        <div class="entity-graph-type">{{ $_.get(node, 'myData.entityType') ? entityType[$_.get(node, 'myData.entityType')] : '-' }}</div>
+        <div class="entity-graph-type">{{entityTypeName}}</div>
         <div class="graph-basic-info">
           <div class="graph-basic-info-name__block">
             <div class="graph-basic-info-name" :title="$_.get(node, 'id', '')" id="entityName">{{ $_.get(node, 'id', '') }}</div>
@@ -143,6 +143,27 @@ export default {
           break
       }
       return className
+    },
+    entityTypeName () {
+      const type = _.get(this.node, 'myData.entityType', '')
+      let entityTypeName = '-'
+      switch (type) {
+        case ('ip'): {
+          entityTypeName = 'IP'
+          break
+        }
+        case ('domain'): {
+          entityTypeName = this.$t('overall.domain')
+          break
+        }
+        case ('app'): {
+          entityTypeName = 'APP'
+          break
+        }
+        default:
+          break
+      }
+      return entityTypeName
     },
     handleDate () {
       return function (key) {
