@@ -83,6 +83,7 @@
                        :active-value="1"
                        :inactive-value="0"
                        :before-change="(knowledgeId) => confirmSwitchLearning(updateKnowledge.knowledgeId)"
+                       v-if="updateKnowledge.source === 'cn_psiphon3_ip'"
             >
             </el-switch>
           </div>
