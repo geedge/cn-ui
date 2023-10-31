@@ -823,6 +823,9 @@ export default {
         if (obj) {
           this.filterData[this.pageType][index].value = [obj.value]
           this.filterData[this.pageType][index].flag = true
+        } else {
+          this.filterData[this.pageType][index].value = []
+          this.filterData[this.pageType][index].flag = true
         }
       } else {
         this.filterData[this.pageType][index].value = []
