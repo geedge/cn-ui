@@ -43,10 +43,10 @@
     <div class="cn-header__nav">
       <i class="cn-icon cn-icon-a-NetworkAnalytics"></i>
       <el-breadcrumb class="header__left-breadcrumb" separator=">">
-        <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item.value}`" :title="item.value"
+        <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item.value}`" :title="index===3?item.value:''"
                             v-for="(item,index) in breadcrumb" :key="item.value">
-          <template v-if="index===3">
-            <div class="header__left-breadcrumb-item-select">
+          <template v-if="index===3" >
+            <div class="header__left-breadcrumb-item-select" >
               <el-popover placement="bottom-start"
                           ref="breadcrumbPopover"
                           :show-arrow="false"

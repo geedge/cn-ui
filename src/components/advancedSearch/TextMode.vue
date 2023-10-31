@@ -68,7 +68,7 @@ export default {
         mode: {
           name: 'sql'
         },
-        placeholder: 'Enter...',
+        placeholder: '',
         lineNumbers: false
       })
       this.codeMirror.setOption('extraKeys', {
