@@ -1905,6 +1905,9 @@
       &.update-dialog__table--psiphon3 {
         height: calc(90vh - 190px - 200px - 50px - 10px);
       }
+      &.update-dialog__table--system-user {
+        height: calc(100% - 139px);
+      }
     }
     .update-knowledge-form {
       .el-upload {
