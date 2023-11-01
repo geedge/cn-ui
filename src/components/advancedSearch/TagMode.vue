@@ -555,7 +555,7 @@ export default {
         const column = this.columnList.find(c => {
           return c.label === param.column
         })
-        const obj = this.metaList.find(d => d.column && d.column.label === param.column && d.value && d.value.value === param.value[0])
+        const obj = this.metaList.find(d => d.column && d.column.label === param.column && d.value && (d.value.value === `'${param.value[0]}'` || d.value.value === param.value[0]))
         if (obj) {
           const metaIndex = this.metaList.findIndex(m => m.column && m.column.label === param.column && m.operator.value === param.operator && m.value.value === this.handleValue(param.value, column, param.operator))
           // 不是在首位，则删除时顺带删除前一个index（and或or），否则顺带删除后一个index
