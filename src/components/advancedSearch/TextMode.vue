@@ -2,7 +2,7 @@
   <textarea
       ref="textSearch"
   ></textarea>
-  <div class="search__suffixes search__suffixes--text-mode">
+  <div class="search__suffixes search__suffixes--text-mode" style="background: #fff;">
     <div class="search__suffix">
       <el-popover
           popper-class="my-popper-class"

@@ -90,8 +90,8 @@
       </template>
     </div>
     <div class="tag-search__add" @click="addCondition">{{$t('entities.advancedSearch.add')}}</div>
-    <div class="search__suffixes search__suffixes--tag-mode">
-      <div class="search__suffix" style="margin-right: 12px">
+    <div class="search__suffixes search__suffixes--tag-mode search__suffixes--tag-mode__block">
+      <div class="search__suffix" style="margin-right: 12px;margin-top: 1px;">
         <el-popover
             popper-class="my-popper-class"
             placement="top"
