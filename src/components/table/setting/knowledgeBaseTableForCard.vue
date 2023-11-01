@@ -256,7 +256,7 @@
           </el-form>
         </div>
         <div class="dialog-footer">
-          <el-button @click="showAddUpdateDialog = false">{{ $t('overall.cancel') }}</el-button>
+          <el-button @click="cancle">{{ $t('overall.cancel') }}</el-button>
           <el-button type="primary" @click="submitConfirm">{{ $t('tip.confirm') }}</el-button>
         </div>
       </template>
@@ -283,8 +283,8 @@
       <div class="dialog-message">{{ confirmSwitchLearningTip }}</div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="showConfirmSwitch = false">{{ $t('overall.cancel') }}</el-button>
-          <el-button type="primary" @click="switchLearning">OK</el-button>
+          <el-button @click="cancleSwitch">{{ $t('overall.cancel') }}</el-button>
+          <el-button type="primary" @click="switchLearning">{{$t('tip.confirm')}}</el-button>
         </span>
       </template>
     </el-dialog>
@@ -427,7 +427,6 @@ export default {
         },
         xAxis: {
           type: 'time',
-          boundaryGap: ['1%', '3%'],
           axisLine: {
             show: false
           },
@@ -605,9 +604,18 @@ export default {
     },
     submitConfirm () {
       this.showConfirmDialog = true
+      this.$nextTick(() => {
+        this.handleActiveBar()
+      })
     },
     submit () {
       this.$refs.knowledgeUpload.submit()
+    },
+    cancle(){
+      this.showAddUpdateDialog = false
+      this.$nextTick(() => {
+        this.handleActiveBar()
+      })
     },
     clickCard (data, event) {
       if (data.isSelected) { // 原来为选中，当前点击后未选中
@@ -704,6 +712,9 @@ export default {
       this.getCurTabData()
       if (tab.index === '1') {
         this.init()
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
       }
     },
     clearSelect () {
@@ -742,6 +753,9 @@ export default {
       this.showConfirmSwitch = true
       this.switchKnowledgeId = id
       return false
+    },
+    cancleSwitch(){
+      this.showConfirmSwitch = false
     },
     switchLearning () {
       const hint = this.aiTaggingList.find(d => d.knowledgeId === this.switchKnowledgeId)
