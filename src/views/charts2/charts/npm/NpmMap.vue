@@ -12,8 +12,8 @@
           placeholder=" "
           :popper-append-to-body="false"
       >
-        <el-option value="Server">Server</el-option>
-        <el-option value="Client">Client</el-option>
+        <el-option value="Server" :label="$t('overall.server')">{{$t('overall.server')}}</el-option>
+        <el-option value="Client" :label="$t('overall.client')">{{$t('overall.client')}}</el-option>
       </el-select>
       <el-select
           size="mini"
