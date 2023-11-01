@@ -11,7 +11,7 @@
           <div class="block-mode-title">{{ $t('detection.policy.indicatorMatch') }}</div>
           <div class="block-mode-content">
             {{ $t('detection.policy.indicatorMatchIntroduce') }}
-            <div v-if="language==='cn'" style="color: rgba(0,0,0,0)">0</div>
+            <div v-if="language===ZH" style="color: rgba(0,0,0,0)">0</div>
           </div>
           <div :class="settingObj.ruleType===detectionRuleType.indicator?'block-mode-btn-active':'block-mode-btn'"
                @click="selectMode(detectionRuleType.indicator)">{{ $t('overall.select') }}
@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { detectionRuleType, storageKey, detectionUnitList } from '@/utils/constants'
+import { detectionRuleType, storageKey, detectionUnitList, ZH, EN } from '@/utils/constants'
 import { switchStatus } from '@/utils/tools'
 
 export default {
@@ -160,7 +160,8 @@ export default {
           }
         ]
       },
-      language: 'en'
+      language: EN,
+      ZH
     }
   },
   watch: {
@@ -183,7 +184,7 @@ export default {
   methods: {
     switchStatus,
     initData () {
-      this.language = localStorage.getItem(storageKey.language) || 'en'
+      this.language = localStorage.getItem(storageKey.language) || EN
       this.categoryList = detectionUnitList.categoryList
       this.eventTypeList = detectionUnitList.eventTypeList
     },

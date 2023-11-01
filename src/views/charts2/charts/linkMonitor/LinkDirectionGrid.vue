@@ -12,7 +12,7 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import { getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
-import { storageKey } from '@/utils/constants'
+import { storageKey, ZH } from '@/utils/constants'
 import PopoverContent from './LinkDirectionGrid/PopoverContent'
 import { computeScore } from '@/utils/tools'
 import axios from 'axios'
@@ -178,9 +178,9 @@ export default {
             // 接口数据乱序，根据入方向排序，再根据同个入方向下的出方向进行排序
             nextLinkData.sort((a, b) => {
               if (a.inLinkDirection !== b.inLinkDirection) {
-                return a.inLinkDirection.localeCompare(b.inLinkDirection, 'zh')
+                return a.inLinkDirection.localeCompare(b.inLinkDirection, ZH)
               }
-              return a.outLinkDirection.localeCompare(b.outLinkDirection, 'zh')
+              return a.outLinkDirection.localeCompare(b.outLinkDirection, ZH)
             })
 
             this.isNextNoData = nextLinkData.length === 0

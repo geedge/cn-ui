@@ -1,4 +1,4 @@
-import { chartTableOrderOptionsMapping, storageKey, knowledgeCategoryValue } from '@/utils/constants'
+import { chartTableOrderOptionsMapping, storageKey, knowledgeCategoryValue, ZH } from '@/utils/constants'
 import { getWidthByLanguage } from '@/utils/tools'
 import { api } from '@/utils/api'
 import axios from 'axios'
@@ -58,7 +58,7 @@ export default {
         const language = localStorage.getItem(storageKey.language)
         // 文字所占宽度，一个英文字母占7px，中文16px
         let num = getWidthByLanguage(language) || 7
-        if (language !== 'cn') {
+        if (language !== ZH) {
           num = num + 1 // 最后一位加空格
         }
 

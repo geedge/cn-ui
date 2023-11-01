@@ -82,7 +82,7 @@
     <div class="detection-drawer-collapse" style="margin: 20px 0">
       <el-collapse v-model="activeTrigger">
         <el-collapse-item :title="$t('detection.create.trigger')" name="trigger">
-          <div class="drawer-collapse-content" v-if="language==='en'">
+          <div class="drawer-collapse-content" v-if="language===EN">
             <div class="drawer-collapse-trigger">
               Triggered when conditions occur at least
               <span style="color: #046ECA">
@@ -102,7 +102,7 @@
               </div>
             </div>
           </div>
-          <div class="drawer-collapse-content" v-if="language==='cn'">
+          <div class="drawer-collapse-content" v-if="language===ZH">
             <div class="drawer-collapse-trigger">
               当条件为
               <span style="color: #046ECA">
@@ -131,7 +131,7 @@
 
 <script>
 import { switchStatus, toUpperCaseByString } from '@/utils/tools'
-import { detectionUnitList, eventSeverityColor, securityLevel, storageKey } from '@/utils/constants'
+import { detectionUnitList, eventSeverityColor, securityLevel, storageKey, ZH, EN } from '@/utils/constants'
 import axios from 'axios'
 import { api } from '@/utils/api'
 
@@ -149,9 +149,11 @@ export default {
       detailData: {},
       eventSeverityColor,
       severityList: [],
-      language: 'en',
+      language: EN,
       atLeast: 0,
-      times: 'time'
+      times: 'time',
+      ZH,
+      EN
     }
   },
   watch: {
@@ -166,7 +168,7 @@ export default {
     }
   },
   mounted () {
-    this.language = localStorage.getItem(storageKey.language) || 'en'
+    this.language = localStorage.getItem(storageKey.language) || EN
   },
   methods: {
     switchStatus,

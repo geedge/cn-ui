@@ -13,12 +13,12 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>
-                <div id="header-to-english" :style="language === 'en'?'color:#0091ff':''" @click="changeLocal('en')">
+                <div id="header-to-english" :style="language === EN?'color:#0091ff':''" @click="changeLocal(EN)">
                   English
                 </div>
               </el-dropdown-item>
               <el-dropdown-item>
-                <div id="header-to-chinese" :style="language === 'cn'?'color:#0091ff':''" @click="changeLocal('cn')">
+                <div id="header-to-chinese" :style="language === ZH?'color:#0091ff':''" @click="changeLocal(ZH)">
                   中文
                 </div>
               </el-dropdown-item>
@@ -196,7 +196,9 @@ import {
   networkTable,
   operationType,
   storageKey,
-  wholeScreenRouterMapping
+  wholeScreenRouterMapping,
+  ZH,
+  EN
 } from '@/utils/constants'
 import { api } from '@/utils/api'
 import { ref } from 'vue'
@@ -234,7 +236,7 @@ export default {
     return {
       username: localStorage.getItem(storageKey.username),
       nickName: localStorage.getItem(storageKey.nickName),
-      language: localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : 'en',
+      language: localStorage.getItem(storageKey.language) ? localStorage.getItem(storageKey.language) : EN,
       showChangePin: false,
       from: '', // entity类型
       changePassForm: {
@@ -296,7 +298,9 @@ export default {
       curTabState: curTabState,
       urlChangeParams: {},
       wholeScreenRouterMapping,
-      logo: 'images/logo-header.svg'
+      logo: 'images/logo-header.svg',
+      ZH,
+      EN
     }
   },
   computed: {

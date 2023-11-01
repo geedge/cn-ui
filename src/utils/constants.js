@@ -1792,6 +1792,8 @@ export const langData = [
   { value: 'zh', label: 'zh' },
   { value: 'en', label: 'en' }
 ]
+export const ZH = 'zh'
+export const EN = 'en'
 
 export const performanceMetricMapping = {
   'dns error': 'DNS Error Rate',

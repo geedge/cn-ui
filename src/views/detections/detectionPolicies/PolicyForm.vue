@@ -53,7 +53,7 @@
             </template>
 
             <div class="form-collapse-content margin-t-18">
-              <el-form v-if="language==='en'" class="trigger-block margin-b-20" ref="form3" :model="triggerObj" :rules="rules">
+              <el-form v-if="language===EN" class="trigger-block margin-b-20" ref="form3" :model="triggerObj" :rules="rules">
                 <div class="trigger-block-item margin-b-10">
                   <div>At least</div>
                   <el-form-item prop="atLeast">
@@ -94,7 +94,7 @@
                   </el-form-item>
                 </div>
               </el-form>
-              <el-form v-if="language==='cn'" class="trigger-block margin-b-20" ref="form3" :model="triggerObj" :rules="rules">
+              <el-form v-if="language===ZH" class="trigger-block margin-b-20" ref="form3" :model="triggerObj" :rules="rules">
                 <div class="trigger-block-item margin-b-10">
                   在
                   <el-form-item prop="interval">
@@ -160,7 +160,7 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { getDurationsTimeByType, getTimeByDurations } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
-import { storageKey, detectionUnitList } from '@/utils/constants'
+import { storageKey, detectionUnitList, ZH, EN } from '@/utils/constants'
 
 export default {
   name: 'DetectionForm',
@@ -257,7 +257,9 @@ export default {
       intervalList: [],
       editObj: {},
       isComplete: true, // 参数完整标识，默认完整（照顾编辑模式），false即不完整
-      language: 'en'
+      language: EN,
+      ZH,
+      EN
     }
   },
   components: {
@@ -266,10 +268,10 @@ export default {
     Loading
   },
   mounted () {
-    this.language = localStorage.getItem(storageKey.language) || 'en'
-    if (this.language === 'en') {
+    this.language = localStorage.getItem(storageKey.language) || EN
+    if (this.language === EN) {
       this.intervalList = detectionUnitList.intervalList
-    } else if (this.language === 'cn') {
+    } else if (this.language === ZH) {
       this.intervalList = detectionUnitList.intervalListCN
     }
     this.getDetailInfo()

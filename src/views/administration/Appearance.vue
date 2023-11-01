@@ -58,7 +58,7 @@
 </template>
 <script>
 import { api } from '@/utils/api'
-import { storageKey } from '@/utils/constants'
+import { storageKey, ZH, EN } from '@/utils/constants'
 import axios from 'axios'
 import dayjs from 'dayjs'
 
@@ -97,12 +97,12 @@ export default {
         {
           id: 1,
           label: 'English',
-          value: 'en'
+          value: EN
         },
         {
           id: 2,
           label: '中文',
-          value: 'zh'
+          value: ZH
         }
       ]
     }

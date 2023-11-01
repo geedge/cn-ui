@@ -1,7 +1,7 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig } from '@/utils/constants'
+import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig, ZH, EN } from '@/utils/constants'
 import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
@@ -1248,10 +1248,10 @@ export function getQueryByFlag2 (type, condition) {
  */
 export function getWidthByLanguage (language) {
   switch (language) {
-    case 'en': {
+    case EN: {
       return 7
     }
-    case 'cn': {
+    case ZH: {
       return 16
     }
   }

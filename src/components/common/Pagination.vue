@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { defaultPageSize, storageKey } from '@/utils/constants'
+import { defaultPageSize, storageKey, ZH, EN } from '@/utils/constants'
 import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -64,9 +64,9 @@ export default {
     const { query } = useRoute()
     const pageSize = ref(defaultPageSize)
     const currentPageNo = ref(props.storePageNoOnUrl ? (query.pageNo || (props.pageObj.pageNo || 1)) : (props.pageObj.pageNo || 1))
-    const language = localStorage.getItem(storageKey.language) || 'en' // 初始未选择默认 en 英文
+    const language = localStorage.getItem(storageKey.language) || EN // 初始未选择默认 en 英文
     let locale = en
-    if (language === 'cn') {
+    if (language === ZH) {
       locale = cn
     }
     return {

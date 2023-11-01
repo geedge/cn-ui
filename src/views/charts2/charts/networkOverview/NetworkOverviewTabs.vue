@@ -289,7 +289,9 @@ import {
   dbDrilldownTableConfig,
   fromRoute,
   drillDownPanelTypeMapping,
-  commonErrorTip
+  commonErrorTip,
+  ZH,
+  EN
 } from '@/utils/constants'
 import axios from 'axios'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
@@ -1170,10 +1172,10 @@ export default {
       // 数字可按照排序的要求进行自定义，我这边产品的要求是
       // 数字（0->9）->大写字母（A->Z）->小写字母（a->z）->中文拼音（a->z）
       if (/^[\u4e00-\u9fa5]$/.test(char)) {
-        return ['zh', 300]
+        return [ZH, 300]
       }
       if (/^[a-zA-Z]$/.test(char)) {
-        return ['en', 200]
+        return [EN, 200]
       }
       if (/^[0-9]$/.test(char)) {
         return ['number', 100]
@@ -1222,9 +1224,9 @@ export default {
                 if (char1 === char2) {
                   continue
                 } else {
-                  if (char1Type[0] === 'zh') {
+                  if (char1Type[0] === ZH) {
                     res = char2.localeCompare(char1)
-                  } else if (char1Type[0] === 'en') {
+                  } else if (char1Type[0] === EN) {
                     res = char2.charCodeAt(0) - char1.charCodeAt(0)
                   } else {
                     res = char2 - char1
@@ -1262,9 +1264,9 @@ export default {
                 if (char1 === char2) {
                   continue
                 } else {
-                  if (char1Type[0] === 'zh') {
+                  if (char1Type[0] === ZH) {
                     res = char1.localeCompare(char2)
-                  } else if (char1Type[0] === 'en') {
+                  } else if (char1Type[0] === EN) {
                     res = char1.charCodeAt(0) - char2.charCodeAt(0)
                   } else {
                     res = char1 - char2

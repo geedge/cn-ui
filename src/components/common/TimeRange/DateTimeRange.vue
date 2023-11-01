@@ -81,7 +81,7 @@
 
 <script>
 import { ref, computed, watch, reactive } from 'vue'
-import { storageKey } from '@/utils/constants'
+import { EN, storageKey, ZH } from '@/utils/constants'
 import { getMillisecond, millTimestampDiffFromTz, timestampToList } from '@/utils/date-util'
 import { useStore } from 'vuex'
 import ElConfigProvider from 'element-plus'
@@ -299,9 +299,9 @@ export default {
         })
       }
     }
-    const language = localStorage.getItem(storageKey.language) || 'en' // 初始未选择默认 en 英文
+    const language = localStorage.getItem(storageKey.language) || EN // 初始未选择默认 en 英文
     let locale = en
-    if (language === 'cn') {
+    if (language === ZH) {
       locale = cn
     }
 
