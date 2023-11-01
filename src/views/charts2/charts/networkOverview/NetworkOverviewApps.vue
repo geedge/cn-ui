@@ -493,11 +493,9 @@ export default {
                 }
               })
             })
-            if (val) {
+            if (!show) {//非滚动滚动条操作，直接覆盖之前的数据
               this.providerOptions = res.data.list
-            } else if (!val && !show) {
-              this.providerOptions = res.data.list
-            } else {
+            } else {//滚动条操作，则将新数据和之前的数据组合
               this.providerOptions.push(...res.data.list)
               this.appListData([], this.providerOptions)
             }
@@ -519,11 +517,9 @@ export default {
                 }
               })
             })
-            if (val) {
+            if (!show) {//非滚动滚动条操作，直接覆盖之前的数据
               this.appOptions = res.data.list
-            } else if (!val && !show) {
-              this.appOptions = res.data.list
-            } else {
+            } else {//滚动条操作，则将新数据和之前的数据组合
               this.appOptions.push(...res.data.list)
               this.appListData(this.appOptions, [])
             }
