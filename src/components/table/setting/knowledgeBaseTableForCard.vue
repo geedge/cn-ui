@@ -145,7 +145,11 @@
                   :header-cell-style="{background:'#f5f7fa',color:'#353636',fontWeight: '400',fontSize: '12px',borderRight: 'none',borderBottom: 'none'}"
                   cell-style="padding:6px 0px;font-size: 12px;color: #353636;font-weight: 400;line-height: 20px;border-right:none;"
                   header-cell-style="padding:8px 0px;font-size: 12px;color: #353636;font-weight: 500;border-right:none;">
-          <el-table-column prop="opTime" :label="$t('entities.tab.informationAggregation.updateTime')" width="150" ></el-table-column>
+          <el-table-column prop="opTime" :label="$t('entities.tab.informationAggregation.updateTime')" width="150" >
+            <template #default="scope" :column="item">
+              <span>{{scope.row.opTime ? dateFormatByAppearance(scope.row.opTime) : '-'}}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="user" :label="$t('knowledgeBase.operator')" width="150" v-if="activeTab === 'updateRecord'">
             <template #default="scope" :column="item">
               <span>{{$_.get(scope.row, 'user.name', '-')}}</span>
