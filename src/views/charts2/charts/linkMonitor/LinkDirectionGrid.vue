@@ -188,9 +188,9 @@ export default {
               // 链路下一跳数据
               let nextGridData = []
               const nextGridTemplate = [
-                { linkId: 'Hundredgige2', nextHop: '太原', out: [] },
-                { linkId: 'Hundredgige1', nextHop: '西安', out: [] },
-                { linkId: 'Hundredgige4', nextHop: '西宁', out: [] }
+                { linkId: 'Hundredgige2', nextHop: 'City2', out: [] },
+                { linkId: 'Hundredgige1', nextHop: 'City1', out: [] },
+                { linkId: 'Hundredgige4', nextHop: 'City3', out: [] }
               ]
               nextGridData = JSON.parse(JSON.stringify(nextGridTemplate))
               nextGridData.forEach(link => {
