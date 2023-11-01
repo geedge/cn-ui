@@ -54,7 +54,8 @@ export default {
     return {
       loading: false,
       username: '',
-      pin: ''
+      pin: '',
+      language: ''
     }
   },
   methods: {
@@ -74,6 +75,9 @@ export default {
           if (res.status === 200) {
             if (!_.isEmpty(res.data.data.user.lang)) {
               localStorage.setItem(storageKey.language, res.data.data.user.lang)
+            }
+            if (!localStorage.getItem(storageKey.language)) {
+              localStorage.setItem(storageKey.language, this.language)
             }
             if (!_.isEmpty(res.data.data.user.theme)) {
               localStorage.setItem(storageKey.theme, res.data.data.user.theme)
@@ -107,6 +111,7 @@ export default {
       })
     },
     appearanceOut (data) {
+      this.language = data.lang || defaultLang
       if (_.isEmpty(localStorage.getItem(storageKey.language))) {
         localStorage.setItem(storageKey.language, data.lang || defaultLang)
       }
