@@ -66,7 +66,9 @@
 
   <div class="center-dialog">
     <el-dialog v-model="showUpdateDialog"
+               :destroy-on-close="true"
                :custom-class="showAddUpdateDialog ? 'update-knowledge update-knowledge--upload' : 'update-knowledge'"
+               :before-close="beforeClose"
                :after-close="handleClose">
       <div class="knowledge-update__top" >
         <div class="update-left__icon">
@@ -127,7 +129,7 @@
             </button>
           </div>
         </div>
-        <div :style="{height: updateKnowledge.source === 'cn_psiphon3_ip' ? 'calc(90vh - 190px - 200px - 50px - 42px)' : 'calc(100% - 242px)',  marginTop: '42px', position: 'absolute', width: 'calc(100% - 60px)'}">
+        <div :style="{height: updateKnowledge.source === 'cn_psiphon3_ip' && activeTab === 'intelligenceLearning' ? 'calc(90vh - 190px - 200px - 50px - 42px)' : 'calc(100% - 242px)',  marginTop: '42px', position: 'absolute', width: 'calc(100% - 60px)'}">
           <loading :loading="updateLogLoading"></loading>
         </div>
         <el-table ref="updateDataTable"
@@ -135,7 +137,11 @@
                   :data="updateHistoryList"
                   @selection-change="secondSelectionChange"
                   width="100%"
-                  :class="updateKnowledge.source === 'cn_psiphon3_ip' ? 'update-dialog__table update-dialog__table--psiphon3' : 'update-dialog__table'"
+                  class="update-dialog__table"
+                  :class="{
+                    'update-dialog__table--psiphon3': updateKnowledge.source === 'cn_psiphon3_ip' && activeTab === 'intelligenceLearning',
+                    'update-dialog__table--system-user': updateKnowledge.source === 'cn_psiphon3_ip' && activeTab !== 'intelligenceLearning'
+                  }"
                   :header-cell-style="{background:'#f5f7fa',color:'#353636',fontWeight: '400',fontSize: '12px',borderRight: 'none',borderBottom: 'none'}"
                   cell-style="padding:6px 0px;font-size: 12px;color: #353636;font-weight: 400;line-height: 20px;border-right:none;"
                   header-cell-style="padding:8px 0px;font-size: 12px;color: #353636;font-weight: 500;border-right:none;">
@@ -155,7 +161,7 @@
           </template>
         </el-table>
 
-        <div class="psiphon3" v-if="updateKnowledge.source === 'cn_psiphon3_ip'">
+        <div class="psiphon3" v-if="updateKnowledge.source === 'cn_psiphon3_ip' && activeTab === 'intelligenceLearning'">
           <div class="psiphon3-title">{{$t('knowledgeBase.psiphon3IpCount')}}</div>
           <div class="psiphon3-bar">
             <chart-error v-if="showErrorForPsiphon3" :content="errorMsgForPsiphon3"/>
@@ -526,7 +532,9 @@ export default {
     timeChange () {
       this.timeFilter.endTime = window.$dayJs.tz().valueOf()
       this.timeFilter.startTime = this.timeFilter.endTime - this.selectTime * 60 * 1000
-      this.init()
+      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+        this.init()
+      }
       this.$nextTick(() => {
         this.handleActiveBar()
       })
@@ -536,7 +544,9 @@ export default {
         this.tabType = item.class
       }
       this.legendSelectChange(item)
-      this.init()
+      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+        this.init()
+      }
     },
     mouseenterTab (item) {
       if (this.isNoDataForPsiphon3) return
@@ -578,7 +588,9 @@ export default {
       this.$message.success(this.$t('tip.success'))
       this.showAddUpdateDialog = false
       this.getCurTabData()
-      this.init()
+      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+        this.init()
+      }
       /* } else {
         this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
       } */
@@ -613,6 +625,13 @@ export default {
       data.isSelected = val
       this.$emit('checkboxStatusChange', val, data)
     },
+    beforeClose (done) {
+      if (this.myChart) {
+        this.myChart.dispose()
+        this.myChart = null
+      }
+      done()
+    },
     handleClose () {
       this.showUpdateDialog = false
       this.showAddUpdateDialog = false
@@ -632,7 +651,9 @@ export default {
       this.updateKnowledge = data
       this.showEnable = showEnable
       await this.getCurTabData()
-      await this.init()
+      if (data.source === 'cn_psiphon3_ip') {
+        await this.init()
+      }
       this.showUpdate()
       this.$nextTick(() => {
         this.handleActiveBar()
@@ -677,6 +698,9 @@ export default {
     // 切换tab
     handleClick (tab) {
       this.getCurTabData()
+      if (tab.index === '1') {
+        this.init()
+      }
     },
     clearSelect () {
       this.$nextTick(() => {
@@ -743,7 +767,9 @@ export default {
     },
     timeFilter: {
       handler () {
-        this.init()
+        if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+          this.init()
+        }
         this.$nextTick(() => {
           this.handleActiveBar()
         })
@@ -772,6 +798,14 @@ export default {
         }
       }
     },
+    activeTab (n) {
+      if (n === 'updateRecord') {
+        if (this.myChart) {
+          this.myChart.dispose()
+          this.myChart = null
+        }
+      }
+    },
     showAddUpdateDialog: {
       handler (n) {
         if (!n) {
@@ -780,8 +814,10 @@ export default {
             this.init()
           }
         } else {
-          this.myChart && this.myChart.dispose()
-          this.myChart = null
+          if (this.myChart) {
+            this.myChart.dispose()
+            this.myChart = null
+          }
         }
       }
     }
