@@ -150,7 +150,7 @@
               <span>{{scope.row.opTime ? dateFormatByAppearance(scope.row.opTime) : '-'}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="user" :label="$t('knowledgeBase.operator')" width="150" v-if="activeTab === 'updateRecord'">
+          <el-table-column prop="user" :label="$t('knowledgeBase.operator')" width="150" v-if="updateKnowledge.source !== 'cn_psiphon3_ip' || activeTab === 'updateRecord'">
             <template #default="scope" :column="item">
               <span>{{$_.get(scope.row, 'user.name', '-')}}</span>
             </template>
