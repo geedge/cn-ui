@@ -70,9 +70,11 @@
               </el-popover>
             </templage>
             <template v-else>
-              <template v-for="(refer, index) in scope.row[item.prop]">
-                <div class="type-tag">{{refer}}</div>
-              </template>
+              <div class="reference-tag__show">
+                <div class="reference-tag__group">
+                  <span class="reference-tag" v-for="(refer, index) in scope.row[item.prop]" >{{refer}}</span>
+                </div>
+              </div>
             </template>
           </template>
           <template v-else-if="item.prop === 'opTime' || item.prop === 'ctime'">
