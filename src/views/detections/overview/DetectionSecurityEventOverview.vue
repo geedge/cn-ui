@@ -431,10 +431,7 @@ export default {
     dateFormatByAppearance,
     /** 初始化实体详情 */
     initEntityDetail () {
-      // 为完整填充IP信息，攻击者ip、受害者ip都进行调用；
-      // 根据detection的eventInfo对象的ioc_type进行判断，若为domain，malware信息从domain详情中获取，并填充domain信息
-      // 若ioc_type为ip，则调用ip接口，填充malware信息
-      // 最后调用app，填充app信息。经上获取完整实体详情则最少需要调用4次接口
+      // 调接口查询攻击者和受害者IP、Domain、APP的更多信息；
       if (this.detection.offenderIp) {
         axios.get(`${api.detection.securityEvent.ipDetail}?resource=${this.detection.offenderIp}`).then(res => {
           if (res.status === 200) {
