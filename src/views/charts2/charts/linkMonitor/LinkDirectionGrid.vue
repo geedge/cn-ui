@@ -156,11 +156,9 @@ export default {
               })
 
               // 一行如果无数据，则删除该行，默认10*10矩阵
-              const rowXIndex = 0
-              this.handleXRowNoData(linkGridData, rowXIndex)
+              this.handleXRowNoData(linkGridData, 0)
               // 一列如果无数据，则删除该列，默认10*10矩阵
-              const rowYIndex = 0
-              this.handleYRowNoData(linkGridData, rowYIndex)
+              this.handleYRowNoData(linkGridData, 0)
               this.isLinkNoData = linkGridData.length === 0
               this.linkGridData = linkGridData
             }
@@ -257,11 +255,9 @@ export default {
               })
 
               // 一行如果无数据，则删除该行，默认3*3矩阵
-              const rowXIndex = 0
-              this.handleXRowNoData(nextGridData, rowXIndex)
+              this.handleXRowNoData(nextGridData, 0)
               // 一列如果无数据，则删除该列，默认3*3矩阵
-              const rowYIndex = 0
-              this.handleYRowNoData(nextGridData, rowYIndex)
+              this.handleYRowNoData(nextGridData, 0)
 
               this.isNextNoData = nextGridData.length === 0
               this.nextGridData = nextGridData
@@ -357,7 +353,7 @@ export default {
      * @param index
      */
     handleXRowNoData (data, index) {
-      if (data) {
+      if (data && data.length > 0) {
         const item = data[index]
         let tempList = []
         if (item) {
@@ -380,7 +376,7 @@ export default {
      */
     handleYRowNoData (data, index) {
       const rowList = []
-      if (data) {
+      if (data && data.length > 0) {
         data.forEach(item => {
           if (item.out[index]) {
             if (item.out[index].noData) {
