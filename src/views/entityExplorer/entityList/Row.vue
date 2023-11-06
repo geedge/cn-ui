@@ -11,7 +11,7 @@
       <div class="cn-entity__row">
         <!--标签-->
         <div class="cn-entity__header" style="display: flex;">
-          <span class="cn-entity__header-title">{{ entityData.entityValue || 'Unknown' }}</span>
+          <span class="cn-entity__header-title" v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
           <span class="entity-detail" style="display: flex;margin-left: 6px;margin-top: 1px;flex-wrap: wrap;margin-bottom: -10px;">
             <span v-for="(item, index) in levelTwoTags"
                   :key="index"
@@ -30,29 +30,29 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-country"></i>
                   <span class="row-item-label">{{ $t('overall.country') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ $_.get(entityData, 'location.country', '-') || '-' }}</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'location.country', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
                   <span class="row-item-label">{{ $t('overall.city') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ entityData.location ? ipLocationRegion(entityData.location) : '-' }}</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ entityData.location ? ipLocationRegion(entityData.location) : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-cloud"></i>
                   <span class="row-item-label">{{ $t('entities.asn') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ $_.get(entityData, 'asn.asn', '-') || '-' }}</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'asn.asn', '-') || '-' }}</span>
                 </div>
               </template>
               <template v-else-if="entityData.entityType === 'domain'">
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category-group"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ $_.get(entityData, 'category.categoryGroup', '-') || '-' }}</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryGroup', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
                   <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ $_.get(entityData, 'category.categoryName', '-') || '-' }}</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryName', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-credit-rating"></i>
@@ -64,7 +64,7 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category2"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value">{{ $_.get(entityData, 'category.appCategory', '-') || '-' }}</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'category.appCategory', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
@@ -176,7 +176,7 @@
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
-          <detail-overview :entity="entityData" :time-filter="timeFilter" @reloadEntity="getEntity" />
+          <detail-overview :entity="entityData" :time-filter="timeFilter" :key-word-list="keywordList" @reloadEntity="getEntity" />
         </div>
       </el-collapse-transition>
     </div>
@@ -199,7 +199,8 @@ export default {
   props: {
     index: Number,
     timeFilter: Object,
-    listMode: String
+    listMode: String,
+    keywordList: Array
   },
   components: {
     Loading,

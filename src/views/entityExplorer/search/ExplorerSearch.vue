@@ -90,7 +90,7 @@ export default {
     }
   },
   methods: {
-    search ({ str, q, metaList }) {
+    search ({ str, q, metaList, keywordList }) {
       if (str) {
         // 加入搜索记录，将记录数量控制在30以内
         const oldHistory = localStorage.getItem(storageKey.entitySearchHistory)
@@ -113,7 +113,7 @@ export default {
         }
         localStorage.setItem(storageKey.entitySearchHistory, JSON.stringify(arr))
       }
-      this.$emit('search', { str, q, metaList })
+      this.$emit('search', { str, q, metaList, keywordList })
     },
     addParams (params) {
       this.$refs.search.addParams(params)

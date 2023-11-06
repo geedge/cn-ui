@@ -46,6 +46,7 @@
               style="width: 100%;"
               :list-data="listData"
               :list-mode="listMode"
+              :keywordList="keywordList"
               :pageObj="pageObj"
               :time-filter="timeFilter"
               @pageSize="pageSize"
@@ -174,6 +175,7 @@ import Parser from '@/components/advancedSearch/meta/parser'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import { columnList } from '@/utils/static-data'
 import { useRoute } from 'vue-router'
+import { columnType } from '@/components/advancedSearch/meta/meta'
 
 export default {
   name: 'entity-explorer',
@@ -289,7 +291,8 @@ export default {
         ipCount: 0,
         appCount: 0
       },
-      loadingCount: false // 实体基数统计的loading
+      loadingCount: false, // 实体基数统计的loading
+      keywordList: []
     }
   },
   methods: {
@@ -361,6 +364,7 @@ export default {
         this.q = ''
         this.metaList = []
       }
+      this.getKeyword(param.keywordList)
 
       // 参数q，避免切换页码时，地址栏参数q为空
       let urlQ = ''
@@ -581,7 +585,7 @@ export default {
           this.summaryCount = { total: 0, domainCount: 0, ipCount: 0, appCount: 0 }
         }
       }).catch(e => {
-        console.log(e)
+        console.error(e)
         this.summaryCount = { total: 0, domainCount: 0, ipCount: 0, appCount: 0 }
       }).finally(() => {
         this.loadingCount = false
@@ -675,11 +679,20 @@ export default {
           }
         }
         const parser = new Parser(columnList)
+        const metaList = parser.parseStr(_.cloneDeep(str)).metaList
+        const keywordList = []
+        metaList.forEach(item => {
+          if (item.column && item.column.type === columnType.fullText) {
+            keywordList.push({ type: item.column.type, value: item.column.label })
+          } else if (item.column && item.column.type === columnType.string) {
+            keywordList.push({ type: item.column.type, value: item.value.value })
+          }
+        })
         const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str))
         if (keyInfo.isKey) {
           const errorList = parser.validateStr(keyInfo.key)
           if (_.isEmpty(errorList)) {
-            this.search({ ...parser.parseStr(keyInfo.key), str: str })
+            this.search({ ...parser.parseStr(keyInfo.key), str: str, keywordList: keywordList })
           } else {
             this.$message.error(handleErrorTip(errorList[0]))
           }
@@ -727,6 +740,31 @@ export default {
       }).catch((e) => {
       }).finally(() => {
       })
+    },
+    getKeyword (list) {
+      if (list) {
+        const metaList = JSON.parse(JSON.stringify(list))
+        const keyList = []
+        metaList.forEach(item => {
+          if (item.value) {
+            keyList.push({ type: item.type, value: this.getKeyValue(item.value) })
+          }
+        })
+        this.keywordList = keyList
+      }
+    },
+    getKeyValue (str) {
+      if (str[0] === "'" && str[str.length - 1] === "'") {
+        str = str.substring(1, str.length)
+        str = str.substring(0, str.length - 1)
+      }
+      if (str[0] === '%') {
+        str = str.substring(1, str.length)
+      }
+      if (str[str.length - 1] === '%') {
+        str = str.substring(0, str.length - 1)
+      }
+      return str
     }
   },
   mounted () {

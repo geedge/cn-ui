@@ -7,6 +7,7 @@ import { format } from 'echarts'
 import router from '@/router'
 import store from '@/store'
 import indexedDBUtils from '@/indexedDB'
+import { columnType } from '@/components/advancedSearch/meta/meta'
 
 export const tableSort = {
   // 是否需要排序
@@ -1358,5 +1359,47 @@ export function getTagColor (color) {
       backgroundColor = color.replace('rgb(', 'rgba(').replace(')', ',0.06)')
     }
     return `color: ${color};border-color: ${color};background-color: ${backgroundColor};`
+  }
+}
+
+/**
+ * 字段高亮
+ * 用法： <span v-high-light=['搜索', '高亮']>搜索关键字高亮<span>
+ * @type {{updated(*, *): (*|undefined)}}
+ */
+export const myHighLight = {
+  updated (el, binding) {
+    if (el && binding.value) {
+      const { value } = binding
+      if (value && value.length > 0) {
+        const text = JSON.parse(JSON.stringify(el.innerHTML))
+        value.forEach(item => {
+          const regex = new RegExp(item.value, 'gi')
+          // 一旦高亮后，就不再添加class，不然会一直嵌套span
+          if (el.getElementsByClassName('highlight__text').length === 0) {
+            const newText = text.replace(regex, match => `<span class="highlight__text">${match}</span>`)
+            if (item.type === columnType.fullText) {
+              // el.innerHTML.toLowerCase().indexOf(item.value.toLowerCase()) > -1
+            }
+            if (newText && newText !== '-') {
+              el.innerHTML = newText
+            } else {
+              return newText
+            }
+          }
+        })
+        // const myValue = ['China', 'qq']
+        // const regex = new RegExp(myValue.join('|'), 'gi')
+        // // 一旦高亮后，就不再添加class，不然会一直嵌套span
+        // if (el.getElementsByClassName('highlight__text').length === 0) {
+        //   const newText = text.replace(regex, match => `<span class="highlight__text">${match}</span>`)
+        //   if (newText && newText !== '-') {
+        //     el.innerHTML = newText
+        //   } else {
+        //     return newText
+        //   }
+        // }
+      }
+    }
   }
 }

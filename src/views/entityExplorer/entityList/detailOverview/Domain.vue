@@ -4,11 +4,11 @@
     <div class="overview__content">
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.category')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'category.categoryName', '-') || '-'}}</div>
+        <div class="row__content" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryName', '-') || '-' }}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.domainDetail.categoryGroup')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'category.categoryGroup', '-') || '-'}}</div>
+        <div class="row__content" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryGroup', '-') || '-' }}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.reputationLevel')}}</div>
@@ -20,7 +20,7 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.org')}}</div>
-        <div class="row__content">{{$_.get(entityData, 'whois.registrantOrg', '-') || '-'}}</div>
+        <div class="row__content" v-high-light="keywordList">{{ $_.get(entityData, 'whois.registrantOrg', '-') || '-' }}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.icpCompanyName')}}</div>
@@ -228,6 +228,9 @@ export default {
   components: {
     Loading,
     Chart
+  },
+  props: {
+    keywordList: Array
   },
   mixins: [entityDetailMixin, relatedServer],
   data () {

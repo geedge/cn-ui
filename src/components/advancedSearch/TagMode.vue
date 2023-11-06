@@ -202,6 +202,7 @@ export default {
       if (this.isCustomized(value)) {
         meta.column.type = columnType.fullText
         meta.column.label = value
+        meta.column.isFullText = true
         meta.resetOperator()
         meta.resetValue()
       } else {
@@ -248,6 +249,7 @@ export default {
         if (meta.column && meta.column.type === 'fullText') {
           meta.operator.value = '='
           meta.column.show = false
+          meta.column.isFullText = true
           meta.operator.show = false
           const label = JSON.parse(JSON.stringify(meta.column.label))
           meta.column.label = parser.getEntityTypeByValue(meta.column.label)
@@ -461,13 +463,21 @@ export default {
       if (this.metaList.length > 0) {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
+        const keywordList = []
+        this.metaList.forEach(item => {
+          if (item.column && item.column.isFullText) {
+            keywordList.push({ type: 'fullText', value: item.value.value })
+          } else if (item.column && !item.column.isFullText) {
+            keywordList.push({ type: item.column.type, value: item.value.value })
+          }
+        })
         if (_.isEmpty(errorList)) {
           const strObj = parser.handleMetaListToStr(this.metaList)
           const str = strObj.str ? strObj.str : strObj
           const str2 = strObj.str2 ? strObj.str2 : strObj
           // str为将metaList转成字符串的值，str2为地址栏展示的值
           const key = parser.handleEntityTypeByStr(str)
-          this.$emit('search', { ...parser.parseStr(key), str: str2 })
+          this.$emit('search', { ...parser.parseStr(key), str: str2, keywordList: keywordList })
         } else {
           this.$message.error(handleErrorTip(errorList[0]))
         }
@@ -653,6 +663,7 @@ export default {
             if (item.column && item.column.type === 'fullText') {
               item.operator.value = '='
               item.column.show = false
+              item.column.isFullText = true
               item.operator.show = false
               const label = JSON.parse(JSON.stringify(item.column.label))
               item.column.label = parser.getEntityTypeByValue(item.column.label)

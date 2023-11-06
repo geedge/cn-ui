@@ -1,13 +1,13 @@
 <template>
   <div class="entity-detail-overview">
     <template v-if="entity.entityType === 'ip'">
-      <ip-overview :entity="entity" :time-filter="timeFilter" @reloadEntity="getEntity"></ip-overview>
+      <ip-overview :entity="entity" :time-filter="timeFilter" :key-word-list="keywordList" @reloadEntity="getEntity"></ip-overview>
     </template>
     <template v-else-if="entity.entityType === 'domain'">
-      <domain-overview :entity="entity" :time-filter="timeFilter" @reloadEntity="getEntity"></domain-overview>
+      <domain-overview :entity="entity" :time-filter="timeFilter" :key-word-list="keywordList" @reloadEntity="getEntity"></domain-overview>
     </template>
     <template v-else-if="entity.entityType === 'app'">
-      <app-overview :entity="entity" :time-filter="timeFilter" @reloadEntity="getEntity"></app-overview>
+      <app-overview :entity="entity" :time-filter="timeFilter" :key-word-list="keywordList" @reloadEntity="getEntity"></app-overview>
     </template>
   </div>
 </template>
@@ -22,7 +22,8 @@ export default {
   name: 'DetailOverview',
   props: {
     entity: Object,
-    timeFilter: Object
+    timeFilter: Object,
+    keywordList: Array
   },
   components: {
     'domain-overview': Domain,

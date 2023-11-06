@@ -11,6 +11,7 @@
               v-for="(data, index) in listData"
               :entity="data"
               :listMode="listMode"
+              :keywordList="keywordList"
               :timeFilter="timeFilter"
               :key="index"
               :ref="`entityRow${index}`"
@@ -65,7 +66,8 @@ export default {
     pageObj: Object,
     loading: Boolean,
     timeFilter: Object,
-    listMode: String
+    listMode: String,
+    keywordList: Array
   },
   components: {
     'entity-card': Card,

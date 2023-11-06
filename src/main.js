@@ -7,7 +7,7 @@ import App from '@/App.vue'
 import '@/utils/http.js'
 import { hasPermission } from '@/permission'
 import commonMixin from '@/mixins/common'
-import { cancelWithChange, noData } from '@/utils/tools'
+import { cancelWithChange, noData, myHighLight } from '@/utils/tools'
 import { ClickOutside } from 'element-plus/lib/directives'
 import i18n from '@/i18n'
 // import '@/mock/index.js'
@@ -41,6 +41,7 @@ app.directive('has', hasPermission) // 注册指令
 app.directive('ele-click-outside', ClickOutside)
 app.directive('cancel', cancelWithChange)
 app.directive('no-data', noData)
+app.directive('high-light', myHighLight)
 app.config.globalProperties.$_ = _
 
 app.mixin(commonMixin)

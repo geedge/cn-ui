@@ -8,11 +8,11 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.category')}}</div>
-        <div class="row__content">{{$_.get(entity, 'category.appCategory', '-') || '-'}}</div>
+        <div class="row__content" v-high-light="keywordList">{{ $_.get(entity, 'category.appCategory', '-') || '-' }}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.subcategory')}}</div>
-        <div class="row__content">{{$_.get(entity, 'category.appSubcategory', '-') || '-'}}</div>
+        <div class="row__content" v-high-light="keywordList">{{ $_.get(entity, 'category.appSubcategory', '-') || '-' }}</div>
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.riskLevel')}}</div>
@@ -20,7 +20,9 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('overall.remark')}}</div>
-        <div class="row__content">{{$_.get(entity, 'category.appDescription', '-') || '-'}}</div>
+        <div class="row__content">
+          <span v-high-light="keywordList">{{ $_.get(entity, 'category.appDescription', '-') || '-' }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -224,6 +226,9 @@ export default {
   components: {
     Chart,
     Loading
+  },
+  props: {
+    keywordList: Array
   },
   data () {
     return {

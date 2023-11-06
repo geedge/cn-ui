@@ -97,10 +97,19 @@ export default {
       if (str) {
         const parser = new Parser(this.columnList)
         const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str))
+        const metaList = parser.parseStr(_.cloneDeep(str)).metaList
+        const keywordList = []
+        metaList.forEach(item => {
+          if (item.column && item.column.type === columnType.fullText) {
+            keywordList.push({ type: item.column.type, value: item.column.label })
+          } else if (item.column && item.column.type === columnType.string) {
+            keywordList.push({ type: item.column.type, value: item.value.value })
+          }
+        })
         if (keyInfo.isKey) {
           const errorList = parser.validateStr(keyInfo.key)
           if (_.isEmpty(errorList)) {
-            this.$emit('search', { ...parser.parseStr(keyInfo.key), str: str })
+            this.$emit('search', { ...parser.parseStr(keyInfo.key), str: str, keywordList: keywordList })
           } else {
             this.$message.error(handleErrorTip(errorList[0]))
           }
