@@ -21,7 +21,7 @@
           <template  #default="scope" :column="item">
             <div class="data-recent-table">
               <template v-if="item.prop === 'eventSeverity'">
-                <span class="data-recent-table-severity" :class="scope.row[item.prop]" :test-id="`eventSeverity-${scope.row.eventSeverity}-${scope.$index}`">{{scope.row[item.prop]}}</span>
+                <span class="data-recent-table-severity" :class="scope.row[item.prop]" :test-id="`eventSeverity-${scope.row.eventSeverity}-${scope.$index}`">{{ getEventSeverity(scope.row[item.prop]) }}</span>
               </template>
               <template v-else-if="item.prop === 'eventKey'">
                 <span class="data-recent-table-entity click-active" @click="jumpPage(scope.row)" :test-id="`eventKey-${splitEventKey(scope.row.eventKey)}-${scope.$index}`">{{splitEventKey(scope.row[item.prop])}}</span>
@@ -57,6 +57,7 @@ import ChartError from '@/components/common/Error'
 import axios from 'axios'
 import { dataForNpmRecentEvents } from '@/utils/static-data'
 import { beforeRouterPush } from '@/utils/tools'
+import { securityLevel } from '@/utils/constants'
 
 export default {
   name: 'NpmRecentEvents',
@@ -158,6 +159,14 @@ export default {
       this.isNoData = false
       this.showError = true
       this.errorMsg = this.errorMsgHandler(res)
+    },
+    getEventSeverity (severity) {
+      const obj = securityLevel.find(d => d.value === severity)
+      if (obj) {
+        return this.$t(obj.label)
+      } else {
+        return severity
+      }
     }
   },
   mounted () {

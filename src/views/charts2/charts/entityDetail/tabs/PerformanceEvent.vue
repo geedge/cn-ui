@@ -26,7 +26,7 @@
                     <div class="basic-info__item" v-if="item.eventSeverity">
                       <i class="cn-icon cn-icon-severity-level"></i>
                       <span>{{ $t('network.severity') }}&nbsp;:&nbsp;&nbsp;</span>
-                      <span :test-id="`severity${index}`">{{ toUpperCaseByString(item.eventSeverity) || '-' }}</span>
+                      <span :test-id="`severity${index}`">{{ changeSecurity(item.eventSeverity) }}</span>
                     </div>
                     <div class="basic-info__item">
                       <i class="cn-icon cn-icon-time2"></i>
@@ -51,7 +51,7 @@
 
 <script>
 import { dateFormatByAppearance } from '@/utils/date-util'
-import { eventSeverityColor, entityDetailTabsName } from '@/utils/constants'
+import { eventSeverityColor, entityDetailTabsName, securityLevel } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
@@ -130,6 +130,18 @@ export default {
       this.showError = true
       this.errorMsg = this.errorMsgHandler(e)
       this.$emit('checkTag', entityDetailTabsName.performanceEvent, 0)
+    },
+    changeSecurity (value) {
+      if (value) {
+        const obj = securityLevel.find(d => d.value === value)
+        let label = value
+        if (obj) {
+          label = this.$t(obj.label)
+        }
+        return label
+      } else {
+        return '-'
+      }
     }
   }
 }
