@@ -138,6 +138,7 @@ import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
 import { useStore } from 'vuex'
+import {  tooLongFormatterFor2Columns } from '@/views/charts/charts/tools'
 
 export default {
   name: 'Index',
@@ -478,6 +479,9 @@ export default {
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
           })
+          if(data.length > 6){
+            securityTypeOption.legend.formatter = tooLongFormatterFor2Columns
+          }
           detectionChart.setOption(securityTypeOption)
 
           const vm = this
