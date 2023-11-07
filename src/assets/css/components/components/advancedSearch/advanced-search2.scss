@@ -65,8 +65,8 @@
 
     &.search__suffixes--tag-mode__block {
       background: #fff;
-      margin-top: -10px;
-      padding-top: 10px;
+      margin-top: -9px;
+      padding-top: 9px;
     }
   }
   /*.search-tip--error {
@@ -173,6 +173,9 @@
       }
     }
   }
+}
+.entity__search .tag-search {
+  padding-left: 65px;
 }
 
 .el-popover.my-popper-class {

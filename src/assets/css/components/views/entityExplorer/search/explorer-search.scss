@@ -26,7 +26,8 @@
     padding: 0 20px;
 
     &.explorer-search__input-case--question-mark-in-line {
-      flex-direction: row;
+      //flex-direction: row;
+      flex-direction: column;
       padding: 0;
 
       .explorer-search__input {
@@ -53,14 +54,14 @@
       max-width: 1000px;
       height: 40px;
     }
-    .explorer-search__foot {
+    .explorer-search__foot,.explorer-search__foot-list {
       display: flex;
-      padding-top: 18px;
+      padding-top: 9px;
       width: 100%;
       max-width: 1000px;
       position: relative;
-      justify-content: space-between;
-      font-weight: bold;
+      justify-content: flex-start;
+      //font-weight: bold;
 
       .foot__item {
         display: flex;
@@ -93,8 +94,8 @@
         width: 100%;
         max-width: 1000px;
         z-index: 2;
-        top: 47px;
-        border: 1px solid rgba(206,206,206,0.20);
+        //top: 47px;
+        border: 1px solid rgba(226,229,236,1);
         border-radius: 2px;
         background-color: white;
 
@@ -137,8 +138,32 @@
             color: #66b1ff;
           }
         }
+
+        .history__items-new {
+          max-height: 300px;
+          overflow: auto;
+          .el-table th,.el-table td {
+            padding: 6px 0;
+            border: none !important;
+          }
+          .el-table {
+            font-family: NotoSansSChineseRegular;
+            font-size: 14px;
+            color: #575757;
+            font-weight: 400;
+            thead {
+              font-family: NotoSansHans-Medium;
+              font-size: 14px;
+              color: #353636;
+              font-weight: 500;
+            }
+            .cell {
+              padding-left: 18px;
+            }
+          }
+        }
         .clear-all {
-          padding-left: 30px;
+          padding-left: 18px;
           font-weight: normal;
           font-size: 14px;
           height: 35px;
@@ -152,6 +177,64 @@
         }
       }
     }
+    .explorer-search__foot-list {
+      max-width: 756px;
+      position: absolute;
+      left: 196px;
+      top: 44px;
+      .search__history {
+        max-width: 756px;
+        margin-left: -196px;
+        .history__items-new {
+          max-height: 300px;
+          overflow: auto;
+          .el-table th,.el-table td {
+            padding: 4px 0;
+            border: none !important;
+          }
+          .el-table {
+            font-size: 12px;
+            thead {
+              font-size: 12px;
+            }
+          }
+          .el-table--scrollable-x .el-table__body-wrapper {
+            overflow-x: hidden;
+          }
+        }
+      }
+    }
   }
 
+}
+.highlight__text {
+  background: #FEECC2;
+  padding: 2px 3px;
+}
+.explorer-search__foot-list .explorer-search__block {
+  margin-left: -196px;
+  top: -42px;
+}
+.explorer-search__foot .explorer-search__block {
+  margin-left: 0;
+  top: -40px;
+}
+.explorer-search__block {
+  position: absolute;
+  padding: 10px 15px;
+  display: flex;
+  cursor: pointer;
+
+  i {
+    font-size: 20px;
+    color: #999;
+  }
+
+  .search-dividing-line {
+    width: 1px;
+    height: 30px;
+    background: #DEDEDE;
+    margin-left: 15px;
+    margin-top: -5px;
+  }
 }

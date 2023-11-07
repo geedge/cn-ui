@@ -1,8 +1,10 @@
 <template>
   <textarea
+      style="text-indent: 65px;"
+      cols="40"
       ref="textSearch"
   ></textarea>
-  <div class="search__suffixes search__suffixes--text-mode" style="background: #fff;">
+  <div class="search__suffixes search__suffixes--text-mode" style="padding-left: 1px">
     <div class="search__suffix">
       <el-popover
           popper-class="my-popper-class"

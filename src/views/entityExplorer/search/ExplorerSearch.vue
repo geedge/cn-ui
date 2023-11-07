@@ -2,7 +2,7 @@
   <div class="explorer-search">
     <div class="explorer-search__title" v-show="!showList">{{$t('search.title')}}</div>
     <div class="explorer-search__input-case" :class="{'explorer-search__input-case--question-mark-in-line': showList}">
-      <div class="explorer-search__input explorer-search__input__border">
+      <div class="explorer-search__input explorer-search__input__border entity__search">
         <advanced-search
           ref="search"
           :column-list="columnList"
@@ -17,26 +17,40 @@
 <!--      <div class="search-symbol-inline" v-if="showList">-->
 <!--        <i class="cn-icon cn-icon-help"></i>-->
 <!--      </div>-->
-      <div v-if="!showList" class="explorer-search__foot" v-ele-click-outside="esc">
-        <div class="foot__item" @click="triggerHistory">
-          <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': showHistory }" style="padding-right: 5px;"></i>
-          <span>{{$t('search.searchHistory')}}</span>
+      <div :class="showList ? 'explorer-search__foot-list' : 'explorer-search__foot'" v-ele-click-outside="esc">
+        <div style="position: absolute;" class="explorer-search__block" @click="triggerHistory">
+          <i class="cn-icon cn-icon-time"></i>
+          <div class="search-dividing-line"></div>
         </div>
-        <div class="foot__item">
-          <!-- <span @click="search">{{$t('overall.explore')}}</span>
-          <el-divider direction="vertical"></el-divider>
-          <span>{{$t('overall.help')}}</span>-->
-        </div>
+<!--        <div class="foot__item" @click="triggerHistory">-->
+<!--          <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': showHistory }" style="padding-right: 5px;"></i>-->
+<!--          <span>{{$t('search.searchHistory')}}</span>-->
+<!--        </div>-->
+<!--        <div class="foot__item">-->
+<!--          &lt;!&ndash; <span @click="search">{{$t('overall.explore')}}</span>-->
+<!--          <el-divider direction="vertical"></el-divider>-->
+<!--          <span>{{$t('overall.help')}}</span>&ndash;&gt;-->
+<!--        </div>-->
         <transition name="el-zoom-in-top">
-          <div class="search__history" v-show="showHistory">
-            <div class="history__items">
-              <div class="history__item" v-for="(h, i) in history" :key="i" @click="selectHistory(h.str)">
-                <span class="item-date">{{h.date}}</span>
-                <div class="item-value" :title="h.str">{{h.str}}</div>
-              </div>
+          <div class="search__history" v-if="showHistory">
+            <div class="history__items-new">
+              <el-table
+                  :data="history"
+                  :default-sort="{ prop: 'date', order: 'descending' }"
+                  scrollbar-always-on="false"
+                  @row-click="selectHistory"
+                  style="overflow-x: unset"
+              >
+                <el-table-column prop="str" label="Search" min-width="560" />
+                <el-table-column prop="date" label="Last Run" sortable width="200">
+                  <template #default="scope">
+                    <span>{{ changeTimeByDate(scope.row.date) }}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
             </div>
             <div class="clear-all">
-              <span @click="clearHistory" v-if="!$_.isEmpty(history)">{{$t('overall.clear')}}</span>
+              <span @click="clearHistory" v-if="!$_.isEmpty(history)">{{$t('entity.clearAll')}}</span>
               <div v-else>{{$t('overall.noRecords')}}</div>
             </div>
           </div>
@@ -53,6 +67,7 @@ import { storageKey } from '@/utils/constants'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { columnList } from '@/utils/static-data'
+import { changeTimeByDate } from '@/utils/tools'
 export default {
   name: 'CnSearch',
   components: {
@@ -90,6 +105,7 @@ export default {
     }
   },
   methods: {
+    changeTimeByDate,
     search ({ str, q, metaList, keywordList }) {
       if (str) {
         // 加入搜索记录，将记录数量控制在30以内
@@ -98,9 +114,8 @@ export default {
         const newItem = { str, date: this.dateFormatByAppearance(new Date()) }
         if (!_.isEmpty(oldHistory)) {
           const oldArr = JSON.parse(oldHistory)
-          const obj = oldArr.find(d => d.str === str)
-          if (obj) {
-            oldArr[0].date = this.dateFormatByAppearance(new Date())
+          if (str === oldArr[0].str) {
+            oldArr[0].date = Date.now()
           } else {
             oldArr.unshift(newItem)
           }
@@ -118,14 +133,19 @@ export default {
     addParams (params) {
       this.$refs.search.addParams(params)
     },
-    selectHistory (str) {
-      this.$refs.search.setStr(str)
+    selectHistory (row) {
+      this.$refs.search.setStr(row.str)
       this.showHistory = false
       this.$nextTick(() => {
         if (this.$refs.search.$refs.textMode) {
           this.$refs.search.$refs.textMode.focus()
         }
       })
+      if (this.showList) {
+        this.$nextTick(() => {
+          this.emitter.emit('advanced-search')
+        })
+      }
     },
     clearHistory () {
       localStorage.setItem(storageKey.entitySearchHistory, '')
@@ -141,7 +161,10 @@ export default {
       }
     },
     esc () {
-      this.showHistory = false
+      const timer = setTimeout(() => {
+        this.showHistory = false
+        clearTimeout(timer)
+      }, 100)
     }
   }
 }
