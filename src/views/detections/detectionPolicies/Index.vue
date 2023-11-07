@@ -125,7 +125,7 @@ export default {
     onSearch (keyWord) {
       this.filterParams = {
         ...this.filterParams,
-        name: keyWord
+        q: keyWord
       }
       this.search(this.filterParams, 'detection')
     },
