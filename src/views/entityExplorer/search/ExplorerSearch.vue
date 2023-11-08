@@ -36,7 +36,6 @@
             <div class="history__items-new">
               <el-table
                   :data="history"
-                  :default-sort="{ prop: 'date', order: 'descending' }"
                   scrollbar-always-on="false"
                   @row-click="selectHistory"
                   style="overflow-x: unset"
@@ -115,7 +114,7 @@ export default {
         if (!_.isEmpty(oldHistory)) {
           const oldArr = JSON.parse(oldHistory)
           if (str === oldArr[0].str) {
-            oldArr[0].date = Date.now()
+            oldArr[0].date = this.dateFormatByAppearance(new Date())
           } else {
             oldArr.unshift(newItem)
           }

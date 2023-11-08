@@ -1407,10 +1407,10 @@ export const myHighLight = {
 export const changeTimeByDate = (date) => {
   if (date) {
     const nowDate = Date.now()
-    const oldDate = Date.parse(date)
+    const oldDate = isNaN(date) ? Date.parse(date) : date
     const diff = Math.floor((nowDate - oldDate) / 1000)
     if (diff < 60) {
-      return 60 + i18n.global.t('entity.search.secondsAgo')
+      return diff + i18n.global.t('entity.search.secondsAgo')
     } else if (diff >= 60 && diff < 3600) {
       const minutes = Math.floor(diff / 60)
       return minutes === 1 ? `${minutes} ${i18n.global.t('entity.search.minuteAgo')}` : `${minutes} ${i18n.global.t('entity.search.minutesAgo')}`
@@ -1418,7 +1418,7 @@ export const changeTimeByDate = (date) => {
       const hours = Math.floor(diff / 3600)
       return hours === 1 ? `${hours} ${i18n.global.t('entity.search.hourAgo')}` : `${hours} ${i18n.global.t('entity.search.hoursAgo')}`
     } else {
-      return new Date(oldDate)
+      return (new Date(oldDate).toString()).replace(/GMT.*/, '')
     }
   }
 }
