@@ -26,7 +26,7 @@
     justify-content: flex-start;
   }
 
-  .explorer-top-tools, .explorer-detection-top-tools {
+  .explorer-top-tools, .explorer-detection-top-tools, .explorer-entity-top-tools {
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -46,7 +46,10 @@
       }
     }
   }
-  .explorer-detection-top-tools {
+  .explorer-entity-top-tools {
+    width: 100%;
+  }
+  .explorer-detection-top-tools, .explorer-entity-top-tools {
     display: flex;
     justify-content: space-between;
   }
@@ -87,6 +90,13 @@
     font-size: 14px;
     color: #353636;
     font-weight: 400;
+
+    .entity-hide-entity {
+      margin-left: 20px;
+      .el-checkbox__label {
+        padding-left: 6px;
+      }
+    }
   }
   .explorer-container, .explorer-container-new {
     display: flex;

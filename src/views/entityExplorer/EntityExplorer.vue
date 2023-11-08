@@ -4,8 +4,16 @@
       :class="{'entity-explorer--show-list': showList}">
     <!-- 顶部工具栏，在列表页显示 -->
     <div class="explorer-top-tools explorer-top-tools-new" style="margin: 2px 0;" v-show="showList">
-      <div class="explorer-detection-top-tools">
+      <div class="explorer-entity-top-tools">
         <div class="explorer-top-tools-title" style="padding: 0;margin-left: -10px;">{{$t('network.entity')}}</div>
+        <date-time-range
+            class="date-time-range"
+            :start-time="timeFilter.startTime"
+            :end-time="timeFilter.endTime"
+            :date-range="timeFilter.dateRangeValue"
+            ref="dateTimeRange"
+            @change="reload"
+        />
       </div>
     </div>
     <!-- 搜索组件 -->
@@ -176,6 +184,7 @@ import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import { columnList } from '@/utils/static-data'
 import { useRoute } from 'vue-router'
 import { columnType } from '@/components/advancedSearch/meta/meta'
+import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 
 export default {
   name: 'entity-explorer',
@@ -183,7 +192,8 @@ export default {
     Loading,
     ExplorerSearch,
     EntityFilter,
-    EntityList
+    EntityList,
+    DateTimeRange
   },
   data () {
     return {
@@ -202,13 +212,6 @@ export default {
       entityIpNew: '-',
       entityIpActive: '-',
 
-      // pageObj: {
-      //   pageNo: 1,
-      //   // 是否重置pageNo，在执行新搜索时是true
-      //   resetPageNo: true,
-      //   pageSize: defaultPageSize,
-      //   total: 0
-      // },
       newFilterData: [
         {
           icon: 'cn-icon cn-icon-registration-country',
@@ -286,7 +289,7 @@ export default {
       initFlag: true, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
       timer: null, // 初始化标志的延时器，需要销毁
       summaryCount: {
-        total: 0,
+        totalCount: 0,
         domainCount: 0,
         ipCount: 0,
         appCount: 0
@@ -552,8 +555,8 @@ export default {
       const queryParams = {
         pageSize: params.pageSize,
         pageNo: params.pageNo,
-        // startTime: getSecond(params.startTime),
-        // endTime: getSecond(params.endTime),
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime),
         resource: params.q || ''
       }
       axios.get(api.entity.entityList.list, { params: queryParams }).then(response => {
@@ -561,7 +564,6 @@ export default {
           this.listData = []
           this.$nextTick(() => {
             this.listData = response.data.data.list
-            this.pageObj.total = response.data.data.total
           })
         } else {
           this.$message.error(response.data.message)
@@ -574,19 +576,20 @@ export default {
     queryCount (params) {
       this.loadingCount = true
       const queryParams = {
-        // startTime: getSecond(params.startTime),
-        // endTime: getSecond(params.endTime),
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime),
         resource: params.q || ''
       }
       axios.get(api.entity.entityList.summaryCount, { params: queryParams }).then(response => {
         if (response.status === 200) {
           this.summaryCount = response.data.data
+          this.pageObj.total = response.data.data.totalCount
         } else {
-          this.summaryCount = { total: 0, domainCount: 0, ipCount: 0, appCount: 0 }
+          this.summaryCount = { totalCount: 0, domainCount: 0, ipCount: 0, appCount: 0 }
         }
       }).catch(e => {
         console.error(e)
-        this.summaryCount = { total: 0, domainCount: 0, ipCount: 0, appCount: 0 }
+        this.summaryCount = { totalCount: 0, domainCount: 0, ipCount: 0, appCount: 0 }
       }).finally(() => {
         this.loadingCount = false
       })
@@ -751,6 +754,8 @@ export default {
           }
         })
         this.keywordList = keyList
+      } else {
+        this.keywordList = []
       }
     },
     getKeyValue (str) {
