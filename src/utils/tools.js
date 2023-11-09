@@ -1364,7 +1364,8 @@ export function getTagColor (color) {
 
 /**
  * 字段高亮
- * 用法： <span v-high-light=['搜索', '高亮']>搜索关键字高亮<span>
+ * 用法： <span v-high-light=[{type: 'string', value: '搜索'}, {type: 'fullText', value: '高亮'}]>搜索关键字高亮<span>
+ *   其中type为fullText的为模糊搜索
  * @type {{updated(*, *): (*|undefined)}}
  */
 export const myHighLight = {
@@ -1372,33 +1373,57 @@ export const myHighLight = {
     if (el && binding.value) {
       const { value } = binding
       if (value && value.length > 0) {
-        const text = JSON.parse(JSON.stringify(el.innerHTML))
-        value.forEach(item => {
-          const regex = new RegExp(item.value, 'gi')
-          // 一旦高亮后，就不再添加class，不然会一直嵌套span
-          if (el.getElementsByClassName('highlight__text').length === 0) {
-            const newText = text.replace(regex, match => `<span class="highlight__text">${match}</span>`)
-            if (item.type === columnType.fullText) {
-              // el.innerHTML.toLowerCase().indexOf(item.value.toLowerCase()) > -1
+        const text = _.cloneDeep(el.innerHTML)
+        const regex = new RegExp(value.map(item => `${item.value}`).join('|'), 'g')
+        if (el.getElementsByClassName('highlight__text').length === 0) {
+          const newText = text.replace(regex, (match) => {
+            // 将value中的value提取出来对比，string即精准搜索，fullText模糊搜索
+            for (const item of value) {
+              if (item.type === columnType.string && item.value === match) {
+                if (el.className.indexOf('high-light-block') > -1) {
+                  return `<span class="highlight__block">${match}</span>`
+                } else {
+                  return `<span class="highlight__text">${match}</span>`
+                }
+              } else if (item.type === columnType.fullText) {
+                if (el.className.indexOf('high-light-block') > -1) {
+                  return `<span class="highlight__block">${match}</span>`
+                } else {
+                  return `<span class="highlight__text">${match}</span>`
+                }
+              }
             }
-            if (newText && newText !== '-') {
-              el.innerHTML = newText
+            return match
+          })
+          if (newText && newText !== '-') {
+            // 此处不用el.className.indexOf('high-light-block')判断，是因为block可能会有多个，有一个满足所有的都会渲染
+            if (newText.indexOf('highlight__block') > -1) {
+              el.style.cssText = el.style.cssText + 'background: #FEECC2;'
+              // 此处是相关app、相关ip、相关domain弹窗获取不到dom的草错
+              let dom
+              if (document.getElementById('showRelatedApp')) {
+                dom = document.getElementById('showRelatedApp')
+              } else if (document.getElementById('showRelatedDomain')) {
+                dom = document.getElementById('showRelatedDomain')
+              }
+
+              if (dom) {
+                const itemDom = dom.getElementsByClassName('high-light-block')
+                if (itemDom) {
+                  for (let i = 0; i < itemDom.length; i++) {
+                    if (itemDom[i].innerHTML === el.innerHTML) {
+                      itemDom[i].style.cssText = itemDom[i].style.cssText + 'background: #FEECC2;'
+                    }
+                  }
+                }
+              }
             } else {
-              return newText
+              el.innerHTML = newText
             }
+          } else {
+            return newText
           }
-        })
-        // const myValue = ['China', 'qq']
-        // const regex = new RegExp(myValue.join('|'), 'gi')
-        // // 一旦高亮后，就不再添加class，不然会一直嵌套span
-        // if (el.getElementsByClassName('highlight__text').length === 0) {
-        //   const newText = text.replace(regex, match => `<span class="highlight__text">${match}</span>`)
-        //   if (newText && newText !== '-') {
-        //     el.innerHTML = newText
-        //   } else {
-        //     return newText
-        //   }
-        // }
+        }
       }
     }
   }

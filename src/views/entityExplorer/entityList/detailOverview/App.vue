@@ -91,7 +91,7 @@
             <loading :loading="loadingRelationshipOne" size="small" style="left: 1rem;"></loading>
           </div>
 
-          <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
+          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataOne" :key="index">
             {{item.value}}
           </div>
           <div v-if="relationshipDataOne.length===0 && !loadingRelationshipOne">-</div>
@@ -100,7 +100,7 @@
             <div class="data-item show-more-related" id="related-app-more" @click.stop="showMoreApp" style="position: relative">...</div>
             <div v-if="isShowMoreApp" class="app-popover_block" id="showRelatedApp">
               <div class="popover-content" v-for="(item, index) in relationshipDataOne" :key="index">
-                <span v-if="!item.show">{{item.value}}</span>
+                <span v-if="!item.show" class="high-light-block" v-high-light="keywordList">{{item.value}}</span>
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@
             <loading :loading="loadingRelationshipTwo" size="small" style="left: 1rem;"></loading>
           </div>
 
-          <div class="data-item" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
+          <div class="data-item high-light-block" v-high-light="keywordList" v-show="item.show" v-for="(item, index) in relationshipDataTwo" :key="index">
             {{item.value}}
           </div>
           <div v-if="relationshipDataTwo.length===0 && !loadingRelationshipTwo">-</div>
@@ -124,7 +124,7 @@
             <div class="data-item show-more-related" id="related-domain-more" @click.stop="showMoreDomain" style="position: relative">...</div>
             <div v-if="isShowMoreDomain" class="domain-popover_block" id="showRelatedDomain">
               <div v-for="(item, index) in relationshipDataTwo" :key="index">
-                <span v-if="!item.show">{{item.value}}</span>
+                <span v-if="!item.show" class="high-light-block" v-high-light="keywordList">{{item.value}}</span>
               </div>
             </div>
           </div>
