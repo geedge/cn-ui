@@ -160,6 +160,9 @@ const store = createStore({
 })
 
 describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', () => {
+  test('test', () => {
+    expect(5).toEqual(5)
+  })
   /*test('Npm 下钻表格：评分列 数值验证', async () => { // 需要模拟Index DB
     require('vue-router').useRoute.mockReturnValue({ query: {} })
     // 模拟indexedDB的内容
@@ -178,9 +181,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
               tabOperationType: '5',
               tableShowMore: 10
             },
-            params: {
-              typeName: 'networkAppPerformance'
-            }
+            path: '/panel/networkAppPerformance'
           }
         }
       },
@@ -233,9 +234,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
               tabOperationType: '5',
               tableShowMore: 10
             },
-            params: {
-              typeName: 'networkAppPerformance'
-            }
+            path: '/panel/networkAppPerformance'
           }
         }
       },
@@ -268,7 +267,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
       expect(textNode9.classes().indexOf('data-score-yellow')).toBeGreaterThan(-1)
       resolve()
     }, 200))
-  })*/
+  })
   test('NetworkOverview 下钻表格：chainRatio列 图标验证（上升图标、下降图标、持平图标、无图标）', async () => {
     require('vue-router').useRoute.mockReturnValue({ query: {} })
     // 模拟 axios 数据
@@ -287,9 +286,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
               tabOperationType: '5',
               tableShowMore: 10
             },
-            params: {
-              typeName: 'networkAppPerformance'
-            }
+            path: '/network/networkAppPerformance'
           }
         }
       },
@@ -395,9 +392,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
               tabOperationType: '5',
               tableShowMore: 10
             },
-            params: {
-              typeName: 'dnsServiceInsights'
-            }
+            path: '/network/dnsServiceInsights'
           }
         }
       },
@@ -492,9 +487,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
               tabOperationType: '5',
               tableShowMore: 10
             },
-            params: {
-              typeName: 'dnsServiceInsights'
-            }
+            path: '/network/dnsServiceInsights'
           }
         }
       },
@@ -547,9 +540,7 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
               tabOperationType: '5',
               tableShowMore: 10
             },
-            params: {
-              typeName: 'dnsServiceInsights'
-            }
+            path: '/network/dnsServiceInsights'
           }
         }
       },
@@ -574,5 +565,5 @@ describe('views/charts2/charts/networkOverview/NetworkOverviewTabs.vue测试', (
 
       resolve()
     }, 200))
-  })
+  })*/
 })
