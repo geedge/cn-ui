@@ -824,7 +824,7 @@ export default {
           customClass: 'del-model'
         }).then(() => {
           this.$router.push({
-            path: '/knowledgeBase/userDefinedLibrary',
+            path: '/knowledgeBase/userDefined',
             query: {
               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
               t: +new Date(),
@@ -834,7 +834,7 @@ export default {
         }).catch(() => {})
       } else {
         this.$router.push({
-          path: '/knowledgeBase/userDefinedLibrary',
+          path: '/knowledgeBase/userDefined',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
             t: +new Date(),
@@ -900,7 +900,7 @@ export default {
                             message: this.$t('tip.saveSuccess')
                           })
                           this.$router.push({
-                            path: '/knowledgeBase/userDefinedLibrary',
+                            path: '/knowledgeBase/userDefined',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
                               t: +new Date(),
@@ -929,7 +929,7 @@ export default {
                             message: this.$t('tip.saveSuccess')
                           })
                           this.$router.push({
-                            path: '/knowledgeBase/userDefinedLibrary',
+                            path: '/knowledgeBase/userDefined',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
                               t: +new Date(),
@@ -1262,7 +1262,7 @@ export default {
         console.error(e)
         this.$message.error(this.errorMsgHandler(e))
         this.$router.push({
-          path: '/knowledgeBase/userDefinedLibrary',
+          path: '/knowledgeBase/userDefined',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
             t: +new Date(),

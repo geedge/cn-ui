@@ -350,7 +350,7 @@ export default {
     changeToUserDefinedList () {
       this.dataType = 'userDefinedList'
       this.$router.push({
-        path: '/knowledgeBase/userDefinedLibrary',
+        path: '/knowledgeBase/userDefined',
         query: {
           t: +new Date(),
           dataType: 'userDefinedList'
@@ -412,7 +412,7 @@ export default {
     jumpToEditPage (id) {
       const pageNo = this.$router.currentRoute.value.query.pageNo
       this.$router.push({
-        path: '/knowledgeBase/userDefinedLibrary/edit',
+        path: '/knowledgeBase/userDefined/edit',
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,
@@ -423,7 +423,7 @@ export default {
     },
     jumpToCreatePage () {
       this.$router.push({
-        path: '/knowledgeBase/userDefinedLibrary/create',
+        path: '/knowledgeBase/userDefined/create',
         query: {
           t: +new Date(),
           dataType: this.dataType
