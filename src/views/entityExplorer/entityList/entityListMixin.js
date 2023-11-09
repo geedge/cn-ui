@@ -121,7 +121,7 @@ export default {
   methods: {
     showDetail () {
       const { href } = this.$router.resolve({
-        path: '/entityDetail',
+        path: '/entity/detail',
         query: {
           entityType: this.entityData.entityType,
           entityName: this.entityData.entityValue
@@ -131,7 +131,7 @@ export default {
     },
     showGraph () {
       const { href } = this.$router.resolve({
-        path: '/entityGraph',
+        path: '/entity/graph',
         query: {
           entityType: this.entityData.entityType,
           entityName: this.entityData.entityValue

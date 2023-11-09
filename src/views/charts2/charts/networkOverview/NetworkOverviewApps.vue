@@ -326,7 +326,7 @@ export default {
       if (tabType) {
         const oldCurTab = this.getUrlParam(this.curTabState.networkOverviewBeforeTab, '')
         const curTable = networkTable.networkOverview
-        const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+        const tableType = this.$route.path.replace('/panel/', '') || 'networkOverview'
         const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
         const list = await getUserDrilldownTableConfig(tableType, metric)
         const tabGroup = list.filter(item => item.label === tabType)

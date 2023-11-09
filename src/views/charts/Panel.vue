@@ -5,12 +5,12 @@
         v-if="panel.params && panel.params.wholeScreenScroll"
         id="wholeScreenBox"
     >
-      <dns-screen v-if="currentPath === wholeScreenRouterMapping.dns"
+<!--      <dns-screen v-if="currentPath === wholeScreenRouterMapping.dns"
                   :copy-data-list="chartList"
                   ref="dnsScreen"
                   :time-filter="timeFilter"
                   :entity="entity">
-      </dns-screen>
+      </dns-screen>-->
     </div>
     <div id="panelList" v-if="!isEntityDetail" class="panel-list">
       <div id="cn-panel" class="cn-panel2">
@@ -49,7 +49,7 @@
 <script>
 import { useRoute, useRouter } from 'vue-router'
 import { ref } from 'vue'
-import DnsScreen from '@/views/charts/wholeScreenScroll/DnsScreen'
+// import DnsScreen from '@/views/charts/wholeScreenScroll/DnsScreen'
 import { panelTypeAndRouteMapping, wholeScreenRouterMapping } from '@/utils/constants'
 import { api, getPanelList, getChartList } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
@@ -66,9 +66,9 @@ export default {
     isEntityDetail: Boolean,
     typeName: String
   },
-  components: {
+  /*components: {
     DnsScreen
-  },
+  },*/
   data () {
     return {
       chartList: [], // 普通panel的chart
@@ -104,8 +104,8 @@ export default {
   setup (props, ctx) {
     const panel = ref({})
     let panelType = 1 // 取得panel的type
-    const { params } = useRoute()
-    panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
+    const { path } = useRoute()
+    panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[path.replace('/panel/', '')]
 
     // date
     const dateRangeValue = 60

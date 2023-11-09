@@ -810,7 +810,7 @@ export default {
     },
     jumpNewDetetion () {
       this.$router.push({
-        path: '/detectionPolicy',
+        path: '/detection/policy',
         query: {
           t: +new Date()
         }
@@ -1006,11 +1006,10 @@ export default {
   },
   setup () {
     const store = useStore()
-    let { params, query, path } = useRoute()
+    let { query, path } = useRoute()
     // 获取路由跳转过的历史状态，赋值给当前界面，起到保留状态的作用，如浏览器的回退前进等
     const routerObj = store.getters.getRouterHistoryList.find(item => item.t === query.t)
     if (routerObj) {
-      params = routerObj.params
       query = routerObj.query
       path = routerObj.path
 
@@ -1018,7 +1017,7 @@ export default {
       const newUrl = urlParamsHandler(window.location.href, useRoute().query, query)
       overwriteUrl(newUrl)
     }
-    const pageType = params.typeName
+    const pageType = path.replace('/detection/', '')
     // 获取url携带的range、startTime、endTime
     const rangeParam = query.range
     const startTimeParam = query.startTime

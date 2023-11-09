@@ -282,7 +282,7 @@ export default {
       icon: 'cn-icon cn-icon-graph',
       label: i18n.global.t('entities.graph'),
       url: resolvePath({
-        path: '/entityGraph',
+        path: '/entity/graph',
         query: {
           entityType: props.entity.entityType,
           entityName: props.entity.entityName

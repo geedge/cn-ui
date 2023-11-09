@@ -148,7 +148,7 @@ export default {
     // this.panelName = this.$store.getters.getPanelName
     const pName = this.$route.query.panelName ? this.$t(this.$route.query.panelName) : ''
     const curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
-    if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+    if (this.$route.path.replace('/panel/', '') === fromRoute.dnsServiceInsights) {
       this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
       this.dnsRcodeMapData = await getDnsMapData('dnsRcode')
       this.$store.commit('setDnsQtypeMapData', this.dnsQtypeMapData)
@@ -249,12 +249,11 @@ export default {
 
     const panel = ref({})
     let panelType = 1 // 取得panel的type
-    let { params, query, path } = useRoute()
+    let { query, path } = useRoute()
 
     // 获取路由跳转过的历史状态，赋值给当前界面，起到保留状态的作用，如浏览器的回退前进等
     const routerObj = store.getters.getRouterHistoryList.find(item => item.t === query.t)
     if (routerObj) {
-      params = routerObj.params
       query = routerObj.query
       path = routerObj.path
 
@@ -292,7 +291,7 @@ export default {
     } else if (thirdPanel) {
       panelType = Number(thirdPanel)
     } else {
-      panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[params.typeName]
+      panelType = props.entity ? props.entity.type : panelTypeAndRouteMapping[path.replace('/panel/', '')]
     }
 
     // 获取url携带的range、startTime、endTime
@@ -519,7 +518,7 @@ export default {
     },
     jumpEntityDetail () {
       const { href } = this.$router.resolve({
-        path: '/entityDetail',
+        path: '/entity/detail',
         query: {
           entityType: this.entityType,
           entityName: this.entityValue

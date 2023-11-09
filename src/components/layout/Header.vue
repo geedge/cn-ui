@@ -308,7 +308,7 @@ export default {
       return this.$store.getters.menuList.find(menu => menu.code === 'networkAnalytics')
     },
     otherMenu () {
-      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'chart', 'I18N', 'entityDetail', 'temp', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
+      return this.$store.getters.menuList.filter(menu => ['networkAnalytics', 'I18N', 'entityDetail', 'entityGraph', 'detectionPolicy'].indexOf(menu.code) === -1)
 
       /* function excludeButton (menu) {
         for (let i = 0; i < menu.length; i++) {
@@ -370,7 +370,7 @@ export default {
     },
     async breadcrumb (n) {
       this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
-      if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+      if (this.$route.path.replace('/panel/', '') === fromRoute.dnsServiceInsights) {
         if (this.dnsQtypeMapData.size === 0) {
           this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
         }
@@ -388,7 +388,7 @@ export default {
   async mounted () {
     this.from = Object.keys(this.entityType)[0]
     // 是否需要dns的qtype和rcode的数据字典
-    if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+    if (this.$route.path.replace('/panel/', '') === fromRoute.dnsServiceInsights) {
       if (this.dnsQtypeMapData.size === 0) {
         this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
       }
@@ -427,7 +427,7 @@ export default {
   },
   methods: {
     generateBreadcrumb (breadcrumb, menus) {
-      if (this.route === '/entityDetail') {
+      /*if (this.route === '/entityDetail') {
         const entityMenu = menus.find(m => m.route === '/entityExplorer')
         const entityDetailMenu = menus.find(m => m.route === '/entityDetail')
         breadcrumb.push({
@@ -459,7 +459,7 @@ export default {
           type: entityGraphMenu.type
         })
         return true
-      }
+      }*/
       const menu = menus.find(m => m.route === this.route)
       if (menu) {
         breadcrumb.unshift({
@@ -511,7 +511,7 @@ export default {
     },
     getCurTabByLabel (label) {
       let curTab = null
-      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const tableType = this.$route.path.replace('/panel/', '') || 'networkOverview'
       const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
       if (curTableInCode && curTableInCode.tabList) {
         curTab = curTableInCode.tabList.find(item => item.label === label)
@@ -524,7 +524,7 @@ export default {
       const currentValue = document.getElementById('breadcrumbValue') ? document.getElementById('breadcrumbValue').innerText : ''
       const columnName = this.getUrlParam(this.curTabState.thirdMenu, '')
       let type = 'ip'
-      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const tableType = this.$route.path.replace('/panel/', '') || 'networkOverview'
       const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
       if (curTableInCode && curTableInCode.tabList) {
         const curTab = curTableInCode.tabList.find(item => item.label === columnName)
@@ -548,7 +548,7 @@ export default {
       axios.get(curTableInCode.url.drilldownList, { params }).then(async response => {
         if (response.status === 200) {
           this.breadcrumbColumnValueListShow = response.data.data.result
-          if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+          if (this.$route.path.replace('/panel/', '') === fromRoute.dnsServiceInsights) {
             if (this.dnsQtypeMapData.size === 0) {
               this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
             }
@@ -679,7 +679,7 @@ export default {
     },
     async handleCurDrilldownTableConfig (thirdMenu) {
       // const userId = localStorage.getItem(storageKey.userId)
-      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const tableType = this.$route.path.replace('/panel/', '') || 'networkOverview'
       const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
       const drillDownTableConfigs = await combineDrilldownTableWithUserConfig()
       const currentTableConfig = drillDownTableConfigs.find(config => config.route === tableType)
@@ -701,6 +701,7 @@ export default {
       }
     },
     async jump (route, columnName, columnValue, opeType) {
+      route = route.replace('redirect:', '')
       if (route === '/panel/linkMonitor' && opeType === 3) {
         return true
       }
@@ -720,7 +721,7 @@ export default {
         this.$store.commit('setNetworkOverviewTabList', [])
       }
       // 清空网络概况的特殊面包屑
-      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const tableType = this.$route.path.replace('/panel/', '') || 'networkOverview'
       const metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
       const curTab = await getDefaultCurTab(tableType, metric, columnName)
       this.$store.getters.menuList.forEach(menu => {

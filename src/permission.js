@@ -32,14 +32,19 @@ router.beforeEach(async (to, from, next) => {
         store.commit('setMenuList', menuList)
         store.commit('setButtonList', buttonList)
         store.commit('setRoleList', roleList)
-      }
-      if (to.path) {
-        next()
-        /* if (hasMenu(store.getters.menuList, to.path)) {
+        const homeRoute = {
+          path: '/',
+          name: 'home',
+          component: () => import('@/components/layout/Home'),
+          children: []
+        }
+        handleRoutes(menuList, homeRoute.children)
+        router.addRoute(homeRoute)
+        next({ ...to, replace: true })
+      } else {
+        if (to.path) {
           next()
-        } else {
-          ElMessage.error('No access') // TODO 国际化
-        } */
+        }
       }
     }
   } else {
@@ -159,4 +164,100 @@ export function getWelcomeMenu (menu) {
       }
     }
   }
+}
+
+export function handleComponent (code) {
+  switch (code) {
+    case 'networkOverview':
+    case 'networkAppPerformance':
+    case 'dnsServiceInsights':
+    case 'linkMonitor':
+      return () => import('@/views/charts2/Panel')
+    case 'entity':
+      return () => import('@/views/entityExplorer/EntityExplorer')
+    case 'entityDetail':
+      return () => import('@/views/entityExplorer/EntityDetail')
+    case 'entityGraph':
+      return () => import('@/views/entityExplorer/EntityGraph')
+    case 'securityEvents':
+    case 'performanceEvents':
+      return () => import('@/views/detections/Index')
+    case 'detectionPolicy':
+      return () => import('@/views/detections/detectionPolicies/Index')
+    case 'createDetectionPolicy':
+    case 'editDetectionPolicy':
+      return () => import('@/views/detections/detectionPolicies/PolicyForm')
+    case 'report':
+      return () => import('@/views/report/Report')
+    case 'knowledgeBase':
+    case 'userDefinedLibrary':
+      return () => import('@/views/setting/KnowledgeBase')
+    case 'createUserDefinedLibrary':
+    case 'editUserDefinedLibrary':
+      return () => import('@/views/setting/KnowledgeBaseForm')
+    case 'administration':
+      return () => import('@/views/administration/Index')
+    case 'user':
+      return () => import('@/views/administration/User')
+    case 'role':
+      return () => import('@/views/administration/Roles')
+    case 'operationLog':
+      return () => import('@/views/administration/OperationLog')
+    case 'appearance':
+      return () => import('@/views/administration/Appearance')
+    case 'I18N':
+      return () => import('@/views/administration/I18n')
+    default:
+      return null
+  }
+}
+
+export function handleRoutes (menus, routes) {
+  menus.forEach(menu => {
+    if (menu.route === '' && (!menu.children || menu.children.length < 0)) {
+      return false
+    }
+    // administration的路由使用了嵌套，其他的是平铺
+    if (menu.pid === 0 && menu.code === 'administration') {
+      const path = menu.route.replace('redirect:', '')
+      if (menu.children && menu.children.length > 0) {
+        const route = {
+          name: menu.name,
+          path,
+          redirect: menu.children[0].route,
+          component: handleComponent(menu.code),
+          children: []
+        }
+        menu.children.forEach(c => {
+          route.children.push({
+            name: c.name,
+            path: c.route,
+            component: handleComponent(c.code)
+          })
+        })
+        routes.push(route)
+      }
+    } else {
+      if (menu.route && menu.route.startsWith('redirect:')) {
+        const path = menu.route.replace('redirect:', '')
+        if (menu.children && menu.children.length > 0) {
+          routes.push({
+            name: menu.name,
+            path,
+            redirect: menu.children[0].route
+          })
+          handleRoutes(menu.children, routes)
+        }
+      } else {
+        routes.push({
+          name: menu.code,
+          path: menu.route,
+          component: handleComponent(menu.code)
+        })
+      }
+      if (menu.children && menu.children.length > 0) {
+        handleRoutes(menu.children, routes)
+      }
+    }
+  })
 }

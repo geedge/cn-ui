@@ -503,7 +503,7 @@ export default {
       const currentValue = document.getElementById('tabSearchValue' + tabProp) ? document.getElementById('tabSearchValue' + tabProp).value : ''
       const columnName = curTab ? curTab.label : ''
       let type = 'ip'
-      const tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+      const tableType = this.$route.path.replace('/panel/', '') || 'networkOverview'
       const curTableInCode = networkTable[tableType] ? networkTable[tableType] : networkTable.networkOverview
       if (curTableInCode && curTableInCode.tabList) {
         const curTab = curTableInCode.tabList.find(item => item.label === columnName)
@@ -536,7 +536,7 @@ export default {
       axios.get(url, { params }).then(async response => {
         if (response.status === 200) {
           this.tabSearchColumnValueListShow = response.data.data.result
-          if (this.$route.params.typeName === fromRoute.dnsServiceInsights) {
+          if (this.$route.path.replace('/panel/', '') === fromRoute.dnsServiceInsights) {
             if (this.dnsQtypeMapData.size === 0) {
               this.dnsQtypeMapData = await getDnsMapData('dnsQtype')
             }
@@ -2262,10 +2262,9 @@ export default {
     this.drillDownTableConfigs = null
     this.curTable = null
     this.commonColumnList = null
-
     this.userId = localStorage.getItem(storageKey.userId)
     this.drillDownTableConfigs = await combineDrilldownTableWithUserConfig()
-    this.tableType = this.$route.params ? this.$route.params.typeName : 'networkOverview'
+    this.tableType = this.$route.path.replace('/panel/', '') || 'networkOverview'
     // 是否需要dns的qtype和rcode的数据字典
     if (this.tableType === fromRoute.dnsServiceInsights) {
       this.dnsQtypeMapData = this.$store.getters.getDnsQtypeMapData
@@ -2346,8 +2345,6 @@ export default {
     this.initSearchInfo()
     await this.saveUserLocalConfig()
     this.getChartData()
-  },
-  setup (props) {
   },
   beforeUnmount () {
     // 以下元素，检测到内存并未释放

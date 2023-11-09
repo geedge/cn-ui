@@ -274,7 +274,7 @@ export default {
     },
     goDetail (type, name) {
       const { href } = this.$router.resolve({
-        path: '/entityDetail',
+        path: '/entity/detail',
         query: {
           entityType: type,
           entityName: name

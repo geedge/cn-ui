@@ -396,7 +396,7 @@ export default {
       if (!this.showList) {
         // 首页进入搜索时重载页面，视觉上进入列表页面
         this.$router.push({
-          path: '/entityExplorer',
+          path: '/entity',
           query: {
             listMode: this.listMode,
             q: urlQ,

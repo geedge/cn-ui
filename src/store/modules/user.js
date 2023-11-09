@@ -1,6 +1,6 @@
 import axios from 'axios'
 import router from '@/router'
-import { getWelcomeMenu, sortByOrderNum } from '@/permission'
+import { getWelcomeMenu, sortByOrderNum, handleRoutes } from '@/permission'
 import { ElMessage } from 'element-plus' // dependent on utc plugin
 import { dbDrilldownTableConfig, storageKey } from '@/utils/constants'
 import { getConfigVersion } from '@/utils/tools'
@@ -64,7 +64,14 @@ const user = {
         store.commit('setMenuList', menuList)
         store.commit('setButtonList', res2.data.buttons)
         store.commit('setRoleList', res2.data.roles)
-
+        const homeRoute = {
+          path: '/',
+          name: 'home',
+          component: () => import('@/components/layout/Home'),
+          children: []
+        }
+        handleRoutes(menuList, homeRoute.children)
+        router.addRoute(homeRoute)
         if (res.loginSuccessPath) {
           let tempArr = res.loginSuccessPath.split('?')
           const path = tempArr[0]
