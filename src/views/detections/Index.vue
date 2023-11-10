@@ -48,6 +48,7 @@
             :filter-data="filterData[pageType]"
             :q="q"
             :time-filter="timeFilter"
+            @filter="getFilter"
         ></detection-filter>
 
         <div class="detection__list">
@@ -138,7 +139,7 @@ import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
 import { useStore } from 'vuex'
-import {  tooLongFormatterFor2Columns } from '@/views/charts/charts/tools'
+import { tooLongFormatterFor2Columns } from '@/views/charts/charts/tools'
 
 export default {
   name: 'Index',
@@ -189,6 +190,7 @@ export default {
             topColumn: 'status',
             collapse: false,
             value: [], // value之间是or的关系
+            showMore: false,
             data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
           },
           {
@@ -197,6 +199,7 @@ export default {
             topColumn: 'severity',
             collapse: false,
             value: [], // value之间是or的关系
+            showMore: false,
             data: [] // 从接口动态获取，本项在获得数据后需要特殊处理左边框颜色
           },
           {
@@ -205,6 +208,9 @@ export default {
             topColumn: 'event_type',
             collapse: false,
             value: [],
+            showMore: true,
+            showDisabled: true,
+            showIndex: 5, // index作为showMore分割，从1开始而非0
             data: [] // 从接口动态获取
           },
           {
@@ -214,43 +220,21 @@ export default {
             collapse: false,
             value: [],
             showMore: true,
-            showIndex: 9,
+            showDisabled: true,
+            showIndex: 5,
             data: [] // 从接口动态获取
           },
-          // {
-          //   title: this.$t('detections.victimLocation'),
-          //   column: 'victimLocationCountry',
-          //   collapse: false,
-          //   value: [],
-          //   showMore: false,
-          //   showIndex: 9,
-          //   data: [
-          //     {
-          //       label: 'China',
-          //       value: 'china',
-          //       count: 50
-          //     }
-          //   ] // 从接口动态获取
-          // },
           {
             title: this.$t('detections.offenderIp'),
             column: 'offenderIP',
             topColumn: 'offender_ip',
             collapse: false,
             value: [],
-            showMore: false,
-            showIndex: 9,
+            showMore: true,
+            showDisabled: true,
+            showIndex: 5,
             data: [] // 从接口动态获取
           }
-          // {
-          //   title: this.$t('detections.offenderLocation'),
-          //   column: 'offenderLocationCountry',
-          //   collapse: false,
-          //   value: [],
-          //   showMore: false,
-          //   showIndex: 9,
-          //   data: [] // 从接口动态获取
-          // }
         ],
         performanceEvent: [
           {
@@ -431,6 +415,11 @@ export default {
             value: r.eventType,
             count: r.count
           }))
+          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][2].data)
+          this.filterData[this.pageType][2].showMore = showMore
+          this.filterData[this.pageType][2].showIndex = showIndex
+          this.filterData[this.pageType][2].showDisabled = showDisabled
+
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)
           if (detectionChart) {
@@ -453,6 +442,9 @@ export default {
       }).catch(e => {
         console.error(e)
         this.filterData[this.pageType][2].data = []
+        this.filterData[this.pageType][2].showMore = false
+        this.filterData[this.pageType][2].showIndex = 5
+        this.filterData[this.pageType][2].showDisabled = true
         this.$message.error(this.errorMsgHandler(e))
       })
     },
@@ -468,6 +460,10 @@ export default {
             count: r.count
           }))
           this.isCheckFilterByQ(params, 2)
+          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][2].data)
+          this.filterData[this.pageType][2].showMore = showMore
+          this.filterData[this.pageType][2].showIndex = showIndex
+          this.filterData[this.pageType][2].showDisabled = showDisabled
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)
           if (detectionChart) {
@@ -479,7 +475,7 @@ export default {
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
           })
-          if(data.length > 6){
+          if (data.length > 6) {
             securityTypeOption.legend.formatter = tooLongFormatterFor2Columns
           }
           detectionChart.setOption(securityTypeOption)
@@ -493,6 +489,9 @@ export default {
       }).catch(e => {
         console.error(e)
         this.filterData[this.pageType][2].data = []
+        this.filterData[this.pageType][2].showMore = false
+        this.filterData[this.pageType][2].showIndex = 5
+        this.filterData[this.pageType][2].showDisabled = true
         this.$message.error(this.errorMsgHandler(e))
       })
     },
@@ -508,9 +507,10 @@ export default {
             count: r.count
           }))
           this.isCheckFilterByQ(params, 4)
-          const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][4].data)
+          const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][4].data)
           this.filterData[this.pageType][4].showMore = showMore
           this.filterData[this.pageType][4].showIndex = showIndex
+          this.filterData[this.pageType][4].showDisabled = showDisabled
 
           const chartDom = document.getElementById(`detectionActiveAttacker${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)
@@ -537,7 +537,8 @@ export default {
         console.error(e)
         this.filterData[this.pageType][4].data = []
         this.filterData[this.pageType][4].showMore = false
-        this.filterData[this.pageType][4].showIndex = 9
+        this.filterData[this.pageType][4].showIndex = 5
+        this.filterData[this.pageType][4].showDisabled = true
         this.$message.error(this.errorMsgHandler(e))
       })
     },
@@ -547,14 +548,16 @@ export default {
         const data = res.data.data.result
         this.filterData[this.pageType][3].data = data.map(r => ({ label: r.victimIp, value: r.victimIp, count: r.count }))
         this.isCheckFilterByQ(params, 3)
-        const { showMore, showIndex } = this.computeFilterPage(this.filterData[this.pageType][3].data)
+        const { showMore, showIndex, showDisabled } = this.computeFilterPage(this.filterData[this.pageType][3].data)
         this.filterData[this.pageType][3].showMore = showMore
         this.filterData[this.pageType][3].showIndex = showIndex
+        this.filterData[this.pageType][3].showDisabled = showDisabled
       }).catch(e => {
         console.error(e)
         this.filterData[this.pageType][3].data = []
         this.filterData[this.pageType][3].showMore = false
-        this.filterData[this.pageType][3].showIndex = 9
+        this.filterData[this.pageType][3].showIndex = 5
+        this.filterData[this.pageType][3].showDisabled = true
         this.$message.error(this.errorMsgHandler(e))
       })
     },
@@ -635,8 +638,9 @@ export default {
     },
     computeFilterPage (data) {
       return {
-        showMore: data.length > 10,
-        showIndex: 9
+        showMore: data.length > 0,
+        showDisabled: data.length <= 5,
+        showIndex: 5
       }
     },
     queryList (q) {
@@ -835,6 +839,26 @@ export default {
         this.filterData[this.pageType][index].value = []
         this.filterData[this.pageType][index].flag = true
       }
+    },
+    getFilter (name, topColumn) {
+      if (topColumn === 'tag') {
+        const params = {
+          column: topColumn,
+          operator: 'has',
+          value: name
+        }
+        this.$refs.search.changeParams([params])
+      } else {
+        const params = {
+          column: topColumn,
+          operator: '=',
+          value: name
+        }
+        this.$refs.search.changeParams([params])
+      }
+      this.$nextTick(() => {
+        this.emitter.emit('advanced-search')
+      })
     }
   },
   mounted () {
@@ -927,78 +951,6 @@ export default {
     },
     timeFilter () {
       this.search(this.metaList, this.q)
-    },
-    'filterData.securityEvent.0.value': {
-      deep: true,
-      handler (n, o) {
-        if (!this.filterData.securityEvent[0].flag) {
-          this.$refs.search.changeParams({ column: this.filterData.securityEvent[0].column, oldValue: o, newValue: n })
-        } else {
-          this.filterData.securityEvent[0].flag = false
-        }
-      }
-    },
-    'filterData.securityEvent.1.value': {
-      deep: true,
-      handler (n, o) {
-        if (!this.filterData.securityEvent[1].flag) {
-          this.$refs.search.changeParams({ column: this.filterData.securityEvent[1].column, oldValue: o, newValue: n })
-        } else {
-          this.filterData.securityEvent[1].flag = false
-        }
-      }
-    },
-    'filterData.securityEvent.2.value': {
-      deep: true,
-      handler (n, o) {
-        if (!this.filterData.securityEvent[2].flag) {
-          this.$refs.search.changeParams({ column: this.filterData.securityEvent[2].column, oldValue: o, newValue: n })
-        } else {
-          this.filterData.securityEvent[2].flag = false
-        }
-      }
-    },
-    'filterData.securityEvent.3.value': {
-      deep: true,
-      handler (n, o) {
-        if (!this.filterData.securityEvent[3].flag) {
-          this.$refs.search.changeParams({ column: this.filterData.securityEvent[3].column, oldValue: o, newValue: n })
-        } else {
-          this.filterData.securityEvent[3].flag = false
-        }
-      }
-    },
-    'filterData.securityEvent.4.value': {
-      deep: true,
-      handler (n, o) {
-        if (!this.filterData.securityEvent[4].flag) {
-          this.$refs.search.changeParams({ column: this.filterData.securityEvent[4].column, oldValue: o, newValue: n })
-        } else {
-          this.filterData.securityEvent[4].flag = false
-        }
-      }
-    },
-    'filterData.securityEvent.5.value': {
-      deep: true,
-      handler (n, o) {
-        if (!this.filterData.securityEvent[5].flag) {
-          this.$refs.search.changeParams({ column: this.filterData.securityEvent[5].column, oldValue: o, newValue: n })
-        } else {
-          this.filterData.securityEvent[5].flag = false
-        }
-      }
-    },
-    'filterData.performanceEvent.0.value': {
-      deep: true,
-      handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.performanceEvent[0].column, oldValue: o, newValue: n })
-      }
-    },
-    'filterData.performanceEvent.1.value': {
-      deep: true,
-      handler (n, o) {
-        this.$refs.search.changeParams({ column: this.filterData.performanceEvent[1].column, oldValue: o, newValue: n })
-      }
     }
   },
   beforeUnmount () {

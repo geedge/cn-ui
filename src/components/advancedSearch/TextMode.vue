@@ -234,6 +234,9 @@ export default {
       toRaw(this.codeMirror).setValue(this.str)
     }
     if (q) {
+      if (q.indexOf('+') > -1) {
+        q = q.replace('+', '')
+      }
       if (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1) {
         q = decodeURI(q)
       } else {

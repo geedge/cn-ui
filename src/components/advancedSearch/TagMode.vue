@@ -635,6 +635,9 @@ export default {
     let { q } = this.$route.query
     if (q && !this.convertMetaList) {
       const parser = new Parser(this.columnList)
+      if (q.indexOf('+') > -1) {
+        q = q.replace('+', '')
+      }
       if (q.indexOf('%') === 0 || q.indexOf('%20') > -1 || q.indexOf('%25') > -1) {
         q = decodeURI(q)
       } else {

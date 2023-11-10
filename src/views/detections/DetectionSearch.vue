@@ -125,67 +125,8 @@ export default {
     search ({ q, metaList }) {
       this.$emit('search', { q, metaList })
     },
-    changeParams (params) { // params: { column: columnName, oldValue: [...], newValue: [...] }
-      // 向下传递时需要再转换一次param格式为[{column, operator, value}, ...]
-      if (params.oldValue.length === 0 && params.newValue.length === 1) {
-        // 1.参数值数量从0到1，直接addParams
-        const p = {
-          column: params.column,
-          operator: '=',
-          value: params.newValue
-        }
-        this.$refs.search.addParams([p])
-      } else if (params.oldValue.length === 1 && params.newValue.length === 0) {
-        // 2.参数值数量从1到0，直接removeParams
-        const p = {
-          column: params.column,
-          operator: '=',
-          value: params.oldValue
-        }
-        this.$refs.search.removeParams([p])
-      } else if (params.oldValue.length === 2 && params.newValue.length === 1) {
-        // 3.参数值数量从多到1，operator由'in'改为'='
-        const oldParam = {
-          column: params.column,
-          operator: 'IN',
-          value: params.oldValue
-        }
-        const newParam = {
-          column: params.column,
-          operator: '=',
-          value: params.newValue
-        }
-        this.$refs.search.changeParams([{ newParam, oldParam }])
-      } else if (params.oldValue.length === 1 && params.newValue.length === 2) {
-        // 4.参数值数量从1到多, operator由'='改为'in'
-        const oldParam = {
-          column: params.column,
-          operator: '=',
-          value: params.oldValue
-        }
-        const newParam = {
-          column: params.column,
-          operator: 'IN',
-          value: params.newValue
-        }
-        this.$refs.search.changeParams([{ newParam, oldParam }])
-      } else {
-        // 5.参数值数量从多到多，加1或者减1
-        const oldParam = {
-          column: params.column,
-          operator: 'IN',
-          value: params.oldValue
-        }
-        const newParam = {
-          column: params.column,
-          operator: 'IN',
-          value: params.newValue
-        }
-        this.$refs.search.changeParams([{ newParam, oldParam }])
-      }
-      this.$nextTick(() => {
-        this.emitter.emit('advanced-search')
-      })
+    changeParams (params) {
+      this.$refs.search.addParams(params)
     }
   }
 }

@@ -1,31 +1,36 @@
 <template>
   <div class="detection-filter-case">
-    <div class="new-detection-filter-title">{{$t('detections.filters')}}</div>
+    <div class="filter-case__header">{{$t('detections.filters')}}</div>
     <div class="no-data" v-if="isNoData">{{ $t('npm.noData') }}</div>
     <template v-for="(filter, index) in filterData" :key="index">
       <div class="detection-filter" v-show="filter.data.length > 0">
-        <div class="filter__header" @click="filter.collapse = !filter.collapse">
-          <span class="new-detection-filter-header-title">{{filter.title}}</span>
-          <i class="el-icon-arrow-right new-detection-filter-icon" :class="{ 'arrow-rotate': !filter.collapse }"></i>
-        </div>
-        <el-collapse-transition>
-          <div class="filter__body" v-show="!filter.collapse">
-            <el-checkbox-group v-model="filter.value">
-              <template v-for="(d, i) in filter.data" :key="i">
-                <el-checkbox :label="d.value" v-if="!filter.showIndex || filter.showIndex >= i">
-                  <div class="filter__checkbox-label">
-                    <div style="display: flex">
-                      <span class="severity-color-block" v-if="filter.column === 'eventSeverity'" :style="`background-color: ${eventSeverityColor[d.value]}`"></span>
-                      <span :style="filter.column === 'eventSeverity' ? 'padding-left: 10px' : ''">{{d.label}}</span>
-                    </div>
-                    <div v-if="d.count || d.count === 0">{{d.count}}</div>
-                  </div>
-                </el-checkbox>
-              </template>
-            </el-checkbox-group>
-            <div class="filter__more" v-if="filter.showMore" @click="showMore(filter)">{{$t('overall.showMore')}}</div>
+        <div class="filter__header">{{filter.title}}</div>
+
+        <div class="filter__body" style="position: relative">
+          <loading :loading="loadingLeft" style="top: -5px;"></loading>
+
+          <div class="filter__body-item"
+               v-for="(data, i) in filter.data.slice(0, filter.showIndex)"
+               :key="i"
+               @click="clickFilterItem(data.label, filter.column, index)">
+            <div class="filter__body-item-left">
+              <div class="filter__body-item-left-index">{{ i+1 }}</div>
+              <div class="filter__body-item-left-label">
+                <el-tooltip :content="data.label" placement="top" effect="light" :disabled="disabledLabel">
+                    <span @mouseenter="handleMouse(`filter${index}${i}`)" :id="`filter${index}${i}`">
+                      <span>{{ data.label }}</span>
+                    </span>
+                </el-tooltip>
+              </div>
+            </div>
+            <div class="filter__body-item-right">{{ data.count }}</div>
           </div>
-        </el-collapse-transition>
+        </div>
+        <div v-show="filter.showMore"  @click="showMore(filter)"
+             :class="filter.showDisabled? 'filter-no-show-more' : 'filter-show-more'">
+          {{ $t('overall.showMore') }}
+        </div>
+        <div class="filter-hr"></div>
       </div>
     </template>
   </div>
@@ -42,13 +47,36 @@ export default {
   },
   data () {
     return {
-      eventSeverityColor
+      eventSeverityColor,
+      disabledLabel: true
     }
   },
   methods: {
     showMore (filter) {
-      filter.showIndex && (filter.showIndex += 10)
-      filter.showIndex >= (filter.data.length - 1) && (filter.showMore = false)
+      filter.showIndex && (filter.showIndex += 5)
+      filter.showIndex >= (filter.data.length - 1) && (filter.showDisabled = true)
+    },
+    clickFilterItem (name, data, index) {
+      if (index === 0) {
+        let status = 0
+        if (name === this.$t('detections.active')) {
+          status = '0'
+        } else if (name === this.$t('detections.ended')) {
+          status = '1'
+        }
+        this.$emit('filter', status, data)
+      } else {
+        this.$emit('filter', name, data)
+      }
+    },
+    handleMouse (id) {
+      const dom = document.getElementById(id)
+      if (dom) {
+        const width = document.getElementById(id).offsetWidth
+        this.disabledLabel = width < 180
+      } else {
+        this.disabledLabel = true
+      }
     }
   },
   computed: {
