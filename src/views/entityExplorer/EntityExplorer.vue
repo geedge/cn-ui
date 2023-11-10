@@ -424,19 +424,21 @@ export default {
     },
     pageSize (val) {
       this.pageObj.pageSize = val
+      const keywordList = this.getKeywordListByMetaList(this.metaList)
       if (this.initFlag) {
         if (val !== 20) {
-          this.search({ metaList: this.metaList, q: this.q })
+          this.search({ metaList: this.metaList, q: this.q, keywordList: keywordList })
         }
       } else {
-        this.search({ metaList: this.metaList, q: this.q })
+        this.search({ metaList: this.metaList, q: this.q, keywordList: keywordList })
       }
     },
     pageNo (val) {
       if (!this.initFlag) {
         this.pageObj.pageNo = val
         this.pageObj.resetPageNo = false
-        this.search({ metaList: this.metaList, q: this.q })
+        const keywordList = this.getKeywordListByMetaList(this.metaList)
+        this.search({ metaList: this.metaList, q: this.q, keywordList: keywordList })
       }
     },
     // 点击上一页箭头
@@ -683,14 +685,7 @@ export default {
         }
         const parser = new Parser(columnList)
         const metaList = parser.parseStr(_.cloneDeep(str)).metaList
-        const keywordList = []
-        metaList.forEach(item => {
-          if (item.column && item.column.type === columnType.fullText) {
-            keywordList.push({ type: item.column.type, value: item.column.label })
-          } else if (item.column && item.column.type === columnType.string) {
-            keywordList.push({ type: item.column.type, value: item.value.value })
-          }
-        })
+        const keywordList = this.getKeywordListByMetaList(metaList)
         const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str))
         if (keyInfo.isKey) {
           const errorList = parser.validateStr(keyInfo.key)
@@ -744,6 +739,19 @@ export default {
       }).finally(() => {
       })
     },
+    getKeywordListByMetaList (metaList) {
+      if (metaList) {
+        const keywordList = []
+        metaList.forEach(item => {
+          if (item.column && item.column.type === columnType.fullText) {
+            keywordList.push({ type: item.column.type, value: item.column.label })
+          } else if (item.column && item.column.type === columnType.string) {
+            keywordList.push({ type: item.column.type, value: item.value.value })
+          }
+        })
+        return keywordList
+      }
+    },
     getKeyword (list) {
       if (list) {
         const metaList = JSON.parse(JSON.stringify(list))
@@ -773,7 +781,6 @@ export default {
     }
   },
   mounted () {
-    this.getEntityIndexData()
     let { q, listMode } = this.$route.query
 
     // 如果地址栏有listMode，即列表页，并非首页，则开始搜索
@@ -788,6 +795,9 @@ export default {
       if (q) {
         str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
       }
+      if (q.indexOf('+') > -1) {
+        q = q.replace('+', '')
+      }
       if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
         q = decodeURI(q)
       }
@@ -796,6 +806,10 @@ export default {
       // 查询评分基准
       this.$store.commit('resetScoreBase')
       this.queryScoreBase()
+    }
+
+    if (!this.showList) {
+      this.getEntityIndexData()
     }
   },
   watch: {

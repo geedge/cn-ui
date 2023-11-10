@@ -10,7 +10,7 @@
               <img v-if="entity.location.country===countryNameIdMapping.Unknown || !countryNameIdMapping[entity.location.country]" src="../../../../../public/images/flag/Unknown.svg" class="filter-country-flag">
               <img v-else :src="require(`../../../../../public/images/flag/${countryNameIdMapping[entity.location.country]}.png`)" class="filter-country-flag" >
             </div>
-            <span v-high-light="keywordList">{{ ipLocationRegion(entity.location) }}</span>
+            <span v-high-light="keywordList" class="high-location">{{ ipLocationRegion(entity.location) }}</span>
           </div>
           <div v-else>-</div>
         </div>
@@ -21,7 +21,7 @@
       </div>
       <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.openPort')}}</div>
-        <div class="row__content" style="word-break: break-word;" v-high-light="keywordList">{{ openPort }}</div>
+        <div class="row__content high-location" style="word-break: break-word;" v-high-light="keywordList">{{ openPort }}</div>
       </div>
     </div>
   </div>

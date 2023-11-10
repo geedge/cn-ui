@@ -35,7 +35,7 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-position"></i>
                   <span class="row-item-label">{{ $t('overall.city') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value" v-high-light="keywordList">{{ entityData.location ? ipLocationRegion(entityData.location) : '-' }}</span>
+                  <span class="row-item-value high-location" v-high-light="keywordList">{{ entityData.location ? ipLocationRegion(entityData.location) : '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-cloud"></i>
@@ -176,7 +176,7 @@
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
-          <detail-overview :entity="entityData" :time-filter="timeFilter" :key-word-list="keywordList" @reloadEntity="getEntity" />
+          <detail-overview :entity="entityData" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" />
         </div>
       </el-collapse-transition>
     </div>
