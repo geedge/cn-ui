@@ -279,6 +279,11 @@ export default {
       axios.get(api.detection[this.pageType].statusStatistics, { params }).then(res => {
         if (res.status === 200) {
           const data = res.data.data.result
+          if (data && data.length > 0) {
+            data.sort((a, b) => {
+              return Number(b.count) - Number(a.count)
+            })
+          }
           this.filterData[this.pageType][0].data = data.map(r => {
             let label = ''
             if (r.status === '0') {
@@ -373,6 +378,11 @@ export default {
     initEventSeverityData (params) {
       axios.get(api.detection[this.pageType].severityStatistics, { params }).then(res => {
         const data = res.data.data.result
+        if (data && data.length > 0) {
+          data.sort((a, b) => {
+            return Number(b.count) - Number(a.count)
+          })
+        }
         this.statisticsSeverityData = data
         if (!this.$_.isEmpty(data)) {
           this.filterData[this.pageType][1].data = data.map(r => ({ label: r.severity, value: r.severity, count: r.count }))
