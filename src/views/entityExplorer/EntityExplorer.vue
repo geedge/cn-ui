@@ -48,6 +48,15 @@
             <span>{{ summaryCount.ipCount }}</span>，{{$t('overall.domain')}}
             <span>{{ summaryCount.domainCount }}</span>，APP
             <span>{{ summaryCount.appCount }}</span>
+
+            <span class="entity-hide-entity">
+              <el-checkbox
+                  v-model="isHideRelatedEntities"
+                  :label="$t('entity.hideRelatedEntities')"
+                  :disabled="listData.length===0"
+                  @change="hideRelatedEntities"
+                  size="large" />
+            </span>
           </div>
 
           <entity-list
@@ -498,8 +507,8 @@ export default {
     /** 新版查询filter数据 */
     queryFilterNew (params) {
       const queryParams = {
-        // startTime: getSecond(params.startTime),
-        // endTime: getSecond(params.endTime),
+        startTime: getSecond(params.startTime),
+        endTime: getSecond(params.endTime),
         resource: params.q || ''
       }
       this.loadingLeft = true
@@ -559,7 +568,8 @@ export default {
         pageNo: params.pageNo,
         startTime: getSecond(params.startTime),
         endTime: getSecond(params.endTime),
-        resource: params.q || ''
+        resource: params.q || '',
+        hideRelated: this.isHideRelatedEntities
       }
       axios.get(api.entity.entityList.list, { params: queryParams }).then(response => {
         if (response.status === 200) {
@@ -580,7 +590,8 @@ export default {
       const queryParams = {
         startTime: getSecond(params.startTime),
         endTime: getSecond(params.endTime),
-        resource: params.q || ''
+        resource: params.q || '',
+        hideRelated: this.isHideRelatedEntities
       }
       axios.get(api.entity.entityList.summaryCount, { params: queryParams }).then(response => {
         if (response.status === 200) {
@@ -778,6 +789,12 @@ export default {
         str = str.substring(0, str.length - 1)
       }
       return str
+    },
+    hideRelatedEntities (e) {
+      this.isHideRelatedEntities = e
+      this.reloadUrl({ hideRelated: e })
+      this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
     }
   },
   mounted () {
@@ -841,9 +858,11 @@ export default {
       pageSize: query.pageSize ? parseInt(query.pageSize) : defaultPageSize,
       total: 0
     })
+    const isHideRelatedEntities = ref(query.hideRelated ? JSON.parse(query.hideRelated) : false) // 隐藏相关实体，默认false不隐藏
     return {
       timeFilter,
-      pageObj
+      pageObj,
+      isHideRelatedEntities
     }
   },
   beforeUnmount () {

@@ -12,7 +12,19 @@
         <!--标签-->
         <div class="cn-entity__header" style="display: flex;">
           <span class="cn-entity__header-title" v-high-light="keywordList">{{ entityData.entityValue || 'Unknown' }}</span>
-          <span class="entity-detail" style="display: flex;margin-left: 6px;margin-top: 1px;flex-wrap: wrap;margin-bottom: -10px;">
+          <span v-show="entityData.isRelated">
+            <el-popover
+                popper-class="my-popper-class"
+                placement="right"
+                trigger="hover"
+                :content="$t('entity.relatedEntities')"
+            >
+              <template #reference>
+                <i class="cn-icon cn-icon-related entity-related-entity"></i>
+              </template>
+            </el-popover>
+          </span>
+          <span class="entity-detail entity-row-tag" :style="{'margin-top' : entityData.isRelated ? '4px':'1px'}">
             <span v-for="(item, index) in levelTwoTags"
                   :key="index"
                   class="entity-tag entity-tag--small margin-r-10 margin-b-10"
