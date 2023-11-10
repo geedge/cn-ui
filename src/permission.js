@@ -65,14 +65,14 @@ router.beforeEach(async (to, from, next) => {
   }
 })
 
-// menuList中是否包含route权限
-export function hasMenu (menuList, route) {
+// menuList中是否包含code
+export function hasMenu (menuList, code) {
   return menuList.some(menu => {
-    if (menu.route === route) {
+    if (menu.code === code) {
       return true
     } else {
       if (menu.children) {
-        if (hasMenu(menu.children, route)) {
+        if (hasMenu(menu.children, code)) {
           return true
         }
       }
@@ -101,36 +101,9 @@ export function hasButton (buttonList, code) {
   return buttonList.some(button => button === code)
 }
 
-// 用法 v-has="code" | v-has="[code...]" 任意匹配一个 | v-has:all="[code...]" 全匹配
-export const hasPermission = {
-  beforeMount (el, binding) {
-    // 节点权限处理
-    const buttonCode = binding.value
-    const arg = binding.arg
-    if (buttonCode) {
-      if (buttonCode instanceof Array) {
-        let has = true
-        if (arg && arg === 'all') { // 全匹配
-          buttonCode.forEach(button => {
-            if (has) {
-              has = hasButton(store.getters.buttonList, button)
-            }
-          })
-        } else { // 任意匹配
-          has = buttonCode.some(button => {
-            return hasButton(store.getters.buttonList, button)
-          })
-        }
-        if (!has) {
-          el.parentNode.removeChild(el)
-        }
-      } else { // 单个匹配
-        if (!hasButton(store.getters.buttonList, buttonCode)) {
-          el.parentNode && el.parentNode.removeChild(el)
-        }
-      }
-    }
-  }
+// 根据code从menuList和buttonList中判断是否有权限
+export function hasPermission (code) {
+  return hasButton(store.getters.buttonList, code) || hasMenu(store.getters.menuList, code)
 }
 
 // 根据orderNum排序

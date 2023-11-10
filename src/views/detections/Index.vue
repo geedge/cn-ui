@@ -4,7 +4,7 @@
     <div class="explorer-top-tools explorer-detection-top-tools">
       <div class="explorer-top-tools-title">{{$t('overall.detections')}}</div>
       <div style="display: flex">
-        <div class="explorer-top-tools-block" @click="jumpNewDetetion">
+        <div class="explorer-top-tools-block" @click="jumpNewDetetion" v-if="hasPermission('detectionPolicy')">
           <i class="cn-icon cn-icon-configure-policies detection-icon-setting"></i>
           <span>{{$t('config.detections.configurePolicies')}}</span>
         </div>

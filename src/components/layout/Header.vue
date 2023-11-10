@@ -427,39 +427,6 @@ export default {
   },
   methods: {
     generateBreadcrumb (breadcrumb, menus) {
-      /*if (this.route === '/entityDetail') {
-        const entityMenu = menus.find(m => m.route === '/entityExplorer')
-        const entityDetailMenu = menus.find(m => m.route === '/entityDetail')
-        breadcrumb.push({
-          code: entityMenu.code,
-          value: entityMenu.i18n ? this.$t(entityMenu.i18n) : entityMenu.name,
-          route: entityMenu.route,
-          type: entityMenu.type
-        })
-        breadcrumb.push({
-          code: entityDetailMenu.code,
-          value: entityDetailMenu.i18n ? this.$t(entityDetailMenu.i18n) : entityDetailMenu.name,
-          route: entityDetailMenu.route,
-          type: entityDetailMenu.type
-        })
-        return true
-      } else if (this.route === '/entityGraph') {
-        const entityMenu = menus.find(m => m.route === '/entityExplorer')
-        const entityGraphMenu = menus.find(m => m.route === '/entityGraph')
-        breadcrumb.push({
-          code: entityMenu.code,
-          value: entityMenu.i18n ? this.$t(entityMenu.i18n) : entityMenu.name,
-          route: entityMenu.route,
-          type: entityMenu.type
-        })
-        breadcrumb.push({
-          code: entityGraphMenu.code,
-          value: entityGraphMenu.i18n ? this.$t(entityGraphMenu.i18n) : entityGraphMenu.name,
-          route: entityGraphMenu.route,
-          type: entityGraphMenu.type
-        })
-        return true
-      }*/
       const menu = menus.find(m => m.route === this.route)
       if (menu) {
         breadcrumb.unshift({

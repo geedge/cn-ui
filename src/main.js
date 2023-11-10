@@ -5,7 +5,6 @@ import router from '@/router'
 import store from '@/store'
 import App from '@/App.vue'
 import '@/utils/http.js'
-import { hasPermission } from '@/permission'
 import commonMixin from '@/mixins/common'
 import { cancelWithChange, noData, myHighLight } from '@/utils/tools'
 import { ClickOutside } from 'element-plus/lib/directives'
@@ -37,7 +36,6 @@ app.use(i18n)
 app.use(hljsVuePlugin)
 app.use(VueGridLayout)
 
-app.directive('has', hasPermission) // 注册指令
 app.directive('ele-click-outside', ClickOutside)
 app.directive('cancel', cancelWithChange)
 app.directive('no-data', noData)

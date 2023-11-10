@@ -3,6 +3,7 @@
     <div class="top-tools__left">
       <button
           id="knowledge-base-add"
+          v-if="hasPermission('createDetectionPolicy')"
           :title="$t('knowledgeBase.createKnowledgeBase')"
           class="top-tool-btn margin-r-10 top-tool-btn--create"
           @click="onCreate"
@@ -13,6 +14,7 @@
 
       <button
           :disabled="disableEdit"
+          v-if="hasPermission('editDetectionPolicy')"
           id="knowledge-base-edit"
           :title="$t('knowledgeBase.editKnowledgeBase')"
           class="top-tool-btn margin-r-10"
@@ -24,6 +26,7 @@
 
       <button
           :disabled="disableDelete"
+          v-if="hasPermission('deleteDetectionPolicy')"
           id="knowledge-base-delete"
           :title="$t('knowledgeBase.deleteKnowledgeBase')"
           class="top-tool-btn margin-r-10"

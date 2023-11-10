@@ -6,6 +6,7 @@
       </div>
       <div class="builtIn-to-user-defined" v-if="dataType === 'builtInList'">
         <button :title="$t('knowledgeBase.userDefinedLibrary')" class="top-tool-btn--user_defined_library"
+                v-if="hasPermission('userDefinedLibrary')"
                 @click="changeToUserDefinedList">
           <i class="cn-icon-add-knowledge-base cn-icon" ></i>
           <span>{{$t('knowledgeBase.userDefinedLibrary')}}</span>
@@ -39,17 +40,20 @@
           <div class="top-tools__left">
             <button id="knowledge-base-add" :title="$t('knowledgeBase.createKnowledgeBase')" class="top-tool-btn margin-r-10 top-tool-btn--create"
                     style="width:72px;"
+                    v-if="hasPermission('createUserDefinedLibrary')"
                     @click="jumpToCreatePage">
               <i class="cn-icon-xinjian cn-icon"></i>
               <span>{{$t('overall.create')}}</span>
             </button>
             <button id="knowledge-base-edit" :title="$t('knowledgeBase.editKnowledgeBase')" class="top-tool-btn margin-r-10"  :disabled="disableEdit"
                     style="width:72px;"
+                    v-if="hasPermission('editUserDefinedLibrary')"
                     @click="editSelectRecord">
               <i class="cn-icon-edit cn-icon" ></i>
               <span>{{$t('overall.edit')}}</span>
             </button>
             <button id="knowledge-base-delete" :title="$t('knowledgeBase.deleteKnowledgeBase')" class="top-tool-btn margin-r-10"
+                    v-if="hasPermission('deleteUserDefinedLibrary')"
                     style="width:72px;" :disabled="disableDelete"
                     @click="toDelete">
               <i class="cn-icon-delete cn-icon"></i>

@@ -48,7 +48,9 @@
         </el-form-item>
       </el-form>
       <div class="edit-appearance-base__footer">
-        <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save">
+        <button style="position: relative;" :class="{'footer__btn--disabled': blockOperation.save}" :disabled="blockOperation.save" class="footer__btn" @click="save"
+                v-if="hasPermission('editAppearence')"
+        >
           <loading size="small" :loading="blockOperation.save"></loading>
           <span>{{$t('overall.save')}}</span>
         </button>

@@ -1,4 +1,4 @@
-import { hasButton } from '@/permission'
+import { hasPermission } from '@/permission'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import { commonErrorTip } from '@/utils/constants'
 export default {
@@ -28,9 +28,7 @@ export default {
     }
   },
   methods: {
-    hasButton (code) {
-      return hasButton(this.$store.getters.buttonList, code)
-    },
+    hasPermission,
     errorMsgHandler (axiosError) {
       if (axiosError.response) {
         if (axiosError.response.data) {

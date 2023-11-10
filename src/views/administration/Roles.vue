@@ -11,16 +11,19 @@
     >
       <template v-slot:top-tool-left>
         <button id="roles-add"  class="top-tool-btn margin-r-10 top-tool-btn--create"
+                v-if="hasPermission('createRole')"
                 @click="add">
           <i class="cn-icon-xinjian cn-icon"></i>
           <span>{{$t('overall.create')}}</span>
         </button>
         <button id="roles-edit"  class="top-tool-btn margin-r-10" :disabled="disableEdit"
+                v-if="hasPermission('editRole')"
                 @click="edit">
           <i class="cn-icon-edit cn-icon"></i>
           <span>{{$t('overall.edit')}}</span>
         </button>
         <button id="roles-delete"  class="top-tool-btn margin-r-10" :disabled="disableDelete"
+                v-if="hasPermission('deleteRole')"
                 @click="delBatch">
           <i class="cn-icon-delete cn-icon"></i>
           <span>{{$t('overall.delete')}}</span>

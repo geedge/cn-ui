@@ -25,7 +25,7 @@
             <div class="card-desc" :title="data.desc">{{data.desc ? data.desc : '—'}}</div>
           </div>
           <div class="card-operate__footer">
-            <button v-if="data.showUpdate"
+            <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')"
                     class="top-tool-btn--update"
                     @click="jumpToUpdatePage(data,true)">
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
