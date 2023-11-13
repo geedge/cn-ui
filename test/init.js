@@ -4,6 +4,20 @@ var BASE_CONFIG = {
   version: '23.06',
   apiVersion: 'v1'
 }
+const DEFAULT_TIME_FILTER_RANGE = {
+  dashboard: 60,
+  entity: {
+    list: 60,
+    trafficLine: 60,
+    informationAggregation: 0,
+    relatedEntity: 60 * 24 * 7,
+    openPort: 60 * 24 * 7,
+    securityEvent: 60 * 24 * 7,
+    performanceEvent: 60 * 24 * 7,
+    behaviorPattern: 60 * 24 * 7
+  },
+  detection: 60
+}
 /* 开启测试 */
 config.global.mocks.isUnitTesting = true
 /* 初始化dayjs */
@@ -18,6 +32,7 @@ dayjs.extend(advancedFormat)
 dayjs.extend(weekday)
 window.$dayJs = dayjs
 window.BASE_CONFIG = BASE_CONFIG
+window.DEFAULT_TIME_FILTER_RANGE = DEFAULT_TIME_FILTER_RANGE
 // 引入 lodash 工具 模拟 lodash
 const _ = require('lodash') // lodash工具
 
