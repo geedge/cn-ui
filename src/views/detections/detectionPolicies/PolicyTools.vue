@@ -50,6 +50,9 @@
 </template>
 
 <script>
+import { useRoute } from 'vue-router'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+
 export default {
   name: 'DetectionTools',
   props: {
@@ -67,9 +70,21 @@ export default {
       keyWord: ''
     }
   },
+  mounted () {
+    const { query } = useRoute()
+    if (query.name) {
+      this.keyWord = query.name
+      this.onSearch()
+    }
+  },
   methods: {
     onSearch () {
       this.$emit('search', this.keyWord)
+      if (!this.keyWord) {
+        const query = this.$route.query
+        delete query.name
+        this.reloadUrl(query, 'clear')
+      }
     },
     onCreate () {
       this.$emit('create')
@@ -79,6 +94,14 @@ export default {
     },
     onDelete (data) {
       this.$emit('delete', data)
+    },
+    reloadUrl (newParam, clean) {
+      const { query } = this.$route
+      let newUrl = urlParamsHandler(window.location.href, query, newParam)
+      if (clean) {
+        newUrl = urlParamsHandler(window.location.href, query, newParam, clean)
+      }
+      overwriteUrl(newUrl)
     }
   }
 }

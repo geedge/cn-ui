@@ -10,7 +10,7 @@
           <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}}.
         </div>
         <div class="row__content1" v-else>
-          {{basicInfo.ruleDescription || '-'}}
+          {{ $_.get(basicInfo, 'ruleInfo.description', '-') || '-' }}
         </div>
       </div>
       <div class="overview__title">Fields</div>
@@ -240,6 +240,18 @@
           <div class="row__content">{{ $_.get(detection, 'eventInfoObj.ioc_value', '-') || '-' }}</div>
         </div>
       </template>
+      <template v-if="basicInfo.ruleInfo">
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.policyId') }}</div>
+          <div class="row__content">{{ $_.get(basicInfo, 'ruleInfo.ruleId', '-') || '-' }}</div>
+        </div>
+        <div class="overview__row">
+          <div class="row__label">{{ $t('detection.policyName') }}</div>
+          <div class="row__content" :class="$_.get(basicInfo, 'ruleInfo.ruleId') >=10000 ? 'row__content--link' : ''" @click="goPolicyPage">
+            {{ $_.get(basicInfo, 'ruleInfo.name', '-') || '-' }}
+          </div>
+        </div>
+      </template>
     </div>
     <div class="overview__right">
       <div class="overview__title">{{ $t('detections.goToVictim') }}</div>
@@ -463,7 +475,7 @@ export default {
       if (this.detection.ruleId) {
         axios.get(`${api.detection.detail}/${this.detection.ruleId}`).then(res => {
           if (res.status === 200) {
-            this.basicInfo.ruleDescription = res.data.data.description
+            this.basicInfo.ruleInfo = res.data.data
           }
         })
       }
@@ -492,6 +504,18 @@ export default {
           query: {
             entityType: type,
             entityName: name
+          }
+        })
+        window.open(href, '_blank')
+      }
+    },
+    goPolicyPage () {
+      if (this.basicInfo.ruleInfo.name && Number(this.basicInfo.ruleInfo.ruleId) >= 10000) {
+        const { href } = this.$router.resolve({
+          path: '/detection/policy',
+          query: {
+            t: +new Date(),
+            name: this.basicInfo.ruleInfo.name
           }
         })
         window.open(href, '_blank')

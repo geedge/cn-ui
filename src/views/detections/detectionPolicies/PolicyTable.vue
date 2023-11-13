@@ -5,6 +5,7 @@
       ref="dataTable"
       :data="tableData"
       height="100%"
+      tooltip-effect="light"
       border
       empty-text=" "
       @header-dragend="dragend"
@@ -31,6 +32,7 @@
         :sortable="item.sortable"
         :width="`${item.width}`"
         class="data-column"
+        :show-overflow-tooltip="['library'].indexOf(item.prop) > -1"
     >
       <template #header>
         <span class="data-column__span">{{ item.label }}</span>
