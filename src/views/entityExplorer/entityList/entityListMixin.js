@@ -124,7 +124,8 @@ export default {
         path: '/entity/detail',
         query: {
           entityType: this.entityData.entityType,
-          entityName: this.entityData.entityValue
+          entityName: this.entityData.entityValue,
+          range: this.timeFilter.dateRangeValue
         }
       })
       window.open(href, '_blank')
@@ -139,16 +140,27 @@ export default {
       })
       window.open(href, '_blank')
     },
-    getQueryParams () {
-      return {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        resource: this.entityType
+    getQueryParams (dateRangeValue) {
+      if (dateRangeValue) {
+        // range取 config.js 中配置的值
+        const endTime = window.$dayJs.tz().valueOf()
+        const startTime = endTime - dateRangeValue * 60 * 1000
+        return {
+          startTime: getSecond(startTime),
+          endTime: getSecond(endTime),
+          resource: this.entityType
+        }
+      } else {
+        return {
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime),
+          resource: this.entityType
+        }
       }
     },
     queryEntityDetailTraffic () {
       this.loading = true
-      axios.get(this.trafficUrl, { params: this.getQueryParams() }).then(response => {
+      axios.get(this.trafficUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.trafficLine) }).then(response => {
         if (response.status === 200 && response.data.data.result && response.data.data.result.length > 0) {
           let sentSeries
           let receivedSeries
@@ -262,7 +274,7 @@ export default {
       this.loadingNetworkQuality = true
       this.performanceScoreData = {}
       this.scoreDataState = false
-      axios.get(this.scoreUrl, { params: this.getQueryParams() }).then(response => {
+      axios.get(this.scoreUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.trafficLine) }).then(response => {
         if (response.status === 200) {
           this.performanceScoreData = {
             establishLatencyMs: _.get(response, 'data.data.result.establishLatencyMsAvg', null),

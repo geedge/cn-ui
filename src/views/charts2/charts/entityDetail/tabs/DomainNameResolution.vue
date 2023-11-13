@@ -70,15 +70,15 @@
 <script>
 import axios from 'axios'
 import { api } from '@/utils/api'
+import { getNowTime } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 import { entityDetailTabsName } from '@/utils/constants'
+import { ref } from 'vue'
 
 export default {
   name: 'DomainNameResolution',
   mixins: [chartMixin],
-  props: {
-  },
   components: {
     chartNoData
   },
@@ -105,16 +105,24 @@ export default {
       errorMsg2: ''
     }
   },
+  setup (props) {
+    // range取 config.js 中配置的值
+    const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.relatedEntity
+    const timeFilter = ref({ dateRangeValue })
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    timeFilter.value.startTime = startTime
+    timeFilter.value.endTime = endTime
+
+    return {
+      timeFilter
+    }
+  },
   mounted () {
     this.initData()
   },
   methods: {
     initData () {
-      const params = {
-        resource: this.entity.entityName
-        // startTime: getSecond(this.timeFilter.startTime),
-        // endTime: getSecond(this.timeFilter.endTime)
-      }
+      const params = this.getParams()
       if (this.entity.entityType === 'app') {
         const ipsOfApp = axios.get(api.entity.domainNameResolutionAboutIpsOfApp, { params: params })
         const domainsOfApp = axios.get(api.entity.domainNameResolutionAboutDomainsOfApp, { params: params })

@@ -442,6 +442,9 @@ export default {
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType }
           })
+          if (data.length > 6) {
+            securityTypeOption.legend.formatter = tooLongFormatterFor2Columns
+          }
           detectionChart.setOption(securityTypeOption)
 
           const vm = this
@@ -987,10 +990,11 @@ export default {
     const rangeParam = query.range
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
-    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
+    // 优先级：url > config.js > 默认值。
+    const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.detection || 60)
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
-      const { startTime, endTime } = getNowTime(60)
+      const { startTime, endTime } = getNowTime(dateRangeValue)
       timeFilter.value.startTime = getSecond(startTime)
       timeFilter.value.endTime = getSecond(endTime)
       // 如果没有时间参数，就将参数写入url

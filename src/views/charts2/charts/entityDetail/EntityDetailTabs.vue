@@ -14,13 +14,13 @@
             <span :style="{color: tab.name === activeTab ? '#046ECA' : '#717171'}">{{ tab.tag }}</span>
           </el-tag>
         </template>
-        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" @checkTag="setTag"></information-aggregation>
-        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.relatedEntity && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter" @checkTag="setTag"></domain-name-resolution>
-        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
-        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
-        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :timeFilter="oneDayTimeFilter" @checkTag="setTag" />
-        <open-port v-else-if="tab.name === entityDetailTabsName.openPort && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter" @checkTag="setTag"></open-port>
-        <behavior-pattern v-else-if="tab.name === entityDetailTabsName.behaviorPattern && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" :timeFilter="oneDayTimeFilter" @checkTag="setTag"></behavior-pattern>
+        <information-aggregation v-if="tab.name === entityDetailTabsName.informationAggregation && tab.name === activeTab" @toggleLoading="setLoading"  :entity="entity" @checkTag="setTag"></information-aggregation>
+        <domain-name-resolution v-else-if="tab.name === entityDetailTabsName.relatedEntity && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"  @checkTag="setTag"></domain-name-resolution>
+        <digital-certificate v-else-if="tab.name === entityDetailTabsName.digitalCertificate && tab.name === activeTab" @toggleLoading="setLoading" @checkTag="setTag" />
+        <security-event v-else-if="tab.name === entityDetailTabsName.securityEvent && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" @checkTag="setTag" />
+        <performance-event v-else-if="tab.name === entityDetailTabsName.performanceEvent && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" @checkTag="setTag" />
+        <open-port v-else-if="tab.name === entityDetailTabsName.openPort && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity"  @checkTag="setTag"></open-port>
+        <behavior-pattern v-else-if="tab.name === entityDetailTabsName.behaviorPattern && tab.name === activeTab" @toggleLoading="setLoading" :entity="entity" @checkTag="setTag"></behavior-pattern>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -58,12 +58,7 @@ export default {
   },
   data () {
     return {
-      timer: null,
-      // 最近一天的时间
-      oneDayTimeFilter: {
-        startTime: window.$dayJs.tz().valueOf() - 1440 * 60 * 1000,
-        endTime: window.$dayJs.tz().valueOf()
-      }
+      timer: null
     }
   },
   watch: {
@@ -114,22 +109,17 @@ export default {
   },
   methods: {
     initData () {
-      const params = {
-        resource: this.entity.entityName
-        // startTime: getSecond(this.oneDayTimeFilter.startTime),
-        // endTime: getSecond(this.oneDayTimeFilter.endTime)
-      }
-
       const url = this.getUrlByEntityType(this.entity.entityType)
-      const informationAggregation = axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`, { params: params })
-      const openPort = axios.get(url, { params: params })
-      // const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: params })
-      // const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: params })
+      const informationAggregation = axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`, { params: this.getParamsByTabType(entityDetailTabsName.informationAggregation) })
+      const openPort = axios.get(url, { params: this.getParamsByTabType(entityDetailTabsName.openPort) })
+      const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: this.getParamsByTabType(entityDetailTabsName.securityEvent) })
+      const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: this.getParamsByTabType(entityDetailTabsName.performanceEvent) })
 
-      Promise.all([informationAggregation, openPort]).then(response => {
-        if (response[0].status === 200) {
+      Promise.allSettled([informationAggregation, openPort, security, performance]).then(response => {
+        const informationAggregationResponse = response[0].value
+        if (informationAggregationResponse.status === 200) {
           const list = []
-          response[0].data.data.result.forEach(r => {
+          informationAggregationResponse.data.data.result.forEach(r => {
             Object.keys(r).forEach(k => {
               const aggregation = {
                 createTime: r[k].createTime,
@@ -152,40 +142,43 @@ export default {
               }
             })
           })
-
           this.initSetTag(entityDetailTabsName.informationAggregation, list.length)
         }
-        if (response[1].status === 200) {
-          this.initSetTag(entityDetailTabsName.openPort, response[1].data.data.result.length)
+        const openPortResponse = response[1].value
+        if (openPortResponse.status === 200) {
+          this.initSetTag(entityDetailTabsName.openPort, openPortResponse.data.data.result.length)
         }
-        // if (response[2].status === 200) {
-        //   this.initSetTag(entityDetailTabsName.securityEvent, response[2].data.data.result.length)
+        // let securityResponse = response[2].value
+        // if (securityResponse.status === 200) {
+        //   this.initSetTag(entityDetailTabsName.securityEvent, securityResponse.data.data.result.length)
         // }
-        // if (response[3].status === 200) {
-        //   this.initSetTag(entityDetailTabsName.performanceEvent, response[3].data.data.result.length)
+        // let performanceResponse = response[3].value
+        // if (performanceResponse.status === 200) {
+        //   this.initSetTag(entityDetailTabsName.performanceEvent, performanceResponse.data.data.result.length)
         // }
         this.initSetTag(entityDetailTabsName.securityEvent, 0)
         this.initSetTag(entityDetailTabsName.performanceEvent, 0)
       })
 
+      const relatedEntityParams = this.getParamsByTabType(entityDetailTabsName.relatedEntity)
       // 域名解析
       if (this.entity.entityType === 'app') {
-        const ipsOfApp = axios.get(api.entity.domainNameResolutionAboutIpsOfApp, { params: params })
-        const domainsOfApp = axios.get(api.entity.domainNameResolutionAboutDomainsOfApp, { params: params })
+        const ipsOfApp = axios.get(api.entity.domainNameResolutionAboutIpsOfApp, { params: relatedEntityParams })
+        const domainsOfApp = axios.get(api.entity.domainNameResolutionAboutDomainsOfApp, { params: relatedEntityParams })
         this.promiseData(ipsOfApp, domainsOfApp)
       }
 
       if (this.entity.entityType === 'ip') {
-        const appsOfIp = axios.get(api.entity.domainNameResolutionAboutAppsOfIp, { params: params })
-        const domainsOfIp = axios.get(api.entity.domainNameResolutionAboutDomainsOfIp, { params: params })
-        const behaviorPattern = axios.get(api.entity.behaviorPattern, { params: params })
+        const appsOfIp = axios.get(api.entity.domainNameResolutionAboutAppsOfIp, { params: relatedEntityParams })
+        const domainsOfIp = axios.get(api.entity.domainNameResolutionAboutDomainsOfIp, { params: relatedEntityParams })
+        const behaviorPattern = axios.get(api.entity.behaviorPattern, { params: relatedEntityParams })
         this.promiseData(appsOfIp, domainsOfIp, behaviorPattern)
       }
 
       if (this.entity.entityType === 'domain') {
-        const appsOfDomain = axios.get(api.entity.domainNameResolutionAboutAppsOfDomain, { params: params })
-        const ipsOfDomain = axios.get(api.entity.domainNameResolutionAboutIpsOfDomain, { params: params })
-        const fqdnsOfDomain = axios.get(api.entity.domainNameResolutionAboutFQDNsOfDomain, { params: params })
+        const appsOfDomain = axios.get(api.entity.domainNameResolutionAboutAppsOfDomain, { params: relatedEntityParams })
+        const ipsOfDomain = axios.get(api.entity.domainNameResolutionAboutIpsOfDomain, { params: relatedEntityParams })
+        const fqdnsOfDomain = axios.get(api.entity.domainNameResolutionAboutFQDNsOfDomain, { params: relatedEntityParams })
         this.promiseData(appsOfDomain, ipsOfDomain, fqdnsOfDomain)
       }
     },

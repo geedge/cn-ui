@@ -317,6 +317,13 @@ export default {
     },
     reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
+      const { startTime, endTime } = getNowTime(this.timeFilter.dateRangeValue)
+      const newParam = {
+        range: this.timeFilter.dateRangeValue,
+        startTime: getSecond(startTime),
+        endTime: getSecond(endTime)
+      }
+      this.reloadUrl(newParam)
     },
     // methods
     dateTimeRangeChange (s, e, v) {
@@ -840,11 +847,11 @@ export default {
     const rangeParam = query.range
     const startTimeParam = query.startTime
     const endTimeParam = query.endTime
-    // 若url携带了，使用携带的值，否则使用默认值。
-    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
+    // 优先级：url > config.js > 默认值。
+    const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.entity.list || 60)
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
-      const { startTime, endTime } = getNowTime(60)
+      const { startTime, endTime } = getNowTime(dateRangeValue)
       timeFilter.value.startTime = startTime
       timeFilter.value.endTime = endTime
     } else {

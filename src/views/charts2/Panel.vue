@@ -300,10 +300,10 @@ export default {
     const endTimeParam = query.endTime
 
     // 优先级：url > config.js > 默认值。
-    const dateRangeValue = rangeParam ? parseInt(query.range) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)
+    const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)
     const timeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
-      const { startTime, endTime } = getNowTime(60)
+      const { startTime, endTime } = getNowTime(dateRangeValue)
       timeFilter.value.startTime = getSecond(startTime)
       timeFilter.value.endTime = getSecond(endTime)
       // 如果没有时间参数，就将参数写入url

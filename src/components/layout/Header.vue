@@ -409,10 +409,10 @@ export default {
     const endTimeParam = query.endTime
     // 若url携带了，使用携带的值，否则使用默认值。
 
-    const dateRangeValue = rangeParam ? parseInt(query.range) : 60
+    const dateRangeValue = rangeParam ? parseInt(rangeParam) : 60
     const chartTimeFilter = ref({ dateRangeValue })
     if (!startTimeParam || !endTimeParam) {
-      const { startTime, endTime } = getNowTime(60)
+      const { startTime, endTime } = getNowTime(dateRangeValue)
       chartTimeFilter.value.startTime = startTime
       chartTimeFilter.value.endTime = endTime
     } else {

@@ -27,6 +27,8 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import { api } from '@/utils/api'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 import { entityDetailTabsName } from '@/utils/constants'
+import { ref } from 'vue'
+import { getNowTime } from '@/utils/date-util'
 
 export default {
   name: 'OpenPort',
@@ -50,16 +52,21 @@ export default {
   mounted () {
     this.initData()
   },
-  setup () {
+  setup (props) {
+    // range取 config.js 中配置的值
+    const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.openPort
+    const timeFilter = ref({ dateRangeValue })
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    timeFilter.value.startTime = startTime
+    timeFilter.value.endTime = endTime
+
+    return {
+      timeFilter
+    }
   },
   methods: {
     initData () {
-      const params = {
-        resource: this.entity.entityName
-        // startTime: getSecond(this.timeFilter.startTime),
-        // endTime: getSecond(this.timeFilter.endTime)
-      }
-
+      const params = this.getParams()
       this.toggleLoading(true)
       const url = this.getUrlByEntityType(this.entity.entityType)
       axios.get(url, { params: params }).then(response => {

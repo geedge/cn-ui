@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { dateFormatByAppearance } from '@/utils/date-util'
+import { dateFormatByAppearance, getNowTime } from '@/utils/date-util'
 import { eventSeverityColor, entityDetailTabsName, securityLevel } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
@@ -85,6 +85,7 @@ import { useRoute } from 'vue-router'
 import chartMixin from '@/views/charts2/chart-mixin'
 import { toUpperCaseByString } from '@/utils/tools'
 import chartNoData from '@/views/charts/charts/ChartNoData'
+import { ref } from 'vue'
 
 export default {
   name: 'SecurityEvent',
@@ -102,33 +103,36 @@ export default {
     const { query } = useRoute()
     const entityType = query.entityType
     const entityName = query.entityName
+    // range取 config.js 中配置的值
+    const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.securityEvent
+    const timeFilter = ref({ dateRangeValue })
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    timeFilter.value.startTime = startTime
+    timeFilter.value.endTime = endTime
 
     return {
       entityType,
-      entityName
+      entityName,
+      timeFilter
     }
   },
   mounted () {
-    // this.initData()
+    this.initData()
+    /*
     this.isNoData = true
     this.$emit('checkTag', entityDetailTabsName.securityEvent, 0)
     this.toggleLoading(true)
     const timer = setTimeout(() => {
       this.toggleLoading(false)
       clearInterval(timer)
-    }, 200)
+    }, 200) */
   },
   methods: {
     unitConvert,
     toUpperCaseByString,
     dateFormatByAppearance,
     initData () {
-      const params = {
-        resource: this.entityName
-        // startTime: getSecond(this.timeFilter.startTime),
-        // endTime: getSecond(this.timeFilter.endTime)
-      }
-
+      const params = this.getParams()
       this.toggleLoading(true)
       axios.get(`${api.entity.security}/${this.entityType}`, { params: params }).then(response => {
         const res = response.data

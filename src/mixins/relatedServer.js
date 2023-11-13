@@ -17,7 +17,7 @@ export default {
     // 请求数据 relationshipUrlOne => 路由 refOne => ref
     getRelatedServerDataOne (relationshipUrlOne, refOne) {
       this.loadingRelationshipOne = true
-      axios.get(relationshipUrlOne, { params: this.getQueryParams() }).then(response => {
+      axios.get(relationshipUrlOne, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.relatedEntity) }).then(response => {
         if (response.status === 200) {
           const relationshipDataOne = []
           if (response.data.data.result.length > 0) {
@@ -33,7 +33,7 @@ export default {
     },
     getRelatedServerDataTwo (relationshipUrlTow, refTow) {
       this.loadingRelationshipTwo = true
-      axios.get(relationshipUrlTow, { params: this.getQueryParams() }).then(response => {
+      axios.get(relationshipUrlTow, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.relatedEntity) }).then(response => {
         if (response.status === 200) {
           const relationshipDataTwo = []
           if (response.data.data.result.length > 0) {

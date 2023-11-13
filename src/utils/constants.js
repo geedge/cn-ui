@@ -98,6 +98,11 @@ export const entityType = {
   ip: 'IP'
 }
 
+export const knowledgeCardUpdateRecordType = {
+  updateRecord: 'updateRecord',
+  intelligenceLearning: 'intelligenceLearning'
+}
+
 export const entityDetailTabsName = {
   informationAggregation: 'informationAggregation',
   relatedEntity: 'relatedEntity',
@@ -213,7 +218,7 @@ export const detectionPageType = {
 }
 
 export const listScrollPath = [
-  '/entity',
+  '/entityExplorer',
   '/detection/performanceEvent',
   '/detection/securityEvent'
 ]

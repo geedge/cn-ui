@@ -1,4 +1,5 @@
-import { entityDetailRelatedEntitiesShowSize } from '@/utils/constants'
+import { entityDetailRelatedEntitiesShowSize, entityDetailTabsName } from '@/utils/constants'
+import { getSecond } from '@/utils/date-util'
 
 export default {
   props: {
@@ -27,6 +28,59 @@ export default {
           showListInfo.num = allList.length
         }
       }
+    },
+    getParamsByTabType (tabType) {
+      let params = {
+        resource: this.entity.entityName
+      }
+      let dataRangeValue = 60 * 24 * 7
+      switch (tabType) {
+        case entityDetailTabsName.relatedEntity:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.relatedEntity
+          break
+        case entityDetailTabsName.performanceEvent:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.performanceEvent
+          break
+        case entityDetailTabsName.securityEvent:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.securityEvent
+          break
+        case entityDetailTabsName.openPort:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.openPort
+          break
+        case entityDetailTabsName.informationAggregation:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.informationAggregation
+          break
+        case entityDetailTabsName.behaviorPattern:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.behaviorPattern
+          break
+        default:
+          dataRangeValue = 60 * 24 * 7
+      }
+
+      if (dataRangeValue !== 0) {
+        const endTime = window.$dayJs.tz().valueOf()
+        const startTime = endTime - dataRangeValue * 60 * 1000
+        params = {
+          ...params,
+          startTime: getSecond(startTime),
+          endTime: getSecond(endTime)
+        }
+      }
+      return params
+    },
+    getParams () {
+      const range = this.timeFilter.dateRangeValue
+      let params = {
+        resource: this.entity.entityName
+      }
+      if (range !== 0) {
+        params = {
+          ...params,
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime)
+        }
+      }
+      return params
     },
     handleShowDataNum (showListInfo, allList) {
       if (allList.length <= entityDetailRelatedEntitiesShowSize) {

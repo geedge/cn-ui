@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import { dateFormatByAppearance } from '@/utils/date-util'
+import { dateFormatByAppearance, getNowTime } from '@/utils/date-util'
 import * as echarts from 'echarts'
 import { pieChartOption4 } from '@/views/charts2/charts/options/echartOption'
-import { shallowRef } from 'vue'
+import { shallowRef, ref } from 'vue'
 import { entityDetailTabsName, chartColorForBehaviorPattern, unitTypes } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
@@ -49,13 +49,20 @@ export default {
     const { query } = useRoute()
     const entityType = query.entityType
     const entityName = query.entityName
+    // range取 config.js 中配置的值
+    const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.behaviorPattern
+    const timeFilter = ref({ dateRangeValue })
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    timeFilter.value.startTime = startTime
+    timeFilter.value.endTime = endTime
 
     return {
       entityType,
       entityName,
       myChart: shallowRef(null),
       chartColorForBehaviorPattern,
-      unitTypes
+      unitTypes,
+      timeFilter
     }
   },
   async mounted () {
@@ -130,9 +137,7 @@ export default {
       })
     },
     async initData () {
-      const params = {
-        resource: this.entityName
-      }
+      const params = this.getParams()
       this.toggleLoading(true)
       await axios.get(`${api.entity.behaviorPattern}`, { params: params }).then(response => {
         const res = response.data

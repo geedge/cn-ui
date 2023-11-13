@@ -129,7 +129,8 @@ export default {
     showDetail () {
       let str = ''
       if (this.dateRangeValue !== -1) {
-        str = this.dateRangeArr.find(item => item.value === this.dateRangeValue).name
+        const rangeItem = this.dateRangeArr.find(item => item.value === this.dateRangeValue)
+        str = rangeItem ? rangeItem.name : this.dateRangeArr[0].name
       }
       return str
     }

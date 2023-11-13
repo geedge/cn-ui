@@ -66,9 +66,9 @@ export default {
     isEntityDetail: Boolean,
     typeName: String
   },
-  /*components: {
+  /* components: {
     DnsScreen
-  },*/
+  }, */
   data () {
     return {
       chartList: [], // 普通panel的chart

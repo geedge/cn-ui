@@ -72,8 +72,9 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { entityDetailTabsName, entityDetailTags, tagValueLabelMapping } from '@/utils/constants'
-import { dateFormatByAppearance } from '@/utils/date-util'
+import { dateFormatByAppearance, getNowTime } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
+import { ref } from 'vue'
 
 export default {
   name: 'InformationAggregation',
@@ -81,6 +82,18 @@ export default {
     return {
       informationAggregationList: [],
       loading: true
+    }
+  },
+  setup (props) {
+    // range取 config.js 中配置的值
+    const dateRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.informationAggregation
+    const timeFilter = ref({ dateRangeValue })
+    const { startTime, endTime } = getNowTime(dateRangeValue)
+    timeFilter.value.startTime = startTime
+    timeFilter.value.endTime = endTime
+
+    return {
+      timeFilter
     }
   },
   mixins: [chartMixin],
@@ -108,7 +121,12 @@ export default {
       this.showError = false
       this.toggleLoading(true)
       this.informationAggregationList = []
-      axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`).then(response => {
+      const params = this.getParams()
+      let timeStr = ''
+      if (params.startTime && params.endTime) {
+        timeStr = '&startTime=' + params.startTime + '&endTime=' + params.endTime
+      }
+      axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1${timeStr}`).then(response => {
         const res = response.data
         if (response.status === 200) {
           // this.isNoData = res.data.result.length === 0

@@ -251,7 +251,7 @@ import { valueToRangeValue } from '@/utils/unit-convert'
 import Chart from '@/views/charts/Chart'
 import _ from 'lodash'
 import relatedServer from '@/mixins/relatedServer'
-import { dateFormatByAppearance, getMillisecond, getSecond } from '@/utils/date-util'
+import { dateFormatByAppearance, getMillisecond, getSecond, getNowTime } from '@/utils/date-util'
 import Loading from '@/components/common/Loading'
 import axios from 'axios'
 
@@ -404,11 +404,21 @@ export default {
   methods: {
     getMillisecond,
     dateFormatByAppearance,
-    getQueryParams () {
-      return {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
-        resource: this.entity.entityValue
+    getQueryParams (dateRangeValue) {
+      if (dateRangeValue) {
+        // range取 config.js 中配置的值
+        const { startTime, endTime } = getNowTime(dateRangeValue)
+        return {
+          startTime: getSecond(startTime),
+          endTime: getSecond(endTime),
+          resource: this.entity.entityValue
+        }
+      } else {
+        return {
+          startTime: getSecond(this.timeFilter.startTime),
+          endTime: getSecond(this.timeFilter.endTime),
+          resource: this.entity.entityValue
+        }
       }
     },
     getPerformanceQueryParams () {

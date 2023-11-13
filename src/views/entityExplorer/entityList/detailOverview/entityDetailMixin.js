@@ -121,7 +121,7 @@ export default {
       this.sentChart = echarts.init(document.getElementById(`entityDetailSend${this.entityName}`))
       this.receivedChart = echarts.init(document.getElementById(`entityDetailReceived${this.entityName}`))
       this.loadingTraffic = true
-      axios.get(this.trafficUrl, { params: this.getQueryParams() }).then(response => {
+      axios.get(this.trafficUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.trafficLine) }).then(response => {
         if (response.status === 200 && response.data.data.result && response.data.data.result.length > 0) {
           response.data.data.result.forEach(t => {
             if (t.legend === 'rate') {
@@ -278,7 +278,7 @@ export default {
       this.performanceScoreData = {}
       this.scoreDataState = false
       if (this.networkQuantityUrl) {
-        axios.get(this.networkQuantityUrl, { params: this.getQueryParams() }).then(response => {
+        axios.get(this.networkQuantityUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.trafficLine) }).then(response => {
           if (response.status === 200) {
             this.performanceScoreData = {
               establishLatencyMs: response.data.data.result.establishLatencyMsAvg || null,
@@ -347,7 +347,7 @@ export default {
 
     queryEntityDetailPerformance () {
       this.loadingAlert = true
-      axios.get(this.performanceUrl, { params: this.getQueryParams() }).then(response => {
+      axios.get(this.performanceUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.performanceEvent) }).then(response => {
         if (response.status === 200) {
           this.entityData.performanceNum = response.data.data.result.length
           this.performanceData = response.data.data.result
@@ -359,7 +359,7 @@ export default {
 
     queryEntityDetailSecurity () {
       this.loadingSecurityEvents = true
-      axios.get(this.securityUrl, { params: this.getQueryParams() }).then(response => {
+      axios.get(this.securityUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.securityEvent) }).then(response => {
         if (response.status === 200) {
           this.entityData.securityNum = response.data.data.result.length
           this.securityData = response.data.data.result
@@ -436,9 +436,9 @@ export default {
     queryEntityDetail () {
       this.queryEntityDetailTraffic()
       // this.queryEntityDetailPerformance()
-      // this.queryEntityDetailSecurity()
+      this.queryEntityDetailSecurity()
       this.queryEntityDetailNetworkQuantity()
-      /*if (this.entity.entityType === 'ip') {
+      /* if (this.entity.entityType === 'ip') {
         if (!this.entityData.dnsServerRole) {
           this.loadingDns = true
         }
@@ -449,7 +449,7 @@ export default {
             this.queryDnsServerInfoRate()
           }, 200)
         })
-      }*/
+      } */
     },
 
     resize () {
