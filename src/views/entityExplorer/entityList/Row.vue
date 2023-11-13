@@ -44,7 +44,7 @@
                   <span class="row-item-label">{{ $t('overall.country') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'location.country', '-') || '-' }}</span>
                 </div>
-                <div class="basic-info__item">
+                <div class="basic-info__item1">
                   <i class="cn-icon cn-icon-position"></i>
                   <span class="row-item-label">{{ $t('overall.city') }}&nbsp;:&nbsp;&nbsp;</span>
                   <span class="row-item-value high-location" v-high-light="keywordList">{{ entityData.location ? ipLocationRegion(entityData.location) : '-' }}</span>

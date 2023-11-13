@@ -49,7 +49,7 @@
             <span>{{ summaryCount.domainCount }}</span>，APP
             <span>{{ summaryCount.appCount }}</span>
 
-            <span class="entity-hide-entity">
+            <span class="entity-hide-entity" v-if="q">
               <el-checkbox
                   v-model="isHideRelatedEntities"
                   :label="$t('entity.hideRelatedEntities')"
