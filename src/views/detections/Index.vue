@@ -405,6 +405,7 @@ export default {
             if (this.pageType === 'performanceEvent') {
               vm.filterData.performanceEvent[0].value = vm.triggerFilterDataValue(vm.filterData.performanceEvent[0].value, e.data.name)
             } else if (this.pageType === 'securityEvent') {
+              this.getFilter(e.data.name, vm.filterData.securityEvent[1].column)
               vm.filterData.securityEvent[1].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[1].value, e.data.name)
             }
           })
@@ -493,6 +494,7 @@ export default {
           const vm = this
           detectionChart.off('click')
           detectionChart.on('click', e => {
+            this.getFilter(e.data.name, vm.filterData.securityEvent[2].column)
             vm.filterData.securityEvent[2].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[2].value, e.data.name)
           })
         }
@@ -540,6 +542,7 @@ export default {
           const vm = this
           detectionChart.off('click')
           detectionChart.on('click', e => {
+            this.getFilter(e.data[1], vm.filterData.securityEvent[4].column)
             vm.filterData.securityEvent[4].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[4].value, e.data[1])
           })
         }
