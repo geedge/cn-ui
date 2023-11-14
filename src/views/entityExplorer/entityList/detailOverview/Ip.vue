@@ -20,6 +20,10 @@
         <div class="row__content" v-high-light="keywordList">{{ $_.get(entity, 'asn.asn', '-') || '-' }}</div>
       </div>
       <div class="overview__row">
+        <div class="row__label row__label--width130">ISP</div>
+        <div class="row__content" v-high-light="keywordList">{{ $_.get(entityData, 'location.isp', '-') || '-' }}</div>
+      </div>
+      <div class="overview__row">
         <div class="row__label row__label--width130">{{$t('entities.openPort')}}</div>
         <div class="row__content high-location" style="word-break: break-word;" v-high-light="keywordList">{{ openPort }}</div>
       </div>
