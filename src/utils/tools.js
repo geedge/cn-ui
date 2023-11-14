@@ -1443,7 +1443,7 @@ export const changeTimeByDate = (date) => {
       const hours = Math.floor(diff / 3600)
       return hours === 1 ? `${hours} ${i18n.global.t('entity.search.hourAgo')}` : `${hours} ${i18n.global.t('entity.search.hoursAgo')}`
     } else {
-      return (new Date(oldDate).toString()).replace(/GMT.*/, '')
+      return date
     }
   }
 }
