@@ -545,8 +545,10 @@ export default {
           const vm = this
           detectionChart.off('click')
           detectionChart.on('click', e => {
-            this.getFilter(e.data[1], vm.filterData.securityEvent[4].column)
-            vm.filterData.securityEvent[4].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[4].value, e.data[1])
+            if (e.data) {
+              vm.getFilter(e.data[1], vm.filterData.securityEvent[4].column)
+              vm.filterData.securityEvent[4].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[4].value, e.data[1])
+            }
           })
         }
       }).catch(e => {

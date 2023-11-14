@@ -391,6 +391,8 @@ export default {
         urlQ = encodeURI(param.str)
       } else if (this.q) {
         urlQ = encodeURI(this.q)
+      } else if (!this.q) {
+        this.isHideRelatedEntities = false
       }
 
       // 在非列表模式下选择tag模式，在地址栏输入内容时将mode添加到地址栏

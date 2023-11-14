@@ -109,7 +109,7 @@
             flex-direction: row;
             flex-wrap: wrap;
 
-            .basic-info__item {
+            .basic-info__item, .basic-info__item1 {
               padding-right: 30px;
 
               .item__box {
@@ -169,6 +169,14 @@
               }
 
               span:last-of-type {
+                color: #666;
+              }
+            }
+            .basic-info__item1 {
+              span: {
+                color: #666;
+              }
+              span:first-of-type {
                 color: #666;
               }
             }
