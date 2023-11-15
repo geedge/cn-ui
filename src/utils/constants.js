@@ -38,6 +38,7 @@ export const storageKey = {
   leftMenuShrink: 'cn-left-menu-shrink',
   unsavedChange: 'cn-unsaved-change',
   entitySearchHistory: 'cn-entity-search-history',
+  detectionSearchHistory: 'cn-detection-search-history',
   echartLegendFontSize: 'echartLegendFontSize',
   echartLabelFontSize: 'echartLabelFontSize',
   tokenExpireCurrentPath: 'token-expire-current-path',
