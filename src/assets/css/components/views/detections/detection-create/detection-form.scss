@@ -10,9 +10,9 @@
   }
 
   .detection-form-content {
-    height: 100%;
+    height: calc(100% - 92px);
     overflow: scroll;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
 
     .detection-form-collapse {
       margin-top: 20px;
@@ -130,6 +130,12 @@
           }
         }
       }
+
+      .policy-form-trigger {
+        .el-collapse-item__content {
+          padding-bottom: 0 !important;
+        }
+      }
     }
 
     .el-input--mini, .el-input--mini .el-input__inner {
@@ -143,4 +149,13 @@
     padding-bottom: 20px;
   }
 
+  .policy-form__footer {
+    width: calc(100% + 40px);
+    height: 60px;
+    margin-left: -20px;
+    box-shadow: 0 -1px 4px 0 rgba(0,0,0,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

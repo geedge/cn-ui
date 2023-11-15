@@ -194,12 +194,13 @@
   }
 }
 
-.form-setting__btn, .form-setting__btn1 {
+.form-setting__btn, .form-setting__btn1, .policy-form__footer__btn {
   width: 100%;
   display: flex;
   justify-content: flex-end;
 
   .el-button {
+    width: 80px !important;
     height: 30px !important;
     min-height: 30px !important;
     line-height: 30px !important;
@@ -222,8 +223,15 @@
     }
   }
 }
+.policy-form__footer__btn {
+  justify-content: center;
+  margin-top: 8px;
 
-.form-setting__btn1 {
+  .btn1 {
+    margin-right: 16px;
+  }
+}
+.form-setting__btn1, .policy-form__footer__btn {
   .el-button {
     padding: 0 11px !important;
   }

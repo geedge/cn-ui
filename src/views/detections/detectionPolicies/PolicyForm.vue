@@ -6,8 +6,8 @@
       {{ ruleId ? $t('detection.editEventPolicies') : $t('detection.createEventPolicies') }}
     </div>
 
-    <!--第一步：General Settings-->
     <div class="detection-form-content">
+      <!--第一步：General Settings-->
       <div class="detection-form-collapse">
         <el-collapse v-model="activeNames">
           <el-collapse-item name="1">
@@ -43,7 +43,7 @@
 
       <!--第三步：Trigger-->
       <div class="detection-form-collapse">
-        <el-collapse v-model="activeNames">
+        <el-collapse v-model="activeNames" class="policy-form-trigger">
           <el-collapse-item name="3">
             <template #title>
               <div class="form-collapse-header">
@@ -136,16 +136,18 @@
                   不活跃将重置计数
                 </div>
               </el-form>
-
-              <div class="form-setting__btn1">
-                <div class="btn1">
-                  <el-button @click="createPolicy('')">{{ $t('overall.save') }}</el-button>
-                </div>
-                <el-button @click="createPolicy('enabled')">{{ $t('overall.save') }} & {{ $t('detection.create.enablePolicy') }}</el-button>
-              </div>
             </div>
           </el-collapse-item>
         </el-collapse>
+      </div>
+    </div>
+
+    <div class="policy-form__footer">
+      <div class="policy-form__footer__btn">
+        <div class="btn1">
+          <el-button @click="cancel">{{ $t('overall.cancel') }}</el-button>
+        </div>
+        <el-button @click="createPolicy">{{ $t('overall.save') }}</el-button>
       </div>
     </div>
   </div>
@@ -369,7 +371,7 @@ export default {
       }
     },
     /** 创建policy */
-    createPolicy (flag) {
+    createPolicy () {
       const settingLen = Object.keys(this.settingObj).length
       const ruleLen = Object.keys(this.ruleObj).length
 
@@ -378,9 +380,6 @@ export default {
           if (valid) {
             // 最终提交form
             const formObj = this.$_.cloneDeep({ ...this.settingObj, ruleConfig: JSON.stringify(this.ruleObj), ruleTrigger: this.triggerObj })
-            if (flag) {
-              formObj.status = 1
-            }
             // 将时间转为参数所需，如5分钟转为PT5M
             formObj.ruleTrigger.resetInterval = getDurationsTimeByType(formObj.ruleTrigger.resetInterval, formObj.ruleTrigger.resetIntervalVal)
             formObj.ruleTrigger.interval = getDurationsTimeByType(formObj.ruleTrigger.interval, formObj.ruleTrigger.intervalVal)
@@ -429,12 +428,18 @@ export default {
                     message: this.$t('tip.saveSuccess')
                   })
 
+                  const { query } = this.$route
+                  const queryInfo = {
+                    pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
+                    t: +new Date()
+                  }
+                  if (query.name && query.id) {
+                    queryInfo.ruleId = query.id
+                    queryInfo.name = this.settingObj.name
+                  }
                   this.$router.push({
                     path: '/detection/policy',
-                    query: {
-                      pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-                      t: +new Date()
-                    }
+                    query: queryInfo
                   })
                 } else {
                   console.error(response.data.message)
@@ -492,7 +497,134 @@ export default {
           return { flag: false, msg: this.$t('policy.dateTimeRangeSeconds') }
         }
       }
+    },
+    cancel () {
+      const { query } = this.$route
+      const queryInfo = {
+        pageNo: this.pageNoForTable ? Number(this.pageNoForTable) : 1,
+        t: +new Date()
+      }
+      if (query.name && query.id) {
+        queryInfo.ruleId = query.id
+        queryInfo.name = this.settingObj.name
+      }
+      this.$refs.form3.validate(valid => {
+        if (this.settingObj.settingNoContinue || this.ruleObj.settingNoContinue || !valid) {
+          this.$confirm(this.$t('tip.leavePage'), {
+            confirmButtonText: this.$t('tip.confirm'),
+            cancelButtonText: this.$t('overall.cancel'),
+            message: this.$t('tip.leavePageTips'),
+            title: this.$t('tip.leavePage'),
+            type: 'warning',
+            iconClass: 'width:0px;height:0px;',
+            customClass: 'del-model'
+          }).then(() => {
+            this.$router.push({
+              path: '/detection/policy',
+              query: queryInfo
+            })
+          }).catch(() => {})
+        } else {
+          this.$router.push({
+            path: '/detection/policy',
+            query: queryInfo
+          })
+        }
+      })
     }
   }
 }
 </script>
+
+<style lang="scss">
+.del-model {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0 !important;
+  width: 480px !important;
+  height: 190px;
+
+  .el-message-box__header {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid #eee;
+    height: 42px;
+    background: #F7F7F7;
+    box-shadow: 0 1px 0 0 rgba(53, 54, 54, 0.08);
+    padding-left: 20px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+
+    .el-message-box__headerbtn {
+      display: flex !important;
+      flex-direction: row-reverse;
+      justify-content: center;
+      align-items: center;
+      font-size: 10px;
+      line-height: 10px;
+      padding-right: 5px !important;
+
+      i {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .el-message-box__title {
+      font-size: 14px !important;
+      color: #353636;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+  }
+
+  .el-message-box__content {
+    height: 96px;
+    font-size: 14px;
+    color: #353636;
+    letter-spacing: 0;
+    line-height: 22px;
+    font-weight: 400;
+    padding-top: 8px;
+    padding-right: 20px;
+    padding-left: 20px;
+
+    .el-message-box__message {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  .el-message-box__btns {
+    height: 52px;
+    border-top: 1px solid #eee;
+    box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.07);
+    padding: 11px 0 12px !important;
+
+    .el-button--small {
+      padding: 8px 21px !important;
+      line-height: 12px;
+      font-family: NotoSansHans-Medium !important;
+      font-size: 12px;
+      font-weight: 500;
+      min-height: 28px;
+    }
+
+    .el-button:nth-child(1) {
+      margin-right: 20px;
+      width: 80px;
+      height: 28px;
+      color: #353636;
+    }
+
+    .el-button:nth-child(2) {
+      width: 80px;
+      height: 28px;
+      margin-right: 20px;
+      margin-left: 0 !important;
+      background-color: #2d8cf0;
+      border-color: #2d8cf0;
+    }
+  }
+}
+</style>
