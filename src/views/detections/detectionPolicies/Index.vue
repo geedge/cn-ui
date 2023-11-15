@@ -30,6 +30,7 @@
               :isNoData="isNoData"
               :custom-table-title="tools.customTableTitle"
               :table-data="tableData"
+              :policy-detail="policyDetail"
               :is-selected-status="isSelectedStatus"
               :all-count="18"
               @selectionChange="selectionChange"
@@ -75,7 +76,7 @@
 
   <div class="detection-drawer">
     <el-drawer v-model="showDrawer" :with-header="false">
-      <detection-drawer :drawer-info="drawerInfo"></detection-drawer>
+      <detection-drawer :drawer-info="drawerInfo" @edit="onEdit" />
     </el-drawer>
   </div>
 
@@ -89,6 +90,7 @@ import { api } from '@/utils/api'
 import dataListMixin from '@/mixins/data-list'
 import DetectionDrawer from '@/views/detections/detectionPolicies/PolicyDrawer'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'Index',
@@ -118,10 +120,36 @@ export default {
       drawerInfo: {},
       filterParams: {},
       policyTotal: 0,
-      policyEnabledNum: 0
+      policyEnabledNum: 0,
+      policyDetail: {}
+    }
+  },
+  mounted () {
+    const { query } = useRoute()
+    if (query.name && query.ruleId) {
+      this.getPolicyDetail(query.ruleId)
     }
   },
   methods: {
+    getPolicyDetail (id) {
+      if (id) {
+        axios.get(`${api.detection.detail}/${id}`).then(res => {
+          if (res.status === 200) {
+            if (!res.data.data) {
+              throw new Error('No data found, id: ' + this.ruleId)
+            }
+            this.policyDetail = res.data.data
+            this.selectionChange([res.data.data])
+            this.onRowDoubleClick(res.data.data)
+          } else {
+            console.error(res.data)
+          }
+        }).catch(e => {
+          console.error(e)
+          this.$message.error(this.errorMsgHandler(e))
+        })
+      }
+    },
     onSearch (keyWord) {
       this.filterParams = {
         ...this.filterParams,
@@ -153,7 +181,8 @@ export default {
         query: {
           t: +new Date(),
           pageNoForTable: pageNo || 1,
-          id: this.batchDeleteObjs[0].ruleId
+          id: this.batchDeleteObjs[0].ruleId,
+          name: this.$route.query.name || ''
         }
       })
     },

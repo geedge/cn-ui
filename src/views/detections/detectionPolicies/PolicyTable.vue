@@ -84,6 +84,7 @@ import { dateFormatByAppearance } from '@/utils/date-util'
 import { switchStatus } from '@/utils/tools'
 import _ from 'lodash'
 import { detectionUnitList } from '@/utils/constants'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'DetectionTable',
@@ -91,6 +92,9 @@ export default {
     isNoData: {
       type: Boolean,
       default: false
+    },
+    policyDetail: {
+      type: Object
     }
   },
   mixins: [table],
@@ -146,6 +150,17 @@ export default {
           show: true
         }
       ]
+    }
+  },
+  mounted () {
+    const { query } = useRoute()
+    // 初始化勾选状态
+    if (query.name && query.ruleId && this.policyDetail) {
+      this.selectionChange([this.policyDetail])
+      const timer = setTimeout(() => {
+        this.$refs.dataTable.toggleAllSelection([this.policyDetail])
+        clearTimeout(timer)
+      }, 400)
     }
   },
   watch: {

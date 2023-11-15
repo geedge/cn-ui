@@ -240,20 +240,19 @@
           <div class="row__content">{{ $_.get(detection, 'eventInfoObj.ioc_value', '-') || '-' }}</div>
         </div>
       </template>
-      <template v-if="basicInfo.ruleInfo">
-        <div class="overview__row">
-          <div class="row__label">{{ $t('detection.policyId') }}</div>
-          <div class="row__content">{{ $_.get(basicInfo, 'ruleInfo.ruleId', '-') || '-' }}</div>
-        </div>
-        <div class="overview__row">
-          <div class="row__label">{{ $t('detection.policyName') }}</div>
-          <div class="row__content" :class="$_.get(basicInfo, 'ruleInfo.ruleId') >=10000 ? 'row__content--link' : ''" @click="goPolicyPage">
-            {{ $_.get(basicInfo, 'ruleInfo.name', '-') || '-' }}
-          </div>
-        </div>
-      </template>
     </div>
     <div class="overview__right">
+      <div v-if="$_.get(basicInfo, 'ruleInfo.ruleId') >= 10000">
+        <div class="overview__title">{{ $t('detections.goToPolicy') }}</div>
+        <div class="overview__row">
+          <div class="row__content">
+            <span class="row__content--span">{{ $t('detections.viewDetailOf') }}</span> &nbsp;
+            <span class="row__content--link" @click="goPolicyPage">
+              {{ $_.get(basicInfo, 'ruleInfo.name', '-') || '-' }} (ID: {{ $_.get(basicInfo, 'ruleInfo.ruleId', '-') || '-' }})
+            </span>
+          </div>
+        </div>
+      </div>
       <div class="overview__title">{{ $t('detections.goToVictim') }}</div>
       <div class="overview__row">
         <div class="row__content">
@@ -515,7 +514,8 @@ export default {
           path: '/detection/policy',
           query: {
             t: +new Date(),
-            name: this.basicInfo.ruleInfo.name
+            name: this.basicInfo.ruleInfo.name,
+            ruleId: this.basicInfo.ruleInfo.ruleId
           }
         })
         window.open(href, '_blank')

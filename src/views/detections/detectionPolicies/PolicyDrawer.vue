@@ -2,7 +2,10 @@
   <div class="detection-drawer" style="height: 100vh;overflow: scroll;padding-bottom: 90px">
     <div class="drawer-basic">
       <div class="drawer-basic-header">
-        <div class="drawer-basic-id">ID: {{ drawerInfo.ruleId }}</div>
+        <div class="drawer-basic-id">
+          <div>ID: {{ drawerInfo.ruleId }}</div>
+          <i @click="onEdit" class="cn-icon cn-icon-bianji1"></i>
+        </div>
         <div :class="`detection-tag-status${drawerInfo.status}`">
           {{ $t(switchStatus(drawerInfo.status)) }}
         </div>
@@ -245,6 +248,9 @@ export default {
       } else {
         return '-'
       }
+    },
+    onEdit () {
+      this.$emit('edit')
     }
   }
 }
