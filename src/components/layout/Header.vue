@@ -42,7 +42,7 @@
     </div>
     <div class="cn-header__nav">
       <i class="cn-icon cn-icon-a-NetworkAnalytics"></i>
-      <el-breadcrumb class="header__left-breadcrumb" separator=">">
+      <el-breadcrumb class="header__left-breadcrumb" separator=">" v-if="route.startsWith('/panel')">
         <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item.value}`" :title="index===3?item.value:''"
                             v-for="(item,index) in breadcrumb" :key="item.value">
           <template v-if="index===3" >
@@ -111,6 +111,13 @@
             <span v-if="item.clickable" class="route-menu" @click="jump(item.route,'','',0)">{{ item.value }}</span>
             <span v-else>{{ item.value }}</span>
           </template>
+        </el-breadcrumb-item>
+      </el-breadcrumb>
+      <el-breadcrumb class="header__left-breadcrumb" separator=">" v-else>
+        <el-breadcrumb-item class="header__left-breadcrumb-item" :id="`breadcrumb${item.value}`"
+                            v-for="(item,index) in breadcrumb" :key="item.value">
+          <span v-if="item.clickable" class="route-menu" @click="jumpOther(item.route,index)">{{ item.value }}</span>
+          <span v-else>{{ item.value }}</span>
         </el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -326,15 +333,17 @@ export default {
     breadcrumb () {
       const breadcrumb = []
       this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList)
-      // 写死一级和二级菜单是否可以点击跳转
-      if (breadcrumb[0]) {
-        if (['knowledgeBase'].indexOf(breadcrumb[0].code) > -1) {
-          breadcrumb[0].clickable = true
-        }
-        if (breadcrumb[1]) {
-          if (breadcrumb[1].route && breadcrumb[1].route.indexOf('/panel/') === 0) {
-            breadcrumb[1].clickable = true
-          }
+      if(breadcrumb){
+        // panel菜单是否可以点击跳转：一级菜单不可点击，二级菜单可以点击
+        if(breadcrumb[0] && breadcrumb[1] && breadcrumb[1].route
+                              && breadcrumb[1].route.indexOf('/panel/') === 0){
+          breadcrumb[1].clickable = true
+        }else {// 除panel外的菜单是否可以点击跳转:除了新增、编辑，其它均可点击
+          breadcrumb.forEach(item => {
+            if(item.value !== 'Create' && item.value !== 'Edit'){
+              item.clickable = true
+            }
+          })
         }
       }
 
@@ -667,6 +676,24 @@ export default {
         }
       }
     },
+    //仅处理除panel外的相关路径的导航
+    async jumpOther (route, index) {
+      route = route.replace('redirect:', '')
+      this.showMenu = false
+      if (route === this.route && index > 0) {//当前只有一级菜单时，点击不进行刷新，重新跳转
+        this.refresh()
+        return
+      }
+      if (route) {
+        this.$router.push({
+          path: route,
+          query: {
+            t: +new Date()
+          }
+        })
+      }
+    },
+    //仅处理panel相关路径的导航
     async jump (route, columnName, columnValue, opeType) {
       route = route.replace('redirect:', '')
       if (route === '/panel/linkMonitor' && opeType === 3) {
@@ -700,11 +727,6 @@ export default {
                 child.columnName = columnName
                 this.urlChangeParams[this.curTabState.thirdMenu] = columnName
                 this.urlChangeParams[this.curTabState.fourthMenu] = columnValue
-                // const tabObjGroup = networkOverviewTabList.filter(item => item.label == columnName)
-                // let curTab = this.getCurTabByLabel()
-                // const type = curTab ? curTab.prop : ''
-                // this.curTabProp = this.$route.query.dimensionType ? this.$route.query.dimensionType : null
-                // this.urlChangeParams[this.curTabState.dimensionType] = type
                 this.urlChangeParams[this.curTabState.panelName] = columnValue
               } else if (columnName) { // 点击的为列名
                 child.columnValue = ''

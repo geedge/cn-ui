@@ -821,7 +821,7 @@ export default {
       if (q) {
         str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
       }
-      if (q.indexOf('+') > -1) {
+      if (q && q.indexOf('+') > -1) {
         q = q.replace('+', '')
       }
       if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {

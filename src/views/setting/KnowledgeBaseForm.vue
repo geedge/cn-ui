@@ -512,7 +512,6 @@ export default {
       isPreviewChange: false,
       isClick: false,
       pageNoForTable: 1,
-      dataType: 'builtInList',
       status: 1,
       oldItemIds: [],
       oldTagItem: {},
@@ -827,8 +826,7 @@ export default {
             path: '/knowledgeBase/userDefined',
             query: {
               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-              t: +new Date(),
-              dataType: this.dataType
+              t: +new Date()
             }
           })
         }).catch(() => {})
@@ -837,8 +835,7 @@ export default {
           path: '/knowledgeBase/userDefined',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-            t: +new Date(),
-            dataType: this.dataType
+            t: +new Date()
           }
         })
       }
@@ -903,8 +900,7 @@ export default {
                             path: '/knowledgeBase/userDefined',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-                              t: +new Date(),
-                              dataType: this.dataType
+                              t: +new Date()
                             }
                           })
                         } else {
@@ -932,8 +928,7 @@ export default {
                             path: '/knowledgeBase/userDefined',
                             query: {
                               pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-                              t: +new Date(),
-                              dataType: this.dataType
+                              t: +new Date()
                             }
                           })
                         } else {
@@ -1211,9 +1206,7 @@ export default {
   },
   mounted () {
     const pageNo = this.$router.currentRoute.value.query.pageNoForTable
-    const dataType = this.$router.currentRoute.value.query.dataType
     this.pageNoForTable = pageNo || 1
-    this.dataType = dataType || 'builtInList'
     const div = document.getElementsByClassName('el-upload-dragger')[0]
     const self = this
     div.addEventListener('click', function (event) {
@@ -1265,8 +1258,7 @@ export default {
           path: '/knowledgeBase/userDefined',
           query: {
             pageNo: self.pageNoForTable ? Number(self.pageNoForTable) : 1,
-            t: +new Date(),
-            dataType: this.dataType
+            t: +new Date()
           }
         })
       })

@@ -163,8 +163,9 @@ export function handleComponent (code) {
     case 'report':
       return () => import('@/views/report/Report')
     case 'knowledgeBase':
-    case 'userDefinedLibrary':
       return () => import('@/views/setting/KnowledgeBase')
+    case 'userDefinedLibrary':
+      return () => import('@/views/setting/KnowledgeBaseUserDefinedList')
     case 'createUserDefinedLibrary':
     case 'editUserDefinedLibrary':
       return () => import('@/views/setting/KnowledgeBaseForm')
