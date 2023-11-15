@@ -218,7 +218,7 @@ export const detectionPageType = {
 }
 
 export const listScrollPath = [
-  '/entityExplorer',
+  '/entity',
   '/detection/performanceEvent',
   '/detection/securityEvent'
 ]
