@@ -257,7 +257,8 @@ export const pieChartOption4 = {
       show: false,
       position: 'middle',
       formatter: '{b}: {c}'
-    }
+    },
+    barMinHeight: 5
   }],
   animation: false
 }
