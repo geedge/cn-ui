@@ -13,8 +13,8 @@
             @search="search"
         ></advanced-search>
       </div>
-      <div class="explorer-search__foot-list" style="margin-top: -2px;" v-ele-click-outside="esc">
-        <div style="position: absolute;" class="explorer-search__block" @click="triggerHistory">
+      <div class="explorer-search__foot-list" v-ele-click-outside="esc">
+        <div class="explorer-search__block" @click="triggerHistory">
           <i class="cn-icon cn-icon-time"></i>
           <div class="search-dividing-line"></div>
         </div>
@@ -26,7 +26,7 @@
                   scrollbar-always-on="false"
                   @row-click="selectHistory"
                   style="overflow-x: unset"
-                  empty-text=""
+                  empty-text=" "
               >
                 <el-table-column prop="str" :label="$t('overall.expression')" min-width="560" />
                 <el-table-column prop="date" :label="$t('overall.time')" sortable width="200">

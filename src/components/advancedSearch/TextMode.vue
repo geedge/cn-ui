@@ -4,8 +4,8 @@
       cols="40"
       ref="textSearch"
   ></textarea>
-  <div class="search__suffixes search__suffixes--text-mode" style="padding-left: 1px">
-    <div class="search__suffix">
+  <div class="search__suffixes search__suffixes--text-mode" :class="showList ? '' : 'entity-explorer-home'" style="padding-left: 1px">
+    <span class="search__suffix">
       <el-popover
           popper-class="my-popper-class"
           placement="top"
@@ -13,16 +13,16 @@
           :content="$t('entity.switchToAdvancedSearch')"
       >
         <template #reference>
-          <i class="cn-icon cn-icon-filter margin-r-12" @click="changeMode"></i>
+          <i class="cn-icon cn-icon-filter" @click="changeMode"></i>
         </template>
       </el-popover>
-    </div>
-    <div v-show="isCloseIcon" class="search__suffix-close" @click="cleanParams">
+    </span>
+    <span v-show="isCloseIcon" class="search__suffix search__suffix-close" @click="cleanParams">
       <i class="el-icon-error"></i>
-    </div>
-    <div class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
+    </span>
+    <span class="search__suffix" @click="search">
       <i class="el-icon-search"></i>
-    </div>
+    </span>
   </div>
 </template>
 

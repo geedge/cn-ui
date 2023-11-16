@@ -2,7 +2,7 @@
   <div class="explorer-search">
     <div class="explorer-search__title" v-show="!showList">{{$t('search.title')}}</div>
     <div class="explorer-search__input-case" :class="{'explorer-search__input-case--question-mark-in-line': showList}">
-      <div class="explorer-search__input explorer-search__input__border entity__search">
+      <div class="explorer-search__input explorer-search__input--border entity__search">
         <advanced-search
           ref="search"
           :column-list="columnList"
@@ -22,15 +22,6 @@
           <i class="cn-icon cn-icon-time"></i>
           <div class="search-dividing-line"></div>
         </div>
-<!--        <div class="foot__item" @click="triggerHistory">-->
-<!--          <i class="el-icon-arrow-right" :class="{ 'arrow-rotate': showHistory }" style="padding-right: 5px;"></i>-->
-<!--          <span>{{$t('search.searchHistory')}}</span>-->
-<!--        </div>-->
-<!--        <div class="foot__item">-->
-<!--          &lt;!&ndash; <span @click="search">{{$t('overall.explore')}}</span>-->
-<!--          <el-divider direction="vertical"></el-divider>-->
-<!--          <span>{{$t('overall.help')}}</span>&ndash;&gt;-->
-<!--        </div>-->
         <transition name="el-zoom-in-top">
           <div class="search__history" v-if="showHistory">
             <div class="history__items-new">

@@ -21,13 +21,12 @@
             :end-time="timeFilter.endTime"/>
       </div>
     </div>
-    <div style="width: 100%;padding-bottom: 47px;">
+    <div style="width: 100%; padding-bottom: 50px;">
       <chart-tabs :data="tabsData" router></chart-tabs>
     </div>
 
     <!-- 搜索组件 -->
     <detection-search
-        class="detection-border"
         ref="search"
         :page-type="pageType"
         @search="search"

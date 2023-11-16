@@ -90,7 +90,7 @@
       </template>
     </div>
     <div class="tag-search__add" @click="addCondition">{{$t('entities.advancedSearch.add')}}</div>
-    <div class="search__suffixes search__suffixes--tag-mode search__suffixes--tag-mode__block">
+    <div class="search__suffixes search__suffixes--tag-mode search__suffixes--tag-mode__block" :class="showList ? '' : 'entity-explorer-home'">
       <span class="search__suffix">
         <el-popover
             popper-class="my-popper-class"
@@ -103,10 +103,10 @@
           </template>
         </el-popover>
       </span>
-      <span v-show="metaList.length>0" class="search__suffix-close" @click="cleanMetaList">
+      <span v-show="metaList.length>0" class="search__suffix search__suffix-close" @click="cleanMetaList">
         <i class="el-icon-error"></i>
       </span>
-      <span class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
+      <span class="search__suffix" @click="search">
         <i class="el-icon-search"></i>
       </span>
     </div>

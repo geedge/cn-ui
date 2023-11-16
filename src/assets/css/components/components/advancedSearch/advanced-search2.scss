@@ -3,58 +3,65 @@
   height: 100%;
 
   .search__suffixes {
+    height: 38px;
+
+    &.entity-explorer-home {
+      margin-right: 1px;
+      color: #3976CB;
+
+      &.search__suffixes--text-mode, &.search__suffixes--tag-mode {
+        .search__suffix:last-of-type {
+          width: unset;
+          height: unset;
+          margin-right: 12px;
+          background-color: transparent;
+
+          .el-icon-search {
+            color: #3976CB;
+          }
+        }
+      }
+    }
     &.search__suffixes--text-mode, &.search__suffixes--tag-mode {
       position: absolute;
       display: flex;
       align-items: center;
-      top: 10px;
-      right: 10px;
+      top: 1px;
+      right: 0;
 
       .search__suffix {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin-right: 12px;
+        border-radius: 0 2px 2px 0;
 
         .cn-icon-search-advance, .cn-icon-search-normal, .cn-icon-filter {
           color: #A6AAAE;
           font-size: 18px;
-        }
-        .el-icon-search {
-          color: #3976CB;
-          font-size: 22px;
         }
 
         &:hover {
           cursor: pointer;
         }
         &:last-of-type {
-          margin-right: 4px;
+          margin-right: 0;
+          width: 41px;
+          height: 38px;
+          line-height: 39px;
+          background: #38ACD2;
+
+          .el-icon-search {
+            font-size: 22px;
+            color: #fff;
+          }
         }
       }
       .search__suffix-close {
         .el-icon-error {
           font-size: 17px;
           color: #C4C4C4;
-          margin-right: 12px;
           cursor: pointer;
-        }
-      }
-      .entity-explorer-search {
-        color: #3976CB;
-      }
-      .margin-r-12 {
-        margin-right: 12px;
-      }
-      .new-search__suffix {
-        width: 41px;
-        height: 41px;
-        line-height: 41px;
-        background: #38ACD2;
-        text-align: center;
-        margin-top: -10px;
-        margin-right: -10px;
-
-        .el-icon-search {
-          color: #fff !important;
-          margin-top: 9px !important;
         }
       }
       .my-popper-class .el-popper__arrow {
@@ -66,24 +73,22 @@
       background: #fff;
     }
   }
-  /*.search-tip--error {
-    font-size: 14px;
-    color: #F56C6C;
-  }*/
 }
-.advanced-search--show-list .CodeMirror, .advanced-search--show-list .tag-search {
-  border: none;
+.detections {
+  .tag-search, .CodeMirror {
+    border: 1px solid #E2E5EC;
+  }
 }
 .tag-search {
   display: flex;
   align-items: center;
   height: 40px;
   overflow: auto hidden;
-  border: 1px solid #CECECE;
   border-radius: 2px;
   padding-left: 10px;
   padding-right: 80px;
   background-color: white;
+  border: 1px solid #DEDEDE;
 
   &::-webkit-scrollbar {
     width: 8px;
