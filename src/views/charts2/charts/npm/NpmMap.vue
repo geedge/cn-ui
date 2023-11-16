@@ -20,7 +20,7 @@
           v-model="location"
           class="map-select map-select__location"
           clearable
-          placeholder="All"
+          :placeholder="$t('overall.country')"
           filterable
           popper-class="map-select-down"
           :popper-append-to-body="false"

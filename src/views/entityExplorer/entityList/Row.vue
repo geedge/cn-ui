@@ -158,7 +158,7 @@
                     <template v-if="!loadingNetworkQuality && score !=='-'">
                       <span v-for="(dot, i) in scoreDot" :key="i" :class="dot.class"></span>
                     </template>
-                    <span>{{score}}</span>
+                    <span style="padding-left: 4px;">{{score}}</span>
                     <loading :loading="loadingNetworkQuality" size="small"></loading>
                   </span>
                 </div>

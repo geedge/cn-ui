@@ -17,7 +17,7 @@
                 size="mini"
                 v-model="meta.column.label"
                 ref="columnSelect"
-                :placeholder="meta.column.label || ''"
+                :placeholder="meta.column.label || ' '"
                 @blur="columnBlur(meta, index)"
                 @change="(value) => selectColumn(value, meta)"
             >
@@ -91,7 +91,7 @@
     </div>
     <div class="tag-search__add" @click="addCondition">{{$t('entities.advancedSearch.add')}}</div>
     <div class="search__suffixes search__suffixes--tag-mode search__suffixes--tag-mode__block">
-      <div class="search__suffix" style="margin-right: 12px;margin-top: 1px;">
+      <span class="search__suffix">
         <el-popover
             popper-class="my-popper-class"
             placement="top"
@@ -102,13 +102,13 @@
             <i class="cn-icon cn-icon-search-normal" @click="changeMode"></i>
           </template>
         </el-popover>
-      </div>
-      <div v-show="metaList.length>0" class="search__suffix-close" @click="cleanMetaList">
+      </span>
+      <span v-show="metaList.length>0" class="search__suffix-close" @click="cleanMetaList">
         <i class="el-icon-error"></i>
-      </div>
-      <div class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
+      </span>
+      <span class="search__suffix" :class="showList ? 'new-search__suffix' : 'entity-explorer-search'" @click="search">
         <i class="el-icon-search"></i>
-      </div>
+      </span>
     </div>
   </div>
 </template>

@@ -39,9 +39,10 @@
                   scrollbar-always-on="false"
                   @row-click="selectHistory"
                   style="overflow-x: unset"
+                  empty-text=" "
               >
-                <el-table-column prop="str" :label="$t('networkOverview.search')" min-width="560" />
-                <el-table-column prop="date" :label="$t('entity.search.lastRun')" sortable width="200">
+                <el-table-column prop="str" :label="$t('overall.expression')" min-width="560" />
+                <el-table-column prop="date" :label="$t('overall.time')" sortable width="200">
                   <template #default="scope">
                     <span>{{ changeTimeByDate(scope.row.date) }}</span>
                   </template>

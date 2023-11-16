@@ -41,7 +41,7 @@
               {{ dateFormatByAppearance(getMillisecond(myEndTime)) }}
             </div>
 
-            <div class="date-range-title" style="padding-left: 0">{{$t('dateTime.recentlyUsedAbsoluteRanges')}}</div>
+            <div class="date-range-title" style="padding-left: 0">{{$t('dateTime.recentlyUsedRanges')}}</div>
             <div class="date-range-history">
               <div v-for="(item, index) in rangeHistoryArr" :key="index" class="date-range-history-item"
                    @click="historyChange(item)">
@@ -55,7 +55,7 @@
               :span="8"
               class="date-range-panel-content date-range-panel-content-right"
               style="border-left: 1px solid rgba(0,0,0,0.09);">
-            <div class="date-range-title">{{$t('dateTime.relatimeTimeRanges')}}</div>
+            <div class="date-range-title">{{$t('dateTime.relativeTimeRanges')}}</div>
             <ul class="date-range-item">
               <li v-for="item in dateRangeArr"
                   @click="quickChange(item.value)"
