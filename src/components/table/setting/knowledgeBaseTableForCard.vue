@@ -20,9 +20,9 @@
               <img :src="data.iconUrl"/>
             </div>
             <div class="card-title">
-              <div class="card-title-name" :title="data.label">{{data.label}}</div>
+              <div class="card-title-name" :title="$t(data.label)">{{$t(data.label)}}</div>
             </div>
-            <div class="card-desc" :title="data.desc">{{data.desc ? data.desc : '—'}}</div>
+            <div class="card-desc" :title="$t(data.desc)">{{$t(data.desc) || '—'}}</div>
           </div>
           <div class="card-operate__footer">
             <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')"
@@ -44,9 +44,9 @@
             <img :src="data.iconUrl"/>
           </div>
           <div class="card-title">
-            <div class="card-title-name" :title="data.label">{{data.label}}</div>
+            <div class="card-title-name" :title="$t(data.label)">{{$t(data.label)}}</div>
           </div>
-          <div class="card-desc" :title="data.desc ? data.desc:'—'">{{data.desc ? data.desc : '—'}}</div>
+          <div class="card-desc" :title="data.desc ? $t(data.desc) : '—'">{{data.desc ? $t(data.desc) : '—'}}</div>
         </div>
         <div class="card-operate__footer">
           <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')" :title="$t('overall.update')" class="top-tool-btn--update"
@@ -77,7 +77,7 @@
         <div class="update-right">
           <div class="knowledge-enable">
             <div class="update-title">
-              <div class="card-title-name" :title="updateKnowledge.label">{{updateKnowledge.label}}</div>
+              <div class="card-title-name" :title="$t(updateKnowledge.label)">{{$t(updateKnowledge.label)}}</div>
             </div>
             <el-switch v-model="updateKnowledge.status"
                        active-color="#38ACD2"
@@ -89,7 +89,7 @@
             >
             </el-switch>
           </div>
-          <div class="knowledge-desc" :title="updateKnowledge.desc">{{updateKnowledge.desc ? updateKnowledge.desc : '—'}}</div>
+          <div class="knowledge-desc" :title="updateKnowledge.desc ? $t(updateKnowledge.desc) : '-'">{{updateKnowledge.desc ? $t(updateKnowledge.desc) : '-'}}</div>
         </div>
       </div>
       <template v-if="!showAddUpdateDialog">
