@@ -7,7 +7,7 @@
       <div class="type-data">
         <div class="type-title">
           <span class="title-mark"></span>
-          <span class="type-title-word">{{ $t('entities.tab.currentDevelopmentPortsAndServices') }}</span>({{ openPortList.length }})
+          <span class="type-title-word">{{ $t('entities.tab.currentOpenPortsAndServices') }}</span>({{ openPortList.length }})
         </div>
         <div class="type-content">
           <div v-for="(openPort, index) in openPortList.slice(0,showOpenPortListInfo.num)" :key="index" class="data-item">
