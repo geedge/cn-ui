@@ -9,7 +9,7 @@
         :key="item.eventId">
       <div class="cn-detection--list">
         <div class="cn-detection__case entity-detail-security">
-          <div class="cn-detection__icon" :style="`background-color: ${eventSeverityColor[item.eventSecurity]}`"></div>
+          <div class="cn-detection__icon"></div>
           <div class="cn-detection__row">
             <div class="cn-detection__header">
               <span
@@ -17,7 +17,7 @@
                   class="detection-event-severity-color-block"
                   :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
               </span>
-              <span class="detection-event-severity-block">{{ toUpperCaseByString(item.securityType) || '-' }}</span>
+              <span class="detection-event-severity-block">{{ item.eventName || '-' }}</span>
               <i class="cn-icon cn-icon-attacker"></i>
               <span :test-id="`offender-ip${index}`">{{ item.offenderIp || '-' }}</span>
               <div class="domain">{{ item.offenderDomain }}</div>
