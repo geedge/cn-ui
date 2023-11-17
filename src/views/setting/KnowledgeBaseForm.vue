@@ -121,10 +121,10 @@
                   <div><span>{{$t('overall.format')}}:</span></div>
                   <div><span>IPv4</span>  x.x.x.x</div>
                   <div><span>IPv4 CIDR</span>   x.x.x.x/n</div>
-                  <div><span>IPv4 Range</span>   x.x.x.x-y.y.y.y</div>
+                  <div><span>IPv4 {{$t('overall.range')}}</span>   x.x.x.x-y.y.y.y</div>
                   <div><span>IPv6</span>   x:x:x::x</div>
                   <div><span>IPv6 CIDR</span>   x:x:x::x/n</div>
-                  <div><span>IPv6 Range</span>   x:x:x::x-y:y:y::y</div>
+                  <div><span>IPv6 {{$t('overall.range')}}</span>   x:x:x::x-y:y:y::y</div>
                 </template>
                 <template v-else-if="editObject.source === knowledgeBaseType.find(t => t.name === 'domain').value">
                   <div><span>{{$t('overall.format')}}:</span></div>
@@ -195,7 +195,7 @@
               <!--新增按钮-->
               <el-button class="addTagBtn" :disabled="addEditFlag" @click="addTagAtLast">
                 <i class="cn-icon cn-icon-add add-tag-btn" :style="{'color': addEditFlag ? '#C0C4CC !important' : '#575757'}"></i>
-                Add
+                {{$t('overall.add')}}
               </el-button>
             </div>
             <transition name="el-zoom-in-top">

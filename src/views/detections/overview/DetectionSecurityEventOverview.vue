@@ -71,7 +71,7 @@
           <div class="row__content">{{ $_.get(basicInfo, 'domainInfo.category.categoryGroup', '-') || '-' }}</div>
         </div>
         <div class="overview__row">
-          <div class="row__label">{{ $t('entities.reputationLevel') }}</div>
+          <div class="row__label">{{ $t('detection.domainReputationLevel') }}</div>
           <div class="row__content" v-if="$_.get(basicInfo, 'domainInfo.category.reputationLevel')">
             <div
                 class="row__tag row__tag__level"
