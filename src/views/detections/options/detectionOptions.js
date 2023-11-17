@@ -187,7 +187,7 @@ export const pieForSeverity = {
   legend: {
     orient: 'vertical',
     type: 'plain',
-    left: '52%',
+    left: '44%',
     top: 'middle',
     icon: 'circle',
     itemWidth: 10, // 设置宽度
@@ -203,7 +203,7 @@ export const pieForSeverity = {
       type: 'pie',
       selectedMode: 'single',
       radius: ['43%', '65%'],
-      center: ['26%', '50%'],
+      center: ['22%', '50%'],
       data: [],
       label: {
         show: false

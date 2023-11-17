@@ -23,7 +23,8 @@
               <button type="button" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new option-btn" style="margin-left: 0px;" @click="expandAllOrNone" :class="{'btn-active':expandAllFlag}">展开/收缩</button>
               <button type="button" class="cn-btn cn-btn-size-small-new cn-btn-style-light-new option-btn" @click="selectAllOrNone" :class="{'btn-active':selectAllFlag}"><span ><i class="cn-icon cn-icon-delete"></i></span></button>
             </div>-->
-            <el-tree :data="menus" :default-expand-all="expandAllFlag" :props="{label:labelFormatter}"  @check-change="selectChange" class="tree-border" node-key="id" ref="menuTree" show-checkbox id="role-box-input-menus">
+            <el-checkbox v-model="isCheckAll" :label="$t('overall.all')" @change="checkAll"></el-checkbox>
+            <el-tree :data="menus" :default-expand-all="expandAllFlag" check-strictly="true" :props="{label:labelFormatter}"  @check-change="selectChange" class="tree-border" node-key="id" ref="menuTree" show-checkbox id="role-box-input-menus">
               <template #default="{ data }">
               <span>
                 <i v-if="data.type === '1'" class="el-icon-menu"></i>
@@ -90,7 +91,8 @@ export default {
       menus: [],
       selectedIds: [],
       selectAllFlag: false,
-      expandAllFlag: true
+      expandAllFlag: true,
+      isCheckAll: false
     }
   },
   watch: {
@@ -150,9 +152,40 @@ export default {
     labelFormatter: function (data, node) {
       return data && data.i18n ? this.$t(data.i18n) : data.name
     },
+    getChildNodes (menu) {
+      let nodeGroup = []
+      if (menu.children && menu.children.length > 0) {
+        nodeGroup = menu.children
+        const _this = this
+        menu.children.forEach(node => {
+          const childNodes = _this.getChildNodes(node)
+          if (childNodes && childNodes.length > 0) {
+            nodeGroup = nodeGroup.concat(childNodes)
+          }
+        })
+      }
+      return nodeGroup
+    },
+    checkAll () {
+      if (this.$refs.menuTree) {
+        if (this.isCheckAll) {
+          let nodeGroup = this.menus
+          const _this = this
+          this.menus.forEach(menu => {
+            const childNodes = _this.getChildNodes(menu)
+            if (childNodes && childNodes.length > 0) {
+              nodeGroup = nodeGroup.concat(childNodes)
+            }
+          })
+          this.$refs.menuTree.setCheckedNodes(nodeGroup)
+        } else {
+          this.$refs.menuTree.setCheckedNodes([])
+        }
+      }
+    },
     selectChange: function (data, isCheck, childIsCheck) {
       if (this.$refs.menuTree) {
-        this.editRole.menuIds = this.$refs.menuTree.getCheckedKeys(true)
+        this.editRole.menuIds = this.$refs.menuTree.getCheckedKeys(false)
       }
     },
     selectAllOrNone: function () {

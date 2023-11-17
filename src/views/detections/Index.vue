@@ -138,7 +138,8 @@ import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
 import { useStore } from 'vuex'
-import { tooLongFormatterFor2Columns } from '@/views/charts/charts/tools'
+import { tooLongFormatter } from '@/views/charts/charts/tools'
+import { format } from 'echarts'
 
 export default {
   name: 'Index',
@@ -271,6 +272,7 @@ export default {
       loading: false,
       oldActiveEntitySearchValue: '',
       initFlag: true // 初始化标识，初始化时保证mounted执行
+      // detectionChart:null
     }
   },
   methods: {
@@ -442,7 +444,13 @@ export default {
             return { value: d.count, name: d.eventType }
           })
           if (data.length > 6) {
-            securityTypeOption.legend.formatter = tooLongFormatterFor2Columns
+            const dom = document.getElementById('eventSeverityPiesecurityEvent')
+            if (dom) {
+              const oneColumnWidth = (dom.clientWidth * 0.56) / 2 - 30
+              securityTypeOption.legend.formatter = function (name) {
+                return format.truncateText(name, oneColumnWidth, '12px')
+              }
+            }
           }
           detectionChart.setOption(securityTypeOption)
 
@@ -489,7 +497,13 @@ export default {
             return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
           })
           if (data.length > 6) {
-            securityTypeOption.legend.formatter = tooLongFormatterFor2Columns
+            const dom = document.getElementById('detectionCategoryPersecurityEvent')
+            if (dom) {
+              const oneColumnWidth = (dom.clientWidth * 0.56) / 2 - 30
+              securityTypeOption.legend.formatter = function (name) {
+                return format.truncateText(name, oneColumnWidth, '12px')
+              }
+            }
           }
           detectionChart.setOption(securityTypeOption)
 
@@ -828,6 +842,32 @@ export default {
     },
     resize () {
       this.chartInit.forEach(e => { e.value.resize() })
+      /*
+      //第二个饼图的resize
+      let dom = document.getElementById('detectionCategoryPersecurityEvent')
+      if(dom){
+        let securityTypeOption = this.detectionChart.getOption()
+
+        const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
+        this.detectionChart = echarts.getInstanceByDom(chartDom)
+        if (this.detectionChart) {
+          echarts.dispose(this.detectionChart)
+        }
+        this.detectionChart = echarts.init(chartDom)
+
+        let oneColumnWidth = (dom.clientWidth * 0.56)/2-30
+
+        if (this.statisticsCategoryData.length > 6) {
+          securityTypeOption.legend.formatter = function (name) {
+            return format.truncateText(name, oneColumnWidth, '12px')
+          }
+        }else {
+          securityTypeOption.legend.formatter = tooLongFormatter
+        }
+        this.detectionChart.setOption(securityTypeOption)
+        this.detectionChart.resize()
+      }
+*/
     },
     jumpNewDetetion () {
       this.$router.push({

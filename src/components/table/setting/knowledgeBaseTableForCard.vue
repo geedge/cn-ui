@@ -49,7 +49,7 @@
           <div class="card-desc" :title="data.desc ? data.desc:'—'">{{data.desc ? data.desc : '—'}}</div>
         </div>
         <div class="card-operate__footer">
-          <button v-if="data.showUpdate" :title="$t('overall.update')" class="top-tool-btn--update"
+          <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')" :title="$t('overall.update')" class="top-tool-btn--update"
                   @click="jumpToUpdatePage(data,false)">
             <i class="cn-icon-update-knowledge-base cn-icon"></i>
             <span>{{$t('overall.update')}}</span>
@@ -111,7 +111,7 @@
           </el-tabs>
           <div class="update-operate">
             <button :title="$t('overall.update')" class="top-tool-btn--update"
-                    @click="uploadRecord">
+                    @click="uploadRecord"><!--:disabled="hasUpdatingRecord"-->
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{$t('overall.update')}}</span>
             </button>
@@ -123,7 +123,7 @@
           </div>
           <div class="update-operate">
             <button :title="$t('overall.update')" class="top-tool-btn--update"
-                    @click="uploadRecord">
+                    @click="uploadRecord"><!--   :disabled="hasUpdatingRecord" -->
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{$t('overall.update')}}</span>
             </button>
@@ -295,7 +295,7 @@
 import table from '@/mixins/table'
 import Loading from '@/components/common/Loading'
 import { getSecond, getMillisecond, xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
-import { knowledgeCategoryValue, unitTypes, storageKey, builtInKnowledgeBaseBasicInfo } from '@/utils/constants'
+import { knowledgeCategoryValue, unitTypes, storageKey, builtInKnowledgeBaseBasicInfo, knowledgeCardUpdateRecordType } from '@/utils/constants'
 import { ref, shallowRef } from 'vue'
 import { api } from '@/utils/api'
 import { detectionTooltipFormatter } from '@/views/charts/charts/tools'
@@ -339,6 +339,7 @@ export default {
       psiphon3Loading: false,
       updateLogLoading: false,
       showConfirmSwitch: false,
+      // timer: null,
       switchKnowledgeId: '',
       activeTab: 'updateRecord',
       isNoDataForPsiphon3: false,
@@ -348,6 +349,7 @@ export default {
       tabType: 'total',
       mousemoveCursor: '',
       selectTime: 1440,
+      // hasUpdatingRecord: false,
       tabs: [
         {
           name: 'knowledgeBase.total',
@@ -380,12 +382,6 @@ export default {
   setup () {
     // 没上传过文件的提示
     const uploadErrorTip = ref('')
-    const nowMill = window.$dayJs.tz().valueOf()
-    const timeFilter = ref({
-      startTime: nowMill - 1000 * 60 * 60 * 24,
-      endTime: nowMill,
-      dateRangeValue: 1440
-    })
     return {
       baseUrl: BASE_CONFIG.baseUrl,
       apiVersion: BASE_CONFIG.apiVersion,
@@ -397,8 +393,7 @@ export default {
       fileList: ref([]),
       uploadFileSizeLimit: 1024 * 1024 * 1024,
       myChart: shallowRef(null),
-      chartOption: shallowRef(null),
-      timeFilter
+      chartOption: shallowRef(null)
     }
   },
   methods: {
@@ -470,9 +465,10 @@ export default {
     },
     init (val, show, active, n) {
       this.psiphon3Loading = true
+      const endTime = window.$dayJs.tz().valueOf()
       const params = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+        startTime: getSecond(endTime - this.selectTime * 60 * 1000),
+        endTime: getSecond(endTime)
       }
       const url = api.knowledgeBaseTimedistribution.replace('{{knowledgeId}}', this.updateKnowledge.knowledgeId).replace('{{type}}', this.tabType)
       axios.get(url, { params: params }).then(response => {
@@ -485,7 +481,9 @@ export default {
             const chartsData = res.data.result.map(item => {
               return [getMillisecond(item.statTime), item.count]
             })
-            this.echartsInit(chartsData)
+            if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+              this.echartsInit(chartsData)
+            }
           }
         } else {
           this.httpError(res)
@@ -533,14 +531,14 @@ export default {
       })
     },
     timeChange () {
-      this.timeFilter.endTime = window.$dayJs.tz().valueOf()
-      this.timeFilter.startTime = this.timeFilter.endTime - this.selectTime * 60 * 1000
       if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
         this.init()
       }
-      this.$nextTick(() => {
-        this.handleActiveBar()
-      })
+      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
+      }
     },
     activeChange (item) { // isClick:代表是通过点击操作来的
       if (item) {
@@ -554,9 +552,11 @@ export default {
     mouseenterTab (item) {
       if (this.isNoDataForPsiphon3) return
       this.mousemoveCursor = item.class
-      this.$nextTick(() => {
-        this.handleActiveBar()
-      })
+      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
+      }
     },
     mouseleaveTab () {
       this.mousemoveCursor = ''
@@ -586,17 +586,9 @@ export default {
     uploadSuccess (response) {
       this.uploadLoading = false
       this.uploaded = true
-      /* this.uploaded = response.code === 200
-      if (response.code === 200) { */
       this.$message.success(this.$t('tip.success'))
       this.showAddUpdateDialog = false
       this.getCurTabData()
-      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
-        this.init()
-      }
-      /* } else {
-        this.$message.error(this.$t('tip.uploadFailed', { msg: response.message }))
-      } */
     },
     beforeUpload (file) {
       this.uploadLoading = true
@@ -604,18 +596,12 @@ export default {
     },
     submitConfirm () {
       this.showConfirmDialog = true
-      this.$nextTick(() => {
-        this.handleActiveBar()
-      })
     },
     submit () {
       this.$refs.knowledgeUpload.submit()
     },
-    cancle(){
+    cancle () {
       this.showAddUpdateDialog = false
-      this.$nextTick(() => {
-        this.handleActiveBar()
-      })
     },
     clickCard (data, event) {
       if (data.isSelected) { // 原来为选中，当前点击后未选中
@@ -667,9 +653,11 @@ export default {
         await this.init()
       }
       this.showUpdate()
-      this.$nextTick(() => {
-        this.handleActiveBar()
-      })
+      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+        this.$nextTick(() => {
+          this.handleActiveBar()
+        })
+      }
     },
     uploadRecord () {
       this.showAddUpdateDialog = true
@@ -682,12 +670,12 @@ export default {
         pageSize: -1
       }
       if (this.showEnable) {
-        if (this.activeTab === 'updateRecord') {
+        if (this.activeTab === knowledgeCardUpdateRecordType.updateRecord) {
           params = {
             ...params,
             opUser: -1
           }
-        } else if (this.activeTab === 'intelligenceLearning') {
+        } else if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
           params = {
             ...params,
             opUser: 0
@@ -701,6 +689,15 @@ export default {
         if (this.updateHistoryList[0]) {
           this.currentVersion = this.updateHistoryList[0].commitVersion + 1
         }
+        /*
+        this.hasUpdatingRecord = false
+        this.updateHistoryList.forEach(item => {
+          if (item.isUpdating) { // if(item.isUpdating){//????????
+            this.hasUpdatingRecord = true
+          }
+        })
+
+ */
       }).catch(e => {
         console.error(e)
       }).finally(() => {
@@ -711,10 +708,7 @@ export default {
     handleClick (tab) {
       this.getCurTabData()
       if (tab.index === '1') {
-        this.init()
-        this.$nextTick(() => {
-          this.handleActiveBar()
-        })
+        this.timeChange()
       }
     },
     clearSelect () {
@@ -754,7 +748,7 @@ export default {
       this.switchKnowledgeId = id
       return false
     },
-    cancleSwitch(){
+    cancleSwitch () {
       this.showConfirmSwitch = false
     },
     switchLearning () {
@@ -779,20 +773,19 @@ export default {
   },
   watch: {
     tabType (n) {
-      this.$nextTick(() => {
-        this.handleActiveBar()
-      })
+      this.timeChange()
     },
-    timeFilter: {
-      handler () {
-        if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
-          this.init()
-        }
-        this.$nextTick(() => {
-          this.handleActiveBar()
-        })
+    /*
+    hasUpdatingRecord (n) {
+      if (n) { // update record页存在“正在更新”的记录时，每20秒自动请求一次接口
+        this.timer = setTimeout(() => {
+          this.getCurTabData()
+        }, 20000)
+      } else { // 直到出现新的记录,出现新记录后（失败或者成功）,取消定时请求接口，右上角"update"按钮恢复可用。"正在更新"和"失败”都会有对应的强调样式。
+        clearTimeout(this.timer)
       }
     },
+    */
     tableData: {
       handler (n) {
         if (this.tableData && this.tableData.length > 0) {
@@ -828,9 +821,7 @@ export default {
       handler (n) {
         if (!n) {
           this.fileList = []
-          if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
-            this.init()
-          }
+          this.timeChange()
         } else {
           if (this.myChart) {
             this.myChart.dispose()
@@ -857,7 +848,7 @@ export default {
     })
   },
   beforeUnmount () {
-    clearTimeout(this.timer)
+    //clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
     const dom = document.getElementById('psiphonBarChart')
     if (dom) {

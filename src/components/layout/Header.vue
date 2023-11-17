@@ -333,14 +333,14 @@ export default {
     breadcrumb () {
       const breadcrumb = []
       this.generateBreadcrumb(breadcrumb, this.$store.getters.menuList)
-      if(breadcrumb){
+      if (breadcrumb) {
         // panel菜单是否可以点击跳转：一级菜单不可点击，二级菜单可以点击
-        if(breadcrumb[0] && breadcrumb[1] && breadcrumb[1].route
-                              && breadcrumb[1].route.indexOf('/panel/') === 0){
+        if (breadcrumb[0] && breadcrumb[1] && breadcrumb[1].route &&
+                              breadcrumb[1].route.indexOf('/panel/') === 0) {
           breadcrumb[1].clickable = true
-        }else {// 除panel外的菜单是否可以点击跳转:除了新增、编辑，其它均可点击
+        } else { // 除panel外的菜单是否可以点击跳转:除了新增、编辑，其它均可点击
           breadcrumb.forEach(item => {
-            if(item.value !== 'Create' && item.value !== 'Edit'){
+            if (item.value !== 'Create' && item.value !== 'Edit') {
               item.clickable = true
             }
           })
@@ -676,11 +676,11 @@ export default {
         }
       }
     },
-    //仅处理除panel外的相关路径的导航
+    // 仅处理除panel外的相关路径的导航
     async jumpOther (route, index) {
       route = route.replace('redirect:', '')
       this.showMenu = false
-      if (route === this.route && index > 0) {//当前只有一级菜单时，点击不进行刷新，重新跳转
+      if (route === this.route && index > 0) { // 当前只有一级菜单时，点击不进行刷新，重新跳转
         this.refresh()
         return
       }
@@ -693,7 +693,7 @@ export default {
         })
       }
     },
-    //仅处理panel相关路径的导航
+    // 仅处理panel相关路径的导航
     async jump (route, columnName, columnValue, opeType) {
       route = route.replace('redirect:', '')
       if (route === '/panel/linkMonitor' && opeType === 3) {
