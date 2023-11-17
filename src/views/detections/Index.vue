@@ -271,8 +271,8 @@ export default {
       isStatisticsActiveAttackNoData: false,
       loading: false,
       oldActiveEntitySearchValue: '',
-      initFlag: true // 初始化标识，初始化时保证mounted执行
-      // detectionChart:null
+      initFlag: true, // 初始化标识，初始化时保证mounted执行
+      detectionChart:shallowRef(null)
     }
   },
   methods: {
@@ -486,12 +486,12 @@ export default {
           this.filterData[this.pageType][2].showIndex = showIndex
           this.filterData[this.pageType][2].showDisabled = showDisabled
           const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
-          let detectionChart = echarts.getInstanceByDom(chartDom)
-          if (detectionChart) {
-            echarts.dispose(detectionChart)
+          this.detectionChart = echarts.getInstanceByDom(chartDom)
+          if (this.detectionChart) {
+            echarts.dispose(this.detectionChart)
           }
-          detectionChart = echarts.init(chartDom)
-          this.chartInit.push(shallowRef(detectionChart))
+          this.detectionChart = echarts.init(chartDom)
+          //this.chartInit.push(shallowRef(detectionChart))
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
@@ -505,11 +505,11 @@ export default {
               return format.truncateText(name, oneColumnWidth, '12px')
             }
           }
-          detectionChart.setOption(securityTypeOption)
+          this.detectionChart.setOption(securityTypeOption)
 
           const vm = this
-          detectionChart.off('click')
-          detectionChart.on('click', e => {
+          this.detectionChart.off('click')
+          this.detectionChart.on('click', e => {
             this.getFilter(e.data.name, vm.filterData.securityEvent[2].column)
             vm.filterData.securityEvent[2].value = vm.triggerFilterDataValue(vm.filterData.securityEvent[2].value, e.data.name)
           })
@@ -842,32 +842,24 @@ export default {
     },
     resize () {
       this.chartInit.forEach(e => { e.value.resize() })
-      /*
-      //第二个饼图的resize
-      let dom = document.getElementById('detectionCategoryPersecurityEvent')
-      if(dom){
-        let securityTypeOption = this.detectionChart.getOption()
 
-        const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
-        this.detectionChart = echarts.getInstanceByDom(chartDom)
-        if (this.detectionChart) {
-          echarts.dispose(this.detectionChart)
-        }
-        this.detectionChart = echarts.init(chartDom)
-
-        let oneColumnWidth = (dom.clientWidth * 0.56)/2-30
-
-        if (this.statisticsCategoryData.length > 6) {
-          securityTypeOption.legend.formatter = function (name) {
+      const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
+      this.detectionChart = echarts.getInstanceByDom(chartDom)
+      if(this.detectionChart){
+        let securityTypeOption = this.$_.cloneDeep(this.detectionChart.getOption())
+        echarts.dispose(this.detectionChart)
+        if (chartDom) {
+          this.detectionChart = echarts.init(chartDom)
+          let oneColumnWidth = (chartDom.clientWidth * 0.56) - 30
+          if (this.statisticsCategoryData.length > 6) {
+            oneColumnWidth = (chartDom.clientWidth * 0.56) / 2 - 30
+          }
+          securityTypeOption.legend[0].formatter = function (name) {
             return format.truncateText(name, oneColumnWidth, '12px')
           }
-        }else {
-          securityTypeOption.legend.formatter = tooLongFormatter
+          this.detectionChart.setOption(securityTypeOption)
         }
-        this.detectionChart.setOption(securityTypeOption)
-        this.detectionChart.resize()
       }
-*/
     },
     jumpNewDetetion () {
       this.$router.push({
