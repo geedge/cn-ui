@@ -443,13 +443,13 @@ export default {
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType }
           })
-          if (data.length > 6) {
-            const dom = document.getElementById('eventSeverityPiesecurityEvent')
-            if (dom) {
-              const oneColumnWidth = (dom.clientWidth * 0.56) / 2 - 30
-              securityTypeOption.legend.formatter = function (name) {
-                return format.truncateText(name, oneColumnWidth, '12px')
-              }
+          if (chartDom) {
+            let oneColumnWidth = (chartDom.clientWidth * 0.56) - 30
+            if (data.length > 6) {
+              oneColumnWidth = (chartDom.clientWidth * 0.56) / 2 - 30
+            }
+            securityTypeOption.legend.formatter = function (name) {
+              return format.truncateText(name, oneColumnWidth, '12px')
             }
           }
           detectionChart.setOption(securityTypeOption)
@@ -496,13 +496,13 @@ export default {
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
           })
-          if (data.length > 6) {
-            const dom = document.getElementById('detectionCategoryPersecurityEvent')
-            if (dom) {
-              const oneColumnWidth = (dom.clientWidth * 0.56) / 2 - 30
-              securityTypeOption.legend.formatter = function (name) {
-                return format.truncateText(name, oneColumnWidth, '12px')
-              }
+          if (chartDom) {
+            let oneColumnWidth = (chartDom.clientWidth * 0.56) - 30
+            if (data.length > 6) {
+              oneColumnWidth = (chartDom.clientWidth * 0.56) / 2 - 30
+            }
+            securityTypeOption.legend.formatter = function (name) {
+              return format.truncateText(name, oneColumnWidth, '12px')
             }
           }
           detectionChart.setOption(securityTypeOption)
