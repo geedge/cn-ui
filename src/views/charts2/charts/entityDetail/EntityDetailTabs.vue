@@ -148,15 +148,14 @@ export default {
         if (openPortResponse.status === 200) {
           this.initSetTag(entityDetailTabsName.openPort, openPortResponse.data.data.result.length)
         }
-        // let securityResponse = response[2].value
-        // if (securityResponse.status === 200) {
-        //   this.initSetTag(entityDetailTabsName.securityEvent, securityResponse.data.data.result.length)
-        // }
+        const securityResponse = response[2].value
+        if (securityResponse.status === 200) {
+          this.initSetTag(entityDetailTabsName.securityEvent, securityResponse.data.data.result.length)
+        }
         // let performanceResponse = response[3].value
         // if (performanceResponse.status === 200) {
         //   this.initSetTag(entityDetailTabsName.performanceEvent, performanceResponse.data.data.result.length)
         // }
-        this.initSetTag(entityDetailTabsName.securityEvent, 0)
         this.initSetTag(entityDetailTabsName.performanceEvent, 0)
       })
 
