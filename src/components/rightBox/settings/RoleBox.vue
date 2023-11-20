@@ -183,7 +183,26 @@ export default {
         }
       }
     },
+    checkParentNode(node) {
+      if(node && this.$refs.menuTree.getNode(node)){
+        let parent = this.$refs.menuTree.getNode(node).parent
+        let parentNode = parent.data
+        if(parentNode && parentNode.id && parentNode.id !== 0 ){
+          this.$refs.menuTree.setChecked(parentNode,true,false)
+          this.checkParentNode(parentNode)
+        }
+      }
+    },
     selectChange: function (data, isCheck, childIsCheck) {
+      if(isCheck) {//如果是选中节点，则同步选中所有的父辈节点(有全选和半选两种状态)
+        this.checkParentNode(data)
+      } else {//如果是取消节点，则同步取消选中所有子节点
+        if(data.children && data.children.length > 0) {
+          data.children.forEach(node => {
+            this.$refs.menuTree.setChecked(node, false, true)
+          })
+        }
+      }
       if (this.$refs.menuTree) {
         this.editRole.menuIds = this.$refs.menuTree.getCheckedKeys(false)
       }
