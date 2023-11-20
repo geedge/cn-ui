@@ -7,6 +7,7 @@
           <div class="card-content">
             <div class="card-operate">
               <el-switch v-model="data.status"
+                         v-if="hasPermission('editBuiltInKnowledgeBase')"
                          class="card-enable"
                          active-color="#38ACD2"
                          inactive-color="#C0CEDB"
@@ -85,7 +86,7 @@
                        :active-value="1"
                        :inactive-value="0"
                        :before-change="(knowledgeId) => confirmSwitchLearning(updateKnowledge.knowledgeId)"
-                       v-if="updateKnowledge.source === 'cn_psiphon3_ip'"
+                       v-if="updateKnowledge.source === 'cn_psiphon3_ip' && hasPermission('editBuiltInKnowledgeBase')"
             >
             </el-switch>
           </div>

@@ -98,6 +98,7 @@
           </template>
           <template v-else-if="item.prop === 'status'">
             <el-switch v-model="scope.row.status"
+                       v-if="hasPermission('editUserDefinedLibrary')"
                        active-color="#38ACD2"
                        inactive-color="#C0CEDB"
                        :active-value="1"
@@ -105,6 +106,10 @@
                        @change="changeStatus($event,scope.row.knowledgeId)"
             >
             </el-switch>
+            <template v-else>
+              <span v-if="scope.row.status === 1">{{$t('detection.create.enabled')}}</span>
+              <span v-else>{{$t('detection.create.disabled')}}</span>
+            </template>
           </template>
           <template v-else-if="item.prop === 'color'">
             <div class="knowledge-color">
