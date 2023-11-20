@@ -8,8 +8,8 @@
           <div class="behavior-pattern-legend__item" v-for="(data, index) in tableData" :key="index">
             <div class="legend-icon" :style="`background:${chartColorForBehaviorPattern[index%10]};`"></div>
             <div class="legend-name">{{data.name}}</div>
-            <div class="legend-value" >{{ unitConvert(data.value, unitTypes.number).join('')}}</div>
-            <div class="legend-percent">{{ unitConvert(data.percent, unitTypes.percent).join('') }}</div>
+            <div class="legend-value" >{{ valueToRangeValue(data.value, unitTypes.number).join('')}}</div>
+            <div class="legend-percent">{{ valueToRangeValue(data.percent, unitTypes.percent).join('') }}</div>
           </div>
       </div>
       <div id="entityIpRoseType" class="behavior-pattern-chart"></div>
@@ -25,7 +25,7 @@ import * as echarts from 'echarts'
 import { pieChartOption4 } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef, ref } from 'vue'
 import { entityDetailTabsName, chartColorForBehaviorPattern, unitTypes } from '@/utils/constants'
-import unitConvert from '@/utils/unit-convert'
+import { valueToRangeValue } from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { useRoute } from 'vue-router'
@@ -74,7 +74,7 @@ export default {
     }, 200)
   },
   methods: {
-    unitConvert,
+    valueToRangeValue,
     toUpperCaseByString,
     dateFormatByAppearance,
     initEcharts () {
@@ -149,21 +149,17 @@ export default {
           if (!this.isNoData) {
             const data = res.data.result
             this.tableData = []
-            let sum = 0
             if (data && data[0]) {
               const dataObject = data[0]
               Object.keys(dataObject).forEach(key => {
                 const value = Number(dataObject[key]) ? Number(dataObject[key]) : 0
-                if (value !== 0) {
-                  sum = sum + value
+                if (value !== 0 && key !== 'total') {
                   this.tableData.push({
                     name: key,
-                    value: value
+                    value: value,
+                    percent: dataObject.total ? value / dataObject.total : '-'
                   })
                 }
-              })
-              this.tableData.forEach(item => {
-                item.percent = item.value / sum
               })
               this.tableData = this.tableData.sort(reverseSortBy('value'))
               this.$emit('checkTag', entityDetailTabsName.behaviorPattern, this.tableData.length)

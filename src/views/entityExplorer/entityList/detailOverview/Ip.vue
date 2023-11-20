@@ -185,7 +185,7 @@
         <div class="row__content">{{entityData.performanceNum}}</div>
       </div>
       <div class="overview__row overview__row--small-font" v-for="(performance, index) in entityData.performanceList" :key="index">
-        <div class="row__label row__label--width130">{{dateFormatByAppearance(performance.startTime) || '-'}}</div>
+        <div class="row__label row__label--width130">{{performance.startTime ? dateFormatByAppearance(Number(performance.startTime)) : '-'}}</div>
         <div class="row__content row__content--width90">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(performance)">{{performance.eventSeverity}}</div>
         </div>
@@ -212,7 +212,7 @@
       </div>
 
       <div class="overview__row overview__row--small-font" v-for="(security, index) in entityData.securityList" :key="index">
-        <div class="row__label row__label--width130">{{dateFormatByAppearance(security.startTime) || '-'}}</div>
+        <div class="row__label row__label--width130">{{security.startTime ? dateFormatByAppearance(Number(security.startTime)) : '-'}}</div>
         <div class="row__content row__content--width90">
           <div class="alert-level-tag alert-level-tag--high" :class="iconClass(security)">{{security.eventSeverity}}</div>
         </div>
