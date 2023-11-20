@@ -75,6 +75,7 @@ export const panelTypeAndRouteMapping = {
   ipEntityDetail: 21,
   domainEntityDetail: 22,
   appEntityDetail: 23,
+  subscribeEntityDetail: 24,
   cryptocurrency: 7,
   ipDrillDownTest: 8,
   linkMonitor: 14,

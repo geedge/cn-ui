@@ -39,6 +39,11 @@ export default {
         entityData.appName = query.entityName
         break
       }
+      case 'subscribe': {
+        panelType = panelTypeAndRouteMapping.subscribeEntityDetail
+        entityData.appName = query.entityName
+        break
+      }
       default: {
         panelType = panelTypeAndRouteMapping.ipEntityDetail
         break
