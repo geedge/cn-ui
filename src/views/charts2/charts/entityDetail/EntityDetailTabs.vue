@@ -113,11 +113,13 @@ export default {
       const informationAggregation = axios.get(`${api.entity.informationAggregation}/${this.entity.entityType}?resource=${this.entity.entityName}&pageSize=100&pageNo=1`, { params: this.getParamsByTabType(entityDetailTabsName.informationAggregation) })
       const openPort = axios.get(url, { params: this.getParamsByTabType(entityDetailTabsName.openPort) })
       const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: this.getParamsByTabType(entityDetailTabsName.securityEvent) })
-      const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: this.getParamsByTabType(entityDetailTabsName.performanceEvent) })
+      // const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: this.getParamsByTabType(entityDetailTabsName.performanceEvent) })
 
-      Promise.allSettled([informationAggregation, openPort, security, performance]).then(response => {
+      // todo 暂时隐藏performance的请求，后续接口开发完毕后再解开注释
+      // Promise.allSettled([informationAggregation, openPort, security, performance]).then(response => {
+      Promise.allSettled([informationAggregation, openPort, security]).then(response => {
         const informationAggregationResponse = response[0].value
-        if (informationAggregationResponse.status === 200) {
+        if (informationAggregationResponse && informationAggregationResponse.status === 200) {
           const list = []
           informationAggregationResponse.data.data.result.forEach(r => {
             Object.keys(r).forEach(k => {
@@ -145,15 +147,15 @@ export default {
           this.initSetTag(entityDetailTabsName.informationAggregation, list.length)
         }
         const openPortResponse = response[1].value
-        if (openPortResponse.status === 200) {
+        if (openPortResponse && openPortResponse.status === 200) {
           this.initSetTag(entityDetailTabsName.openPort, openPortResponse.data.data.result.length)
         }
         const securityResponse = response[2].value
-        if (securityResponse.status === 200) {
+        if (securityResponse && securityResponse.status === 200) {
           this.initSetTag(entityDetailTabsName.securityEvent, securityResponse.data.data.result.length)
         }
         // let performanceResponse = response[3].value
-        // if (performanceResponse.status === 200) {
+        // if (performanceResponse && performanceResponse.status === 200) {
         //   this.initSetTag(entityDetailTabsName.performanceEvent, performanceResponse.data.data.result.length)
         // }
         this.initSetTag(entityDetailTabsName.performanceEvent, 0)
