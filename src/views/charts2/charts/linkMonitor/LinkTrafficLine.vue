@@ -37,7 +37,7 @@
        </div>
        <div class="line-select line-header-right">
          <div class="line-select-metric">
-           <span>{{$t('network.metric')}}:</span>
+           <span>{{$t('detections.metric')}}:</span>
            <div class="line-select__operation">
              <el-select
                  size="mini"

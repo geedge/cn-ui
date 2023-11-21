@@ -1,7 +1,7 @@
 <template>
   <div class="panel-box2" :class="{'panel-box2--entity-detail': entity && entity.entityType}">
     <div class="panel__header" v-if="!entity">
-      <div class="panel__title">{{panelName?panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}
+      <div class="panel__title">{{panelName ? panelName:(panel.i18n ? $t(panel.i18n) : panel.name)}}
         <div v-if="showScore" class="score">
           <div class="circle-icon"  v-if="score <= 2 || score === '-'" :class="{'data-score-red': score <= 2 || score === '-'}" ></div>
           <div class="circle-icon"  v-else-if="score <= 4" :class="{'data-score-yellow': score <= 4}" ></div>
@@ -31,7 +31,7 @@
             @change="metricChange"
         >
           <template #prefix>
-            <span class="select-prefix">Metric:</span>
+            <span class="select-prefix">{{$t('detections.metric')}}:</span>
           </template>
           <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>

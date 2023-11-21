@@ -80,15 +80,15 @@ export const dataForNetworkOverviewLine = {
   options2: [
     {
       value: 'Average',
-      label: 'Average'
+      label: 'overall.average'
     },
     {
       value: '95th Percentile',
-      label: '95th Percentile'
+      label: ['overall.percentileNumber', { number: 95 }]
     },
     {
       value: 'Maximum',
-      label: 'Maximum'
+      label: 'overall.maximum'
     }
   ],
   tabsTemplate: [
@@ -200,15 +200,15 @@ export const dataForDnsTrafficLine = {
   options2: [
     {
       value: 'Average',
-      label: 'Average'
+      label: 'overall.average'
     },
     {
       value: '95th Percentile',
-      label: '95th Percentile'
+      label: ['overall.percentileNumber', { number: 95 }]
     },
     {
       value: 'Maximum',
-      label: 'Maximum'
+      label: 'overall.maximum'
     }
   ],
   tabs: [
