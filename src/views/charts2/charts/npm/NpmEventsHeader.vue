@@ -2,7 +2,7 @@
  <div class="npm-header">
   <div class="npm-header-body" v-for="(item, index) in chartData" :key=index>
     <div class="npm-header-body-severity">
-      <div class="npm-header-body-severity-icon" :class="item.eventSeverity" :test-id="`icon${index}`"></div>
+      <div class="npm-header-body-severity-icon" :class="item.class" :test-id="`icon${index}`"></div>
       <div class="npm-header-body-severity-value" :test-id="`severity${index}`">{{ $t(item.eventSeverity) }}</div>
     </div>
     <chart-error v-if="showError" tooltip :content="errorMsg" />

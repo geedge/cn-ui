@@ -222,26 +222,31 @@ export const dataForNpmEventsHeader = {
   chartData: [
     {
       eventSeverity: 'overall.critical',
+      class: 'critical',
       count: '-',
       index: 0
     },
     {
       eventSeverity: 'overall.high',
+      class: 'high',
       count: '-',
       index: 1
     },
     {
       eventSeverity: 'overall.medium',
+      class: 'medium',
       count: '-',
       index: 2
     },
     {
       eventSeverity: 'overall.low',
+      class: 'low',
       count: '-',
       index: 3
     },
     {
       eventSeverity: 'overall.info',
+      class: 'info',
       count: '-',
       index: 4
     }
