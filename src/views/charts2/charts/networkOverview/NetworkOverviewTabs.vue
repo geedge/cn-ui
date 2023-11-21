@@ -217,7 +217,7 @@
     <div class="tab-search" >
       <el-popover placement="bottom-end"
                   ref="searchCustomizePopover"
-                  :width="240"
+                  :width="260"
                   :show-arrow="false"
                   :append-to-body="true"
                   :hide-after="0"
