@@ -188,7 +188,7 @@
       <el-collapse-transition>
         <div class="cn-entity__detail-overview" v-if="!isCollapse">
           <el-divider></el-divider>
-          <detail-overview :entity="entityData" :time-filter="timeFilter" :keywordList="keywordList" @eventNum="getEventNum" />
+          <detail-overview :entity="entityData" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum" />
         </div>
       </el-collapse-transition>
     </div>
