@@ -321,7 +321,7 @@ export default {
     getMillisecond,
     dateFormatByAppearance,
     getQueryParams (dateRangeValue) {
-      if (dateRangeValue) {
+      if (dateRangeValue && (!this.timeFilter.startTime || !this.timeFilter.endTime)) {
         // range取 config.js 中配置的值
         const { startTime, endTime } = getNowTime(dateRangeValue)
         return {

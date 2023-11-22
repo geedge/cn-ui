@@ -1,13 +1,13 @@
 <template>
   <div class="entity-detail-overview">
     <template v-if="entity.entityType === 'ip'">
-      <ip-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity"></ip-overview>
+      <ip-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum"></ip-overview>
     </template>
     <template v-else-if="entity.entityType === 'domain'">
-      <domain-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity"></domain-overview>
+      <domain-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum"></domain-overview>
     </template>
     <template v-else-if="entity.entityType === 'app'">
-      <app-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity"></app-overview>
+      <app-overview :entity="entity" :time-filter="timeFilter" :keywordList="keywordList" @reloadEntity="getEntity" @eventNum="getEventNum"></app-overview>
     </template>
   </div>
 </template>
@@ -33,6 +33,9 @@ export default {
   methods: {
     getEntity (data) {
       this.$emit('reloadEntity', data)
+    },
+    getEventNum (data) {
+      this.$emit('eventNum', data)
     }
   }
 }

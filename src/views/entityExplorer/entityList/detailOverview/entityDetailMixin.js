@@ -50,7 +50,8 @@ export default {
       isShowMoreApp: false, // related App 展示更多时
       isShowMoreDomain: false, // related Domain 展示更多时
       scoreDataState: false, // 性能数据加载情况，true 表示加载完成
-      performanceScoreData: {} // 用来计算评分的性能数据
+      performanceScoreData: {}, // 用来计算评分的性能数据
+      eventNum: 0 // 性能事件和安全事件数量之和
     }
   },
   computed: {
@@ -108,6 +109,13 @@ export default {
     scoreDataState (n) {
       if (n && this.scoreBaseState) {
         this.handleScoreData()
+      }
+    },
+    'entityData.securityNum': {
+      handler (n) {
+        this.eventNum = 0
+        this.eventNum = n + (this.entityData.performanceNum || 0)
+        this.$emit('eventNum', this.eventNum)
       }
     }
   },
@@ -347,7 +355,7 @@ export default {
 
     queryEntityDetailPerformance () {
       this.loadingAlert = true
-      axios.get(this.performanceUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.performanceEvent) }).then(response => {
+      axios.get(this.performanceUrl, { params: { ...this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.securityEvent), pageSize: -1 } }).then(response => {
         if (response.status === 200) {
           this.entityData.performanceNum = response.data.data.result.length
           this.performanceData = response.data.data.result
@@ -359,7 +367,7 @@ export default {
 
     queryEntityDetailSecurity () {
       this.loadingSecurityEvents = true
-      axios.get(this.securityUrl, { params: this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.securityEvent) }).then(response => {
+      axios.get(this.securityUrl, { params: { ...this.getQueryParams(DEFAULT_TIME_FILTER_RANGE.entity.securityEvent), pageSize: -1 } }).then(response => {
         if (response.status === 200) {
           this.entityData.securityNum = response.data.data.result.length
           this.securityData = response.data.data.result

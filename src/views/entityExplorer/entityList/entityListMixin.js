@@ -292,17 +292,31 @@ export default {
     /** 获取事件数量 */
     queryEventNum () {
       this.loadingEvent = true
-      const performance = axios.get(this.performanceEventUrl, { params: this.getQueryParams() })
-      const security = axios.get(this.securityEventUrl, { params: this.getQueryParams() })
+      // const performance = axios.get(this.performanceEventUrl, { params: this.getQueryParams() })
+      // const security = axios.get(this.securityEventUrl, { params: this.getQueryParams() })
+      // performance接口修改，暂时不能访问，故只调用security的，后续加上
       this.eventNum = 0
-
-      Promise.all([performance, security]).then(response => {
-        this.eventNum = response[0].data.data.result.length + response[1].data.data.result.length
-      }).catch(e => {
-        this.eventNum = 0
+      const param = {
+        params: {
+          ...this.getQueryParams(),
+          pageSize: -1
+        }
+      }
+      axios.get(this.securityEventUrl, param).then(res => {
+        if (res.status === 200) {
+          this.eventNum = res.data.data.result.length
+        }
       }).finally(() => {
         this.loadingEvent = false
       })
+
+      // Promise.all([performance, security]).then(response => {
+      //   this.eventNum = response[0].data.data.result.length + response[1].data.data.result.length
+      // }).catch(e => {
+      //   this.eventNum = 0
+      // }).finally(() => {
+      //   this.loadingEvent = false
+      // })
     },
     handleScoreData () {
       this.score = computeScore(this.performanceScoreData, this.$store.getters.getScoreBase)
@@ -335,7 +349,7 @@ export default {
     setTimeout(() => {
       this.queryEntityDetailTraffic()
       this.queryNetworkQuantity()
-      // this.queryEventNum()
+      this.queryEventNum()
     })
   },
   beforeUnmount () {
