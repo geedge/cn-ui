@@ -59,12 +59,12 @@
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-category-group"></i>
                   <span class="row-item-label">{{ $t('entities.category') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryGroup', '-') || '-' }}</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryName', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-sub-category"></i>
-                  <span class="row-item-label">{{ $t('entities.subcategory') }}&nbsp;:&nbsp;&nbsp;</span>
-                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryName', '-') || '-' }}</span>
+                  <span class="row-item-label">{{ $t('entities.domainDetail.categoryGroup') }}&nbsp;:&nbsp;&nbsp;</span>
+                  <span class="row-item-value" v-high-light="keywordList">{{ $_.get(entityData, 'category.categoryGroup', '-') || '-' }}</span>
                 </div>
                 <div class="basic-info__item">
                   <i class="cn-icon cn-icon-credit-rating"></i>

@@ -46,7 +46,7 @@
               />
             </div>
             <div class="line-select-metric">
-              <span class="select-prefix line-margin-right">Metric:</span>
+              <span class="select-prefix line-margin-right">{{$t('network.metric')}}:</span>
               <el-select
                   size="mini"
                   v-model="metric"
@@ -71,7 +71,9 @@
                   :popper-append-to-body="false"
                   @change="referenceSelectChange"
               >
-                <el-option v-for="item in options2" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option :key="options2[0].value" :label="$t(options2[0].label)" :value="options2[0].value"></el-option>
+                <el-option :key="options2[1].value" :label="$t(options2[1].label[0], options2[1].label[1])" :value="options2[1].value"></el-option>
+                <el-option :key="options2[2].value" :label="$t(options2[2].label)" :value="options2[2].value"></el-option>
               </el-select>
             </div>
           </div>
@@ -306,6 +308,14 @@ export default {
               label: {
                 formatter (params) {
                   const arr = unitConvert(params.value, unitTypes.number).join('')
+                  const referIndex = _this.options2.findIndex(o => o.value === _this.lineRefer)
+                  if (referIndex > -1) {
+                    if (referIndex === 1) {
+                      return _this.$t(_this.options2[1].label[0], _this.options2[1].label[1]) + '(' + arr + echartsData[0].unitType + ')'
+                    } else {
+                      return _this.$t(_this.options2[referIndex].label) + '(' + arr + echartsData[0].unitType + ')'
+                    }
+                  }
                   return _this.lineRefer + '(' + arr + echartsData[0].unitType + ')'
                 },
                 position: 'insideStartTop',

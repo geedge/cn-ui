@@ -39,7 +39,7 @@
             </div>
             <div class="app-card__body-unit">{{this.metric}}</div>
             <div class="app-card__body-previous">
-              <div>Total</div>
+              <div>{{$t('network.total')}}</div>
               <div v-if="metric === 'Bits/s'" :test-id="`total${index}`">{{valueToRangeValue(app.total, unitTypes.byte).join(' ')}}</div>
               <div v-else :test-id="`total${index}`">{{valueToRangeValue(app.total, unitTypes.number).join(' ')}}</div>
             </div>

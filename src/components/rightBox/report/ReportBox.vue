@@ -154,7 +154,6 @@
                       <el-checkbox v-for="item in dateList" :key="item" :label="item"/>
                     </el-checkbox-group>
                   </div>
-                  <div class="enable-month-value">*一月，三月，五月，七月，八月，十月和12月含31天;闰年二月含29天*</div>
                 </template>
                 <!-- 按周 -->
                 <template v-else-if="monthScheduleType === 'weekly'">

@@ -61,7 +61,7 @@
                   <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryName', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">
-                  <div class="graph-list-item-label__app">{{$t('entities.group')}}:</div>
+                  <div class="graph-list-item-label__app">{{$t('entities.domainDetail.categoryGroup')}}:</div>
                   <div class="graph-list-item-value">{{ $_.get(item.detail, 'category.categoryGroup', '-') || '-' }}</div>
                 </div>
                 <div class="graph-list-item__app">

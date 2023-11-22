@@ -37,7 +37,7 @@
       flex-direction: row;
       align-items: flex-start;
       flex-wrap: nowrap;
-      padding: 2px 10px 2px 0;
+      padding: 6px 10px 6px 0;
       font-size: 14px;
       word-break: break-all;
 
@@ -45,6 +45,8 @@
         padding-right: 20px;
         min-width: 100px;
         color: #6B717B;
+        line-height: 14px;
+        word-break: normal;
       }
 
       .row__charts {
@@ -68,6 +70,7 @@
         font-size: 14px;
         align-items: center;
         flex-wrap: wrap;
+        line-height: 14px;
 
         &.row__content--link {
           font-style: italic;

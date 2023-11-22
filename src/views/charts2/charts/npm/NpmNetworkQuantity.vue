@@ -36,17 +36,17 @@
       <div class="single-value__circle">
         <div class="single-value__circle-p95" :test-id="`singleValueP95${index}`">
         <span v-if="index ===0 || index ===1 || index ===2">
-          P95:{{ valueToRangeValue(npm.P95, unitTypes.time).join(' ') }}</span>
+          P95:&nbsp;{{ valueToRangeValue(npm.P95, unitTypes.time).join(' ') }}</span>
           <span v-else>
-          P95:{{ valueToRangeValue(npm.P95, unitTypes.percent).join(' ') }}
+          P95:&nbsp;{{ valueToRangeValue(npm.P95, unitTypes.percent).join(' ') }}
         </span>
         </div>
         <div class="single-value__circle-p99" :test-id="`singleValueP99${index}`">
         <span v-if="index ===0 || index ===1 || index ===2">
-          P99:{{ valueToRangeValue(npm.P99, unitTypes.time).join(' ') }}
+          P99:&nbsp;{{ valueToRangeValue(npm.P99, unitTypes.time).join(' ') }}
         </span>
           <span v-else>
-          P99:{{ valueToRangeValue(npm.P99, unitTypes.percent).join(' ') }}
+          P99:&nbsp;{{ valueToRangeValue(npm.P99, unitTypes.percent).join(' ') }}
         </span>
         </div>
       </div>

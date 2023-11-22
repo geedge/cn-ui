@@ -148,7 +148,7 @@
       </template>
       <template v-else-if="detection.darkweb">
         <div class="overview__row">
-          <div class="row__label">{{ $t('detection.nodeTypeLower') }}</div>
+          <div class="row__label">{{ $t('detection.nodeType') }}</div>
           <div class="row__content">{{ $_.get(detection, 'darkweb.nodeType', '-') || '-' }}</div>
         </div>
         <template v-if="$_.get(detection.darkweb, 'nodeType', '') === 'tor'">

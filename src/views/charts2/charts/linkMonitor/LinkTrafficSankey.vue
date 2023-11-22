@@ -13,16 +13,16 @@
       </el-tab-pane>
     </el-tabs>
     <template v-if="parseInt(tab) === 0 && !ingressNoData">
-      <div class="sankey__label" style="left: 5%;">External Locations</div>
-      <div class="sankey__label" style="left: 35%;">Next-Hop Internets</div>
-      <div class="sankey__label" style="left: 63%;">Links</div>
-      <div class="sankey__label" style="right: 9%; transform: translateX(50%)">Internal Locations</div>
+      <div class="sankey__label" style="left: 5%;">{{$t('linkMonitor.externalLocations')}}</div>
+      <div class="sankey__label" style="left: 35%;">{{$t('linkMonitor.nextHopInternet')}}</div>
+      <div class="sankey__label" style="left: 63%;">{{$t('linkMonitor.links')}}</div>
+      <div class="sankey__label" style="right: 9%; transform: translateX(50%)">{{$t('linkMonitor.internalLocations')}}</div>
     </template>
     <template v-else-if="parseInt(tab) === 1 && !egressNoData">
-      <div class="sankey__label" style="left: 5%;">Internal Locations</div>
-      <div class="sankey__label" style="left: 33.2%;">Links</div>
-      <div class="sankey__label" style="left: 64.5%;">Next-Hop Internets</div>
-      <div class="sankey__label" style="right: 9%; transform: translateX(50%)">External Locations</div>
+      <div class="sankey__label" style="left: 5%;">{{$t('linkMonitor.internalLocations')}}</div>
+      <div class="sankey__label" style="left: 33.2%;">{{$t('linkMonitor.links')}}</div>
+      <div class="sankey__label" style="left: 64.5%;">{{$t('linkMonitor.nextHopInternet')}}</div>
+      <div class="sankey__label" style="right: 9%; transform: translateX(50%)">{{$t('linkMonitor.externalLocations')}}</div>
     </template>
   </div>
 </template>

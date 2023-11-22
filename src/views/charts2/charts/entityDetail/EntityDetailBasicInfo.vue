@@ -439,7 +439,7 @@ export default {
       case 'domain': {
         detailCards.value = _.concat(detailCards.value,
           { icon: 'cn-icon cn-icon-category2', name: 'categoryName', label: i18n.global.t('entities.category'), value: '' },
-          { icon: 'cn-icon cn-icon-sub-type', name: 'categoryGroup', label: i18n.global.t('entities.group'), value: '' },
+          { icon: 'cn-icon cn-icon-sub-type', name: 'categoryGroup', label: i18n.global.t('entities.domainDetail.categoryGroup'), value: '' },
           { icon: 'cn-icon cn-icon-credit-rating', name: 'reputationLevel', label: i18n.global.t('entities.creditLevel2'), value: '' },
           { icon: 'cn-icon cn-icon-expire-date', name: 'expireDate', label: i18n.global.t('entities.expirationDate2'), value: '' },
           { icon: 'cn-icon cn-icon-registrar', name: 'registrarName', label: i18n.global.t('entities.registrar'), value: '' },
