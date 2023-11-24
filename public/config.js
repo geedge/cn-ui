@@ -9,6 +9,8 @@ const DEFAULT_TIME_FILTER_RANGE = {
   entity: {
     list: 60,
     trafficLine: 60,
+    subscriberKpi: 60,
+    subscriberTopApp: 60,
     informationAggregation: 0,
     relatedEntity: 60 * 24 * 7,
     openPort: 60 * 24 * 7,

@@ -5,7 +5,8 @@ import {
   chartColor5,
   chartColor6,
   chartColorForBehaviorPattern,
-  unitTypes
+  unitTypes,
+  chartColorForSubscriberTopApp
 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import { axisFormatter } from '@/views/charts/charts/tools'
@@ -665,4 +666,59 @@ export const stackedBarChartOption = {
       barWidth: 26
     }
   ]
+}
+
+export const entityDetailSubscriberTopApp = {
+  xAxis: {
+    axisTick: { show: false },
+    axisLine: { show: false },
+    axisLabel: {
+      show: false
+    },
+    splitLine: {
+      show: false
+    }
+  },
+  grid: {
+    top: 0,
+    left: 15,
+    right: 20,
+    bottom: 0
+  },
+  yAxis: {
+    type: 'category',
+    axisTick: { show: false },
+    axisLine: {
+      show: true,
+      lineStyle: {
+        color: '#E2E5EC'
+      }
+    },
+    axisLabel: {
+      show: false
+    },
+    splitLine: {
+      show: false
+    }
+  },
+  series: [{
+    barWidth: 14,
+    barMaxHeight: 20,
+    itemStyle: {
+      color: function (params) {
+        const colorList = chartColorForSubscriberTopApp
+        return colorList[params.dataIndex]
+      }
+    },
+    data: [],
+    type: 'bar',
+    label: {
+      show: true,
+      position: 'right',
+      valueAnimation: true,
+      formatter: function (param, index, callback) {
+        return `${unitConvert(param.value[0], unitTypes.percent, null, null, 1).join(' ')}`
+      }
+    }
+  }]
 }

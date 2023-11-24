@@ -34,6 +34,8 @@ export const typeMapping = {
   },
   entityDetail: {
     basicInfo: 712,
+    subscriberKpi: 714,
+    subscriberTopApp: 715,
     line: 107,
     tabsChart: 713
   }

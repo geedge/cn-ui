@@ -166,11 +166,23 @@
         :entity="entity"
         @toggleLoading="toggleLoading"
     ></entity-detail-basic-info>
-    <entity-detail-line
-        v-else-if="chart.type === typeMapping.entityDetail.line"
+    <entity-detail-subscriber-kpi
+        v-else-if="chart.type === typeMapping.entityDetail.subscriberKpi"
         :chart="chart"
         :entity="entity"
         @toggleLoading="toggleLoading"
+    ></entity-detail-subscriber-kpi>
+    <entity-detail-subscriber-top-app
+            v-else-if="chart.type === typeMapping.entityDetail.subscriberTopApp"
+            :chart="chart"
+            :entity="entity"
+            @toggleLoading="toggleLoading"
+    ></entity-detail-subscriber-top-app>
+    <entity-detail-line
+            v-else-if="chart.type === typeMapping.entityDetail.line"
+            :chart="chart"
+            :entity="entity"
+            @toggleLoading="toggleLoading"
     ></entity-detail-line>
     <entity-detail-tabs-chart
         v-else-if="chart.type === typeMapping.entityDetail.tabsChart"
@@ -210,6 +222,8 @@ import DnsRecentEvents from '@/views/charts2/charts/dnsInsight/DnsRecentEvents'
 import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
 import EntityDetailBasicInfo from '@/views/charts2/charts/entityDetail/EntityDetailBasicInfo'
 import EntityDetailLine from '@/views/charts2/charts/entityDetail/EntityDetailLine'
+import EntityDetailSubscriberKpi from '@/views/charts2/charts/entityDetail/EntityDetailSubscriberKpi'
+import EntityDetailSubscriberTopApp from '@/views/charts2/charts/entityDetail/EntityDetailSubscriberTopApp'
 import EntityDetailTabsChart from '@/views/charts2/charts/entityDetail/EntityDetailTabs'
 
 import { getNowTime } from '@/utils/date-util'
@@ -245,6 +259,8 @@ export default {
     DnsRecentEvents,
     DnsTrafficLine,
     EntityDetailBasicInfo,
+    EntityDetailSubscriberKpi,
+    EntityDetailSubscriberTopApp,
     EntityDetailLine,
     EntityDetailTabsChart
   },

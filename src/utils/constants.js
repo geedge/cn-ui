@@ -1887,6 +1887,8 @@ export const chartColor5 = ['#E26154', '#E7B34E', '#88AF65']
 
 export const chartColor6 = ['#E99F67', '#D9C74B']
 export const chartColorForBehaviorPattern = ['#7acac7', '#b4d38e', '#fee9b9', '#fec396', '#fb9b79', '#e3799c', '#edd5f5', '#868cac', '#a4adde', '#64b4e6']
+export const chartColorForSubscriberTopApp = ['#A7C186', '#AFCC8A', '#BEDCAC', '#80BEA5', '#7BBBBC', '#8CB9C8', '#E6BF88', '#E6D99B', '#E0D1B0', '#ECAE95']
+
 export const iso36112 = {
   [storageKey.iso36112Capital]: 'data/countriesWithCapital',
   [storageKey.iso36112WorldLow]: 'worldChinaLow',
