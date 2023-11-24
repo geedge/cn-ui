@@ -52,6 +52,12 @@
         display:flex;
         flex-direction:column;
         align-items: flex-start;
+        color: #778391;
+        font-weight: 400;
+        .data-column__span {
+          font-weight: bold;
+          color:#353636;
+        }
         .unit__span {
           color: #778391;
           font-weight: 400;

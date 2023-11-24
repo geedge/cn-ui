@@ -55,7 +55,7 @@
                   :popper-append-to-body="false"
                   @change="metricChange"
               >
-                <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
               </el-select>
             </div>
           </div>
@@ -92,7 +92,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import * as echarts from 'echarts'
 import { stackedLineChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { unitTypes, chartColor3, chartColor4 } from '@/utils/constants.js'
+import { unitTypes, chartColor3, chartColor4, metricType, metricOptions } from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineTooltipFormatter } from '@/views/charts/charts/tools'
 import _ from 'lodash'
@@ -104,7 +104,6 @@ import { useRoute } from 'vue-router'
 import { getLineType, getMarkLineByLineRefer, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import ChartError from '@/components/common/Error'
 import { dataForNetworkOverviewLine } from '@/utils/static-data'
-import { metricOptions } from '@/utils/constants'
 
 export default {
   name: 'EntityDetailLine',
@@ -542,7 +541,7 @@ export default {
         }
       }
 
-      if (val === 'Sessions/s') {
+      if (val === metricType.Sessions) {
         const tabs = _.cloneDeep(this.tabsTemplate)
         lineData.forEach((d, i) => {
           tabs[i].data = d.values
@@ -552,7 +551,8 @@ export default {
           if (i !== 0) {
             e.show = false
           }
-          e.unitType = 'sessions/s'
+          const metric = metricOptions.find(item => item.value === metricType.Sessions)
+          e.unitType = metric ? this.$t(metric.label) : ''
           e.invertTab = false
           this.lineTab = 'total'
           this.legendSelectChange(e, 0)
@@ -563,7 +563,11 @@ export default {
           this.echartsInit(this.tabs, true)
         })
       } else {
-        const unit = val === 'Bits/s' ? 'bps' : 'packets/s'
+        let metric = metricOptions.find(item => item.value === val)
+        if (!metric) {
+          metric = metricOptions.find(item => item.value === metricType.Packets)
+        }
+        const unit = metric ? this.$t(metric.label) : ''
         this.legendInit(lineData, active, show, unit, n)
       }
     },
@@ -689,7 +693,7 @@ export default {
     this.chartOption = null
     const self = this
     self.timer = setTimeout(() => {
-      if (self.lineTab && self.metric !== 'Sessions/s') {
+      if (self.lineTab && self.metric !== metricType.Sessions) {
         const data = self.tabsTemplate.find(t => t.class === self.lineTab)
         self.activeChange(data, data.positioning)
       } else {

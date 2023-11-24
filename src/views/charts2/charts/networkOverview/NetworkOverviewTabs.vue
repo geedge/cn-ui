@@ -114,7 +114,7 @@
                   <div v-else>
                     <div class="title-unit"  v-if="tableType === 'networkOverview'">
                       <span class="data-column__span" >{{$t(item.label)}}</span>
-                      <span class="unit__span"  >{{metric}}</span>
+                      {{$t(metricShow.label)}}
                     </div>
                     <div v-else>
                       <span class="data-column__span" >{{$t(item.label)}}</span>
@@ -291,7 +291,9 @@ import {
   drillDownPanelTypeMapping,
   commonErrorTip,
   ZH,
-  EN
+  EN,
+  metricType,
+  metricOptions
 } from '@/utils/constants'
 import axios from 'axios'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
@@ -319,7 +321,11 @@ export default {
       commonTabList: [],
       commonColumnList: [],
       tables: [],
-      list: [], // 当前状态列表
+      list: [], // 当前状态列表,
+      metricShow: {
+        value: 'Bits/s',
+        label: 'metric.bps'
+      },
       allList: [], // 包含2级标签的所有状态的列表
       networkTabList: [], // 原始状态列表
       showBackground: false,
@@ -374,7 +380,7 @@ export default {
     chart: Object,
     metric: {
       type: String,
-      default: 'Bits/s'
+      default: metricType.Bits
     }
   },
   watch: {
@@ -386,6 +392,7 @@ export default {
       }
     },
     metric (n) {
+      this.metricShow = metricOptions.find(item => item.value === n)
       this.changeMetric()
     },
     scoreBaseState (n) {
@@ -2225,17 +2232,17 @@ export default {
       return tabs
     },
     initMetric () {
-      if (this.metric === 'Bits/s') {
+      if (this.metric === metricType.Bits) {
         this.columnNameGroup = this.curTableInCode ? this.curTableInCode.bytesColumnNameGroup : []
         this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.bytesCycleColumnNameGroup : []
         this.orderBy = 'totalBytes'
         this.metricUnit = 'bytes'
-      } else if (this.metric === 'Packets/s') {
+      } else if (this.metric === metricType.Packets) {
         this.columnNameGroup = this.curTableInCode ? this.curTableInCode.packetsColumnNameGroup : []
         this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.packetsCycleColumnNameGroup : []
         this.orderBy = 'totalPackets'
         this.metricUnit = 'packets'
-      } else if (this.metric === 'Sessions/s') {
+      } else if (this.metric === metricType.Sessions) {
         this.columnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsColumnNameGroup : []
         this.cycleColumnNameGroup = this.curTableInCode ? this.curTableInCode.sessionsCycleColumnNameGroup : []
         this.orderBy = 'sessions'
@@ -2257,6 +2264,7 @@ export default {
   },
   async mounted () {
     this.list = null
+    this.metricShow = metricOptions.find(item => item.value === this.metric)
     this.tabList = null
     this.allList = null
     this.drillDownTableConfigs = null
@@ -2332,7 +2340,6 @@ export default {
         }
         this.activeCustomize = ref('tabs')
         this.networkSearchUrl = this.curTable.url
-        // let metric = this.getUrlParam(this.curTabState.tableMetric, 'Bits/s')
         this.initMetric()
         this.isOnlyRead = this.curTable.isOnlyRead ? this.curTable.isOnlyRead : false
         this.showUnit = this.curTable.showUnit ? this.curTable.showUnit : false

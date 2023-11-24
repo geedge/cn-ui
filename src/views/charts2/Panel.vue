@@ -33,7 +33,7 @@
           <template #prefix>
             <span class="select-prefix">{{$t('detections.metric')}}:</span>
           </template>
-          <el-option v-for="item in metricOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-option v-for="item in metricOptions" :key="item.value" :label="$t(item.label)" :value="item.value"></el-option>
         </el-select>
         <div class="panel__time">
           <date-time-range

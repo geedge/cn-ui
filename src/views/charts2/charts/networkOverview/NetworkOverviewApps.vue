@@ -37,7 +37,7 @@
                 <div v-else-if="app.value === '-' || app.value === 0" class="app-card__body-content-percent">+0.00%</div>
               </div>
             </div>
-            <div class="app-card__body-unit">{{this.metric}}</div>
+            <div class="app-card__body-unit">{{$t(metricShow.label)}}</div>
             <div class="app-card__body-previous">
               <div>{{$t('network.total')}}</div>
               <div v-if="metric === 'Bits/s'" :test-id="`total${index}`">{{valueToRangeValue(app.total, unitTypes.byte).join(' ')}}</div>
@@ -122,7 +122,7 @@
 
 <script>
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { storageKey, unitTypes, networkTable, operationType, curTabState } from '@/utils/constants'
+import { storageKey, unitTypes, networkTable, operationType, curTabState, metricType, metricOptions } from '@/utils/constants'
 import * as echarts from 'echarts'
 import { appListChartOption } from '@/views/charts2/charts/options/echartOption'
 import { shallowRef } from 'vue'
@@ -174,7 +174,11 @@ export default {
       curTabState: curTabState,
       urlChangeParams: {},
       showError: false,
-      errorMsg: ''
+      errorMsg: '',
+      metricShow: {
+        value: 'Bits/s',
+        label: 'metric.bps'
+      }
     }
   },
   props: {
@@ -204,6 +208,7 @@ export default {
       this.init()
     },
     metric (n) {
+      this.metricShow = metricOptions.find(item => item.value === this.metric)
       this.init()
     }
   },
@@ -721,6 +726,7 @@ export default {
     }
   },
   mounted () {
+    this.metricShow = metricOptions.find(item => item.value === this.metric)
     if (this.chart && this.chart.params && this.chart.params.app) {
       const userId = parseInt(localStorage.getItem(storageKey.userId))
       const apps = _.cloneDeep(this.chart.params.app)

@@ -247,17 +247,24 @@ export const networkOverviewTabs = [
 export const metricOptions = [
   {
     value: 'Bits/s',
-    label: 'Bits/s'
+    label: 'metric.bps'
   },
   {
     value: 'Packets/s',
-    label: 'Packets/s'
+    label: 'metric.packets'
   },
   {
     value: 'Sessions/s',
-    label: 'Sessions/s'
+    label: 'metric.sessions'
   }
 ]
+
+export const metricType = {
+  Bits: 'Bits/s',
+  Packets: 'Packets/s',
+  Sessions: 'Sessions/s'
+
+}
 
 export const operationType = {
   mainMenu: 0, // 菜单
