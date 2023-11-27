@@ -190,6 +190,12 @@
         :entity="entity"
         @toggleLoading="toggleLoading"
     ></entity-detail-tabs-chart>
+    <entity-detail-map
+        v-else-if="chart.type === typeMapping.entityDetail.map"
+        :chart="chart"
+        :entity="entity"
+        @toggleLoading="toggleLoading"
+    ></entity-detail-map>
   </div>
 </template>
 
@@ -225,6 +231,7 @@ import EntityDetailLine from '@/views/charts2/charts/entityDetail/EntityDetailLi
 import EntityDetailSubscriberKpi from '@/views/charts2/charts/entityDetail/EntityDetailSubscriberKpi'
 import EntityDetailSubscriberTopApp from '@/views/charts2/charts/entityDetail/EntityDetailSubscriberTopApp'
 import EntityDetailTabsChart from '@/views/charts2/charts/entityDetail/EntityDetailTabs'
+import EntityDetailMap from '@/views/charts2/charts/entityDetail/EntityDetailMap'
 
 import { getNowTime } from '@/utils/date-util'
 import { ref } from 'vue'
@@ -262,7 +269,8 @@ export default {
     EntityDetailSubscriberKpi,
     EntityDetailSubscriberTopApp,
     EntityDetailLine,
-    EntityDetailTabsChart
+    EntityDetailTabsChart,
+    EntityDetailMap
   },
   props: {
     chart: Object,
