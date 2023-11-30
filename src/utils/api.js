@@ -284,6 +284,7 @@ export const api = {
     informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list',
     deviceInformation: apiVersion + '/entity/detail/subscribe/device', // 暂时写的值
     accountInformation: apiVersion + '/entity/detail/subscribe/account', // 暂时写的值
+    locationTrack: apiVersion + '/entity/detail/subscribe/track',
     // 实体关系
     entityGraph: {
       basicInfo: apiVersion + '/entity/graph/relation/basic',

@@ -1,0 +1,31 @@
+.subscriber-map {
+  height: 100%;
+
+  .subscriber-map-header {
+    height: 34px;
+    padding-bottom: 10px;
+    font-size: 14px;
+    color: #353636;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .subscriber-map-title {
+      height: 24px;
+      overflow: hidden;
+    }
+  }
+  .subscriber-map-body {
+    border: 1px solid #E2E5EC;
+    border-radius: 4px;
+    height: calc(100% - 34px);
+
+    .subscriber-map {
+      height: 100%;
+      width: 100%;
+    }
+    .panel-chart__no-data {
+      height: calc(100% - 46px);
+    }
+  }
+}
