@@ -14,6 +14,8 @@ const DEFAULT_TIME_FILTER_RANGE = {
     informationAggregation: 0,
     relatedEntity: 60 * 24 * 7,
     openPort: 60 * 24 * 7,
+    deviceInformation: 60 * 24 * 7,
+    accountInformation: 60 * 24 * 7,
     securityEvent: 60 * 24 * 7,
     performanceEvent: 60 * 24 * 7,
     behaviorPattern: 60 * 24 * 7

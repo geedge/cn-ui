@@ -849,7 +849,7 @@ export default {
     })
   },
   beforeUnmount () {
-    //clearTimeout(this.timer)
+    // clearTimeout(this.timer)
     window.removeEventListener('resize', this.resize)
     const dom = document.getElementById('psiphonBarChart')
     if (dom) {

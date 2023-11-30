@@ -282,6 +282,8 @@ export const api = {
     basicInfo: apiVersion + '/entity/detail/basic',
     tags: apiVersion + '/entity/detail/kb/intelligence/tag',
     informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list',
+    deviceInformation: apiVersion + '/entity/detail/subscribe/device', // 暂时写的值
+    accountInformation: apiVersion + '/entity/detail/subscribe/account', // 暂时写的值
     // 实体关系
     entityGraph: {
       basicInfo: apiVersion + '/entity/graph/relation/basic',

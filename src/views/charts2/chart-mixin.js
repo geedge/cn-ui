@@ -47,6 +47,12 @@ export default {
         case entityDetailTabsName.openPort:
           dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.openPort
           break
+        case entityDetailTabsName.deviceInformation:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.deviceInformation
+          break
+        case entityDetailTabsName.accountInformation:
+          dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.accountInformation
+          break
         case entityDetailTabsName.informationAggregation:
           dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.informationAggregation
           break

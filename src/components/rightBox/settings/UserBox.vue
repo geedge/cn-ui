@@ -132,9 +132,9 @@ export default {
       }
     }
     const validateConfirmPin = (rule, value, callback) => { // 确认密码的二次校验
-      if (_.isEmpty(value) && !_.isEmpty(this.editObject.pin)) {//密码有内容，确认密码没内容
+      if (_.isEmpty(value) && !_.isEmpty(this.editObject.pin)) { // 密码有内容，确认密码没内容
         callback(new Error(this.$t('config.user.confirmPin')))
-      } else if (!_.isEmpty(value) && value !== this.editObject.pin) {//密码有内容，确认密码也有内容，内容不一致
+      } else if (!_.isEmpty(value) && value !== this.editObject.pin) { // 密码有内容，确认密码也有内容，内容不一致
         callback(new Error(this.$t('config.user.confirmPinErr')))
       } else {
         callback()

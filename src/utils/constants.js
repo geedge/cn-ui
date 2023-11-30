@@ -95,9 +95,10 @@ export const position = {
 }
 
 export const entityType = {
-  app: 'APP',
-  domain: 'Domain',
-  ip: 'IP'
+  app: 'app',
+  domain: 'domain',
+  ip: 'ip',
+  subscribe: 'subscribe'
 }
 
 export const knowledgeCardUpdateRecordType = {
@@ -109,11 +110,59 @@ export const entityDetailTabsName = {
   informationAggregation: 'informationAggregation',
   relatedEntity: 'relatedEntity',
   openPort: 'openPort',
+  deviceInformation: 'deviceInformation',
+  accountInformation: 'accountInformation',
   digitalCertificate: 'digitalCertificate',
   securityEvent: 'securityEvent',
   performanceEvent: 'performanceEvent',
   behaviorPattern: 'behaviorPattern'
 }
+
+export const entityDetailTabConfig = [
+  {
+    name: 'app',
+    config: [
+      { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
+      { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
+      // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
+      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
+      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+    ]
+  },
+  {
+    name: 'domain',
+    config: [
+      { name: entityDetailTabsName.informationAggregation, label: 'entities.informationAggregation', icon: 'cn-icon cn-icon-information-aggregation', tag: 0 },
+      { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
+      { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
+      // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
+      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
+      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+    ]
+  },
+  {
+    name: 'ip',
+    config: [
+      { name: entityDetailTabsName.informationAggregation, label: 'entities.informationAggregation', icon: 'cn-icon cn-icon-information-aggregation', tag: 0 },
+      { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
+      { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
+      // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
+      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
+      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 },
+      { name: entityDetailTabsName.behaviorPattern, label: 'entities.behaviorPattern', icon: 'cn-icon cn-icon-behavior', tag: 0 }
+    ]
+  },
+  {
+    name: 'subscribe',
+    config: [
+      { name: entityDetailTabsName.deviceInformation, label: 'entities.deviceInformation', icon: 'cn-icon cn-icon-device-info', tag: 0 },
+      { name: entityDetailTabsName.accountInformation, label: 'entities.accountInformation', icon: 'cn-icon cn-icon-account-info', tag: 0 },
+      { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
+      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
+      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+    ]
+  }
+]
 
 export const entityDetailRelatedEntitiesShowSize = 100
 
