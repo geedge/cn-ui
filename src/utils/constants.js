@@ -98,7 +98,7 @@ export const entityType = {
   app: 'app',
   domain: 'domain',
   ip: 'ip',
-  subscribe: 'subscribe'
+  subscriber: 'subscriber'
 }
 
 export const knowledgeCardUpdateRecordType = {
@@ -153,7 +153,7 @@ export const entityDetailTabConfig = [
     ]
   },
   {
-    name: 'subscribe',
+    name: 'subscriber',
     config: [
       { name: entityDetailTabsName.deviceInformation, label: 'entities.deviceInformation', icon: 'cn-icon cn-icon-device-info', tag: 0 },
       { name: entityDetailTabsName.accountInformation, label: 'entities.accountInformation', icon: 'cn-icon cn-icon-account-info', tag: 0 },

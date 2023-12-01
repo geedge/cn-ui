@@ -23,9 +23,47 @@
     .subscriber-map {
       height: 100%;
       width: 100%;
+
+      .maplibregl-canvas:focus-visible {
+        outline: none;
+      }
     }
     .panel-chart__no-data {
       height: calc(100% - 46px);
+    }
+  }
+
+  .subscriber-map-point-tooltip {
+    position: fixed;
+    background-color: white;
+    width: 200px;
+    border: 1px solid #C5C5C5;
+    box-shadow: -1px 1px 10px -1px rgba(205,205,205,0.85);
+    border-radius: 2px;
+
+    .subscriber-map-point-tooltip__time {
+      padding: 10px;
+      font-size: 12px;
+      color: #353636;
+      font-weight: bold;
+    }
+    .subscriber-map-point-tooltip__coordinates {
+      padding: 0 10px 10px;
+
+      .subscriber-map-point-tooltip__coordinate {
+        display: flex;
+
+        .coordinate__label {
+          width: 115px;
+          font-size: 12px;
+          color: #575757;
+        }
+        .coordinate__value {
+          font-size: 12px;
+          color: #353636;
+          font-weight: bold;
+        }
+      }
     }
   }
 }

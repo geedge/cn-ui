@@ -39,7 +39,7 @@ export default {
         entityData.appName = query.entityName
         break
       }
-      case 'subscribe': {
+      case 'subscriber': {
         panelType = panelTypeAndRouteMapping.subscribeEntityDetail
         entityData.appName = query.entityName
         break
