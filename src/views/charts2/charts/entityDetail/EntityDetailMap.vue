@@ -149,7 +149,7 @@ export default {
       })
     },
     queryData () {
-      return new Promise((resolve, reject) => {
+      /*return new Promise((resolve, reject) => {
         resolve({
           status: 200,
           data: {
@@ -189,8 +189,8 @@ export default {
             }
           }
         })
-      })
-      // return axios.get(`${api.entity.locationTrack}?resource=${this.entity.entityName}`)
+      })*/
+      return axios.get(`${api.entity.locationTrack}?resource=${this.entity.entityName}`)
     },
     generateRouteGEOJSON (result) {
       return {
