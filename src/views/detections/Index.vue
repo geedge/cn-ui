@@ -738,7 +738,7 @@ export default {
     },
     // methods
     dateTimeRangeChange (s, e, v) {
-      this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
+      this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v.value }
     },
     search (param) {
       let q

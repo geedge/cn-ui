@@ -317,17 +317,16 @@ export default {
     },
     reload (s, e, v) {
       this.dateTimeRangeChange(s, e, v)
-      const { startTime, endTime } = getNowTime(this.timeFilter.dateRangeValue)
       const newParam = {
-        range: this.timeFilter.dateRangeValue,
-        startTime: getSecond(startTime),
-        endTime: getSecond(endTime)
+        range: v.value,
+        startTime: getSecond(s),
+        endTime: getSecond(e)
       }
       this.reloadUrl(newParam)
     },
     // methods
     dateTimeRangeChange (s, e, v) {
-      this.timeFilter = { startTime: s, endTime: e, dateRangeValue: v }
+      this.timeFilter = { startTime: getSecond(s), endTime: getSecond(e), dateRangeValue: v.value }
     },
     // sql特殊字段转换
     specialColumnHandle (sql) {
@@ -518,6 +517,7 @@ export default {
       const queryParams = {
         startTime: getSecond(params.startTime),
         endTime: getSecond(params.endTime),
+        hideRelated: this.isHideRelatedEntities,
         resource: params.q || ''
       }
       this.loadingLeft = true
