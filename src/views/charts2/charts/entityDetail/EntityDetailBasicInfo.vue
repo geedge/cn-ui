@@ -15,7 +15,7 @@
           @show="analysisPopSwitch(true)"
           @hide="analysisPopSwitch(false)"
       >
-        <template #reference>
+        <template #reference v-if="entity.entityType !== entityType.subscriber">
           <div class="analysis-btn" :class="{'analysis-btn--active': analysisPopShow}"><i class="cn-icon cn-icon-analysis"></i>{{$t('overall.analysis')}}</div>
         </template>
         <div class="analysis-entry">
@@ -105,6 +105,10 @@ export default {
         }
         case ('app'): {
           entityTypeName = 'APP'
+          break
+        }
+        case ('subscriber'): {
+          entityTypeName = 'SUBSCRIBER'
           break
         }
         default:
