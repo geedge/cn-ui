@@ -15,20 +15,22 @@
       </div>
     </div>
     <transition name="el-zoom-in-top" style="z-index: 4;">
-      <div v-if="dropdownFlag" class="date-range-panel">
+      <div v-if="dropdownFlag" class="date-range-panel" :style="showPosition === 'left' ? leftStyle : rightStyle">
         <el-row class="date-range-panel-top" style="position: relative">
           <el-col :span="16" class="date-range-panel-content date-range-panel-content-left">
             <div class="date-range-title" style="padding-left: 0">{{$t('dateTime.absoluteTimeRange')}}</div>
             <el-config-provider :locale="locale">
               <el-date-picker
                       v-model="newDateValue"
+                      :key="keyValue"
                       ref="newDatePicker"
                       popper-class="my-date-picker"
-                      style="position: absolute;top: -53px;left: -536px;"
+                      :style="showPosition === 'left' ? datePickerLeftStyle : datePickerRightStyle"
                       :clearable="false"
                       :default-time="defaultTime"
                       :unlink-panels="true"
                       type="datetimerange"
+                      @blur="datePickerVisibleChange"
                       @change="timeArrChange"
               />
             </el-config-provider>
@@ -70,7 +72,7 @@
             </ul>
           </el-col>
         </el-row>
-        <el-row class="date-range-panel-bottom">
+        <el-row class="date-range-panel-bottom" >
           <el-col :span="12">{{ address }}</el-col>
           <el-col :span="12" class="utc-str">{{ utcStr }}</el-col>
         </el-row>
@@ -107,6 +109,10 @@ export default {
     },
     style: {
       type: String
+    },
+    showPosition: {
+      type: String,
+      default: 'right'
     }
   },
   emits: ['change'],
@@ -135,6 +141,17 @@ export default {
       return str
     }
   },
+  methods: {
+    /**
+     * 时间选择器失去焦点之后就会隐藏，此时，Left展示类型的，就需要重新设置下拉框的位置
+     */
+    datePickerVisibleChange () {
+      if (this.showPosition === 'left') {
+        this.leftStyle = this.leftStyleBefore
+        //this.dropdownFlag = true
+      }
+    }
+  },
   setup (props, ctx) {
     // data
     const store = useStore()
@@ -160,6 +177,12 @@ export default {
       new Date(2023, 1, 1, 0, 0, 0),
       new Date(2023, 1, 2, 23, 59, 59)
     ])
+    const rightStyle = 'position: absolute;top: 32px;right: 0px;'
+    const leftStyleBefore = 'position: absolute;top: 32px;left: 0px;'
+    const leftStyleAfter = 'position: absolute;top: 32px;left: 660px;'
+    const datePickerRightStyle = 'position: absolute;top: -53px;left: -536px;'
+    const datePickerLeftStyle = 'position: absolute;top: -53px;left: -536px;'
+    const leftStyle = ref('position: absolute;top: 32px;left: 0px;')
     // computed
     const utcStr = computed(() => {
       let str = 'UTC '
@@ -197,6 +220,17 @@ export default {
       }
     })
 
+    /**
+     * 监测下拉框，一旦隐藏，则设置其位置靠最左边
+     * */
+    watch(() => dropdownFlag.value, (newVal) => {
+      if (!newVal) {
+        if (props.showPosition === 'left') {
+          leftStyle.value = leftStyleBefore
+        }
+      }
+    })
+
     // methods
     /**
      * 打开/关闭时间面板
@@ -215,14 +249,14 @@ export default {
       if (dropdownFlag.value) {
         dropdownFlag.value = false
       }
-      if (dropdownFlag.value) {
-        dropdownFlag.value = false
-      }
     }
     /**
      * 打开时间选择器，从时间面板的“开始时间”、“结束时间”调用
      */
     const myDatePickerShow = () => {
+      if (props.showPosition === 'left') {
+        leftStyle.value = leftStyleAfter
+      }
       newDateValue.value = [
         new Date(...timestampToList(myStartTime.value)),
         new Date(...timestampToList(myEndTime.value))
@@ -306,6 +340,8 @@ export default {
       locale = cn
     }
 
+    const keyValue = window.$dayJs.tz().valueOf()
+
     return {
       myStartTime,
       myEndTime,
@@ -322,6 +358,12 @@ export default {
       rangeHistory,
       rangeHistoryArr,
       getMillisecond,
+      datePickerLeftStyle,
+      datePickerRightStyle,
+      leftStyle,
+      leftStyleBefore,
+      rightStyle,
+      keyValue,
       myDatePickerShow,
       showDropdown,
       changeDropdown,

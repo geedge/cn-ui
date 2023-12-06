@@ -8,71 +8,103 @@
               :end-time="timeFilter.endTime"
               :date-range="timeFilter.dateRangeValue"
               ref="dateTimeRange"
+              showPosition="left"
               @change="reload"
       />
     </div>
 
     <div class="subscriber-kpi-body">
       <chart-no-data v-if="isNoData" test-id="noData"></chart-no-data>
-      <chart-error v-if="showError" :content="errorMsg" />
+      <chart-error v-if="showError" :content="errorMsg" style="top:34px;" />
 
       <div class="subscriber-kpi-content" v-if="!isNoData && !showError">
         <div class="kpi-type">
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.volume')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number">
-                {{unitConvert($_.get(kpiData, 'volume'), unitTypes.number).join(' ')}}
-              </div>
-
-              <div class="data-trend">
-                <div  class="data-total-trend data-total-trend-red">
-                  <i class="cn-icon-rise1 cn-icon"></i>&nbsp;
-                  <span >32%</span>
+              <template v-if="$_.get(kpiData, 'volume')">
+                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'volume') ? unitConvert($_.get(kpiData, 'volume')[0], unitTypes.bps).join(' ') : '-'}}</div>
+                <div class="data-trend">
+                  <div v-if="$_.get(kpiData, 'volume')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                    <i class="cn-icon-constant cn-icon"></i>
+                  </div>
                 </div>
-              </div>
-
+              </template>
+              <template  v-else>
+                -
+              </template>
             </div>
           </div>
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.throughput')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{unitConvert($_.get(kpiData, 'throughput'), unitTypes.bps).join(' ')}}</div>
-              <div class="data-trend">
-
-                <div  class="data-total-trend data-total-trend-green">
-                  <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                  <span >8%</span>
+              <template v-if="$_.get(kpiData, 'throughput')">
+                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'throughput') ? unitConvert($_.get(kpiData, 'throughput')[0], unitTypes.bps).join(' ') : '-'}}</div>
+                <div class="data-trend">
+                    <div v-if="$_.get(kpiData, 'throughput')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                      <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
+                    </div>
+                    <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                      <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
+                    </div>
+                    <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                      <i class="cn-icon-constant cn-icon"></i>
+                    </div>
                 </div>
-              </div>
+              </template>
+              <template  v-else>
+                -
+              </template>
             </div>
-
           </div>
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.latency')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{unitConvert($_.get(kpiData, 'latency'), unitTypes.time).join(' ')}}</div>
-              <div class="data-trend">
-
-                <div  class="data-total-trend data-total-trend-black">
-                  <i class="cn-icon-constant cn-icon"></i>
+              <template v-if="$_.get(kpiData, 'latency')">
+                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'latency') ? unitConvert($_.get(kpiData, 'latency')[0], unitTypes.bps).join(' ') : '-'}}</div>
+                <div class="data-trend">
+                  <div v-if="$_.get(kpiData, 'latency')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'latency')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'latency')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'latency')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'latency')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                    <i class="cn-icon-constant cn-icon"></i>
+                  </div>
                 </div>
-              </div>
-
+              </template>
+              <template  v-else>
+                -
+              </template>
             </div>
           </div>
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.packetLoss')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{unitConvert($_.get(kpiData, 'packetLoss'), unitTypes.percent).join(' ')}}</div>
-              <div class="data-trend">
-
-                <div  class="data-total-trend data-total-trend-green">
-                  <i class="cn-icon-decline cn-icon"></i>&nbsp;
-                  <span >66%</span>
+              <template v-if="$_.get(kpiData, 'packetLoss')">
+                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'packetLoss') ? unitConvert($_.get(kpiData, 'packetLoss')[0], unitTypes.bps).join(' ') : '-'}}</div>
+                <div class="data-trend">
+                  <div v-if="$_.get(kpiData, 'packetLoss')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'packetLoss')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'packetLoss')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'packetLoss')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'packetLoss')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                    <i class="cn-icon-constant cn-icon"></i>
+                  </div>
                 </div>
-              </div>
-
+              </template>
+              <template  v-else>
+                -
+              </template>
             </div>
           </div>
         </div>
@@ -90,7 +122,7 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
 import unitConvert from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { overwriteUrl, urlParamsHandler, getChainRatio } from '@/utils/tools'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { getNowTime, getSecond } from '@/utils/date-util'
@@ -131,10 +163,11 @@ export default {
   data () {
     return {
       kpiData: {
-        volume: 5300000000,
-        throughput: 600000,
-        latency: 21,
-        packetLoss: 0.0192
+        volume: [5300000000, 'up', '6%'],
+        throughput: [600000, 'noChange', '6%'],
+        httpLatency: [21, 'down', '6%'],
+        sslLatency: [21, 'down', '6%'],
+        packetLoss: [0.0192, 'down', '2%']
       },
       unitConvert,
       unitTypes,
@@ -151,25 +184,100 @@ export default {
     }
   },
   methods: {
-    init (val, show, active, n) {
+    handleTrendData (curData, preData) {
+      let trend = ''
+      let trendPercent = ''
+      const totalDiff = curData - preData
+      const chainRatio = getChainRatio(curData, preData)
+      if (chainRatio !== '-') {
+        trendPercent = parseFloat(Math.abs(chainRatio) * 100).toFixed(2)
+        if (totalDiff > 0) {
+          trend = 'up'
+          if (trendPercent <= 500) {
+            trendPercent = trendPercent + '%'
+          } else {
+            trendPercent = '>500%'
+          }
+        } else if (totalDiff < 0) {
+          trend = 'down'
+          if (trendPercent <= 500) {
+            trendPercent = trendPercent + '%'
+          } else {
+            trendPercent = '>500%'
+          }
+        } else if (totalDiff === 0) {
+          trend = 'noChange'// 横向图标
+        } else {
+          trend = ''
+        }
+        if (trendPercent === '0%') {
+          trend = 'noChange'
+          trendPercent = ''
+        }
+      }
+      return [curData, trend, trendPercent]
+    },
+    init () {
       const params = {
         resource: this.entity.entityName,
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
-
-      if (this.queryCondition) {
-        // params.q = this.queryCondition
+      const preParams = {
+        resource: this.entity.entityName,
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        cycle: 1
       }
 
       this.toggleLoading(true)
-      axios.get(`${api.entity.throughput}/${this.entity.entityType}`, { params: params }).then(response => {
+
+      axios.get(api.entity.subscriberKpi, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
-          this.isNoData = res.data.result.length === 0
+          const data = res.data
+          this.isNoData = Object.keys(data).length === 0
           this.showError = false
           if (!this.isNoData) {
-            this.kpiData = res.data.result
+            this.kpiData = {
+              volume: [data ? data.total_bytes : '', '', ''],
+              throughput: [data ? data.avg_bits_per_sec : '', '', ''],
+              httpLatency: [data ? data.avg_http_response_latency_ms : '', '', ''],
+              sslLatency: [data ? data.avg_ssl_handshake_latency_ms : '', '', ''],
+              packetLoss: [data ? data.tcp_lost_bytes_ratio : '', '', '']
+            }
+
+            axios.get(api.entity.subscriberKpi, { params: preParams }).then(preCycleRes => {
+              const preRes = preCycleRes.data
+              if (preCycleRes.status === 200) {
+                const data = preRes.data
+                if (Object.keys(data).length > 0) {
+                  const preVolume = data ? data.avg_bits_per_sec : ''
+                  const preThroughput = data ? data.total_bytes : ''
+                  const preHttpLatency = data ? data.avg_http_response_latency_ms : ''
+                  const preSslLatency = data ? data.avg_ssl_handshake_latency_ms : ''
+                  const prePacketLoss = data ? data.tcp_lost_bytes_ratio : ''
+
+                  if (this.kpiData.volume[0] !== '' && preVolume !== '') {
+                    this.kpiData.volume = this.handleTrendData(this.kpiData.volume[0], preVolume)
+                  }
+                  if (this.kpiData.throughput[0] !== '' && preThroughput !== '') {
+                    this.kpiData.throughput = this.handleTrendData(this.kpiData.throughput[0], preThroughput)
+                  }
+                  if (this.kpiData.httpLatency[0] !== '' && preHttpLatency !== '') {
+                    this.kpiData.httpLatency = this.handleTrendData(this.kpiData.httpLatency[0], preHttpLatency)
+                  }
+                  if (this.kpiData.sslLatency[0] !== '' && preSslLatency !== '') {
+                    this.kpiData.sslLatency = this.handleTrendData(this.kpiData.sslLatency[0], preSslLatency)
+                  }
+                  if (this.kpiData.packetLoss[0] !== '' && prePacketLoss !== '') {
+                    this.kpiData.packetLoss = this.handleTrendData(this.kpiData.packetLoss[0], prePacketLoss)
+                  }
+                }
+              } else {
+                this.httpError(res)
+              }
+            })
           }
         } else {
           this.httpError(res)
@@ -179,8 +287,6 @@ export default {
         this.httpError(e)
       }).finally(() => {
         this.toggleLoading(false)
-        // 测试代码
-        // this.isNoData = false
       })
     },
     httpError (e) {
