@@ -325,6 +325,73 @@ export const stackedLineChartOption = {
     }
   ]
 }
+// subscriber的app页签
+export const stackedLineWithLegendChartOption = {
+  color: chartColor3,
+  tooltip: {
+    trigger: 'axis',
+    className: 'echarts-tooltip echarts-tooltip-dark'
+  },
+  toolbox: {
+    show: false
+  },
+  brush: {
+    toolbox: ['lineX'],
+    xAxisIndex: 'all',
+    throttleType: 'debounce',
+    transformable: false
+  },
+  legend: {
+    show: true,
+    left: 'center',
+    bottom: 10,
+    icon: 'roundRect',
+    itemWidth: 10,
+    itemHeight: 10
+  },
+  grid: {
+    top: '12%',
+    left: '2%',
+    right: '1.5%',
+    bottom: 40,
+    containLabel: true
+  },
+  xAxis: [
+    {
+      type: 'time',
+      splitNumber: 8,
+      axisLabel: {
+        formatter: xAxisTimeFormatter,
+        rich: xAxisTimeRich
+      }
+    }
+  ],
+  yAxis: [
+    {
+      type: 'value',
+      splitLine: {
+        show: false
+      },
+      axisLabel: {
+        formatter: function (value) {
+          return unitConvert(value, unitTypes.number).join('')
+        }
+      }
+    }
+  ],
+  series: [
+    {
+      type: 'line',
+      symbol: 'circle',
+      smooth: true,
+      showSymbol: false,
+      emphasis: {
+        focus: 'series'
+      },
+      data: []
+    }
+  ]
+}
 
 export const linkTrafficLineChartOption = {
   color: chartColor3,
@@ -454,7 +521,6 @@ export const npmLineChartOption = {
   xAxis: [
     {
       type: 'time',
-      splitNumber: 8,
       axisLabel: {
         formatter: xAxisTimeFormatter,
         rich: xAxisTimeRich

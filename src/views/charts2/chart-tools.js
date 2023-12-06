@@ -37,6 +37,7 @@ export const typeMapping = {
     subscriberKpi: 714,
     subscriberTopApp: 715,
     line: 107,
+    subscriberLine: 108,
     tabsChart: 713,
     map: 3
   }

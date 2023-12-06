@@ -496,6 +496,40 @@ export function stackedLineTooltipFormatter (params) {
   str += '</div>'
   return str
 }
+// subscriber详情页的app页签
+export function stackedLineWithLegendTooltipFormatter (params) {
+  // 堆叠图tooltip倒叙操作
+  params = params.reverse()
+
+  let str = '<div>'
+  params.forEach((item, i) => {
+    const tData = item.data[0]
+    if (i === 0) {
+      str += '<div style="margin-bottom: 5px">'
+      str += dateFormatByAppearance(tData)
+      str += '</div>'
+    }
+  })
+  str += '<div class="cn-chart-body">'
+  str += '<div class="cn-chart-tooltip">'
+  params.forEach((item, i) => {
+    str += '<span class="cn-chart-tooltip-box">'
+    str += `<span style="display:inline-block;margin-right:4px;border-radius:2px;width:10px;height:10px;background-color:${item.borderColor};"></span>`
+    str += `<span class="cn-chart-tooltip-content">${item.seriesName.split('(')[0]}</span>`
+    str += '</span>'
+  })
+  str += '</div>'
+  str += '<div class="cn-chart-tooltip">'
+  params.forEach((item, i) => {
+    str += `<span class="cn-chart-tooltip-value cn-chart-tooltip__color">
+        ${valueToRangeValue(item.data[1], item.value[2]).join(' ')}
+    </span>`
+  })
+  str += '</div>'
+  str += '</div>'
+  str += '</div>'
+  return str
+}
 export function appStackedLineTooltipFormatter (params) {
   let str = '<div>'
   params.forEach((item, i) => {

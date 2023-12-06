@@ -184,6 +184,12 @@
             :entity="entity"
             @toggleLoading="toggleLoading"
     ></entity-detail-line>
+    <entity-detail-subscriber-line
+            v-else-if="chart.type === typeMapping.entityDetail.subscriberLine"
+            :chart="chart"
+            :entity="entity"
+            @toggleLoading="toggleLoading"
+    ></entity-detail-subscriber-line>
     <entity-detail-tabs-chart
         v-else-if="chart.type === typeMapping.entityDetail.tabsChart"
         :chart="chart"
@@ -228,6 +234,7 @@ import DnsRecentEvents from '@/views/charts2/charts/dnsInsight/DnsRecentEvents'
 import DnsTrafficLine from '@/views/charts2/charts/dnsInsight/DnsTrafficLine'
 import EntityDetailBasicInfo from '@/views/charts2/charts/entityDetail/EntityDetailBasicInfo'
 import EntityDetailLine from '@/views/charts2/charts/entityDetail/EntityDetailLine'
+import EntityDetailSubscriberLine from '@/views/charts2/charts/entityDetail/EntityDetailSubscriberLine'
 import EntityDetailSubscriberKpi from '@/views/charts2/charts/entityDetail/EntityDetailSubscriberKpi'
 import EntityDetailSubscriberTopApp from '@/views/charts2/charts/entityDetail/EntityDetailSubscriberTopApp'
 import EntityDetailTabsChart from '@/views/charts2/charts/entityDetail/EntityDetailTabs'
@@ -269,6 +276,7 @@ export default {
     EntityDetailSubscriberKpi,
     EntityDetailSubscriberTopApp,
     EntityDetailLine,
+    EntityDetailSubscriberLine,
     EntityDetailTabsChart,
     EntityDetailMap
   },
