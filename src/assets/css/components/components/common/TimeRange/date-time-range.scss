@@ -206,6 +206,7 @@
 }
 
 .my-date-picker {
+  z-index: 100004 !important;
   .el-popper__arrow {
     position: absolute;
     top: 20px !important;

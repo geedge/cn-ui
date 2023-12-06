@@ -88,7 +88,7 @@ export default {
     const tabObj = entityDetailTabConfig.find(tab => tab.name === entityType)
 
     const tabs = reactive(tabObj ? tabObj.config : [])
-    const activeTab = ref(tabs[0].name)
+    const activeTab = ref(tabs[0] ? tabs[0].name : {})
 
     const { query } = useRoute()
     const item = tabs.find(item => item.name === query.currentTab)
@@ -180,7 +180,7 @@ export default {
         this.promiseData(appsOfDomain, ipsOfDomain, fqdnsOfDomain)
       }
 
-      if (this.entity.entityType === entityType.subscribe) {
+      if (this.entity.entityType === entityType.subscriber) {
         axios.get(api.entity.deviceInformation, { params: this.getParamsByTabType(entityDetailTabsName.deviceInformation) }).then(response => {
           const res = response.data
           if (response.status === 200) {

@@ -22,89 +22,86 @@
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.volume')}}</div>
             <div class="kpi-type-data" >
-              <template v-if="$_.get(kpiData, 'volume')">
-                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'volume') ? unitConvert($_.get(kpiData, 'volume')[0], unitTypes.bps).join(' ') : '-'}}</div>
-                <div class="data-trend">
-                  <div v-if="$_.get(kpiData, 'volume')[1] === 'up'" class="data-total-trend data-total-trend-red" >
-                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'down'" class="data-total-trend data-total-trend-green" >
-                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
-                    <i class="cn-icon-constant cn-icon"></i>
-                  </div>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'volume') ? unitConvert($_.get(kpiData, 'volume')[0], unitTypes.byte).join(' ') : '-'}}</div>
+              <div class="data-trend" v-if="$_.get(kpiData, 'volume')">
+                <div v-if="$_.get(kpiData, 'volume')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                  <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
                 </div>
-              </template>
-              <template  v-else>
-                -
-              </template>
+                <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                  <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'volume')[2]}}</span>
+                </div>
+                <div v-else-if=" $_.get(kpiData, 'volume')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                  <i class="cn-icon-constant cn-icon"></i>
+                </div>
+              </div>
             </div>
           </div>
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.throughput')}}</div>
             <div class="kpi-type-data" >
-              <template v-if="$_.get(kpiData, 'throughput')">
-                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'throughput') ? unitConvert($_.get(kpiData, 'throughput')[0], unitTypes.bps).join(' ') : '-'}}</div>
-                <div class="data-trend">
-                    <div v-if="$_.get(kpiData, 'throughput')[1] === 'up'" class="data-total-trend data-total-trend-red" >
-                      <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
-                    </div>
-                    <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'down'" class="data-total-trend data-total-trend-green" >
-                      <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
-                    </div>
-                    <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
-                      <i class="cn-icon-constant cn-icon"></i>
-                    </div>
-                </div>
-              </template>
-              <template  v-else>
-                -
-              </template>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'throughput') ? unitConvert($_.get(kpiData, 'throughput')[0], unitTypes.bps).join(' ') : '-'}}</div>
+              <div class="data-trend" v-if="$_.get(kpiData, 'throughput')">
+                  <div v-if="$_.get(kpiData, 'throughput')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
+                  </div>
+                  <div v-else-if=" $_.get(kpiData, 'throughput')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                    <i class="cn-icon-constant cn-icon"></i>
+                  </div>
+              </div>
             </div>
           </div>
           <div class="kpi-type-value">
-            <div class="kpi-type-value-name">{{$t('subscriber.latency')}}</div>
+            <div class="kpi-type-value-name">{{$t('subscriber.httpLatency')}}</div>
             <div class="kpi-type-data" >
-              <template v-if="$_.get(kpiData, 'latency')">
-                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'latency') ? unitConvert($_.get(kpiData, 'latency')[0], unitTypes.bps).join(' ') : '-'}}</div>
-                <div class="data-trend">
-                  <div v-if="$_.get(kpiData, 'latency')[1] === 'up'" class="data-total-trend data-total-trend-red" >
-                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'latency')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'latency')[1] === 'down'" class="data-total-trend data-total-trend-green" >
-                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'latency')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'latency')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
-                    <i class="cn-icon-constant cn-icon"></i>
-                  </div>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'httpLatency') ? unitConvert($_.get(kpiData, 'httpLatency')[0], unitTypes.time).join(' ') : '-'}}</div>
+              <div class="data-trend" v-if="$_.get(kpiData, 'httpLatency')">
+                <div v-if="$_.get(kpiData, 'httpLatency')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                  <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'httpLatency')[2]}}</span>
                 </div>
-              </template>
-              <template  v-else>
-                -
-              </template>
+                <div v-else-if=" $_.get(kpiData, 'httpLatency')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                  <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'httpLatency')[2]}}</span>
+                </div>
+                <div v-else-if=" $_.get(kpiData, 'httpLatency')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                  <i class="cn-icon-constant cn-icon"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-type-value">
+            <div class="kpi-type-value-name">{{$t('subscriber.sslLatency')}}</div>
+            <div class="kpi-type-data" >
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'sslLatency') ? unitConvert($_.get(kpiData, 'sslLatency')[0], unitTypes.time).join(' ') : '-'}}</div>
+              <div class="data-trend" v-if="$_.get(kpiData, 'sslLatency')">
+                <div v-if="$_.get(kpiData, 'sslLatency')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                  <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'sslLatency')[2]}}</span>
+                </div>
+                <div v-else-if=" $_.get(kpiData, 'sslLatency')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                  <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'sslLatency')[2]}}</span>
+                </div>
+                <div v-else-if=" $_.get(kpiData, 'sslLatency')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                  <i class="cn-icon-constant cn-icon"></i>
+                </div>
+              </div>
             </div>
           </div>
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.packetLoss')}}</div>
             <div class="kpi-type-data" >
-              <template v-if="$_.get(kpiData, 'packetLoss')">
-                <div class="kpi-type-value-number" >{{$_.get(kpiData, 'packetLoss') ? unitConvert($_.get(kpiData, 'packetLoss')[0], unitTypes.bps).join(' ') : '-'}}</div>
-                <div class="data-trend">
-                  <div v-if="$_.get(kpiData, 'packetLoss')[1] === 'up'" class="data-total-trend data-total-trend-red" >
-                    <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'packetLoss')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'packetLoss')[1] === 'down'" class="data-total-trend data-total-trend-green" >
-                    <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'packetLoss')[2]}}</span>
-                  </div>
-                  <div v-else-if=" $_.get(kpiData, 'packetLoss')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
-                    <i class="cn-icon-constant cn-icon"></i>
-                  </div>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'packetLoss') ? unitConvert($_.get(kpiData, 'packetLoss')[0], unitTypes.percent).join(' ') : '-'}}</div>
+              <div class="data-trend" v-if="$_.get(kpiData, 'packetLoss')">
+                <div v-if="$_.get(kpiData, 'packetLoss')[1] === 'up'" class="data-total-trend data-total-trend-red" >
+                  <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'packetLoss')[2]}}</span>
                 </div>
-              </template>
-              <template  v-else>
-                -
-              </template>
+                <div v-else-if=" $_.get(kpiData, 'packetLoss')[1] === 'down'" class="data-total-trend data-total-trend-green" >
+                  <i class="cn-icon-decline cn-icon"></i><span>{{$_.get(kpiData, 'packetLoss')[2]}}</span>
+                </div>
+                <div v-else-if=" $_.get(kpiData, 'packetLoss')[1] === 'noChange'" class="data-total-trend data-total-trend-black" >
+                  <i class="cn-icon-constant cn-icon"></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -163,11 +160,12 @@ export default {
   data () {
     return {
       kpiData: {
+        /*
         volume: [5300000000, 'up', '6%'],
         throughput: [600000, 'noChange', '6%'],
         httpLatency: [21, 'down', '6%'],
         sslLatency: [21, 'down', '6%'],
-        packetLoss: [0.0192, 'down', '2%']
+        packetLoss: [0.0192, 'down', '2%']*/
       },
       unitConvert,
       unitTypes,
@@ -187,32 +185,39 @@ export default {
     handleTrendData (curData, preData) {
       let trend = ''
       let trendPercent = ''
-      const totalDiff = curData - preData
-      const chainRatio = getChainRatio(curData, preData)
-      if (chainRatio !== '-') {
-        trendPercent = parseFloat(Math.abs(chainRatio) * 100).toFixed(2)
-        if (totalDiff > 0) {
-          trend = 'up'
-          if (trendPercent <= 500) {
-            trendPercent = trendPercent + '%'
+      curData = Number(curData)
+      preData = Number(preData)
+      if(curData === 0 && preData === 0) {
+        trend = 'noChange'
+        trendPercent = ''
+      } else if(curData && preData) {
+        const totalDiff = curData - preData
+        const chainRatio = getChainRatio(curData, preData)
+        if (chainRatio !== '-') {
+          trendPercent = parseFloat(Math.abs(chainRatio) * 100).toFixed(2)
+          if (totalDiff > 0) {
+            trend = 'up'
+            if (trendPercent <= 500) {
+              trendPercent = trendPercent + '%'
+            } else {
+              trendPercent = '>500%'
+            }
+          } else if (totalDiff < 0) {
+            trend = 'down'
+            if (trendPercent <= 500) {
+              trendPercent = trendPercent + '%'
+            } else {
+              trendPercent = '>500%'
+            }
+          } else if (totalDiff === 0) {
+            trend = 'noChange'// 横向图标
           } else {
-            trendPercent = '>500%'
+            trend = ''
           }
-        } else if (totalDiff < 0) {
-          trend = 'down'
-          if (trendPercent <= 500) {
-            trendPercent = trendPercent + '%'
-          } else {
-            trendPercent = '>500%'
+          if (trendPercent === '0%') {
+            trend = 'noChange'
+            trendPercent = ''
           }
-        } else if (totalDiff === 0) {
-          trend = 'noChange'// 横向图标
-        } else {
-          trend = ''
-        }
-        if (trendPercent === '0%') {
-          trend = 'noChange'
-          trendPercent = ''
         }
       }
       return [curData, trend, trendPercent]
@@ -240,11 +245,11 @@ export default {
           this.showError = false
           if (!this.isNoData) {
             this.kpiData = {
-              volume: [data ? data.total_bytes : '', '', ''],
-              throughput: [data ? data.avg_bits_per_sec : '', '', ''],
-              httpLatency: [data ? data.avg_http_response_latency_ms : '', '', ''],
-              sslLatency: [data ? data.avg_ssl_handshake_latency_ms : '', '', ''],
-              packetLoss: [data ? data.tcp_lost_bytes_ratio : '', '', '']
+              volume: [data ? data.total_bytes : null],
+              throughput: [data ? data.avg_bits_per_sec : null],
+              httpLatency: [data ? data.avg_http_response_latency_ms : null],
+              sslLatency: [data ? data.avg_ssl_handshake_latency_ms : null],
+              packetLoss: [data ? data.tcp_lost_bytes_ratio : null]
             }
 
             axios.get(api.entity.subscriberKpi, { params: preParams }).then(preCycleRes => {
@@ -252,25 +257,25 @@ export default {
               if (preCycleRes.status === 200) {
                 const data = preRes.data
                 if (Object.keys(data).length > 0) {
-                  const preVolume = data ? data.avg_bits_per_sec : ''
-                  const preThroughput = data ? data.total_bytes : ''
-                  const preHttpLatency = data ? data.avg_http_response_latency_ms : ''
-                  const preSslLatency = data ? data.avg_ssl_handshake_latency_ms : ''
-                  const prePacketLoss = data ? data.tcp_lost_bytes_ratio : ''
+                  const preVolume = data ? data.avg_bits_per_sec : null
+                  const preThroughput = data ? data.total_bytes : null
+                  const preHttpLatency = data ? data.avg_http_response_latency_ms : null
+                  const preSslLatency = data ? data.avg_ssl_handshake_latency_ms : null
+                  const prePacketLoss = data ? data.tcp_lost_bytes_ratio : null
 
-                  if (this.kpiData.volume[0] !== '' && preVolume !== '') {
+                  if (this.kpiData.volume[0] !==null  && preVolume !==null) {
                     this.kpiData.volume = this.handleTrendData(this.kpiData.volume[0], preVolume)
                   }
-                  if (this.kpiData.throughput[0] !== '' && preThroughput !== '') {
+                  if (this.kpiData.throughput[0] !==null && preThroughput !==null) {
                     this.kpiData.throughput = this.handleTrendData(this.kpiData.throughput[0], preThroughput)
                   }
-                  if (this.kpiData.httpLatency[0] !== '' && preHttpLatency !== '') {
+                  if (this.kpiData.httpLatency[0] !==null && preHttpLatency !==null) {
                     this.kpiData.httpLatency = this.handleTrendData(this.kpiData.httpLatency[0], preHttpLatency)
                   }
-                  if (this.kpiData.sslLatency[0] !== '' && preSslLatency !== '') {
+                  if (this.kpiData.sslLatency[0] !==null && preSslLatency !==null) {
                     this.kpiData.sslLatency = this.handleTrendData(this.kpiData.sslLatency[0], preSslLatency)
                   }
-                  if (this.kpiData.packetLoss[0] !== '' && prePacketLoss !== '') {
+                  if (this.kpiData.packetLoss[0] !==null && prePacketLoss !==null) {
                     this.kpiData.packetLoss = this.handleTrendData(this.kpiData.packetLoss[0], prePacketLoss)
                   }
                 }

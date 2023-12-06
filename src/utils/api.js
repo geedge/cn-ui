@@ -275,6 +275,9 @@ export const api = {
     domainNameResolutionAboutAppsOfDomain: apiVersion + '/entity/detail/domain/relate/apps',
     domainNameResolutionAboutIpsOfDomain: apiVersion + '/entity/detail/domain/relate/ips',
     domainNameResolutionAboutFQDNsOfDomain: apiVersion + '/entity/detail/domain/relate/fqdns',
+    // subscriber
+    subscriberKpi: apiVersion + '/entity/detail/traffic/overview/subscriber',
+    subscriberTopApp: apiVersion + '/entity/detail/subscriber/relate/apps',
     // 开放端口：ip、domain、app相关
     openPortOfIp: apiVersion + '/entity/detail/ip/relate/ports',
     openPortOfDomain: apiVersion + '/entity/detail/domain/relate/ports',
@@ -282,8 +285,8 @@ export const api = {
     basicInfo: apiVersion + '/entity/detail/basic',
     tags: apiVersion + '/entity/detail/kb/intelligence/tag',
     informationAggregation: apiVersion + '/entity/detail/kb/intelligence/list',
-    deviceInformation: apiVersion + '/entity/detail/subscribe/device', // 暂时写的值
-    accountInformation: apiVersion + '/entity/detail/subscribe/account', // 暂时写的值
+    deviceInformation: apiVersion + '/entity/detail/subscriber/device', // 暂时写的值
+    accountInformation: apiVersion + '/entity/detail/subscriber/account', // 暂时写的值
     locationTrack: apiVersion + '/entity/detail/subscribe/track',
     // 实体关系
     entityGraph: {

@@ -14,7 +14,7 @@
         <i class="cn-icon cn-icon-dropdown" :class="dropdownFlag ? 'cn-icon-up' : ''"></i>
       </div>
     </div>
-    <transition name="el-zoom-in-top" style="z-index: 4;">
+    <transition name="el-zoom-in-top" style="z-index: 100004;">
       <div v-if="dropdownFlag" class="date-range-panel" :style="showPosition === 'left' ? leftStyle : rightStyle">
         <el-row class="date-range-panel-top" style="position: relative">
           <el-col :span="16" class="date-range-panel-content date-range-panel-content-left">
