@@ -157,13 +157,13 @@ export default {
               this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
             }
             this.hideTagArea = _.isEmpty(this.levelTwoTags)
-            this.$nextTick(() => {
-              this.emitter.emit('entity-detail-hide-tag-area')
-            })
           } else {
             tagError = this.errorMsgHandler(res)
           }
         }
+        this.$nextTick(() => {
+          this.emitter.emit('entity-detail-hide-tag-area')
+        })
         if (basicInfoData) {
           const res = basicInfoData.data
           if (basicInfoData.status === 200) {
