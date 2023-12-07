@@ -59,7 +59,7 @@ export default {
     this.initMap()
   },
   unmounted () {
-    this.myChart.remove()
+    this.myChart && this.myChart.remove()
     this.myChart = null
   },
   methods: {
