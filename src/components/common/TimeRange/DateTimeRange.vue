@@ -2,10 +2,10 @@
   <div v-ele-click-outside="changeDropdown" style="position: relative;" class="date-range-box">
     <div @click="showDropdown" class="date-range-text" :class="myClass" :style="style">
       <div class="calendar-popover-text"><i class="cn-icon cn-icon-Data"></i></div>
-      <div class="calendar-popover-text" style="display: flex" v-if="isCustom">
-        <div class="calendar-popover-text">{{ dateFormatByAppearance(getMillisecond(startTime)) }}</div>
-        <div class="calendar-popover-text"> -</div>
-        <div class="calendar-popover-text">{{ dateFormatByAppearance(getMillisecond(endTime)) }}</div>
+      <div class="calendar-popover-text" style="display: flex" v-if="isCustom" :title="`${dateFormatByAppearance(getMillisecond(startTime))} -${dateFormatByAppearance(getMillisecond(endTime))}`">
+        <div class="calendar-popover-text" :style="showPosition === 'left' ? 'width: 90px;text-overflow: ellipsis;overflow: hidden;' : ''" >{{ dateFormatByAppearance(getMillisecond(startTime)) }}</div>
+        <div class="calendar-popover-text" :style="showPosition === 'left' ? 'display:none;' : ''"> -</div>
+        <div class="calendar-popover-text" :style="showPosition === 'left' ? 'display:none;' : ''">{{ dateFormatByAppearance(getMillisecond(endTime)) }}</div>
       </div>
       <div class="calendar-popover-text" v-else>
         {{ showDetail }}
@@ -148,7 +148,7 @@ export default {
     datePickerVisibleChange () {
       if (this.showPosition === 'left') {
         this.leftStyle = this.leftStyleBefore
-        //this.dropdownFlag = true
+        // this.dropdownFlag = true
       }
     }
   },

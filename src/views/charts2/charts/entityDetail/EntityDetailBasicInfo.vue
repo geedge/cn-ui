@@ -127,9 +127,15 @@ export default {
       this.toggleLoading(true)
       this.showError = false
       this.levelTwoTags = []
-      const tagRequest = axios.get(`${api.entity.tags}/${this.entity.entityType}?resource=${this.entity.entityName}`)
       const basicInfoRequest = axios.get(`${api.entity.basicInfo}/${this.entity.entityType}?resource=${this.entity.entityName}`)
-      Promise.all([tagRequest, basicInfoRequest]).then(response => {
+      let requestArray = []
+      if(this.entity.entityType === entityType.subscriber) {
+        requestArray = [null,basicInfoRequest]
+      }else {
+        const tagRequest = axios.get(`${api.entity.tags}/${this.entity.entityType}?resource=${this.entity.entityName}`)
+        requestArray = [tagRequest, basicInfoRequest]
+      }
+      Promise.all(requestArray).then(response => {
         const tagData = response[0]
         let tagError = ''
         const basicInfoData = response[1]
@@ -201,6 +207,13 @@ export default {
                   this.detailCards.find(c => c.name === 'appLongname').value = res.data.category.appLongname
                   this.detailCards.find(c => c.name === 'appDescription').value = res.data.category.appDescription
                 }
+                break
+              }
+              case 'subscriber': {
+                this.detailCards.find(c => c.name === 'iphoneNumber').value = res.data.phone_number
+                this.detailCards.find(c => c.name === 'imei').value = res.data.imei
+                this.detailCards.find(c => c.name === 'imsi').value = res.data.imsi
+                this.detailCards.find(c => c.name === 'apn').value = res.data.apn
                 break
               }
             }
@@ -463,6 +476,14 @@ export default {
           { icon: 'cn-icon cn-icon-app-name', name: 'appName', label: i18n.global.t('overall.appName2'), value: '' },
           { icon: 'cn-icon cn-icon-app-full-name', name: 'appLongname', label: i18n.global.t('overall.appFullName'), value: '' },
           { icon: 'cn-icon cn-icon-description', name: 'appDescription', label: i18n.global.t('config.dataSource.description'), value: '' }
+        )
+      }
+      case 'subscriber': {
+        detailCards.value = _.concat(detailCards.value,
+          { icon: 'cn-icon cn-icon-shoujihaoma', name: 'iphoneNumber', label: i18n.global.t('entities.iphoneNumber'), value: '' },
+          { icon: 'cn-icon cn-icon-IMEI', name: 'imei', label: i18n.global.t('entities.imei'), value: '' },
+          { icon: 'cn-icon cn-icon-IMSI', name: 'imsi', label: i18n.global.t('entities.imsi'), value: '' },
+          { icon: 'cn-icon cn-icon-APN', name: 'apn', label: i18n.global.t('entities.apn'), value: '' }
         )
       }
     }
