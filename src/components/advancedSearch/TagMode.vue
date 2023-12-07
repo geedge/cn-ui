@@ -40,7 +40,25 @@
         <div v-if="meta.operator.value === 'has'" class="condition__operator" style="color: #000C18">({{meta.column.label}},</div>
         <!-- 值 -->
         <div class="condition__value">
-          <div v-if="meta.value.isEditing">
+          <div  v-if="meta.value.isEditing && meta.doc">
+            <el-select
+                allow-create
+                filterable
+                size="mini"
+                v-model="meta.value.value"
+                ref="columnValue"
+                :placeholder="meta.value.value || ' '"
+                @change="(value) => selectValue(value, meta)"
+            >
+              <el-option
+                  v-for="(code, i) in meta.doc.data"
+                  :key="i"
+                  :label="code.code"
+                  :value="code.code"
+              ></el-option>
+            </el-select>
+          </div>
+          <div v-if="meta.value.isEditing && !meta.doc">
             <!--避免blur事件和keyup.enter重复执行-->
             <el-input
                 ref="valueInput"
@@ -119,6 +137,7 @@ import _ from 'lodash'
 import { handleErrorTip } from '@/components/advancedSearch/meta/error'
 import Parser, { stringInQuot } from '@/components/advancedSearch/meta/parser'
 import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { enumerateData } from '@/utils/static-data'
 export default {
   name: 'TagMode',
   props: {
@@ -222,6 +241,15 @@ export default {
         }, 200)
       }
     },
+    selectValue (value, meta) {
+      const isWrapped = this.isSingleQuoteWrapping(value)
+      meta.value.value = isWrapped && meta.column.type === columnType.string ? value : `'${value}'`
+      meta.value.label = isWrapped && meta.column.type === columnType.string ? value : `'${value}'`
+      setTimeout(() => {
+        meta.column.isEditing = false
+        meta.value.isEditing = false
+      }, 100)
+    },
     selectConnection (value, meta) {
       meta.isEditing = false
     },
@@ -279,6 +307,10 @@ export default {
       // 处理搜索值
       meta.value.isEditing = true
       meta.value.show = true
+      const obj = enumerateData.find(d => d.name === meta.column.label)
+      if (obj) {
+        meta.doc = obj
+      }
       // 若是in或not in，column的type要改成array，否则是string
       if (operator.toLowerCase().indexOf('in') > -1) {
         meta.column.type = columnType.array
@@ -292,9 +324,16 @@ export default {
         }
       }
       this.$nextTick(() => {
-        const selectList = this.$refs.valueInput
-        if (selectList && selectList.length > 0) {
-          this.$refs.valueInput[selectList.length - 1].focus() // 在for循环里生成的dom，所以是数组
+        if (meta.doc) {
+          const selectList = this.$refs.columnValue
+          if (selectList && selectList.length > 0) {
+            this.$refs.columnValue[selectList.length - 1].focus() // 在for循环里生成的dom，所以是数组
+          }
+        } else {
+          const selectList = this.$refs.valueInput
+          if (selectList && selectList.length > 0) {
+            this.$refs.valueInput[selectList.length - 1].focus() // 在for循环里生成的dom，所以是数组
+          }
         }
       })
     },

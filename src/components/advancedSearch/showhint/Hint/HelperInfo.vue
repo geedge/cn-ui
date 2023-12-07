@@ -75,7 +75,7 @@ export default {
         const fields = this.getDataset().sourceData.fields
         const obj = fields.find(d => d.label === hintSearch)
         if (obj) {
-          hintSearch = obj.name
+          hintSearch = obj.label
         }
       }
 

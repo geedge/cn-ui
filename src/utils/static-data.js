@@ -343,7 +343,7 @@ const securityEvent = [
   {
     name: 'event_type',
     type: 'string',
-    label: 'event_type',
+    label: 'eventType',
     doc: {
       constraints: {
         operator_functions: '=,in,like'
@@ -353,7 +353,7 @@ const securityEvent = [
   {
     name: 'event_name',
     type: 'string',
-    label: 'event_name',
+    label: 'eventName',
     doc: {
       constraints: {
         operator_functions: '=,in,like'
@@ -373,7 +373,7 @@ const securityEvent = [
   {
     name: 'offender_ip',
     type: 'string',
-    label: 'offender Ip',
+    label: 'offenderIp',
     doc: {
       constraints: {
         operator_functions: '=,in,like'
@@ -383,7 +383,7 @@ const securityEvent = [
   {
     name: 'victim_ip',
     type: 'string',
-    label: 'victim Ip',
+    label: 'victimIp',
     doc: {
       constraints: {
         operator_functions: '=,in,like'
@@ -409,6 +409,49 @@ const securityEvent = [
         operator_functions: '=,in,like'
       }
     }
+  },
+  {
+    name: 'status',
+    label: 'status',
+    type: 'string',
+    doc: {
+      constraints: {
+        operator_functions: '=,in'
+      }
+    }
+  }
+]
+
+export const enumerateData = [
+  {
+    name: 'status',
+    data: [
+      { code: 'Ended', value: 1 },
+      { code: 'Active', value: 0 }
+    ]
+  },
+  {
+    name: 'eventType',
+    data: [
+      { code: 'Initial Access', value: 'Initial Access' },
+      { code: 'Command and Control', value: 'Command and Control' },
+      { code: 'Credential Access', value: 'Credential Access' },
+      { code: 'Lateral Movement', value: 'Lateral Movement' },
+      { code: 'Collection', value: 'Collection' },
+      { code: 'Impact', value: 'Impact' },
+      { code: 'Anonymity', value: 'Anonymity' },
+      { code: 'Regulatory Risk', value: 'Regulatory Risk' }
+    ]
+  },
+  {
+    name: 'severity',
+    data: [
+      { code: 'critical', value: 'critical' },
+      { code: 'high', value: 'high' },
+      { code: 'Medium', value: 'Medium' },
+      { code: 'low', value: 'low' },
+      { code: 'info', value: 'info' }
+    ]
   }
 ]
 
@@ -422,6 +465,12 @@ if (schema) {
     securityEventMetadata = JSON.parse(schema).securityEventMetadata.searchColumns
   }
 }
+securityEventMetadata.forEach(item => {
+  const obj = enumerateData.find(d => d.name === item.label)
+  if (obj) {
+    item.doc.data = obj.data
+  }
+})
 export const schemaDetectionSecurity = securityEventMetadata
 
 export const operatorList = ['=', '!=', /* '>', '<', '>=', '<=', */'IN', 'NOT IN', 'LIKE', 'NOT LIKE']
