@@ -1,7 +1,7 @@
 <template>
   <div class="subscriber-map">
     <div class="subscriber-map-header">
-      <div class="subscriber-map-title">{{$t('subscriber.kpi')}}</div>
+      <div class="subscriber-map-title">{{$t('subscriber.locationTrack')}}</div>
       <date-time-range
           class="entity-detail-date-time-range"
           :start-time="timeFilter.startTime"
