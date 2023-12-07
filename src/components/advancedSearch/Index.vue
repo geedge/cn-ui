@@ -10,6 +10,7 @@
         :column-list="columnList"
         :str="str"
         :show-list="showList"
+        :is-show-hint="showHint"
         @changeMode="changeMode"
         @search="search"
         :show-close-icon="showCloseIcon"
@@ -64,7 +65,11 @@ export default {
       required: true
     },
     // 连接符列表
-    connectionList: Array
+    connectionList: Array,
+    showHint: {
+      type: Boolean,
+      default: false
+    }
   },
   emits: ['search'],
   methods: {

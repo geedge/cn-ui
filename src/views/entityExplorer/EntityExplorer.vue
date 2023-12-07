@@ -824,7 +824,7 @@ export default {
       if (q && q.indexOf('+') > -1) {
         q = q.replace('+', '')
       }
-      if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+      if (q && q.indexOf('%') > 0 && (str1 === '%20' || str1 === '%25')) {
         q = decodeURI(q)
       }
       this.initSearch(q)

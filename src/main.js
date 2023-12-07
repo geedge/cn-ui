@@ -21,6 +21,7 @@ import DateTimeRange from '@/components/common/TimeRange/DateTimeRange'
 import TimeRefresh from '@/components/common/TimeRange/TimeRefresh'
 import PanelChartList from '@/views/charts/PanelChartList'
 import Error from '@/components/common/Error'
+import Renderer from '@/components/advancedSearch/showhint/Hint/Renderer'
 import 'lib-flexible'
 
 const emitter = new bus()
@@ -48,6 +49,7 @@ app.component('date-time-range', DateTimeRange)
 app.component('time-refresh', TimeRefresh)
 app.component('panel-chart-list', PanelChartList)
 app.component('chart-error', Error)
+app.component('Renderer', Renderer)
 
 app.mount('#app')
 

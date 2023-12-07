@@ -10,6 +10,7 @@
           :default-mode="defaultMode"
           :full-text="true"
           :show-list="showList"
+          showHint
           :class="{'advanced-search--show-list': showList}"
           @search="search"
         ></advanced-search>

@@ -642,7 +642,7 @@ export default {
         q = decodeURI(q)
       } else {
         const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
-        if (q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+        if (q.indexOf('%') > 0 && (str1 === '%20' || str1 === '%25')) {
           q = decodeURI(q)
         }
       }

@@ -180,6 +180,9 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
   position: relative;
   z-index: 0;
 }
+.CodeMirror-scroll::-webkit-scrollbar {
+  width: 0;
+}
 .CodeMirror-sizer {
   position: relative;
   border-right: 50px solid transparent;
@@ -356,3 +359,77 @@ div.CodeMirror-dragcursors {
 
 /* Help users use markselection to safely style text background */
 span.CodeMirror-selectedtext { background: none; }
+
+.CodeMirror-hint-active {
+  background-color: #eaf1f5;
+  color: #5a90b0;
+}
+
+.el-dropdown-menu__item.CodeMirror-hint {
+  line-height: 20px;
+  /*font-family: NotoSansSC-Regular;*/
+}
+
+.hint-clear {
+  color: #31739C !important;
+}
+
+.hint-title {
+  margin: 10px 10px 10px 4px;
+  line-height: 20px;
+  font-weight: bold;
+  /* 禁止选中  样式 */
+  background: #fff !important;
+  color: #000 !important;
+}
+
+.cm-s-eclipse span.cm-string-2 {
+  //color: #D85512;
+}
+
+.CodeMirror-lines {
+  /*height: 20px;*/
+  //padding: 3px 0;
+}
+
+.in-coder-panel {
+  margin-left: 2px;
+}
+
+.in-coder-panel pre {
+  height: auto !important;
+}
+
+.in-coder-panel .CodeMirror {
+  /*height: inherit;*/
+}
+
+.in-coder-panel input {
+  font-size: 12px !important;
+  display: block;
+  border-color: transparent !important;
+  padding: 0 0 0 8px !important;
+}
+
+.CodeMirror-hints {
+  font-family: NotoSansSC-Regular !important;
+  max-width: 800px;
+}
+
+.CodeMirror-line {
+  //font-family: Arial !important;
+}
+
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px !important;
+  line-height: 20px !important;
+  border-radius: 2px;
+  white-space: pre;
+  color: black;
+  cursor: pointer;
+}
+
+.cm-variable-2{
+  font-weight: bold;
+}
