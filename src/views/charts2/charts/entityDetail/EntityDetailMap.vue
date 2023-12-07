@@ -58,6 +58,10 @@ export default {
   mounted () {
     this.initMap()
   },
+  unmounted () {
+    this.myChart.remove()
+    this.myChart = null
+  },
   methods: {
     async initMap () {
       const _this = this
