@@ -108,7 +108,7 @@ export default {
           break
         }
         case ('subscriber'): {
-          entityTypeName = 'SUBSCRIBER'
+          entityTypeName = this.$t('entity.subscriberId')
           break
         }
         default:
