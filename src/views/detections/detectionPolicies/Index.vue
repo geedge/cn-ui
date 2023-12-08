@@ -91,6 +91,7 @@ import dataListMixin from '@/mixins/data-list'
 import DetectionDrawer from '@/views/detections/detectionPolicies/PolicyDrawer'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
+import _ from 'lodash'
 
 export default {
   name: 'Index',
@@ -131,6 +132,45 @@ export default {
     }
   },
   methods: {
+    getTableData (params, isAll, isClearType) {
+      if (isAll) {
+        this.searchLabel = null
+      } else if (isClearType) {
+        this.searchLabel.type = ''// 换新接口需要修改的属性名称
+      }
+      this.searchLabel = { ...this.searchLabel, ...this.pageObj }
+      if (params) {
+        this.searchLabel = { ...this.searchLabel, ...params }
+      }
+      this.searchLabel.isBuiltIn = 0
+      this.isNoData = false
+      this.toggleLoading(true)
+      delete this.searchLabel.total
+      let listUrl = this.url
+      if (this.listUrl) {
+        listUrl = this.listUrl
+      }
+      axios.get(listUrl, { params: this.searchLabel }).then(response => {
+        if (response.status === 200) {
+          this.tableData = _.get(response, 'data.data.list', [])
+          this.pageObj.total = _.get(response, 'data.data.total', 0)
+          this.isNoData = !this.tableData || this.tableData.length === 0
+        } else {
+          console.error(response)
+          this.isNoData = true
+          if (response.data.message) {
+            this.$message.error(response.data.message)
+          } else {
+            this.$message.error(this.$t('tip.somethingWentWrong'))
+          }
+        }
+      }).catch(() => {
+        this.isNoData = true
+      }).finally(() => {
+        this.toggleLoading(false)
+        this.loading = false
+      })
+    },
     getPolicyDetail (id) {
       if (id) {
         axios.get(`${api.detection.detail}/${id}`).then(res => {

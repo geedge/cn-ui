@@ -24,9 +24,9 @@
 <script>
 import ServiceName from '@/views/charts2/charts/entityDetail/lines/ServiceName'
 import App from '@/views/charts2/charts/entityDetail/lines/App'
-import {useRoute} from 'vue-router'
-import {ref} from 'vue'
-import {overwriteUrl, urlParamsHandler} from '@/utils/tools'
+import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
 
 export default {
   name: 'EntityDetailLine',

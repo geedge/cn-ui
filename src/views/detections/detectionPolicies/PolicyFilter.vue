@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     getFilterData () {
-      axios.get(api.detection.statistics).then(response => {
+      axios.get(api.detection.statistics, { params: { isBuiltIn: 0 } }).then(response => {
         if (response.status === 200) {
           const data = response.data.data
           if (data.statusList) {
