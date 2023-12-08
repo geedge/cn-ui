@@ -221,7 +221,9 @@ export class Dataset {
     keywords = (keywords.trim && keywords.trim()) || keywords
     const fieldInfo = {}
     const matchItem = this.sourceData.filtersList.find((item) => {
-      const itemName = item.name && item.name.toLowerCase()
+      // const itemName = item.name && item.name.toLowerCase()
+      // 左侧面板的options值，即枚举的值
+      const itemName = item.label && item.label.toLowerCase()
       return keywords.toLowerCase() === itemName
     })
     if (!matchItem) {
@@ -276,9 +278,9 @@ export class Dataset {
 }
 
 // 获取数据集
-export function getDataset (component, params) {
+export function getDataset (component, params, list) {
   return new Promise((resolve, reject) => {
-    const schemeInstance = new Scheme(component, params)
+    const schemeInstance = new Scheme(component, params, list)
     schemeInstance.getFormatedData((schemeData) => {
       const dataset = new Dataset(schemeData)
       resolve(dataset, () => {

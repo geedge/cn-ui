@@ -10,6 +10,7 @@
             class="advanced-search--show-list"
             :full-text="true"
             :show-list="showList"
+            showHint
             @search="search"
         ></advanced-search>
       </div>

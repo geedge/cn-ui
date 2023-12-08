@@ -322,7 +322,7 @@ export default {
       }
     },
     _initComponent () {
-      getDataset(this, this.queryParams || {}).then((dataset, dataDisposeFun) => {
+      getDataset(this, this.queryParams || {}, this.columnList).then((dataset, dataDisposeFun) => {
         this.dataset = Object.freeze(dataset)
       }).catch(err => {
         console.error(err)
