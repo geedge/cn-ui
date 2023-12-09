@@ -59,8 +59,9 @@ export const multipleBarOption = {
     itemHeight: 10 // 设置高度
   },
   tooltip: {
-    formatter: function (params) {
-      return detectionTooltipFormatter(params)
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow'
     }
   },
   dataset: {
@@ -116,7 +117,7 @@ export const multipleBarOption = {
       type: 'bar',
       stack: 'eventSeverityTrend',
       emphasis: {
-        focus: 'series'
+        focus: 'none'
       },
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -129,7 +130,7 @@ export const multipleBarOption = {
       type: 'bar',
       stack: 'eventSeverityTrend',
       emphasis: {
-        focus: 'series'
+        focus: 'none'
       },
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -142,7 +143,7 @@ export const multipleBarOption = {
       type: 'bar',
       stack: 'eventSeverityTrend',
       emphasis: {
-        focus: 'series'
+        focus: 'none'
       },
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -155,7 +156,7 @@ export const multipleBarOption = {
       type: 'bar',
       stack: 'eventSeverityTrend',
       emphasis: {
-        focus: 'series'
+        focus: 'none'
       },
       barWidth: 15,
       seriesLayoutBy: 'row',
@@ -168,7 +169,7 @@ export const multipleBarOption = {
       type: 'bar',
       stack: 'eventSeverityTrend',
       emphasis: {
-        focus: 'series'
+        focus: 'none'
       },
       barWidth: 15,
       seriesLayoutBy: 'row',
