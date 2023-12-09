@@ -366,48 +366,6 @@ export default {
       })
     },
     initEchart (data) {
-      /* data = [
-        {
-          count: 0.307,
-          app: 1
-        },
-        {
-          count: 0.206,
-          app: 2
-        },
-        {
-          count: 0.09,
-          app: 3
-        },
-        {
-          count: 0.082,
-          app: 4
-        },
-        {
-          count: 0.06,
-          app: 5
-        },
-        {
-          count: 0.032,
-          app: 6
-        },
-        {
-          count: 0.024,
-          app: 7
-        },
-        {
-          count: 0.017,
-          app: 8
-        },
-        {
-          count: 0.009,
-          app: 9
-        },
-        {
-          count: 0.006,
-          app: 10
-        }
-      ] */
       if (data && data.length > 0) {
         if (data.length < 10) { // 重新设置图标高度
           this.isSetHeight = true

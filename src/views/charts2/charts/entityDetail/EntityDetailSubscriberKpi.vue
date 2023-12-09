@@ -39,7 +39,7 @@
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.throughput')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'throughput') ? unitConvert($_.get(kpiData, 'throughput')[0], unitTypes.bps).join(' ') : '-'}}</div>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'throughput') ? valueToRangeValue($_.get(kpiData, 'throughput')[0], unitTypes.bps).join(' ') : '-'}}</div>
               <div class="data-trend" v-if="$_.get(kpiData, 'throughput')">
                   <div v-if="$_.get(kpiData, 'throughput')[1] === 'up'" class="data-total-trend data-total-trend-red" >
                     <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'throughput')[2]}}</span>
@@ -56,7 +56,7 @@
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.httpLatency')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'httpLatency') ? unitConvert($_.get(kpiData, 'httpLatency')[0], unitTypes.time).join(' ') : '-'}}</div>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'httpLatency') ? valueToRangeValue($_.get(kpiData, 'httpLatency')[0], unitTypes.time).join(' ') : '-'}}</div>
               <div class="data-trend" v-if="$_.get(kpiData, 'httpLatency')">
                 <div v-if="$_.get(kpiData, 'httpLatency')[1] === 'up'" class="data-total-trend data-total-trend-red" >
                   <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'httpLatency')[2]}}</span>
@@ -73,7 +73,7 @@
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.sslLatency')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'sslLatency') ? unitConvert($_.get(kpiData, 'sslLatency')[0], unitTypes.time).join(' ') : '-'}}</div>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'sslLatency') ? valueToRangeValue($_.get(kpiData, 'sslLatency')[0], unitTypes.time).join(' ') : '-'}}</div>
               <div class="data-trend" v-if="$_.get(kpiData, 'sslLatency')">
                 <div v-if="$_.get(kpiData, 'sslLatency')[1] === 'up'" class="data-total-trend data-total-trend-red" >
                   <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'sslLatency')[2]}}</span>
@@ -90,7 +90,7 @@
           <div class="kpi-type-value">
             <div class="kpi-type-value-name">{{$t('subscriber.packetLoss')}}</div>
             <div class="kpi-type-data" >
-              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'packetLoss') ? unitConvert($_.get(kpiData, 'packetLoss')[0], unitTypes.percent).join(' ') : '-'}}</div>
+              <div class="kpi-type-value-number" >{{$_.get(kpiData, 'packetLoss') ? valueToRangeValue($_.get(kpiData, 'packetLoss')[0], unitTypes.percent).join(' ') : '-'}}</div>
               <div class="data-trend" v-if="$_.get(kpiData, 'packetLoss')">
                 <div v-if="$_.get(kpiData, 'packetLoss')[1] === 'up'" class="data-total-trend data-total-trend-red" >
                   <i class="cn-icon-rise1 cn-icon"></i><span>{{$_.get(kpiData, 'packetLoss')[2]}}</span>
@@ -117,7 +117,7 @@ import { ref, shallowRef } from 'vue'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
-import unitConvert from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 import { overwriteUrl, urlParamsHandler, getChainRatio } from '@/utils/tools'
 import axios from 'axios'
@@ -165,9 +165,10 @@ export default {
         throughput: [600000, 'noChange', '6%'],
         httpLatency: [21, 'down', '6%'],
         sslLatency: [21, 'down', '6%'],
-        packetLoss: [0.0192, 'down', '2%']*/
+        packetLoss: [0.0192, 'down', '2%'] */
       },
       unitConvert,
+      valueToRangeValue,
       unitTypes,
       isNoData: false,
       showError: false,
@@ -187,10 +188,10 @@ export default {
       let trendPercent = ''
       curData = Number(curData)
       preData = Number(preData)
-      if(curData === 0 && preData === 0) {
+      if (curData === 0 && preData === 0) {
         trend = 'noChange'
         trendPercent = ''
-      } else if(curData && preData) {
+      } else if (curData && preData) {
         const totalDiff = curData - preData
         const chainRatio = getChainRatio(curData, preData)
         if (chainRatio !== '-') {
@@ -263,19 +264,19 @@ export default {
                   const preSslLatency = data ? data.avg_ssl_handshake_latency_ms : null
                   const prePacketLoss = data ? data.tcp_lost_bytes_ratio : null
 
-                  if (this.kpiData.volume[0] !==null  && preVolume !==null) {
+                  if (this.kpiData.volume[0] !== null && preVolume !== null) {
                     this.kpiData.volume = this.handleTrendData(this.kpiData.volume[0], preVolume)
                   }
-                  if (this.kpiData.throughput[0] !==null && preThroughput !==null) {
+                  if (this.kpiData.throughput[0] !== null && preThroughput !== null) {
                     this.kpiData.throughput = this.handleTrendData(this.kpiData.throughput[0], preThroughput)
                   }
-                  if (this.kpiData.httpLatency[0] !==null && preHttpLatency !==null) {
+                  if (this.kpiData.httpLatency[0] !== null && preHttpLatency !== null) {
                     this.kpiData.httpLatency = this.handleTrendData(this.kpiData.httpLatency[0], preHttpLatency)
                   }
-                  if (this.kpiData.sslLatency[0] !==null && preSslLatency !==null) {
+                  if (this.kpiData.sslLatency[0] !== null && preSslLatency !== null) {
                     this.kpiData.sslLatency = this.handleTrendData(this.kpiData.sslLatency[0], preSslLatency)
                   }
-                  if (this.kpiData.packetLoss[0] !==null && prePacketLoss !==null) {
+                  if (this.kpiData.packetLoss[0] !== null && prePacketLoss !== null) {
                     this.kpiData.packetLoss = this.handleTrendData(this.kpiData.packetLoss[0], prePacketLoss)
                   }
                 }
@@ -318,6 +319,7 @@ export default {
   },
   beforeUnmount () {
     this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>
