@@ -126,7 +126,7 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
       // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
       { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ]
   },
   {
@@ -137,7 +137,7 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
       // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
       { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ]
   },
   {
@@ -148,7 +148,7 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
       // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
       { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 },
+      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 },
       { name: entityDetailTabsName.behaviorPattern, label: 'entities.behaviorPattern', icon: 'cn-icon cn-icon-behavior', tag: 0 }
     ]
   },
@@ -159,7 +159,7 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.accountInformation, label: 'entities.accountInformation', icon: 'cn-icon cn-icon-account-info', tag: 0 },
       { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
       { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ]
   }
 ]
