@@ -22,12 +22,12 @@
           <div class="app-name">{{appData.app}}</div>
           <div class="app-trend">
             <i class="cn-icon cn-icon-egress"></i>
-            <div class="app-up">{{appData.up ? unitConvert(appData.up, unitTypes.byte,null,null,1).join('') : '-'}}</div>
+            <div class="app-up">{{appData.up ? valueToRangeValue(appData.up, unitTypes.byte,null,null,1).join('') : '-'}}</div>
           </div>
           <el-divider direction="vertical" class="top-app-divider"/>
           <div class="app-trend">
             <i class="cn-icon cn-icon-ingress"></i>
-            <div class="app-down">{{appData.down ? unitConvert(appData.down, unitTypes.byte,null,null,1).join('') : '-'}}</div>
+            <div class="app-down">{{appData.down ? valueToRangeValue(appData.down, unitTypes.byte,null,null,1).join('') : '-'}}</div>
           </div>
 
         </div>
@@ -46,7 +46,7 @@ import { ref, shallowRef } from 'vue'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import chartMixin from '@/views/charts2/chart-mixin'
 import ChartError from '@/components/common/Error'
-import unitConvert from '@/utils/unit-convert'
+import unitConvert,{valueToRangeValue} from '@/utils/unit-convert'
 import { unitTypes } from '@/utils/constants'
 import { overwriteUrl, urlParamsHandler, reverseSortBy } from '@/utils/tools'
 import axios from 'axios'
@@ -144,6 +144,7 @@ export default {
         }
       ],
       unitConvert,
+      valueToRangeValue,
       unitTypes,
       isNoData: false,
       showError: false,
@@ -420,6 +421,7 @@ export default {
     }
     // 检测时发现该方法占用较大内存，且未被释放
     this.unitConvert = null
+    this.valueToRangeValue = null
   }
 }
 </script>
