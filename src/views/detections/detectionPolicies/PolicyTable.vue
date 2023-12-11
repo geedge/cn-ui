@@ -65,7 +65,36 @@
           <span class="detection-tag-blue">{{ scope.row[item.prop] }}</span>
         </template>
         <template v-else-if="item.prop === 'library' && scope.row[item.prop]">
-          <span class="detection-table-library">{{ scope.row[item.prop] }}</span>
+          <el-tooltip
+              effect="light"
+              trigger="hover"
+              placement="left"
+          >
+            <span class="detection-table-library">{{ scope.row[item.prop] }}</span>
+            <template #content>
+              <div class="policy-library-tip">
+                <div class="tip__header">{{scope.row[item.prop]}}</div>
+                <div class="tip__tags">
+                  <div class="tip__tag" v-if="knowledgeBaseSource.find(s => s.value === $_.get(scope.row.ruleConfigObj, 'knowledgeBase.source'))">
+                    {{
+                      knowledgeBaseSource.find(s => s.value === $_.get(scope.row.ruleConfigObj, 'knowledgeBase.source')) &&
+                      knowledgeBaseSource.find(s => s.value === $_.get(scope.row.ruleConfigObj, 'knowledgeBase.source')).name
+                    }}</div>
+                  <div
+                      class="tip__tag"
+                      v-if="$_.get(scope.row.ruleConfigObj, 'knowledgeBase.color')"
+                      :style="{backgroundColor: $_.get(scope.row.ruleConfigObj, 'knowledgeBase.color'), color: 'white'}"
+                  >{{colorText($_.get(scope.row.ruleConfigObj, 'knowledgeBase.color'))}}</div>
+                </div>
+                <div class="tip__description" :class="{ 'tip__description--non': !($_.get(scope.row.ruleConfigObj, 'knowledgeBase.description')) }">
+                  <template v-if="$_.get(scope.row.ruleConfigObj, 'knowledgeBase.description')">
+                    {{$_.get(scope.row.ruleConfigObj, 'knowledgeBase.description')}}
+                  </template>
+                  <template v-else>{{$t('tip.noDescription')}}</template>
+                </div>
+              </div>
+            </template>
+          </el-tooltip>
         </template>
         <span v-else>{{ scope.row[item.prop] || '-' }}</span>
       </template>
@@ -83,7 +112,7 @@ import table from '@/mixins/table'
 import { dateFormatByAppearance } from '@/utils/date-util'
 import { switchStatus } from '@/utils/tools'
 import _ from 'lodash'
-import { detectionUnitList } from '@/utils/constants'
+import { detectionUnitList, knowledgeBaseSource, knowledgeBaseColor } from '@/utils/constants'
 import { useRoute } from 'vue-router'
 
 export default {
@@ -100,6 +129,8 @@ export default {
   mixins: [table],
   data () {
     return {
+      knowledgeBaseColor,
+      knowledgeBaseSource,
       tableTitle: [
         {
           label: this.$t('knowledge.status'),
@@ -161,6 +192,15 @@ export default {
         this.$refs.dataTable.toggleAllSelection([this.policyDetail])
         clearTimeout(timer)
       }, 400)
+    }
+  },
+  computed: {
+    colorText () {
+      const vm = this
+      return function (color) {
+        const t = vm.knowledgeBaseColor.find(t => t.value === color)
+        return t ? vm.$t(t.label) : vm.$t(vm.knowledgeBaseColor[0].label)
+      }
     }
   },
   watch: {

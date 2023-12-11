@@ -40,7 +40,37 @@
             <div v-if="detailData.ruleType==='indicator_match'">
               <div class="drawer-basic-function">
                 <div class="detection-drawer-title">{{ $t('detection.library') }}</div>
-                <span class="basic-function-value">{{ $_.get(detailData, 'ruleConfigObj.knowledgeBase.name', '-') || '-' }}</span>
+                <el-tooltip
+                    effect="light"
+                    trigger="hover"
+                    placement="left"
+                >
+                  <span class="basic-function-value">{{ $_.get(detailData, 'ruleConfigObj.knowledgeBase.name', '-') || '-' }}</span>
+                  <template #content>
+                    <div class="policy-library-tip">
+                      <div class="tip__header">{{$_.get(detailData, 'ruleConfigObj.knowledgeBase.name', '-')}}</div>
+                      <div class="tip__tags">
+                        <div class="tip__tag" v-if="knowledgeBaseSource.find(s => s.value === $_.get(detailData.ruleConfigObj, 'knowledgeBase.source'))">
+                          {{
+                            knowledgeBaseSource.find(s => s.value === $_.get(detailData.ruleConfigObj, 'knowledgeBase.source')) &&
+                            knowledgeBaseSource.find(s => s.value === $_.get(detailData.ruleConfigObj, 'knowledgeBase.source')).name
+                          }}</div>
+                        <div
+                            class="tip__tag"
+                            v-if="$_.get(detailData.ruleConfigObj, 'knowledgeBase.color')"
+                            :style="{backgroundColor: $_.get(detailData.ruleConfigObj, 'knowledgeBase.color'), color: 'white'}"
+                        >{{colorText($_.get(detailData.ruleConfigObj, 'knowledgeBase.color'))}}</div>
+                      </div>
+                      <div class="tip__description" :class="{ 'tip__description--non': !($_.get(detailData.ruleConfigObj, 'knowledgeBase.description')) }">
+                        <template v-if="$_.get(detailData.ruleConfigObj, 'knowledgeBase.description')">
+                          {{$_.get(detailData.ruleConfigObj, 'knowledgeBase.description')}}
+                        </template>
+                        <template v-else>{{$t('tip.noDescription')}}</template>
+                      </div>
+                    </div>
+                  </template>
+                </el-tooltip>
+
               </div>
 
               <div class="drawer-basic-function">
@@ -134,7 +164,7 @@
 
 <script>
 import { switchStatus, toUpperCaseByString } from '@/utils/tools'
-import { detectionUnitList, eventSeverityColor, securityLevel, storageKey, ZH, EN } from '@/utils/constants'
+import { detectionUnitList, eventSeverityColor, securityLevel, storageKey, ZH, EN, knowledgeBaseSource, knowledgeBaseColor } from '@/utils/constants'
 import axios from 'axios'
 import { api } from '@/utils/api'
 
@@ -147,6 +177,8 @@ export default {
   },
   data () {
     return {
+      knowledgeBaseSource,
+      knowledgeBaseColor,
       activeRule: 'rule',
       activeTrigger: 'trigger',
       detailData: {},
@@ -172,6 +204,15 @@ export default {
   },
   mounted () {
     this.language = localStorage.getItem(storageKey.language) || EN
+  },
+  computed: {
+    colorText () {
+      const vm = this
+      return function (color) {
+        const t = vm.knowledgeBaseColor.find(t => t.value === color)
+        return t ? vm.$t(t.label) : vm.$t(vm.knowledgeBaseColor[0].label)
+      }
+    }
   },
   methods: {
     switchStatus,
@@ -255,6 +296,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-</style>

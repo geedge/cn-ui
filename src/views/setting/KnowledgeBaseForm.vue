@@ -45,7 +45,7 @@
                   </div>
                 </template>
                 <template v-for="color in knowledgeBaseColor" :key="color.name">
-                  <el-option  :value="color.label" >
+                  <el-option :value="color.label" :label="$t(color.label)">
                     <div class="knowledge-color">
                       <span class="knowledge-color__icon" :class="color.name"></span> <span>{{$t(color.label)}}</span>
                     </div>
@@ -236,7 +236,7 @@
 import { useRoute } from 'vue-router'
 import { nextTick, reactive, ref } from 'vue'
 import _ from 'lodash'
-import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight, knowledgeCategoryValue } from '@/utils/constants'
+import { knowledgeBaseType, storageKey, unitTypes, knowledgeSourceValue, itemListHeight, knowledgeCategoryValue, knowledgeBaseColor } from '@/utils/constants'
 import Pagination from '@/components/common/Pagination'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import axios from 'axios'
@@ -515,23 +515,7 @@ export default {
       status: 1,
       oldItemIds: [],
       oldTagItem: {},
-      knowledgeBaseColor: [
-        {
-          label: this.$t('knowledge.info'),
-          value: 'rgb(119,131,145)',
-          name: 'info'
-        },
-        {
-          label: this.$t('knowledge.benign'),
-          value: 'rgb(116,159,77)',
-          name: 'benign'
-        },
-        {
-          label: this.$t('knowledge.malicious'),
-          value: 'rgb(226,97,84)',
-          name: 'malicious'
-        }
-      ]
+      knowledgeBaseColor
     }
   },
   methods: {

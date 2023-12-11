@@ -430,7 +430,23 @@ export const knowledgeBaseCategory = [
     value: 'user_defined'
   }
 ]
-
+export const knowledgeBaseColor = [
+  {
+    label: 'knowledge.info',
+    value: 'rgb(119,131,145)',
+    name: 'info'
+  },
+  {
+    label: 'knowledge.benign',
+    value: 'rgb(116,159,77)',
+    name: 'benign'
+  },
+  {
+    label: 'knowledge.malicious',
+    value: 'rgb(226,97,84)',
+    name: 'malicious'
+  }
+]
 export const knowledgeCategoryValue = {
   webSketch: 'websketch',
   aiTagging: 'ai_tagging',
@@ -498,15 +514,15 @@ export const knowledgeBaseSource = [
     value: 'cn_psiphon3_ip'
   },
   {
-    name: 'IP Tag',
+    name: 'IP',
     value: 'cn_ip_tag_user_defined'
   },
   {
-    name: 'Domain Tag',
+    name: 'Domain',
     value: 'cn_domain_tag_user_defined'
   },
   {
-    name: 'APP Tag',
+    name: 'APP',
     value: 'cn_app_tag_user_defined'
   }
 ]
