@@ -180,7 +180,7 @@ export default {
         if (keyInfo.isKey) {
           // 检查是否包含枚举字段，包含的话进行替换
           const enumKey = parser.conversionEnum(keyInfo.key)
-          const errorList = parser.validateStr(newKey)
+          const errorList = parser.validateStr(enumKey)
           if (_.isEmpty(errorList)) {
             // 补全模糊搜索
             toRaw(this.codeMirror).setValue(parser.handleEntityTypeByStr(str))
