@@ -12,6 +12,7 @@ const strReg = {
   value: /^[\da-zA-Z\u4E00-\u9FA5\u3040-\u309F\u0800-\u4e00\u0400-\u04FF\u2000-\u206F\s.'-_%]$/
 }
 const operatorList = ['=', ' in ', ' IN ', ' like ', ' LIKE ', 'HAS(', 'has(']
+const enumList = ['status', 'eventType', 'severity']
 
 export default class Parser {
   constructor (columnList) {
@@ -1475,6 +1476,47 @@ export default class Parser {
     })
 
     return this.columnList.find(t => t.label.toLowerCase() === label.toLowerCase())
+  }
+
+  /**
+   * 检测str是否包含枚举字段，包含的话，进行替换
+   * @param str
+   * @returns {string|*}
+   */
+  conversionEnum (str) {
+    if (str) {
+      let enumFlag = false // 判断字符串是否包含枚举类型的key，不包含则直接返回
+      enumList.forEach(item => {
+        if (str.toLocaleLowerCase().indexOf(item.toLocaleLowerCase()) > -1) {
+          enumFlag = true
+        }
+      })
+      if (enumFlag) {
+        let key = _.cloneDeep(str)
+        let searchList = [] // 将字符串按AND分割成单独的搜索条件
+        if (key.indexOf(' AND ') > -1) {
+          searchList = key.split(' AND ')
+        } else {
+          searchList = [key]
+        }
+        searchList.forEach((item, index) => {
+          const obj = this.columnList.find(d => item.indexOf(d.label) > -1)
+          if (obj && obj.doc.data) {
+            obj.doc.data.forEach(item1 => {
+              if (item.indexOf(item1.code) > -1) {
+                searchList[index] = searchList[index].replace(new RegExp(item1.code, 'g'), item1.value)
+              }
+            })
+          }
+        })
+        key = searchList.join(' AND ')
+        return key
+      } else {
+        return str
+      }
+    } else {
+      return str
+    }
   }
 }
 

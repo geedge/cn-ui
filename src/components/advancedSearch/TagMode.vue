@@ -40,7 +40,8 @@
         <div v-if="meta.operator.value === 'has'" class="condition__operator" style="color: #000C18">({{meta.column.label}},</div>
         <!-- 值 -->
         <div class="condition__value">
-          <div  v-if="meta.value.isEditing && meta.doc">
+          <!--点击=操作符时，单个选择枚举值-->
+          <div  v-if="meta.value.isEditing && meta.doc && meta.column.type!==columnType.array">
             <el-select
                 allow-create
                 filterable
@@ -48,6 +49,7 @@
                 v-model="meta.value.value"
                 ref="columnValue"
                 :placeholder="meta.value.value || ' '"
+                @blur="valueBlur1(meta, index)"
                 @change="(value) => selectValue(value, meta)"
             >
               <el-option
@@ -58,6 +60,37 @@
               ></el-option>
             </el-select>
           </div>
+
+          <!--点击 in 操作符时，多个选择枚举值-->
+          <div v-if="meta.value.isEditing && meta.doc && meta.column.type===columnType.array">
+            <el-select
+                v-model="myCheckboxList"
+                ref="valuesSelect"
+                multiple
+                size="mini"
+                collapse-tags
+                collapse-tags-tooltip
+                :placeholder="meta.value.value || ' '"
+                @blur="valuesBlur(meta, index)"
+                @focus="valuesFocus(meta)"
+                @change="(value) => selectValues(value, meta)"
+                @visible-change="(value) => selectVisibleValues(value, meta)"
+                popper-class="my-select-class"
+            >
+              <template #label>
+                {{ meta.value.value }}
+              </template>
+              <template #default>
+                <el-option
+                    v-for="item in meta.doc.data"
+                    :key="item.code"
+                    :label="item.code"
+                    :value="item.code"
+                />
+              </template>
+            </el-select>
+          </div>
+
           <div v-if="meta.value.isEditing && !meta.doc">
             <!--避免blur事件和keyup.enter重复执行-->
             <el-input
@@ -151,6 +184,8 @@ export default {
       condition,
       connection,
       metaList: [],
+      columnType,
+      myCheckboxList: [],
       operatorList: [] // 操作符列表，根据所选columnList的label来确定，一般为=,IN，tags操作符为has
     }
   },
@@ -250,14 +285,28 @@ export default {
         meta.value.isEditing = false
       }, 100)
     },
+    selectVisibleValues (value, meta) {
+      if (!value) {
+        meta.value.isEditing = false
+        this.myCheckboxList = []
+      }
+    },
+    selectValues (value, meta) {
+      if (value.length > 0) {
+        let str = ''
+        value.forEach(item => {
+          str += `'${item}',`
+        })
+        str = str.substring(0, str.length - 1)
+        str = `(${str})`
+        meta.value.value = str
+        meta.value.label = str
+      } else {
+        meta.value.value = ''
+      }
+    },
     selectConnection (value, meta) {
       meta.isEditing = false
-    },
-    columnClick (meta) {
-      meta.column.isEditing = true
-      this.$nextTick(() => {
-        this.$refs.columnSelect[this.$refs.columnSelect.length - 1].focus()
-      })
     },
     columnBlur (meta, index) {
       setTimeout(() => {
@@ -276,26 +325,59 @@ export default {
         this.operatorList = obj ? obj.doc.constraints.operator_functions.split(',') : ['=', 'IN']
         if (meta.column && meta.column.type === 'fullText') {
           meta.operator.value = '='
-          meta.column.show = false
+          meta.column.show = true
           meta.column.isFullText = true
-          meta.operator.show = false
+          meta.operator.show = true
           const label = JSON.parse(JSON.stringify(meta.column.label))
           meta.column.label = parser.getEntityTypeByValue(meta.column.label)
           meta.value.value = label
           meta.value.label = label
 
-          // if (meta.column.label === 'domain') {
-          //   meta.operator.value = 'like'
-          //   meta.value.value = `%${this.delSingleQuote(label)}`
-          //   meta.value.label = `${this.delSingleQuote(label)}`
-          // } else if (meta.column.label === 'app') {
-          //   meta.operator.value = 'like'
-          //   meta.value.value = `%${this.delSingleQuote(label)}%`
-          //   meta.value.label = `${this.delSingleQuote(label)}`
-          // }
+          if (meta.column.label === 'domain') {
+            meta.operator.value = 'like'
+            meta.value.value = `%${this.delSingleQuote(label)}`
+            meta.value.label = `%${this.delSingleQuote(label)}`
+          } else if (meta.column.label === 'app') {
+            meta.operator.value = 'like'
+            meta.value.value = `%${this.delSingleQuote(label)}%`
+            meta.value.label = `%${this.delSingleQuote(label)}%`
+          }
           meta.column.type = 'string'
         }
       }, 200)
+    },
+    valueBlur1 (meta) {
+      setTimeout(() => {
+        meta.value.isEditing = false
+      }, 200)
+    },
+    valuesBlur (meta) {
+      this.$nextTick(() => {
+      })
+    },
+    valuesFocus (meta) {
+      this.$nextTick(() => {
+        meta.value.isEditing = true
+        setTimeout(() => {
+          if (meta.value.value && this.myCheckboxList.length === 0) {
+            let valueArr = []
+            if (!_.isArray(meta.value.value)) {
+              let value = meta.value.value
+              if (value.indexOf('(') === 0 && value.indexOf(')') === value.length - 1) {
+                value = value.substring(1, value.length)
+                value = value.substring(0, value.length - 1)
+              }
+              valueArr = value.split(',')
+              valueArr.forEach((item, index) => {
+                if (item[0] === "'" && item[item.length - 1] === "'") {
+                  item = item.substring(1, item.length - 1)
+                  this.myCheckboxList.push(item)
+                }
+              })
+            }
+          }
+        }, 100)
+      })
     },
     connectionClick (meta) {
       meta.isEditing = true
@@ -314,7 +396,7 @@ export default {
       // 若是in或not in，column的type要改成array，否则是string
       if (operator.toLowerCase().indexOf('in') > -1) {
         meta.column.type = columnType.array
-        meta.value.value = []
+        // meta.value.value = []
       } else if (['>', '<', '>=', '<='].indexOf(operator) > -1) {
         meta.column.type = columnType.number
       } else {
@@ -480,10 +562,26 @@ export default {
       }
       meta.value.isEditing = !meta.isCompleteCondition()
     },
+    columnClick (meta) {
+      meta.column.isEditing = true
+      this.$nextTick(() => {
+        this.$refs.columnSelect[this.$refs.columnSelect.length - 1].focus()
+      })
+    },
     valueClick (meta) {
       meta.value.isEditing = true
+      const obj = enumerateData.find(d => d.name === meta.column.label)
+      if (obj) {
+        meta.doc = obj
+      }
       this.$nextTick(() => {
-        this.$refs.valueInput[0].focus()
+        if (this.$refs.valueInput) {
+          this.$refs.valueInput[0].focus()
+        }
+        if (this.$refs.valuesSelect) {
+          // 触发focus后，select弹窗并没有生效
+          this.$refs.valuesSelect[0].focus(meta)
+        }
       })
     },
     // 判断是否是用户自己添加的内容，用于判断是否是全局搜索
@@ -515,7 +613,8 @@ export default {
           const str = strObj.str ? strObj.str : strObj
           const str2 = strObj.str2 ? strObj.str2 : strObj
           // str为将metaList转成字符串的值，str2为地址栏展示的值
-          const key = parser.handleEntityTypeByStr(str)
+          let key = parser.handleEntityTypeByStr(str)
+          key = parser.conversionEnum(key)
           this.$emit('search', { ...parser.parseStr(key), str: str2, keywordList: keywordList })
         } else {
           this.$message.error(handleErrorTip(errorList[0]))

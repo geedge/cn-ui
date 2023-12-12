@@ -282,6 +282,7 @@ export default {
       ],
       listData: [],
       q: '',
+      str: '',
       metaList: [],
       listLoading: false,
       // 实体详情搜索页面 底部列表
@@ -387,9 +388,12 @@ export default {
       // 参数q，避免切换页码时，地址栏参数q为空
       let urlQ = ''
       if (param.str) {
-        urlQ = encodeURI(param.str)
+        // urlQ = encodeURI(param.str)
+        urlQ = param.str.indexOf('%') > -1 ? encodeURI(param.str) : param.str
+        this.str = param.str
       } else if (this.q) {
-        urlQ = encodeURI(this.q)
+        // urlQ = encodeURI(this.q)
+        urlQ = this.q.indexOf('%') > -1 ? encodeURI(this.q) : this.q
       } else if (!this.q) {
         this.isHideRelatedEntities = false
       }
@@ -444,10 +448,10 @@ export default {
       const keywordList = this.getKeywordListByMetaList(this.metaList)
       if (this.initFlag) {
         if (val !== 20) {
-          this.search({ metaList: this.metaList, q: this.q, keywordList: keywordList })
+          this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
         }
       } else {
-        this.search({ metaList: this.metaList, q: this.q, keywordList: keywordList })
+        this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
       }
     },
     pageNo (val) {
@@ -455,7 +459,7 @@ export default {
         this.pageObj.pageNo = val
         this.pageObj.resetPageNo = false
         const keywordList = this.getKeywordListByMetaList(this.metaList)
-        this.search({ metaList: this.metaList, q: this.q, keywordList: keywordList })
+        this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
       }
     },
     // 点击上一页箭头
@@ -827,6 +831,8 @@ export default {
       if (q && q.indexOf('%') > 0 && (str1 === '%20' || str1 === '%25')) {
         q = decodeURI(q)
       }
+      const parser = new Parser(columnList)
+      q = parser.conversionEnum(q)
       this.initSearch(q)
       this.listMode = listMode
       // 查询评分基准
@@ -840,7 +846,7 @@ export default {
   },
   watch: {
     timeFilter () {
-      this.search({ metaList: this.metaList, q: this.q })
+      this.search({ metaList: this.metaList, q: this.q, str: this.str })
     }
   },
   setup () {

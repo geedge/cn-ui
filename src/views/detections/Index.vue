@@ -140,6 +140,8 @@ import ChartTabs from '@/components/common/ChartTabs'
 import { useStore } from 'vuex'
 import { tooLongFormatter } from '@/views/charts/charts/tools'
 import { format } from 'echarts'
+import Parser from '@/components/advancedSearch/meta/parser'
+import { schemaDetectionSecurity } from '@/utils/static-data'
 
 export default {
   name: 'Index',
@@ -763,11 +765,11 @@ export default {
       // 参数q，避免切换页码时，地址栏参数q为空
       let urlQ = ''
       if (param && param.str) {
-        // urlQ = encodeURI(param.str)
-        urlQ = param.str
+        urlQ = param.str.indexOf('%') > -1 ? encodeURI(param.str) : param.str
+        this.str = param.str
       } else if (this.q) {
         // urlQ = encodeURI(this.q)
-        urlQ = this.q
+        urlQ = this.q.indexOf('%') > -1 ? encodeURI(this.q) : this.q
       }
       const mode = this.$route.query.mode || 'text'
       const newUrl = urlParamsHandler(window.location.href, this.$route.query, {
@@ -778,8 +780,8 @@ export default {
         mode: mode
       })
       overwriteUrl(newUrl)
-      this.queryFilter(urlQ)
-      this.queryList(urlQ)
+      this.queryFilter(this.q)
+      this.queryList(this.q)
     },
     resetFilterData () {
       this.filterData.securityEvent.forEach(d => {
@@ -921,10 +923,12 @@ export default {
       }
       // %位置不为0，即内容包含非英文时
       const str1 = q.substring(q.indexOf('%'), q.indexOf('%') + 3)
-      if (q && q.indexOf('%') > 0 && (str1 !== '%20' || str1 === '%25')) {
+      if (q && q.indexOf('%') > 0 && (str1 === '%20' || str1 === '%25')) {
         q = decodeURI(q)
       }
     }
+    const parser = new Parser(schemaDetectionSecurity)
+    q = parser.conversionEnum(q)
     this.queryFilter(q)
     if (this.initFlag) {
       this.timer = setTimeout(() => {

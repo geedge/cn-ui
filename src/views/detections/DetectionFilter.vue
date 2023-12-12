@@ -57,17 +57,17 @@ export default {
       filter.showIndex >= (filter.data.length - 1) && (filter.showDisabled = true)
     },
     clickFilterItem (name, data, index) {
-      if (index === 0) {
-        let status = 0
-        if (name === this.$t('detections.active')) {
-          status = '0'
-        } else if (name === this.$t('detections.ended')) {
-          status = '1'
-        }
-        this.$emit('filter', status, data)
-      } else {
-        this.$emit('filter', name, data)
-      }
+      // if (index === 0) {
+      //   let status = 0
+      //   if (name === this.$t('detections.active')) {
+      //     status = '0'
+      //   } else if (name === this.$t('detections.ended')) {
+      //     status = '1'
+      //   }
+      //   this.$emit('filter', status, data)
+      // } else {
+      // }
+      this.$emit('filter', name, data)
     },
     handleMouse (id) {
       const dom = document.getElementById(id)

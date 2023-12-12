@@ -178,9 +178,13 @@ export default {
           }
         })
         if (keyInfo.isKey) {
-          const errorList = parser.validateStr(keyInfo.key)
+          // 检查是否包含枚举字段，包含的话进行替换
+          const enumKey = parser.conversionEnum(keyInfo.key)
+          const errorList = parser.validateStr(newKey)
           if (_.isEmpty(errorList)) {
-            this.$emit('search', { ...parser.parseStr(keyInfo.key), str: str, keywordList: keywordList })
+            // 补全模糊搜索
+            toRaw(this.codeMirror).setValue(parser.handleEntityTypeByStr(str))
+            this.$emit('search', { ...parser.parseStr(enumKey), str: parser.handleEntityTypeByStr(str), keywordList: keywordList })
           } else {
             this.$message.error(handleErrorTip(errorList[0]))
           }

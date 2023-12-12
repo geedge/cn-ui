@@ -181,7 +181,7 @@ export default {
         }
         localStorage.setItem(storageKey.detectionSearchHistory, JSON.stringify(arr))
       }
-      this.$emit('search', { q, metaList })
+      this.$emit('search', { q, metaList, str })
     },
     changeParams (params) {
       this.$refs.search.addParams(params)
