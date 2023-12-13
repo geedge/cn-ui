@@ -6,7 +6,7 @@
         <i class="cn-icon cn-icon-arrow-right"></i>
       </span>
     </div>
-    <div class="cn-entity__case">
+    <div class="cn-entity__case" ref="rowBlock">
       <div class="cn-entity__icon"><i :class="iconClass"></i></div>
       <div class="cn-entity__row">
         <!--标签-->
@@ -327,6 +327,12 @@ export default {
     /* 切换折叠状态 */
     switchCollapse () {
       this.isCollapse = !this.isCollapse
+      // 因为默认的背景白色会导致showhint的box-shadow被盖住，所以展开详情时才渲染颜色
+      if (this.isCollapse) {
+        this.$refs.rowBlock.style.cssText = 'background-color: none'
+      } else {
+        this.$refs.rowBlock.style.cssText = 'background-color: #fff'
+      }
       this.$emit('switchCollapse', this.isCollapse, this.index)
     },
     /* 设为折叠状态 */

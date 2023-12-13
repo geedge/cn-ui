@@ -1,5 +1,6 @@
 //  改js  用户获取初始化的 SchemaData
 import { Scheme } from './service/Scheme'
+import i18n from '@/i18n'
 
 export class Dataset {
   constructor ({ operatesList, filtersList, operatesDic, funcDic, operatorManual, fields, doc }) {
@@ -66,7 +67,7 @@ export class Dataset {
       type: 'abstract',
       text: '',
       // displayText: "Filter",
-      displayText: 'filter',
+      displayText: i18n.global.t('overall.fields'),
       className: 'divider hint-title',
       hint (cm, callback, options) {
       }
@@ -96,7 +97,7 @@ export class Dataset {
       type: 'abstract',
       text: '',
       // displayText: "Operator",
-      displayText: 'operator',
+      displayText: i18n.global.t('overall.keyword'),
       className: 'divider hint-title'
       // hint(cm, callback, options) {}
     }

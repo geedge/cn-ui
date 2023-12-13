@@ -1,6 +1,6 @@
 <template>
   <div class="HintInfo">
-    <ul class="CodeMirror-hints-manual eclipse" style="padding-left: 0">
+    <ul style="padding-left: 0;margin: -10px 0 0 0;">
       <template v-for="(item,index) in hintList" :key="index">
         <li :ref="'hint_'+index" class="relative-item CodeMirror-hint"
             @click="handleSelect(item,index,hintList)"
@@ -115,8 +115,9 @@ export default {
   }
   .hint-title{
     margin: 10px !important;
-    margin-left: 4px !important;
+    margin-left: 0 !important;
     font-size: 14px;
+    line-height: 24px;
   }
   .el-dropdown-menu__item{
     text-indent: 1em;

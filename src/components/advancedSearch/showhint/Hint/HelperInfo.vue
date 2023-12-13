@@ -15,6 +15,7 @@ import filterTips from '@/components/advancedSearch/showhint/const/filterTips.js
 import varTips from '@/components/advancedSearch/showhint/const/varTips.js'
 
 import { fieldRender } from '@/components/advancedSearch/showhint/const/fieldTips.js'
+import { EN, storageKey, ZH } from '@/utils/constants'
 
 export default {
   name: 'HelperInfo',
@@ -104,8 +105,12 @@ export default {
           return fieldRender
         }
       }
+      const language = localStorage.getItem(storageKey.language) || EN
 
-      return defaultTips.default.description
+      if (language === ZH) {
+        return defaultTips.zhDefault.description
+      }
+      return defaultTips.enDefault.description
     }
   }
 }
@@ -122,7 +127,7 @@ export default {
   }
 
   .tips-container {
-    padding: 6px;
+    padding: 12px;
   }
 
   /deep/ ul li {
@@ -143,9 +148,10 @@ export default {
   /deep/ code,
   .code {
     background: initial;
-
-    border: 1px solid #ccc;
-    padding: 4px 12px;
+    border: 1px solid #DEDEDE;
+    height: 24px;
+    line-height: 24px;
+    padding: 0 12px;
     margin: 6px 0;
     display: block;
   }

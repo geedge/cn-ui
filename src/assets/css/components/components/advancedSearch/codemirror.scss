@@ -375,12 +375,16 @@ span.CodeMirror-selectedtext { background: none; }
 }
 
 .hint-title {
-  margin: 10px 10px 10px 4px;
-  line-height: 20px;
-  font-weight: bold;
+  margin: 10px 10px 10px 0;
+  height: 24px;
+  line-height: 24px;
   /* 禁止选中  样式 */
   background: #fff !important;
-  color: #000 !important;
+  font-family: NotoSansHans-Medium;
+  font-size: 14px;
+  color: #333333 !important;
+  letter-spacing: 0;
+  font-weight: 500;
 }
 
 .cm-s-eclipse span.cm-string-2 {
@@ -432,4 +436,56 @@ span.CodeMirror-selectedtext { background: none; }
 
 .cm-variable-2{
   font-weight: bold;
+}
+
+.default-tips-header,.default-tips-title {
+  height: 24px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #333333;
+  font-size: 14px;
+  margin: 6px 0;
+  font-family: NotoSansSC-Bold;
+  letter-spacing: 0;
+}
+
+.default-tips-header {
+  font-size: 15px;
+}
+
+.show-hint-tips__p {
+  word-break: keep-all;
+  margin: 0;
+  line-height: 24px;
+  color: #575757;
+  font-weight: 400;
+}
+
+.Hint {
+  padding: 0;
+  z-index: 2;
+
+  .hint__block {
+    display: flex;
+    flex-direction: row;
+    width: calc(100% - 41px);
+    min-height: 320px;
+    margin-top: 6px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,.3);
+    z-index: 2;
+
+    .hint__block-filter {
+      width: 326px;
+      background: #fff;
+      border-right: 1px solid #DEDEDE;
+      padding: 12px;
+      z-index: 2;
+    }
+
+    .hint__block-helper {
+      width: calc(100% - 326px);
+      background: #fff;
+      z-index: 2;
+    }
+  }
 }
