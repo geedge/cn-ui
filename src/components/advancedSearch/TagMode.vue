@@ -299,7 +299,7 @@ export default {
         })
         str = str.substring(0, str.length - 1)
         str = `(${str})`
-        meta.value.value = str
+        meta.value.value = value
         meta.value.label = str
       } else {
         meta.value.value = ''
@@ -396,7 +396,6 @@ export default {
       // 若是in或not in，column的type要改成array，否则是string
       if (operator.toLowerCase().indexOf('in') > -1) {
         meta.column.type = columnType.array
-        // meta.value.value = []
       } else if (['>', '<', '>=', '<='].indexOf(operator) > -1) {
         meta.column.type = columnType.number
       } else {
