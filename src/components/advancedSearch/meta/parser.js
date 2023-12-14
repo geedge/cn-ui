@@ -1528,7 +1528,7 @@ export default class Parser {
         if (item.column && item.column.isFullText) {
           keywordList.push({ type: 'fullText', value: item.value.value })
         } else if (item.column && !item.column.isFullText) {
-          keywordList.push({ type: item.column.type, value: item.column.label })
+          keywordList.push({ type: item.column.type, value: item.value.value || item.column.label })
         }
       })
     }
