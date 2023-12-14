@@ -13,7 +13,7 @@ export default {
         <p class='show-hint-tips__p'>Strings containing spaces must be enclosed in single quotes ('). Such as:</p>
         <code>ip=192.168.10.53</code>
         <code>ip.country='United States'</code>
-        <p class='show-hint-tips__p'>Keyword - Keywords are specific words in the SQL. You can specify the AND and OR to create more complex query conditions. Currently only support AND.</p>
+        <p class='show-hint-tips__p'>Keyword - Keywords are specific words in the query. You can specify the AND and OR to create more complex query conditions. Currently only support AND.</p>
         <p class='show-hint-tips__p'>There are two input modes, which can be switched by clicking the button on the right side of the input box.</p>
 
         <div class='default-tips-title'> 1. Text Mode</div>
@@ -38,7 +38,7 @@ export default {
         <p class='show-hint-tips__p'>包含空格的字符串必须用单引号(')括住。例如：</p>
         <code>ip=192.168.10.53</code>
         <code>ip.country='United States'</code>
-        <p class='show-hint-tips__p'>关键字 - 关键字是 SQL 中的特定单词。您可以指定 AND 和 OR 来创建更复杂的查询条件。暂时只支持AND。</p>
+        <p class='show-hint-tips__p'>关键字 - 关键字是查询中的特定单词。您可以指定 AND 和 OR 来创建更复杂的查询条件。暂时只支持AND。</p>
         <p class='show-hint-tips__p'>有两种输入模式，通过点击输入框右侧的按钮进行切换。</p>
 
         <div class='default-tips-title'> 1. 文本模式</div>

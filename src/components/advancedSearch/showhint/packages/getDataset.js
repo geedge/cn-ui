@@ -78,7 +78,7 @@ export class Dataset {
         // text: item.name,
         // displayText: `${item.label}(${item.name})`,
         text: item.label,
-        displayText: `${item.name}(${item.label})`,
+        displayText: `${item.label}`,
         className: 'filter-item el-dropdown-menu__item relative-item'
       }
     })

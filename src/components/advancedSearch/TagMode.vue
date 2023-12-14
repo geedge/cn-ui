@@ -147,7 +147,7 @@
             popper-class="my-popper-class"
             placement="top"
             trigger="hover"
-            :content="$t('entity.switchToBasicSearch')"
+            :content="$t('overall.switchToText')"
         >
           <template #reference>
             <i class="cn-icon cn-icon-search-normal" @click="changeMode"></i>
@@ -190,6 +190,7 @@ export default {
     }
   },
   emits: ['changeMode', 'search'],
+  inject: ['myHighLight'],
   methods: {
     // 新增条件
     addCondition (meta) {
@@ -599,14 +600,7 @@ export default {
       if (this.metaList.length > 0) {
         const parser = new Parser(this.columnList)
         const errorList = parser.validateMeta(this.metaList)
-        const keywordList = []
-        this.metaList.forEach(item => {
-          if (item.column && item.column.isFullText) {
-            keywordList.push({ type: 'fullText', value: item.value.value })
-          } else if (item.column && !item.column.isFullText) {
-            keywordList.push({ type: item.column.type, value: item.value.value })
-          }
-        })
+        const keywordList = this.myHighLight ? parser.getKeywordList(this.metaList) : [] // 搜索高亮的关键字
         if (_.isEmpty(errorList)) {
           const strObj = parser.handleMetaListToStr(this.metaList)
           const str = strObj.str ? strObj.str : strObj

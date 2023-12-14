@@ -1,6 +1,6 @@
 <template>
   <div class="HintInfo">
-    <ul style="padding-left: 0;margin: -10px 0 0 0;">
+    <ul style="padding-left: 0;margin: -10px 0 0 0;min-width: calc(100% - 12px)">
       <template v-for="(item,index) in hintList" :key="index">
         <li :ref="'hint_'+index" class="relative-item CodeMirror-hint"
             @click="handleSelect(item,index,hintList)"

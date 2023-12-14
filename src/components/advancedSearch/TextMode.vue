@@ -6,26 +6,30 @@
         ref="textSearch"
     ></textarea>
     <div class="search__suffixes search__suffixes--text-mode" :class="showList ? '' : 'entity-explorer-home'" style="padding-left: 1px">
+      <!--切换text、tag模式图标-->
       <span class="search__suffix">
         <el-popover
             popper-class="my-popper-class"
             placement="top"
             trigger="hover"
-            :content="$t('entity.switchToAdvancedSearch')"
+            :content="$t('overall.switchToTag')"
         >
           <template #reference>
             <i class="cn-icon cn-icon-filter" @click="changeMode"></i>
           </template>
         </el-popover>
       </span>
+      <!--删除图标-->
       <span v-show="isCloseIcon" class="search__suffix search__suffix-close" @click="cleanParams">
         <i class="el-icon-error"></i>
       </span>
+      <!--搜索图标-->
       <span class="search__suffix" @click.stop="search">
         <i class="el-icon-search"></i>
       </span>
     </div>
 
+    <!--showHint弹窗部分-->
     <el-popover
         placement="bottom"
         width="100%"
@@ -82,6 +86,7 @@ export default {
     }
   },
   emits: ['changeMode', 'search'],
+  inject: ['myHighLight'],
   created () {
     if (this.isShowHint) {
       this._initComponent()
@@ -167,23 +172,16 @@ export default {
       const str = this.codeMirror.getValue().trim()
       if (str) {
         const parser = new Parser(this.columnList)
-        const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str))
+        const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str)) // 校验输入str字段是schema内的字段，并将语句进行规范
         const metaList = parser.parseStr(_.cloneDeep(str)).metaList
-        const keywordList = []
-        metaList.forEach(item => {
-          if (item.column && item.column.type === columnType.fullText) {
-            keywordList.push({ type: item.column.type, value: item.column.label })
-          } else if (item.column && item.column.type === columnType.string) {
-            keywordList.push({ type: item.column.type, value: item.value.value })
-          }
-        })
+        const keywordList = this.myHighLight ? parser.getKeywordList(metaList) : [] // 搜索高亮所需的关键字
         if (keyInfo.isKey) {
-          // 检查是否包含枚举字段，包含的话进行替换
-          const enumKey = parser.conversionEnum(keyInfo.key)
-          const errorList = parser.validateStr(enumKey)
+          const enumKey = parser.conversionEnum(keyInfo.key) // 检查是否包含枚举字段，包含的话进行替换
+          const errorList = parser.validateStr(enumKey) // 检查语句是否有错误
           if (_.isEmpty(errorList)) {
             // 补全模糊搜索
             toRaw(this.codeMirror).setValue(parser.handleEntityTypeByStr(str))
+            // 注：参数str，1.是用户搜索框的内容在补全模糊搜索后的内容；2.部分参数是用户主观可见，但格式不符合接口原则的，如status='Active'，接口需要status=0
             this.$emit('search', { ...parser.parseStr(enumKey), str: parser.handleEntityTypeByStr(str), keywordList: keywordList })
           } else {
             this.$message.error(handleErrorTip(errorList[0]))

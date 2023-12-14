@@ -48,6 +48,11 @@ export default {
       showCloseIcon: false
     }
   },
+  provide () {
+    return {
+      myHighLight: !this.noHighlight
+    }
+  },
   props: {
     // 默认模式，tag | text
     defaultMode: String,
@@ -67,6 +72,10 @@ export default {
     // 连接符列表
     connectionList: Array,
     showHint: {
+      type: Boolean,
+      default: false
+    },
+    noHighlight: {
       type: Boolean,
       default: false
     }

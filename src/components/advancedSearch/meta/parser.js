@@ -14,6 +14,13 @@ const strReg = {
 const operatorList = ['=', ' in ', ' IN ', ' like ', ' LIKE ', 'HAS(', 'has(']
 const enumList = ['status', 'eventType', 'severity']
 
+// ipv4校验
+const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+// ipv6校验
+const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
+// domain校验
+const regexDomain = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
+
 export default class Parser {
   constructor (columnList) {
     this.columnList = columnList
@@ -861,7 +868,7 @@ export default class Parser {
           item.value.label = isWrapped ? `'${this.delSingleQuote(label)}'` : `${this.delSingleQuote(label)}`
           item.value.label1 = isWrapped ? `'%${this.delSingleQuote(label)}%'` : `%${this.delSingleQuote(label)}%`
         }
-        item.column.type = 'string'
+        item.column.type = columnType.string
       }
     })
     // 长度为1时，即模糊搜索，例如搜索框值为1.1.1.1，则直接返回1.1.1.1
@@ -1274,12 +1281,6 @@ export default class Parser {
     if (str[0] === '%' && str[str.length - 1] !== '%') {
       str = str.substring(1, str.length)
     }
-    // ipv4校验
-    const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-    // ipv6校验
-    const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
-    // domain校验
-    const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
 
     if (regexIPv4.test(str) || regexIPv6.test(str)) {
       const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip')
@@ -1291,7 +1292,7 @@ export default class Parser {
         }
         return str
       }
-    } else if (reg.test(str)) {
+    } else if (regexDomain.test(str)) {
       // 只写作domain即可，schema字段更改几次，避免后续再更改，直接拿this.columnList的label进行替换
       const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain')
       if (obj) {
@@ -1315,18 +1316,14 @@ export default class Parser {
     }
   }
 
+  /**
+   * 判断传过来值的实体类型，仅限于ip、domain、app
+   */
   getEntityTypeByValue (str) {
     if (str[0] === "'" && str[str.length - 1] === "'") {
       str = str.substring(1, str.length)
       str = str.substring(0, str.length - 1)
     }
-    // ipv4校验
-    const regexIPv4 = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-    // ipv6校验
-    const regexIPv6 = /^(?:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,7}:|(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}|(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}|(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}|(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(?:(?::[0-9A-Fa-f]{1,4}){1,6})|:(?:(?::[0-9A-Fa-f]{1,4}){1,7}|:)|fe80:(?::[0-9A-Fa-f]{0,4}){0,4}%\w+|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])\.(?:(?:2[0-4]|1\d|[1-9])?\d|25[0-5])|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.88\.99\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:192\.0\.2\.(\d{1,3})|(?:[0-9A-Fa-f]{1,4}:){1,4}:(?:[0-9A-Fa-f]{1,4}:){0,1}192\.0\.0\.(\d{1,3})|ff00:(?::[0-9A-Fa-f]{0,4}){0,4}|(?:[0-9A-Fa-f]{1,4}:){1,4}:255\.255\.255\.255)$/
-    // domain校验
-    const reg = /^(?=^.{3,255}$)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+(:\d+)*(\/\w+\.\w+)*$/
-
     if (regexIPv4.test(str) || regexIPv6.test(str)) {
       const obj = this.columnList.find(t => t.label.toLowerCase() === 'ip')
       if (obj) {
@@ -1334,7 +1331,7 @@ export default class Parser {
       } else {
         return str
       }
-    } else if (reg.test(str)) {
+    } else if (regexDomain.test(str)) {
       const obj = this.columnList.find(t => t.label.toLowerCase() === 'domain')
       if (obj) {
         return obj.label
@@ -1517,6 +1514,26 @@ export default class Parser {
     } else {
       return str
     }
+  }
+
+  /**
+   * 获取关键字列表，即高亮字段
+   * @param metaList
+   * @returns {*[]}
+   */
+  getKeywordList (metaList) {
+    const keywordList = []
+    if (metaList && metaList.length > 0) {
+      metaList.forEach(item => {
+        if (item.column && item.column.isFullText) {
+          keywordList.push({ type: 'fullText', value: item.value.value })
+        } else if (item.column && !item.column.isFullText) {
+          keywordList.push({ type: item.column.type, value: item.column.label })
+        }
+      })
+    }
+
+    return keywordList
   }
 }
 
