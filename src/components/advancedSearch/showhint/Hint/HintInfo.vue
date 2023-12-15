@@ -3,6 +3,7 @@
     <ul style="padding-left: 0;margin: -10px 0 0 0;min-width: calc(100% - 12px)">
       <template v-for="(item,index) in hintList" :key="index">
         <li :ref="'hint_'+index" class="relative-item CodeMirror-hint"
+            style="margin-bottom: 2px"
             @click="handleSelect(item,index,hintList)"
             :class="{'CodeMirror-hint-active':index === activeIndex,[item.className]:true}"
         >{{ item.displayText }}</li>
@@ -113,14 +114,12 @@ export default {
     box-sizing: border-box;
     padding-bottom: 10px;
   }
-  .hint-title{
-    margin: 10px !important;
-    margin-left: 0 !important;
-    font-size: 14px;
-    line-height: 24px;
-  }
   .el-dropdown-menu__item{
     text-indent: 1em;
+    font-size: 12px !important;
+    font-family: NotoSansSChineseRegular;
+    color: #575757;
+    font-weight: 400;
   }
   .hint-clear{
     text-indent: 1em;

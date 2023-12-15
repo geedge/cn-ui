@@ -134,12 +134,13 @@ export default {
         option = {
           keyMap: 'sublime',
           tabSize: 2, // 缩进格式
-          theme: 'eclipse', // 主题，对应主题库 JS 需要提前引入
+          // theme: 'eclipse', // 主题，对应主题库 JS 需要提前引入
           line: true,
           lineNumbers: false, // 显示行数
           indentUnit: 4, // 缩进单位为4
           styleActiveLine: true, // 当前行背景高亮
-          mode: 'text/x-filter', // HMTL混合模式
+          // mode: 'text/x-filter', // HMTL混合模式
+          mode: 'sql', // HMTL混合模式
           foldGutter: true,
           lint: true,
           auto: 'auto', // 自动换行

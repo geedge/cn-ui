@@ -806,6 +806,7 @@ export default {
     hideRelatedEntities (e) {
       this.isHideRelatedEntities = e
       this.reloadUrl({ hideRelated: e })
+      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
     }

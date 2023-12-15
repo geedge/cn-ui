@@ -375,16 +375,15 @@ span.CodeMirror-selectedtext { background: none; }
 }
 
 .hint-title {
-  margin: 10px 10px 10px 0;
-  height: 24px;
-  line-height: 24px;
+  margin: 7px 0 3px 0 !important;
   /* 禁止选中  样式 */
   background: #fff !important;
   font-family: NotoSansHans-Medium;
-  font-size: 14px;
+  font-size: 12px;
   color: #333333 !important;
   letter-spacing: 0;
-  font-weight: 500;
+  font-weight: 600 !important;
+  line-height: 12px;
 }
 
 .cm-s-eclipse span.cm-string-2 {
@@ -435,7 +434,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 
 .cm-variable-2{
-  font-weight: bold;
+  color: #164 !important;
 }
 
 .default-tips-header,.default-tips-title {
