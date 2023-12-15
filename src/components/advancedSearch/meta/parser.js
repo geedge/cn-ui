@@ -1119,7 +1119,7 @@ export default class Parser {
             if (key === 'has') {
               returnObj.key += 'has(' + obj.label + item.substring(item.indexOf(','), item.length) + ' AND '
             } else {
-              returnObj.key += obj.label + ' ' + item.substring(item.toLowerCase().indexOf(key.toLowerCase()), item.length) + ' AND '
+              returnObj.key += obj.label + ' ' + item.substring(obj.label.length, item.length) + ' AND '
             }
           } else if (returnObj.isKey) {
             returnObj.key = '[' + key + ']'
@@ -1224,8 +1224,9 @@ export default class Parser {
           if (item.indexOf('it is test keyword') > -1) {
             const regex = /\d+/g
             const result1 = item.match(regex)
-            noAndList[index] = noAndList[index].replace(result1[0], '')
-            noAndList[index] = noAndList[index].replace('it is test keyword', tempList[result1[0]])
+            result1.forEach((r, i) => {
+              noAndList[index] = noAndList[index].replace('it is test keyword' + r, tempList[result1[i]])
+            })
           }
         })
 
