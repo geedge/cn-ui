@@ -1420,8 +1420,8 @@ export default {
       if (tab.prop === 'protocolPort') {
         const valueGroup = value.split(':')
         if (valueGroup) {
-          queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
-          queryCondition.push('common_server_port=' + valueGroup[1])
+          queryCondition.push("l7_protocol='" + valueGroup[0] + "'")
+          queryCondition.push('server_port=' + valueGroup[1])
         }
         conditions = queryCondition.join(' AND ')
         this.urlChangeParams[this.curTabState.queryCondition] = conditions
@@ -1571,8 +1571,8 @@ export default {
       if (curTab.prop === 'protocolPort') {
         const valueGroup = columnValue.split(':')
         if (valueGroup) {
-          queryCondition.push("common_l7_protocol='" + valueGroup[0] + "'")
-          queryCondition.push('common_server_port=' + valueGroup[1])
+          queryCondition.push("l7_protocol='" + valueGroup[0] + "'")
+          queryCondition.push('server_port=' + valueGroup[1])
         }
         this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
         this.urlChangeParams[this.curTabState.lineQueryCondition] = queryCondition.join(' AND ')
@@ -1835,9 +1835,9 @@ export default {
       if (fourthPanel === drillDownPanelTypeMapping.npmOverviewIp) {
         if (dimensionType === 'clientIp' || dimensionType === 'serverIp' || dimensionType === 'ip') {
           if (tabIndex === 0) {
-            return `common_client_ip='${fourthMenu}'`
+            return `client_ip='${fourthMenu}'`
           } else if (tabIndex === 1) {
-            return `common_server_ip='${fourthMenu}'`
+            return `server_ip='${fourthMenu}'`
           }
         }
       }

@@ -129,9 +129,9 @@ export default {
       this.levelTwoTags = []
       const basicInfoRequest = axios.get(`${api.entity.basicInfo}/${this.entity.entityType}?resource=${this.entity.entityName}`)
       let requestArray = []
-      if(this.entity.entityType === entityType.subscriber) {
-        requestArray = [null,basicInfoRequest]
-      }else {
+      if (this.entity.entityType === entityType.subscriber) {
+        requestArray = [null, basicInfoRequest]
+      } else {
         const tagRequest = axios.get(`${api.entity.tags}/${this.entity.entityType}?resource=${this.entity.entityName}`)
         requestArray = [tagRequest, basicInfoRequest]
       }
@@ -312,7 +312,7 @@ export default {
         networkOverviewAnalysisItemCopy.url = resolvePath({
           path: networkOverviewAnalysisItemCopy.path,
           query: {
-            queryCondition: `common_client_ip='${props.entity.entityName}' OR common_server_ip='${props.entity.entityName}'`,
+            queryCondition: `client_ip='${props.entity.entityName}' OR server_ip='${props.entity.entityName}'`,
             lineQueryCondition: `ip='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'network.ips',
@@ -340,7 +340,7 @@ export default {
         dnsAnalysisItemCopy.url = resolvePath({
           path: dnsAnalysisItem.path,
           query: {
-            queryCondition: `common_server_ip='${props.entity.entityName}'`,
+            queryCondition: `server_ip='${props.entity.entityName}'`,
             lineQueryCondition: `server_ip='${props.entity.entityName}'`,
             panelName: props.entity.entityName,
             thirdMenu: 'dns.dnsServer',
@@ -404,7 +404,7 @@ export default {
         break
       }
       case 'app': {
-        const queryCondition = `common_app_label='${props.entity.entityName}'`
+        const queryCondition = `app='${props.entity.entityName}'`
         const networkOverviewAnalysisItemCopy = _.cloneDeep(networkOverviewAnalysisItem)
         networkOverviewAnalysisItemCopy.url = resolvePath({
           path: networkOverviewAnalysisItemCopy.path,

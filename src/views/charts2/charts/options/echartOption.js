@@ -8,7 +8,7 @@ import {
   unitTypes,
   chartColorForSubscriberTopApp
 } from '@/utils/constants'
-import unitConvert,{valueToRangeValue} from '@/utils/unit-convert'
+import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
 import { axisFormatter } from '@/views/charts/charts/tools'
 import { xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
 
@@ -739,7 +739,7 @@ export const entityDetailSubscriberTopApp = {
     show: true,
     trigger: 'axis',
     formatter: function (param) {
-      return `${param[0].name}: ${valueToRangeValue(param[0].value[0], unitTypes.percent,null,null,1).join(' ')}`
+      return `${param[0].name}: ${valueToRangeValue(param[0].value[0], unitTypes.percent, null, null, 1).join(' ')}`
     },
     className: 'nz-chart-tooltip',
     extraCssText: 'box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);max-width: 400px !important'
@@ -792,7 +792,7 @@ export const entityDetailSubscriberTopApp = {
       position: 'right',
       valueAnimation: true,
       formatter: function (param, index, callback) {
-        return `${valueToRangeValue(param.value[0], unitTypes.percent,null,null,1).join(' ')}`
+        return `${valueToRangeValue(param.value[0], unitTypes.percent, null, null, 1).join(' ')}`
       }
     }
   }]

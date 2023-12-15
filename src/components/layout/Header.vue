@@ -591,21 +591,28 @@ export default {
         if (curTab.prop === 'protocolPort') {
           const valueGroup = value.split(':')
           if (valueGroup) {
-            queryCondition.push('common_l7_protocol=\'' + valueGroup[0] + '\'')
-            queryCondition.push('common_server_port=' + valueGroup[1])
+            queryCondition.push('l7_protocol=\'' + valueGroup[0] + '\'')
+            queryCondition.push('server_port=' + valueGroup[1])
           }
           // console.log(queryCondition.join(' AND '))
           this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' AND ')
           this.urlChangeParams[this.curTabState.lineQueryCondition] = queryCondition.join(' AND ')
         } else {
-          searchProps.forEach(item => {
-            queryCondition.push(item + '=\'' + handleSpecialValue(value) + '\'')
-          })
+          if (curTab.queryCondition) {
+            curTab.queryCondition.forEach(item => {
+              queryCondition.push(item.replaceAll('$param', value))
+            })
+          } else if (searchProps) {
+            searchProps.forEach(item => {
+              queryCondition.push(item + '=\'' + handleSpecialValue(value) + '\'')
+            })
+          }
+
           this.urlChangeParams[this.curTabState.queryCondition] = queryCondition.join(' OR ')
           const lineQueryCondition = []
           if (curTab.lineQueryCondition) {
             curTab.lineQueryCondition.forEach(item => {
-              lineQueryCondition.push(item.replaceAll('$param', value))
+              lineQueryCondition.push(item.replaceAll('$param', handleSpecialValue(value)))
             })
             this.urlChangeParams[this.curTabState.lineQueryCondition] = lineQueryCondition.join(' OR ')
           }

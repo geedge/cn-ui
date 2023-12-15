@@ -125,8 +125,8 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
       { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
       // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
-      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 }
+      // { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ]
   },
   {
@@ -136,8 +136,8 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
       { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
       // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
-      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 }
+      // { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ]
   },
   {
@@ -148,7 +148,7 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.openPort, label: 'entities.openPort', icon: 'cn-icon cn-icon-open-port', tag: 0 },
       // { name: entityDetailTabsName.digitalCertificate, label: 'entities.digitalCertificate', icon: 'cn-icon cn-icon-digital-certificate', tag: 0 },
       { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 },
+      // { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 },
       { name: entityDetailTabsName.behaviorPattern, label: 'entities.behaviorPattern', icon: 'cn-icon cn-icon-behavior', tag: 0 }
     ]
   },
@@ -158,8 +158,8 @@ export const entityDetailTabConfig = [
       { name: entityDetailTabsName.deviceInformation, label: 'entities.deviceInformation', icon: 'cn-icon cn-icon-device-info', tag: 0 },
       { name: entityDetailTabsName.accountInformation, label: 'entities.accountInformation', icon: 'cn-icon cn-icon-account-info', tag: 0 },
       { name: entityDetailTabsName.relatedEntity, label: 'entities.relatedEntity', icon: 'cn-icon cn-icon-domain-name-resolution', tag: 0 },
-      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 },
-      //{ name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
+      { name: entityDetailTabsName.securityEvent, label: 'overall.securityEvent', icon: 'cn-icon cn-icon-security-event', tag: 0 }
+      // { name: entityDetailTabsName.performanceEvent, label: 'overall.performanceEvent', icon: 'cn-icon cn-icon-a-PerformanceEvent', tag: 0 }
     ]
   }
 ]
@@ -784,7 +784,7 @@ export const networkOverviewTabList = [
     label: 'network.ips',
     prop: 'ip',
     queryCycleTotalProp: 'ips',
-    dillDownProp: ['common_client_ip', 'common_server_ip'], // 下钻表格：查询条件q（dillDownProp里条件之间都是OR的关系）,或者queryCondition属性，queryCondition: ['ip = \'$param\' AND side = \'server\''],
+    dillDownProp: ['client_ip', 'server_ip'], // 下钻表格：查询条件q（dillDownProp里条件之间都是OR的关系）,或者queryCondition属性，queryCondition: ['ip = \'$param\' AND side = \'server\''],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['ip = \'$param\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['side = \'server\''], // 曲线图：第三级维度查询条件q
@@ -817,10 +817,10 @@ export const networkOverviewTabList = [
     label: 'network.applications',
     prop: 'appLabel',
     queryCycleTotalProp: 'applications',
-    dillDownProp: ['common_app_label'],
+    dillDownProp: ['app'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
-    lineQueryCondition: ['common_app_label = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(common_app_label)'], // 曲线图：第三级维度查询条件q
+    lineQueryCondition: ['app = \'$param\''], // 曲线图：查询条件q
+    lineThirdDimensionQueryCondition: ['notEmpty(app)'], // 曲线图：第三级维度查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -861,10 +861,10 @@ export const networkOverviewTabList = [
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
-    dillDownProp: ['common_l7_protocol'],
+    dillDownProp: ['l7_protocol'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
-    lineQueryCondition: ['common_l7_protocol = \'$param\''], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(common_l7_protocol)'], // 曲线图：第三级维度查询条件q
+    lineQueryCondition: ['l7_protocol = \'$param\''], // 曲线图：查询条件q
+    lineThirdDimensionQueryCondition: ['notEmpty(l7_protocol)'], // 曲线图：第三级维度查询条件q
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -938,10 +938,10 @@ export const networkOverviewTabList = [
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',
-    dillDownProp: ['common_l7_protocol', 'common_server_port'],
+    dillDownProp: ['l7_protocol', 'server_port'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
-    lineQueryCondition: ['common_l7_protocol = \'$protocol_param\' AND common_server_port = $port_param'], // 曲线图：查询条件q
-    lineThirdDimensionQueryCondition: ['notEmpty(common_l7_protocol)'], // 曲线图：第三级维度查询条件q
+    lineQueryCondition: ['l7_protocol = \'$protocol_param\' AND server_port = $port_param'], // 曲线图：查询条件q
+    lineThirdDimensionQueryCondition: ['notEmpty(l7_protocol)'], // 曲线图：第三级维度查询条件q
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.networkOverview
@@ -949,7 +949,7 @@ export const networkOverviewTabList = [
     label: 'network.clientIps',
     prop: 'clientIp',
     queryCycleTotalProp: 'clientIps',
-    dillDownProp: ['common_client_ip'],
+    dillDownProp: ['client_ip'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['ip = \'$param\' and side = \'client\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(ip) and side = \'client\''], // 曲线图：第三级维度查询条件q
@@ -960,7 +960,7 @@ export const networkOverviewTabList = [
     label: 'network.serverIps',
     prop: 'serverIp',
     queryCycleTotalProp: 'serverIps',
-    dillDownProp: ['common_server_ip'],
+    dillDownProp: ['server_ip'],
     thirdDimensionQueryCondition: [], // 下钻表格：第三级维度查询条件q
     lineQueryCondition: ['ip = \'$param\' and side = \'server\''], // 曲线图：查询条件q
     lineThirdDimensionQueryCondition: ['notEmpty(ip) and side = \'server\''], // 曲线图：第三级维度查询条件q
@@ -1112,8 +1112,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.applications',
     prop: 'appLabel',
     queryCycleTotalProp: 'applications',
-    dillDownProp: ['common_app_label'],
-    lineQueryCondition: ['common_app_label = \'$param\''],
+    dillDownProp: ['app'],
+    lineQueryCondition: ['app = \'$param\''],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewApp
@@ -1148,7 +1148,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
-    dillDownProp: ['common_l7_protocol'],
+    dillDownProp: ['l7_protocol'],
     lineQueryCondition: ['l7_protocol = \'$param\''],
     checked: true,
     disabled: false,
@@ -1211,8 +1211,8 @@ export const networkAppPerformanceTabList = [
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',
-    dillDownProp: ['common_l7_protocol', 'common_server_port'],
-    lineQueryCondition: ['common_l7_protocol = \'$protocol_param\' AND common_server_port = $port_param'],
+    dillDownProp: ['l7_protocol', 'server_port'],
+    lineQueryCondition: ['l7_protocol = \'$protocol_param\' AND server_port = $port_param'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.npmOverviewCommon
@@ -1220,7 +1220,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.clientIps',
     prop: 'clientIp',
     queryCycleTotalProp: 'clientIps',
-    dillDownProp: ['common_client_ip'],
+    dillDownProp: ['client_ip'],
     lineQueryCondition: ['ip = \'$param\' AND side = \'client\''],
     checked: false,
     disabled: false,
@@ -1229,7 +1229,7 @@ export const networkAppPerformanceTabList = [
     label: 'network.serverIps',
     prop: 'serverIp',
     queryCycleTotalProp: 'serverIps',
-    dillDownProp: ['common_server_ip'],
+    dillDownProp: ['server_ip'],
     lineQueryCondition: ['ip = \'$param\' AND side = \'server\''],
     checked: false,
     disabled: false,
@@ -1332,7 +1332,7 @@ export const linkMonitorTabList = [
     label: 'network.ips', // tab名称对应的il8n
     prop: 'ip', // 接口返回数据中，tab第一列对应的属性名
     queryCycleTotalProp: 'ips', // SQL中查询不同纬度的列名称
-    dillDownProp: ['common_client_ip', 'common_server_ip'], // 下钻时，传递的查询条件，即接口的q参数
+    dillDownProp: ['client_ip', 'server_ip'], // 下钻时，传递的查询条件，即接口的q参数
     checked: true, // 自定义设置中，是否默认选中
     disabled: false, // 自定义设置中，是否可操作（选中或取消选中）
     panelId: drillDownPanelTypeMapping.linkMonitor// 下钻后展示的panelId
@@ -1356,7 +1356,7 @@ export const linkMonitorTabList = [
     label: 'network.applications',
     prop: 'appLabel',
     queryCycleTotalProp: 'applications',
-    dillDownProp: ['common_app_label'],
+    dillDownProp: ['app'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1388,7 +1388,7 @@ export const linkMonitorTabList = [
     label: 'network.protocols',
     prop: 'l7Protocol',
     queryCycleTotalProp: 'protocols',
-    dillDownProp: ['common_l7_protocol'],
+    dillDownProp: ['l7_protocol'],
     checked: true,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1444,7 +1444,7 @@ export const linkMonitorTabList = [
     label: 'network.protocolPorts',
     prop: 'protocolPort',
     queryCycleTotalProp: 'protocolports',
-    dillDownProp: ['common_l7_protocol', 'common_server_port'],
+    dillDownProp: ['l7_protocol', 'server_port'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1452,7 +1452,7 @@ export const linkMonitorTabList = [
     label: 'network.clientIps',
     prop: 'clientIp',
     queryCycleTotalProp: 'clientIps',
-    dillDownProp: ['common_client_ip'],
+    dillDownProp: ['client_ip'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1460,7 +1460,7 @@ export const linkMonitorTabList = [
     label: 'network.serverIps',
     prop: 'serverIp',
     queryCycleTotalProp: 'serverIps',
-    dillDownProp: ['common_server_ip'],
+    dillDownProp: ['server_ip'],
     checked: false,
     disabled: false,
     panelId: drillDownPanelTypeMapping.linkMonitor
@@ -1552,7 +1552,7 @@ export const dnsServiceInsightsTabList = [
     label: 'dns.dnsServer', // tab名称对应的il8n
     prop: 'dnsServer', // 接口返回数据中，tab第一列对应的属性名
     queryCycleTotalProp: 'dnsServer', // SQL中查询不同纬度的列名称
-    dillDownProp: ['common_server_ip'], // 下钻时，传递的查询条件，即接口的q参数
+    dillDownProp: ['server_ip'], // 下钻时，传递的查询条件，即接口的q参数
     lineQueryCondition: ['server_ip = \'$param\''], // 曲线图：查询条件q
     checked: true, // 自定义设置中，是否默认选中
     disabled: false, // 自定义设置中，是否可操作（选中或取消选中）

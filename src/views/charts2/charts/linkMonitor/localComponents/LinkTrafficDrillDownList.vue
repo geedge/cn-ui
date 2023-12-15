@@ -127,20 +127,20 @@ export default {
         const condition = this.queryCondition.split(' or ')
         if (condition.length > 1) {
           // params.outParam = true
-          params.outParam = condition.find(c => c.indexOf('common_out_link_id') > -1 || c.indexOf('out_link_direction') > -1)
-          params.inParam = condition.find(c => c.indexOf('common_in_link_id') > -1 || c.indexOf('in_link_direction') > -1)
+          params.outParam = condition.find(c => c.indexOf('out_link_id') > -1 || c.indexOf('out_link_direction') > -1)
+          params.inParam = condition.find(c => c.indexOf('in_link_id') > -1 || c.indexOf('in_link_direction') > -1)
           let bandwidthAll = 0
           let inLinkId = null
           let outLinkId = null
           let linkDirection = null
           const outParamSplit = params.outParam.split('=')
           const inParamSplit = params.inParam.split('=')
-          if (outParamSplit[0] && (outParamSplit[0].trim() === 'common_out_link_id')) {
+          if (outParamSplit[0] && (outParamSplit[0].trim() === 'out_link_id')) {
             outLinkId = outParamSplit[1].trim()
           } else if (outParamSplit[0].trim() === 'out_link_direction') {
             linkDirection = outParamSplit[1].trim()
           }
-          if (inParamSplit[0] && (inParamSplit[0].trim() === 'common_in_link_id')) {
+          if (inParamSplit[0] && (inParamSplit[0].trim() === 'in_link_id')) {
             inLinkId = inParamSplit[1].trim()
           }
           if (outLinkId && inLinkId) {

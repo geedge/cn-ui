@@ -371,7 +371,7 @@ export default {
       return width
     },
     drillLinkId (item) {
-      const queryCondition = `common_out_link_id = ${item.outLinkId} or common_in_link_id = ${item.inLinkId}`
+      const queryCondition = `out_link_id = ${item.outLinkId} or in_link_id = ${item.inLinkId}`
       beforeRouterPush()
       this.$router.push({
         query: {

@@ -481,7 +481,7 @@ export default {
           this.lineTab = 'total'
           this.legendSelectChange(tab, 0)
         })
-        /*tabs.forEach((e, i) => {
+        /* tabs.forEach((e, i) => {
           if (i !== 0) {
             e.show = false
           }
@@ -490,7 +490,7 @@ export default {
           e.invertTab = false
           this.lineTab = 'total'
           this.legendSelectChange(e, 0)
-        })*/
+        }) */
         this.tabs = tabs
         this.$nextTick(() => {
           this.echartsInit(lineData)
