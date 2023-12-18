@@ -425,7 +425,7 @@ span.CodeMirror-selectedtext { background: none; }
 
 .CodeMirror-hint {
   margin: 0;
-  padding: 0 4px !important;
+  padding: 0 !important;
   line-height: 20px !important;
   border-radius: 2px;
   white-space: pre;
@@ -468,7 +468,7 @@ span.CodeMirror-selectedtext { background: none; }
     display: flex;
     flex-direction: row;
     width: calc(100% - 41px);
-    min-height: 320px;
+    min-height: 298px;
     margin-top: 6px;
     box-shadow: 0 2px 8px 0 rgba(0,0,0,.3);
     z-index: 2;

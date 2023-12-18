@@ -103,7 +103,7 @@ export default {
 
 <style scoped>
   .HintInfo {
-    height: 302px;
+    height: 280px;
     overflow: auto;
     background: #fff;
   }

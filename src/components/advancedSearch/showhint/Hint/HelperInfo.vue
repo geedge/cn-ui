@@ -120,7 +120,7 @@ export default {
   .HelperInfo {
     min-width: 450px;
     background-color: #fff;
-    height: 302px;
+    height: 294px;
     box-sizing: border-box;
     overflow: auto;
     z-index: 99;
