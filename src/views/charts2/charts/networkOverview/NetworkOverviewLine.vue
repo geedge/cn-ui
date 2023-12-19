@@ -191,7 +191,7 @@ export default {
       this.toggleLoading(true)
       axios.get(url, { params: params }).then(response => {
         const res = response.data
-
+        this.chartDateObject = response
         if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
           this.showError = false
@@ -213,6 +213,33 @@ export default {
       }).finally(() => {
         this.toggleLoading(false)
       })
+    },
+    initTabData (val, show, active, n) {
+      const newVal = val ? _.clone(val) : this.metric
+      this.toggleLoading(true)
+      try {
+        const res = this.chartDateObject.data
+        if (this.chartDateObject.status === 200) {
+          this.isNoData = res.data.result.length === 0
+          this.showError = false
+          if (!active) {
+            this.tabs = _.cloneDeep(this.tabsTemplate)
+          }
+          if (this.isNoData) {
+            this.lineTab = ''
+            this.tabs = _.cloneDeep(this.tabsTemplate)
+          } else {
+            this.initData(res.data.result, newVal, active, show, n)
+          }
+        } else {
+          this.httpError(res)
+        }
+      } catch (e) {
+        console.error(e)
+        this.httpError(e)
+      } finally {
+        this.toggleLoading(false)
+      }
     },
     echartsInit (echartsData, show) {
       // echarts内容在单元测试时不执行
@@ -360,7 +387,7 @@ export default {
         this.legendSelectChange(item, index, 'active')
         this.showMarkLine = !item.invertTab
       }
-      this.init(this.metric, this.showMarkLine, 'active')
+      this.initTabData(this.metric, this.showMarkLine, 'active')
     },
     mouseenter (item) {
       if (this.isNoData) return

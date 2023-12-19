@@ -408,9 +408,18 @@ export default {
     },
     metricChange (value) {
       const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        metric: value
-      })
+      const rangeParam = query.range
+      let params = { metric: value }
+      // 优先级：url > config.js > 默认值。
+      const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)
+      if (dateRangeValue !== -1) {
+        const { startTime, endTime } = getNowTime(dateRangeValue)
+        this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
+        this.$store.commit('setTimeRangeArray', [this.timeFilter.startTime, this.timeFilter.endTime])
+        this.$store.commit('setTimeRangeFlag', dateRangeValue.value)
+        params = { metric: value, startTime: this.timeFilter.startTime, endTime: this.timeFilter.endTime, range: dateRangeValue }
+      }
+      const newUrl = urlParamsHandler(window.location.href, query, params)
       overwriteUrl(newUrl)
     },
     // 动态查询评分基准
