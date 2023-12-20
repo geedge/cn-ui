@@ -11,6 +11,7 @@ export async function loadI18n () {
     const items = await getI18n()
     if (items) {
       store.commit('loadI18n')
+      store.state.i18nObj = items
       Object.keys(items).forEach(lang => {
         i18n.global.mergeLocaleMessage(lang, items[lang])
       })

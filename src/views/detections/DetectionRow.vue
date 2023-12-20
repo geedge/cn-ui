@@ -33,7 +33,7 @@
               <div class="basic-info__item" v-if="detection.severity">
                 <i class="cn-icon cn-icon-severity-level"></i>
                 <span>{{$t('detection.list.security')}}&nbsp;:&nbsp;&nbsp;</span>
-                <span>{{detection.severity || '-'}}</span>
+                <span>{{changeI18nOfSeverity(detection.severity)}}</span>
               </div>
               <div class="basic-info__item" v-if="detection.eventSeverity">
                 <i class="cn-icon cn-icon-severity-level"></i>
@@ -116,7 +116,7 @@ import DetectionSecurityEventOverview from '@/views/detections/overview/Detectio
 import DetectionPerformanceEventIpOverview from '@/views/detections/overview/DetectionPerformanceEventIpOverview'
 import DetectionPerformanceEventAppOverview from '@/views/detections/overview/DetectionPerformanceEventAppOverview'
 import DetectionPerformanceEventDomainOverview from '@/views/detections/overview/DetectionPerformanceEventDomainOverview'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { overwriteUrl, urlParamsHandler, changeI18nOfSeverity } from '@/utils/tools'
 export default {
   name: 'DetectionRow',
   components: {
@@ -189,6 +189,7 @@ export default {
     unitConvert,
     getMillisecond,
     dateFormatByAppearance,
+    changeI18nOfSeverity,
     /* 切换折叠状态 */
     switchCollapse () {
       this.isCollapse = !this.isCollapse

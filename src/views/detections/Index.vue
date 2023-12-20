@@ -133,7 +133,7 @@ import {
 } from '@/views/detections/options/detectionOptions'
 import { api } from '@/utils/api'
 import axios from 'axios'
-import { urlParamsHandler, overwriteUrl, extensionEchartY, reverseSortBy } from '@/utils/tools'
+import { urlParamsHandler, overwriteUrl, extensionEchartY, reverseSortBy, changeI18nOfSeverity } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
@@ -313,12 +313,12 @@ export default {
         if (!this.$_.isEmpty(data)) {
           const dataMap = new Map()
           data.forEach(item => {
-            if (item.severity) {
-              if (!dataMap.has(item.severity)) {
+            if (changeI18nOfSeverity(item.severity)) {
+              if (!dataMap.has(changeI18nOfSeverity(item.severity))) {
                 const count = [[getMillisecond(parseFloat(item.statTime)), item.count]]
-                dataMap.set(item.severity, count)
+                dataMap.set(changeI18nOfSeverity(item.severity), count)
               } else {
-                dataMap.get(item.severity).push([getMillisecond(parseFloat(item.statTime)), item.count])
+                dataMap.get(changeI18nOfSeverity(item.severity)).push([getMillisecond(parseFloat(item.statTime)), item.count])
               }
             }
           })
@@ -337,6 +337,7 @@ export default {
           })
 
           eventSeverityTrendOption.series.forEach(serie => {
+            serie.name = changeI18nOfSeverity(serie.name)
             const seriesData = []
             xData.forEach(item => {
               if (dataMap.has(serie.name)) {
@@ -388,11 +389,11 @@ export default {
         }
         this.statisticsSeverityData = data
         if (!this.$_.isEmpty(data)) {
-          this.filterData[this.pageType][1].data = data.map(r => ({ label: r.severity, value: r.severity, count: r.count }))
+          this.filterData[this.pageType][1].data = data.map(r => ({ label: changeI18nOfSeverity(r.severity), value: r.severity, count: r.count }))
           this.isCheckFilterByQ(params, 1)
           const eventSeverityOption = this.$_.cloneDeep(pieForSeverity)
           eventSeverityOption.series[0].data = data.map(d => {
-            return { value: d.count, name: d.severity, itemStyle: { color: getSeverityColor(d.severity) } }
+            return { value: d.count, name: changeI18nOfSeverity(d.severity), itemStyle: { color: getSeverityColor(d.severity) } }
           })
           const chartDom = document.getElementById(`eventSeverityPie${this.pageType}`)
           let detectionChart = echarts.getInstanceByDom(chartDom)

@@ -82,21 +82,21 @@ export default {
 
       let searchKey = hintSearch.toUpperCase() || ''
       searchKey = searchKey.trim()
-      if (functionTips[searchKey]) {
-        return functionTips[searchKey].description
-      }
+      // if (functionTips[searchKey]) {
+      //   return functionTips[searchKey].description
+      // }
       if (operatorTips[searchKey]) {
         return operatorTips[searchKey].description
       }
-      if (sqlTips[searchKey]) {
-        return sqlTips[searchKey].description
-      }
+      // if (sqlTips[searchKey]) {
+      //   return sqlTips[searchKey].description
+      // }
       if (filterTips[searchKey]) {
         return filterTips[searchKey].description
       }
-      if (varTips[searchKey]) {
-        return varTips[searchKey].description
-      }
+      // if (varTips[searchKey]) {
+      //   return varTips[searchKey].description
+      // }
 
       // 完整的匹配关键字
       if (this.getDataset()) {

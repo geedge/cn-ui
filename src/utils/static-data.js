@@ -426,8 +426,8 @@ export const enumerateData = [
   {
     name: 'status',
     data: [
-      { code: 'Ended', value: 1 },
-      { code: 'Active', value: 0 }
+      { code: _this.$t('detections.ended'), code1: 'detections.ended', value: 1 },
+      { code: _this.$t('detections.active'), code1: 'detections.active', value: 0 }
     ]
   },
   {
@@ -446,11 +446,11 @@ export const enumerateData = [
   {
     name: 'severity',
     data: [
-      { code: 'critical', value: 'critical' },
-      { code: 'high', value: 'high' },
-      { code: 'Medium', value: 'Medium' },
-      { code: 'low', value: 'low' },
-      { code: 'info', value: 'info' }
+      { code: _this.$t('overall.critical'), code1: 'overall.critical', value: 'critical' },
+      { code: _this.$t('overall.high'), code1: 'overall.high', value: 'high' },
+      { code: _this.$t('overall.medium'), code1: 'overall.medium', value: 'medium' },
+      { code: _this.$t('overall.low'), code1: 'overall.low', value: 'low' },
+      { code: _this.$t('overall.info'), code1: 'overall.info', value: 'info' }
     ]
   }
 ]
