@@ -387,7 +387,11 @@ export default {
         this.legendSelectChange(item, index, 'active')
         this.showMarkLine = !item.invertTab
       }
-      this.initTabData(this.metric, this.showMarkLine, 'active')
+      if (isClick) {
+        this.initTabData(this.metric, this.showMarkLine, 'active')
+      } else {
+        this.init(this.metric, this.showMarkLine, 'active')
+      }
     },
     mouseenter (item) {
       if (this.isNoData) return

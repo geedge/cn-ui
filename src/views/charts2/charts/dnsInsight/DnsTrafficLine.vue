@@ -12,7 +12,7 @@
                :key="index"
                @mouseenter="mouseenter(item)"
                @mouseleave="mouseleave(item)"
-               @click="activeChange(item, index)">
+               @click="activeChange(item, index,true)">
             <div class="line-value-tabs-name">
               <div :class="item.class"></div>
               <div class="tabs-name">{{$t(item.name)}}</div>
@@ -175,6 +175,7 @@ export default {
       const url = this.lineQueryCondition ? api.dnsInsight.drilldownTrafficAnalysis : api.dnsInsight.totalTrafficAnalysis
 
       axios.get(url, { params }).then(res => {
+        this.chartDateObject = res
         if (res.status === 200) {
           this.showError = false
           this.isNoData = res.data.data.result.length === 0
@@ -200,6 +201,38 @@ export default {
       }).finally(() => {
         this.toggleLoading(false)
       })
+    },
+    initTabData (val, show, active) {
+      if (!val) {
+        val = this.lineMetric
+      }
+      this.toggleLoading(true)
+      try {
+        const res = this.chartDateObject.data
+        if (this.chartDateObject.status === 200) {
+          this.isNoData = res.data.result.length === 0
+          if (!active) {
+            this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
+          }
+          if (this.isNoData) {
+            this.lineTab = ''
+            this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
+          } else {
+            this.initData(res.data.result, val, active, show)
+          }
+        } else {
+          this.isNoData = false
+          this.showError = true
+          this.errorMsg = this.errorMsgHandler(res)
+        }
+      } catch (e) {
+        console.error(e)
+        this.isNoData = false
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
+      } finally {
+        this.toggleLoading(false)
+      }
     },
     echartsInit (echartsData, show) {
       this.$nextTick(() => {
@@ -325,12 +358,16 @@ export default {
         }
       })
     },
-    activeChange (item, index) {
+    activeChange (item, index, isClick) {
       if (this.isNoData) return
       this.lineTab = item.class
       this.legendSelectChange(item, index, 'active')
       this.showMarkLine = !item.invertTab
-      this.init(this.lineMetric, this.showMarkLine, 'active')
+      if (isClick) {
+        this.initTabData(this.lineMetric, this.showMarkLine, 'active')
+      } else {
+        this.init(this.lineMetric, this.showMarkLine, 'active')
+      }
     },
     mouseenter (item) {
       if (this.isNoData) return
