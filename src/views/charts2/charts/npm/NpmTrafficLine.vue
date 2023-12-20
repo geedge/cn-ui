@@ -80,6 +80,7 @@ export default {
       unitTypes,
       side: '',
       chartData: {},
+      chartDateObject: [],
       tabs: dataForNpmTrafficLine.tabs,
       npmQuantity: dataForNpmTrafficLine.npmQuantity,
       metricOptions: dataForNpmTrafficLine.metricOptions,
@@ -142,6 +143,7 @@ export default {
       this.toggleLoading(true)
       if (params.type && params.q) {
         axios.get(api.npm.overview.trafficGraph, { params: params }).then(response => {
+          this.chartDateObject = response
           const res = response.data
           if (response.status === 200) {
             this.showError = false
@@ -177,6 +179,7 @@ export default {
             }
           })
           this.showError = false
+          this.chartDateObject = _.cloneDeep(npmLineData)
           this.isNoData = npmLineData.length === 0
           if (this.isNoData) {
             this.tabs = dataForNpmTrafficLine.tabs
@@ -189,6 +192,78 @@ export default {
         }).finally(() => {
           this.toggleLoading(false)
         })
+      }
+    },
+    initDataByCache (val) {
+      if (!val) {
+        val = this.metricFilter
+      }
+      let condition = ''
+      const type = this.dimensionType
+
+      if (this.lineQueryCondition.indexOf(' OR ') > -1) {
+        condition = this.lineQueryCondition.split(/["|'](.*?)["|']/)
+      } else if (this.lineQueryCondition.indexOf('+OR+') > -1) {
+        condition = this.lineQueryCondition.replace(/\+/g, ' ').split(/["|'](.*?)["|']/)
+      } else {
+        condition = this.lineQueryCondition
+      }
+
+      if (parseFloat(this.tabIndex) === 0) {
+        this.side = 'client'
+      } else if (parseFloat(this.tabIndex) === 1) {
+        this.side = 'server'
+      }
+      const params = {
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime),
+        type: type
+      }
+
+      if (type === 'ip' || type === 'clientIp' || type === 'serverIp') {
+        params.q = `${condition} and side='${this.side}'`
+      } else {
+        params.q = condition
+      }
+
+      this.toggleLoading(true)
+      if (params.type && params.q) {
+        try {
+          const res = this.chartDateObject.data
+          if (this.chartDateObject.status === 200) {
+            this.showError = false
+            this.isNoData = res.data.result.length === 0
+            if (this.isNoData) {
+              this.tabs = dataForNpmTrafficLine.tabs
+              this.npmQuantity = dataForNpmTrafficLine.npmQuantity
+            } else {
+              this.initLineData(res.data.result, val)
+            }
+          } else {
+            this.httpError(res)
+          }
+        } catch(e) {
+          this.httpError(e)
+          console.error(e)
+        } finally {
+          this.toggleLoading(false)
+        }
+      } else {
+        this.toggleLoading(true)
+        try {
+          this.showError = false
+          this.isNoData = this.chartDateObject.length === 0
+          if (this.isNoData) {
+            this.tabs = dataForNpmTrafficLine.tabs
+            this.npmQuantity = dataForNpmTrafficLine.npmQuantity
+          } else {
+            this.initLineData(this.chartDateObject, val)
+          }
+        } catch(e) {
+          this.httpError(e)
+        } finally {
+          this.toggleLoading(false)
+        }
       }
     },
     /**
@@ -342,7 +417,7 @@ export default {
       })
     },
     metricChange (value) {
-      this.initData(value)
+      this.initDataByCache(value)
     },
     resize () {
       this.myChart.resize()
@@ -488,6 +563,7 @@ export default {
       echarts.dispose(this.myChart)
     }
     this.unitConvert = null
+    this.chartDateObject = []
   }
 }
 </script>

@@ -683,6 +683,7 @@ export default {
     // 检测时发现该方法占用较大内存，且未被释放
     this.valueToRangeValue = null
     myChart = null
+    this.chartDateObject = []
   }
 }
 </script>
