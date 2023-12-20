@@ -4,6 +4,7 @@ import ParserError, { errorDesc, errorTypes } from '@/components/advancedSearch/
 import _ from 'lodash'
 import { ElMessage } from 'element-plus'
 import i18n from '@/i18n'
+import store from '@/store'
 
 const strReg = {
   // 需要不限制语言，正则过滤中英日俄语出错实现语言都通过。留个记录观察，后续校验
@@ -1500,11 +1501,22 @@ export default class Parser {
         searchList.forEach((item, index) => {
           const obj = this.columnList.find(d => item.indexOf(d.label) > -1)
           if (obj && obj.doc.data) {
-            obj.doc.data.forEach(item1 => {
+            for (let i = 0; i < obj.doc.data.length; i++) {
+              const item1 = obj.doc.data[i]
               if (item.indexOf(item1.code) > -1) {
                 searchList[index] = searchList[index].replace(new RegExp(item1.code, 'g'), item1.value)
+                // 匹配到code，终止匹配
+                break
+              } else {
+                // 该操作是避免中文参数切换到英文环境时，code经i18n转为英文，匹配不到中文参数的情况
+                Object.keys(store.state.i18nObj).forEach(lang => {
+                  const i18nCode = store.state.i18nObj[lang][item1.code1]
+                  if (item.indexOf(i18nCode) > -1) {
+                    searchList[index] = searchList[index].replace(new RegExp(i18nCode, 'g'), item1.value)
+                  }
+                })
               }
-            })
+            }
           }
         })
         key = searchList.join(' AND ')

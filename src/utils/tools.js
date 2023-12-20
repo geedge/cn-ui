@@ -1,7 +1,7 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig, ZH, EN } from '@/utils/constants'
+import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig, ZH, EN, securityLevel } from '@/utils/constants'
 import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
@@ -1445,5 +1445,21 @@ export const changeTimeByDate = (date) => {
     } else {
       return date
     }
+  }
+}
+
+/**
+ * 转换严重程度severity的国际化值
+ */
+export const changeI18nOfSeverity = (severity) => {
+  if (severity) {
+    const obj = securityLevel.find(d => d.value === severity)
+    if (obj) {
+      return i18n.global.t(obj.label)
+    } else {
+      return severity
+    }
+  } else {
+    return '-'
   }
 }

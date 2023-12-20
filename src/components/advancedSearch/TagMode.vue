@@ -273,6 +273,25 @@ export default {
           if (!meta.operator.value) {
             meta.operator.isEditing = true
             meta.operator.show = true
+          } else {
+            // 切换column，清除上次column选择的value，包含枚举的则删除，in操作符的让类型回归array
+            meta.value.value = ''
+            meta.value.label = ''
+            meta.value.isEditing = true
+            meta.value.show = true
+            const obj = enumerateData.find(d => d.name === meta.column.label)
+            if (obj) {
+              meta.doc = obj
+              if (this.$refs.valuesSelect) {
+                // 触发focus后，select弹窗并没有生效
+                this.$refs.valuesSelect[0].focus(meta)
+              }
+            } else {
+              delete meta.doc
+            }
+            if (meta.operator.value.toLowerCase() === 'in') {
+              meta.column.type = columnType.array
+            }
           }
         }, 200)
       }

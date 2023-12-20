@@ -143,7 +143,7 @@
           <div class="row__content row__content--link" v-if="$_.get(detection, 'malware.reference')">
             {{ detection.malware.reference }}
           </div>
-          <div class="row__content">-</div>
+          <div class="row__content" v-else>-</div>
         </div>
       </template>
       <template v-else-if="detection.darkweb">
@@ -315,7 +315,7 @@
                   class="cn-icon cn-icon-alert-level"
                   :style="`color:${eventSeverityColor[event.severity]}`"
                 ></i>
-                <span>{{ event.severity }}</span>
+                <span>{{ changeI18nOfSeverity(event.severity) }}</span>
               </div>
               <div class="timeline__security-type">{{ event.eventType }}</div>
               <div class="timeline__start-time">{{ dateFormatByAppearance(parseInt(event.startTime)) }}</div>
@@ -360,6 +360,7 @@ import { getMillisecond, dateFormatByAppearance } from '@/utils/date-util'
 import { eventSeverityColor, unitTypes, countryNameIdMapping, riskLevelMapping, riskLevelColor, riskLevelColor1 } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
+import { changeI18nOfSeverity } from '@/utils/tools'
 export default {
   name: 'DetectionOverview',
   props: {
@@ -440,6 +441,7 @@ export default {
   methods: {
     getMillisecond,
     dateFormatByAppearance,
+    changeI18nOfSeverity,
     /** 初始化实体详情 */
     initEntityDetail () {
       // 调接口查询攻击者和受害者IP、Domain、APP的更多信息；
