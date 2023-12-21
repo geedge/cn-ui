@@ -156,7 +156,19 @@ export default {
           e.invertTab = true
         }
       })
-      this.init(n, this.showMarkLine, '', n)
+      const { query } = this.$route
+      const rangeParam = query.range
+      if (rangeParam !== -1) {
+        let timeFilter = {}
+        if (query.startTime && query.endTime) {
+          timeFilter = { startTime: parseInt(query.startTime), endTime: parseInt(query.endTime) }
+          this.init(n, this.showMarkLine, '', n, timeFilter)
+        } else {
+          this.init(n, this.showMarkLine, '', n)
+        }
+      } else {
+        this.initTabData(n, this.showMarkLine, '', n)
+      }
     }
   },
   methods: {
@@ -165,12 +177,18 @@ export default {
       const newUrl = urlParamsHandler(window.location.href, query, newParam)
       overwriteUrl(newUrl)
     },
-    init (val, show, active, n) {
+    init (val, show, active, n, timeFilter) {
       const newVal = val ? _.clone(val) : this.metric
 
-      const params = {
+      let params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
+      }
+      if (timeFilter) {
+        params = {
+          startTime: timeFilter.startTime,
+          endTime: timeFilter.endTime
+        }
       }
 
       let url

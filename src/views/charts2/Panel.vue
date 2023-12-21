@@ -414,10 +414,10 @@ export default {
       const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)
       if (dateRangeValue !== -1) {
         const { startTime, endTime } = getNowTime(dateRangeValue)
-        this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
+        // this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
         this.$store.commit('setTimeRangeArray', [this.timeFilter.startTime, this.timeFilter.endTime])
         this.$store.commit('setTimeRangeFlag', dateRangeValue.value)
-        params = { metric: value, startTime: this.timeFilter.startTime, endTime: this.timeFilter.endTime, range: dateRangeValue }
+        params = { metric: value, startTime: getSecond(startTime), endTime: getSecond(endTime), range: dateRangeValue }
       }
       const newUrl = urlParamsHandler(window.location.href, query, params)
       overwriteUrl(newUrl)

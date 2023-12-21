@@ -242,7 +242,7 @@ export default {
           } else {
             this.httpError(res)
           }
-        } catch(e) {
+        } catch (e) {
           this.httpError(e)
           console.error(e)
         } finally {
@@ -259,7 +259,7 @@ export default {
           } else {
             this.initLineData(this.chartDateObject, val)
           }
-        } catch(e) {
+        } catch (e) {
           this.httpError(e)
         } finally {
           this.toggleLoading(false)

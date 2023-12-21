@@ -610,7 +610,7 @@ export default {
     }
     this.chartOption = null
     this.unitConvert = null
-    this.this.chartDateObject = []
+    this.chartDateObject = []
   }
 }
 </script>

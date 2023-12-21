@@ -168,7 +168,8 @@ export default {
       brushHistory: [],
       showError: false,
       errorMsg: '',
-      metricOptions
+      metricOptions,
+      isMetricChange: false
     }
   },
   watch: {
@@ -183,11 +184,14 @@ export default {
     },
     timeFilter: {
       handler () {
-        if (this.lineTab) {
-          this.init(this.metric, this.showMarkLine, 'active')
-        } else {
-          this.init()
+        if (!this.isMetricChange) {
+          if (this.lineTab) {
+            this.init(this.metric, this.showMarkLine, 'active')
+          } else {
+            this.init()
+          }
         }
+        this.isMetricChange = false
       }
     },
     metric (n) {
@@ -224,7 +228,7 @@ export default {
       this.toggleLoading(true)
       axios.get(`${api.entity.throughput}/${this.entity.entityType}`, { params: params }).then(response => {
         const res = response.data
-
+        this.chartDateObject = response
         if (response.status === 200) {
           this.isNoData = res.data.result.length === 0
           this.showError = false
@@ -246,6 +250,33 @@ export default {
       }).finally(() => {
         this.toggleLoading(false)
       })
+    },
+    initTabData (val, show, active, n) {
+      const newVal = val ? _.clone(val) : this.metric
+      this.toggleLoading(true)
+      try {
+        const res = this.chartDateObject.data
+        if (this.chartDateObject.status === 200) {
+          this.isNoData = res.data.result.length === 0
+          this.showError = false
+          if (!active) {
+            this.tabs = _.cloneDeep(this.tabsTemplate)
+          }
+          if (this.isNoData) {
+            this.lineTab = ''
+            this.tabs = _.cloneDeep(this.tabsTemplate)
+          } else {
+            this.initData(res.data.result, newVal, active, show, n)
+          }
+        } else {
+          this.httpError(res)
+        }
+      } catch (e) {
+        console.error(e)
+        this.httpError(e)
+      } finally {
+        this.toggleLoading(false)
+      }
     },
     echartsInit (echartsData, show) {
       // echarts内容在单元测试时不执行
@@ -391,7 +422,12 @@ export default {
         this.legendSelectChange(item, index, 'active')
         this.showMarkLine = !item.invertTab
       }
-      this.init(this.metric, this.showMarkLine, 'active')
+
+      if (isClick) {
+        this.initTabData(this.metric, this.showMarkLine, 'active')
+      } else {
+        this.init(this.metric, this.showMarkLine, 'active')
+      }
     },
     mouseenter (item) {
       if (this.isNoData) return
@@ -654,10 +690,20 @@ export default {
       this.errorMsg = this.errorMsgHandler(e)
     },
     metricChange (value) {
+      this.isMetricChange = true
       const { query } = this.$route
-      const newUrl = urlParamsHandler(window.location.href, query, {
-        metric: value
-      })
+      const rangeParam = query.range
+      let params = { metric: value }
+      // 优先级：url > config.js > 默认值。
+      const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.entity.trafficLine || 60)
+      if (dateRangeValue !== -1) {
+        const { startTime, endTime } = getNowTime(dateRangeValue)
+        this.timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), dateRangeValue: dateRangeValue }
+        this.$store.commit('setTimeRangeArray', [this.timeFilter.startTime, this.timeFilter.endTime])
+        this.$store.commit('setTimeRangeFlag', dateRangeValue.value)
+        params = { metric: value, startTime: this.timeFilter.startTime, endTime: this.timeFilter.endTime, range: dateRangeValue }
+      }
+      const newUrl = urlParamsHandler(window.location.href, query, params)
       overwriteUrl(newUrl)
     },
     reload (startTime, endTime, dateRangeValue) {
@@ -716,6 +762,7 @@ export default {
     // 检测时发现该方法占用较大内存，且未被释放
     this.unitConvert = null
     this.valueToRangeValue = null
+    this.chartDateObject = []
     myChart = null
   }
 }
