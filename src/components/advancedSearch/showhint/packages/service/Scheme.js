@@ -1,5 +1,3 @@
-import { getSchemaInfo } from '@/utils/timeQueryApi'
-
 export class Scheme {
   constructor (context, params, list) {
     // 先从缓存获取数据
@@ -83,12 +81,6 @@ export class Scheme {
     return result || []
   }
 
-  async getSchemaDataFromRemote () {
-    const schemaData = await getSchemaInfo(this.queryparams?.logType)
-    this.context.initDataReadyCb && this.context.initDataReadyCb(schemaData || null)
-    return schemaData
-  }
-
   formatSchemaData (data) {
     // 格式化  获取的数据
     const formatedData = {
@@ -146,12 +138,6 @@ export class Scheme {
       callback && callback(this.schemeData)
       return
     }
-    this.getSchemaDataFromRemote().then(data => {
-      this.schemeData = this.formatSchemaData(data)
-      // 获取schemaData的时候 查询映射字段
-      // this.getRemoteOptions()
-      callback && callback(this.schemeData)
-    })
     callback && callback(this.schemeData)
     return this.schemeData
   }

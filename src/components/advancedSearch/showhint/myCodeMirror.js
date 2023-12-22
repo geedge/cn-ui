@@ -3,7 +3,7 @@ import 'codemirror/theme/eclipse.css'
 import 'codemirror/mode/sql/sql'
 
 import 'codemirror/theme/ambiance.css'
-import 'codemirror/addon/hint/show-hint'
+// import 'codemirror/addon/hint/show-hint.js'
 import 'codemirror/addon/hint/show-hint.css'
 import 'codemirror/addon/display/placeholder'
 

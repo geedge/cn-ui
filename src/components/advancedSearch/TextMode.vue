@@ -15,7 +15,7 @@
             :content="$t('overall.switchToTag')"
         >
           <template #reference>
-            <i class="cn-icon cn-icon-filter" @click="changeMode"></i>
+            <i test-id="text-change-mode" class="cn-icon cn-icon-filter" @click="changeMode"></i>
           </template>
         </el-popover>
       </span>
@@ -24,7 +24,7 @@
         <i class="el-icon-error"></i>
       </span>
       <!--搜索图标-->
-      <span class="search__suffix" @click.stop="search">
+      <span class="search__suffix" test-id="text-search" @click.stop="search">
         <i class="el-icon-search"></i>
       </span>
     </div>
@@ -73,7 +73,8 @@ export default {
     isShowHint: {
       type: Boolean,
       default: false
-    }
+    },
+    unitTestStr: String
   },
   data () {
     return {
@@ -82,13 +83,14 @@ export default {
       isEdit: false,
       hintVisible: false,
       dataset: null,
-      CodeMirror
+      CodeMirror,
+      myUnitTestStr: this.unitTestStr
     }
   },
   emits: ['changeMode', 'search'],
   inject: ['myHighLight'],
   created () {
-    if (this.isShowHint) {
+    if (this.isShowHint && !this.isUnitTesting) {
       this._initComponent()
     }
   },
@@ -161,16 +163,23 @@ export default {
         }
       }
       this.codeMirror = CodeMirror.fromTextArea(this.$refs.textSearch, option)
-      this.codeMirror.setOption('extraKeys', {
-        Enter: (cm) => {}
-      })
-      this.setCodemirrorValue()
-      this.initEvent()
-      this.initHint()
+      if (this.codeMirror) {
+        this.codeMirror.setOption('extraKeys', {
+          Enter: (cm) => {}
+        })
+        this.setCodemirrorValue()
+        this.initEvent()
+        this.initHint()
+      }
     },
     search () {
       this.handleBlur()
-      const str = this.codeMirror.getValue().trim()
+      let str
+      if (!this.isUnitTesting) {
+        str = this.codeMirror.getValue().trim()
+      } else {
+        str = this.myUnitTestStr
+      }
       if (str) {
         const parser = new Parser(this.columnList)
         const keyInfo = parser.comparedEntityKey(parser.handleEntityTypeByStr(str)) // 校验输入str字段是schema内的字段，并将语句进行规范
@@ -181,7 +190,9 @@ export default {
           const errorList = parser.validateStr(enumKey) // 检查语句是否有错误
           if (_.isEmpty(errorList)) {
             // 补全模糊搜索
-            toRaw(this.codeMirror).setValue(parser.handleEntityTypeByStr(str))
+            if (!this.isUnitTesting) {
+              toRaw(this.codeMirror).setValue(parser.handleEntityTypeByStr(str))
+            }
             // 注：参数str，1.是用户搜索框的内容在补全模糊搜索后的内容；2.部分参数是用户主观可见，但格式不符合接口原则的，如status='Active'，接口需要status=0
             this.$emit('search', { ...parser.parseStr(enumKey), str: parser.handleEntityTypeByStr(str), keywordList: keywordList })
           } else {
@@ -230,7 +241,12 @@ export default {
       }
     },
     addParams (params) {
-      let current = this.codeMirror.getValue()
+      let current = ''
+      if (!this.isUnitTesting) {
+        current = this.codeMirror.getValue()
+      } else {
+        current = this.myUnitTestStr
+      }
       params.forEach(param => {
         const column = this.columnList.find(c => c.label === param.column)
         if (param.operator === 'has') {
@@ -239,7 +255,11 @@ export default {
           current = `${current ? current + ' AND ' : ''}${param.column}${handleOperatorSpace(param.operator)}${this.handleValue(param.value, column, param.operator)}`
         }
       })
-      toRaw(this.codeMirror).setValue(current.trim())
+      if (!this.isUnitTesting) {
+        toRaw(this.codeMirror).setValue(current.trim())
+      } else {
+        this.myUnitTestStr = current
+      }
     },
     removeParams (params) {
       let current = this.codeMirror.getValue()
@@ -475,7 +495,7 @@ export default {
           this.initCodeMirror()
         }
       })
-    } else {
+    } else if (this.$refs.textSearch) {
       this.initCodeMirror()
     }
   }

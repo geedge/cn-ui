@@ -5,17 +5,20 @@
       @mouseleave="showCloseIcon = false"
   >
     <text-mode
+        test-id="text-mode"
         v-if="searchMode === 'text'"
         ref="textMode"
         :column-list="columnList"
         :str="str"
         :show-list="showList"
         :is-show-hint="showHint"
+        :unit-test-str="unitTestStr"
         @changeMode="changeMode"
         @search="search"
         :show-close-icon="showCloseIcon"
     ></text-mode>
     <tag-mode
+        test-id="tag-mode"
         v-if="searchMode === 'tag'"
         ref="tagMode"
         :column-list="columnList"
@@ -83,6 +86,9 @@ export default {
   emits: ['search'],
   methods: {
     search (parseData) {
+      if (this.isUnitTesting) {
+        this.unitTestParam = parseData
+      }
       this.$emit('search', parseData)
     },
     changeMode (mode, { str, metaList }) {
@@ -105,6 +111,7 @@ export default {
     },
     // params: [{ newParam: {column, operator, value }, oldParam: { column, operator, value }], ...]
     changeParams (params) {
+      console.log('鬼子进来了？', params)
       this.$refs.tagMode && this.$refs.tagMode.changeParams(params)
       this.$refs.textMode && this.$refs.textMode.changeParams(params)
     },

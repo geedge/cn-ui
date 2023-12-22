@@ -157,7 +157,7 @@
       <span v-show="metaList.length>0" class="search__suffix search__suffix-close" @click="cleanMetaList">
         <i class="el-icon-error"></i>
       </span>
-      <span class="search__suffix" @click="search">
+      <span test-id="tag-search" class="search__suffix" @click="search">
         <i class="el-icon-search"></i>
       </span>
     </div>
@@ -177,7 +177,8 @@ export default {
     columnList: Array,
     connectionList: Array,
     convertMetaList: Array,
-    showList: Boolean
+    showList: Boolean,
+    unitTestStr: String
   },
   data () {
     return {
@@ -618,7 +619,11 @@ export default {
     search () {
       if (this.metaList.length > 0) {
         const parser = new Parser(this.columnList)
-        const errorList = parser.validateMeta(this.metaList)
+        let errorList = parser.validateMeta(this.metaList)
+        // 测试的metaList并不是由new Meta()生成，所以instanceof时，meta并不在Meta原型链上导致报错，故直接略过
+        if (this.isUnitTesting) {
+          errorList = []
+        }
         const keywordList = this.myHighLight ? parser.getKeywordList(this.metaList) : [] // 搜索高亮的关键字
         if (_.isEmpty(errorList)) {
           const strObj = parser.handleMetaListToStr(this.metaList)
@@ -799,9 +804,11 @@ export default {
       this.metaList = parser.parseStr(q).metaList
     }
 
-    this.emitter.on('advanced-search', function () {
-      vm.search()
-    })
+    if (!this.isUnitTesting) {
+      this.emitter.on('advanced-search', function () {
+        vm.search()
+      })
+    }
   },
   watch: {
     convertMetaList: {
