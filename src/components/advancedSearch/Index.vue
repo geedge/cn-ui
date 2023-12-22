@@ -111,7 +111,6 @@ export default {
     },
     // params: [{ newParam: {column, operator, value }, oldParam: { column, operator, value }], ...]
     changeParams (params) {
-      console.log('鬼子进来了？', params)
       this.$refs.tagMode && this.$refs.tagMode.changeParams(params)
       this.$refs.textMode && this.$refs.textMode.changeParams(params)
     },
