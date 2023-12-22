@@ -180,17 +180,10 @@ export default {
     init (val, show, active, n, timeFilter) {
       const newVal = val ? _.clone(val) : this.metric
 
-      let params = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
+      const params = {
+        startTime: timeFilter ? timeFilter.startTime : getSecond(this.timeFilter.startTime),
+        endTime: timeFilter ? timeFilter.endTime : getSecond(this.timeFilter.endTime)
       }
-      if (timeFilter) {
-        params = {
-          startTime: timeFilter.startTime,
-          endTime: timeFilter.endTime
-        }
-      }
-
       let url
       if (this.lineQueryCondition && this.fourthMenu) {
         params.q = this.lineQueryCondition
@@ -209,8 +202,8 @@ export default {
       this.toggleLoading(true)
       axios.get(url, { params: params }).then(response => {
         const res = response.data
-        this.chartDateObject = response
         if (response.status === 200) {
+          this.chartDateObject = res.data.result
           this.isNoData = res.data.result.length === 0
           this.showError = false
           if (!active) {
@@ -236,25 +229,9 @@ export default {
       const newVal = val ? _.clone(val) : this.metric
       this.toggleLoading(true)
       try {
-        const res = this.chartDateObject.data
-        if (this.chartDateObject.status === 200) {
-          this.isNoData = res.data.result.length === 0
-          this.showError = false
-          if (!active) {
-            this.tabs = _.cloneDeep(this.tabsTemplate)
-          }
-          if (this.isNoData) {
-            this.lineTab = ''
-            this.tabs = _.cloneDeep(this.tabsTemplate)
-          } else {
-            this.initData(res.data.result, newVal, active, show, n)
-          }
-        } else {
-          this.httpError(res)
-        }
+        this.initData(this.chartDateObject, newVal, active, show, n)
       } catch (e) {
         console.error(e)
-        this.httpError(e)
       } finally {
         this.toggleLoading(false)
       }

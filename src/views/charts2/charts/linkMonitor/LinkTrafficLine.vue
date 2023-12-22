@@ -152,15 +152,9 @@ export default {
       if (!val) {
         val = this.lineMetric
       }
-      let params = {
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime)
-      }
-      if (timeFilter) {
-        params = {
-          startTime: timeFilter.startTime,
-          endTime: timeFilter.endTime
-        }
+      const params = {
+        startTime: timeFilter ? timeFilter.startTime : getSecond(this.timeFilter.startTime),
+        endTime: timeFilter ? timeFilter.endTime : getSecond(this.timeFilter.endTime)
       }
       if (this.queryCondition) {
         const condition = this.queryCondition.split(' or ')
@@ -172,9 +166,9 @@ export default {
       this.loading = true
       axios.get(api.linkMonitor.totalTrafficAnalysis, { params: params }).then(response => {
         const res = response.data
-        this.chartDateObject = response
         if (response.status === 200) {
           this.showError = false
+          this.chartDateObject = res.data.result
           this.isNoData = res.data.result.length === 0
           if (!active) {
             this.tabs = dataForLinkTrafficLine.tabs
@@ -204,28 +198,9 @@ export default {
       }
       this.loading = true
       try {
-        const res = this.chartDateObject.data
-        if (this.chartDateObject.status === 200) {
-          this.showError = false
-          this.isNoData = res.data.result.length === 0
-          if (!active) {
-            this.tabs = dataForLinkTrafficLine.tabs
-          }
-          if (this.isNoData) {
-            this.lineTab = ''
-            this.tabs = dataForLinkTrafficLine.tabs
-          } else {
-            this.initData(res.data.result, val, active, show)
-          }
-        } else {
-          this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
-        }
+        this.initData(this.chartDateObject, val, active, show)
       } catch (e) {
         console.error(e)
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
-        this.isNoData = false
       } finally {
         this.loading = false
       }

@@ -175,8 +175,8 @@ export default {
       const url = this.lineQueryCondition ? api.dnsInsight.drilldownTrafficAnalysis : api.dnsInsight.totalTrafficAnalysis
 
       axios.get(url, { params }).then(res => {
-        this.chartDateObject = res
         if (res.status === 200) {
+          this.chartDateObject = res.data.data.result
           this.showError = false
           this.isNoData = res.data.data.result.length === 0
           if (!active) {
@@ -208,28 +208,9 @@ export default {
       }
       this.toggleLoading(true)
       try {
-        const res = this.chartDateObject.data
-        if (this.chartDateObject.status === 200) {
-          this.isNoData = res.data.result.length === 0
-          if (!active) {
-            this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
-          }
-          if (this.isNoData) {
-            this.lineTab = ''
-            this.tabs = _.cloneDeep(dataForDnsTrafficLine.tabs)
-          } else {
-            this.initData(res.data.result, val, active, show)
-          }
-        } else {
-          this.isNoData = false
-          this.showError = true
-          this.errorMsg = this.errorMsgHandler(res)
-        }
+        this.initData(this.chartDateObject, val, active, show)
       } catch (e) {
         console.error(e)
-        this.isNoData = false
-        this.showError = true
-        this.errorMsg = this.errorMsgHandler(e)
       } finally {
         this.toggleLoading(false)
       }

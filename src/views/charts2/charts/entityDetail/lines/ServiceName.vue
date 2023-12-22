@@ -196,7 +196,19 @@ export default {
           e.invertTab = true
         }
       })
-      this.init(n, this.showMarkLine, '', n)
+
+      const { query } = this.$route
+      const rangeParam = query.range
+      const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.entity.trafficLine || 60)
+      if (dateRangeValue !== -1) {
+        const { startTime, endTime } = getNowTime(dateRangeValue)
+        const timeFilter = { startTime: getSecond(startTime), endTime: getSecond(endTime), range: dateRangeValue }
+        const newUrl = urlParamsHandler(window.location.href, query, timeFilter)
+        overwriteUrl(newUrl)
+        this.init(n, this.showMarkLine, '', n, timeFilter)
+      } else {
+        this.initTabData(n, this.showMarkLine, '', n)
+      }
     }
   },
   methods: {
@@ -205,13 +217,13 @@ export default {
       const newUrl = urlParamsHandler(window.location.href, query, newParam)
       overwriteUrl(newUrl)
     },
-    init (val, show, active, n) {
+    init (val, show, active, n, timeFilter) {
       const newVal = val ? _.clone(val) : this.metric
 
       const params = {
         resource: this.entity.entityName,
-        startTime: getSecond(this.timeFilter.startTime),
-        endTime: getSecond(this.timeFilter.endTime),
+        startTime: timeFilter ? timeFilter.startTime : getSecond(this.timeFilter.startTime),
+        endTime: timeFilter ? timeFilter.endTime : getSecond(this.timeFilter.endTime),
         metric: newVal
       }
 
@@ -222,8 +234,8 @@ export default {
       this.toggleLoading(true)
       axios.get(`${api.entity.throughput}/${this.entity.entityType}`, { params: params }).then(response => {
         const res = response.data
-
         if (response.status === 200) {
+          this.chartDateObject = res.data.result
           this.isNoData = res.data.result.length === 0
           this.showError = false
           if (!active) {
@@ -244,6 +256,17 @@ export default {
       }).finally(() => {
         this.toggleLoading(false)
       })
+    },
+    initTabData (val, show, active, n) {
+      const newVal = val ? _.clone(val) : this.metric
+      this.toggleLoading(true)
+      try {
+        this.initData(this.chartDateObject, newVal, active, show, n)
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.toggleLoading(false)
+      }
     },
     echartsInit (echartsData, show) {
       // echarts内容在单元测试时不执行
@@ -389,7 +412,11 @@ export default {
         this.legendSelectChange(item, index, 'active')
         this.showMarkLine = !item.invertTab
       }
-      this.init(this.metric, this.showMarkLine, 'active')
+      if (isClick) {
+        this.initTabData(this.metric, this.showMarkLine, 'active')
+      } else {
+        this.init(this.metric, this.showMarkLine, 'active')
+      }
     },
     mouseenter (item) {
       if (this.isNoData) return
