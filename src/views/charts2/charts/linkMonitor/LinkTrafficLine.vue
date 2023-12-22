@@ -19,7 +19,7 @@
                 :key="index"
                 @mouseenter="mouseenter(item)"
                 @mouseleave="mouseleave(item)"
-                @click="activeChange(item, index)"
+                @click="activeChange(item, index, true)"
                 :test-id="`tab-${index}`">
              <div class="line-value-tabs-name">
                <div :class="item.class"></div>
@@ -71,7 +71,7 @@ import { ref, shallowRef } from 'vue'
 import { valueToRangeValue } from '@/utils/unit-convert'
 import { chartColor3, chartColor4, unitTypes } from '@/utils/constants'
 import { getLineType, overwriteUrl, urlParamsHandler } from '@/utils/tools'
-import { getSecond } from '@/utils/date-util'
+import { getNowTime, getSecond } from '@/utils/date-util'
 import { api } from '@/utils/api'
 import _ from 'lodash'
 import * as echarts from 'echarts'
@@ -148,13 +148,19 @@ export default {
       const newUrl = urlParamsHandler(window.location.href, query, newParam)
       overwriteUrl(newUrl)
     },
-    init (val, show, active) {
+    init (val, show, active, timeFilter) {
       if (!val) {
         val = this.lineMetric
       }
-      const params = {
+      let params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
+      }
+      if (timeFilter) {
+        params = {
+          startTime: timeFilter.startTime,
+          endTime: timeFilter.endTime
+        }
       }
       if (this.queryCondition) {
         const condition = this.queryCondition.split(' or ')
@@ -166,6 +172,7 @@ export default {
       this.loading = true
       axios.get(api.linkMonitor.totalTrafficAnalysis, { params: params }).then(response => {
         const res = response.data
+        this.chartDateObject = response
         if (response.status === 200) {
           this.showError = false
           this.isNoData = res.data.result.length === 0
@@ -190,6 +197,38 @@ export default {
       }).finally(() => {
         this.loading = false
       })
+    },
+    initTabData (val, show, active) {
+      if (!val) {
+        val = this.lineMetric
+      }
+      this.loading = true
+      try {
+        const res = this.chartDateObject.data
+        if (this.chartDateObject.status === 200) {
+          this.showError = false
+          this.isNoData = res.data.result.length === 0
+          if (!active) {
+            this.tabs = dataForLinkTrafficLine.tabs
+          }
+          if (this.isNoData) {
+            this.lineTab = ''
+            this.tabs = dataForLinkTrafficLine.tabs
+          } else {
+            this.initData(res.data.result, val, active, show)
+          }
+        } else {
+          this.showError = true
+          this.errorMsg = this.errorMsgHandler(res)
+        }
+      } catch (e) {
+        console.error(e)
+        this.showError = true
+        this.errorMsg = this.errorMsgHandler(e)
+        this.isNoData = false
+      } finally {
+        this.loading = false
+      }
     },
     echartsInit (echartsData) {
       if (!this.isUnitTesting) {
@@ -279,12 +318,16 @@ export default {
         })
       }
     },
-    activeChange (item, index) {
+    activeChange (item, index, isClick) {
       if (this.isNoData) return
       this.lineTab = item.class
       this.legendSelectChange(item, index, 'active')
       this.showMarkLine = !item.invertTab
-      this.init(this.lineMetric, this.showMarkLine, 'active')
+      if (isClick) {
+        this.initTabData(this.lineMetric, this.showMarkLine, 'active')
+      } else {
+        this.init(this.lineMetric, this.showMarkLine, 'active')
+      }
     },
     mouseenter (item) {
       if (this.isNoData) return
@@ -343,7 +386,17 @@ export default {
           e.invertTab = true
         }
       })
-      this.init(val, this.showMarkLine)
+      const { query } = this.$route
+      const rangeParam = query.range
+      let params = {}
+      // 优先级：url > config.js > 默认值。
+      const dateRangeValue = rangeParam ? parseInt(rangeParam) : (DEFAULT_TIME_FILTER_RANGE.dashboard || 60)
+      if (dateRangeValue !== -1) {
+        const { startTime, endTime } = getNowTime(dateRangeValue)
+        params = { startTime: getSecond(startTime), endTime: getSecond(endTime), range: dateRangeValue }
+      }
+      this.reloadUrl(params)
+      this.init(val, this.showMarkLine, null, params)
     },
     symbolSizeSortChange (index, time) {
       const dataIntegrationArray = []
@@ -487,6 +540,7 @@ export default {
     }
     this.chartOption = null
     this.valueToRangeValue = null
+    this.chartDateObject = []
   }
 }
 </script>
