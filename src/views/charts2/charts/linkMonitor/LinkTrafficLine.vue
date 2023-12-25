@@ -494,17 +494,24 @@ export default {
         }
         this.$store.commit('setRangeEchartsData', rangeObj)
       }
-    }
-  },
-  mounted () {
-    this.timer = setTimeout(() => {
+    },
+    initLink () {
       if (this.lineTab) {
         const data = this.tabs.find(t => t.class === this.lineTab)
         this.activeChange(data, data.positioning)
       } else {
         this.init()
       }
-    }, 200)
+    }
+  },
+  mounted () {
+    if (!this.isUnitTesting) {
+      this.timer = setTimeout(() => {
+        this.initLink()
+      }, 200)
+    } else {
+      this.initLink()
+    }
     window.addEventListener('resize', this.resize)
   },
   beforeUnmount () {
