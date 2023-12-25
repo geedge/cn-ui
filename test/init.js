@@ -59,5 +59,3 @@ config.global.mocks.$route = { query: '' }
 config.global.mocks.$_ = _
 /* 消除warn */
 jest.spyOn(console, 'warn').mockImplementation(() => {})
-/* 模拟codemirror */
-jest.mock('Codemirror')
