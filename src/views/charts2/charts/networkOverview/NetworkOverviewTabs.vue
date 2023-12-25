@@ -180,7 +180,7 @@
                   </template>
                   <template v-else-if="item.prop === 'score'" >
                     <div class="score-cell">
-                      <div v-if="scope.row.score <= 2" class="data-score data-score-red" >
+                      <div v-if="scope.row.score <= 2" class="data-score data-score-red" :test-id="`score-${scope.row.index}`">
                         {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                       </div>
                       <div v-else-if="scope.row.score <= 4" class="data-score data-score-yellow" :test-id="`score-${scope.row.index}`">
@@ -189,7 +189,7 @@
                       <div v-else-if="scope.row.score <= 6" class="data-score data-score-green" :test-id="`score-${scope.row.index}`">
                         {{scope.row[item.prop] ? unitConvert(scope.row[item.prop], unitTypes.number).join(' ') : '0'}}
                       </div>
-                      <div v-else-if="scope.row.score === '-'">-</div>
+                      <div v-else-if="scope.row.score === '-'" :test-id="`score-${scope.row.index}`">-</div>
                     </div>
                   </template>
                   <template v-else>
