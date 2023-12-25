@@ -11,7 +11,7 @@
           </div>
 
           <div class="filter__body" style="position: relative">
-            <loading :loading="loadingLeft" style="top: -5px;"></loading>
+            <loading :loading="item.loading" style="top: -5px;"></loading>
 
             <div class="filter__body-item"
                  v-for="(data, i) in item.data.slice(0, item.showNum)"
@@ -45,6 +45,7 @@
         </div>
       </div>
     </div>
+    <loading v-else-if="isFirstLoad" :loading="isFirstLoad"></loading>
     <chart-no-data v-else style="padding-top: 40px"></chart-no-data>
 
   </div>
@@ -54,15 +55,13 @@
 import Loading from '@/components/common/Loading'
 import ChartNoData from '@/views/charts/charts/ChartNoData'
 import { countryNameIdMapping } from '@/utils/constants'
+import _ from 'lodash'
 export default {
   name: 'EntityFilter',
   components: { ChartNoData, Loading },
   props: {
     filterData: {
       type: Array
-    },
-    loadingLeft: {
-      type: Boolean
     }
   },
   computed: {
@@ -73,6 +72,9 @@ export default {
       })
 
       return length
+    },
+    isFirstLoad () {
+      return this.myFilterData.some(d => d.firstLoad)
     }
   },
   data () {
@@ -84,6 +86,14 @@ export default {
   },
   mounted () {
     this.myFilterData = this.filterData
+  },
+  watch: {
+    filterData: {
+      deep: true,
+      handler (n) {
+        this.myFilterData = _.cloneDeep(n)
+      }
+    }
   },
   methods: {
     /**
@@ -113,7 +123,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>
