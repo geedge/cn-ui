@@ -28,7 +28,6 @@
     <div v-if="showList" style="display: flex;flex-direction: row;padding-bottom: 20px;">
       <entity-filter
           :filter-data="newFilterData"
-          :loading-left="loadingLeft"
           :q="q"
           :time-filter="timeFilter"
           @filter="filter"
@@ -227,28 +226,36 @@ export default {
           title: this.$t('entity.topCountries'),
           topColumn: 'ip.country',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-city',
           title: this.$t('entity.topCities'),
           topColumn: 'ip.city',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-as',
           title: this.$t('entity.topASNs'),
           topColumn: 'ip.asn',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-operator',
           title: this.$t('entity.topISPs'),
           topColumn: 'ip.isp',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-open-port',
@@ -256,28 +263,36 @@ export default {
           topColumn: 'ip.port',
           topColumn1: 'ip.protocol',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-FQDN',
           title: this.$t('entity.topFQDNCategories'),
           topColumn: 'domain.category',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-category2',
           title: this.$t('entity.topAppCategories'),
           topColumn: 'app.category',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         },
         {
           icon: 'cn-icon cn-icon-tag1',
           title: this.$t('entity.topTags'),
           topColumn: 'tag',
           totalCount: 0,
-          data: []
+          data: [],
+          loading: false,
+          firstLoad: true
         }
       ],
       listData: [],
@@ -294,8 +309,6 @@ export default {
       loadingDomainActive: false,
       loadingIpActive: false,
 
-      // 实体详情列表页面 左侧筛选条件
-      loadingLeft: false,
       initFlag: true, // 初始化标志，避免初始化时pageSize和pageNo会调用搜索
       timer: null, // 初始化标志的延时器，需要销毁
       summaryCount: {
@@ -424,7 +437,8 @@ export default {
             mode: mode,
             range: this.timeFilter.dateRangeValue,
             pageNo: this.pageObj.pageNo,
-            pageSize: this.pageObj.pageSize
+            pageSize: this.pageObj.pageSize,
+            showList: true
           }
         })
         this.showList = true
@@ -432,8 +446,8 @@ export default {
         return true
       }
 
-      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
 
       // 延时一秒，避免初始化时pageSize为20，pageNo为1也会调用“搜索”的情况
@@ -524,7 +538,6 @@ export default {
         hideRelated: this.isHideRelatedEntities,
         resource: params.q || ''
       }
-      this.loadingLeft = true
       const aggCountry = axios.get(api.entity.entityList.aggCountry, { params: queryParams })
       const aggCity = axios.get(api.entity.entityList.aggCity, { params: queryParams })
       const aggIPAsn = axios.get(api.entity.entityList.aggIPAsn, { params: queryParams })
@@ -534,43 +547,48 @@ export default {
       const aggAppCategory = axios.get(api.entity.entityList.aggAppCategory, { params: queryParams })
       const aggTag = axios.get(api.entity.entityList.aggTag, { params: queryParams })
 
-      Promise.all([aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]).then(response => {
-        response.forEach((item1, index) => {
-          if (item1.status === 200 && item1.data.data.list) {
-            if (item1.data.data.list.length >= 5) {
-              this.newFilterData[index].showNum = 5
-            } else {
-              this.newFilterData[index].showNum = item1.data.data.list.length
-            }
-            this.newFilterData[index].data = []
-            item1.data.data.list.forEach((item, i) => {
-              let obj = {
-                label: item.value,
-                topColumn: this.newFilterData[index].topColumn,
-                value: item.uniqueEntities,
-                showNum: 5
+      const requests = [aggCountry, aggCity, aggIPAsn, aggIPIsp, aggPort, aggDomain, aggAppCategory, aggTag]
+      requests.forEach((req, index) => {
+        this.newFilterData[index].loading = true
+        if (req) {
+          req.then(response => {
+            if (response.status === 200 && response.data.data.list) {
+              if (response.data.data.list.length >= 5) {
+                this.newFilterData[index].showNum = 5
+              } else {
+                this.newFilterData[index].showNum = response.data.data.list.length
               }
-              if (index === 0) {
-                obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
-              }
-              if (index === 4) {
-                obj = {
+              this.newFilterData[index].data = []
+              response.data.data.list.forEach(item => {
+                let obj = {
+                  label: item.value,
                   topColumn: this.newFilterData[index].topColumn,
-                  topColumn1: this.newFilterData[index].topColumn1,
-                  port: item.port,
-                  l7Protocol: item.l7Protocol,
                   value: item.uniqueEntities,
                   showNum: 5
                 }
-              }
-              this.newFilterData[index].data.push(obj)
-            })
-          }
-        })
-      }).catch(e => {
-        this.$message.error(e.response.data.message)
-      }).finally(() => {
-        this.loadingLeft = false
+                if (index === 0) {
+                  obj.flag = item.value // 接口字段名称为'China'，svg名称为'CN'，通过countryNameIdMapping进行转换
+                }
+                if (index === 4) {
+                  obj = {
+                    topColumn: this.newFilterData[index].topColumn,
+                    topColumn1: this.newFilterData[index].topColumn1,
+                    port: item.port,
+                    l7Protocol: item.l7Protocol,
+                    value: item.uniqueEntities,
+                    showNum: 5
+                  }
+                }
+                this.newFilterData[index].data.push(obj)
+              })
+            }
+          }).catch(e => {
+            this.$message.error(e.response.data.message)
+          }).finally(() => {
+            this.newFilterData[index].loading = false
+            this.newFilterData[index].firstLoad = false
+          })
+        }
       })
     },
     /** 实体列表查询 */
@@ -736,6 +754,7 @@ export default {
       const ssl = axios.get(api.npm.overview.sslConDelay, { params: params })
       const tcpPercent = axios.get(api.npm.overview.tcpLostlenPercent, { params: params })
       const packetPercent = axios.get(api.npm.overview.packetRetransPercent, { params: params })
+      // 需要值都请求到才计算，使用promise.all
       Promise.all([tcp, http, ssl, tcpPercent, packetPercent]).then(res => {
         const scoreBase = {}
         res.forEach((t, i) => {
@@ -759,7 +778,7 @@ export default {
           }
         })
         this.$store.commit('setScoreBase', scoreBase)
-      }).catch((e) => {
+      }).catch(() => {
       }).finally(() => {
       })
     },
@@ -806,8 +825,8 @@ export default {
     hideRelatedEntities (e) {
       this.isHideRelatedEntities = e
       this.reloadUrl({ hideRelated: e })
-      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryList({ q: this.q, ...this.pageObj, ...this.timeFilter })
+      this.queryFilterNew({ q: this.q, ...this.pageObj, ...this.timeFilter })
       this.queryCount({ q: this.q, ...this.pageObj, ...this.timeFilter })
     }
   },
