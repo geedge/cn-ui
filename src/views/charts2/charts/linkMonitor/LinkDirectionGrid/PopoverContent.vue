@@ -8,19 +8,19 @@
 
     <div class="data-grid" v-show="!isNoData && !showError">
       <div class="egress-row" v-if="gridData[0]">
-        <div class="egress-id" v-for="(item, index) in gridData[0].out" :key="index">
+        <div class="egress-id" v-for="(item, index) in gridData[0].outList" :key="index">
           <!--兼容下一跳情况-->
-          <span v-if="item.nextHop">{{ item.nextHop }}</span>
-          <span v-else>{{ item.linkId }}</span>
+          <span v-if="item.peerCity">{{ item.peerCity }}</span>
+          <span v-else>{{ item.interfaceName}}</span>
         </div>
       </div>
       <div class="data-row" v-for="(row, index2) in gridData" :key="index2">
         <div class="ingress-id">
           <!--兼容下一跳情况-->
-          <span v-if="row.nextHop">{{ row.nextHop }}</span>
-          <span v-else>{{ row.linkId }}</span>
+          <span v-if="row.peerCity">{{ row.peerCity }}</span>
+          <span v-else>{{ row.interfaceName }}</span>
         </div>
-        <div v-for="(item, index3) in row.out" :key="index3">
+        <div v-for="(item, index3) in row.outList" :key="index3">
 
           <el-popover v-if="!item.noData" :width="437" placement="right" trigger="hover">
             <template #reference>
@@ -34,13 +34,13 @@
             <template #default>
               <div class="item-popover-header">
                 <!--兼容下一跳情况-->
-                <span v-if="row.nextHop" :test-id="`toNextHop${index2+1}`">{{ row.nextHop }}</span>
-                <span v-else :test-id="`fromLinkId${index2+1}`">{{ row.linkId }}</span>
+                <span v-if="row.peerCity" :test-id="`toNextHop${index2+1}`">{{ row.peerCity }}</span>
+                <span v-else :test-id="`fromLinkId${index2+1}`">{{ row.interfaceName }}</span>
                 <svg class="icon item-popover-header-icon" aria-hidden="true">
                   <use xlink:href="#cn-icon-arrow-right2"></use>
                 </svg>
-                <span v-if="row.nextHop" :test-id="`toNextHop${index3+1}`">{{ item.outLinkDirection }}</span>
-                <span v-else :test-id="`toLinkId${index3+1}`">{{ item.linkId }}</span>
+                <span v-if="row.peerCity" :test-id="`toNextHop${index3+1}`">{{ item.peerCity }}</span>
+                <span v-else :test-id="`toLinkId${index3+1}`">{{ item.interfaceName }}</span>
               </div>
 
               <div class="item-popover-block">

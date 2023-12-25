@@ -42,6 +42,7 @@ import { valueToRangeValue } from '@/utils/unit-convert'
 import { storageKey, unitTypes } from '@/utils/constants'
 import ChartError from '@/components/common/Error'
 import _ from 'lodash'
+import { quadrupleIngressAnalysis } from './test-data'
 
 export default {
   name: 'LinksTrafficSankey',
@@ -116,6 +117,7 @@ export default {
       this.toggleLoading(true)
       axios.get(url, { params }).then(response => {
         const res = response.data
+        // const res = quadrupleIngressAnalysis.ingress.data
         if (response.status === 200) {
           this.showError = false
           let noData
@@ -166,9 +168,9 @@ export default {
       if (tab === 0) {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (t.commonInLinkId === e.originalLinkId) {
-              t.linkId = e.linkId
-              t.linkDirection = e.nextHop
+            if (parseInt(t.commonInLinkId) === e.linkId) {
+              t.linkId = e.interfaceName
+              t.linkDirection = e.peerCity
               t.bandwidth = e.bandwidth
               t.originalValue = _.round(Number(t.inBitsRate), 2)
               t.value = _.round(Number(t.drawInBitsRate), 2)
@@ -180,10 +182,10 @@ export default {
       } else {
         result.forEach(t => {
           this.cnLinkInfo.forEach(e => {
-            if (t.commonOutLinkId === e.originalLinkId) {
-              t.linkId = e.linkId
+            if (parseInt(t.commonOutLinkId) === e.linkId) {
+              t.linkId = e.interfaceName
               t.bandwidth = e.bandwidth
-              t.linkDirection = e.nextHop
+              t.linkDirection = e.peerCity
               t.originalValue = _.round(Number(t.outBitsRate), 2)
               t.value = _.round(Number(t.drawOutBitsRate), 2)
               t.external = `e_${t.externalLocation}`

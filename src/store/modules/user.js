@@ -119,11 +119,21 @@ const user = {
           }
         }
       })
-      axios.get(api.config, { params: { ckey: 'link_info' } }).then(response => {
+      axios.get(`${api.knowledgeBase}/13?pageSize=-1`).then(response => {
         const res = response.data
-        if (response.status === 200 && res.page.list && res.page.list.length > 0) {
-          localStorage.setItem(storageKey.linkInfo, res.page.list[0].cvalue)
+        if (response.status === 200 && res.data.itemList && res.data.itemList.length > 0) {
+          res.data.itemList.sort((a, b) => {
+            if (a.inLinkId !== b.inLinkId) {
+              return a.inLinkId - b.inLinkId
+            }
+            return a.outLinkId - b.outLinkId
+          })
+          localStorage.setItem(storageKey.linkInfo, JSON.stringify(res.data.itemList))
+        } else {
+          localStorage.setItem(storageKey.linkInfo, '')
         }
+      }).catch(e => {
+        localStorage.setItem(storageKey.linkInfo, '')
       })
       axios.get(api.config, { params: { ckey: 'schema_explore' } }).then(response => {
         const res = response.data

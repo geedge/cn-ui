@@ -25,7 +25,7 @@
           </template>
           <template #default>
             <div class="popper-content">
-              <div class="popper-content__link-id">Link ID: {{ item.linkId }}</div>
+              <div class="popper-content__link-id">Link ID: {{ item.interfaceName }}</div>
               <div class="popper-content__link-info">
                 <div class="info__label">{{ $t('linkMonitor.linkBlock.total') }}</div>
                 <div class="info__value" :test-id="`linkBlockTotal${index}`" style="margin-left: 8px">
@@ -122,6 +122,7 @@ import { drillDownPanelTypeMapping, storageKey, unitTypes } from '@/utils/consta
 import { getSecond } from '@/utils/date-util'
 import ChartError from '@/components/common/Error'
 import axios from 'axios'
+import { analysis, analysisOneWay, nextHopAnalysis, nextHopAnalysisOneWay} from './test-data'
 
 export default {
   name: 'LinkBlock',
@@ -166,13 +167,15 @@ export default {
     init () {
       this.toggleLoading(true)
       // 链路基本信息
-      let linkInfo = null
-      linkInfo = localStorage.getItem(storageKey.linkInfo)
-      linkInfo = JSON.parse(linkInfo)
+      let linkConfig = null
+      linkConfig = localStorage.getItem(storageKey.linkInfo)
+      linkConfig = JSON.parse(linkConfig)
       const params = {
         startTime: getSecond(this.timeFilter.startTime),
         endTime: getSecond(this.timeFilter.endTime)
       }
+      // 根据配置判断是否是单向还是双向，只要有一条数据的direction=0或1，就视为双向。
+      const isTwoWay = linkConfig.some(config => config.direction === 0 || config.direction === 1)
 
       const dataRequest = axios.get(api.linkMonitor.analysis, { params: params }).catch(e => {
         console.error(e)
@@ -191,37 +194,42 @@ export default {
         if (response[0] && response[1]) {
           const res = []
           res[0] = response[0].data
+          // res[0] = analysis.data
           res[1] = response[1].data
+          // res[1] = nextHopAnalysis.data
           if (response[0].status === 200) {
             this.showError1 = false
 
             const linkData = res[0].data.result
-
             this.linkNoData = linkData.length === 0
             if (!this.linkNoData) {
               const data = []
               linkData.forEach(d => {
-                const info = linkInfo.find(i => i.originalLinkId === d.linkId)
+                const info = linkConfig.find(i => i.linkId === parseInt(d.linkId))
                 if (info) {
-                  const hit = data.find(d => d.linkId === info.linkId)
+                  const hit = data.find(d => d.interfaceName === info.interfaceName)
                   if (hit) {
                     hit.outBitsRate += d.outBitsRate
                     hit.inBitsRate += d.inBitsRate
-                    if (info.direction === 'out') {
+                    if (info.direction === 0) {
                       hit.outBandwidth = info.bandwidth
-                    } else if (info.direction === 'in') {
+                    } else if (info.direction === 1) {
                       hit.inBandwidth = info.bandwidth
+                    } else if (info.direction === 2) {
+                      hit.bandwidth = info.bandwidth
                     }
                   } else {
                     const hit = {
-                      linkId: info.linkId,
+                      interfaceName: info.interfaceName,
                       outBitsRate: d.outBitsRate,
                       inBitsRate: d.inBitsRate
                     }
-                    if (info.direction === 'out') {
+                    if (info.direction === 0) {
                       hit.outBandwidth = info.bandwidth
-                    } else if (info.direction === 'in') {
+                    } else if (info.direction === 1) {
                       hit.inBandwidth = info.bandwidth
+                    } else if (info.direction === 2) {
+                      hit.bandwidth = info.bandwidth
                     }
                     data.push(hit)
                   }
@@ -230,11 +238,13 @@ export default {
               this.linkNoData = data.length === 0
               data.forEach(item => {
                 item.totalBitsRate = item.outBitsRate + item.inBitsRate
-                linkInfo.filter(info => info.linkId === item.linkId).forEach(info => {
-                  if (info.direction === 'out') {
-                    item.outLinkId = info.originalLinkId
-                  } else if (info.direction === 'in') {
-                    item.inLinkId = info.originalLinkId
+                linkConfig.filter(info => info.interfaceName === item.interfaceName).forEach(info => {
+                  if (info.direction === 0) {
+                    item.outLinkId = info.linkId
+                  } else if (info.direction === 1) {
+                    item.inLinkId = info.linkId
+                  } else if (info.direction === 2) {
+                    item.linkId = info.linkId
                   }
                 })
               })
@@ -243,8 +253,8 @@ export default {
               const linkColors = colorGradientCalculation(this.gradientColor[0], this.gradientColor[1], sorted.map(s => s.totalBitsRate))
               sorted.forEach((s, i) => {
                 s.color = linkColors[i]
-                s.outUsage = this.computeUsage(s.outBitsRate, s.outBandwidth)
-                s.inUsage = this.computeUsage(s.inBitsRate, s.inBandwidth)
+                s.outUsage = this.computeUsage(s.outBitsRate, isTwoWay ? s.outBandwidth : s.bandwidth)
+                s.inUsage = this.computeUsage(s.inBitsRate, isTwoWay ? s.inBandwidth : s.bandwidth)
                 s.popoverWidth = this.computePopoverWidth(s.outUsage, s.inUsage)
               })
               this.linkData = sorted
@@ -293,17 +303,25 @@ export default {
               nextHopSorted.forEach((s, i) => {
                 s.color = nextHopColors[i]
 
-                let sum = 0
-                linkInfo.forEach((item) => {
-                  if (s.linkDirection === item.nextHop) {
-                    sum += item.bandwidth
+                let outTotalBandwidth = 0
+                let inTotalBandwidth = 0
+                let totalBandwidth = 0
+                linkConfig.forEach((item) => {
+                  if (s.linkDirection === item.peerCity) {
+                    if (item.direction === 0) {
+                      outTotalBandwidth += item.bandwidth
+                    } else if (item.direction === 1) {
+                      inTotalBandwidth += item.bandwidth
+                    } else if (item.direction === 2) {
+                      totalBandwidth += item.bandwidth
+                    }
                   }
                 })
 
                 // 上行使用情况计算
-                const outUsage = this.computeUsage(s.outBitsRate, sum)
+                const outUsage = this.computeUsage(s.outBitsRate, isTwoWay ? outTotalBandwidth : totalBandwidth)
                 // 下行使用情况计算
-                const inUsage = this.computeUsage(s.inBitsRate, sum)
+                const inUsage = this.computeUsage(s.inBitsRate, isTwoWay ? inTotalBandwidth : totalBandwidth)
                 s.outUsage = outUsage
                 s.inUsage = inUsage
                 s.popoverWidth = this.computePopoverWidth(outUsage, inUsage)
@@ -377,8 +395,8 @@ export default {
         query: {
           ...this.$route.query,
           thirdPanel: drillDownPanelTypeMapping.linkMonitor,
-          thirdMenu: `Link ID: ${item.linkId}`,
-          panelName: `Link ID: ${item.linkId}`,
+          thirdMenu: `Link ID: ${item.interfaceName}`,
+          panelName: `Link ID: ${item.interfaceName}`,
           queryCondition,
           t: +new Date()
         }
