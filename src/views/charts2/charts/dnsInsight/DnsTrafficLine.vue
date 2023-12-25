@@ -208,7 +208,11 @@ export default {
       }
       this.toggleLoading(true)
       try {
-        this.initData(this.chartDateObject, val, active, show)
+        if(this.chartDateObject.length > 0) {
+          this.initData(this.chartDateObject, val, active, show)
+        } else {
+          this.init(val, show, active)
+        }
       } catch (e) {
         console.error(e)
       } finally {

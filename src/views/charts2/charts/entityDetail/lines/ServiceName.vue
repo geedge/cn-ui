@@ -261,7 +261,11 @@ export default {
       const newVal = val ? _.clone(val) : this.metric
       this.toggleLoading(true)
       try {
-        this.initData(this.chartDateObject, newVal, active, show, n)
+        if(this.chartDateObject.length > 0) {
+          this.initData(this.chartDateObject, newVal, active, show, n)
+        } else {
+          this.init(val, show, active, n)
+        }
       } catch (e) {
         console.error(e)
       } finally {

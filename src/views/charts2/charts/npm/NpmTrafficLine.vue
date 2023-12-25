@@ -200,7 +200,11 @@ export default {
       }
       this.toggleLoading(true)
       try {
-        this.initLineData(this.chartDateObject, val)
+        if(this.chartDateObject.length > 0) {
+          this.initLineData(this.chartDateObject, val)
+        } else {
+          this.init(val)
+        }
       } catch (e) {
         console.error(e)
       } finally {
