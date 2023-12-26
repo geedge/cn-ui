@@ -464,7 +464,7 @@ export default {
         this.myChart.setOption(this.chartOption)
       })
     },
-    init (val, show, active, n) {
+    init () {
       this.psiphon3Loading = true
       const endTime = window.$dayJs.tz().valueOf()
       const params = {

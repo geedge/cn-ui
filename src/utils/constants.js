@@ -57,6 +57,7 @@ export const fromRoute = {
   dnsServiceInsights: 'dnsServiceInsights',
   linkMonitor: 'linkMonitor',
   user: 'user',
+  plugin: 'plugin',
   galaxyProxy: 'galaxyProxy',
   chart: 'chart',
   cryptocurrency: 'cryptocurrency',

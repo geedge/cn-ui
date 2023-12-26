@@ -132,7 +132,7 @@
         :show-close="false"
     >
       <div class="cn-menu__left" v-if="otherMenu">
-        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jump(menu.route,'','',0)">
+        <div class="left-menu" v-for="menu in otherMenu" :key="menu.id" @click="jumpOther(menu.route,'','',0)">
           <i :class="menu.icon"></i>
           <span>{{ $t(menu.i18n || menu.name) }}</span>
           <i class="cn-icon cn-icon-right"></i>

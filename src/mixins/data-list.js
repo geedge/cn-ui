@@ -353,7 +353,9 @@ export default {
     },
     dragend () {
       this.$nextTick(() => {
-        if (this.$refs.dataTable && this.$refs.dataTable.$refs.dataTable) {
+        if (this.$refs.dataTable && this.$refs.dataTable.$refs &&
+            this.$refs.dataTable.$refs.dataTable
+        ) {
           this.$refs.dataTable.$refs.dataTable.doLayout()
         }
       })
