@@ -5,7 +5,7 @@
         cols="40"
         ref="textSearch"
     ></textarea>
-    <div class="search__suffixes search__suffixes--text-mode" :class="showList ? '' : 'entity-explorer-home'" style="padding-left: 1px">
+    <div class="search__suffixes search__suffixes--text-mode" :class="showList ? '' : 'entity-explorer-home'" style="padding-left: 1px;background: #fff;">
       <!--切换text、tag模式图标-->
       <span class="search__suffix">
         <el-popover
