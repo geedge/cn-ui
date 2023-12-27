@@ -181,6 +181,10 @@ export function handleComponent (code) {
       return () => import('@/views/administration/Appearance')
     case 'I18N':
       return () => import('@/views/administration/I18n')
+    case 'system':
+      return () => import('@/views/system/Index')
+    case 'plugin':
+      return () => import('@/views/system/Plugin')
     default:
       return null
   }
