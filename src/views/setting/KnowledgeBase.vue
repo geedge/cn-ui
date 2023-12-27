@@ -72,7 +72,6 @@
 import dataListMixin from '@/mixins/data-list'
 import KnowledgeBaseTableForCard from '@/components/table/setting/knowledgeBaseTableForCard'
 import { api } from '@/utils/api'
-import { urlParamsHandler, overwriteUrl } from '@/utils/tools'
 import { knowledgeBaseCategory, knowledgeBaseSource, knowledgeCategoryValue } from '@/utils/constants'
 import axios from 'axios'
 

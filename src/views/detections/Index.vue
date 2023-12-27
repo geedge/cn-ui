@@ -138,7 +138,6 @@ import { useRoute } from 'vue-router'
 import Loading from '@/components/common/Loading'
 import ChartTabs from '@/components/common/ChartTabs'
 import { useStore } from 'vuex'
-import { tooLongFormatter } from '@/views/charts/charts/tools'
 import { format } from 'echarts'
 import Parser from '@/components/advancedSearch/meta/parser'
 import { schemaDetectionSecurity } from '@/utils/static-data'
@@ -274,7 +273,7 @@ export default {
       loading: false,
       oldActiveEntitySearchValue: '',
       initFlag: true, // 初始化标识，初始化时保证mounted执行
-      detectionChart:shallowRef(null)
+      detectionChart: shallowRef(null)
     }
   },
   methods: {
@@ -494,7 +493,7 @@ export default {
             echarts.dispose(this.detectionChart)
           }
           this.detectionChart = echarts.init(chartDom)
-          //this.chartInit.push(shallowRef(detectionChart))
+          // this.chartInit.push(shallowRef(detectionChart))
           const securityTypeOption = this.$_.cloneDeep(pieForSeverity)
           securityTypeOption.series[0].data = data.map(d => {
             return { value: d.count, name: d.eventType, itemStyle: { color: getAttackColor(d.eventType) } }
@@ -848,8 +847,8 @@ export default {
 
       const chartDom = document.getElementById(`detectionCategoryPer${this.pageType}`)
       this.detectionChart = echarts.getInstanceByDom(chartDom)
-      if(this.detectionChart){
-        let securityTypeOption = this.$_.cloneDeep(this.detectionChart.getOption())
+      if (this.detectionChart) {
+        const securityTypeOption = this.$_.cloneDeep(this.detectionChart.getOption())
         echarts.dispose(this.detectionChart)
         if (chartDom) {
           this.detectionChart = echarts.init(chartDom)

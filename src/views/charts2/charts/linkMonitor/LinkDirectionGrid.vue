@@ -17,7 +17,6 @@ import PopoverContent from './LinkDirectionGrid/PopoverContent'
 import { computeScore } from '@/utils/tools'
 import axios from 'axios'
 import _ from 'lodash'
-import { bigramAnalysis, bigramAnalysisOneWay, bigramNextHopAnalysis, bigramNextHopAnalysisOneWay } from './test-data'
 
 export default {
   name: 'LinkDirectionGrid',

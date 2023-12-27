@@ -3,7 +3,7 @@ import { tooLongFormatter } from '../tools'
 import { chartColor, storageKey } from '@/utils/constants'
 
 const legendFontSize = localStorage.getItem(storageKey.echartLegendFontSize)
-const labelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
+// const labelFontSize = localStorage.getItem(storageKey.echartLabelFontSize)
 export const pieWithTable = {
   tooltip: {
     appendToBody: true

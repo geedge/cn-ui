@@ -1,7 +1,4 @@
-import {
-  detectionTooltipFormatter,
-  tooLongFormatter
-} from '@/views/charts/charts/tools'
+import { tooLongFormatter } from '@/views/charts/charts/tools'
 import unitConvert from '@/utils/unit-convert'
 import _ from 'lodash'
 import { dateFormatByAppearance, xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'

@@ -61,9 +61,7 @@ export class Dataset {
     if (!(list && list.length > 0)) {
       return
     }
-    let tempTitle
-    let results
-    tempTitle = {
+    const tempTitle = {
       type: 'abstract',
       text: '',
       // displayText: "Filter",
@@ -73,7 +71,7 @@ export class Dataset {
       }
     }
 
-    results = list.map((item) => {
+    const results = list.map((item) => {
       return {
         // text: item.name,
         // displayText: `${item.label}(${item.name})`,
@@ -91,9 +89,7 @@ export class Dataset {
     if (!(list && list.length > 0)) {
       return
     }
-    let tempTitle = {}
-    let results = []
-    tempTitle = {
+    const tempTitle = {
       type: 'abstract',
       text: '',
       // displayText: "Operator",
@@ -102,7 +98,7 @@ export class Dataset {
       // hint(cm, callback, options) {}
     }
 
-    results = list.map((item) => {
+    const results = list.map((item) => {
       return {
         text: item.name,
         displayText: item.name,
@@ -168,25 +164,24 @@ export class Dataset {
 
   getOperates (type, item) {
     // 获取 当前类型支持的操作符
-    let operator_functions = ''
+    let operatorFunctions = ''
     if (item && item.doc && item.doc.constraints && item.doc.constraints.operator_functions) {
-      operator_functions = item.doc.constraints.operator_functions
+      operatorFunctions = item.doc.constraints.operator_functions
     } else {
       const functions = this.sourceData.operatesDic.find(item => {
         return item.type === type
       })
-      operator_functions = functions && functions.functions || ''
+      // eslint-disable-next-line no-mixed-operators
+      operatorFunctions = functions && functions.functions || ''
     }
-    const funList = operator_functions.split(',')
-    let result = []
-    result = funList.map((item) => {
+    const funList = operatorFunctions.split(',')
+    return funList.map((item) => {
       return {
         text: item,
         displayText: item,
         className: 'filter-item el-dropdown-menu__item relative-item'
       }
     })
-    return result
   }
 
   getFunctions (type, item) {
@@ -199,7 +194,7 @@ export class Dataset {
       const functions = this.sourceData.funcDic.find(item => {
         return item.type === type
       })
-      functionsInfo = functions && functions.functions || ''
+      functionsInfo = (functions && functions.functions) || ''
     }
 
     const funList = functionsInfo.split(',')

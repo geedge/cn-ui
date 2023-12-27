@@ -247,9 +247,8 @@ import {
   chartActiveIpTableOrderOptions,
   chartPieTableTopOptions,
   eventSeverity,
-  chartTableColumnMapping, panelTypeAndRouteMapping
+  chartTableColumnMapping
 } from '@/utils/constants'
-import { useRouter } from 'vue-router'
 
 export default {
   name: 'ChartHeader',
