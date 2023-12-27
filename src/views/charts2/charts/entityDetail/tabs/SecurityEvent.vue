@@ -58,7 +58,7 @@
                   <div class="basic-info__item">
                     <i class="cn-icon cn-icon-time2"></i>
                     <span>{{ $t('detection.list.startTime') }}&nbsp;:&nbsp;&nbsp;</span>
-                    <span>{{ dateFormatByAppearance(item.startTime) || '-' }}</span>
+                    <span>{{ changeTimestampToTime(item.startTime) }}</span>
                   </div>
                   <div class="basic-info__item">
                     <i class="cn-icon cn-icon-duration"></i>
@@ -76,14 +76,14 @@
 </template>
 
 <script>
-import { dateFormatByAppearance, getNowTime } from '@/utils/date-util'
+import { getNowTime } from '@/utils/date-util'
 import { eventSeverityColor, entityDetailTabsName, securityLevel } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
 import { useRoute } from 'vue-router'
 import chartMixin from '@/views/charts2/chart-mixin'
-import { toUpperCaseByString } from '@/utils/tools'
+import { changeTimestampToTime } from '@/utils/tools'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 import { ref } from 'vue'
 
@@ -129,8 +129,7 @@ export default {
   },
   methods: {
     unitConvert,
-    toUpperCaseByString,
-    dateFormatByAppearance,
+    changeTimestampToTime,
     initData () {
       const params = this.getParams()
       this.toggleLoading(true)

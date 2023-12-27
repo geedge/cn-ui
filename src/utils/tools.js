@@ -8,6 +8,7 @@ import router from '@/router'
 import store from '@/store'
 import indexedDBUtils from '@/indexedDB'
 import { columnType } from '@/components/advancedSearch/meta/meta'
+import { dateFormatByAppearance, getMillisecond } from '@/utils/date-util'
 
 export const tableSort = {
   // 是否需要排序
@@ -1458,6 +1459,23 @@ export const changeI18nOfSeverity = (severity) => {
       return i18n.global.t(obj.label)
     } else {
       return severity
+    }
+  } else {
+    return '-'
+  }
+}
+
+/**
+ * 将时间戳转为YYYY-MM-DD hh:mm:ss格式
+ * @param timestamp
+ * @returns {string|*}
+ */
+export const changeTimestampToTime = (timestamp) => {
+  if (timestamp) {
+    if (_.isNumber(Number(timestamp))) {
+      return dateFormatByAppearance(getMillisecond(Number(timestamp)))
+    } else {
+      return '-'
     }
   } else {
     return '-'
