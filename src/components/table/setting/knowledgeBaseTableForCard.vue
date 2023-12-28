@@ -1,62 +1,26 @@
 <template>
   <template v-if="!isNoData">
-    <div class="card-type-title" v-if="aiTaggingList.length > 0">{{$t('knowledgeBase.intelligenceLearning')}}</div>
+    <div class="card-type-title" style="margin-top:4px;"  v-if="websketchList.length > 0">{{$t('knowledgeBase.websketchIntegration')}}</div>
     <el-checkbox-group v-model="checkList" >
-      <div class="card-box" v-for="data in aiTaggingList" :key="data.knowledgeId">
-        <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)" @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
+      <div class="card-box" v-for="data in websketchList" :key="data.knowledgeId">
+        <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
           <div class="card-content">
-            <div class="card-operate">
-              <el-switch v-model="data.status"
-                         v-if="hasPermission('editBuiltInKnowledgeBase')"
-                         class="card-enable"
-                         active-color="#38ACD2"
-                         inactive-color="#C0CEDB"
-                         :active-value="1"
-                         :inactive-value="0"
-                         :before-change="(knowledgeId) => confirmSwitchLearning(data.knowledgeId)"
-              >
-              </el-switch>
-            </div>
             <div class="card-icon">
               <img :src="data.iconUrl"/>
             </div>
             <div class="card-title">
               <div class="card-title-name" :title="$t(data.label)">{{$t(data.label)}}</div>
             </div>
-            <div class="card-desc" :title="$t(data.desc)">{{$t(data.desc) || '—'}}</div>
+            <div class="card-desc" :title="data.desc ? $t(data.desc) : '—'">{{data.desc ? $t(data.desc) : '—'}}</div>
           </div>
           <div class="card-operate__footer">
-            <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')"
-                    class="top-tool-btn--update"
-                    @click="jumpToUpdatePage(data,true)">
+            <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')" :title="$t('overall.update')" class="top-tool-btn--update"
+                    @click="jumpToUpdatePage(data,false)">
               <i class="cn-icon-update-knowledge-base cn-icon"></i>
               <span>{{$t('overall.update')}}</span>
             </button>
           </div>
         </div>
-      </div>
-    </el-checkbox-group>
-    <div class="card-type-title" style="margin-top:4px;"  v-if="websketchList.length > 0">{{$t('knowledgeBase.websketchIntegration')}}</div>
-    <el-checkbox-group v-model="checkList" >
-      <div class="card-box" v-for="data in websketchList" :key="data.knowledgeId">
-        <div @click="isSelectedStatus && data.isBuiltIn !== 1 && clickCard(data,$event)"  @mouseenter="mouseenter(data)" @mouseleave="mouseleave(data)" class="card-item"  :class="data.isSelected ? 'card-selected' : ''">
-        <div class="card-content">
-          <div class="card-icon">
-            <img :src="data.iconUrl"/>
-          </div>
-          <div class="card-title">
-            <div class="card-title-name" :title="$t(data.label)">{{$t(data.label)}}</div>
-          </div>
-          <div class="card-desc" :title="data.desc ? $t(data.desc) : '—'">{{data.desc ? $t(data.desc) : '—'}}</div>
-        </div>
-        <div class="card-operate__footer">
-          <button v-if="data.showUpdate && hasPermission('editBuiltInKnowledgeBase')" :title="$t('overall.update')" class="top-tool-btn--update"
-                  @click="jumpToUpdatePage(data,false)">
-            <i class="cn-icon-update-knowledge-base cn-icon"></i>
-            <span>{{$t('overall.update')}}</span>
-          </button>
-        </div>
-      </div>
       </div>
     </el-checkbox-group>
   </template>
@@ -96,8 +60,8 @@
       <template v-if="!showAddUpdateDialog">
         <div class="knowledge-update__tab" v-if="showEnable">
           <el-tabs  v-model="activeTab"
-                   class="update-log-tab"
-                   @tab-click="handleClick"
+                    class="update-log-tab"
+                    @tab-click="handleClick"
           >
             <el-tab-pane  :label="$t('knowledgeBase.updateRecord')"
                           name="updateRecord"
@@ -275,617 +239,582 @@
         </span>
       </template>
     </el-dialog>
-    <el-dialog
-        v-model="showConfirmSwitch"
-        :width="330"
-        custom-class="confirm-knowledge-switch"
-        :title="$t('overall.hint')"
-    >
-      <div class="dialog-message">{{ confirmSwitchLearningTip }}</div>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="cancleSwitch">{{ $t('overall.cancel') }}</el-button>
-          <el-button type="primary" @click="switchLearning">{{$t('tip.confirm')}}</el-button>
-        </span>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import table from '@/mixins/table'
-import Loading from '@/components/common/Loading'
-import { getSecond, getMillisecond, xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
-import { knowledgeCategoryValue, unitTypes, storageKey, builtInKnowledgeBaseBasicInfo, knowledgeCardUpdateRecordType } from '@/utils/constants'
-import { ref, shallowRef } from 'vue'
-import { api } from '@/utils/api'
-import { detectionTooltipFormatter } from '@/views/charts/charts/tools'
-import ChartNoData from '@/views/charts/charts/ChartNoData'
-import axios from 'axios'
-import _ from 'lodash'
-import * as echarts from 'echarts'
-import unitConvert from '@/utils/unit-convert'
+  import table from '@/mixins/table'
+  import Loading from '@/components/common/Loading'
+  import { getSecond, getMillisecond, xAxisTimeFormatter, xAxisTimeRich } from '@/utils/date-util'
+  import { knowledgeCategoryValue, unitTypes, storageKey, builtInKnowledgeBaseBasicInfo, knowledgeCardUpdateRecordType } from '@/utils/constants'
+  import { ref, shallowRef } from 'vue'
+  import { api } from '@/utils/api'
+  import { detectionTooltipFormatter } from '@/views/charts/charts/tools'
+  import ChartNoData from '@/views/charts/charts/ChartNoData'
+  import axios from 'axios'
+  import _ from 'lodash'
+  import * as echarts from 'echarts'
+  import unitConvert from '@/utils/unit-convert'
 
-export default {
-  name: 'knowledgeBaseTableForCard',
-  mixins: [table],
-  props: {
-    isNoData: {
-      type: Boolean,
-      default: false
-    },
-    isSelectedStatus: {
-      type: Boolean
-    }
-  },
-  components: {
-    Loading,
-    ChartNoData
-  },
-  data () {
-    return {
-      tableTitle: [],
-      checkList: [],
-      aiTaggingList: [],
-      websketchList: [],
-      showUpdateDialog: false,
-      showConfirmDialog: false,
-      showAddUpdateDialog: false,
-      updateKnowledge: {},
-      showEnable: false,
-      updateHistoryList: [],
-      updateObject: {},
-      currentVersion: 0,
-      uploadLoading: false,
-      psiphon3Loading: false,
-      updateLogLoading: false,
-      showConfirmSwitch: false,
-      // timer: null,
-      switchKnowledgeId: '',
-      activeTab: 'updateRecord',
-      isNoDataForPsiphon3: false,
-      showErrorForPsiphon3: false,
-      errorMsgForPsiphon3: '',
-      leftOffset: 0,
-      tabType: 'total',
-      mousemoveCursor: '',
-      selectTime: 1440,
-      // hasUpdatingRecord: false,
-      tabs: [
-        {
-          name: 'knowledgeBase.total',
-          class: 'total',
-          color: '#00A7AB',
-          data: []
-        },
-        {
-          name: 'knowledgeBase.active',
-          class: 'active',
-          color: '#7FA054',
-          data: []
-        },
-        {
-          name: 'knowledgeBase.new',
-          class: 'new',
-          color: '#98709B',
-          data: []
-        }
-      ],
-      dateRangeArr: [
-        { value: 1440, name: this.$t('dateTime.last1Day') },
-        { value: 2880, name: this.$t('dateTime.last2Days') },
-        { value: 10080, name: this.$t('dateTime.last7Days') },
-        { value: 21600, name: this.$t('dateTime.last15Days') },
-        { value: 43200, name: this.$t('dateTime.last30Days') }
-      ]
-    }
-  },
-  setup () {
-    // 没上传过文件的提示
-    const uploadErrorTip = ref('')
-    return {
-      baseUrl: BASE_CONFIG.baseUrl,
-      apiVersion: BASE_CONFIG.apiVersion,
-      uploadHeaders: {
-        'Cn-Authorization': localStorage.getItem(storageKey.token)
+  export default {
+    name: 'knowledgeBaseTableForCard',
+    mixins: [table],
+    props: {
+      isNoData: {
+        type: Boolean,
+        default: false
       },
-      uploadErrorTip,
-      fileTypeLimit: '.csv',
-      fileList: ref([]),
-      uploadFileSizeLimit: 1024 * 1024 * 1024,
-      myChart: shallowRef(null),
-      chartOption: shallowRef(null)
-    }
-  },
-  methods: {
-    echartsInit (echartsData) {
-      const _this = this
-      const curTab = this.tabs.find(item => item.class === _this.tabType)
-      this.chartOption = {
-        color: curTab.color,
-        legend: {
-          show: false
-        },
-        tooltip: {
-          show: true,
-          formatter: (params) => {
-            params.seriesName = this.$t(params.seriesName)
-            params.borderColor = params.color
-            return detectionTooltipFormatter(params)
-          }
-        },
-        grid: {
-          top: '12%',
-          left: '2%',
-          right: '2%',
-          bottom: 24,
-          containLabel: true
-        },
-        xAxis: {
-          type: 'time',
-          axisLine: {
-            show: false
-          },
-          axisTick: {
-            show: false
-          },
-          axisLabel: {
-            formatter: xAxisTimeFormatter,
-            rich: xAxisTimeRich
-          }
-        },
-        yAxis: {
-          type: 'value',
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: '#ECECEC'
-            }
-          },
-          axisLabel: {
-            margin: 20
-          },
-          minInterval: 1
-        },
-        series: [
+      isSelectedStatus: {
+        type: Boolean
+      }
+    },
+    components: {
+      Loading,
+      ChartNoData
+    },
+    data () {
+      return {
+        tableTitle: [],
+        checkList: [],
+        websketchList: [],
+        showUpdateDialog: false,
+        showConfirmDialog: false,
+        showAddUpdateDialog: false,
+        updateKnowledge: {},
+        showEnable: false,
+        updateHistoryList: [],
+        updateObject: {},
+        currentVersion: 0,
+        uploadLoading: false,
+        psiphon3Loading: false,
+        updateLogLoading: false,
+        showConfirmSwitch: false,
+        // timer: null,
+        switchKnowledgeId: '',
+        activeTab: 'updateRecord',
+        isNoDataForPsiphon3: false,
+        showErrorForPsiphon3: false,
+        errorMsgForPsiphon3: '',
+        leftOffset: 0,
+        tabType: 'total',
+        mousemoveCursor: '',
+        selectTime: 1440,
+        // hasUpdatingRecord: false,
+        tabs: [
           {
-            name: curTab.name,
-            data: echartsData,
-            type: 'bar',
-            barWidth: 26
+            name: 'knowledgeBase.total',
+            class: 'total',
+            color: '#00A7AB',
+            data: []
+          },
+          {
+            name: 'knowledgeBase.active',
+            class: 'active',
+            color: '#7FA054',
+            data: []
+          },
+          {
+            name: 'knowledgeBase.new',
+            class: 'new',
+            color: '#98709B',
+            data: []
           }
+        ],
+        dateRangeArr: [
+          { value: 1440, name: this.$t('dateTime.last1Day') },
+          { value: 2880, name: this.$t('dateTime.last2Days') },
+          { value: 10080, name: this.$t('dateTime.last7Days') },
+          { value: 21600, name: this.$t('dateTime.last15Days') },
+          { value: 43200, name: this.$t('dateTime.last30Days') }
         ]
       }
-
-      this.$nextTick(() => {
-        if (!this.myChart) {
-          this.myChart = echarts.init(document.getElementById('psiphonBarChart'))
-        }
-        this.myChart.setOption(this.chartOption)
-      })
     },
-    init () {
-      this.psiphon3Loading = true
-      const endTime = window.$dayJs.tz().valueOf()
-      const params = {
-        startTime: getSecond(endTime - this.selectTime * 60 * 1000),
-        endTime: getSecond(endTime)
+    setup () {
+      // 没上传过文件的提示
+      const uploadErrorTip = ref('')
+      return {
+        baseUrl: BASE_CONFIG.baseUrl,
+        apiVersion: BASE_CONFIG.apiVersion,
+        uploadHeaders: {
+          'Cn-Authorization': localStorage.getItem(storageKey.token)
+        },
+        uploadErrorTip,
+        fileTypeLimit: '.csv',
+        fileList: ref([]),
+        uploadFileSizeLimit: 1024 * 1024 * 1024,
+        myChart: shallowRef(null),
+        chartOption: shallowRef(null)
       }
-      const url = api.knowledgeBaseTimedistribution.replace('{{knowledgeId}}', this.updateKnowledge.knowledgeId).replace('{{type}}', this.tabType)
-      axios.get(url, { params: params }).then(response => {
-        const res = response.data
-
-        if (response.status === 200) {
-          this.isNoDataForPsiphon3 = res.data.result.length === 0
-          this.showErrorForPsiphon3 = false
-          if (!this.isNoDataForPsiphon3) {
-            const chartsData = res.data.result.map(item => {
-              return [getMillisecond(item.statTime), item.count]
-            })
-            if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-              this.echartsInit(chartsData)
+    },
+    methods: {
+      echartsInit (echartsData) {
+        const _this = this
+        const curTab = this.tabs.find(item => item.class === _this.tabType)
+        this.chartOption = {
+          color: curTab.color,
+          legend: {
+            show: false
+          },
+          tooltip: {
+            show: true,
+            formatter: (params) => {
+              params.seriesName = this.$t(params.seriesName)
+              params.borderColor = params.color
+              return detectionTooltipFormatter(params)
             }
-          }
-        } else {
-          this.httpError(res)
-        }
-      }).catch(e => {
-        console.error(e)
-        this.httpError(e)
-      }).finally(() => {
-        this.psiphon3Loading = false
-      })
-    },
-    httpError (e) {
-      this.isNoDataForPsiphon3 = false
-      this.showErrorForPsiphon3 = true
-      this.errorMsgForPsiphon3 = this.errorMsgHandler(e)
-    },
-    handleActiveBar () {
-      if (document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')) {
-        const {
-          offsetLeft,
-          clientWidth,
-          clientLeft
-        } = document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')
-        const activeBar = document.querySelector('.psiphon3-bar .bar-value-active')
-        activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
-      }
-    },
-    resize () {
-      if (this.myChart) {
-        this.myChart.resize()
-      }
-    },
-    dispatchSelectAction (type, name) {
-      this.myChart && this.myChart.dispatchAction({
-        type: type,
-        name: name
-      })
-    },
-    legendSelectChange (item) {
-      this.dispatchSelectAction('legendSelect', item.name)
-      this.tabs.forEach((t) => {
-        if (t.name !== item.name) {
-          this.dispatchSelectAction('legendUnSelect', t.name)
-        }
-      })
-    },
-    timeChange () {
-      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
-        this.init()
-      }
-      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-        this.$nextTick(() => {
-          this.handleActiveBar()
-        })
-      }
-    },
-    activeChange (item) { // isClick:代表是通过点击操作来的
-      if (item) {
-        this.tabType = item.class
-      }
-      this.legendSelectChange(item)
-      if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
-        this.init()
-      }
-    },
-    mouseenterTab (item) {
-      if (this.isNoDataForPsiphon3) return
-      this.mousemoveCursor = item.class
-      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-        this.$nextTick(() => {
-          this.handleActiveBar()
-        })
-      }
-    },
-    mouseleaveTab () {
-      this.mousemoveCursor = ''
-    },
-    fileChange (file, fileList) {
-      // 判断后缀，仅支持.csv
-      if (!_.endsWith(file.name, '.csv')) {
-        this.fileList = []
-        this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
-      } else if (file.size > this.uploadFileSizeLimit) { // 判断文件大小
-        this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
-        this.fileList = []
-      } else {
-        this.fileList = fileList.slice(-1)
-      }
-    },
-    uploadError (error) {
-      let errorMsg
-      if (error.message) {
-        errorMsg = JSON.parse(error.message).message
-      } else {
-        errorMsg = 'error'
-      }
-      this.uploadLoading = false
-      this.$message.error(this.$t('tip.uploadFailed', { msg: errorMsg }))
-    },
-    uploadSuccess (response) {
-      this.uploadLoading = false
-      this.uploaded = true
-      this.$message.success(this.$t('tip.success'))
-      this.showAddUpdateDialog = false
-      this.getCurTabData()
-    },
-    beforeUpload (file) {
-      this.uploadLoading = true
-      this.showConfirmDialog = false
-    },
-    submitConfirm () {
-      this.showConfirmDialog = true
-    },
-    submit () {
-      this.$refs.knowledgeUpload.submit()
-    },
-    cancle () {
-      this.showAddUpdateDialog = false
-    },
-    clickCard (data, event) {
-      if (data.isSelected) { // 原来为选中，当前点击后未选中
-        const index = this.checkList.indexOf(data)
-        if (index > -1) {
-          this.checkList.splice(index, 1)
-        }
-      } else {
-        const index = this.checkList.indexOf(data)
-        if (index === -1) {
-          this.checkList.push(data)
-        }
-      }
-      const val = !data.isSelected
-      data.isSelected = val
-      this.$emit('checkboxStatusChange', val, data)
-    },
-    checkboxStatusChange (val, data) {
-      data.isSelected = val
-      this.$emit('checkboxStatusChange', val, data)
-    },
-    beforeClose (done) {
-      if (this.myChart) {
-        this.myChart.dispose()
-        this.myChart = null
-      }
-      done()
-    },
-    handleClose () {
-      this.showUpdateDialog = false
-      this.showAddUpdateDialog = false
-      this.uploadLoading = false
-    },
-    handleConfirmClose () {
-      this.showConfirmDialog = false
-    },
-    handleUpdateClose () {
-      this.showAddUpdateDialog = false
-    },
-    showUpdate () {
-      this.showUpdateDialog = true
-      this.showAddUpdateDialog = false
-    },
-    async jumpToUpdatePage (data, showEnable) {
-      this.updateKnowledge = data
-      this.showEnable = showEnable
-      await this.getCurTabData()
-      if (data.source === 'cn_psiphon3_ip') {
-        await this.init()
-      }
-      this.showUpdate()
-      if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-        this.$nextTick(() => {
-          this.handleActiveBar()
-        })
-      }
-    },
-    uploadRecord () {
-      this.showAddUpdateDialog = true
-      this.updateObject.name = this.updateKnowledge.name
-      this.updateObject.label = this.updateKnowledge.label
-      this.updateObject.description = ''
-    },
-    getCurTabData () { // showEnable:true 为psiphon3的知识库，false为其它知识库
-      let params = {
-        pageSize: -1
-      }
-      if (this.showEnable) {
-        if (this.activeTab === knowledgeCardUpdateRecordType.updateRecord) {
-          params = {
-            ...params,
-            opUser: -1
-          }
-        } else if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
-          params = {
-            ...params,
-            opUser: 0
-          }
-        }
-      }
-      this.updateLogLoading = true
-      this.updateHistoryList = []
-      axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: params }).then(res => {
-        this.updateHistoryList = res.data.data.list
-        if (this.updateHistoryList[0]) {
-          this.currentVersion = this.updateHistoryList[0].commitVersion + 1
-        }
-        /*
-        this.hasUpdatingRecord = false
-        this.updateHistoryList.forEach(item => {
-          if (item.isUpdating) { // if(item.isUpdating){//????????
-            this.hasUpdatingRecord = true
-          }
-        })
-
- */
-      }).catch(e => {
-        console.error(e)
-      }).finally(() => {
-        this.updateLogLoading = false
-      })
-    },
-    // 切换tab
-    handleClick (tab) {
-      this.getCurTabData()
-      if (tab.index === '1') {
-        this.timeChange()
-      }
-    },
-    clearSelect () {
-      this.$nextTick(() => {
-        this.checkList = []
-        if (this.tableData && this.tableData.length > 0) {
-          this.tableData.forEach(data => {
-            data.isSelected = false
-          })
-        }
-      })
-    },
-    mouseenter (card) {
-      card.showUpdate = true
-    },
-    mouseleave (card) {
-      card.showUpdate = false
-    },
-    del (data) {
-      this.$emit('delete', data)
-    },
-    edit (id) {
-      const pageNo = this.$router.currentRoute.value.query.pageNo
-      const dataType = this.$router.currentRoute.value.query.dataType
-      this.$router.push({
-        path: '/knowledgeBase/edit',
-        query: {
-          t: +new Date(),
-          pageNoForTable: pageNo || 1,
-          id: id,
-          dataType: dataType
-        }
-      })
-    },
-    confirmSwitchLearning (id) {
-      this.showConfirmSwitch = true
-      this.switchKnowledgeId = id
-      return false
-    },
-    cancleSwitch () {
-      this.showConfirmSwitch = false
-    },
-    switchLearning () {
-      const hint = this.aiTaggingList.find(d => d.knowledgeId === this.switchKnowledgeId)
-      const toStatus = hint.status === 0 ? 1 : 0
-      const url = toStatus === 0 ? api.knowledgeBaseLearningStop : api.knowledgeBaseLearningStart
-      axios.post(`${url}?knowledgeId=${hint.knowledgeId}`).then(res => {
-        if (res.status === 200) {
-          hint.status = toStatus
-          this.$message.success(this.$t('tip.success'))
-        } else {
-          console.error(res.message)
-          this.$message.error(this.errorMsgHandler(res))
-        }
-      }).catch(e => {
-        console.error(e)
-        this.$message.error(this.errorMsgHandler(e))
-      }).finally(() => {
-        this.showConfirmSwitch = false
-      })
-    }
-  },
-  watch: {
-    tabType (n) {
-      this.timeChange()
-    },
-    /*
-    hasUpdatingRecord (n) {
-      if (n) { // update record页存在“正在更新”的记录时，每20秒自动请求一次接口
-        this.timer = setTimeout(() => {
-          this.getCurTabData()
-        }, 20000)
-      } else { // 直到出现新的记录,出现新记录后（失败或者成功）,取消定时请求接口，右上角"update"按钮恢复可用。"正在更新"和"失败”都会有对应的强调样式。
-        clearTimeout(this.timer)
-      }
-    },
-    */
-    tableData: {
-      handler (n) {
-        if (this.tableData && this.tableData.length > 0) {
-          this.aiTaggingList = []
-          this.websketchList = []
-          this.tableData.forEach(item => {
-            item.showUpdate = false
-            const basicInfo = builtInKnowledgeBaseBasicInfo.find(bi => bi.knowledgeId === item.knowledgeId)
-            if (basicInfo) {
-              item = {
-                ...item,
-                ...basicInfo
+          },
+          grid: {
+            top: '12%',
+            left: '2%',
+            right: '2%',
+            bottom: 24,
+            containLabel: true
+          },
+          xAxis: {
+            type: 'time',
+            axisLine: {
+              show: false
+            },
+            axisTick: {
+              show: false
+            },
+            axisLabel: {
+              formatter: xAxisTimeFormatter,
+              rich: xAxisTimeRich
+            }
+          },
+          yAxis: {
+            type: 'value',
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: '#ECECEC'
               }
-              if (item.category === knowledgeCategoryValue.aiTagging) {
-                this.aiTaggingList.push(item)
-              } else if (item.category === knowledgeCategoryValue.webSketch) {
-                this.websketchList.push(item)
+            },
+            axisLabel: {
+              margin: 20
+            },
+            minInterval: 1
+          },
+          series: [
+            {
+              name: curTab.name,
+              data: echartsData,
+              type: 'bar',
+              barWidth: 26
+            }
+          ]
+        }
+
+        this.$nextTick(() => {
+          if (!this.myChart) {
+            this.myChart = echarts.init(document.getElementById('psiphonBarChart'))
+          }
+          this.myChart.setOption(this.chartOption)
+        })
+      },
+      init () {
+        this.psiphon3Loading = true
+        const endTime = window.$dayJs.tz().valueOf()
+        const params = {
+          startTime: getSecond(endTime - this.selectTime * 60 * 1000),
+          endTime: getSecond(endTime)
+        }
+        const url = api.knowledgeBaseTimedistribution.replace('{{knowledgeId}}', this.updateKnowledge.knowledgeId).replace('{{type}}', this.tabType)
+        axios.get(url, { params: params }).then(response => {
+          const res = response.data
+
+          if (response.status === 200) {
+            this.isNoDataForPsiphon3 = res.data.result.length === 0
+            this.showErrorForPsiphon3 = false
+            if (!this.isNoDataForPsiphon3) {
+              const chartsData = res.data.result.map(item => {
+                return [getMillisecond(item.statTime), item.count]
+              })
+              if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+                this.echartsInit(chartsData)
               }
             }
+          } else {
+            this.httpError(res)
+          }
+        }).catch(e => {
+          console.error(e)
+          this.httpError(e)
+        }).finally(() => {
+          this.psiphon3Loading = false
+        })
+      },
+      httpError (e) {
+        this.isNoDataForPsiphon3 = false
+        this.showErrorForPsiphon3 = true
+        this.errorMsgForPsiphon3 = this.errorMsgHandler(e)
+      },
+      handleActiveBar () {
+        if (document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')) {
+          const {
+            offsetLeft,
+            clientWidth,
+            clientLeft
+          } = document.querySelector('.psiphon3-bar .bar-value-tabs.is-active')
+          const activeBar = document.querySelector('.psiphon3-bar .bar-value-active')
+          activeBar.style.cssText += `width: ${clientWidth}px; left: ${offsetLeft + this.leftOffset + clientLeft}px;`
+        }
+      },
+      resize () {
+        if (this.myChart) {
+          this.myChart.resize()
+        }
+      },
+      dispatchSelectAction (type, name) {
+        this.myChart && this.myChart.dispatchAction({
+          type: type,
+          name: name
+        })
+      },
+      legendSelectChange (item) {
+        this.dispatchSelectAction('legendSelect', item.name)
+        this.tabs.forEach((t) => {
+          if (t.name !== item.name) {
+            this.dispatchSelectAction('legendUnSelect', t.name)
+          }
+        })
+      },
+      timeChange () {
+        if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+          this.init()
+        }
+        if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+          this.$nextTick(() => {
+            this.handleActiveBar()
           })
         }
-      }
-    },
-    activeTab (n) {
-      if (n === 'updateRecord') {
+      },
+      activeChange (item) { // isClick:代表是通过点击操作来的
+        if (item) {
+          this.tabType = item.class
+        }
+        this.legendSelectChange(item)
+        if (this.updateKnowledge.source === 'cn_psiphon3_ip') {
+          this.init()
+        }
+      },
+      mouseenterTab (item) {
+        if (this.isNoDataForPsiphon3) return
+        this.mousemoveCursor = item.class
+        if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+          this.$nextTick(() => {
+            this.handleActiveBar()
+          })
+        }
+      },
+      mouseleaveTab () {
+        this.mousemoveCursor = ''
+      },
+      fileChange (file, fileList) {
+        // 判断后缀，仅支持.csv
+        if (!_.endsWith(file.name, '.csv')) {
+          this.fileList = []
+          this.$message.error(this.$t('validate.fileTypeLimit', { types: this.fileTypeLimit }))
+        } else if (file.size > this.uploadFileSizeLimit) { // 判断文件大小
+          this.$message.error(this.$t('validate.fileSizeLimit', { size: unitConvert(this.uploadFileSizeLimit, unitTypes.byte).join('') }))
+          this.fileList = []
+        } else {
+          this.fileList = fileList.slice(-1)
+        }
+      },
+      uploadError (error) {
+        let errorMsg
+        if (error.message) {
+          errorMsg = JSON.parse(error.message).message
+        } else {
+          errorMsg = 'error'
+        }
+        this.uploadLoading = false
+        this.$message.error(this.$t('tip.uploadFailed', { msg: errorMsg }))
+      },
+      uploadSuccess (response) {
+        this.uploadLoading = false
+        this.uploaded = true
+        this.$message.success(this.$t('tip.success'))
+        this.showAddUpdateDialog = false
+        this.getCurTabData()
+      },
+      beforeUpload (file) {
+        this.uploadLoading = true
+        this.showConfirmDialog = false
+      },
+      submitConfirm () {
+        this.showConfirmDialog = true
+      },
+      submit () {
+        this.$refs.knowledgeUpload.submit()
+      },
+      cancle () {
+        this.showAddUpdateDialog = false
+      },
+      clickCard (data, event) {
+        if (data.isSelected) { // 原来为选中，当前点击后未选中
+          const index = this.checkList.indexOf(data)
+          if (index > -1) {
+            this.checkList.splice(index, 1)
+          }
+        } else {
+          const index = this.checkList.indexOf(data)
+          if (index === -1) {
+            this.checkList.push(data)
+          }
+        }
+        const val = !data.isSelected
+        data.isSelected = val
+        this.$emit('checkboxStatusChange', val, data)
+      },
+      checkboxStatusChange (val, data) {
+        data.isSelected = val
+        this.$emit('checkboxStatusChange', val, data)
+      },
+      beforeClose (done) {
         if (this.myChart) {
           this.myChart.dispose()
           this.myChart = null
         }
+        done()
+      },
+      handleClose () {
+        this.showUpdateDialog = false
+        this.showAddUpdateDialog = false
+        this.uploadLoading = false
+      },
+      handleConfirmClose () {
+        this.showConfirmDialog = false
+      },
+      handleUpdateClose () {
+        this.showAddUpdateDialog = false
+      },
+      showUpdate () {
+        this.showUpdateDialog = true
+        this.showAddUpdateDialog = false
+      },
+      async jumpToUpdatePage (data, showEnable) {
+        this.updateKnowledge = data
+        this.showEnable = showEnable
+        await this.getCurTabData()
+        if (data.source === 'cn_psiphon3_ip') {
+          await this.init()
+        }
+        this.showUpdate()
+        if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+          this.$nextTick(() => {
+            this.handleActiveBar()
+          })
+        }
+      },
+      uploadRecord () {
+        this.showAddUpdateDialog = true
+        this.updateObject.name = this.updateKnowledge.name
+        this.updateObject.label = this.updateKnowledge.label
+        this.updateObject.description = ''
+      },
+      getCurTabData () { // showEnable:true 为psiphon3的知识库，false为其它知识库
+        let params = {
+          pageSize: -1
+        }
+        if (this.showEnable) {
+          if (this.activeTab === knowledgeCardUpdateRecordType.updateRecord) {
+            params = {
+              ...params,
+              opUser: -1
+            }
+          } else if (this.activeTab === knowledgeCardUpdateRecordType.intelligenceLearning) {
+            params = {
+              ...params,
+              opUser: 0
+            }
+          }
+        }
+        this.updateLogLoading = true
+        this.updateHistoryList = []
+        axios.get(api.knowledgeBaseLog + '/' + this.updateKnowledge.knowledgeId, { params: params }).then(res => {
+          this.updateHistoryList = res.data.data.list
+          if (this.updateHistoryList[0]) {
+            this.currentVersion = this.updateHistoryList[0].commitVersion + 1
+          }
+          /*
+          this.hasUpdatingRecord = false
+          this.updateHistoryList.forEach(item => {
+            if (item.isUpdating) { // if(item.isUpdating){//????????
+              this.hasUpdatingRecord = true
+            }
+          })
+
+   */
+        }).catch(e => {
+          console.error(e)
+        }).finally(() => {
+          this.updateLogLoading = false
+        })
+      },
+      // 切换tab
+      handleClick (tab) {
+        this.getCurTabData()
+        if (tab.index === '1') {
+          this.timeChange()
+        }
+      },
+      clearSelect () {
+        this.$nextTick(() => {
+          this.checkList = []
+          if (this.tableData && this.tableData.length > 0) {
+            this.tableData.forEach(data => {
+              data.isSelected = false
+            })
+          }
+        })
+      },
+      mouseenter (card) {
+        card.showUpdate = true
+      },
+      mouseleave (card) {
+        card.showUpdate = false
+      },
+      del (data) {
+        this.$emit('delete', data)
+      },
+      edit (id) {
+        const pageNo = this.$router.currentRoute.value.query.pageNo
+        const dataType = this.$router.currentRoute.value.query.dataType
+        this.$router.push({
+          path: '/knowledgeBase/edit',
+          query: {
+            t: +new Date(),
+            pageNoForTable: pageNo || 1,
+            id: id,
+            dataType: dataType
+          }
+        })
+      },
+      confirmSwitchLearning (id) {
+        this.showConfirmSwitch = true
+        this.switchKnowledgeId = id
+        return false
+      },
+      cancleSwitch () {
+        this.showConfirmSwitch = false
+      },
+      switchLearning () {
+        const hint = this.aiTaggingList.find(d => d.knowledgeId === this.switchKnowledgeId)
+        const toStatus = hint.status === 0 ? 1 : 0
+        const url = toStatus === 0 ? api.knowledgeBaseLearningStop : api.knowledgeBaseLearningStart
+        axios.post(`${url}?knowledgeId=${hint.knowledgeId}`).then(res => {
+          if (res.status === 200) {
+            hint.status = toStatus
+            this.$message.success(this.$t('tip.success'))
+          } else {
+            console.error(res.message)
+            this.$message.error(this.errorMsgHandler(res))
+          }
+        }).catch(e => {
+          console.error(e)
+          this.$message.error(this.errorMsgHandler(e))
+        }).finally(() => {
+          this.showConfirmSwitch = false
+        })
       }
     },
-    showAddUpdateDialog: {
-      handler (n) {
-        if (!n) {
-          this.fileList = []
-          this.timeChange()
-        } else {
+    watch: {
+      tabType (n) {
+        this.timeChange()
+      },
+      /*
+      hasUpdatingRecord (n) {
+        if (n) { // update record页存在“正在更新”的记录时，每20秒自动请求一次接口
+          this.timer = setTimeout(() => {
+            this.getCurTabData()
+          }, 20000)
+        } else { // 直到出现新的记录,出现新记录后（失败或者成功）,取消定时请求接口，右上角"update"按钮恢复可用。"正在更新"和"失败”都会有对应的强调样式。
+          clearTimeout(this.timer)
+        }
+      },
+      */
+      tableData: {
+        handler (n) {
+          if (this.tableData && this.tableData.length > 0) {
+            this.websketchList = []
+            this.tableData.forEach(item => {
+              item.showUpdate = false
+              const basicInfo = builtInKnowledgeBaseBasicInfo.find(bi => bi.knowledgeId === item.knowledgeId)
+              if (basicInfo) {
+                item = {
+                  ...item,
+                  ...basicInfo
+                }
+                if (item.category === knowledgeCategoryValue.webSketch) {
+                  this.websketchList.push(item)
+                }
+              }
+            })
+          }
+        }
+      },
+      activeTab (n) {
+        if (n === 'updateRecord') {
           if (this.myChart) {
             this.myChart.dispose()
             this.myChart = null
           }
         }
-      }
-    }
-  },
-  mounted () {
-    this.myChart = null
-    this.chartOption = null
-    window.addEventListener('resize', this.resize)
-
-    this.aiTaggingList = []
-    this.websketchList = []
-    this.tableData.forEach(item => {
-      item.showUpdate = false
-      if (item.category === knowledgeCategoryValue.aiTagging) {
-        this.aiTaggingList.push(item)
-      } else if (item.category === knowledgeCategoryValue.webSketch) {
-        this.websketchList.push(item)
-      }
-    })
-  },
-  beforeUnmount () {
-    // clearTimeout(this.timer)
-    window.removeEventListener('resize', this.resize)
-    const dom = document.getElementById('psiphonBarChart')
-    if (dom) {
-      let myChart = echarts.getInstanceByDom(document.getElementById('psiphonBarChart'))
-      if (myChart) {
-        echarts.dispose(myChart)
-      }
-      myChart = null
-    }
-
-    if (this.myChart) {
-      echarts.dispose(this.myChart)
-    }
-  },
-  computed: {
-    uploadParams () {
-      return {
-        knowledgeId: this.updateKnowledge.knowledgeId,
-        action: 'overwrite',
-        description: this.updateObject.description
-      }
-    },
-    confirmSwitchLearningTip () {
-      let tip = ''
-      if (this.switchKnowledgeId) {
-        const find = this.aiTaggingList.find(item => item.knowledgeId === this.switchKnowledgeId)
-        if (find) {
-          if (find.status === 0) {
-            tip = this.$t('tip.confirmEnablePsiphon3') + '?'
-          } else if (find.status === 1) {
-            tip = this.$t('tip.confirmDisablePsiphon3') + '?'
+      },
+      showAddUpdateDialog: {
+        handler (n) {
+          if (!n) {
+            this.fileList = []
+            this.timeChange()
+          } else {
+            if (this.myChart) {
+              this.myChart.dispose()
+              this.myChart = null
+            }
           }
         }
       }
-      return tip
+    },
+    mounted () {
+      this.myChart = null
+      this.chartOption = null
+      window.addEventListener('resize', this.resize)
+
+      this.websketchList = []
+      this.tableData.forEach(item => {
+        item.showUpdate = false
+        if (item.category === knowledgeCategoryValue.webSketch) {
+          this.websketchList.push(item)
+        }
+      })
+    },
+    beforeUnmount () {
+      // clearTimeout(this.timer)
+      window.removeEventListener('resize', this.resize)
+      const dom = document.getElementById('psiphonBarChart')
+      if (dom) {
+        let myChart = echarts.getInstanceByDom(document.getElementById('psiphonBarChart'))
+        if (myChart) {
+          echarts.dispose(myChart)
+        }
+        myChart = null
+      }
+
+      if (this.myChart) {
+        echarts.dispose(this.myChart)
+      }
+    },
+    computed: {
+      uploadParams () {
+        return {
+          knowledgeId: this.updateKnowledge.knowledgeId,
+          action: 'overwrite',
+          description: this.updateObject.description
+        }
+      }
     }
   }
-}
 </script>
