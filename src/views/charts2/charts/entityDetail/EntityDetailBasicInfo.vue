@@ -47,7 +47,13 @@
         <i :class="card.icon"></i>
         <div class="detail-card__text">
           <div class="detail-card__label">{{card.label}}:</div>
-          <div class="detail-card__value" :title="card.value">{{card.value || '-'}}</div>
+          <div v-if="card.name==='reputationLevel'"
+               class="detail-card__value row__tag row__tag__level"
+               :title="card.value"
+               :style="`background-color:${riskLevelColor1[card.level]};color: ${card.value !== '-' ? '#fff' : ''}`">
+            {{card.value || '-'}}
+          </div>
+          <div v-else class="detail-card__value" :title="card.value">{{card.value || '-'}}</div>
         </div>
       </div>
     </div>
@@ -62,7 +68,8 @@ import {
   entityDetailTags,
   tagValueLabelMapping,
   riskLevelMapping,
-  entityDefaultColor
+  entityDefaultColor,
+  riskLevelColor1
 } from '@/utils/constants'
 import { selectElementText, copySelectionText, getTagColor } from '@/utils/tools'
 import { ref } from 'vue'
@@ -87,7 +94,8 @@ export default {
       // type: positive 正面的，绿色；normal 灰色；negative 负面的，红色
       levelTwoTags: [{ value: '安全', type: 'positive' }, { value: '工具', type: 'normal' }, { value: '恶意IP', type: 'negative' }],
       analysisPopShow: false,
-      hideTagArea: false
+      hideTagArea: false,
+      riskLevelColor1
     }
   },
   computed: {
@@ -185,7 +193,8 @@ export default {
                 if (res.data.category) {
                   this.detailCards.find(c => c.name === 'categoryName').value = res.data.category.categoryName
                   this.detailCards.find(c => c.name === 'categoryGroup').value = res.data.category.categoryGroup
-                  this.detailCards.find(c => c.name === 'reputationLevel').value = res.data.category.reputationLevel
+                  this.detailCards.find(c => c.name === 'reputationLevel').value = this.reputationLevel(res.data.category.reputationLevel)
+                  this.detailCards.find(c => c.name === 'reputationLevel').level = res.data.category.reputationLevel
                 }
                 if (res.data.whois) {
                   this.detailCards.find(c => c.name === 'expireDate').value = dateFormatByAppearance(res.data.whois.expireDate)
@@ -269,6 +278,14 @@ export default {
     },
     jump (url) {
       window.open(url, '_blank')
+    },
+    reputationLevel (level) {
+      if (level) {
+        const m = riskLevelMapping.find(mapping => mapping.name === level)
+        return (m && this.$t(m.label)) || level
+      } else {
+        return '-'
+      }
     }
   },
   setup (props) {
@@ -477,6 +494,7 @@ export default {
           { icon: 'cn-icon cn-icon-app-full-name', name: 'appLongname', label: i18n.global.t('overall.appFullName'), value: '' },
           { icon: 'cn-icon cn-icon-description', name: 'appDescription', label: i18n.global.t('config.dataSource.description'), value: '' }
         )
+        break
       }
       case 'subscriber': {
         detailCards.value = _.concat(detailCards.value,
