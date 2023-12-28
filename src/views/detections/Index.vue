@@ -325,6 +325,21 @@ export default {
           const chartDom = document.getElementById(`eventSeverityTrendBar${this.pageType}`)
           const eventSeverityTrendOption = this.$_.cloneDeep(multipleBarOption)
 
+          const key = changeI18nOfSeverity(data[0].severity)
+          const len = dataMap.get(key).length
+          // 将时间转为毫秒，并分为100个间隔值，如有100条数据，则不分割，如48不满100，按52分割，保证有数据的时间点不受无数据时间点影响
+          const diffTime = ((params.endTime - params.startTime) * 1000) / (len > 100 ? 100 : (100 - len))
+          const timeList = []
+          for (let i = (params.startTime * 1000); i < (params.endTime * 1000);) {
+            i = i + diffTime
+            timeList.push([parseInt(i.toFixed(0)), 0])
+          }
+          // 将100个时间间隔与柱状图数据合并并排序
+          dataMap.forEach(function (value, index) {
+            value = value.concat(timeList)
+            value.sort((a, b) => a[0] - b[0])
+            dataMap.set(index, value)
+          })
           const xData = []
           dataMap.forEach(function (value) {
             // eventSeverityTrendOption.series[Number(getSeriesIndex(key))].data = value.map(v => Number(v[1]))
