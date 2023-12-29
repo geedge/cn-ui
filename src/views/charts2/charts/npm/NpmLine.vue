@@ -85,7 +85,7 @@ export default {
   data () {
     return {
       chartData: {},
-      chartOptionLineData: dataForNpmLine.chartOptionLineData,
+      chartOptionLineData: [],
       npmLineColor: dataForNpmLine.npmLineColor,
       timer: null,
       myChartArray: [],
@@ -140,6 +140,7 @@ export default {
               this.showError = false
               this.isNoData = res.data.result.length === 0
 
+              this.chartOptionLineData = dataForNpmLine.chartOptionLineData
               if (!this.isNoData) {
                 if (this.chart.params.index === 0) {
                   res.data.result.forEach((t, i) => {
@@ -181,7 +182,7 @@ export default {
         // this.chartOption.color = this.chartOption.color.reverse()
         // data = data.reverse()
 
-        this.chartOption.series = data.map((t, i) => {
+        this.chartOption.series = data.map(t => {
           return {
             type: 'line',
             symbol: 'circle',
@@ -274,7 +275,7 @@ export default {
       })
 
       if (legend.length === 0) {
-        chartOptionLineData.forEach((t, i) => {
+        chartOptionLineData.forEach(t => {
           t.invertTab = true
         })
       }
