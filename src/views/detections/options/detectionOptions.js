@@ -104,7 +104,7 @@ export const multipleBarOption = {
   grid: {
     top: 40,
     left: 25,
-    right: 25,
+    right: 40,
     bottom: 20,
     containLabel: true
   },
