@@ -47,7 +47,7 @@ export default {
   },
   data () {
     return {
-      url: api.knowledgeBaseList,
+      url: api.pluginList,
       blankObject: { // 空白对象
         id: '',
         name: '',
@@ -69,16 +69,16 @@ export default {
       if (params) {
         this.searchLabel = { ...this.searchLabel, ...params }
       }
-      this.searchLabel = { ...this.searchLabel, ...this.pageObj }
+      //this.searchLabel = { ...this.searchLabel, ...this.pageObj }
+      //this.searchLabel = {...this.searchLabel,jobGroup:3}
       this.isNoData = false
-      // this.tableData = []
       this.toggleLoading(true)
       delete this.searchLabel.total
       let listUrl = this.url
       if (this.listUrl) {
         listUrl = this.listUrl
       }
-      this.searchLabel.category = 'ai_tagging'
+      //this.searchLabel.category = 'ai_tagging'
       axios.get(listUrl, { params: this.searchLabel }).then(response => {
         if (response.status === 200) {
           for (let i = 0; i < response.data.data.list.length; i++) {

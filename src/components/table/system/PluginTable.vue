@@ -30,16 +30,11 @@
       <template #default="scope" :column="item">
         <template v-if="item.prop === 'status'">
           <el-switch
-              v-if="hasPermission('editUser')"
               v-model="scope.row.status"
               active-value="1"
               inactive-value="0"
               @change="()=>{statusChange(scope.row)}">
           </el-switch>
-          <template v-else>
-            <span v-if="scope.row.status === '1'">{{$t('detection.create.enabled')}}</span>
-            <span v-else>{{$t('detection.create.disabled')}}</span>
-          </template>
         </template>
         <template v-else-if="item.prop === 'type'">
           <span class="type-tag">{{tagSourceText(scope.row[item.prop])}}</span>
@@ -133,15 +128,17 @@ export default {
   },
   methods: {
     statusChange (plugin) {
-      /*
-      axios.put('sys/plugin', user).then(response => {
+      let status = plugin.status
+      let statusUrl = status === 0 ? api.pluginStatusEnable : api.pluginStatusDisable
+
+      axios.put(statusUrl,{id:plugin.id}).then(response => {
         if (response.status === 200) {
           this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
         } else {
           this.$message.error(response.data.message)
         }
         this.$emit('reload')
-      }) */
+      })
     }
   }
 }
