@@ -211,7 +211,7 @@ export default {
               const dataObject = behaviorPatternData[0]
               Object.keys(dataObject).forEach(key => {
                 const value = Number(dataObject[key]) ? Number(dataObject[key]) : 0
-                if (value !== 0) {
+                if (value !== 0 && key !== 'total') {
                   behaviorPatternLen++
                 }
               })
