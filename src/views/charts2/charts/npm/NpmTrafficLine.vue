@@ -165,19 +165,40 @@ export default {
         })
       } else {
         this.toggleLoading(true)
-        const totalTrafficAnalysis = axios.get(api.npm.overview.totalTrafficAnalysis, { params: params })
-        const totalNetworkAnalysis = axios.get(api.npm.overview.totalNetworkAnalysis, { params: params })
-        const totalHttpResponseDelay = axios.get(api.npm.overview.totalHttpResponseDelay, { params: params })
-        const totalSslConDelay = axios.get(api.npm.overview.totalSslConDelay, { params: params })
-        const npmLineData = []
-        Promise.all([totalNetworkAnalysis, totalTrafficAnalysis, totalHttpResponseDelay, totalSslConDelay]).then(res => {
-          res.forEach(item => {
-            if (item.status === 200) {
-              npmLineData.push(...item.data.data.result)
-            } else {
-              this.httpError(res)
-            }
-          })
+        // const totalTrafficAnalysis = axios.get(api.npm.overview.totalTrafficAnalysis, { params: params })
+        // const totalNetworkAnalysis = axios.get(api.npm.overview.totalNetworkAnalysis, { params: params })
+        // const totalHttpResponseDelay = axios.get(api.npm.overview.totalHttpResponseDelay, { params: params })
+        // const totalSslConDelay = axios.get(api.npm.overview.totalSslConDelay, { params: params })
+        let npmLineData = []
+        // Promise.all([totalNetworkAnalysis, totalTrafficAnalysis, totalHttpResponseDelay, totalSslConDelay]).then(res => {
+        //   res.forEach(item => {
+        //     if (item.status === 200) {
+        //       npmLineData.push(...item.data.data.result)
+        //     } else {
+        //       this.httpError(res)
+        //     }
+        //   })
+        //   this.showError = false
+        //   this.chartDateObject = _.cloneDeep(npmLineData)
+        //   this.isNoData = npmLineData.length === 0
+        //   if (this.isNoData) {
+        //     this.tabs = dataForNpmTrafficLine.tabs
+        //     this.npmQuantity = dataForNpmTrafficLine.npmQuantity
+        //   } else {
+        //     this.initLineData(npmLineData, val)
+        //   }
+        // }).catch(e => {
+        //   this.httpError(e)
+        // }).finally(() => {
+        //   this.toggleLoading(false)
+        // })
+        // 暂时无数据，后续观察
+        axios.get(api.npm.overview.totalTrafficAnalysis, { params: params }).then(res => {
+          if (res.status === 200) {
+            npmLineData = res.data.data.result
+          } else {
+            this.httpError(res)
+          }
           this.showError = false
           this.chartDateObject = _.cloneDeep(npmLineData)
           this.isNoData = npmLineData.length === 0
