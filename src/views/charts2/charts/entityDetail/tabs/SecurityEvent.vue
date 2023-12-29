@@ -63,7 +63,7 @@
                   <div class="basic-info__item">
                     <i class="cn-icon cn-icon-duration"></i>
                     <span>{{ $t('overall.duration') }}&nbsp;:&nbsp;&nbsp;</span>
-                    <span>{{ unitConvert(item.durationMs, 'time', null, null, 0).join(' ') || '-' }}</span>
+                    <span>{{unitConvert(parseInt(item.durationS), 'time', 's', null, 0).join(' ') || '-'}}</span>
                   </div>
                 </div>
               </div>
