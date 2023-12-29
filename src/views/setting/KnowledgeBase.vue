@@ -326,7 +326,7 @@ export default {
       this.isNoData = false
       this.toggleLoading(true)
       const params = {
-        category: knowledgeCategoryValue.aiTagging + ',' + knowledgeCategoryValue.webSketch,
+        category: knowledgeCategoryValue.webSketch,
         pageSize: -1
       }
       axios.get(this.listUrl, { params }).then(response => {
