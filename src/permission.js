@@ -196,7 +196,7 @@ export function handleRoutes (menus, routes) {
       return false
     }
     // administration的路由使用了嵌套，其他的是平铺
-    if (menu.pid === 0 && menu.code === 'administration') {
+    if (menu.pid === 0 && (menu.code === 'administration' || menu.code === 'system')) {
       const path = menu.route.replace('redirect:', '')
       if (menu.children && menu.children.length > 0) {
         const route = {
