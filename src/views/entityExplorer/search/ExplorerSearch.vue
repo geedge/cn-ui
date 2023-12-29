@@ -130,7 +130,7 @@ export default {
       this.showHistory = false
       this.$nextTick(() => {
         if (this.$refs.search.$refs.textMode) {
-          this.$refs.search.$refs.textMode.focus()
+          this.$refs.search.$refs.textMode.focus(row)
         }
       })
       if (this.showList) {

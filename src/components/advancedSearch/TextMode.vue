@@ -205,8 +205,9 @@ export default {
         this.$emit('search', { q: '', str: '', metaList: [] })
       }
     },
-    focus () {
-      this.codeMirror.focus()
+    focus (e) {
+      toRaw(this.codeMirror).setValue(e.str)
+      // this.codeMirror.focus()
     },
     changeMode () {
       const str = this.codeMirror.getValue().trim()
