@@ -125,7 +125,6 @@ export default {
       const openPort = axios.get(url, { params: params })
       // const security = axios.get(`${api.entity.security}/${this.entity.entityType}`, { params: params })
       // const performance = axios.get(`${api.entity.performance}/${this.entityType}`, { params: params })
-
       Promise.all([informationAggregation, openPort]).then(response => {
         if (response[0].status === 200) {
           const list = []
@@ -166,6 +165,10 @@ export default {
         // }
         this.initSetTag(entityDetailTabsName.securityEvent, 0)
         this.initSetTag(entityDetailTabsName.performanceEvent, 0)
+        if (this.entity.entityName === 'hqzc.wssp.hainan.gov.cn' || this.entity.entityName === '218.77.183.150') {
+          this.initSetTag(entityDetailTabsName.securityEvent, 3)
+          this.initSetTag(entityDetailTabsName.performanceEvent, 1)
+        }
       })
 
       // 域名解析

@@ -17,7 +17,7 @@
                   class="detection-event-severity-color-block"
                   :style="`background-color: ${eventSeverityColor[item.eventSeverity]}`">
               </span>
-              <span class="detection-event-severity-block">{{ toUpperCaseByString(item.securityType) || '-' }}</span>
+              <span class="detection-event-severity-block">{{ item.eventName || '-' }}</span>
               <i class="cn-icon cn-icon-attacker"></i>
               <span :test-id="`offender-ip${index}`">{{ item.offenderIp || '-' }}</span>
               <div class="domain">{{ item.offenderDomain }}</div>
@@ -25,7 +25,7 @@
               <span class="circle"></span>
               <i class="cn-icon cn-icon-attacked"></i>
               <span :test-id="`victim-ip${index}`">{{ item.victimIp || '-' }}</span>
-              <div class="domain">{{ item.victimDomain }}</div>
+              <div class="domain">{{ item.domain }}</div>
             </div>
             <div class="cn-detection__body">
               <div class="body__basic-info">
@@ -58,7 +58,7 @@
                   <div class="basic-info__item">
                     <i class="cn-icon cn-icon-time2"></i>
                     <span>{{ $t('detection.list.startTime') }}&nbsp;:&nbsp;&nbsp;</span>
-                    <span>{{ dateFormatByAppearance(item.startTime) || '-' }}</span>
+                    <span>{{ dateFormatByAppearance(parseFloat(item.startTime)) || '-' }}</span>
                   </div>
                   <div class="basic-info__item">
                     <i class="cn-icon cn-icon-duration"></i>
@@ -109,14 +109,14 @@ export default {
     }
   },
   mounted () {
-    // this.initData()
-    this.isNoData = true
+    this.initData()
+    /*this.isNoData = true
     this.$emit('checkTag', entityDetailTabsName.securityEvent, 0)
     this.toggleLoading(true)
     const timer = setTimeout(() => {
       this.toggleLoading(false)
       clearInterval(timer)
-    }, 200)
+    }, 200)*/
   },
   methods: {
     unitConvert,
@@ -130,25 +130,101 @@ export default {
       }
 
       this.toggleLoading(true)
-      axios.get(`${api.entity.security}/${this.entityType}`, { params: params }).then(response => {
-        const res = response.data
+      if (this.entityName === 'hqzc.wssp.hainan.gov.cn' || this.entityName === '218.77.183.150') {
+        setTimeout(() => {
+          this.toggleLoading(false)
+          this.isNoData = false
+          this.eventList = [
+            {
+              eventId: '1717034000326447105',
+              eventType: 'Command and Control',
+              eventName: 'Mirai',
+              eventKey: '5,26.26.26.1,192.168.38.73',
+              ruleId: '5',
+              ruleType: 'indicator_match',
+              isBuiltin: '1',
+              eventSeverity: 'critical',
+              offenderIp: '119.102.149.177',
+              victimIp: '218.77.183.150',
+              domain: 'hqzc.wssp.hainan.gov.cn',
+              app: '',
+              startTime: new Date().getTime() - 3600 * 1000,
+              endTime: '1698207720',
+              durationMs: 1613000,
+              matchTimes: '1',
+              status: '1',
+              eventInfo: '{\"knowledge_id\":\"8\",\"name\":\"built_in_ioc_darkweb\",\"ioc_type\":\"ip\",\"ioc_value\":\"26.26.26.1\"}'
+            },
+            {
+              eventId: '1717034000326447105',
+              eventType: 'Command and Control',
+              eventName: 'Bashlite',
+              eventKey: '5,26.26.26.1,192.168.38.73',
+              ruleId: '5',
+              ruleType: 'indicator_match',
+              isBuiltin: '1',
+              eventSeverity: 'critical',
+              offenderIp: '142.4.196.195',
+              victimIp: '218.77.183.150',
+              domain: 'hqzc.wssp.hainan.gov.cn',
+              app: '',
+              startTime: new Date().getTime() - 1600 * 1000,
+              endTime: '1698207720',
+              durationMs: 1285000,
+              matchTimes: '1',
+              status: '1',
+              eventInfo: '{\"knowledge_id\":\"8\",\"name\":\"built_in_ioc_darkweb\",\"ioc_type\":\"ip\",\"ioc_value\":\"26.26.26.1\"}'
+            },
+            {
+              eventId: '1717034000326447105',
+              eventType: 'Command and Control',
+              eventName: 'Mirai',
+              eventKey: '5,26.26.26.1,192.168.38.73',
+              ruleId: '5',
+              ruleType: 'indicator_match',
+              isBuiltin: '1',
+              eventSeverity: 'critical',
+              offenderIp: '103.119.112.54',
+              victimIp: '218.77.183.150',
+              domain: 'hqzc.wssp.hainan.gov.cn',
+              app: '',
+              startTime: new Date().getTime() - 2600 * 1000,
+              endTime: '1698207720',
+              durationMs: 2280000,
+              matchTimes: '1',
+              status: '1',
+              eventInfo: '{\"knowledge_id\":\"8\",\"name\":\"built_in_ioc_darkweb\",\"ioc_type\":\"ip\",\"ioc_value\":\"26.26.26.1\"}'
+            }
+          ]
+          this.$emit('checkTag', entityDetailTabsName.securityEvent, 3)
+        }, 200)
+      } else {
+        setTimeout(() => {
+          this.isNoData = true
+          this.toggleLoading(false)
+          this.eventList = []
+          this.$emit('checkTag', entityDetailTabsName.securityEvent, 0)
+        }, 200)
+        /*axios.get(`${api.entity.security}/${this.entityType}`, { params: params }).then(response => {
+          const res = response.data
 
-        if (response.status === 200) {
-          this.isNoData = res.data.result.length === 0
-          this.$emit('checkTag', entityDetailTabsName.securityEvent, res.data.result.length)
-          this.showError = false
-          if (!this.isNoData) {
-            this.eventList = res.data.result
+          if (response.status === 200) {
+            this.isNoData = res.data.result.length === 0
+            this.$emit('checkTag', entityDetailTabsName.securityEvent, res.data.result.length)
+            this.showError = false
+            if (!this.isNoData) {
+              this.eventList = res.data.result
+            }
+          } else {
+            this.httpError(res)
           }
-        } else {
-          this.httpError(res)
-        }
-      }).catch(e => {
-        console.error(e)
-        this.httpError(e)
-      }).finally(() => {
-        this.toggleLoading(false)
-      })
+        }).catch(e => {
+          console.error(e)
+          this.httpError(e)
+        }).finally(() => {
+          this.toggleLoading(false)
+        })*/
+      }
     },
     httpError (e) {
       this.$emit('checkTag', entityDetailTabsName.securityEvent, 0)

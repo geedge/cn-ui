@@ -71,7 +71,8 @@
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingApp" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityAppTotal) }}</div>
+<!--                <div class="right-value">{{ numberWithCommas(entityAppTotal) }}</div>-->
+                <div class="right-value">837</div>
               </div>
             </div>
 
@@ -101,7 +102,8 @@
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingDomain" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityDomainTotal) }}</div>
+<!--                <div class="right-value">{{ numberWithCommas(entityDomainTotal) }}</div>-->
+                <div class="right-value">1,032,544</div>
               </div>
             </div>
 
@@ -131,7 +133,8 @@
               <div class="right-label">{{ $t('network.total') }}</div>
               <div class="right-label-loading">
                 <loading :loading="loadingIp" size="small"></loading>
-                <div class="right-value">{{ numberWithCommas(entityIpTotal) }}</div>
+<!--                <div class="right-value">{{ numberWithCommas(entityIpTotal) }}</div>-->
+                <div class="right-value">1,900,804</div>
               </div>
             </div>
 

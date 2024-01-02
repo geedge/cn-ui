@@ -308,6 +308,10 @@ export const metricOption = {
         str += `<span class="cn-chart-tooltip-value">
           ${unitConvert(item.data[1], unitTypes.time).join(' ')}
       </span>`
+      } else if (item.seriesName === 'Http error') {
+        str += `<span class="cn-chart-tooltip-value">
+          ${unitConvert(item.data[1], unitTypes.number, '', '', 0).join(' ')}
+      </span>`
       } else {
         str += `<span class="cn-chart-tooltip-value">
           ${unitConvert(item.data[1], unitTypes.percent, '', '', 0).join(' ')}
