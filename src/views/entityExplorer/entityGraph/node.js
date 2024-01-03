@@ -82,12 +82,24 @@ export default class Node {
     let _tags = []
     Object.keys(tags).forEach(k => {
       if (k !== 'userDefinedTags' && tags[k]) {
-        Object.keys(tags[k]).forEach(k2 => {
-          const find = entityDetailTags[entityType].find(t => t.name === k2)
-          if (find) {
-            _tags.push({ key: k2, value: this.tagValueHandler(k, k2, tags[k][k2]), type: find.type })
-          }
-        })
+        // 此处是vpnLearningDomain/Ip/App的tag
+        if (_.isArray(tags[k])) {
+          tags[k].forEach(k3 => {
+            const find = entityDetailTags[entityType].find(t => t.name === k3.pluginName)
+            if (find) {
+              _tags.push({ key: 'pluginName', value: this.tagValueHandler('', '', k3.pluginName), type: find.type })
+            } else {
+              _tags.push({ key: 'pluginName', value: this.tagValueHandler('', '', k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
+            }
+          })
+        } else {
+          Object.keys(tags[k]).forEach(k2 => {
+            const find = entityDetailTags[entityType].find(t => t.name === k2)
+            if (find) {
+              _tags.push({ key: k2, value: this.tagValueHandler(k, k2, tags[k][k2]), type: find.type })
+            }
+          })
+        }
       }
     })
     if (_.isArray(tags.userDefinedTags)) {

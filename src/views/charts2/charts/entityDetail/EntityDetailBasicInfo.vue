@@ -153,12 +153,24 @@ export default {
           if (tagData.status === 200) {
             Object.keys(res.data).forEach(k => {
               if (k !== 'userDefinedTags' && res.data[k]) {
-                Object.keys(res.data[k]).forEach(k2 => {
-                  const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
-                  if (find) {
-                    this.levelTwoTags.push({ key: k2, value: this.tagValueHandler(res.data[k][k2]), type: find.type })
-                  }
-                })
+                // 此处是vpnLearningDomain/Ip/App的tag
+                if (_.isArray(res.data[k])) {
+                  res.data[k].forEach(k3 => {
+                    const find = entityDetailTags[this.entity.entityType].find(t => t.name === k3.pluginName)
+                    if (find) {
+                      this.levelTwoTags.push({ key: 'pluginName', value: this.tagValueHandler(k3.pluginName), type: find.type })
+                    } else {
+                      this.levelTwoTags.push({ key: 'pluginName', value: this.tagValueHandler(k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
+                    }
+                  })
+                } else {
+                  Object.keys(res.data[k]).forEach(k2 => {
+                    const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
+                    if (find) {
+                      this.levelTwoTags.push({ key: k2, value: this.tagValueHandler(res.data[k][k2]), type: find.type })
+                    }
+                  })
+                }
               }
             })
             if (_.isArray(res.data.userDefinedTags)) {
