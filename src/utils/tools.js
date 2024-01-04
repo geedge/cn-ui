@@ -1,7 +1,19 @@
 import { ElMessageBox, ElMessage } from 'element-plus'
 import i18n from '@/i18n'
 import _ from 'lodash'
-import { storageKey, iso36112, topDomain, echartsFontSize, dbGeoDataTableName, networkTable, dbDrilldownTableConfig, ZH, EN, securityLevel } from '@/utils/constants'
+import {
+  storageKey,
+  iso36112,
+  topDomain,
+  echartsFontSize,
+  dbGeoDataTableName,
+  networkTable,
+  dbDrilldownTableConfig,
+  ZH,
+  EN,
+  securityLevel,
+  entityDetailTags, entityDefaultColor, tagValueLabelMapping
+} from '@/utils/constants'
 import { getIso36112JsonData, getDictList } from '@/utils/api'
 import { format } from 'echarts'
 import router from '@/router'
@@ -1480,4 +1492,76 @@ export const changeTimestampToTime = (timestamp) => {
   } else {
     return '-'
   }
+}
+
+/**
+ * 规范实体的tag展示
+ */
+export const formatTags = (data, type, list) => {
+  Object.keys(data).forEach(k => {
+    if (k !== 'userDefinedTags' && data[k]) {
+      if (_.isArray(data[k])) {
+        data[k].forEach(k3 => {
+          const find = entityDetailTags[type].find(t => t.name === k3.pluginName)
+          if (find) {
+            list.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), type: find.type })
+          } else {
+            list.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
+          }
+        })
+      } else {
+        Object.keys(data[k]).forEach(k2 => {
+          const find = entityDetailTags[type].find(t => t.name === k2)
+          if (find) {
+            list.push({ key: k2, value: tagValueHandler(data[k][k2]), type: find.type })
+          }
+        })
+      }
+    }
+  })
+}
+
+/**
+ * 规范实体详情的tag展示
+ */
+export const formatTagsOfDetails = (data, type, list) => {
+  data.forEach(r => {
+    Object.keys(r).forEach(k => {
+      const aggregation = {
+        createTime: r[k].createTime,
+        updateTime: r[k].updateTime,
+        status: r[k].isValid,
+        intelligenceContent: []
+      }
+      if (k === 'userDefinedTag') {
+        aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal' })
+      } else {
+        if (_.isArray(r[k])) {
+          r[k].forEach(k3 => {
+            const find = entityDetailTags[type].find(t => t.name === k3.pluginName)
+            if (find) {
+              aggregation.intelligenceContent.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), type: find.type })
+            } else {
+              aggregation.intelligenceContent.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
+            }
+          })
+        } else {
+          Object.keys(r[k]).forEach(k2 => {
+            const find = entityDetailTags[type].find(t => t.name === k2)
+            if (find) {
+              aggregation.intelligenceContent.push({ key: k2, value: tagValueHandler(r[k][k2]), type: find.type })
+            }
+          })
+        }
+      }
+      if (aggregation.intelligenceContent.length > 0) {
+        list.push(aggregation)
+      }
+    })
+  })
+}
+
+const tagValueHandler = (value) => {
+  const find = tagValueLabelMapping.find(t => t.value === value)
+  return find ? find.name : value
 }

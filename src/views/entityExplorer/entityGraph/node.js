@@ -2,7 +2,8 @@ import _ from 'lodash'
 import i18n from '@/i18n'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDefaultColor, entityDetailTags, tagValueLabelMapping } from '@/utils/constants'
+import { entityDefaultColor } from '@/utils/constants'
+import { formatTags } from '@/utils/tools'
 
 export default class Node {
   /*
@@ -80,28 +81,7 @@ export default class Node {
 
     const tags = await this.queryTags(entityType, entityName)
     let _tags = []
-    Object.keys(tags).forEach(k => {
-      if (k !== 'userDefinedTags' && tags[k]) {
-        // 此处是vpnLearningDomain/Ip/App的tag
-        if (_.isArray(tags[k])) {
-          tags[k].forEach(k3 => {
-            const find = entityDetailTags[entityType].find(t => t.name === k3.pluginName)
-            if (find) {
-              _tags.push({ key: 'pluginName', value: this.tagValueHandler('', '', k3.pluginName), type: find.type })
-            } else {
-              _tags.push({ key: 'pluginName', value: this.tagValueHandler('', '', k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
-            }
-          })
-        } else {
-          Object.keys(tags[k]).forEach(k2 => {
-            const find = entityDetailTags[entityType].find(t => t.name === k2)
-            if (find) {
-              _tags.push({ key: k2, value: this.tagValueHandler(k, k2, tags[k][k2]), type: find.type })
-            }
-          })
-        }
-      }
-    })
+    formatTags(tags, entityType, _tags)
     if (_.isArray(tags.userDefinedTags)) {
       _tags = _.concat(_tags, tags.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
     }
@@ -152,18 +132,6 @@ export default class Node {
       console.error(response)
       throw response
     }
-  }
-
-  tagValueHandler (k, k2, value) {
-    if (k === 'psiphon3Ip') {
-      if (k2 === 'type') {
-        const find = tagValueLabelMapping.find(t => t.value === value)
-        if (find) {
-          return find.name
-        }
-      }
-    }
-    return value
   }
 }
 export const nodeType = {

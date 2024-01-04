@@ -71,10 +71,11 @@
 import chartMixin from '@/views/charts2/chart-mixin'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { entityDetailTabsName, entityDetailTags, tagValueLabelMapping } from '@/utils/constants'
+import { entityDetailTabsName } from '@/utils/constants'
 import { dateFormatByAppearance, getNowTime } from '@/utils/date-util'
 import chartNoData from '@/views/charts/charts/ChartNoData'
 import { ref } from 'vue'
+import { formatTagsOfDetails } from '@/utils/tools'
 
 export default {
   name: 'InformationAggregation',
@@ -105,17 +106,6 @@ export default {
         return 'padding-0'
       }
     },
-    tagValueHandler (k, k2, value) {
-      if (k === 'psiphon3Ip') {
-        if (k2 === 'type') {
-          const find = tagValueLabelMapping.find(t => t.value === value)
-          if (find) {
-            return find.name
-          }
-        }
-      }
-      return value
-    },
     getData () {
       this.loading = true
       this.showError = false
@@ -132,29 +122,7 @@ export default {
           // this.isNoData = res.data.result.length === 0
           this.showError = false
           if (res.data.result.length > 0) {
-            res.data.result.forEach(r => {
-              Object.keys(r).forEach(k => {
-                const aggregation = {
-                  createTime: r[k].createTime,
-                  updateTime: r[k].updateTime,
-                  status: r[k].isValid,
-                  intelligenceContent: []
-                }
-                if (k === 'userDefinedTag') {
-                  aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal' })
-                } else {
-                  Object.keys(r[k]).forEach(k2 => {
-                    const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
-                    if (find) {
-                      aggregation.intelligenceContent.push({ key: k2, value: this.tagValueHandler(k, k2, r[k][k2]), type: find.type })
-                    }
-                  })
-                }
-                if (aggregation.intelligenceContent.length > 0) {
-                  this.informationAggregationList.push(aggregation)
-                }
-              })
-            })
+            formatTagsOfDetails(res.data.result, this.entity.entityType, this.informationAggregationList)
             this.$emit('checkTag', entityDetailTabsName.informationAggregation, this.informationAggregationList.length)
           } else {
             this.$emit('checkTag', entityDetailTabsName.informationAggregation, 0)

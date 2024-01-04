@@ -65,13 +65,11 @@ import ChartError from '@/components/common/Error'
 import {
   drillDownPanelTypeMapping,
   entityType,
-  entityDetailTags,
-  tagValueLabelMapping,
   riskLevelMapping,
   entityDefaultColor,
   riskLevelColor1
 } from '@/utils/constants'
-import { selectElementText, copySelectionText, getTagColor } from '@/utils/tools'
+import { selectElementText, copySelectionText, getTagColor, formatTags } from '@/utils/tools'
 import { ref } from 'vue'
 import i18n from '@/i18n'
 import { useRouter } from 'vue-router'
@@ -127,10 +125,6 @@ export default {
   },
   methods: {
     getTagColor,
-    tagValueHandler (value) {
-      const find = tagValueLabelMapping.find(t => t.value === value)
-      return find ? find.name : value
-    },
     getData () {
       this.toggleLoading(true)
       this.showError = false
@@ -151,28 +145,7 @@ export default {
         if (tagData) {
           const res = tagData.data
           if (tagData.status === 200) {
-            Object.keys(res.data).forEach(k => {
-              if (k !== 'userDefinedTags' && res.data[k]) {
-                // 此处是vpnLearningDomain/Ip/App的tag
-                if (_.isArray(res.data[k])) {
-                  res.data[k].forEach(k3 => {
-                    const find = entityDetailTags[this.entity.entityType].find(t => t.name === k3.pluginName)
-                    if (find) {
-                      this.levelTwoTags.push({ key: 'pluginName', value: this.tagValueHandler(k3.pluginName), type: find.type })
-                    } else {
-                      this.levelTwoTags.push({ key: 'pluginName', value: this.tagValueHandler(k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
-                    }
-                  })
-                } else {
-                  Object.keys(res.data[k]).forEach(k2 => {
-                    const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
-                    if (find) {
-                      this.levelTwoTags.push({ key: k2, value: this.tagValueHandler(res.data[k][k2]), type: find.type })
-                    }
-                  })
-                }
-              }
-            })
+            formatTags(res.data, this.entity.entityType, this.levelTwoTags)
             if (_.isArray(res.data.userDefinedTags)) {
               this.levelTwoTags = _.concat(this.levelTwoTags, res.data.userDefinedTags.map(tag => ({ value: tag.tagValue, color: tag.knowledgeBase ? tag.knowledgeBase.color : entityDefaultColor })))
             }

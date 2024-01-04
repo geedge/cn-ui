@@ -30,8 +30,7 @@
 
 <script>
 import chartMixin from '@/views/charts2/chart-mixin'
-import i18n from '@/i18n'
-import { entityDetailTabsName, entityDetailTags } from '@/utils/constants'
+import { entityDetailTabsName } from '@/utils/constants'
 import { reactive, ref } from 'vue'
 import InformationAggregation from '@/views/charts2/charts/entityDetail/tabs/InformationAggregation'
 import DomainNameResolution from '@/views/charts2/charts/entityDetail/tabs/DomainNameResolution'
@@ -42,11 +41,11 @@ import OpenPort from '@/views/charts2/charts/entityDetail/tabs/OpenPort'
 import AccountInformation from '@/views/charts2/charts/entityDetail/tabs/AccountInformation'
 import DeviceInformation from '@/views/charts2/charts/entityDetail/tabs/DeviceInformation'
 import DigitalCertificate from '@/views/charts2/charts/entityDetail/tabs/DigitalCertificate'
-import { overwriteUrl, urlParamsHandler } from '@/utils/tools'
+import { formatTagsOfDetails, overwriteUrl, urlParamsHandler } from '@/utils/tools'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { tagValueLabelMapping, entityType, entityDetailTabConfig } from '../../../../utils/constants'
+import { entityType, entityDetailTabConfig } from '../../../../utils/constants'
 
 export default {
   name: 'EntityDetailTabs',
@@ -118,29 +117,7 @@ export default {
         const informationAggregationResponse = response[0].value
         if (informationAggregationResponse && informationAggregationResponse.status === 200) {
           const list = []
-          informationAggregationResponse.data.data.result.forEach(r => {
-            Object.keys(r).forEach(k => {
-              const aggregation = {
-                createTime: r[k].createTime,
-                updateTime: r[k].updateTime,
-                status: r[k].isValid,
-                intelligenceContent: []
-              }
-              if (k === 'userDefinedTag') {
-                aggregation.intelligenceContent.push({ key: k, value: r[k].tagValue, type: 'normal' })
-              } else {
-                Object.keys(r[k]).forEach(k2 => {
-                  const find = entityDetailTags[this.entity.entityType].find(t => t.name === k2)
-                  if (find) {
-                    aggregation.intelligenceContent.push({ key: k2, value: this.tagValueHandler(r[k][k2]), type: find.type })
-                  }
-                })
-              }
-              if (aggregation.intelligenceContent.length > 0) {
-                list.push(aggregation)
-              }
-            })
-          })
+          formatTagsOfDetails(informationAggregationResponse.data.data.result, this.entity.entityType, list)
           this.initSetTag(entityDetailTabsName.informationAggregation, list.length)
         }
         const openPortResponse = response[1].value
@@ -276,10 +253,6 @@ export default {
         case 'domain': return api.entity.openPortOfDomain
         case 'app': return api.entity.openPortOfApp
       }
-    },
-    tagValueHandler (value) {
-      const find = tagValueLabelMapping.find(t => t.value === value)
-      return find ? find.name : value
     }
   },
   beforeUnmount () {
