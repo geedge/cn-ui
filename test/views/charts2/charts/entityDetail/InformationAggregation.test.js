@@ -62,7 +62,7 @@ describe('views/charts2/charts/entityDetail/tabs/InformationAggregation.vue测�
 
       expect(textNode0.text()).toEqual('dba Omsoft')
       expect(textNode1.text()).toEqual('IcedID')
-      expect(textNode2.text()).toEqual('i2p')
+      expect(textNode2.text()).toEqual('I2P')
       expect(textNode3.text()).toEqual('门户网站')
       expect(textNode4.text()).toEqual('用户tag')
       resolve()
