@@ -49,12 +49,14 @@
             <span>{{ summaryCount.appCount }}</span>
 
             <span class="entity-hide-entity" v-if="q">
-              <el-checkbox
-                  v-model="isHideRelatedEntities"
-                  :label="$t('entity.hideRelatedEntities')"
-                  :disabled="listData.length===0"
-                  @change="hideRelatedEntities"
-                  size="large" />
+              <span v-if="listData.length !== 0">
+                <el-checkbox
+                    v-model="isHideRelatedEntities"
+                    :label="$t('entity.hideRelatedEntities')"
+                    :disabled="listData.length===0"
+                    @change="hideRelatedEntities"
+                    size="large" />
+              </span>
             </span>
           </div>
 
@@ -607,6 +609,9 @@ export default {
           this.listData = []
           this.$nextTick(() => {
             this.listData = response.data.data.list
+            if (this.listData.length === 0) {
+              this.isHideRelatedEntities = false
+            }
           })
         } else {
           this.$message.error(response.data.message)
