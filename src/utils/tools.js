@@ -1502,11 +1502,11 @@ export const formatTags = (data, type, list) => {
     if (k !== 'userDefinedTags' && data[k]) {
       if (_.isArray(data[k])) {
         data[k].forEach(k3 => {
-          const find = entityDetailTags[type].find(t => t.name === k3.pluginName)
+          const find = entityDetailTags[type].find(t => t.name === k3.vpnServiceName)
           if (find) {
-            list.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), type: find.type })
+            list.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), type: find.type })
           } else {
-            list.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
+            list.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
           }
         })
       } else {
@@ -1538,11 +1538,11 @@ export const formatTagsOfDetails = (data, type, list) => {
       } else {
         if (_.isArray(r[k])) {
           r[k].forEach(k3 => {
-            const find = entityDetailTags[type].find(t => t.name === k3.pluginName)
+            const find = entityDetailTags[type].find(t => t.name === k3.vpnServiceName)
             if (find) {
-              aggregation.intelligenceContent.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), type: find.type })
+              aggregation.intelligenceContent.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), type: find.type })
             } else {
-              aggregation.intelligenceContent.push({ key: 'pluginName', value: tagValueHandler(k3.pluginName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
+              aggregation.intelligenceContent.push({ key: 'vpnServiceName', value: tagValueHandler(k3.vpnServiceName), color: k3.knowledgeBase ? (k3.knowledgeBase.color || entityDefaultColor) : entityDefaultColor })
             }
           })
         } else {
