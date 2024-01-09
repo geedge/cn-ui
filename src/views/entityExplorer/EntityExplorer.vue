@@ -871,7 +871,8 @@ export default {
   },
   watch: {
     timeFilter () {
-      this.search({ metaList: this.metaList, q: this.q, str: this.str })
+      const keywordList = this.getKeywordListByMetaList(this.metaList)
+      this.search({ metaList: this.metaList, q: this.q, str: this.str, keywordList: keywordList })
     }
   },
   setup () {
