@@ -465,6 +465,10 @@ export const knowledgeSourceValue = {
   appTag: 'cn_app_tag_user_defined'
 }
 
+export const pluginSchedule = {
+  always: 'plugin.always'
+}
+
 export const knowledgeBaseSource = [
   {
     name: 'FQDN Category',
@@ -1880,6 +1884,23 @@ export const performanceMetricMapping = {
   'http error': 'HTTP Error Rate',
   'high dns response time': 'DNS Response Latency'
 }
+
+export const pluginBasicInfo = [
+  {
+    id: 108,
+    name: '',
+    type: '',
+    desc: '',
+    iconUrl: ''
+  },
+  {
+    id: 109,
+    name: 'Psiphon3 VPN',
+    type: 'ip',
+    desc: 'knowledgeBase.desc.psiphon3',
+    iconUrl: 'images/knowledge-base-logo/psiphon3-vpn.png'
+  }
+]
 
 export const builtInKnowledgeBaseBasicInfo = [
   {

@@ -28,25 +28,28 @@
         <div class="col-resize-area"></div>
       </template>
       <template #default="scope" :column="item">
-        <template v-if="item.prop === 'status'">
+        <template v-if="item.prop === 'triggerStatus'">
           <el-switch
-              v-model="scope.row.status"
+              v-model="scope.row.triggerStatus"
               active-value="1"
               inactive-value="0"
               @change="()=>{statusChange(scope.row)}">
           </el-switch>
         </template>
         <template v-else-if="item.prop === 'type'">
-          <span class="type-tag">{{tagSourceText(scope.row[item.prop])}}</span>
+          <span class="type-tag">{{typeText(scope.row['id'])}}</span>
         </template>
         <template v-else-if="item.prop === 'name'">
           <div class="plugin-name">
-            <div class="icon-background"><img class="plugin-name-icon" :src="getIconUrl(scope.row['knowledgeId'])"/></div>
-            {{scope.row[item.prop] || '-'}}
+            <div class="icon-background"><img class="plugin-name-icon" :src="getIconUrl(scope.row['id'])"/></div>
+            {{getName(scope.row['id'])}}
           </div>
         </template>
         <template v-else-if="item.prop === 'description'">
-          <div class="two-line" :title="getDescription(scope.row['knowledgeId'])">{{getDescription(scope.row['knowledgeId'])}}</div>
+          <div class="two-line" :title="getDescription(scope.row['id'])">{{getDescription(scope.row['id'])}}</div>
+        </template>
+        <template v-else-if="item.prop === 'schedule'">
+          <div class="two-line" >{{scheduleText(scope.row['id'])}}</div>
         </template>
         <span v-else>{{scope.row[item.prop] || '-'}}</span>
       </template>
@@ -62,7 +65,8 @@
 <script>
 import table from '@/mixins/table'
 import axios from 'axios'
-import { storageKey, knowledgeBaseSource, builtInKnowledgeBaseBasicInfo } from '@/utils/constants'
+import { api } from '@/utils/api'
+import { storageKey, pluginBasicInfo,pluginSchedule } from '@/utils/constants'
 
 export default {
   name: 'pluginTable',
@@ -99,7 +103,7 @@ export default {
           minWidth: 150
         }, {
           label: this.$t('overall.status'),
-          prop: 'status',
+          prop: 'triggerStatus',
           show: true,
           minWidth: 200
         }
@@ -107,37 +111,51 @@ export default {
     }
   },
   computed: {
-    tagSourceText () {
+    typeText () {
+      return function (id) {
+        const t = pluginBasicInfo.find(t => t.id === id)
+        return t ? t.type : 'Unknown Tag'
+      }
+    },
+    scheduleText () {
       return function (type) {
-        const t = knowledgeBaseSource.find(t => t.value === type)
-        return t ? t.name : 'Unknown Tag'
+        return this.$t(pluginSchedule.always)
       }
     },
     getIconUrl () {
-      return function (knowledgeId) {
-        const basicInfo = builtInKnowledgeBaseBasicInfo.find(bi => bi.knowledgeId === knowledgeId)
+      return function (id) {
+        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
         return basicInfo ? basicInfo.iconUrl : ''
       }
     },
     getDescription () {
-      return function (knowledgeId) {
-        const basicInfo = builtInKnowledgeBaseBasicInfo.find(bi => bi.knowledgeId === knowledgeId)
+      return function (id) {
+        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
         return basicInfo ? this.$t(basicInfo.desc) : '-'
+      }
+    },
+    getName () {
+      return function (id) {
+        const basicInfo = pluginBasicInfo.find(bi => bi.id === id)
+        return basicInfo ? this.$t(basicInfo.name) : '-'
       }
     }
   },
   methods: {
     statusChange (plugin) {
-      let status = plugin.status
-      let statusUrl = status === 0 ? api.pluginStatusEnable : api.pluginStatusDisable
-
-      axios.put(statusUrl,{id:plugin.id}).then(response => {
+      let triggerStatus = plugin.triggerStatus
+      let statusUrl = triggerStatus === '1' ? api.pluginStatusEnable : api.pluginStatusDisable
+      statusUrl = statusUrl.replace('{{id}}', plugin.id)
+      axios.post(statusUrl).then(response => {
         if (response.status === 200) {
           this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
         } else {
           this.$message.error(response.data.message)
         }
         this.$emit('reload')
+      }).catch(e => {
+        console.error(e)
+        this.$message.error(this.errorMsgHandler(e))
       })
     }
   }

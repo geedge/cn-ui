@@ -44,10 +44,10 @@ export const api = {
   updateKnowledgeUrl: apiVersion + '/knowledgeBase/items/batch',
   knowledgeBaseLog: apiVersion + '/knowledgeBase/audit/log',
   knowledgeBaseTimedistribution: apiVersion + '/knowledgeBase/{{knowledgeId}}/{{type}}/timedistribution',
-  //插件
+  // 插件
   pluginList: apiVersion + '/plugin/intelligence-learning/list',
-  pluginStatusEnable: apiVersion + '/plugin/intelligence-learning/{id}/start',
-  pluginStatusDisable: apiVersion + '/plugin/intelligence-learning/{id}/stop',
+  pluginStatusEnable: apiVersion + '/plugin/intelligence-learning/{{id}}/start',
+  pluginStatusDisable: apiVersion + '/plugin/intelligence-learning/{{id}}/stop',
 
   // 报告相关
   reportJob: '/report/job',
