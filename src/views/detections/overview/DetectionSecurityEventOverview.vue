@@ -4,10 +4,10 @@
       <div class="overview__title">{{ $t('overall.remark') }}</div>
       <div class="overview__row">
         <div class="row__content1" v-if="detection.eventType === 'Command and Control' && detection.isBuiltin == 1">
-          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}} activity, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
+          <span>{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span>{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}} activity, {{$_.get(detection, 'eventInfoObj.ioc_value', '') || ''}}.
         </div>
         <div class="row__content1" v-else-if="detection.eventType === 'Anonymity' && detection.isBuiltin == 1">
-          <span class="row__content--link">{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span class="row__content--link">{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}}.
+          <span>{{detection.victimIp}}</span>&nbsp;&nbsp;communicated with&nbsp;<span>{{detection.offenderIp}}</span>&nbsp;&nbsp;that was associated with the indicator of {{detection.eventName}}.
         </div>
         <div class="row__content1" v-else>
           {{ $_.get(basicInfo, 'ruleInfo.description', '-') || '-' }}
@@ -364,7 +364,8 @@ import { changeI18nOfSeverity } from '@/utils/tools'
 export default {
   name: 'DetectionOverview',
   props: {
-    detection: Object
+    detection: Object,
+    timeFilter: Object
   },
   data () {
     return {
@@ -504,7 +505,8 @@ export default {
           path: '/entity/detail',
           query: {
             entityType: type,
-            entityName: name
+            entityName: name,
+            range: this.timeFilter.dateRangeValue
           }
         })
         window.open(href, '_blank')

@@ -25,7 +25,7 @@
                        @change="timeConfigTypeChange"
             >
               <template v-for="time in timeRuleList" :key="time.value">
-                <el-option :label="time.name" :value="time.value"></el-option>
+                <el-option :label="$t(time.name)" :value="time.value"></el-option>
               </template>
             </el-select>
             <template v-if="editObject.config.timeConfig.type === 'this'">
@@ -38,7 +38,7 @@
                          size="small"
                          @change="()=>{ this.$forceUpdate() }">
                 <template v-for="time in timeUnitList" :key="time.value">
-                  <el-option :label="time.name" :value="time.value"></el-option>
+                  <el-option :label="$t(time.name)" :value="time.value"></el-option>
                 </template>
               </el-select>
             </template>
@@ -56,7 +56,7 @@
                          size="small"
                          @change="()=>{ this.$forceUpdate() }">
                 <template v-for="time in timeUnitList" :key="time.value">
-                  <el-option :label="time.name" :value="time.value"></el-option>
+                  <el-option :label="$t(time.name)" :value="time.value"></el-option>
                 </template>
               </el-select>
             </div>

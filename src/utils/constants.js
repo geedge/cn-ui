@@ -2470,20 +2470,20 @@ export const reg = {
 
 export const report = {
   timeRuleList: [
-    { name: 'today', value: 'today' },
-    { name: 'yesterday', value: 'yesterday' },
-    { name: 'this', value: 'this' },
-    { name: 'last', value: 'last' },
-    { name: 'previous', value: 'previous' },
-    { name: 'customize', value: 'customize' }
+    { name: 'overall.today', value: 'today' },
+    { name: 'overall.yesterday', value: 'yesterday' },
+    { name: 'overall.this', value: 'this' },
+    { name: 'overall.last', value: 'last' },
+    { name: 'overall.previous', value: 'previous' },
+    { name: 'overall.customize', value: 'customize' }
   ],
   timeUnitList: [
-    { name: 'minute', value: 'minute' },
-    { name: 'hour', value: 'hour' },
-    { name: 'day', value: 'day' },
-    { name: 'week', value: 'week' },
-    { name: 'month', value: 'month' },
-    { name: 'year', value: 'year' }
+    { name: 'overall.minute', value: 'minute' },
+    { name: 'overall.hour', value: 'hour' },
+    { name: 'overall.day', value: 'day' },
+    { name: 'overall.week', value: 'week' },
+    { name: 'overall.month', value: 'month' },
+    { name: 'overall.year', value: 'year' }
   ],
   scheduleTypeList: [
     { name: 'report.daily', value: 'day' },
