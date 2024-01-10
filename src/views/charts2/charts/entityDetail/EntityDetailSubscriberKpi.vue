@@ -160,12 +160,6 @@ export default {
   data () {
     return {
       kpiData: {
-        /*
-        volume: [5300000000, 'up', '6%'],
-        throughput: [600000, 'noChange', '6%'],
-        httpLatency: [21, 'down', '6%'],
-        sslLatency: [21, 'down', '6%'],
-        packetLoss: [0.0192, 'down', '2%'] */
       },
       unitConvert,
       valueToRangeValue,

@@ -85,16 +85,6 @@ export default {
       }).catch(e => {
         this.httpError(e)
       }).finally(() => {
-        // 测试代码----------------
-        this.deviceList = [
-          'Huawei mate20',
-          'Iphone 14pro max',
-          'Xiaomi 12'
-        ]
-        this.handleShowDataNum(this.showDeviceListInfo, this.deviceList)
-        this.isNoData = false
-        this.showError = false
-        // ----------------------
         this.initFlag = true
         this.toggleLoading(false)
       })

@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div v-if="!showError2 && !isNoData2 && initFlag" class="type-data__column">
+    <div v-if="!showError && !isNoData && initFlag" class="type-data__column">
       <div class="type-data">
         <div class="type-title">
           <span class="title-mark"></span>
@@ -62,11 +62,10 @@ export default {
       showWetchatListInfo: {
         num: 0
       },
-      showError: false,
-      errorMsg: '',
       initFlag: false, // 初始化标识，请求接口之后再显示，避免标题初始化会闪一下
       showError2: false,
-      errorMsg2: ''
+      errorMsg2: '',
+      isNoData2: false
     }
   },
   components: {
@@ -107,23 +106,6 @@ export default {
       }).catch(e => {
         this.httpError(e)
       }).finally(() => {
-        // 测试代码----------------
-        this.mailList = [
-          'Lina@126.com.cn',
-          'Sina@qq.com'
-        ]
-        this.handleShowDataNum(this.showMailListInfo, this.mailList)
-        this.wetchatList = [
-          'uawei0',
-          'phoneomax',
-          'iaomi2'
-        ]
-        this.handleShowDataNum(this.showWetchatListInfo, this.wetchatList)
-        this.isNoData = false
-        this.showError = false
-        this.isNoData2 = false
-        this.showError2 = false
-        // ----------------------
         this.initFlag = true
         this.toggleLoading(false)
       })

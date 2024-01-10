@@ -91,58 +91,7 @@ export default {
   },
   data () {
     return {
-      topAppData: [
-        {
-          app: 'Wetchat',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'QQ',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Douyin',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Weibo',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Tecent',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Kuaishou',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Taobao',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Jd',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Aiqiyi',
-          up: '1.2GB',
-          down: '28MB'
-        },
-        {
-          app: 'Baidu',
-          up: '1.2GB',
-          down: '28MB'
-        }
-      ],
+      topAppData: [],
       unitConvert,
       unitTypes,
       isNoData: false,
@@ -196,100 +145,6 @@ export default {
         this.httpError(e)
       }).finally(() => {
         this.toggleLoading(false)
-        // 无数据时的测试代码----------
-        const response = {
-          status: 200,
-          data: {
-            msg: 'success',
-            code: 200,
-            data: {
-              result: [
-                {
-                  app: 'Wetchat',
-                  inbound_byte: 9024,
-                  inbound_pkt: 1024
-                }, /*
-            {
-              "app": "QQ",
-              "inbound_byte": 224,
-              "inbound_pkt": 1024,
-              "outbound_byte": 24956711,
-              "outbound_pkt": 2048
-            },{
-              "app": "Douyin",
-              "inbound_byte": 21356711,
-              "inbound_pkt": 1024,
-              "outbound_byte": 2048,
-              "outbound_pkt": 2048
-            }, */{
-                  app: 'Weibo',
-                  inbound_byte: 24356711,
-                  inbound_pkt: 1024,
-                  outbound_byte: 2048,
-                  outbound_pkt: 2048
-                }, {
-                  app: 'Tecent',
-                  inbound_byte: 124356711,
-                  inbound_pkt: 1024,
-                  outbound_byte: 2048,
-                  outbound_pkt: 2048
-                }, {
-                  app: 'Kuaishou',
-                  inbound_byte: 324356711,
-                  inbound_pkt: 1024,
-                  outbound_byte: 2048,
-                  outbound_pkt: 2048
-                }, {
-                  app: 'Taobao',
-                  inbound_byte: 424356711,
-                  inbound_pkt: 1024,
-                  outbound_byte: 2048,
-                  outbound_pkt: 2048
-                }/* {
-              "app": "Jd",
-              "inbound_byte": 924356711,
-              "inbound_pkt": 1024,
-              "outbound_byte": 2048,
-              "outbound_pkt": 2048
-            },{
-              "app": "Aiqiyi",
-              "inbound_byte": 624356711,
-              "inbound_pkt": 1024,
-              "outbound_byte": 2048,
-              "outbound_pkt": 2048
-            },{
-              "app": "Baidu",
-              "inbound_byte": 1624356711,
-              "inbound_pkt": 1024,
-              "outbound_byte": 2048,
-              "outbound_pkt": 2048
-            } */
-              ]
-            }
-          }
-        }
-        const res = response.data
-        if (response.status === 200) {
-          this.isNoData = res.data.result.length === 0
-          this.showError = false
-          if (!this.isNoData) {
-            const appDatas = res.data.result.map(item => {
-              const upData = item.outbound_byte ? item.outbound_byte : 0
-              const downData = item.inbound_byte ? item.inbound_byte : 0
-              return {
-                app: item.app,
-                up: upData,
-                down: downData,
-                appTotal: upData + downData
-              }
-            })
-
-            this.topAppData = appDatas.sort(reverseSortBy('appTotal'))
-            this.getTotalData()
-          }
-        }
-
-        // 无数据时的测试代码----------
       })
     },
     getTotalData () {
@@ -324,45 +179,7 @@ export default {
       }).catch(e => {
         console.error(e)
         this.httpError(e)
-      }).finally(() => { // 无数据时的测试代码----------
-        const response = {
-          status: 200,
-          data: {
-            code: 200,
-            msg: 'ok',
-            data: {
-              total_bytes: 9024356711,
-              total_packets: 999,
-              avg_bits_per_sec: 888,
-              avg_pkts_per_sec: 888,
-              avg_http_response_latency_ms: 30,
-              avg_ssl_handshake_latency_ms: 10,
-              tcp_lost_bytes_ratio: 0.10
-            }
-          }
-        }
-        const res = response.data
-        if (response.status === 200) {
-          const data = res.data
-          this.isNoData = Object.keys(data).length === 0
-          this.showError = false
-          if (!this.isNoData) {
-            const totalData = data.total_bytes ? data.total_bytes : 0
-            if (totalData !== 0) {
-              const echartDataList = []
-              this.topAppData.forEach(item => {
-                echartDataList.push({
-                  count: (item.appTotal / totalData).toFixed(3),
-                  app: item.app
-                })
-              })
-
-              this.initEchart(echartDataList)
-            }
-          }
-        }
-
-        // 无数据时的测试代码----------
+      }).finally(() => {
       })
     },
     initEchart (data) {
