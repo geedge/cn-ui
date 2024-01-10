@@ -1414,8 +1414,8 @@ export default class Parser {
         } else if (i.toLowerCase() === 'tag') {
           lastObj[i] = `has(${i},${commonObj[i]})`
         } else {
-          // 单独存在的,直接保留 todo 后续观察当初添加单引号动机和问题
-          lastObj[i] = `${i} = ${commonObj[i]}`
+          // 单独存在的,直接保留
+          lastObj[i] = `${i}=${commonObj[i]}`
         }
       }
 
