@@ -126,7 +126,11 @@ export default {
         }
         const securityResponse = response[2].value
         if (securityResponse && securityResponse.status === 200) {
-          this.initSetTag(entityDetailTabsName.securityEvent, securityResponse.data.data.result.length)
+          if (this.entity.entityType === entityType.subscriber) {
+            this.initSetTag(entityDetailTabsName.securityEvent, 0)
+          } else {
+            this.initSetTag(entityDetailTabsName.securityEvent, securityResponse.data.data.result.length)
+          }
         }
         // let performanceResponse = response[3].value
         // if (performanceResponse && performanceResponse.status === 200) {
@@ -158,6 +162,7 @@ export default {
       }
 
       if (this.entity.entityType === entityType.subscriber) {
+        /*
         axios.get(api.entity.deviceInformation, { params: this.getParamsByTabType(entityDetailTabsName.deviceInformation) }).then(response => {
           const res = response.data
           if (response.status === 200) {
@@ -169,7 +174,9 @@ export default {
           if (response.status === 200) {
             this.initSetTag(entityDetailTabsName.accountInformation, res.data.result.length)
           }
-        })
+        }) */
+        this.initSetTag(entityDetailTabsName.deviceInformation, 0)
+        this.initSetTag(entityDetailTabsName.accountInformation, 0)
       }
     },
     promiseData (data1, data2, data3) {

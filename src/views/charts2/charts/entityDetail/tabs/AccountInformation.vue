@@ -1,6 +1,6 @@
 <template>
   <div>
-    <chart-error v-if="showError" :content="errorMsg" class="entity-detail-event-error"></chart-error>
+    <chart-error v-if="showError" :content="errorMsg" class="entity-subscriber-detail-error"></chart-error>
     <chart-no-data v-if="isNoData && !showError"></chart-no-data>
 
     <div v-if="!showError && !isNoData && initFlag" class="type-data__column">
@@ -90,6 +90,7 @@ export default {
     initData () {
       const params = this.getParams()
       this.toggleLoading(true)
+      /*
       axios.get(api.entity.accountInformation, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
@@ -108,7 +109,11 @@ export default {
       }).finally(() => {
         this.initFlag = true
         this.toggleLoading(false)
-      })
+      }) */
+      this.isNoData = true
+      this.showError = false
+      this.initFlag = true
+      this.toggleLoading(false)
     },
     httpError (e) {
       this.$emit('checkTag', entityDetailTabsName.accountInformation, 0)

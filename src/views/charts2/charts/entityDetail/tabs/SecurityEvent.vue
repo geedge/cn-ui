@@ -77,7 +77,7 @@
 
 <script>
 import { getNowTime } from '@/utils/date-util'
-import { eventSeverityColor, entityDetailTabsName, securityLevel } from '@/utils/constants'
+import { eventSeverityColor, entityDetailTabsName, securityLevel, entityType } from '@/utils/constants'
 import unitConvert from '@/utils/unit-convert'
 import axios from 'axios'
 import { api } from '@/utils/api'
@@ -133,25 +133,30 @@ export default {
     initData () {
       const params = this.getParams()
       this.toggleLoading(true)
-      axios.get(`${api.entity.security}/${this.entityType}`, { params: params }).then(response => {
-        const res = response.data
-
-        if (response.status === 200) {
-          this.isNoData = res.data.result.length === 0
-          this.$emit('checkTag', entityDetailTabsName.securityEvent, res.data.result.length)
-          this.showError = false
-          if (!this.isNoData) {
-            this.eventList = res.data.result
-          }
-        } else {
-          this.httpError(res)
-        }
-      }).catch(e => {
-        console.error(e)
-        this.httpError(e)
-      }).finally(() => {
+      if (this.entity.entityType === entityType.subscriber) {
+        this.isNoData = true
         this.toggleLoading(false)
-      })
+      } else {
+        axios.get(`${api.entity.security}/${this.entityType}`, { params: params }).then(response => {
+          const res = response.data
+
+          if (response.status === 200) {
+            this.isNoData = res.data.result.length === 0
+            this.$emit('checkTag', entityDetailTabsName.securityEvent, res.data.result.length)
+            this.showError = false
+            if (!this.isNoData) {
+              this.eventList = res.data.result
+            }
+          } else {
+            this.httpError(res)
+          }
+        }).catch(e => {
+          console.error(e)
+          this.httpError(e)
+        }).finally(() => {
+          this.toggleLoading(false)
+        })
+      }
     },
     httpError (e) {
       this.$emit('checkTag', entityDetailTabsName.securityEvent, 0)

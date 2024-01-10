@@ -73,7 +73,7 @@ import { api } from '@/utils/api'
 import { getNowTime } from '@/utils/date-util'
 import chartMixin from '@/views/charts2/chart-mixin'
 import chartNoData from '@/views/charts/charts/ChartNoData'
-import { entityDetailTabsName } from '@/utils/constants'
+import { entityDetailTabsName, entityType } from '@/utils/constants'
 import { ref } from 'vue'
 
 export default {
@@ -123,23 +123,29 @@ export default {
   methods: {
     initData () {
       const params = this.getParams()
-      if (this.entity.entityType === 'app') {
+      if (this.entity.entityType === entityType.app) {
         const ipsOfApp = axios.get(api.entity.domainNameResolutionAboutIpsOfApp, { params: params })
         const domainsOfApp = axios.get(api.entity.domainNameResolutionAboutDomainsOfApp, { params: params })
         this.promiseData(ipsOfApp, domainsOfApp)
       }
 
-      if (this.entity.entityType === 'ip') {
+      if (this.entity.entityType === entityType.ip) {
         const appsOfIp = axios.get(api.entity.domainNameResolutionAboutAppsOfIp, { params: params })
         const domainsOfIp = axios.get(api.entity.domainNameResolutionAboutDomainsOfIp, { params: params })
         this.promiseData(appsOfIp, domainsOfIp)
       }
 
-      if (this.entity.entityType === 'domain') {
+      if (this.entity.entityType === entityType.domain) {
         const appsOfDomain = axios.get(api.entity.domainNameResolutionAboutAppsOfDomain, { params: params })
         const ipsOfDomain = axios.get(api.entity.domainNameResolutionAboutIpsOfDomain, { params: params })
         const fqdnsOfDomain = axios.get(api.entity.domainNameResolutionAboutFQDNsOfDomain, { params: params })
         this.promiseData(appsOfDomain, ipsOfDomain, fqdnsOfDomain)
+      }
+
+      if (this.entity.entityType === entityType.subscriber) {
+        this.isNoData = true
+        this.initFlag = true
+        this.toggleLoading(false)
       }
     },
     promiseData (data1, data2, data3) {
