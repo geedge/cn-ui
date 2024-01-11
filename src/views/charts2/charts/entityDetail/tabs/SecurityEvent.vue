@@ -93,6 +93,7 @@ export default {
   data () {
     return {
       eventList: [],
+      eventListAll: [],
       showError: false,
       eventSeverityColor,
       errorMsg: ''
@@ -118,6 +119,7 @@ export default {
   },
   mounted () {
     this.initData()
+    window.addEventListener('scroll', this.handleScroll, true)
     /*
     this.isNoData = true
     this.$emit('checkTag', entityDetailTabsName.securityEvent, 0)
@@ -132,6 +134,7 @@ export default {
     changeTimestampToTime,
     initData () {
       const params = this.getParams()
+      params.pageSize = -1
       this.toggleLoading(true)
       if (this.entity.entityType === entityType.subscriber) {
         this.isNoData = true
@@ -145,7 +148,8 @@ export default {
             this.$emit('checkTag', entityDetailTabsName.securityEvent, res.data.result.length)
             this.showError = false
             if (!this.isNoData) {
-              this.eventList = res.data.result
+              this.eventListAll = res.data.result
+              this.eventList = this.getTargetPageData(1, 10, this.eventListAll)
             }
           } else {
             this.httpError(res)
@@ -175,6 +179,21 @@ export default {
       } else {
         return '-'
       }
+    },
+    handleScroll (e) {
+      const clientHeight = e.target.clientHeight
+      const scrollTop = e.target.scrollTop
+      const scrollHeight = e.target.scrollHeight
+      if (scrollTop && this.$_.ceil(clientHeight + scrollTop) >= scrollHeight) {
+        if (this.eventListAll.length > this.eventList.length) {
+          const diff = (this.eventListAll.length - this.eventList.length) <= 10 ? this.eventListAll.length - this.eventList.length : 10
+          const num = this.$_.ceil(this.eventList.length / 10) + 1
+          this.eventList = this.eventList.concat(this.getTargetPageData(num, diff, this.eventListAll))
+        }
+      }
+    },
+    getTargetPageData (pageNum, pageSize, data) {
+      return this.$_.slice(data, (pageNum - 1) * pageSize, pageNum * pageSize)
     }
   }
 }

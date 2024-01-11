@@ -57,8 +57,8 @@
 <!--                    @change="hideRelatedEntities"-->
 <!--                    size="large" />-->
                 <el-radio-group v-model="isHideRelatedEntities" @change="hideRelatedEntities" class="ml-4">
-                  <el-radio label="true" size="large">{{ $t('entity.entityMode') }}</el-radio>
-                  <el-radio label="false" style="margin-left: -10px;" size="large">{{ $t('entity.relatedMode') }}</el-radio>
+                  <el-radio :label="true" size="large">{{ $t('entity.entityMode') }}</el-radio>
+                  <el-radio :label="false" style="margin-left: -10px;" size="large">{{ $t('entity.relatedMode') }}</el-radio>
                 </el-radio-group>
               </span>
             </span>
@@ -905,6 +905,7 @@ export default {
       total: 0
     })
     const isHideRelatedEntities = ref(query.hideRelated ? JSON.parse(query.hideRelated) : false) // 隐藏相关实体，默认false不隐藏
+    console.log('初始化', isHideRelatedEntities.value)
     return {
       timeFilter,
       pageObj,

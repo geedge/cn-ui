@@ -43,6 +43,7 @@ export default {
           break
         case entityDetailTabsName.securityEvent:
           dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.securityEvent
+          params.pageSize = -1
           break
         case entityDetailTabsName.openPort:
           dataRangeValue = DEFAULT_TIME_FILTER_RANGE.entity.openPort
