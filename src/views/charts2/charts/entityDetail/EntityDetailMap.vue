@@ -334,7 +334,7 @@ export default {
       timeFilter,
       currentPoint,
       tooltip,
-      maxZoom: 11,
+      maxZoom: 14,
       minZoom: 1,
       center: [116.38, 39.9]
     }
