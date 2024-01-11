@@ -22,12 +22,12 @@
           <div class="app-name" :title="appData.app">{{appData.app}}</div>
           <div class="app-trend-left">
             <i class="cn-icon cn-icon-egress"></i>
-            <div class="app-up">{{appData.up ? unitConvert(appData.up, unitTypes.byte,null,null,1).join('') : '-'}}</div>
+            <div class="app-up">{{appData.up ? unitConvert(appData.up, unitTypes.byte,null,null,1).join('') : '<1B'}}</div>
           </div>
           <el-divider direction="vertical" class="top-app-divider"/>
           <div class="app-trend-right">
             <i class="cn-icon cn-icon-ingress"></i>
-            <div class="app-down">{{appData.down ? unitConvert(appData.down, unitTypes.byte,null,null,1).join('') : '-'}}</div>
+            <div class="app-down">{{appData.down ? unitConvert(appData.down, unitTypes.byte,null,null,1).join('') : '<1B'}}</div>
           </div>
 
         </div>
