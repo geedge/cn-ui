@@ -426,7 +426,8 @@ export default {
         q: urlQ,
         mode: mode,
         pageNo: this.pageObj.pageNo,
-        pageSize: this.pageObj.pageSize
+        pageSize: this.pageObj.pageSize,
+        hideRelated: this.isHideRelatedEntities
       })
 
       if (!this.showList) {
