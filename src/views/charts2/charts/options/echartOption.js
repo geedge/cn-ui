@@ -327,7 +327,7 @@ export const stackedLineChartOption = {
 }
 // subscriber的app页签
 export const stackedLineWithLegendChartOption = {
-  color: chartColor3,
+  color: chartColorForBehaviorPattern,
   tooltip: {
     trigger: 'axis',
     className: 'echarts-tooltip echarts-tooltip-dark'

@@ -71,7 +71,14 @@ import chartMixin from '@/views/charts2/chart-mixin'
 import * as echarts from 'echarts'
 import { stackedLineWithLegendChartOption } from '@/views/charts2/charts/options/echartOption'
 import unitConvert, { valueToRangeValue } from '@/utils/unit-convert'
-import { unitTypes, chartColor3, chartColor4, metricType, metricOptions } from '@/utils/constants.js'
+import {
+  unitTypes,
+  chartColor3,
+  chartColor4,
+  metricType,
+  metricOptions,
+  chartColorForBehaviorPattern
+} from '@/utils/constants.js'
 import { ref, shallowRef } from 'vue'
 import { stackedLineWithLegendTooltipFormatter } from '@/views/charts/charts/tools'
 import _ from 'lodash'
@@ -205,7 +212,7 @@ export default {
       axios.get(`${api.entity.throughput}/${this.entity.entityType}/relate/app`, { params: params }).then(response => {
         const res = response.data
         if (response.status === 200) {
-          this.chartDateObject = res.data.result
+          this.chartDateObject = res.data.result.slice(0, 10)
           this.isNoData = res.data.result.length === 0
           this.showError = false
           if (!active) {
@@ -215,7 +222,7 @@ export default {
             this.lineTab = ''
             this.tabs = _.cloneDeep(this.tabsTemplate)
           } else {
-            this.initData(res.data.result, newVal, active)
+            this.initData(res.data.result.slice(0, 10), newVal, active)
           }
         } else {
           this.httpError(res)
@@ -269,9 +276,7 @@ export default {
             },
             emphasis: {
               itemStyle: {
-                borderColor: chartColor4[i],
-                borderWidth: 2,
-                shadowColor: chartColor4[i]
+                borderWidth: 2
               }
             },
             areaStyle: {
@@ -279,23 +284,23 @@ export default {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: chartColor3[i]
+                  color: chartColorForBehaviorPattern[i]
                 },
                 {
                   offset: 1,
-                  color: chartColor3[i]
+                  color: chartColorForBehaviorPattern[i]
                 }
               ])
             },
             data: t.values.map(v => [Number(v[0]) * 1000, Number(v[1]), 'number'])
           }
         })
-
+        this.chartOption.legend.data = echartsData.map(t => t.name).reverse()
         this.chartOption.tooltip.formatter = (params) => {
           params.forEach(t => {
             echartsData.forEach((e, i) => {
               if (e.name === t.seriesName) {
-                t.borderColor = chartColor3[i]
+                t.borderColor = chartColorForBehaviorPattern[i]
               }
             })
           })
