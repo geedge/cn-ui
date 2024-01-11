@@ -1397,6 +1397,7 @@ export default {
       } else {
         this.changeUrlTabState()
       }
+      this.isDnsMapType = false
     },
     setOperationType (operationType) {
       this.urlChangeParams[this.curTabState.tabOperationBeforeType] = this.getUrlParam(this.curTabState.tabOperationType, '', true)
