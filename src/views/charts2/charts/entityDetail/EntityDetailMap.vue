@@ -197,8 +197,8 @@ export default {
       })*/
       const params = {
         resource: this.entity.entityName,
-        startTime: this.timeFilter.startTime,
-        endTime: this.timeFilter.endTime
+        startTime: getSecond(this.timeFilter.startTime),
+        endTime: getSecond(this.timeFilter.endTime)
       }
       return axios.get(`${api.entity.locationTrack}`, { params })
     },
