@@ -395,6 +395,10 @@ export default {
                   this.myCheckboxList.push(item)
                 }
               })
+            } else if (_.isArray(meta.value.value)) {
+              meta.value.value.forEach(item => {
+                this.myCheckboxList.push(item)
+              })
             }
           }
         }, 100)
@@ -598,7 +602,7 @@ export default {
         if (this.$refs.valueInput) {
           this.$refs.valueInput[0].focus()
         }
-        if (this.$refs.valuesSelect) {
+        if (this.$refs.valuesSelect.length > 0) {
           // 触发focus后，select弹窗并没有生效
           this.$refs.valuesSelect[0].focus(meta)
         }
