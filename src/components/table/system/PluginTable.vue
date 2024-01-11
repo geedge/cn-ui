@@ -66,7 +66,7 @@
 import table from '@/mixins/table'
 import axios from 'axios'
 import { api } from '@/utils/api'
-import { storageKey, pluginBasicInfo,pluginSchedule } from '@/utils/constants'
+import { pluginBasicInfo, pluginSchedule } from '@/utils/constants'
 
 export default {
   name: 'pluginTable',
@@ -79,7 +79,6 @@ export default {
   mixins: [table],
   data () {
     return {
-      loginName: localStorage.getItem(storageKey.username),
       tableTitle: [ // 原始table列
         {
           label: this.$t('overall.name'),
@@ -148,7 +147,7 @@ export default {
       statusUrl = statusUrl.replace('{{id}}', plugin.id)
       axios.post(statusUrl).then(response => {
         if (response.status === 200) {
-          this.$message({ duration: 1000, type: 'success', message: this.$t('tip.saveSuccess') })
+          this.$message({ duration: 1000, type: 'success', message: this.$t('tip.operateSuccess') })
         } else {
           this.$message.error(response.data.message)
         }

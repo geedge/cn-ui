@@ -1887,13 +1887,6 @@ export const performanceMetricMapping = {
 
 export const pluginBasicInfo = [
   {
-    id: 108,
-    name: '',
-    type: '',
-    desc: '',
-    iconUrl: ''
-  },
-  {
     id: 109,
     name: 'Psiphon3 VPN',
     type: 'ip',

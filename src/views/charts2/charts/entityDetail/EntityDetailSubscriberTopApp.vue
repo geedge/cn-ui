@@ -19,13 +19,13 @@
       <div class="top-app-left" v-show="!isNoData && !showError">
         <div class="app-data" v-for="(appData, index) in topAppData">
           <div class="app-index">{{++index}}</div>
-          <div class="app-name">{{appData.app}}</div>
-          <div class="app-trend">
+          <div class="app-name" :title="appData.app">{{appData.app}}</div>
+          <div class="app-trend-left">
             <i class="cn-icon cn-icon-egress"></i>
             <div class="app-up">{{appData.up ? unitConvert(appData.up, unitTypes.byte,null,null,1).join('') : '-'}}</div>
           </div>
           <el-divider direction="vertical" class="top-app-divider"/>
-          <div class="app-trend">
+          <div class="app-trend-right">
             <i class="cn-icon cn-icon-ingress"></i>
             <div class="app-down">{{appData.down ? unitConvert(appData.down, unitTypes.byte,null,null,1).join('') : '-'}}</div>
           </div>
@@ -136,6 +136,10 @@ export default {
 
             this.topAppData = appDatas.sort(reverseSortBy('appTotal'))
             this.getTotalData()
+          } else {
+            if (this.myChart) {
+              echarts.dispose(this.myChart)
+            }
           }
         } else {
           this.httpError(res)
@@ -184,21 +188,23 @@ export default {
     },
     initEchart (data) {
       if (data && data.length > 0) {
-        if (data.length < 10) { // 重新设置图标高度
-          this.isSetHeight = true
-          this.newHeight = 'height:' + unitConvert(data.length / 10, unitTypes.percent, null, null, 0).join('') + ';'
-        }
+        // if (data.length < 10) { // 重新设置图标高度
+        this.isSetHeight = true
+        this.newHeight = 'height:' + unitConvert(data.length / 10, unitTypes.percent, null, null, 0).join('') + ';'
+        // }
         const chartDom = document.getElementById('subscriberTopAppChart')
         this.myChart = echarts.getInstanceByDom(chartDom)
         if (this.myChart) {
           echarts.dispose(this.myChart)
         }
-        this.myChart = echarts.init(chartDom)
-        const chartOption = this.$_.cloneDeep(entityDetailSubscriberTopApp)
-        chartOption.series[0].data = data.map(d => {
-          return [d.count, d.app]
-        }).reverse()
-        this.myChart.setOption(chartOption)
+        this.$nextTick(() => {
+          this.myChart = echarts.init(chartDom)
+          const chartOption = this.$_.cloneDeep(entityDetailSubscriberTopApp)
+          chartOption.series[0].data = data.map(d => {
+            return [d.count, d.app]
+          }).reverse()
+          this.myChart.setOption(chartOption)
+        })
       }
     },
     resize () {
@@ -221,6 +227,9 @@ export default {
         topAppRange: dateRangeValue.value
       })
       overwriteUrl(newUrl)
+      if (this.myChart) {
+        echarts.dispose(this.myChart)
+      }
     }
   },
   mounted () {
