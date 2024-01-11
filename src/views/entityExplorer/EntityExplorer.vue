@@ -50,12 +50,16 @@
 
             <span class="entity-hide-entity" v-if="q">
               <span v-if="listData.length !== 0">
-                <el-checkbox
-                    v-model="isHideRelatedEntities"
-                    :label="$t('entity.hideRelatedEntities')"
-                    :disabled="listData.length===0"
-                    @change="hideRelatedEntities"
-                    size="large" />
+<!--                <el-checkbox-->
+<!--                    v-model="isHideRelatedEntities"-->
+<!--                    :label="$t('entity.hideRelatedEntities')"-->
+<!--                    :disabled="listData.length===0"-->
+<!--                    @change="hideRelatedEntities"-->
+<!--                    size="large" />-->
+                <el-radio-group v-model="isHideRelatedEntities" @change="hideRelatedEntities" class="ml-4">
+                  <el-radio label="true" size="large">{{ $t('entity.entityMode') }}</el-radio>
+                  <el-radio label="false" style="margin-left: -10px;" size="large">{{ $t('entity.relatedMode') }}</el-radio>
+                </el-radio-group>
               </span>
             </span>
           </div>
