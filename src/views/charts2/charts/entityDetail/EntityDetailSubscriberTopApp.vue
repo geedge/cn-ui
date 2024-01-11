@@ -124,8 +124,8 @@ export default {
           this.showError = false
           if (!this.isNoData) {
             const appDatas = res.data.result.map(item => {
-              const upData = item.outbound_byte ? item.outbound_byte : 0
-              const downData = item.inbound_byte ? item.inbound_byte : 0
+              const upData = item.outbound_bytes ? Number(item.outbound_bytes) : 0
+              const downData = item.inbound_bytes ? Number(item.inbound_bytes) : 0
               return {
                 app: item.app,
                 up: upData,
@@ -160,7 +160,7 @@ export default {
           this.isNoData = Object.keys(data).length === 0
           this.showError = false
           if (!this.isNoData) {
-            const totalData = data.total_bytes ? data.total_bytes : 0
+            const totalData = data.total_bytes ? Number(data.total_bytes) : 0
             if (totalData !== 0) {
               const echartDataList = []
               this.topAppData.forEach(item => {
