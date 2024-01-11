@@ -301,6 +301,7 @@ export default {
       this.queryData().then(res => {
         this.showError = false
         const result = _.get(res, 'data.data.result', []).sort((a, b) => a.stat_time - b.stat_time)
+        console.info(result)
         const route = this.generateRouteGEOJSON(result)
         const points = this.generatePointsGEOJSON(result)
         this.myChart.getSource('route').setData(route)
@@ -334,7 +335,7 @@ export default {
       timeFilter,
       currentPoint,
       tooltip,
-      maxZoom: 14,
+      maxZoom: 13,
       minZoom: 1,
       center: [116.38, 39.9]
     }
