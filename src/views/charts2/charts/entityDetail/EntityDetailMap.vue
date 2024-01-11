@@ -101,15 +101,16 @@ export default {
           }
         }
       })
-
       this.queryData().then(res => {
-        this.showError = false
-        const result = _.get(res, 'data.data.result', []).sort((a, b) => a.stat_time - b.stat_time)
-        const route = this.generateRouteGEOJSON(result)
-        const points = this.generatePointsGEOJSON(result)
         map.on('load', () => {
-          map.jumpTo({ center: this.computeMapCenter(result) })
-          map.zoomTo(this.computeMapZoom(result))
+          this.showError = false
+          const result = _.get(res, 'data.data.result', []).sort((a, b) => a.stat_time - b.stat_time)
+          const route = this.generateRouteGEOJSON(result)
+          const points = this.generatePointsGEOJSON(result)
+          if (result.length > 0) {
+            map.jumpTo({ center: this.computeMapCenter(result) })
+            map.zoomTo(this.computeMapZoom(result))
+          }
           map.loadImage(
               `${window.location.protocol}//${window.location.host}/images/entity-detail/track-point.png`,
               (error, image) => {
@@ -194,7 +195,12 @@ export default {
           }
         })
       })*/
-      return axios.get(`${api.entity.locationTrack}?resource=${this.entity.entityName}`)
+      const params = {
+        resource: this.entity.entityName,
+        startTime: this.timeFilter.startTime,
+        endTime: this.timeFilter.endTime
+      }
+      return axios.get(`${api.entity.locationTrack}`, { params })
     },
     generateRouteGEOJSON (result) {
       return {
@@ -299,8 +305,10 @@ export default {
         const points = this.generatePointsGEOJSON(result)
         this.myChart.getSource('route').setData(route)
         this.myChart.getSource('points').setData(points)
-        this.myChart.jumpTo({ center: this.computeMapCenter(result) })
-        this.myChart.zoomTo(this.computeMapZoom(result))
+        if (result.length > 0) {
+          this.myChart.jumpTo({ center: this.computeMapCenter(result) })
+          this.myChart.zoomTo(this.computeMapZoom(result))
+        }
       }).catch(e => {
         this.showError = true
         console.error(e)
