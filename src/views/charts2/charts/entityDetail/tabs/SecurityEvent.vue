@@ -5,7 +5,7 @@
   <div v-if="!isNoData && !showError" class="entity-detail-event-block">
     <div
         class="entity-detail-event-border"
-        v-for="(item, index) in eventList"
+        v-for="(item, index) in eventList.slice(0, showEventNum)"
         :key="item.eventId">
       <div class="cn-detection--list">
         <div class="cn-detection__case entity-detail-security">
@@ -93,10 +93,10 @@ export default {
   data () {
     return {
       eventList: [],
-      eventListAll: [],
       showError: false,
       eventSeverityColor,
-      errorMsg: ''
+      errorMsg: '',
+      showEventNum: 0
     }
   },
   components: { chartNoData },
@@ -148,8 +148,12 @@ export default {
             this.$emit('checkTag', entityDetailTabsName.securityEvent, res.data.result.length)
             this.showError = false
             if (!this.isNoData) {
-              this.eventListAll = res.data.result
-              this.eventList = this.getTargetPageData(1, 10, this.eventListAll)
+              this.eventList = res.data.result
+              if (res.data.result.length <= 10) {
+                this.showEventNum = res.data.result.length
+              } else {
+                this.showEventNum = 10
+              }
             }
           } else {
             this.httpError(res)
@@ -185,15 +189,13 @@ export default {
       const scrollTop = e.target.scrollTop
       const scrollHeight = e.target.scrollHeight
       if (scrollTop && this.$_.ceil(clientHeight + scrollTop) >= scrollHeight) {
-        if (this.eventListAll.length > this.eventList.length) {
-          const diff = (this.eventListAll.length - this.eventList.length) <= 10 ? this.eventListAll.length - this.eventList.length : 10
-          const num = this.$_.ceil(this.eventList.length / 10) + 1
-          this.eventList = this.eventList.concat(this.getTargetPageData(num, diff, this.eventListAll))
+        if (this.showEventNum < this.eventList.length) {
+          this.showEventNum = this.showEventNum + 10
+          if (this.showEventNum > this.eventList.length) {
+            this.eventList.num = this.eventList.length
+          }
         }
       }
-    },
-    getTargetPageData (pageNum, pageSize, data) {
-      return this.$_.slice(data, (pageNum - 1) * pageSize, pageNum * pageSize)
     }
   }
 }
