@@ -757,7 +757,7 @@ export const entityDetailSubscriberTopApp = {
   grid: {
     top: 0,
     left: 15,
-    right: 40,
+    right: 45,
     bottom: 0
   },
   yAxis: {
