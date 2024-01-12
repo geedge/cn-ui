@@ -197,6 +197,8 @@ export default {
       if (this.settingObj.ruleType && this.settingObj.category && this.settingObj.eventType && this.settingObj.name) {
         this.settingObj.settingNoContinue = true
         this.onContinue()
+      } else {
+        this.$emit('setSettingForm', this.settingObj)
       }
     },
     /** 点击继续，进行第二步 */

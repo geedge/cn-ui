@@ -507,6 +507,8 @@ export default {
             this.$refs.form2.validate(valid2 => {
               if (valid2) {
                 this.getConditions()
+                this.indicatorRuleObj.editFlag = false
+                this.indicatorRuleObj.saveFlag = true
                 this.$emit('setRuleObj', this.thresholdRuleObj)
               }
             })
@@ -534,6 +536,9 @@ export default {
       if (this.indicatorRuleObj.dataSource && this.indicatorRuleObj.knowledgeId && this.indicatorRuleObj.level) {
         this.indicatorRuleObj.ruleNoContinue = true
         this.onContinue()
+      } else {
+        this.indicatorRuleObj.editFlag = true
+        this.$emit('setRuleObj', this.indicatorRuleObj)
       }
     }
   }

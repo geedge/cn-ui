@@ -18,7 +18,7 @@
               </div>
             </template>
             <div class="form-collapse-content">
-              <general-settings ref="form" :editObj="editObj" :isComplete="isComplete" @setSettingForm="getFormSetting" />
+              <general-settings ref="form" :editObj="editObj" :isComplete="isCompleteSetting" @setSettingForm="getFormSetting" />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -35,7 +35,7 @@
               </div>
             </template>
             <div class="form-collapse-content">
-              <rule-definition :settingObj="settingObj" :editObj="editObj" :isComplete="isComplete" @setRuleObj="getRuleObj" />
+              <rule-definition :settingObj="settingObj" :editObj="editObj" :isComplete="isCompleteRule" @setRuleObj="getRuleObj" />
             </div>
           </el-collapse-item>
         </el-collapse>
@@ -57,16 +57,16 @@
                 <div class="trigger-block-item margin-b-10">
                   <div>At least</div>
                   <el-form-item prop="atLeast">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   <div>times within</div>
 
                   <el-form-item prop="interval" class="policy-form-item">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
 
                   <el-form-item prop="intervalVal">
-                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="mini">
+                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="mini" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -80,10 +80,10 @@
                 <div class="trigger-block-item">
                   <div>With the counter resetting after no activity for</div>
                   <el-form-item prop="resetInterval" class="policy-form-item">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   <el-form-item prop="resetIntervalVal">
-                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini">
+                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini"  @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -98,11 +98,11 @@
                 <div class="trigger-block-item margin-b-10">
                   在
                   <el-form-item prop="interval">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.interval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
 
                   <el-form-item prop="intervalVal">
-                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="mini">
+                    <el-select v-model="triggerObj.intervalVal" class="form-trigger__select" placeholder=" " size="mini" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -113,7 +113,7 @@
                   </el-form-item>
                   内至少发生
                   <el-form-item prop="atLeast">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.atLeast" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   次
                 </div>
@@ -121,10 +121,10 @@
                 <div class="trigger-block-item">
                   若连续
                   <el-form-item prop="resetInterval">
-                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                    <el-input size="mini" maxlength="5" v-model="triggerObj.resetInterval" oninput="value=value.replace(/[^\d]/g,'')" @input="resetEditFlag"></el-input>
                   </el-form-item>
                   <el-form-item prop="resetIntervalVal">
-                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini">
+                    <el-select v-model="triggerObj.resetIntervalVal" class="form-trigger__select" placeholder=" " size="mini" @change="resetEditFlag">
                       <el-option
                           v-for="item in intervalList"
                           :key="item.value"
@@ -258,7 +258,8 @@ export default {
       },
       intervalList: [],
       editObj: {},
-      isComplete: true, // 参数完整标识，默认完整（照顾编辑模式），false即不完整
+      isCompleteSetting: true, // 参数完整标识，默认完整（照顾编辑模式），false即不完整
+      isCompleteRule: true, // 参数完整标识，默认完整（照顾编辑模式），false即不完整
       language: EN,
       ZH,
       EN
@@ -294,7 +295,7 @@ export default {
       intervalVal: '',
       resetInterval: '',
       resetIntervalVal: '',
-      finishFlag: false
+      editFlag: false
     })
 
     return {
@@ -345,12 +346,18 @@ export default {
     },
     /** 获取General Settings折叠板form数据 */
     getFormSetting (data) {
-      this.handleActiveNames('1', this.activeNames, data.settingNoContinue)
+      if (data.saveFlag) {
+        this.handleActiveNames('1', this.activeNames, data.settingNoContinue)
+      }
       this.settingObj = JSON.parse(JSON.stringify(data))
     },
     /** 获取Rule Definition折叠板form数据 */
     getRuleObj (data) {
-      this.handleActiveNames('2', this.activeNames, data.ruleNoContinue)
+      if (data.dataSource && data.knowledgeId && data.level) {
+        data.editFlag = false
+        data.saveFlag = true
+        this.handleActiveNames('2', this.activeNames, data.ruleNoContinue)
+      }
       this.ruleObj = JSON.parse(JSON.stringify(data))
     },
     /** 自动展开收起折叠板 */
@@ -453,14 +460,15 @@ export default {
               })
             }
           } else {
-            this.isComplete = false
+            this.isCompleteSetting = false
+            this.isCompleteRule = false
           }
         })
       } else if (settingLen === 0) {
-        this.isComplete = false
+        this.isCompleteSetting = false
         this.handleFormError('1')
       } else if (ruleLen === 0) {
-        this.isComplete = false
+        this.isCompleteRule = false
         this.handleFormError('2')
       }
     },
@@ -508,29 +516,55 @@ export default {
         queryInfo.ruleId = query.id
         queryInfo.name = this.settingObj.name
       }
-      this.$refs.form3.validate(valid => {
-        if (this.settingObj.settingNoContinue || this.ruleObj.settingNoContinue || !valid) {
-          this.$confirm(this.$t('tip.leavePage'), {
-            confirmButtonText: this.$t('tip.confirm'),
-            cancelButtonText: this.$t('overall.cancel'),
-            message: this.$t('tip.leavePageTips'),
-            title: this.$t('tip.leavePage'),
-            type: 'warning',
-            iconClass: 'width:0px;height:0px;',
-            customClass: 'del-model'
-          }).then(() => {
-            this.$router.push({
-              path: '/detection/policy',
-              query: queryInfo
-            })
-          }).catch(() => {})
-        } else {
-          this.$router.push({
-            path: '/detection/policy',
-            query: queryInfo
+
+      if (this.settingObj.editFlag || this.ruleObj.editFlag || this.triggerObj.editFlag) {
+        // if (this.settingObj.editFlag) {
+        //   this.isCompleteSetting = false
+        //   this.handleFormError('1')
+        // }
+        // if (this.ruleObj.editFlag) {
+        //   this.isCompleteRule = false
+        //   this.handleFormError('2')
+        // }
+        if (this.triggerObj.editFlag) {
+          this.$refs.form3.validate(valid => {
+            if (!valid) {
+              this.confirmMessage(queryInfo)
+            } else {
+              this.$router.push({
+                path: '/detection/policy',
+                query: queryInfo
+              })
+            }
           })
+        } else {
+          this.confirmMessage(queryInfo)
         }
-      })
+      } else {
+        this.$router.push({
+          path: '/detection/policy',
+          query: queryInfo
+        })
+      }
+    },
+    confirmMessage (queryInfo) {
+      this.$confirm(this.$t('tip.leavePage'), {
+        confirmButtonText: this.$t('tip.confirm'),
+        cancelButtonText: this.$t('overall.cancel'),
+        message: this.$t('tip.leavePageTips'),
+        title: this.$t('tip.leavePage'),
+        type: 'warning',
+        iconClass: 'width:0px;height:0px;',
+        customClass: 'del-model'
+      }).then(() => {
+        this.$router.push({
+          path: '/detection/policy',
+          query: queryInfo
+        })
+      }).catch(() => {})
+    },
+    resetEditFlag () {
+      this.triggerObj.editFlag = true
     }
   }
 }
