@@ -13,11 +13,17 @@ export function getMillisecond (time) {
     ms = window.$dayJs.tz(new Date(time)).valueOf()
   } else if (_.isNumber(time)) {
     const timeStr = _.toString(time)
-    const difference = timeStr.length - 13
+    /* const difference = timeStr.length - 13
     if (difference >= 0) {
       ms = window.$dayJs.tz(new Date(Number(timeStr.slice(0, 13)))).valueOf()
     } else {
       ms = window.$dayJs.tz(new Date(Math.floor(time * (10 ** (0 - difference))))).valueOf()
+    } */
+    // 判断9位和10位数为秒，12位和13位为毫秒。其他位数不做处理
+    if (timeStr.length === 9 || timeStr.length === 10) {
+      ms = window.$dayJs.tz(new Date(Number(time * 1000))).valueOf()
+    } else {
+      ms = window.$dayJs.tz(new Date(Number(time))).valueOf()
     }
   } else if (_.isString(time)) {
     try {
